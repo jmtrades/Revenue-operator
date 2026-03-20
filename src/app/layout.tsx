@@ -49,26 +49,26 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.recall-touch.com"),
   title: {
     template: "%s — Recall Touch",
-    default: "Recall Touch — AI Phone System for Missed Call Recovery",
+    default: "Recall Touch — AI That Makes and Takes Your Phone Calls",
   },
   description:
-    "AI-powered phone system that answers calls, books appointments, follows up with leads, and recovers missed revenue — so no opportunity falls through the cracks.",
+    "AI phone agents that answer calls, make calls, follow up with leads, book appointments, recover revenue, and get smarter with every conversation. Any business. Any industry. Try free.",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://www.recall-touch.com",
     siteName: "Recall Touch",
-    title: "Recall Touch — AI Phone System for Missed Call Recovery",
+    title: "Recall Touch — AI That Makes and Takes Your Phone Calls",
     description:
-      "AI-powered phone system that answers calls, books appointments, follows up with leads, and recovers missed revenue — so no opportunity falls through the cracks.",
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Recall Touch — AI Phone System for Missed Call Recovery" }],
+      "AI phone agents that answer calls, make calls, follow up with leads, book appointments, recover revenue, and get smarter with every conversation. Any business. Any industry. Try free.",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Recall Touch — AI phone agents for every business" }],
   },
   icons: { icon: "/icon" },
   twitter: {
     card: "summary_large_image",
-    title: "Recall Touch — AI Phone System for Missed Call Recovery",
+    title: "Recall Touch — AI That Makes and Takes Your Phone Calls",
     description:
-      "AI-powered phone system that answers calls, books appointments, follows up with leads, and recovers missed revenue — so no opportunity falls through the cracks.",
+      "AI phone agents that answer calls, make calls, follow up with leads, book appointments, recover revenue, and get smarter with every conversation. Any business. Any industry. Try free.",
   },
   robots: {
     index: true,

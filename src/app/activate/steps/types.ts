@@ -16,7 +16,7 @@ export interface HoursSlot {
 export type OrgTypeId = "business" | "solo" | "team" | "agency" | "personal" | "other";
 export type UseCaseId = "answer" | "book" | "followup" | "afterhours" | "outbound" | "route";
 
-export interface ElevenLabsVoice {
+export interface VoiceOption {
   id: string;
   name: string;
   labels: Record<string, string>;

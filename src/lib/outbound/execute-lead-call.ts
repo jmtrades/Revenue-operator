@@ -9,7 +9,7 @@ import { getVoicemailConfigForBehavior } from "@/lib/voice/voicemail-detection";
 import { buildFirstMessageWithConsent } from "@/lib/compliance/recording-consent";
 import { buildCampaignPrompt, type CampaignType, type LeadForPrompt } from "@/lib/campaigns/prompt";
 import { getVoiceProvider } from "@/lib/voice";
-import { DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
+import { DEFAULT_RECALL_VOICE_ID as DEFAULT_VOICE_ID } from "@/lib/constants/recall-voices";
 
 export async function executeLeadOutboundCall(
   workspaceId: string,
@@ -51,6 +51,98 @@ export async function executeLeadOutboundCall(
   const phone = leadRow.phone;
   if (!phone || String(phone).replace(/\D/g, "").length < 10) {
     return { ok: false, error: "Lead has no valid phone number" };
+  }
+
+  // Safety guard: per-lead contact frequency caps
+  const now = new Date();
+  const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
+
+  // Check outbound calls in last 24 hours
+  const { data: callData, error: callError } = await db
+    .from("call_sessions")
+    .select("id")
+    .eq("lead_id", leadId)
+    .gte("call_started_at", twentyFourHoursAgo);
+  const callCount = (callData?.length ?? 0);
+
+  // Check outbound SMS messages in last 24 hours
+  const { data: smsData, error: smsError } = await db
+    .from("outbound_messages")
+    .select("id")
+    .eq("lead_id", leadId)
+    .gte("created_at", twentyFourHoursAgo);
+  const smsCount = (smsData?.length ?? 0);
+
+  // Enforce contact frequency caps
+  if (callCount >= 4) {
+    console.warn(
+      `[outbound-safety] Lead ${leadId} has reached call frequency cap: ${callCount} calls in last 24 hours (max: 4)`
+    );
+    return { ok: false, error: "Lead has reached maximum call frequency for 24-hour period" };
+  }
+
+  const totalTouches = callCount + smsCount;
+  if (totalTouches > 6) {
+    console.warn(
+      `[outbound-safety] Lead ${leadId} has exceeded total contact limit: ${callCount} calls + ${smsCount} SMS = ${totalTouches} touches in last 24 hours (max: 6)`
+    );
+    return { ok: false, error: "Lead has exceeded maximum contact frequency for 24-hour period" };
+  }
+
+  // COMPLIANCE: Check opt-out status before calling
+  try {
+    const { isOptedOut } = await import("@/lib/lead-opt-out");
+    const phoneNormalized = String(phone).replace(/\D/g, "");
+    const optedOut = await isOptedOut(workspaceId, phoneNormalized) || await isOptedOut(workspaceId, phone);
+    // Also check the leads table opt_out flag
+    const { data: leadOptData } = await db
+      .from("leads")
+      .select("opt_out")
+      .eq("id", leadId)
+      .maybeSingle();
+    if (optedOut || (leadOptData as { opt_out?: boolean } | null)?.opt_out === true) {
+      console.warn(`[outbound-compliance] Lead ${leadId} is opted out — blocking call`);
+      return { ok: false, error: "Lead has opted out of contact" };
+    }
+  } catch (optErr) {
+    // If opt-out table doesn't exist yet, continue (fail open for missing table only)
+    console.warn("[outbound-compliance] Opt-out check failed (table may not exist):", optErr instanceof Error ? optErr.message : optErr);
+  }
+
+  // COMPLIANCE: Business hours enforcement — don't call outside configured hours
+  try {
+    const { data: bizCtx } = await db
+      .from("workspace_business_context")
+      .select("business_hours, timezone")
+      .eq("workspace_id", workspaceId)
+      .maybeSingle();
+    const ctx = bizCtx as { business_hours?: Record<string, { start: string; end: string }> | null; timezone?: string | null } | null;
+    if (ctx?.business_hours && Object.keys(ctx.business_hours).length > 0) {
+      const tz = ctx.timezone ?? "America/New_York";
+      const localNow = new Date(now.toLocaleString("en-US", { timeZone: tz }));
+      const dayNames = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+      const today = dayNames[localNow.getDay()];
+      const todayHours = ctx.business_hours[today];
+      if (todayHours) {
+        const [startH, startM] = todayHours.start.split(":").map(Number);
+        const [endH, endM] = todayHours.end.split(":").map(Number);
+        const currentMinutes = localNow.getHours() * 60 + localNow.getMinutes();
+        const startMinutes = startH * 60 + (startM || 0);
+        const endMinutes = endH * 60 + (endM || 0);
+        if (currentMinutes < startMinutes || currentMinutes > endMinutes) {
+          console.warn(`[outbound-hours] Lead ${leadId} — outside business hours (${todayHours.start}-${todayHours.end} ${tz})`);
+          return { ok: false, error: "Outside business hours — call will be scheduled for next available window" };
+        }
+      } else {
+        // No hours configured for today = closed day
+        console.warn(`[outbound-hours] Lead ${leadId} — no business hours configured for ${today}`);
+        return { ok: false, error: "Business is closed today — call will be scheduled for next business day" };
+      }
+    }
+    // If no business hours configured at all, allow calls (user hasn't set hours yet)
+  } catch (bizErr) {
+    // If business context doesn't exist, continue but log
+    console.warn("[outbound-hours] Business context check failed:", bizErr instanceof Error ? bizErr.message : bizErr);
   }
 
   // Outbound calling config differs by orchestration provider.

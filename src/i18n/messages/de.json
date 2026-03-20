@@ -262,7 +262,7 @@
     "paymentMethod": "Zahlungsmethode: •••• 4242",
     "update": "Aktualisieren",
     "invoiceHistory": "Rechnungsverlauf",
-    "invoiceDesc": "Rechnungen in Stripe anzeigen und herunterladen.",
+    "invoiceDesc": "Rechnungen anzeigen und herunterladen.",
     "viewInvoices": "Rechnungen und Zahlungshistorie anzeigen →",
     "pauseAccount": "Konto pausieren",
     "cancel": "Abbrechen",
@@ -348,7 +348,7 @@
         "features": [
           "1 KI-Agent",
           "1 Rufnummer",
-          "400 Min/Monat",
+          "500 Min/Monat",
           "Nutzungsübersicht"
         ]
       },
@@ -357,23 +357,23 @@
         "features": [
           "3 KI-Agenten",
           "3 Rufnummern",
-          "1.500 Min/Monat",
+          "2.500 Min/Monat",
           "Call Intelligence",
           "Prioritäts-Support"
         ]
       },
       "scale": {
-        "name": "Scale",
+        "name": "Business",
         "features": [
           "Unbegrenzte KI-Agenten",
           "10 Rufnummern",
-          "5.000 Min/Monat",
+          "6.000 Min/Monat",
           "Detaillierte Berichte",
           "API-Zugang"
         ]
       },
       "enterprise": {
-        "name": "Enterprise",
+        "name": "Agency",
         "features": [
           "Unbegrenzte Agenten",
           "Unbegrenzte Rufnummern",
@@ -3818,7 +3818,7 @@
         "starter": {
           "name": "Einstieg",
           "tagline": "Für Solo und kleine Teams zum Einstieg.",
-          "f1": "400 Inbound-Min. inkl.",
+          "f1": "500 Inbound-Min. inkl.",
           "f2": "1 KI-Nummer",
           "f3": "Basis-Anrufzusammenfassungen & Lead-Erfassung",
           "f4": "Standard-Support"
@@ -3826,7 +3826,7 @@
         "growth": {
           "name": "Wachstum",
           "tagline": "Für wachsende Teams mit voller Abdeckung.",
-          "f1": "1.500 Inbound-Min. inkl.",
+          "f1": "2.500 Inbound-Min. inkl.",
           "f2": "3 KI-Nummern",
           "f3": "Erweiterte Anruf-Intelligence & Routing",
           "f4": "Prioritäts-Support"
@@ -4013,7 +4013,7 @@
           "name": "Starter",
           "description": "Jeden Anruf beantworten. Eine Nummer, ein Agent.",
           "features": [
-            "400 Min inklusive",
+            "500 Min inklusive",
             "50 ausgehende Anrufe",
             "100 SMS",
             "1 KI-Agent",
@@ -4026,7 +4026,7 @@
           "name": "Growth",
           "description": "Ein zurückgewonnener Lead zahlt den Monat.",
           "features": [
-            "1.500 Min inklusive",
+            "2.500 Min inklusive",
             "500 ausgehende Anrufe",
             "500 SMS",
             "3 KI-Agenten",
@@ -4034,15 +4034,15 @@
             "Terminbuchung",
             "Follow-up-Sequenzen",
             "Analysen",
-            "Mehrverbrauch: 0,18 €/Min"
+            "Mehrverbrauch: 0,10 €/Min"
           ],
           "cta": "Kostenlos starten"
         },
         "scale": {
-          "name": "Scale",
+          "name": "Business",
           "description": "Volles KI-Kommunikationsteam für einen Bruchteil einer Stelle.",
           "features": [
-            "5.000 Min inklusive",
+            "6.000 Min inklusive",
             "2.000 ausgehende Anrufe",
             "SMS unbegrenzt",
             "KI-Agenten unbegrenzt",
@@ -4051,12 +4051,12 @@
             "Compliance",
             "API",
             "Prioritäts-Support",
-            "Mehrverbrauch: 0,12 €/Min"
+            "Mehrverbrauch: 0,08 €/Min"
           ],
           "cta": "Kostenlos starten"
         },
         "enterprise": {
-          "name": "Enterprise",
+          "name": "Agency",
           "description": "Individuelle Preise — White Label, Compliance, SSO, dedizierter Manager, SLA.",
           "features": [
             "White Label",
@@ -4381,7 +4381,7 @@
       "starter": {
         "name": "Einstieg",
         "description": "Für Einzelunternehmer, die möchten, dass KI jeden Anruf beantwortet.",
-        "f1": "400 Inbound-Min. inkl.",
+        "f1": "500 Inbound-Min. inkl.",
         "f2": "50 Outbound-Anrufe",
         "f3": "100 SMS",
         "f4": "1 KI-Agent",
@@ -4391,14 +4391,14 @@
       "growth": {
         "name": "Wachstum",
         "description": "Für wachsende Teams, die zuverlässige Abdeckung und Nachverfolgung benötigen.",
-        "f1": "1.500 Inbound-Min. inkl.",
+        "f1": "2.500 Inbound-Min. inkl.",
         "f2": "500 Outbound-Anrufe",
         "f3": "500 SMS",
         "f4": "3 KI-Agenten",
         "f5": "3 Nummern",
         "f6": "Terminbuchung",
         "f7": "Nachfass-Sequenzen",
-        "f8": "Mehrverbrauch: 0,18 €/Min."
+        "f8": "Mehrverbrauch: 0,10 €/Min."
       },
       "scale": {
         "name": "Skalierung",
@@ -4412,7 +4412,7 @@
         "f7": "Compliance",
         "f8": "API",
         "f9": "Prioritäts-Support",
-        "f10": "Mehrverbrauch: 0,12 €/Min."
+        "f10": "Mehrverbrauch: 0,08 €/Min."
       },
       "enterprise": {
         "name": "Unternehmen",
@@ -6049,7 +6049,7 @@
       },
       "integrations": {
         "title": "Integrationen",
-        "description": "Recall Touch mit Anbieter (Twilio), Kalender und CRM verbinden. Webhooks und API in Scale- und Enterprise-Plänen.",
+        "description": "Recall Touch mit Anbieter , Kalender und CRM verbinden. Webhooks und API in Scale- und Enterprise-Plänen.",
         "zapierHeading": "Zapier & Make",
         "zapierDesc": "OAuth nutzen, um Ihren Recall-Touch-Workspace zu verbinden, dann Trigger abfragen oder Aktionen aufrufen.",
         "authorizeLabel": "Autorisieren",
@@ -6084,7 +6084,7 @@
         "title": "Changelog",
         "description": "Aktuelle Plattform-Updates.",
         "entry202503": "Kampagnen-Sequenzen (Anruf, SMS, E-Mail, Warten), Lead-Scoring, Benachrichtigungszentrum, Onboarding-Checkliste, Fehlerberichte, SEO- und Barrierefreiheits-Verbesserungen.",
-        "entry202502": "Recall Sprachagenten, Twilio-Telefonbereitstellung, Aktivitäts- und Posteingangs-Ansichten, Einstellungs-Hub.",
+        "entry202502": "Recall Sprachagenten, AI-Telefonbereitstellung, Aktivitäts- und Posteingangs-Ansichten, Einstellungs-Hub.",
         "entry202501": "Erstes Release: Workspace-Setup, Anmeldung, Preise, Demo-Simulator."
       },
       "faq": {

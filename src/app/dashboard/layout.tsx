@@ -38,6 +38,7 @@ import {
   Plug,
   Download,
   CreditCard,
+  Brain,
   type LucideIcon,
 } from "lucide-react";
 import { WorkspaceProvider, useWorkspace } from "@/components/WorkspaceContext";
@@ -68,6 +69,7 @@ const ALLOWED_DASHBOARD_PATHS = [
   "/dashboard/campaigns",
   "/dashboard/agents",
   "/dashboard/analytics",
+  "/dashboard/intelligence",
   "/dashboard/team",
   "/dashboard/integrations",
   "/dashboard/onboarding",
@@ -83,6 +85,45 @@ function isAllowedPath(pathname: string): boolean {
   if (pathname.startsWith("/dashboard/agents/")) return true;
   return false;
 }
+/* ─── Grouped navigation ─── */
+interface NavGroup {
+  label: string;
+  items: { key: string; href: string; icon: LucideIcon }[];
+}
+function buildNavGroups(t: (key: string) => string): NavGroup[] {
+  return [
+    {
+      label: "",
+      items: [
+        { key: "activity", href: "/dashboard/activity", icon: LayoutList },
+        { key: "contacts", href: "/dashboard/contacts", icon: Users },
+        { key: "agents", href: "/dashboard/agents", icon: Bot },
+        { key: "campaigns", href: "/dashboard/campaigns", icon: Megaphone },
+        { key: "messages", href: "/dashboard/messages", icon: MessageSquare },
+        { key: "calls", href: "/dashboard/calls", icon: PhoneCall },
+      ],
+    },
+    {
+      label: "Operations",
+      items: [
+        { key: "calendar", href: "/dashboard/calendar", icon: Calendar },
+        { key: "followUps", href: "/dashboard/follow-ups", icon: ListTodo },
+        { key: "analytics", href: "/dashboard/analytics", icon: BarChart3 },
+        { key: "intelligence", href: "/dashboard/intelligence", icon: Brain },
+      ],
+    },
+    {
+      label: "Settings",
+      items: [
+        { key: "settings", href: "/dashboard/settings", icon: Settings },
+        { key: "integrations", href: "/dashboard/integrations", icon: Plug },
+        { key: "billing", href: "/dashboard/billing", icon: CreditCard },
+      ],
+    },
+  ];
+}
+
+/* Legacy flat nav for buildNav callers (mobile, etc.) */
 const NAV_KEYS = [
   "activity", "contacts", "agents", "campaigns", "messages", "calendar", "analytics", "settings",
   "start", "record", "calls", "presence", "approvals", "followUps", "escalations", "policies",
@@ -145,6 +186,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   const searchParams = useSearchParams();
   const { workspaceId, workspaces, loading, error, setWorkspaceId, retry } = useWorkspace();
   const navItems = useMemo(() => buildNav(t), [t]);
+  const navGroups = useMemo(() => buildNavGroups(t), [t]);
   const urlWid = searchParams.get("workspace_id");
   const redirecting = useRef(false);
 
@@ -228,9 +270,20 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
           </p>
         </div>
         <WorkspaceSelect />
-        <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-          {navItems.map((n) => (
-            <NavLink key={n.href} href={n.href} label={n.label} icon={n.icon} />
+        <nav className="flex-1 p-3 overflow-y-auto">
+          {navGroups.map((group, gi) => (
+            <div key={gi} className={gi > 0 ? "mt-4 pt-3 border-t" : ""} style={gi > 0 ? { borderColor: "var(--border)" } : undefined}>
+              {group.label && (
+                <p className="text-[10px] uppercase tracking-widest font-medium px-3 mb-1.5" style={{ color: "var(--text-muted)" }}>
+                  {group.label}
+                </p>
+              )}
+              <div className="space-y-0.5">
+                {group.items.map((item) => (
+                  <NavLink key={item.href} href={item.href} label={t(`layout.navLabels.${item.key}`)} icon={item.icon} />
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
       </aside>

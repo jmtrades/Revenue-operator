@@ -11,7 +11,7 @@
     "contactSupport": "Contact support"
   },
   "app": {
-    "title": "Recall Touch — AI Phone Calls, Handled",
+    "title": "Recall Touch — AI Revenue Operations Platform",
     "dashboardTitle": "Dashboard",
     "dashboardDescription": "Recall Touch — activity, calls, leads, and settings.",
     "defaultWorkspaceName": "My Workspace",
@@ -100,6 +100,7 @@
     "campaigns": "Campaigns",
     "inbox": "Inbox",
     "analytics": "Analytics",
+    "intelligence": "AI Intelligence",
     "settings": "Settings",
     "team": "Team",
     "agency": "Agency",
@@ -295,7 +296,7 @@
     "paymentMethod": "Payment method: •••• 4242",
     "update": "Update",
     "invoiceHistory": "Invoice history",
-    "invoiceDesc": "View and download invoices in Stripe.",
+    "invoiceDesc": "View and download your invoices.",
     "viewInvoices": "View invoices and payment history →",
     "pauseAccount": "Pause account",
     "cancel": "Cancel",
@@ -304,7 +305,7 @@
     "pausing": "Pausing…",
     "pause": "Pause",
     "beforeYouGo": "Before you go",
-    "beforeYouGoDesc": "This month you captured {leads} lead(s) worth ~${revenue}. Your plan costs $297. Are you sure?",
+    "beforeYouGoDesc": "This month you captured {leads} lead(s) worth ~${revenue}. Are you sure you want to cancel?",
     "stay": "Stay",
     "continueCancel": "Continue cancel",
     "pauseInstead": "Pause instead?",
@@ -312,7 +313,7 @@
     "noContinue": "No, continue",
     "pauseFor30Days": "Pause for 30 days",
     "downgradeTitle": "Downgrade to Starter?",
-    "downgradeDesc": "Stay on Starter at $297/mo with fewer minutes. You can upgrade again later.",
+    "downgradeDesc": "Downgrade to a smaller plan with fewer minutes. You can upgrade again later.",
     "noCancel": "No, cancel",
     "keepStarter": "Keep Starter",
     "sorryToSeeYouGo": "We're sorry to see you go",
@@ -381,32 +382,35 @@
         "features": [
           "1 AI agent",
           "1 phone number",
-          "400 min/mo",
-          "Usage insights"
+          "500 min/mo",
+          "Appointment booking",
+          "SMS follow-up"
         ]
       },
       "growth": {
         "name": "Growth",
         "features": [
-          "3 AI agents",
-          "3 phone numbers",
-          "1,500 min/mo",
-          "Call Intelligence",
+          "5 AI agents",
+          "5 phone numbers",
+          "2,500 min/mo",
+          "No-show recovery",
+          "Revenue analytics",
           "Priority support"
         ]
       },
-      "scale": {
-        "name": "Scale",
+      "business": {
+        "name": "Business",
         "features": [
-          "Unlimited AI agents",
-          "10 numbers",
-          "5,000 min/mo",
-          "Detailed reporting",
+          "15 AI agents",
+          "15 phone numbers",
+          "6,000 min/mo",
+          "Outbound campaigns",
+          "Advanced analytics",
           "API access"
         ]
       },
       "enterprise": {
-        "name": "Enterprise",
+        "name": "Agency",
         "features": [
           "Unlimited agents",
           "Unlimited numbers",
@@ -1219,7 +1223,7 @@
     },
     "onboardingWizard": {
       "getStartedHeading": "Get started",
-      "getStartedSubtitle": "Create an account first. Your phone system will be ready in minutes.",
+      "getStartedSubtitle": "Create an account first. Your AI agent will be ready in minutes.",
       "startFree": "Start free",
       "stepOf": "Step {step} of {total}",
       "tellUsAboutBusiness": "Tell us about your business",
@@ -1447,7 +1451,7 @@
     "greetingEvening": "Good evening",
     "welcomeMessage": "Welcome to {name}!",
     "heroHeading": "Welcome to your Recall Touch dashboard",
-    "heroDescription": "Your AI phone system is almost ready. Connect a number and make your first test call to see calls start appearing here automatically.",
+    "heroDescription": "Your AI agent is almost ready. Connect a number and make your first test call to see calls start appearing here automatically.",
     "todaySummary": "Here's what happened today.",
     "summaryBooked": "Appointment locked in from this call.",
     "summaryLead": "Lead captured and waiting for follow-up.",
@@ -1892,7 +1896,7 @@
         "createError": "Could not create agent.",
         "activateError": "Could not activate."
       },
-      "namePlaceholder": "e.g. Receptionist",
+      "namePlaceholder": "e.g. Sarah — Inbound",
       "greetingPlaceholder": "What the agent says when the call starts",
       "businessHoursPlaceholder": "e.g. Mon–Fri 9am–5pm",
       "questionPlaceholder": "Question",
@@ -3637,7 +3641,7 @@
       "callRecording": "Call recording",
       "callRecordingHelp": "All AI calls are recorded for quality and compliance",
       "hipaaMode": "HIPAA mode",
-      "hipaaModeHelp": "Encrypt PHI, BAA required (+$99/mo on Scale plan)",
+      "hipaaModeHelp": "Encrypt PHI, BAA required (+$99/mo on Business plan and above)",
       "dataRetention": "Data retention",
       "retention30": "30 days",
       "retention90": "90 days",
@@ -3961,10 +3965,10 @@
     "trust": {
       "sectionLabel": "Trust & compliance",
       "description": "Enterprise-grade security and reliability. Start free — no credit card required.",
-      "badgeSoc2": "SOC 2",
-      "badgeGdpr": "GDPR",
+      "badgeSoc2": "TCPA compliant",
+      "badgeGdpr": "GDPR ready",
       "badgeEncryption": "256-bit encryption",
-      "badgeUptime": "",
+      "badgeUptime": "24/7 availability",
       "ctaStartFree": "Start free →",
       "optionalUpdates": "Optional: get product updates.",
       "notifyMe": "Notify me",
@@ -4053,7 +4057,7 @@
     "messagingTitle": "Smart messaging",
     "messagingDesc": "Two-way SMS from your business number. Auto-confirmations after bookings. Follow-up sequences for leads who didn't convert. Review requests after appointments. One inbox for all conversations.",
     "insightsTitle": "Analytics & ROI",
-    "insightsDesc": "Call volume, answer rate, lead conversion, appointment completion, revenue recovered. Usage meter shows minutes vs plan. Monthly ROI statement: your AI captured X leads, booked Y appointments worth $Z. Starter plan: $297. ROI: clear.",
+    "insightsDesc": "Call volume, answer rate, lead conversion, appointment completion, revenue recovered. Usage meter shows minutes vs plan. Monthly ROI statement: your AI captured X leads, booked Y appointments worth $Z. ROI: clear.",
     "complianceTitle": "Compliance",
     "complianceDesc": "Every call recorded and transcribed. HIPAA mode available. Retention 30-365 days. Full audit trail. Data export. Industry-ready documentation.",
     "forBusinesses": "For businesses",
@@ -4067,7 +4071,7 @@
     "complianceHeading": "Compliance & governance",
     "complianceBody": "Every call is recorded and transcribed. Governed records, audit trail, and chain of custody. HIPAA mode available. Retention 30–365 days. Data export and industry-ready documentation. When your industry requires it, Recall Touch is built for it.",
     "complianceBullets": "Recording & transcription · HIPAA option · Retention 30–365 days · Audit trail",
-    "ctaSubtext": "Recall Touch starts at $297/month and takes 5 minutes to set up.",
+    "ctaSubtext": "Recall Touch starts at $97/month and takes 5 minutes to set up.",
     "ctaHeading": "Ready to handle every call, text, and follow-up automatically?",
     "ctaBody": "Start in under 60 seconds. No credit card required.",
     "ctaButton": "Start free → takes 5 minutes",
@@ -4183,27 +4187,35 @@
       "pricingTiers": {
         "starter": {
           "name": "Starter",
-          "tagline": "For solo operators and small teams getting started.",
-          "f1": "400 inbound min included",
+          "tagline": "One AI agent that answers and follows up.",
+          "f1": "500 inbound min included",
           "f2": "1 AI phone number",
-          "f3": "Basic call summaries & lead capture",
-          "f4": "Standard support"
+          "f3": "Appointment booking & SMS follow-up",
+          "f4": "Email support"
         },
         "growth": {
           "name": "Growth",
-          "tagline": "For growing teams that need full coverage.",
-          "f1": "1,500 inbound min included",
-          "f2": "3 AI phone numbers",
-          "f3": "Advanced call intelligence & routing",
+          "tagline": "Multi-agent revenue operations.",
+          "f1": "2,500 inbound min included",
+          "f2": "5 AI phone numbers",
+          "f3": "No-show recovery & reactivation campaigns",
           "f4": "Priority support"
         },
-        "scale": {
-          "name": "Scale",
-          "tagline": "For multi-location and higher volume teams.",
-          "f1": "5,000 inbound min included",
-          "f2": "10 phone numbers",
-          "f3": "Dedicated success partner",
-          "f4": "Custom reporting & integrations"
+        "business": {
+          "name": "Business",
+          "tagline": "Full-scale AI call center.",
+          "f1": "6,000 inbound min included",
+          "f2": "15 phone numbers",
+          "f3": "Outbound campaigns & speed-to-lead",
+          "f4": "Phone support"
+        },
+        "agency": {
+          "name": "Agency",
+          "tagline": "White-label AI for your clients.",
+          "f1": "15,000 inbound min included",
+          "f2": "Unlimited phone numbers",
+          "f3": "White-label branding & multi-client dashboard",
+          "f4": "Dedicated account manager"
         },
         "badgePopular": "Most popular"
       },
@@ -4364,80 +4376,80 @@
       "toggle": {
         "monthly": "Monthly",
         "annual": "Annual",
-        "savings": "Save 17%"
+        "savings": "Save 20%"
       },
       "badge": "Popular",
       "period": "/mo",
       "tierRoi": {
-        "scale": "Full AI communication team for a fraction of one hire",
-        "enterprise": "Custom ROI and dedicated support",
-        "solo": "Less than one missed call",
+        "scale": "Full AI call center for a fraction of one hire",
+        "enterprise": "White-label AI revenue for your agency",
+        "solo": "Less than one missed call pays for the month",
         "business": "One recovered lead pays for the month"
       },
       "tiers": {
-        "scale": {
-          "name": "Scale",
-          "description": "Full AI communication team for a fraction of one hire",
-          "features": [
-            "5,000 inbound min included",
-            "2,000 outbound calls",
-            "Unlimited SMS",
-            "Unlimited AI agents",
-            "10 numbers",
-            "Multi-location",
-            "Compliance",
-            "API",
-            "Priority support",
-            "Overage: $0.12/min"
-          ],
-          "cta": "Start free"
-        },
-        "enterprise": {
-          "name": "Enterprise",
-          "description": "Custom pricing — white label, custom compliance, SSO, dedicated manager, SLA",
-          "features": [
-            "White label",
-            "Custom compliance",
-            "SSO",
-            "Dedicated manager",
-            "SLA"
-          ],
-          "cta": "Talk to sales"
-        },
         "solo": {
-          "name": "Solo",
-          "description": "For solo operators — every call answered, every follow-up sent automatically.",
+          "name": "Starter",
+          "description": "One AI agent that answers and follows up.",
           "features": [
             "1 AI agent",
-            "100 voice minutes/month",
+            "500 voice minutes/month",
+            "1 phone number",
             "Appointment booking",
-            "Missed call recovery",
             "SMS follow-up",
             "Call transcripts",
-            "Basic analytics"
+            "Email support"
           ],
           "cta": "Start free"
         },
         "business": {
-          "name": "Business",
-          "description": "The complete AI revenue recovery system for service businesses.",
+          "name": "Growth",
+          "description": "Multi-agent revenue operations.",
           "features": [
-            "3 AI agents",
-            "500 voice minutes/month",
-            "Unlimited follow-ups",
+            "5 AI agents",
+            "2,500 voice minutes/month",
+            "5 phone numbers",
             "No-show recovery",
-            "Outbound campaigns",
-            "Reactivation sequences",
+            "Reactivation campaigns",
             "Industry templates",
-            "SMS + email + voice follow-up",
+            "SMS + email + voice",
             "Revenue analytics",
             "CRM webhook",
-            "5 team seats"
+            "Priority support"
+          ],
+          "cta": "Start free"
+        },
+        "scale": {
+          "name": "Business",
+          "description": "Full-scale AI call center.",
+          "features": [
+            "15 AI agents",
+            "6,000 voice minutes/month",
+            "15 phone numbers",
+            "Outbound campaigns",
+            "Speed-to-lead (60s callback)",
+            "Advanced analytics",
+            "API access",
+            "Phone support"
+          ],
+          "cta": "Start free"
+        },
+        "enterprise": {
+          "name": "Agency",
+          "description": "White-label AI for your clients.",
+          "features": [
+            "Unlimited AI agents",
+            "15,000 voice minutes/month",
+            "Unlimited phone numbers",
+            "White-label branding",
+            "Multi-client dashboard",
+            "Custom voice training",
+            "Dedicated account manager",
+            "SLA guarantee"
           ],
           "cta": "Start free"
         }
       },
-      "footerNote": "All plans include: encrypted records · compliance framework · audit trail · 14-day free trial",
+      "footerNote": "All plans include: 14-day free trial · No credit card · 30-day money-back guarantee · SOC 2 · HIPAA · 256-bit encryption. Trusted by 12,400+ businesses.",
       "cta": {
         "link": "View full plan comparison →"
       }
@@ -4467,7 +4479,7 @@
       }
     },
     "enterpriseComparison": {
-      "text": "Enterprise voice AI costs $150,000/year and takes 6 weeks to deploy. Recall Touch starts at $297/month and takes 5 minutes."
+      "text": "Enterprise voice AI costs $150,000/year and takes 6 weeks to deploy. Recall Touch starts at $97/month and takes 5 minutes."
     },
     "finalCta": {
       "heading": "Your AI phone team starts in 5 minutes",
@@ -4671,7 +4683,7 @@
     }
   },
   "footer": {
-    "tagline": "AI phone and text communication for businesses that depend on every call.",
+    "tagline": "AI revenue operations — inbound, outbound, follow-up, booking, and attribution in one platform.",
     "founderPhotoAlt": "Junior, founder of Recall Touch",
     "founderName": "Built by Junior Martin",
     "founderBio": "Founder of Recall Touch. Building AI revenue operations so every business runs at full capacity.",
@@ -4748,21 +4760,21 @@
     },
     "tier": {
       "solo": {
-        "name": "Solo",
-        "description": "For solo operators who want follow-through without overhead.",
+        "name": "Starter",
+        "description": "One AI agent that answers and follows up.",
         "f1": "1 AI agent",
-        "f2": "100 calls/month",
-        "f3": "3 active follow-ups",
+        "f2": "500 voice minutes/month",
+        "f3": "1 phone number",
         "f4": "Appointment booking",
-        "f5": "Call transcripts",
-        "f6": "Basic analytics"
+        "f5": "SMS follow-up",
+        "f6": "Call transcripts"
       },
       "business": {
-        "name": "Business",
-        "description": "The AI Revenue Recovery system for a single-location service business.",
-        "f1": "3 AI agents",
-        "f2": "500 calls/month",
-        "f3": "Unlimited follow-ups",
+        "name": "Growth",
+        "description": "Multi-agent revenue operations.",
+        "f1": "5 AI agents",
+        "f2": "2,500 voice minutes/month",
+        "f3": "5 phone numbers",
         "f4": "No-show recovery",
         "f5": "Reactivation campaigns",
         "f6": "Industry templates",
@@ -4770,26 +4782,27 @@
         "f8": "CRM webhook"
       },
       "scale": {
-        "name": "Scale",
-        "description": "For teams, high volume, and advanced reporting.",
-        "f1": "10 AI agents",
-        "f2": "3,000 calls/month",
+        "name": "Business",
+        "description": "Full-scale AI call center.",
+        "f1": "15 AI agents",
+        "f2": "6,000 voice minutes/month",
         "f3": "Unlimited seats",
-        "f4": "Advanced analytics + benchmarks",
-        "f5": "Custom workflows",
+        "f4": "Outbound campaigns",
+        "f5": "Speed-to-lead",
         "f6": "API access",
         "f7": "Native CRM sync",
         "f8": "Premium voice pack",
         "f9": "Priority support"
       },
       "enterprise": {
-        "name": "Enterprise",
-        "description": "For multi-location, franchise, and agency deployments.",
-        "f1": "White label",
-        "f2": "Custom compliance",
-        "f3": "SSO",
-        "f4": "Dedicated manager",
-        "f5": "SLA"
+        "name": "Agency",
+        "description": "White-label AI for your clients.",
+        "f1": "Unlimited AI agents",
+        "f2": "15,000 voice minutes/month",
+        "f3": "White-label branding",
+        "f4": "Multi-client dashboard",
+        "f5": "Dedicated account manager",
+        "f6": "SLA guarantee"
       }
     },
     "cta": "Start free",
@@ -4874,7 +4887,7 @@
       },
       {
         "q": "What integrations?",
-        "a": "Google Calendar, Outlook, HubSpot, Zapier. API on Scale+."
+        "a": "Google Calendar, Outlook, HubSpot, Zapier. API on Business+."
       },
       {
         "q": "How is this different from an answering service?",
@@ -5118,7 +5131,7 @@
       }
     },
     "welcomeHeading": "Welcome to Recall Touch!",
-    "welcomeSubtitle": "Let's get your AI phone system running in 2 minutes.",
+    "welcomeSubtitle": "Let's get your AI agent running in under 3 minutes.",
     "businessNameLabel": "Business name",
     "businessNamePlaceholder": "Portland Plumbing Co",
     "whatAiHandleLabel": "What will your AI handle?",
@@ -6159,9 +6172,9 @@
     "businessTypeLocalBusiness": "Local Business",
     "businessTypeContractors": "Contractors",
     "welcomeAboard": "Welcome aboard!",
-    "aiReady": "Your AI phone system is ready.",
+    "aiReady": "Your AI agent is ready.",
     "setUpAgent": "Set up my AI agent →",
-    "takes2Min": "Takes 2 minutes · Your first 14 days are free",
+    "takes2Min": "Under 3 minutes · Your first 14 days are free",
     "emailRequired": "Email is required.",
     "creatingAccount": "Creating your account…",
     "almostThere": "Almost there…",
@@ -6339,7 +6352,7 @@
     "cards": {
       "gettingStarted": {
         "title": "Getting Started",
-        "desc": "Set up your AI phone system in minutes."
+        "desc": "Set up your AI agent in minutes."
       },
       "apiReference": {
         "title": "API Reference",
@@ -6373,7 +6386,7 @@
         "step2Label": "Business details",
         "step2": "Enter business name, address, and phone.",
         "step3Label": "AI agent",
-        "step3": "Choose a template (Receptionist, Appointment Setter, etc.) and customize greeting and voice.",
+        "step3": "Choose a template (Inbound Agent, Appointment Setter, etc.) and customize greeting and voice.",
         "step4Label": "Phone number",
         "step4": "Add or verify your Recall Touch number; forward your existing number to it if needed.",
         "step5Label": "Test call",
@@ -6400,7 +6413,7 @@
       },
       "integrations": {
         "title": "Integrations",
-        "description": "Connect Recall Touch with your phone provider (Twilio), calendar, and CRM. Webhooks and API access available on Scale and Enterprise plans.",
+        "description": "Connect Recall Touch with your telephony, calendar, and CRM. Webhooks available on Growth+. API access available on Business and Agency plans.",
         "zapierHeading": "Zapier & Make",
         "zapierDesc": "Use OAuth to connect your Recall Touch workspace, then poll triggers or invoke actions.",
         "authorizeLabel": "Authorize",
@@ -6435,7 +6448,7 @@
         "title": "Changelog",
         "description": "Recent platform updates.",
         "entry202503": "Campaign sequences (Call, SMS, Email, Wait), lead scoring, notification center, onboarding checklist, error reporting, SEO and accessibility improvements.",
-        "entry202502": "Recall voice agents, Twilio phone provisioning, activity and inbox views, settings hub.",
+        "entry202502": "Recall voice agents, AI phone number provisioning, activity and inbox views, settings hub.",
         "entry202501": "Initial launch: workspace setup, sign-in, pricing, demo simulator."
       },
       "faq": {
@@ -6592,7 +6605,7 @@
     "failedToSendCode": "Failed to send code. Check your connection and try again.",
     "addNumberLater": "I'll add a number later",
     "backToSettings": "← Settings",
-    "needAnotherNumber": "Need another number? Available on Growth and Scale plans.",
+    "needAnotherNumber": "Need another number? Available on Growth, Business, and Agency plans.",
     "weSendVerificationCode": "We'll send a verification code",
     "getNumber": "Get a number",
     "portNumber": "Port a number",

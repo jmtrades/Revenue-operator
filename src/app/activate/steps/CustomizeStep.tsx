@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { SUPPORTED_LANGUAGES } from "@/lib/constants/languages";
-import type { ActivationState, ElevenLabsVoice } from "./types";
+import type { ActivationState, VoiceOption } from "./types";
 
 export function CustomizeStep({
   state,
@@ -17,7 +17,7 @@ export function CustomizeStep({
 }: {
   state: ActivationState;
   setState: React.Dispatch<React.SetStateAction<ActivationState>>;
-  voices: ElevenLabsVoice[];
+  voices: VoiceOption[];
   industryServices: string[];
   effectiveServices: string[];
   onPlayGreeting: () => void;

@@ -7,6 +7,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { log } from "@/lib/logger";
 
 // Rate limiting: IP -> { count, resetAt }
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -23,7 +24,7 @@ function checkRateLimit(ip: string, maxRequests: number = 10, windowMs: number =
 
   // Check if limit exceeded
   if (record.count >= maxRequests) {
-    console.warn(`Voice preview rate limit exceeded for IP: ${ip} (${record.count}/${maxRequests})`);
+    log("warn", "voice_preview.rate_limit_exceeded", { ip, count: record.count, maxRequests });
     return false;
   }
 
@@ -91,7 +92,8 @@ export async function GET(req: NextRequest) {
       clearTimeout(timeoutId);
 
       if (!response.ok) {
-        console.error(`Voice server returned ${response.status}:`, await response.text());
+        const responseText = await response.text();
+        log("error", "voice_preview.server_error", { status: response.status, response: responseText });
 
         // Return fallback audio or error
         if (response.status === 404) {
@@ -124,14 +126,14 @@ export async function GET(req: NextRequest) {
       const err = fetchError as Error;
 
       if (err.name === "AbortError") {
-        console.error("Voice server request timeout");
+        log("error", "voice_preview.timeout", { error: "request timeout" });
         return NextResponse.json(
           { error: "Voice service timeout. Please try again." },
           { status: 504 }
         );
       }
 
-      console.error("Voice server connection error:", err.message);
+      log("error", "voice_preview.connection_error", { error: err.message });
 
       // Fallback: return a silent audio or error response
       return NextResponse.json(
@@ -140,7 +142,7 @@ export async function GET(req: NextRequest) {
       );
     }
   } catch (error) {
-    console.error("Voice preview endpoint error:", error);
+    log("error", "voice_preview.endpoint_error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

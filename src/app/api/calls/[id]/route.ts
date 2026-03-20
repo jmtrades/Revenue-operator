@@ -31,7 +31,7 @@ export async function GET(
     .eq("workspace_id", workspaceId)
     .maybeSingle();
 
-  if (sessionErr) return NextResponse.json({ error: sessionErr.message }, { status: 500 });
+  if (sessionErr) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   if (!callRow) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const leadId = (callRow as { lead_id?: string | null; matched_lead_id?: string | null }).lead_id

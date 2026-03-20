@@ -53,6 +53,17 @@ export async function POST(req: NextRequest) {
 
   const db = getDb();
 
+  // Resolve workspace_id from call session for defense-in-depth workspace isolation
+  let resolvedWorkspaceId: string | null = null;
+  if (callInfo.callSessionId) {
+    const { data: sessionRow } = await db
+      .from("call_sessions")
+      .select("workspace_id")
+      .eq("external_meeting_id", callInfo.callSessionId)
+      .maybeSingle();
+    resolvedWorkspaceId = (sessionRow as { workspace_id?: string } | null)?.workspace_id ?? null;
+  }
+
   try {
     switch (eventType) {
       case "call.initiated":
@@ -60,22 +71,41 @@ export async function POST(req: NextRequest) {
         break;
 
       case "call.answered":
-        log("info", "telnyx_voice.call_answered", { sessionId: callInfo.callSessionId });
-        if (callInfo.callSessionId) {
+        log("info", "telnyx_voice.call_answered", { sessionId: callInfo.callSessionId, workspaceId: resolvedWorkspaceId });
+        if (callInfo.callSessionId && resolvedWorkspaceId) {
           await db
             .from("call_sessions")
             .update({ call_started_at: new Date().toISOString() })
-            .eq("external_meeting_id", callInfo.callSessionId);
+            .eq("external_meeting_id", callInfo.callSessionId)
+            .eq("workspace_id", resolvedWorkspaceId);
         }
         break;
 
       case "call.hangup":
-        log("info", "telnyx_voice.call_hangup", { sessionId: callInfo.callSessionId });
-        if (callInfo.callSessionId) {
+        log("info", "telnyx_voice.call_hangup", { sessionId: callInfo.callSessionId, workspaceId: resolvedWorkspaceId });
+        if (callInfo.callSessionId && resolvedWorkspaceId) {
           await db
             .from("call_sessions")
             .update({ call_ended_at: new Date().toISOString() })
-            .eq("external_meeting_id", callInfo.callSessionId);
+            .eq("external_meeting_id", callInfo.callSessionId)
+            .eq("workspace_id", resolvedWorkspaceId);
+
+          // Trigger post-call processing asynchronously
+          const appUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+          fetch(`${appUrl}/api/inbound/post-call`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              call_session_id: callInfo.callSessionId,
+              workspace_id: resolvedWorkspaceId,
+              source: "telnyx_hangup",
+            }),
+          }).catch((err) => {
+            log("error", "telnyx_voice.post_call_trigger_failed", {
+              error: err instanceof Error ? err.message : String(err),
+              sessionId: callInfo.callSessionId,
+            });
+          });
         }
         break;
 

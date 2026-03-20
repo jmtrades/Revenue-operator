@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
           ok: false,
           status: res.status,
           response: text.slice(0, 2000),
-          error: `Webhook failed with HTTP ${res.status}`,
+          error: "Webhook test failed. Please check the URL and try again.",
         },
         { status: 502 },
       );

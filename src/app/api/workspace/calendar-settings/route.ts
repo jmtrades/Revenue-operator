@@ -54,6 +54,6 @@ export async function PATCH(req: NextRequest) {
     })
     .eq("id", session.workspaceId);
 
-  if (error) return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   return NextResponse.json({ calendar_buffer_minutes });
 }

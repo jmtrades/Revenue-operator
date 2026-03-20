@@ -224,6 +224,39 @@ export async function POST(req: NextRequest) {
           unanswered_questions: insight.unanswered_questions.length ? insight.unanswered_questions : null,
         });
 
+        // Persist unanswered questions as knowledge gaps
+        if (insight.unanswered_questions?.length) {
+          for (const question of insight.unanswered_questions.slice(0, 5)) {
+            const q = String(question).trim();
+            if (!q || q.length < 10) continue;
+            // Check if similar gap already exists (fuzzy match on first 60 chars)
+            const prefix = q.slice(0, 60).toLowerCase();
+            const { data: existing } = await db
+              .from("knowledge_gaps")
+              .select("id, occurrences")
+              .eq("workspace_id", workspace_id)
+              .eq("status", "open")
+              .ilike("question", `${prefix}%`)
+              .limit(1)
+              .maybeSingle();
+            const existingRow = existing as { id: string; occurrences: number } | null;
+            if (existingRow) {
+              // Increment occurrence count
+              await db.from("knowledge_gaps")
+                .update({ occurrences: existingRow.occurrences + 1, last_seen_at: new Date().toISOString() })
+                .eq("id", existingRow.id);
+            } else {
+              // Create new gap
+              await db.from("knowledge_gaps").insert({
+                workspace_id: workspace_id,
+                question: q,
+                occurrences: 1,
+                call_session_id: sessionId,
+              });
+            }
+          }
+        }
+
         // If transferred for a recurring reason, suggest adding knowledge
         if (insight.transfer_reason && insight.transfer_reason.length > 0) {
           const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();

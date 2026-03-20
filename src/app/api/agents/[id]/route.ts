@@ -52,7 +52,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
     if (k === "personality" && typeof body[k] === "string" && !validPersonality.includes(body[k] as (typeof validPersonality)[number])) continue;
     if (k === "purpose" && typeof body[k] === "string" && !validPurpose.includes(body[k] as (typeof validPurpose)[number])) continue;
     if (k === "name" && typeof body[k] === "string") {
-      updates[k] = body[k].trim().slice(0, 500) || "Receptionist";
+      updates[k] = body[k].trim().slice(0, 500) || "Primary Agent";
     } else if (k === "greeting" && typeof body[k] === "string") {
       updates[k] = body[k].trim().slice(0, 2000);
     } else if (k === "tested_at") {

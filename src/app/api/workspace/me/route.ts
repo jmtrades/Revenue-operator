@@ -269,7 +269,7 @@ export async function PATCH(req: NextRequest) {
       .from("workspaces")
       .update(update)
       .eq("id", session.workspaceId);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
     try {
       await db.from("audit_log").insert({
         workspace_id: session.workspaceId,

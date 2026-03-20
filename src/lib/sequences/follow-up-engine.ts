@@ -8,6 +8,14 @@ import type { DealStateVector } from "@/lib/engines/perception";
 import { setLeadPlan } from "@/lib/plans/lead-plan";
 import { getSequenceDelayMultiplier, type WorkspaceStrategyState } from "@/lib/strategy/planner";
 
+/* ─── Safety Limits ─── */
+/** Maximum steps any single sequence can have. Prevents runaway automation. */
+export const MAX_SEQUENCE_STEPS = 10;
+/** Maximum active enrollments a single contact can have simultaneously. */
+export const MAX_CONCURRENT_ENROLLMENTS_PER_CONTACT = 3;
+/** Maximum outbound touches (SMS + calls) to a single lead within a 24h window. */
+export const MAX_TOUCHES_PER_LEAD_24H = 6;
+
 export interface SequenceStep {
   id: string;
   sequence_id: string;
@@ -257,6 +265,31 @@ export async function enrollContact(
 
   if (!seq) return null;
 
+  // Safety: Check if contact already has too many active enrollments
+  const { count: activeCount } = await db
+    .from("sequence_enrollments")
+    .select("id", { count: "exact", head: true })
+    .eq("contact_id", contactId)
+    .eq("workspace_id", workspaceId)
+    .eq("status", "active");
+  if ((activeCount ?? 0) >= MAX_CONCURRENT_ENROLLMENTS_PER_CONTACT) {
+    console.warn(`[sequence-safety] Contact ${contactId} already has ${activeCount} active enrollments — skipping new enrollment`);
+    return null;
+  }
+
+  // Safety: Check if contact is already enrolled in this specific sequence
+  const { data: existing } = await db
+    .from("sequence_enrollments")
+    .select("id")
+    .eq("sequence_id", sequenceId)
+    .eq("contact_id", contactId)
+    .eq("status", "active")
+    .maybeSingle();
+  if (existing) {
+    console.warn(`[sequence-safety] Contact ${contactId} already enrolled in sequence ${sequenceId} — skipping duplicate`);
+    return null;
+  }
+
   // Get the first step to calculate next_step_due_at
   const { data: firstStep } = await db
     .from("sequence_steps")
@@ -335,6 +368,16 @@ export async function advanceEnrollment(
   const e = enrollment as SequenceEnrollment;
   if (e.status !== "active") return null;
 
+  // Safety: Hard cap on step count to prevent runaway sequences
+  if (e.current_step >= MAX_SEQUENCE_STEPS) {
+    console.warn(`[sequence-safety] Enrollment ${enrollmentId} reached MAX_SEQUENCE_STEPS (${MAX_SEQUENCE_STEPS}) — auto-completing`);
+    await db
+      .from("sequence_enrollments")
+      .update({ status: "completed", completed_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+      .eq("id", enrollmentId);
+    return null;
+  }
+
   // Get the next step (increment current_step)
   const nextStep = await getNextStep(e.sequence_id, e.current_step);
   if (!nextStep) {
@@ -367,12 +410,112 @@ export async function advanceEnrollment(
     }
   }
 
-  // Execute the action (in a real system, this would trigger SMS/email/call)
-  // For now, we just log the intention
-  if (process.env.NODE_ENV === "development") {
-    console.error(
-      `[Sequence] Executing step ${stepToExecute.step_order} for enrollment ${enrollmentId}: ${stepToExecute.channel}`
-    );
+  // Safety: Check per-lead 24h touch count before executing outbound action
+  if (stepToExecute.channel === "sms" || stepToExecute.channel === "call") {
+    const twentyFourHoursAgo = new Date();
+    twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
+    const { count: recentTouches } = await db
+      .from("call_sessions")
+      .select("id", { count: "exact", head: true })
+      .eq("workspace_id", e.workspace_id)
+      .eq("lead_id", e.contact_id)
+      .gte("call_started_at", twentyFourHoursAgo.toISOString());
+    // Also count recent outbound messages
+    const { count: recentMessages } = await db
+      .from("outbound_messages")
+      .select("id", { count: "exact", head: true })
+      .eq("workspace_id", e.workspace_id)
+      .eq("lead_id", e.contact_id)
+      .gte("created_at", twentyFourHoursAgo.toISOString());
+    const totalTouches = (recentTouches ?? 0) + (recentMessages ?? 0);
+    if (totalTouches >= MAX_TOUCHES_PER_LEAD_24H) {
+      console.warn(`[sequence-safety] Lead ${e.contact_id} already has ${totalTouches} touches in 24h — skipping step, rescheduling`);
+      // Reschedule this step for 6 hours later instead of executing now
+      const laterDue = new Date();
+      laterDue.setHours(laterDue.getHours() + 6);
+      await db
+        .from("sequence_enrollments")
+        .update({ next_step_due_at: laterDue.toISOString(), updated_at: new Date().toISOString() })
+        .eq("id", enrollmentId);
+      return null;
+    }
+  }
+
+  // Execute the action: send SMS, email, or trigger outbound call
+  try {
+    if (stepToExecute.channel === "sms") {
+      const { data: leadRow } = await db
+        .from("leads")
+        .select("phone, name")
+        .eq("id", e.contact_id)
+        .eq("workspace_id", e.workspace_id)
+        .maybeSingle();
+      const lead = leadRow as { phone?: string; name?: string } | null;
+      if (lead?.phone) {
+        const { data: phoneConfig } = await db
+          .from("phone_configs")
+          .select("proxy_number")
+          .eq("workspace_id", e.workspace_id)
+          .eq("status", "active")
+          .maybeSingle();
+        const fromNumber = (phoneConfig as { proxy_number?: string } | null)?.proxy_number;
+        if (fromNumber) {
+          const { getTelephonyService } = await import("@/lib/telephony");
+          const svc = getTelephonyService();
+          const messageText = stepToExecute.template_content
+            ? stepToExecute.template_content
+                .replace(/\{\{name\}\}/gi, lead.name ?? "there")
+                .replace(/\{\{phone\}\}/gi, lead.phone)
+            : `Hi ${lead.name ?? "there"}, just following up. Let us know if you have any questions or would like to schedule a time to chat.`;
+          await svc.sendSms({ from: fromNumber, to: lead.phone, text: messageText });
+        }
+      }
+    } else if (stepToExecute.channel === "call") {
+      const { executeLeadOutboundCall } = await import("@/lib/outbound/execute-lead-call");
+      await executeLeadOutboundCall(e.workspace_id, e.contact_id, { campaignType: "lead_followup" });
+    } else if (stepToExecute.channel === "email") {
+      // Email delivery through workspace email config (if configured)
+      const { data: leadRow } = await db
+        .from("leads")
+        .select("email, name")
+        .eq("id", e.contact_id)
+        .eq("workspace_id", e.workspace_id)
+        .maybeSingle();
+      const lead = leadRow as { email?: string; name?: string } | null;
+      if (lead?.email) {
+        const { data: wsCtx } = await db
+          .from("workspace_business_context")
+          .select("business_name")
+          .eq("workspace_id", e.workspace_id)
+          .maybeSingle();
+        const businessName = (wsCtx as { business_name?: string } | null)?.business_name ?? "Our team";
+        const subject = `Following up — ${businessName}`;
+        const body = stepToExecute.template_content
+          ? stepToExecute.template_content
+              .replace(/\{\{name\}\}/gi, lead.name ?? "there")
+          : `Hi ${lead.name ?? "there"},\n\nJust wanted to follow up and see if you had any questions. We'd love to help.\n\nBest,\n${businessName}`;
+
+        // Use Resend if configured
+        const resendKey = process.env.RESEND_API_KEY;
+        const fromEmail = process.env.RESEND_FROM_EMAIL ?? `noreply@recall-touch.com`;
+        if (resendKey) {
+          await fetch("https://api.resend.com/emails", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
+            body: JSON.stringify({ from: fromEmail, to: lead.email, subject, text: body }),
+          });
+        }
+      }
+    }
+  } catch (execErr) {
+    // Log but don't block enrollment advancement — step delivery failure shouldn't stall the sequence
+    const { log } = await import("@/lib/logger");
+    log("error", "sequence_step_execution_error", {
+      enrollment_id: enrollmentId,
+      step_order: stepToExecute.step_order,
+      channel: stepToExecute.channel,
+      error: execErr instanceof Error ? execErr.message : String(execErr),
+    });
   }
 
   // Calculate when the next step should execute
@@ -472,6 +615,45 @@ export async function getNextDueEnrollments(
   }
 
   return (enrollments as SequenceEnrollment[]) ?? [];
+}
+
+/**
+ * Pause all active enrollments for a lead when they reply (inbound message, answered call, etc.).
+ * This prevents the system from sending follow-ups to someone who's already engaged.
+ * Should be called from inbound webhooks and voice call completion handlers.
+ */
+export async function pauseOnLeadReply(
+  workspaceId: string,
+  leadId: string,
+  reason: string = "lead_replied"
+): Promise<number> {
+  const db = getDb();
+
+  // Find all active enrollments for this lead
+  const { data: activeEnrollments } = await db
+    .from("sequence_enrollments")
+    .select("id")
+    .eq("workspace_id", workspaceId)
+    .eq("contact_id", leadId)
+    .eq("status", "active");
+
+  const enrollments = (activeEnrollments ?? []) as Array<{ id: string }>;
+  if (enrollments.length === 0) return 0;
+
+  let paused = 0;
+  for (const enrollment of enrollments) {
+    const success = await pauseEnrollment(enrollment.id);
+    if (success) paused++;
+  }
+
+  // Also stop legacy sequence runs
+  await db.from("sequence_runs")
+    .update({ status: "paused", stopped_reason: reason, updated_at: new Date().toISOString() })
+    .eq("workspace_id", workspaceId)
+    .eq("lead_id", leadId)
+    .eq("status", "running");
+
+  return paused;
 }
 
 /**

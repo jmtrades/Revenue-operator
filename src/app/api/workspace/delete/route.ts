@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
+import { getTelephonyService } from "@/lib/telephony";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +31,8 @@ async function releaseWorkspaceNumbers(workspaceId: string): Promise<void> {
     .in("status", ["active", "pending"]);
 
   const rows = (numbers ?? []) as Array<{ id: string; provider?: string | null; provider_sid?: string | null }>;
+  const telephony = getTelephonyService();
+
   for (const row of rows) {
     await db
       .from("phone_numbers")
@@ -40,17 +43,9 @@ async function releaseWorkspaceNumbers(workspaceId: string): Promise<void> {
       })
       .eq("id", row.id);
 
-    if (row.provider === "twilio" && row.provider_sid && process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
+    if (row.provider_sid) {
       try {
-        await fetch(
-          `https://api.twilio.com/2010-04-01/Accounts/${process.env.TWILIO_ACCOUNT_SID}/IncomingPhoneNumbers/${row.provider_sid}.json`,
-          {
-            method: "DELETE",
-            headers: {
-              Authorization: `Basic ${Buffer.from(`${process.env.TWILIO_ACCOUNT_SID}:${process.env.TWILIO_AUTH_TOKEN}`).toString("base64")}`,
-            },
-          },
-        );
+        await telephony.releaseNumber(row.provider_sid);
       } catch {
         // Non-blocking provider release failure.
       }
@@ -128,7 +123,7 @@ export async function POST(req: NextRequest) {
     .eq("id", session.workspaceId);
 
   if (updateErr) {
-    return NextResponse.json({ error: updateErr.message }, { status: 500 });
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
 
   // Mark recording/transcript purge work for retention cron.

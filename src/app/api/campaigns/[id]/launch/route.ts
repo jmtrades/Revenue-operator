@@ -31,7 +31,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     .eq("id", id)
     .maybeSingle();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   if (!row) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const workspaceId = (row as { workspace_id: string }).workspace_id;
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     .eq("id", workspaceId)
     .maybeSingle();
   if (wsError) {
-    return NextResponse.json({ error: wsError.message }, { status: 500 });
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
   if (!ws) {
     return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
@@ -175,7 +175,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
 
   const { data: leads, error: leadsError } = await leadQuery;
   if (leadsError) {
-    return NextResponse.json({ error: leadsError.message }, { status: 500 });
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
 
   if (!leads || leads.length < 1) {

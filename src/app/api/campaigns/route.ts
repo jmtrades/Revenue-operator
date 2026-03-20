@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
       .eq("workspace_id", workspaceId)
       .order("created_at", { ascending: false })
       .limit(50);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
     return NextResponse.json({ campaigns: data ?? [] });
   } catch {
     return NextResponse.json({ campaigns: [] });
@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
       .insert(insertPayload)
       .select("id, name, type, status, total_contacts, called, answered, appointments_booked, created_at, target_filter")
       .maybeSingle();
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
     const row = campaign as Record<string, unknown> | null;
     return NextResponse.json({
       id: row?.id,

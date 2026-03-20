@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
     .eq("workspace_id", workspaceId)
     .order("start_time", { ascending: true })
     .limit(100);
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
 
   const list = (rows ?? []) as { id: string; lead_id: string; title: string; start_time: string; end_time?: string | null; location?: string | null; status: string; notes?: string | null; external_calendar_id?: string | null }[];
   const leadIds = [...new Set(list.map((a) => a.lead_id))];

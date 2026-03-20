@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     .update({ industry })
     .eq("id", workspaceId);
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
 
   // Return the industry template if one exists
   const { data: template } = await db

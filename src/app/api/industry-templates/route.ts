@@ -19,7 +19,7 @@ export async function GET(_req: NextRequest) {
 
     if (error) {
       return NextResponse.json(
-        { error: error.message },
+        { error: "Something went wrong. Please try again." },
         { status: 500 }
       );
     }

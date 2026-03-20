@@ -13,7 +13,7 @@ export default function AdminRevenuePage() {
         MRR, plan distribution, churn, growth chart.
       </p>
       <div className="rounded-lg border p-6" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
-        <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>Revenue data will appear when Stripe and subscriptions are wired.</p>
+        <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>Revenue data will appear when billing and subscriptions are wired.</p>
       </div>
     </div>
   );

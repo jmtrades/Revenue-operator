@@ -3,33 +3,42 @@ import { BILLING_PLANS, type PlanSlug } from "@/lib/billing-plans";
 import Stripe from "stripe";
 
 /** Plan minute and SMS limits by tier (source of truth: BILLING_PLANS) */
-export const PLAN_LIMITS: Record<PlanSlug, { minutes: number; sms: number; voice_minutes?: number; overage_cents_per_minute: number }> =
-  {
-    solo: {
-      minutes: BILLING_PLANS.solo.includedMinutes,
-      sms: BILLING_PLANS.solo.smsMonthlyCap,
-      voice_minutes: BILLING_PLANS.solo.includedMinutes,
-      overage_cents_per_minute: BILLING_PLANS.solo.overageRateCents,
-    },
-    business: {
-      minutes: BILLING_PLANS.business.includedMinutes,
-      sms: BILLING_PLANS.business.smsMonthlyCap,
-      voice_minutes: BILLING_PLANS.business.includedMinutes,
-      overage_cents_per_minute: BILLING_PLANS.business.overageRateCents,
-    },
-    scale: {
-      minutes: BILLING_PLANS.scale.includedMinutes,
-      sms: BILLING_PLANS.scale.smsMonthlyCap,
-      voice_minutes: BILLING_PLANS.scale.includedMinutes,
-      overage_cents_per_minute: BILLING_PLANS.scale.overageRateCents,
-    },
-    enterprise: {
-      minutes: BILLING_PLANS.enterprise.includedMinutes,
-      sms: BILLING_PLANS.enterprise.smsMonthlyCap,
-      voice_minutes: BILLING_PLANS.enterprise.includedMinutes,
-      overage_cents_per_minute: BILLING_PLANS.enterprise.overageRateCents,
-    },
-  };
+export const PLAN_LIMITS: Record<PlanSlug, {
+  minutes: number;
+  sms: number;
+  voice_minutes?: number;
+  overage_cents_per_minute: number;
+  sms_overage_cents: number;
+}> = {
+  solo: {
+    minutes: BILLING_PLANS.solo.includedMinutes,
+    sms: BILLING_PLANS.solo.smsMonthlyCap,
+    voice_minutes: BILLING_PLANS.solo.includedMinutes,
+    overage_cents_per_minute: BILLING_PLANS.solo.overageRateCents,
+    sms_overage_cents: BILLING_PLANS.solo.smsOverageRateCents,
+  },
+  business: {
+    minutes: BILLING_PLANS.business.includedMinutes,
+    sms: BILLING_PLANS.business.smsMonthlyCap,
+    voice_minutes: BILLING_PLANS.business.includedMinutes,
+    overage_cents_per_minute: BILLING_PLANS.business.overageRateCents,
+    sms_overage_cents: BILLING_PLANS.business.smsOverageRateCents,
+  },
+  scale: {
+    minutes: BILLING_PLANS.scale.includedMinutes,
+    sms: BILLING_PLANS.scale.smsMonthlyCap,
+    voice_minutes: BILLING_PLANS.scale.includedMinutes,
+    overage_cents_per_minute: BILLING_PLANS.scale.overageRateCents,
+    sms_overage_cents: BILLING_PLANS.scale.smsOverageRateCents,
+  },
+  enterprise: {
+    minutes: BILLING_PLANS.enterprise.includedMinutes,
+    sms: BILLING_PLANS.enterprise.smsMonthlyCap,
+    voice_minutes: BILLING_PLANS.enterprise.includedMinutes,
+    overage_cents_per_minute: BILLING_PLANS.enterprise.overageRateCents,
+    sms_overage_cents: BILLING_PLANS.enterprise.smsOverageRateCents,
+  },
+};
 
 /** Usage alert level */
 export type AlertLevel = "normal" | "warning" | "critical" | "exceeded";
@@ -136,7 +145,9 @@ export async function checkUsageThresholds(workspaceId: string): Promise<UsageMe
   const overageMinutes = Math.max(0, minutesUsed - limits.minutes);
   const overageSms = Math.max(0, smsUsed - limits.sms);
   const overageVoiceMinutes = Math.max(0, voiceMinutesUsed - voiceMinutesLimit);
-  const estimatedOverageCents = overageMinutes * limits.overage_cents_per_minute;
+  const estimatedOverageCents =
+    overageMinutes * limits.overage_cents_per_minute +
+    overageSms * limits.sms_overage_cents;
 
   return {
     minutes_used: minutesUsed,
@@ -268,25 +279,79 @@ export async function calculateOverageCharges(
     voiceMinutesUsed = 0;
   }
 
-  const voiceMinutesLimit = (limits as { voice_minutes?: number }).voice_minutes ?? 0;
-  const overageMinutes = Math.max(0, minutesUsed - limits.minutes);
-  const overageVoiceMinutes = Math.max(0, voiceMinutesUsed - voiceMinutesLimit);
+  // SMS usage in billing period
+  let smsUsed = 0;
+  try {
+    const { data: smsLogs } = await db
+      .from("sms_logs")
+      .select("id", { count: "exact", head: true })
+      .eq("workspace_id", workspaceId)
+      .gte("created_at", billingPeriodStart.toISOString())
+      .lte("created_at", billingPeriodEnd.toISOString());
+    smsUsed = smsLogs?.length ?? 0;
+  } catch {
+    smsUsed = 0;
+  }
 
-  if (overageMinutes <= 0 && overageVoiceMinutes <= 0) {
+  // Get bonus minutes from minute pack purchases (consumed before overage)
+  let bonusMinutes = 0;
+  try {
+    const { data: balance } = await db
+      .from("workspace_minute_balance")
+      .select("bonus_minutes")
+      .eq("workspace_id", workspaceId)
+      .maybeSingle();
+    bonusMinutes = (balance as { bonus_minutes?: number } | null)?.bonus_minutes ?? 0;
+  } catch {
+    // Table may not exist yet
+  }
+
+  const voiceMinutesLimit = (limits as { voice_minutes?: number }).voice_minutes ?? 0;
+
+  // Effective limits include purchased bonus minutes
+  const effectiveMinutesLimit = limits.minutes + bonusMinutes;
+  const effectiveVoiceLimit = voiceMinutesLimit + bonusMinutes;
+
+  const overageMinutes = Math.max(0, minutesUsed - effectiveMinutesLimit);
+  const overageVoiceMinutes = Math.max(0, voiceMinutesUsed - effectiveVoiceLimit);
+  const overageSms = Math.max(0, smsUsed - limits.sms);
+
+  // Deduct consumed bonus minutes from balance
+  const bonusMinutesConsumed = Math.min(bonusMinutes, Math.max(0, minutesUsed - limits.minutes) + Math.max(0, voiceMinutesUsed - voiceMinutesLimit));
+  if (bonusMinutesConsumed > 0) {
+    try {
+      await db
+        .from("workspace_minute_balance")
+        .update({
+          bonus_minutes: Math.max(0, bonusMinutes - bonusMinutesConsumed),
+          updated_at: new Date().toISOString(),
+        })
+        .eq("workspace_id", workspaceId);
+    } catch {
+      // Non-fatal: balance deduction will be retried next billing cycle
+    }
+  }
+
+  if (overageMinutes <= 0 && overageVoiceMinutes <= 0 && overageSms <= 0) {
     return null;
   }
 
   const overageAmountCents =
     overageMinutes * limits.overage_cents_per_minute +
-    overageVoiceMinutes * limits.overage_cents_per_minute;
+    overageVoiceMinutes * limits.overage_cents_per_minute +
+    overageSms * limits.sms_overage_cents;
 
   return {
     subscription_id: wsData.stripe_subscription_id,
     overage_minutes: overageMinutes,
     overage_voice_minutes: overageVoiceMinutes,
+    overage_sms: overageSms,
     overage_amount_cents: overageAmountCents,
     rate_per_minute_cents: limits.overage_cents_per_minute,
     rate_per_voice_minute_cents: limits.overage_cents_per_minute,
+    rate_per_sms_cents: limits.sms_overage_cents,
+    bonus_minutes_consumed: bonusMinutesConsumed,
+    bonus_minutes_remaining: Math.max(0, bonusMinutes - bonusMinutesConsumed),
   };
 }
 
@@ -297,15 +362,18 @@ export async function reportUsageOverage(
   minutesUsed: number,
   minutesIncluded: number,
   voiceMinutesUsed?: number,
-  voiceMinutesIncluded?: number
+  voiceMinutesIncluded?: number,
+  smsUsed?: number,
+  smsIncluded?: number
 ) {
   if (!process.env.STRIPE_SECRET_KEY) return;
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
   const overageMinutes = Math.max(0, minutesUsed - minutesIncluded);
   const overageVoiceMinutes = Math.max(0, (voiceMinutesUsed ?? 0) - (voiceMinutesIncluded ?? 0));
+  const overageSms = Math.max(0, (smsUsed ?? 0) - (smsIncluded ?? 0));
 
-  if (overageMinutes <= 0 && overageVoiceMinutes <= 0) return;
+  if (overageMinutes <= 0 && overageVoiceMinutes <= 0 && overageSms <= 0) return;
 
   const rawTier = (tier || "solo").toLowerCase();
   const tierSlug: PlanSlug = (["solo", "business", "scale", "enterprise"] as const).includes(
@@ -315,17 +383,24 @@ export async function reportUsageOverage(
     : "solo";
   const ratePerMin = PLAN_LIMITS[tierSlug].overage_cents_per_minute;
   const ratePerVoiceMin = PLAN_LIMITS[tierSlug].overage_cents_per_minute;
-  const overageAmountCents = overageMinutes * ratePerMin + overageVoiceMinutes * ratePerVoiceMin;
+  const ratePerSms = PLAN_LIMITS[tierSlug].sms_overage_cents;
+  const overageAmountCents =
+    overageMinutes * ratePerMin +
+    overageVoiceMinutes * ratePerVoiceMin +
+    overageSms * ratePerSms;
 
   const subscription = await stripe.subscriptions.retrieve(subscriptionId);
   const customerId = subscription.customer as string;
 
   const descriptions: string[] = [];
   if (overageMinutes > 0) {
-    descriptions.push(`Call overage: ${overageMinutes} minutes × $${(ratePerMin / 100).toFixed(2)}/min`);
+    descriptions.push(`Call overage: ${overageMinutes} min × $${(ratePerMin / 100).toFixed(2)}/min`);
   }
   if (overageVoiceMinutes > 0) {
-    descriptions.push(`Voice overage: ${overageVoiceMinutes} minutes × $${(ratePerVoiceMin / 100).toFixed(2)}/min`);
+    descriptions.push(`Voice overage: ${overageVoiceMinutes} min × $${(ratePerVoiceMin / 100).toFixed(2)}/min`);
+  }
+  if (overageSms > 0) {
+    descriptions.push(`SMS overage: ${overageSms} messages × $${(ratePerSms / 100).toFixed(2)}/msg`);
   }
 
   await stripe.invoiceItems.create({
@@ -337,6 +412,7 @@ export async function reportUsageOverage(
       workspace_id: workspaceId,
       overage_minutes: String(overageMinutes),
       overage_voice_minutes: String(overageVoiceMinutes),
+      overage_sms: String(overageSms),
     },
   });
 }

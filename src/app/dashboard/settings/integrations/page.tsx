@@ -45,9 +45,9 @@ const INTEGRATIONS: Integration[] = [
     actionLabel: "Disconnect",
   },
   {
-    id: "twilio",
-    name: "Twilio",
-    description: "Phone number provisioning, inbound/outbound calls, and SMS.",
+    id: "phone",
+    name: "Phone & SMS",
+    description: "AI phone numbers, inbound/outbound calls, and SMS messaging.",
     icon: Phone,
     color: "text-red-400",
     bg: "bg-red-500/10",
@@ -88,7 +88,7 @@ const INTEGRATIONS: Integration[] = [
   },
   {
     id: "email",
-    name: "Email (Resend)",
+    name: "Email",
     description: "Transactional emails, weekly digests, and follow-up sequences.",
     icon: Mail,
     color: "text-cyan-400",
@@ -151,10 +151,10 @@ export default function IntegrationsPage() {
       <PageHeader title="Integrations" subtitle="Connect your tools and automate workflows." />
 
       <div className="flex items-center gap-2 mb-6 text-xs text-zinc-400">
-        <span className="px-2 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-300">
-          Demo data
+        <span className="px-2 py-0.5 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-300">
+          Preview
         </span>
-        <span>Integration statuses shown are examples. Connect for real once live.</span>
+        <span>Connect your integrations to start automating workflows.</span>
       </div>
 
       {/* Integration grid */}

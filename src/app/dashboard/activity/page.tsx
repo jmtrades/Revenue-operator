@@ -42,8 +42,8 @@ function deriveCardType(call: CallRow): CardType {
   const summary = (call.summary ?? call.transcript_text ?? "").toLowerCase();
   if (out.includes("booked") || summary.includes("appointment") || summary.includes("scheduled")) return "appointment";
   if (out.includes("urgent") || summary.includes("emergency") || summary.includes("urgent")) return "emergency";
-  if (call.provider === "twilio" && call.matched_lead && !call.call_ended_at) return "lead";
-  if (call.provider === "twilio") return "info";
+  if (call.matched_lead && !call.call_ended_at) return "lead";
+  if (call.matched_lead) return "lead";
   return "info";
 }
 
@@ -78,6 +78,7 @@ export default function ActivityPage() {
   const [loading, setLoading] = useState(true);
   const [callInProgress, setCallInProgress] = useState<string | null>(null);
   const [callError, setCallError] = useState<string | null>(null);
+  const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
 
   const dash = "—";
   const cardLabel = (type: CardType) => ta(`cardLabels.${type}` as "cardLabels.lead");
@@ -125,21 +126,27 @@ export default function ActivityPage() {
     return { ...call, cardType: type, name, meta, detail };
   }), [calls, ta, dash]);
 
+  const handleMarkDone = useCallback((id: string) => {
+    setDismissedIds((prev) => new Set([...prev, id]));
+    setExpandedId(null);
+  }, []);
+
+  const visibleCards = feedCards.filter((c) => !dismissedIds.has(c.id));
   const filtered = filter === "all"
-    ? feedCards
+    ? visibleCards
     : filter === "needs_action"
-      ? feedCards.filter((c) => c.cardType === "lead" || c.cardType === "emergency" || c.cardType === "action")
+      ? visibleCards.filter((c) => c.cardType === "lead" || c.cardType === "emergency" || c.cardType === "action")
       : filter === "leads"
-        ? feedCards.filter((c) => c.cardType === "lead")
+        ? visibleCards.filter((c) => c.cardType === "lead")
         : filter === "appointments"
-          ? feedCards.filter((c) => c.cardType === "appointment")
+          ? visibleCards.filter((c) => c.cardType === "appointment")
           : filter === "urgent"
-            ? feedCards.filter((c) => c.cardType === "emergency")
+            ? visibleCards.filter((c) => c.cardType === "emergency")
             : filter === "outbound"
-              ? feedCards.filter((c) => c.cardType === "outbound")
+              ? visibleCards.filter((c) => c.cardType === "outbound")
               : filter === "spam"
-                ? feedCards.filter((c) => c.cardType === "spam")
-                : feedCards;
+                ? visibleCards.filter((c) => c.cardType === "spam")
+                : visibleCards;
 
   if (!workspaceId) {
     return (
@@ -305,7 +312,8 @@ export default function ActivityPage() {
                       </Link>
                       <button
                         type="button"
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border"
+                        onClick={() => handleMarkDone(card.id)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border hover:bg-emerald-500/10 hover:border-emerald-500/30 hover:text-emerald-400 transition-colors"
                         style={{ borderColor: "var(--border-default)", color: "var(--text-tertiary)" }}
                       >
                         <Check className="w-3.5 h-3.5" /> {ta("markDone")}

@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { createHmac } from "crypto";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 type VoiceEventBody = {
   event: string;
@@ -23,7 +24,7 @@ type VoiceEventBody = {
 function verifyWebhookSignature(rawBody: string, signature: string | null): boolean {
   const secret = process.env.VOICE_WEBHOOK_SECRET;
   if (!secret) {
-    console.warn("[voice-events] VOICE_WEBHOOK_SECRET not configured, skipping signature verification");
+    log("warn", "voice_events.secret_not_configured", { message: "skipping signature verification" });
     return true;
   }
   if (!signature) return false;

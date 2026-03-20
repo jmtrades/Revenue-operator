@@ -381,6 +381,147 @@ export const RECALL_VOICES: RecallVoice[] = [
     tone: "friendly",
     bestFor: "Diverse teams, inclusive, approachable",
   },
+
+  // ============================================================================
+  // SPANISH ACCENT VOICES (4)
+  // ============================================================================
+
+  {
+    id: "es-female-warm",
+    name: "María",
+    desc: "Warm Spanish",
+    description: "Warm bilingual voice, English with Spanish warmth",
+    accent: "Spanish",
+    gender: "female",
+    age: "middle-aged",
+    tone: "warm",
+    bestFor: "Bilingual businesses, Hispanic communities, healthcare",
+  },
+  {
+    id: "es-female-professional",
+    name: "Sofía",
+    desc: "Professional Spanish",
+    description: "Professional bilingual voice",
+    accent: "Spanish",
+    gender: "female",
+    age: "young",
+    tone: "professional",
+    bestFor: "Professional services, law offices, real estate",
+  },
+  {
+    id: "es-male-friendly",
+    name: "Carlos",
+    desc: "Friendly Spanish",
+    description: "Friendly bilingual voice",
+    accent: "Spanish",
+    gender: "male",
+    age: "young",
+    tone: "friendly",
+    bestFor: "Customer service, restaurants, auto repair",
+  },
+  {
+    id: "es-male-confident",
+    name: "Diego",
+    desc: "Confident Spanish",
+    description: "Confident bilingual voice",
+    accent: "Spanish",
+    gender: "male",
+    age: "middle-aged",
+    tone: "confident",
+    bestFor: "Sales, insurance, financial services",
+  },
+
+  // ============================================================================
+  // CANADIAN FRENCH ACCENT VOICES (2)
+  // ============================================================================
+
+  {
+    id: "ca-female-warm",
+    name: "Amélie",
+    desc: "Warm Canadian French",
+    description: "Warm Canadian French accent",
+    accent: "Canadian French",
+    gender: "female",
+    age: "young",
+    tone: "warm",
+    bestFor: "Quebec businesses, bilingual Canadian services",
+  },
+  {
+    id: "ca-male-professional",
+    name: "Laurent",
+    desc: "Professional Canadian French",
+    description: "Professional Canadian French accent",
+    accent: "Canadian French",
+    gender: "male",
+    age: "middle-aged",
+    tone: "professional",
+    bestFor: "Professional services, government, finance in Canada",
+  },
+
+  // ============================================================================
+  // INDIAN ENGLISH ACCENT VOICES (3)
+  // ============================================================================
+
+  {
+    id: "in-female-professional",
+    name: "Priya",
+    desc: "Professional Indian English",
+    description: "Clear, professional Indian English accent",
+    accent: "Indian English",
+    gender: "female",
+    age: "young",
+    tone: "professional",
+    bestFor: "Tech support, IT services, consulting",
+  },
+  {
+    id: "in-male-warm",
+    name: "Arjun",
+    desc: "Warm Indian English",
+    description: "Warm, relatable Indian English accent",
+    accent: "Indian English",
+    gender: "male",
+    age: "middle-aged",
+    tone: "warm",
+    bestFor: "Healthcare, customer support, relationship building",
+  },
+  {
+    id: "in-male-confident",
+    name: "Vikram",
+    desc: "Confident Indian English",
+    description: "Confident, articulate Indian English accent",
+    accent: "Indian English",
+    gender: "male",
+    age: "middle-aged",
+    tone: "confident",
+    bestFor: "Sales, finance, enterprise communications",
+  },
+
+  // ============================================================================
+  // SOUTHERN US ACCENT VOICES (2)
+  // ============================================================================
+
+  {
+    id: "us-south-female-friendly",
+    name: "Savannah",
+    desc: "Friendly Southern",
+    description: "Friendly, warm Southern American accent",
+    accent: "Southern American",
+    gender: "female",
+    age: "young",
+    tone: "friendly",
+    bestFor: "Home services, hospitality, community businesses",
+  },
+  {
+    id: "us-south-male-warm",
+    name: "Jackson",
+    desc: "Warm Southern",
+    description: "Warm, personable Southern American accent",
+    accent: "Southern American",
+    gender: "male",
+    age: "middle-aged",
+    tone: "warm",
+    bestFor: "Construction, auto, trades, local services",
+  },
 ];
 
 export const DEFAULT_RECALL_VOICE_ID = RECALL_VOICES[0].id;

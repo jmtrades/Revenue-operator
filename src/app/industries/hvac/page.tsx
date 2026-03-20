@@ -7,7 +7,7 @@ import { ROUTES } from "@/lib/constants";
 const BASE = "https://www.recall-touch.com";
 
 export const metadata = {
-  title: "HVAC AI Phone System — Recall Touch",
+  title: "HVAC AI Revenue Operations — Recall Touch",
   description:
     "Capture urgent calls, book service windows, and follow up automatically with an AI phone system built for HVAC.",
   alternates: { canonical: `${BASE}/industries/hvac` },
@@ -124,7 +124,7 @@ export default function HvacIndustryPage() {
             <div className="space-y-4 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
               <p>
                 In HVAC, one recovered emergency job can cover the subscription for months. Even ignoring emergencies, the ROI is
-                typically immediate: if your average ticket is \( $450 \) and you recover just one otherwise missed job per month,
+                typically immediate: if your average ticket is $450 and you recover just one otherwise missed job per month,
                 you’ve already beaten the plan cost. The bigger win is consistency—your shop becomes reliably responsive, even at
                 peak load.
               </p>

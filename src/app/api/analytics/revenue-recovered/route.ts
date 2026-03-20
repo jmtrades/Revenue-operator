@@ -1,14 +1,16 @@
 /**
  * Revenue recovered metrics endpoint
  * GET /api/analytics/revenue-recovered?workspace_id=...
- * Returns metrics for the revenue recovered dashboard widget
+ * Returns real revenue recovery data using deal values when available.
  */
 
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { getRevenueRecovered } from "@/lib/analytics/revenue-recovered";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   try {
@@ -22,67 +24,39 @@ export async function GET(req: NextRequest) {
 
     const db = getDb();
 
-    // Get current month
-    const startOfMonth = new Date();
-    startOfMonth.setDate(1);
-    startOfMonth.setHours(0, 0, 0, 0);
+    // Current month range
+    const now = new Date();
+    const startDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
+    const endDate = now.toISOString().slice(0, 10);
 
-    // Count answered calls this month (calls that started and ended)
-    const { data: _answeredCalls, count: callsAnsweredCount } = await db
+    // Get real revenue recovery data
+    const recovery = await getRevenueRecovered(workspaceId, startDate, endDate);
+
+    // Also get total answered calls this month for context
+    const startTs = `${startDate}T00:00:00Z`;
+    const { count: callsAnsweredCount } = await db
       .from("call_sessions")
-      .select("id", { count: "exact" })
+      .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
-      .gte("call_started_at", startOfMonth.toISOString())
+      .gte("call_started_at", startTs)
       .not("call_ended_at", "is", null);
 
-    const callsAnswered = callsAnsweredCount ?? 0;
-
-    // Count no-shows (calls scheduled but not answered) - estimate from appointments
-    let noShowsRecovered = 0;
-    try {
-      const { data: _appointments, count: _appointmentCount } = await db
-        .from("appointments")
-        .select("id", { count: "exact" })
-        .eq("workspace_id", workspaceId)
-        .gte("created_at", startOfMonth.toISOString())
-        .eq("status", "completed");
-
-      // Estimate: 30% of answered calls represent no-show recovery
-      noShowsRecovered = Math.floor(callsAnswered * 0.3);
-    } catch {
-      noShowsRecovered = Math.floor(callsAnswered * 0.3);
-    }
-
-    // Count reactivations (contacts that had activity after a period of inactivity)
-    let reactivations = 0;
-    try {
-      const { data: _leads } = await db
-        .from("leads")
-        .select("id, last_contact_at")
-        .eq("workspace_id", workspaceId)
-        .gte("created_at", startOfMonth.toISOString());
-
-      // Estimate: 15% of calls represent lead reactivations
-      reactivations = Math.floor(callsAnswered * 0.15);
-    } catch {
-      reactivations = Math.floor(callsAnswered * 0.15);
-    }
-
-    // Calculate estimated revenue recovered
-    // Assumptions: $200 average customer value, 30% recovery rate from answered calls
-    const estimatedCustomerValue = 200;
-    const recoveryRate = 0.30;
-    const totalRecovered = Math.round(callsAnswered * estimatedCustomerValue * recoveryRate);
-
     return NextResponse.json({
-      total_recovered: totalRecovered,
-      calls_answered: callsAnswered,
-      no_shows_recovered: noShowsRecovered,
-      reactivations,
+      total_recovered: Math.round(recovery.total_revenue_recovered / 100), // dollars
+      total_recovered_cents: recovery.total_revenue_recovered,
+      calls_answered: callsAnsweredCount ?? 0,
+      calls_recovered: recovery.calls_recovered_count,
+      calls_recovered_revenue_cents: recovery.calls_recovered_revenue,
+      no_shows_recovered: recovery.noshow_recovered_count,
+      noshow_recovered_revenue_cents: recovery.noshow_recovered_revenue,
+      reactivations: recovery.reactivation_count,
+      reactivation_revenue_cents: recovery.reactivation_revenue,
+      attribution_method: recovery.attribution_method,
+      period: { start: startDate, end: endDate },
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error("[analytics/revenue-recovered]", msg);
+    log("error", "analytics_revenue_recovered_error", { error: msg });
     return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

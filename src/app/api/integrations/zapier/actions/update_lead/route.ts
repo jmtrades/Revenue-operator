@@ -37,6 +37,6 @@ export async function POST(req: NextRequest) {
   if (body.state !== undefined) updates.state = body.state.toString().toLowerCase().replace(/\s+/g, "_");
 
   const { data, error } = await db.from("leads").update(updates).eq("id", id).select("id, name, phone, email, company, state").maybeSingle();
-  if (error) return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   return NextResponse.json(data);
 }

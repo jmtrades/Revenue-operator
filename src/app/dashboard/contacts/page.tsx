@@ -3,6 +3,7 @@
 import { useCallback, useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
+import { Upload, Download } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { PageHeader, EmptyState } from "@/components/ui";
 import { ContactsListSkeleton } from "@/components/ui/ContactsListSkeleton";
@@ -73,9 +74,48 @@ export default function ContactsPage() {
     );
   }
 
+  async function handleExport() {
+    if (!workspaceId) return;
+    try {
+      const res = await fetch(`/api/contacts/export?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" });
+      if (!res.ok) return;
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `contacts-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      // Silent fail
+    }
+  }
+
   return (
     <div className="p-8 max-w-4xl">
-      <PageHeader title={t("pages.contacts.title")} subtitle={t("pages.contacts.subtitle")} />
+      <div className="flex items-center justify-between mb-2">
+        <PageHeader title={t("pages.contacts.title")} subtitle={t("pages.contacts.subtitle")} />
+        <div className="flex gap-2">
+          <Link
+            href="/dashboard/import"
+            className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors hover:opacity-80"
+            style={{ borderColor: "var(--border)", color: "var(--text-secondary)" }}
+          >
+            <Upload className="w-3.5 h-3.5" />
+            Import CSV
+          </Link>
+          <button
+            type="button"
+            onClick={handleExport}
+            disabled={contacts.length === 0}
+            className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors hover:opacity-80 disabled:opacity-40"
+            style={{ borderColor: "var(--border)", color: "var(--text-secondary)" }}
+          >
+            <Download className="w-3.5 h-3.5" />
+            Export CSV
+          </button>
+        </div>
+      </div>
       <div className="mb-4">
         <input
           type="search"

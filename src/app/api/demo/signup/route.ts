@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 // Simple in-memory rate limit tracking (IP -> timestamp array)
 const rateLimitMap = new Map<string, number[]>();
@@ -19,7 +20,7 @@ function checkRateLimit(ip: string, maxRequests: number = 5, windowMs: number = 
   timestamps = timestamps.filter(t => t > windowStart);
 
   if (timestamps.length >= maxRequests) {
-    console.warn(`Rate limit exceeded for IP: ${ip}`);
+    log("warn", "demo_signup.rate_limit_exceeded", { ip, count: timestamps.length, maxRequests });
     return false;
   }
 
@@ -75,7 +76,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (error) {
-      console.error("Database error:", error);
+      log("error", "demo_signup.database_error", { error: String(error) });
       return NextResponse.json(
         { error: "Failed to save signup" },
         { status: 500 }
@@ -84,7 +85,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: true, message: "Signup captured successfully" });
   } catch (error) {
-    console.error("Signup endpoint error:", error);
+    log("error", "demo_signup.endpoint_error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

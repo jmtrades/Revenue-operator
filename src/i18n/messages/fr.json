@@ -262,7 +262,7 @@
     "paymentMethod": "Méthode de paiement : •••• 4242",
     "update": "Mettre à jour",
     "invoiceHistory": "Historique des factures",
-    "invoiceDesc": "Voir et télécharger les factures dans Stripe.",
+    "invoiceDesc": "Voir et télécharger vos factures.",
     "viewInvoices": "Voir factures et historique des paiements →",
     "pauseAccount": "Mettre le compte en pause",
     "cancel": "Annuler",
@@ -348,7 +348,7 @@
         "features": [
           "1 agent IA",
           "1 numéro",
-          "400 min/mois",
+          "500 min/mois",
           "Statistiques d'usage"
         ]
       },
@@ -357,23 +357,23 @@
         "features": [
           "3 agents IA",
           "3 numéros",
-          "1 500 min/mois",
+          "2 500 min/mois",
           "Call Intelligence",
           "Support prioritaire"
         ]
       },
       "scale": {
-        "name": "Scale",
+        "name": "Business",
         "features": [
           "Agents IA illimités",
           "10 numéros",
-          "5 000 min/mois",
+          "6 000 min/mois",
           "Rapports détaillés",
           "Accès API"
         ]
       },
       "enterprise": {
-        "name": "Enterprise",
+        "name": "Agency",
         "features": [
           "Agents illimités",
           "Numéros illimités",
@@ -3812,7 +3812,7 @@
         "starter": {
           "name": "Starter",
           "tagline": "Pour indépendants et petites équipes qui démarrent.",
-          "f1": "400 min entrants inclus",
+          "f1": "500 min entrants inclus",
           "f2": "1 numéro IA",
           "f3": "Résumés d'appels et capture de leads basiques",
           "f4": "Support standard"
@@ -3820,15 +3820,15 @@
         "growth": {
           "name": "Croissance",
           "tagline": "Pour les équipes en croissance qui veulent une couverture complète.",
-          "f1": "1 500 min entrants inclus",
+          "f1": "2 500 min entrants inclus",
           "f2": "3 numéros IA",
           "f3": "Intelligence d'appels et routage avancés",
           "f4": "Support prioritaire"
         },
         "scale": {
-          "name": "Scale",
+          "name": "Business",
           "tagline": "Pour équipes multi-sites et gros volume.",
-          "f1": "5 000 min entrants inclus",
+          "f1": "6 000 min entrants inclus",
           "f2": "10 numéros",
           "f3": "Success partner dédié",
           "f4": "Reporting et intégrations sur mesure"
@@ -4007,7 +4007,7 @@
           "name": "Starter",
           "description": "Répondez à chaque appel. Un numéro, un agent.",
           "features": [
-            "400 min entrants inclus",
+            "500 min entrants inclus",
             "50 appels sortants",
             "100 SMS",
             "1 agent IA",
@@ -4020,7 +4020,7 @@
           "name": "Growth",
           "description": "Un lead récupéré paie le mois.",
           "features": [
-            "1 500 min entrants",
+            "2 500 min entrants",
             "500 appels sortants",
             "500 SMS",
             "3 agents IA",
@@ -4028,15 +4028,15 @@
             "Réservation",
             "Séquences de suivi",
             "Analytiques",
-            "Dépassement : 0,18 €/min"
+            "Dépassement : 0,10 €/min"
           ],
           "cta": "Commencer gratuit"
         },
         "scale": {
-          "name": "Scale",
+          "name": "Business",
           "description": "Équipe communication IA pour une fraction d'un recrutement.",
           "features": [
-            "5 000 min entrants",
+            "6 000 min entrants",
             "2 000 appels sortants",
             "SMS illimités",
             "Agents IA illimités",
@@ -4045,12 +4045,12 @@
             "Conformité",
             "API",
             "Support prioritaire",
-            "Dépassement : 0,12 €/min"
+            "Dépassement : 0,08 €/min"
           ],
           "cta": "Commencer gratuit"
         },
         "enterprise": {
-          "name": "Enterprise",
+          "name": "Agency",
           "description": "Tarifs sur mesure — marque blanche, conformité, SSO, manager dédié, SLA.",
           "features": [
             "Marque blanche",
@@ -4375,7 +4375,7 @@
       "starter": {
         "name": "Starter",
         "description": "Pour les indépendants qui veulent que l'IA réponde à chaque appel.",
-        "f1": "400 min entrants inclus",
+        "f1": "500 min entrants inclus",
         "f2": "50 appels sortants",
         "f3": "100 SMS",
         "f4": "1 agent IA",
@@ -4385,19 +4385,19 @@
       "growth": {
         "name": "Croissance",
         "description": "Pour les équipes en croissance qui ont besoin d'une couverture fiable et d'un suivi.",
-        "f1": "1 500 min entrants inclus",
+        "f1": "2 500 min entrants inclus",
         "f2": "500 appels sortants",
         "f3": "500 SMS",
         "f4": "3 agents IA",
         "f5": "3 numéros",
         "f6": "Prise de rendez-vous",
         "f7": "Séquences de relance",
-        "f8": "Dépassement : 0,18 €/min"
+        "f8": "Dépassement : 0,10 €/min"
       },
       "scale": {
-        "name": "Scale",
+        "name": "Business",
         "description": "Pour les équipes qui fonctionnent avec des revenus planifiés et des pipelines complexes.",
-        "f1": "5 000 min entrants inclus",
+        "f1": "6 000 min entrants inclus",
         "f2": "2 000 appels sortants",
         "f3": "SMS illimités",
         "f4": "Agents IA illimités",
@@ -4406,7 +4406,7 @@
         "f7": "Conformité",
         "f8": "API",
         "f9": "Support prioritaire",
-        "f10": "Dépassement : 0,12 €/min"
+        "f10": "Dépassement : 0,08 €/min"
       },
       "enterprise": {
         "name": "Entreprise",
@@ -6043,7 +6043,7 @@
       },
       "integrations": {
         "title": "Intégrations",
-        "description": "Connectez Recall Touch à votre opérateur (Twilio), calendrier et CRM. Webhooks et API sur les offres Scale et Enterprise.",
+        "description": "Connectez Recall Touch à votre opérateur , calendrier et CRM. Webhooks et API sur les offres Scale et Enterprise.",
         "zapierHeading": "Zapier et Make",
         "zapierDesc": "Utilisez OAuth pour connecter votre espace Recall Touch, puis interrogez les déclencheurs ou appelez les actions.",
         "authorizeLabel": "Autoriser",
@@ -6078,7 +6078,7 @@
         "title": "Changelog",
         "description": "Dernières mises à jour de la plateforme.",
         "entry202503": "Séquences de campagne (Appel, SMS, Email, Attente), scoring de leads, centre de notifications, checklist d'onboarding, rapports d'erreur, améliorations SEO et accessibilité.",
-        "entry202502": "Agents vocaux Recall, provisionnement Twilio, vues activité et boîte de réception, hub paramètres.",
+        "entry202502": "Agents vocaux Recall, provisionnement de numéros AI, vues activité et boîte de réception, hub paramètres.",
         "entry202501": "Lancement initial : configuration de l'espace, connexion, tarifs, simulateur de démo."
       },
       "faq": {

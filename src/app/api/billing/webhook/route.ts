@@ -9,6 +9,7 @@ export const runtime = "nodejs";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { logWebhookFailure } from "@/lib/reliability/logging";
+import { log } from "@/lib/logger";
 import { createPaymentObligation, resolvePaymentObligationsBySubject } from "@/lib/payment-completion";
 import {
   ensureSharedTransactionForSubject,
@@ -21,6 +22,8 @@ import { priceIdToTierAndInterval } from "@/lib/stripe-prices";
 import Stripe from "stripe";
 import { sendDunningEmail } from "@/lib/email/dunning";
 import { getTelephonyService } from "@/lib/telephony";
+import { creditMinutePack, MINUTE_PACKS } from "@/lib/voice/billing";
+import { buildMinutePackEmail } from "@/lib/email/templates";
 
 // Structured logging for webhook events (errors only in production)
 function logWebhookEvent(type: string, workspaceId: string | null, status: "success" | "error", details?: unknown) {
@@ -131,7 +134,7 @@ export async function POST(req: NextRequest) {
       if (existingAfter?.processed) {
         return NextResponse.json({ received: true, skipped: "already_processed" }, { status: 200 });
       }
-      console.error("Webhook event insert failed:", insertError);
+      log("error", "billing_webhook.event_insert_failed", { error: String(insertError) });
       return NextResponse.json({ error: "Internal error" }, { status: 500 });
     }
   }
@@ -140,7 +143,7 @@ export async function POST(req: NextRequest) {
     await handleStripeWebhookEvent(db, event, eventId);
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err);
-    console.error(`[webhook] handler failed for ${eventId}: ${errMsg}`);
+    log("error", "billing_webhook.handler_failed", { event_id: eventId, error: errMsg });
     try {
       await db.from("system_webhook_failures").insert({
         provider: "stripe",
@@ -164,6 +167,81 @@ async function handleStripeWebhookEvent(
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
       const workspaceId = session.client_reference_id ?? session.metadata?.workspace_id;
+
+      // ── Handle one-time minute pack purchases ──
+      if (session.metadata?.type === "minute_pack" && workspaceId) {
+        const packId = session.metadata.pack_id;
+        const paymentIntentId =
+          typeof session.payment_intent === "string"
+            ? session.payment_intent
+            : (session.payment_intent as { id?: string } | null)?.id ?? session.id;
+        if (packId) {
+          try {
+            const { credited, minutes } = await creditMinutePack(workspaceId, packId, paymentIntentId);
+            if (credited) {
+              logWebhookEvent("minute_pack_credited", workspaceId, "success", { pack_id: packId, minutes });
+
+              // Send confirmation email
+              try {
+                const { data: wsRow } = await db
+                  .from("workspaces")
+                  .select("owner_id, name")
+                  .eq("id", workspaceId)
+                  .maybeSingle();
+                const ownerId = (wsRow as { owner_id?: string } | null)?.owner_id;
+                if (ownerId) {
+                  const { data: userRow } = await db
+                    .from("users")
+                    .select("email, full_name")
+                    .eq("id", ownerId)
+                    .maybeSingle();
+                  const ownerEmail = (userRow as { email?: string } | null)?.email;
+                  const ownerName = (userRow as { full_name?: string } | null)?.full_name;
+                  if (ownerEmail && process.env.RESEND_API_KEY) {
+                    const pack = MINUTE_PACKS.find((p) => p.id === packId);
+                    // Get updated bonus balance
+                    const { data: balRow } = await db
+                      .from("workspace_minute_balance")
+                      .select("bonus_minutes")
+                      .eq("workspace_id", workspaceId)
+                      .maybeSingle();
+                    const newBalance = (balRow as { bonus_minutes?: number } | null)?.bonus_minutes ?? minutes;
+
+                    const { subject, html } = buildMinutePackEmail({
+                      name: ownerName ?? (wsRow as { name?: string } | null)?.name ?? "there",
+                      minutes,
+                      price: pack?.price_display ?? `$${(session.amount_total ?? 0) / 100}`,
+                      newBalance,
+                    });
+
+                    const emailFrom = process.env.EMAIL_FROM ?? "Recall Touch <noreply@recall-touch.com>";
+                    await fetch("https://api.resend.com/emails", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+                      },
+                      body: JSON.stringify({ from: emailFrom, to: ownerEmail, subject, html }),
+                    });
+                  }
+                }
+              } catch (emailErr) {
+                // Non-critical: log but don't fail the webhook
+                log("error", "billing_webhook.minute_pack_email_failed", {
+                  workspace_id: workspaceId,
+                  error: emailErr instanceof Error ? emailErr.message : String(emailErr),
+                });
+              }
+            } else {
+              logWebhookEvent("minute_pack_duplicate", workspaceId, "success", { pack_id: packId, message: "already credited" });
+            }
+          } catch (e) {
+            logWebhookEvent("minute_pack_credit_failed", workspaceId, "error", { pack_id: packId, error: String(e) });
+          }
+        }
+        break;
+      }
+
       const isSettlement = session.metadata?.settlement === "true";
       if (workspaceId && isSettlement && session.subscription && session.customer) {
         await activateSettlementFromStripe(
@@ -174,7 +252,7 @@ async function handleStripeWebhookEvent(
       } else if (workspaceId && !isSettlement) {
         const subId = typeof session.subscription === "string" ? session.subscription : session.subscription?.id;
         if (!subId) {
-          console.warn(`[billing-webhook] checkout.session.completed for workspace ${workspaceId} has no subscription — skipping`);
+          log("warn", "billing_webhook.no_subscription", { workspace_id: workspaceId, message: "checkout.session.completed has no subscription" });
           break;
         }
         const { data: existing } = await db
@@ -332,10 +410,10 @@ async function handleStripeWebhookEvent(
               try {
                                 const res = await telephony.releaseNumber(num.provider_sid);
                 if ("error" in res) {
-                  console.error("Failed to release number:", num.provider_sid, res.error);
+                  log("error", "billing_webhook.release_number_failed", { provider_sid: num.provider_sid, error: res.error });
                 }
 } catch (e) {
-                console.error("Failed to release number:", num.provider_sid, e);
+                log("error", "billing_webhook.release_number_error", { provider_sid: num.provider_sid, error: e instanceof Error ? e.message : String(e) });
               }
             }
           }
@@ -363,7 +441,7 @@ async function handleStripeWebhookEvent(
           currency: (invCreated.currency ?? "usd").toLowerCase(),
           dueAt,
         }).catch((err) => {
-          console.error("Billing webhook background task failed:", err);
+          log("error", "billing_webhook.background_task_failed", { error: err instanceof Error ? err.message : String(err) });
         });
         const customerEmail =
           typeof (invCreated as Stripe.Invoice).customer_email === "string"
@@ -407,7 +485,7 @@ async function handleStripeWebhookEvent(
               `payment-ack:${workspaceId}:${invCreated.id}`
             );
           }).catch((err) => {
-            console.error("Billing webhook background task failed:", err);
+            log("error", "billing_webhook.background_task_failed", { error: err instanceof Error ? err.message : String(err) });
           });
         }
       }
@@ -553,7 +631,7 @@ async function handleStripeWebhookEvent(
           currency: (invoice.currency ?? "usd").toLowerCase(),
           dueAt,
         }).catch((err) => {
-          console.error("Billing webhook background task failed:", err);
+          log("error", "billing_webhook.background_task_failed", { error: err instanceof Error ? err.message : String(err) });
         });
         if (customerEmail) {
           ensureSharedTransactionForSubject({
@@ -593,7 +671,7 @@ async function handleStripeWebhookEvent(
               `payment-ack:${workspaceId}:${invoice.id}`
             );
           }).catch((err) => {
-            console.error("Billing webhook background task failed:", err);
+            log("error", "billing_webhook.background_task_failed", { error: err instanceof Error ? err.message : String(err) });
           });
         }
       }

@@ -82,9 +82,9 @@ export function IndustryPageTemplate({ industry }: IndustryPageTemplateProps) {
   const HeroIcon = HERO_ICONS[industry.heroIcon] ?? Wrench;
   const recommendedPlan = (() => {
     const recovered = industry.roi.recoveredPerMonth;
-    if (recovered <= 4000) return "Solo";
-    if (recovered <= 15000) return "Business";
-    return "Scale";
+    if (recovered <= 4000) return "Starter";
+    if (recovered <= 15000) return "Growth";
+    return "Business";
   })();
 
   return (

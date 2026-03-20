@@ -123,7 +123,7 @@ export async function POST(req: NextRequest) {
     systemPrompt = buildAgentSystemPrompt({
       businessName,
       industry: null,
-      agentName: agent.name?.trim() || "Receptionist",
+      agentName: agent.name?.trim() || "AI Agent",
       greeting,
       services: Array.isArray(kb.services) ? kb.services : [],
       faq,

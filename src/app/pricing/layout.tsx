@@ -2,19 +2,19 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Pricing",
-  description: "ROI-first pricing for the AI Revenue Execution System. Start on Solo, upgrade into Business, and scale into multi-location and teams.",
+  description: "ROI-first pricing for AI that makes and takes your phone calls. Start on Starter, grow into Growth, and scale into Business or Agency.",
 };
 
 const productJsonLd = {
   "@context": "https://schema.org",
   "@type": "Product",
   name: "Recall Touch",
-  description: "AI Revenue Execution System for service businesses and teams",
+  description: "AI that makes and takes your phone calls",
   offers: [
-    { "@type": "Offer", name: "Solo", price: "49", priceCurrency: "USD", priceValidUntil: "2026-12-31" },
-    { "@type": "Offer", name: "Business", price: "297", priceCurrency: "USD", priceValidUntil: "2026-12-31" },
-    { "@type": "Offer", name: "Scale", price: "997", priceCurrency: "USD", priceValidUntil: "2026-12-31" },
-    { "@type": "Offer", name: "Enterprise", price: "0", priceCurrency: "USD", description: "Custom pricing" },
+    { "@type": "Offer", name: "Starter", price: "97", priceCurrency: "USD", priceValidUntil: "2026-12-31" },
+    { "@type": "Offer", name: "Growth", price: "297", priceCurrency: "USD", priceValidUntil: "2026-12-31" },
+    { "@type": "Offer", name: "Business", price: "597", priceCurrency: "USD", priceValidUntil: "2026-12-31" },
+    { "@type": "Offer", name: "Agency", price: "997", priceCurrency: "USD", priceValidUntil: "2026-12-31" },
   ],
 };
 

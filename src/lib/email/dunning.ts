@@ -1,45 +1,14 @@
+/**
+ * Dunning emails — sent on payment failure.
+ * Uses branded HTML templates with escalating urgency.
+ */
+
 import * as Sentry from "@sentry/nextjs";
 import { sendEmail } from "@/lib/integrations/email";
+import { buildDunningEmail } from "@/lib/email/templates";
 import { log } from "@/lib/logger";
 
 export type DunningAttempt = 1 | 2 | 3 | 4;
-
-const DUNNING_TEMPLATES: Record<
-  DunningAttempt,
-  {
-    subject: string;
-    bodyHtml: string;
-  }
-> = {
-  1: {
-    subject: "Payment failed. Update method.",
-    bodyHtml: `
-      <p>Your payment failed.</p>
-      <p>Update your payment method to continue service.</p>
-    `,
-  },
-  2: {
-    subject: "Second attempt failed. Service pauses soon.",
-    bodyHtml: `
-      <p>Your second payment attempt failed.</p>
-      <p>Update your payment method to avoid a service pause soon.</p>
-    `,
-  },
-  3: {
-    subject: "Final notice.",
-    bodyHtml: `
-      <p>We couldn’t process your payment on the third attempt.</p>
-      <p>Update your payment method to keep your AI running.</p>
-    `,
-  },
-  4: {
-    subject: "Fourth failure. Service is scheduled to pause.",
-    bodyHtml: `
-      <p>This is the fourth payment failure.</p>
-      <p>You still have a short grace window to update payment and keep service running.</p>
-    `,
-  },
-};
 
 function clampAttempt(attempt: number): DunningAttempt {
   if (attempt <= 1) return 1;
@@ -52,12 +21,27 @@ export async function sendDunningEmail(
   workspaceId: string,
   toEmail: string,
   attempt: number,
+  amountDueCents?: number,
+  nextRetryAt?: string | null,
 ): Promise<{ ok: boolean; attemptSent: DunningAttempt }> {
   const clamped = clampAttempt(attempt);
-  const template = DUNNING_TEMPLATES[clamped];
+
+  const amountDue = amountDueCents
+    ? `$${(amountDueCents / 100).toFixed(2)}`
+    : "your subscription amount";
+
+  const nextRetryDate = nextRetryAt
+    ? new Date(nextRetryAt).toLocaleDateString(undefined, { dateStyle: "medium" })
+    : undefined;
+
+  const { subject, html } = buildDunningEmail({
+    attempt: clamped,
+    amountDue,
+    nextRetryDate,
+  });
 
   try {
-    await sendEmail(workspaceId, toEmail, template.subject, template.bodyHtml);
+    await sendEmail(workspaceId, toEmail, subject, html);
     return { ok: true, attemptSent: clamped };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -66,4 +50,3 @@ export async function sendDunningEmail(
     return { ok: false, attemptSent: clamped };
   }
 }
-

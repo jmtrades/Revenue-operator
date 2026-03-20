@@ -128,8 +128,8 @@ export default function DentalIndustryPage() {
             <div className="space-y-4 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
               <p>
                 Dental economics are straightforward: one kept new patient appointment or one recovered hygiene slot can cover
-                the monthly subscription. If your average appointment value is \( $250 \) and you recover just two otherwise
-                missed appointments per month, that’s \( $500 \) in incremental production before downstream treatment plans.
+                the monthly subscription. If your average appointment value is $250 and you recover just two otherwise
+                missed appointments per month, that’s $500 in incremental production before downstream treatment plans.
               </p>
               <p>
                 Practices that run a consistent reminder + reschedule system often see fewer empty chairs. And when a no-show

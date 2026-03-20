@@ -31,7 +31,7 @@ export default function SettingsPage() {
   });
   const [showBusinessContext, setShowBusinessContext] = useState(false);
   const [showSources, setShowSources] = useState(false);
-  const [twilioPhone, setTwilioPhone] = useState<string | null>(null);
+  const [activePhone, setActivePhone] = useState<string | null>(null);
   const [inboundWebhookUrl, setInboundWebhookUrl] = useState("");
   const [teamHandoffEmails, setTeamHandoffEmails] = useState("");
   const [absenceStatements, setAbsenceStatements] = useState<{
@@ -141,12 +141,12 @@ export default function SettingsPage() {
         }
       })
       .catch(() => {});
-    // Fetch Twilio phone number
+    // Fetch active phone number
     fetch("/api/integrations/twilio/auto-provision", { method: "POST" })
       .then((r) => r.ok ? r.json() : Promise.resolve(null))
       .then((d: { phone_number?: string } | null) => {
         if (d?.phone_number) {
-          setTwilioPhone(d.phone_number);
+          setActivePhone(d.phone_number);
         }
       })
       .catch(() => {});
@@ -387,9 +387,9 @@ export default function SettingsPage() {
               <div className="space-y-4 mt-4">
                 <div>
                   <label className="block text-xs mb-1" style={{ color: "var(--text-muted)" }}>SMS</label>
-                  {twilioPhone ? (
+                  {activePhone ? (
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-mono" style={{ color: "var(--text-primary)" }}>{twilioPhone}</p>
+                      <p className="text-sm font-mono" style={{ color: "var(--text-primary)" }}>{activePhone}</p>
                       <span className="text-xs px-2 py-0.5 rounded" style={{ background: "var(--meaning-green)", color: "#0c0f13" }}>{t("settings.inPlace")}</span>
                     </div>
                   ) : (

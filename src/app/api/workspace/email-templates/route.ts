@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
 
   if (error) {
     if ((error as { code?: string }).code === "23505") return NextResponse.json({ error: "Template slug already exists" }, { status: 409 });
-    return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
   return NextResponse.json({ template: data });
 }

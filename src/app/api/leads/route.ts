@@ -73,6 +73,10 @@ export async function POST(req: NextRequest) {
   if (!name?.trim()) return NextResponse.json({ error: "Name is required" }, { status: 400 });
   const phoneStr = (phone ?? "").toString().trim();
   if (!phoneStr) return NextResponse.json({ error: "Phone is required" }, { status: 400 });
+  const phoneDigits = phoneStr.replace(/\D/g, "");
+  if (phoneDigits.length < 10 || phoneDigits.length > 15) {
+    return NextResponse.json({ error: "Phone number must be between 10 and 15 digits" }, { status: 400 });
+  }
 
   const state = (status ?? "new").toLowerCase().replace(/\s+/g, "_");
   const stateMap: Record<string, string> = {
@@ -108,7 +112,7 @@ export async function POST(req: NextRequest) {
     .select()
     .maybeSingle();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
 
   const createdLead = lead as {
     id: string;
@@ -196,6 +200,47 @@ export async function POST(req: NextRequest) {
     }).catch((err) => { console.error("[leads] error:", err instanceof Error ? err.message : err); });
   } catch {
     // non-blocking
+  }
+
+  // Speed-to-lead: auto-callback within 60 seconds for eligible workspaces
+  // Only triggers when lead has a phone number and source is website/form/api
+  if (phoneStr && ["website", "form", "api", "landing_page"].includes(String(metadata.source))) {
+    try {
+      const { data: ws } = await db
+        .from("workspaces")
+        .select("plan_id")
+        .eq("id", workspaceId)
+        .maybeSingle();
+      const wsRow = ws as { plan_id?: string | null } | null;
+      // Speed-to-lead available on Business ($597) and above
+      const eligiblePlans = ["business", "agency", "enterprise", "scale"];
+      if (wsRow?.plan_id && eligiblePlans.includes(wsRow.plan_id)) {
+        // Check if workspace has speed-to-lead enabled
+        const { data: setting } = await db
+          .from("workspace_settings")
+          .select("value")
+          .eq("workspace_id", workspaceId)
+          .eq("key", "speed_to_lead_enabled")
+          .maybeSingle();
+        const enabled = (setting as { value?: string | null } | null)?.value === "true";
+        if (enabled) {
+          // Enqueue outbound call with 60-second delay
+          await db.from("action_queue").insert({
+            workspace_id: workspaceId,
+            type: "speed_to_lead_call",
+            payload: {
+              lead_id: createdLead.id,
+              phone: phoneStr,
+              name: (createdLead.name ?? "").toString().trim(),
+            },
+            scheduled_for: new Date(Date.now() + 60_000).toISOString(),
+            status: "pending",
+          });
+        }
+      }
+    } catch {
+      // Non-blocking: don't fail lead creation if speed-to-lead fails
+    }
   }
 
   return NextResponse.json(lead);

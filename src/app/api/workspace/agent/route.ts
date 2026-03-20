@@ -110,7 +110,7 @@ export async function PATCH(req: NextRequest) {
   try {
     const db = getDb();
     const { error } = await db.from("workspaces").update(update).eq("id", session.workspaceId);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
     const voiceId = typeof update.voice_id === "string" ? update.voice_id : null;
     const agentName = typeof update.agent_name === "string" ? update.agent_name : null;
     const greeting = typeof update.greeting === "string" ? update.greeting : null;

@@ -58,7 +58,7 @@ export async function PATCH(
     .select("id, slug, name, subject, body_html, created_at, updated_at")
     .maybeSingle();
 
-  if (error) return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   if (!data) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json({ template: data });
 }
@@ -75,6 +75,6 @@ export async function DELETE(
   const { slug } = await params;
   const db = getDb();
   const { error } = await db.from("email_templates").delete().eq("workspace_id", session.workspaceId).eq("slug", slug);
-  if (error) return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   return NextResponse.json({ ok: true });
 }

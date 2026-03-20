@@ -9,10 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
-
-const VERIFY_SID = process.env.TWILIO_VERIFY_SERVICE_SID;
-const ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
-const AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
+import { getTelephonyProvider } from "@/lib/telephony/get-telephony-provider";
 
 function toE164(value: string): string | null {
   const digits = value.replace(/\D/g, "");
@@ -20,6 +17,72 @@ function toE164(value: string): string | null {
   if (digits.length === 11 && digits.startsWith("1")) return `+${digits}`;
   if (digits.length >= 10 && digits.length <= 15) return `+${digits}`;
   return null;
+}
+
+async function checkTelnyxVerification(phone: string, code: string): Promise<{ verified: boolean; error?: string; status?: number }> {
+  const apiKey = process.env.TELNYX_API_KEY;
+  if (!apiKey) {
+    return { verified: false, error: "Phone verification is being set up. You can use 'Get a new AI number' instead.", status: 503 };
+  }
+
+  try {
+    const res = await fetch("https://api.telnyx.com/v2/verifications/by_phone_number", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        phone_number: phone,
+        code,
+      }),
+    });
+
+    const data = (await res.json().catch(() => ({}))) as { data?: { response_code?: string }; errors?: Array<{ detail?: string }> };
+
+    if (!res.ok || data.data?.response_code !== "accepted") {
+      const errorMsg = data.errors?.[0]?.detail ?? "Code didn't match. Try again or resend.";
+      return { verified: false, error: errorMsg, status: 400 };
+    }
+
+    return { verified: true };
+  } catch {
+    return { verified: false, error: "Verification check failed", status: 503 };
+  }
+}
+
+async function checkTwilioVerification(phone: string, code: string): Promise<{ verified: boolean; error?: string; status?: number }> {
+  const verifySid = process.env.TWILIO_VERIFY_SERVICE_SID;
+  const accountSid = process.env.TWILIO_ACCOUNT_SID;
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
+
+  if (!verifySid || !accountSid || !authToken) {
+    return { verified: false, error: "Phone verification is being set up. You can use 'Get a new AI number' instead.", status: 503 };
+  }
+
+  const url = `https://verify.twilio.com/v2/Services/${verifySid}/VerificationCheck`;
+  const params = new URLSearchParams({ To: phone, Code: code });
+
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: "Basic " + Buffer.from(`${accountSid}:${authToken}`).toString("base64"),
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: params.toString(),
+    });
+
+    const data = (await res.json().catch(() => ({}))) as { status?: string; valid?: boolean; error_message?: string };
+    const valid = data.status === "approved" || data.valid === true;
+
+    if (!valid) {
+      return { verified: false, error: data.error_message ?? "Code didn't match. Try again or resend.", status: 400 };
+    }
+    return { verified: true };
+  } catch {
+    return { verified: false, error: "Verification check failed", status: 503 };
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -43,45 +106,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Phone number and code required" }, { status: 400 });
   }
 
-  if (!VERIFY_SID || !ACCOUNT_SID || !AUTH_TOKEN) {
+  const provider = getTelephonyProvider();
+  const result = provider === "telnyx"
+    ? await checkTelnyxVerification(phone, code)
+    : await checkTwilioVerification(phone, code);
+
+  if (!result.verified) {
     return NextResponse.json(
-      { error: "Phone verification is being set up. You can use 'Get a new AI number' instead.", action: "redirect" },
-      { status: 503 }
+      { verified: false, error: result.error, ...(result.error?.includes("Get a new AI number") ? { action: "redirect" } : {}) },
+      { status: result.status ?? 400 }
     );
   }
 
-  const url = `https://verify.twilio.com/v2/Services/${VERIFY_SID}/VerificationCheck`;
-  const params = new URLSearchParams({ To: phone, Code: code });
+  const db = getDb();
+  await db
+    .from("workspaces")
+    .update({ verified_phone: phone })
+    .eq("id", session.workspaceId);
 
-  try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        Authorization: "Basic " + Buffer.from(`${ACCOUNT_SID}:${AUTH_TOKEN}`).toString("base64"),
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: params.toString(),
-    });
-
-    const data = (await res.json().catch(() => ({}))) as { status?: string; valid?: boolean; error_message?: string };
-    const valid = data.status === "approved" || data.valid === true;
-
-    if (!valid) {
-      return NextResponse.json(
-        { verified: false, error: data.error_message ?? "Code didn't match. Try again or resend." },
-        { status: 400 }
-      );
-    }
-
-    const db = getDb();
-    await db
-      .from("workspaces")
-      .update({ verified_phone: phone })
-      .eq("id", session.workspaceId);
-
-    return NextResponse.json({ verified: true });
-  } catch (e) {
-    // Verify check failed; error response returned below
-    return NextResponse.json({ error: "Verification check failed" }, { status: 503 });
-  }
+  return NextResponse.json({ verified: true });
 }

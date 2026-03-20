@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     const pageRes = await fetch(url);
     if (!pageRes.ok) {
       return Response.json(
-        { error: `Failed to fetch URL (HTTP ${pageRes.status})` },
+        { error: "Failed to fetch the URL. Please check the link and try again." },
         { status: 502 },
       );
     }
@@ -71,12 +71,8 @@ export async function POST(req: NextRequest) {
     });
 
     if (!claudeRes.ok) {
-      const bodyText = await claudeRes.text().catch(() => "");
       return Response.json(
-        {
-          error: `AI request failed (HTTP ${claudeRes.status})`,
-          details: bodyText.slice(0, 300),
-        },
+        { error: "Analysis failed. Please try again." },
         { status: 502 },
       );
     }
@@ -108,7 +104,7 @@ export async function POST(req: NextRequest) {
     const message =
       e instanceof Error ? e.message : typeof e === "string" ? e : "Unknown error";
     return Response.json(
-      { error: `Failed to import URL: ${message}` },
+      { error: "Failed to import URL. Please check the link and try again." },
       { status: 500 },
     );
   }

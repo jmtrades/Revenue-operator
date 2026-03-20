@@ -5,6 +5,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { syncPrimaryAgent } from "@/lib/agents/sync-primary-agent";
 import { DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
+import { canCreateAgent } from "@/lib/billing/plan-enforcement";
 
 export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
@@ -13,7 +14,7 @@ export async function GET(req: NextRequest) {
   if (err) return err;
   const db = getDb();
   const { data, error } = await db.from("agents").select("*").eq("workspace_id", workspaceId).order("created_at", { ascending: false });
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
 
   let agents = data ?? [];
   if (agents.length === 0) {
@@ -43,7 +44,7 @@ export async function GET(req: NextRequest) {
       } catch {
         await db.from("agents").insert({
           workspace_id: row.id,
-          name: row.agent_name?.trim() || "Receptionist",
+          name: row.agent_name?.trim() || "Primary Agent",
           voice_id: row.voice_id?.trim() || DEFAULT_VOICE_ID,
           personality: "professional",
           purpose: "both",
@@ -100,6 +101,21 @@ export async function POST(req: NextRequest) {
       { status: 429, headers: { "Retry-After": String(Math.max(0, retryAfterSeconds)) } }
     );
   }
+  // Enforce plan limit on agent creation
+  const enforcement = await canCreateAgent(workspace_id);
+  if (!enforcement.allowed) {
+    return NextResponse.json(
+      {
+        error: enforcement.message,
+        reason: enforcement.reason,
+        upgrade_to: enforcement.upgradeTo,
+        current: enforcement.current,
+        limit: enforcement.limit,
+      },
+      { status: 403 }
+    );
+  }
+
   const validPurpose = ["inbound", "outbound", "both"];
   const validPersonality = ["friendly", "professional", "casual", "empathetic"];
   const db = getDb();
@@ -156,6 +172,6 @@ export async function POST(req: NextRequest) {
     rules: Object.keys(industryRules).length > 0 ? industryRules : {},
     is_active: true,
   }).select().maybeSingle();
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   return NextResponse.json(agent);
 }

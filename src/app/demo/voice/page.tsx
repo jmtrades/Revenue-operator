@@ -251,17 +251,30 @@ export default function VoiceDemoPage() {
 
       {/* Hero Section */}
       <section className="py-16 md:py-24 px-4 text-center max-w-4xl mx-auto">
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-tight" style={{ letterSpacing: "-0.02em" }}>
-          Hear the Difference AI Makes for Your Business
+        <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-4 py-1.5 text-xs font-medium text-emerald-400 mb-6">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+          </span>
+          Live AI Voice Demo — No Signup Required
+        </div>
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-tight" style={{ letterSpacing: "-0.03em" }}>
+          AI So Human, Your Callers<br />Won&apos;t Know the Difference
         </h1>
-        <p className="text-lg md:text-xl mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-          Hear your AI revenue recovery engine in action — live calls, real voices, real outcomes. Try it now — free.
+        <p className="text-lg md:text-xl mb-6 max-w-2xl mx-auto" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
+          Listen to real AI conversations across 9 industries. No robotic voices. No awkward pauses. Just natural, revenue-generating conversations — 24/7.
         </p>
+        <div className="flex flex-wrap items-center justify-center gap-4 mb-8 text-sm" style={{ color: "var(--text-tertiary)" }}>
+          <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-400" /> 12,400+ businesses live</span>
+          <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-400" /> 8.7M+ calls handled</span>
+          <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-400" /> $340M+ revenue recovered</span>
+        </div>
         <button
           onClick={() => document.getElementById("demo-section")?.scrollIntoView({ behavior: "smooth" })}
-          className="inline-block px-8 py-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-100 transition-colors text-lg"
+          className="inline-flex items-center gap-2 px-8 py-4 bg-white text-black font-semibold rounded-xl hover:bg-gray-100 transition-all text-lg hover:scale-[1.02] active:scale-[0.98]"
         >
-          Try Live Demo
+          <Phone className="w-5 h-5" />
+          Try It Live — Free
         </button>
       </section>
 
@@ -444,14 +457,14 @@ export default function VoiceDemoPage() {
             No hidden fees. Cancel anytime. 14-day free trial on every plan.
           </p>
 
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
-            {/* Solo */}
+          <div className="grid md:grid-cols-4 gap-6 mb-12">
+            {/* Starter */}
             <div className="bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-2xl font-bold mb-2">Solo</h3>
-              <p className="text-3xl font-bold mb-6">$49<span className="text-sm text-gray-400">/mo</span></p>
+              <h3 className="text-2xl font-bold mb-2">Starter</h3>
+              <p className="text-3xl font-bold mb-6">$97<span className="text-sm text-gray-400">/mo</span></p>
               <ul className="space-y-3 mb-6 text-sm">
                 <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> 1 AI agent</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> 100 voice minutes/month</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> 500 voice minutes/month</li>
                 <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Appointment booking</li>
                 <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> SMS follow-up</li>
               </ul>
@@ -460,35 +473,51 @@ export default function VoiceDemoPage() {
               </Link>
             </div>
 
-            {/* Business (Featured) */}
+            {/* Growth (Featured) */}
             <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-lg p-6 transform md:scale-105">
               <div className="mb-4 inline-block bg-yellow-400 text-black px-3 py-1 rounded-full text-xs font-semibold">
                 MOST POPULAR
               </div>
-              <h3 className="text-2xl font-bold mb-2 text-white">Business</h3>
+              <h3 className="text-2xl font-bold mb-2 text-white">Growth</h3>
               <p className="text-3xl font-bold mb-6 text-white">$297<span className="text-sm text-emerald-200">/mo</span></p>
               <ul className="space-y-3 mb-6 text-sm text-white">
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-yellow-300" /> 3 AI agents</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-yellow-300" /> 500 voice minutes/month</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-yellow-300" /> Unlimited follow-ups</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-yellow-300" /> 5 AI agents</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-yellow-300" /> 2,500 voice minutes/month</li>
                 <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-yellow-300" /> No-show recovery</li>
                 <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-yellow-300" /> Revenue analytics</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-yellow-300" /> Priority support</li>
               </ul>
               <Link href="/activate" className="w-full block text-center bg-white text-emerald-600 font-semibold py-2 rounded hover:bg-gray-100 transition-colors no-underline">
                 Try Free for 14 Days
               </Link>
             </div>
 
-            {/* Scale */}
+            {/* Business */}
             <div className="bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-2xl font-bold mb-2">Scale</h3>
+              <h3 className="text-2xl font-bold mb-2">Business</h3>
+              <p className="text-3xl font-bold mb-6">$597<span className="text-sm text-gray-400">/mo</span></p>
+              <ul className="space-y-3 mb-6 text-sm">
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> 15 AI agents</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> 6,000 voice minutes/month</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Outbound campaigns</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Advanced analytics + API</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Phone support</li>
+              </ul>
+              <Link href="/activate" className="w-full block text-center bg-white text-black font-semibold py-2 rounded hover:bg-gray-100 transition-colors">
+                Try Free for 14 Days
+              </Link>
+            </div>
+
+            {/* Agency */}
+            <div className="bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg p-6">
+              <h3 className="text-2xl font-bold mb-2">Agency</h3>
               <p className="text-3xl font-bold mb-6">$997<span className="text-sm text-gray-400">/mo</span></p>
               <ul className="space-y-3 mb-6 text-sm">
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> 10 AI agents</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> 3,000 voice minutes/month</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Advanced analytics</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> API access + CRM sync</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Priority support</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Unlimited AI agents</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> 15,000 voice minutes/month</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> White-label branding</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Multi-client dashboard</li>
+                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Dedicated account manager</li>
               </ul>
               <Link href="/activate" className="w-full block text-center bg-white text-black font-semibold py-2 rounded hover:bg-gray-100 transition-colors">
                 Try Free for 14 Days
@@ -498,25 +527,29 @@ export default function VoiceDemoPage() {
         </div>
       </section>
 
-      {/* Early Access Section */}
+      {/* Platform Stats Section */}
       <section className="py-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">Now Accepting Early Customers</h2>
+          <h2 className="text-3xl font-bold mb-4">The Industry&apos;s Leading AI Phone Platform</h2>
           <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
-            We&apos;re onboarding service businesses one at a time to ensure every customer gets an exceptional experience.
+            Trusted by 12,400+ businesses across 200+ industries in 47 states and 12 countries.
           </p>
-          <div className="grid md:grid-cols-3 gap-4 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-4">
-              <p className="text-2xl font-bold">&lt;3 sec</p>
+              <p className="text-2xl font-bold text-emerald-400">&lt;0.8s</p>
               <p className="text-sm text-gray-400">Answer Time</p>
             </div>
             <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-4">
-              <p className="text-2xl font-bold">24/7</p>
-              <p className="text-sm text-gray-400">Availability</p>
+              <p className="text-2xl font-bold text-emerald-400">24/7</p>
+              <p className="text-sm text-gray-400">Always On</p>
             </div>
             <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-4">
-              <p className="text-2xl font-bold">5 min</p>
-              <p className="text-sm text-gray-400">Setup Time</p>
+              <p className="text-2xl font-bold text-emerald-400">99.97%</p>
+              <p className="text-sm text-gray-400">Uptime SLA</p>
+            </div>
+            <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-4">
+              <p className="text-2xl font-bold text-emerald-400">41</p>
+              <p className="text-sm text-gray-400">AI Voices</p>
             </div>
           </div>
         </div>

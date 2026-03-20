@@ -24,8 +24,8 @@ export function HowItWorks() {
         num: 1,
         icon: PhoneForwarded,
         title: "Connect Your Number",
-        subtitle: "90 seconds",
-        desc: "Use your current business number or provision a new one. Setup takes about 90 seconds and does not require replacing your phone stack.",
+        subtitle: "in minutes",
+        desc: "Use your current business number or provision a new one. Setup takes under 3 minutes and does not require replacing your phone stack.",
       },
       {
         num: 2,
@@ -102,7 +102,7 @@ export function HowItWorks() {
         <div className="mt-12 flex flex-wrap justify-center gap-6 text-sm">
           <div className="flex items-center gap-2 text-white/50">
             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-            <span>Setup: <strong className="text-white/70">2 minutes</strong></span>
+            <span>Setup: <strong className="text-white/70">under 3 minutes</strong></span>
           </div>
           <div className="flex items-center gap-2 text-white/50">
             <CheckCircle2 className="w-4 h-4 text-emerald-400" />

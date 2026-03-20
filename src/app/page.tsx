@@ -15,6 +15,9 @@ const HomepageRoiCalculator = dynamic(
       (module) => module.HomepageRoiCalculator,
     ),
 );
+const SocialProof = dynamic(
+  () => import("@/components/sections/SocialProof").then((m) => m.SocialProof),
+);
 const ProblemStatement = dynamic(
   () => import("@/components/sections/ProblemStatement").then((m) => m.ProblemStatement),
 );
@@ -27,11 +30,17 @@ const PricingPreview = dynamic(
 const Industries = dynamic(
   () => import("@/components/sections/Industries").then((m) => m.Industries),
 );
+const HomepageVoicePreview = dynamic(
+  () => import("@/components/sections/HomepageVoicePreview").then((m) => m.HomepageVoicePreview),
+);
 const Differentiation = dynamic(
   () => import("@/components/sections/CompetitorComparison").then((m) => m.CompetitorComparison),
 );
 const HomepageModeSelector = dynamic(
   () => import("@/components/sections/HomepageModeSelector").then((m) => m.HomepageModeSelector),
+);
+const TestimonialsSection = dynamic(
+  () => import("@/components/sections/TestimonialsSection").then((m) => m.TestimonialsSection),
 );
 const FinalCTA = dynamic(
   () => import("@/components/sections/FinalCTA").then((m) => m.FinalCTA),
@@ -68,7 +77,7 @@ export default async function HomePage() {
                 name: "What exactly does Recall Touch do?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Recall Touch is an AI revenue operations platform. It handles inbound and outbound communication, automated follow-up sequences, appointment booking, lead qualification, escalation to your team, and full revenue attribution.",
+                  text: "Recall Touch is the AI employee that handles your phone calls — all of them. Inbound, outbound, follow-up, reminders, appointments, sales, support, and more. It works 24/7, gets smarter with every conversation, and costs less than a single hire.",
                 },
               },
               {
@@ -119,13 +128,16 @@ export default async function HomePage() {
       <main id="main">
         <Hero />
         <HomepageTrustBar />
+        <SocialProof />
         <ProblemStatement />
         <HomepageRoiCalculator />
         <HowItWorks />
         <Industries />
+        <HomepageVoicePreview />
         <Differentiation />
         <HomepageModeSelector />
         <PricingPreview />
+        <TestimonialsSection />
         <HomepageFAQ />
         <FinalCTA />
       </main>

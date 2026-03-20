@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import type { Agent } from "../AgentsPageClient";
-import type { CuratedVoice } from "@/lib/constants/curated-voices";
+import type { RecallVoice as CuratedVoice } from "@/lib/constants/recall-voices";
 import { Play, Square } from "lucide-react";
 
 type Props = {

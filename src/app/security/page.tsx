@@ -82,7 +82,7 @@ export default function SecurityPage() {
                   Access Control
                 </h2>
                 <p className="mt-3" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                  We rely on Supabase RLS policies to enforce workspace isolation. Your data is segmented by workspace, so queries and actions are constrained by tenant rules rather than trusting client input.
+                  We enforce row-level security policies to guarantee workspace isolation. Your data is segmented by workspace, so queries and actions are constrained by tenant rules rather than trusting client input.
                 </p>
               </div>
 
@@ -91,7 +91,7 @@ export default function SecurityPage() {
                   Rate Limiting
                 </h2>
                 <p className="mt-3" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                  Outbound operations and sensitive endpoints are protected with Upstash Redis rate limiting. This prevents burst abuse, supports predictable costs, and improves reliability during peak call volume.
+                  Outbound operations and sensitive endpoints are protected with distributed rate limiting. This prevents burst abuse, supports predictable costs, and improves reliability during peak call volume.
                 </p>
               </div>
 
@@ -118,7 +118,7 @@ export default function SecurityPage() {
                   Monitoring
                 </h2>
                 <p className="mt-3" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                  We use Sentry for error tracking and PostHog for analytics. This gives you visibility into reliability, performance, and conversion outcomes while keeping sensitive operational details out of client responses.
+                  We use enterprise-grade error tracking and analytics monitoring. This gives you visibility into reliability, performance, and conversion outcomes while keeping sensitive operational details out of client responses.
                 </p>
               </div>
 

@@ -39,6 +39,6 @@ export async function POST(req: NextRequest) {
     .select("id, name, phone, email, company, state, created_at")
     .maybeSingle();
 
-  if (error) return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   return NextResponse.json({ id: (data as { id: string }).id, ...(data as object) });
 }

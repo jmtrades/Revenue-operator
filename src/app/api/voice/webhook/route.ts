@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { createHmac } from "crypto";
+import { log } from "@/lib/logger";
 
 interface Transcript {
   timestamp: number;
@@ -57,9 +58,13 @@ interface VoiceWebhookBody {
 function verifyWebhookSignature(body: string, signature: string): boolean {
   const secret = process.env.VOICE_WEBHOOK_SECRET;
   if (!secret) {
-    console.warn(
-      "[voice-webhook] VOICE_WEBHOOK_SECRET not configured, skipping signature verification"
-    );
+    // Fail closed in production — reject all requests when secret is not configured
+    const isProduction = process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production";
+    if (isProduction) {
+      log("error", "voice_webhook.secret_not_configured", { message: "rejecting webhook — VOICE_WEBHOOK_SECRET must be set in production" });
+      return false;
+    }
+    log("warn", "voice_webhook.secret_not_configured", { message: "skipping signature verification in development" });
     return true;
   }
 
@@ -75,7 +80,7 @@ export async function POST(req: NextRequest) {
   const body = await req.text();
 
   if (!verifyWebhookSignature(body, signature ?? "")) {
-    console.error("[voice-webhook] Invalid signature");
+    log("error", "voice_webhook.invalid_signature", { message: "signature verification failed" });
     return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
       headers: { "Content-Type": "application/json" },
@@ -143,10 +148,7 @@ export async function POST(req: NextRequest) {
         .eq("id", callSessionId);
 
       if (updateError) {
-        console.error(
-          "[voice-webhook] Failed to update call_session:",
-          updateError
-        );
+        log("error", "voice_webhook.call_session_update_failed", { error: String(updateError) });
       }
 
       // If this was a test call and it finished successfully, unblock agent go-live.
@@ -157,15 +159,10 @@ export async function POST(req: NextRequest) {
           .eq("id", testAgentId);
       }
     } else {
-      console.warn(
-        `[voice-webhook] call_session not found for call_sid: ${payload.call_sid}`
-      );
+      log("warn", "voice_webhook.call_session_not_found", { call_sid: payload.call_sid });
     }
   } catch (err) {
-    console.error(
-      "[voice-webhook] Error updating call_session:",
-      err instanceof Error ? err.message : err
-    );
+    log("error", "voice_webhook.call_session_update_error", { error: err instanceof Error ? err.message : String(err) });
   }
 
   try {
@@ -183,13 +180,10 @@ export async function POST(req: NextRequest) {
     });
 
     if (usageError) {
-      console.error("[voice-webhook] Failed to insert voice_usage:", usageError);
+      log("error", "voice_webhook.voice_usage_insert_failed", { error: String(usageError) });
     }
   } catch (err) {
-    console.error(
-      "[voice-webhook] Error inserting voice_usage:",
-      err instanceof Error ? err.message : err
-    );
+    log("error", "voice_webhook.voice_usage_insert_error", { error: err instanceof Error ? err.message : String(err) });
   }
 
   try {
@@ -212,16 +206,10 @@ export async function POST(req: NextRequest) {
       });
 
     if (qualityError) {
-      console.error(
-        "[voice-webhook] Failed to insert voice_quality_logs:",
-        qualityError
-      );
+      log("error", "voice_webhook.quality_logs_insert_failed", { error: String(qualityError) });
     }
   } catch (err) {
-    console.error(
-      "[voice-webhook] Error inserting voice_quality_logs:",
-      err instanceof Error ? err.message : err
-    );
+    log("error", "voice_webhook.quality_logs_insert_error", { error: err instanceof Error ? err.message : String(err) });
   }
 
   // 4. Process tool calls (book_appointment, capture_lead, etc)
@@ -260,16 +248,25 @@ export async function POST(req: NextRequest) {
                   })
                   .eq("id", leadId);
 
-                // Create appointment record if appointments table exists
+                // Create appointment record — with idempotency check to prevent duplicate bookings
                 try {
-                  await db.from("appointments").insert({
-                    workspace_id: payload.workspace_id,
-                    lead_id: leadId,
-                    scheduled_at: `${appointmentDate}T${appointmentTime}`,
-                    source: "voice_call",
-                    call_session_id: callSessionId,
-                    status: "scheduled",
-                  });
+                  const { data: existingAppt } = await db
+                    .from("appointments")
+                    .select("id")
+                    .eq("call_session_id", callSessionId)
+                    .maybeSingle();
+                  if (!existingAppt) {
+                    await db.from("appointments").insert({
+                      workspace_id: payload.workspace_id,
+                      lead_id: leadId,
+                      scheduled_at: `${appointmentDate}T${appointmentTime}`,
+                      source: "voice_call",
+                      call_session_id: callSessionId,
+                      status: "scheduled",
+                    });
+                  } else {
+                    log("warn", "voice_webhook.duplicate_booking_prevented", { callSessionId, leadId });
+                  }
                 } catch {
                   // appointments table may not exist, that's okay
                 }
@@ -313,11 +310,26 @@ export async function POST(req: NextRequest) {
           }
         }
       } catch (toolErr) {
-        console.error(
-          `[voice-webhook] Failed to process tool call ${toolCall.name}:`,
-          toolErr instanceof Error ? toolErr.message : toolErr
-        );
+        log("error", "voice_webhook.tool_call_process_failed", { tool_name: toolCall.name, error: toolErr instanceof Error ? toolErr.message : String(toolErr) });
       }
+    }
+  }
+
+  // 5. Stop-on-reply: pause active follow-up sequences when a lead engages via call
+  if (callSessionId && payload.outcome === "completed" && payload.duration_seconds > 10) {
+    try {
+      const { data: callSessionForLead } = await db
+        .from("call_sessions")
+        .select("lead_id")
+        .eq("id", callSessionId)
+        .maybeSingle();
+      const leadId = (callSessionForLead as { lead_id?: string | null } | null)?.lead_id;
+      if (leadId) {
+        const { pauseOnLeadReply } = await import("@/lib/sequences/follow-up-engine");
+        await pauseOnLeadReply(payload.workspace_id, leadId, "call_completed");
+      }
+    } catch (err) {
+      log("warn", "voice_webhook.pause_on_reply_error", { error: err instanceof Error ? err.message : String(err) });
     }
   }
 

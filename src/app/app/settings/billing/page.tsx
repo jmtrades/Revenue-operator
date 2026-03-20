@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
@@ -8,10 +8,38 @@ import { useSearchParams } from "next/navigation";
 import { fetchWorkspaceMeCached, getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { PlanChangeModal, type PlanId } from "@/components/PlanChangeModal";
 
+interface MinutePack {
+  id: string;
+  minutes: number;
+  price_cents: number;
+  price_display: string;
+  per_minute_cents: number;
+  savings_pct: number;
+  popular: boolean;
+  best_value: boolean;
+}
+
+interface UsageAlertData {
+  level: string;
+  pct_used: number;
+  minutes_remaining: number;
+  days_remaining: number;
+  projected_overage_minutes: number;
+  projected_overage_cost_cents: number;
+  upsell: {
+    current_tier: string;
+    recommended_tier: string;
+    current_price: number;
+    recommended_price: number;
+    savings: number;
+    reason: string;
+  } | null;
+}
+
 type CancelStep = 0 | 1 | 2 | 3 | 4;
 type PauseStep = 0 | 1;
 
-const defaultUsage = { minutes_used: 0, minutes_limit: 400, calls: 0, leads: 0, estRevenue: 0 };
+const defaultUsage = { minutes_used: 0, minutes_limit: 500, calls: 0, leads: 0, estRevenue: 0 };
 
 export default function AppSettingsBillingPage() {
   const tNav = useTranslations("nav");
@@ -47,14 +75,54 @@ export default function AppSettingsBillingPage() {
   const [toast, setToast] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [billingError, setBillingError] = useState(false);
+  const [minutePacks, setMinutePacks] = useState<MinutePack[]>([]);
+  const [buyingPack, setBuyingPack] = useState<string | null>(null);
+  const [usageAlert, setUsageAlert] = useState<UsageAlertData | null>(null);
+  const [bonusMinutes, setBonusMinutes] = useState(0);
   const searchParams = useSearchParams();
 
   useEffect(() => {
     document.title = tBilling("pageTitle");
   }, [tBilling]);
 
+  // Fetch available minute packs
+  useEffect(() => {
+    fetch("/api/billing/buy-minutes")
+      .then((res) => res.json())
+      .then((data: { ok?: boolean; packs?: MinutePack[] }) => {
+        if (data?.packs) setMinutePacks(data.packs);
+      })
+      .catch(() => {});
+  }, []);
+
+  // Handle minute pack purchase
+  const handleBuyMinutes = useCallback(async (packId: string) => {
+    if (!workspaceId || buyingPack) return;
+    setBuyingPack(packId);
+    try {
+      const res = await fetch("/api/billing/buy-minutes", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ workspace_id: workspaceId, pack_id: packId }),
+      });
+      const data = (await res.json().catch(() => null)) as { ok?: boolean; url?: string; checkout_url?: string; reason?: string } | null;
+      if (data?.url || data?.checkout_url) {
+        window.location.href = data.url ?? data.checkout_url ?? "";
+      } else {
+        setToast(data?.reason === "subscription_required" ? "An active subscription is required to purchase minutes." : "Could not start purchase. Please try again.");
+      }
+    } catch {
+      setToast("Could not start purchase. Please try again.");
+    } finally {
+      setBuyingPack(null);
+    }
+  }, [workspaceId, buyingPack]);
+
   useEffect(() => {
     if (searchParams.get("plan_changed") === "1") setToast(tBilling("toast.planUpdated"));
+    const minutesPurchased = searchParams.get("minutes_purchased");
+    if (minutesPurchased) setToast(`${minutesPurchased} minutes added to your account!`);
   }, [searchParams, tBilling]);
 
   useEffect(() => {
@@ -117,6 +185,12 @@ export default function AppSettingsBillingPage() {
         if (typeof data.minutes_used === "number") {
           setUsage((prev) => ({ ...prev, minutes_used: data.minutes_used ?? prev.minutes_used, minutes_limit: data.minutes_limit ?? prev.minutes_limit }));
         }
+        if ((data as Record<string, unknown>).bonus_minutes != null) {
+          setBonusMinutes((data as Record<string, unknown>).bonus_minutes as number);
+        }
+        if ((data as Record<string, unknown>).usage_alert) {
+          setUsageAlert((data as Record<string, unknown>).usage_alert as UsageAlertData);
+        }
         const tier = (data as { billing_tier?: string })?.billing_tier?.toLowerCase();
         if (tier === "solo" || tier === "starter") setCurrentPlanId("starter");
         else if (tier === "growth") setCurrentPlanId("growth");
@@ -157,7 +231,7 @@ export default function AppSettingsBillingPage() {
         } catch {
           // If JSON parsing fails, use a generic message including status code
           if (res.status === 502) {
-            errorMessage = tBilling("toast.stripeFailed") ?? "Stripe service temporarily unavailable. Please try again later.";
+            errorMessage = tBilling("toast.stripeFailed") ?? "Billing service temporarily unavailable. Please try again later.";
           }
         }
         setToast(errorMessage);
@@ -255,7 +329,7 @@ export default function AppSettingsBillingPage() {
           </div>
         ) : (
           <>
-            <p className="text-sm font-medium text-[var(--text-primary)]">{tBilling("planDisplay", { plan: currentPlanId === "starter" ? "Starter" : currentPlanId === "growth" ? "Growth" : currentPlanId === "scale" ? "Scale" : "Starter", price: currentPlanId === "starter" ? "297" : currentPlanId === "growth" ? "497" : currentPlanId === "scale" ? "2400" : "297" })}</p>
+            <p className="text-sm font-medium text-[var(--text-primary)]">{tBilling("planDisplay", { plan: String(currentPlanId) === "starter" || String(currentPlanId) === "solo" ? "Starter" : String(currentPlanId) === "growth" || String(currentPlanId) === "business" ? "Growth" : String(currentPlanId) === "scale" ? "Business" : String(currentPlanId) === "enterprise" ? "Agency" : "Starter", price: String(currentPlanId) === "starter" || String(currentPlanId) === "solo" ? "97" : String(currentPlanId) === "growth" || String(currentPlanId) === "business" ? "297" : String(currentPlanId) === "scale" ? "597" : String(currentPlanId) === "enterprise" ? "997" : "97" })}</p>
             <p className="text-xs text-[var(--text-secondary)] mt-1">
               {tBilling("minutesUsed", { used: usage.minutes_used, limit: usage.minutes_limit })}
             </p>
@@ -296,6 +370,101 @@ export default function AppSettingsBillingPage() {
               Upgrade for more minutes
             </button>
           )}
+        </div>
+      )}
+      {/* Usage Alert Banner */}
+      {usageAlert && usageAlert.level !== "healthy" && (
+        <div className={`p-4 rounded-xl border mb-4 ${
+          usageAlert.level === "overage" || usageAlert.level === "critical"
+            ? "border-red-500/30 bg-red-500/10 text-red-100"
+            : usageAlert.level === "warning"
+              ? "border-amber-500/30 bg-amber-500/10 text-amber-100"
+              : "border-blue-500/30 bg-blue-500/10 text-blue-100"
+        }`}>
+          <p className="text-sm font-medium">
+            {usageAlert.level === "overage"
+              ? `You've exceeded your plan limit by ${usageAlert.projected_overage_minutes} minutes.`
+              : usageAlert.level === "critical"
+                ? `${usageAlert.pct_used.toFixed(0)}% of minutes used — ${usageAlert.minutes_remaining} minutes remaining.`
+                : `${usageAlert.pct_used.toFixed(0)}% of minutes used this period. ~${usageAlert.days_remaining} days left.`}
+          </p>
+          {usageAlert.projected_overage_cost_cents > 0 && (
+            <p className="text-xs mt-1 opacity-80">
+              Projected overage: ~${(usageAlert.projected_overage_cost_cents / 100).toFixed(2)} at current rate.
+            </p>
+          )}
+          {usageAlert.upsell && (
+            <p className="text-xs mt-1 opacity-80">
+              {usageAlert.upsell.reason}
+            </p>
+          )}
+          <div className="flex gap-2 mt-2">
+            {minutePacks.length > 0 && (
+              <button
+                type="button"
+                onClick={() => document.getElementById("minute-packs-section")?.scrollIntoView({ behavior: "smooth" })}
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-black hover:bg-zinc-100"
+              >
+                Buy More Minutes
+              </button>
+            )}
+            {usageAlert.upsell && (
+              <button
+                type="button"
+                onClick={() => setPlanChangeOpen(true)}
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-white/30 text-white hover:bg-white/10"
+              >
+                Upgrade to {usageAlert.upsell.recommended_tier}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+      {/* Bonus Minutes Display */}
+      {bonusMinutes > 0 && (
+        <div className="p-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4">
+          <p className="text-xs text-[var(--text-secondary)]">
+            Bonus minutes from purchased packs: <span className="text-white font-medium">{bonusMinutes.toLocaleString()} min</span>
+          </p>
+        </div>
+      )}
+      {/* Buy More Minutes Section */}
+      {minutePacks.length > 0 && (
+        <div id="minute-packs-section" className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4">
+          <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">Buy More Minutes</h3>
+          <p className="text-xs text-[var(--text-secondary)] mb-3">
+            One-time minute packs — use them anytime, no expiration. Bonus minutes are used before overage billing.
+          </p>
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
+            {minutePacks.map((pack) => (
+              <button
+                key={pack.id}
+                type="button"
+                onClick={() => handleBuyMinutes(pack.id)}
+                disabled={buyingPack !== null}
+                className={`relative text-left p-3 rounded-xl border transition-all ${
+                  pack.popular
+                    ? "border-white/30 bg-zinc-800/80 ring-1 ring-white/10"
+                    : pack.best_value
+                      ? "border-emerald-500/30 bg-emerald-500/5"
+                      : "border-[var(--border-default)] hover:border-[var(--border-medium)] hover:bg-[var(--bg-hover)]"
+                } ${buyingPack === pack.id ? "opacity-60" : "cursor-pointer"}`}
+              >
+                {pack.popular && (
+                  <span className="absolute -top-2 right-2 px-2 py-0.5 text-[9px] uppercase tracking-wide bg-white text-black rounded-full font-bold">Popular</span>
+                )}
+                {pack.best_value && (
+                  <span className="absolute -top-2 right-2 px-2 py-0.5 text-[9px] uppercase tracking-wide bg-emerald-500 text-white rounded-full font-bold">Best Value</span>
+                )}
+                <p className="text-white font-bold text-sm">{pack.minutes.toLocaleString()} min</p>
+                <p className="text-white text-lg font-bold mt-0.5">{pack.price_display}</p>
+                <p className="text-[var(--text-tertiary)] text-[10px] mt-1">
+                  ${(pack.per_minute_cents / 100).toFixed(3)}/min
+                  {pack.savings_pct > 0 && ` · ${pack.savings_pct}% off`}
+                </p>
+              </button>
+            ))}
+          </div>
         </div>
       )}
       <button

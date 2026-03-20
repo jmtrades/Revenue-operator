@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { getTelephonyService } from "@/lib/telephony";
 
 export async function POST(req: NextRequest) {
   let body: { workspace_id?: string };
@@ -25,60 +26,46 @@ export async function POST(req: NextRequest) {
   const { data: ws } = await db.from("workspaces").select("id").eq("id", workspace_id).maybeSingle();
   if (!ws) return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
 
-  const accountSid = process.env.TWILIO_ACCOUNT_SID;
-  const authToken = process.env.TWILIO_AUTH_TOKEN;
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl?.origin ?? "";
   const voiceWebhookUrl =
     process.env.VOICE_PROVIDER === "pipecat"
       ? `${baseUrl}/api/voice/connect`
       : `${baseUrl}/api/webhooks/twilio/voice`;
 
-  if (accountSid && authToken) {
-    try {
-      const searchUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/AvailablePhoneNumbers/US/Local.json?SmsEnabled=true&Limit=1`;
-      const searchRes = await fetch(searchUrl, {
-        headers: { Authorization: "Basic " + Buffer.from(`${accountSid}:${authToken}`).toString("base64") },
-      });
-      if (searchRes.ok) {
-        const data = (await searchRes.json()) as { available_phone_numbers?: Array<{ phone_number: string }> };
-        const num = data.available_phone_numbers?.[0]?.phone_number;
-        if (num && baseUrl) {
-          const purchaseUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/IncomingPhoneNumbers.json`;
-          const purchaseParams = new URLSearchParams({
-            PhoneNumber: num,
-            VoiceUrl: voiceWebhookUrl,
-            VoiceMethod: "POST",
-            SmsUrl: `${baseUrl}/api/webhooks/twilio/inbound`,
-            SmsMethod: "POST",
-            StatusCallback: `${baseUrl}/api/webhooks/twilio/status`,
-            StatusCallbackMethod: "POST",
-          });
-          const purchaseRes = await fetch(purchaseUrl, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-              Authorization: "Basic " + Buffer.from(`${accountSid}:${authToken}`).toString("base64"),
-            },
-            body: purchaseParams.toString(),
-          });
-          if (purchaseRes.ok) {
-            const purchaseJson = (await purchaseRes.json()) as { sid?: string };
-            const existing = await db.from("phone_configs").select("id").eq("workspace_id", workspace_id).maybeSingle();
-            if (!existing) {
-              await db.from("phone_configs").insert({
-                workspace_id,
-                proxy_number: num,
-                status: "active",
-                twilio_phone_sid: purchaseJson.sid ?? null,
-              });
-            }
-            return NextResponse.json({ phone_number: num });
-          }
-        }
-      }
-    } catch (e) {
-      // Provision error; response below
+  try {
+    const telephony = getTelephonyService();
+
+    // Search for available numbers with limit of 5
+    const searchResult = await telephony.searchAvailableNumbers({
+      areaCode: "US",
+      limit: 5,
+    });
+
+    if ("error" in searchResult || searchResult.length === 0) {
+      throw new Error("No available numbers");
     }
+
+    const num = searchResult[0].phone_number;
+
+    // Purchase the first available number
+    const purchaseResult = await telephony.purchaseNumber(num);
+
+    if ("error" in purchaseResult) {
+      throw new Error(purchaseResult.error);
+    }
+
+    const existing = await db.from("phone_configs").select("id").eq("workspace_id", workspace_id).maybeSingle();
+    if (!existing) {
+      await db.from("phone_configs").insert({
+        workspace_id,
+        proxy_number: num,
+        status: "active",
+        twilio_phone_sid: purchaseResult.numberId,
+      });
+    }
+    return NextResponse.json({ phone_number: num });
+  } catch (e) {
+    // Provision error; response below
   }
 
   const stubNumber = "+1 (555) 000-" + workspace_id.slice(0, 4);

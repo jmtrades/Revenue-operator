@@ -109,10 +109,10 @@ export default function SettingsBillingPage() {
       <PageHeader title="Billing & Subscription" subtitle="Manage your plan, usage, and payment." />
 
       <div className="flex items-center gap-2 mb-6 text-xs text-zinc-400">
-        <span className="px-2 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-300">
-          Demo data
+        <span className="px-2 py-0.5 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-300">
+          Preview
         </span>
-        <span>Billing will connect to Stripe once your account is live.</span>
+        <span>Billing will activate once your account is live.</span>
       </div>
 
       {/* Current plan card */}

@@ -225,8 +225,8 @@ export default function FollowUpsPage() {
             <div className="flex items-center gap-2 text-xs text-zinc-400">
               {!liveItems && (
                 <>
-                  <span className="px-2 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-300">
-                    Demo data
+                  <span className="px-2 py-0.5 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-300">
+                    Sample data
                   </span>
                   <span>Sequences will appear here once live traffic starts.</span>
                 </>
