@@ -1,63 +1,61 @@
 /**
- * System health probe for hosting and self-monitoring. API only, no UI.
+ * System health probe for hosting and self-monitoring.
  */
 
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
-import { getCronHeartbeats } from "@/lib/runtime/cron-heartbeat";
 
 export async function GET() {
-  let database: "ok" | "fail" = "fail";
+  const checks: Record<string, boolean> = {};
+  const start = Date.now();
+
+  // Database
   try {
     const db = getDb();
-    const { error } = await db.from("system_cron_heartbeats").select("job_name").limit(1);
-    database = error ? "fail" : "ok";
+    const { error } = await db.from("workspaces").select("id").limit(1);
+    checks.database = !error;
   } catch {
-    database = "fail";
+    checks.database = false;
   }
 
-  const stripePriceKeys = {
-    STRIPE_PRICE_SOLO_MONTH: !!process.env.STRIPE_PRICE_SOLO_MONTH,
-    STRIPE_PRICE_SOLO_YEAR: !!process.env.STRIPE_PRICE_SOLO_YEAR,
-    STRIPE_PRICE_GROWTH_MONTH: !!process.env.STRIPE_PRICE_GROWTH_MONTH,
-    STRIPE_PRICE_GROWTH_YEAR: !!process.env.STRIPE_PRICE_GROWTH_YEAR,
-    STRIPE_PRICE_TEAM_MONTH: !!process.env.STRIPE_PRICE_TEAM_MONTH,
-    STRIPE_PRICE_TEAM_YEAR: !!process.env.STRIPE_PRICE_TEAM_YEAR,
-  };
-  const hasStripePrice = Object.values(stripePriceKeys).some(Boolean);
-  const stripe: "ok" | "partial" | "missing" =
-    process.env.STRIPE_SECRET_KEY && process.env.STRIPE_WEBHOOK_SECRET && hasStripePrice
-      ? Object.values(stripePriceKeys).every(Boolean) ? "ok" : "partial"
-      : "missing";
-
-  let last_cron_execution: { commitment_recovery: string | null; settlement_export: string | null } = {
-    commitment_recovery: null,
-    settlement_export: null,
-  };
+  // Voice Server
   try {
-    const heartbeats = await getCronHeartbeats();
-    last_cron_execution = {
-      commitment_recovery: heartbeats["commitment-recovery"] ?? null,
-      settlement_export: heartbeats["settlement-export"] ?? null,
-    };
+    const res = await fetch(`${process.env.VOICE_SERVER_URL}/health`, {
+      signal: AbortSignal.timeout(3000),
+    });
+    checks.voice_server = res.ok;
   } catch {
-    // leave nulls
+    checks.voice_server = false;
   }
 
-  const system_ready = database === "ok";
-  const status = system_ready ? "ok" : "degraded";
+  // Redis
+  try {
+    const { checkRateLimit } = await import("@/lib/rate-limit");
+    const result = await checkRateLimit("health-check-ping", 1000, 60000);
+    checks.redis = result.allowed;
+  } catch {
+    checks.redis = false;
+  }
+
+  // Telnyx
+  try {
+    const res = await fetch("https://api.telnyx.com/v2/balance", {
+      headers: { Authorization: `Bearer ${process.env.TELNYX_API_KEY}` },
+      signal: AbortSignal.timeout(3000),
+    });
+    checks.telnyx = res.ok;
+  } catch {
+    checks.telnyx = false;
+  }
+
+  const allHealthy = Object.values(checks).every(Boolean);
 
   return NextResponse.json({
-    ok: system_ready,
-    status,
-    database,
-    stripe,
-    stripe_prices: stripePriceKeys,
-    has_stripe_secret: !!process.env.STRIPE_SECRET_KEY,
-    has_stripe_webhook_secret: !!process.env.STRIPE_WEBHOOK_SECRET,
-    last_cron_execution,
-    system_ready,
-  });
+    status: allHealthy ? "healthy" : "degraded",
+    checks,
+    latencyMs: Date.now() - start,
+    version: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || "dev",
+  }, { status: allHealthy ? 200 : 503 });
 }
