@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { Check } from "lucide-react";
@@ -20,6 +20,12 @@ const TIER_ROI_KEYS: Record<string, string> = {
 export function PricingPreview() {
   const t = useTranslations("homepage.pricingPreview");
   const [annual, setAnnual] = useState(false);
+  const hasAnnualPrices =
+    PRICING_TIERS.some((tier) => Boolean(tier.priceAnnual) && tier.priceAnnual !== tier.priceMonthly);
+
+  useEffect(() => {
+    if (!hasAnnualPrices) setAnnual(false);
+  }, [hasAnnualPrices]);
 
   return (
     <section id="pricing" className="marketing-section" style={{ background: "var(--bg-primary)" }}>
@@ -31,14 +37,46 @@ export function PricingPreview() {
           </h2>
         </AnimateOnScroll>
         <div className="flex items-center justify-center gap-3 mb-10">
-          <span className="text-sm font-medium" style={{ color: !annual ? "var(--text-primary)" : "var(--text-tertiary)" }}>{t("toggle.monthly")}</span>
-          <button type="button" role="switch" aria-checked={annual} onClick={() => setAnnual((a) => !a)} className="relative w-12 h-7 rounded-full border transition-colors" style={{ background: "var(--bg-surface)", borderColor: "var(--border-default)" }}>
-            <span className="absolute top-0.5 w-6 h-6 rounded-full transition-all duration-200" style={{ left: annual ? "calc(100% - 26px)" : "2px", background: annual ? "var(--accent-primary)" : "var(--text-tertiary)" }} />
-          </button>
-          <span className="text-sm font-medium flex items-center gap-2" style={{ color: annual ? "var(--text-primary)" : "var(--text-tertiary)" }}>
-            {t("toggle.annual")}
-            {annual && <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={{ background: "#22C55E20", color: "#22C55E" }}>{t("toggle.savings")}</span>}
+          <span
+            className="text-sm font-medium"
+            style={{ color: !annual ? "var(--text-primary)" : "var(--text-tertiary)" }}
+          >
+            {t("toggle.monthly")}
           </span>
+          {hasAnnualPrices ? (
+            <button
+              type="button"
+              role="switch"
+              aria-checked={annual}
+              onClick={() => setAnnual((a) => !a)}
+              className="relative w-12 h-7 rounded-full border transition-colors"
+              style={{ background: "var(--bg-surface)", borderColor: "var(--border-default)" }}
+            >
+              <span
+                className="absolute top-0.5 w-6 h-6 rounded-full transition-all duration-200"
+                style={{
+                  left: annual ? "calc(100% - 26px)" : "2px",
+                  background: annual ? "var(--accent-primary)" : "var(--text-tertiary)",
+                }}
+              />
+            </button>
+          ) : null}
+          {hasAnnualPrices ? (
+            <span
+              className="text-sm font-medium flex items-center gap-2"
+              style={{ color: annual ? "var(--text-primary)" : "var(--text-tertiary)" }}
+            >
+              {t("toggle.annual")}
+              {annual && (
+                <span
+                  className="text-xs font-medium px-2 py-0.5 rounded-full"
+                  style={{ background: "#22C55E20", color: "#22C55E" }}
+                >
+                  {t("toggle.savings")}
+                </span>
+              )}
+            </span>
+          ) : null}
         </div>
         <StaggerChildren className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {PRICING_TIERS.map((tier) => {
