@@ -778,7 +778,7 @@ export default function AppOnboardingPage() {
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="h-4 w-4 shrink-0 rounded-full border border-[var(--border-medium)] text-[var(--text-tertiary)]" aria-hidden />
-                  <span className="text-[var(--text-secondary)]">{t("phoneOptional")}</span>
+                  <span className="text-[var(--text-secondary)]">{t("phoneOptional")} <span className="text-amber-400 text-xs font-medium ml-1">Recommended</span></span>
                 </li>
               </ul>
             </div>

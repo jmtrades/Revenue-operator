@@ -29,9 +29,10 @@ export function SocialProof() {
       // ignore
     }
     try {
-      fetch("/api/waitlist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email.trim() }) }).catch(() => {});
-    } catch {
-      // silent fail
+      fetch("/api/waitlist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email.trim() }) })
+        .catch((err) => console.error("Waitlist submit error:", err));
+    } catch (err) {
+      console.error("Waitlist submit error:", err);
     }
     setSubmitted(true);
   };

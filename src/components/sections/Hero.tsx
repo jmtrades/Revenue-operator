@@ -9,15 +9,14 @@ import { ROUTES } from "@/lib/constants";
 import { ArrowRight, Play, Phone, Star, Shield, Users } from "lucide-react";
 
 const USE_CASES = [
-  "Answers missed calls instantly",
-  "Calls back leads in under 60 seconds",
-  "Books appointments automatically",
+  "Responds to every lead in under 60 seconds",
+  "Runs outbound campaigns while you sleep",
+  "Books, confirms, and reschedules automatically",
   "Follows up until the deal closes",
-  "Reminds customers about appointments",
-  "Handles support questions 24/7",
-  "Runs outbound campaigns at scale",
-  "Converts after-hours calls into booked appointments",
-  "Gets smarter with every single call",
+  "Qualifies inbound leads before they go cold",
+  "Recovers revenue from missed and after-hours calls",
+  "Routes high-value calls to the right person instantly",
+  "Replaces your entire phone workflow — not just answering",
 ];
 
 export function Hero() {
@@ -36,7 +35,7 @@ export function Hero() {
         <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div>
             <SectionLabel>
-              AI Phone Agents for Every Business
+              The AI-Powered Phone Platform
             </SectionLabel>
 
             <h1
@@ -47,11 +46,11 @@ export function Hero() {
                 lineHeight: 1.05,
               }}
             >
-              AI that makes and takes your phone calls.
+              Your entire phone operation, handled by AI.
             </h1>
 
             <p className="text-base md:text-lg max-w-xl mb-5 text-[var(--text-secondary)] leading-relaxed">
-              Answer every call. Follow up with every lead. Book every appointment. Recover every dollar. Your AI employee works 24/7, gets smarter with every conversation, and costs less than a single hire.
+              Inbound. Outbound. Follow-up. Booking. Routing. Escalation. One AI platform that replaces your phone team, recovers lost revenue, and runs 24/7 — at a fraction of the cost.
             </p>
 
             {/* Rotating use case ticker */}

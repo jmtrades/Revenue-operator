@@ -4,7 +4,7 @@ import Link from "next/link";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
-import { ArrowRight, Shield, Clock, CreditCard, Star, Users } from "lucide-react";
+import { ArrowRight, Shield, Clock, CreditCard } from "lucide-react";
 
 export function FinalCTA() {
   return (
@@ -59,19 +59,9 @@ export function FinalCTA() {
           </div>
 
           {/* Social proof */}
-          <div className="flex flex-wrap items-center justify-center gap-4 mt-6">
-            <div className="flex items-center gap-1">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
-              ))}
-              <span className="text-xs ml-1 text-white/40">4.9/5 from 3,200+ reviews</span>
-            </div>
-            <span className="text-white/10">|</span>
-            <span className="text-xs text-white/40 flex items-center gap-1">
-              <Users className="w-3 h-3" />
-              Trusted by <strong className="text-white/60">12,400+</strong> businesses
-            </span>
-          </div>
+          <p className="text-xs text-white/30 mt-6">
+            Trusted by thousands of businesses across 47 states.
+          </p>
         </AnimateOnScroll>
       </Container>
     </section>

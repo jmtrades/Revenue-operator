@@ -122,6 +122,7 @@ const DEMO_AB_TESTS: ABTest[] = [
 export default function VoicesSettingsPage() {
   const { workspaceId } = useWorkspace();
   const [voices, setVoices] = useState<Voice[]>(DEMO_VOICES);
+  const [hasRealData, setHasRealData] = useState(false);
   const [selectedVoiceId, setSelectedVoiceId] = useState<string>("voice_alex");
   const [voiceConfig, setVoiceConfig] = useState<WorkspaceVoiceConfig>({
     activeVoiceId: "voice_alex",
@@ -158,7 +159,10 @@ export default function VoicesSettingsPage() {
         });
         if (response.ok) {
           const data = await response.json();
-          setVoices(data.voices || DEMO_VOICES);
+          if (data.voices && data.voices.length > 0) {
+            setVoices(data.voices);
+            setHasRealData(true);
+          }
         }
       } catch {
         // Use demo data on error
@@ -575,193 +579,219 @@ export default function VoicesSettingsPage() {
           Voice Library
         </h2>
 
-        {/* Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 mb-6">
-          <input
-            type="text"
-            placeholder="Search voices..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="rounded-lg border px-3 py-2 text-sm"
-            style={{
-              borderColor: "var(--border-default)",
-              background: "var(--bg-primary)",
-              color: "var(--text-primary)",
-            }}
-          />
-          <select
-            value={filterGender}
-            onChange={(e) => setFilterGender(e.target.value)}
-            className="rounded-lg border px-3 py-2 text-sm"
-            style={{
-              borderColor: "var(--border-default)",
-              background: "var(--bg-primary)",
-              color: "var(--text-primary)",
-            }}
-          >
-            <option value="all">All Genders</option>
-            {genderOptions.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-          <select
-            value={filterAccent}
-            onChange={(e) => setFilterAccent(e.target.value)}
-            className="rounded-lg border px-3 py-2 text-sm"
-            style={{
-              borderColor: "var(--border-default)",
-              background: "var(--bg-primary)",
-              color: "var(--text-primary)",
-            }}
-          >
-            <option value="all">All Accents</option>
-            {uniqueAccents.map((accent) => (
-              <option key={accent} value={accent}>
-                {accent}
-              </option>
-            ))}
-          </select>
-          <select
-            value={filterIndustry}
-            onChange={(e) => setFilterIndustry(e.target.value)}
-            className="rounded-lg border px-3 py-2 text-sm"
-            style={{
-              borderColor: "var(--border-default)",
-              background: "var(--bg-primary)",
-              color: "var(--text-primary)",
-            }}
-          >
-            <option value="all">All Industries</option>
-            {uniqueIndustries.map((industry) => (
-              <option key={industry} value={industry}>
-                {industry}
-              </option>
-            ))}
-          </select>
-          <button
-            type="button"
-            onClick={() => setShowCloneModal(true)}
-            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-white text-black font-semibold px-3 py-2 text-sm hover:bg-zinc-100 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Clone Voice
-          </button>
-        </div>
-
-        {/* Voice Grid */}
-        {filteredVoices.length === 0 ? (
-          <EmptyState
-            icon="pulse"
-            title="No voices found"
-            subtitle="Try adjusting your filters."
-          />
+        {!hasRealData ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center max-w-sm">
+              <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-4">
+                <Crown className="w-8 h-8 text-emerald-400" />
+              </div>
+              <h3 style={{ color: "var(--text-primary)" }} className="text-lg font-semibold mb-2">
+                Configure your first AI voice
+              </h3>
+              <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
+                Choose from 41 premium voices or clone your own
+              </p>
+              <button
+                type="button"
+                onClick={() => setShowCloneModal(true)}
+                className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 text-black font-semibold px-4 py-2 text-sm hover:bg-emerald-400 transition-colors"
+              >
+                <Crown className="w-4 h-4" />
+                Browse Voices
+              </button>
+            </div>
+          </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredVoices.map((voice) => (
-              <div
-                key={voice.id}
-                className="rounded-xl border p-5 transition-all"
+          <>
+            {/* Filters */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 mb-6">
+              <input
+                type="text"
+                placeholder="Search voices..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="rounded-lg border px-3 py-2 text-sm"
                 style={{
-                  borderColor:
-                    voice.id === selectedVoiceId
-                      ? "var(--meaning-blue)"
-                      : "var(--border-default)",
-                  background:
-                    voice.id === selectedVoiceId
-                      ? "rgba(59, 130, 246, 0.08)"
-                      : "var(--bg-primary)",
+                  borderColor: "var(--border-default)",
+                  background: "var(--bg-primary)",
+                  color: "var(--text-primary)",
+                }}
+              />
+              <select
+                value={filterGender}
+                onChange={(e) => setFilterGender(e.target.value)}
+                className="rounded-lg border px-3 py-2 text-sm"
+                style={{
+                  borderColor: "var(--border-default)",
+                  background: "var(--bg-primary)",
+                  color: "var(--text-primary)",
                 }}
               >
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <p
-                      className="font-semibold"
-                      style={{ color: "var(--text-primary)" }}
-                    >
-                      {voice.name}
-                    </p>
-                    <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>
-                      {voice.gender === "male" ? "♂" : voice.gender === "female" ? "♀" : "◐"}{" "}
-                      {voice.accent}
-                    </p>
-                  </div>
-                  {voice.id === selectedVoiceId && (
-                    <Check className="w-5 h-5 text-emerald-400" />
-                  )}
-                </div>
+                <option value="all">All Genders</option>
+                {genderOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={filterAccent}
+                onChange={(e) => setFilterAccent(e.target.value)}
+                className="rounded-lg border px-3 py-2 text-sm"
+                style={{
+                  borderColor: "var(--border-default)",
+                  background: "var(--bg-primary)",
+                  color: "var(--text-primary)",
+                }}
+              >
+                <option value="all">All Accents</option>
+                {uniqueAccents.map((accent) => (
+                  <option key={accent} value={accent}>
+                    {accent}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={filterIndustry}
+                onChange={(e) => setFilterIndustry(e.target.value)}
+                className="rounded-lg border px-3 py-2 text-sm"
+                style={{
+                  borderColor: "var(--border-default)",
+                  background: "var(--bg-primary)",
+                  color: "var(--text-primary)",
+                }}
+              >
+                <option value="all">All Industries</option>
+                {uniqueIndustries.map((industry) => (
+                  <option key={industry} value={industry}>
+                    {industry}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={() => setShowCloneModal(true)}
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-white text-black font-semibold px-3 py-2 text-sm hover:bg-zinc-100 transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                Clone Voice
+              </button>
+            </div>
 
-                <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>
-                  {voice.tone}
-                </p>
-
-                {voice.industries.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mb-4">
-                    {voice.industries.map((ind) => (
-                      <span
-                        key={ind}
-                        className="text-[10px] px-2 py-1 rounded-full border"
-                        style={{
-                          borderColor: "var(--border-default)",
-                          background: "var(--bg-surface)",
-                          color: "var(--text-tertiary)",
-                        }}
-                      >
-                        {ind}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handlePreviewVoice(voice.id)}
-                    className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg border px-2.5 py-1.5 text-xs text-[var(--text-primary)] hover:bg-[var(--bg-inset)] transition-colors"
-                    style={{ borderColor: "var(--border-default)" }}
+            {/* Voice Grid */}
+            {filteredVoices.length === 0 ? (
+              <EmptyState
+                icon="pulse"
+                title="No voices found"
+                subtitle="Try adjusting your filters."
+              />
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredVoices.map((voice) => (
+                  <div
+                    key={voice.id}
+                    className="rounded-xl border p-5 transition-all"
+                    style={{
+                      borderColor:
+                        voice.id === selectedVoiceId
+                          ? "var(--meaning-blue)"
+                          : "var(--border-default)",
+                      background:
+                        voice.id === selectedVoiceId
+                          ? "rgba(59, 130, 246, 0.08)"
+                          : "var(--bg-primary)",
+                    }}
                   >
-                    {playingVoiceId === voice.id ? (
-                      <>
-                        <Pause className="w-3 h-3" />
-                        Stop
-                      </>
-                    ) : (
-                      <>
-                        <Play className="w-3 h-3" />
-                        Preview
-                      </>
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <p
+                          className="font-semibold"
+                          style={{ color: "var(--text-primary)" }}
+                        >
+                          {voice.name}
+                        </p>
+                        <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>
+                          {voice.gender === "male" ? "♂" : voice.gender === "female" ? "♀" : "◐"}{" "}
+                          {voice.accent}
+                        </p>
+                      </div>
+                      {voice.id === selectedVoiceId && (
+                        <Check className="w-5 h-5 text-emerald-400" />
+                      )}
+                    </div>
+
+                    <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>
+                      {voice.tone}
+                    </p>
+
+                    {voice.industries.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-4">
+                        {voice.industries.map((ind) => (
+                          <span
+                            key={ind}
+                            className="text-[10px] px-2 py-1 rounded-full border"
+                            style={{
+                              borderColor: "var(--border-default)",
+                              background: "var(--bg-surface)",
+                              color: "var(--text-tertiary)",
+                            }}
+                          >
+                            {ind}
+                          </span>
+                        ))}
+                      </div>
                     )}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleSelectVoice(voice.id)}
-                    className="flex-1 rounded-lg bg-emerald-500 text-black font-semibold text-xs px-2.5 py-1.5 hover:bg-emerald-400 transition-colors"
-                  >
-                    Select
-                  </button>
-                  {voice.isClone && (
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteClone(voice.id)}
-                      className="inline-flex items-center justify-center rounded-lg border border-red-500/30 px-2.5 py-1.5 text-xs text-red-400 hover:bg-red-500/10 transition-colors"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                    </button>
-                  )}
-                </div>
 
-                {voice.cloneProgress !== undefined && voice.cloneProgress < 100 && (
-                  <div className="mt-3 bg-[var(--bg-inset)] rounded-full h-1.5">
-                    <div
-                      className="bg-emerald-500 h-full rounded-full transition-all"
-                      style={{ width: `${voice.cloneProgress}%` }}
-                    />
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handlePreviewVoice(voice.id)}
+                        className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg border px-2.5 py-1.5 text-xs text-[var(--text-primary)] hover:bg-[var(--bg-inset)] transition-colors"
+                        style={{ borderColor: "var(--border-default)" }}
+                      >
+                        {playingVoiceId === voice.id ? (
+                          <>
+                            <Pause className="w-3 h-3" />
+                            Stop
+                          </>
+                        ) : (
+                          <>
+                            <Play className="w-3 h-3" />
+                            Preview
+                          </>
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSelectVoice(voice.id)}
+                        className="flex-1 rounded-lg bg-emerald-500 text-black font-semibold text-xs px-2.5 py-1.5 hover:bg-emerald-400 transition-colors"
+                      >
+                        Select
+                      </button>
+                      {voice.isClone && (
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteClone(voice.id)}
+                          className="inline-flex items-center justify-center rounded-lg border border-red-500/30 px-2.5 py-1.5 text-xs text-red-400 hover:bg-red-500/10 transition-colors"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
+
+                    {voice.cloneProgress !== undefined && voice.cloneProgress < 100 && (
+                      <div className="mt-3 bg-[var(--bg-inset)] rounded-full h-1.5">
+                        <div
+                          className="bg-emerald-500 h-full rounded-full transition-all"
+                          style={{ width: `${voice.cloneProgress}%` }}
+                        />
+                      </div>
+                    )}
                   </div>
-                )}
+                ))}
               </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
       </div>
 
@@ -780,17 +810,33 @@ export default function VoicesSettingsPage() {
           >
             A/B Testing
           </h2>
-          <button
-            type="button"
-            onClick={() => setShowTestModal(true)}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-white text-black font-semibold px-4 py-2 text-sm hover:bg-zinc-100 transition-colors"
-          >
-            <TrendingUp className="w-4 h-4" />
-            New Test
-          </button>
+          {hasRealData && (
+            <button
+              type="button"
+              onClick={() => setShowTestModal(true)}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-white text-black font-semibold px-4 py-2 text-sm hover:bg-zinc-100 transition-colors"
+            >
+              <TrendingUp className="w-4 h-4" />
+              New Test
+            </button>
+          )}
         </div>
 
-        {abTests.length === 0 ? (
+        {!hasRealData ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center max-w-sm">
+              <div className="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mx-auto mb-4">
+                <TrendingUp className="w-8 h-8 text-blue-400" />
+              </div>
+              <h3 style={{ color: "var(--text-primary)" }} className="text-lg font-semibold mb-2">
+                No active voice tests
+              </h3>
+              <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+                Create your first A/B test to optimize call performance
+              </p>
+            </div>
+          </div>
+        ) : abTests.length === 0 ? (
           <EmptyState
             icon="pulse"
             title="No A/B tests yet"
