@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { compileSystemPrompt } from "@/lib/business-brain";
 import { getVoiceProvider } from "@/lib/voice";
 import { DEFAULT_RECALL_VOICE_ID } from "@/lib/constants/recall-voices";
@@ -20,6 +21,16 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   const workspaceId = (agent as { workspace_id: string }).workspace_id;
   const err = await requireWorkspaceAccess(req, workspaceId);
   if (err) return err;
+
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit(`test-call:${workspaceId}`, 3, 60_000);
+  if (!rl.allowed) {
+    const retryAfterSeconds = Math.ceil((rl.resetAt - Date.now()) / 1000);
+    return NextResponse.json(
+      { error: "Too many requests" },
+      { status: 429, headers: { "Retry-After": String(Math.max(0, retryAfterSeconds)) } }
+    );
+  }
 
   let body: { phone_number?: string };
   try {
