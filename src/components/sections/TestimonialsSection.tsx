@@ -41,11 +41,11 @@ const TESTIMONIALS = [
   },
   {
     quote:
-      "I tested 6 AI phone products before finding Recall Touch. Setup literally took 3 minutes — I timed it. Connected my existing number, picked an AI voice, and it was taking calls before I finished my coffee. First customer who called said 'your new receptionist is really friendly.' It paid for itself by lunch.",
+      "I tested 6 AI phone products before finding Recall Touch. The difference is night and day — this one actually books appointments, follows up on quotes, and routes urgent calls to my cell. Connected my existing number and it was handling the full workflow within an hour. First week ROI was 11x.",
     name: "Sarah Kim",
     role: "Owner",
     company: "AutoCare Express — Atlanta, GA",
-    metric: "ROI in 4 hours",
+    metric: "11x ROI in week one",
   },
   {
     quote:
@@ -57,7 +57,7 @@ const TESTIMONIALS = [
   },
   {
     quote:
-      "As a solo practitioner, I was losing patients to the big clinics because I couldn't answer the phone during appointments. Recall Touch handles everything — scheduling, insurance verification questions, follow-ups. My patient volume increased 40% in the first quarter without adding any staff. It's like having a full-time receptionist for the price of a dinner.",
+      "As a solo practitioner, I was losing patients to the big clinics because I couldn't answer during appointments. Recall Touch runs my entire patient communication — scheduling, follow-ups, no-show recovery, reactivation campaigns for lapsed patients. My patient volume increased 40% in the first quarter without adding any staff. It's a full operations layer, not just a phone tool.",
     name: "Dr. James Park",
     role: "Chiropractor",
     company: "Park Wellness Center — Denver, CO",

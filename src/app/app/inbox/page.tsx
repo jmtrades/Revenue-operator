@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
+import { toast } from "sonner";
 
 type InboxChannel = "phone" | "sms" | "email" | "whatsapp";
 type InboxStatus = "Open" | "Resolved" | "Pending";
@@ -494,7 +495,10 @@ export default function InboxPage() {
           persistInboxSnapshot(workspaceId, list);
         }
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.error("Inbox fetch error:", err);
+        toast.error("Failed to load messages");
+      });
   }, [workspaceId]);
 
   useEffect(() => {
@@ -517,8 +521,9 @@ export default function InboxPage() {
             persistInboxSnapshot(workspaceId, list);
           }
         })
-        .catch(() => {
-          // Silent fail on polling errors
+        .catch((err) => {
+          console.error("Inbox fetch error:", err);
+          toast.error("Failed to load messages");
         });
     }, 30000); // Poll every 30 seconds
 

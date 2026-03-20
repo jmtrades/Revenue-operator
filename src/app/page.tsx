@@ -2,9 +2,7 @@ import { cookies } from "next/headers";
 import dynamic from "next/dynamic";
 import { Navbar } from "@/components/sections/Navbar";
 import { Hero } from "@/components/sections/Hero";
-import { HomepageTrustBar } from "@/components/sections/HomepageTrustBar";
-
-// V8: Homepage reduced to 10 core sections (see master prompt).
+// V9: Homepage streamlined to 10 high-impact sections.
 const HomepageFAQ = dynamic(
   () => import("@/components/sections/HomepageFAQ").then((m) => m.HomepageFAQ),
 );
@@ -18,9 +16,7 @@ const HomepageRoiCalculator = dynamic(
 const SocialProof = dynamic(
   () => import("@/components/sections/SocialProof").then((m) => m.SocialProof),
 );
-const ProblemStatement = dynamic(
-  () => import("@/components/sections/ProblemStatement").then((m) => m.ProblemStatement),
-);
+// ProblemStatement removed — loss-psychology framing replaced by ROI calculator
 const HowItWorks = dynamic(
   () => import("@/components/sections/HowItWorks").then((m) => m.HowItWorks),
 );
@@ -33,9 +29,7 @@ const Industries = dynamic(
 const HomepageVoicePreview = dynamic(
   () => import("@/components/sections/HomepageVoicePreview").then((m) => m.HomepageVoicePreview),
 );
-const HomepageModeSelector = dynamic(
-  () => import("@/components/sections/HomepageModeSelector").then((m) => m.HomepageModeSelector),
-);
+// HomepageModeSelector removed — merged into HowItWorks flow
 const TestimonialsSection = dynamic(
   () => import("@/components/sections/TestimonialsSection").then((m) => m.TestimonialsSection),
 );
@@ -124,16 +118,13 @@ export default async function HomePage() {
       <Navbar initialAuthenticated={initialAuthenticated} />
       <main id="main">
         <Hero />
-        <HomepageTrustBar />
         <SocialProof />
-        <ProblemStatement />
-        <HomepageRoiCalculator />
         <HowItWorks />
-        <Industries />
         <HomepageVoicePreview />
-        <HomepageModeSelector />
-        <PricingPreview />
+        <Industries />
+        <HomepageRoiCalculator />
         <TestimonialsSection />
+        <PricingPreview />
         <HomepageFAQ />
         <FinalCTA />
       </main>
