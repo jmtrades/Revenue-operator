@@ -19,10 +19,10 @@ export type PlanOption = {
 const PLAN_ORDER: PlanId[] = ["starter", "growth", "scale", "enterprise"];
 
 const PLAN_PRICES: Record<PlanId, { price: number | null; minutes: number | null }> = {
-  starter: { price: 297, minutes: 400 },
-  growth: { price: 497, minutes: 1500 },
-  scale: { price: 2400, minutes: 5000 },
-  enterprise: { price: null, minutes: null },
+  starter: { price: 97, minutes: 500 },
+  growth: { price: 297, minutes: 2500 },
+  scale: { price: 597, minutes: 6000 },
+  enterprise: { price: 997, minutes: 15000 },
 };
 
 type PlanChangeModalProps = {
@@ -57,20 +57,16 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
   const selectedPlan = PLANS.find((p) => p.id === selected);
   const currentIndex = PLAN_ORDER.indexOf(currentPlanId);
   const selectedIndex = PLAN_ORDER.indexOf(selected);
-  const isUpgrade = selectedIndex > currentIndex && selected !== "enterprise";
+  const isUpgrade = selectedIndex > currentIndex;
 
   const handleContinue = () => {
-    if (selected === "enterprise") {
-      window.location.href = "mailto:team@recall-touch.com?subject=Enterprise%20plan%20inquiry";
-      return;
-    }
     if (selected === currentPlanId) return;
     setStep("confirm");
     setError(null);
   };
 
   const handleConfirm = async () => {
-    if (selected === "enterprise" || !workspaceId) return;
+    if (!workspaceId) return;
     if (currentPlanId === "starter" && selected === "growth") {
       track("upgrade_clicked", { from: "solo", to: "business" });
     }
@@ -198,7 +194,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
                   disabled={selected === currentPlanId}
                   className="px-6 py-2.5 bg-white text-gray-900 font-semibold rounded-xl text-sm disabled:opacity-30 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
                 >
-                  {selected === "enterprise" ? tPlan("contactUs") : tPlan("continue")}
+                  {tPlan("continue")}
                 </button>
               </div>
             </>

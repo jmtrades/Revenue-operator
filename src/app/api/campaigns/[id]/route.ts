@@ -50,6 +50,6 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
     updates.target_filter = body.target_filter;
   }
   const { data: campaign, error } = await db.from("campaigns").update(updates).eq("id", id).select().maybeSingle();
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   return NextResponse.json(campaign);
 }

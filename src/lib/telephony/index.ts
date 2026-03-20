@@ -76,8 +76,8 @@ function createTelnyxService(): TelephonyService {
         phone_number: n.phone_number,
         friendly_name: n.phone_number,
         type: (params.phoneType || "local") as "local" | "toll_free" | "mobile",
-        monthly_cost_cents: params.phoneType === "toll_free" ? 500 : 300,
-        setup_fee_cents: 100,
+        monthly_cost_cents: params.phoneType === "toll_free" ? 800 : 500,
+        setup_fee_cents: 200,
         capabilities: n.capabilities,
       }));
     },

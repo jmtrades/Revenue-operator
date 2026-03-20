@@ -6,7 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { previewVoiceViaApi } from "@/lib/voice-preview";
 import { RECALL_VOICES, DEFAULT_RECALL_VOICE_ID } from "@/lib/constants/recall-voices";
 import { getServicesForIndustry } from "@/lib/constants/industries";
-import type { ActivationState, ElevenLabsVoice, StepId } from "./steps/types";
+import type { ActivationState, VoiceOption, StepId } from "./steps/types";
 import { DEFAULT_HOURS, STEPS } from "./steps/types";
 import { ModeStep } from "./steps/ModeStep";
 import { PackBusinessStep } from "./steps/PackBusinessStep";
@@ -39,6 +39,7 @@ export function ActivateWizard() {
     preferredLanguage: "en",
     voiceId: DEFAULT_RECALL_VOICE_ID,
   }));
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -127,7 +128,7 @@ export function ActivateWizard() {
     () => RECALL_VOICES.map((v) => ({ id: v.id, name: v.name, labels: {} as Record<string, string>, category: v.accent })),
     []
   );
-  const [voices, _setVoices] = useState<ElevenLabsVoice[]>(() => recallVoiceList);
+  const [voices, _setVoices] = useState<VoiceOption[]>(() => recallVoiceList);
 
   const handlePlayTestGreeting = () => {
     const voiceText =
@@ -178,9 +179,13 @@ export function ActivateWizard() {
       });
       if (!res.ok) {
         console.error("[activate] Onboard API returned", res.status);
+        setError("Something went wrong setting up your workspace. Please try again.");
+        return;
       }
     } catch (err) {
       console.error("[activate] Onboard failed:", err instanceof Error ? err.message : err);
+      setError("Connection error. Please check your internet and try again.");
+      return;
     }
     if (typeof localStorage !== "undefined") localStorage.setItem("rt_onboarded", "true");
     window.location.href = "/app/activity";
@@ -189,6 +194,13 @@ export function ActivateWizard() {
   return (
     <Container>
       <div className="max-w-4xl mx-auto">
+        {error && (
+          <div className="mb-6 rounded-2xl border border-red-500/30 bg-red-950/30 px-5 py-4">
+            <p className="text-sm font-semibold text-red-300">Setup Error</p>
+            <p className="mt-1 text-sm text-red-200/80">{error}</p>
+            <button type="button" onClick={() => setError(null)} className="mt-2 text-xs text-red-400 hover:text-red-300 underline">Dismiss</button>
+          </div>
+        )}
         {emailVerified === false && (
           <div className="mb-6 rounded-2xl border border-slate-800 bg-slate-950/40 px-5 py-4">
             <p className="text-sm font-semibold text-slate-50">{t("emailNotVerifiedBannerTitle")}</p>

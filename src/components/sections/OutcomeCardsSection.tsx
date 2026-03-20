@@ -21,21 +21,21 @@ export function OutcomeCardsSection() {
     () => [
       {
         name: t("pricingTiers.starter.name"),
-        price: "$297",
+        price: "$97",
         tagline: t("pricingTiers.starter.tagline"),
         features: [t("pricingTiers.starter.f1"), t("pricingTiers.starter.f2"), t("pricingTiers.starter.f3"), t("pricingTiers.starter.f4")],
         badge: null as string | null,
       },
       {
         name: t("pricingTiers.growth.name"),
-        price: "$497",
+        price: "$297",
         tagline: t("pricingTiers.growth.tagline"),
         features: [t("pricingTiers.growth.f1"), t("pricingTiers.growth.f2"), t("pricingTiers.growth.f3"), t("pricingTiers.growth.f4")],
         badge: t("pricingTiers.badgePopular"),
       },
       {
         name: t("pricingTiers.scale.name"),
-        price: "$2,400",
+        price: "$597",
         tagline: t("pricingTiers.scale.tagline"),
         features: [t("pricingTiers.scale.f1"), t("pricingTiers.scale.f2"), t("pricingTiers.scale.f3"), t("pricingTiers.scale.f4")],
         badge: null as string | null,

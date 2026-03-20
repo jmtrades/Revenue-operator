@@ -28,6 +28,30 @@ interface Handoff {
   when: string;
   decision_needed: string;
 }
+interface QuickStats {
+  active_leads: number;
+  recent_calls: number;
+  pending_followups: number;
+}
+interface RevenueAtRisk {
+  total_at_risk: number;
+  avg_deal_value: number;
+  categories: Array<{
+    key: string;
+    label: string;
+    count: number;
+    estimatedRevenue: number;
+    action: string;
+    actionLabel: string;
+  }>;
+}
+interface KnowledgeGap {
+  id: string;
+  question: string;
+  occurrences: number;
+  first_seen_at: string;
+  last_seen_at: string;
+}
 
 export default function SituationPage() {
   const searchParams = useSearchParams();
@@ -36,6 +60,9 @@ export default function SituationPage() {
   const [retention, setRetention] = useState<RetentionPayload | null>(null);
   const [handoffs, setHandoffs] = useState<Handoff[]>([]);
   const [beyondScope, setBeyondScope] = useState(false);
+  const [stats, setStats] = useState<QuickStats | null>(null);
+  const [revenueRisk, setRevenueRisk] = useState<RevenueAtRisk | null>(null);
+  const [gaps, setGaps] = useState<KnowledgeGap[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -51,13 +78,19 @@ export default function SituationPage() {
       fetchWithFallback<Capsule>(`/api/operational/operator-capsule?workspace_id=${encodeURIComponent(workspaceId)}`),
       fetchWithFallback<RetentionPayload>(`/api/operational/retention-intercept?workspace_id=${encodeURIComponent(workspaceId)}`),
       fetchWithFallback<{ handoffs: Handoff[]; beyond_scope?: boolean }>(`/api/handoffs?workspace_id=${encodeURIComponent(workspaceId)}`),
-    ]).then(([capRes, retRes, handRes]) => {
+      fetchWithFallback<QuickStats>(`/api/dashboard/quick-stats?workspace_id=${encodeURIComponent(workspaceId)}`),
+      fetchWithFallback<RevenueAtRisk>(`/api/dashboard/revenue-at-risk?workspace_id=${encodeURIComponent(workspaceId)}`),
+      fetchWithFallback<{ gaps: KnowledgeGap[]; total: number }>(`/api/dashboard/knowledge-gaps?workspace_id=${encodeURIComponent(workspaceId)}`),
+    ]).then(([capRes, retRes, handRes, statsRes, riskRes, gapsRes]) => {
       if (capRes.data) setCapsule(capRes.data);
       if (retRes.data) setRetention(retRes.data);
       if (handRes.data?.handoffs) {
         setHandoffs(handRes.data.handoffs);
         setBeyondScope(handRes.data.beyond_scope === true);
       }
+      if (statsRes.data) setStats(statsRes.data);
+      if (riskRes.data) setRevenueRisk(riskRes.data);
+      if (gapsRes.data?.gaps) setGaps(gapsRes.data.gaps);
     }).finally(() => setLoading(false));
   }, [workspaceId]);
 
@@ -128,19 +161,79 @@ export default function SituationPage() {
         Handling active. Commitments secured. Compliance enforced. Confirmation recorded.
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-        <div className="rounded-lg border p-4" style={{ borderColor: "var(--border)", background: "var(--card)" }}>
-          <p className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>—</p>
-          <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Active records</p>
-        </div>
-        <div className="rounded-lg border p-4" style={{ borderColor: "var(--border)", background: "var(--card)" }}>
-          <p className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>—</p>
-          <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Recent calls</p>
-        </div>
-        <div className="rounded-lg border p-4" style={{ borderColor: "var(--border)", background: "var(--card)" }}>
-          <p className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>—</p>
+        <Link href={`/dashboard/leads${searchParams.toString() ? `?${searchParams.toString()}` : ""}`} className="rounded-lg border p-4 transition-colors hover:border-emerald-500/30" style={{ borderColor: "var(--border)", background: "var(--card)" }}>
+          <p className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>{stats?.active_leads ?? "—"}</p>
+          <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Active leads</p>
+        </Link>
+        <Link href={callsHref} className="rounded-lg border p-4 transition-colors hover:border-emerald-500/30" style={{ borderColor: "var(--border)", background: "var(--card)" }}>
+          <p className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>{stats?.recent_calls ?? "—"}</p>
+          <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Calls this week</p>
+        </Link>
+        <Link href={`/dashboard/leads?filter=followup${searchParams.get("workspace_id") ? `&workspace_id=${searchParams.get("workspace_id")}` : ""}`} className="rounded-lg border p-4 transition-colors hover:border-emerald-500/30" style={{ borderColor: "var(--border)", background: "var(--card)" }}>
+          <p className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>{stats?.pending_followups ?? "—"}</p>
           <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Pending follow-ups</p>
-        </div>
+        </Link>
       </div>
+      {/* Revenue At Risk Widget */}
+      {revenueRisk && revenueRisk.categories.length > 0 && (
+        <div className="mb-10 rounded-lg border p-5" style={{ borderColor: "var(--border)", background: "var(--card)" }}>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Revenue At Risk</h2>
+              <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>Estimated revenue leaking this week</p>
+            </div>
+            <p className="text-2xl font-bold text-red-400">${revenueRisk.total_at_risk.toLocaleString()}</p>
+          </div>
+          <div className="space-y-3">
+            {revenueRisk.categories.map((cat) => (
+              <div key={cat.key} className="flex items-center justify-between gap-4 py-2 border-t" style={{ borderColor: "var(--border)" }}>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm" style={{ color: "var(--text-primary)" }}>
+                    {cat.label}
+                    <span className="ml-2 text-xs px-1.5 py-0.5 rounded" style={{ background: "rgba(239,68,68,0.1)", color: "rgb(239,68,68)" }}>
+                      {cat.count}
+                    </span>
+                  </p>
+                  <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>~${cat.estimatedRevenue.toLocaleString()} at risk</p>
+                </div>
+                <Link
+                  href={cat.action}
+                  className="text-xs font-medium px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors"
+                  style={{ background: "rgba(16,185,129,0.1)", color: "rgb(16,185,129)" }}
+                >
+                  {cat.actionLabel}
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Knowledge Gaps */}
+      {gaps.length > 0 && (
+        <div className="mb-10 rounded-lg border p-5" style={{ borderColor: "var(--border)", background: "var(--card)" }}>
+          <h2 className="text-sm font-semibold mb-1" style={{ color: "var(--text-primary)" }}>AI Knowledge Gaps</h2>
+          <p className="text-xs mb-4" style={{ color: "var(--text-muted)" }}>Your AI couldn&apos;t answer these questions. Add answers to make it smarter.</p>
+          <div className="space-y-2">
+            {gaps.slice(0, 5).map((gap) => (
+              <div key={gap.id} className="flex items-center justify-between gap-4 py-2 border-t" style={{ borderColor: "var(--border)" }}>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm truncate" style={{ color: "var(--text-primary)" }}>&ldquo;{gap.question}&rdquo;</p>
+                  <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>Asked {gap.occurrences}x</p>
+                </div>
+                <Link
+                  href={`/dashboard/agents?gap=${gap.id}`}
+                  className="text-xs font-medium px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors"
+                  style={{ background: "rgba(59,130,246,0.1)", color: "rgb(59,130,246)" }}
+                >
+                  Add answer
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="mb-10">
         <h2 className="text-sm font-medium mb-2" style={{ color: "var(--text-muted)", letterSpacing: "0.02em" }}>Recent records</h2>
         <p className="text-sm" style={{ color: "var(--text-secondary)" }}>

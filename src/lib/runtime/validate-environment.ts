@@ -10,6 +10,18 @@ const REQUIRED = [
   "CRON_SECRET",
 ] as const;
 
+const REQUIRED_TELEPHONY = [
+  "TELNYX_API_KEY",
+  "TELNYX_CONNECTION_ID",
+  "TELNYX_MESSAGING_PROFILE_ID",
+  "TELNYX_PUBLIC_KEY",
+] as const;
+
+const OPTIONAL_TELEPHONY_LEGACY = [
+  "TWILIO_ACCOUNT_SID",
+  "TWILIO_AUTH_TOKEN",
+] as const;
+
 const OPTIONAL_STRIPE = [
   "STRIPE_SECRET_KEY",
   "STRIPE_WEBHOOK_SECRET",
@@ -41,6 +53,38 @@ export function validateEnvironment(): void {
     throw new Error(
       `Missing required environment variables: ${missingRequired.join(", ")}. Server cannot start.`
     );
+  }
+
+  // Telephony: Telnyx is required when TELEPHONY_PROVIDER is "telnyx" (default)
+  const provider = process.env.TELEPHONY_PROVIDER || "telnyx";
+  if (provider === "telnyx") {
+    const missingTelnyx: string[] = [];
+    for (const key of REQUIRED_TELEPHONY) {
+      const v = process.env[key];
+      if (v === undefined || v === "") missingTelnyx.push(key);
+    }
+    if (missingTelnyx.length > 0) {
+      const msg = `Telnyx is primary telephony provider but keys missing: ${missingTelnyx.join(", ")}. Calls and SMS will fail.`;
+      if (process.env.NODE_ENV === "production") {
+        throw new Error(msg);
+      }
+      logStructured("warning", "telephony_telnyx_missing", {
+        message: msg,
+        missing: missingTelnyx,
+      });
+    }
+  }
+
+  // Legacy Twilio: warn if configured but not primary
+  if (provider !== "twilio") {
+    const hasTwilio = OPTIONAL_TELEPHONY_LEGACY.every(
+      (key) => process.env[key] !== undefined && process.env[key] !== ""
+    );
+    if (!hasTwilio) {
+      logStructured("info", "telephony_twilio_not_configured", {
+        message: "Twilio credentials not set — Telnyx is primary, this is expected",
+      });
+    }
   }
 
   if (isSettlementEnabled()) {

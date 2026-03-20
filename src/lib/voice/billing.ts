@@ -10,38 +10,38 @@ import type { BillingTier } from "@/lib/feature-gate/types";
 /** Voice tier limits — included in base plan (aligned with billing-plans.ts) */
 export const VOICE_TIER_LIMITS = {
   solo: {
-    voice_minutes: 100, // 100 min included (matches billing-plans.ts)
-    voice_clones: 0, // No cloning on solo
+    voice_minutes: 500, // 500 min included (Starter plan)
+    voice_clones: 0, // No cloning on Starter
     ab_tests: 0, // No A/B testing
     concurrent_calls: 2, // 2 simultaneous
-    voices_available: 6, // Standard voices only
-    premium_voices: false, // ElevenLabs premium = add-on
+    voices_available: 8, // Standard voices only
+    premium_voices: false,
     custom_emotions: false,
   },
   business: {
-    voice_minutes: 500, // 500 min included (matches billing-plans.ts)
+    voice_minutes: 2500, // 2,500 min included (Growth plan)
     voice_clones: 3, // 3 cloned voices
     ab_tests: 2, // 2 concurrent A/B tests
     concurrent_calls: 10, // 10 simultaneous
-    voices_available: 40, // Full library
+    voices_available: 16, // Growth library
     premium_voices: true,
     custom_emotions: true,
   },
   scale: {
-    voice_minutes: 3000, // 3000 min included (matches billing-plans.ts)
+    voice_minutes: 6000, // 6,000 min included (Business plan)
     voice_clones: 10, // 10 cloned voices
     ab_tests: 5, // 5 concurrent A/B tests
     concurrent_calls: 25, // 25 simultaneous
-    voices_available: 40, // Full library + priority
+    voices_available: 30, // Full library + priority
     premium_voices: true,
     custom_emotions: true,
   },
   enterprise: {
-    voice_minutes: -1, // Unlimited
+    voice_minutes: 15000, // 15,000 min included (Agency plan)
     voice_clones: -1, // Unlimited
     ab_tests: -1, // Unlimited
     concurrent_calls: 100, // Custom
-    voices_available: 40,
+    voices_available: 41, // All voices including premium
     premium_voices: true,
     custom_emotions: true,
   },
@@ -51,14 +51,13 @@ export type VoiceTierLimits = (typeof VOICE_TIER_LIMITS)[BillingTier];
 
 /**
  * Voice overage rates — tiered per billing-plans.ts:
- * Solo: $0.30/min, Business: $0.20/min, Scale: $0.12/min
- * At Phase 2 COGS of $0.058/min, margins are 5.2x / 3.4x / 2.1x respectively.
+ * Starter: $0.10/min, Growth: $0.10/min, Business: $0.08/min, Agency: $0.07/min
  */
 export const VOICE_OVERAGE_RATES = {
-  solo_per_minute_cents: 30, // $0.30/min (matches billing-plans.ts)
-  business_per_minute_cents: 20, // $0.20/min
-  scale_per_minute_cents: 12, // $0.12/min
-  enterprise_per_minute_cents: 0, // Negotiated
+  solo_per_minute_cents: 10, // $0.10/min (Starter)
+  business_per_minute_cents: 10, // $0.10/min (Growth)
+  scale_per_minute_cents: 8, // $0.08/min (Business)
+  enterprise_per_minute_cents: 7, // $0.07/min (Agency)
   voice_clone_monthly: 1500, // $15/mo per extra clone slot
   ab_test_monthly: 500, // $5/mo per extra A/B test
 };
@@ -188,7 +187,7 @@ export async function getVoiceUsage(workspaceId: string): Promise<VoiceUsageMetr
 
   const overageMinutes = Math.max(0, minutesUsed - limits.voice_minutes);
   const overageRateKey = `${tier}_per_minute_cents` as keyof typeof VOICE_OVERAGE_RATES;
-  const overageRate = (VOICE_OVERAGE_RATES[overageRateKey] as number) || 20; // default to business rate
+  const overageRate = (VOICE_OVERAGE_RATES[overageRateKey] as number) || 7; // default to lowest (enterprise) rate — never overcharge
   const estimatedOverageCents = overageMinutes * overageRate;
 
   return {
@@ -328,6 +327,322 @@ export async function calculateVoiceOverage(workspaceId: string): Promise<VoiceO
     clone_overages_monthly: cloneOveragesCents,
     ab_test_overages_monthly: testOveragesCents,
     total_overage_cents: totalOverageCents,
-    rate_per_minute_cents: (VOICE_OVERAGE_RATES[`${tier}_per_minute_cents` as keyof typeof VOICE_OVERAGE_RATES] as number) || 20,
+    rate_per_minute_cents: (VOICE_OVERAGE_RATES[`${tier}_per_minute_cents` as keyof typeof VOICE_OVERAGE_RATES] as number) || 7,
   };
+}
+
+// ─── PROFITABILITY ENGINE ─────────────────────────────────────────────
+// Smart usage alerts + upsell triggers that maximize MRR while keeping users happy.
+
+export type UsageAlertLevel = "healthy" | "approaching" | "warning" | "critical" | "overage";
+
+export interface UsageAlert {
+  level: UsageAlertLevel;
+  pctUsed: number;
+  minutesRemaining: number;
+  daysRemaining: number;
+  projectedOverageMinutes: number;
+  projectedOverageCost: number;
+  upsellRecommendation: UpsellRecommendation | null;
+}
+
+export interface UpsellRecommendation {
+  currentTier: string;
+  recommendedTier: string;
+  currentPrice: number;
+  recommendedPrice: number;
+  savings: number; // How much they'd save vs overage if they upgrade
+  reason: string;
+}
+
+const TIER_PRICES_MONTHLY: Record<string, number> = {
+  solo: 9700,      // $97
+  business: 29700, // $297
+  scale: 59700,    // $597
+  enterprise: 99700, // $997
+};
+
+const TIER_UPGRADE_PATH: Record<string, string> = {
+  solo: "business",
+  business: "scale",
+  scale: "enterprise",
+};
+
+/**
+ * Evaluate usage and return alert level + smart upsell recommendation.
+ * Called by dashboard, billing page, and notification system.
+ */
+export function evaluateUsageAlert(usage: VoiceUsageMetrics, tier: string): UsageAlert {
+  const pctUsed = usage.minutes_pct;
+  const daysInPeriod = Math.max(1, Math.ceil(
+    (new Date(usage.billing_period_end).getTime() - new Date(usage.billing_period_start).getTime()) / 86400000
+  ));
+  const daysElapsed = Math.max(1, Math.ceil(
+    (Date.now() - new Date(usage.billing_period_start).getTime()) / 86400000
+  ));
+  const daysRemaining = Math.max(0, daysInPeriod - daysElapsed);
+
+  // Project total usage at current burn rate
+  const dailyRate = usage.minutes_used / daysElapsed;
+  const projectedTotal = dailyRate * daysInPeriod;
+  const projectedOverage = Math.max(0, projectedTotal - usage.minutes_limit);
+  const overageRateKey = `${tier}_per_minute_cents` as keyof typeof VOICE_OVERAGE_RATES;
+  const overageRate = (VOICE_OVERAGE_RATES[overageRateKey] as number) || 7;
+  const projectedOverageCost = Math.round(projectedOverage * overageRate);
+
+  // Determine alert level
+  let level: UsageAlertLevel;
+  if (pctUsed > 100) level = "overage";
+  else if (pctUsed >= 90) level = "critical";
+  else if (pctUsed >= 75) level = "warning";
+  else if (pctUsed >= 60) level = "approaching";
+  else level = "healthy";
+
+  // Calculate upsell recommendation if projected overage > half the upgrade price difference
+  let upsellRecommendation: UpsellRecommendation | null = null;
+  const nextTier = TIER_UPGRADE_PATH[tier];
+  if (nextTier && projectedOverageCost > 0) {
+    const currentPrice = TIER_PRICES_MONTHLY[tier] ?? 0;
+    const nextPrice = TIER_PRICES_MONTHLY[nextTier] ?? 0;
+    const upgradeDelta = nextPrice - currentPrice;
+    const savings = projectedOverageCost - upgradeDelta;
+
+    // Recommend upgrade if overage cost exceeds 50% of the tier price difference
+    if (projectedOverageCost > upgradeDelta * 0.5) {
+      const displayNames: Record<string, string> = {
+        solo: "Starter", business: "Growth", scale: "Business", enterprise: "Agency",
+      };
+      upsellRecommendation = {
+        currentTier: displayNames[tier] ?? tier,
+        recommendedTier: displayNames[nextTier] ?? nextTier,
+        currentPrice: currentPrice / 100,
+        recommendedPrice: nextPrice / 100,
+        savings: Math.max(0, savings) / 100,
+        reason: savings > 0
+          ? `You'd save $${(savings / 100).toFixed(0)}/mo vs overage charges`
+          : `Upgrading costs only $${(upgradeDelta / 100).toFixed(0)}/mo more and includes ${VOICE_TIER_LIMITS[nextTier as keyof typeof VOICE_TIER_LIMITS]?.voice_minutes ?? 0} minutes`,
+      };
+    }
+  }
+
+  return {
+    level,
+    pctUsed: Math.round(pctUsed * 10) / 10,
+    minutesRemaining: Math.max(0, usage.minutes_limit - usage.minutes_used),
+    daysRemaining,
+    projectedOverageMinutes: Math.round(projectedOverage),
+    projectedOverageCost,
+    upsellRecommendation,
+  };
+}
+
+/**
+ * Check if workspace should receive a usage notification.
+ * Returns the notification type to send, or null if none needed.
+ */
+export function getUsageNotificationType(
+  alert: UsageAlert,
+  lastNotifiedLevel: UsageAlertLevel | null,
+): "approaching_limit" | "at_limit" | "over_limit" | "upgrade_recommended" | null {
+  // Don't re-notify for the same level
+  const levelPriority: Record<UsageAlertLevel, number> = {
+    healthy: 0, approaching: 1, warning: 2, critical: 3, overage: 4,
+  };
+  const currentPriority = levelPriority[alert.level];
+  const lastPriority = lastNotifiedLevel ? levelPriority[lastNotifiedLevel] : -1;
+  if (currentPriority <= lastPriority) return null;
+
+  switch (alert.level) {
+    case "approaching": return "approaching_limit";
+    case "warning": return "approaching_limit";
+    case "critical": return alert.upsellRecommendation ? "upgrade_recommended" : "at_limit";
+    case "overage": return "over_limit";
+    default: return null;
+  }
+}
+
+/**
+ * Revenue per minute by tier — used for ROI calculations in dashboard.
+ *
+ * With smart model routing (see cost-optimizer.ts):
+ *   Blended cost drops from ~3.5¢/min → ~1.2¢/min
+ *   Economy model for greetings/routing/closings (0.9¢/min)
+ *   Standard model for scheduling/qualification (1.8¢/min)
+ *   Premium model only for objections/negotiations (3.2¢/min)
+ *   + 30% TTS cache hit rate on common phrases
+ */
+export const REVENUE_PER_MINUTE = {
+  // Overage revenue (per extra minute beyond plan)
+  solo:       { cost_cents: 1.2, revenue_cents: 10, margin_pct: 88 },
+  business:   { cost_cents: 1.2, revenue_cents: 10, margin_pct: 88 },
+  scale:      { cost_cents: 1.2, revenue_cents: 8,  margin_pct: 85 },
+  enterprise: { cost_cents: 1.2, revenue_cents: 7,  margin_pct: 83 },
+  // Base plan revenue (subscription ÷ included minutes)
+  solo_included:       { cost_cents: 1.2, revenue_per_minute_from_sub_cents: 19.4,  margin_pct: 94 },
+  business_included:   { cost_cents: 1.2, revenue_per_minute_from_sub_cents: 11.88, margin_pct: 90 },
+  scale_included:      { cost_cents: 1.2, revenue_per_minute_from_sub_cents: 9.95,  margin_pct: 88 },
+  enterprise_included: { cost_cents: 1.2, revenue_per_minute_from_sub_cents: 6.65,  margin_pct: 82 },
+} as const;
+
+/**
+ * Premium add-ons — high-margin revenue multipliers.
+ * Most are pure software with zero marginal cost.
+ */
+export const PREMIUM_ADDONS = {
+  voice_clone:          { name: "Voice Clone Slot",              price_cents: 1500, cost_cents: 50,  margin_pct: 97 },
+  ab_test_slot:         { name: "A/B Test Slot",                 price_cents: 500,  cost_cents: 0,   margin_pct: 100 },
+  priority_support:     { name: "Priority Support",              price_cents: 4900, cost_cents: 500, margin_pct: 90 },
+  analytics_pro:        { name: "Advanced Analytics",            price_cents: 2900, cost_cents: 0,   margin_pct: 100 },
+  dedicated_number:     { name: "Dedicated Phone Number",        price_cents: 1500, cost_cents: 100, margin_pct: 93 },
+  white_label:          { name: "White Label / Agency Branding", price_cents: 9900, cost_cents: 0,   margin_pct: 100 },
+  multi_language:       { name: "Multi-Language Pack",           price_cents: 1900, cost_cents: 0,   margin_pct: 100 },
+  compliance_recording: { name: "Compliance Recording & Audit",  price_cents: 2900, cost_cents: 200, margin_pct: 93 },
+} as const;
+
+/**
+ * Annual pricing — 2 months free (16.7% off).
+ * 100% prepaid = zero churn risk = higher LTV than monthly.
+ */
+export const ANNUAL_PRICING = {
+  solo:       { monthly: 9700,  annual: 97000,  effective_monthly: 8083,  discount_pct: 17, ltv_boost_pct: 120 },
+  business:   { monthly: 29700, annual: 297000, effective_monthly: 24750, discount_pct: 17, ltv_boost_pct: 125 },
+  scale:      { monthly: 59700, annual: 597000, effective_monthly: 49750, discount_pct: 17, ltv_boost_pct: 130 },
+  enterprise: { monthly: 99700, annual: 997000, effective_monthly: 83083, discount_pct: 17, ltv_boost_pct: 135 },
+} as const;
+
+// ─── MINUTE PACKS (ONE-TIME PURCHASES) ────────────────────────────────
+// High-margin minute packs users can buy when they run out or want to stock up.
+// Larger packs = better per-minute price (volume incentive) but still 85-94% margins.
+
+export interface MinutePackDef {
+  id: string;
+  minutes: number;
+  price_cents: number;
+  price_display: string;
+  per_minute_cents: number;
+  savings_pct: number; // vs overage rate at $0.10/min
+  margin_pct: number;
+  popular?: boolean;
+  best_value?: boolean;
+}
+
+export const MINUTE_PACKS: MinutePackDef[] = [
+  {
+    id: "pack_100",
+    minutes: 100,
+    price_cents: 1500,
+    price_display: "$15",
+    per_minute_cents: 15,
+    savings_pct: 0,        // Baseline — same as overage for small buyers
+    margin_pct: 92,        // Cost: 1.2¢/min × 100 = $1.20, revenue $15 → 92%
+  },
+  {
+    id: "pack_250",
+    minutes: 250,
+    price_cents: 2900,
+    price_display: "$29",
+    per_minute_cents: 11.6,
+    savings_pct: 23,       // 23% cheaper than overage at $0.10/min
+    margin_pct: 90,        // Cost: 1.2¢ × 250 = $3, revenue $29 → 90%
+  },
+  {
+    id: "pack_500",
+    minutes: 500,
+    price_cents: 4900,
+    price_display: "$49",
+    per_minute_cents: 9.8,
+    savings_pct: 35,
+    margin_pct: 88,        // Cost: 1.2¢ × 500 = $6, revenue $49 → 88%
+    popular: true,
+  },
+  {
+    id: "pack_1000",
+    minutes: 1000,
+    price_cents: 8900,
+    price_display: "$89",
+    per_minute_cents: 8.9,
+    savings_pct: 41,
+    margin_pct: 87,        // Cost: 1.2¢ × 1000 = $12, revenue $89 → 87%
+  },
+  {
+    id: "pack_2500",
+    minutes: 2500,
+    price_cents: 17900,
+    price_display: "$179",
+    per_minute_cents: 7.16,
+    savings_pct: 52,
+    margin_pct: 83,        // Cost: 1.2¢ × 2500 = $30, revenue $179 → 83%
+    best_value: true,
+  },
+  {
+    id: "pack_5000",
+    minutes: 5000,
+    price_cents: 29900,
+    price_display: "$299",
+    per_minute_cents: 5.98,
+    savings_pct: 60,
+    margin_pct: 80,        // Cost: 1.2¢ × 5000 = $60, revenue $299 → 80%
+  },
+];
+
+/** Find a minute pack by ID */
+export function getMinutePack(packId: string): MinutePackDef | undefined {
+  return MINUTE_PACKS.find((p) => p.id === packId);
+}
+
+/** Credit purchased minutes to workspace balance */
+export async function creditMinutePack(
+  workspaceId: string,
+  packId: string,
+  stripePaymentIntentId: string,
+): Promise<{ credited: boolean; minutes: number }> {
+  const pack = getMinutePack(packId);
+  if (!pack) return { credited: false, minutes: 0 };
+
+  const db = getDb();
+
+  // Idempotency: check if this payment was already credited
+  const { data: existing } = await db
+    .from("minute_pack_purchases")
+    .select("id")
+    .eq("stripe_payment_intent_id", stripePaymentIntentId)
+    .maybeSingle();
+
+  if (existing) {
+    return { credited: false, minutes: 0 }; // Already processed
+  }
+
+  // Record the purchase
+  await db.from("minute_pack_purchases").insert({
+    workspace_id: workspaceId,
+    pack_id: packId,
+    minutes: pack.minutes,
+    price_cents: pack.price_cents,
+    stripe_payment_intent_id: stripePaymentIntentId,
+    credited_at: new Date().toISOString(),
+  });
+
+  // Add bonus minutes to workspace balance
+  // Uses upsert on workspace_minute_balance (workspace_id is primary key)
+  const { data: currentBalance } = await db
+    .from("workspace_minute_balance")
+    .select("bonus_minutes")
+    .eq("workspace_id", workspaceId)
+    .maybeSingle();
+
+  const currentBonus = (currentBalance as { bonus_minutes?: number } | null)?.bonus_minutes ?? 0;
+  const newBonus = currentBonus + pack.minutes;
+
+  if (currentBalance) {
+    await db
+      .from("workspace_minute_balance")
+      .update({ bonus_minutes: newBonus, updated_at: new Date().toISOString() })
+      .eq("workspace_id", workspaceId);
+  } else {
+    await db
+      .from("workspace_minute_balance")
+      .insert({ workspace_id: workspaceId, bonus_minutes: newBonus });
+  }
+
+  return { credited: true, minutes: pack.minutes };
 }

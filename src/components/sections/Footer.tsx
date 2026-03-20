@@ -117,13 +117,10 @@ export function Footer() {
             </Link>
             <div className="pt-2">
               <p className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>
-                Top industries
+                Industries
               </p>
               <div className="mt-2 space-y-1">
-                <Link
-                  href="/industries/plumbing-hvac"
-                  className="block hover:opacity-80 transition-opacity"
-                >
+                <Link href="/industries/plumbing-hvac" className="block hover:opacity-80 transition-opacity">
                   Plumbing & HVAC
                 </Link>
                 <Link href="/industries/dental" className="block hover:opacity-80 transition-opacity">
@@ -131,6 +128,30 @@ export function Footer() {
                 </Link>
                 <Link href="/industries/legal" className="block hover:opacity-80 transition-opacity">
                   Legal
+                </Link>
+                <Link href="/industries/real-estate" className="block hover:opacity-80 transition-opacity">
+                  Real Estate
+                </Link>
+                <Link href="/industries/healthcare" className="block hover:opacity-80 transition-opacity">
+                  Healthcare
+                </Link>
+                <Link href="/industries/roofing" className="block hover:opacity-80 transition-opacity">
+                  Roofing
+                </Link>
+                <Link href="/industries/med-spa" className="block hover:opacity-80 transition-opacity">
+                  Med Spa
+                </Link>
+                <Link href="/industries/recruiting" className="block hover:opacity-80 transition-opacity">
+                  Recruiting
+                </Link>
+                <Link href="/industries/auto-repair" className="block hover:opacity-80 transition-opacity">
+                  Auto Repair
+                </Link>
+                <Link href="/industries/insurance" className="block hover:opacity-80 transition-opacity">
+                  Insurance
+                </Link>
+                <Link href="/industries/construction" className="block hover:opacity-80 transition-opacity">
+                  Construction
                 </Link>
               </div>
             </div>
@@ -140,10 +161,16 @@ export function Footer() {
               </p>
               <div className="mt-2 space-y-1">
                 <Link href="/compare/smith-ai" className="block hover:opacity-80 transition-opacity">
-                  Smith.ai
+                  vs Smith.ai
                 </Link>
                 <Link href="/compare/ruby" className="block hover:opacity-80 transition-opacity">
-                  Ruby
+                  vs Ruby
+                </Link>
+                <Link href="/compare/gohighlevel" className="block hover:opacity-80 transition-opacity">
+                  vs GoHighLevel
+                </Link>
+                <Link href="/compare/hiring-receptionist" className="block hover:opacity-80 transition-opacity">
+                  vs Hiring a Receptionist
                 </Link>
               </div>
             </div>
@@ -158,9 +185,11 @@ export function Footer() {
             <Link href="/terms" className="block hover:opacity-80 transition-opacity">
               {t("termsOfService")}
             </Link>
+            <Link href="/status" className="block hover:opacity-80 transition-opacity">
+              System Status
+            </Link>
             <div className="flex flex-wrap gap-2 mt-3">
               {[
-                { label: "SOC 2 (in progress)", icon: "🛡️" },
                 { label: "256-bit SSL", icon: "🔒" },
                 { label: "GDPR-ready", icon: "🔐" },
               ].map((badge) => (

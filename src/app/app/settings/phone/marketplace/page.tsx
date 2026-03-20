@@ -99,14 +99,11 @@ export default function PhoneMarketplacePage() {
           country,
         }),
       });
-      const data = (await res.json()) as { error?: string; twilio_code?: string; phone_number?: string };
+      const data = (await res.json()) as { error?: string; provider_code?: string; phone_number?: string };
       if (!res.ok) {
         const msg = data.error ?? tSettings("phone.provisionFailed");
         setError(msg);
         toast.error(msg);
-        if (data.twilio_code) {
-          console.error("[marketplace] Twilio error code:", data.twilio_code);
-        }
         return;
       }
       toast.success(tSettings("phone.provisioned"));

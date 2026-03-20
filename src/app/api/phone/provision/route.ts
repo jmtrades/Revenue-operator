@@ -13,6 +13,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { getTelephonyProvider } from "@/lib/telephony/get-telephony-provider";
 import { getTelephonyService } from "@/lib/telephony";
 import { purchaseTelnyxPhoneNumber } from "@/lib/telephony/telnyx/numbers";
+import { canProvisionNumber } from "@/lib/billing/plan-enforcement";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +36,21 @@ export async function POST(req: NextRequest) {
   const rl = await checkRateLimit(`phone-provision:${session.workspaceId}`, 5, 3600_000);
   if (!rl.allowed) {
     return NextResponse.json({ error: "Too many provisioning attempts" }, { status: 429 });
+  }
+
+  // Enforce plan limit on phone number provisioning
+  const enforcement = await canProvisionNumber(session.workspaceId);
+  if (!enforcement.allowed) {
+    return NextResponse.json(
+      {
+        error: enforcement.message,
+        reason: enforcement.reason,
+        upgrade_to: enforcement.upgradeTo,
+        current: enforcement.current,
+        limit: enforcement.limit,
+      },
+      { status: 403 }
+    );
   }
 
   const db = getDb();

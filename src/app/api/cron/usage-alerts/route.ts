@@ -12,6 +12,7 @@ import { getDb } from "@/lib/db/queries";
 import { assertCronAuthorized } from "@/lib/runtime";
 import { checkUsageThresholds, getUsageAlertLevel } from "@/lib/billing/overage";
 import { sendEmail } from "@/lib/integrations/email";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   try {
@@ -55,11 +56,7 @@ export async function GET(req: NextRequest) {
         const alertLevel = getUsageAlertLevel(maxPct);
 
         if (alertLevel === "critical") {
-          console.warn(
-            `[usage-alerts] CRITICAL: Workspace ${wsData.id} (${wsData.name}) at ${Math.round(
-              maxPct
-            )}% usage. Minutes: ${usage.minutes_used}/${usage.minutes_limit}, SMS: ${usage.sms_used}/${usage.sms_limit}`
-          );
+          log("warn", "usage_alerts.critical", { workspace_id: wsData.id, name: wsData.name, max_pct: Math.round(maxPct), minutes_used: usage.minutes_used, minutes_limit: usage.minutes_limit, sms_used: usage.sms_used, sms_limit: usage.sms_limit });
           warnings.push({
             workspace_id: wsData.id,
             name: wsData.name,
@@ -68,11 +65,7 @@ export async function GET(req: NextRequest) {
             sms_pct: Math.round(usage.sms_pct),
           });
         } else if (alertLevel === "warning") {
-          console.warn(
-            `[usage-alerts] WARNING: Workspace ${wsData.id} (${wsData.name}) at ${Math.round(
-              maxPct
-            )}% usage. Minutes: ${usage.minutes_used}/${usage.minutes_limit}, SMS: ${usage.sms_used}/${usage.sms_limit}`
-          );
+          log("warn", "usage_alerts.warning", { workspace_id: wsData.id, name: wsData.name, max_pct: Math.round(maxPct), minutes_used: usage.minutes_used, minutes_limit: usage.minutes_limit, sms_used: usage.sms_used, sms_limit: usage.sms_limit });
           warnings.push({
             workspace_id: wsData.id,
             name: wsData.name,
@@ -81,9 +74,7 @@ export async function GET(req: NextRequest) {
             sms_pct: Math.round(usage.sms_pct),
           });
         } else if (alertLevel === "exceeded") {
-          console.error(
-            `[usage-alerts] EXCEEDED: Workspace ${wsData.id} (${wsData.name}) exceeded limits. Minutes: ${usage.minutes_used}/${usage.minutes_limit}, SMS: ${usage.sms_used}/${usage.sms_limit}`
-          );
+          log("error", "usage_alerts.exceeded", { workspace_id: wsData.id, name: wsData.name, minutes_used: usage.minutes_used, minutes_limit: usage.minutes_limit, sms_used: usage.sms_used, sms_limit: usage.sms_limit });
           warnings.push({
             workspace_id: wsData.id,
             name: wsData.name,
@@ -129,13 +120,13 @@ export async function GET(req: NextRequest) {
           }
         } catch (err) {
           const msg = err instanceof Error ? err.message : String(err);
-          console.error(`[usage-alerts] email alert error for workspace ${wsData.id}:`, msg);
+          log("error", "usage_alerts.email_alert_error", { workspace_id: wsData.id, error: msg });
         }
 
         checked++;
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
-        console.error(`[usage-alerts] Error checking workspace ${wsData.id}:`, msg);
+        log("error", "usage_alerts.workspace_check_error", { workspace_id: wsData.id, error: msg });
       }
     }
 
@@ -147,7 +138,7 @@ export async function GET(req: NextRequest) {
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error("[cron/usage-alerts] Unexpected error:", msg);
+    log("error", "cron.usage_alerts.unexpected_error", { error: msg });
     return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

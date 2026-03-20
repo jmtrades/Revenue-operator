@@ -96,12 +96,10 @@ export class PipecatVoiceProvider implements VoiceProvider {
     const assistant = this.assistants.get(params.assistantId);
     if (!assistant) throw new Error(`Assistant ${params.assistantId} not found`);
 
-    const twilioSid = process.env.TWILIO_ACCOUNT_SID;
-    const twilioAuth = process.env.TWILIO_AUTH_TOKEN;
     const twilioPhone = process.env.TWILIO_PHONE_NUMBER;
 
-    if (!twilioSid || !twilioAuth || !twilioPhone) {
-      console.warn("Twilio credentials not configured — outbound call queued but not placed");
+    if (!twilioPhone) {
+      console.warn("Twilio phone number not configured — outbound call queued but not placed");
       return {
         callId: `call_${Date.now()}_${crypto.randomUUID().slice(0, 9)}`,
         status: "queued",
@@ -127,30 +125,20 @@ export class PipecatVoiceProvider implements VoiceProvider {
 
     const callId = `outbound_${Date.now()}_${crypto.randomUUID().slice(0, 9)}`;
     try {
-      const authHeader = Buffer.from(`${twilioSid}:${twilioAuth}`).toString("base64");
-      const res = await fetch(
-        `https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Calls.json`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Basic ${authHeader}`,
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: new URLSearchParams({
-            To: params.phoneNumber,
-            From: twilioPhone,
-            Twiml: twiml,
-          }),
-        },
-      );
+      const { getTelephonyService } = await import("@/lib/telephony");
+      const telephony = getTelephonyService();
+      const result = await telephony.createOutboundCall({
+        from: twilioPhone,
+        to: params.phoneNumber,
+        webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000"}/api/inbound/post-call`,
+        metadata: params.metadata,
+      });
 
-      if (!res.ok) {
-        const errText = await res.text().catch(() => "");
-        throw new Error(`Twilio API error: ${res.status} ${errText}`);
+      if ("error" in result) {
+        throw new Error(result.error);
       }
 
-      const data = (await res.json()) as { sid: string };
-      return { callId: data.sid ?? callId, status: "queued", provider: "pipecat" };
+      return { callId: result.callId ?? callId, status: "queued", provider: "pipecat" };
     } catch (err) {
       console.error("Outbound call failed:", err instanceof Error ? err.message : err);
       return { callId, status: "failed", provider: "pipecat" };

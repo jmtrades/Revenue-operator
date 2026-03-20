@@ -100,10 +100,10 @@ export default function MissedCallRecoveryPage() {
       <div className="flex items-start justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>
-            Missed Call Recovery
+            Revenue Recovery
           </h1>
           <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>
-            Track and recover revenue from missed calls automatically.
+            Track and recover revenue from missed calls, no-shows, and stalled leads automatically.
           </p>
         </div>
         <Link

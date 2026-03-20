@@ -272,10 +272,10 @@ export default function CancelSubscriptionPage() {
                   <DollarSign size={24} style={{ color: "var(--accent-primary)", flexShrink: 0, marginTop: 2 }} />
                   <div className="flex-1">
                     <h3 className="font-semibold text-base" style={{ color: "var(--text-primary)" }}>
-                      Downgrade to Solo
+                      Downgrade to Starter
                     </h3>
                     <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>
-                      Start at just $49/month instead of canceling completely.
+                      Start at just $97/month instead of canceling completely.
                     </p>
                   </div>
                   <ChevronUp size={20} style={{ color: "var(--text-tertiary)", flexShrink: 0 }} />

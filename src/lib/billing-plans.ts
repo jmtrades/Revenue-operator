@@ -1,5 +1,33 @@
 export type PlanSlug = "solo" | "business" | "scale" | "enterprise";
 
+/** Display names for customer-facing UI (slugs remain for DB/Stripe compat) */
+export const PLAN_DISPLAY_NAMES: Record<PlanSlug, string> = {
+  solo: "Starter",
+  business: "Growth",
+  scale: "Business",
+  enterprise: "Agency",
+};
+
+/** Usage-based rates (cents). Applied when plan limits exceeded. */
+export const USAGE_RATES = {
+  /** Per SMS segment overage */
+  smsOverageCentsPerSegment: { solo: 5, business: 4, scale: 3, enterprise: 0 } as Record<PlanSlug, number>,
+  /** Per phone number per month (our cost ~$1, we charge $5) */
+  phoneNumberMonthlyCents: 500,
+  /** One-time phone number setup fee */
+  phoneNumberSetupCents: 200,
+  /** Per extra AI agent beyond plan limit */
+  extraAgentMonthlyCents: 1500,
+  /** Per extra team seat beyond plan limit */
+  extraSeatMonthlyCents: 1000,
+  /** Per extra phone number beyond plan limit */
+  extraNumberMonthlyCents: 500,
+  /** Recording storage per minute beyond 30 days retention */
+  recordingStorageCentsPerMin: 5,
+  /** Knowledge base storage per 100MB per month */
+  knowledgeStorageCentsPerBlock: 500,
+} as const;
+
 export interface BillingPlan {
   slug: PlanSlug;
   label: string;
@@ -8,11 +36,15 @@ export interface BillingPlan {
   annualPrice: number;
   includedMinutes: number;
   overageRateCents: number;
+  /** Overage rate per SMS segment (cents) */
+  smsOverageRateCents: number;
   maxAgents: number;
   maxSeats: number;
   maxPhoneNumbers: number;
   outboundDailyLimit: number;
   smsMonthlyCap: number;
+  /** Included phone numbers in the plan (billed at $0 for these) */
+  includedPhoneNumbers: number;
   features: {
     appointmentBooking: boolean;
     missedCallRecovery: boolean;
@@ -38,17 +70,19 @@ export interface BillingPlan {
 export const BILLING_PLANS: Record<PlanSlug, BillingPlan> = {
   solo: {
     slug: "solo",
-    label: "Solo",
-    description: "For solo operators",
-    monthlyPrice: 4900,
-    annualPrice: 3900,
-    includedMinutes: 100,
-    overageRateCents: 30,
+    label: "Starter",
+    description: "One AI agent that answers and follows up",
+    monthlyPrice: 9700,
+    annualPrice: 7700,
+    includedMinutes: 500,
+    overageRateCents: 10,
+    smsOverageRateCents: 5,
     maxAgents: 1,
     maxSeats: 1,
     maxPhoneNumbers: 1,
     outboundDailyLimit: 10,
     smsMonthlyCap: 500,
+    includedPhoneNumbers: 1,
     features: {
       appointmentBooking: true,
       missedCallRecovery: true,
@@ -72,23 +106,25 @@ export const BILLING_PLANS: Record<PlanSlug, BillingPlan> = {
   },
   business: {
     slug: "business",
-    label: "Business",
-    description: "The complete revenue recovery system",
+    label: "Growth",
+    description: "Multi-agent revenue operations",
     monthlyPrice: 29700,
     annualPrice: 23700,
-    includedMinutes: 500,
-    overageRateCents: 20,
-    maxAgents: 3,
+    includedMinutes: 2500,
+    overageRateCents: 10,
+    smsOverageRateCents: 4,
+    maxAgents: 5,
     maxSeats: 5,
-    maxPhoneNumbers: 3,
+    maxPhoneNumbers: 5,
     outboundDailyLimit: 100,
     smsMonthlyCap: 2000,
+    includedPhoneNumbers: 5,
     features: {
       appointmentBooking: true,
       missedCallRecovery: true,
       noShowRecovery: true,
       reactivationCampaigns: true,
-      outboundCampaigns: true,
+      outboundCampaigns: false,
       outboundPowerDialer: false,
       industryTemplates: true,
       smsEmail: true,
@@ -99,24 +135,26 @@ export const BILLING_PLANS: Record<PlanSlug, BillingPlan> = {
       nativeCrmSync: false,
       apiAccess: false,
       premiumVoices: false,
-      prioritySupport: false,
+      prioritySupport: true,
       whiteLabel: false,
       sso: false,
     },
   },
   scale: {
     slug: "scale",
-    label: "Scale",
-    description: "For teams and high volume",
-    monthlyPrice: 99700,
-    annualPrice: 79700,
-    includedMinutes: 3000,
-    overageRateCents: 12,
-    maxAgents: 10,
+    label: "Business",
+    description: "Full-scale AI call center",
+    monthlyPrice: 59700,
+    annualPrice: 47700,
+    includedMinutes: 6000,
+    overageRateCents: 8,
+    smsOverageRateCents: 3,
+    maxAgents: 15,
     maxSeats: -1,
-    maxPhoneNumbers: 10,
+    maxPhoneNumbers: 15,
     outboundDailyLimit: 500,
     smsMonthlyCap: 10000,
+    includedPhoneNumbers: 15,
     features: {
       appointmentBooking: true,
       missedCallRecovery: true,
@@ -140,17 +178,19 @@ export const BILLING_PLANS: Record<PlanSlug, BillingPlan> = {
   },
   enterprise: {
     slug: "enterprise",
-    label: "Enterprise",
-    description: "Custom",
+    label: "Agency",
+    description: "White-label AI for your clients",
     monthlyPrice: 0,
     annualPrice: 0,
     includedMinutes: 0,
     overageRateCents: 0,
+    smsOverageRateCents: 0,
     maxAgents: -1,
     maxSeats: -1,
     maxPhoneNumbers: -1,
     outboundDailyLimit: -1,
     smsMonthlyCap: -1,
+    includedPhoneNumbers: -1,
     features: {
       appointmentBooking: true,
       missedCallRecovery: true,

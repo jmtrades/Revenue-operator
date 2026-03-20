@@ -11,10 +11,10 @@ import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 const PLAN_NAMES: Record<string, string> = {
-  solo: "Solo",
-  growth: "Growth",
-  team: "Team",
-  enterprise: "Enterprise",
+  solo: "Starter",
+  business: "Growth",
+  scale: "Business",
+  enterprise: "Agency",
 };
 
 export async function GET(req: NextRequest) {
@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
       stripe_customer_id?: string | null;
     };
 
-    const planName = PLAN_NAMES[r.billing_tier ?? "solo"] ?? r.billing_tier ?? "Solo";
+    const planName = PLAN_NAMES[r.billing_tier ?? "solo"] ?? r.billing_tier ?? "Starter";
     const interval = r.billing_interval === "year" ? "year" : "month";
     const status = r.billing_status ?? "trial";
 

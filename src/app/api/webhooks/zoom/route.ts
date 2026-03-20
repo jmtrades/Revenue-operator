@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "node:crypto";
 import { getDb } from "@/lib/db/queries";
 import { enqueue } from "@/lib/queue";
+import { log } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   const raw = await req.text();
@@ -23,7 +24,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
     }
   } else if (process.env.NODE_ENV === "production") {
-    console.warn("[zoom-webhook] ZOOM_WEBHOOK_SECRET not configured — signature verification skipped");
+    log("warn", "zoom_webhook.secret_not_configured", { message: "signature verification skipped" });
   }
 
   let body: { event?: string; payload?: { object?: { id?: string; uuid?: string; participant_user_ids?: string[] }; account_id?: string } };

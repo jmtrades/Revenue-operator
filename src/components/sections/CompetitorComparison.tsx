@@ -101,7 +101,7 @@ const COMPARISON_DATA: ComparisonRow[] = [
   },
   {
     feature: "Transparent Pricing",
-    recallTouch: "$49–$997/mo flat",
+    recallTouch: "$97–$997/mo flat",
     humanServices: "$4–10/call or /min",
     basicAI: "$0.50/caller + fees",
     diyPlatforms: "$0.05–0.15/min + infra",

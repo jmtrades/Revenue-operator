@@ -36,7 +36,7 @@ export async function GET(
 
     if (error) {
       return NextResponse.json(
-        { error: error.message },
+        { error: "Something went wrong. Please try again." },
         { status: 500 }
       );
     }

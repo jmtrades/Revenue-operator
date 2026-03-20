@@ -1,6 +1,6 @@
 /**
- * Campaign execution: process active campaigns (stub — increment called or enqueue outbound).
- * Add to core cron to run periodically.
+ * Campaign execution: process active campaigns — fetch uncalled leads, trigger real outbound calls.
+ * Runs on cron schedule. Respects daily limits per billing tier.
  */
 
 export const dynamic = "force-dynamic";
@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { assertCronAuthorized } from "@/lib/runtime";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 const DAILY_OUTBOUND_LIMITS: Record<string, number> = {
   solo: 100,
@@ -16,16 +17,20 @@ const DAILY_OUTBOUND_LIMITS: Record<string, number> = {
   enterprise: 2500,
 };
 
+/** Max calls to trigger per cron tick per campaign (keep bounded) */
+const MAX_PER_TICK = 5;
+
 export async function GET(req: NextRequest) {
   const authErr = assertCronAuthorized(req);
   if (authErr) return authErr;
   const db = getDb();
   let processed = 0;
+  let failed = 0;
   let throttledWorkspaces = 0;
   try {
     const { data: active } = await db
       .from("campaigns")
-      .select("id, workspace_id, total_contacts, called")
+      .select("id, workspace_id, total_contacts, called, campaign_type, metadata")
       .eq("status", "active")
       .limit(50);
     const activeRows = (active ?? []) as Array<{
@@ -33,9 +38,11 @@ export async function GET(req: NextRequest) {
       workspace_id: string;
       total_contacts: number;
       called: number;
+      campaign_type?: string;
+      metadata?: Record<string, unknown>;
     }>;
     if (activeRows.length === 0) {
-      return NextResponse.json({ ok: true, processed, throttled_workspaces: throttledWorkspaces });
+      return NextResponse.json({ ok: true, processed, failed, throttled_workspaces: throttledWorkspaces });
     }
 
     const workspaceIds = [...new Set(activeRows.map((r) => r.workspace_id))];
@@ -63,6 +70,9 @@ export async function GET(req: NextRequest) {
       ]),
     );
 
+    // Lazy-import to avoid circular dependencies at module level
+    const { executeLeadOutboundCall } = await import("@/lib/outbound/execute-lead-call");
+
     for (const row of activeRows) {
       const tier = tierByWorkspace.get(row.workspace_id) ?? "solo";
       const dailyCap = DAILY_OUTBOUND_LIMITS[tier] ?? DAILY_OUTBOUND_LIMITS.solo;
@@ -74,21 +84,93 @@ export async function GET(req: NextRequest) {
       }
 
       const campaignRemaining = Math.max(0, Number(row.total_contacts || 0) - Number(row.called || 0));
-      if (campaignRemaining <= 0) continue;
+      if (campaignRemaining <= 0) {
+        // Campaign exhausted — mark as completed
+        await db.from("campaigns").update({ status: "completed", updated_at: new Date().toISOString() }).eq("id", row.id);
+        continue;
+      }
 
-      // Keep each cron tick bounded while honoring workspace-level daily caps.
-      const toProcess = Math.min(workspaceRemaining, campaignRemaining, 25);
+      const toProcess = Math.min(workspaceRemaining, campaignRemaining, MAX_PER_TICK);
       if (toProcess <= 0) continue;
 
-      const nextCalled = Number(row.called || 0) + toProcess;
-      const { error: updateErr } = await db
+      // Fetch uncalled leads for this campaign
+      const { data: campaignLeads } = await db
+        .from("campaign_leads")
+        .select("id, lead_id")
+        .eq("campaign_id", row.id)
+        .eq("status", "pending")
+        .order("created_at", { ascending: true })
+        .limit(toProcess);
+
+      const leads = (campaignLeads ?? []) as Array<{ id: string; lead_id: string }>;
+      if (leads.length === 0) {
+        // No more pending leads — mark campaign completed
+        await db.from("campaigns").update({ status: "completed", updated_at: new Date().toISOString() }).eq("id", row.id);
+        continue;
+      }
+
+      const campaignType = (row.campaign_type ?? "lead_followup") as import("@/lib/campaigns/prompt").CampaignType;
+      let callsMade = 0;
+
+      for (const cl of leads) {
+        try {
+          // Pre-check: skip leads that have opted out since campaign launch
+          const { data: leadCheck } = await db
+            .from("leads")
+            .select("opt_out")
+            .eq("id", cl.lead_id)
+            .maybeSingle();
+          if ((leadCheck as { opt_out?: boolean } | null)?.opt_out === true) {
+            await db.from("campaign_leads").update({ status: "skipped", updated_at: new Date().toISOString() }).eq("id", cl.id);
+            continue;
+          }
+
+          // Mark lead as in-progress
+          await db.from("campaign_leads").update({ status: "calling", updated_at: new Date().toISOString() }).eq("id", cl.id);
+
+          const result = await executeLeadOutboundCall(row.workspace_id, cl.lead_id, {
+            campaignType,
+          });
+
+          if (result.ok) {
+            await db.from("campaign_leads").update({
+              status: "called",
+              call_session_id: result.call_session_id,
+              updated_at: new Date().toISOString(),
+            }).eq("id", cl.id);
+            callsMade++;
+            processed++;
+          } else {
+            await db.from("campaign_leads").update({
+              status: "failed",
+              error_message: result.error,
+              updated_at: new Date().toISOString(),
+            }).eq("id", cl.id);
+            failed++;
+          }
+        } catch (err) {
+          log("error", "campaign_call_error", {
+            campaign_id: row.id,
+            lead_id: cl.lead_id,
+            error: err instanceof Error ? err.message : String(err),
+          });
+          await db.from("campaign_leads").update({
+            status: "failed",
+            error_message: err instanceof Error ? err.message : "Unknown error",
+            updated_at: new Date().toISOString(),
+          }).eq("id", cl.id);
+          failed++;
+        }
+      }
+
+      // Update campaign counter
+      const nextCalled = Number(row.called || 0) + callsMade;
+      await db
         .from("campaigns")
         .update({ called: nextCalled, updated_at: new Date().toISOString() })
         .eq("id", row.id);
-      if (!updateErr) {
-        processed += toProcess;
-        processedByWorkspace.set(row.workspace_id, used + toProcess);
-      }
+
+      processedByWorkspace.set(row.workspace_id, used + callsMade);
     }
 
     const counterRows = [...processedByWorkspace.entries()].map(([workspace_id, count]) => ({
@@ -102,8 +184,8 @@ export async function GET(req: NextRequest) {
         .from("campaign_daily_counters")
         .upsert(counterRows, { onConflict: "workspace_id,counter_date" });
     }
-  } catch {
-    // campaigns table may not exist
+  } catch (err) {
+    log("error", "campaign_process_cron_error", { error: err instanceof Error ? err.message : String(err) });
   }
-  return NextResponse.json({ ok: true, processed, throttled_workspaces: throttledWorkspaces });
+  return NextResponse.json({ ok: true, processed, failed, throttled_workspaces: throttledWorkspaces });
 }

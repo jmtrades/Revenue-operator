@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { AlertCircle, ChevronRight } from 'lucide-react';
 
 interface AttentionItem {
@@ -51,12 +52,12 @@ const NeedsAttentionList = () => {
           </div>
 
           {items.length > 5 && (
-            <a
-              href="#"
+            <Link
+              href="/dashboard/activity"
               className="mt-4 text-sm text-[var(--accent-primary)] hover:underline font-medium flex items-center gap-1"
             >
               View all <ChevronRight className="w-4 h-4" />
-            </a>
+            </Link>
           )}
         </>
       )}

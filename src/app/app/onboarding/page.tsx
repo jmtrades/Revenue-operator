@@ -537,14 +537,14 @@ export default function AppOnboardingPage() {
             <div className="flex gap-2">
               <button
                 type="button"
-                onClick={() => setStep(1)}
+                onClick={() => setStep(2)}
                 className="py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-default)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
               >
                 ← {t("cta.back")}
               </button>
               <button
                 type="button"
-                onClick={() => setStep(3)}
+                onClick={() => setStep(4)}
                 className="flex-1 py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
               >
                 {t("cta.next")} →

@@ -107,10 +107,10 @@ export default function AdminDashboardPage() {
             <span className="w-2 h-2 rounded-full bg-emerald-500" aria-hidden /> Voice Server: {health.voiceServer ?? "—"}
           </span>
           <span className="inline-flex items-center gap-2 text-sm">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" aria-hidden /> Twilio: {health.twilio ?? "—"}
+            <span className="w-2 h-2 rounded-full bg-emerald-500" aria-hidden /> Telephony: {health.twilio ?? "—"}
           </span>
           <span className="inline-flex items-center gap-2 text-sm">
-            <span className="w-2 h-2 rounded-full bg-emerald-500" aria-hidden /> Supabase: {health.supabase ?? "—"}
+            <span className="w-2 h-2 rounded-full bg-emerald-500" aria-hidden /> Database: {health.supabase ?? "—"}
           </span>
         </div>
         <div className="mt-2 text-sm" style={{ color: "var(--text-tertiary)" }}>

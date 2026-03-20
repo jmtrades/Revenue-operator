@@ -11,17 +11,17 @@ import { motion } from "framer-motion";
 import { PRICING_TIERS, ROUTES } from "@/lib/constants";
 
 const TIER_ROI_KEYS: Record<string, string> = {
-  Solo: "solo",
-  Business: "business",
-  Scale: "scale",
-  Enterprise: "enterprise",
+  Starter: "solo",
+  Growth: "business",
+  Business: "scale",
+  Agency: "enterprise",
 };
 
 export function PricingPreview() {
   const t = useTranslations("homepage.pricingPreview");
   const [annual, setAnnual] = useState(false);
   const hasAnnualPrices =
-    PRICING_TIERS.some((tier) => Boolean(tier.priceAnnual) && tier.priceAnnual !== tier.priceMonthly);
+    PRICING_TIERS.some((tier) => Boolean(tier.priceAnnual) && String(tier.priceAnnual) !== String(tier.priceMonthly));
 
   useEffect(() => {
     if (!hasAnnualPrices) setAnnual(false);

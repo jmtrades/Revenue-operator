@@ -7,6 +7,7 @@ import { useWorkspace } from "@/components/WorkspaceContext";
 import { PageHeader, EmptyState } from "@/components/ui";
 import { ListSkeleton } from "@/components/ui/ListSkeleton";
 import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
+import { Plus, X } from "lucide-react";
 
 type Agent = { id: string; name: string; purpose: string; is_active: boolean; created_at: string };
 
@@ -16,6 +17,10 @@ export default function AgentsPage() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showCreate, setShowCreate] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [newPurpose, setNewPurpose] = useState("inbound");
+  const [creating, setCreating] = useState(false);
 
   const load = useCallback(() => {
     if (!workspaceId) return;
@@ -52,7 +57,18 @@ export default function AgentsPage() {
 
   return (
     <div className="p-8 max-w-4xl">
-      <PageHeader title={t("pages.agents.title")} subtitle={t("pages.agents.subtitle")} />
+      <div className="flex items-center justify-between mb-6">
+        <PageHeader title={t("pages.agents.title")} subtitle={t("pages.agents.subtitle")} />
+        {agents.length > 0 && (
+          <button
+            type="button"
+            onClick={() => setShowCreate(true)}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-white text-black text-sm font-semibold px-4 py-2 hover:bg-zinc-100 transition-colors"
+          >
+            <Plus className="w-4 h-4" /> New Agent
+          </button>
+        )}
+      </div>
       {loading ? (
         <ListSkeleton rows={4} />
       ) : error ? (
@@ -64,7 +80,7 @@ export default function AgentsPage() {
         <div className="rounded-xl border py-12 px-6 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
           <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>{t("empty.noAgentsYet")}</p>
           <p className="text-xs mb-4" style={{ color: "var(--text-tertiary)" }}>{t("empty.noAgentsYetHint")}</p>
-          <Link href="/activate" className="inline-block text-sm font-medium" style={{ color: "var(--accent-primary)" }}>{t("empty.createFirstAgent")}</Link>
+          <button type="button" onClick={() => setShowCreate(true)} className="inline-block text-sm font-medium" style={{ color: "var(--accent-primary)" }}>{t("empty.createFirstAgent")}</button>
         </div>
       ) : (
         <ul className="rounded-lg border overflow-hidden" style={{ borderColor: "var(--border)", background: "var(--surface-card)" }}>
@@ -77,6 +93,66 @@ export default function AgentsPage() {
             </li>
           ))}
         </ul>
+      )}
+
+      {/* Create Agent Modal */}
+      {showCreate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border p-6" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>Create New Agent</h3>
+              <button type="button" onClick={() => setShowCreate(false)} className="text-zinc-500 hover:text-zinc-300"><X className="w-5 h-5" /></button>
+            </div>
+            <div className="space-y-4">
+              <label className="block">
+                <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Agent Name *</span>
+                <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" placeholder="e.g., Sarah — Inbound" />
+              </label>
+              <label className="block">
+                <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Purpose</span>
+                <select value={newPurpose} onChange={(e) => setNewPurpose(e.target.value)} className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                  <option value="inbound">Inbound Call Handling</option>
+                  <option value="outbound">Outbound Campaigns</option>
+                  <option value="follow_up">Follow-up Sequences</option>
+                  <option value="triage">Triage & Routing</option>
+                  <option value="booking">Booking & Scheduling</option>
+                </select>
+              </label>
+            </div>
+            <div className="flex items-center gap-3 mt-6">
+              <button
+                type="button"
+                disabled={creating || !newName.trim()}
+                onClick={async () => {
+                  if (!workspaceId || !newName.trim()) return;
+                  setCreating(true);
+                  try {
+                    const res = await fetch("/api/agents", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      credentials: "include",
+                      body: JSON.stringify({ workspace_id: workspaceId, name: newName.trim(), purpose: newPurpose }),
+                    });
+                    if (res.ok) {
+                      setShowCreate(false);
+                      setNewName("");
+                      setNewPurpose("inbound");
+                      load();
+                    }
+                  } finally {
+                    setCreating(false);
+                  }
+                }}
+                className="flex-1 rounded-xl bg-emerald-500 text-black font-semibold py-2.5 text-sm hover:bg-emerald-400 transition-colors disabled:opacity-60"
+              >
+                {creating ? "Creating…" : "Create Agent"}
+              </button>
+              <button type="button" onClick={() => setShowCreate(false)} className="rounded-xl border border-zinc-700 px-4 py-2.5 text-sm text-zinc-300 hover:bg-zinc-800 transition-colors">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

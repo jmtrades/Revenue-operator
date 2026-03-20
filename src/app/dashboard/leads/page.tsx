@@ -9,6 +9,10 @@ import {
   ArrowLeftRight,
   ArrowUpRight,
   ArrowDownRight,
+  X,
+  Calendar,
+  Phone,
+  Trash2,
 } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { PageHeader, EmptyState } from "@/components/ui";
@@ -193,10 +197,66 @@ export default function LeadsPage() {
     { key: "campaign", label: "Campaign" },
   ];
 
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newLeadName, setNewLeadName] = useState("");
+  const [newLeadPhone, setNewLeadPhone] = useState("");
+  const [newLeadEmail, setNewLeadEmail] = useState("");
+  const [newLeadCompany, setNewLeadCompany] = useState("");
+  const [addingLead, setAddingLead] = useState(false);
+  const [actionMenu, setActionMenu] = useState<string | null>(null);
+
   const onAddLead = useCallback(() => {
-    // Placeholder for modal; for now navigate to conversations or detail.
-    // In a full implementation this would open a create-lead dialog.
+    setShowAddModal(true);
   }, []);
+
+  const handleCreateLead = useCallback(async () => {
+    if (!workspaceId || !newLeadName.trim()) return;
+    setAddingLead(true);
+    try {
+      await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          workspace_id: workspaceId,
+          name: newLeadName.trim(),
+          phone: newLeadPhone.trim() || null,
+          email: newLeadEmail.trim() || null,
+          company: newLeadCompany.trim() || null,
+        }),
+      });
+      // Refresh leads
+      setShowAddModal(false);
+      setNewLeadName("");
+      setNewLeadPhone("");
+      setNewLeadEmail("");
+      setNewLeadCompany("");
+      // Re-fetch
+      const res = await fetchWithFallback<{ id: string; name: string; email: string | null; phone: string | null; company: string | null; state: string; qualification_score: number | null; metadata: Record<string, unknown> | null; created_at: string }[]>(
+        `/api/leads?workspace_id=${encodeURIComponent(workspaceId)}`,
+        { credentials: "include" },
+      );
+      if (res.data?.length) {
+        const stateToStatus: Record<string, LeadStatus> = {
+          new: "NEW", contacted: "CONTACTED", qualified: "QUALIFIED",
+          booked: "BOOKED", won: "WON", lost: "LOST",
+        };
+        setLiveLeads(res.data.map((l) => ({
+          id: l.id,
+          name: l.name,
+          email: l.email,
+          phone: l.phone,
+          company: l.company,
+          status: stateToStatus[l.state?.toLowerCase()] ?? "NEW",
+          score: l.qualification_score ?? 0,
+          source: ((l.metadata as Record<string, unknown>)?.source as LeadSource) ?? "phone",
+          createdAt: l.created_at,
+        })));
+      }
+    } finally {
+      setAddingLead(false);
+    }
+  }, [workspaceId, newLeadName, newLeadPhone, newLeadEmail, newLeadCompany]);
 
   if (!workspaceId) {
     return (
@@ -273,12 +333,14 @@ export default function LeadsPage() {
         </div>
       </div>
 
-      <div className="flex items-center gap-2 mb-3 text-xs text-zinc-400">
-        <span className="px-2 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-300">
-          Demo data
-        </span>
-        <span>Leads from your AI agent and forms will appear here automatically.</span>
-      </div>
+      {!liveLeads && (
+        <div className="flex items-center gap-2 mb-3 text-xs text-zinc-400">
+          <span className="px-2 py-0.5 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-300">
+            Sample data
+          </span>
+          <span>Leads from your AI agent and forms will appear here automatically.</span>
+        </div>
+      )}
 
       {pageLeads.length === 0 ? (
         <EmptyState
@@ -369,18 +431,41 @@ export default function LeadsPage() {
                         >
                           Message
                         </Link>
-                        <button
-                          type="button"
-                          className="px-3 py-1.5 rounded-full border border-zinc-700 text-zinc-200 hover:bg-zinc-800 transition-colors"
+                        <Link
+                          href={`/dashboard/calendar?lead=${lead.id}`}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full border border-zinc-700 text-zinc-200 hover:bg-zinc-800 transition-colors"
                         >
+                          <Calendar className="w-3 h-3" />
                           Schedule
-                        </button>
-                        <button
-                          type="button"
-                          className="px-3 py-1.5 rounded-full border border-zinc-700 text-zinc-200 hover:bg-zinc-800 transition-colors"
-                        >
-                          More…
-                        </button>
+                        </Link>
+                        <div className="relative">
+                          <button
+                            type="button"
+                            onClick={() => setActionMenu(actionMenu === lead.id ? null : lead.id)}
+                            className="px-3 py-1.5 rounded-full border border-zinc-700 text-zinc-200 hover:bg-zinc-800 transition-colors"
+                          >
+                            More…
+                          </button>
+                          {actionMenu === lead.id && (
+                            <div className="absolute right-0 top-full mt-1 z-20 w-40 rounded-xl border border-zinc-700 bg-zinc-900 shadow-xl py-1">
+                              <Link href={`/dashboard/leads/${lead.id}`} className="flex items-center gap-2 px-3 py-2 text-xs text-zinc-200 hover:bg-zinc-800">
+                                View details
+                              </Link>
+                              {lead.phone && (
+                                <Link href={`/dashboard/activity?call=${lead.id}`} className="flex items-center gap-2 px-3 py-2 text-xs text-zinc-200 hover:bg-zinc-800">
+                                  <Phone className="w-3 h-3" /> Call
+                                </Link>
+                              )}
+                              <button
+                                type="button"
+                                onClick={() => { setActionMenu(null); }}
+                                className="flex items-center gap-2 w-full px-3 py-2 text-xs text-red-400 hover:bg-zinc-800"
+                              >
+                                <Trash2 className="w-3 h-3" /> Archive
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </td>
                   </tr>
@@ -406,6 +491,45 @@ export default function LeadsPage() {
                 disabled
               >
                 Next
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Add Lead Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border p-6" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>Add New Lead</h3>
+              <button type="button" onClick={() => setShowAddModal(false)} className="text-zinc-500 hover:text-zinc-300">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <label className="block">
+                <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Name *</span>
+                <input type="text" value={newLeadName} onChange={(e) => setNewLeadName(e.target.value)} className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" placeholder="John Smith" />
+              </label>
+              <label className="block">
+                <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Phone</span>
+                <input type="tel" value={newLeadPhone} onChange={(e) => setNewLeadPhone(e.target.value)} className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" placeholder="+1 (480) 555-0100" />
+              </label>
+              <label className="block">
+                <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Email</span>
+                <input type="email" value={newLeadEmail} onChange={(e) => setNewLeadEmail(e.target.value)} className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" placeholder="john@example.com" />
+              </label>
+              <label className="block">
+                <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Company</span>
+                <input type="text" value={newLeadCompany} onChange={(e) => setNewLeadCompany(e.target.value)} className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" placeholder="Acme Corp" />
+              </label>
+            </div>
+            <div className="flex items-center gap-3 mt-6">
+              <button type="button" onClick={handleCreateLead} disabled={addingLead || !newLeadName.trim()} className="flex-1 rounded-xl bg-emerald-500 text-black font-semibold py-2.5 text-sm hover:bg-emerald-400 transition-colors disabled:opacity-60">
+                {addingLead ? "Creating…" : "Create Lead"}
+              </button>
+              <button type="button" onClick={() => setShowAddModal(false)} className="rounded-xl border border-zinc-700 px-4 py-2.5 text-sm text-zinc-300 hover:bg-zinc-800 transition-colors">
+                Cancel
               </button>
             </div>
           </div>

@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { BILLING_PLANS, type PlanSlug } from "@/lib/billing-plans";
+import { evaluateUsageAlert, type VoiceUsageMetrics } from "@/lib/voice/billing";
 
 export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
@@ -96,6 +97,43 @@ export async function GET(req: NextRequest) {
     }
   }
 
+  // Get bonus minutes from minute pack purchases
+  let bonusMinutes = 0;
+  try {
+    const { data: balance } = await db
+      .from("workspace_minute_balance")
+      .select("bonus_minutes")
+      .eq("workspace_id", workspaceId)
+      .maybeSingle();
+    bonusMinutes = (balance as { bonus_minutes?: number } | null)?.bonus_minutes ?? 0;
+  } catch {
+    // Table may not exist yet
+  }
+
+  // Effective limit = plan included + purchased bonus minutes
+  const effectiveMinutesLimit = planMinutes + bonusMinutes;
+
+  // Build usage metrics for the alert engine
+  const usageMetrics: VoiceUsageMetrics = {
+    workspace_id: workspaceId,
+    billing_period_start: startOfMonth.toISOString(),
+    billing_period_end: new Date(startOfMonth.getFullYear(), startOfMonth.getMonth() + 1, 0, 23, 59, 59).toISOString(),
+    minutes_used: minutesUsed,
+    minutes_limit: effectiveMinutesLimit,
+    minutes_pct: effectiveMinutesLimit > 0 ? (minutesUsed / effectiveMinutesLimit) * 100 : 0,
+    clones_used: 0,
+    clones_limit: 0,
+    ab_tests_used: 0,
+    ab_tests_limit: 0,
+    concurrent_calls_peak: 0,
+    concurrent_calls_limit: 0,
+    is_over_limit: minutesUsed > effectiveMinutesLimit,
+    overage_minutes: Math.max(0, minutesUsed - effectiveMinutesLimit),
+    estimated_overage_cents: 0,
+  };
+
+  const usageAlert = evaluateUsageAlert(usageMetrics, tier);
+
   return NextResponse.json({
     billing_status: row.billing_status ?? "trial",
     renewal_at: row.protection_renewal_at ?? row.trial_ends_at ?? trialEndIso ?? null,
@@ -105,10 +143,30 @@ export async function GET(req: NextRequest) {
     billing_tier: row.billing_tier ?? "solo",
     minutes_used: minutesUsed,
     minutes_limit: planMinutes,
+    bonus_minutes: bonusMinutes,
+    effective_minutes_limit: effectiveMinutesLimit,
     pending_billing_tier: pendingTier,
     pending_billing_effective_at: pendingEffectiveAt,
     downgrade_warning: downgradeWarning,
     active_agents_count: activeAgentsCount,
+    usage_alert: {
+      level: usageAlert.level,
+      pct_used: usageAlert.pctUsed,
+      minutes_remaining: usageAlert.minutesRemaining,
+      days_remaining: usageAlert.daysRemaining,
+      projected_overage_minutes: usageAlert.projectedOverageMinutes,
+      projected_overage_cost_cents: usageAlert.projectedOverageCost,
+      upsell: usageAlert.upsellRecommendation
+        ? {
+            current_tier: usageAlert.upsellRecommendation.currentTier,
+            recommended_tier: usageAlert.upsellRecommendation.recommendedTier,
+            current_price: usageAlert.upsellRecommendation.currentPrice,
+            recommended_price: usageAlert.upsellRecommendation.recommendedPrice,
+            savings: usageAlert.upsellRecommendation.savings,
+            reason: usageAlert.upsellRecommendation.reason,
+          }
+        : null,
+    },
     dunning: row.billing_status === "payment_failed"
       ? {
           amount_due_cents: row.dunning_amount_due_cents ?? 0,

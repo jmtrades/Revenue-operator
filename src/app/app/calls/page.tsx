@@ -422,9 +422,9 @@ export default function CallsPage() {
         <div className="mt-6 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]">
           <EmptyState
             icon={PhoneCall}
-            title="Make your first test call"
-            description="Choose a primary agent and place a quick test call to unlock call intelligence."
-            primaryAction={{ label: "Test Call", href: "/app/settings/phone" }}
+            title={t("calls.emptyTitle") ?? "Make your first test call"}
+            description={t("calls.emptyDescription") ?? "Choose a primary agent and place a quick test call to unlock call intelligence."}
+            primaryAction={{ label: t("calls.testCall") ?? "Test Call", href: "/app/settings/phone" }}
           />
         </div>
       ) : (
@@ -589,7 +589,7 @@ export default function CallsPage() {
                 <span className="text-xs text-zinc-300">
                   {durSec > 0 ? (
                     <>
-                      {durMin}m {durSec.toString().padStart(2, "2")}s
+                      {durMin}m {durSec.toString().padStart(2, "0")}s
                     </>
                   ) : (
                     "—"

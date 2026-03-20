@@ -262,7 +262,7 @@
     "paymentMethod": "Método de pagamento: •••• 4242",
     "update": "Atualizar",
     "invoiceHistory": "Histórico de faturas",
-    "invoiceDesc": "Ver e baixar faturas no Stripe.",
+    "invoiceDesc": "Ver e baixar suas faturas.",
     "viewInvoices": "Ver faturas e histórico de pagamentos →",
     "pauseAccount": "Pausar conta",
     "cancel": "Cancelar",
@@ -348,7 +348,7 @@
         "features": [
           "1 agente IA",
           "1 número",
-          "400 min/mês",
+          "500 min/mês",
           "Insights de uso"
         ]
       },
@@ -357,23 +357,23 @@
         "features": [
           "3 agentes IA",
           "3 números",
-          "1.500 min/mês",
+          "2.500 min/mês",
           "Call Intelligence",
           "Suporte prioritário"
         ]
       },
       "scale": {
-        "name": "Scale",
+        "name": "Business",
         "features": [
           "Agentes IA ilimitados",
           "10 números",
-          "5.000 min/mês",
+          "6.000 min/mês",
           "Relatórios detalhados",
           "Acesso API"
         ]
       },
       "enterprise": {
-        "name": "Enterprise",
+        "name": "Agency",
         "features": [
           "Agentes ilimitados",
           "Números ilimitados",
@@ -3817,7 +3817,7 @@
         "starter": {
           "name": "Início",
           "tagline": "Para autônomos e pequenas equipes começando.",
-          "f1": "400 min de entrada incluídos",
+          "f1": "500 min de entrada incluídos",
           "f2": "1 número de IA",
           "f3": "Resumos de chamadas e captura de leads básicos",
           "f4": "Suporte padrão"
@@ -3825,7 +3825,7 @@
         "growth": {
           "name": "Crescimento",
           "tagline": "Para equipes em crescimento que precisam de cobertura total.",
-          "f1": "1.500 min de entrada incluídos",
+          "f1": "2.500 min de entrada incluídos",
           "f2": "3 números de IA",
           "f3": "Inteligência de chamadas e roteamento avançados",
           "f4": "Suporte prioritário"
@@ -4012,7 +4012,7 @@
           "name": "Starter",
           "description": "Atenda cada ligação. Um número, um agente.",
           "features": [
-            "400 min incluídos",
+            "500 min incluídos",
             "50 ligações outbound",
             "100 SMS",
             "1 agente IA",
@@ -4025,7 +4025,7 @@
           "name": "Growth",
           "description": "Um lead recuperado paga o mês.",
           "features": [
-            "1.500 min incluídos",
+            "2.500 min incluídos",
             "500 ligações outbound",
             "500 SMS",
             "3 agentes IA",
@@ -4033,15 +4033,15 @@
             "Agendamento",
             "Sequências de follow-up",
             "Análises",
-            "Excedente: $0,18/min"
+            "Excedente: $0,10/min"
           ],
           "cta": "Começar grátis"
         },
         "scale": {
-          "name": "Scale",
+          "name": "Business",
           "description": "Equipe de comunicação IA por uma fração de um contratação.",
           "features": [
-            "5.000 min incluídos",
+            "6.000 min incluídos",
             "2.000 ligações outbound",
             "SMS ilimitado",
             "Agentes IA ilimitados",
@@ -4050,12 +4050,12 @@
             "Compliance",
             "API",
             "Suporte prioritário",
-            "Excedente: $0,12/min"
+            "Excedente: $0,08/min"
           ],
           "cta": "Começar grátis"
         },
         "enterprise": {
-          "name": "Enterprise",
+          "name": "Agency",
           "description": "Preços sob medida — white label, compliance, SSO, gerente dedicado, SLA.",
           "features": [
             "White label",
@@ -4380,7 +4380,7 @@
       "starter": {
         "name": "Início",
         "description": "Para profissionais solo que querem que a IA atenda todas as chamadas.",
-        "f1": "400 min de entrada incluídos",
+        "f1": "500 min de entrada incluídos",
         "f2": "50 ligações de saída",
         "f3": "100 SMS",
         "f4": "1 agente de IA",
@@ -4390,14 +4390,14 @@
       "growth": {
         "name": "Crescimento",
         "description": "Para equipes em crescimento que precisam de cobertura confiável e acompanhamento.",
-        "f1": "1.500 min de entrada incluídos",
+        "f1": "2.500 min de entrada incluídos",
         "f2": "500 ligações de saída",
         "f3": "500 SMS",
         "f4": "3 agentes de IA",
         "f5": "3 números",
         "f6": "Agendamento",
         "f7": "Sequências de follow-up",
-        "f8": "Excedente: $0,18/min"
+        "f8": "Excedente: $0,10/min"
       },
       "scale": {
         "name": "Escala",
@@ -4411,7 +4411,7 @@
         "f7": "Conformidade",
         "f8": "API",
         "f9": "Suporte prioritário",
-        "f10": "Excedente: $0,12/min"
+        "f10": "Excedente: $0,08/min"
       },
       "enterprise": {
         "name": "Empresa",
@@ -6048,7 +6048,7 @@
       },
       "integrations": {
         "title": "Integrações",
-        "description": "Conecte o Recall Touch ao provedor (Twilio), calendário e CRM. Webhooks e API nos planos Scale e Enterprise.",
+        "description": "Conecte o Recall Touch ao provedor , calendário e CRM. Webhooks e API nos planos Scale e Enterprise.",
         "zapierHeading": "Zapier e Make",
         "zapierDesc": "Use OAuth para conectar seu workspace Recall Touch e depois consultar triggers ou invocar ações.",
         "authorizeLabel": "Autorizar",
@@ -6083,7 +6083,7 @@
         "title": "Changelog",
         "description": "Atualizações recentes da plataforma.",
         "entry202503": "Sequências de campanha (Chamada, SMS, Email, Espera), pontuação de leads, centro de notificações, checklist de onboarding, relatórios de erro, melhorias SEO e acessibilidade.",
-        "entry202502": "Agentes de voz Recall, provisionamento Twilio, vistas de atividade e caixa de entrada, hub de definições.",
+        "entry202502": "Agentes de voz Recall, provisionamento de números AI, vistas de atividade e caixa de entrada, hub de definições.",
         "entry202501": "Lançamento inicial: configuração do workspace, início de sessão, preços, simulador de demo."
       },
       "faq": {

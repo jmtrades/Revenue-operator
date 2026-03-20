@@ -12,6 +12,7 @@ import { enqueue } from "@/lib/queue";
 import { burstDrain } from "@/lib/queue/burst-drain";
 import { logWebhookFailure } from "@/lib/reliability/logging";
 import { ingestInboundAsSignal } from "@/lib/signals/ingest-inbound";
+import { log } from "@/lib/logger";
 
 function verifyTwilioSignature(
   url: string,
@@ -113,7 +114,7 @@ export async function POST(request: NextRequest) {
     const authToken = process.env.TWILIO_AUTH_TOKEN;
     if (authToken) {
       if (!signature) {
-        console.warn("[twilio-inbound] Missing x-twilio-signature header");
+        log("warn", "twilio_inbound.missing_signature_header", { message: "x-twilio-signature header missing" });
         return new NextResponse("Forbidden", { status: 403 });
       }
       const params = new URLSearchParams();
@@ -125,7 +126,7 @@ export async function POST(request: NextRequest) {
         return new NextResponse("Forbidden", { status: 403 });
       }
     } else if (process.env.NODE_ENV === "production") {
-      console.warn("[twilio-inbound] TWILIO_AUTH_TOKEN not configured — signature verification skipped");
+      log("warn", "twilio_inbound.auth_token_not_configured", { message: "signature verification skipped" });
     }
 
     try {

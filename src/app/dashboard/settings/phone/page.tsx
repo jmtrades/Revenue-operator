@@ -137,8 +137,8 @@ export default function SettingsPhonePage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <span className="px-2 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 text-xs">
-            Demo data
+          <span className="px-2 py-0.5 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-300 text-xs">
+            Sample data
           </span>
           <button
             type="button"
@@ -324,7 +324,7 @@ export default function SettingsPhonePage() {
                 style={{ borderColor: "var(--border-default)", background: "rgba(34,197,94,0.03)" }}
               >
                 <p className="text-xs" style={{ color: "var(--text-secondary)" }}>
-                  New numbers cost <span className="font-medium text-emerald-400">$3/month</span> and are provisioned via Twilio.
+                  New numbers cost <span className="font-medium text-emerald-400">$5/month</span> with a one-time $2 setup fee.
                   Your AI agent will be assigned automatically.
                 </p>
               </div>

@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
+import { getTelephonyService } from "@/lib/telephony";
 
 export const dynamic = "force-dynamic";
 
@@ -100,21 +101,12 @@ export async function POST(
   }
 
   const providerSid = number.provider_sid;
-  if (providerSid && process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
-    const sid = process.env.TWILIO_ACCOUNT_SID;
-    const token = process.env.TWILIO_AUTH_TOKEN;
+  if (providerSid) {
+    const telephony = getTelephonyService();
     try {
-      await fetch(
-        `https://api.twilio.com/2010-04-01/Accounts/${sid}/IncomingPhoneNumbers/${providerSid}.json`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Basic ${Buffer.from(`${sid}:${token}`).toString("base64")}`,
-          },
-        }
-      );
+      await telephony.releaseNumber(providerSid);
     } catch (e) {
-      console.error("Failed to release Twilio number:", e);
+      console.error("Failed to release number:", e);
     }
   }
 

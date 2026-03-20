@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
   }));
 
   const { data, error } = await db.from("leads").insert(toInsert).select("id");
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   const imported = Array.isArray(data) ? data.length : 0;
   return NextResponse.json({ imported, skipped: valid.length - imported });
 }

@@ -31,7 +31,7 @@ export async function syncPrimaryAgent(
   seed: WorkspaceAgentSeed,
 ): Promise<{ id: string } | null> {
   const voiceId = seed.voiceId?.trim() || DEFAULT_VOICE_ID;
-  const name = seed.agentName?.trim() || "Receptionist";
+  const name = seed.agentName?.trim() || "Primary Agent";
   const greeting =
     seed.greeting?.trim() ||
     `Thanks for calling ${seed.businessName}. How can I help you today?`;

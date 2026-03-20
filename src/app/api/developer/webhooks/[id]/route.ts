@@ -130,7 +130,7 @@ export async function PATCH(
     .eq("id", id)
     .select()
     .maybeSingle();
-  if (error) return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   const row = data as { id: string; url: string; events: string[]; enabled: boolean; created_at: string };
   return NextResponse.json({
     id: row.id,
@@ -155,6 +155,6 @@ export async function DELETE(
 
   const db = getDb();
   const { error } = await db.from("developer_webhook_endpoints").delete().eq("id", id);
-  if (error) return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   return NextResponse.json({ ok: true });
 }

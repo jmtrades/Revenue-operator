@@ -89,7 +89,7 @@ export default async function StatusPage() {
               </div>
 
               <div className="rounded-2xl border" style={{ borderColor: "var(--border-default)", background: "var(--bg-inset)", padding: 20 }}>
-                <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Billing (Stripe)</p>
+                <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Billing</p>
                 <p className="mt-2 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
                   {health?.stripe ? `Probe result: ${health.stripe}` : "Unavailable"}
                 </p>
@@ -105,7 +105,7 @@ export default async function StatusPage() {
               </div>
 
               <div className="rounded-2xl border" style={{ borderColor: "var(--border-default)", background: "var(--bg-inset)", padding: 20 }}>
-                <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Stripe configuration</p>
+                <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Billing configuration</p>
                 <p className="mt-2 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
                   Secret key: {health?.has_stripe_secret ? "set" : "missing"}
                   <br />

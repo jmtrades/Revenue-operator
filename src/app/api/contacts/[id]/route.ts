@@ -15,7 +15,7 @@ export async function GET(
   const { id } = await params;
   const db = getDb();
   const { data: contact, error } = await db.from("leads").select("*").eq("id", id).maybeSingle();
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   if (!contact) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const err = await requireWorkspaceAccess(req, (contact as { workspace_id: string }).workspace_id);
@@ -48,6 +48,6 @@ export async function PATCH(
   }
 
   const { data: contact, error } = await db.from("leads").update(updates).eq("id", id).select().maybeSingle();
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   return NextResponse.json(contact);
 }

@@ -143,8 +143,8 @@ export default function PipelinePage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <span className="px-2 py-0.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 text-xs">
-            Demo data
+          <span className="px-2 py-0.5 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-300 text-xs">
+            Sample data
           </span>
           <button
             type="button"

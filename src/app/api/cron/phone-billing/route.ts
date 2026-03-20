@@ -11,6 +11,7 @@ import { getDb } from "@/lib/db/queries";
 import Stripe from "stripe";
 import "@/lib/runtime";
 import { assertCronAuthorized } from "@/lib/runtime";
+import { log } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   const authErr = assertCronAuthorized(request);
@@ -63,7 +64,7 @@ export async function GET(request: NextRequest) {
 
       const workspace = ws as { stripe_customer_id?: string; billing_status?: string } | null;
       if (!workspace?.stripe_customer_id) {
-        console.warn(`[phone-billing] No Stripe customer for workspace ${workspaceId}`);
+        log("warn", "phone_billing.no_stripe_customer", { workspace_id: workspaceId });
         continue;
       }
 
@@ -106,7 +107,7 @@ export async function GET(request: NextRequest) {
       totalBilled += numberCount;
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      console.error(`[phone-billing] Error billing workspace ${workspaceId}:`, msg);
+      log("error", "phone_billing.workspace_error", { workspace_id: workspaceId, error: msg });
       errors.push(`${workspaceId}: ${msg}`);
     }
   }

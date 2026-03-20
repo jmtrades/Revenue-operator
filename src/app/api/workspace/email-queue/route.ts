@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
   }
   const { data, error } = await q;
 
-  if (error) return NextResponse.json({ error: (error as Error).message }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   const list = (data ?? []) as {
     id: string;
     to_email: string;

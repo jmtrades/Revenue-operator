@@ -10,7 +10,7 @@ import { Container } from "@/components/ui/Container";
 export const metadata: Metadata = {
   title: "Privacy Policy — Recall Touch",
   description:
-    "Recall Touch Privacy Policy covering data collection, usage, storage, and third parties (Stripe, Supabase, PostHog, Sentry). Contact support for rights requests",
+    "Recall Touch Privacy Policy covering data collection, usage, storage, and your rights. Learn how we protect your data and handle personal information.",
 };
 
 export default async function PrivacyPage() {
