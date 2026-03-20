@@ -45,35 +45,39 @@ export interface TelnyxWebhookPayload {
 }
 
 /**
- * Verify Telnyx webhook signature using public key and HMAC.
- * Telnyx uses SHA-256 HMAC with the webhook request body.
+ * Verify Telnyx webhook signature using HMAC-SHA256.
+ * SECURITY: Never skip verification — always reject if key is missing.
+ * Uses timing-safe comparison to prevent timing attacks.
  */
 export function verifyTelnyxWebhook(
   payload: string,
   signature: string | undefined,
   publicKey?: string
 ): boolean {
-  // If no signature provided, fail verification
+  // If no signature provided, ALWAYS fail
   if (!signature) {
     return false;
   }
 
   const key = publicKey || process.env.TELNYX_PUBLIC_KEY;
   if (!key) {
-    console.warn("TELNYX_PUBLIC_KEY not configured; webhook verification skipped");
-    return true; // Warn but allow in non-production
+    // SECURITY: Never allow unverified webhooks, even in dev
+    return false;
   }
 
   try {
-    // Telnyx uses HMAC-SHA256 of the request body
     const expected = crypto
       .createHmac("sha256", key)
       .update(payload)
       .digest("base64");
 
-    return signature === expected;
-  } catch (err) {
-    console.error("Webhook signature verification failed:", err);
+    // Timing-safe comparison to prevent timing attacks
+    if (expected.length !== signature.length) return false;
+    return crypto.timingSafeEqual(
+      Buffer.from(expected, "base64"),
+      Buffer.from(signature, "base64")
+    );
+  } catch {
     return false;
   }
 }

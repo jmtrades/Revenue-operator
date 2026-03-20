@@ -21,6 +21,9 @@ function clamp(value: number, min: number, max: number) {
 function getVoiceServerUrl(): string {
   const url = process.env.VOICE_SERVER_URL;
   if (!url) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("VOICE_SERVER_URL is required in production");
+    }
     return "http://localhost:8100";
   }
   return url;

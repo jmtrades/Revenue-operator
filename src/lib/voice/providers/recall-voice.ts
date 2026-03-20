@@ -11,10 +11,9 @@ import { log } from "@/lib/logger";
 function getVoiceServerUrl(): string {
   const url = process.env.VOICE_SERVER_URL;
   if (!url) {
-    console.warn(
-      "VOICE_SERVER_URL not set, using default http://localhost:8100. " +
-      "Set VOICE_SERVER_URL to your self-hosted voice server."
-    );
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("VOICE_SERVER_URL is required in production");
+    }
     return "http://localhost:8100";
   }
   return url;
@@ -133,93 +132,66 @@ export class RecallVoiceProvider implements VoiceProvider {
 
     const callId = `call_${Date.now()}_${crypto.randomUUID().slice(0, 9)}`;
 
-    // Place outbound call via Twilio, streaming audio to our voice server
-    const twilioSid = process.env.TWILIO_ACCOUNT_SID;
-    const twilioAuth = process.env.TWILIO_AUTH_TOKEN;
-    const twilioPhone = process.env.TWILIO_PHONE_NUMBER;
-
-    if (!twilioSid || !twilioAuth || !twilioPhone) {
-      console.warn("Twilio credentials not configured — outbound call queued but not placed");
-      return { callId, status: "queued", provider: "recall" };
-    }
-
-    const wsUrl = this.serverUrl.replace(/^https:/, "wss:").replace(/^http:/, "ws:");
-    const escXml = (s: string) =>
-      s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-
-    const twiml = `<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-  <Connect>
-    <Stream url="${escXml(wsUrl)}/ws/conversation">
-      <Parameter name="assistant_id" value="${escXml(params.assistantId)}" />
-      <Parameter name="voice_id" value="${escXml(config.voice_id)}" />
-      <Parameter name="direction" value="outbound" />
-    </Stream>
-  </Connect>
-</Response>`;
-
+    // Use the unified telephony service (Telnyx or Twilio based on TELEPHONY_PROVIDER)
     try {
-      const authHeader = Buffer.from(`${twilioSid}:${twilioAuth}`).toString("base64");
-      const response = await fetch(
-        `https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Calls.json`,
-        {
-          method: "POST",
-          headers: {
-            "Authorization": `Basic ${authHeader}`,
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: new URLSearchParams({
-            To: params.phoneNumber,
-            From: twilioPhone,
-            Twiml: twiml,
-          }),
-        },
-      );
+      const { getTelephonyService } = await import("@/lib/telephony");
+      const telephony = getTelephonyService();
 
-      if (!response.ok) {
-        const err = await response.text();
-        throw new Error(`Twilio API error: ${response.status} ${err}`);
+      const result = await telephony.createOutboundCall({
+        to: params.phoneNumber,
+        from: process.env.TELNYX_PHONE_NUMBER || process.env.TWILIO_PHONE_NUMBER || "",
+        webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/telnyx/voice`,
+        metadata: {
+          assistant_id: params.assistantId,
+          voice_id: config.voice_id,
+          direction: "outbound",
+        },
+      });
+
+      if ("error" in result) {
+        throw new Error(result.error);
       }
 
-      const data = await response.json() as { sid: string };
-      log("info", "recall_voice.outbound_call_placed", { callSid: data.sid });
-
+      log("info", "recall_voice.outbound_call_placed", { callId: result.callId });
       return {
-        callId: data.sid,
+        callId: result.callId || callId,
         status: "queued",
         provider: "recall",
       };
     } catch (error) {
-      console.error("Outbound call failed:", error);
+      log("error", "recall_voice.outbound_call_failed", {
+        error: error instanceof Error ? error.message : String(error),
+      });
       return { callId, status: "failed", provider: "recall" };
     }
   }
 
-  async createInboundCall(twilioCallSid: string, assistantId: string): Promise<string> {
+  async createInboundCall(callSessionId: string, assistantId: string): Promise<string> {
     const config = this.assistantConfigs.get(assistantId);
     if (!config) {
       throw new Error(`Assistant ${assistantId} not found`);
     }
 
-    // Return TwiML that streams to our voice server WebSocket instead of ElevenLabs
-    // The voice server will handle STT, LLM, and TTS
+    // Return streaming config for voice server WebSocket
+    // Works with both Telnyx (Call Control) and Twilio (TwiML) depending on provider
     const wsUrl = this.serverUrl.replace(/^https:/, "wss:").replace(/^http:/, "ws:");
 
     // Escape XML special characters to prevent injection
     const escXml = (s: string) =>
       s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
+    // Return TwiML-compatible streaming response (works as fallback for both providers)
     const twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Connect>
     <Stream url="${escXml(wsUrl)}/ws/conversation">
-      <Parameter name="call_sid" value="${escXml(twilioCallSid)}" />
+      <Parameter name="call_session_id" value="${escXml(callSessionId)}" />
       <Parameter name="assistant_id" value="${escXml(assistantId)}" />
     </Stream>
   </Connect>
 </Response>`;
 
-    log("info", "recall_voice.inbound_twiml_created", { callSid: twilioCallSid });
+    log("info", "recall_voice.inbound_stream_created", { callSessionId });
 
     return twiml;
   }
