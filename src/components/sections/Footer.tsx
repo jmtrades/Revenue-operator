@@ -157,20 +157,20 @@ export function Footer() {
             </div>
             <div className="pt-2">
               <p className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>
-                Comparisons
+                Resources
               </p>
               <div className="mt-2 space-y-1">
-                <Link href="/compare/smith-ai" className="block hover:opacity-80 transition-opacity">
-                  vs Smith.ai
+                <Link href="/demo" className="block hover:opacity-80 transition-opacity">
+                  Live Demo
                 </Link>
-                <Link href="/compare/ruby" className="block hover:opacity-80 transition-opacity">
-                  vs Ruby
+                <Link href="/demo/voice" className="block hover:opacity-80 transition-opacity">
+                  Voice Library
                 </Link>
-                <Link href="/compare/gohighlevel" className="block hover:opacity-80 transition-opacity">
-                  vs GoHighLevel
+                <Link href="/pricing" className="block hover:opacity-80 transition-opacity">
+                  Pricing
                 </Link>
-                <Link href="/compare/hiring-receptionist" className="block hover:opacity-80 transition-opacity">
-                  vs Hiring a Receptionist
+                <Link href="/contact" className="block hover:opacity-80 transition-opacity">
+                  Contact Sales
                 </Link>
               </div>
             </div>
