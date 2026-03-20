@@ -1852,7 +1852,7 @@
       },
       "templates": {
         "receptionist": {
-          "label": "Réceptionniste",
+          "label": "Agent IA",
           "desc": "Répond aux appels, prend les messages, oriente.",
           "greeting": "Merci d'avoir appelé. Je peux répondre aux questions, prendre des messages et vous orienter. Comment vous aider aujourd'hui ?"
         },
@@ -1898,7 +1898,7 @@
     },
     "profile": {
       "agentNameLabel": "Nom de l'agent",
-      "agentNamePlaceholder": "Réceptionniste",
+      "agentNamePlaceholder": "Agent IA",
       "openingGreetingLabel": "Message d'accueil",
       "openingGreetingHint": "C'est ainsi que votre IA répond au téléphone. Ensuite, elle converse naturellement selon vos connaissances et règles.",
       "greetingPlaceholder": "Merci d'avoir appelé. Comment puis-je vous aider ?",
@@ -1919,7 +1919,7 @@
       "title": "Créer un agent",
       "subtitle": "Partez d'un modèle éprouvé au lieu de tout configurer from scratch.",
       "closeAria": "Fermer la boîte de dialogue de création d'agent",
-      "receptionistDesc": "Répond aux appels, aiguille et gère les FAQ.",
+      "receptionistDesc": "Répond aux appels, aiguille et gère les FAQ avec votre Agent IA.",
       "salesCallerDesc": "Appelle les leads, qualifie et présente.",
       "appointmentSetterDesc": "Réserve des rendez-vous, confirme et rappelle.",
       "supportDesc": "Triage, répond et escalade.",
@@ -1931,7 +1931,7 @@
       "all": "Tous"
     },
     "templateName": {
-      "receptionist": "Réceptionniste",
+      "receptionist": "Agent IA",
       "after_hours": "Hors horaires",
       "emergency": "Ligne d'urgence",
       "lead_qualifier": "Commercial",
@@ -1987,7 +1987,7 @@
       "receptionist": "Merci d'avoir appelé. Comment vous aider aujourd'hui ?"
     },
     "defaultAgent": {
-      "name": "Réceptionniste",
+      "name": "Agent IA",
       "simpleGreeting": "Merci d'avoir appelé. Comment puis-je vous aider aujourd'hui ?",
       "defaultHours": "Lun–Ven 9h–17h",
       "yourBusiness": "votre entreprise",
@@ -2331,7 +2331,7 @@
       "emergency": "Urgence",
       "review_request": "Avis",
       "scratch": "Personnalisé",
-      "receptionist": "Réceptionniste"
+      "receptionist": "Agent IA"
     },
     "setupProgress": {
       "title": "Progression de la configuration",
@@ -3594,6 +3594,7 @@
       "badgeEncryption": "Chiffrement 256 bits",
       "badgeUptime": "",
       "ctaStartFree": "Commencer gratuitement →",
+      "complianceAndSecurity": "Conformité et Sécurité",
       "optionalUpdates": "Optionnel : recevoir les actualités produit.",
       "notifyMe": "M'alerter",
       "onList": "Vous êtes sur la liste ! 🎉",
@@ -4752,7 +4753,7 @@
     "errorNameRequired": "Votre nom et le nom de l'entreprise sont requis.",
     "errorSomethingWentWrong": "Une erreur s'est produite",
     "creating": "Création…",
-    "step2Heading": "Voici votre réceptionniste IA.",
+    "step2Heading": "Voici votre Agent IA.",
     "step2Subtitle": "Choisissez un nom et ce qu'elle peut faire.",
     "agentNameLabel": "Nom de l'agent",
     "greetingLabelOptional": "Salutation (optionnel)",

@@ -9,6 +9,16 @@ import { Shell } from "@/components/Shell";
 import { HandoffList } from "@/components/HandoffList";
 import { DashboardExecutionStateBanner } from "@/components/ExecutionStateBanner";
 import { TrialGraceEndedBanner } from "@/components/TrialGraceEndedBanner";
+import {
+  Phone,
+  TrendingUp,
+  CheckCircle2,
+  Calendar,
+  ChevronRight,
+  Clock,
+  AlertCircle,
+  Zap,
+} from "lucide-react";
 
 interface Capsule {
   today: string[];
@@ -97,16 +107,25 @@ export default function SituationPage() {
   if (workspaces.length === 0) {
     return (
       <div className="min-h-[80vh] flex items-center justify-center p-8" style={{ background: "var(--background)" }}>
-        <div className="max-w-lg text-center">
-          <p className="text-lg" style={{ color: "var(--text-primary)", lineHeight: 1.7 }}>
-            Operation is not yet in place.
+        <div className="max-w-md text-center">
+          <div className="mb-6 flex justify-center">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: "var(--accent-primary-subtle)" }}>
+              <Phone size={32} style={{ color: "var(--accent-primary)" }} />
+            </div>
+          </div>
+          <h1 className="text-3xl font-bold mb-2" style={{ color: "var(--text-primary)" }}>
+            Ready to get started?
+          </h1>
+          <p className="text-base mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
+            Set up your AI receptionist and start handling calls, capturing leads, and booking appointments automatically.
           </p>
           <Link
             href="/activate"
-            className="mt-8 inline-block px-6 py-3 text-sm font-medium"
-            style={{ color: "var(--meaning-blue)" }}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm transition-colors hover:opacity-90"
+            style={{ background: "var(--accent-primary)", color: "white" }}
           >
-            Start protection
+            Start Your Free Trial
+            <ChevronRight size={18} />
           </Link>
         </div>
       </div>
@@ -116,9 +135,11 @@ export default function SituationPage() {
   if (!workspaceId) {
     return (
       <Shell>
-        <p className="text-lg" style={{ color: "var(--text-primary)", lineHeight: 1.7 }}>
-          Normal conditions.
-        </p>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <p className="text-lg" style={{ color: "var(--text-muted)" }}>Loading your dashboard...</p>
+          </div>
+        </div>
       </Shell>
     );
   }
@@ -153,53 +174,170 @@ export default function SituationPage() {
 
   const callsHref = `/dashboard/calls${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
 
+  // Get workspace name
+  const currentWorkspace = workspaces.find(w => w.id === workspaceId);
+  const businessName = currentWorkspace?.name || "Your Business";
+
   return (
     <Shell>
       <TrialGraceEndedBanner />
       <DashboardExecutionStateBanner />
-      <p className="text-xs mb-6" style={{ color: "var(--text-muted)" }}>
-        Handling active. Commitments secured. Compliance enforced. Confirmation recorded.
-      </p>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-        <Link href={`/dashboard/leads${searchParams.toString() ? `?${searchParams.toString()}` : ""}`} className="rounded-lg border p-4 transition-colors hover:border-emerald-500/30" style={{ borderColor: "var(--border)", background: "var(--card)" }}>
-          <p className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>{stats?.active_leads ?? "—"}</p>
-          <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Active leads</p>
+
+      {/* Welcome Section */}
+      <div className="mb-12">
+        <h1 className="text-4xl font-bold mb-2" style={{ color: "var(--text-primary)" }}>
+          Welcome back
+        </h1>
+        <p className="text-lg" style={{ color: "var(--text-secondary)" }}>
+          {businessName}
+        </p>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+        <Link href={callsHref} className="rounded-lg border p-6 transition-all hover:shadow-md hover:border-opacity-50" style={{ borderColor: "var(--border-default)", background: "var(--card)", borderWidth: "1px" }}>
+          <div className="flex items-start justify-between mb-3">
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: "var(--accent-primary-subtle)" }}>
+              <Phone size={20} style={{ color: "var(--accent-primary)" }} />
+            </div>
+          </div>
+          <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
+            {stats?.recent_calls ?? "0"}
+          </p>
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Active Calls</p>
         </Link>
-        <Link href={callsHref} className="rounded-lg border p-4 transition-colors hover:border-emerald-500/30" style={{ borderColor: "var(--border)", background: "var(--card)" }}>
-          <p className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>{stats?.recent_calls ?? "—"}</p>
-          <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Calls this week</p>
-        </Link>
-        <Link href={`/dashboard/leads?filter=followup${searchParams.get("workspace_id") ? `&workspace_id=${searchParams.get("workspace_id")}` : ""}`} className="rounded-lg border p-4 transition-colors hover:border-emerald-500/30" style={{ borderColor: "var(--border)", background: "var(--card)" }}>
-          <p className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>{stats?.pending_followups ?? "—"}</p>
-          <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Pending follow-ups</p>
+
+        <div className="rounded-lg border p-6" style={{ borderColor: "var(--border-default)", background: "var(--card)", borderWidth: "1px" }}>
+          <div className="flex items-start justify-between mb-3">
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: "var(--meaning-green)" }}>
+              <TrendingUp size={20} color="white" />
+            </div>
+          </div>
+          <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
+            $0
+          </p>
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Revenue Recovered</p>
+        </div>
+
+        <div className="rounded-lg border p-6" style={{ borderColor: "var(--border-default)", background: "var(--card)", borderWidth: "1px" }}>
+          <div className="flex items-start justify-between mb-3">
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: "var(--meaning-blue)" }}>
+              <CheckCircle2 size={20} color="white" />
+            </div>
+          </div>
+          <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
+            {stats?.recent_calls ?? "0"}
+          </p>
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Calls Handled</p>
+        </div>
+
+        <Link href={`/dashboard/leads?filter=followup${searchParams.get("workspace_id") ? `&workspace_id=${searchParams.get("workspace_id")}` : ""}`} className="rounded-lg border p-6 transition-all hover:shadow-md hover:border-opacity-50" style={{ borderColor: "var(--border-default)", background: "var(--card)", borderWidth: "1px" }}>
+          <div className="flex items-start justify-between mb-3">
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: "var(--meaning-purple)" }}>
+              <Calendar size={20} color="white" />
+            </div>
+          </div>
+          <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
+            {stats?.pending_followups ?? "0"}
+          </p>
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Appointments Booked</p>
         </Link>
       </div>
+      {/* Getting Started Section */}
+      <div className="mb-12">
+        <div className="flex items-center gap-2 mb-6">
+          <Zap size={24} style={{ color: "var(--accent-primary)" }} />
+          <h2 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Getting Started</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Link
+            href="/dashboard/settings/business"
+            className="rounded-lg border p-6 transition-all hover:shadow-md hover:border-opacity-50 group"
+            style={{ borderColor: "var(--border-default)", background: "var(--card)" }}
+          >
+            <div className="flex items-start justify-between mb-3">
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: "var(--accent-primary-subtle)" }}>
+                <CheckCircle2 size={20} style={{ color: "var(--accent-primary)" }} />
+              </div>
+              <ChevronRight size={18} style={{ color: "var(--text-tertiary)" }} className="group-hover:translate-x-1 transition-transform" />
+            </div>
+            <h3 className="font-semibold mb-1" style={{ color: "var(--text-primary)" }}>Complete Your Profile</h3>
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Add business info and preferences</p>
+          </Link>
+
+          <Link
+            href="/dashboard/settings/phone"
+            className="rounded-lg border p-6 transition-all hover:shadow-md hover:border-opacity-50 group"
+            style={{ borderColor: "var(--border-default)", background: "var(--card)" }}
+          >
+            <div className="flex items-start justify-between mb-3">
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: "var(--accent-primary-subtle)" }}>
+                <Phone size={20} style={{ color: "var(--accent-primary)" }} />
+              </div>
+              <ChevronRight size={18} style={{ color: "var(--text-tertiary)" }} className="group-hover:translate-x-1 transition-transform" />
+            </div>
+            <h3 className="font-semibold mb-1" style={{ color: "var(--text-primary)" }}>Set Up Your Number</h3>
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Configure your AI receptionist's phone</p>
+          </Link>
+
+          <Link
+            href="/dashboard/settings/voices"
+            className="rounded-lg border p-6 transition-all hover:shadow-md hover:border-opacity-50 group"
+            style={{ borderColor: "var(--border-default)", background: "var(--card)" }}
+          >
+            <div className="flex items-start justify-between mb-3">
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: "var(--accent-primary-subtle)" }}>
+                <Clock size={20} style={{ color: "var(--accent-primary)" }} />
+              </div>
+              <ChevronRight size={18} style={{ color: "var(--text-tertiary)" }} className="group-hover:translate-x-1 transition-transform" />
+            </div>
+            <h3 className="font-semibold mb-1" style={{ color: "var(--text-primary)" }}>Choose Agent Voice</h3>
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Pick the perfect voice personality</p>
+          </Link>
+
+          <Link
+            href="/dashboard/calls"
+            className="rounded-lg border p-6 transition-all hover:shadow-md hover:border-opacity-50 group"
+            style={{ borderColor: "var(--border-default)", background: "var(--card)" }}
+          >
+            <div className="flex items-start justify-between mb-3">
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: "var(--accent-primary-subtle)" }}>
+                <AlertCircle size={20} style={{ color: "var(--accent-primary)" }} />
+              </div>
+              <ChevronRight size={18} style={{ color: "var(--text-tertiary)" }} className="group-hover:translate-x-1 transition-transform" />
+            </div>
+            <h3 className="font-semibold mb-1" style={{ color: "var(--text-primary)" }}>View Recent Activity</h3>
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Check call logs and recordings</p>
+          </Link>
+        </div>
+      </div>
+
       {/* Revenue At Risk Widget */}
       {revenueRisk && revenueRisk.categories.length > 0 && (
-        <div className="mb-10 rounded-lg border p-5" style={{ borderColor: "var(--border)", background: "var(--card)" }}>
-          <div className="flex items-center justify-between mb-4">
+        <div className="mb-10 rounded-lg border p-6" style={{ borderColor: "var(--border-default)", background: "var(--card)" }}>
+          <div className="flex items-center justify-between mb-5">
             <div>
-              <h2 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Revenue At Risk</h2>
-              <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>Estimated revenue leaking this week</p>
+              <h3 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>Revenue At Risk</h3>
+              <p className="text-sm mt-0.5" style={{ color: "var(--text-secondary)" }}>Estimated revenue leaking this week</p>
             </div>
-            <p className="text-2xl font-bold text-red-400">${revenueRisk.total_at_risk.toLocaleString()}</p>
+            <p className="text-2xl font-bold" style={{ color: "var(--meaning-red)" }}>${revenueRisk.total_at_risk.toLocaleString()}</p>
           </div>
           <div className="space-y-3">
             {revenueRisk.categories.map((cat) => (
-              <div key={cat.key} className="flex items-center justify-between gap-4 py-2 border-t" style={{ borderColor: "var(--border)" }}>
+              <div key={cat.key} className="flex items-center justify-between gap-4 py-3 border-t" style={{ borderColor: "var(--border-default)" }}>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm" style={{ color: "var(--text-primary)" }}>
+                  <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
                     {cat.label}
-                    <span className="ml-2 text-xs px-1.5 py-0.5 rounded" style={{ background: "rgba(239,68,68,0.1)", color: "rgb(239,68,68)" }}>
+                    <span className="ml-2 text-xs px-2 py-1 rounded-full" style={{ background: "rgba(239,68,68,0.15)", color: "var(--meaning-red)" }}>
                       {cat.count}
                     </span>
                   </p>
-                  <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>~${cat.estimatedRevenue.toLocaleString()} at risk</p>
+                  <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>~${cat.estimatedRevenue.toLocaleString()} at risk</p>
                 </div>
                 <Link
                   href={cat.action}
-                  className="text-xs font-medium px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors"
-                  style={{ background: "rgba(16,185,129,0.1)", color: "rgb(16,185,129)" }}
+                  className="text-xs font-medium px-3 py-2 rounded-lg whitespace-nowrap transition-colors"
+                  style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}
                 >
                   {cat.actionLabel}
                 </Link>
@@ -211,20 +349,20 @@ export default function SituationPage() {
 
       {/* Knowledge Gaps */}
       {gaps.length > 0 && (
-        <div className="mb-10 rounded-lg border p-5" style={{ borderColor: "var(--border)", background: "var(--card)" }}>
-          <h2 className="text-sm font-semibold mb-1" style={{ color: "var(--text-primary)" }}>AI Knowledge Gaps</h2>
-          <p className="text-xs mb-4" style={{ color: "var(--text-muted)" }}>Your AI couldn&apos;t answer these questions. Add answers to make it smarter.</p>
-          <div className="space-y-2">
+        <div className="mb-10 rounded-lg border p-6" style={{ borderColor: "var(--border-default)", background: "var(--card)" }}>
+          <h3 className="text-lg font-semibold mb-1" style={{ color: "var(--text-primary)" }}>AI Knowledge Gaps</h3>
+          <p className="text-sm mb-5" style={{ color: "var(--text-secondary)" }}>Your AI couldn&apos;t answer these questions. Add answers to make it smarter.</p>
+          <div className="space-y-3">
             {gaps.slice(0, 5).map((gap) => (
-              <div key={gap.id} className="flex items-center justify-between gap-4 py-2 border-t" style={{ borderColor: "var(--border)" }}>
+              <div key={gap.id} className="flex items-center justify-between gap-4 py-3 border-t" style={{ borderColor: "var(--border-default)" }}>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm truncate" style={{ color: "var(--text-primary)" }}>&ldquo;{gap.question}&rdquo;</p>
-                  <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>Asked {gap.occurrences}x</p>
+                  <p className="text-sm font-medium truncate" style={{ color: "var(--text-primary)" }}>&ldquo;{gap.question}&rdquo;</p>
+                  <p className="text-xs mt-1" style={{ color: "var(--text-secondary)" }}>Asked {gap.occurrences}x</p>
                 </div>
                 <Link
                   href={`/dashboard/agents?gap=${gap.id}`}
-                  className="text-xs font-medium px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors"
-                  style={{ background: "rgba(59,130,246,0.1)", color: "rgb(59,130,246)" }}
+                  className="text-xs font-medium px-3 py-2 rounded-lg whitespace-nowrap transition-colors"
+                  style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}
                 >
                   Add answer
                 </Link>
@@ -234,92 +372,73 @@ export default function SituationPage() {
         </div>
       )}
 
+      {/* Recent Activity Section */}
       <div className="mb-10">
-        <h2 className="text-sm font-medium mb-2" style={{ color: "var(--text-muted)", letterSpacing: "0.02em" }}>Recent records</h2>
-        <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-          <Link href={callsHref} style={{ color: "var(--meaning-blue)" }}>View all calls</Link>
-          {" · "}
-          <Link href={recordHref} style={{ color: "var(--text-muted)" }}>Record</Link>
-        </p>
-      </div>
-      <div className="space-y-16 max-w-2xl">
-        <section>
-          <div className="border-b pb-4 mb-4" style={{ borderColor: "var(--border)" }}>
-            <h2 className="text-sm font-medium" style={{ color: "var(--text-muted)", letterSpacing: "0.02em" }}>
-              Current state
-            </h2>
-          </div>
-          <div className="space-y-4">
-            {currentState.length === 0 ? (
-              <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                No unresolved condition was present.
-              </p>
-            ) : (
-              currentState.map((line, i) => (
-                <p key={i} className="text-sm" style={{ color: "var(--text-primary)", lineHeight: 1.7 }}>
-                  {line}
-                </p>
-              ))
-            )}
-            {hasMoreCurrent && (
-              <p className="text-sm pt-2">
-                <Link href={recordHref} style={{ color: "var(--text-muted)" }}>More in Record</Link>
-              </p>
-            )}
-          </div>
-        </section>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Recent Activity</h2>
+          <Link href={callsHref} className="text-sm font-medium flex items-center gap-1 transition-colors" style={{ color: "var(--accent-primary)" }}>
+            View all
+            <ChevronRight size={16} />
+          </Link>
+        </div>
 
-        <section>
-          <div className="border-b pb-4 mb-4" style={{ borderColor: "var(--border)" }}>
-            <h2 className="text-sm font-medium" style={{ color: "var(--text-muted)", letterSpacing: "0.02em" }}>
-              Recent change
-            </h2>
+        {currentState.length === 0 && recentChange.length === 0 ? (
+          <div className="rounded-lg border p-12 text-center" style={{ borderColor: "var(--border-default)", background: "var(--card)", borderStyle: "dashed" }}>
+            <div className="flex justify-center mb-4">
+              <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: "var(--accent-primary-subtle)" }}>
+                <Clock size={24} style={{ color: "var(--accent-primary)" }} />
+              </div>
+            </div>
+            <h3 className="font-semibold mb-2" style={{ color: "var(--text-primary)" }}>No activity yet</h3>
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+              Once calls start coming in, you&apos;ll see a summary here
+            </p>
           </div>
-          <div className="space-y-4">
-            {recentChange.length === 0 ? (
-              <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                No recent change recorded.
-              </p>
-            ) : (
-              recentChange.map((line, i) => (
-                <p key={i} className="text-sm" style={{ color: "var(--text-primary)", lineHeight: 1.7 }}>
-                  {line}
-                </p>
-              ))
+        ) : (
+          <div className="space-y-6">
+            {currentState.length > 0 && (
+              <section>
+                <h3 className="text-sm font-semibold mb-3" style={{ color: "var(--text-secondary)" }}>Current Status</h3>
+                <div className="space-y-2">
+                  {currentState.map((line, i) => (
+                    <div key={i} className="flex gap-3 p-3 rounded-lg" style={{ background: "var(--bg-elevated)" }}>
+                      <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style={{ background: "var(--accent-primary)" }} />
+                      <p className="text-sm" style={{ color: "var(--text-primary)" }}>
+                        {line}
+                      </p>
+                    </div>
+                  ))}
+                  {hasMoreCurrent && (
+                    <Link href={recordHref} className="text-sm font-medium mt-2 transition-colors" style={{ color: "var(--accent-primary)" }}>
+                      View more records
+                    </Link>
+                  )}
+                </div>
+              </section>
             )}
-            {hasMoreRecent && (
-              <p className="text-sm pt-2">
-                <Link href={recordHref} style={{ color: "var(--text-muted)" }}>More in Record</Link>
-              </p>
-            )}
-          </div>
-        </section>
 
-        <section>
-          <div className="border-b pb-4 mb-4" style={{ borderColor: "var(--border)" }}>
-            <h2 className="text-sm font-medium" style={{ color: "var(--text-muted)", letterSpacing: "0.02em" }}>
-              If removed
-            </h2>
-          </div>
-          <div className="space-y-4">
-            {ifRemoved.length === 0 ? (
-              <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                No dependency recorded.
-              </p>
-            ) : (
-              ifRemoved.map((line, i) => (
-                <p key={i} className="text-sm" style={{ color: "var(--text-primary)", lineHeight: 1.7 }}>
-                  {line}
-                </p>
-              ))
-            )}
-            {hasMoreRemoved && (
-              <p className="text-sm pt-2">
-                <Link href={recordHref} style={{ color: "var(--text-muted)" }}>More in Record</Link>
-              </p>
+            {recentChange.length > 0 && (
+              <section>
+                <h3 className="text-sm font-semibold mb-3" style={{ color: "var(--text-secondary)" }}>Recent Updates</h3>
+                <div className="space-y-2">
+                  {recentChange.map((line, i) => (
+                    <div key={i} className="flex gap-3 p-3 rounded-lg" style={{ background: "var(--bg-elevated)" }}>
+                      <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style={{ background: "var(--accent-primary)" }} />
+                      <p className="text-sm" style={{ color: "var(--text-primary)" }}>
+                        {line}
+                      </p>
+                    </div>
+                  ))}
+                  {hasMoreRecent && (
+                    <Link href={recordHref} className="text-sm font-medium mt-2 transition-colors" style={{ color: "var(--accent-primary)" }}>
+                      View more updates
+                    </Link>
+                  )}
+                </div>
+              </section>
             )}
           </div>
-        </section>
+        )}
       </div>
     </Shell>
   );

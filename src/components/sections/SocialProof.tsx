@@ -56,6 +56,11 @@ export function SocialProof() {
               );
             })}
           </div>
+          <p className="text-xs mt-4 mb-8" style={{ color: "var(--text-tertiary)" }}>
+            <Link href="/security" className="underline hover:opacity-80 transition-opacity" style={{ color: "var(--accent-primary)" }}>
+              {t("complianceAndSecurity")}
+            </Link>
+          </p>
           <Link
             href={ROUTES.START}
             className="inline-flex items-center justify-center bg-white text-black font-semibold rounded-xl px-6 py-3 hover:bg-zinc-200 transition-colors"

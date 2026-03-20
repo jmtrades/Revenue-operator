@@ -29,21 +29,8 @@ export async function detectLocaleFromRequest(): Promise<AppLocale> {
     return cookieLocale as AppLocale;
   }
 
-  const h = await headers();
-  const acceptLanguage = h.get("accept-language") || "";
-  const accepted = acceptLanguage
-    .split(",")
-    .map((part: string) => part.split(";")[0]?.trim())
-    .filter(Boolean);
-
-  for (const lang of accepted) {
-    const base = lang.split("-")[0];
-    const match = (locales as readonly string[]).find(
-      (locale) => locale === lang || locale === base,
-    );
-    if (match) return match as AppLocale;
-  }
-
+  // Always default to English. Do not auto-detect browser locale from Accept-Language header.
+  // Explicit locale parameters or cookies can still override this default.
   return "en";
 }
 

@@ -24,6 +24,7 @@ import {
   PanelLeftOpen,
   Command as CommandIcon,
   HelpCircle,
+  Check,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { PageTransition } from "@/components/ui/PageTransition";
@@ -770,7 +771,7 @@ function OnboardingSidebar({ initialWorkspaceName }: { initialWorkspaceName?: st
                           : "bg-[var(--bg-input)] text-[var(--text-tertiary)]"
                     } ${isCurrent ? "ring-2 ring-white/50" : ""}`}
                   >
-                    {isComplete ? "✓" : stepNum}
+                    {isComplete ? <Check className="w-3 h-3" /> : stepNum}
                   </div>
                   {i < ONBOARDING_STEP_LABELS.length - 1 && (
                     <div className={`w-0.5 min-h-[14px] ${step > stepNum ? "bg-green-500/50" : "bg-[var(--border-default)]"}`} />

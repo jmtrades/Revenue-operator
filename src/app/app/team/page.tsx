@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { Plus, MoreVertical, Crown, ChevronDown, ChevronRight } from "lucide-react";
+import { Plus, MoreVertical, Crown, ChevronDown, ChevronRight, Check, Minus } from "lucide-react";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useWorkspace } from "@/components/WorkspaceContext";
@@ -434,10 +434,10 @@ export default function TeamPage() {
                   {permissionsMatrix.map((row) => (
                     <tr key={row.id} className="border-b border-[var(--border-default)]/80">
                       <td className="py-2.5 pr-4 text-zinc-300">{row.label}</td>
-                      <td className="py-2.5 px-2 text-center">{row.roles.owner ? "✓" : "—"}</td>
-                      <td className="py-2.5 px-2 text-center">{row.roles.admin ? "✓" : "—"}</td>
-                      <td className="py-2.5 px-2 text-center">{row.roles.manager ? "✓" : "—"}</td>
-                      <td className="py-2.5 px-2 text-center">{row.roles.agent ? "✓" : "—"}</td>
+                      <td className="py-2.5 px-2 text-center">{row.roles.owner ? <Check className="w-4 h-4 text-emerald-400 mx-auto" /> : <Minus className="w-4 h-4 text-zinc-600 mx-auto" />}</td>
+                      <td className="py-2.5 px-2 text-center">{row.roles.admin ? <Check className="w-4 h-4 text-emerald-400 mx-auto" /> : <Minus className="w-4 h-4 text-zinc-600 mx-auto" />}</td>
+                      <td className="py-2.5 px-2 text-center">{row.roles.manager ? <Check className="w-4 h-4 text-emerald-400 mx-auto" /> : <Minus className="w-4 h-4 text-zinc-600 mx-auto" />}</td>
+                      <td className="py-2.5 px-2 text-center">{row.roles.agent ? <Check className="w-4 h-4 text-emerald-400 mx-auto" /> : <Minus className="w-4 h-4 text-zinc-600 mx-auto" />}</td>
                     </tr>
                   ))}
                 </tbody>

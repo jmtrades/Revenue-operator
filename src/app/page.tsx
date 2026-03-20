@@ -16,6 +16,9 @@ const HomepageRoiCalculator = dynamic(
 const SocialProof = dynamic(
   () => import("@/components/sections/SocialProof").then((m) => m.SocialProof),
 );
+const CustomerLogosBar = dynamic(
+  () => import("@/components/sections/CustomerLogosBar").then((m) => m.CustomerLogosBar),
+);
 // ProblemStatement removed — loss-psychology framing replaced by ROI calculator
 const HowItWorks = dynamic(
   () => import("@/components/sections/HowItWorks").then((m) => m.HowItWorks),
@@ -23,9 +26,8 @@ const HowItWorks = dynamic(
 const PricingPreview = dynamic(
   () => import("@/components/sections/PricingPreview").then((m) => m.PricingPreview),
 );
-const Industries = dynamic(
-  () => import("@/components/sections/Industries").then((m) => m.Industries),
-);
+// Industries removed — listing specific industries on homepage excludes potential users.
+// Industry-specific pages still exist at /industries/* for SEO.
 const HomepageVoicePreview = dynamic(
   () => import("@/components/sections/HomepageVoicePreview").then((m) => m.HomepageVoicePreview),
 );
@@ -118,10 +120,10 @@ export default async function HomePage() {
       <Navbar initialAuthenticated={initialAuthenticated} />
       <main id="main">
         <Hero />
+        <CustomerLogosBar />
         <SocialProof />
         <HowItWorks />
         <HomepageVoicePreview />
-        <Industries />
         <HomepageRoiCalculator />
         <TestimonialsSection />
         <PricingPreview />

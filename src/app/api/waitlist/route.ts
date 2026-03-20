@@ -1,32 +1,99 @@
+/**
+ * Waitlist signup route
+ * Public endpoint for collecting email signups with rate limiting
+ */
+
+export const dynamic = "force-dynamic";
+
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
-import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
-/**
- * Founding members / early access waitlist.
- * Accepts POST { email } — persists to waitlist table when DB configured; always returns 200.
- */
+// Simple in-memory rate limiting: Map<email, timestamp>
+const rateLimitMap = new Map<string, number>();
+
+function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+function checkRateLimit(email: string): boolean {
+  const now = Date.now();
+  const lastSubmission = rateLimitMap.get(email);
+
+  // If no previous submission or more than 1 hour has passed, allow
+  if (!lastSubmission || now - lastSubmission > 60 * 60 * 1000) {
+    rateLimitMap.set(email, now);
+    return true;
+  }
+
+  return false;
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const ip = getClientIp(req);
-    const rl = await checkRateLimit(`waitlist:${ip}`, 5, 3600_000);
-    if (!rl.allowed) {
-      return NextResponse.json({ ok: false, error: "Too many requests. Please try again later." }, { status: 429 });
+    const body = await req.json();
+    const { email } = body;
+
+    // Validate email format
+    if (!email || typeof email !== "string") {
+      return NextResponse.json(
+        { error: "Email is required" },
+        { status: 400 }
+      );
     }
 
-    const body = await req.json().catch(() => ({}));
-    const email = typeof body?.email === "string" ? body.email.trim() : null;
-    if (!email) {
-      return NextResponse.json({ ok: true });
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!isValidEmail(normalizedEmail)) {
+      return NextResponse.json(
+        { error: "Invalid email format" },
+        { status: 400 }
+      );
     }
-    try {
-      const db = getDb();
-      await db.from("waitlist").insert({ email });
-    } catch {
-      // DB not configured or insert failed; continue
+
+    // Check rate limit
+    if (!checkRateLimit(normalizedEmail)) {
+      return NextResponse.json(
+        { error: "Too many submissions from this email. Try again later." },
+        { status: 429 }
+      );
     }
-    return NextResponse.json({ ok: true });
-  } catch {
-    return NextResponse.json({ ok: true });
+
+    // Get database client
+    const db = getDb();
+
+    // Insert into waitlist_signups table
+    const { data, error } = await db
+      .from("waitlist_signups")
+      .insert([
+        {
+          email: normalizedEmail,
+          source: "website",
+          created_at: new Date().toISOString(),
+        },
+      ])
+      .select();
+
+    if (error) {
+      // If it's a unique constraint violation, that's okay - they're already on the list
+      if (error.code === "23505") {
+        return NextResponse.json(
+          { message: "Email already registered" },
+          { status: 200 }
+        );
+      }
+      throw error;
+    }
+
+    return NextResponse.json(
+      { message: "Successfully added to waitlist", data },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("[API] waitlist route error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

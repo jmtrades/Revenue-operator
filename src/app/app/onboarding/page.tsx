@@ -13,6 +13,11 @@ import {
   Sparkles,
   Play,
   X,
+  PhoneIncoming,
+  PhoneOutgoing,
+  RefreshCcw,
+  LifeBuoy,
+  Zap,
 } from "lucide-react";
 import { useOnboardingStep } from "../OnboardingStepContext";
 import IndustrySelector from "@/components/onboarding/IndustrySelector";
@@ -37,12 +42,78 @@ const STEP_KEYS: { id: number; titleKey: string; subtitleKey: string }[] = [
 const ONBOARDING_SCENARIO_IDS = ["normal", "angry", "booking", "afterhours", "unknown"] as const;
 
 const ONBOARDING_TEMPLATE_IDS = [
-  { id: "receptionist", icon: Headphones },
-  { id: "appointment_scheduler", icon: CalendarRange },
-  { id: "lead_qualifier", icon: ClipboardList },
-  { id: "after_hours", icon: MoonStar },
-  { id: "follow_up", icon: PhoneCall },
-  { id: "custom", icon: Sparkles },
+  {
+    id: "inbound-closer",
+    icon: PhoneIncoming,
+    name: "Inbound Closer",
+    tagline: "Answers calls, qualifies leads, books appointments",
+    features: [
+      "Intelligent call routing and screening",
+      "Real-time lead qualification",
+      "Automated appointment booking"
+    ],
+    recommendedFor: "Any business with inbound call volume"
+  },
+  {
+    id: "outbound-setter",
+    icon: PhoneOutgoing,
+    name: "Outbound Setter",
+    tagline: "Runs outbound campaigns, sets appointments",
+    features: [
+      "Automated outbound call campaigns",
+      "Lead list management",
+      "Calendar integration & booking"
+    ],
+    recommendedFor: "Sales teams running outbound campaigns"
+  },
+  {
+    id: "receptionist-pro",
+    icon: Headphones,
+    name: "Receptionist Pro",
+    tagline: "Full front-desk replacement, routing, FAQ handling",
+    features: [
+      "Complete call routing and forwarding",
+      "FAQ answering and knowledgebase",
+      "Message taking & callback scheduling"
+    ],
+    recommendedFor: "Professional offices needing 24/7 coverage"
+  },
+  {
+    id: "follow-up-engine",
+    icon: RefreshCcw,
+    name: "Follow-Up Engine",
+    tagline: "Automated follow-up sequences, no-show recovery",
+    features: [
+      "Automated follow-up call sequences",
+      "No-show and reminder calling",
+      "Campaign performance tracking"
+    ],
+    recommendedFor: "Businesses with high volume follow-ups"
+  },
+  {
+    id: "support-agent",
+    icon: LifeBuoy,
+    name: "Support Agent",
+    tagline: "Customer support, ticket creation, escalation",
+    features: [
+      "Multi-channel customer support",
+      "Ticket creation and tracking",
+      "Smart escalation to human agents"
+    ],
+    recommendedFor: "Companies with customer support teams"
+  },
+  {
+    id: "full-operator",
+    icon: Zap,
+    name: "Full Revenue Operator",
+    tagline: "All-in-one: inbound + outbound + follow-up + booking",
+    features: [
+      "Complete revenue pipeline automation",
+      "Inbound, outbound, follow-up, and booking",
+      "Advanced analytics and reporting"
+    ],
+    recommendedFor: "Growing companies needing end-to-end automation"
+  },
 ] as const;
 
 export default function AppOnboardingPage() {
@@ -50,15 +121,17 @@ export default function AppOnboardingPage() {
   const router = useRouter();
   const onboardingTemplates = useMemo(
     () =>
-      ONBOARDING_TEMPLATE_IDS.map(({ id, icon }) => ({
+      ONBOARDING_TEMPLATE_IDS.map(({ id, icon, name, tagline, features, recommendedFor }) => ({
         id,
         icon,
-        name: t(`templates.${id}.name`),
-        description: t(`templates.${id}.description`),
-        agentName: t(`templates.${id}.agentName`),
-        greeting: t(`templates.${id}.greeting`),
+        name,
+        tagline,
+        features,
+        recommendedFor,
+        agentName: name,
+        greeting: `Hello, this is ${name} speaking.`,
       })),
-    [t],
+    [],
   );
   const onboardingScenarios = (ONBOARDING_SCENARIO_IDS as readonly string[]).map((id) => ({
     id,
@@ -109,11 +182,19 @@ export default function AppOnboardingPage() {
     return () => cancelAnimationFrame(id);
   }, []);
 
-  const [_selectedTemplate, _setSelectedTemplate] = useState<string>("receptionist");
-  const [agentName, setAgentName] = useState<string>(onboardingTemplates[0].agentName);
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("inbound-closer");
+  const [agentName, setAgentName] = useState<string>("Inbound Closer");
   const [voiceId, setVoiceId] = useState<string>(DEFAULT_VOICE_ID);
-  const [greeting, setGreeting] = useState<string>(onboardingTemplates[0].greeting);
+  const [greeting, setGreeting] = useState<string>("Hello, this is Inbound Closer speaking.");
   const [_personality, _setPersonality] = useState(50);
+
+  useEffect(() => {
+    const template = onboardingTemplates.find((tmpl) => tmpl.id === selectedTemplate);
+    if (template) {
+      setAgentName(template.name);
+      setGreeting(`Hello, this is ${template.name} speaking.`);
+    }
+  }, [selectedTemplate]);
   const [_callStyle, _setCallStyle] = useState<"thorough" | "conversational" | "quick">("conversational");
   const [greetingPlaying, setGreetingPlaying] = useState(false);
 
@@ -344,7 +425,7 @@ export default function AppOnboardingPage() {
           </div>
 
           <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-6 md:p-8">
-        {/* Step 1 — MODE + INDUSTRY */}
+        {/* Step 1 — TEMPLATE + MODE + INDUSTRY */}
         {step === 1 && (
           <div className="space-y-8">
             <div className="space-y-3">
@@ -355,6 +436,59 @@ export default function AppOnboardingPage() {
                 {t("welcomeSubtitle")}
               </p>
             </div>
+
+            {/* Template Selection */}
+            <div className="space-y-4">
+              <p className="text-xs font-medium text-[var(--text-tertiary)]">
+                Select Your AI Agent Template
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {onboardingTemplates.map((template) => {
+                  const isSelected = selectedTemplate === template.id;
+                  const Icon = template.icon;
+                  return (
+                    <button
+                      key={template.id}
+                      type="button"
+                      onClick={() => setSelectedTemplate(template.id)}
+                      className={`rounded-xl border p-5 text-left transition-all relative group ${
+                        isSelected
+                          ? "border-emerald-500/50 bg-emerald-950/20 ring-2 ring-emerald-500/30"
+                          : "border-[var(--border-default)] bg-transparent hover:border-[var(--border-medium)] hover:bg-zinc-900/40"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <Icon className={`w-5 h-5 ${isSelected ? "text-emerald-400" : "text-[var(--text-tertiary)]"}`} />
+                        {isSelected && (
+                          <div className="w-5 h-5 rounded-full bg-emerald-500 border-2 border-emerald-400 flex items-center justify-center">
+                            <span className="w-2 h-2 rounded-full bg-white" />
+                          </div>
+                        )}
+                      </div>
+                      <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">
+                        {template.name}
+                      </h3>
+                      <p className="text-xs text-[var(--text-tertiary)] mb-3">
+                        {template.tagline}
+                      </p>
+                      <ul className="space-y-1.5 mb-3">
+                        {template.features.map((feature, idx) => (
+                          <li key={idx} className="text-xs text-[var(--text-secondary)] flex items-start gap-2">
+                            <span className="text-emerald-400 mt-0.5">•</span>
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <p className="text-[11px] text-[var(--text-secondary)] border-t border-[var(--border-default)] pt-2.5">
+                        <span className="font-medium text-[var(--text-tertiary)]">Best for:</span> {template.recommendedFor}
+                      </p>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Mode Selection */}
             <div className="space-y-4">
               <p className="text-xs font-medium text-[var(--text-tertiary)]">
                 {t("modeLabel")}
@@ -388,14 +522,17 @@ export default function AppOnboardingPage() {
                 })}
               </div>
             </div>
+
+            {/* Industry Selection */}
             <IndustrySelector
               selected={industrySlug}
               onSelect={setIndustrySlug}
             />
+
             <button
               type="button"
               onClick={() => setStep(2)}
-              disabled={!mode || !industrySlug}
+              disabled={!mode || !industrySlug || !selectedTemplate}
               className="w-full py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {t("cta.next")} →
