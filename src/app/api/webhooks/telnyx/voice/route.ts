@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 import {
   verifyTelnyxWebhook,
   parseTelnyxEvent,
@@ -25,9 +26,9 @@ export async function POST(req: NextRequest) {
   const body = await req.text();
   const signature = req.headers.get("x-telnyx-signature-ed25519");
 
-  // Verify webhook signature
+  // Verify webhook signature — rejects if key missing or sig invalid
   if (!verifyTelnyxWebhook(body, signature)) {
-    console.warn("[telnyx-voice] Invalid webhook signature");
+    log("warn", "telnyx_voice.invalid_signature");
     return new NextResponse("Invalid signature", { status: 401 });
   }
 
@@ -38,16 +39,15 @@ export async function POST(req: NextRequest) {
     return new NextResponse("Invalid JSON", { status: 400 });
   }
 
-  const { eventType, data } = parseTelnyxEvent(payload);
+  const { eventType } = parseTelnyxEvent(payload);
 
   if (!isCallEvent(eventType)) {
-    // Not a call event, skip
     return NextResponse.json({ ok: true });
   }
 
   const callInfo = extractCallInfo(payload);
   if (!callInfo) {
-    console.warn("[telnyx-voice] Could not extract call info from event", eventType);
+    log("warn", "telnyx_voice.no_call_info", { eventType });
     return NextResponse.json({ ok: true });
   }
 
@@ -56,53 +56,41 @@ export async function POST(req: NextRequest) {
   try {
     switch (eventType) {
       case "call.initiated":
-        // Call created but not yet connected
-        console.log("[telnyx-voice] Call initiated:", callInfo.callSessionId);
+        log("info", "telnyx_voice.call_initiated", { sessionId: callInfo.callSessionId });
         break;
 
       case "call.answered":
-        // Call was answered
-        console.log("[telnyx-voice] Call answered:", callInfo.callSessionId);
+        log("info", "telnyx_voice.call_answered", { sessionId: callInfo.callSessionId });
         if (callInfo.callSessionId) {
           await db
             .from("call_sessions")
-            .update({
-              call_started_at: new Date().toISOString(),
-            })
+            .update({ call_started_at: new Date().toISOString() })
             .eq("external_meeting_id", callInfo.callSessionId);
         }
         break;
 
       case "call.hangup":
-        // Call ended
-        console.log("[telnyx-voice] Call hung up:", callInfo.callSessionId);
+        log("info", "telnyx_voice.call_hangup", { sessionId: callInfo.callSessionId });
         if (callInfo.callSessionId) {
           await db
             .from("call_sessions")
-            .update({
-              call_ended_at: new Date().toISOString(),
-            })
+            .update({ call_ended_at: new Date().toISOString() })
             .eq("external_meeting_id", callInfo.callSessionId);
         }
         break;
 
       case "call.streaming.started":
-        console.log("[telnyx-voice] Streaming started:", callInfo.callSessionId);
-        break;
-
       case "call.streaming.stopped":
-        console.log("[telnyx-voice] Streaming stopped:", callInfo.callSessionId);
+        log("info", `telnyx_voice.${eventType.replace(/\./g, "_")}`, { sessionId: callInfo.callSessionId });
         break;
 
       default:
-        console.log("[telnyx-voice] Unhandled event type:", eventType);
+        log("info", "telnyx_voice.unhandled_event", { eventType });
     }
   } catch (err) {
-    console.error(
-      "[telnyx-voice] Error processing webhook:",
-      err instanceof Error ? err.message : err
-    );
-    // Still return 200 to acknowledge receipt
+    log("error", "telnyx_voice.processing_error", {
+      error: err instanceof Error ? err.message : String(err),
+    });
   }
 
   return NextResponse.json({ ok: true });

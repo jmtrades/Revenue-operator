@@ -29,7 +29,11 @@ export async function checkRateLimit(
   windowMs: number = 60_000,
 ): Promise<RateLimitResult> {
   if (!redis) {
-    // Fallback: allow all when Redis not configured (non-production / dev only)
+    // In production, fail closed — deny if Redis unavailable
+    if (process.env.NODE_ENV === "production") {
+      return { allowed: false, remaining: 0, resetAt: Date.now() + windowMs };
+    }
+    // Dev/test: allow all when Redis not configured
     return { allowed: true, remaining: limit, resetAt: Date.now() + windowMs };
   }
 
