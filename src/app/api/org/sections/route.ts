@@ -17,6 +17,11 @@ export async function GET(request: NextRequest) {
   const authErr = await requireWorkspaceAccess(request, workspaceId);
   if (authErr) return authErr;
 
-  const sections = await getOrgSections(workspaceId);
-  return NextResponse.json(sections);
+  try {
+    const sections = await getOrgSections(workspaceId);
+    return NextResponse.json(sections);
+  } catch (err) {
+    console.error("[org-sections]", err instanceof Error ? err.message : String(err));
+    return NextResponse.json({ error: "Failed to load sections" }, { status: 500 });
+  }
 }

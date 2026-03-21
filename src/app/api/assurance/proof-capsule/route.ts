@@ -17,15 +17,20 @@ export async function GET(request: NextRequest) {
   const authErr = await requireWorkspaceAccess(request, workspaceId);
   if (authErr) return authErr;
 
-  const db = getDb();
-  const { data: row } = await db
-    .from("proof_capsules")
-    .select("lines")
-    .eq("workspace_id", workspaceId)
-    .order("period_end", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  try {
+    const db = getDb();
+    const { data: row } = await db
+      .from("proof_capsules")
+      .select("lines")
+      .eq("workspace_id", workspaceId)
+      .order("period_end", { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
-  const lines = (row as { lines?: string[] } | null)?.lines ?? [];
-  return NextResponse.json({ lines: Array.isArray(lines) ? lines : [] });
+    const lines = (row as { lines?: string[] } | null)?.lines ?? [];
+    return NextResponse.json({ lines: Array.isArray(lines) ? lines : [] });
+  } catch (err) {
+    console.error("[proof-capsule]", err instanceof Error ? err.message : String(err));
+    return NextResponse.json({ lines: [] }, { status: 500 });
+  }
 }

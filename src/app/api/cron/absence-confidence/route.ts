@@ -27,6 +27,7 @@ export async function GET(req: NextRequest) {
   const authErr = assertCronAuthorized(req);
   if (authErr) return authErr;
 
+  try {
   const db = getDb();
   const now = new Date();
   const seventyTwoHoursAgo = new Date(now.getTime() - HOURS_ABSENCE * 60 * 60 * 1000);
@@ -127,4 +128,8 @@ export async function GET(req: NextRequest) {
   }
 
   return NextResponse.json({ ok: true, sent: results.filter((r) => r.sent).length, results });
+  } catch (err) {
+    console.error("[absence-confidence] Cron failed:", err instanceof Error ? err.message : String(err));
+    return NextResponse.json({ error: "Absence confidence cron failed" }, { status: 500 });
+  }
 }

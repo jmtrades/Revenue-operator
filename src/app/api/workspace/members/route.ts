@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
   const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;
 
+  try {
   const db = getDb();
   const { data: members } = await db
     .from("workspace_members")
@@ -44,4 +45,8 @@ export async function GET(req: NextRequest) {
   }
 
   return NextResponse.json({ members: formatted });
+  } catch (err) {
+    console.error("[workspace-members]", err instanceof Error ? err.message : String(err));
+    return NextResponse.json({ members: [] }, { status: 500 });
+  }
 }

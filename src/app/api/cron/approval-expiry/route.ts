@@ -17,13 +17,18 @@ export async function GET(req: NextRequest) {
   const db = getDb();
   const cutoff = new Date(Date.now() - EXPIRY_HOURS * 60 * 60 * 1000).toISOString();
 
-  const { data, error } = await db
-    .from("message_approvals")
-    .update({ status: "expired" })
-    .eq("status", "pending")
-    .lt("created_at", cutoff)
-    .select("id");
+  try {
+    const { data, error } = await db
+      .from("message_approvals")
+      .update({ status: "expired" })
+      .eq("status", "pending")
+      .lt("created_at", cutoff)
+      .select("id");
 
-  const count = data?.length ?? 0;
-  return NextResponse.json({ ok: !error, expired: count }, { status: 200 });
+    const count = data?.length ?? 0;
+    return NextResponse.json({ ok: !error, expired: count }, { status: 200 });
+  } catch (err) {
+    console.error("[approval-expiry] Cron failed:", err instanceof Error ? err.message : String(err));
+    return NextResponse.json({ error: "Cron failed" }, { status: 500 });
+  }
 }

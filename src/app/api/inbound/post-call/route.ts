@@ -97,6 +97,8 @@ export async function POST(req: NextRequest) {
   }
   const { workspace_id, call_sid, call_session_id, recording_url, transcript, summary, send_confirmation_sms } = body;
   if (!workspace_id) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
+
+  try {
   const db = getDb();
   const { data: ws } = await db.from("workspaces").select("id").eq("id", workspace_id).maybeSingle();
   if (!ws) return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
@@ -379,4 +381,8 @@ export async function POST(req: NextRequest) {
   }
 
   return NextResponse.json({ ok: true, call_session_id: sessionId });
+  } catch (err) {
+    console.error("[post-call]", err instanceof Error ? err.message : String(err));
+    return NextResponse.json({ error: "Post-call processing failed" }, { status: 500 });
+  }
 }

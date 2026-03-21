@@ -17,6 +17,11 @@ export async function GET(request: NextRequest) {
   const authErr = await requireWorkspaceAccess(request, workspaceId);
   if (authErr) return authErr;
 
-  const overview = await getOrgOperationalOverview(workspaceId);
-  return NextResponse.json(overview);
+  try {
+    const overview = await getOrgOperationalOverview(workspaceId);
+    return NextResponse.json(overview);
+  } catch (err) {
+    console.error("[operational-overview]", err instanceof Error ? err.message : String(err));
+    return NextResponse.json({ error: "Failed to load overview" }, { status: 500 });
+  }
 }

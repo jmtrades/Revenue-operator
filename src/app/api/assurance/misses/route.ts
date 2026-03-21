@@ -15,6 +15,7 @@ export async function GET(req: NextRequest) {
   const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;
 
+  try {
   const db = getDb();
   const now = new Date();
   const weekStart = new Date(now);
@@ -137,4 +138,8 @@ export async function GET(req: NextRequest) {
       recovery_scheduled: misses.filter((m) => m.recovery_scheduled).length,
     },
   });
+  } catch (err) {
+    console.error("[misses]", err instanceof Error ? err.message : String(err));
+    return NextResponse.json({ misses: [], summary: { total_misses: 0, follow_up_missed: 0, conversation_cold: 0, recovery_scheduled: 0 } }, { status: 500 });
+  }
 }
