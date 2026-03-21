@@ -19,11 +19,11 @@ export async function GET(request: NextRequest) {
   const db = getDb();
 
   try {
-    // Get all active workspaces
+    // Get all active workspaces (status column, not is_active boolean)
     const { data: workspaces, error: wsError } = await db
       .from("workspaces")
       .select("id")
-      .eq("is_active", true);
+      .not("status", "eq", "deleted");
 
     if (wsError) {
       console.error("[Cron] Error fetching workspaces:", wsError);

@@ -70,6 +70,13 @@ const nextConfig: NextConfig = {
       { source: "/dashboard/value", destination: "/app", permanent: true },
       // Catch-all for anything not explicitly mapped
       { source: "/dashboard/:path*", destination: "/app", permanent: true },
+      // Common typos and crawlers
+      { source: "/signin", destination: "/sign-in", permanent: true },
+      { source: "/login", destination: "/sign-in", permanent: true },
+      { source: "/signup", destination: "/activate", permanent: true },
+      { source: "/register", destination: "/activate", permanent: true },
+      { source: "/book-demo", destination: "/demo", permanent: false },
+      { source: "/sitemaps.xml", destination: "/sitemap.xml", permanent: true },
     ];
   },
   // Force new JS chunk hashes every build so browsers don't load stale bundles (fixes #418 from mixed deploys).

@@ -32,14 +32,19 @@ export async function GET(
     if (accessErr) return accessErr;
   }
 
-  const { data: existing } = await db
-    .from("call_coaching")
-    .select("what_worked, missed_signals, recommended_next_step")
-    .eq("call_session_id", callId)
-    .maybeSingle();
+  // call_coaching table may not be provisioned yet — try reading, fall through on error
+  try {
+    const { data: existing } = await db
+      .from("call_coaching")
+      .select("what_worked, missed_signals, recommended_next_step")
+      .eq("call_session_id", callId)
+      .maybeSingle();
 
-  if (existing) {
-    return NextResponse.json(existing);
+    if (existing) {
+      return NextResponse.json(existing);
+    }
+  } catch {
+    // Table may not exist yet — generate coaching inline
   }
 
   const s = session as { lead_id: string; transcript?: unknown[]; outcome?: string; current_node?: string };
@@ -69,12 +74,17 @@ export async function GET(
         ? "Follow up with proposal or booking link."
         : "Schedule follow-up call or send value content.";
 
-  await db.from("call_coaching").insert({
-    call_session_id: callId,
-    what_worked: whatWorked,
-    missed_signals: missedSignals,
-    recommended_next_step: recommendedNextStep,
-  });
+  // Persist coaching if table exists (non-blocking)
+  try {
+    await db.from("call_coaching").insert({
+      call_session_id: callId,
+      what_worked: whatWorked,
+      missed_signals: missedSignals,
+      recommended_next_step: recommendedNextStep,
+    });
+  } catch {
+    // Table may not be provisioned yet — coaching still returned inline
+  }
 
   return NextResponse.json({
     what_worked: whatWorked,
