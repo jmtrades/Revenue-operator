@@ -169,7 +169,7 @@ export default function AppSettingsCompliancePage() {
                   role="switch"
                   aria-checked={pauseOnSensitive}
                   onClick={() => setPauseOnSensitive((v) => !v)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${pauseOnSensitive ? "bg-white" : "bg-[var(--bg-inset)]"}`}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${pauseOnSensitive ? "bg-[var(--accent-primary)]" : "bg-[var(--bg-inset)]"}`}
                 >
                   <span className={`inline-block h-4 w-4 transform rounded-full transition-transform ${pauseOnSensitive ? "translate-x-6 bg-[var(--text-primary)]" : "translate-x-1 bg-[var(--text-tertiary)]"}`} />
                 </button>
@@ -192,7 +192,7 @@ export default function AppSettingsCompliancePage() {
               <p className="text-sm font-medium text-[var(--text-primary)]">{tSettings("compliance.callRecording")}</p>
               <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">{tSettings("compliance.callRecordingHelp")}</p>
             </div>
-            <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${recording ? "bg-white" : "bg-[var(--bg-inset)]"}`} onClick={() => setRecording(!recording)}>
+            <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${recording ? "bg-[var(--accent-primary)]" : "bg-[var(--bg-inset)]"}`} onClick={() => setRecording(!recording)}>
               <span className={`inline-block h-4 w-4 transform rounded-full transition-transform ${recording ? "translate-x-6 bg-[var(--text-primary)]" : "translate-x-1 bg-[var(--text-tertiary)]"}`} />
             </div>
           </label>
@@ -204,7 +204,7 @@ export default function AppSettingsCompliancePage() {
               <p className="text-sm font-medium text-[var(--text-primary)]">{tSettings("compliance.hipaaMode")}</p>
               <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">{tSettings("compliance.hipaaModeHelp")}</p>
             </div>
-            <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${hipaa ? "bg-white" : "bg-[var(--bg-inset)]"}`} onClick={() => setHipaa(!hipaa)}>
+            <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${hipaa ? "bg-[var(--accent-primary)]" : "bg-[var(--bg-inset)]"}`} onClick={() => setHipaa(!hipaa)}>
               <span className={`inline-block h-4 w-4 transform rounded-full transition-transform ${hipaa ? "translate-x-6 bg-[var(--text-primary)]" : "translate-x-1 bg-[var(--text-tertiary)]"}`} />
             </div>
           </label>
