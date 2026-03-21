@@ -225,7 +225,7 @@ export function UnifiedDashboard() {
         data-product-tour="revenueMetric"
       >
         {usageRatio >= 0.8 && (
-          <div className={`mb-4 rounded-xl border px-4 py-3 ${usageRatio >= 1 ? "border-red-500/40 bg-red-500/10" : "border-amber-500/40 bg-amber-500/10"}`}>
+          <div className={`mb-4 rounded-xl border px-4 py-3 ${usageRatio >= 1 ? "border-red-600/40 dark:border-red-500/40 bg-red-600/10 dark:bg-red-500/10" : "border-amber-600/40 dark:border-amber-500/40 bg-amber-600/10 dark:bg-amber-500/10"}`}>
             <p className="text-sm text-[var(--text-primary)]">
               You&apos;ve used{" "}
               <span className="font-semibold tabular-nums">
@@ -245,11 +245,11 @@ export function UnifiedDashboard() {
         )}
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--text-secondary)]">This month</p>
         <div className="mt-2 flex flex-wrap items-baseline gap-3">
-          <h1 className="text-2xl md:text-3xl font-bold text-green-500 tabular-nums">
+          <h1 className="text-2xl md:text-3xl font-bold text-green-600 dark:text-green-400 tabular-nums">
             Revenue recovered: {fmtMoney(data.revenue_recovered_cents)}
           </h1>
           {data.revenue_trend_pct !== 0 && (
-            <span className={`text-sm font-medium ${data.revenue_trend_pct >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+            <span className={`text-sm font-medium ${data.revenue_trend_pct >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
               {data.revenue_trend_pct >= 0 ? "↑" : "↓"}
               {Math.abs(data.revenue_trend_pct)}% vs prior period (calls)
             </span>
@@ -276,7 +276,7 @@ export function UnifiedDashboard() {
         <div className="mt-4 h-2 rounded-full bg-[var(--bg-hover)] overflow-hidden">
           <div
             className={`h-full rounded-full ${
-              pctMin >= 100 ? "bg-red-500" : pctMin >= 80 ? "bg-amber-500" : "bg-green-500"
+              pctMin >= 100 ? "bg-red-600 dark:bg-red-500" : pctMin >= 80 ? "bg-amber-600 dark:bg-amber-500" : "bg-green-600 dark:bg-green-500"
             }`}
             style={{ width: `${pctMin}%` }}
           />
