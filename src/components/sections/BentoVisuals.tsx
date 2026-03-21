@@ -102,7 +102,7 @@ export function ComplianceRecordPreview() {
         <span style={{ color: "var(--text-secondary)" }}>4m 32s</span>
         <span style={{ color: "var(--text-tertiary)" }}>{t("complianceRecord.status")}</span>
         <span className="flex items-center gap-1" style={{ color: "var(--accent-secondary)" }}>
-          <span className="w-1.5 h-1.5 rounded-full bg-current inline-block animate-pulse" /> {t("complianceRecord.compliant")}
+          <span className="w-1.5 h-1.5 rounded-full bg-current inline-block" /> {t("complianceRecord.compliant")}
         </span>
         <span style={{ color: "var(--text-tertiary)" }}>{t("complianceRecord.chain")}</span>
         <span style={{ color: "var(--text-secondary)" }}>{t("complianceRecord.chainValue")}</span>

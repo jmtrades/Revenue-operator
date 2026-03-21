@@ -601,7 +601,7 @@ export default function VoiceDemoPage() {
           </p>
 
           <div className="flex flex-wrap justify-center gap-4 text-sm" style={{ color: "var(--text-secondary)" }}>
-            <Link href="/book-demo" className="no-underline transition-colors" style={{ color: "var(--text-secondary)" }}>Book a demo</Link>
+            <Link href="/demo" className="no-underline transition-colors" style={{ color: "var(--text-secondary)" }}>Book a demo</Link>
             <span style={{ color: "var(--border-default)" }}>|</span>
             <Link href="#pricing-section" className="no-underline transition-colors" style={{ color: "var(--text-secondary)" }}>See pricing</Link>
             <span style={{ color: "var(--border-default)" }}>|</span>

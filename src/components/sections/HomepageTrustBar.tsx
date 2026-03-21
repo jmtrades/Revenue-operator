@@ -1,6 +1,7 @@
 "use client";
 
 import { Container } from "@/components/ui/Container";
+import { SOCIAL_PROOF } from "@/lib/constants";
 
 export function HomepageTrustBar() {
   return (
@@ -8,8 +9,7 @@ export function HomepageTrustBar() {
       <Container>
         <div className="flex flex-wrap items-center justify-center gap-6 text-sm" style={{ color: "var(--text-secondary, #4A4A4A)" }}>
           <span className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <strong style={{ color: "var(--text-primary)" }}>12,400+</strong> businesses active
+            <strong style={{ color: "var(--text-primary)" }}>{SOCIAL_PROOF.businessCount}</strong> businesses active
           </span>
           <span>·</span>
           <span>3-minute setup</span>

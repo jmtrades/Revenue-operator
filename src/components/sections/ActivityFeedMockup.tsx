@@ -78,7 +78,7 @@ export function ActivityFeedMockup() {
         style={{ borderColor: "var(--border-default)", background: "var(--bg-primary)" }}
       >
         <div className="h-8 flex items-center justify-center border-b" style={{ borderColor: "var(--border-default)", background: "var(--bg-elevated)" }}>
-          <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: "var(--text-tertiary)" }} />
+          <span className="w-2 h-2 rounded-full" style={{ background: "var(--text-tertiary)", opacity: 0.5 }} />
         </div>
         <div className="px-3 pt-4 pb-6" style={{ minHeight: "320px" }}>
           <div className="flex items-center justify-between mb-3 px-1">

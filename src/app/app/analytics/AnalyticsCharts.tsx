@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   Area,
   AreaChart,
@@ -26,8 +27,37 @@ type AnalyticsChartsProps = {
   outcomeSlices: OutcomeSlice[];
 };
 
+/** Read CSS custom properties at runtime so charts respect light/dark mode. */
+function useChartColors() {
+  const fallbackAccent = tokens.colors.accentPrimary;
+  const [colors, setColors] = useState({
+    tickFill: "#71757E",
+    tooltipBg: "#FFFFFF",
+    tooltipBorder: "rgba(0,0,0,0.08)",
+    tooltipLabel: "#4B5563",
+    accent: fallbackAccent as string,
+    legendText: "#71757E",
+  });
+
+  useEffect(() => {
+    const cs = getComputedStyle(document.documentElement);
+    setColors({
+      tickFill: cs.getPropertyValue("--text-tertiary").trim() || "#71757E",
+      tooltipBg: cs.getPropertyValue("--bg-surface").trim() || "#FFFFFF",
+      tooltipBorder: cs.getPropertyValue("--border-default").trim() || "rgba(0,0,0,0.08)",
+      tooltipLabel: cs.getPropertyValue("--text-secondary").trim() || "#4B5563",
+      accent: cs.getPropertyValue("--accent-primary").trim() || fallbackAccent,
+      legendText: cs.getPropertyValue("--text-tertiary").trim() || "#71757E",
+    });
+  }, []);
+
+  return colors;
+}
+
 export function AnalyticsCharts({ volumeData, outcomeSlices }: AnalyticsChartsProps) {
   const t = useTranslations("analytics");
+  const cc = useChartColors();
+
   return (
     <>
       {/* Row 2: charts */}
@@ -41,18 +71,18 @@ export function AnalyticsCharts({ volumeData, outcomeSlices }: AnalyticsChartsPr
               <AreaChart data={volumeData}>
                 <defs>
                   <linearGradient id="volumeGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={tokens.colors.accentPrimary} stopOpacity={0.35} />
-                    <stop offset="95%" stopColor={tokens.colors.accentPrimary} stopOpacity={0.02} />
+                    <stop offset="5%" stopColor={cc.accent} stopOpacity={0.35} />
+                    <stop offset="95%" stopColor={cc.accent} stopOpacity={0.02} />
                   </linearGradient>
                 </defs>
                 <XAxis
                   dataKey="day"
-                  tick={{ fontSize: 11, fill: "#9CA3AF" }}
+                  tick={{ fontSize: 11, fill: cc.tickFill }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
-                  tick={{ fontSize: 11, fill: "#9CA3AF" }}
+                  tick={{ fontSize: 11, fill: cc.tickFill }}
                   axisLine={false}
                   tickLine={false}
                   width={32}
@@ -60,17 +90,17 @@ export function AnalyticsCharts({ volumeData, outcomeSlices }: AnalyticsChartsPr
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#020617",
+                    backgroundColor: cc.tooltipBg,
                     borderRadius: 8,
-                    border: "1px solid rgba(148,163,184,0.4)",
+                    border: `1px solid ${cc.tooltipBorder}`,
                     fontSize: 12,
                   }}
-                  labelStyle={{ color: "#E5E7EB" }}
+                  labelStyle={{ color: cc.tooltipLabel }}
                 />
                 <Area
                   type="monotone"
                   dataKey="calls"
-                  stroke={tokens.colors.accentPrimary}
+                  stroke={cc.accent}
                   strokeWidth={2}
                   fill="url(#volumeGradient)"
                 />
@@ -106,7 +136,7 @@ export function AnalyticsCharts({ volumeData, outcomeSlices }: AnalyticsChartsPr
                   verticalAlign="middle"
                   iconSize={8}
                   formatter={(value) => (
-                    <span style={{ color: "#9CA3AF", fontSize: 11 }}>{value}</span>
+                    <span style={{ color: cc.legendText, fontSize: 11 }}>{value}</span>
                   )}
                 />
               </PieChart>

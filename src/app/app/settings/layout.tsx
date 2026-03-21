@@ -20,40 +20,40 @@ export default function SettingsLayout({ children }: { children: ReactNode }) {
           style={{ boxShadow: "0 1px 3px rgba(15, 23, 42, 0.06)" }}
           aria-label={tSettings("title")}
         >
-          <AccordionItem title="Your Business" defaultOpen>
+          <AccordionItem title={tNav("sectionBusiness")} defaultOpen>
             <div className="space-y-1.5">
               <NavLink href="/app/settings/business" label={tNav("business")} pathname={pathname} />
               <NavLink href="/app/settings/call-rules" label={tNav("callRules")} pathname={pathname} />
-              <NavLink href="/app/settings/industry-templates" label="Industry Templates" pathname={pathname} />
-              <NavLink href="/app/settings/outbound" label="Outbound" pathname={pathname} />
-              <NavLink href="/app/settings/lead-scoring" label="Lead Scoring" pathname={pathname} />
-              <NavLink href="/app/settings/agent" label="Agent" pathname={pathname} />
+              <NavLink href="/app/settings/industry-templates" label={tNav("industryTemplates")} pathname={pathname} />
+              <NavLink href="/app/settings/outbound" label={tNav("outbound")} pathname={pathname} />
+              <NavLink href="/app/settings/lead-scoring" label={tNav("leadScoring")} pathname={pathname} />
+              <NavLink href="/app/settings/agent" label={tNav("agent")} pathname={pathname} />
             </div>
           </AccordionItem>
 
-          <AccordionItem title="Integrations" defaultOpen>
+          <AccordionItem title={tNav("sectionIntegrations")} defaultOpen>
             <div className="space-y-1.5">
               <NavLink href="/app/settings/phone" label={tNav("phone")} pathname={pathname} />
-              <NavLink href="/app/settings/phone/marketplace" label="Marketplace" pathname={pathname} />
-              <NavLink href="/app/settings/phone/port" label="Porting" pathname={pathname} />
+              <NavLink href="/app/settings/phone/marketplace" label={tNav("marketplace")} pathname={pathname} />
+              <NavLink href="/app/settings/phone/port" label={tNav("porting")} pathname={pathname} />
 
               <NavLink href="/app/settings/integrations" label={tNav("integrations")} pathname={pathname} />
-              <NavLink href="/app/settings/integrations/mapping" label="Mapping" pathname={pathname} />
-              <NavLink href="/app/settings/integrations/sync-log" label="Sync Log" pathname={pathname} />
+              <NavLink href="/app/settings/integrations/mapping" label={tNav("mapping")} pathname={pathname} />
+              <NavLink href="/app/settings/integrations/sync-log" label={tNav("syncLog")} pathname={pathname} />
 
-              <NavLink href="/app/settings/voices" label="Voice Settings" pathname={pathname} />
+              <NavLink href="/app/settings/voices" label={tNav("voiceSettings")} pathname={pathname} />
               <NavLink href="/app/settings/compliance" label={tNav("compliance")} pathname={pathname} />
             </div>
           </AccordionItem>
 
-          <AccordionItem title="Account" defaultOpen={false}>
+          <AccordionItem title={tNav("sectionAccount")} defaultOpen={false}>
             <div className="space-y-1.5">
               <NavLink href="/app/settings/billing" label={tNav("billing")} pathname={pathname} />
-              <NavLink href="/app/settings/billing/cancel" label="Cancellation" pathname={pathname} />
+              <NavLink href="/app/settings/billing/cancel" label={tNav("cancellation")} pathname={pathname} />
               <NavLink href="/app/settings/team" label={tNav("team")} pathname={pathname} />
               <NavLink href="/app/settings/notifications" label={tNav("notifications")} pathname={pathname} />
-              <NavLink href="/app/settings/errors" label="Errors & Audit Log" pathname={pathname} />
-              <NavLink href="/app/settings/activity" label="Activity" pathname={pathname} />
+              <NavLink href="/app/settings/errors" label={tNav("errorsAuditLog")} pathname={pathname} />
+              <NavLink href="/app/settings/activity" label={tNav("activity")} pathname={pathname} />
             </div>
           </AccordionItem>
         </div>
@@ -89,4 +89,3 @@ function NavLink({
     </Link>
   );
 }
-

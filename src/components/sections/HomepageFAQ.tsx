@@ -25,7 +25,7 @@ const FAQS: FaqItem[] = [
   },
   {
     q: "Does the AI sound robotic?",
-    a: "Not even close. Recall Touch uses 32 premium AI voices engineered with natural pauses, real intonation, pitch variation, and conversational warmth. Over 90% of callers don't realize they're speaking with AI.",
+    a: "Not even close. Recall Touch uses 32 premium AI voices engineered with natural pauses, real intonation, pitch variation, and conversational warmth. Play a sample on our voice preview above and judge for yourself.",
   },
   {
     q: "Who is this for?",

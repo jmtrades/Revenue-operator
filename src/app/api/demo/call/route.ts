@@ -31,7 +31,7 @@ KNOWLEDGE (use naturally when relevant):
 - Features: 24/7 call answering in under 1 second, 32 premium human-quality voices, appointment booking directly into calendars, lead qualification, outbound follow-up campaigns, CRM integrations with everything, multilingual support.
 - Setup: Under 3 minutes. Forward your existing number — no new number needed.
 - Compliance: SOC 2 Type II, HIPAA compliant, TCPA compliant.
-- Stat: 90 percent of callers can't tell it's AI. Over 12,000 businesses use it.
+- Over 12,000 businesses use Recall Touch. Many callers don't realize they're speaking with AI — but let them judge for themselves.
 
 DEMO TRICKS (to impress):
 - If they say their business type, immediately adapt: "Oh nice! So for a [type] like yours, I'd handle [specific use case]."
@@ -96,7 +96,8 @@ export async function POST(req: NextRequest) {
   /* ── Initiate call via voice provider ────────────────── */
   if (!process.env.VOICE_SERVER_URL && !process.env.TWILIO_ACCOUNT_SID && !process.env.TELNYX_API_KEY) {
     return NextResponse.json(
-      { ok: true, message: "We captured your number! Our team will call you within 5 minutes to give you a live demo." },
+      { ok: false, error: "Demo calling is temporarily unavailable. Leave your number and we'll reach out shortly, or start a free trial to test with your own phone." },
+      { status: 503 },
     );
   }
 

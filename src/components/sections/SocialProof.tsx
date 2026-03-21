@@ -2,6 +2,7 @@
 
 import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
+import { SOCIAL_PROOF } from "@/lib/constants";
 
 export function SocialProof() {
   return (
@@ -34,17 +35,17 @@ export function SocialProof() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
           {[
             {
-              stat: "12,400+",
+              stat: SOCIAL_PROOF.businessCount,
               label: "Businesses Live",
-              desc: "Across 200+ industries in 47 states",
+              desc: `Across ${SOCIAL_PROOF.industryCount} industries in ${SOCIAL_PROOF.stateCount} states`,
             },
             {
-              stat: "8.7M+",
+              stat: SOCIAL_PROOF.callsHandled,
               label: "Calls Handled",
-              desc: "Every single one answered",
+              desc: "Inbound, outbound, and follow-up",
             },
             {
-              stat: "$340M+",
+              stat: SOCIAL_PROOF.revenueRecovered,
               label: "Revenue Recovered",
               desc: "From calls that used to go to voicemail",
             },

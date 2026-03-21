@@ -92,7 +92,7 @@ export default function AppSettingsBillingPage() {
       .then((data: { ok?: boolean; packs?: MinutePack[] }) => {
         if (data?.packs) setMinutePacks(data.packs);
       })
-      .catch(() => {});
+      .catch((err) => console.error("[billing] Failed to load minute packs:", err));
   }, []);
 
   // Handle minute pack purchase
@@ -131,7 +131,7 @@ export default function AppSettingsBillingPage() {
         setWorkspaceId(data?.id ?? null);
         if (data?.stats) setUsage(data.stats as typeof defaultUsage);
       })
-      .catch(() => {})
+      .catch((err) => console.error("[billing] Failed to load workspace data:", err))
       .finally(() => setLoading(false));
   }, []);
 
