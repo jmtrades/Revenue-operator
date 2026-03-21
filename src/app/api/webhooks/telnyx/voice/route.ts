@@ -10,6 +10,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
+import { handleInboundCall } from "@/lib/voice/call-flow";
 import {
   verifyTelnyxWebhook,
   parseTelnyxEvent,
@@ -17,6 +18,7 @@ import {
   isCallEvent,
   type TelnyxWebhookPayload,
 } from "@/lib/telephony/telnyx-webhooks";
+import { answerCall, startStreamingAudio, speakText, hangupCall } from "@/lib/telephony/telnyx-voice";
 
 /**
  * POST /api/webhooks/telnyx/voice
@@ -52,6 +54,7 @@ export async function POST(req: NextRequest) {
   }
 
   const db = getDb();
+  const direction = payload.data?.record?.direction;
 
   // Resolve workspace_id from call session for defense-in-depth workspace isolation
   let resolvedWorkspaceId: string | null = null;
@@ -66,13 +69,144 @@ export async function POST(req: NextRequest) {
 
   try {
     switch (eventType) {
-      case "call.initiated":
-        log("info", "telnyx_voice.call_initiated", { sessionId: callInfo.callSessionId });
-        break;
+      case "call.initiated": {
+        // Only handle inbound calls on call.initiated
+        if (direction !== "incoming") {
+          log("info", "telnyx_voice.call_initiated_outbound", { sessionId: callInfo.callSessionId, direction });
+          break;
+        }
 
-      case "call.answered":
+        log("info", "telnyx_voice.call_initiated_inbound", { sessionId: callInfo.callSessionId, to: callInfo.to, from: callInfo.from });
+
+        // 1. Look up workspace from phone_configs using the 'to' (called) number
+        const { data: phoneConfig } = await db
+          .from("phone_configs")
+          .select("workspace_id")
+          .eq("proxy_number", callInfo.to)
+          .eq("status", "active")
+          .maybeSingle();
+
+        const workspaceId = (phoneConfig as { workspace_id?: string } | null)?.workspace_id ?? null;
+
+        if (!workspaceId) {
+          // No workspace found — answer call and play error message, then hang up
+          log("warn", "telnyx_voice.no_workspace_for_number", { to: callInfo.to, callControlId: callInfo.callControlId });
+          if (callInfo.callControlId) {
+            await answerCall(callInfo.callControlId);
+            await speakText(callInfo.callControlId, "We're sorry, this number is not currently in service. Please check the number and try again.");
+            await hangupCall(callInfo.callControlId);
+          }
+          break;
+        }
+
+        // 2. Look up or create a lead from the 'from' (caller) number
+        let leadId: string | null = null;
+        const phone = (callInfo.from ?? "").replace(/\D/g, "");
+        if (phone.length >= 10) {
+          const { data: existingLead } = await db
+            .from("leads")
+            .select("id")
+            .eq("workspace_id", workspaceId)
+            .or(`phone.eq.${callInfo.from},phone.eq.${phone}`)
+            .limit(1)
+            .maybeSingle();
+
+          leadId = (existingLead as { id: string } | null)?.id ?? null;
+
+          if (!leadId) {
+            const { data: createdLead } = await db
+              .from("leads")
+              .insert({
+                workspace_id: workspaceId,
+                name: "Inbound caller",
+                phone: callInfo.from ?? undefined,
+                state: "NEW",
+              })
+              .select("id")
+              .maybeSingle();
+
+            leadId = (createdLead as { id: string } | null)?.id ?? null;
+          }
+        }
+
+        // 3. Create a call_sessions row
+        let callSessionId: string | null = null;
+        try {
+          const { data: existingSession } = await db
+            .from("call_sessions")
+            .select("id")
+            .eq("workspace_id", workspaceId)
+            .eq("external_meeting_id", callInfo.callSessionId)
+            .maybeSingle();
+
+          if (!existingSession) {
+            const { data: inserted } = await db
+              .from("call_sessions")
+              .insert({
+                workspace_id: workspaceId,
+                lead_id: leadId,
+                external_meeting_id: callInfo.callSessionId,
+                provider: "telnyx",
+                call_started_at: new Date().toISOString(),
+              })
+              .select("id")
+              .maybeSingle();
+
+            callSessionId = (inserted as { id: string } | null)?.id ?? null;
+          } else {
+            callSessionId = (existingSession as { id: string }).id;
+          }
+        } catch (sessionErr) {
+          log("error", "telnyx_voice.call_session_creation_failed", {
+            error: sessionErr instanceof Error ? sessionErr.message : String(sessionErr),
+            workspaceId,
+          });
+        }
+
+        // 4. Answer the call
+        if (callInfo.callControlId) {
+          const answerResult = await answerCall(callInfo.callControlId);
+          if ("error" in answerResult) {
+            log("error", "telnyx_voice.answer_failed", { error: answerResult.error, callControlId: callInfo.callControlId });
+            break;
+          }
+
+          // 5. Start streaming audio after answering
+          const voiceServerUrl = process.env.VOICE_SERVER_URL || "http://localhost:8080";
+          const wsUrl = voiceServerUrl.replace(/^http:/, "ws:").replace(/^https:/, "wss:") + "/ws/conversation";
+
+          const streamResult = await startStreamingAudio(callInfo.callControlId, wsUrl);
+          if ("error" in streamResult) {
+            log("error", "telnyx_voice.streaming_start_failed", { error: streamResult.error, callControlId: callInfo.callControlId });
+          } else {
+            log("info", "telnyx_voice.streaming_started", { callControlId: callInfo.callControlId, wsUrl });
+          }
+        }
+
+        break;
+      }
+
+      case "call.answered": {
         log("info", "telnyx_voice.call_answered", { sessionId: callInfo.callSessionId, workspaceId: resolvedWorkspaceId });
+
+        // After workspace is resolved, try to handle the call with the voice AI
         if (callInfo.callSessionId && resolvedWorkspaceId) {
+          try {
+            // Use handleInboundCall to set up voice AI
+            // For Telnyx, we'll pass the callSessionId as the callSid equivalent
+            await handleInboundCall({
+              workspaceId: resolvedWorkspaceId,
+              callSid: callInfo.callSessionId,
+              callerPhone: callInfo.from ?? "",
+            });
+          } catch (callFlowErr) {
+            log("warn", "telnyx_voice.call_flow_error", {
+              error: callFlowErr instanceof Error ? callFlowErr.message : String(callFlowErr),
+              sessionId: callInfo.callSessionId,
+            });
+          }
+
+          // Update call_started_at timestamp
           await db
             .from("call_sessions")
             .update({ call_started_at: new Date().toISOString() })
@@ -80,8 +214,9 @@ export async function POST(req: NextRequest) {
             .eq("workspace_id", resolvedWorkspaceId);
         }
         break;
+      }
 
-      case "call.hangup":
+      case "call.hangup": {
         log("info", "telnyx_voice.call_hangup", { sessionId: callInfo.callSessionId, workspaceId: resolvedWorkspaceId });
         if (callInfo.callSessionId && resolvedWorkspaceId) {
           await db
@@ -108,6 +243,7 @@ export async function POST(req: NextRequest) {
           });
         }
         break;
+      }
 
       case "call.streaming.started":
       case "call.streaming.stopped":

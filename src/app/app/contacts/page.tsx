@@ -578,7 +578,7 @@ export default function AppContactsPage() {
           onClick={() => setShowAdd(false)}
         >
           <div
-            className="w-full max-w-xs sm:max-w-sm h-full bg-black border-l border-[var(--border-default)] p-5 flex flex-col"
+            className="w-full max-w-xs sm:max-w-sm h-full bg-[var(--bg-surface)] border-l border-[var(--border-default)] p-5 flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
@@ -749,7 +749,7 @@ export default function AppContactsPage() {
           onClick={() => setSelectedId(null)}
         >
           <div
-            className="w-full max-w-sm h-full bg-black border-l border-[var(--border-default)] p-5 overflow-y-auto"
+            className="w-full max-w-sm h-full bg-[var(--bg-surface)] border-l border-[var(--border-default)] p-5 overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <ContactDetail contact={selected} />

@@ -281,7 +281,7 @@ export default function AgentVoiceTestPage() {
                   className={cn(
                     "text-xs px-2.5 py-1.5 rounded-lg border",
                     selectedVoiceId === voice.id
-                      ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)] border-white"
+                      ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)] border-[var(--accent-primary)]"
                       : "border-[var(--border-default)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
                   )}
                 >

@@ -3716,7 +3716,7 @@
       "card2Stat2Desc": "Délai de réponse moyen",
       "card2Stat3Desc": "Des commerciaux abandonnent après 1 essai",
       "card3Title": "La communication ne scale pas",
-      "card3Stat1Desc": "Réceptionniste + salaires SDR",
+      "card3Stat1Desc": "Téléphonie IA vs embauche et formation",
       "card3Stat2Desc": "Turnover dans les rôles à fort volume d'appels",
       "card3Stat3Desc": "Outils que les entreprises jonglent pour appels, SMS, planification et suivi",
       "closing": "Et si chaque appel, SMS et suivi était géré automatiquement — et que vous puissiez voir exactement ce qui s'est passé ?"
@@ -4526,9 +4526,9 @@
       "missedCallsPerWeek": "Appels manqués par semaine",
       "avgValuePerCall": "Valeur moyenne par appel ($)",
       "monthlyRecovered": "Revenus récupérés par mois",
-      "annualBaseline": "Base annuelle d'embauche",
+      "annualBaseline": "Base annuelle de coûts",
       "annualProtected": "Revenus annuels que Recall Touch protège",
-      "receptionistCost": "coût d'embauche.",
+      "receptionistCost": "coût annuel type.",
       "recommendedPlan": "Forfait recommandé :",
       "description": "Calculez votre potentiel de recouvrement avec notre calculateur ROI."
     },

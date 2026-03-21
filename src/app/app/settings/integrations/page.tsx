@@ -245,7 +245,7 @@ export default function AppSettingsIntegrationsPage() {
                 </span>
               </div>
               <p className="text-xs text-[var(--text-secondary)]">
-                WhatsApp integration support is coming soon. Stay tuned!
+                {t("whatsappComingSoon")}
               </p>
             </div>
           </div>
@@ -298,19 +298,24 @@ export default function AppSettingsIntegrationsPage() {
                     <div className="w-10 h-10 rounded-xl bg-[var(--bg-inset)] flex items-center justify-center">
                       <Icon className="w-5 h-5 text-[var(--text-tertiary)]" aria-hidden />
                     </div>
-                    {crm.comingSoon ? (
-                      <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-amber-500/40 text-amber-400 shrink-0">
-                        {t("comingSoon")}
+                    <div className="flex flex-col gap-1 items-end">
+                      <span className="px-1.5 py-0.5 rounded-full text-xs bg-blue-500/20 text-blue-400 shrink-0">
+                        Beta
                       </span>
-                    ) : connected ? (
-                      <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-green-500/30 text-green-400 shrink-0">
-                        {t("status.connected")}
-                      </span>
-                    ) : (
-                      <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-[var(--border-default)] text-[var(--text-secondary)] shrink-0">
-                        {t("status.disconnected")}
-                      </span>
-                    )}
+                      {crm.comingSoon ? (
+                        <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-amber-500/40 text-amber-400 shrink-0">
+                          {t("comingSoon")}
+                        </span>
+                      ) : connected ? (
+                        <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-green-500/30 text-green-400 shrink-0">
+                          {t("status.connected")}
+                        </span>
+                      ) : (
+                        <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-[var(--border-default)] text-[var(--text-secondary)] shrink-0">
+                          {t("status.disconnected")}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <h4 className="text-sm font-medium text-[var(--text-primary)]">{t(`card.${crm.id === "zoho_crm" ? "zoho" : crm.id === "google_contacts" ? "googleContacts" : crm.id === "microsoft_365" ? "microsoft365" : crm.id}.title`)}</h4>
                   <p className="text-xs text-[var(--text-secondary)] mt-1 flex-1">{t(`card.${crm.id === "zoho_crm" ? "zoho" : crm.id === "google_contacts" ? "googleContacts" : crm.id === "microsoft_365" ? "microsoft365" : crm.id}.body`)}</p>

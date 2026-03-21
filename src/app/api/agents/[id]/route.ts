@@ -24,7 +24,7 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
     .maybeSingle();
   if (error) {
     console.error("[DB Error] agents GET", error.message);
-    return NextResponse.json({ error: "An unexpected error occurred" }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
   if (!agent) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(agent);
@@ -75,7 +75,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
   const { data: agent, error } = await db.from("agents").update(updates).eq("id", id).select().maybeSingle();
   if (error) {
     console.error("[DB Error] agents PATCH", error.message);
-    return NextResponse.json({ error: "An unexpected error occurred" }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
   return NextResponse.json(agent);
 }
@@ -90,7 +90,7 @@ export async function DELETE(req: NextRequest, ctx: { params: Promise<{ id: stri
   const { error } = await db.from("agents").delete().eq("id", id);
   if (error) {
     console.error("[DB Error] agents DELETE", error.message);
-    return NextResponse.json({ error: "An unexpected error occurred" }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
   return NextResponse.json({ ok: true });
 }

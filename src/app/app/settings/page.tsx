@@ -170,22 +170,35 @@ export default function AppSettingsPage() {
         </div>
       </div>
       <div className="grid gap-3">
-        {SETTINGS_LINKS.map((s) => (
-          <Link
-            key={s.href}
-            href={s.href}
-            className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] hover:border-[var(--border-medium)] transition-colors group focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
-          >
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--bg-card)] text-[var(--text-secondary)]">
-              <s.icon className="h-5 w-5" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-medium text-[var(--text-primary)] group-hover:text-[var(--text-primary)]">{tSettings(`links.${s.linkKey}.label`)}</p>
-              <p className="text-xs text-[var(--text-secondary)] mt-0.5">{tSettings(`links.${s.linkKey}.desc`)}</p>
-            </div>
-            <ChevronRight className="h-4 w-4 shrink-0 text-[var(--text-tertiary)] transition-colors group-hover:text-[var(--text-tertiary)]" />
-          </Link>
-        ))}
+        {SETTINGS_LINKS.map((s) => {
+          const isPhoneSettings = s.linkKey === "phone";
+          const isAgentSettings = s.linkKey === "agent";
+          const showIndicator = isPhoneSettings || isAgentSettings;
+          return (
+            <Link
+              key={s.href}
+              href={s.href}
+              className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] hover:border-[var(--border-medium)] transition-colors group focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
+            >
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--bg-card)] text-[var(--text-secondary)]">
+                <s.icon className="h-5 w-5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-[var(--text-primary)] group-hover:text-[var(--text-primary)]">
+                  {tSettings(`links.${s.linkKey}.label`)}
+                  {showIndicator && (
+                    <span className="ml-2 text-xs text-[var(--text-secondary)]">
+                      {isPhoneSettings && "(Required for calls)"}
+                      {isAgentSettings && "(Required)"}
+                    </span>
+                  )}
+                </p>
+                <p className="text-xs text-[var(--text-secondary)] mt-0.5">{tSettings(`links.${s.linkKey}.desc`)}</p>
+              </div>
+              <ChevronRight className="h-4 w-4 shrink-0 text-[var(--text-tertiary)] transition-colors group-hover:text-[var(--text-tertiary)]" />
+            </Link>
+          );
+        })}
       </div>
       <div className="mt-6 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 flex items-center justify-between gap-4">
         <div>

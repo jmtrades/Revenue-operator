@@ -295,6 +295,42 @@ YOUR GOAL:
   const voicemailMessage = typeof agent.knowledge_base?.voicemailMessage === "string" ? agent.knowledge_base.voicemailMessage : "";
   const { voicemailDetection, voicemailMessage: vmMessage } = getVoicemailConfigForBehavior(voicemailBehavior, voicemailMessage);
 
+  // Check minute limit before initiating call
+  try {
+    const { BILLING_PLANS } = await import("@/lib/billing-plans");
+    const { data: wsBilling } = await db
+      .from("workspaces")
+      .select("billing_tier")
+      .eq("id", workspaceId)
+      .maybeSingle();
+
+    const billingTier = (wsBilling as { billing_tier?: string | null } | null)?.billing_tier as keyof typeof BILLING_PLANS | null;
+    if (billingTier && billingTier in BILLING_PLANS) {
+      const plan = BILLING_PLANS[billingTier];
+      const includedMinutes = plan.includedMinutes;
+
+      // Get current month's usage in seconds
+      const now = new Date();
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+      const { data: callSessions } = await db
+        .from("call_sessions")
+        .select("duration_seconds")
+        .eq("workspace_id", workspaceId)
+        .gte("call_started_at", monthStart)
+        .not("duration_seconds", "is", null);
+
+      const usedSeconds = (callSessions ?? []).reduce((sum: number, s: { duration_seconds?: number | null }) => sum + (s.duration_seconds ?? 0), 0);
+      const usedMinutes = Math.ceil(usedSeconds / 60);
+
+      if (usedMinutes >= includedMinutes) {
+        return { ok: false, error: "Monthly minute limit reached. Upgrade your plan or purchase additional minutes." };
+      }
+    }
+  } catch (err) {
+    // Log but don't block on minute check errors
+    console.warn("[outbound-minute-check] Error checking minute limit:", err instanceof Error ? err.message : err);
+  }
+
   const voice = getVoiceProvider();
 
   let assistantId: string;

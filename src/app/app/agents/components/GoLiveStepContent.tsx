@@ -146,7 +146,7 @@ export function GoLiveStepContent({
           </AccordionItem>
         </div>
       </section>
-      <section className="rounded-2xl border border-[var(--border-default)] bg-white/[0.02] p-5 space-y-4" aria-label={t("goLive.previewAria")}>
+      <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-5 space-y-4" aria-label={t("goLive.previewAria")}>
         <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-4">{t("goLive.previewHeading")}</h3>
         <div className="space-y-4">
           <div>

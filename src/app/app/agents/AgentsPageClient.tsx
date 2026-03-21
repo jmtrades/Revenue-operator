@@ -1676,7 +1676,7 @@ function ProfileTab({
               onClick={() => onChange({ callStyle: id })}
               className={`text-left p-2 rounded-xl border text-[11px] ${
                 agent.callStyle === id
-                  ? "border-white bg-[var(--bg-input)] text-[var(--text-primary)]"
+                  ? "border-[var(--accent-primary)] bg-[var(--bg-input)] text-[var(--text-primary)]"
                   : "border-[var(--border-default)] bg-[var(--bg-input)]/50 text-[var(--text-secondary)]"
               }`}
             >
@@ -1958,7 +1958,7 @@ export function RulesTab({
                       ),
                     })
                   }
-                  className="w-full px-3 py-2 rounded-lg bg-black border border-[var(--border-default)] text-xs text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none"
+                  className="w-full px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-xs text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none"
                   placeholder={t("transferRulePhrasePlaceholder")}
                 />
                 <p className="text-[11px] text-[var(--text-secondary)]">{t("callThisNumber")}</p>
@@ -1972,7 +1972,7 @@ export function RulesTab({
                       ),
                     })
                   }
-                  className="w-full px-3 py-2 rounded-lg bg-black border border-[var(--border-default)] text-xs text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none"
+                  className="w-full px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-xs text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none"
                   placeholder={t("transferRulePhonePlaceholder")}
                 />
               </div>
@@ -2223,7 +2223,7 @@ export function RulesTab({
                       ),
                     })
                   }
-                  className="w-full px-3 py-2 rounded-lg bg-black border border-[var(--border-default)] text-xs text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none"
+                  className="w-full px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-xs text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none"
                   placeholder={t("placeholders.objectionTrigger")}
                 />
                 <span className="text-[11px] text-[var(--text-secondary)]">{t("labels.response")}</span>
@@ -2237,7 +2237,7 @@ export function RulesTab({
                       ),
                     })
                   }
-                  className="w-full px-3 py-2 rounded-lg bg-black border border-[var(--border-default)] text-xs text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none"
+                  className="w-full px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-xs text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none"
                   placeholder={t("placeholders.objectionResponse")}
                 />
               </div>

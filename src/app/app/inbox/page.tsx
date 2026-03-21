@@ -422,7 +422,7 @@ function ConversationDetail({
               onClick={() => setReplyChannel(ch)}
               className={`px-3 py-1.5 rounded-full border text-xs font-medium ${
                 replyChannel === ch
-                  ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)] border-white"
+                  ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)] border-[var(--accent-primary)]"
                   : "bg-[var(--bg-input)] text-[var(--text-secondary)] border-[var(--border-medium)] hover:border-[var(--border-medium)]"
               }`}
             >

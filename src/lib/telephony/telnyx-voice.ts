@@ -182,3 +182,28 @@ export async function getCallStatus(
     return { error: errorMessage };
   }
 }
+
+/**
+ * Play audio (speak text) on a call via text-to-speech.
+ */
+export async function speakText(
+  callControlId: string,
+  text: string,
+  voiceType: "male" | "female" = "female"
+): Promise<{ success: boolean } | { error: string }> {
+  try {
+    await telnyxRequest(`/calls/${callControlId}/actions/speak`, {
+      method: "POST",
+      body: JSON.stringify({
+        payload: text,
+        voice: voiceType === "male" ? "male" : "female",
+        language: "en-US",
+      }),
+    });
+
+    return { success: true };
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    return { error: errorMessage };
+  }
+}

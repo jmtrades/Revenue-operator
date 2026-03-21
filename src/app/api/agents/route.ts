@@ -6,6 +6,7 @@ import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { syncPrimaryAgent } from "@/lib/agents/sync-primary-agent";
 import { DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
 import { canCreateAgent } from "@/lib/billing/plan-enforcement";
+import { VOICE_TIER_LIMITS } from "@/lib/voice/billing";
 
 export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
@@ -92,7 +93,7 @@ export async function POST(req: NextRequest) {
   if (!workspace_id || !name) return NextResponse.json({ error: "workspace_id and name required" }, { status: 400 });
   if (name.length > 100) return NextResponse.json({ error: "Agent name must be 100 characters or less" }, { status: 400 });
 
-  // Validate voice_id against known voices if provided
+  // Validate voice_id against known voices and tier limits if provided
   if (body.voice_id) {
     try {
       const { RECALL_VOICES } = await import("@/lib/constants/recall-voices");
@@ -100,8 +101,36 @@ export async function POST(req: NextRequest) {
       if (!validVoiceIds.includes(body.voice_id)) {
         return NextResponse.json({ error: "Invalid voice_id. Please select a valid voice." }, { status: 400 });
       }
-    } catch {
+
+      // Check if voice is premium and if user's plan allows it
+      const voice = RECALL_VOICES.find((v: { id: string }) => v.id === body.voice_id);
+      const isPremiumVoice = voice && !["us-female-warm-receptionist", "us-female-professional", "us-female-casual", "us-male-confident", "us-male-casual", "us-male-professional"].includes(voice.id);
+
+      if (isPremiumVoice) {
+        const { data: wsData } = await getDb()
+          .from("workspaces")
+          .select("billing_tier")
+          .eq("id", workspace_id)
+          .maybeSingle();
+
+        const wsTier = (wsData as { billing_tier?: string } | null)?.billing_tier?.toLowerCase() || "solo";
+        const validTier = (["solo", "business", "scale", "enterprise"].includes(wsTier) ? wsTier : "solo") as keyof typeof VOICE_TIER_LIMITS;
+        const limits = VOICE_TIER_LIMITS[validTier];
+
+        if (!limits.premium_voices) {
+          return NextResponse.json(
+            {
+              error: "Voice not available on your plan",
+              reason: "voice_not_available",
+              message: `The voice "${voice.name}" is only available on our Business plan or higher. Upgrade to access premium voices.`,
+            },
+            { status: 403 }
+          );
+        }
+      }
+    } catch (err) {
       // If voice list can't be loaded, allow any voice_id (graceful degradation)
+      console.warn("[agents POST] Could not validate voice_id:", err);
     }
   }
 

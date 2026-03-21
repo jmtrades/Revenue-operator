@@ -67,8 +67,9 @@ export async function POST(
       response: text.slice(0, 300),
     });
   } catch (error) {
+    console.error("[webhook-config/test] Request failed:", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Webhook test failed." },
+      { error: "Webhook test failed" },
       { status: 502 },
     );
   }

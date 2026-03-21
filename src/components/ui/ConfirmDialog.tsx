@@ -43,7 +43,7 @@ export function ConfirmDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)]"
       role="dialog"
       aria-modal="true"
       aria-labelledby="confirm-dialog-title"
@@ -54,7 +54,7 @@ export function ConfirmDialog({
         className="w-full max-w-sm rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] shadow-xl p-6 space-y-4"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 id="confirm-dialog-title" className="text-base font-semibold text-white">
+        <h2 id="confirm-dialog-title" className="text-base font-semibold text-[var(--text-on-accent)]">
           {title}
         </h2>
         <p id="confirm-dialog-desc" className="text-sm text-[var(--text-tertiary)]">

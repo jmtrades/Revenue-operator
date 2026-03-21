@@ -342,7 +342,7 @@ export default function AppointmentsPage() {
                       {getAppointmentsForDay(selectedDay).map((appt) => (
                         <div
                           key={appt.id}
-                          className="bg-black border border-[var(--border-default)] rounded-xl p-3"
+                          className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-3"
                         >
                           <p className="text-sm text-[var(--text-primary)]">
                             {appt.type || appt.contactName}

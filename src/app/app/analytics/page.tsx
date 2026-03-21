@@ -645,7 +645,7 @@ export default function AppAnalyticsPage() {
             onClick={() => setScope(key)}
             className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-medium transition-colors ${
               scope === key
-                ? "border-white bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
+                ? "border-[var(--accent-primary)] bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
                 : "border-[var(--border-default)] bg-[var(--bg-card)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
             }`}
           >
@@ -1034,7 +1034,7 @@ export default function AppAnalyticsPage() {
             style={{ width: `${positivePct}%` }}
           />
           <div
-            className="h-full bg-slate-500"
+            className="h-full bg-[var(--text-tertiary)]"
             style={{ width: `${neutralPct}%` }}
           />
           <div

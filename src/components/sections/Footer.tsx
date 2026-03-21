@@ -7,6 +7,7 @@ import { ROUTES } from "@/lib/constants";
 
 export function Footer() {
   const t = useTranslations("footer");
+  const tMarketing = useTranslations("marketing.footer");
   const year = new Date().getFullYear();
 
   const linkStyle = { color: "var(--text-tertiary)" };
@@ -41,8 +42,8 @@ export function Footer() {
               <Link href={ROUTES.PRODUCT} className={linkClass} style={linkStyle}>{t("features")}</Link>
               <Link href={ROUTES.PRICING} className={linkClass} style={linkStyle}>{t("pricing")}</Link>
               <Link href="/demo" className={linkClass} style={linkStyle}>{t("demo")}</Link>
-              <Link href="/outbound" className={linkClass} style={linkStyle}>Outbound</Link>
-              <Link href="/enterprise" className={linkClass} style={linkStyle}>Enterprise</Link>
+              <Link href="/outbound" className={linkClass} style={linkStyle}>{tMarketing("outbound")}</Link>
+              <Link href="/enterprise" className={linkClass} style={linkStyle}>{tMarketing("enterprise")}</Link>
               <Link href={ROUTES.DOCS} className={linkClass} style={linkStyle}>{t("docs")}</Link>
             </nav>
           </div>
@@ -50,17 +51,17 @@ export function Footer() {
           {/* Industries */}
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--text-secondary)" }}>
-              Industries
+              {tMarketing("industries")}
             </p>
             <nav className="space-y-0.5">
               {[
-                ["Dental", "/industries/dental"],
-                ["Healthcare", "/industries/healthcare"],
-                ["Legal", "/industries/legal"],
-                ["Real Estate", "/industries/real-estate"],
-                ["Plumbing & HVAC", "/industries/plumbing-hvac"],
-                ["Insurance", "/industries/insurance"],
-                ["Med Spa", "/industries/med-spa"],
+                [tMarketing("dental"), "/industries/dental"],
+                [tMarketing("healthcare"), "/industries/healthcare"],
+                [tMarketing("legal"), "/industries/legal"],
+                [tMarketing("realEstate"), "/industries/real-estate"],
+                [tMarketing("plumbingHvac"), "/industries/plumbing-hvac"],
+                [tMarketing("insurance"), "/industries/insurance"],
+                [tMarketing("medSpa"), "/industries/med-spa"],
               ].map(([label, href]) => (
                 <Link key={href} href={href} className={linkClass} style={linkStyle}>{label}</Link>
               ))}
@@ -76,8 +77,8 @@ export function Footer() {
               <a href="mailto:team@recall-touch.com" className={linkClass} style={linkStyle}>{t("emailUs")}</a>
               <Link href="/blog" className={linkClass} style={linkStyle}>{t("blog")}</Link>
               <Link href="/contact" className={linkClass} style={linkStyle}>{t("contact")}</Link>
-              <Link href="/results" className={linkClass} style={linkStyle}>Results</Link>
-              <Link href="/security" className={linkClass} style={linkStyle}>Security</Link>
+              <Link href="/results" className={linkClass} style={linkStyle}>{tMarketing("results")}</Link>
+              <Link href="/security" className={linkClass} style={linkStyle}>{tMarketing("security")}</Link>
             </nav>
           </div>
 
@@ -89,7 +90,7 @@ export function Footer() {
             <nav className="space-y-0.5">
               <Link href="/privacy" className={linkClass} style={linkStyle}>{t("privacyPolicy")}</Link>
               <Link href="/terms" className={linkClass} style={linkStyle}>{t("termsOfService")}</Link>
-              <a href="https://status.recall-touch.com" target="_blank" rel="noopener noreferrer" className={linkClass} style={linkStyle}>System Status</a>
+              <a href="https://status.recall-touch.com" target="_blank" rel="noopener noreferrer" className={linkClass} style={linkStyle}>{tMarketing("systemStatus")}</a>
             </nav>
             <div className="flex flex-wrap gap-1.5 mt-4">
               {["SOC 2", "HIPAA", "GDPR", "SSL"].map((badge) => (

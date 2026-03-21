@@ -3721,7 +3721,7 @@
       "card2Stat2Desc": "Durchschnittliche Reaktionszeit",
       "card2Stat3Desc": "Der Vertriebler geben nach 1 Versuch auf",
       "card3Title": "Kommunikation skaliert nicht",
-      "card3Stat1Desc": "Empfang + SDR-Gehälter",
+      "card3Stat1Desc": "KI-Telefon vs Einstellung und Schulung",
       "card3Stat2Desc": "Fluktuation in telefonlastigen Rollen",
       "card3Stat3Desc": "Tools, die Unternehmen für Anrufe, Texte, Termine und Follow-up jonglieren",
       "closing": "Was, wenn jeder Anruf, jede Nachricht und jedes Follow-up automatisch erledigt würde — und Sie genau sehen könnten, was passiert ist?"
@@ -4531,9 +4531,9 @@
       "missedCallsPerWeek": "Verpasste Anrufe pro Woche",
       "avgValuePerCall": "Durchschnittswert pro Anruf ($)",
       "monthlyRecovered": "Monatlich wiedergewonnene Einnahmen",
-      "annualBaseline": "Jahresbasis Einstellung",
+      "annualBaseline": "Jährliche Kostenbasis",
       "annualProtected": "Jahreseinnahmen, die Recall Touch schützt",
-      "receptionistCost": "Einstellungskosten.",
+      "receptionistCost": "typische Jahreskosten.",
       "recommendedPlan": "Empfohlener Tarif:",
       "description": "Berechnen Sie Ihr Umsatzpotenzial mit unserem ROI-Rechner."
     },

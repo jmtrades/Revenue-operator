@@ -16,6 +16,7 @@ import {
 import { buildSTTVocabulary, formatForDeepgram } from "@/lib/voice/stt-vocabulary";
 import { applyPronunciationRules, COMMON_PRONUNCIATION_FIXES, type PronunciationEntry } from "@/lib/voice/pronunciation";
 import { log } from "@/lib/logger";
+import { getDb } from "@/lib/db/queries";
 
 function getVoiceServerUrl(): string {
   const url = process.env.VOICE_SERVER_URL;
@@ -272,11 +273,38 @@ export class RecallVoiceProvider implements VoiceProvider {
       const { getTelephonyService } = await import("@/lib/telephony");
       const telephony = getTelephonyService();
 
+      // Determine the "from" phone number: workspace-specific or fall back to global env var
+      let fromPhoneNumber: string | undefined;
+
+      // Check if workspace_id is available in metadata
+      const workspaceId = params.metadata?.workspace_id;
+      if (workspaceId) {
+        const db = getDb();
+        const { data: phoneConfig } = await db
+          .from("phone_configs")
+          .select("proxy_number")
+          .eq("workspace_id", workspaceId)
+          .eq("status", "active")
+          .limit(1)
+          .maybeSingle();
+
+        if (phoneConfig && (phoneConfig as { proxy_number?: string | null }).proxy_number) {
+          fromPhoneNumber = (phoneConfig as { proxy_number: string }).proxy_number;
+        }
+      }
+
+      // Fall back to global env var if no workspace phone found
+      if (!fromPhoneNumber) {
+        fromPhoneNumber = process.env.TELNYX_PHONE_NUMBER || process.env.TWILIO_PHONE_NUMBER;
+      }
+
+      if (!fromPhoneNumber) {
+        throw new Error("No outbound phone number configured — set workspace phone config or TELNYX_PHONE_NUMBER or TWILIO_PHONE_NUMBER");
+      }
+
       const result = await telephony.createOutboundCall({
         to: params.phoneNumber,
-        from: process.env.TELNYX_PHONE_NUMBER || process.env.TWILIO_PHONE_NUMBER || (() => {
-          throw new Error("No outbound phone number configured — set TELNYX_PHONE_NUMBER or TWILIO_PHONE_NUMBER");
-        })(),
+        from: fromPhoneNumber,
         webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/telnyx/voice`,
         metadata: {
           assistant_id: params.assistantId,

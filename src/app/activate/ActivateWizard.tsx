@@ -194,7 +194,7 @@ export function ActivateWizard() {
       return;
     }
     if (typeof localStorage !== "undefined") localStorage.setItem("rt_onboarded", "true");
-    window.location.href = "/app/activity";
+    window.location.href = "/app/dashboard";
   }, [state]);
 
   return (

@@ -3719,7 +3719,7 @@
       "card2Stat2Desc": "平均応答時間",
       "card2Stat3Desc": "1回で諦める営業",
       "card3Title": "コミュニケーションがスケールしない",
-      "card3Stat1Desc": "受付・SDR人件費",
+      "card3Stat1Desc": "AI電話運用 vs 採用・研修",
       "card3Stat2Desc": "電話業務の離職率",
       "card3Stat3Desc": "通話・SMS・予約・フォローに使うツールの数",
       "closing": "すべての通話・メッセージ・フォローを自動で処理し、何が起きたか正確に把握できたら？"
@@ -4529,9 +4529,9 @@
       "missedCallsPerWeek": "週あたりの取りこぼし着信数",
       "avgValuePerCall": "1通話あたりの平均価値（$）",
       "monthlyRecovered": "月間回収収入",
-      "annualBaseline": "年間採用ベースライン",
+      "annualBaseline": "年間コストベースライン",
       "annualProtected": "Recall Touchが守る年間収入",
-      "receptionistCost": "採用コスト。",
+      "receptionistCost": "年間典型コスト。",
       "recommendedPlan": "おすすめプラン：",
       "description": "ROI計算機で収益回復の可能性を計算できます。"
     },

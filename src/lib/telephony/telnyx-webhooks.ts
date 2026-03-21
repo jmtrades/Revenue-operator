@@ -32,7 +32,7 @@ export interface TelnyxWebhookPayload {
       from?: string;
       created_at?: string;
       call_control_id?: string;
-      direction?: string;
+      direction?: "incoming" | "outgoing" | string;
       message_id?: string;
       to_number?: string;
       from_number?: string;

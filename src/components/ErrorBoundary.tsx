@@ -106,7 +106,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <button
               type="button"
               onClick={this.handleTryAgain}
-              className="px-4 py-2.5 rounded-xl bg-white text-black text-sm font-semibold hover:bg-[var(--bg-hover)]"
+              className="px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold hover:opacity-90"
             >
               {msg.tryAgain}
             </button>

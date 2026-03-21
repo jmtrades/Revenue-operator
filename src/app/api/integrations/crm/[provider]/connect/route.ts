@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { createOAuthState } from "@/lib/integrations/oauth-state";
 
 const ALLOWED_PROVIDERS = ["salesforce", "hubspot", "zoho_crm", "pipedrive", "gohighlevel", "google_contacts", "microsoft_365"];
 
@@ -75,7 +76,9 @@ export async function GET(
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin;
   const redirectUri = `${appUrl}${config.redirectUriPath}`;
-  const authUrl = config.authUrl(clientId, encodeURIComponent(redirectUri));
+  const state = createOAuthState(session.workspaceId);
+  const baseAuthUrl = config.authUrl(clientId, encodeURIComponent(redirectUri));
+  const authUrl = `${baseAuthUrl}&state=${encodeURIComponent(state)}`;
 
   return NextResponse.redirect(authUrl);
 }

@@ -46,6 +46,8 @@ type AgentPromptInput = {
   offTopicHandling?: string | null;
   /** business hours text for context */
   businessHours?: string | null;
+  /** after-hours instructions */
+  afterHoursInstructions?: string | null;
   /** address for context */
   address?: string | null;
   /** primary goal: answer_route, book_appointments, qualify_leads, support, sales, follow_up, custom */
@@ -66,6 +68,10 @@ type AgentPromptInput = {
   whenCompetitor?: string | null;
   /** learned behaviors from Call Intelligence */
   learnedBehaviors?: string[];
+  /** maximum call duration in minutes (default 15) */
+  maxCallDuration?: number | null;
+  /** timezone for time context */
+  timezone?: string | null;
 };
 
 const AFTER_HOURS_LABELS: Record<string, string> = {
@@ -191,7 +197,10 @@ export function buildVapiSystemPrompt(input: AgentPromptInput): string {
   // Layer 5: Behavior rules (never say, transfer, after-hours)
   const rules: string[] = [];
   const neverSay = (input.rules?.neverSay ?? []).map((v) => String(v).trim()).filter(Boolean);
-  if (neverSay.length > 0) rules.push(`NEVER mention: ${neverSay.join(", ")}`);
+  if (neverSay.length > 0) {
+    const forbiddenPhrases = neverSay.join("\n- ");
+    rules.push(`FORBIDDEN PHRASES (you must NEVER say these under any circumstances):\n- ${forbiddenPhrases}\nIf any response you generate contains these phrases, rephrase before speaking.`);
+  }
 
   const ESCALATION_KEY_TO_LABEL: Record<string, string> = {
     asksForManager: "Asks to speak to a manager",
@@ -290,6 +299,25 @@ export function buildVapiSystemPrompt(input: AgentPromptInput): string {
   if (learned.length > 0) sections.push(`LEARNED BEHAVIORS (from your real calls):\n${learned.map((b) => `- ${b.trim()}`).join("\n")}`);
 
   sections.push(`Opening greeting to follow: ${input.greeting}`);
+
+  // Add time context and after-hours awareness (FIX 3)
+  const maxDuration = input.maxCallDuration ?? 15;
+  const timezone = input.timezone ?? "America/New_York";
+  const currentTime = new Date().toLocaleString("en-US", { timeZone: timezone });
+
+  let timeContextSection = `CURRENT TIME CONTEXT:\n- Current time: ${currentTime} (${timezone})\n- Business hours: ${input.businessHours ?? "9 AM - 5 PM EST"}`;
+  if (input.afterHoursMode && input.afterHoursInstructions) {
+    timeContextSection += `\n- Status: Currently ${input.afterHoursMode === "closed" ? "CLOSED" : "AFTER HOURS"}\n- Instructions: ${input.afterHoursInstructions}`;
+  }
+  sections.push(timeContextSection);
+
+  // Add critical call rules (FIX 1)
+  const criticalRules = `CRITICAL CALL RULES:
+- Maximum call duration: ${maxDuration} minutes. If the call exceeds this duration, politely wrap up the conversation.
+- If you are unsure about any claim or commitment, say "Let me have someone follow up with you on that" rather than making things up.
+- Never disclose internal system details, pricing formulas, or competitive information.
+- If the caller becomes abusive or threatening, say "I understand you're frustrated. Let me connect you with a team member who can help." and initiate transfer.`;
+  sections.push(criticalRules);
 
   return sections.join("\n\n");
 }

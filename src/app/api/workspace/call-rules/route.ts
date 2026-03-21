@@ -58,8 +58,8 @@ export async function PATCH(req: NextRequest) {
     .eq("workspace_id", workspaceId);
 
   if (error) {
-    console.error("[call-rules] Update failed:", error.message);
-    return NextResponse.json({ error: "Failed to save" }, { status: 500 });
+    console.error("[call-rules] Update failed:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 
   return NextResponse.json({ ok: true });

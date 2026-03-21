@@ -15,7 +15,7 @@ const SCENARIOS = [
 const SCENARIO_GREETINGS: Record<string, { greeting: string; voiceId: string }> = {
   "New Customer Inquiry": {
     greeting: "Thank you for calling. How can I help you today?",
-    voiceId: "us-female-warm-receptionist"
+    voiceId: "us-female-warm-agent"
   },
   "Appointment Booking": {
     greeting: "Hi there, I'd be happy to help you schedule an appointment. What day works best for you?",

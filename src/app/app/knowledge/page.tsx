@@ -101,7 +101,7 @@ function KnowledgeModal({
   const [fileName, setFileName] = useState(entry?.fileName ?? "");
   const [uploadState, setUploadState] = useState<"idle" | "uploading" | "done">("idle");
   const [websiteFetchState, setWebsiteFetchState] = useState<"idle" | "fetching" | "done">("idle");
-  const [websitePages, setWebsitePages] = useState(entry?.type === "Website" ? 12 : 0);
+  const [websitePages, setWebsitePages] = useState(0);
 
   const handleSave = () => {
     const wordCount = content.trim().split(/\s+/).filter(Boolean).length;
@@ -152,12 +152,32 @@ function KnowledgeModal({
     }
   };
 
-  const handleMockFetch = () => {
+  const handleWebsiteFetch = async () => {
+    if (!url.trim()) {
+      toast.error("Please enter a website URL");
+      return;
+    }
     setWebsiteFetchState("fetching");
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/knowledge/scrape", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: url.trim() }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        toast.error((data as { error?: string }).error ?? "Failed to fetch website");
+        setWebsiteFetchState("idle");
+        return;
+      }
+      const data = await res.json().catch(() => ({}));
       setWebsiteFetchState("done");
-      setWebsitePages(12);
-    }, 1500);
+      setWebsitePages((data as { pages?: number }).pages ?? 0);
+      toast.success("Website content indexed successfully");
+    } catch {
+      toast.error("Failed to fetch website. Please check the URL and try again.");
+      setWebsiteFetchState("idle");
+    }
   };
 
   return (
@@ -291,7 +311,7 @@ function KnowledgeModal({
               <div>
                 <button
                   type="button"
-                  onClick={handleMockFetch}
+                  onClick={handleWebsiteFetch}
                   disabled={websiteFetchState === "fetching"}
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-inset)] disabled:opacity-50"
                 >
@@ -327,7 +347,7 @@ function KnowledgeModal({
                   onClick={() => setStatus(s.value)}
                   className={`px-4 py-2 rounded-xl text-sm font-medium border transition-colors ${
                     status === s.value
-                      ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)] border-white"
+                      ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)] border-[var(--accent-primary)]"
                       : "bg-[var(--bg-input)] border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
                   }`}
                 >

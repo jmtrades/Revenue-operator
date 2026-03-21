@@ -144,7 +144,7 @@ export function NotificationCenter({
       >
         <Bell className="w-4 h-4" />
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-[var(--accent-danger)] px-1 text-[10px] font-medium text-white">
+          <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-[var(--accent-danger)] px-1 text-[10px] font-medium text-[var(--text-on-accent)]">
             {unreadCount > 99 ? "99+" : unreadCount}
           </span>
         )}

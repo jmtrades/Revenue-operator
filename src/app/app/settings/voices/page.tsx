@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import {
   Play,
   Pause,
@@ -135,7 +136,7 @@ export default function VoicesSettingsPage() {
       try {
         // Check if voice server is configured
         if (!process.env.NEXT_PUBLIC_VOICE_SERVER_URL) {
-          alert("Voice preview unavailable — voice server not configured");
+          toast.error("Voice preview unavailable — voice server not configured");
           setPlayingVoiceId(null);
           return;
         }
@@ -146,7 +147,7 @@ export default function VoicesSettingsPage() {
           credentials: "include",
           body: JSON.stringify({
             voice_id: voiceId,
-            text: "Hi there, how can I help you today?",
+            text: t("previewText"),
           }),
         });
         if (response.ok) {
@@ -162,12 +163,12 @@ export default function VoicesSettingsPage() {
           // Handle error responses
           const errorData = await response.json().catch(() => ({}));
           const errorMsg = errorData.error || "Voice preview failed";
-          alert(errorMsg);
+          toast.error(errorMsg);
           setPlayingVoiceId(null);
         }
       } catch (error) {
         const message = error instanceof Error ? error.message : "Voice preview unavailable";
-        alert(message);
+        toast.error(message);
         setPlayingVoiceId(null);
       }
     }
@@ -539,6 +540,13 @@ export default function VoicesSettingsPage() {
         </div>
       )}
 
+      {/* Voice Cloning Coming Soon Banner */}
+      <div className="mb-6 p-4 rounded-xl bg-blue-500/10 border border-blue-500/30">
+        <p className="text-sm font-medium text-blue-300">
+          Voice Cloning — Coming Soon. Custom voice cloning is not yet available.
+        </p>
+      </div>
+
       {/* Voice Library Browser */}
       <div
         className="rounded-2xl border p-8"
@@ -630,7 +638,8 @@ export default function VoicesSettingsPage() {
               <button
                 type="button"
                 onClick={() => setShowCloneModal(true)}
-                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold px-3 py-2 text-sm hover:opacity-90 transition-colors"
+                disabled
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold px-3 py-2 text-sm opacity-50 cursor-not-allowed"
               >
                 <Plus className="w-4 h-4" />
                 {t("cloneVoice")}

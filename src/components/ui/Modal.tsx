@@ -41,7 +41,7 @@ export function Modal({ open, onClose, title, size = "md", children }: ModalProp
     <AnimatePresence>
       {open && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--overlay)] backdrop-blur-sm px-4"
           onClick={onClose}
         >
           <motion.div

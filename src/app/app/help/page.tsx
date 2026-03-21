@@ -55,6 +55,28 @@ export default function HelpPage() {
             {t("inviteTeam.desc1", { defaultValue: "Go to" })} <Link className="underline" href="/app/settings/team">{t("inviteTeam.team", { defaultValue: "Team" })}</Link> {t("inviteTeam.desc2", { defaultValue: "and invite teammates with the appropriate role. They will automatically see the right workspaces and receive notifications based on your configuration." })}
           </p>
         </section>
+
+        <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5">
+          <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-4">{t("troubleshooting.title", { defaultValue: "Troubleshooting" })}</h2>
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-sm font-medium text-[var(--text-primary)] mb-1">{t("troubleshooting.noCallsTitle", { defaultValue: "Why am I not receiving calls?" })}</h3>
+              <p className="text-sm text-[var(--text-secondary)]">{t("troubleshooting.noCallsDesc", { defaultValue: "Make sure you have a phone number connected in Settings > Phone Numbers. Your agent must also be configured and your account must be on an active plan." })}</p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-[var(--text-primary)] mb-1">{t("troubleshooting.noVoiceTitle", { defaultValue: "Why can't I hear voice previews?" })}</h3>
+              <p className="text-sm text-[var(--text-secondary)]">{t("troubleshooting.noVoiceDesc", { defaultValue: "Voice preview requires the voice server to be configured. Contact support if previews are not playing." })}</p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-[var(--text-primary)] mb-1">{t("troubleshooting.crmSyncTitle", { defaultValue: "My CRM shows Connected but contacts aren't syncing" })}</h3>
+              <p className="text-sm text-[var(--text-secondary)]">{t("troubleshooting.crmSyncDesc", { defaultValue: "CRM sync is currently in Beta. Inbound token storage works, but full two-way sync is coming soon." })}</p>
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-[var(--text-primary)] mb-1">{t("troubleshooting.callsCutOffTitle", { defaultValue: "Calls are being cut off" })}</h3>
+              <p className="text-sm text-[var(--text-secondary)]">{t("troubleshooting.callsCutOffDesc", { defaultValue: "Check your plan's minute allowance in Settings > Billing. Calls are limited to 15 minutes by default." })}</p>
+            </div>
+          </div>
+        </section>
       </div>
 
       <div className="mt-8 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5">
