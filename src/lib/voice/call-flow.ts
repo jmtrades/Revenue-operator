@@ -391,7 +391,8 @@ export async function initiateCall(
           .filter(Boolean);
         if (names.length > 0) assistantMeta.staff_names = names.join(",");
       }
-    } catch {
+    } catch (err) {
+      console.warn("[call-flow] Failed to load workspace context for STT/pronunciation:", err);
       // Non-critical — STT/pronunciation just won't be workspace-aware
     }
 
@@ -402,7 +403,7 @@ export async function initiateCall(
       voiceProvider: getVoiceProviderFromModel(modelConfig),
       language: undefined,
       tools,
-      maxDuration: 600,
+      maxDuration: 600, // 10-minute hard limit; system prompt requests graceful wrap-up at 8-9 min
       silenceTimeout: 30,
       backgroundDenoising: true,
       metadata: assistantMeta,
@@ -645,7 +646,7 @@ export async function handleInboundCall(
       voiceProvider: getVoiceProviderFromModel(modelConfig),
       language: undefined,
       tools: agentTools,
-      maxDuration: 600,
+      maxDuration: 600, // 10-minute hard limit; system prompt requests graceful wrap-up at 8-9 min
       silenceTimeout: 30,
       backgroundDenoising: true,
       metadata: inboundMeta,

@@ -195,5 +195,5 @@ function extractKeyTerms(text: string): string[] {
     }
   }
 
-  return [...new Set(terms)].slice(0, 50); // Cap at 50 terms
+  return [...new Set(terms)].slice(0, 100); // Cap at 100 terms
 }
