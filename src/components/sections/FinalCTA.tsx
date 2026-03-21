@@ -1,74 +1,144 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
 import { Container } from "@/components/ui/Container";
 import { DemoVoiceButton } from "@/components/demo/DemoVoiceButton";
 import { ROUTES } from "@/lib/constants";
-import { ArrowRight, Shield, Clock, CreditCard, Phone } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export function FinalCTA() {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleEmailSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim() || !email.includes("@")) return;
+    // Redirect to signup with email pre-filled
+    window.location.href = `${ROUTES.START}?email=${encodeURIComponent(email.trim())}`;
+    setSubmitted(true);
+  };
+
   return (
     <section
-      className="marketing-section py-24 md:py-32 relative overflow-hidden"
-      style={{ background: "var(--gradient-cta-section)", borderTop: "1px solid var(--border-default)" }}
+      className="py-24 md:py-32 relative overflow-hidden"
+      style={{
+        background: "var(--bg-primary)",
+        borderTop: "1px solid var(--border-default)",
+      }}
     >
-      {/* Background glow */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-white/[0.06] blur-[100px]" />
-      </div>
-
       <Container>
         <AnimateOnScroll className="text-center max-w-2xl mx-auto relative z-10">
-
-          <h2 className="font-bold text-3xl md:text-5xl mb-4" style={{ letterSpacing: "-0.02em", lineHeight: 1.15, color: "var(--text-primary)" }}>
-            Every Unanswered Call Is Revenue Walking Out the Door.
-          </h2>
-
-          <p className="text-lg mb-8 max-w-xl mx-auto" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-            Start your 14-day free trial in under 3 minutes. No credit card. No contracts. No risk. Just results.
+          <p
+            className="text-[11px] font-semibold uppercase tracking-wider mb-4"
+            style={{ color: "var(--accent-primary)" }}
+          >
+            Get started
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href={ROUTES.START}
-              className="group bg-white text-black font-semibold rounded-xl px-8 py-4 hover:bg-zinc-100 transition-colors no-underline inline-flex items-center gap-2 text-lg"
+          <h2
+            className="font-semibold mb-5"
+            style={{
+              fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)",
+              letterSpacing: "-0.025em",
+              lineHeight: 1.15,
+              color: "var(--text-primary)",
+            }}
+          >
+            Every unanswered call is revenue walking out the door.
+          </h2>
+
+          <p
+            className="text-base md:text-lg max-w-xl mx-auto mb-6 leading-relaxed"
+            style={{ color: "var(--text-secondary)" }}
+          >
+            Start your 14-day free trial in under 3 minutes. No credit card.
+            No contracts. No risk.
+          </p>
+
+          {/* Trust signals ABOVE the form — build confidence before the ask */}
+          <div
+            className="flex flex-wrap justify-center gap-x-5 gap-y-2 mb-6 text-xs"
+            style={{ color: "var(--text-tertiary)" }}
+          >
+            <span className="flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5 shrink-0" style={{ color: "var(--accent-secondary)" }} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd"/>
+              </svg>
+              No credit card required
+            </span>
+            <span className="flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5 shrink-0" style={{ color: "var(--accent-secondary)" }} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd"/>
+              </svg>
+              30-day money-back guarantee
+            </span>
+            <span className="flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5 shrink-0" style={{ color: "var(--accent-secondary)" }} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd"/>
+              </svg>
+              SOC 2 + HIPAA compliant
+            </span>
+          </div>
+
+          {/* Inline email capture — zero-friction conversion */}
+          <form
+            onSubmit={handleEmailSubmit}
+            className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto mb-3"
+          >
+            <label htmlFor="final-cta-email" className="sr-only">Email address</label>
+            <input
+              id="final-cta-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@company.com"
+              className="flex-1 px-4 py-3 rounded-[10px] text-sm transition-colors focus:outline-none"
+              style={{
+                background: "var(--bg-inset)",
+                border: "1px solid var(--border-default)",
+                color: "var(--text-primary)",
+              }}
+              required
+              autoComplete="email"
+            />
+            <button
+              type="submit"
+              disabled={submitted}
+              className="btn-marketing-blue px-6 py-3 text-sm whitespace-nowrap group inline-flex items-center justify-center gap-2"
             >
-              Start Your Free Trial Now
-              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-0.5" />
-            </Link>
+              {submitted ? "Redirecting..." : "Start free trial"}
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+            </button>
+          </form>
+
+          <p className="text-xs mb-8" style={{ color: "var(--text-tertiary)" }}>
+            Live in under 3 minutes. Cancel anytime.
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
             <Link
               href="/book-demo"
-              className="no-underline inline-flex items-center justify-center px-6 py-4 rounded-xl border border-zinc-700 text-zinc-300 font-semibold hover:text-white hover:bg-[var(--bg-inset)] transition-colors"
+              className="btn-marketing-ghost no-underline text-sm px-5 py-2.5"
             >
-              Book a Live Demo
+              Book a live demo
             </Link>
           </div>
 
-          {/* Instant demo call CTA */}
-          <div className="mt-8 flex flex-col items-center">
-            <p className="text-sm text-white/50 mb-3 flex items-center gap-1.5">
-              <Phone className="w-3.5 h-3.5 text-emerald-400" />
+          {/* Instant demo call */}
+          <div className="flex flex-col items-center">
+            <p
+              className="text-sm mb-3"
+              style={{ color: "var(--text-tertiary)" }}
+            >
               Still not sure? Hear it for yourself — we&apos;ll call you right now.
             </p>
             <DemoVoiceButton />
           </div>
 
-          {/* Trust signals */}
-          <div className="flex flex-wrap justify-center gap-6 mt-8 text-xs text-white/40">
-            <span className="flex items-center gap-1.5">
-              <CreditCard className="w-3.5 h-3.5" /> No credit card — start free instantly
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5" /> Go live in under 3 minutes
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Shield className="w-3.5 h-3.5" /> 100% money-back guarantee
-            </span>
-          </div>
-
-          {/* Social proof */}
-          <p className="text-xs text-white/30 mt-6">
+          {/* Social proof below demo */}
+          <p className="text-xs mt-10" style={{ color: "var(--text-tertiary)" }}>
             Join 12,400+ businesses that stopped losing revenue to voicemail.
           </p>
         </AnimateOnScroll>

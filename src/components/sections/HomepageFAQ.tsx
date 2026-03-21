@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { Container } from "@/components/ui/Container";
-import { SectionLabel } from "@/components/ui/SectionLabel";
 
 type FaqItem = { q: string; a: string };
 
@@ -58,30 +57,44 @@ export function HomepageFAQ() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section className="marketing-section" style={{ background: "var(--bg-surface)" }}>
+    <section
+      className="marketing-section"
+      style={{ background: "var(--bg-surface)" }}
+    >
       <Container>
         <div className="text-center mb-10">
-          <SectionLabel>FAQ</SectionLabel>
+          <p
+            className="text-[11px] font-semibold uppercase tracking-wider mb-4"
+            style={{ color: "var(--accent-primary)" }}
+          >
+            FAQ
+          </p>
           <h2
             className="font-semibold max-w-2xl mx-auto"
             style={{
               fontSize: "clamp(1.6rem, 3.2vw, 2.4rem)",
-              letterSpacing: "-0.02em",
+              letterSpacing: "-0.025em",
               lineHeight: 1.2,
               color: "var(--text-primary)",
             }}
           >
-            Everything You Need to Know
+            Common Questions
           </h2>
         </div>
 
-        <div className="max-w-3xl mx-auto space-y-3">
+        <div className="max-w-3xl mx-auto space-y-2">
           {FAQS.map((item, idx) => {
             const expanded = open === idx;
             return (
               <div
                 key={item.q}
-                className="rounded-2xl border border-white/[0.08] bg-black/20 overflow-hidden"
+                className="rounded-xl overflow-hidden transition-colors"
+                style={{
+                  border: "1px solid var(--border-default)",
+                  background: expanded
+                    ? "var(--bg-primary)"
+                    : "var(--bg-surface)",
+                }}
               >
                 <button
                   type="button"
@@ -89,16 +102,32 @@ export function HomepageFAQ() {
                   onClick={() => setOpen((v) => (v === idx ? null : idx))}
                   aria-expanded={expanded}
                 >
-                  <span className="text-sm font-semibold text-white">{item.q}</span>
+                  <span
+                    className="text-sm font-semibold"
+                    style={{ color: "var(--text-primary)" }}
+                  >
+                    {item.q}
+                  </span>
                   <ChevronDown
-                    className={`h-5 w-5 text-white/60 transition-transform ${expanded ? "rotate-180" : ""}`}
+                    className={`h-4 w-4 shrink-0 transition-transform ${expanded ? "rotate-180" : ""}`}
+                    style={{ color: "var(--text-tertiary)" }}
                   />
                 </button>
-                {expanded && (
-                  <div className="px-5 pb-5">
-                    <p className="text-sm text-white/70 leading-relaxed">{item.a}</p>
+                <div
+                  className="accordion-content"
+                  data-open={expanded ? "true" : "false"}
+                >
+                  <div>
+                    <div className="px-5 pb-5">
+                      <p
+                        className="text-sm leading-relaxed"
+                        style={{ color: "var(--text-secondary)" }}
+                      >
+                        {item.a}
+                      </p>
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
             );
           })}

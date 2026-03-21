@@ -72,7 +72,7 @@ export function ScrollDepthCTA() {
       <div className="flex items-center gap-2 shrink-0">
         <Link
           href={ROUTES.START}
-          className="btn-marketing-primary px-4 py-2 text-sm rounded-lg no-underline shrink-0"
+          className="btn-marketing-blue px-4 py-2 text-sm rounded-lg no-underline shrink-0"
           onClick={dismiss}
         >
           {t("button")}

@@ -422,7 +422,7 @@ export function CallSimulator() {
         </p>
         <Link
           href={ROUTES.START}
-          className="btn-marketing-primary no-underline inline-block"
+          className="btn-marketing-blue no-underline inline-block"
         >
           {t("simulator.ctaStartFree")}
         </Link>

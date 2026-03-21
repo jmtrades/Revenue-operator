@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { NAV_LINKS, SOLUTIONS_LINKS, ROUTES } from "@/lib/constants";
 import { Container } from "@/components/ui/Container";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?: boolean }) {
   const t = useTranslations("siteNav");
@@ -17,7 +18,7 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 8);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -28,9 +29,7 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
     } else {
       document.body.style.overflow = "";
     }
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return () => { document.body.style.overflow = ""; };
   }, [mobileOpen]);
 
   useEffect(() => {
@@ -44,16 +43,19 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key !== "Tab") return;
       if (e.shiftKey) {
-        if (document.activeElement === first) {
-          e.preventDefault();
-          last?.focus();
-        }
+        if (document.activeElement === first) { e.preventDefault(); last?.focus(); }
       } else {
-        if (document.activeElement === last) {
-          e.preventDefault();
-          first?.focus();
-        }
+        if (document.activeElement === last) { e.preventDefault(); first?.focus(); }
       }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [mobileOpen]);
+
+  // Escape key closes mobile menu
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && mobileOpen) setMobileOpen(false);
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
@@ -61,7 +63,6 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
 
   useEffect(() => {
     let cancelled = false;
-
     const refreshAuthState = () => {
       fetch("/api/auth/session", {
         credentials: "include",
@@ -73,15 +74,11 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
           if (cancelled) return;
           setAuthenticated(Boolean(data?.session?.userId));
         })
-        .catch(() => {
-          if (!cancelled) setAuthenticated(false);
-        });
+        .catch(() => { if (!cancelled) setAuthenticated(false); });
     };
-
     refreshAuthState();
     window.addEventListener("focus", refreshAuthState);
     document.addEventListener("visibilitychange", refreshAuthState);
-
     return () => {
       cancelled = true;
       window.removeEventListener("focus", refreshAuthState);
@@ -89,70 +86,78 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
     };
   }, [pathname]);
 
-  const headerStyle = {
-    background: scrolled ? "rgba(10, 10, 11, 0.85)" : "transparent",
-    backdropFilter: scrolled ? "blur(16px)" : "none",
-    WebkitBackdropFilter: scrolled ? "blur(16px)" : "none",
-    borderBottom: scrolled ? "1px solid var(--border-default)" : "none",
-  };
   const desktopPrimaryHref = authenticated ? "/app/activity" : ROUTES.START;
   const desktopPrimaryLabel = authenticated ? t("dashboardCta") : t("startFreeCta");
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 h-16 flex items-center transition-all duration-200"
-      style={headerStyle}
+      className="fixed top-0 left-0 right-0 z-50 h-[60px] flex items-center transition-all duration-200"
+      style={{
+        background: scrolled ? "rgba(255, 255, 255, 0.85)" : "transparent",
+        backdropFilter: scrolled ? "saturate(180%) blur(16px)" : "none",
+        WebkitBackdropFilter: scrolled ? "saturate(180%) blur(16px)" : "none",
+        borderBottom: scrolled ? "1px solid var(--border-default)" : "1px solid transparent",
+      }}
     >
       <Container className="flex items-center justify-between w-full">
+        {/* Logo: clean wordmark */}
         <Link
           href="/"
-          className="text-[17px] font-semibold"
-          style={{ color: "var(--text-primary)" }}
+          className="text-[15px] font-semibold tracking-tight no-underline"
+          style={{ color: "var(--text-primary)", letterSpacing: "-0.02em" }}
         >
           Recall Touch
         </Link>
-        <nav className="hidden lg:flex items-center gap-8">
+
+        {/* Desktop nav */}
+        <nav className="hidden lg:flex items-center gap-7">
           <Link
             href={ROUTES.PRODUCT}
-            className="text-sm font-medium transition-colors duration-150 pb-0.5 border-b-2 border-transparent"
+            className="text-[13px] font-medium transition-colors duration-150 no-underline"
             style={{
               color: pathname === ROUTES.PRODUCT ? "var(--text-primary)" : "var(--text-secondary)",
-              borderBottomColor: pathname === ROUTES.PRODUCT ? "var(--accent-primary)" : "transparent",
             }}
           >
             {t("product")}
           </Link>
+
+          {/* Solutions dropdown */}
           <div className="relative group">
             <button
               type="button"
-              className="flex items-center gap-1 text-sm font-medium transition-colors duration-150 pb-0.5 border-b-2 border-transparent"
+              className="flex items-center gap-1 text-[13px] font-medium transition-colors duration-150"
               style={{
                 color: pathname.startsWith("/industries/") ? "var(--text-primary)" : "var(--text-secondary)",
-                borderBottomColor: pathname.startsWith("/industries/") ? "var(--accent-primary)" : "transparent",
               }}
               aria-haspopup="true"
               aria-expanded="false"
             >
               {t("solutions")}
-              <ChevronDown className="w-4 h-4 opacity-70" />
+              <ChevronDown className="w-3.5 h-3.5 opacity-50" />
             </button>
-            <div
-              className="absolute top-full left-0 pt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150"
-              style={{ minWidth: "200px" }}
-            >
+            <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150" style={{ minWidth: "200px" }}>
               <div
-                className="rounded-xl border py-2 shadow-lg"
+                className="rounded-xl py-1.5"
                 style={{
                   background: "var(--bg-surface)",
-                  borderColor: "var(--border-default)",
+                  border: "1px solid var(--border-default)",
+                  boxShadow: "var(--shadow-lg)",
                 }}
               >
                 {SOLUTIONS_LINKS.map((s) => (
                   <Link
                     key={s.href + s.labelKey}
                     href={s.href}
-                    className="block px-4 py-2.5 text-sm transition-colors hover:bg-white/5"
-                    style={{ color: "var(--text-primary)" }}
+                    className="block px-4 py-2 text-[13px] no-underline transition-colors"
+                    style={{ color: "var(--text-secondary)" }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = "var(--text-primary)";
+                      e.currentTarget.style.background = "var(--bg-hover)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = "var(--text-secondary)";
+                      e.currentTarget.style.background = "transparent";
+                    }}
                   >
                     {t(s.labelKey)}
                   </Link>
@@ -160,16 +165,16 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
               </div>
             </div>
           </div>
+
           {NAV_LINKS.filter((l) => l.href !== ROUTES.PRODUCT).map((l) => {
             const isActive = pathname === l.href || (l.href.length > 1 && pathname.startsWith(l.href + "/"));
             return (
               <Link
                 key={l.href}
                 href={l.href}
-                className="text-sm font-medium transition-colors duration-150 pb-0.5 border-b-2 border-transparent"
+                className="text-[13px] font-medium transition-colors duration-150 no-underline"
                 style={{
                   color: isActive ? "var(--text-primary)" : "var(--text-secondary)",
-                  borderBottomColor: isActive ? "var(--accent-primary)" : "transparent",
                 }}
               >
                 {t(l.labelKey)}
@@ -177,79 +182,69 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
             );
           })}
         </nav>
-        <div className="hidden lg:flex items-center gap-3">
+
+        {/* Desktop CTAs */}
+        <div className="hidden lg:flex items-center gap-2.5">
+          <ThemeToggle />
           {!authenticated ? (
-            <Link href={ROUTES.SIGN_IN} className="btn-marketing-ghost px-4 py-2 text-sm rounded-lg no-underline">
+            <Link
+              href={ROUTES.SIGN_IN}
+              className="text-[13px] font-medium px-3.5 py-2 rounded-lg no-underline transition-colors"
+              style={{ color: "var(--text-secondary)" }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = "var(--text-primary)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-secondary)"; }}
+            >
               {t("signIn")}
             </Link>
           ) : null}
-          <Link href={desktopPrimaryHref} className="btn-marketing-primary px-4 py-2 text-sm rounded-xl no-underline">
+          <Link
+            href={desktopPrimaryHref}
+            className="btn-marketing-blue text-[13px] px-4 py-2 no-underline"
+          >
             {desktopPrimaryLabel}
           </Link>
         </div>
+
+        {/* Mobile toggle */}
         <button
           type="button"
           aria-label="Toggle menu"
           aria-expanded={mobileOpen}
-          className="lg:hidden p-2 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)]"
+          className="lg:hidden p-2.5 min-w-[44px] min-h-[44px] rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 flex items-center justify-center"
           style={{ color: "var(--text-primary)" }}
           onClick={() => setMobileOpen((o) => !o)}
         >
-          {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </Container>
 
+      {/* Mobile menu */}
       {mobileOpen && (
         <div
           ref={menuRef}
-          className="lg:hidden fixed inset-0 top-16 z-40 flex flex-col items-center justify-center gap-6 p-8 pt-12 overflow-y-auto"
+          className="lg:hidden fixed inset-0 top-[60px] z-40 flex flex-col p-8 pt-10 overflow-y-auto"
           style={{
             background: "var(--bg-primary)",
             borderTop: "1px solid var(--border-default)",
           }}
         >
-          <Link
-            href={ROUTES.PRODUCT}
-            className="text-2xl font-semibold transition-colors"
-            style={{ color: "var(--text-primary)" }}
-            onClick={() => setMobileOpen(false)}
-          >
-            {t("product")}
-          </Link>
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-tertiary)" }}>{t("solutions")}</p>
-            {SOLUTIONS_LINKS.map((s) => (
-              <Link
-                key={s.href + s.labelKey}
-                href={s.href}
-                className="text-lg font-medium transition-colors"
-                style={{ color: "var(--text-primary)" }}
-                onClick={() => setMobileOpen(false)}
-              >
-                {t(s.labelKey)}
-              </Link>
+          <nav className="flex flex-col gap-1">
+            <Link href={ROUTES.PRODUCT} className="text-base font-medium py-3 no-underline transition-colors" style={{ color: "var(--text-primary)" }} onClick={() => setMobileOpen(false)}>{t("product")}</Link>
+            <div className="py-2">
+              <p className="text-[11px] font-semibold uppercase tracking-wider mb-2" style={{ color: "var(--text-tertiary)" }}>{t("solutions")}</p>
+              {SOLUTIONS_LINKS.map((s) => (
+                <Link key={s.href + s.labelKey} href={s.href} className="block text-sm py-2 no-underline transition-colors" style={{ color: "var(--text-secondary)" }} onClick={() => setMobileOpen(false)}>{t(s.labelKey)}</Link>
+              ))}
+            </div>
+            {NAV_LINKS.filter((l) => l.href !== ROUTES.PRODUCT).map((l) => (
+              <Link key={l.href} href={l.href} className="text-base font-medium py-3 no-underline transition-colors" style={{ color: "var(--text-primary)" }} onClick={() => setMobileOpen(false)}>{t(l.labelKey)}</Link>
             ))}
-          </div>
-          {NAV_LINKS.filter((l) => l.href !== ROUTES.PRODUCT).map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className="text-2xl font-semibold transition-colors"
-              style={{ color: "var(--text-primary)" }}
-              onClick={() => setMobileOpen(false)}
-            >
-              {t(l.labelKey)}
-            </Link>
-          ))}
-          <div className="flex flex-col w-full max-w-xs gap-3 mt-4">
+          </nav>
+          <div className="flex flex-col w-full gap-3 mt-8">
             {!authenticated ? (
-              <Link href={ROUTES.SIGN_IN} className="btn-marketing-ghost w-full text-center py-3 rounded-lg no-underline text-base" onClick={() => setMobileOpen(false)}>
-                {t("signIn")}
-              </Link>
+              <Link href={ROUTES.SIGN_IN} className="btn-marketing-ghost w-full text-center py-3 rounded-[10px] no-underline text-sm" onClick={() => setMobileOpen(false)}>{t("signIn")}</Link>
             ) : null}
-            <Link href={desktopPrimaryHref} className="btn-marketing-primary w-full text-center py-3 rounded-xl no-underline text-base" onClick={() => setMobileOpen(false)}>
-              {desktopPrimaryLabel}
-            </Link>
+            <Link href={desktopPrimaryHref} className="btn-marketing-blue w-full text-center py-3 rounded-[10px] no-underline text-sm" onClick={() => setMobileOpen(false)}>{desktopPrimaryLabel}</Link>
           </div>
         </div>
       )}

@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
-import { Check } from "lucide-react";
 
 export function HomepageRoiCalculator() {
   const [monthlyOpportunities, setMonthlyOpportunities] = useState(220);
@@ -20,39 +19,40 @@ export function HomepageRoiCalculator() {
     { label: "$10,000+", value: 10000 },
   ] as const;
 
-  const { monthlyLost, monthlyRecovered, annualRecovered, paysForItself } = useMemo(() => {
-    const opportunities = Math.max(0, Math.min(4000, monthlyOpportunities));
-    const value = Math.max(200, avgDealValue);
-    const missed = Math.max(0, Math.min(80, revenueGapPct)) / 100;
+  const { monthlyLost, monthlyRecovered, annualRecovered, paysForItself } =
+    useMemo(() => {
+      const opportunities = Math.max(0, Math.min(4000, monthlyOpportunities));
+      const value = Math.max(200, avgDealValue);
+      const missed = Math.max(0, Math.min(80, revenueGapPct)) / 100;
 
-    const monthlyLostRaw = opportunities * missed * value;
-    const monthlyRecoveredRaw = monthlyLostRaw * 0.7;
-    const annualRecoveredRaw = monthlyRecoveredRaw * 12;
+      const monthlyLostRaw = opportunities * missed * value;
+      const monthlyRecoveredRaw = monthlyLostRaw * 0.7;
+      const annualRecoveredRaw = monthlyRecoveredRaw * 12;
 
-    const businessPlan = 297;
-    const pays = businessPlan > 0 ? monthlyRecoveredRaw / businessPlan : 0;
+      const businessPlan = 297;
+      const pays = businessPlan > 0 ? monthlyRecoveredRaw / businessPlan : 0;
 
-    return {
-      monthlyLost: monthlyLostRaw,
-      monthlyRecovered: monthlyRecoveredRaw,
-      annualRecovered: annualRecoveredRaw,
-      paysForItself: pays,
-    };
-  }, [avgDealValue, revenueGapPct, monthlyOpportunities]);
+      return {
+        monthlyLost: monthlyLostRaw,
+        monthlyRecovered: monthlyRecoveredRaw,
+        annualRecovered: annualRecoveredRaw,
+        paysForItself: pays,
+      };
+    }, [avgDealValue, revenueGapPct, monthlyOpportunities]);
 
   return (
     <section
-      className="py-12 md:py-16 border-t"
+      className="py-16 md:py-24"
       style={{
-        borderColor: "var(--border-subtle)",
-        background: "var(--bg-base)",
+        borderTop: "1px solid var(--border-default)",
+        background: "var(--bg-surface)",
       }}
     >
       <Container>
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] items-start">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] items-start max-w-5xl mx-auto">
           <div>
             <p
-              className="text-sm font-medium mb-2 tracking-wide uppercase"
+              className="text-[11px] font-semibold uppercase tracking-wider mb-3"
               style={{ color: "var(--accent-primary)" }}
             >
               Revenue math
@@ -60,7 +60,7 @@ export function HomepageRoiCalculator() {
             <h2
               className="font-semibold text-2xl md:text-3xl mb-4"
               style={{
-                letterSpacing: "-0.02em",
+                letterSpacing: "-0.025em",
                 lineHeight: 1.2,
                 color: "var(--text-primary)",
               }}
@@ -68,40 +68,49 @@ export function HomepageRoiCalculator() {
               Calculate your revenue operations gap.
             </h2>
             <p
-              className="text-sm md:text-base max-w-xl"
-              style={{
-                color: "var(--text-secondary)",
-                lineHeight: 1.7,
-              }}
+              className="text-sm md:text-base max-w-xl leading-relaxed"
+              style={{ color: "var(--text-secondary)" }}
             >
-              Drag the sliders. We estimate your monthly revenue operations gap, then show what Recall Touch can recover with consistent automation and follow-up execution.
+              Drag the sliders. We estimate your monthly revenue operations gap,
+              then show what Recall Touch can recover with consistent automation
+              and follow-up execution.
             </p>
             <ul className="mt-6 space-y-2 text-sm">
-              <li
-                style={{
-                  color: "var(--text-secondary)",
-                }}
-              >
-                <Check className="w-3.5 h-3.5 inline-block mr-1 text-emerald-500" style={{ verticalAlign: "text-bottom" }} /> Uses conservative 70% recovery rate based on aggregated call data.
-              </li>
-              <li
-                style={{
-                  color: "var(--text-secondary)",
-                }}
-              >
-                <Check className="w-3.5 h-3.5 inline-block mr-1 text-emerald-500" style={{ verticalAlign: "text-bottom" }} /> Shows monthly recovery and whether Growth plan pays for itself.
-              </li>
+              {[
+                "Uses conservative 70% recovery rate based on aggregated call data.",
+                "Shows monthly recovery and whether Growth plan pays for itself.",
+              ].map((text) => (
+                <li
+                  key={text}
+                  className="flex items-start gap-2"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  <svg
+                    className="w-4 h-4 shrink-0 mt-0.5"
+                    style={{ color: "var(--accent-secondary)" }}
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  {text}
+                </li>
+              ))}
             </ul>
           </div>
 
           <div
-            className="rounded-2xl p-6 md:p-7"
+            className="rounded-xl p-6 md:p-7"
             style={{
-              background: "var(--bg-surface)",
+              background: "var(--bg-primary)",
               border: "1px solid var(--border-default)",
             }}
           >
-            <div className="grid gap-4 mb-6">
+            <div className="grid gap-5 mb-6">
               <label className="block">
                 <span
                   className="text-sm font-medium"
@@ -116,11 +125,16 @@ export function HomepageRoiCalculator() {
                     max={2000}
                     step={10}
                     value={monthlyOpportunities}
-                    onChange={(event) => setMonthlyOpportunities(Number(event.target.value))}
-                    className="flex-1 h-2 rounded-lg cursor-pointer"
+                    onChange={(event) =>
+                      setMonthlyOpportunities(Number(event.target.value))
+                    }
+                    className="flex-1 h-1.5 rounded-lg cursor-pointer"
                     style={{ accentColor: "var(--accent-primary)" }}
                   />
-                  <span className="text-sm font-medium w-16 text-right tabular-nums" style={{ color: "var(--text-primary)" }}>
+                  <span
+                    className="text-sm font-medium w-16 text-right tabular-nums"
+                    style={{ color: "var(--text-primary)" }}
+                  >
                     {monthlyOpportunities}
                   </span>
                 </div>
@@ -140,8 +154,10 @@ export function HomepageRoiCalculator() {
                     max={60}
                     step={1}
                     value={revenueGapPct}
-                    onChange={(event) => setRevenueGapPct(Number(event.target.value))}
-                    className="flex-1 h-2 rounded-lg cursor-pointer"
+                    onChange={(event) =>
+                      setRevenueGapPct(Number(event.target.value))
+                    }
+                    className="flex-1 h-1.5 rounded-lg cursor-pointer"
                     style={{ accentColor: "var(--accent-primary)" }}
                   />
                   <span
@@ -162,16 +178,21 @@ export function HomepageRoiCalculator() {
                 </span>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {AVG_VALUE_OPTIONS.map((opt) => {
-                  const selected = avgDealValue === opt.value;
+                    const selected = avgDealValue === opt.value;
                     return (
                       <button
                         key={opt.value}
                         type="button"
-                        className={`px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
-                          selected
-                            ? "bg-white text-black"
-                            : "border border-zinc-700 text-zinc-300 hover:bg-[var(--bg-inset)]"
-                        }`}
+                        className="px-3.5 py-2 rounded-lg text-sm font-medium transition-all"
+                        style={{
+                          background: selected
+                            ? "var(--accent-primary)"
+                            : "transparent",
+                          color: selected ? "var(--text-on-accent)" : "var(--text-secondary)",
+                          border: selected
+                            ? "1px solid var(--accent-primary)"
+                            : "1px solid var(--border-default)",
+                        }}
                         onClick={() => setAvgDealValue(opt.value)}
                         aria-pressed={selected}
                       >
@@ -184,8 +205,10 @@ export function HomepageRoiCalculator() {
             </div>
 
             <div
-              className="pt-4 border-t space-y-2 text-sm"
-              style={{ borderColor: "var(--border-default)" }}
+              className="pt-5 space-y-2 text-sm"
+              style={{
+                borderTop: "1px solid var(--border-default)",
+              }}
             >
               <p style={{ color: "var(--text-secondary)" }}>
                 You&apos;re currently{" "}
@@ -198,22 +221,23 @@ export function HomepageRoiCalculator() {
                 in revenue leak.
               </p>
               <p style={{ color: "var(--text-secondary)" }}>
-                With Recall Touch answering 24/7 and running recovery follow-up, you could recover around{" "}
+                With Recall Touch answering 24/7 and running recovery follow-up,
+                you could recover around{" "}
                 <span
                   className="font-semibold"
                   style={{ color: "var(--accent-primary)" }}
                 >
                   ${monthlyRecovered.toLocaleString()}/month
                 </span>{" "}
-                and ${annualRecovered.toLocaleString()}/year in recovered bookings
-                and no-show rescue.
-              </p>
-              <p style={{ color: "var(--text-secondary)" }}>
-                We base this on your average booking value, then estimate the share that slips away without automated follow-up.
+                and ${annualRecovered.toLocaleString()}/year in recovered
+                bookings and no-show rescue.
               </p>
               <p style={{ color: "var(--text-primary)" }}>
                 Business plan pays for itself at{" "}
-                <span className="font-semibold" style={{ color: "var(--accent-primary)" }}>
+                <span
+                  className="font-semibold"
+                  style={{ color: "var(--accent-primary)" }}
+                >
                   {paysForItself.toFixed(1)}x
                 </span>
                 .
@@ -223,9 +247,9 @@ export function HomepageRoiCalculator() {
             <div className="mt-6 flex flex-col gap-3">
               <Link
                 href={ROUTES.START}
-                className="bg-white text-black font-semibold rounded-xl px-5 py-2.5 text-sm text-center hover:bg-zinc-100 transition-colors no-underline"
+                className="btn-marketing-blue w-full text-center no-underline block"
               >
-                Get full ROI report →
+                Get full ROI report
               </Link>
               <p
                 className="text-xs text-center"
@@ -241,4 +265,3 @@ export function HomepageRoiCalculator() {
     </section>
   );
 }
-
