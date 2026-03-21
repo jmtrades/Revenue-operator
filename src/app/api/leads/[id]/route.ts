@@ -83,7 +83,7 @@ export async function PATCH(
     .eq("id", id)
     .select()
     .maybeSingle();
-  if (error) return NextResponse.json({ error: String(error) }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Failed to update lead" }, { status: 500 });
   const leadWorkspaceId = (updated as { workspace_id?: string })?.workspace_id;
   if (leadWorkspaceId) {
     const { recordProviderInteraction } = await import("@/lib/detachment");

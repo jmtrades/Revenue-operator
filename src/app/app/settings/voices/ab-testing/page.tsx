@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { RECALL_VOICES } from "@/lib/constants/recall-voices";
 
 interface AbTest {
@@ -36,6 +37,7 @@ function formatDate(dateStr: string): string {
 }
 
 export default function AbTestingPage() {
+  const t = useTranslations("voiceAbTesting");
   const searchParams = useSearchParams();
   const workspaceId = searchParams.get("workspace_id") ?? "";
   const [tests, setTests] = useState<AbTest[]>([]);
@@ -126,28 +128,36 @@ export default function AbTestingPage() {
 
   return (
     <div className="max-w-4xl mx-auto py-8 px-4">
+      {/* Coming Soon Banner */}
+      <div className="mb-6 p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/30">
+        <p className="text-sm font-medium text-yellow-300">
+          {t("comingSoon", { defaultValue: "Voice A/B Testing is coming soon. This feature is not yet active." })}
+        </p>
+      </div>
+
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-semibold text-[var(--text-primary)]">Voice A/B Testing</h1>
+          <h1 className="text-xl font-semibold text-[var(--text-primary)]">{t("title", { defaultValue: "Voice A/B Testing" })}</h1>
           <p className="text-sm text-[var(--text-secondary)] mt-1">
-            Test different voices to find which one converts best for your business.
+            {t("subtitle", { defaultValue: "Test different voices to find which one converts best for your business." })}
           </p>
         </div>
         <button
           onClick={() => setShowCreate(!showCreate)}
-          className="px-4 py-2 text-sm font-medium rounded-lg bg-[var(--accent)] text-white hover:opacity-90 transition-opacity"
+          disabled
+          className="px-4 py-2 text-sm font-medium rounded-lg bg-[var(--accent)] text-white opacity-50 cursor-not-allowed"
         >
-          {showCreate ? "Cancel" : "New Test"}
+          {showCreate ? t("cancel", { defaultValue: "Cancel" }) : t("newTest", { defaultValue: "New Test" })}
         </button>
       </div>
 
       {/* Create form */}
       {showCreate && (
-        <div className="mb-6 p-5 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]">
-          <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-4">Create A/B Test</h2>
+        <div className="mb-6 p-5 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] opacity-50 pointer-events-none">
+          <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-4">{t("createTest", { defaultValue: "Create A/B Test" })}</h2>
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Test Name</label>
+              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">{t("form.testName", { defaultValue: "Test Name" })}</label>
               <input
                 type="text"
                 value={newName}
@@ -158,7 +168,7 @@ export default function AbTestingPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Voice A (Control)</label>
+                <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">{t("form.voiceA", { defaultValue: "Voice A (Control)" })}</label>
                 <select
                   value={newVoiceA}
                   onChange={(e) => setNewVoiceA(e.target.value)}
@@ -171,7 +181,7 @@ export default function AbTestingPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Voice B (Variant)</label>
+                <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">{t("form.voiceB", { defaultValue: "Voice B (Variant)" })}</label>
                 <select
                   value={newVoiceB}
                   onChange={(e) => setNewVoiceB(e.target.value)}
@@ -187,7 +197,7 @@ export default function AbTestingPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
-                  Traffic Split — {newSplit}% Voice A / {100 - newSplit}% Voice B
+                  {t("form.trafficSplit", { defaultValue: "Traffic Split" })} — {newSplit}% {t("form.voiceAShort", { defaultValue: "Voice A" })} / {100 - newSplit}% {t("form.voiceBShort", { defaultValue: "Voice B" })}
                 </label>
                 <input
                   type="range"
@@ -200,7 +210,7 @@ export default function AbTestingPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Duration (days)</label>
+                <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">{t("form.duration", { defaultValue: "Duration (days)" })}</label>
                 <select
                   value={newDays}
                   onChange={(e) => setNewDays(Number(e.target.value))}
@@ -273,22 +283,22 @@ export default function AbTestingPage() {
                     )}
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 opacity-50 pointer-events-none">
                   <button
-                    onClick={() => handleAction(test.id, "pause")}
-                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-inset)]"
+                    disabled
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[var(--border-default)] text-[var(--text-secondary)]"
                   >
                     Pause
                   </button>
                   <button
-                    onClick={() => handleAction(test.id, "complete", test.voice_a)}
-                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-inset)]"
+                    disabled
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[var(--border-default)] text-[var(--text-secondary)]"
                   >
                     Pick Voice A
                   </button>
                   <button
-                    onClick={() => handleAction(test.id, "complete", test.voice_b)}
-                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-inset)]"
+                    disabled
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[var(--border-default)] text-[var(--text-secondary)]"
                   >
                     Pick Voice B
                   </button>

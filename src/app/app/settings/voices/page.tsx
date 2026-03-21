@@ -161,6 +161,16 @@ export default function VoicesSettingsPage() {
   const handleSelectVoice = useCallback((voiceId: string) => {
     setSelectedVoiceId(voiceId);
     setVoiceConfig((prev) => ({ ...prev, activeVoiceId: voiceId }));
+
+    // Persist voice selection to database
+    fetch("/api/workspace/agent", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ voiceId: voiceId }),
+      credentials: "include",
+    }).catch((error) => {
+      console.error("Failed to persist voice selection:", error);
+    });
   }, []);
 
   const getAudioDurationSec = useCallback(async (file: File): Promise<number> => {
@@ -491,7 +501,7 @@ export default function VoicesSettingsPage() {
             <button
               type="button"
               onClick={handleTestVoice}
-              className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 text-black font-semibold px-4 py-2.5 text-sm hover:bg-emerald-400 transition-colors"
+              className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 text-[var(--text-on-accent)] font-semibold px-4 py-2.5 text-sm hover:bg-emerald-400 transition-colors"
             >
               <Play className="w-4 h-4" />
               {t("testVoice")}
@@ -698,7 +708,7 @@ export default function VoicesSettingsPage() {
                       <button
                         type="button"
                         onClick={() => handleSelectVoice(voice.id)}
-                        className="flex-1 rounded-lg bg-emerald-500 text-black font-semibold text-xs px-2.5 py-1.5 hover:bg-emerald-400 transition-colors"
+                        className="flex-1 rounded-lg bg-emerald-500 text-[var(--text-on-accent)] font-semibold text-xs px-2.5 py-1.5 hover:bg-emerald-400 transition-colors"
                       >
                         {t("select")}
                       </button>
@@ -950,7 +960,7 @@ export default function VoicesSettingsPage() {
                 type="button"
                 onClick={handleCloneVoice}
                 disabled={isCloning || !cloneFile || !cloneName.trim()}
-                className="flex-1 rounded-xl bg-emerald-500 text-black font-semibold py-2.5 text-sm hover:bg-emerald-400 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                className="flex-1 rounded-xl bg-emerald-500 text-[var(--text-on-accent)] font-semibold py-2.5 text-sm hover:bg-emerald-400 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {isCloning ? t("cloning") : t("cloneVoice")}
               </button>

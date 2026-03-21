@@ -413,7 +413,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
               type="button"
               onClick={handleWebsiteExtract}
               disabled={extracting || !websiteUrl.trim()}
-              className="h-9 rounded-xl bg-white px-4 text-xs font-semibold text-black disabled:cursor-not-allowed disabled:bg-white/40"
+              className="h-9 rounded-xl bg-white px-4 text-xs font-semibold text-[var(--text-on-accent)] disabled:cursor-not-allowed disabled:bg-white/40"
             >
               {extracting ? t("identityStep.reading") : t("identityStep.fillFromSite")}
             </button>
@@ -507,7 +507,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
         <button
           type="button"
           onClick={handleContinue}
-          className="rounded-xl bg-white px-5 py-2 text-xs font-semibold text-black disabled:cursor-not-allowed disabled:bg-white/40"
+          className="rounded-xl bg-white px-5 py-2 text-xs font-semibold text-[var(--text-on-accent)] disabled:cursor-not-allowed disabled:bg-white/40"
           disabled={!canContinue}
         >
           {t("identityStep.continueToVoice")}

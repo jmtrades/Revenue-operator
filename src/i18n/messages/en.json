@@ -345,7 +345,9 @@
     },
     "errors": {
       "loadingFailed": "Failed to load billing information",
-      "loadingFailedDesc": "Please try again or contact support if the problem persists."
+      "loadingFailedDesc": "Please try again or contact support if the problem persists.",
+      "subscriptionRequired": "An active subscription is required to purchase minutes.",
+      "purchaseFailed": "Could not start purchase. Please try again."
     },
     "protectionPaused": {
       "title": "Normal conditions are not present.",
@@ -1559,7 +1561,15 @@
     "outcomesLeads": "Leads",
     "outcomesAppointments": "Appointments",
     "outcomesTransfers": "Transfers",
-    "outcomesOther": "Other"
+    "outcomesOther": "Other",
+    "minutesUsed": "You've used",
+    "minutesThisMonth": "minutes this month.",
+    "upgrade": "Upgrade →",
+    "revenueRecovered": "Revenue recovered:",
+    "call": "Call",
+    "text": "Text",
+    "activeCampaigns": "Active outbound campaigns",
+    "createCampaign": "Create campaign →"
   },
   "analytics": {
     "pageTitle": "Analytics — Recall Touch",
@@ -1700,7 +1710,7 @@
     "pageTitle": "Agents — Recall Touch",
     "pageHeading": "AI Agents",
     "pageSubtitle": "Different agents for daytime, after-hours, emergencies, and follow-up.",
-    "createAgent": "+ Create Agent",
+    "createAgent": "Create Agent",
     "callVolumeByDay": "Call volume by day",
     "title": "Agents",
     "new": "New agent",
@@ -2513,6 +2523,11 @@
       "previewOffTopicAnswer": "That's a great question. Let me have someone get back to you on that. Can I get your name and number?",
       "previewRobotQuestion": "Are you a robot?",
       "previewRobotAnswer": "I'm the phone assistant for {business}. How can I help you today?"
+    },
+    "back": "Back",
+    "continue": "Continue",
+    "voiceStep": {
+      "heading": "How should your agent sound?"
     }
   },
   "agents.testPanel": {
@@ -2644,8 +2659,8 @@
       "playbackSpeed": "Speed",
       "speakerAgent": "AI agent",
       "summaryTitle": "Call summary",
-      "sentiment": "Sentiment",
-      "outcome": "Outcome",
+      "sentiment": "Sentiment:",
+      "outcome": "Outcome:",
       "duration": "Duration",
       "viewLead": "View lead details →",
       "recording": "Recording",
@@ -2667,7 +2682,11 @@
       "flag": "Flag",
       "addToCallIntelligence": "Add to Call Intelligence",
       "leadInfo": "Lead info",
-      "download": "Download"
+      "download": "Download",
+      "ai": "AI:",
+      "callSummary": "Call summary",
+      "recommendedFollowUp": "Recommended follow-up",
+      "contact": "Contact"
     },
     "empty": {
       "title": "Your AI is ready.",
@@ -3278,6 +3297,48 @@
         "saved": "Campaign saved as draft.",
         "launched": "Campaign launched.",
         "createdButLaunchFailed": "Campaign created, but launch failed."
+      },
+      "types": {
+        "speedToLead": {
+          "label": "Speed-to-Lead",
+          "desc": "Text in 5 minutes, call if no reply."
+        },
+        "leadQualification": {
+          "label": "Lead Qualification",
+          "desc": "Qualify interest and book the next step."
+        },
+        "appointmentSetting": {
+          "label": "Appointment Setting",
+          "desc": "Call and text until an appointment is set."
+        },
+        "appointmentReminder": {
+          "label": "Appointment Reminder",
+          "desc": "24h and 1h reminders to reduce no-shows."
+        },
+        "noShowRecovery": {
+          "label": "No-Show Recovery",
+          "desc": "Recover missed appointments with follow-up."
+        },
+        "reactivation": {
+          "label": "Reactivation",
+          "desc": "Re-engage inactive contacts."
+        },
+        "quoteChase": {
+          "label": "Quote Chase",
+          "desc": "Follow up on pending quotes."
+        },
+        "reviewRequest": {
+          "label": "Review Request",
+          "desc": "Request a review after completion."
+        },
+        "coldOutreach": {
+          "label": "Cold Outreach",
+          "desc": "Reach a list with a controlled cadence."
+        },
+        "custom": {
+          "label": "Custom",
+          "desc": "Build your own sequence."
+        }
       }
     },
     "loading": "Loading campaigns…",
@@ -5526,7 +5587,14 @@
       "ipAddress": "IP Address",
       "showing": "Showing {from}–{to} of {total}",
       "previous": "Previous",
-      "next": "Next"
+      "next": "Next",
+      "columns": {
+        "timestamp": "Timestamp",
+        "user": "User",
+        "action": "Action",
+        "resource": "Resource",
+        "ipAddress": "IP Address"
+      }
     },
     "toast": {
       "changesSaved": "Changes saved",
@@ -6346,7 +6414,13 @@
       "phoneNumber": "Phone number"
     },
     "back": "Back",
-    "continue": "Continue"
+    "continue": "Continue",
+    "errors": {
+      "setupFailed": "Something went wrong setting up your workspace. Please try again.",
+      "connectionError": "Connection error. Please check your internet and try again.",
+      "title": "Setup Error",
+      "dismiss": "Dismiss"
+    }
   },
   "onboard": {
     "complete": {
@@ -7099,5 +7173,70 @@
   },
   "legal": {
     "languageNotice": "This document is available in English only."
+  },
+  "sidebar": {
+    "tier": "Starter",
+    "trial": " · Trial",
+    "activeSubscription": "Active subscription",
+    "callsAnswered": "calls answered",
+    "minUsed": "min used"
+  },
+  "help": {
+    "breadcrumbs": {
+      "settings": "Settings",
+      "help": "Help"
+    },
+    "title": "Help & Support",
+    "subtitle": "Answers to common questions from onboarding through daily operations.",
+    "connectNumber": {
+      "title": "How to connect a number",
+      "desc1": "Go to",
+      "phone": "Phone",
+      "desc2": "provision or connect a number, and verify forwarding. Once connected, run a test call so your agent can handle live inbound conversations."
+    },
+    "createCampaign": {
+      "title": "How to create a campaign",
+      "desc1": "Open",
+      "campaigns": "Campaigns",
+      "desc2": "choose an audience and sequence, then review compliance settings. When everything looks right, launch the campaign and track outcomes in analytics."
+    },
+    "readDashboard": {
+      "title": "How to read the dashboard",
+      "desc": "Start with the revenue recovered metric and the quick stats row. Needs-attention items show what your team should handle next, and the activity feed explains which calls led to each outcome."
+    },
+    "configureAgent": {
+      "title": "How to configure an agent",
+      "desc1": "Use",
+      "agent": "Agent",
+      "desc2": "to set your greeting, voice, knowledge, and behavior rules. Complete a test call and then enable go-live once the readiness checklist is met."
+    },
+    "inviteTeam": {
+      "title": "How to invite team members",
+      "desc1": "Go to",
+      "team": "Team",
+      "desc2": "and invite teammates with the appropriate role. They will automatically see the right workspaces and receive notifications based on your configuration."
+    },
+    "stuck": {
+      "title": "Still stuck?",
+      "desc1": "Email",
+      "desc2": "and include what you were trying to do. We typically respond within 1 business day."
+    }
+  },
+  "voiceAbTesting": {
+    "title": "Voice A/B Testing",
+    "subtitle": "Test different voices to find which one converts best for your business.",
+    "comingSoon": "Voice A/B Testing is coming soon. This feature is not yet active.",
+    "newTest": "New Test",
+    "cancel": "Cancel",
+    "createTest": "Create A/B Test",
+    "form": {
+      "testName": "Test Name",
+      "voiceA": "Voice A (Control)",
+      "voiceB": "Voice B (Variant)",
+      "trafficSplit": "Traffic Split",
+      "voiceAShort": "Voice A",
+      "voiceBShort": "Voice B",
+      "duration": "Duration (days)"
+    }
   }
 }

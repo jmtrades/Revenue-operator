@@ -110,10 +110,10 @@ export default function AppSettingsBillingPage() {
       if (data?.url || data?.checkout_url) {
         window.location.href = data.url ?? data.checkout_url ?? "";
       } else {
-        setToast(data?.reason === "subscription_required" ? "An active subscription is required to purchase minutes." : "Could not start purchase. Please try again.");
+        setToast(data?.reason === "subscription_required" ? tBilling("errors.subscriptionRequired", { defaultValue: "An active subscription is required to purchase minutes." }) : tBilling("errors.purchaseFailed", { defaultValue: "Could not start purchase. Please try again." }));
       }
     } catch {
-      setToast("Could not start purchase. Please try again.");
+      setToast(tBilling("errors.purchaseFailed", { defaultValue: "Could not start purchase. Please try again." }));
     } finally {
       setBuyingPack(null);
     }
@@ -365,7 +365,7 @@ export default function AppSettingsBillingPage() {
             <button
               type="button"
               onClick={() => setPlanChangeOpen(true)}
-              className="mt-2 px-4 py-2 rounded-xl text-xs font-semibold bg-amber-500 text-black hover:bg-amber-400 transition-colors"
+              className="mt-2 px-4 py-2 rounded-xl text-xs font-semibold bg-amber-500 text-[var(--text-on-accent)] hover:bg-amber-400 transition-colors"
             >
               {tBilling("upgradeForMore")}
             </button>

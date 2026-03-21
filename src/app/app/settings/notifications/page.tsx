@@ -154,7 +154,7 @@ export default function AppSettingsNotificationsPage() {
                           type="checkbox"
                           checked={prefs[key]?.has(ch) ?? false}
                           onChange={() => toggle(key, ch)}
-                          className="rounded accent-white"
+                          className="rounded accent-[var(--accent-primary)]"
                         />
                         <span className="text-[11px] text-[var(--text-tertiary)]">{tSettings(`notifications.channels.${ch}`)}</span>
                       </label>

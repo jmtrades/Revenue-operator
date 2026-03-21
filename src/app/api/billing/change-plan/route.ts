@@ -20,6 +20,8 @@ const PLAN_TO_TIER: Record<string, BillingTier> = {
   growth: "business", // legacy alias
   scale: "scale",
   team: "scale", // legacy alias
+  enterprise: "enterprise",
+  agency: "enterprise", // legacy alias
 };
 
 const TIER_RANK: Record<BillingTier, number> = {
@@ -61,7 +63,7 @@ export async function POST(req: NextRequest) {
   if (!planId || typeof planId !== "string") return NextResponse.json({ ok: false, error: "plan_id required" }, { status: 400 });
 
   const tier = PLAN_TO_TIER[planId.toLowerCase()];
-  if (!tier) return NextResponse.json({ ok: false, error: "Invalid plan. Use starter, growth, or scale. For Enterprise contact us." }, { status: 400 });
+  if (!tier) return NextResponse.json({ ok: false, error: "Invalid plan. Use starter, growth, scale, or enterprise." }, { status: 400 });
 
   if (!process.env.STRIPE_SECRET_KEY) {
     return NextResponse.json(

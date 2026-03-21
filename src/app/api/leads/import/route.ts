@@ -31,7 +31,12 @@ export async function POST(req: NextRequest) {
       service_requested: (r.service_requested ?? "").toString().trim() || null,
       notes: (r.notes ?? "").toString().trim() || null,
     }))
-    .filter((r) => r.name.length > 0 && r.phone.length >= 10);
+    .filter((r) => {
+      // Validate: name required, phone must contain only digits and be 10-15 chars
+      if (r.name.length === 0) return false;
+      const digits = r.phone.replace(/\D/g, "");
+      return /^\d+$/.test(digits) && digits.length >= 10 && digits.length <= 15;
+    });
 
   if (valid.length === 0) {
     return NextResponse.json({ error: "No valid leads (need name and phone with at least 10 digits)" }, { status: 400 });

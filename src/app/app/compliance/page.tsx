@@ -304,11 +304,11 @@ export default function CompliancePage() {
               <table className="w-full text-left text-sm">
                 <thead className="bg-[var(--bg-input)]/80 border-b border-[var(--border-default)]">
                   <tr>
-                    <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">Timestamp</th>
-                    <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">User</th>
-                    <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">Action</th>
-                    <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">Resource</th>
-                    <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">IP Address</th>
+                    <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("audit.columns.timestamp", { defaultValue: "Timestamp" })}</th>
+                    <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("audit.columns.user", { defaultValue: "User" })}</th>
+                    <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("audit.columns.action", { defaultValue: "Action" })}</th>
+                    <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("audit.columns.resource", { defaultValue: "Resource" })}</th>
+                    <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("audit.columns.ipAddress", { defaultValue: "IP Address" })}</th>
                   </tr>
                 </thead>
                 <tbody>

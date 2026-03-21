@@ -1347,9 +1347,9 @@ export default function AppAgentsPageClient({
                   type="button"
                   onClick={() => void createAgentFromTemplate("scratch")}
                   className="rounded-xl bg-[var(--bg-surface)] px-6 py-3 text-sm font-semibold text-[var(--text-primary)] hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
-                  aria-label="Create Agent"
+                  aria-label={tAgents("createAgent")}
                 >
-                  Create Agent
+                  {tAgents("createAgent", { defaultValue: "Create Agent" })}
                 </button>
               </div>
             ) : (
@@ -1662,7 +1662,7 @@ function ProfileTab({
           max={100}
           value={agent.personality}
           onChange={(e) => onChange({ personality: Number(e.target.value) })}
-          className="w-full accent-white"
+          className="w-full accent-[var(--accent-primary)]"
         />
       </div>
 
@@ -1804,7 +1804,7 @@ export function RulesTab({
             max={100}
             value={agent.assertiveness}
             onChange={(e) => onChange({ assertiveness: Number(e.target.value) })}
-            className="w-full accent-white"
+            className="w-full accent-[var(--accent-primary)]"
           />
         </div>
         <div className="space-y-3">
@@ -1865,7 +1865,7 @@ export function RulesTab({
             <label key={option} className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
               <input
                 type="checkbox"
-                className="accent-white"
+                className="accent-[var(--accent-primary)]"
                 checked={agent.alwaysTransfer.includes(option)}
                 onChange={(e) =>
                   onChange({
@@ -2043,7 +2043,7 @@ export function RulesTab({
         <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
           <input
             type="checkbox"
-            className="accent-white"
+            className="accent-[var(--accent-primary)]"
             checked={agent.bookingEnabled}
             onChange={(e) => onChange({ bookingEnabled: e.target.checked })}
           />
@@ -2073,7 +2073,7 @@ export function RulesTab({
         <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
           <input
             type="checkbox"
-            className="accent-white"
+            className="accent-[var(--accent-primary)]"
             checked={agent.followUpSMS}
             onChange={(e) => onChange({ followUpSMS: e.target.checked })}
           />
@@ -2082,7 +2082,7 @@ export function RulesTab({
         <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
           <input
             type="checkbox"
-            className="accent-white"
+            className="accent-[var(--accent-primary)]"
             checked={agent.notifyOwnerOnLead}
             onChange={(e) => onChange({ notifyOwnerOnLead: e.target.checked })}
           />
@@ -2091,7 +2091,7 @@ export function RulesTab({
         <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
           <input
             type="checkbox"
-            className="accent-white"
+            className="accent-[var(--accent-primary)]"
             checked={agent.sendSummaryEmail}
             onChange={(e) => onChange({ sendSummaryEmail: e.target.checked })}
           />
@@ -2149,7 +2149,7 @@ export function RulesTab({
               <label key={c.id} className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                 <input
                   type="checkbox"
-                  className="accent-white"
+                  className="accent-[var(--accent-primary)]"
                   checked={c.enabled}
                   onChange={(e) =>
                     onChange({
@@ -2435,16 +2435,17 @@ function VoiceStepContent({
   onBack: () => void;
   onNext: () => void;
 }) {
+  const t = useTranslations("agents");
   return (
     <div className="space-y-6">
-      <h3 className="text-sm font-semibold text-[var(--text-primary)]">How should your agent sound?</h3>
+      <h3 className="text-sm font-semibold text-[var(--text-primary)]">{t("voiceStep.heading", { defaultValue: "How should your agent sound?" })}</h3>
       <ProfileTab agent={agent} voices={voices} workspaceName={workspaceName} onChange={onChange} onVoicePreview={onVoicePreview} previewingVoiceId={previewingVoiceId} />
       <div className="flex justify-between pt-4">
-        <button type="button" onClick={onBack} aria-label="Back to Identity" className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black">
-          Back
+        <button type="button" onClick={onBack} className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+          {t("back", { defaultValue: "Back" })}
         </button>
-        <button type="button" onClick={onNext} aria-label="Continue to Knowledge" className="rounded-xl bg-[var(--bg-surface)] px-6 py-2.5 text-sm font-semibold text-[var(--text-primary)] hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black">
-          Continue
+        <button type="button" onClick={onNext} className="rounded-xl bg-[var(--bg-surface)] px-6 py-2.5 text-sm font-semibold text-[var(--text-primary)] hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+          {t("continue", { defaultValue: "Continue" })}
         </button>
       </div>
     </div>

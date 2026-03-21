@@ -97,9 +97,34 @@ export async function PATCH(req: NextRequest) {
   }
 
   const update: Record<string, unknown> = { updated_at: new Date().toISOString() };
-  if (typeof body.businessName === "string") update.name = body.businessName.trim() || "My Workspace";
-  if (typeof body.greeting === "string") update.greeting = body.greeting.trim();
-  if (typeof body.agentName === "string") update.agent_name = body.agentName.trim();
+
+  // Validate and trim businessName (max 200 chars)
+  if (typeof body.businessName === "string") {
+    const trimmed = body.businessName.trim();
+    if (trimmed.length > 200) {
+      return NextResponse.json({ error: "Business name must be 200 characters or less" }, { status: 400 });
+    }
+    update.name = trimmed || "My Workspace";
+  }
+
+  // Validate and trim greeting (max 2000 chars)
+  if (typeof body.greeting === "string") {
+    const trimmed = body.greeting.trim();
+    if (trimmed.length > 2000) {
+      return NextResponse.json({ error: "Greeting must be 2000 characters or less" }, { status: 400 });
+    }
+    update.greeting = trimmed;
+  }
+
+  // Validate and trim agentName (max 100 chars)
+  if (typeof body.agentName === "string") {
+    const trimmed = body.agentName.trim();
+    if (trimmed.length > 100) {
+      return NextResponse.json({ error: "Agent name must be 100 characters or less" }, { status: 400 });
+    }
+    update.agent_name = trimmed;
+  }
+
   if (typeof body.preferredLanguage === "string") update.preferred_language = body.preferredLanguage.trim() || "en";
   // Accept both voiceId and elevenlabsVoiceId for backwards compatibility
   const voiceIdValue = body.voiceId ?? body.elevenlabsVoiceId;

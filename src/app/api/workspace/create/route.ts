@@ -30,6 +30,7 @@ const workspaceCreateSchema = z.object({
   preferredLanguage: z.string().max(10).optional(),
   voiceId: z.string().max(100).optional(),
   elevenlabsVoiceId: z.string().max(100).optional(), // Deprecated: kept for backwards compatibility
+  billingTier: z.string().max(50).optional(),
 });
 
 
@@ -62,15 +63,19 @@ export async function POST(req: NextRequest) {
   const preferredLanguage = (body.preferredLanguage ?? "").trim() || null;
   // Accept both voiceId and elevenlabsVoiceId for backwards compatibility
   const voiceId = ((body.voiceId ?? body.elevenlabsVoiceId) ?? "").trim() || null;
+  const billingTier = (body.billingTier ?? "").trim() || null;
 
   try {
     const db = getDb();
     let workspaceId = session.workspaceId;
 
     if (!workspaceId) {
+      const insertPayload: Record<string, unknown> = { name, owner_id: session.userId, autonomy_level: "assisted", kill_switch: false };
+      if (billingTier !== null) insertPayload.billing_tier = billingTier;
+
       const { data: created, error: createErr } = await db
         .from("workspaces")
-        .insert({ name, owner_id: session.userId, autonomy_level: "assisted", kill_switch: false })
+        .insert(insertPayload)
         .select("id")
         .maybeSingle();
       if (createErr || !created) {
