@@ -155,7 +155,7 @@ export async function getVoiceUsage(workspaceId: string): Promise<VoiceUsageMetr
     .from("voice_ab_tests")
     .select("id", { count: "exact", head: true })
     .eq("workspace_id", workspaceId)
-    .eq("is_active", true);
+    .eq("status", "running");
 
   const abTestsUsed = abTestsData?.length ?? 0;
 
@@ -236,7 +236,7 @@ export async function checkVoiceLimit(workspaceId: string, feature: string): Pro
         .from("voice_ab_tests")
         .select("id", { count: "exact", head: true })
         .eq("workspace_id", workspaceId)
-        .eq("is_active", true);
+        .eq("status", "running");
       const abTestsUsed = abTestsData?.length ?? 0;
       const allowed = limits.ab_tests === -1 || abTestsUsed < limits.ab_tests;
       return {
