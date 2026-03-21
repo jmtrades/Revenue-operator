@@ -1,5 +1,5 @@
 /**
- * Follow-up Sequence Engine — Works with follow_up_sequences, sequence_steps, sequence_enrollments.
+ * Follow-up Sequence Engine — Works with sequences, sequence_steps, sequence_enrollments.
  * Handles enrollment, advancement, pausing, and batch processing of sequences.
  */
 
@@ -109,16 +109,26 @@ export async function chooseSequence(
         ? "revival"
         : "followup";
 
+  // Map legacy purpose to trigger_type; store steps in trigger_config
   const { data: seq } = await db
     .from("sequences")
     .select("*")
     .eq("workspace_id", stateVector.workspace_id)
-    .eq("purpose", purpose)
+    .eq("trigger_type", purpose)
     .limit(1)
     .maybeSingle();
 
   if (seq) {
-    return seq as LegacySequence;
+    // Reconstruct LegacySequence from DB row
+    const row = seq as { id: string; workspace_id: string; name: string; trigger_type: string; trigger_config?: { steps?: LegacySequenceStep[]; is_default?: boolean } };
+    return {
+      id: row.id,
+      workspace_id: row.workspace_id,
+      name: row.name,
+      purpose: row.trigger_type as LegacySequence["purpose"],
+      is_default: row.trigger_config?.is_default ?? false,
+      steps: row.trigger_config?.steps ?? [],
+    };
   }
 
   const defaultSteps =
@@ -133,25 +143,43 @@ export async function chooseSequence(
     .insert({
       workspace_id: stateVector.workspace_id,
       name: `Default ${purpose}`,
-      purpose,
-      is_default: true,
-      steps: defaultSteps,
+      trigger_type: purpose,
+      trigger_config: { is_default: true, steps: defaultSteps },
+      is_active: true,
     })
-    .select("id, workspace_id, name, purpose, is_default, steps")
+    .select("*")
     .maybeSingle();
 
   if (created && (created as { id: string }).id) {
-    return created as LegacySequence;
+    const row = created as { id: string; workspace_id: string; name: string; trigger_type: string; trigger_config?: { steps?: LegacySequenceStep[]; is_default?: boolean } };
+    return {
+      id: row.id,
+      workspace_id: row.workspace_id,
+      name: row.name,
+      purpose: row.trigger_type as LegacySequence["purpose"],
+      is_default: row.trigger_config?.is_default ?? true,
+      steps: row.trigger_config?.steps ?? defaultSteps,
+    };
   }
 
   const { data: fallback } = await db
     .from("sequences")
     .select("*")
     .eq("workspace_id", stateVector.workspace_id)
-    .eq("purpose", purpose)
+    .eq("trigger_type", purpose)
     .limit(1)
     .maybeSingle();
-  if (fallback) return fallback as LegacySequence;
+  if (fallback) {
+    const row = fallback as { id: string; workspace_id: string; name: string; trigger_type: string; trigger_config?: { steps?: LegacySequenceStep[]; is_default?: boolean } };
+    return {
+      id: row.id,
+      workspace_id: row.workspace_id,
+      name: row.name,
+      purpose: row.trigger_type as LegacySequence["purpose"],
+      is_default: row.trigger_config?.is_default ?? false,
+      steps: row.trigger_config?.steps ?? [],
+    };
+  }
 
   return {
     id: "",
@@ -181,13 +209,13 @@ export async function advanceSequence(
   if (!run) return { advanced: false };
 
   const r = run as { sequence_id: string; current_step: number };
-  const { data: seq } = await db.from("sequences").select("steps").eq("id", r.sequence_id).maybeSingle();
-  const steps = ((seq as { steps?: LegacySequenceStep[] })?.steps ?? []) as LegacySequenceStep[];
+  const { data: seq } = await db.from("sequences").select("trigger_config").eq("id", r.sequence_id).maybeSingle();
+  const steps = (((seq as { trigger_config?: { steps?: LegacySequenceStep[] } })?.trigger_config?.steps) ?? []) as LegacySequenceStep[];
   const nextStepIndex = steps.findIndex((s) => s.step === r.current_step + 1);
   if (nextStepIndex < 0) {
     await db
       .from("sequence_runs")
-      .update({ status: "completed", updated_at: new Date().toISOString() })
+      .update({ status: "completed", completed_at: new Date().toISOString() })
       .eq("workspace_id", workspaceId)
       .eq("lead_id", leadId);
     return { advanced: true };
@@ -223,7 +251,6 @@ export async function advanceSequence(
     .from("sequence_runs")
     .update({
       current_step: r.current_step + 1,
-      updated_at: new Date().toISOString(),
     })
     .eq("workspace_id", workspaceId)
     .eq("lead_id", leadId);
@@ -245,7 +272,7 @@ export async function stopSequence(workspaceId: string, leadId: string, reason: 
   await cancelLeadPlan(workspaceId, leadId, reason);
   await db
     .from("sequence_runs")
-    .update({ status: "stopped", stopped_reason: reason, updated_at: new Date().toISOString() })
+    .update({ status: "stopped", metadata: { stopped_reason: reason } })
     .eq("workspace_id", workspaceId)
     .eq("lead_id", leadId);
 }
@@ -263,7 +290,7 @@ export async function enrollContact(
 
   // Verify the sequence exists and belongs to this workspace
   const { data: seq } = await db
-    .from("follow_up_sequences")
+    .from("sequences")
     .select("id, workspace_id")
     .eq("id", sequenceId)
     .eq("workspace_id", workspaceId)
@@ -663,7 +690,7 @@ export async function pauseOnLeadReply(
 
   // Also stop legacy sequence runs
   await db.from("sequence_runs")
-    .update({ status: "paused", stopped_reason: reason, updated_at: new Date().toISOString() })
+    .update({ status: "paused", metadata: { stopped_reason: reason } })
     .eq("workspace_id", workspaceId)
     .eq("lead_id", leadId)
     .eq("status", "running");
@@ -718,7 +745,7 @@ export async function getEnrollmentWithDetails(
   const e = enrollment as SequenceEnrollment;
 
   const { data: sequence } = await db
-    .from("follow_up_sequences")
+    .from("sequences")
     .select("*")
     .eq("id", e.sequence_id)
     .maybeSingle();
@@ -773,7 +800,7 @@ export async function getWorkspaceSequences(
 
   try {
     const { data: sequences, error } = await db
-      .from("follow_up_sequences")
+      .from("sequences")
       .select("*")
       .eq("workspace_id", workspaceId)
       .eq("is_active", true)
@@ -796,7 +823,7 @@ export async function getSequenceWithSteps(
   const db = getDb();
 
   const { data: sequence } = await db
-    .from("follow_up_sequences")
+    .from("sequences")
     .select("*")
     .eq("id", sequenceId)
     .eq("workspace_id", workspaceId)
@@ -837,7 +864,7 @@ export async function createSequence(
   const trigger = validTriggers.includes(triggerType) ? triggerType : "manual";
 
   const { data: sequence, error } = await db
-    .from("follow_up_sequences")
+    .from("sequences")
     .insert({
       workspace_id: workspaceId,
       name: name.trim(),
@@ -895,7 +922,7 @@ export async function updateSequence(
   const db = getDb();
 
   const { data: sequence, error } = await db
-    .from("follow_up_sequences")
+    .from("sequences")
     .update({
       ...updates,
       updated_at: new Date().toISOString(),
@@ -919,7 +946,7 @@ export async function deleteSequence(
   const db = getDb();
 
   const { error } = await db
-    .from("follow_up_sequences")
+    .from("sequences")
     .delete()
     .eq("id", sequenceId)
     .eq("workspace_id", workspaceId);
