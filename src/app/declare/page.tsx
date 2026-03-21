@@ -26,7 +26,7 @@ export default function DeclarePage() {
     if (typeof window !== "undefined") window.sessionStorage.setItem("declared_posture", "1");
     setActivated(true);
     setTimeout(() => setFading(true), 3000);
-    setTimeout(() => router.push("/dashboard/start"), 3400);
+    setTimeout(() => router.push("/app/activity"), 3400);
   };
 
   if (activated) {
@@ -118,7 +118,7 @@ export default function DeclarePage() {
               opt.id === "csv" ? (
                 <Link
                   key={opt.id}
-                  href="/dashboard/import"
+                  href="/app/contacts"
                   className="rounded-[16px] border p-8 text-center transition-colors focus-ring hover:border-[var(--accent)]"
                   style={{ background: "var(--surface-card)", borderColor: "var(--card-border)" }}
                 >
