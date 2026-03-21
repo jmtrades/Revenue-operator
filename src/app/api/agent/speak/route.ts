@@ -34,13 +34,10 @@ async function getVoiceConfigFromDb(workspaceId: string) {
   return null;
 }
 
-function getVoiceServerUrl(): string {
+function getVoiceServerUrl(): string | null {
   const url = process.env.VOICE_SERVER_URL;
   if (!url) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error("VOICE_SERVER_URL is required in production");
-    }
-    return "http://localhost:8100";
+    return null;
   }
   return url;
 }
@@ -85,6 +82,13 @@ export async function POST(req: NextRequest) {
   }
 
   const voiceServerUrl = getVoiceServerUrl();
+
+  if (!voiceServerUrl) {
+    return NextResponse.json(
+      { error: "Voice server not configured", fallback: "browser" },
+      { status: 503 }
+    );
+  }
 
   try {
     const res = await fetch(

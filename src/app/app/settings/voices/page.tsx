@@ -133,6 +133,13 @@ export default function VoicesSettingsPage() {
     setPlayingVoiceId(voiceId === playingVoiceId ? null : voiceId);
     if (voiceId !== playingVoiceId) {
       try {
+        // Check if voice server is configured
+        if (!process.env.NEXT_PUBLIC_VOICE_SERVER_URL) {
+          alert("Voice preview unavailable — voice server not configured");
+          setPlayingVoiceId(null);
+          return;
+        }
+
         const response = await fetch(`${VOICE_SERVER_URL}/tts/preview`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -151,8 +158,16 @@ export default function VoicesSettingsPage() {
             });
             audio.onended = () => setPlayingVoiceId(null);
           }
+        } else {
+          // Handle error responses
+          const errorData = await response.json().catch(() => ({}));
+          const errorMsg = errorData.error || "Voice preview failed";
+          alert(errorMsg);
+          setPlayingVoiceId(null);
         }
-      } catch {
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Voice preview unavailable";
+        alert(message);
         setPlayingVoiceId(null);
       }
     }

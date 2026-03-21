@@ -11,6 +11,24 @@ type WorkspaceAgentSeed = {
   greeting?: string | null;
   voiceId?: string | null;
   knowledgeItems?: KnowledgeItem[] | null;
+  // Advanced fields from workspace_business_context
+  industry?: string | null;
+  services?: string | null;
+  address?: string | null;
+  phone?: string | null;
+  primary_goal?: string | null;
+  business_context?: string | null;
+  target_audience?: string | null;
+  assertiveness?: number | null;
+  when_hesitation?: string | null;
+  when_think_about_it?: string | null;
+  when_pricing?: string | null;
+  when_competitor?: string | null;
+  offer_summary?: string | null;
+  business_hours?: Record<string, { start: string; end: string } | null> | null;
+  faq?: Array<{ q?: string; a?: string }> | null;
+  emergencies_after_hours?: string | null;
+  appointment_handling?: string | null;
 };
 
 function buildKnowledgeBase(seed: WorkspaceAgentSeed) {
@@ -23,6 +41,18 @@ function buildKnowledgeBase(seed: WorkspaceAgentSeed) {
       q: item.q ?? "",
       a: item.a ?? "",
     })),
+    // Store advanced fields in knowledge_base for retrieval during compileSystemPrompt
+    industry: seed.industry,
+    primaryGoal: seed.primary_goal,
+    businessContext: seed.business_context,
+    targetAudience: seed.target_audience,
+    assertiveness: seed.assertiveness,
+    whenHesitation: seed.when_hesitation,
+    whenThinkAboutIt: seed.when_think_about_it,
+    whenPricing: seed.when_pricing,
+    whenCompetitor: seed.when_competitor,
+    emergencies_after_hours: seed.emergencies_after_hours,
+    appointment_handling: seed.appointment_handling,
   };
 }
 

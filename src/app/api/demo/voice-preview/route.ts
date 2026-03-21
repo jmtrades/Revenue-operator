@@ -67,7 +67,13 @@ export async function GET(req: NextRequest) {
     }
 
     // Get voice server URL from environment
-    const voiceServerUrl = process.env.NEXT_PUBLIC_VOICE_SERVER_URL || "http://localhost:8100";
+    const voiceServerUrl = process.env.NEXT_PUBLIC_VOICE_SERVER_URL;
+    if (!voiceServerUrl) {
+      return NextResponse.json(
+        { error: "Voice server not configured" },
+        { status: 503 }
+      );
+    }
 
     // Build the request to the voice server
     const ttsUrl = new URL(`${voiceServerUrl}/tts/preview`);
@@ -82,14 +88,17 @@ export async function GET(req: NextRequest) {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-      const response = await fetch(ttsUrl.toString(), {
-        signal: controller.signal,
-        headers: {
-          "User-Agent": "RecallTouch-DemoProxy/1.0"
-        }
-      });
-
-      clearTimeout(timeoutId);
+      let response;
+      try {
+        response = await fetch(ttsUrl.toString(), {
+          signal: controller.signal,
+          headers: {
+            "User-Agent": "RecallTouch-DemoProxy/1.0"
+          }
+        });
+      } finally {
+        clearTimeout(timeoutId);
+      }
 
       if (!response.ok) {
         const responseText = await response.text();
