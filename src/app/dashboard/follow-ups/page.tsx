@@ -125,13 +125,13 @@ export default function FollowUpsPage() {
       const allItems: FollowUpItem[] = [];
       for (const seq of sequences.slice(0, 5)) {
         try {
-          const enrollRes = await fetchWithFallback<{ id: string; contact_id: string; status: string; current_step: number; next_step_due_at: string | null; leads?: { name: string; phone: string } }[]>(
+          const enrollRes = await fetchWithFallback<{ id: string; lead_id: string; status: string; current_step: number; next_step_due_at: string | null; leads?: { name: string; phone: string } }[]>(
             `/api/sequences/${seq.id}/enroll?workspace_id=${encodeURIComponent(workspaceId)}`,
             { credentials: "include" },
           );
           const enrollments = enrollRes.data;
           if (!enrollments?.length) continue;
-          const stepsRes = await fetchWithFallback<{ id: string; step_order: number; channel: string }[]>(
+          const stepsRes = await fetchWithFallback<{ id: string; step_order: number; type: string }[]>(
             `/api/sequences/${seq.id}/steps?workspace_id=${encodeURIComponent(workspaceId)}`,
             { credentials: "include" },
           );
@@ -153,7 +153,7 @@ export default function FollowUpsPage() {
               totalSteps: steps.length,
               dueAt: enrollment.next_step_due_at ?? new Date().toISOString(),
               status,
-              channel: ((currentStep as { channel?: string })?.channel as "sms" | "email" | "call") ?? "sms",
+              channel: ((currentStep as { type?: string })?.type as "sms" | "email" | "call") ?? "sms",
             });
           }
         } catch {

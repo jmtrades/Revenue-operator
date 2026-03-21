@@ -76,17 +76,18 @@ export async function POST(
     const err = await requireWorkspaceAccess(req, workspaceId);
     if (err) return err;
 
-    let body: { contact_id: string };
+    let body: { contact_id?: string; lead_id?: string };
     try {
       body = await req.json();
     } catch {
       return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
     }
 
-    const { contact_id } = body;
+    // Accept either contact_id (legacy) or lead_id
+    const contact_id = body.lead_id || body.contact_id;
 
     if (!contact_id?.trim()) {
-      return NextResponse.json({ error: "contact_id required" }, { status: 400 });
+      return NextResponse.json({ error: "contact_id or lead_id required" }, { status: 400 });
     }
 
     // Verify sequence exists and belongs to workspace
@@ -120,7 +121,7 @@ export async function POST(
       .from("sequence_enrollments")
       .select("id")
       .eq("sequence_id", id)
-      .eq("contact_id", contact_id)
+      .eq("lead_id", contact_id)
       .in("status", ["active", "paused"])
       .maybeSingle();
 
