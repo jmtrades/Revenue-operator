@@ -39,6 +39,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(cached.data);
   }
 
+  try {
   const startTime = Date.now();
   // Synthetic protection bootstrap removed - only show real activity
 
@@ -925,4 +926,8 @@ export async function GET(req: NextRequest) {
   }
 
   return NextResponse.json(response);
+  } catch (err) {
+    console.error("[command-center]", err instanceof Error ? err.message : String(err));
+    return NextResponse.json({ error: "Failed to load command center" }, { status: 500 });
+  }
 }

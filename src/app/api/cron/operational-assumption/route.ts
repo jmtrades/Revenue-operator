@@ -28,6 +28,7 @@ export async function GET(req: NextRequest) {
   yesterday.setUTCDate(yesterday.getUTCDate() - 1);
   const yesterdayStr = yesterday.toISOString().slice(0, 10);
 
+  try {
   const { data: workspaces } = await db
     .from("workspaces")
     .select("id, owner_id, status, pause_reason, consecutive_healthy_days, last_health_check_date, operational_assumption_sent_at");
@@ -120,4 +121,8 @@ export async function GET(req: NextRequest) {
   }
 
   return NextResponse.json({ ok: true, sent: results.filter((r) => r.sent).length, results });
+  } catch (err) {
+    console.error("[operational-assumption] Cron failed:", err instanceof Error ? err.message : String(err));
+    return NextResponse.json({ error: "Cron failed" }, { status: 500 });
+  }
 }

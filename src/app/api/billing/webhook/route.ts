@@ -689,6 +689,97 @@ async function handleStripeWebhookEvent(
       }
       break;
     }
+    case "charge.refunded": {
+      const charge = event.data.object as Stripe.Charge & { metadata?: Record<string, string> };
+      const workspaceId = charge.metadata?.workspace_id;
+      if (workspaceId) {
+        const refundedAmountCents = charge.amount_refunded ?? 0;
+        log("info", "billing_webhook.charge_refunded", {
+          workspace_id: workspaceId,
+          amount_refunded: refundedAmountCents,
+          charge_id: charge.id,
+        });
+        await db.from("protocol_events").insert({
+          external_ref: `refund:${charge.id}`,
+          workspace_id: workspaceId,
+          event_type: "charge_refunded",
+          payload: {
+            charge_id: charge.id,
+            amount_refunded: refundedAmountCents,
+            currency: charge.currency,
+            refunded_at: new Date().toISOString(),
+          },
+        });
+      }
+      break;
+    }
+    case "charge.failed": {
+      const charge = event.data.object as Stripe.Charge & { metadata?: Record<string, string>; failure_message?: string };
+      const workspaceId = charge.metadata?.workspace_id;
+      if (workspaceId) {
+        log("warn", "billing_webhook.charge_failed", {
+          workspace_id: workspaceId,
+          charge_id: charge.id,
+          failure_message: charge.failure_message ?? "unknown",
+        });
+        await db.from("protocol_events").insert({
+          external_ref: `charge-fail:${charge.id}`,
+          workspace_id: workspaceId,
+          event_type: "charge_failed",
+          payload: {
+            charge_id: charge.id,
+            amount: charge.amount,
+            currency: charge.currency,
+            failure_message: charge.failure_message ?? "unknown",
+            failed_at: new Date().toISOString(),
+          },
+        });
+      }
+      break;
+    }
+    case "charge.dispute.created": {
+      const dispute = event.data.object as Stripe.Dispute & { metadata?: Record<string, string> };
+      const chargeId = typeof dispute.charge === "string" ? dispute.charge : dispute.charge?.id ?? null;
+      const workspaceId = dispute.metadata?.workspace_id;
+      // Try to resolve workspace from charge metadata if not on dispute
+      let resolvedWorkspaceId = workspaceId ?? null;
+      if (!resolvedWorkspaceId && chargeId) {
+        try {
+          const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+          const ch = await stripe.charges.retrieve(chargeId);
+          resolvedWorkspaceId = ch.metadata?.workspace_id ?? null;
+        } catch { /* best-effort lookup */ }
+      }
+      log("error", "billing_webhook.dispute_created", {
+        workspace_id: resolvedWorkspaceId,
+        dispute_id: dispute.id,
+        charge_id: chargeId,
+        amount: dispute.amount,
+        reason: dispute.reason,
+      });
+      if (resolvedWorkspaceId) {
+        await db.from("protocol_events").insert({
+          external_ref: `dispute:${dispute.id}`,
+          workspace_id: resolvedWorkspaceId,
+          event_type: "dispute_created",
+          payload: {
+            dispute_id: dispute.id,
+            charge_id: chargeId,
+            amount: dispute.amount,
+            currency: dispute.currency,
+            reason: dispute.reason,
+            status: dispute.status,
+            created_at: new Date().toISOString(),
+          },
+        });
+        // Mark workspace to flag dispute in dashboard
+        await db.from("workspaces").update({
+          has_active_dispute: true,
+          updated_at: new Date().toISOString(),
+        }).eq("id", resolvedWorkspaceId);
+      }
+      break;
+    }
     default:
       break;
   }

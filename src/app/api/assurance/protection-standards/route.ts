@@ -22,6 +22,7 @@ export async function GET(req: NextRequest) {
   const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;
 
+  try {
   const db = getDb();
   const now = new Date();
   const weekStart = new Date(now);
@@ -96,4 +97,8 @@ export async function GET(req: NextRequest) {
       standards_violated: standards_with_status.filter((s) => s.status === "violated").length,
     },
   });
+  } catch (err) {
+    console.error("[protection-standards]", err instanceof Error ? err.message : String(err));
+    return NextResponse.json({ error: "Failed to load protection standards" }, { status: 500 });
+  }
 }

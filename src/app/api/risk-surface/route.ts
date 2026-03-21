@@ -24,6 +24,7 @@ export async function GET(req: NextRequest) {
   const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;
 
+  try {
   const db = getDb();
   const now = new Date();
   const threeDaysAgo = new Date(now);
@@ -208,4 +209,8 @@ export async function GET(req: NextRequest) {
     risk_surface_summary,
     risk_incidents_prevented_this_week: preventedCount ?? 0,
   });
+  } catch (err) {
+    console.error("[risk-surface]", err instanceof Error ? err.message : String(err));
+    return NextResponse.json({ error: "Failed to load risk surface" }, { status: 500 });
+  }
 }

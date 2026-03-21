@@ -17,6 +17,7 @@ export async function GET(req: NextRequest) {
   const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;
 
+  try {
   const db = getDb();
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
@@ -164,4 +165,9 @@ export async function GET(req: NextRequest) {
     })),
     generated_at: todayStr,
   });
+  } catch (err) {
+    const errMsg = err instanceof Error ? err.message : String(err);
+    console.error("[attention] Failed:", errMsg);
+    return NextResponse.json({ error: "Failed to generate attention list" }, { status: 500 });
+  }
 }

@@ -40,6 +40,8 @@ export async function POST(req: NextRequest) {
   const meetingUuid = payload.object?.uuid ?? "";
 
   const dedupeKey = `zoom:${event}:${meetingId}:${meetingUuid}`;
+
+  try {
   const db = getDb();
 
   const { data: existing } = await db
@@ -87,4 +89,8 @@ export async function POST(req: NextRequest) {
   }
 
   return NextResponse.json({ received: true });
+  } catch (err) {
+    log("error", "zoom_webhook.processing_error", { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: "Processing failed" }, { status: 500 });
+  }
 }

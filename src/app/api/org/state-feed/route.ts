@@ -17,6 +17,11 @@ export async function GET(request: NextRequest) {
   const authErr = await requireWorkspaceAccess(request, workspaceId);
   if (authErr) return authErr;
 
-  const statements = await getOrgStateFeedStatements(workspaceId);
-  return NextResponse.json(statements);
+  try {
+    const statements = await getOrgStateFeedStatements(workspaceId);
+    return NextResponse.json(statements);
+  } catch (err) {
+    console.error("[state-feed]", err instanceof Error ? err.message : String(err));
+    return NextResponse.json({ error: "Failed to load state feed" }, { status: 500 });
+  }
 }

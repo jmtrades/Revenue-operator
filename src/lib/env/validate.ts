@@ -82,7 +82,8 @@ export function validateEnv() {
   }
 
   // Log missing required vars (warn-only — never crash the build)
-  if (missing.length > 0) {
+  // In production, validate-environment.ts handles hard failures; suppress noise here.
+  if (missing.length > 0 && process.env.NODE_ENV !== "production") {
     console.warn(`[env] Missing required environment variables:\n${missing.map((v) => `  - ${v}`).join("\n")}\n\nSet these in your .env.local or production environment.`);
   }
 }
