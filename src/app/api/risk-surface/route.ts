@@ -130,16 +130,22 @@ export async function GET(req: NextRequest) {
     };
   });
 
-  // Revenue at risk (from targets/objectives)
-  const { data: objRow } = await db
-    .from("workspace_objectives")
-    .select("target_value, current_value")
-    .eq("workspace_id", workspaceId)
-    .eq("objective_type", "calls")
-    .maybeSingle();
+  // Revenue at risk (from targets/objectives — table may not exist yet)
+  let target = 12;
+  let current = 0;
+  try {
+    const { data: objRow } = await db
+      .from("workspace_objectives")
+      .select("target_value, current_value")
+      .eq("workspace_id", workspaceId)
+      .eq("objective_type", "calls")
+      .maybeSingle();
 
-  const target = (objRow as { target_value?: number })?.target_value ?? 12;
-  const current = (objRow as { current_value?: number })?.current_value ?? 0;
+    target = (objRow as { target_value?: number })?.target_value ?? 12;
+    current = (objRow as { current_value?: number })?.current_value ?? 0;
+  } catch {
+    // Table doesn't exist yet — use defaults
+  }
   const weekly_target_gap = Math.max(0, target - current);
 
   const revenue_at_risk = {

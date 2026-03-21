@@ -459,8 +459,14 @@ export async function GET(req: NextRequest) {
   const targetSnapshot = await getTargetSnapshot(workspaceId);
 
   const { getWorkspaceStrategy, planWorkspaceStrategy } = await import("@/lib/strategy/planner");
-  const { data: objRow } = await db.from("workspace_objectives").select("last_evaluated_at").eq("workspace_id", workspaceId).eq("objective_type", "bookings").maybeSingle();
-  const lastEval = (objRow as { last_evaluated_at?: string })?.last_evaluated_at;
+  // workspace_objectives may not be provisioned yet — default to stale so we re-evaluate
+  let lastEval: string | undefined;
+  try {
+    const { data: objRow } = await db.from("workspace_objectives").select("last_evaluated_at").eq("workspace_id", workspaceId).eq("objective_type", "bookings").maybeSingle();
+    lastEval = (objRow as { last_evaluated_at?: string })?.last_evaluated_at;
+  } catch {
+    // Table doesn't exist yet — proceed with evaluation
+  }
   const thirtyMinAgo = new Date(Date.now() - 30 * 60 * 1000);
   let revenue_trajectory: "On track" | "At risk" = "On track";
   if (!lastEval || new Date(lastEval) < thirtyMinAgo) {
@@ -478,9 +484,13 @@ export async function GET(req: NextRequest) {
     }
     if (obj) await planWorkspaceStrategy(workspaceId, obj.status, revenueStatus);
   } else {
-    const { data: revRow } = await db.from("workspace_objectives").select("status").eq("workspace_id", workspaceId).eq("objective_type", "revenue").maybeSingle();
-    const revStatus = (revRow as { status?: string })?.status;
-    if (revStatus === "behind") revenue_trajectory = "At risk";
+    try {
+      const { data: revRow } = await db.from("workspace_objectives").select("status").eq("workspace_id", workspaceId).eq("objective_type", "revenue").maybeSingle();
+      const revStatus = (revRow as { status?: string })?.status;
+      if (revStatus === "behind") revenue_trajectory = "At risk";
+    } catch {
+      // Table doesn't exist yet — default trajectory is "On track"
+    }
   }
   const strategy = await getWorkspaceStrategy(workspaceId);
   const levelLabel = strategy.aggressiveness_level.charAt(0).toUpperCase() + strategy.aggressiveness_level.slice(1);
