@@ -234,13 +234,18 @@ export default function AppSettingsIntegrationsPage() {
                 {t("hub.manageLink")}
               </Link>
             </div>
-            <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5 opacity-70">
-              <div className="flex items-center gap-3 mb-2">
-                <MessageCircle className="w-5 h-5 text-[var(--accent-green)]" aria-hidden />
-                <p className="text-sm font-medium text-[var(--text-primary)]">{t("hub.whatsappLabel")}</p>
+            <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5">
+              <div className="flex items-center justify-between gap-3 mb-2">
+                <div className="flex items-center gap-3">
+                  <MessageCircle className="w-5 h-5 text-[var(--accent-green)]" aria-hidden />
+                  <p className="text-sm font-medium text-[var(--text-primary)]">{t("hub.whatsappLabel")}</p>
+                </div>
+                <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-amber-500/40 text-amber-400 shrink-0">
+                  {t("comingSoon")}
+                </span>
               </div>
-              <p className="text-sm text-[var(--text-tertiary)]">
-                {t("comingSoon")}
+              <p className="text-xs text-[var(--text-secondary)]">
+                WhatsApp integration support is coming soon. Stay tuned!
               </p>
             </div>
           </div>
@@ -353,34 +358,47 @@ export default function AppSettingsIntegrationsPage() {
 
         <section>
           <h2 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">{t("hub.calendarHeading")}</h2>
-          <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="text-sm font-medium text-[var(--text-primary)]">{t("hub.googleCalendarLabel")}</p>
-              <p className="text-xs text-[var(--text-secondary)] mt-1">{t("hub.calendarDesc")}</p>
-            </div>
-            {googleCalendarConnected ? (
-              <span className="px-3 py-1.5 rounded-xl text-xs font-medium border border-green-500/30 text-green-400">
-                {t("status.connected")}
-              </span>
-            ) : (
-              <Link href="/api/integrations/google-calendar/auth" className="px-3 py-1.5 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)] shrink-0 transition-colors">
-                {t("button.connect")}
-              </Link>
-            )}
-          </div>
-          {googleCalendarConnected && availabilityPreview.length > 0 && (
-            <div className="mt-4">
-              <p className="text-[11px] font-medium text-[var(--text-tertiary)] mb-2">{t("hub.todaysSlots")}</p>
-              <div className="flex flex-wrap gap-2">
-                {availabilityPreview.map((slot) => (
-                  <span key={slot} className="rounded-full border border-[var(--border-medium)] px-3 py-1 text-[11px] text-[var(--text-secondary)]">
-                    {slot}
+          <div className="space-y-3">
+            <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-medium text-[var(--text-primary)]">{t("hub.googleCalendarLabel")}</p>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1">{t("hub.calendarDesc")}</p>
+                </div>
+                {googleCalendarConnected ? (
+                  <span className="px-3 py-1.5 rounded-xl text-xs font-medium border border-green-500/30 text-green-400">
+                    {t("status.connected")}
                   </span>
-                ))}
+                ) : (
+                  <Link href="/api/integrations/google-calendar/auth" className="px-3 py-1.5 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)] shrink-0 transition-colors">
+                    {t("button.connect")}
+                  </Link>
+                )}
+              </div>
+              {googleCalendarConnected && availabilityPreview.length > 0 && (
+                <div className="mt-4">
+                  <p className="text-[11px] font-medium text-[var(--text-tertiary)] mb-2">{t("hub.todaysSlots")}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {availabilityPreview.map((slot) => (
+                      <span key={slot} className="rounded-full border border-[var(--border-medium)] px-3 py-1 text-[11px] text-[var(--text-secondary)]">
+                        {slot}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-medium text-[var(--text-primary)]">Outlook Calendar</p>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1">{t("hub.calendarDesc")}</p>
+                </div>
+                <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-amber-500/40 text-amber-400 shrink-0">
+                  {t("comingSoon")}
+                </span>
               </div>
             </div>
-          )}
           </div>
         </section>
 

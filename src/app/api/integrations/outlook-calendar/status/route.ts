@@ -20,19 +20,19 @@ export async function GET(req: NextRequest) {
 
   try {
     const db = getDb();
-    const { data: token } = await db
-      .from("oauth_tokens")
-      .select("id, expires_at")
+    const { data: connection } = await db
+      .from("workspace_crm_connections")
+      .select("connected_at, expires_at")
       .eq("workspace_id", session.workspaceId)
-      .in("provider", ["outlook", "microsoft"])
+      .eq("provider", "microsoft_365")
       .maybeSingle();
 
-    if (!token) {
+    if (!connection || !connection.connected_at) {
       return NextResponse.json({ connected: false });
     }
 
     // Check if token is expired
-    const expiresAt = token.expires_at as string | null;
+    const expiresAt = connection.expires_at as string | null;
     const isExpired = expiresAt && new Date(expiresAt) < new Date();
     const connected = !isExpired;
 

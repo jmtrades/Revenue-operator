@@ -47,10 +47,14 @@ export function WorkspaceVoiceButton({
       if (res.ok && data.ok) {
         setStatus(data.message ?? tAgents("toast.agentLive"));
       } else {
-        setError(data.error ?? tCommon("errorGeneric"));
+        // Show specific error message from response
+        const errorMessage = data.error ?? `Test call failed (${res.status})`;
+        setError(errorMessage);
       }
-    } catch {
-      setError(tCommon("errorGeneric"));
+    } catch (err) {
+      // Show network error details
+      const errorMessage = err instanceof Error ? err.message : tCommon("errorGeneric");
+      setError(`Test call error: ${errorMessage}`);
     } finally {
       setLoading(false);
     }

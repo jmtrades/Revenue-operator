@@ -88,6 +88,21 @@ export async function PATCH(req: NextRequest) {
     elevenlabsVoiceId?: string; // Deprecated but kept for backwards compatibility
     knowledgeItems?: Array<{ q?: string; a?: string }>;
     workingHours?: Record<string, unknown>;
+    // Advanced fields for workspace_business_context
+    industry?: string;
+    services?: string;
+    address?: string;
+    phone?: string;
+    primaryGoal?: string;
+    businessContext?: string;
+    targetAudience?: string;
+    assertiveness?: number;
+    whenHesitation?: string;
+    whenThinkAboutIt?: string;
+    whenPricing?: string;
+    whenCompetitor?: string;
+    offerSummary?: string;
+    businessHours?: Record<string, { start: string; end: string } | null>;
   };
 
   try {
@@ -136,6 +151,44 @@ export async function PATCH(req: NextRequest) {
     const db = getDb();
     const { error } = await db.from("workspaces").update(update).eq("id", session.workspaceId);
     if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+
+    // Update workspace_business_context with advanced fields if provided
+    const businessContextUpdate: Record<string, unknown> = {};
+    if (typeof body.industry === "string") businessContextUpdate.industry = body.industry.trim() || null;
+    if (typeof body.services === "string") businessContextUpdate.services = body.services.trim() || null;
+    if (typeof body.address === "string") businessContextUpdate.address = body.address.trim() || null;
+    if (typeof body.phone === "string") businessContextUpdate.phone = body.phone.trim() || null;
+    if (typeof body.primaryGoal === "string") businessContextUpdate.primary_goal = body.primaryGoal.trim() || null;
+    if (typeof body.businessContext === "string") businessContextUpdate.business_context = body.businessContext.trim() || null;
+    if (typeof body.targetAudience === "string") businessContextUpdate.target_audience = body.targetAudience.trim() || null;
+    if (typeof body.assertiveness === "number") businessContextUpdate.assertiveness = body.assertiveness;
+    if (typeof body.whenHesitation === "string") businessContextUpdate.when_hesitation = body.whenHesitation.trim() || null;
+    if (typeof body.whenThinkAboutIt === "string") businessContextUpdate.when_think_about_it = body.whenThinkAboutIt.trim() || null;
+    if (typeof body.whenPricing === "string") businessContextUpdate.when_pricing = body.whenPricing.trim() || null;
+    if (typeof body.whenCompetitor === "string") businessContextUpdate.when_competitor = body.whenCompetitor.trim() || null;
+    if (typeof body.offerSummary === "string") businessContextUpdate.offer_summary = body.offerSummary.trim() || null;
+    if (body.businessHours && typeof body.businessHours === "object") businessContextUpdate.business_hours = body.businessHours;
+
+    // Upsert workspace_business_context
+    if (Object.keys(businessContextUpdate).length > 0) {
+      businessContextUpdate.workspace_id = session.workspaceId;
+      businessContextUpdate.updated_at = new Date().toISOString();
+
+      try {
+        // Try to insert or update — use upsert pattern
+        await db
+          .from("workspace_business_context")
+          .upsert(
+            businessContextUpdate as Record<string, unknown>,
+            { onConflict: "workspace_id" }
+          );
+      } catch (ctx_err) {
+        // If table doesn't exist or upsert fails, log but don't fail the request
+        console.warn("[workspace/agent] workspace_business_context update failed:",
+          ctx_err instanceof Error ? ctx_err.message : ctx_err);
+      }
+    }
+
     const voiceId = typeof update.voice_id === "string" ? update.voice_id : null;
     const agentName = typeof update.agent_name === "string" ? update.agent_name : null;
     const greeting = typeof update.greeting === "string" ? update.greeting : null;
@@ -149,6 +202,21 @@ export async function PATCH(req: NextRequest) {
       knowledgeItems: Array.isArray(update.knowledge_items)
         ? (update.knowledge_items as Array<{ q?: string; a?: string }>)
         : null,
+      // Pass through advanced fields
+      industry: typeof body.industry === "string" ? body.industry : null,
+      services: typeof body.services === "string" ? body.services : null,
+      address: typeof body.address === "string" ? body.address : null,
+      phone: typeof body.phone === "string" ? body.phone : null,
+      primary_goal: typeof body.primaryGoal === "string" ? body.primaryGoal : null,
+      business_context: typeof body.businessContext === "string" ? body.businessContext : null,
+      target_audience: typeof body.targetAudience === "string" ? body.targetAudience : null,
+      assertiveness: typeof body.assertiveness === "number" ? body.assertiveness : null,
+      when_hesitation: typeof body.whenHesitation === "string" ? body.whenHesitation : null,
+      when_think_about_it: typeof body.whenThinkAboutIt === "string" ? body.whenThinkAboutIt : null,
+      when_pricing: typeof body.whenPricing === "string" ? body.whenPricing : null,
+      when_competitor: typeof body.whenCompetitor === "string" ? body.whenCompetitor : null,
+      offer_summary: typeof body.offerSummary === "string" ? body.offerSummary : null,
+      business_hours: body.businessHours && typeof body.businessHours === "object" ? body.businessHours as Record<string, { start: string; end: string } | null> : null,
     });
     return NextResponse.json({ ok: true });
   } catch {
