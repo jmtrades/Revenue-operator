@@ -138,7 +138,7 @@ export default function CallsLivePage() {
                       <div className="flex items-center gap-1">
                         <button
                           type="button"
-                          className="p-2 rounded-lg border border-zinc-700 text-[var(--text-tertiary)] hover:bg-[var(--bg-inset)] hover:text-[var(--text-primary)]"
+                          className="p-2 rounded-lg border border-[var(--border-default)] text-[var(--text-tertiary)] hover:bg-[var(--bg-inset)] hover:text-[var(--text-primary)]"
                           title={t("calls.live.listenIn")}
                           onClick={() => toast.info(t("calls.live.listenInComingSoon"))}
                         >
@@ -146,7 +146,7 @@ export default function CallsLivePage() {
                         </button>
                         <button
                           type="button"
-                          className="p-2 rounded-lg border border-zinc-700 text-[var(--text-tertiary)] hover:bg-[var(--bg-inset)] hover:text-[var(--text-primary)]"
+                          className="p-2 rounded-lg border border-[var(--border-default)] text-[var(--text-tertiary)] hover:bg-[var(--bg-inset)] hover:text-[var(--text-primary)]"
                           title={t("calls.live.whisper")}
                           onClick={() => toast.info(t("calls.live.whisperComingSoon"))}
                         >
@@ -154,7 +154,7 @@ export default function CallsLivePage() {
                         </button>
                         <button
                           type="button"
-                          className="p-2 rounded-lg border border-zinc-700 text-[var(--text-tertiary)] hover:bg-[var(--bg-inset)] hover:text-[var(--text-primary)]"
+                          className="p-2 rounded-lg border border-[var(--border-default)] text-[var(--text-tertiary)] hover:bg-[var(--bg-inset)] hover:text-[var(--text-primary)]"
                           title={t("calls.live.bargeIn")}
                           onClick={() => toast.info(t("calls.live.bargeInComingSoon"))}
                         >
@@ -163,9 +163,9 @@ export default function CallsLivePage() {
                       </div>
                     </div>
                   </div>
-                  <div className="rounded-xl bg-zinc-950 border border-[var(--border-default)] p-3 max-h-32 overflow-y-auto">
+                  <div className="rounded-xl bg-[var(--bg-base)] border border-[var(--border-default)] p-3 max-h-32 overflow-y-auto">
                     <p className="text-xs text-[var(--text-secondary)] mb-1">{t("calls.live.liveTranscript")}</p>
-                    <p className="text-sm text-zinc-300 whitespace-pre-wrap">
+                    <p className="text-sm text-[var(--text-secondary)] whitespace-pre-wrap">
                       {call.transcript_text?.trim() || call.summary?.trim() || t("calls.live.noTranscript")}
                     </p>
                   </div>

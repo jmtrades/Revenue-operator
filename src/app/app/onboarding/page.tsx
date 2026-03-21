@@ -340,7 +340,7 @@ export default function AppOnboardingPage() {
 
   return (
     <div className="min-h-screen bg-black text-[var(--text-primary)] flex">
-      <aside className="hidden md:flex w-64 flex-col border-r border-zinc-900 bg-zinc-950 px-6 py-8 gap-8">
+      <aside className="hidden md:flex w-64 flex-col border-r border-zinc-900 bg-[var(--bg-base)] px-6 py-8 gap-8">
         <div>
           <p className="text-xs font-semibold tracking-wide text-[var(--text-tertiary)]">
             Recall Touch
@@ -454,7 +454,7 @@ export default function AppOnboardingPage() {
                       className={`rounded-xl border p-5 text-left transition-all relative group ${
                         isSelected
                           ? "border-emerald-500/50 bg-emerald-950/20 ring-2 ring-emerald-500/30"
-                          : "border-[var(--border-default)] bg-transparent hover:border-[var(--border-medium)] hover:bg-zinc-900/40"
+                          : "border-[var(--border-default)] bg-transparent hover:border-[var(--border-medium)] hover:bg-[var(--bg-card)]/40"
                       }`}
                     >
                       <div className="flex items-start justify-between mb-3">
@@ -508,7 +508,7 @@ export default function AppOnboardingPage() {
                       className={`rounded-2xl border p-4 text-left transition-colors ${
                         active
                           ? "border-white bg-[var(--bg-inset)]"
-                          : "border-[var(--border-default)] bg-zinc-950 hover:border-zinc-600"
+                          : "border-[var(--border-default)] bg-[var(--bg-base)] hover:border-[var(--border-default)]"
                       }`}
                     >
                       <div className="text-sm font-semibold text-[var(--text-primary)] mb-1">
@@ -533,7 +533,7 @@ export default function AppOnboardingPage() {
               type="button"
               onClick={() => setStep(2)}
               disabled={!mode || !industrySlug || !selectedTemplate}
-              className="w-full py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full py-3.5 px-8 bg-[var(--accent-primary)] text-[var(--text-on-accent)] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {t("cta.next")} →
             </button>
@@ -589,7 +589,7 @@ export default function AppOnboardingPage() {
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
                 placeholder={t("websitePlaceholder")}
-                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-[var(--border-default)] focus:ring-1 focus:ring-zinc-600 focus:outline-none"
               />
               <p className="mt-1 text-[11px] text-[var(--text-secondary)]">
                 {t("websiteHint")}
@@ -603,7 +603,7 @@ export default function AppOnboardingPage() {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder={t("addressPlaceholder")}
-                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-[var(--border-default)] focus:ring-1 focus:ring-zinc-600 focus:outline-none"
               />
               <p className="mt-1 text-[11px] text-[var(--text-secondary)]">
                 {t("addressHint")}
@@ -617,7 +617,7 @@ export default function AppOnboardingPage() {
                 value={businessPhone}
                 onChange={(e) => setBusinessPhone(e.target.value)}
                 placeholder={t("phonePlaceholder")}
-                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-[var(--border-default)] focus:ring-1 focus:ring-zinc-600 focus:outline-none"
               />
             </div>
             <div className="flex gap-2">
@@ -631,7 +631,7 @@ export default function AppOnboardingPage() {
               <button
                 type="button"
                 onClick={() => setStep(3)}
-                className="flex-1 py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
+                className="flex-1 py-3.5 px-8 bg-[var(--accent-primary)] text-[var(--text-on-accent)] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
               >
                 {t("cta.next")} →
               </button>
@@ -667,7 +667,7 @@ export default function AppOnboardingPage() {
                     onEnd: () => setGreetingPlaying(false),
                   });
                 }}
-                className="mt-2 flex items-center gap-2 py-2.5 px-4 rounded-xl border border-[var(--border-default)] text-zinc-300 hover:text-[var(--text-primary)] hover:border-[var(--border-medium)] text-sm"
+                className="mt-2 flex items-center gap-2 py-2.5 px-4 rounded-xl border border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-medium)] text-sm"
               >
                 {greetingPlaying ? <Waveform isPlaying /> : <Play className="w-4 h-4" />}
                 {t("hearIt")}
@@ -684,7 +684,7 @@ export default function AppOnboardingPage() {
               <button
                 type="button"
                 onClick={() => setStep(4)}
-                className="flex-1 py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
+                className="flex-1 py-3.5 px-8 bg-[var(--accent-primary)] text-[var(--text-on-accent)] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
               >
                 {t("cta.next")} →
               </button>
@@ -762,7 +762,7 @@ export default function AppOnboardingPage() {
             </div>
             {!starterAdded && (
               <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <p className="text-sm text-zinc-300">
+                <p className="text-sm text-[var(--text-secondary)]">
                   {t("starterEntriesCta")}
                 </p>
                 <button
@@ -784,7 +784,7 @@ export default function AppOnboardingPage() {
                     setKnowledgeItems(withHours);
                     setStarterAdded(true);
                   }}
-                  className="shrink-0 py-2.5 px-4 rounded-xl bg-white text-gray-900 font-semibold text-sm hover:bg-white/90"
+                  className="shrink-0 py-2.5 px-4 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:bg-white/90"
                 >
                   {t("addThemNow")}
                 </button>
@@ -812,13 +812,13 @@ export default function AppOnboardingPage() {
                       />
                       <div className="flex gap-2">
                         <button type="button" onClick={() => { const next = [...knowledgeItems]; next[i] = { q: editingQ.trim() || item.q || "", a: editingA.trim() || item.a || "" }; setKnowledgeItems(next); setEditingKnowledgeIdx(null); }} className="text-xs text-green-400 hover:text-green-300">Save</button>
-                        <button type="button" onClick={() => setEditingKnowledgeIdx(null)} className="text-xs text-[var(--text-tertiary)] hover:text-zinc-300">Cancel</button>
+                        <button type="button" onClick={() => setEditingKnowledgeIdx(null)} className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]">Cancel</button>
                       </div>
                     </div>
                   ) : (
                     <>
                       <p className="text-xs font-medium text-[var(--text-tertiary)] mb-0.5">Q: {item.q}</p>
-                      <p className="text-sm text-zinc-300 mb-2">A: {item.a}</p>
+                      <p className="text-sm text-[var(--text-secondary)] mb-2">A: {item.a}</p>
                       <div className="flex gap-2">
                         <button
                           type="button"
@@ -851,7 +851,7 @@ export default function AppOnboardingPage() {
             <p className="text-xs text-[var(--text-secondary)]">{t("addMoreLater")}</p>
             <div className="flex gap-2">
               <button type="button" onClick={() => setStep(2)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-default)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]">← {t("cta.back")}</button>
-              <button type="button" onClick={() => setStep(4)} className="flex-1 py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all">{t("cta.next")} →</button>
+              <button type="button" onClick={() => setStep(4)} className="flex-1 py-3.5 px-8 bg-[var(--accent-primary)] text-[var(--text-on-accent)] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all">{t("cta.next")} →</button>
             </div>
           </div>
         )}
@@ -889,7 +889,7 @@ export default function AppOnboardingPage() {
             </div>
             <div className="flex gap-2">
               <button type="button" onClick={() => setStep(3)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-default)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]">← {t("cta.back")}</button>
-              <button type="button" onClick={() => setStep(5)} className="flex-1 py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all">{t("cta.next")} →</button>
+              <button type="button" onClick={() => setStep(5)} className="flex-1 py-3.5 px-8 bg-[var(--accent-primary)] text-[var(--text-on-accent)] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all">{t("cta.next")} →</button>
             </div>
           </div>
         )}
@@ -935,7 +935,7 @@ export default function AppOnboardingPage() {
             <button
               type="button"
               onClick={handleGoToDashboard}
-              className="w-full py-3.5 px-8 bg-white text-gray-900 rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
+              className="w-full py-3.5 px-8 bg-[var(--accent-primary)] text-[var(--text-on-accent)] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
             >
               {t("cta.finish")} →
             </button>

@@ -6,14 +6,14 @@ export default async function NotFound() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-[var(--bg-base)]">
       <div className="max-w-md w-full text-center">
-        <p className="text-6xl font-bold mb-2 text-white">404</p>
+        <p className="text-6xl font-bold mb-2 text-[var(--text-primary)]">404</p>
         <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-3">{t("title")}</h1>
         <p className="text-sm text-[var(--text-secondary)] mb-6">{t("description")}</p>
         <div className="flex gap-3 justify-center flex-wrap">
           <Link
             href="/"
             aria-label={t("goHome")}
-            className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none transition"
+            className="px-6 py-3 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none transition"
           >
             {t("goHome")}
           </Link>

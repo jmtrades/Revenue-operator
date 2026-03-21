@@ -31,7 +31,7 @@ export default function Error({
           <button
             type="button"
             onClick={() => reset()}
-            className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 transition focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
+            className="px-6 py-3 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 transition focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
           >
             {t("tryAgain")}
           </button>

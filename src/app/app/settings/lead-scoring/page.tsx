@@ -133,14 +133,14 @@ export default function AppSettingsLeadScoringPage() {
               type="button"
               onClick={handleSave}
               disabled={saving}
-              className="px-4 py-3 rounded-xl bg-white text-black text-sm font-semibold hover:bg-zinc-100 disabled:opacity-60"
+              className="px-4 py-3 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold hover:opacity-90 disabled:opacity-60"
             >
               {saving ? tSettings("leadScoring.saving") : tSettings("leadScoring.saveWeights")}
             </button>
             <button
               type="button"
               onClick={handleResetAll}
-              className="px-4 py-3 rounded-xl border border-zinc-700 text-zinc-300 text-sm hover:bg-[var(--bg-inset)]/50"
+              className="px-4 py-3 rounded-xl border border-[var(--border-default)] text-[var(--text-secondary)] text-sm hover:bg-[var(--bg-inset)]/50"
             >
               {tSettings("leadScoring.useAllDefaults")}
             </button>
@@ -149,7 +149,7 @@ export default function AppSettingsLeadScoringPage() {
       )}
 
       <p className="mt-6 text-xs text-[var(--text-secondary)]">
-        <Link href="/app/leads" className="underline hover:text-zinc-300">{tSettings("leadScoring.viewLeadsLink")}</Link>
+        <Link href="/app/leads" className="underline hover:text-[var(--text-secondary)]">{tSettings("leadScoring.viewLeadsLink")}</Link>
         {tSettings("leadScoring.viewLeadsHintSuffix")}
       </p>
     </div>

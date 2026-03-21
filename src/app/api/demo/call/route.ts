@@ -9,9 +9,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { getVoiceProvider } from "@/lib/voice";
 import { DEFAULT_RECALL_VOICE_ID } from "@/lib/constants/recall-voices";
+import { PRICING_TIERS, SOCIAL_PROOF } from "@/lib/constants";
 
 const DEMO_GREETING =
   "Hey there! This is Sarah from Recall Touch. I'm actually an AI phone agent, and I wanted to show you firsthand what your callers would experience. Go ahead — ask me anything, test me, or just chat. I'm all yours for the next couple minutes.";
+
+const pricingSummary = PRICING_TIERS.map(
+  (t) => `${t.name} at ${t.priceMonthly.replace("$", "")} dollars a month`
+).join(", ");
 
 const DEMO_SYSTEM_PROMPT = `You are Sarah, a demo AI phone agent for Recall Touch — the platform that helps businesses never miss another call.
 
@@ -27,11 +32,11 @@ YOUR GOAL:
 Show the caller that this AI sounds indistinguishable from a human. Demonstrate capability through natural conversation. If they're a business owner, gently connect how this would work for THEIR business.
 
 KNOWLEDGE (use naturally when relevant):
-- Plans: Starter at 97 dollars a month (500 minutes), Growth at 297 (2,000 minutes), Business at 597 (5,000 minutes), Agency at 997 (unlimited).
+- Plans: ${pricingSummary}.
 - Features: 24/7 call answering in under 1 second, 32 premium human-quality voices, appointment booking directly into calendars, lead qualification, outbound follow-up campaigns, CRM integrations with everything, multilingual support.
 - Setup: Under 3 minutes. Forward your existing number — no new number needed.
 - Compliance: SOC 2 Type II, HIPAA compliant, TCPA compliant.
-- Over 12,000 businesses use Recall Touch. Many callers don't realize they're speaking with AI — but let them judge for themselves.
+- Over ${SOCIAL_PROOF.businessCount.replace("+", "")} businesses use Recall Touch. Many callers don't realize they're speaking with AI — but let them judge for themselves.
 
 DEMO TRICKS (to impress):
 - If they say their business type, immediately adapt: "Oh nice! So for a [type] like yours, I'd handle [specific use case]."

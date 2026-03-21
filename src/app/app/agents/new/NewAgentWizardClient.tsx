@@ -275,7 +275,7 @@ export default function NewAgentWizardClient({
       </div>
 
       {toast && (
-        <div className="mb-4 p-3 rounded-xl bg-[var(--bg-surface)] border border-zinc-700 text-zinc-300 text-sm">
+        <div className="mb-4 p-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] text-[var(--text-secondary)] text-sm">
           {toast}
         </div>
       )}
@@ -301,7 +301,7 @@ export default function NewAgentWizardClient({
                   className={`p-4 rounded-xl border text-left transition-colors ${
                     state.purpose === value
                       ? "border-white bg-white/10 text-[var(--text-primary)]"
-                      : "border-[var(--border-default)] text-[var(--text-tertiary)] hover:border-zinc-600 hover:text-zinc-300"
+                      : "border-[var(--border-default)] text-[var(--text-tertiary)] hover:border-[var(--border-default)] hover:text-[var(--text-secondary)]"
                   }`}
                 >
                   <Icon className="w-5 h-5 mb-2" />
@@ -317,7 +317,7 @@ export default function NewAgentWizardClient({
                   type="button"
                   onClick={() => applyTemplate(t)}
                   className={`p-3 rounded-xl border text-left text-sm ${
-                    state.templateId === t.id ? "border-white bg-white/10 text-[var(--text-primary)]" : "border-[var(--border-default)] text-[var(--text-tertiary)] hover:border-zinc-600"
+                    state.templateId === t.id ? "border-white bg-white/10 text-[var(--text-primary)]" : "border-[var(--border-default)] text-[var(--text-tertiary)] hover:border-[var(--border-default)]"
                   }`}
                 >
                   {t.name}
@@ -329,7 +329,7 @@ export default function NewAgentWizardClient({
               type="text"
               value={state.name}
               onChange={(e) => setState((p) => ({ ...p, name: e.target.value }))}
-              className="w-full bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-4 py-2.5 text-[var(--text-primary)] placeholder-zinc-500 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600"
+              className="w-full bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-4 py-2.5 text-[var(--text-primary)] placeholder-zinc-500 focus:border-[var(--border-default)] focus:ring-1 focus:ring-zinc-600"
               placeholder={t("namePlaceholder")}
             />
           </>
@@ -378,7 +378,7 @@ export default function NewAgentWizardClient({
               value={state.greeting}
               onChange={(e) => setState((p) => ({ ...p, greeting: e.target.value }))}
               rows={2}
-              className="w-full bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-4 py-2.5 text-[var(--text-primary)] placeholder-zinc-500 focus:border-zinc-600"
+              className="w-full bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-4 py-2.5 text-[var(--text-primary)] placeholder-zinc-500 focus:border-[var(--border-default)]"
               placeholder={t("greetingPlaceholder")}
             />
           </>
@@ -428,7 +428,7 @@ export default function NewAgentWizardClient({
             <button
               type="button"
               onClick={() => setState((p) => ({ ...p, faq: [...p.faq, { question: "", answer: "" }] }))}
-              className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] border border-zinc-700 rounded-xl px-3 py-2"
+              className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] border border-[var(--border-default)] rounded-xl px-3 py-2"
             >
               {t("addFaq")}
             </button>
@@ -460,7 +460,7 @@ export default function NewAgentWizardClient({
                 type="checkbox"
                 checked={state.bantEnabled}
                 onChange={(e) => setState((p) => ({ ...p, bantEnabled: e.target.checked }))}
-                className="rounded border-zinc-600"
+                className="rounded border-[var(--border-default)]"
               />
               {t("bantLabel")}
             </label>
@@ -510,7 +510,7 @@ export default function NewAgentWizardClient({
             {agentId ? (
               <Link
                 href={`/app/agents/${agentId}/voice-test`}
-                className="inline-flex items-center gap-2 bg-white text-black font-semibold rounded-xl px-4 py-2.5 hover:bg-zinc-100"
+                className="inline-flex items-center gap-2 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl px-4 py-2.5 hover:opacity-90"
               >
                 <Play className="w-4 h-4" />
                 {t("openTestCall")}
@@ -530,7 +530,7 @@ export default function NewAgentWizardClient({
               <p><span className="text-[var(--text-secondary)]">{t("reviewName")}</span> <span className="text-[var(--text-primary)]">{state.name}</span></p>
               <p><span className="text-[var(--text-secondary)]">{t("reviewPurpose")}</span> <span className="text-[var(--text-primary)]">{state.purpose}</span></p>
               <p><span className="text-[var(--text-secondary)]">{t("reviewVoice")}</span> <span className="text-[var(--text-primary)]">{CURATED_VOICES.find((v) => v.id === state.voiceId)?.name ?? state.voiceId}</span></p>
-              <p><span className="text-[var(--text-secondary)]">{t("reviewGreeting")}</span> <span className="text-zinc-300">{state.greeting.slice(0, 60)}{state.greeting.length > 60 ? "…" : ""}</span></p>
+              <p><span className="text-[var(--text-secondary)]">{t("reviewGreeting")}</span> <span className="text-[var(--text-secondary)]">{state.greeting.slice(0, 60)}{state.greeting.length > 60 ? "…" : ""}</span></p>
             </div>
             <p className="text-[var(--text-secondary)] text-sm mt-4">{t("costNote")}</p>
           </>
@@ -543,7 +543,7 @@ export default function NewAgentWizardClient({
           type="button"
           onClick={handleBack}
           disabled={step === 1}
-          className="flex items-center gap-1 border border-zinc-700 text-zinc-300 rounded-xl px-4 py-2.5 text-sm font-medium disabled:opacity-40 disabled:pointer-events-none hover:bg-[var(--bg-inset)]"
+          className="flex items-center gap-1 border border-[var(--border-default)] text-[var(--text-secondary)] rounded-xl px-4 py-2.5 text-sm font-medium disabled:opacity-40 disabled:pointer-events-none hover:bg-[var(--bg-inset)]"
         >
           <ChevronLeft className="w-4 h-4" />
           {t("back")}
@@ -553,7 +553,7 @@ export default function NewAgentWizardClient({
             type="button"
             onClick={saveDraft}
             disabled={saving}
-            className="border border-zinc-700 text-zinc-300 rounded-xl px-4 py-2.5 text-sm font-medium hover:bg-[var(--bg-inset)] disabled:opacity-50"
+            className="border border-[var(--border-default)] text-[var(--text-secondary)] rounded-xl px-4 py-2.5 text-sm font-medium hover:bg-[var(--bg-inset)] disabled:opacity-50"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : t("saveDraft")}
           </button>
@@ -561,7 +561,7 @@ export default function NewAgentWizardClient({
             type="button"
             onClick={handleNext}
             disabled={saving}
-            className="flex items-center gap-1 bg-white text-black font-semibold rounded-xl px-6 py-2.5 text-sm hover:bg-zinc-100 disabled:opacity-50"
+            className="flex items-center gap-1 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl px-6 py-2.5 text-sm hover:opacity-90 disabled:opacity-50"
           >
             {step === 7 ? t("launch") : t("next")}
             {step < 7 && <ChevronRight className="w-4 h-4" />}

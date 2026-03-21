@@ -209,7 +209,7 @@ export default function CompliancePage() {
                 </select>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-zinc-300">{t("piiRedaction")}</span>
+                <span className="text-sm text-[var(--text-secondary)]">{t("piiRedaction")}</span>
                 <button
                   type="button"
                   role="switch"
@@ -223,7 +223,7 @@ export default function CompliancePage() {
                 </button>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-zinc-300">{t("autoTranscription")}</span>
+                <span className="text-sm text-[var(--text-secondary)]">{t("autoTranscription")}</span>
                 <button
                   type="button"
                   role="switch"
@@ -249,7 +249,7 @@ export default function CompliancePage() {
             <button
               type="button"
               onClick={handleSavePolicies}
-              className="mt-4 px-4 py-2.5 rounded-xl bg-white text-black font-semibold text-sm hover:bg-zinc-200"
+              className="mt-4 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:bg-zinc-200"
             >
               {t("saveChanges")}
             </button>
@@ -263,7 +263,7 @@ export default function CompliancePage() {
             <button
               type="button"
               onClick={handleExportReport}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[var(--border-medium)] text-sm font-medium text-zinc-300 hover:bg-[var(--bg-input)]"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[var(--border-medium)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-input)]"
             >
               <Download className="w-4 h-4" />
               Export Audit Report
@@ -280,7 +280,7 @@ export default function CompliancePage() {
             <select
               value={auditUserFilter}
               onChange={(e) => { setAuditUserFilter(e.target.value); setAuditPage(0); }}
-              className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-300 text-sm focus:outline-none focus:border-[var(--border-medium)]"
+              className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-secondary)] text-sm focus:outline-none focus:border-[var(--border-medium)]"
             >
               <option value="all">{t("audit.allUsers")}</option>
               {uniqueUsers.map((u) => (
@@ -290,7 +290,7 @@ export default function CompliancePage() {
             <select
               value={auditActionFilter}
               onChange={(e) => { setAuditActionFilter(e.target.value); setAuditPage(0); }}
-              className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-300 text-sm focus:outline-none focus:border-[var(--border-medium)]"
+              className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-secondary)] text-sm focus:outline-none focus:border-[var(--border-medium)]"
             >
               <option value="all">{t("audit.allActions")}</option>
               {uniqueActions.map((a) => (
@@ -315,7 +315,7 @@ export default function CompliancePage() {
                   {paginatedAudit.map((row) => (
                     <tr key={row.id} className="border-b border-[var(--border-default)]/80 hover:bg-[var(--bg-card)]">
                       <td className="py-3 px-4 text-[var(--text-secondary)] text-xs">{formatDateTime(row.timestamp)}</td>
-                      <td className="py-3 px-4 text-zinc-300">{row.user}</td>
+                      <td className="py-3 px-4 text-[var(--text-secondary)]">{row.user}</td>
                       <td className="py-3 px-4 text-[var(--text-primary)]">{row.action}</td>
                       <td className="py-3 px-4 text-[var(--text-tertiary)] text-xs">{row.resource}</td>
                       <td className="py-3 px-4 font-mono text-[var(--text-secondary)] text-xs">{row.ipAddress}</td>

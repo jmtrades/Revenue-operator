@@ -125,7 +125,7 @@ export default function IndustryTemplatesPage() {
           {templates.map((template) => (
             <div
               key={template.industry_slug}
-              className="border border-[var(--border-default)] rounded-lg bg-[var(--bg-surface)] overflow-hidden hover:border-zinc-700 transition-colors"
+              className="border border-[var(--border-default)] rounded-lg bg-[var(--bg-surface)] overflow-hidden hover:border-[var(--border-default)] transition-colors"
             >
               {/* Header - Always visible */}
               <button
@@ -139,7 +139,7 @@ export default function IndustryTemplatesPage() {
                 <div className="flex-1 text-left">
                   <div className="flex items-center gap-3 mb-1">
                     <h2 className="text-lg font-semibold text-[var(--text-primary)]">{template.name}</h2>
-                    <code className="text-xs px-2 py-1 rounded bg-[var(--bg-inset)] text-zinc-300">
+                    <code className="text-xs px-2 py-1 rounded bg-[var(--bg-inset)] text-[var(--text-secondary)]">
                       {template.industry_slug}
                     </code>
                   </div>
@@ -169,7 +169,7 @@ export default function IndustryTemplatesPage() {
                         <Copy className="w-4 h-4" />
                       </button>
                     </h3>
-                    <p className="text-sm text-zinc-300 bg-[var(--bg-surface)] rounded p-3 italic">
+                    <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-surface)] rounded p-3 italic">
                       &ldquo;{template.default_greeting}&rdquo;
                     </p>
                   </section>
@@ -193,7 +193,7 @@ export default function IndustryTemplatesPage() {
                               <Copy className="w-4 h-4" />
                             </button>
                           </div>
-                          <p className="text-xs text-zinc-300">{script.content}</p>
+                          <p className="text-xs text-[var(--text-secondary)]">{script.content}</p>
                         </div>
                       ))}
                     </div>
@@ -206,7 +206,7 @@ export default function IndustryTemplatesPage() {
                       {template.default_faq.map((item, idx) => (
                         <div key={idx} className="bg-[var(--bg-surface)] rounded p-3 border border-[var(--border-default)]">
                           <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{item.q}</p>
-                          <p className="text-xs text-zinc-300">{item.a}</p>
+                          <p className="text-xs text-[var(--text-secondary)]">{item.a}</p>
                         </div>
                       ))}
                     </div>
@@ -254,7 +254,7 @@ export default function IndustryTemplatesPage() {
                       {template.recommended_features.map((feature, idx) => (
                         <span
                           key={idx}
-                          className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[var(--bg-inset)] text-zinc-200"
+                          className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[var(--bg-inset)] text-[var(--text-primary)]"
                         >
                           {feature.replace(/_/g, " ")}
                         </span>
@@ -269,7 +269,7 @@ export default function IndustryTemplatesPage() {
                       <div>
                         <p className="text-xs text-[var(--text-secondary)] mb-1">GET single template:</p>
                         <div className="flex items-center gap-2">
-                          <code className="text-xs flex-1 bg-[var(--bg-inset)] rounded px-2 py-1 text-zinc-300 overflow-auto">
+                          <code className="text-xs flex-1 bg-[var(--bg-inset)] rounded px-2 py-1 text-[var(--text-secondary)] overflow-auto">
                             /api/industry-templates/{template.industry_slug}
                           </code>
                           <button
@@ -305,7 +305,7 @@ export default function IndustryTemplatesPage() {
       {/* API Documentation */}
       <div className="mt-8 p-6 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)]">
         <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">API Documentation</h2>
-        <div className="space-y-4 text-sm text-zinc-300">
+        <div className="space-y-4 text-sm text-[var(--text-secondary)]">
           <div>
             <p className="font-medium text-[var(--text-primary)] mb-1">Get all templates:</p>
             <code className="block bg-[var(--bg-surface)] rounded p-2 text-xs text-[var(--text-tertiary)] overflow-auto mb-2">

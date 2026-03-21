@@ -46,7 +46,7 @@ export default function AppSettingsErrorsPage() {
               {Object.entries(grouped).map(([type, count]) => (
                 <span
                   key={type}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700 bg-[var(--bg-surface)] px-3 py-2 text-sm text-zinc-300"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 py-2 text-sm text-[var(--text-secondary)]"
                 >
                   <AlertTriangle className="w-4 h-4 text-amber-500" />
                   {type}: {count}
@@ -68,7 +68,7 @@ export default function AppSettingsErrorsPage() {
                   </p>
                   <div className="mt-1 flex items-center gap-2 text-[11px] text-[var(--text-secondary)]">
                     {e.error_type && (
-                      <span className="rounded border border-zinc-700 px-1.5 py-0.5">{e.error_type}</span>
+                      <span className="rounded border border-[var(--border-default)] px-1.5 py-0.5">{e.error_type}</span>
                     )}
                     {e.page_url && (
                       <span className="truncate max-w-[200px]" title={e.page_url}>

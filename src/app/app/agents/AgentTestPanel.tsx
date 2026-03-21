@@ -267,7 +267,7 @@ export function AgentTestPanel({
         <button
           type="button"
           onClick={() => startTest(defaultScenarioPrompt)}
-          className="w-full py-3 bg-white text-gray-900 font-semibold rounded-xl hover:bg-zinc-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
+          className="w-full py-3 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl hover:opacity-90 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
         >
           {tAgents("startConversation")}
         </button>
@@ -323,7 +323,7 @@ export function AgentTestPanel({
             className={`rounded-xl p-3 ${
               msg.role === "caller"
                 ? "bg-white/[0.04] mr-8"
-                : "bg-[var(--bg-inset)]/80 border border-zinc-700/50 ml-8"
+                : "bg-[var(--bg-inset)]/80 border border-[var(--border-default)]/50 ml-8"
             }`}
           >
             <p
@@ -333,11 +333,11 @@ export function AgentTestPanel({
             >
               {msg.role === "caller" ? tAgents("youAsCaller") : tAgents("aiAgent")}
             </p>
-            <p className="text-sm text-white/90">{msg.text}</p>
+            <p className="text-sm text-[var(--text-primary)]">{msg.text}</p>
           </div>
         ))}
         {(loading || isSpeaking) && (
-          <div className="rounded-xl p-3 bg-[var(--bg-inset)]/80 border border-zinc-700/50 ml-8">
+          <div className="rounded-xl p-3 bg-[var(--bg-inset)]/80 border border-[var(--border-default)]/50 ml-8">
             <p className="text-xs text-[var(--text-tertiary)]">
               {loading ? tAgents("thinking") : tAgents("speaking")}
             </p>
@@ -370,7 +370,7 @@ export function AgentTestPanel({
                   onClick={startListening}
                   disabled={loading || isSpeaking}
                   aria-label={tAgents("tapToSpeak")}
-                  className="flex items-center justify-center w-14 h-14 rounded-full bg-white text-gray-900 hover:bg-zinc-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                  className="flex items-center justify-center w-14 h-14 rounded-full bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                 >
                   <Mic className="w-6 h-6" />
                 </button>
@@ -399,13 +399,13 @@ export function AgentTestPanel({
             placeholder={tAgents("inputPlaceholder")}
             disabled={loading || isListening}
             aria-label={tAgents("inputAria")}
-            className="flex-1 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-4 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-white/25 focus:border-zinc-600 focus:outline-none disabled:opacity-50"
+            className="flex-1 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-4 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-white/25 focus:border-[var(--border-default)] focus:outline-none disabled:opacity-50"
           />
           <button
             type="button"
             onClick={() => sendMessage()}
             disabled={loading || isListening || !input.trim()}
-            className="px-4 py-2.5 bg-white text-gray-900 font-semibold rounded-xl text-sm disabled:opacity-30 hover:bg-zinc-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
+            className="px-4 py-2.5 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl text-sm disabled:opacity-30 hover:opacity-90 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
           >
             {tAgents("send")}
           </button>

@@ -534,7 +534,7 @@ export default function AppSettingsBillingPage() {
         </button>
       </div>
       <div className="flex gap-2">
-        <button type="button" onClick={() => setPauseStep(1)} disabled={pausing || !workspaceId} className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-[var(--text-tertiary)] disabled:opacity-60 hover:bg-[var(--bg-inset)]/50">{pausing ? tBilling("pausing") : tBilling("pauseAccount")}</button>
+        <button type="button" onClick={() => setPauseStep(1)} disabled={pausing || !workspaceId} className="px-4 py-2 rounded-xl text-sm border border-[var(--border-default)] text-[var(--text-tertiary)] disabled:opacity-60 hover:bg-[var(--bg-inset)]/50">{pausing ? tBilling("pausing") : tBilling("pauseAccount")}</button>
         <button
           type="button"
           onClick={() => setCancelStep(1)}

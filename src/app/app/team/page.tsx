@@ -300,7 +300,7 @@ export default function TeamPage() {
           <button
             type="button"
             onClick={() => setInviteModalOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-black font-semibold text-sm hover:bg-zinc-200"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:bg-zinc-200"
           >
             <Plus className="w-4 h-4" />
             {t("inviteMember")}
@@ -352,7 +352,7 @@ export default function TeamPage() {
                                 setRoleModalMember(member);
                                 setMenuMemberId(null);
                               }}
-                              className="block w-full text-left px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-700"
+                              className="block w-full text-left px-3 py-2 text-sm text-[var(--text-secondary)] hover:bg-zinc-700"
                             >
                               Change role
                             </button>
@@ -378,9 +378,9 @@ export default function TeamPage() {
                       member.role === "owner"
                         ? "bg-amber-500/20 text-amber-300"
                         : member.role === "admin"
-                          ? "bg-zinc-600 text-zinc-200"
+                          ? "bg-zinc-600 text-[var(--text-primary)]"
                           : member.role === "manager"
-                            ? "bg-zinc-700 text-zinc-300"
+                            ? "bg-zinc-700 text-[var(--text-secondary)]"
                             : "bg-zinc-700 text-[var(--text-tertiary)]"
                     }`}
                   >
@@ -403,7 +403,7 @@ export default function TeamPage() {
                 {pendingInvites.map((inv) => (
                   <li key={inv.id} className="flex flex-wrap items-center justify-between gap-2 py-2 border-b border-[var(--border-default)]/80 last:border-0">
                     <div>
-                      <span className="text-sm text-zinc-300">{inv.email}</span>
+                      <span className="text-sm text-[var(--text-secondary)]">{inv.email}</span>
                       <span className="ml-2 text-xs text-[var(--text-secondary)]">— {roleLabels[inv.role]}</span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -440,7 +440,7 @@ export default function TeamPage() {
             className="flex items-center gap-2 w-full text-left py-3 border-b border-[var(--border-default)]"
           >
             {rolesExpanded ? <ChevronDown className="w-4 h-4 text-[var(--text-secondary)]" /> : <ChevronRight className="w-4 h-4 text-[var(--text-secondary)]" />}
-            <span className="text-sm font-semibold text-zinc-300">Roles & Permissions</span>
+            <span className="text-sm font-semibold text-[var(--text-secondary)]">Roles & Permissions</span>
           </button>
           {rolesExpanded && (
             <div className="pt-4 overflow-x-auto">
@@ -457,7 +457,7 @@ export default function TeamPage() {
                 <tbody>
                   {permissionsMatrix.map((row) => (
                     <tr key={row.id} className="border-b border-[var(--border-default)]/80">
-                      <td className="py-2.5 pr-4 text-zinc-300">{row.label}</td>
+                      <td className="py-2.5 pr-4 text-[var(--text-secondary)]">{row.label}</td>
                       <td className="py-2.5 px-2 text-center">{row.roles.owner ? <Check className="w-4 h-4 text-emerald-400 mx-auto" /> : <Minus className="w-4 h-4 text-zinc-600 mx-auto" />}</td>
                       <td className="py-2.5 px-2 text-center">{row.roles.admin ? <Check className="w-4 h-4 text-emerald-400 mx-auto" /> : <Minus className="w-4 h-4 text-zinc-600 mx-auto" />}</td>
                       <td className="py-2.5 px-2 text-center">{row.roles.manager ? <Check className="w-4 h-4 text-emerald-400 mx-auto" /> : <Minus className="w-4 h-4 text-zinc-600 mx-auto" />}</td>
@@ -507,7 +507,7 @@ export default function TeamPage() {
               <button type="button" onClick={() => { setInviteModalOpen(false); setInviteError(null); }} className="px-4 py-2 rounded-xl text-sm text-[var(--text-tertiary)] border border-[var(--border-medium)] hover:bg-[var(--bg-card)]">
                 Cancel
               </button>
-              <button type="button" onClick={handleSendInvite} disabled={!inviteEmail.trim() || inviteSending} className="px-4 py-2 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-200 disabled:opacity-50">
+              <button type="button" onClick={handleSendInvite} disabled={!inviteEmail.trim() || inviteSending} className="px-4 py-2 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:bg-zinc-200 disabled:opacity-50">
                 {inviteSending ? t("sending") : t("sendInvite")}
               </button>
             </div>
@@ -527,7 +527,7 @@ export default function TeamPage() {
                   key={r}
                   type="button"
                   onClick={() => handleChangeRole(roleModalMember.id, r)}
-                  className={`block w-full text-left px-3 py-2.5 rounded-lg text-sm ${roleModalMember.role === r ? "bg-zinc-700 text-[var(--text-primary)]" : "text-[var(--text-tertiary)] hover:bg-[var(--bg-card)] hover:text-zinc-200"}`}
+                  className={`block w-full text-left px-3 py-2.5 rounded-lg text-sm ${roleModalMember.role === r ? "bg-zinc-700 text-[var(--text-primary)]" : "text-[var(--text-tertiary)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)]"}`}
                 >
                   {roleLabels[r]}
                 </button>

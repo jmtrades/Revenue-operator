@@ -242,7 +242,7 @@ export default function AppContactsPage() {
             resetForm();
             setShowAdd(true);
           }}
-          className="hidden sm:inline-flex items-center gap-1.5 bg-white text-black font-semibold rounded-xl px-4 py-2 text-sm hover:bg-zinc-100"
+          className="hidden sm:inline-flex items-center gap-1.5 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl px-4 py-2 text-sm hover:opacity-90"
         >
           {t("addContactCta")}
         </button>
@@ -255,7 +255,7 @@ export default function AppContactsPage() {
             placeholder={t("searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
+            className="flex-1 px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none"
           />
         </div>
         <div className="flex items-center gap-2">
@@ -263,7 +263,7 @@ export default function AppContactsPage() {
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value as SortId)}
-            className="px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-xs text-zinc-300 focus:outline-none"
+            className="px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-xs text-[var(--text-secondary)] focus:outline-none"
           >
             <option value="newest">{t("sort.newest")}</option>
             <option value="score">{t("sort.score")}</option>
@@ -325,7 +325,7 @@ export default function AppContactsPage() {
             resetForm();
             setShowAdd(true);
           }}
-          className="sm:hidden mb-3 w-full bg-white text-black font-semibold rounded-xl px-4 py-2 text-sm hover:bg-zinc-100"
+          className="sm:hidden mb-3 w-full bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl px-4 py-2 text-sm hover:opacity-90"
         >
           {t("addContactCta")}
         </button>
@@ -379,7 +379,7 @@ export default function AppContactsPage() {
                       </p>
                     </div>
                     {typeof c.score === "number" && (
-                      <div className="w-12 h-12 rounded-full border border-[var(--border-medium)] flex items-center justify-center text-xs font-semibold text-zinc-200 shrink-0">
+                      <div className="w-12 h-12 rounded-full border border-[var(--border-medium)] flex items-center justify-center text-xs font-semibold text-[var(--text-primary)] shrink-0">
                         {c.score}
                       </div>
                     )}
@@ -446,7 +446,7 @@ export default function AppContactsPage() {
                     type="text"
                     value={formFirstName}
                     onChange={(e) => setFormFirstName(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none"
                     placeholder={t("form.firstNamePlaceholder")}
                   />
                   {formErrors.firstName && (
@@ -459,7 +459,7 @@ export default function AppContactsPage() {
                     type="text"
                     value={formLastName}
                     onChange={(e) => setFormLastName(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none"
                     placeholder={t("form.lastNamePlaceholder")}
                   />
                   {formErrors.lastName && (
@@ -473,7 +473,7 @@ export default function AppContactsPage() {
                   type="tel"
                   value={formPhone}
                   onChange={(e) => setFormPhone(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none"
                   placeholder={t("form.phonePlaceholder")}
                 />
                 {formErrors.phone && (
@@ -486,7 +486,7 @@ export default function AppContactsPage() {
                   type="email"
                   value={formEmail}
                   onChange={(e) => setFormEmail(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none"
                   placeholder={t("form.emailPlaceholder")}
                 />
               </div>
@@ -495,7 +495,7 @@ export default function AppContactsPage() {
                 <select
                   value={formType}
                   onChange={(e) => setFormType(e.target.value as ContactType)}
-                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-zinc-200 focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] focus:outline-none"
                 >
                   <option value="lead">{t("form.type.lead")}</option>
                   <option value="customer">{t("form.type.customer")}</option>
@@ -515,13 +515,13 @@ export default function AppContactsPage() {
                         handleAddTag();
                       }
                     }}
-                    className="flex-1 px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
+                    className="flex-1 px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none"
                     placeholder={t("form.tagsPlaceholder")}
                   />
                   <button
                     type="button"
                     onClick={handleAddTag}
-                    className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)]"
+                    className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
                   >
                     {t("form.addTag")}
                   </button>
@@ -533,7 +533,7 @@ export default function AppContactsPage() {
                         key={tag}
                         type="button"
                         onClick={() => setFormTags((prev) => prev.filter((t) => t !== tag))}
-                        className="text-[11px] px-2 py-0.5 rounded-full bg-[var(--bg-inset)] text-zinc-200"
+                        className="text-[11px] px-2 py-0.5 rounded-full bg-[var(--bg-inset)] text-[var(--text-primary)]"
                       >
                         {tag} <span className="text-[var(--text-secondary)]">×</span>
                       </button>
@@ -547,7 +547,7 @@ export default function AppContactsPage() {
                   rows={3}
                   value={formNotes}
                   onChange={(e) => setFormNotes(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none resize-none"
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none resize-none"
                   placeholder={t("form.notesPlaceholder")}
                 />
               </div>
@@ -556,14 +556,14 @@ export default function AppContactsPage() {
               <button
                 type="button"
                 onClick={() => setShowAdd(false)}
-                className="px-4 py-2 rounded-xl border border-[var(--border-medium)] text-sm text-zinc-300 hover:border-[var(--border-medium)]"
+                className="px-4 py-2 rounded-xl border border-[var(--border-medium)] text-sm text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
               >
                 {tCommon("cancel")}
               </button>
               <button
                 type="button"
                 onClick={handleSaveContact}
-                className="px-4 py-2 rounded-xl bg-white text-black text-sm font-semibold hover:bg-zinc-100"
+                className="px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold hover:opacity-90"
               >
                 {t("form.saveContact")}
               </button>
@@ -595,14 +595,14 @@ function ContactDetail({ contact }: { contact: Contact }) {
   const t = useTranslations("contacts");
   const fullName = `${contact.firstName} ${contact.lastName}`;
   return (
-    <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-input)]/60 p-5 text-sm text-zinc-200">
+    <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-input)]/60 p-5 text-sm text-[var(--text-primary)]">
       <div className="flex items-start justify-between gap-3 mb-4">
         <div>
           <h2 className="text-sm font-semibold text-[var(--text-primary)]">{fullName}</h2>
           <p className="text-xs text-[var(--text-secondary)] mt-0.5">{t(`form.type.${contact.type}`)}</p>
         </div>
         {typeof contact.score === "number" && (
-          <div className="w-10 h-10 rounded-full border border-[var(--border-medium)] flex items-center justify-center text-xs font-semibold text-zinc-200">
+          <div className="w-10 h-10 rounded-full border border-[var(--border-medium)] flex items-center justify-center text-xs font-semibold text-[var(--text-primary)]">
             {contact.score}
           </div>
         )}
@@ -612,14 +612,14 @@ function ContactDetail({ contact }: { contact: Contact }) {
         <div className="flex flex-wrap gap-2 text-xs">
           <a
             href={`tel:${encodeURIComponent(contact.phone)}`}
-            className="px-2 py-1 rounded-lg border border-[var(--border-medium)] text-zinc-200 hover:border-[var(--border-medium)]"
+            className="px-2 py-1 rounded-lg border border-[var(--border-medium)] text-[var(--text-primary)] hover:border-[var(--border-medium)]"
           >
             {t("callPhone", { phone: contact.phone })}
           </a>
           {contact.email && (
             <a
               href={`mailto:${encodeURIComponent(contact.email)}`}
-              className="px-2 py-1 rounded-lg border border-[var(--border-medium)] text-zinc-200 hover:border-[var(--border-medium)]"
+              className="px-2 py-1 rounded-lg border border-[var(--border-medium)] text-[var(--text-primary)] hover:border-[var(--border-medium)]"
             >
               {t("email")}
             </a>
@@ -630,7 +630,7 @@ function ContactDetail({ contact }: { contact: Contact }) {
             {contact.tags.map((tag) => (
               <span
                 key={tag}
-                className="text-[11px] px-2 py-0.5 rounded-full bg-[var(--bg-inset)] text-zinc-200"
+                className="text-[11px] px-2 py-0.5 rounded-full bg-[var(--bg-inset)] text-[var(--text-primary)]"
               >
                 {tag}
               </span>
@@ -640,12 +640,12 @@ function ContactDetail({ contact }: { contact: Contact }) {
       </div>
       {contact.notes && (
         <div className="mb-4">
-          <h3 className="text-xs font-semibold text-zinc-300 mb-1.5">Notes</h3>
+          <h3 className="text-xs font-semibold text-[var(--text-secondary)] mb-1.5">Notes</h3>
           <p className="text-xs text-[var(--text-tertiary)] whitespace-pre-line">{contact.notes}</p>
         </div>
       )}
       <div>
-        <h3 className="text-xs font-semibold text-zinc-300 mb-2">{t("callHistory")}</h3>
+        <h3 className="text-xs font-semibold text-[var(--text-secondary)] mb-2">{t("callHistory")}</h3>
         {contact.history && contact.history.length > 0 ? (
           <ul className="space-y-3">
             {contact.history.map((h) => (
@@ -663,7 +663,7 @@ function ContactDetail({ contact }: { contact: Contact }) {
                     })}{" "}
                     · {h.type === "inbound" ? t("inbound") : t("outbound")} · {h.duration}
                   </p>
-                  <p className="text-xs text-zinc-200">{h.summary}</p>
+                  <p className="text-xs text-[var(--text-primary)]">{h.summary}</p>
                 </div>
               </li>
             ))}

@@ -230,7 +230,7 @@ export default function AppSettingsIntegrationsPage() {
                 <p className="text-sm font-medium text-[var(--text-primary)]">{t("hub.phoneLabel")}</p>
               </div>
               <p className="text-xs text-[var(--text-secondary)] mb-3">{t("hub.phoneDesc")}</p>
-              <Link href="/app/settings/phone" className="text-sm text-zinc-300 hover:text-[var(--text-primary)] hover:underline focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded">
+              <Link href="/app/settings/phone" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:underline focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded">
                 {t("hub.manageLink")}
               </Link>
             </div>
@@ -326,7 +326,7 @@ export default function AppSettingsIntegrationsPage() {
                     ) : connected ? (
                       <Link
                         href={`/app/settings/integrations/mapping?provider=${crm.id}`}
-                        className="inline-block px-3 py-2 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-zinc-300 hover:border-zinc-500 transition-colors"
+                        className="inline-block px-3 py-2 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-zinc-500 transition-colors"
                       >
                         {t("button.configure")}
                       </Link>
@@ -364,7 +364,7 @@ export default function AppSettingsIntegrationsPage() {
                 {t("status.connected")}
               </span>
             ) : (
-              <Link href="/api/integrations/google-calendar/auth" className="px-3 py-1.5 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-zinc-300 hover:border-zinc-500 shrink-0 transition-colors">
+              <Link href="/api/integrations/google-calendar/auth" className="px-3 py-1.5 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-zinc-500 shrink-0 transition-colors">
                 {t("button.connect")}
               </Link>
             )}
@@ -374,7 +374,7 @@ export default function AppSettingsIntegrationsPage() {
               <p className="text-[11px] font-medium text-[var(--text-tertiary)] mb-2">{t("hub.todaysSlots")}</p>
               <div className="flex flex-wrap gap-2">
                 {availabilityPreview.map((slot) => (
-                  <span key={slot} className="rounded-full border border-[var(--border-medium)] px-3 py-1 text-[11px] text-zinc-300">
+                  <span key={slot} className="rounded-full border border-[var(--border-medium)] px-3 py-1 text-[11px] text-[var(--text-secondary)]">
                     {slot}
                   </span>
                 ))}
@@ -396,7 +396,7 @@ export default function AppSettingsIntegrationsPage() {
             value={webhookConfig.endpoint_url}
             onChange={(e) => setWebhookConfig((prev) => ({ ...prev, endpoint_url: e.target.value, enabled: true }))}
             placeholder={t("hub.webhookUrlPlaceholder")}
-            className="mt-4 w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
+            className="mt-4 w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
           />
           <div className="mt-3">
             <label className="block text-[11px] font-medium text-[var(--text-tertiary)] mb-1">{t("hub.signingSecretLabel")}</label>
@@ -405,13 +405,13 @@ export default function AppSettingsIntegrationsPage() {
               value={webhookSecret}
               onChange={(e) => setWebhookSecret(e.target.value)}
               placeholder={webhookConfig.has_secret ? t("hub.signingSecretPlaceholderSaved") : t("hub.signingSecretPlaceholderNew")}
-              className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
+              className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
             />
             {webhookConfig.has_secret ? (
               <p className="mt-1 text-[11px] text-[var(--text-secondary)]">{t("hub.signingSecretStored")}</p>
             ) : null}
           </div>
-          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-zinc-300">
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-[var(--text-secondary)]">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -473,7 +473,7 @@ export default function AppSettingsIntegrationsPage() {
                 type="button"
                 onClick={handleTestWebhook}
                 disabled={testingWebhook || !workspaceId || !webhookConfig.endpoint_url.trim()}
-                className="px-4 py-2.5 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-zinc-300 hover:border-zinc-500 disabled:opacity-60"
+                className="px-4 py-2.5 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-zinc-500 disabled:opacity-60"
               >
                 {testingWebhook ? t("hub.testing") : t("hub.sendTest")}
               </button>
@@ -499,7 +499,7 @@ export default function AppSettingsIntegrationsPage() {
               For CRMs like xLeads, Podio, or any other platform, use the webhook configuration above to push lead and call data in real-time. Configure your webhook endpoint URL, select the events you want to send, and Recall Touch will POST JSON payloads whenever those events occur.
             </p>
             <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
-              You can also use <a href="https://zapier.com" target="_blank" rel="noopener noreferrer" className="text-zinc-300 underline underline-offset-2 hover:text-[var(--text-primary)]">Zapier</a> as a bridge — connect Recall Touch webhooks to 5,000+ apps including xLeads and Podio without writing any code.
+              You can also use <a href="https://zapier.com" target="_blank" rel="noopener noreferrer" className="text-[var(--text-secondary)] underline underline-offset-2 hover:text-[var(--text-primary)]">Zapier</a> as a bridge — connect Recall Touch webhooks to 5,000+ apps including xLeads and Podio without writing any code.
             </p>
             <p className="text-xs text-[var(--text-secondary)] mt-2">
               Need help? Contact <a href="mailto:support@recall-touch.com" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline underline-offset-2">support@recall-touch.com</a>
@@ -509,7 +509,7 @@ export default function AppSettingsIntegrationsPage() {
       </div>
 
       {toast && (
-        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-zinc-200">{toast}</div>
+        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-[var(--text-primary)]">{toast}</div>
       )}
 
       <p className="text-xs text-[var(--text-secondary)] mt-6">

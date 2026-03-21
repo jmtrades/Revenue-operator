@@ -269,7 +269,7 @@ export default function CampaignCreatePage() {
               <span
                 className={cn(
                   "inline-flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-semibold",
-                  step > s.id ? "bg-white text-black" : "bg-[var(--bg-input)] text-[var(--text-secondary)]",
+                  step > s.id ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]" : "bg-[var(--bg-input)] text-[var(--text-secondary)]",
                 )}
               >
                 {step > s.id ? <Check className="h-3.5 w-3.5" /> : s.id}
@@ -601,7 +601,7 @@ export default function CampaignCreatePage() {
                 className={cn(
                   "rounded-xl px-5 py-2 text-sm font-semibold",
                   canContinue
-                    ? "bg-white text-black hover:bg-zinc-100"
+                    ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90"
                     : "bg-[var(--bg-input)] text-[var(--text-tertiary)] cursor-not-allowed",
                 )}
                 disabled={!canContinue}
@@ -625,7 +625,7 @@ export default function CampaignCreatePage() {
                   type="button"
                   onClick={() => void createCampaign(true)}
                   className={cn(
-                    "rounded-xl px-5 py-2 text-sm font-semibold bg-white text-black hover:bg-zinc-100",
+                    "rounded-xl px-5 py-2 text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90",
                     saving ? "opacity-60 cursor-not-allowed" : "",
                   )}
                   disabled={saving}

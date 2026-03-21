@@ -32,7 +32,7 @@ const SCORE_COLORS: Record<string, string> = {
   high: "bg-emerald-500/15 text-emerald-300 border-emerald-500/40",
   medium: "bg-amber-500/15 text-amber-200 border-amber-500/40",
   low: "bg-rose-500/15 text-rose-200 border-rose-500/40",
-  all: "bg-[var(--bg-card)] text-zinc-300 border-[var(--border-medium)]",
+  all: "bg-[var(--bg-card)] text-[var(--text-secondary)] border-[var(--border-medium)]",
 };
 
 function scoreBucket(score: number): string {
@@ -99,7 +99,7 @@ function BoardColumn({
       className={`flex flex-col rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-3 min-h-[220px] transition-colors ${isOver ? "ring-2 ring-[var(--accent-primary)]/50" : ""}`}
     >
       <div className="flex items-center justify-between mb-2">
-        <p className="text-xs font-semibold text-zinc-200">{getStatusLabel(status, t)}</p>
+        <p className="text-xs font-semibold text-[var(--text-primary)]">{getStatusLabel(status, t)}</p>
         <span className="text-[11px] text-[var(--text-secondary)]">{columnLeads.length}</span>
       </div>
       <div className="space-y-2 overflow-y-auto min-h-0">

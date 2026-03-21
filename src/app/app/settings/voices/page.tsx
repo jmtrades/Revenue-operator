@@ -695,7 +695,7 @@ export default function VoicesSettingsPage() {
               <button
                 type="button"
                 onClick={() => setShowCloneModal(true)}
-                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-white text-black font-semibold px-3 py-2 text-sm hover:bg-zinc-100 transition-colors"
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold px-3 py-2 text-sm hover:opacity-90 transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 Clone Voice
@@ -838,7 +838,7 @@ export default function VoicesSettingsPage() {
             <button
               type="button"
               onClick={() => setShowTestModal(true)}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-white text-black font-semibold px-4 py-2 text-sm hover:bg-zinc-100 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold px-4 py-2 text-sm hover:opacity-90 transition-colors"
             >
               <TrendingUp className="w-4 h-4" />
               New Test
@@ -955,7 +955,7 @@ export default function VoicesSettingsPage() {
               <button
                 type="button"
                 onClick={() => setShowCloneModal(false)}
-                className="text-[var(--text-secondary)] hover:text-zinc-300"
+                className="text-[var(--text-secondary)] hover:text-[var(--text-secondary)]"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1063,7 +1063,7 @@ export default function VoicesSettingsPage() {
               <button
                 type="button"
                 onClick={() => setShowCloneModal(false)}
-                className="rounded-xl border border-zinc-700 px-4 py-2.5 text-sm text-zinc-300 hover:bg-[var(--bg-inset)] transition-colors"
+                className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors"
               >
                 Cancel
               </button>
@@ -1089,7 +1089,7 @@ export default function VoicesSettingsPage() {
               <button
                 type="button"
                 onClick={() => setShowTestModal(false)}
-                className="text-[var(--text-secondary)] hover:text-zinc-300"
+                className="text-[var(--text-secondary)] hover:text-[var(--text-secondary)]"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1165,14 +1165,14 @@ export default function VoicesSettingsPage() {
               <button
                 type="button"
                 onClick={handleCreateABTest}
-                className="flex-1 rounded-xl bg-white text-black font-semibold py-2.5 text-sm hover:bg-zinc-100 transition-colors"
+                className="flex-1 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold py-2.5 text-sm hover:opacity-90 transition-colors"
               >
                 Create Test
               </button>
               <button
                 type="button"
                 onClick={() => setShowTestModal(false)}
-                className="rounded-xl border border-zinc-700 px-4 py-2.5 text-sm text-zinc-300 hover:bg-[var(--bg-inset)] transition-colors"
+                className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors"
               >
                 Cancel
               </button>

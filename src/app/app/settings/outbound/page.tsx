@@ -136,7 +136,7 @@ export default function OutboundSettingsPage() {
           disabled={!canSave || saving}
           className={cn(
             "px-5 py-2 rounded-xl text-sm font-semibold",
-            canSave ? "bg-white text-black hover:bg-zinc-100" : "bg-[var(--bg-input)] text-[var(--text-tertiary)]",
+            canSave ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90" : "bg-[var(--bg-input)] text-[var(--text-tertiary)]",
             saving ? "opacity-60 cursor-not-allowed" : "",
           )}
         >

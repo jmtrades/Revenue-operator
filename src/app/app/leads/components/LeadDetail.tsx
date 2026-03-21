@@ -85,7 +85,7 @@ export function LeadDetail({
       {lead.service && lead.service !== t("defaultService") && (
         <section>
           <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">{t("detail.whatTheyNeed")}</h3>
-          <p className="text-sm text-zinc-200">{lead.service}</p>
+          <p className="text-sm text-[var(--text-primary)]">{lead.service}</p>
         </section>
       )}
 
@@ -141,14 +141,14 @@ export function LeadDetail({
 
       <div className="flex flex-wrap gap-2 pt-2">
         {lead.phone ? (
-          <a href={`tel:${lead.phone.replace(/\s/g, "")}`} className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-zinc-200 text-xs font-medium px-3 py-2 hover:bg-[var(--bg-hover)]">
+          <a href={`tel:${lead.phone.replace(/\s/g, "")}`} className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-[var(--text-primary)] text-xs font-medium px-3 py-2 hover:bg-[var(--bg-hover)]">
             <Phone className="w-3.5 h-3.5" /> {t("actionCall")}
           </a>
         ) : null}
-        <Link href={lead.id ? `/app/messages?lead_id=${lead.id}` : "/app/messages"} className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-zinc-200 text-xs font-medium px-3 py-2 hover:bg-[var(--bg-hover)]">
+        <Link href={lead.id ? `/app/messages?lead_id=${lead.id}` : "/app/messages"} className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-[var(--text-primary)] text-xs font-medium px-3 py-2 hover:bg-[var(--bg-hover)]">
           <MessageSquare className="w-3.5 h-3.5" /> {t("detail.textButton")}
         </Link>
-        <Link href="/app/calendar" className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-zinc-200 text-xs font-medium px-3 py-2 hover:bg-[var(--bg-hover)]">
+        <Link href="/app/calendar" className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-medium)] text-[var(--text-primary)] text-xs font-medium px-3 py-2 hover:bg-[var(--bg-hover)]">
           <Calendar className="w-3.5 h-3.5" /> {t("actionSchedule")}
         </Link>
         <Button variant="ghost" size="sm" className="text-xs">
@@ -159,7 +159,7 @@ export function LeadDetail({
             <select
               value={outboundCallType || "default"}
               onChange={(e) => setOutboundCallType(e.target.value === "default" ? "" : e.target.value)}
-              className="rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-2 py-1.5 text-xs text-zinc-200"
+              className="rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-2 py-1.5 text-xs text-[var(--text-primary)]"
               aria-label={t("detail.callTypeLabel")}
             >
               <option value="default">{t("detail.callTypes.default")}</option>

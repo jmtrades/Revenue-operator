@@ -1160,7 +1160,7 @@ export default function AppAgentsPageClient({
         </div>
         <Link
           href="/app/agents/new"
-          className="hidden sm:inline-flex items-center gap-1.5 bg-white text-black font-semibold rounded-xl px-4 py-2 text-sm hover:bg-zinc-100"
+          className="hidden sm:inline-flex items-center gap-1.5 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl px-4 py-2 text-sm hover:opacity-90"
         >
           {tAgents("createAgent")}
         </Link>
@@ -1168,7 +1168,7 @@ export default function AppAgentsPageClient({
 
       <Link
         href="/app/agents/new"
-        className="sm:hidden mb-4 w-full inline-flex justify-center items-center bg-white text-black font-semibold rounded-xl px-4 py-2 text-sm hover:bg-zinc-100"
+        className="sm:hidden mb-4 w-full inline-flex justify-center items-center bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl px-4 py-2 text-sm hover:opacity-90"
       >
         {tAgents("createAgent")}
       </Link>
@@ -1346,7 +1346,7 @@ export default function AppAgentsPageClient({
                 <button
                   type="button"
                   onClick={() => void createAgentFromTemplate("scratch")}
-                  className="rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                  className="rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                   aria-label="Create Agent"
                 >
                   Create Agent
@@ -1493,7 +1493,7 @@ export default function AppAgentsPageClient({
                     key={t.id}
                     type="button"
                     onClick={() => createAgentFromSharedTemplate(t.id)}
-                    className="w-full text-left px-3 py-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)]/50 hover:bg-[var(--bg-input)] hover:border-zinc-600 text-xs transition-colors"
+                    className="w-full text-left px-3 py-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)]/50 hover:bg-[var(--bg-input)] hover:border-[var(--border-default)] text-xs transition-colors"
                   >
                     <span className="font-medium text-[var(--text-primary)]">{t.name}</span>
                     <span className="text-[var(--text-secondary)] ml-1">· {t.styleLabel}</span>
@@ -1530,9 +1530,9 @@ function TemplateCard(props: {
     <button
       type="button"
       onClick={onClick}
-      className="text-left p-3 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] hover:bg-[var(--bg-input)] hover:border-zinc-600 transition-colors"
+      className="text-left p-3 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] hover:bg-[var(--bg-input)] hover:border-[var(--border-default)] transition-colors"
     >
-      <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-input)] text-zinc-300">
+      <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-[var(--bg-input)] text-[var(--text-secondary)]">
         <Icon className="h-4 w-4" />
       </div>
       <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{title}</p>
@@ -1624,7 +1624,7 @@ function ProfileTab({
           type="text"
           value={agent.name}
           onChange={(e) => onChange({ name: e.target.value })}
-          className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           placeholder={t("profile.agentNamePlaceholder")}
         />
       </div>
@@ -1645,7 +1645,7 @@ function ProfileTab({
           value={agent.greeting}
           onChange={(e) => onChange({ greeting: e.target.value })}
           placeholder={t("profile.greetingPlaceholder")}
-          className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none resize-none"
+          className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none resize-none"
         />
       </div>
 
@@ -1677,7 +1677,7 @@ function ProfileTab({
               className={`text-left p-2 rounded-xl border text-[11px] ${
                 agent.callStyle === id
                   ? "border-white bg-[var(--bg-input)] text-[var(--text-primary)]"
-                  : "border-[var(--border-default)] bg-[var(--bg-input)]/50 text-zinc-300"
+                  : "border-[var(--border-default)] bg-[var(--bg-input)]/50 text-[var(--text-secondary)]"
               }`}
             >
               <p className="font-medium mb-0.5">{t(labelKey)}</p>
@@ -1703,7 +1703,7 @@ function ProfileTab({
               style={{ left: agent.active ? "22px" : "2px" }}
             />
           </button>
-          <span className="text-[11px] text-zinc-300">
+          <span className="text-[11px] text-[var(--text-secondary)]">
             {agent.active ? t("profile.activeOnNumber") : t("profile.inactive")}
           </span>
         </div>
@@ -1862,7 +1862,7 @@ export function RulesTab({
         <h3 className="mb-2 text-sm font-medium text-[var(--text-primary)]">{t("rulesTab.transferToHumanWhen")}</h3>
         <div className="space-y-2">
           {getAlwaysTransferOptions(t).map((option) => (
-            <label key={option} className="flex items-center gap-2 text-sm text-zinc-300">
+            <label key={option} className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
               <input
                 type="checkbox"
                 className="accent-white"
@@ -1918,7 +1918,7 @@ export function RulesTab({
             type="button"
             onClick={addTransferRule}
             aria-label={t("addTransferRuleAria")}
-            className="text-[11px] text-zinc-300 underline underline-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded"
+            className="text-[11px] text-[var(--text-secondary)] underline underline-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded"
           >
             {t("addTransferRule")}
           </button>
@@ -1943,7 +1943,7 @@ export function RulesTab({
                         transferRules: agent.transferRules.filter((r) => r.id !== rule.id),
                       })
                     }
-                    className="text-[11px] text-[var(--text-secondary)] hover:text-zinc-200"
+                    className="text-[11px] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                   >
                     {tCommon("remove")}
                   </button>
@@ -1958,7 +1958,7 @@ export function RulesTab({
                       ),
                     })
                   }
-                  className="w-full px-3 py-2 rounded-lg bg-black border border-[var(--border-default)] text-xs text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
+                  className="w-full px-3 py-2 rounded-lg bg-black border border-[var(--border-default)] text-xs text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none"
                   placeholder={t("transferRulePhrasePlaceholder")}
                 />
                 <p className="text-[11px] text-[var(--text-secondary)]">{t("callThisNumber")}</p>
@@ -1972,7 +1972,7 @@ export function RulesTab({
                       ),
                     })
                   }
-                  className="w-full px-3 py-2 rounded-lg bg-black border border-[var(--border-default)] text-xs text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
+                  className="w-full px-3 py-2 rounded-lg bg-black border border-[var(--border-default)] text-xs text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none"
                   placeholder={t("transferRulePhonePlaceholder")}
                 />
               </div>
@@ -1986,7 +1986,7 @@ export function RulesTab({
           <label className="mb-2 block text-[11px] text-[var(--text-secondary)]">{t("learnedBehaviorsLabel")}</label>
           <div className="space-y-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-3">
             {agent.learnedBehaviors.map((line, idx) => (
-              <div key={idx} className="flex items-start gap-2 text-sm text-zinc-300">
+              <div key={idx} className="flex items-start gap-2 text-sm text-[var(--text-secondary)]">
                 <span className="flex-1">{line}</span>
                 <button
                   type="button"
@@ -2040,7 +2040,7 @@ export function RulesTab({
 
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-4">
         <h3 className="text-sm font-medium text-[var(--text-primary)]">{t("rulesTab.appointmentBooking")}</h3>
-        <label className="flex items-center gap-2 text-sm text-zinc-300">
+        <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
           <input
             type="checkbox"
             className="accent-white"
@@ -2070,7 +2070,7 @@ export function RulesTab({
 
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-3">
         <h3 className="text-sm font-medium text-[var(--text-primary)]">{t("rulesTab.followUpBehavior")}</h3>
-        <label className="flex items-center gap-2 text-sm text-zinc-300">
+        <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
           <input
             type="checkbox"
             className="accent-white"
@@ -2079,7 +2079,7 @@ export function RulesTab({
           />
           {t("rulesTab.sendFollowUpSMS")}
         </label>
-        <label className="flex items-center gap-2 text-sm text-zinc-300">
+        <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
           <input
             type="checkbox"
             className="accent-white"
@@ -2088,7 +2088,7 @@ export function RulesTab({
           />
           {t("rulesTab.notifyOwnerOnLead")}
         </label>
-        <label className="flex items-center gap-2 text-sm text-zinc-300">
+        <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
           <input
             type="checkbox"
             className="accent-white"
@@ -2146,7 +2146,7 @@ export function RulesTab({
           <div className="border-t border-[var(--border-default)] p-4 space-y-3">
             <p className="text-[11px] text-[var(--text-secondary)]">{t("rulesTab.whatMakesQualified")}</p>
             {(agent.qualification?.criteria ?? []).map((c) => (
-              <label key={c.id} className="flex items-center gap-2 text-sm text-zinc-300">
+              <label key={c.id} className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
                 <input
                   type="checkbox"
                   className="accent-white"
@@ -2208,7 +2208,7 @@ export function RulesTab({
                         objections: agent.objections.filter((x) => x.id !== o.id),
                       })
                     }
-                    className="text-[11px] text-[var(--text-secondary)] hover:text-zinc-200"
+                    className="text-[11px] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                   >
                     {t("actions.remove")}
                   </button>
@@ -2223,7 +2223,7 @@ export function RulesTab({
                       ),
                     })
                   }
-                  className="w-full px-3 py-2 rounded-lg bg-black border border-[var(--border-default)] text-xs text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
+                  className="w-full px-3 py-2 rounded-lg bg-black border border-[var(--border-default)] text-xs text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none"
                   placeholder={t("placeholders.objectionTrigger")}
                 />
                 <span className="text-[11px] text-[var(--text-secondary)]">{t("labels.response")}</span>
@@ -2237,7 +2237,7 @@ export function RulesTab({
                       ),
                     })
                   }
-                  className="w-full px-3 py-2 rounded-lg bg-black border border-[var(--border-default)] text-xs text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
+                  className="w-full px-3 py-2 rounded-lg bg-black border border-[var(--border-default)] text-xs text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none"
                   placeholder={t("placeholders.objectionResponse")}
                 />
               </div>
@@ -2249,7 +2249,7 @@ export function RulesTab({
                   const id = `obj-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
                   onChange({ objections: [...(agent.objections ?? []), { id, trigger: "", response: "" }] });
                 }}
-                className="text-[11px] text-zinc-300 underline underline-offset-2 hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded"
+                className="text-[11px] text-[var(--text-secondary)] underline underline-offset-2 hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded"
               >
                 {t("actions.addObjection")}
               </button>
@@ -2264,7 +2264,7 @@ export function RulesTab({
                     }));
                     onChange({ objections: next });
                   }}
-                  className="text-[11px] text-zinc-300 underline underline-offset-2 hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded"
+                  className="text-[11px] text-[var(--text-secondary)] underline underline-offset-2 hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded"
                 >
                   {t("actions.addFromSuggestions")}
                 </button>
@@ -2443,7 +2443,7 @@ function VoiceStepContent({
         <button type="button" onClick={onBack} aria-label="Back to Identity" className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
           Back
         </button>
-        <button type="button" onClick={onNext} aria-label="Continue to Knowledge" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
+        <button type="button" onClick={onNext} aria-label="Continue to Knowledge" className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
           Continue
         </button>
       </div>

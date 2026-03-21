@@ -190,7 +190,7 @@ export default function PhoneMarketplacePage() {
           type="button"
           onClick={search}
           disabled={loading}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-black font-medium text-sm hover:bg-zinc-100 transition-colors disabled:opacity-60"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-medium text-sm hover:opacity-90 transition-colors disabled:opacity-60"
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
           {tPhone("marketplaceSearch")}
@@ -256,7 +256,7 @@ export default function PhoneMarketplacePage() {
                 type="button"
                 onClick={() => handleProvision(n)}
                 disabled={provisioning !== null}
-                className="px-4 py-2 rounded-xl bg-white text-black font-medium text-sm hover:bg-zinc-100 transition-colors disabled:opacity-60 flex items-center gap-2"
+                className="px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-medium text-sm hover:opacity-90 transition-colors disabled:opacity-60 flex items-center gap-2"
               >
                 {provisioning === n.phone_number ? (
                   <>

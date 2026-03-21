@@ -161,7 +161,7 @@ export function BehaviorStepContent({
               }}
               className={`px-2.5 py-1 rounded-full border text-[11px] ${
                 preset === "custom"
-                  ? "border-white bg-white text-black"
+                  ? "border-white bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
                   : "border-white/20 text-[var(--text-secondary)] hover:border-white/40"
               }`}
             >
@@ -303,7 +303,7 @@ export function BehaviorStepContent({
       </section>
       <div className="flex justify-between pt-4">
         <button type="button" onClick={onBack} aria-label={t("nav.backToKnowledge")} className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">{tCommon("back")}</button>
-        <button type="button" onClick={onNext} aria-label={t("nav.continueToTest")} className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">{tCommon("continue")}</button>
+        <button type="button" onClick={onNext} aria-label={t("nav.continueToTest")} className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">{tCommon("continue")}</button>
       </div>
     </div>
   );
