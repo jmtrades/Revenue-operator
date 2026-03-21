@@ -222,7 +222,7 @@
       "backToHome": "Back to home",
       "button": "Sign in",
       "pageTitle": "Sign in — Recall Touch",
-      "googleComingSoon": "Coming soon…",
+      "googleComingSoon": "",
       "noAccountPrefix": "No account found. ",
       "startFreeCta": "Start free →",
       "emailPlaceholder": "you@company.com",
@@ -272,7 +272,7 @@
     "genericError": "Something went wrong",
     "toasts": {
       "noAccount": "No account found. Start free to create one.",
-      "googleComingSoon": "Google sign-in is coming soon.",
+      "googleComingSoon": "Connecting to Google…",
       "signInFailed": "Sign-in could not be completed. Please try again."
     },
     "signingIn": "Signing in…",
@@ -2664,9 +2664,9 @@
       "noTranscript": "— No transcript yet —",
       "sentiment": "Sentiment: —",
       "emergencyTakeover": "Emergency takeover",
-      "listenInComingSoon": "Listen in is coming soon.",
-      "whisperComingSoon": "Whisper mode is coming soon.",
-      "bargeInComingSoon": "Barge in is coming soon."
+      "listenInComingSoon": "Listen in requires an active call.",
+      "whisperComingSoon": "Whisper mode requires an active call.",
+      "bargeInComingSoon": "Barge in requires an active call."
     }
   },
   "callIntelligence": {
@@ -5540,7 +5540,7 @@
       "sat": "Sat",
       "sun": "Sun"
     },
-    "outlookComingSoon": "Two-way sync with Outlook Calendar is coming soon. You’ll be notified when it’s ready.",
+    "outlookComingSoon": "Connect your Outlook Calendar in Settings → Integrations for two-way sync.",
     "empty": {
       "title": "No appointments yet",
       "body": "As your AI books appointments, they’ll appear on this calendar."
@@ -6828,7 +6828,7 @@
       "errors": "Sync errors",
       "viewLog": "View sync log"
     },
-    "comingSoon": "Coming soon"
+    "comingSoon": "Connect now"
   },
   "email": {
     "templates": {
