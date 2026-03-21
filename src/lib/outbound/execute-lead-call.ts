@@ -105,8 +105,15 @@ export async function executeLeadOutboundCall(
       return { ok: false, error: "Lead has opted out of contact" };
     }
   } catch (optErr) {
-    // If opt-out table doesn't exist yet, continue (fail open for missing table only)
-    console.warn("[outbound-compliance] Opt-out check failed (table may not exist):", optErr instanceof Error ? optErr.message : optErr);
+    const errMsg = optErr instanceof Error ? optErr.message : String(optErr);
+    // Only fail open if the table doesn't exist yet (e.g. new workspace)
+    if (errMsg.includes("does not exist") || errMsg.includes("relation") || errMsg.includes("42P01")) {
+      console.warn("[outbound-compliance] Opt-out table not found — skipping check:", errMsg);
+    } else {
+      // Real error (DB down, network issue, etc.) — fail closed for compliance safety
+      console.error("[outbound-compliance] Opt-out check failed — blocking call for safety:", errMsg);
+      return { ok: false, error: "Unable to verify opt-out status — call blocked for compliance" };
+    }
   }
 
   // COMPLIANCE: Business hours enforcement — don't call outside configured hours
@@ -124,11 +131,15 @@ export async function executeLeadOutboundCall(
       const today = dayNames[localNow.getDay()];
       const todayHours = ctx.business_hours[today];
       if (todayHours) {
-        const [startH, startM] = todayHours.start.split(":").map(Number);
-        const [endH, endM] = todayHours.end.split(":").map(Number);
+        const startParts = typeof todayHours.start === "string" ? todayHours.start.split(":").map(Number) : [];
+        const endParts = typeof todayHours.end === "string" ? todayHours.end.split(":").map(Number) : [];
+        const startH = isNaN(startParts[0]) ? 0 : startParts[0];
+        const startM = isNaN(startParts[1]) ? 0 : startParts[1];
+        const endH = isNaN(endParts[0]) ? 23 : endParts[0];
+        const endM = isNaN(endParts[1]) ? 59 : endParts[1];
         const currentMinutes = localNow.getHours() * 60 + localNow.getMinutes();
-        const startMinutes = startH * 60 + (startM || 0);
-        const endMinutes = endH * 60 + (endM || 0);
+        const startMinutes = startH * 60 + startM;
+        const endMinutes = endH * 60 + endM;
         if (currentMinutes < startMinutes || currentMinutes > endMinutes) {
           console.warn(`[outbound-hours] Lead ${leadId} — outside business hours (${todayHours.start}-${todayHours.end} ${tz})`);
           return { ok: false, error: "Outside business hours — call will be scheduled for next available window" };

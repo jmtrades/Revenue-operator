@@ -36,16 +36,31 @@ export interface PronunciationDictionary {
  * Preprocess TTS text by replacing words with their pronunciation-corrected equivalents.
  * Runs before every TTS call.
  */
+/**
+ * Escape text for safe inclusion in SSML attributes/content.
+ */
+function escapeSSML(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
 export function applyPronunciationRules(
   text: string,
   dictionary: PronunciationEntry[],
 ): string {
   if (!dictionary || dictionary.length === 0) return text;
+  if (!text || typeof text !== "string") return text ?? "";
 
   let processed = text;
 
   // Sort by word length (longest first) to prevent partial replacements
-  const sorted = [...dictionary].sort((a, b) => b.word.length - a.word.length);
+  const sorted = [...dictionary]
+    .filter((e) => e.word && typeof e.word === "string" && e.word.trim())
+    .sort((a, b) => b.word.length - a.word.length);
 
   for (const entry of sorted) {
     const flags = entry.caseInsensitive ? "gi" : "g";
@@ -55,13 +70,16 @@ export function applyPronunciationRules(
 
     if (entry.ipa) {
       // Use SSML phoneme tag if IPA is available (requires SSML-capable TTS)
+      // Escape user-supplied IPA and word to prevent SSML injection
+      const safeIpa = escapeSSML(entry.ipa);
+      const safeWord = escapeSSML(entry.word);
       processed = processed.replace(
         pattern,
-        `<phoneme alphabet="ipa" ph="${entry.ipa}">${entry.word}</phoneme>`,
+        `<phoneme alphabet="ipa" ph="${safeIpa}">${safeWord}</phoneme>`,
       );
     } else {
       // Simple respelling replacement
-      processed = processed.replace(pattern, entry.respelling);
+      processed = processed.replace(pattern, entry.respelling ?? entry.word);
     }
   }
 

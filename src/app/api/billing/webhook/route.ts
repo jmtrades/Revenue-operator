@@ -166,7 +166,12 @@ async function handleStripeWebhookEvent(
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
-      const workspaceId = session.client_reference_id ?? session.metadata?.workspace_id;
+      const rawWorkspaceId = session.client_reference_id ?? session.metadata?.workspace_id;
+      // Validate workspace_id is a plausible UUID before using in DB queries
+      const workspaceId = rawWorkspaceId && /^[0-9a-f-]{36}$/i.test(rawWorkspaceId) ? rawWorkspaceId : undefined;
+      if (rawWorkspaceId && !workspaceId) {
+        log("error", "billing_webhook.invalid_workspace_id", { raw: rawWorkspaceId, event_id: eventId });
+      }
 
       // ── Handle one-time minute pack purchases ──
       if (session.metadata?.type === "minute_pack" && workspaceId) {
@@ -246,8 +251,8 @@ async function handleStripeWebhookEvent(
       if (workspaceId && isSettlement && session.subscription && session.customer) {
         await activateSettlementFromStripe(
           workspaceId,
-          typeof session.customer === "string" ? session.customer : session.customer.id,
-          typeof session.subscription === "string" ? session.subscription : session.subscription.id
+          typeof session.customer === "string" ? session.customer : session.customer?.id,
+          typeof session.subscription === "string" ? session.subscription : session.subscription?.id
         );
       } else if (workspaceId && !isSettlement) {
         const subId = typeof session.subscription === "string" ? session.subscription : session.subscription?.id;
@@ -265,7 +270,13 @@ async function handleStripeWebhookEvent(
           break;
         }
         const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-        const sub = await stripe.subscriptions.retrieve(subId);
+        let sub: Stripe.Subscription;
+        try {
+          sub = await stripe.subscriptions.retrieve(subId);
+        } catch (stripeErr) {
+          log("error", "billing_webhook.stripe_retrieve_failed", { sub_id: subId, error: stripeErr instanceof Error ? stripeErr.message : String(stripeErr) });
+          break;
+        }
         const isTrialing = sub.status === "trialing";
         const trialEnd = (sub as Stripe.Subscription & { trial_end?: number }).trial_end;
         const periodEnd = (sub as Stripe.Subscription & { current_period_end?: number }).current_period_end;
@@ -309,7 +320,8 @@ async function handleStripeWebhookEvent(
     }
     case "customer.subscription.updated": {
       const sub = event.data.object as Stripe.Subscription & { current_period_end?: number; trial_end?: number; status?: string };
-      const workspaceId = sub.metadata?.workspace_id;
+      const rawSubWsId = sub.metadata?.workspace_id;
+      const workspaceId = rawSubWsId && /^[0-9a-f-]{36}$/i.test(rawSubWsId) ? rawSubWsId : undefined;
       if (workspaceId) {
         const isTrialing = sub.status === "trialing";
         const trialEnd = sub.trial_end;

@@ -1482,8 +1482,14 @@
     "am": "AM",
     "pm": "PM",
     "description": "会話が予約と収益に変わる様子を確認できます。",
-    "tabs": { "overview": "概要", "inbound": "受電", "outbound": "発信" },
-    "inboundTab": { "hint": "選択期間の受電・成果・転換。" },
+    "tabs": {
+      "overview": "概要",
+      "inbound": "受電",
+      "outbound": "発信"
+    },
+    "inboundTab": {
+      "hint": "選択期間の受電・成果・転換。"
+    },
     "outboundTab": {
       "hint": "選択期間のSMSフォローとキャンペーン。",
       "smsSent": "送信SMS",
@@ -2876,79 +2882,6 @@
   "campaigns": {
     "title": "キャンペーン",
     "pageTitle": "キャンペーン — Recall Touch",
-    "create": "キャンペーンを作成",
-    "loading": "キャンペーンを読み込み中…",
-    "statTotal": "キャンペーン合計",
-    "statActive": "アクティブなキャンペーン",
-    "statContacted": "接触済み",
-    "statConverted": "コンバート",
-    "estRoi": "推定ROI",
-    "roiSummary": "コスト約{cost} · 収益約{revenue}",
-    "roiCampaign": "推定コスト約{cost} · 推定収益約{revenue}",
-    "createdDate": "作成日 {date}",
-    "metricContacts": "コンタクト",
-    "metricContacted": "接触済み",
-    "metricReached": "リーチ",
-    "metricConverted": "コンバート",
-    "edit": "編集",
-    "pause": "一時停止",
-    "launchCampaign": "キャンペーンを開始",
-    "pauseConfirmTitle": "このキャンペーンを一時停止しますか？",
-    "pauseConfirmMessage": "「{name}」を一時停止しますか？このページから後で再開できます。",
-    "remaining": "残り",
-    "failed": "失敗",
-    "form": {
-      "typeLabel": "種類",
-      "sourceLabel": "ソース",
-      "leaveEmptyForAllStatuses": "空欄で全ステータス",
-      "titleCreate": "キャンペーンを作成",
-      "titleEdit": "キャンペーンを編集",
-      "subtitle": "フォローアップ、リマインダー、回復、再活性化など、実際の結果に結びつけましょう。",
-      "cancelEdit": "キャンセル",
-      "campaignTypeLabel": "キャンペーン種別",
-      "campaignNameLabel": "キャンペーン名",
-      "audienceLabel": "オーディエンス名",
-      "audiencePlaceholder": "例：フォローアップ待ちのリード",
-      "leadStatusOptionalLabel": "リードのステータス（任意）",
-      "quickTypes": {
-        "followup": {
-          "label": "リードフォローアップ",
-          "desc": "関心を示したリードに電話"
-        },
-        "reactivation": {
-          "label": "再活性化",
-          "desc": "冷えたリードを再エンゲージ"
-        },
-        "reminder": {
-          "label": "予約リマインダー",
-          "desc": "近日の予約を確認"
-        },
-        "qualification": {
-          "label": "スクリーニング",
-          "desc": "新規リードを電話で判定"
-        }
-      }
-    },
-    "type": {
-      "leadFollowup": "リードの評価・フォローアップ",
-      "appointmentReminder": "予約取得・リマインダー",
-      "reactivation": "再アクティベーション",
-      "coldOutreach": "お知らせ・新規開拓コール",
-      "reviewRequest": "口コミ依頼",
-      "custom": "カスタム"
-    },
-    "source": {
-      "any": "すべてのソース",
-      "inboundCall": "着信通話",
-      "outbound": "発信キャンペーン",
-      "website": "Webサイト",
-      "referral": "紹介"
-    },
-    "empty": {
-      "title": "まだキャンペーンがありません",
-      "body": "キャンペーンを使って不在着信を取り戻し、休眠リードを再活性化し、カレンダーを埋めましょう。",
-      "description": "最初のキャンペーンを作成してリードのフォローアップ、予約リマインダーの送信、または連絡先の再活性化を行いましょう。"
-    },
     "create": {
       "back": "Back to campaigns",
       "title": "Create campaign",
@@ -3024,6 +2957,78 @@
         "launched": "Campaign launched.",
         "createdButLaunchFailed": "Campaign created, but launch failed."
       }
+    },
+    "loading": "キャンペーンを読み込み中…",
+    "statTotal": "キャンペーン合計",
+    "statActive": "アクティブなキャンペーン",
+    "statContacted": "接触済み",
+    "statConverted": "コンバート",
+    "estRoi": "推定ROI",
+    "roiSummary": "コスト約{cost} · 収益約{revenue}",
+    "roiCampaign": "推定コスト約{cost} · 推定収益約{revenue}",
+    "createdDate": "作成日 {date}",
+    "metricContacts": "コンタクト",
+    "metricContacted": "接触済み",
+    "metricReached": "リーチ",
+    "metricConverted": "コンバート",
+    "edit": "編集",
+    "pause": "一時停止",
+    "launchCampaign": "キャンペーンを開始",
+    "pauseConfirmTitle": "このキャンペーンを一時停止しますか？",
+    "pauseConfirmMessage": "「{name}」を一時停止しますか？このページから後で再開できます。",
+    "remaining": "残り",
+    "failed": "失敗",
+    "form": {
+      "typeLabel": "種類",
+      "sourceLabel": "ソース",
+      "leaveEmptyForAllStatuses": "空欄で全ステータス",
+      "titleCreate": "キャンペーンを作成",
+      "titleEdit": "キャンペーンを編集",
+      "subtitle": "フォローアップ、リマインダー、回復、再活性化など、実際の結果に結びつけましょう。",
+      "cancelEdit": "キャンセル",
+      "campaignTypeLabel": "キャンペーン種別",
+      "campaignNameLabel": "キャンペーン名",
+      "audienceLabel": "オーディエンス名",
+      "audiencePlaceholder": "例：フォローアップ待ちのリード",
+      "leadStatusOptionalLabel": "リードのステータス（任意）",
+      "quickTypes": {
+        "followup": {
+          "label": "リードフォローアップ",
+          "desc": "関心を示したリードに電話"
+        },
+        "reactivation": {
+          "label": "再活性化",
+          "desc": "冷えたリードを再エンゲージ"
+        },
+        "reminder": {
+          "label": "予約リマインダー",
+          "desc": "近日の予約を確認"
+        },
+        "qualification": {
+          "label": "スクリーニング",
+          "desc": "新規リードを電話で判定"
+        }
+      }
+    },
+    "type": {
+      "leadFollowup": "リードの評価・フォローアップ",
+      "appointmentReminder": "予約取得・リマインダー",
+      "reactivation": "再アクティベーション",
+      "coldOutreach": "お知らせ・新規開拓コール",
+      "reviewRequest": "口コミ依頼",
+      "custom": "カスタム"
+    },
+    "source": {
+      "any": "すべてのソース",
+      "inboundCall": "着信通話",
+      "outbound": "発信キャンペーン",
+      "website": "Webサイト",
+      "referral": "紹介"
+    },
+    "empty": {
+      "title": "まだキャンペーンがありません",
+      "body": "キャンペーンを使って不在着信を取り戻し、休眠リードを再活性化し、カレンダーを埋めましょう。",
+      "description": "最初のキャンペーンを作成してリードのフォローアップ、予約リマインダーの送信、または連絡先の再活性化を行いましょう。"
     },
     "heading": "キャンペーン",
     "description": "自動化された発信通話とメッセージでリードにリーチします。",
@@ -3118,7 +3123,11 @@
     "agentPageTitle": "エージェント設定 — Recall Touch",
     "title": "設定",
     "pageSubtitle": "設定と構成",
-    "profile": "プロフィール",
+    "profile": {
+      "title": "プロフィール",
+      "saved": "プロフィールを保存しました。",
+      "saveFailed": "プロフィールを保存できませんでした。もう一度お試しください。"
+    },
     "emailLabel": "メール",
     "revisitOnboarding": "オンボーディングをやり直しますか？",
     "revisitOnboardingDesc": "5ステップのセットアップを再度実行して、AIエージェントと電話を調整します。",
@@ -3198,10 +3207,46 @@
       "team": "チーム",
       "compliance": "コンプライアンス"
     },
-    "business": "ビジネス",
-    "phone": "電話と番号",
+    "business": {
+      "title": "ビジネス",
+      "saveFailed": "ビジネス設定を保存できませんでした。もう一度お試しください。",
+      "nameNoMatch": "ワークスペース名が一致しません。確認のため正確に入力してください。",
+      "deleted": "ワークスペースを削除しました。リダイレクト中です…",
+      "deleteWorkspaceError": "ワークスペースを削除できませんでした。"
+    },
+    "phone": {
+      "title": "電話と番号",
+      "searchFailed": "検索に失敗しました。フィルターを調整して再度お試しください。",
+      "provisionFailed": "番号をプロビジョニングできませんでした。もう一度お試しください。",
+      "provisioned": "番号をワークスペースに追加しました。"
+    },
     "notifications": {
-      "title": "通知"
+      "title": "通知",
+      "heading": "通知",
+      "description": "通知の方法とタイミングを選択します。",
+      "loadingPrefs": "通知設定を読み込み中…",
+      "saving": "保存中…",
+      "savePreferences": "設定を保存",
+      "backToSettings": "← 設定",
+      "events": {
+        "call_received": "着信",
+        "call_receivedDesc": "AIが電話に応答するたびに",
+        "lead_captured": "リードを獲得",
+        "lead_capturedDesc": "発信者が新規リードとして識別されたとき",
+        "appointment_booked": "予約完了",
+        "appointment_bookedDesc": "AIが予約を入れたとき",
+        "urgent_call": "緊急通話",
+        "urgent_callDesc": "緊急または高優先度の通話",
+        "voicemail": "ボイスメールが残されたとき",
+        "voicemailDesc": "発信者がボイスメールを残したとき"
+      },
+      "channels": {
+        "push": "プッシュ",
+        "sms": "SMS",
+        "email": "メール"
+      },
+      "loadFailed": "通知設定を読み込めませんでした。デフォルト値を使用します。",
+      "saved": "通知設定を保存しました。"
     },
     "billing": {
       "title": "プランと請求"
@@ -3250,8 +3295,12 @@
       "retentionHelp": "これより古い録音と文字起こしは自動削除されます。",
       "saveChanges": "変更を保存",
       "exportData": "すべてのデータをエクスポート",
-      "exportRequested": "エクスポートをリクエストしました。準備できたらメールでお知らせします。",
-      "backToSettings": "← 設定"
+      "exportRequested": "データのエクスポートをリクエストしました — 24時間以内にメールが届きます。",
+      "backToSettings": "← 設定",
+      "loadFailed": "録音同意設定を読み込めませんでした。",
+      "saveFailed": "コンプライアンス設定を保存できませんでした。もう一度お試しください。",
+      "recordingSaved": "録音同意設定を保存しました。",
+      "saved": "コンプライアンス設定を保存しました。"
     },
     "errorReports": "エラーレポート",
     "errorsPage": {
@@ -3284,9 +3333,9 @@
       "viewLeadsHint": "リードを表示してスコアを確認。通話ごとに自動更新されます。",
       "viewLeadsLink": "リードを表示",
       "viewLeadsHintSuffix": " でスコアを確認。通話ごとに自動更新されます。",
-      "loadFailed": "設定の読み込みに失敗しました。",
-      "saved": "重みを保存しました。",
-      "usingDefaults": "デフォルトの重みを使用しています。",
+      "loadFailed": "リードスコアリング設定を読み込めませんでした。",
+      "saved": "リードスコアリングの重みを保存しました。スコアは次回の通話または再計算時に更新されます。",
+      "usingDefaults": "デフォルトの重みを使用しています。保持するには保存してください。",
       "weights": {
         "baseScore": "ベーススコア（0–100）",
         "baseScoreHelp": "イベント前の初期スコア",
@@ -3302,10 +3351,6 @@
     },
     "activityLog": "アクティビティログ",
     "deleteAccountTitle": "アカウントを削除",
-    "business.saveFailed": "ビジネス設定を保存できませんでした。もう一度お試しください。",
-    "business.nameNoMatch": "ワークスペース名が一致しません。確認のため正確に入力してください。",
-    "business.deleted": "ワークスペースを削除しました。リダイレクト中です…",
-    "business.deleteWorkspaceError": "ワークスペースを削除できませんでした。",
     "businessPage": {
       "heading": "ビジネス",
       "description": "ビジネス情報はAIが正確に電話に対応するのに役立ちます。",
@@ -3328,51 +3373,6 @@
       "confirmPlaceholder": "ワークスペース名を入力",
       "backToSettings": "← 設定"
     },
-    "agent.loading": "エージェント設定を読み込み中…",
-    "agent.testTitle": "エージェントをテスト",
-    "agent.loadFailed": "エージェント設定を読み込めませんでした。もう一度お試しください。",
-    "agent.saveFailed": "エージェント設定を保存できませんでした。もう一度お試しください。",
-    "agent.voiceSyncFailed": "保存されましたが、音声エージェントを更新できませんでした。再度お試しください。",
-    "agent.updated": "エージェントを更新しました。次回以降の通話で新しい設定が使われます。",
-    "agent.heading": "エージェント",
-    "agent.description": "音声エージェントを管理：挨拶、声、言語、ナレッジ。",
-    "agent.businessNameLabel": "ビジネス名",
-    "agent.businessNamePlaceholder": "あなたのビジネス",
-    "agent.agentNameLabel": "エージェント名",
-    "agent.agentNamePlaceholder": "受付",
-    "agent.openingGreetingLabel": "オープニング挨拶",
-    "agent.openingGreetingHelp": "AIが電話にこう答えます。その後、ナレッジに基づいて自然な会話をします。",
-    "agent.greetingPlaceholderDefault": "{business}にお電話いただきありがとうございます。本日はどのようなご用件でしょうか？",
-    "agent.previewVoice": "音声プレビュー →",
-    "agent.voiceLabel": "声",
-    "agent.languageLabel": "言語",
-    "agent.knowledgeLabel": "ナレッジ（エージェントが使えるQ&A）",
-    "agent.knowledgeAdd": "+ 追加",
-    "agent.questionPlaceholder": "質問",
-    "agent.answerPlaceholder": "回答",
-    "agent.playingVoicePreview": "音声プレビュー再生中…",
-    "agent.saveAndUpdateAgent": "保存してエージェントを更新",
-    "agent.saving": "保存中…",
-    "agent.backToSettings": "← 設定",
-    "agent.testDescription": "現在のアシスタントでライブ通話を行い、さらに変更を保存する前に文字起こしを確認します。",
-    "agent.startLiveTest": "ライブテストを開始",
-    "agent.endLiveTest": "ライブテストを終了",
-    "agent.removeAria": "削除",
-    "agent.knowledgeDeleteConfirmTitle": "ナレッジエントリを削除しますか？",
-    "agent.knowledgeDeleteConfirmMessage": "このエントリはエージェントのナレッジベースから完全に削除されます。",
-    "agent.defaultAgentName": "受付",
-    "agent.defaultGreeting": "{business} にお電話ありがとうございます。どのようなご用件でしょうか？",
-    "agent.voicePreviewText": "お電話ありがとうございます。本日はどのようなご用件でしょうか？",
-    "agent.defaultBusiness": "あなたのビジネス",
-    "agent.defaultWorkspaceName": "マイワークスペース",
-    "compliance.loadFailed": "録音同意設定を読み込めませんでした。",
-    "compliance.saveFailed": "コンプライアンス設定を保存できませんでした。もう一度お試しください。",
-    "compliance.recordingSaved": "録音同意設定を保存しました。",
-    "compliance.saved": "コンプライアンス設定を保存しました。",
-    "compliance.exportRequested": "データのエクスポートをリクエストしました — 24時間以内にメールが届きます。",
-    "leadScoring.loadFailed": "リードスコアリング設定を読み込めませんでした。",
-    "leadScoring.saved": "リードスコアリングの重みを保存しました。スコアは次回の通話または再計算時に更新されます。",
-    "leadScoring.usingDefaults": "デフォルトの重みを使用しています。保持するには保存してください。",
     "integrations": {
       "defaultsLoaded": "デフォルト値を読み込みました。",
       "testSuccess": "テストが完了しました。下の出力を確認してください。",
@@ -3411,72 +3411,70 @@
       },
       "crmFallback": "CRM"
     },
-    "syncLog.breadcrumb": "同期ログ",
-    "syncLog.heading": "同期ログ",
-    "syncLog.description": "CRM同期イベントの監査証跡：送信（Recall Touch → CRM）と受信（CRM → Recall Touch）。",
-    "syncLog.allProviders": "すべてのプロバイダー",
-    "syncLog.allDirections": "すべての方向",
-    "syncLog.outbound": "送信",
-    "syncLog.inbound": "受信",
-    "syncLog.refresh": "更新",
-    "syncLog.loading": "読み込み中…",
-    "syncLog.empty": "同期イベントはまだありません。CRMを接続して送受信するとここに表示されます。",
-    "syncLog.loadMore": "さらに読み込む（残り{count}件）",
-    "notifications.heading": "通知",
-    "notifications.description": "通知の方法とタイミングを選択します。",
-    "notifications.loadingPrefs": "通知設定を読み込み中…",
-    "notifications.saving": "保存中…",
-    "notifications.savePreferences": "設定を保存",
-    "notifications.backToSettings": "← 設定",
-    "notifications.events.call_received": "着信",
-    "notifications.events.call_receivedDesc": "AIが電話に応答するたび",
-    "notifications.events.lead_captured": "リード獲得",
-    "notifications.events.lead_capturedDesc": "発信者が新規リードとして識別されたとき",
-    "notifications.events.appointment_booked": "予約確定",
-    "notifications.events.appointment_bookedDesc": "AIが予約を入れたとき",
-    "notifications.events.urgent_call": "緊急通話",
-    "notifications.events.urgent_callDesc": "緊急または高優先度の通話",
-    "notifications.events.voicemail": "ボイスメール",
-    "notifications.events.voicemailDesc": "発信者がボイスメールを残したとき",
-    "notifications.channels.push": "プッシュ",
-    "notifications.channels.sms": "SMS",
-    "notifications.channels.email": "メール",
-    "activity.heading": "アクティビティログ",
-    "activity.description": "最近の設定とワークスペースの変更。",
-    "activity.loading": "読み込み中…",
-    "activity.empty": "まだアクティビティがありません。プロフィールや設定の変更がここに表示されます。",
-    "activity.backToSettings": "← 設定",
-    "activity.actions.settings_update": "設定を更新しました",
-    "activity.actions.settings_business_update": "ビジネス設定を更新しました",
-    "phone.searchFailed": "検索に失敗しました。フィルターを調整して再度お試しください。",
-    "phone.provisionFailed": "番号をプロビジョニングできませんでした。もう一度お試しください。",
-    "phone.provisioned": "番号をワークスペースに追加しました。",
-    "profile.saved": "プロフィールを保存しました。",
-    "profile.saveFailed": "プロフィールを保存できませんでした。もう一度お試しください。",
-    "notifications.loadFailed": "通知設定を読み込めませんでした。デフォルト値を使用します。",
-    "notifications.saved": "通知設定を保存しました。",
     "deleteDataInfo": "データを完全に削除するには、サポートまでお問い合わせください。",
     "deleteAccountInfo": "アカウントを完全に削除するには、サポートまでお問い合わせください。",
-    "notifications.events": {
-      "call_received": "着信",
-      "call_receivedDesc": "AIが電話に応答するたびに",
-      "lead_captured": "リードを獲得",
-      "lead_capturedDesc": "発信者が新規リードとして識別されたとき",
-      "appointment_booked": "予約完了",
-      "appointment_bookedDesc": "AIが予約を入れたとき",
-      "urgent_call": "緊急通話",
-      "urgent_callDesc": "緊急または高優先度の通話",
-      "voicemail": "ボイスメールが残されたとき",
-      "voicemailDesc": "発信者がボイスメールを残したとき"
+    "agent": {
+      "loading": "エージェント設定を読み込み中…",
+      "testTitle": "エージェントをテスト",
+      "loadFailed": "エージェント設定を読み込めませんでした。もう一度お試しください。",
+      "saveFailed": "エージェント設定を保存できませんでした。もう一度お試しください。",
+      "voiceSyncFailed": "保存されましたが、音声エージェントを更新できませんでした。再度お試しください。",
+      "updated": "エージェントを更新しました。次回以降の通話で新しい設定が使われます。",
+      "heading": "エージェント",
+      "description": "音声エージェントを管理：挨拶、声、言語、ナレッジ。",
+      "businessNameLabel": "ビジネス名",
+      "businessNamePlaceholder": "あなたのビジネス",
+      "agentNameLabel": "エージェント名",
+      "agentNamePlaceholder": "受付",
+      "openingGreetingLabel": "オープニング挨拶",
+      "openingGreetingHelp": "AIが電話にこう答えます。その後、ナレッジに基づいて自然な会話をします。",
+      "greetingPlaceholderDefault": "{business}にお電話いただきありがとうございます。本日はどのようなご用件でしょうか？",
+      "previewVoice": "音声プレビュー →",
+      "voiceLabel": "声",
+      "languageLabel": "言語",
+      "knowledgeLabel": "ナレッジ（エージェントが使えるQ&A）",
+      "knowledgeAdd": "+ 追加",
+      "questionPlaceholder": "質問",
+      "answerPlaceholder": "回答",
+      "playingVoicePreview": "音声プレビュー再生中…",
+      "saveAndUpdateAgent": "保存してエージェントを更新",
+      "saving": "保存中…",
+      "backToSettings": "← 設定",
+      "testDescription": "現在のアシスタントでライブ通話を行い、さらに変更を保存する前に文字起こしを確認します。",
+      "startLiveTest": "ライブテストを開始",
+      "endLiveTest": "ライブテストを終了",
+      "removeAria": "削除",
+      "knowledgeDeleteConfirmTitle": "ナレッジエントリを削除しますか？",
+      "knowledgeDeleteConfirmMessage": "このエントリはエージェントのナレッジベースから完全に削除されます。",
+      "defaultAgentName": "受付",
+      "defaultGreeting": "{business} にお電話ありがとうございます。どのようなご用件でしょうか？",
+      "voicePreviewText": "お電話ありがとうございます。本日はどのようなご用件でしょうか？",
+      "defaultBusiness": "あなたのビジネス",
+      "defaultWorkspaceName": "マイワークスペース"
     },
-    "notifications.channels": {
-      "push": "プッシュ",
-      "sms": "SMS",
-      "email": "メール"
+    "syncLog": {
+      "breadcrumb": "同期ログ",
+      "heading": "同期ログ",
+      "description": "CRM同期イベントの監査証跡：送信（Recall Touch → CRM）と受信（CRM → Recall Touch）。",
+      "allProviders": "すべてのプロバイダー",
+      "allDirections": "すべての方向",
+      "outbound": "送信",
+      "inbound": "受信",
+      "refresh": "更新",
+      "loading": "読み込み中…",
+      "empty": "同期イベントはまだありません。CRMを接続して送受信するとここに表示されます。",
+      "loadMore": "さらに読み込む（残り{count}件）"
     },
-    "activity.actions": {
-      "settings_update": "設定を更新しました",
-      "settings_business_update": "ビジネス設定を更新しました"
+    "activity": {
+      "heading": "アクティビティログ",
+      "description": "最近の設定とワークスペースの変更。",
+      "loading": "読み込み中…",
+      "empty": "まだアクティビティがありません。プロフィールや設定の変更がここに表示されます。",
+      "backToSettings": "← 設定",
+      "actions": {
+        "settings_update": "設定を更新しました",
+        "settings_business_update": "ビジネス設定を更新しました"
+      }
     }
   },
   "hero": {
@@ -3647,6 +3645,7 @@
     "supportDesc": "アカウント・技術・請求についてサポートが必要ですか？",
     "emailSupport": "メールサポート →",
     "sendMessage": "メッセージを送る",
+    "sendError": "エラーが発生しました。もう一度お試しください。",
     "scheduleCall": "通話を予約 →",
     "startFree": "無料で開始 →",
     "backToHome": "ホームに戻る",
@@ -4563,10 +4562,22 @@
     "jurisdictionLabel": "管轄権",
     "jurisdictionHint": "管轄権はコンプライアンスの境界を決定します。",
     "jurisdictions": [
-      { "value": "United States", "label": "米国" },
-      { "value": "UK", "label": "英国" },
-      { "value": "EU", "label": "欧州連合" },
-      { "value": "Other", "label": "その他" }
+      {
+        "value": "United States",
+        "label": "米国"
+      },
+      {
+        "value": "UK",
+        "label": "英国"
+      },
+      {
+        "value": "EU",
+        "label": "欧州連合"
+      },
+      {
+        "value": "Other",
+        "label": "その他"
+      }
     ],
     "reviewStep": {
       "title": "レビュー構造",
@@ -4575,18 +4586,36 @@
     "reviewLabel": "レビュー構造",
     "reviewHint": "レビュー構造はエスカレーション動作を決定します。",
     "reviewLevels": [
-      { "value": "Preview required", "label": "プレビューが必要" },
-      { "value": "Approval required", "label": "承認が必要" },
-      { "value": "Standard", "label": "標準" }
+      {
+        "value": "Preview required",
+        "label": "プレビューが必要"
+      },
+      {
+        "value": "Approval required",
+        "label": "承認が必要"
+      },
+      {
+        "value": "Standard",
+        "label": "標準"
+      }
     ],
     "sourceStep": {
       "title": "プライマリソースの記録",
       "description": "ソースが記録された後にのみ実行が開始されます。"
     },
     "sourceOptions": [
-      { "id": "csv", "label": "ソースをアップロード" },
-      { "id": "calendar", "label": "カレンダーを接続" },
-      { "id": "phone", "label": "電話を接続" }
+      {
+        "id": "csv",
+        "label": "ソースをアップロード"
+      },
+      {
+        "id": "calendar",
+        "label": "カレンダーを接続"
+      },
+      {
+        "id": "phone",
+        "label": "電話を接続"
+      }
     ],
     "sourceHint1": "ソースなし。実行なし。",
     "sourceHint2": "ソースにはアップロードされたリード リスト、電話回線、カレンダー問い合わせが含まれます。",
@@ -4596,12 +4625,30 @@
       "description": "目的は目標と停止条件を決定します。"
     },
     "purposeOptions": [
-      { "value": "Qualify", "label": "認定" },
-      { "value": "Confirm", "label": "確認" },
-      { "value": "Collect", "label": "収集" },
-      { "value": "Reactivate", "label": "再度有効化" },
-      { "value": "Route", "label": "ルート" },
-      { "value": "Recover", "label": "復旧" }
+      {
+        "value": "Qualify",
+        "label": "認定"
+      },
+      {
+        "value": "Confirm",
+        "label": "確認"
+      },
+      {
+        "value": "Collect",
+        "label": "収集"
+      },
+      {
+        "value": "Reactivate",
+        "label": "再度有効化"
+      },
+      {
+        "value": "Route",
+        "label": "ルート"
+      },
+      {
+        "value": "Recover",
+        "label": "復旧"
+      }
     ],
     "purposeHint": "目的は目標と結果を決定します。",
     "governanceStep": {

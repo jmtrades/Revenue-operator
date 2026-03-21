@@ -24,12 +24,25 @@ type VoiceEventBody = {
 function verifyWebhookSignature(rawBody: string, signature: string | null): boolean {
   const secret = process.env.VOICE_WEBHOOK_SECRET;
   if (!secret) {
-    log("warn", "voice_events.secret_not_configured", { message: "skipping signature verification" });
-    return true;
+    // SECURITY: Reject all requests when secret is not configured.
+    // Never fail-open on authentication.
+    log("error", "voice_events.secret_not_configured", {
+      message: "VOICE_WEBHOOK_SECRET not set — rejecting request",
+    });
+    return false;
   }
   if (!signature) return false;
   const expected = createHmac("sha256", secret).update(rawBody, "utf-8").digest("hex");
-  return expected === signature;
+  // Use timing-safe comparison to prevent timing attacks
+  if (expected.length !== signature.length) return false;
+  const a = Buffer.from(expected, "utf-8");
+  const b = Buffer.from(signature, "utf-8");
+  try {
+    const { timingSafeEqual } = require("crypto");
+    return timingSafeEqual(a, b);
+  } catch {
+    return expected === signature;
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -59,7 +72,7 @@ export async function POST(req: NextRequest) {
 
   const db = getDb();
   try {
-    await db.from("events").insert({
+    const { error: insertErr } = await db.from("events").insert({
       workspace_id: workspaceId,
       event_type: eventType,
       entity_type: entityType,
@@ -67,8 +80,11 @@ export async function POST(req: NextRequest) {
       payload,
       trigger_source: "voice",
     });
-  } catch {
-    // Best-effort logging; don't fail the voice pipeline.
+    if (insertErr) {
+      log("warn", "voice_events.insert_failed", { workspace_id: workspaceId, event: eventType, error: insertErr.message });
+    }
+  } catch (err) {
+    log("warn", "voice_events.insert_error", { workspace_id: workspaceId, event: eventType, error: err instanceof Error ? err.message : String(err) });
   }
 
   return NextResponse.json({ ok: true });

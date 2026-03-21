@@ -100,14 +100,29 @@ export async function POST(req: NextRequest) {
   const db = getDb();
   let callSessionId: string | null = null;
 
+  // Validate workspace_id is a plausible UUID to prevent injection
+  if (!payload.workspace_id || !/^[0-9a-f-]{36}$/i.test(payload.workspace_id)) {
+    log("error", "voice_webhook.invalid_workspace_id", { workspace_id: payload.workspace_id });
+    return new NextResponse(JSON.stringify({ error: "Invalid workspace_id" }), { status: 400, headers: { "Content-Type": "application/json" } });
+  }
+
   try {
-    // 1. Find and update the call_session record
+    // 1. Find the call_session by call_sid and cross-verify workspace ownership
     const { data: callSession } = await db
       .from("call_sessions")
-      .select("id, metadata")
-      .eq("workspace_id", payload.workspace_id)
+      .select("id, workspace_id, metadata")
       .eq("external_meeting_id", payload.call_sid)
       .maybeSingle();
+
+    // Cross-verify: the call_session's workspace must match the payload's workspace_id
+    if (callSession && (callSession as { workspace_id?: string }).workspace_id !== payload.workspace_id) {
+      log("error", "voice_webhook.workspace_mismatch", {
+        call_sid: payload.call_sid,
+        expected: (callSession as { workspace_id?: string }).workspace_id,
+        received: payload.workspace_id,
+      });
+      return new NextResponse(JSON.stringify({ error: "Workspace mismatch" }), { status: 403, headers: { "Content-Type": "application/json" } });
+    }
 
     if (callSession) {
       const callSessionRow = callSession as { id: string; metadata?: Record<string, unknown> | null };
@@ -166,7 +181,10 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // 2. Insert voice_usage record
+    // 2. Insert voice_usage record (only if we found a valid call session)
+    if (!callSessionId) {
+      log("warn", "voice_webhook.skipping_usage_insert", { reason: "no call_session found", call_sid: payload.call_sid });
+    }
     const { error: usageError } = await db.from("voice_usage").insert({
       workspace_id: payload.workspace_id,
       call_session_id: callSessionId,

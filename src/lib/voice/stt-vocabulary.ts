@@ -181,7 +181,7 @@ function extractKeyTerms(text: string): string[] {
   const words = text.split(/\s+/);
   for (let i = 1; i < words.length; i++) {
     const word = words[i].replace(/[^a-zA-Z'-]/g, "");
-    if (word.length > 3 && word[0] === word[0].toUpperCase() && word[0] !== word[0].toLowerCase()) {
+    if (word.length > 3 && /^[A-Z]/.test(word[0])) {
       terms.push(word);
     }
   }

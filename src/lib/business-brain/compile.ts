@@ -65,6 +65,29 @@ export interface BusinessBrainInput {
   };
 }
 
+/**
+ * Sanitize user-supplied strings before injecting into the system prompt.
+ * Prevents prompt injection by stripping dangerous patterns and capping length.
+ */
+function sanitizeForPrompt(value: string | undefined | null, maxLen = 500): string {
+  if (!value || typeof value !== "string") return "";
+  let s = value.trim().slice(0, maxLen);
+  // Strip sequences that could break out of prompt structure
+  s = s
+    .replace(/\x00/g, "")                 // Strip null bytes
+    .replace(/\n{3,}/g, "\n\n")           // Collapse excessive newlines
+    .replace(/={3,}/g, "==")               // Collapse separator chars
+    .replace(/-{5,}/g, "----")             // Collapse dashes
+    .replace(/#{3,}/g, "##")               // Collapse header markers
+    .replace(/<\/?[a-z][^>]*>/gi, "")      // Strip HTML/XML tags
+    .replace(/\$\{[^}]*\}/g, "")          // Strip template literal expressions
+    .replace(/\b(SYSTEM|IGNORE|OVERRIDE|INSTRUCTION|PROMPT)\s*[:\-=]/gi, "$1 ") // Defuse injection keywords (colon, dash, equals)
+    .replace(/\[(SYSTEM|IGNORE|OVERRIDE|INSTRUCTION|PROMPT)\]/gi, "$1")         // Defuse bracketed injection keywords
+    .replace(/```[\s\S]*?```/g, "")        // Strip code blocks
+    .trim();
+  return s;
+}
+
 export function compileSystemPrompt(input: BusinessBrainInput): string {
   const {
     business_name,
@@ -96,23 +119,33 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
 
   const langName = preferred_language ? getLanguageName(preferred_language) : "English";
 
+  // Sanitize all user-supplied fields before prompt injection
+  const safeName = sanitizeForPrompt(agent_name, 50) || "Sarah";
+  const safeBizName = sanitizeForPrompt(business_name, 100) || "the business";
+  const safeOfferSummary = sanitizeForPrompt(offer_summary, 500);
+  const safeServices = sanitizeForPrompt(services, 500);
+  const safeBusinessContext = sanitizeForPrompt(business_context, 500);
+  const safeTargetAudience = sanitizeForPrompt(target_audience, 300);
+  const safeFaqExtra = sanitizeForPrompt(faq_extra, 1000);
+  const safeGreeting = sanitizeForPrompt(greeting, 300);
+
   // Layer 1: Identity & boundaries
   const layer1 = [
-    `You are ${agent_name}, the phone assistant for ${business_name}. You answer calls on their behalf.`,
+    `You are ${safeName}, the phone assistant for ${safeBizName}. You answer calls on their behalf.`,
     "You handle the ENTIRE call naturally. There is no fixed script — listen to what the caller says and respond. Move the conversation toward a clear outcome: answer questions, book appointments, capture leads, take a message, or transfer. Adapt to whatever they need.",
     "You are NOT a chatbot. You are speaking on a phone call. Keep responses SHORT — 1-2 sentences max.",
     'Never say "as an AI" or "I\'m an AI assistant." You are simply the person answering the phone.',
-    `If asked "are you a robot?" say "I'm ${business_name}'s phone assistant. How can I help?"`,
+    `If asked "are you a robot?" say "I'm ${safeBizName}'s phone assistant. How can I help?"`,
     "Never make up information you don't know. If unsure, say \"Let me have someone get back to you on that.\"",
     "Never discuss competitors. Never give medical/legal/financial advice.",
   ].join("\n");
 
   // Layer 2: Business context
   const businessLines: string[] = [
-    `Business: ${business_name}`,
-    ...(industry ? [`Industry: ${industry}`] : []),
-    ...(phone ? [`Phone: ${phone}`] : []),
-    ...(address ? [`Location: ${address}`] : []),
+    `Business: ${safeBizName}`,
+    ...(industry ? [`Industry: ${sanitizeForPrompt(industry, 100)}`] : []),
+    ...(phone ? [`Phone: ${sanitizeForPrompt(phone, 30)}`] : []),
+    ...(address ? [`Location: ${sanitizeForPrompt(address, 200)}`] : []),
   ];
   if (business_hours && Object.keys(business_hours).length > 0) {
     const hoursStr = Object.entries(business_hours)
@@ -124,8 +157,8 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
       .join("; ");
     if (hoursStr) businessLines.push(`Hours: ${hoursStr}`);
   }
-  if (offer_summary) businessLines.push(`What we offer: ${offer_summary}`);
-  if (services) businessLines.push(`Services: ${services}`);
+  if (safeOfferSummary) businessLines.push(`What we offer: ${safeOfferSummary}`);
+  if (safeServices) businessLines.push(`Services: ${safeServices}`);
   if (emergencies_after_hours === "call_me") {
     businessLines.push("After hours emergencies: take details and tell the caller someone will call back soon.");
   } else if (emergencies_after_hours === "message") {
@@ -140,10 +173,12 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
   }
   businessLines.push("");
   businessLines.push("Knowledge Base:");
-  faq.forEach((item) => {
-    if (item.q && item.a) businessLines.push(`Q: ${item.q}\nA: ${item.a}`);
+  faq.slice(0, 50).forEach((item) => { // Cap at 50 FAQ entries
+    if (item.q && item.a) {
+      businessLines.push(`Q: ${sanitizeForPrompt(item.q, 200)}\nA: ${sanitizeForPrompt(item.a, 500)}`);
+    }
   });
-  if (faq_extra) businessLines.push(faq_extra);
+  if (safeFaqExtra) businessLines.push(safeFaqExtra);
   const layer2 = businessLines.join("\n");
 
   // Mission / strategy (optional)
@@ -160,8 +195,8 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
     };
     missionParts.push(`Primary goal: ${goalLabels[primary_goal] ?? primary_goal}`);
   }
-  if (business_context?.trim()) missionParts.push(`Business context: ${business_context.trim()}`);
-  if (target_audience?.trim()) missionParts.push(`Target audience: ${target_audience.trim()}`);
+  if (safeBusinessContext) missionParts.push(`Business context: ${safeBusinessContext}`);
+  if (safeTargetAudience) missionParts.push(`Target audience: ${safeTargetAudience}`);
   if (typeof assertiveness === "number") {
     if (assertiveness >= 70) missionParts.push("Tone: Be direct and confident.");
     else if (assertiveness <= 30) missionParts.push("Tone: Be gentle and patient.");
@@ -171,8 +206,11 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
   if (when_think_about_it?.trim()) missionParts.push(`When they say "let me think": ${whenThinkLabel(when_think_about_it)}`);
   if (when_pricing?.trim()) missionParts.push(`When they ask about pricing: ${whenPricingLabel(when_pricing)}`);
   if (when_competitor?.trim()) missionParts.push(`When they mention a competitor: ${whenCompetitorLabel(when_competitor)}`);
-  const learned = (learned_behaviors ?? []).filter((b) => String(b).trim());
-  if (learned.length > 0) missionParts.push("Learned behaviors (from real calls): " + learned.map((b) => b.trim()).join(". "));
+  const learned = (learned_behaviors ?? [])
+    .filter((b) => String(b).trim())
+    .slice(0, 20) // Cap at 20 behaviors to prevent prompt bloat
+    .map((b) => sanitizeForPrompt(b, 200));
+  if (learned.length > 0) missionParts.push("Learned behaviors (from real calls): " + learned.join(". "));
   const layer2b = missionParts.length > 0 ? "MISSION / STRATEGY:\n" + missionParts.join("\n") : "";
 
   // Layer 2c: Call objective — dynamically resolved per-call using the objective router.
@@ -248,7 +286,7 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
     "- If booking: confirm everything. \"Perfect, I have you down for [service] on [date] at [time]. You'll get a confirmation shortly.\"",
     "- If not booking: capture info for follow-up. \"Can I get the best number to reach you at?\"",
     "- Always end warmly: \"Thanks so much for calling, [name]. We look forward to seeing you.\"",
-    ...(greeting ? [`Opening greeting (use this tone): ${greeting}`] : []),
+    ...(safeGreeting ? [`Opening greeting (use this tone): ${safeGreeting}`] : []),
   ].join("\n");
 
   // Layer 4: Language & multilingual
@@ -263,12 +301,12 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
   let layer5 = "";
   if (lead_context) {
     const parts: string[] = ["CALLER CONTEXT (use naturally, don't recite):"];
-    if (lead_context.name) parts.push(`Name: ${lead_context.name}`);
-    if (lead_context.state) parts.push(`Status: ${lead_context.state}`);
-    if (lead_context.score) parts.push(`Lead score: ${lead_context.score}/100`);
-    if (lead_context.tags?.length) parts.push(`Tags: ${lead_context.tags.join(", ")}`);
-    if (lead_context.last_contacted) parts.push(`Last contacted: ${lead_context.last_contacted}`);
-    if (lead_context.notes) parts.push(`Notes: ${lead_context.notes}`);
+    if (lead_context.name) parts.push(`Name: ${sanitizeForPrompt(lead_context.name, 50)}`);
+    if (lead_context.state) parts.push(`Status: ${sanitizeForPrompt(lead_context.state, 30)}`);
+    if (lead_context.score != null) parts.push(`Lead score: ${Math.min(100, Math.max(0, Number(lead_context.score) || 0))}/100`);
+    if (lead_context.tags?.length) parts.push(`Tags: ${lead_context.tags.slice(0, 10).map((t) => sanitizeForPrompt(t, 30)).join(", ")}`);
+    if (lead_context.last_contacted) parts.push(`Last contacted: ${sanitizeForPrompt(lead_context.last_contacted, 30)}`);
+    if (lead_context.notes) parts.push(`Notes: ${sanitizeForPrompt(lead_context.notes, 300)}`);
     layer5 = parts.join("\n");
   }
 
@@ -277,10 +315,10 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
   if (call_history && call_history.length > 0) {
     const historyLines = ["PREVIOUS CALL HISTORY (reference naturally if relevant — don't read it back verbatim):"];
     for (const call of call_history.slice(-5)) { // last 5 calls max
-      const parts = [`- ${call.date}`];
-      if (call.outcome) parts.push(`outcome: ${call.outcome}`);
-      if (call.summary) parts.push(`summary: ${call.summary}`);
-      if (call.topics?.length) parts.push(`topics: ${call.topics.join(", ")}`);
+      const parts = [`- ${sanitizeForPrompt(call.date, 30)}`];
+      if (call.outcome) parts.push(`outcome: ${sanitizeForPrompt(call.outcome, 100)}`);
+      if (call.summary) parts.push(`summary: ${sanitizeForPrompt(call.summary, 200)}`);
+      if (call.topics?.length) parts.push(`topics: ${call.topics.slice(0, 10).map((t) => sanitizeForPrompt(t, 50)).join(", ")}`);
       historyLines.push(parts.join(" | "));
     }
     historyLines.push("Use this context to personalize the call. Example: \"I see we spoke last week about your appointment — did everything go well?\"");
@@ -435,7 +473,8 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
   blocks.push(layer10);             // Guardrails last (always enforced)
 
   // Replace {business_name} placeholder in objection handling and guardrails
-  return blocks.join("\n\n").replace(/\{business_name\}/g, business_name);
+  // Use the sanitized business name for safety
+  return blocks.join("\n\n").replace(/\{business_name\}/g, safeBizName);
 }
 
 function whenHesitationLabel(id: string): string {

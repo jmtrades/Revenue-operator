@@ -338,7 +338,7 @@ export default function AppSettingsPhonePage() {
 
   return (
     <div className="max-w-3xl mx-auto p-6">
-      <Breadcrumbs items={[{ label: tSettings("integrations.breadcrumbSettings"), href: "/app/settings" }, { label: tSettings("phone") }]} />
+      <Breadcrumbs items={[{ label: tSettings("integrations.breadcrumbSettings"), href: "/app/settings" }, { label: tSettings("phone.title") }]} />
       <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">{tPhone("heading")}</h1>
       <p className="text-sm text-white/60 mb-6">{tPhone("description")}</p>
 

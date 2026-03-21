@@ -38,10 +38,13 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   } catch {
     body = {};
   }
-  const phone = body.phone_number?.trim();
-  if (!phone || phone.replace(/\D/g, "").length < 10) {
+  const rawPhone = body.phone_number?.trim() ?? "";
+  const digits = rawPhone.replace(/\D/g, "");
+  if (!rawPhone || digits.length < 10 || digits.length > 15) {
     return NextResponse.json({ ok: true, message: "Add a phone number to receive a test call, or call from the Activity feed." });
   }
+  // Normalize to E.164: if already has +, trust it; if 10 digits, assume US (+1); otherwise prefix +
+  const phone = rawPhone.startsWith("+") ? rawPhone : digits.length === 10 ? `+1${digits}` : `+${digits}`;
 
   if (!process.env.VOICE_SERVER_URL && !process.env.TWILIO_ACCOUNT_SID) {
     return NextResponse.json({ ok: true, message: "Voice server is not configured yet. Set VOICE_SERVER_URL to enable test calls." });
@@ -112,7 +115,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     .insert({
       workspace_id: workspaceId,
       name: "Test contact",
-      phone: phone.replace(/\D/g, "").length === 10 ? `+1${phone.replace(/\D/g, "")}` : phone,
+      phone,
       state: "NEW",
       external_id: `test-${Date.now()}`,
     })
@@ -137,11 +140,10 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   if (sessErr || !sessionRow) return NextResponse.json({ error: "Failed to create call session" }, { status: 500 });
   const callSessionId = (sessionRow as { id: string }).id;
 
-  const e164 = /^\+?\d{10,15}$/.test(phone) ? phone : phone.replace(/\D/g, "").length === 10 ? `+1${phone.replace(/\D/g, "")}` : phone.replace(/\D/g, "");
   try {
     await voice.createOutboundCall({
       assistantId,
-      phoneNumber: e164 || phone,
+      phoneNumber: phone,
       metadata: { workspace_id: workspaceId, call_session_id: callSessionId, lead_id: leadId },
     });
   } catch (e) {

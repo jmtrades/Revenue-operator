@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
   const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;
 
-  const areaCode = body.area_code?.replace(/D/g, "").slice(0, 3);
+  const areaCode = body.area_code?.replace(/\D/g, "").slice(0, 3) || undefined;
 
   const db = getDb();
   const { data: ws } = await db
@@ -115,8 +115,8 @@ export async function POST(req: NextRequest) {
     provider: telephonyProvider,
     provider_sid: phoneSid,
     status: "active",
-    monthly_cost_cents: 500,
-    setup_fee_cents: 200,
+    monthly_cost_cents: 300,  // $3/mo local — consistent with /api/phone/provision
+    setup_fee_cents: 100,     // $1.00 setup — consistent with /api/phone/provision
     capabilities: { voice: true, sms: true, mms: false },
     updated_at: new Date().toISOString(),
   });

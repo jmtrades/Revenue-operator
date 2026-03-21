@@ -38,6 +38,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Too many provisioning attempts" }, { status: 429 });
   }
 
+  // Enforce billing status — must be trial or active
+  {
+    const db0 = getDb();
+    const { data: wsCheck } = await db0
+      .from("workspaces")
+      .select("billing_status")
+      .eq("id", session.workspaceId)
+      .maybeSingle();
+    const bStatus = (wsCheck as { billing_status?: string } | null)?.billing_status;
+    if (!bStatus || !["trial", "active"].includes(bStatus)) {
+      return NextResponse.json(
+        { error: "Active subscription required to provision phone numbers.", code: "SUBSCRIPTION_REQUIRED" },
+        { status: 403 },
+      );
+    }
+  }
+
   // Enforce plan limit on phone number provisioning
   const enforcement = await canProvisionNumber(session.workspaceId);
   if (!enforcement.allowed) {

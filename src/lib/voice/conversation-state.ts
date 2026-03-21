@@ -235,6 +235,16 @@ export function selectFiller(
   options: string[],
   lookbackTurns: number,
 ): string {
+  // Guard against empty options array
+  if (!options || options.length === 0) {
+    const defaults: Record<string, string> = {
+      acknowledgment: "Sure thing",
+      transition: "So",
+      closer: "Thanks",
+    };
+    return defaults[type] ?? "Okay";
+  }
+
   // Get fillers used in the last N turns
   const recentTurns = state.turns.slice(-lookbackTurns);
   const recentlyUsed = new Set(
@@ -253,7 +263,8 @@ export function selectFiller(
       .map((t) => t.fillerUsed!)
       .pop();
     const fallback = options.filter((f) => f !== lastUsed);
-    return fallback[Math.floor(Math.random() * fallback.length)] ?? options[0];
+    if (fallback.length === 0) return options[0];
+    return fallback[Math.floor(Math.random() * fallback.length)];
   }
 
   return available[Math.floor(Math.random() * available.length)];
@@ -347,7 +358,9 @@ function detectEmotion(text: string): CallerEmotion {
 }
 
 function classifyPace(text: string): "fast" | "normal" | "slow" {
-  const wordCount = text.trim().split(/\s+/).length;
+  const trimmed = text.trim();
+  if (!trimmed) return "normal"; // Empty text = no signal
+  const wordCount = trimmed.split(/\s+/).length;
   // Short clipped responses suggest a fast/impatient caller
   if (wordCount <= 3) return "fast";
   // Long detailed responses suggest a slower, more deliberate caller
@@ -435,10 +448,12 @@ function detectRepeatedQuestion(state: ConversationState, currentText: string): 
   for (const prev of previousUserTurns) {
     if (prev.length < 15) continue;
     // Check word overlap ratio
-    const currentWords = new Set(current.split(/\s+/));
-    const prevWords = prev.split(/\s+/);
+    const currentWords = new Set(current.split(/\s+/).filter(Boolean));
+    const prevWords = prev.split(/\s+/).filter(Boolean);
+    const denominator = Math.max(currentWords.size, prevWords.length);
+    if (denominator === 0) continue; // Prevent division by zero
     const overlap = prevWords.filter((w) => currentWords.has(w)).length;
-    const ratio = overlap / Math.max(currentWords.size, prevWords.length);
+    const ratio = overlap / denominator;
     if (ratio > 0.7) return true; // 70%+ word overlap = likely repeated question
   }
   return false;

@@ -63,9 +63,19 @@ export async function POST(req: NextRequest) {
     .maybeSingle();
 
   const workspaceId = (phoneConfig as { workspace_id?: string } | null)?.workspace_id ?? null;
+
+  // Reject calls to unmapped numbers — no workspace means we can't serve this caller
+  if (!workspaceId) {
+    console.error(`[twilio-voice] No workspace found for number: ${to}`);
+    return new NextResponse(
+      `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">We're sorry, this number is not currently in service. Please check the number and try again.</Say><Hangup/></Response>`,
+      { status: 200, headers: { "Content-Type": "text/xml" } },
+    );
+  }
+
   let callSessionId: string | null = null;
 
-  if (workspaceId && callSid) {
+  if (callSid) {
     try {
       const { data: existing } = await db.from("call_sessions").select("id").eq("workspace_id", workspaceId).eq("external_meeting_id", callSid).maybeSingle();
       if (!existing) {
