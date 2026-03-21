@@ -86,7 +86,7 @@ export default function AppShellClient({
         ],
       },
       {
-        label: t("nav.communication"),
+        label: t("nav.sectionCommunication"),
         items: [
           { href: "/app/inbox", label: t("nav.inbox"), icon: MessageSquare },
           { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
@@ -102,7 +102,7 @@ export default function AppShellClient({
         ],
       },
       {
-        label: t("nav.workspace"),
+        label: t("nav.sectionWorkspace"),
         items: [
           { href: "/app/settings", label: t("nav.settings"), icon: Settings },
           { href: "/app/billing", label: t("nav.billing"), icon: CreditCard },

@@ -1,4 +1,5 @@
 {
+  "contactSupport": "Help & Support",
   "compare": {
     "title": "Recall Touch vs {name}",
     "subtitle": "See how the AI Revenue Execution System compares.",
@@ -111,6 +112,7 @@
     "callIntelligence": "Call intelligence",
     "compliance": "Compliance",
     "billing": "Billing",
+    "developer": "Developer",
     "signOut": "Sign out",
     "notifications": "Notifications",
     "sectionMain": "Main",
