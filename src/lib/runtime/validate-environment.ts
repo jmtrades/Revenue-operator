@@ -95,7 +95,10 @@ export function validateEnvironment(): void {
     }
     if (missingStripe.length > 0) {
       const msg = `Stripe/settlement enabled but keys missing: ${missingStripe.join(", ")}`;
-      console.warn(msg);
+      // Only warn in non-production; logStructured already suppresses in production
+      if (process.env.NODE_ENV !== "production") {
+        console.warn(msg);
+      }
       logStructured("warning", "optional_stripe_missing", {
         message: msg,
         missing: missingStripe,

@@ -21,18 +21,27 @@ export async function GET(req: NextRequest) {
   const db = getDb();
   const cutoff = new Date(Date.now() - NEW_LEAD_WINDOW_SEC * 1000).toISOString();
 
-  const { data: recentLeads } = await db
-    .from("leads")
-    .select("id, workspace_id, phone, created_at")
-    .gte("created_at", cutoff)
-    .not("phone", "is", null)
-    .limit(MAX_CALLS_PER_RUN * 2);
+  type LeadRow = { id: string; workspace_id: string; phone: string | null };
+  let recentLeads: LeadRow[] = [];
+  try {
+    const { data, error } = await db
+      .from("leads")
+      .select("id, workspace_id, phone, created_at")
+      .gte("created_at", cutoff)
+      .not("phone", "is", null)
+      .limit(MAX_CALLS_PER_RUN * 2);
+    if (error) throw error;
+    recentLeads = (data ?? []) as LeadRow[];
+  } catch (err) {
+    console.error("[speed-to-lead] Error fetching leads:", err instanceof Error ? err.message : err);
+    return NextResponse.json({ ok: false, error: "Failed to fetch leads" }, { status: 500 });
+  }
 
-  if (!recentLeads?.length) {
+  if (recentLeads.length === 0) {
     return NextResponse.json({ ok: true, called: 0 });
   }
 
-  const leadIds = (recentLeads as { id: string; workspace_id: string; phone: string | null }[]).map((l) => l.id).filter(Boolean);
+  const leadIds = recentLeads.map((l) => l.id).filter(Boolean);
   if (leadIds.length === 0) return NextResponse.json({ ok: true, called: 0 });
 
   const { data: existingSessions } = await db
@@ -41,14 +50,19 @@ export async function GET(req: NextRequest) {
     .in("lead_id", leadIds);
 
   const calledLeadIds = new Set((existingSessions ?? []).map((s: { lead_id: string }) => s.lead_id));
-  const toCall = (recentLeads as { id: string; workspace_id: string; phone: string | null }[]).filter(
+  const toCall = recentLeads.filter(
     (l) => !calledLeadIds.has(l.id) && l.phone && String(l.phone).replace(/\D/g, "").length >= 10
   ).slice(0, MAX_CALLS_PER_RUN);
 
   let called = 0;
   for (const row of toCall) {
-    const result = await executeLeadOutboundCall(row.workspace_id, row.id);
-    if (result.ok) called++;
+    try {
+      const result = await executeLeadOutboundCall(row.workspace_id, row.id);
+      if (result.ok) called++;
+    } catch (err) {
+      console.error(`[speed-to-lead] Failed to call lead ${row.id}:`, err instanceof Error ? err.message : err);
+      // Continue to next lead — don't let one failure block others
+    }
   }
 
   return NextResponse.json({ ok: true, called, considered: toCall.length });
