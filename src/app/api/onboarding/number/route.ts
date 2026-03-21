@@ -65,6 +65,7 @@ export async function POST(req: NextRequest) {
     }
     return NextResponse.json({ phone_number: num });
   } catch (e) {
+    console.error("[Onboarding] Phone provisioning failed:", e);
     // Provision error; response below
   }
 

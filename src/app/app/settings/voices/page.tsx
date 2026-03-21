@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   Play,
   Pause,
@@ -68,6 +69,7 @@ const DEFAULT_VOICE_B_ID = BUILT_IN_VOICES[1]?.id ?? "us-female-confident-closer
 
 export default function VoicesSettingsPage() {
   const { workspaceId } = useWorkspace();
+  const t = useTranslations("voices");
   const [voices, setVoices] = useState<Voice[]>(BUILT_IN_VOICES);
   // Voice server can override built-in voices with live data
   const [, setHasRealData] = useState(true);
@@ -188,16 +190,16 @@ export default function VoicesSettingsPage() {
       const allowedMime = new Set(["audio/wav", "audio/x-wav", "audio/mpeg", "audio/mp3"]);
       const allowedExt = /\.(wav|mp3)$/i.test(cloneFile.name);
       if (!allowedMime.has(cloneFile.type) && !allowedExt) {
-        setCloneError("Only WAV or MP3 files are supported.");
+        setCloneError(t("cloneErrorFormat"));
         return;
       }
       if (cloneFile.size > 5 * 1024 * 1024) {
-        setCloneError("File must be under 5MB.");
+        setCloneError(t("cloneErrorSize"));
         return;
       }
       const durationSec = await getAudioDurationSec(cloneFile);
       if (durationSec < 10 || durationSec > 30) {
-        setCloneError("Audio duration must be between 10 and 30 seconds.");
+        setCloneError(t("cloneErrorDuration"));
         return;
       }
 
@@ -260,7 +262,7 @@ export default function VoicesSettingsPage() {
         setShowCloneModal(false);
       }
     } catch {
-      setCloneError("Voice cloning failed. Please try again.");
+      setCloneError(t("cloneErrorGeneric"));
     } finally {
       setIsCloning(false);
     }
@@ -318,22 +320,22 @@ export default function VoicesSettingsPage() {
     new Set(voices.flatMap((v) => v.industries))
   );
   const genderOptions = [
-    { value: "male", label: "Male" },
-    { value: "female", label: "Female" },
-    { value: "neutral", label: "Neutral" },
+    { value: "male", label: t("genderMale") },
+    { value: "female", label: t("genderFemale") },
+    { value: "neutral", label: t("genderNeutral") },
   ];
 
   if (!workspaceId) {
     return (
       <div className="p-8 max-w-6xl mx-auto">
         <PageHeader
-          title="Voice Library"
-          subtitle="Manage and configure AI voice settings."
+          title={t("pageTitle")}
+          subtitle={t("pageSubtitle")}
         />
         <EmptyState
           icon="pulse"
-          title="Select a workspace"
-          subtitle="Voice settings will appear here."
+          title={t("selectWorkspace")}
+          subtitle={t("selectWorkspaceDesc")}
         />
       </div>
     );
@@ -342,8 +344,8 @@ export default function VoicesSettingsPage() {
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-8">
       <PageHeader
-        title="Voice Library"
-        subtitle="Configure and manage AI voices for your workspace."
+        title={t("pageTitle")}
+        subtitle={t("pageSubtitle")}
       />
 
       {/* Active Voice Configuration */}
@@ -359,12 +361,12 @@ export default function VoicesSettingsPage() {
             className="text-lg font-semibold mb-6"
             style={{ color: "var(--text-primary)" }}
           >
-            Active Voice Configuration
+            {t("activeConfig")}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <div>
               <p className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>
-                Voice
+                {t("voiceLabel")}
               </p>
               <div
                 className="rounded-xl p-4 flex items-center gap-3 border"
@@ -387,7 +389,7 @@ export default function VoicesSettingsPage() {
 
             <div>
               <p className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>
-                Industry Preset
+                {t("industryPreset")}
               </p>
               <select
                 value={voiceConfig.industryPreset}
@@ -404,16 +406,16 @@ export default function VoicesSettingsPage() {
                   color: "var(--text-primary)",
                 }}
               >
-                <option value="tech">Technology</option>
-                <option value="finance">Finance</option>
-                <option value="healthcare">Healthcare</option>
-                <option value="sales">Sales</option>
+                <option value="tech">{t("presetTech")}</option>
+                <option value="finance">{t("presetFinance")}</option>
+                <option value="healthcare">{t("presetHealthcare")}</option>
+                <option value="sales">{t("presetSales")}</option>
               </select>
             </div>
 
             <div>
               <p className="text-sm font-medium mb-2" style={{ color: "var(--text-secondary)" }}>
-                Tone
+                {t("toneLabel")}
               </p>
               <p
                 className="rounded-xl p-3 text-sm font-medium border"
@@ -431,28 +433,28 @@ export default function VoicesSettingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {[
               {
-                label: "Speed",
+                label: t("speedLabel"),
                 value: voiceConfig.speed,
                 min: 0.5,
                 max: 2,
                 step: 0.1,
               },
               {
-                label: "Stability",
+                label: t("stabilityLabel"),
                 value: voiceConfig.stability,
                 min: 0,
                 max: 1,
                 step: 0.05,
               },
               {
-                label: "Warmth",
+                label: t("warmthLabel"),
                 value: voiceConfig.warmth,
                 min: 0,
                 max: 1,
                 step: 0.05,
               },
               {
-                label: "Emotion Intensity",
+                label: t("emotionLabel"),
                 value: voiceConfig.emotionIntensity,
                 min: 0,
                 max: 1,
@@ -492,14 +494,14 @@ export default function VoicesSettingsPage() {
               className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 text-black font-semibold px-4 py-2.5 text-sm hover:bg-emerald-400 transition-colors"
             >
               <Play className="w-4 h-4" />
-              Test Voice
+              {t("testVoice")}
             </button>
             <div className="flex-1 flex items-center gap-2">
               <input
                 type="text"
                 value={testCustomText}
                 onChange={(e) => setTestCustomText(e.target.value)}
-                placeholder="Enter custom text for testing..."
+                placeholder={t("testPlaceholder")}
                 className="flex-1 rounded-lg border px-3 py-2 text-sm"
                 style={{
                   borderColor: "var(--border-default)",
@@ -524,14 +526,14 @@ export default function VoicesSettingsPage() {
           className="text-lg font-semibold mb-6"
           style={{ color: "var(--text-primary)" }}
         >
-          Voice Library
+          {t("libraryTitle")}
         </h2>
 
         {voices.length === 0 ? (
           <EmptyState
             icon="pulse"
-            title="No voices available"
-            subtitle="Voice library is loading..."
+            title={t("noVoices")}
+            subtitle={t("voicesLoading")}
           />
         ) : (
           <>
@@ -539,7 +541,7 @@ export default function VoicesSettingsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 mb-6">
               <input
                 type="text"
-                placeholder="Search voices..."
+                placeholder={t("searchPlaceholder")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="rounded-lg border px-3 py-2 text-sm"
@@ -559,7 +561,7 @@ export default function VoicesSettingsPage() {
                   color: "var(--text-primary)",
                 }}
               >
-                <option value="all">All Genders</option>
+                <option value="all">{t("allGenders")}</option>
                 {genderOptions.map((opt) => (
                   <option key={opt.value} value={opt.value}>
                     {opt.label}
@@ -576,7 +578,7 @@ export default function VoicesSettingsPage() {
                   color: "var(--text-primary)",
                 }}
               >
-                <option value="all">All Accents</option>
+                <option value="all">{t("allAccents")}</option>
                 {uniqueAccents.map((accent) => (
                   <option key={accent} value={accent}>
                     {accent}
@@ -593,7 +595,7 @@ export default function VoicesSettingsPage() {
                   color: "var(--text-primary)",
                 }}
               >
-                <option value="all">All Industries</option>
+                <option value="all">{t("allIndustries")}</option>
                 {uniqueIndustries.map((industry) => (
                   <option key={industry} value={industry}>
                     {industry}
@@ -606,7 +608,7 @@ export default function VoicesSettingsPage() {
                 className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold px-3 py-2 text-sm hover:opacity-90 transition-colors"
               >
                 <Plus className="w-4 h-4" />
-                Clone Voice
+                {t("cloneVoice")}
               </button>
             </div>
 
@@ -698,7 +700,7 @@ export default function VoicesSettingsPage() {
                         onClick={() => handleSelectVoice(voice.id)}
                         className="flex-1 rounded-lg bg-emerald-500 text-black font-semibold text-xs px-2.5 py-1.5 hover:bg-emerald-400 transition-colors"
                       >
-                        Select
+                        {t("select")}
                       </button>
                       {voice.isClone && (
                         <button
@@ -740,7 +742,7 @@ export default function VoicesSettingsPage() {
             className="text-lg font-semibold"
             style={{ color: "var(--text-primary)" }}
           >
-            A/B Testing
+            {t("abTesting")}
           </h2>
           <button
             type="button"
@@ -748,15 +750,15 @@ export default function VoicesSettingsPage() {
             className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold px-4 py-2 text-sm hover:opacity-90 transition-colors"
           >
             <TrendingUp className="w-4 h-4" />
-            New Test
+            {t("newTest")}
           </button>
         </div>
 
         {abTests.length === 0 ? (
           <EmptyState
             icon="pulse"
-            title="No A/B tests yet"
-            subtitle="Create a test to compare voice performance."
+            title={t("noTests")}
+            subtitle={t("noTestsDesc")}
           />
         ) : (
           <div className="space-y-4">
@@ -775,7 +777,7 @@ export default function VoicesSettingsPage() {
                   <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
                     <div>
                       <p className="text-xs font-medium mb-1" style={{ color: "var(--text-secondary)" }}>
-                        Voice A ({test.trafficSplit}%)
+                        {t("voiceA")} ({test.trafficSplit}%)
                       </p>
                       <p style={{ color: "var(--text-primary)" }} className="font-semibold">
                         {voiceA?.name} {voiceA?.isClone && <Crown className="w-3 h-3 inline ml-1" />}
@@ -783,7 +785,7 @@ export default function VoicesSettingsPage() {
                     </div>
                     <div>
                       <p className="text-xs font-medium mb-1" style={{ color: "var(--text-secondary)" }}>
-                        Voice B ({100 - test.trafficSplit}%)
+                        {t("voiceB")} ({100 - test.trafficSplit}%)
                       </p>
                       <p style={{ color: "var(--text-primary)" }} className="font-semibold">
                         {voiceB?.name}
@@ -791,7 +793,7 @@ export default function VoicesSettingsPage() {
                     </div>
                     <div>
                       <p className="text-xs font-medium mb-1" style={{ color: "var(--text-secondary)" }}>
-                        Calls
+                        {t("calls")}
                       </p>
                       <p style={{ color: "var(--text-primary)" }} className="font-semibold">
                         {test.calls.toLocaleString()}
@@ -799,7 +801,7 @@ export default function VoicesSettingsPage() {
                     </div>
                     <div>
                       <p className="text-xs font-medium mb-1" style={{ color: "var(--text-secondary)" }}>
-                        Satisfaction
+                        {t("satisfaction")}
                       </p>
                       <p style={{ color: "var(--meaning-green)" }} className="font-semibold">
                         {test.satisfaction}%
@@ -807,7 +809,7 @@ export default function VoicesSettingsPage() {
                     </div>
                     <div>
                       <p className="text-xs font-medium mb-1" style={{ color: "var(--text-secondary)" }}>
-                        Conversion
+                        {t("conversion")}
                       </p>
                       <p style={{ color: "var(--meaning-blue)" }} className="font-semibold">
                         {test.conversion}%
@@ -842,7 +844,7 @@ export default function VoicesSettingsPage() {
           >
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>
-                Clone Voice
+                {t("cloneVoice")}
               </h3>
               <button
                 type="button"
@@ -950,14 +952,14 @@ export default function VoicesSettingsPage() {
                 disabled={isCloning || !cloneFile || !cloneName.trim()}
                 className="flex-1 rounded-xl bg-emerald-500 text-black font-semibold py-2.5 text-sm hover:bg-emerald-400 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {isCloning ? "Cloning..." : "Clone Voice"}
+                {isCloning ? t("cloning") : t("cloneVoice")}
               </button>
               <button
                 type="button"
                 onClick={() => setShowCloneModal(false)}
                 className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors"
               >
-                Cancel
+                {t("cancel")}
               </button>
             </div>
           </div>
@@ -976,7 +978,7 @@ export default function VoicesSettingsPage() {
           >
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>
-                Create A/B Test
+                {t("createTest")}
               </h3>
               <button
                 type="button"
@@ -990,7 +992,7 @@ export default function VoicesSettingsPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-primary)" }}>
-                  Voice A
+                  {t("voiceA")}
                 </label>
                 <select
                   value={testVoiceAId}
@@ -1012,7 +1014,7 @@ export default function VoicesSettingsPage() {
 
               <div>
                 <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-primary)" }}>
-                  Voice B
+                  {t("voiceB")}
                 </label>
                 <select
                   value={testVoiceBId}
@@ -1034,7 +1036,7 @@ export default function VoicesSettingsPage() {
 
               <div>
                 <label className="block text-sm font-medium mb-2" style={{ color: "var(--text-primary)" }}>
-                  Traffic Split (Voice A %)
+                  {t("trafficSplit")}
                 </label>
                 <div className="flex items-center gap-3">
                   <input
@@ -1059,14 +1061,14 @@ export default function VoicesSettingsPage() {
                 onClick={handleCreateABTest}
                 className="flex-1 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold py-2.5 text-sm hover:opacity-90 transition-colors"
               >
-                Create Test
+                {t("createTest")}
               </button>
               <button
                 type="button"
                 onClick={() => setShowTestModal(false)}
                 className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors"
               >
-                Cancel
+                {t("cancel")}
               </button>
             </div>
           </div>

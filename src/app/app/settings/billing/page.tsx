@@ -276,7 +276,7 @@ export default function AppSettingsBillingPage() {
       )}
       {billingStatus === "payment_failed" && dunning && (
         <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/10 text-red-100 text-sm mb-4">
-          <p className="font-semibold">Payment failed. Billing needs attention.</p>
+          <p className="font-semibold">{tBilling("paymentFailedBanner")}</p>
           <p className="mt-1">
             Amount due: {(dunning.amount_due_cents / 100).toLocaleString(undefined, {
               style: "currency",
@@ -308,14 +308,14 @@ export default function AppSettingsBillingPage() {
             }}
             className="mt-3 px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold hover:opacity-90"
           >
-            Update Payment Method
+            {tBilling("updatePaymentMethod")}
           </button>
         </div>
       )}
       {pendingTier && (
         <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-100 text-sm mb-4">
           <p className="font-medium">
-            Plan downgrade scheduled for {pendingEffectiveAt ? new Date(pendingEffectiveAt).toLocaleDateString() : "your next billing date"}.
+            {tBilling("downgradeScheduled", { date: pendingEffectiveAt ? new Date(pendingEffectiveAt).toLocaleDateString() : "your next billing date" })}
           </p>
           {downgradeWarning && <p className="mt-1 text-amber-200/90">{downgradeWarning}</p>}
         </div>
@@ -343,7 +343,7 @@ export default function AppSettingsBillingPage() {
       {billingStatus !== null && (
         <div className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4">
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-medium text-[var(--text-primary)]">Minutes Usage</p>
+            <p className="text-sm font-medium text-[var(--text-primary)]">{tBilling("minutesUsage")}</p>
             <span className="text-xs text-[var(--text-tertiary)]">
               {usage.minutes_used} / {usage.minutes_limit} min
             </span>
@@ -359,7 +359,7 @@ export default function AppSettingsBillingPage() {
             />
           </div>
           <p className="text-[11px] text-[var(--text-secondary)] mt-1.5">
-            {usage.minutes_limit > 0 ? Math.round((usage.minutes_used / usage.minutes_limit) * 100) : 0}% used this billing period
+            {tBilling("usedThisPeriod", { pct: usage.minutes_limit > 0 ? Math.round((usage.minutes_used / usage.minutes_limit) * 100) : 0 })}
           </p>
           {usage.minutes_limit > 0 && usage.minutes_used / usage.minutes_limit > 0.8 && (
             <button
@@ -367,7 +367,7 @@ export default function AppSettingsBillingPage() {
               onClick={() => setPlanChangeOpen(true)}
               className="mt-2 px-4 py-2 rounded-xl text-xs font-semibold bg-amber-500 text-black hover:bg-amber-400 transition-colors"
             >
-              Upgrade for more minutes
+              {tBilling("upgradeForMore")}
             </button>
           )}
         </div>
@@ -383,14 +383,14 @@ export default function AppSettingsBillingPage() {
         }`}>
           <p className="text-sm font-medium">
             {usageAlert.level === "overage"
-              ? `You've exceeded your plan limit by ${usageAlert.projected_overage_minutes} minutes.`
+              ? tBilling("alertOverage", { minutes: usageAlert.projected_overage_minutes })
               : usageAlert.level === "critical"
-                ? `${usageAlert.pct_used.toFixed(0)}% of minutes used — ${usageAlert.minutes_remaining} minutes remaining.`
-                : `${usageAlert.pct_used.toFixed(0)}% of minutes used this period. ~${usageAlert.days_remaining} days left.`}
+                ? tBilling("alertCritical", { pct: usageAlert.pct_used.toFixed(0), remaining: usageAlert.minutes_remaining })
+                : tBilling("alertWarning", { pct: usageAlert.pct_used.toFixed(0), days: usageAlert.days_remaining })}
           </p>
           {usageAlert.projected_overage_cost_cents > 0 && (
             <p className="text-xs mt-1 opacity-80">
-              Projected overage: ~${(usageAlert.projected_overage_cost_cents / 100).toFixed(2)} at current rate.
+              {tBilling("projectedOverage", { amount: (usageAlert.projected_overage_cost_cents / 100).toFixed(2) })}
             </p>
           )}
           {usageAlert.upsell && (
@@ -405,7 +405,7 @@ export default function AppSettingsBillingPage() {
                 onClick={() => document.getElementById("minute-packs-section")?.scrollIntoView({ behavior: "smooth" })}
                 className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90"
               >
-                Buy More Minutes
+                {tBilling("buyMoreMinutes")}
               </button>
             )}
             {usageAlert.upsell && (
@@ -414,7 +414,7 @@ export default function AppSettingsBillingPage() {
                 onClick={() => setPlanChangeOpen(true)}
                 className="px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--border-medium)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
               >
-                Upgrade to {usageAlert.upsell.recommended_tier}
+                {tBilling("upgradeTo", { tier: usageAlert.upsell.recommended_tier })}
               </button>
             )}
           </div>
@@ -424,16 +424,16 @@ export default function AppSettingsBillingPage() {
       {bonusMinutes > 0 && (
         <div className="p-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4">
           <p className="text-xs text-[var(--text-secondary)]">
-            Bonus minutes from purchased packs: <span className="text-[var(--text-primary)] font-medium">{bonusMinutes.toLocaleString()} min</span>
+            {tBilling("bonusMinutes", { count: bonusMinutes.toLocaleString() })}
           </p>
         </div>
       )}
       {/* Buy More Minutes Section */}
       {minutePacks.length > 0 && (
         <div id="minute-packs-section" className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4">
-          <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">Buy More Minutes</h3>
+          <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">{tBilling("buyMoreMinutes")}</h3>
           <p className="text-xs text-[var(--text-secondary)] mb-3">
-            One-time minute packs — use them anytime, no expiration. Bonus minutes are used before overage billing.
+            {tBilling("minutePacksDesc")}
           </p>
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
             {minutePacks.map((pack) => (
@@ -451,10 +451,10 @@ export default function AppSettingsBillingPage() {
                 } ${buyingPack === pack.id ? "opacity-60" : "cursor-pointer"}`}
               >
                 {pack.popular && (
-                  <span className="absolute -top-2 right-2 px-2 py-0.5 text-[9px] uppercase tracking-wide bg-[var(--accent-primary)] text-[var(--text-on-accent)] rounded-full font-bold">Popular</span>
+                  <span className="absolute -top-2 right-2 px-2 py-0.5 text-[9px] uppercase tracking-wide bg-[var(--accent-primary)] text-[var(--text-on-accent)] rounded-full font-bold">{tBilling("popular")}</span>
                 )}
                 {pack.best_value && (
-                  <span className="absolute -top-2 right-2 px-2 py-0.5 text-[9px] uppercase tracking-wide bg-emerald-500 text-white rounded-full font-bold">Best Value</span>
+                  <span className="absolute -top-2 right-2 px-2 py-0.5 text-[9px] uppercase tracking-wide bg-emerald-500 text-white rounded-full font-bold">{tBilling("bestValue")}</span>
                 )}
                 <p className="text-[var(--text-primary)] font-bold text-sm">{pack.minutes.toLocaleString()} min</p>
                 <p className="text-[var(--text-primary)] text-lg font-bold mt-0.5">{pack.price_display}</p>
