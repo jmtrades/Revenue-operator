@@ -290,41 +290,6 @@ export default function ExportPage() {
         </div>
       </section>
 
-      {/* API Access */}
-      <section>
-        <h2 className="text-lg font-semibold mb-4">API Access (Coming Soon)</h2>
-        <div
-          className="rounded-lg border p-6"
-          style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}
-        >
-          <p style={{ color: "var(--text-secondary)" }} className="mb-4">
-            Programmatic access to export endpoints with webhooks and scheduled exports.
-          </p>
-
-          <div className="space-y-2 text-sm">
-            <div className="flex items-center gap-2">
-              <span style={{ color: "var(--text-tertiary)" }}>•</span>
-              <p style={{ color: "var(--text-secondary)" }}>REST API endpoints for all data types</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <span style={{ color: "var(--text-tertiary)" }}>•</span>
-              <p style={{ color: "var(--text-secondary)" }}>Webhook notifications on export completion</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <span style={{ color: "var(--text-tertiary)" }}>•</span>
-              <p style={{ color: "var(--text-secondary)" }}>Scheduled exports (daily, weekly, monthly)</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <span style={{ color: "var(--text-tertiary)" }}>•</span>
-              <p style={{ color: "var(--text-secondary)" }}>S3/Cloud Storage integration</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <span style={{ color: "var(--text-tertiary)" }}>•</span>
-              <p style={{ color: "var(--text-secondary)" }}>Data retention policies</p>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

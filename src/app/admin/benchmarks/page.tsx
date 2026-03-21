@@ -172,50 +172,6 @@ export default function BenchmarksPage() {
         </div>
       </section>
 
-      {/* Coming Soon Section */}
-      <section>
-        <h2 className="text-lg font-semibold mb-4">Data Marketplace (Coming Soon)</h2>
-        <div
-          className="rounded-lg border p-8 text-center"
-          style={{ borderColor: "var(--border-default)", background: "var(--accent-primary-subtle)" }}
-        >
-          <p className="text-lg font-medium" style={{ color: "var(--accent-primary)" }}>
-            Anonymized Industry Benchmarks Available for Purchase
-          </p>
-          <p style={{ color: "var(--text-secondary)" }} className="mt-2 text-sm">
-            Soon, you'll be able to access deep-dive benchmark reports, cohort analysis, and competitive intelligence data.
-          </p>
-          <div className="mt-4 flex flex-wrap gap-2 justify-center">
-            <span
-              className="px-3 py-1 rounded-full text-xs font-medium"
-              style={{
-                background: "var(--bg-surface)",
-                color: "var(--text-secondary)",
-              }}
-            >
-              Quarterly Reports
-            </span>
-            <span
-              className="px-3 py-1 rounded-full text-xs font-medium"
-              style={{
-                background: "var(--bg-surface)",
-                color: "var(--text-secondary)",
-              }}
-            >
-              Cohort Analysis
-            </span>
-            <span
-              className="px-3 py-1 rounded-full text-xs font-medium"
-              style={{
-                background: "var(--bg-surface)",
-                color: "var(--text-secondary)",
-              }}
-            >
-              Competitive Intelligence
-            </span>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
