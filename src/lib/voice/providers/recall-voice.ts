@@ -5,7 +5,16 @@ import type {
   CallResult,
   WebhookEvent,
 } from "../types";
-import { HUMAN_VOICE_DEFAULTS } from "@/lib/voice/human-voice-defaults";
+import {
+  HUMAN_VOICE_DEFAULTS,
+  PHONE_LINE_OPTIMIZATION,
+  HUMAN_IMPERFECTION_SETTINGS,
+  DYNAMIC_RESPONSE_LATENCY,
+  INTERRUPTION_ACKNOWLEDGMENT,
+  FILLER_ROTATION,
+} from "@/lib/voice/human-voice-defaults";
+import { buildSTTVocabulary, formatForDeepgram } from "@/lib/voice/stt-vocabulary";
+import { applyPronunciationRules, COMMON_PRONUNCIATION_FIXES, type PronunciationEntry } from "@/lib/voice/pronunciation";
 import { log } from "@/lib/logger";
 
 function getVoiceServerUrl(): string {
@@ -35,6 +44,52 @@ interface RecallAssistantConfig {
   tool_calling_enabled?: boolean;
   backchannel_enabled?: boolean;
   silence_timeout_ms?: number;
+  /** Dynamic response latency tiers */
+  response_latency?: {
+    instant: { min_ms: number; max_ms: number };
+    normal: { min_ms: number; max_ms: number };
+    thoughtful: { min_ms: number; max_ms: number };
+  };
+  /** Interruption handling config */
+  interruption_config?: {
+    enabled: boolean;
+    stop_latency_ms: number;
+    barge_in_threshold_ms: number;
+    barge_in_min_words: number;
+    acknowledgment_phrases: Record<string, string[]>;
+  };
+  /** Phone-line audio optimization */
+  phone_optimization?: {
+    output_sample_rate: number;
+    telephony_eq: boolean;
+    dynamic_range_compression: number;
+    de_esser_strength: number;
+    low_end_boost_db: number;
+  };
+  /** Human imperfection injection */
+  imperfections?: {
+    micro_pause_range_ms: readonly [number, number];
+    pitch_variation_semitones: number;
+    thinking_sounds: boolean;
+    list_cadence_acceleration: boolean;
+    important_word_emphasis: boolean;
+    sentence_start_breath: boolean;
+    self_correction: boolean;
+    question_intonation_rise: boolean;
+    name_emphasis: boolean;
+    conversational_transitions: boolean;
+  };
+  /** Filler word rotation */
+  filler_rotation?: {
+    acknowledgments: string[];
+    transitions: string[];
+    closers: string[];
+    lookback_turns: number;
+  };
+  /** STT keyword boost list for Deepgram */
+  stt_keywords?: string[];
+  /** Pronunciation dictionary for TTS preprocessing */
+  pronunciation_dictionary?: PronunciationEntry[];
   metadata?: Record<string, string>;
 }
 
@@ -50,6 +105,18 @@ export class RecallVoiceProvider implements VoiceProvider {
     this.serverUrl = getVoiceServerUrl();
   }
 
+  /**
+   * Preprocess text through the pronunciation dictionary before TTS.
+   * Called by the voice server before every speech synthesis.
+   */
+  preprocessTTSText(assistantId: string, text: string): string {
+    const config = this.assistantConfigs.get(assistantId);
+    if (!config) return text;
+
+    const dictionary = config.pronunciation_dictionary ?? COMMON_PRONUNCIATION_FIXES;
+    return applyPronunciationRules(text, dictionary);
+  }
+
   async createAssistant(params: CreateAssistantParams): Promise<{ assistantId: string }> {
     const assistantId = `assistant_${Date.now()}_${crypto.randomUUID().slice(0, 9)}`;
 
@@ -63,14 +130,82 @@ export class RecallVoiceProvider implements VoiceProvider {
         speed: HUMAN_VOICE_DEFAULTS.speed,
         stability: HUMAN_VOICE_DEFAULTS.stability,
         style: HUMAN_VOICE_DEFAULTS.style,
-        warmth: 0.5,
+        warmth: HUMAN_VOICE_DEFAULTS.warmth,
       },
       stt_enabled: true,
-      tool_calling_enabled: params.tools && params.tools.length > 0,
+      tool_calling_enabled: !!(params.tools && params.tools.length > 0),
       backchannel_enabled: HUMAN_VOICE_DEFAULTS.backchannel,
       silence_timeout_ms: (params.silenceTimeout ?? 30) * 1000,
+      response_latency: {
+        instant: { min_ms: DYNAMIC_RESPONSE_LATENCY.instant.minMs, max_ms: DYNAMIC_RESPONSE_LATENCY.instant.maxMs },
+        normal: { min_ms: DYNAMIC_RESPONSE_LATENCY.normal.minMs, max_ms: DYNAMIC_RESPONSE_LATENCY.normal.maxMs },
+        thoughtful: { min_ms: DYNAMIC_RESPONSE_LATENCY.thoughtful.minMs, max_ms: DYNAMIC_RESPONSE_LATENCY.thoughtful.maxMs },
+      },
+      interruption_config: {
+        enabled: INTERRUPTION_ACKNOWLEDGMENT.enabled,
+        stop_latency_ms: INTERRUPTION_ACKNOWLEDGMENT.stopLatencyMs,
+        barge_in_threshold_ms: INTERRUPTION_ACKNOWLEDGMENT.bargeInThresholdMs,
+        barge_in_min_words: INTERRUPTION_ACKNOWLEDGMENT.bargeInMinWords,
+        acknowledgment_phrases: {
+          redirect: [...INTERRUPTION_ACKNOWLEDGMENT.phrases.redirect],
+          confirmation: [...INTERRUPTION_ACKNOWLEDGMENT.phrases.confirmation],
+          hold_request: [...INTERRUPTION_ACKNOWLEDGMENT.phrases.holdRequest],
+          generic: [...INTERRUPTION_ACKNOWLEDGMENT.phrases.generic],
+        },
+      },
+      phone_optimization: {
+        output_sample_rate: PHONE_LINE_OPTIMIZATION.outputSampleRate,
+        telephony_eq: PHONE_LINE_OPTIMIZATION.telephonyEqEnabled,
+        dynamic_range_compression: PHONE_LINE_OPTIMIZATION.dynamicRangeCompression,
+        de_esser_strength: PHONE_LINE_OPTIMIZATION.deEsserStrength,
+        low_end_boost_db: PHONE_LINE_OPTIMIZATION.lowEndBoostDb,
+      },
+      imperfections: {
+        micro_pause_range_ms: HUMAN_IMPERFECTION_SETTINGS.microPauseRange,
+        pitch_variation_semitones: HUMAN_IMPERFECTION_SETTINGS.pitchVariationSemitones,
+        thinking_sounds: HUMAN_IMPERFECTION_SETTINGS.thinkingSoundsEnabled,
+        list_cadence_acceleration: HUMAN_IMPERFECTION_SETTINGS.listCadenceAcceleration,
+        important_word_emphasis: HUMAN_IMPERFECTION_SETTINGS.importantWordEmphasis,
+        sentence_start_breath: HUMAN_IMPERFECTION_SETTINGS.sentenceStartBreath,
+        self_correction: HUMAN_IMPERFECTION_SETTINGS.occasionalSelfCorrection,
+        question_intonation_rise: HUMAN_IMPERFECTION_SETTINGS.questionIntonationRise,
+        name_emphasis: HUMAN_IMPERFECTION_SETTINGS.nameEmphasis,
+        conversational_transitions: HUMAN_IMPERFECTION_SETTINGS.conversationalTransitions,
+      },
+      filler_rotation: {
+        acknowledgments: [...FILLER_ROTATION.acknowledgments],
+        transitions: [...FILLER_ROTATION.transitions],
+        closers: [...FILLER_ROTATION.closers],
+        lookback_turns: FILLER_ROTATION.lookbackTurns,
+      },
       metadata: params.metadata ?? {},
     };
+
+    // Build STT vocabulary boost from workspace context (if metadata provides it)
+    const meta = params.metadata ?? {};
+    if (meta.business_name || meta.industry) {
+      const sttKeywords = buildSTTVocabulary({
+        businessName: meta.business_name ?? "",
+        staffNames: meta.staff_names ? meta.staff_names.split(",") : undefined,
+        services: meta.services ? meta.services.split(",") : undefined,
+        address: meta.address,
+        industry: meta.industry,
+        customTerms: meta.custom_terms ? meta.custom_terms.split(",") : undefined,
+      });
+      config.stt_keywords = formatForDeepgram(sttKeywords);
+    }
+
+    // Build pronunciation dictionary from workspace context
+    const pronunciationEntries: PronunciationEntry[] = [...COMMON_PRONUNCIATION_FIXES];
+    if (meta.business_name) {
+      pronunciationEntries.push({
+        word: meta.business_name,
+        respelling: meta.business_name_pronunciation ?? meta.business_name,
+        category: "business_name",
+        caseInsensitive: true,
+      });
+    }
+    config.pronunciation_dictionary = pronunciationEntries;
 
     this.assistantConfigs.set(assistantId, config);
 

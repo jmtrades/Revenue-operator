@@ -106,11 +106,14 @@ function isPublicApi(pathname: string): boolean {
   // Vapi routes removed — ElevenLabs is the active voice provider
   if (pathname === "/api/agent/speak" || pathname === "/api/agent/voices") return true;
   if (pathname.startsWith("/api/webhooks/") || pathname.startsWith("/api/integrations/twilio")) return true;
+  // Voice server callback routes — called by Python voice server during live calls, not by browsers
+  if (pathname.startsWith("/api/voice/")) return true;
   if (pathname.startsWith("/api/command-center")) return true;
   if (pathname.startsWith("/api/dev/simulate-inbound")) return true;
   if (pathname.startsWith("/api/integrations/twilio/auto-provision")) return true;
   if (pathname.startsWith("/api/conversations/") && pathname.includes("/messages")) return true;
   if (pathname === "/api/signup" || pathname === "/api/contact" || pathname === "/api/waitlist") return true;
+  if (pathname === "/api/demo/call") return true;
   return false;
 }
 

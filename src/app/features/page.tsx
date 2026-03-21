@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { ArrowRight, Phone, PhoneOutgoing, Repeat, CalendarCheck, BarChart3, Brain, DollarSign, Zap } from "lucide-react";
+import { ArrowRight, Phone, PhoneOutgoing, Repeat, CalendarCheck, BarChart3, Brain, DollarSign, Zap, AudioWaveform } from "lucide-react";
 
 const Navbar = dynamic(() => import("@/components/sections/Navbar").then((m) => m.Navbar));
 const Footer = dynamic(() => import("@/components/sections/Footer").then((m) => m.Footer));
@@ -13,6 +13,14 @@ export const metadata: Metadata = {
 };
 
 const FEATURES = [
+  {
+    icon: AudioWaveform,
+    title: "32 Human-Quality AI Voices",
+    description:
+      "Every voice in the Recall Touch library was engineered to be indistinguishable from a real person. Natural pauses, real intonation, pitch variation, conversational warmth, and even subtle breathing. Over 90% of callers don't realize they're speaking with AI. Choose from 32 voices across 8 accents, 3 genders, and 10 tonal styles — or clone your own voice.",
+    href: "/demo/voice",
+    color: "#10B981",
+  },
   {
     icon: Phone,
     title: "Inbound Call Handling",
@@ -106,7 +114,7 @@ export default function FeaturesPage() {
               className="text-base md:text-lg max-w-2xl mx-auto"
               style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}
             >
-              Recall Touch replaces your receptionist, your SDR, your follow-up process, and your missed-call anxiety — with one AI employee that works 24/7 and gets smarter with every conversation.
+              Recall Touch replaces your front desk, your SDR, your follow-up process, and your missed-call anxiety — with one AI employee that works 24/7 and gets smarter with every conversation.
             </p>
           </div>
 

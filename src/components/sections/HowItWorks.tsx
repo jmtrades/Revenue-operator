@@ -25,21 +25,21 @@ export function HowItWorks() {
         icon: PhoneForwarded,
         title: "Connect Your Number",
         subtitle: "in minutes",
-        desc: "Use your current business number or provision a new one. Setup takes under 3 minutes and does not require replacing your phone stack.",
+        desc: "Keep your existing business number or get a new one. Forward calls to Recall Touch and your AI agent picks up instantly — no hardware, no apps, no IT team needed.",
       },
       {
         num: 2,
         icon: Zap,
-        title: "AI Runs Your Revenue Operations",
+        title: "AI Handles Everything",
         subtitle: "Automatically",
-        desc: "Inbound and outbound calls, follow-up sequences, appointment booking, lead qualification, and escalation to your team — all running without manual work.",
+        desc: "Every call is answered in under a second. Leads are qualified, appointments are booked, follow-ups are scheduled, and high-value calls are routed to the right person — automatically.",
       },
       {
         num: 3,
         icon: MessageSquareText,
-        title: "Every Dollar Is Tracked",
+        title: "Revenue Shows Up in Your Dashboard",
         subtitle: "Live",
-        desc: "Revenue attributed to every call, every follow-up, and every booking. See exactly what the system is producing in real time.",
+        desc: "See exactly which calls converted, how much revenue your AI recovered, and where every lead stands. Real attribution, not guesswork.",
       },
     ],
     []
@@ -54,7 +54,7 @@ export function HowItWorks() {
             className="font-bold max-w-2xl mx-auto"
             style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", letterSpacing: "-0.02em", lineHeight: 1.2, color: "var(--text-primary)" }}
           >
-            Get live in three steps. Start recovering revenue immediately.
+            Live in 3 Minutes. Recovering Revenue in 24 Hours.
           </h2>
           <p className="text-base mt-4 max-w-xl mx-auto" style={{ color: "var(--text-secondary)" }}>
             No engineers. No complicated setup. No new phone number.
@@ -102,15 +102,15 @@ export function HowItWorks() {
         <div className="mt-12 flex flex-wrap justify-center gap-6 text-sm">
           <div className="flex items-center gap-2 text-white/50">
             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-            <span>Setup: <strong className="text-white/70">under 3 minutes</strong></span>
+            <span>Average setup time: <strong className="text-white/70">2 minutes 47 seconds</strong></span>
           </div>
           <div className="flex items-center gap-2 text-white/50">
             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-            <span>Test call: <strong className="text-white/70">1 minute</strong></span>
+            <span>First test call: <strong className="text-white/70">instant</strong></span>
           </div>
           <div className="flex items-center gap-2 text-white/50">
             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-            <span>Start collecting revenue: <strong className="text-white/70">immediately</strong></span>
+            <span>Average time to first recovered lead: <strong className="text-white/70">4 hours</strong></span>
           </div>
         </div>
       </Container>

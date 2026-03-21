@@ -119,7 +119,7 @@ export async function GET(req: NextRequest) {
           "Content-Type": response.headers.get("content-type") || "audio/mpeg",
           "Content-Length": audioBuffer.byteLength.toString(),
           "Cache-Control": "public, max-age=3600", // Cache for 1 hour
-          "Access-Control-Allow-Origin": "*"
+          "Access-Control-Allow-Origin": process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com"
         }
       });
     } catch (fetchError) {

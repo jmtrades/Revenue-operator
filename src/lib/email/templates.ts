@@ -196,21 +196,23 @@ export function buildMilestoneEmail(params: {
   const { name, milestone, totalCalls, estimatedRevenueSaved } = params;
   const safeName = name?.trim() || "there";
 
-  const milestoneMessages: Record<number, { emoji: string; headline: string; body: string }> = {
-    1: { emoji: "🎉", headline: "Your first call is in!", body: "Your AI agent just handled its first call. This is just the beginning." },
-    10: { emoji: "🔥", headline: "10 calls handled!", body: "Your AI is picking up steam. That's 10 calls that didn't go to voicemail." },
-    50: { emoji: "🚀", headline: "50 calls — you're on fire!", body: "50 calls handled by your AI. Imagine if those went to voicemail instead." },
-    100: { emoji: "💰", headline: "100 calls — serious ROI!", body: "Your AI has handled 100 calls. That's real revenue you're protecting." },
-    500: { emoji: "⭐", headline: "500 calls — you're a power user!", body: "500 calls. Your AI is a full-time team member at this point." },
+  const milestoneMessages: Record<number, { headline: string; body: string }> = {
+    1: { headline: "Your AI agent just handled its first call", body: "Your phone line is now live with AI coverage. Every call from here is one less you have to worry about." },
+    10: { headline: "10 calls handled — your AI is working", body: "That's 10 calls answered instantly, zero hold times, zero voicemails. The ROI is already building." },
+    50: { headline: "50 calls handled — momentum is building", body: "At this pace, your AI agent is saving you hours of phone time every week." },
+    100: { headline: "100 calls — this is real ROI", body: "100 calls handled by your AI. At $47 average value per call, that's potentially $4,700 in recovered revenue." },
+    500: { headline: "500 calls — your AI is a full-time employee", body: "Most businesses need 2-3 staff to handle this volume. Your AI does it alone, 24/7." },
   };
 
-  const msg = milestoneMessages[milestone] ?? { emoji: "📞", headline: `${milestone} calls handled!`, body: `Your AI agent has handled ${milestone} calls.` };
+  const msg = milestoneMessages[milestone] ?? { headline: `${milestone} calls handled!`, body: `Your AI agent has handled ${milestone} calls.` };
 
-  const subject = `${msg.emoji} ${msg.headline}`;
+  const subject = msg.headline;
 
   const content = `
   <div style="text-align:center;margin-bottom:24px;">
-    <span style="font-size:48px;">${msg.emoji}</span>
+    <div style="width:56px;height:56px;border-radius:50%;background:#10b981;margin:0 auto;display:flex;align-items:center;justify-content:center;">
+      <span style="font-size:24px;color:#fff;font-weight:700;">${milestone}</span>
+    </div>
   </div>
   <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;text-align:center;">${msg.headline}</h1>
   <p style="margin:0 0 24px;font-size:15px;color:#a3a3a3;line-height:1.6;text-align:center;">${msg.body}</p>

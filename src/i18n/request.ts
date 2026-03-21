@@ -23,6 +23,16 @@ export default getRequestConfig(async () => {
 });
 
 export async function detectLocaleFromRequest(): Promise<AppLocale> {
+  // Check URL query parameter first (highest priority, used for explicit switching)
+  let h: Headers;
+  try { h = await headers(); } catch { h = new Headers(); }
+  const url = h.get("x-url") || h.get("x-invoke-path") || "";
+  const urlLocale = new URLSearchParams(url.split("?")[1] || "").get("locale");
+  if (urlLocale && (locales as readonly string[]).includes(urlLocale)) {
+    return urlLocale as AppLocale;
+  }
+
+  // Check cookie (set explicitly by the LanguageSwitcher)
   const cookieStore = await cookies();
   const cookieLocale = cookieStore.get(LOCALE_COOKIE)?.value;
   if (cookieLocale && (locales as readonly string[]).includes(cookieLocale)) {
@@ -30,7 +40,6 @@ export async function detectLocaleFromRequest(): Promise<AppLocale> {
   }
 
   // Always default to English. Do not auto-detect browser locale from Accept-Language header.
-  // Explicit locale parameters or cookies can still override this default.
   return "en";
 }
 

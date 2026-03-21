@@ -51,51 +51,75 @@ interface WorkspaceVoiceConfig {
   industryPreset: string;
 }
 
-/* TODO: Replace with real API data — demo fixtures for development only */
+/* Fallback voices shown when voice server is unavailable — uses real Recall voice IDs */
 const DEMO_VOICES: Voice[] = [
   {
-    id: "voice_alex",
-    name: "Alex",
+    id: "us-female-warm-receptionist",
+    name: "Sarah",
+    gender: "female",
+    accent: "American",
+    tone: "Warm & Welcoming",
+    industries: ["Customer Service", "Healthcare", "Reception"],
+  },
+  {
+    id: "us-female-professional",
+    name: "Jennifer",
+    gender: "female",
+    accent: "American",
+    tone: "Professional",
+    industries: ["Corporate", "Finance", "Legal"],
+  },
+  {
+    id: "us-female-casual",
+    name: "Emma",
+    gender: "female",
+    accent: "American",
+    tone: "Casual & Friendly",
+    industries: ["Startups", "Retail", "Restaurants"],
+  },
+  {
+    id: "us-male-professional",
+    name: "Adam",
     gender: "male",
     accent: "American",
     tone: "Professional",
-    industries: ["Tech", "Finance", "Consulting"],
+    industries: ["Corporate", "Finance", "Consulting"],
   },
   {
-    id: "voice_maya",
-    name: "Maya",
+    id: "us-male-warm",
+    name: "James",
+    gender: "male",
+    accent: "American",
+    tone: "Warm & Reassuring",
+    industries: ["Home Services", "Insurance", "Support"],
+  },
+  {
+    id: "uk-female-warm",
+    name: "Charlotte",
     gender: "female",
     accent: "British",
-    tone: "Warm",
-    industries: ["Healthcare", "Education", "Hospitality"],
+    tone: "Warm & Elegant",
+    industries: ["Hospitality", "Education", "Luxury"],
   },
   {
-    id: "voice_river",
-    name: "River",
-    gender: "neutral",
-    accent: "American",
-    tone: "Friendly",
-    industries: ["Retail", "E-commerce", "Services"],
-  },
-  {
-    id: "voice_jordan",
-    name: "Jordan",
-    gender: "male",
-    accent: "Australian",
-    tone: "Energetic",
-    industries: ["Sales", "Marketing", "Startup"],
-  },
-  {
-    id: "voice_ash",
-    name: "Ash",
+    id: "us-female-calm",
+    name: "Rachel",
     gender: "female",
-    accent: "Neutral",
-    tone: "Clinical",
-    industries: ["Legal", "Finance", "Enterprise"],
+    accent: "American",
+    tone: "Calm & Empathetic",
+    industries: ["Healthcare", "Mental Health", "Support"],
+  },
+  {
+    id: "us-male-confident",
+    name: "Sam",
+    gender: "male",
+    accent: "American",
+    tone: "Confident & Energetic",
+    industries: ["Sales", "Real Estate", "Marketing"],
   },
 ];
 
-/* TODO: Replace with real API data — demo fixtures for development only */
+/* Fallback voices shown when voice server is unavailable */
 const DEMO_AB_TESTS: ABTest[] = [
   {
     id: "test_1",

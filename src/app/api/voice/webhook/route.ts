@@ -273,6 +273,20 @@ export async function POST(req: NextRequest) {
               }
             }
           }
+        } else if (toolCall.name === "search_knowledge" && callSessionId) {
+          // Knowledge search was invoked during a call — log for analytics
+          log("info", "voice_webhook.tool_search_knowledge", {
+            callSessionId,
+            query: typeof toolCall.args.query === "string" ? toolCall.args.query.slice(0, 100) : "",
+            result: toolCall.result,
+          });
+        } else if (toolCall.name === "check_business_hours" && callSessionId) {
+          // Business hours check was invoked — log for analytics
+          log("info", "voice_webhook.tool_check_hours", {
+            callSessionId,
+            day: typeof toolCall.args.day === "string" ? toolCall.args.day : "today",
+            result: toolCall.result,
+          });
         } else if (
           toolCall.name === "capture_lead" &&
           callSessionId &&

@@ -1948,7 +1948,7 @@
       "scratch": "Eigener Agent"
     },
     "greetings": {
-      "receptionist": "Hallo, danke für Ihren Anruf. Ich bin Ihr KI-Empfang — ich erfasse die Daten und lasse nichts aus.",
+      "receptionist": "Hallo, danke für Ihren Anruf. Ich bin Ihr KI-Agent — ich erfasse die Daten und lasse nichts aus.",
       "after_hours": "Hallo, Ihr KI-Empfang für Recall Touch außerhalb der Geschäftszeiten. Wie kann ich helfen?",
       "emergency": "Ihre Notfallleitung. Ich handle schnell, beruhige Sie und alarmiere die richtige Person.",
       "lead_qualifier": "Danke für Ihre Nachricht. Ich stelle ein paar Fragen, um Sie weiterzuleiten.",
@@ -1998,7 +1998,7 @@
       "defaultHours": "Mo–Fr 9–17 Uhr",
       "yourBusiness": "Ihr Unternehmen",
       "greeting": "Danke für Ihren Anruf bei {business}. Wie kann ich Ihnen heute helfen?",
-      "receptionist": "Empfang",
+      "receptionist": "KI-Agent",
       "hasBudget": "Hat Budget",
       "hasTimeline": "Hat Zeitrahmen",
       "isDecisionMaker": "Ist Entscheider",
@@ -3602,7 +3602,7 @@
       "ctaStartFree": "Kostenlos starten →",
       "optionalUpdates": "Optional: Produkt-Updates erhalten.",
       "notifyMe": "Benachrichtigen",
-      "onList": "Du bist auf der Liste! 🎉",
+      "onList": "Du bist auf der Liste!",
       "getUpdates": "Updates erhalten",
       "emailPlaceholder": "du@firma.com",
       "emailAriaLabel": "E-Mail für Produkt-Updates"
@@ -4209,15 +4209,15 @@
       "cards": {
         "1": {
           "summary": "Terminvereinbarung",
-          "outcome": "✅ 14 Uhr gebucht"
+          "outcome": "14 Uhr gebucht"
         },
         "2": {
           "summary": "Preisfrage",
-          "outcome": "✅ Info per SMS gesendet"
+          "outcome": "Info per SMS gesendet"
         },
         "3": {
           "summary": "Rückruf angefordert",
-          "outcome": "✅ Follow-up in 30 Min."
+          "outcome": "Follow-up in 30 Min."
         }
       }
     },
@@ -4532,9 +4532,9 @@
       "missedCallsPerWeek": "Verpasste Anrufe pro Woche",
       "avgValuePerCall": "Durchschnittswert pro Anruf ($)",
       "monthlyRecovered": "Monatlich wiedergewonnene Einnahmen",
-      "annualBaseline": "Jahresbasis Empfang",
+      "annualBaseline": "Jahresbasis Einstellung",
       "annualProtected": "Jahreseinnahmen, die Recall Touch schützt",
-      "receptionistCost": "Empfangsmitarbeiter-Kosten.",
+      "receptionistCost": "Einstellungskosten.",
       "recommendedPlan": "Empfohlener Tarif:",
       "description": "Berechnen Sie Ihr Umsatzpotenzial mit unserem ROI-Rechner."
     },
@@ -6633,5 +6633,45 @@
   },
   "legal": {
     "languageNotice": "Dieses Dokument ist nur auf Englisch verfügbar."
+  },
+  "compare": {
+    "title": "Recall Touch vs {name}",
+    "subtitle": "See how the AI Revenue Execution System compares.",
+    "cta": "Start free"
+  },
+  "agency": {
+    "kicker": "Partner operations",
+    "title": "Agency",
+    "subtitle": "Set up and manage client workspaces with a repeatable, ROI-first onboarding flow.",
+    "ctaCreateWorkspace": "Create a client workspace",
+    "ctaPricing": "View pricing",
+    "cards": {
+      "workspaces": {
+        "title": "Client workspaces",
+        "description": "Create separate workspaces for each client to isolate data and manage access."
+      },
+      "whitelabel": {
+        "title": "White-label",
+        "description": "Brand the platform as your own with custom logos, colors, and domains."
+      },
+      "support": {
+        "title": "Support",
+        "description": "We handle onboarding, training, and technical support for your clients."
+      }
+    }
+  },
+  "followUps": {
+    "title": "Follow-ups",
+    "create": "Create Sequence",
+    "tabs": {
+      "templates": "Templates",
+      "active": "Active enrollments"
+    },
+    "empty": {
+      "templatesTitle": "No sequences yet.",
+      "templatesDescription": "Create a custom sequence to automatically follow up with contacts.",
+      "activeTitle": "No active enrollments",
+      "activeDescription": "Active enrollments appear here."
+    }
   }
 }

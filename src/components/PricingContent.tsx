@@ -183,7 +183,7 @@ const FAQS = [
   { q: "Does Recall Touch integrate with my calendar/CRM?", a: "Yes. Growth+ tiers get integrations with Google Calendar, Cal.com, Zapier, and Make.com. Business+ adds API access. Enterprise gets custom integrations." },
   { q: "What's included in your support?", a: "Starter: Email (24h response). Growth: Priority email + live chat. Business: Phone support. Agency+: Dedicated account manager." },
   { q: "Can I test Recall Touch free first?", a: "Absolutely. 14-day free trial. Full access to all features. No credit card required. Your AI agent will be answering calls in under 3 minutes." },
-  { q: "How does Recall Touch work?", a: "Recall Touch answers all your incoming calls as an AI receptionist, qualifies leads in real-time, books appointments directly into your calendar, and automatically follows up with contacts to move them through your pipeline." },
+  { q: "How does Recall Touch work?", a: "Recall Touch answers all your incoming calls with an AI phone agent, qualifies leads in real-time, books appointments directly into your calendar, and automatically follows up with contacts to move them through your pipeline." },
   { q: "Can I white-label this for my clients?", a: "Yes. Agency plan includes full white-label branding, multi-client dashboard, and client invitation flow. Enterprise adds custom domain support." },
 ];
 

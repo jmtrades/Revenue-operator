@@ -1948,7 +1948,7 @@
       "scratch": "Agente personalizado"
     },
     "greetings": {
-      "receptionist": "Olá, obrigado por ligar. Sou a sua rececionista IA — recolho os dados e não deixamos nada para trás.",
+      "receptionist": "Olá, obrigado por ligar. Sou seu agente IA — recolho os dados e não deixamos nada para trás.",
       "after_hours": "Olá, é a sua rececionista IA da Recall Touch para chamadas fora de horário. Como posso ajudar?",
       "emergency": "É a sua linha de emergência. Atuo rápido, acalmo e alerto a pessoa certa.",
       "lead_qualifier": "Obrigado pelo contacto. Vou fazer algumas perguntas para o encaminhar.",
@@ -1998,7 +1998,7 @@
       "defaultHours": "Seg–Sex 9h–17h",
       "yourBusiness": "sua empresa",
       "greeting": "Obrigado por ligar para {business}. Como posso ajudar hoje?",
-      "receptionist": "Recepcionista",
+      "receptionist": "Agente IA",
       "hasBudget": "Tem orçamento",
       "hasTimeline": "Tem prazo",
       "isDecisionMaker": "É decisor",
@@ -3602,7 +3602,7 @@
       "complianceAndSecurity": "Conformidade e Segurança",
       "optionalUpdates": "Opcional: receber atualizações do produto.",
       "notifyMe": "Avise-me",
-      "onList": "Você está na lista! 🎉",
+      "onList": "Você está na lista!",
       "getUpdates": "Receber atualizações",
       "emailPlaceholder": "voce@empresa.com",
       "emailAriaLabel": "E-mail para atualizações do produto"
@@ -4209,15 +4209,15 @@
       "cards": {
         "1": {
           "summary": "Consulta de agendamento",
-          "outcome": "✅ Agendado 14h"
+          "outcome": "Agendado 14h"
         },
         "2": {
           "summary": "Dúvida sobre preço",
-          "outcome": "✅ Info enviada por SMS"
+          "outcome": "Info enviada por SMS"
         },
         "3": {
           "summary": "Pedido de retorno",
-          "outcome": "✅ Follow-up em 30 min"
+          "outcome": "Follow-up em 30 min"
         }
       }
     },
@@ -4532,9 +4532,9 @@
       "missedCallsPerWeek": "Chamadas perdidas por semana",
       "avgValuePerCall": "Valor médio por chamada ($)",
       "monthlyRecovered": "Receita recuperada mensalmente",
-      "annualBaseline": "Base anual de rececionista",
+      "annualBaseline": "Base anual de contratação",
       "annualProtected": "Receita anual que o Recall Touch protege",
-      "receptionistCost": "custo de rececionista.",
+      "receptionistCost": "custo de contratação.",
       "recommendedPlan": "Plano recomendado:",
       "description": "Calcule sua recuperação de receita com nossa calculadora de ROI."
     },
@@ -6633,5 +6633,45 @@
   },
   "legal": {
     "languageNotice": "Este documento está disponível apenas em inglês."
+  },
+  "compare": {
+    "title": "Recall Touch vs {name}",
+    "subtitle": "See how the AI Revenue Execution System compares.",
+    "cta": "Start free"
+  },
+  "agency": {
+    "kicker": "Partner operations",
+    "title": "Agency",
+    "subtitle": "Set up and manage client workspaces with a repeatable, ROI-first onboarding flow.",
+    "ctaCreateWorkspace": "Create a client workspace",
+    "ctaPricing": "View pricing",
+    "cards": {
+      "workspaces": {
+        "title": "Client workspaces",
+        "description": "Create separate workspaces for each client to isolate data and manage access."
+      },
+      "whitelabel": {
+        "title": "White-label",
+        "description": "Brand the platform as your own with custom logos, colors, and domains."
+      },
+      "support": {
+        "title": "Support",
+        "description": "We handle onboarding, training, and technical support for your clients."
+      }
+    }
+  },
+  "followUps": {
+    "title": "Follow-ups",
+    "create": "Create Sequence",
+    "tabs": {
+      "templates": "Templates",
+      "active": "Active enrollments"
+    },
+    "empty": {
+      "templatesTitle": "No sequences yet.",
+      "templatesDescription": "Create a custom sequence to automatically follow up with contacts.",
+      "activeTitle": "No active enrollments",
+      "activeDescription": "Active enrollments appear here."
+    }
   }
 }

@@ -205,19 +205,43 @@ export default function TeamPage() {
       .finally(() => setInviteSending(false));
   }, [inviteEmail, inviteRole, workspaceId, inviteSending, showToast, fetchTeam, t]);
 
-  const handleChangeRole = useCallback((memberId: string, newRole: TeamRole) => {
-    setMembers((prev) =>
-      prev.map((m) => (m.id === memberId ? { ...m, role: newRole } : m))
-    );
+  const handleChangeRole = useCallback(async (memberId: string, newRole: TeamRole) => {
+    try {
+      const res = await fetch(`/api/team/members/${memberId}/role`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ role: newRole, workspace_id: workspaceId }),
+      });
+      if (!res.ok) throw new Error("Failed to update role");
+      setMembers((prev) =>
+        prev.map((m) => (m.id === memberId ? { ...m, role: newRole } : m))
+      );
+      toast.success("Role updated");
+    } catch {
+      toast.error("Failed to update role");
+    }
     setRoleModalMember(null);
     setMenuMemberId(null);
-  }, []);
+  }, [workspaceId, t]);
 
-  const handleRemoveMember = useCallback((memberId: string) => {
-    setMembers((prev) => prev.filter((m) => m.id !== memberId));
+  const handleRemoveMember = useCallback(async (memberId: string) => {
+    try {
+      const res = await fetch(`/api/team/members/${memberId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ workspace_id: workspaceId }),
+      });
+      if (!res.ok) throw new Error("Failed to remove member");
+      setMembers((prev) => prev.filter((m) => m.id !== memberId));
+      toast.success("Member removed");
+    } catch {
+      toast.error("Failed to remove member");
+    }
     setRemoveConfirmMember(null);
     setMenuMemberId(null);
-  }, []);
+  }, [workspaceId, t]);
 
   const invitableRoleOptions = useMemo(() => INVITABLE_ROLES.map((r) => ({ value: r, label: roleLabels[r] })), [roleLabels]);
 

@@ -3973,7 +3973,7 @@
       "complianceAndSecurity": "Compliance & Security",
       "optionalUpdates": "Optional: get product updates.",
       "notifyMe": "Notify me",
-      "onList": "You're on the list! 🎉",
+      "onList": "You're on the list!",
       "getUpdates": "Get updates",
       "emailPlaceholder": "you@company.com",
       "emailAriaLabel": "Email for product updates"
@@ -4591,15 +4591,15 @@
       "cards": {
         "1": {
           "summary": "Scheduling consultation",
-          "outcome": "✅ Booked 2 PM"
+          "outcome": "Booked 2 PM"
         },
         "2": {
           "summary": "Pricing question",
-          "outcome": "✅ Info sent via text"
+          "outcome": "Info sent via text"
         },
         "3": {
           "summary": "Callback request",
-          "outcome": "✅ Follow-up in 30 min"
+          "outcome": "Follow-up in 30 min"
         }
       }
     },
@@ -4917,9 +4917,9 @@
       "missedCallsPerWeek": "Missed calls per week",
       "avgValuePerCall": "Average value per call ($)",
       "monthlyRecovered": "Monthly revenue recovered",
-      "annualBaseline": "Annual receptionist baseline",
+      "annualBaseline": "Annual hiring baseline",
       "annualProtected": "Annual revenue Recall Touch protects",
-      "receptionistCost": "receptionist cost.",
+      "receptionistCost": "hiring cost.",
       "recommendedPlan": "Recommended plan:"
     },
     "faq": {

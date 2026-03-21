@@ -233,13 +233,44 @@ export const AGENT_TOOL_CREATE_ESTIMATE: AssistantTool = {
   },
 };
 
+export const AGENT_TOOL_SEARCH_KNOWLEDGE: AssistantTool = {
+  type: "function",
+  name: "search_knowledge",
+  description:
+    "Search the business knowledge base for an answer to the caller's question. Use this BEFORE saying you don't know something. This searches FAQs, service descriptions, policies, pricing info, and any information the business has provided. If this tool returns a result, use it to answer the caller naturally.",
+  parameters: {
+    type: "object",
+    properties: {
+      query: { type: "string", description: "The question or topic to search for (use the caller's exact words)" },
+      category: { type: "string", enum: ["pricing", "hours", "services", "policies", "location", "staff", "general"], description: "Category to narrow the search" },
+    },
+    required: ["query"],
+  },
+};
+
+export const AGENT_TOOL_CHECK_BUSINESS_HOURS: AssistantTool = {
+  type: "function",
+  name: "check_business_hours",
+  description:
+    "Check whether the business is currently open and what the hours are for a specific day. Use when a caller asks 'are you open?', 'what time do you close?', or 'are you open on Saturday?'.",
+  parameters: {
+    type: "object",
+    properties: {
+      day: { type: "string", description: "Day to check (e.g., 'today', 'tomorrow', 'Monday', 'Saturday')" },
+    },
+    required: [],
+  },
+};
+
 /**
  * Get tools appropriate for the agent template and capabilities.
  */
 export function getAgentTools(capabilities: string[]): AssistantTool[] {
   const tools: AssistantTool[] = [];
 
-  // Always include customer lookup and message taking
+  // Always include: knowledge search, customer lookup, hours check, and message taking
+  tools.push(AGENT_TOOL_SEARCH_KNOWLEDGE);
+  tools.push(AGENT_TOOL_CHECK_BUSINESS_HOURS);
   tools.push(AGENT_TOOL_LOOKUP_CUSTOMER);
   tools.push(AGENT_TOOL_TAKE_MESSAGE);
 
@@ -281,6 +312,8 @@ export function getAgentTools(capabilities: string[]): AssistantTool[] {
   // Fewer tools = fewer hallucination opportunities for unconfigured agents.
   if (capabilities.length === 0) {
     return [
+      AGENT_TOOL_SEARCH_KNOWLEDGE,
+      AGENT_TOOL_CHECK_BUSINESS_HOURS,
       AGENT_TOOL_LOOKUP_CUSTOMER,
       AGENT_TOOL_CAPTURE_LEAD,
       AGENT_TOOL_BOOK_APPOINTMENT,
@@ -295,6 +328,8 @@ export function getAgentTools(capabilities: string[]): AssistantTool[] {
 
 /** All available tools (for reference and documentation) */
 export const ALL_AGENT_TOOLS: AssistantTool[] = [
+  AGENT_TOOL_SEARCH_KNOWLEDGE,
+  AGENT_TOOL_CHECK_BUSINESS_HOURS,
   AGENT_TOOL_BOOK_APPOINTMENT,
   AGENT_TOOL_CHECK_AVAILABILITY,
   AGENT_TOOL_CAPTURE_LEAD,

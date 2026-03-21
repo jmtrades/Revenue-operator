@@ -19,8 +19,17 @@ import {
 
 const STEPS = 5;
 const INDUSTRY_VALUES = ["home_services", "healthcare", "legal", "real_estate", "insurance", "b2b_sales", "local_business", "contractors"] as const;
-const AGENT_NAMES = ["Sarah", "Alex", "Emma", "James", "Mike", "Lisa"];
-const VOICE_IDS = ["warm", "professional", "casual", "calm"] as const;
+const AGENT_NAMES = ["Sarah", "Alex", "Emma", "James", "Rachel", "Charlotte"];
+const VOICE_IDS = [
+  "us-female-warm-receptionist",   // Sarah — warm & welcoming
+  "us-male-professional",           // Adam — professional & clear
+  "us-female-casual",               // Emma — casual & friendly
+  "uk-female-warm",                 // Charlotte — warm British
+  "us-male-warm",                   // James — warm & reassuring
+  "us-female-calm",                 // Rachel — calm & empathetic
+  "us-male-confident",              // Sam — confident & energetic
+  "uk-male-authoritative",          // George — authoritative British
+] as const;
 
 function OnboardingWizard() {
   const t = useTranslations("dashboard.onboardingWizard");
@@ -62,14 +71,23 @@ function OnboardingWizard() {
   const playVoicePreview = useCallback(async (voice: string) => {
     setPlayingVoice(voice);
     try {
-      // Simple voice preview text
-      const previewText = `Hello, this is a preview of the ${voice} voice. Thank you for calling.`;
-      // In a real implementation, this would call the voice API
-      // For now, we'll just simulate it
-      await new Promise(resolve => setTimeout(resolve, 2000));
-    } finally {
-      setPlayingVoice(null);
+      const previewText = `Hi there, thanks so much for calling. I'd love to help you out — what can I do for you today?`;
+      const res = await fetch(
+        `/api/demo/voice-preview?voice_id=${encodeURIComponent(voice)}&text=${encodeURIComponent(previewText)}`
+      );
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        audio.onended = () => { URL.revokeObjectURL(url); setPlayingVoice(null); };
+        audio.onerror = () => { URL.revokeObjectURL(url); setPlayingVoice(null); };
+        await audio.play();
+        return;
+      }
+    } catch {
+      // Voice service unavailable
     }
+    setPlayingVoice(null);
   }, []);
 
   useEffect(() => {
@@ -258,7 +276,7 @@ function OnboardingWizard() {
           <div className="space-y-6">
             <div>
               <h1 className="text-2xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>{t("tellUsAboutBusiness")}</h1>
-              <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Help us customize your AI receptionist</p>
+              <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Help us customize your AI phone agent</p>
             </div>
 
             <div>
@@ -385,7 +403,7 @@ function OnboardingWizard() {
                         type="button"
                         onClick={(e) => { e.stopPropagation(); playVoicePreview(v.id); }}
                         disabled={playingVoice === v.id}
-                        className="p-2 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                        className="p-2 rounded-lg transition-all md:opacity-0 md:group-hover:opacity-100"
                         style={{ background: "var(--accent-primary-subtle)" }}
                       >
                         <Volume2 size={16} style={{ color: playingVoice === v.id ? "var(--text-muted)" : "var(--accent-primary)" }} />
@@ -537,7 +555,7 @@ function OnboardingWizard() {
           <div className="space-y-6">
             <div>
               <h1 className="text-2xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>{t("yourBusinessNumber")}</h1>
-              <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Get a dedicated number for your AI receptionist</p>
+              <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Get a dedicated number for your AI agent</p>
             </div>
 
             {!phoneNumber ? (

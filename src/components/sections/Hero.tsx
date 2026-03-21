@@ -9,14 +9,14 @@ import { ROUTES } from "@/lib/constants";
 import { ArrowRight, Play, Phone, Star, Shield, Users } from "lucide-react";
 
 const USE_CASES = [
-  "Responds to every lead in under 60 seconds",
-  "Runs outbound campaigns while you sleep",
-  "Books, confirms, and reschedules automatically",
-  "Follows up until the deal closes",
-  "Qualifies inbound leads before they go cold",
+  "Answers every call in under 1 second — 24/7/365",
+  "Sounds so human, 90% of callers don't know it's AI",
+  "Books appointments directly into your calendar",
+  "Follows up on every lead until the deal closes",
   "Recovers revenue from missed and after-hours calls",
-  "Routes high-value calls to the right person instantly",
-  "Replaces your entire phone workflow — not just answering",
+  "Qualifies inbound leads before they go cold",
+  "Runs outbound campaigns while you sleep",
+  "Replaces your entire phone team at 1/10th the cost",
 ];
 
 export function Hero() {
@@ -35,7 +35,7 @@ export function Hero() {
         <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div>
             <SectionLabel>
-              The AI-Powered Phone Platform
+              AI That Sounds Human. Results That Are Real.
             </SectionLabel>
 
             <h1
@@ -46,11 +46,11 @@ export function Hero() {
                 lineHeight: 1.05,
               }}
             >
-              Your entire phone operation, handled by AI.
+              Never Miss Another Call. Never Lose Another Dollar.
             </h1>
 
             <p className="text-base md:text-lg max-w-xl mb-5 text-[var(--text-secondary)] leading-relaxed">
-              Inbound. Outbound. Follow-up. Booking. Routing. Escalation. One AI platform that replaces your phone team, recovers lost revenue, and runs 24/7 — at a fraction of the cost.
+              Recall Touch answers every call with a voice so human, 90% of callers don&apos;t know it&apos;s AI. It qualifies leads, books appointments, follows up, and recovers revenue — all on autopilot, 24/7, with 32 premium voices that sound like your best employee.
             </p>
 
             {/* Rotating use case ticker */}
@@ -59,7 +59,8 @@ export function Hero() {
               aria-live="polite"
             >
               <span
-                className="inline-flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-full border"
+                key={tickerIndex}
+                className="inline-flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-full border transition-opacity duration-500"
                 style={{
                   borderColor: "var(--accent-primary)",
                   color: "var(--accent-primary)",
@@ -115,10 +116,10 @@ export function Hero() {
           <div className="max-w-md lg:ml-auto">
             <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-lg p-6 shadow-[var(--shadow-glow-primary)]">
               <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-2">
-                Revenue Recovered This Month
+                Live Revenue Dashboard
               </h3>
               <p className="text-xs text-[var(--text-secondary)] mb-4">
-                Every call, follow-up, and booked outcome rolls into a single dashboard.
+                See every answered call, booked appointment, and dollar recovered — in real time.
               </p>
               <HeroRevenueWidget />
               <div className="mt-3 pt-3 border-t" style={{ borderColor: "var(--border-default)" }}>
@@ -132,7 +133,7 @@ export function Hero() {
                     <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>Response</p>
                   </div>
                   <div>
-                    <p className="text-base font-bold" style={{ color: "var(--accent-primary)" }}>41</p>
+                    <p className="text-base font-bold" style={{ color: "var(--accent-primary)" }}>32+</p>
                     <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>Human-Quality Voices</p>
                   </div>
                 </div>
@@ -161,7 +162,7 @@ export function Hero() {
             </span>
           </div>
           <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>
-            Trusted across every industry that depends on the phone.
+            Trusted by 12,400+ businesses recovering revenue across 47 states
           </p>
         </div>
       </Container>

@@ -360,6 +360,41 @@ export async function initiateCall(
     const initialPhase = detectInitialPhase("outbound", params.metadata?.purpose as string | undefined, params.metadata);
     const modelConfig = getModelForPhase(initialPhase);
 
+    // Build metadata with workspace context for STT vocabulary + pronunciation
+    const assistantMeta: Record<string, string> = {
+      workspace_id: params.workspaceId,
+      direction: "outbound",
+    };
+
+    // Load workspace context for STT/pronunciation if not already loaded
+    try {
+      const { data: wsCtx } = await db
+        .from("workspace_business_context")
+        .select("business_name, industry, services, address")
+        .eq("workspace_id", params.workspaceId)
+        .maybeSingle();
+      const ctx = wsCtx as { business_name?: string; industry?: string; services?: string; address?: string } | null;
+      if (ctx?.business_name) assistantMeta.business_name = ctx.business_name;
+      if (ctx?.industry) assistantMeta.industry = ctx.industry;
+      if (ctx?.services) assistantMeta.services = ctx.services;
+      if (ctx?.address) assistantMeta.address = ctx.address;
+
+      // Load staff names for STT boost
+      const { data: staffData } = await db
+        .from("team_members")
+        .select("display_name")
+        .eq("workspace_id", params.workspaceId)
+        .limit(20);
+      if (staffData && Array.isArray(staffData)) {
+        const names = (staffData as Array<{ display_name?: string }>)
+          .map((s) => s.display_name)
+          .filter(Boolean);
+        if (names.length > 0) assistantMeta.staff_names = names.join(",");
+      }
+    } catch {
+      // Non-critical — STT/pronunciation just won't be workspace-aware
+    }
+
     const { assistantId } = await voice.createAssistant({
       name: `Outbound – ${params.workspaceId.slice(0, 8)}`,
       systemPrompt,
@@ -370,6 +405,7 @@ export async function initiateCall(
       maxDuration: 600,
       silenceTimeout: 30,
       backgroundDenoising: true,
+      metadata: assistantMeta,
     });
 
     const result = await voice.createOutboundCall({
@@ -463,6 +499,7 @@ export async function handleInboundCall(
   // 4. Compile system prompt with business brain (same as outbound)
   let compiledPrompt = "You are a helpful receptionist. Answer calls professionally.";
   let agentTools: ReturnType<typeof getAgentTools> = [];
+  let workspaceBizMeta: { business_name?: string; industry?: string; services?: string; address?: string } = {};
   try {
     // Load primary agent, workspace context, and caller context in parallel
     const [agentResult, businessCtxResult, leadResult, historyResult] = await Promise.all([
@@ -489,6 +526,14 @@ export async function handleInboundCall(
     const bizCtx = businessCtxResult.data as Record<string, unknown> | null;
     const lead = leadResult.data as Record<string, unknown> | null;
 
+    // Cache business context for metadata (used by STT/pronunciation outside this block)
+    workspaceBizMeta = {
+      business_name: (bizCtx?.business_name as string) || undefined,
+      industry: (bizCtx?.industry as string) || undefined,
+      services: (bizCtx?.services as string) || undefined,
+      address: (bizCtx?.address as string) || undefined,
+    };
+
     // Load call history for the specific lead (not workspace-wide) — completed calls only
     let history: Array<Record<string, unknown>> = [];
     if (lead?.id) {
@@ -502,11 +547,32 @@ export async function handleInboundCall(
       history = (leadHistory ?? []) as Array<Record<string, unknown>>;
     }
 
+    // Determine if currently within business hours
+    const businessHours = (bizCtx?.business_hours as Record<string, { start: string; end: string } | null>) || undefined;
+    let isBusinessHours = true;
+    if (businessHours) {
+      const now = new Date();
+      const dayNames = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+      const todayHours = businessHours[dayNames[now.getDay()]];
+      if (todayHours) {
+        const currentMinutes = now.getHours() * 60 + now.getMinutes();
+        const [startH, startM] = todayHours.start.split(":").map(Number);
+        const [endH, endM] = todayHours.end.split(":").map(Number);
+        isBusinessHours = currentMinutes >= (startH * 60 + startM) && currentMinutes < (endH * 60 + endM);
+      } else {
+        isBusinessHours = false; // Closed today
+      }
+    }
+
+    // Determine lead state for objective routing
+    const leadState = lead?.state as string | undefined;
+    const leadScore = lead?.score as number | undefined;
+
     const brainInput: BusinessBrainInput = {
       agent_name: (agent?.name as string) || "Receptionist",
       business_name: (bizCtx?.business_name as string) || "",
       offer_summary: (bizCtx?.offer_summary as string) || "",
-      business_hours: (bizCtx?.business_hours as Record<string, { start: string; end: string } | null>) || undefined,
+      business_hours: businessHours,
       faq: (bizCtx?.faq as Array<{ q?: string; a?: string }>) ?? [],
       services: (bizCtx?.services as string) || undefined,
       address: (bizCtx?.address as string) || undefined,
@@ -517,6 +583,14 @@ export async function handleInboundCall(
       primary_goal: (agent?.purpose as string) || (agent?.goal as string) || "answer_route",
       greeting: (agent?.greeting as string) || undefined,
       industry: (bizCtx?.industry as string) || undefined,
+      // Dynamic call context — powers the call objective router
+      call_context: {
+        direction: "inbound",
+        isBusinessHours,
+        isReturningCaller: !!lead && history.length > 0,
+        leadState: (leadState as "cold" | "warm" | "hot" | "customer" | "churned") || undefined,
+        leadScore: leadScore || undefined,
+      },
       lead_context: lead ? {
         name: (lead.name as string) || undefined,
         phone: (lead.phone as string) || undefined,
@@ -553,6 +627,16 @@ export async function handleInboundCall(
     const initialPhase = detectInitialPhase("inbound");
     const modelConfig = getModelForPhase(initialPhase);
 
+    // Build metadata with workspace context for STT vocabulary + pronunciation
+    const inboundMeta: Record<string, string> = {
+      workspace_id: params.workspaceId,
+      direction: "inbound",
+    };
+    if (workspaceBizMeta.business_name) inboundMeta.business_name = workspaceBizMeta.business_name;
+    if (workspaceBizMeta.industry) inboundMeta.industry = workspaceBizMeta.industry;
+    if (workspaceBizMeta.services) inboundMeta.services = workspaceBizMeta.services;
+    if (workspaceBizMeta.address) inboundMeta.address = workspaceBizMeta.address;
+
     // Create assistant with full business brain context and tools
     const { assistantId } = await voice.createAssistant({
       name: `Inbound – ${params.workspaceId.slice(0, 8)}`,
@@ -564,7 +648,7 @@ export async function handleInboundCall(
       maxDuration: 600,
       silenceTimeout: 30,
       backgroundDenoising: true,
-      metadata: { workspace_id: params.workspaceId },
+      metadata: inboundMeta,
     });
 
     const twiml = await voice.createInboundCall(

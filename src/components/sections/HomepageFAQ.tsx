@@ -9,18 +9,6 @@ type FaqItem = { q: string; a: string };
 
 const FAQS: FaqItem[] = [
   {
-    q: "What exactly does Recall Touch do?",
-    a: "Recall Touch is an AI revenue operations platform. It handles inbound and outbound communication, automated follow-up sequences, appointment booking, lead qualification, escalation to your team, and full revenue attribution. Think of it as the execution layer that runs your revenue operations automatically.",
-  },
-  {
-    q: "Who is this for?",
-    a: "Any business or team that generates revenue through conversations. Solo consultants, sales teams, agencies, service businesses, clinics, law firms, real estate teams, recruiters, multi-location operators, and more. If you have leads, appointments, or follow-up to manage, Recall Touch runs it.",
-  },
-  {
-    q: "Do I need to replace my CRM?",
-    a: "No. Recall Touch is the execution layer that sits on top of your CRM. It handles communication, follow-up, booking, and attribution. Your CRM stays as your system of record.",
-  },
-  {
     q: "How fast can I be live?",
     a: "Most teams are live within minutes. Connect your number, configure your workflows, run a test, and go live. You can refine sequences and agent behavior after you see it working.",
   },
@@ -31,6 +19,22 @@ const FAQS: FaqItem[] = [
   {
     q: "Can I use my existing business number?",
     a: "Yes. Keep your current number and forward to Recall Touch, or provision new numbers directly.",
+  },
+  {
+    q: "What exactly does Recall Touch do?",
+    a: "Recall Touch is an AI revenue operations platform. It handles inbound and outbound communication, automated follow-up sequences, appointment booking, lead qualification, escalation to your team, and full revenue attribution. Think of it as the execution layer that runs your revenue operations automatically.",
+  },
+  {
+    q: "Does the AI sound robotic?",
+    a: "Not even close. Recall Touch uses 32 premium AI voices engineered with natural pauses, real intonation, pitch variation, and conversational warmth. Over 90% of callers don't realize they're speaking with AI.",
+  },
+  {
+    q: "Who is this for?",
+    a: "Any business or team that generates revenue through conversations. Solo consultants, sales teams, agencies, service businesses, clinics, law firms, real estate teams, recruiters, multi-location operators, and more. If you have leads, appointments, or follow-up to manage, Recall Touch runs it.",
+  },
+  {
+    q: "Do I need to replace my CRM?",
+    a: "No. Recall Touch is the execution layer that sits on top of your CRM. It handles communication, follow-up, booking, and attribution. Your CRM stays as your system of record.",
   },
   {
     q: "How do you prevent bad automation?",
@@ -67,7 +71,7 @@ export function HomepageFAQ() {
               color: "var(--text-primary)",
             }}
           >
-            Common questions
+            Everything You Need to Know
           </h2>
         </div>
 

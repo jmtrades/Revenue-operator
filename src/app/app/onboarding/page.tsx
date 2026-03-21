@@ -46,7 +46,7 @@ const ONBOARDING_TEMPLATE_IDS = [
     id: "inbound-closer",
     icon: PhoneIncoming,
     name: "Inbound Closer",
-    tagline: "Answers calls, qualifies leads, books appointments",
+    tagline: "Answers every call, qualifies leads, books appointments instantly",
     features: [
       "Intelligent call routing and screening",
       "Real-time lead qualification",
@@ -58,7 +58,7 @@ const ONBOARDING_TEMPLATE_IDS = [
     id: "outbound-setter",
     icon: PhoneOutgoing,
     name: "Outbound Setter",
-    tagline: "Runs outbound campaigns, sets appointments",
+    tagline: "Runs campaigns on autopilot, fills your calendar with qualified meetings",
     features: [
       "Automated outbound call campaigns",
       "Lead list management",
@@ -67,22 +67,22 @@ const ONBOARDING_TEMPLATE_IDS = [
     recommendedFor: "Sales teams running outbound campaigns"
   },
   {
-    id: "receptionist-pro",
+    id: "office-agent",
     icon: Headphones,
-    name: "Receptionist Pro",
-    tagline: "Full front-desk replacement, routing, FAQ handling",
+    name: "Office Agent",
+    tagline: "24/7 front-desk coverage that never calls in sick",
     features: [
       "Complete call routing and forwarding",
       "FAQ answering and knowledgebase",
       "Message taking & callback scheduling"
     ],
-    recommendedFor: "Professional offices needing 24/7 coverage"
+    recommendedFor: "Any business needing 24/7 phone coverage"
   },
   {
     id: "follow-up-engine",
     icon: RefreshCcw,
     name: "Follow-Up Engine",
-    tagline: "Automated follow-up sequences, no-show recovery",
+    tagline: "Turns no-shows into booked appointments, dead leads into revenue",
     features: [
       "Automated follow-up call sequences",
       "No-show and reminder calling",
@@ -94,7 +94,7 @@ const ONBOARDING_TEMPLATE_IDS = [
     id: "support-agent",
     icon: LifeBuoy,
     name: "Support Agent",
-    tagline: "Customer support, ticket creation, escalation",
+    tagline: "Handles support calls with patience and precision, escalates when needed",
     features: [
       "Multi-channel customer support",
       "Ticket creation and tracking",
@@ -106,7 +106,7 @@ const ONBOARDING_TEMPLATE_IDS = [
     id: "full-operator",
     icon: Zap,
     name: "Full Revenue Operator",
-    tagline: "All-in-one: inbound + outbound + follow-up + booking",
+    tagline: "Your entire phone operation in one AI — inbound, outbound, follow-up, everything",
     features: [
       "Complete revenue pipeline automation",
       "Inbound, outbound, follow-up, and booking",
