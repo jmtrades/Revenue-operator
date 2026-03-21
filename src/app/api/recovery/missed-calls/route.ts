@@ -73,7 +73,7 @@ export async function GET(req: NextRequest) {
       .limit(50);
 
     if (error) {
-      console.error("[recovery/missed-calls] query error:", error.message);
+      console.error("[recovery/missed-calls] query error:", error);
       return NextResponse.json({ calls: [] });
     }
 

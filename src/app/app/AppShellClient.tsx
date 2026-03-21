@@ -25,6 +25,13 @@ import {
   Command as CommandIcon,
   HelpCircle,
   Check,
+  Bot,
+  UserPlus,
+  BookOpen,
+  Clock,
+  CreditCard,
+  Code,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { PageTransition } from "@/components/ui/PageTransition";
@@ -72,18 +79,36 @@ export default function AppShellClient({
         label: t("nav.sectionMain"),
         items: [
           { href: "/app/dashboard", label: t("nav.dashboard"), icon: LayoutList },
+          { href: "/app/agents", label: t("nav.agents"), icon: Bot },
           { href: "/app/calls", label: t("nav.calls"), icon: PhoneCall },
           { href: "/app/contacts", label: t("nav.contacts"), icon: Users },
-          { href: "/app/inbox", label: t("nav.inbox"), icon: MessageSquare },
-          { href: "/app/calendar", label: t("nav.calendar"), icon: Calendar },
-          { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
-          { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
-          { href: "/app/settings", label: t("nav.settings"), icon: Settings },
+          { href: "/app/leads", label: t("nav.leads"), icon: UserPlus },
         ],
       },
       {
-        label: t("contactSupport"),
-        items: [{ href: "/app/help", label: t("contactSupport"), icon: HelpCircle }],
+        label: t("nav.communication"),
+        items: [
+          { href: "/app/inbox", label: t("nav.inbox"), icon: MessageSquare },
+          { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
+          { href: "/app/follow-ups", label: t("nav.followUps"), icon: Clock },
+          { href: "/app/calendar", label: t("nav.calendar"), icon: Calendar },
+        ],
+      },
+      {
+        label: t("nav.intelligence"),
+        items: [
+          { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
+          { href: "/app/knowledge", label: t("nav.knowledge"), icon: BookOpen },
+        ],
+      },
+      {
+        label: t("nav.workspace"),
+        items: [
+          { href: "/app/settings", label: t("nav.settings"), icon: Settings },
+          { href: "/app/billing", label: t("nav.billing"), icon: CreditCard },
+          { href: "/app/developer", label: t("nav.developer"), icon: Code },
+          { href: "/app/help", label: t("contactSupport"), icon: HelpCircle },
+        ],
       },
     ],
     [t]
@@ -98,11 +123,17 @@ export default function AppShellClient({
   );
   const mobileMoreLinks = useMemo(
     () => [
+      { href: "/app/agents", label: t("nav.agents"), icon: Bot },
       { href: "/app/contacts", label: t("nav.contacts"), icon: Users },
+      { href: "/app/leads", label: t("nav.leads"), icon: UserPlus },
       { href: "/app/calendar", label: t("nav.calendar"), icon: Calendar },
       { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
+      { href: "/app/follow-ups", label: t("nav.followUps"), icon: Clock },
+      { href: "/app/knowledge", label: t("nav.knowledge"), icon: BookOpen },
       { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
       { href: "/app/settings", label: t("nav.settings"), icon: Settings },
+      { href: "/app/billing", label: t("nav.billing"), icon: CreditCard },
+      { href: "/app/developer", label: t("nav.developer"), icon: Code },
       { href: "/app/help", label: t("contactSupport"), icon: HelpCircle },
     ],
     [t]
@@ -136,6 +167,14 @@ export default function AppShellClient({
       safeSetItem("rt_sidebar", next ? "collapsed" : "expanded");
       return next;
     });
+  };
+
+  const handleSignOut = async () => {
+    const client = getClientOrNull();
+    if (client) {
+      await client.auth.signOut();
+    }
+    router.push("/sign-in");
   };
 
   useEffect(() => {
@@ -517,6 +556,15 @@ export default function AppShellClient({
                         </kbd>
                         <span className="ml-1.5">{t("accessibility.quickSearch")}</span>
                       </div>
+                      <button
+                        type="button"
+                        onClick={handleSignOut}
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-[13px] font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
+                        aria-label={t("nav.signOut")}
+                      >
+                        <LogOut className="w-4 h-4 shrink-0" strokeWidth={1.5} />
+                        <span>{t("nav.signOut")}</span>
+                      </button>
                       <div className="pt-2">
                         <LanguageSwitcher className="w-full" />
                       </div>

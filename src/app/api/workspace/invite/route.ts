@@ -50,6 +50,32 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "This user is already a team member." }, { status: 409 });
     }
 
+    // Check seat limit before adding
+    const { BILLING_PLANS } = await import("@/lib/billing-plans");
+    const { data: wsBilling } = await db
+      .from("workspaces")
+      .select("billing_tier")
+      .eq("id", workspaceId)
+      .maybeSingle();
+
+    const billingTier = (wsBilling as { billing_tier?: string | null } | null)?.billing_tier as keyof typeof BILLING_PLANS | null;
+    if (billingTier && billingTier in BILLING_PLANS) {
+      const plan = BILLING_PLANS[billingTier];
+      const maxSeats = plan.maxSeats;
+
+      if (maxSeats !== -1) {
+        const { data: currentMembers } = await db
+          .from("workspace_roles")
+          .select("id")
+          .eq("workspace_id", workspaceId);
+
+        const currentCount = currentMembers?.length ?? 0;
+        if (currentCount >= maxSeats) {
+          return NextResponse.json({ error: "Team member limit reached for your plan." }, { status: 403 });
+        }
+      }
+    }
+
     // Add them directly
     await db.from("workspace_roles").insert({
       workspace_id: workspaceId,
@@ -70,7 +96,7 @@ export async function POST(req: NextRequest) {
 
   if (error) {
     // May not have workspace_invites table — still return success
-    console.error("[workspace/invite] Insert failed:", error.message);
+    console.error("[workspace/invite] Insert failed:", error);
     return NextResponse.json({ ok: true, pending: true, note: "Invite recorded" });
   }
 

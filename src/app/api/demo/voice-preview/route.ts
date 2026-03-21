@@ -33,6 +33,140 @@ function checkRateLimit(ip: string, maxRequests: number = 10, windowMs: number =
   return true;
 }
 
+/**
+ * Map internal voice IDs to Deepgram Aura model names
+ */
+function mapVoiceIdToDeepgramModel(voiceId: string): string {
+  // Map recall-touch voice IDs to Deepgram Aura models
+  // Deepgram Aura models: aura-asteria-en, aura-luna-en, aura-orion-en, aura-stella-en, etc.
+  const voiceMap: { [key: string]: string } = {
+    // Female voices
+    "us-female-warm-receptionist": "aura-stella-en",
+    "us-female-professional": "aura-asteria-en",
+    "us-female-casual": "aura-luna-en",
+    "us-female-energetic": "aura-stella-en",
+    "us-female-calm": "aura-luna-en",
+    "us-female-authoritative": "aura-asteria-en",
+    "us-female-friendly": "aura-stella-en",
+    "us-female-empathetic": "aura-luna-en",
+
+    // Male voices
+    "us-male-confident": "aura-orion-en",
+    "us-male-casual": "aura-orion-en",
+    "us-male-professional": "aura-asteria-en",
+    "us-male-warm": "aura-orion-en",
+    "us-male-energetic": "aura-stella-en",
+    "us-male-calm": "aura-luna-en",
+    "us-male-deep": "aura-orion-en",
+    "us-male-friendly": "aura-orion-en",
+
+    // British voices - default to available models
+    "uk-female-professional": "aura-asteria-en",
+    "uk-female-warm": "aura-stella-en",
+    "uk-female-casual": "aura-luna-en",
+    "uk-female-authoritative": "aura-asteria-en",
+
+    "uk-male-professional": "aura-asteria-en",
+    "uk-male-warm": "aura-orion-en",
+    "uk-male-casual": "aura-orion-en",
+    "uk-male-deep": "aura-orion-en",
+
+    // Default to Aura Luna for unmapped voices
+  };
+
+  return voiceMap[voiceId] || "aura-luna-en";
+}
+
+/**
+ * Handle TTS request via Deepgram API fallback
+ */
+async function handleDeepgramFallback(
+  voiceId: string,
+  text: string,
+  apiKey: string
+): Promise<NextResponse> {
+  try {
+    const model = mapVoiceIdToDeepgramModel(voiceId);
+
+    const deepgramUrl = `https://api.deepgram.com/v1/speak?model=${encodeURIComponent(model)}`;
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+    let response;
+    try {
+      response = await fetch(deepgramUrl, {
+        method: "POST",
+        signal: controller.signal,
+        headers: {
+          Authorization: `Token ${apiKey}`,
+          "Content-Type": "application/json",
+          "User-Agent": "RecallTouch-DemoProxy/1.0",
+        },
+        body: JSON.stringify({ text }),
+      });
+    } finally {
+      clearTimeout(timeoutId);
+    }
+
+    if (!response.ok) {
+      const responseText = await response.text();
+      log("error", "voice_preview.deepgram_error", {
+        status: response.status,
+        response: responseText,
+      });
+
+      if (response.status === 401) {
+        return NextResponse.json(
+          { error: "Deepgram API key invalid" },
+          { status: 401 }
+        );
+      }
+
+      if (response.status === 404) {
+        return NextResponse.json(
+          { error: `Voice model ${model} not found` },
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json(
+        { error: "Voice service temporarily unavailable" },
+        { status: 503 }
+      );
+    }
+
+    const audioBuffer = await response.arrayBuffer();
+
+    return new NextResponse(audioBuffer, {
+      status: 200,
+      headers: {
+        "Content-Type": response.headers.get("content-type") || "audio/mpeg",
+        "Content-Length": audioBuffer.byteLength.toString(),
+        "Cache-Control": "public, max-age=3600",
+        "Access-Control-Allow-Origin":
+          process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com",
+      },
+    });
+  } catch (error) {
+    const err = error as Error;
+
+    if (err.name === "AbortError") {
+      log("error", "voice_preview.deepgram_timeout", { error: "request timeout" });
+      return NextResponse.json(
+        { error: "Voice service timeout" },
+        { status: 504 }
+      );
+    }
+
+    log("error", "voice_preview.deepgram_error", { error: err.message });
+    return NextResponse.json(
+      { error: "Could not connect to voice service" },
+      { status: 503 }
+    );
+  }
+}
+
 export async function GET(req: NextRequest) {
   try {
     const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
@@ -68,11 +202,18 @@ export async function GET(req: NextRequest) {
 
     // Get voice server URL from environment
     const voiceServerUrl = process.env.NEXT_PUBLIC_VOICE_SERVER_URL;
-    if (!voiceServerUrl) {
+    const deepgramApiKey = process.env.DEEPGRAM_API_KEY;
+
+    if (!voiceServerUrl && !deepgramApiKey) {
       return NextResponse.json(
         { error: "Voice server not configured" },
         { status: 503 }
       );
+    }
+
+    // Use Deepgram as fallback if voice server is not available
+    if (!voiceServerUrl && deepgramApiKey) {
+      return handleDeepgramFallback(voiceId, text, deepgramApiKey);
     }
 
     // Build the request to the voice server

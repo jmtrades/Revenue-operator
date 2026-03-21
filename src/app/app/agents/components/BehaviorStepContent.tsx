@@ -27,6 +27,15 @@ export function BehaviorStepContent({
     t("behavior.presets.noInternal"),
   ];
 
+  // Phone number validation helper
+  const isValidPhoneNumber = (phone: string): boolean => {
+    if (!phone) return true; // Allow empty (optional field)
+    // Match: starts with + or is 10+ digits
+    return /^(\+|[0-9]{10,})/.test(phone.replace(/\D/g, "") || phone);
+  };
+
+  const transferPhoneError = agent.transferPhone && !isValidPhoneNumber(agent.transferPhone);
+
   const neverDo = Array.isArray(agent.neverSay) ? agent.neverSay : [];
 
   const addNeverDo = (rule: string) => {
@@ -161,8 +170,8 @@ export function BehaviorStepContent({
               }}
               className={`px-2.5 py-1 rounded-full border text-[11px] ${
                 preset === "custom"
-                  ? "border-white bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
-                  : "border-[var(--border-default)] text-[var(--text-secondary)] hover:border-white/40"
+                  ? "border-[var(--accent-primary)] bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
+                  : "border-[var(--border-default)] text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
               }`}
             >
               {preset === "bant"
@@ -262,8 +271,17 @@ export function BehaviorStepContent({
               value={agent.transferPhone || ""}
               onChange={(e) => onChange({ transferPhone: e.target.value })}
               placeholder={t("behavior.transferPhonePlaceholder")}
-              className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-white/25 focus:border-[var(--border-default)] focus:outline-none"
+              className={`w-full bg-[var(--bg-input)] border rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-white/25 focus:outline-none ${
+                transferPhoneError
+                  ? "border-red-500/50 focus:border-red-500/70"
+                  : "border-[var(--border-default)] focus:border-[var(--border-default)]"
+              }`}
             />
+            {transferPhoneError && (
+              <p className="text-xs text-red-400 mt-1">
+                Phone number must start with + or contain 10+ digits
+              </p>
+            )}
           </div>
 
           <div>
@@ -303,7 +321,7 @@ export function BehaviorStepContent({
       </section>
       <div className="flex justify-between pt-4">
         <button type="button" onClick={onBack} aria-label={t("nav.backToKnowledge")} className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black">{tCommon("back")}</button>
-        <button type="button" onClick={onNext} aria-label={t("nav.continueToTest")} className="rounded-xl bg-[var(--bg-surface)] px-6 py-2.5 text-sm font-semibold text-[var(--text-primary)] hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black">{tCommon("continue")}</button>
+        <button type="button" onClick={onNext} disabled={!!transferPhoneError} aria-label={t("nav.continueToTest")} className={`rounded-xl bg-[var(--bg-surface)] px-6 py-2.5 text-sm font-semibold text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black ${transferPhoneError ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"}`}>{tCommon("continue")}</button>
       </div>
     </div>
   );

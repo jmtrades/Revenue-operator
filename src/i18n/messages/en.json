@@ -278,6 +278,22 @@
     "signingIn": "Signing in…",
     "savePassword": "Save password"
   },
+  "signUp": {
+    "title": "Create your account",
+    "subtitle": "Start your free trial of Recall Touch",
+    "businessName": "Business name",
+    "businessNamePlaceholder": "Your company name",
+    "email": "Email address",
+    "emailPlaceholder": "you@company.com",
+    "password": "Password",
+    "passwordPlaceholder": "Create a password",
+    "submit": "Create account",
+    "submitting": "Creating account...",
+    "googleSignUp": "Sign up with Google",
+    "haveAccount": "Already have an account?",
+    "signIn": "Sign in",
+    "orContinueWith": "or continue with"
+  },
   "billing": {
     "pageTitle": "Billing — Recall Touch",
     "failureBanner": {
@@ -1328,6 +1344,7 @@
         "select": "Select",
         "selected": "Selected",
         "preview": "Preview",
+        "previewText": "Hi there, how can I help you today?",
         "bestFor": "Best for",
         "warm": "Warm & friendly",
         "professional": "Professional",
@@ -4193,7 +4210,7 @@
       "card2Stat2Desc": "Average response time",
       "card2Stat3Desc": "Of reps give up after 1 try",
       "card3Title": "Communication doesn't scale",
-      "card3Stat1Desc": "Receptionist + $55K SDR salaries",
+      "card3Stat1Desc": "AI phone operations vs hiring + training",
       "card3Stat2Desc": "Turnover in phone-heavy roles",
       "card3Stat3Desc": "Average tools businesses juggle for calls, texts, scheduling, and follow-up",
       "closing": "What if every call, text, and follow-up was handled automatically — and you could see exactly what happened?"
@@ -5017,9 +5034,9 @@
       "missedCallsPerWeek": "Missed calls per week",
       "avgValuePerCall": "Average value per call ($)",
       "monthlyRecovered": "Monthly revenue recovered",
-      "annualBaseline": "Annual hiring baseline",
+      "annualBaseline": "Annual cost baseline",
       "annualProtected": "Annual revenue Recall Touch protects",
-      "receptionistCost": "hiring cost.",
+      "receptionistCost": "typical annual cost.",
       "recommendedPlan": "Recommended plan:"
     },
     "faq": {
@@ -6949,6 +6966,7 @@
       "phoneDesc": "AI phone number for calls",
       "manageLink": "Manage →",
       "whatsappLabel": "WhatsApp",
+      "whatsappComingSoon": "WhatsApp integration support is coming soon. Stay tuned!",
       "crmHeading": "CRM & contacts",
       "crmDescription": "Connect your CRM to sync leads and contacts automatically. Your data stays secure and in sync across all your business tools.",
       "lastSyncLabel": "Last sync:",
@@ -7257,6 +7275,131 @@
       "voiceAShort": "Voice A",
       "voiceBShort": "Voice B",
       "duration": "Duration (days)"
+    }
+  },
+  "marketing": {
+    "hero": {
+      "badge": "AI phone infrastructure for revenue teams",
+      "heading1": "Every call answered.",
+      "heading2": "Every lead followed up.",
+      "heading3": "Every dollar recovered.",
+      "description": "Recall Touch runs your phone operation with AI that handles inbound, outbound, follow-up, and booking — 24/7. Natural voice quality. Real conversations. Full revenue attribution.",
+      "socialProof": "businesses",
+      "socialProofRecovered": "recovered",
+      "startFreeTrial": "Start free trial",
+      "watchDemo": "Watch demo",
+      "creditCard": "No credit card required. Live in under 3 minutes.",
+      "dashboardTitle": "Revenue Dashboard",
+      "dashboardPreview": "Preview",
+      "coverage24_7": "24/7",
+      "coverageLabel": "Coverage",
+      "responseTime": "<0.8s",
+      "responseLabel": "Response",
+      "voiceCount": "32",
+      "voiceLabel": "Voices",
+      "voiceDemo": {
+        "playButton": "Hear the voice",
+        "stopButton": "Stop",
+        "loading": "Loading...",
+        "placeholder": "(555) 123-4567",
+        "demoCall": "Get a demo call",
+        "calling": "Calling...",
+        "callStatus": "Calling you now! Pick up to hear it live.",
+        "callError": "Could not start the call. Try again.",
+        "connectionError": "Could not connect. Please try again.",
+        "invalidPhone": "Enter a valid phone number with area code.",
+        "disclaimer": "Free. No signup required. We call your phone in under 10 seconds."
+      },
+      "compliance": ["SOC 2 Type II", "HIPAA", "TCPA", "GDPR", "256-bit SSL"]
+    },
+    "features": {
+      "label": "What it does",
+      "heading": "AI Revenue Operations that closes the loop.",
+      "description": "Message-only assistants answer calls and take messages. Recall Touch answers calls, books appointments, and runs follow-up until revenue is recovered.",
+      "messageOnlyTitle": "Message-only answering",
+      "messageOnlyDesc": "Answers calls, takes messages, and stops.",
+      "recallTouchTitle": "Recall Touch",
+      "recallTouchDesc": "Answers calls and follows up until the lead books, converts, or opts out.",
+      "automatedFollowUp": {
+        "title": "Automated follow-up",
+        "desc": "Missed calls, quotes, no-shows, reactivation — without manual chasing."
+      },
+      "noShowRecovery": {
+        "title": "No-show recovery",
+        "desc": "Reminders + rescue follow-ups that protect bookings."
+      },
+      "deadLeadReactivation": {
+        "title": "Dead lead reactivation",
+        "desc": "Re-engage cold contacts with controlled cadence and guardrails."
+      },
+      "revenueAttribution": {
+        "title": "Revenue attribution",
+        "desc": "Tie outcomes to activity so ROI is visible and credible."
+      },
+      "industryWorkflows": {
+        "title": "Industry workflows",
+        "desc": "Scripts and defaults built around how service businesses actually sell."
+      }
+    },
+    "pricing": {
+      "heading": "Simple, Transparent Pricing",
+      "subheading": "Pick the plan that fits your business. Upgrade anytime.",
+      "highlight": "Less than the cost of one missed call.",
+      "moneyBackGuarantee": "30-day money-back guarantee",
+      "trustedBy": "Trusted by 12,400+ businesses",
+      "support24_7": "24/7 US-based support",
+      "monthly": "Monthly",
+      "annual": "Annual",
+      "save": "Save 20%",
+      "tryFree14Days": "Try it free for 14 days",
+      "annualNote": "Two months applied without interruption on annual commitment.",
+      "faq": {
+        "title": "Frequently Asked Questions",
+        "searchPlaceholder": "Search FAQ..."
+      },
+      "calculator": {
+        "title": "Calculate Your ROI",
+        "description": "See what Recall Touch can do for your business",
+        "missedCalls": "Missed calls per week:",
+        "jobValue": "Average job value:",
+        "conversionRate": "Call-to-appointment rate:",
+        "selectPlan": "Your plan:",
+        "monthlyLoss": "Monthly Loss",
+        "annualLoss": "Annual Loss",
+        "paybackPeriod": "Payback Period",
+        "annualRoi": "Annual ROI",
+        "cta": "Stop Losing {amount}/mo — Try Free"
+      }
+    },
+    "finalCta": {
+      "label": "Get started",
+      "heading": "Every unanswered call is revenue walking out the door.",
+      "description": "Start your 14-day free trial in under 3 minutes. No credit card. No contracts. No risk.",
+      "noCreditCard": "No credit card required",
+      "moneyBackGuarantee": "30-day money-back guarantee",
+      "compliance": "SOC 2 + HIPAA compliant",
+      "emailPlaceholder": "you@company.com",
+      "startFreeTrial": "Start free trial",
+      "redirecting": "Redirecting...",
+      "liveInMinutes": "Live in under 3 minutes. Cancel anytime.",
+      "bookDemo": "Book a live demo",
+      "stillNotSure": "Still not sure? Hear it for yourself — we'll call you right now.",
+      "joinBusinesses": "Join {count} businesses that stopped losing revenue to voicemail."
+    },
+    "footer": {
+      "outbound": "Outbound",
+      "enterprise": "Enterprise",
+      "industries": "Industries",
+      "dental": "Dental",
+      "healthcare": "Healthcare",
+      "legal": "Legal",
+      "realEstate": "Real Estate",
+      "plumbingHvac": "Plumbing & HVAC",
+      "insurance": "Insurance",
+      "medSpa": "Med Spa",
+      "results": "Results",
+      "security": "Security",
+      "systemStatus": "System Status"
     }
   }
 }

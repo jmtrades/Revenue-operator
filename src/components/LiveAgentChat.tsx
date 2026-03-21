@@ -196,7 +196,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
                   type="button"
                   onClick={() => setAgent(id)}
                   className={`px-3 py-1.5 rounded-full text-[11px] font-semibold border transition-colors ${
-                    active ? "bg-white/10 border-white text-white" : "bg-[var(--bg-card)] border-[var(--border-default)] text-[var(--text-tertiary)] hover:border-[var(--border-default)]"
+                    active ? "bg-[var(--accent-primary)]/10 border-[var(--accent-primary)] text-[var(--text-primary)]" : "bg-[var(--bg-card)] border-[var(--border-default)] text-[var(--text-tertiary)] hover:border-[var(--border-default)]"
                   }`}
                   aria-label={t("liveChat.switchAgentTo", { name: agentPills[id] })}
                 >
@@ -281,7 +281,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
             type="button"
             onClick={() => send(input)}
             disabled={!input.trim() || loading || atLimit}
-            className="bg-white text-black font-medium rounded-xl px-5 py-2.5 hover:bg-[var(--bg-hover)] disabled:opacity-60 transition-colors"
+            className="bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-medium rounded-xl px-5 py-2.5 hover:opacity-90 disabled:opacity-60 transition-colors"
             aria-label={t("liveChat.sendMessageLabel")}
           >
             →

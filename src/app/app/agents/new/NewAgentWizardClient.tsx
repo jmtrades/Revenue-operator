@@ -268,7 +268,7 @@ export default function NewAgentWizardClient({
         {STEPS.map((s) => (
           <div
             key={s.id}
-            className={`h-1 flex-1 rounded-full ${s.id <= step ? "bg-white" : "bg-[var(--bg-inset)]"}`}
+            className={`h-1 flex-1 rounded-full ${s.id <= step ? "bg-[var(--accent-primary)]" : "bg-[var(--bg-inset)]"}`}
             title={`Step ${s.id}: ${t(s.labelKey)}`}
           />
         ))}
@@ -300,7 +300,7 @@ export default function NewAgentWizardClient({
                   onClick={() => setState((p) => ({ ...p, purpose: value }))}
                   className={`p-4 rounded-xl border text-left transition-colors ${
                     state.purpose === value
-                      ? "border-white bg-white/10 text-[var(--text-primary)]"
+                      ? "border-[var(--accent-primary)] bg-[var(--accent-primary)]/10 text-[var(--text-primary)]"
                       : "border-[var(--border-default)] text-[var(--text-tertiary)] hover:border-[var(--border-default)] hover:text-[var(--text-secondary)]"
                   }`}
                 >
@@ -317,7 +317,7 @@ export default function NewAgentWizardClient({
                   type="button"
                   onClick={() => applyTemplate(t)}
                   className={`p-3 rounded-xl border text-left text-sm ${
-                    state.templateId === t.id ? "border-white bg-white/10 text-[var(--text-primary)]" : "border-[var(--border-default)] text-[var(--text-tertiary)] hover:border-[var(--border-default)]"
+                    state.templateId === t.id ? "border-[var(--accent-primary)] bg-[var(--accent-primary)]/10 text-[var(--text-primary)]" : "border-[var(--border-default)] text-[var(--text-tertiary)] hover:border-[var(--border-default)]"
                   }`}
                 >
                   {t.name}

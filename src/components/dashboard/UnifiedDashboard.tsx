@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
-import { Phone, MessageSquare, Megaphone, LayoutList } from "lucide-react";
+import { Phone, MessageSquare, Megaphone, LayoutList, Bot, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { track } from "@/lib/analytics/posthog";
@@ -18,6 +18,7 @@ type Summary = {
   follow_ups_sent: number;
   minutes_used: number;
   minutes_limit: number;
+  phone_number_configured?: boolean;
   needs_attention: { id: string; name: string; reason: string; phone?: string | null }[];
   activity: { id: string; at: string; line: string }[];
   campaigns: { id: string; name: string; status: string; enrolled: number; booked: number }[];
@@ -216,6 +217,16 @@ export function UnifiedDashboard() {
 
   return (
     <div className="space-y-6 p-4 md:p-6 max-w-6xl mx-auto">
+      {data?.phone_number_configured === false && (
+        <div className="rounded-xl border border-red-600/40 dark:border-red-500/40 bg-red-600/10 dark:bg-red-500/10 px-4 py-3">
+          <p className="text-sm text-[var(--text-primary)] font-semibold">
+            You haven&apos;t connected a phone number yet. Your AI can&apos;t receive calls until you do.{" "}
+            <Link href="/app/settings/phone" className="underline hover:opacity-80">
+              Connect Number →
+            </Link>
+          </p>
+        </div>
+      )}
       <div className="flex items-center gap-2 text-[var(--text-secondary)] text-sm">
         <LayoutList className="w-4 h-4" />
         <span>{t("dashboard", { defaultValue: "Dashboard" })}</span>
@@ -258,9 +269,35 @@ export function UnifiedDashboard() {
           )}
         </div>
         {!hasSignal && (
-          <p className="mt-2 text-sm text-[var(--text-tertiary)]">
-            Your AI is ready. Revenue appears here once appointments and analytics rollups are recorded.
-          </p>
+          <div className="mt-6 space-y-4">
+            <h3 className="text-base font-semibold text-[var(--text-primary)]">Get started with Recall Touch</h3>
+            <div className="grid sm:grid-cols-3 gap-4">
+              <Link href="/app/settings/phone" className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] hover:bg-[var(--bg-hover)] p-5 transition-colors group">
+                <div className="flex items-start justify-between mb-3">
+                  <Phone className="w-6 h-6 text-[var(--accent-primary)] flex-shrink-0" />
+                  <span className="text-[var(--text-tertiary)] group-hover:text-[var(--text-secondary)] transition-colors">→</span>
+                </div>
+                <h4 className="font-semibold text-[var(--text-primary)] mb-1">Connect a Number</h4>
+                <p className="text-sm text-[var(--text-secondary)]">Set up your phone number to start receiving calls</p>
+              </Link>
+              <Link href="/app/settings/agent" className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] hover:bg-[var(--bg-hover)] p-5 transition-colors group">
+                <div className="flex items-start justify-between mb-3">
+                  <Bot className="w-6 h-6 text-[var(--accent-primary)] flex-shrink-0" />
+                  <span className="text-[var(--text-tertiary)] group-hover:text-[var(--text-secondary)] transition-colors">→</span>
+                </div>
+                <h4 className="font-semibold text-[var(--text-primary)] mb-1">Configure Your Agent</h4>
+                <p className="text-sm text-[var(--text-secondary)]">Customize how your AI handles calls</p>
+              </Link>
+              <Link href="/app/settings/phone" className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] hover:bg-[var(--bg-hover)] p-5 transition-colors group">
+                <div className="flex items-start justify-between mb-3">
+                  <PhoneCall className="w-6 h-6 text-[var(--accent-primary)] flex-shrink-0" />
+                  <span className="text-[var(--text-tertiary)] group-hover:text-[var(--text-secondary)] transition-colors">→</span>
+                </div>
+                <h4 className="font-semibold text-[var(--text-primary)] mb-1">Make a Test Call</h4>
+                <p className="text-sm text-[var(--text-secondary)]">Call your connected number from any phone</p>
+              </Link>
+            </div>
+          </div>
         )}
         <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
           {[

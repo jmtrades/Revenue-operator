@@ -126,29 +126,18 @@ export default function RevenuePage() {
     );
   }
 
-  // Mock revenue data - in production, this would come from a real API
-  const mrr = 15420;
-  const arr = mrr * 12;
-  const arvPerWorkspace = stats?.workspaces?.billing_distribution ? Math.round(arr / Object.values(stats.workspaces.billing_distribution).reduce((a, b) => a + b, 1)) : 0;
-
+  // Revenue metrics derived from real billing distribution data
   const billingDist = stats?.workspaces?.billing_distribution ?? {};
   const totalWorkspaces = Object.values(billingDist).reduce((a, b) => a + b, 0);
 
-  // Last 12 months revenue trend (mock data)
-  const revenueData = [
-    { label: "Jan", value: 8200 },
-    { label: "Feb", value: 9100 },
-    { label: "Mar", value: 10500 },
-    { label: "Apr", value: 10800 },
-    { label: "May", value: 12100 },
-    { label: "Jun", value: 13400 },
-    { label: "Jul", value: 13900 },
-    { label: "Aug", value: 14200 },
-    { label: "Sep", value: 14800 },
-    { label: "Oct", value: 15100 },
-    { label: "Nov", value: 15200 },
-    { label: "Dec", value: 15420 },
-  ];
+  // Calculate MRR from plan distribution × plan prices
+  const planPrices: Record<string, number> = { starter: 97, growth: 297, business: 597, agency: 997 };
+  const mrr = Object.entries(billingDist).reduce((sum, [plan, count]) => {
+    const price = planPrices[plan.toLowerCase()] ?? 0;
+    return sum + price * (count as number);
+  }, 0);
+  const arr = mrr * 12;
+  const arvPerWorkspace = totalWorkspaces > 0 ? Math.round(arr / totalWorkspaces) : 0;
 
   const billingIntervals = stats?.workspaces?.billing_intervals ?? { monthly: 0, annual: 0 };
 
@@ -224,66 +213,41 @@ export default function RevenuePage() {
         </div>
       </section>
 
-      {/* Revenue Trend */}
+      {/* Revenue Trend — requires historical billing data */}
       <section>
-        <h2 className="text-lg font-semibold mb-4">Revenue Trend (Last 12 Months)</h2>
+        <h2 className="text-lg font-semibold mb-4">Revenue Trend</h2>
         <div
           className="rounded-lg border p-6"
           style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}
         >
-          <SimpleBarChart data={revenueData} height="h-48" />
-          <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
-            <div>
-              <p style={{ color: "var(--text-tertiary)" }}>YoY Growth</p>
-              <p className="text-xl font-bold" style={{ color: "var(--meaning-green)" }}>
-                +12.5%
+          {totalWorkspaces > 0 ? (
+            <div className="text-center py-8">
+              <p className="text-2xl font-bold">${mrr.toLocaleString()}</p>
+              <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>
+                Current MRR based on {totalWorkspaces} active workspace{totalWorkspaces !== 1 ? "s" : ""}
+              </p>
+              <p className="text-xs mt-3" style={{ color: "var(--text-secondary)" }}>
+                Historical trend data will populate as billing events accumulate over time.
               </p>
             </div>
-            <div>
-              <p style={{ color: "var(--text-tertiary)" }}>Avg Monthly Growth</p>
-              <p className="text-xl font-bold" style={{ color: "var(--meaning-green)" }}>
-                +1.2%
-              </p>
-            </div>
-          </div>
+          ) : (
+            <p className="text-center py-8" style={{ color: "var(--text-tertiary)" }}>
+              Revenue trend data will appear once workspaces are on paid plans.
+            </p>
+          )}
         </div>
       </section>
 
-      {/* Expansion & Contraction */}
+      {/* Expansion & Contraction — requires historical billing events */}
       <section>
         <h2 className="text-lg font-semibold mb-4">Expansion & Contraction</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="rounded-lg border p-4" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
-            <p className="text-2xl font-bold" style={{ color: "var(--meaning-green)" }}>
-              +$2,340
-            </p>
-            <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>
-              Expansion Revenue
-            </p>
-            <p className="text-xs mt-2" style={{ color: "var(--text-secondary)" }}>
-              ↑ Upgrades & add-ons
-            </p>
-          </div>
-          <div className="rounded-lg border p-4" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
-            <p className="text-2xl font-bold" style={{ color: "var(--meaning-red)" }}>
-              -$580
-            </p>
-            <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>
-              Contraction Revenue
-            </p>
-            <p className="text-xs mt-2" style={{ color: "var(--text-secondary)" }}>
-              ↓ Downgrades & cancellations
-            </p>
-          </div>
-          <div className="rounded-lg border p-4" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
-            <p className="text-2xl font-bold">3.9x</p>
-            <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>
-              Net Revenue Retention
-            </p>
-            <p className="text-xs mt-2" style={{ color: "var(--text-secondary)" }}>
-              Expansion/Contraction Ratio
-            </p>
-          </div>
+        <div
+          className="rounded-lg border p-6 text-center py-8"
+          style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}
+        >
+          <p style={{ color: "var(--text-tertiary)" }}>
+            Expansion, contraction, and net revenue retention metrics will appear once plan changes are tracked.
+          </p>
         </div>
       </section>
     </div>

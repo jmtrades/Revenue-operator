@@ -3722,7 +3722,7 @@
       "card2Stat2Desc": "Tiempo medio de respuesta",
       "card2Stat3Desc": "De los comerciales abandonan tras 1 intento",
       "card3Title": "La comunicación no escala",
-      "card3Stat1Desc": "Recepción + salarios SDR",
+      "card3Stat1Desc": "Operaciones telefónicas IA vs contratación y formación",
       "card3Stat2Desc": "Rotación en roles con mucho teléfono",
       "card3Stat3Desc": "Herramientas que las empresas combinan para llamadas, mensajes, agenda y seguimiento",
       "closing": "¿Y si cada llamada, mensaje y seguimiento se gestionara automáticamente y pudieras ver exactamente qué pasó?"
@@ -4532,9 +4532,9 @@
       "missedCallsPerWeek": "Llamadas perdidas por semana",
       "avgValuePerCall": "Valor medio por llamada ($)",
       "monthlyRecovered": "Ingresos recuperados al mes",
-      "annualBaseline": "Base anual de contratación",
+      "annualBaseline": "Base anual de costes",
       "annualProtected": "Ingresos anuales que Recall Touch protege",
-      "receptionistCost": "coste de contratación.",
+      "receptionistCost": "coste anual típico.",
       "recommendedPlan": "Plan recomendado:",
       "description": "Calcula tu potencial recuperación de ingresos con nuestra calculadora de ROI."
     },

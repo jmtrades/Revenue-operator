@@ -56,9 +56,19 @@ export async function GET(
     );
   }
 
-  // Get OAuth credentials
-  const clientIdEnv = `${provider.toUpperCase().replace(/_/g, "_")}_CLIENT_ID`;
-  const clientSecretEnv = `${provider.toUpperCase().replace(/_/g, "_")}_CLIENT_SECRET`;
+  // Get OAuth credentials with proper env var mapping
+  const ENV_PREFIX: Record<string, string> = {
+    hubspot: "HUBSPOT",
+    salesforce: "SALESFORCE",
+    zoho_crm: "ZOHO",
+    pipedrive: "PIPEDRIVE",
+    gohighlevel: "GOHIGHLEVEL",
+    google_contacts: "GOOGLE",
+    microsoft_365: "MICROSOFT",
+  };
+  const prefix = ENV_PREFIX[provider] ?? provider.toUpperCase();
+  const clientIdEnv = `${prefix}_CLIENT_ID`;
+  const clientSecretEnv = `${prefix}_CLIENT_SECRET`;
 
   const clientId = process.env[clientIdEnv];
   const clientSecret = process.env[clientSecretEnv];

@@ -141,7 +141,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-4 border-b border-[var(--border-default)]">
-          <h2 id="plan-change-title" className="text-lg font-semibold text-white">
+          <h2 id="plan-change-title" className="text-lg font-semibold text-[var(--text-on-accent)]">
             {step === "select"
               ? tPlan("title")
               : isUpgrade
@@ -175,8 +175,8 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
                           : "border-[var(--border-default)] hover:border-[var(--border-medium)] hover:bg-[var(--bg-hover)]"
                       }`}
                     >
-                      <p className="text-sm font-medium text-white">{plan.name}</p>
-                      <p className="text-lg font-bold text-white mt-1">
+                      <p className="text-sm font-medium text-[var(--text-on-accent)]">{plan.name}</p>
+                      <p className="text-lg font-bold text-[var(--text-on-accent)] mt-1">
                         {plan.price != null ? `$${plan.price}` : tPlan("custom")}
                         {plan.price != null && <span className="text-xs font-normal text-[var(--text-tertiary)]">{tPlan("perMonth")}</span>}
                       </p>
@@ -217,11 +217,11 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
               <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-inset)]/50 p-4 mb-6">
                 <div className="flex justify-between text-sm">
                   <span className="text-[var(--text-tertiary)]">{tPlan("currentPlanLabel")}</span>
-                  <span className="text-white">{currentPlan.name}{currentPlan.price != null ? ` — $${currentPlan.price}${tPlan("perMonth")}` : ""}</span>
+                  <span className="text-[var(--text-on-accent)]">{currentPlan.name}{currentPlan.price != null ? ` — $${currentPlan.price}${tPlan("perMonth")}` : ""}</span>
                 </div>
                 <div className="flex justify-between text-sm mt-2">
                   <span className="text-[var(--text-tertiary)]">{tPlan("newPlanLabel")}</span>
-                  <span className="text-white font-medium">{selectedPlan?.name}{selectedPlan?.price != null ? ` — $${selectedPlan.price}${tPlan("perMonth")}` : ` — ${tPlan("contactUsPrice")}`}</span>
+                  <span className="text-[var(--text-on-accent)] font-medium">{selectedPlan?.name}{selectedPlan?.price != null ? ` — $${selectedPlan.price}${tPlan("perMonth")}` : ` — ${tPlan("contactUsPrice")}`}</span>
                 </div>
               </div>
               {error && <p className="text-sm text-[var(--accent-red)] mb-4" role="alert">{error}</p>}

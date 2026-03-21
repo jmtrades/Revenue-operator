@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     default: "Recall Touch — AI That Makes and Takes Your Phone Calls",
   },
   description:
-    "AI phone agents that answer calls, make calls, follow up with leads, book appointments, recover revenue, and get smarter with every conversation. Any business. Any industry. Try free.",
+    "AI-powered phone system that makes and takes calls, books appointments, follows up with leads, and connects to your CRM. Built for businesses that never want to miss a call.",
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -72,6 +72,7 @@ export const metadata: Metadata = {
     title: "Recall Touch — AI That Makes and Takes Your Phone Calls",
     description:
       "AI phone agents that answer calls, make calls, follow up with leads, book appointments, recover revenue, and get smarter with every conversation. Any business. Any industry. Try free.",
+    creator: "@recalltouch",
   },
   robots: {
     index: true,

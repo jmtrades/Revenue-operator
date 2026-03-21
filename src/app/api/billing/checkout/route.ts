@@ -93,48 +93,65 @@ export async function POST(req: NextRequest) {
     let finalEmail = email;
     
     if (!finalWorkspaceId && email) {
-      const { randomUUID } = await import("crypto");
-      const userId = randomUUID();
-      const wsId = randomUUID();
-      const trialEnd = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
-      
-      try {
-        await db.from("users").insert({
-          id: userId,
-          email,
-          full_name: null,
-        });
-        
-        await db.from("workspaces").insert({
-          id: wsId,
-          name: email.split("@")[0] + "'s workspace",
-          owner_id: userId,
-          autonomy_level: "assisted",
-          kill_switch: false,
-          billing_status: "trial",
-          protection_renewal_at: trialEnd.toISOString(),
-          trial_ends_at: trialEnd.toISOString(),
-          trial_end_at: trialEnd.toISOString(),
-        });
-        
-        await db.from("settings").insert({
-          workspace_id: wsId,
-          risk_level: "balanced",
-          hired_roles: ["full_autopilot"],
-          autonomy_mode: "act",
-          responsibility_level: "guarantee",
-        });
-        
-        finalWorkspaceId = wsId;
-        finalEmail = email;
-      } catch (insertErr) {
-        console.error("[billing/checkout] workspace creation failed, looking up existing:", insertErr instanceof Error ? insertErr.message : insertErr);
-        const { data: existing } = await db.from("users").select("id").eq("email", email).limit(1).maybeSingle();
-        const uid = (existing as { id: string } | null)?.id;
+      // Check if workspace already exists for this email
+      const { data: existingUser } = await db.from("users").select("id").eq("email", email).maybeSingle();
+      if (existingUser) {
+        const uid = (existingUser as { id: string } | null)?.id;
         if (uid) {
-          const { data: ws } = await db.from("workspaces").select("id").eq("owner_id", uid).order("created_at", { ascending: false }).limit(1).maybeSingle();
-          if (ws) {
-            finalWorkspaceId = (ws as { id: string }).id;
+          const { data: existingWs } = await db.from("workspaces").select("id").eq("owner_id", uid).order("created_at", { ascending: false }).limit(1).maybeSingle();
+          if (existingWs) {
+            finalWorkspaceId = (existingWs as { id: string }).id;
+            finalEmail = email;
+          }
+        }
+      }
+
+      // If no existing workspace, create new one
+      if (!finalWorkspaceId) {
+        const { randomUUID } = await import("crypto");
+        const userId = randomUUID();
+        const wsId = randomUUID();
+        const trialEnd = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+
+        try {
+          await db.from("users").insert({
+            id: userId,
+            email,
+            full_name: null,
+          });
+
+          await db.from("workspaces").insert({
+            id: wsId,
+            name: email.split("@")[0] + "'s workspace",
+            owner_id: userId,
+            autonomy_level: "assisted",
+            kill_switch: false,
+            billing_status: "trial",
+            protection_renewal_at: trialEnd.toISOString(),
+            trial_ends_at: trialEnd.toISOString(),
+            trial_end_at: trialEnd.toISOString(),
+          });
+
+          await db.from("settings").insert({
+            workspace_id: wsId,
+            risk_level: "balanced",
+            hired_roles: ["full_autopilot"],
+            autonomy_mode: "act",
+            responsibility_level: "guarantee",
+          });
+
+          finalWorkspaceId = wsId;
+          finalEmail = email;
+        } catch (insertErr) {
+          console.error("[billing/checkout] workspace creation failed:", insertErr instanceof Error ? insertErr.message : insertErr);
+          // Fallback: try to get existing workspace one more time
+          const { data: fallbackUser } = await db.from("users").select("id").eq("email", email).maybeSingle();
+          const fallbackUid = (fallbackUser as { id: string } | null)?.id;
+          if (fallbackUid) {
+            const { data: fallbackWs } = await db.from("workspaces").select("id").eq("owner_id", fallbackUid).order("created_at", { ascending: false }).limit(1).maybeSingle();
+            if (fallbackWs) {
+              finalWorkspaceId = (fallbackWs as { id: string }).id;
+            }
           }
         }
       }

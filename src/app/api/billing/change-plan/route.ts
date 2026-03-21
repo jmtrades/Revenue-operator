@@ -225,6 +225,8 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const oldTier = (row.billing_tier ?? "solo") as BillingTier;
+
   await db
     .from("workspaces")
     .update({
@@ -234,6 +236,35 @@ export async function POST(req: NextRequest) {
       updated_at: new Date().toISOString(),
     })
     .eq("id", workspace_id);
+
+  // Log billing change to audit log
+  try {
+    let userId: string | null = null;
+    try {
+      const mod = await import("@/lib/auth/request-session");
+      const sess = mod.getSession ? await mod.getSession(req) : null;
+      userId = (sess as { userId?: string } | null)?.userId ?? null;
+    } catch { /* session read failed — continue without userId */ }
+
+    const { error: auditInsertErr } = await db.from("billing_events").insert({
+      workspace_id,
+      event_type: "plan_change",
+      old_tier: oldTier,
+      new_tier: tier,
+      changed_by: userId,
+      timestamp: new Date().toISOString(),
+      metadata: {
+        from_stripe: true,
+        subscription_id: (row as { stripe_subscription_id?: string }).stripe_subscription_id ?? null,
+      },
+    });
+    if (auditInsertErr) {
+      console.warn("[change-plan] Failed to log billing event:", auditInsertErr.message);
+    }
+  } catch (auditErr) {
+    // Non-blocking: audit log error should not fail the plan change
+    console.warn("[change-plan] Audit log error:", auditErr instanceof Error ? auditErr.message : auditErr);
+  }
 
   return NextResponse.json({
     ok: true,

@@ -119,6 +119,12 @@ const ONBOARDING_TEMPLATE_IDS = [
 export default function AppOnboardingPage() {
   const t = useTranslations("onboarding");
   const router = useRouter();
+
+  // Redirect to main activation flow if user reaches orphaned onboarding page
+  useEffect(() => {
+    window.location.href = "/activate";
+  }, []);
+
   const onboardingTemplates = useMemo(
     () =>
       ONBOARDING_TEMPLATE_IDS.map(({ id, icon, name, tagline, features, recommendedFor }) => ({
@@ -183,9 +189,9 @@ export default function AppOnboardingPage() {
   }, []);
 
   const [selectedTemplate, setSelectedTemplate] = useState<string>("inbound-closer");
-  const [agentName, setAgentName] = useState<string>("Inbound Closer");
+  const [agentName, setAgentName] = useState<string>("");
   const [voiceId, setVoiceId] = useState<string>(DEFAULT_VOICE_ID);
-  const [greeting, setGreeting] = useState<string>("Hello, this is Inbound Closer speaking.");
+  const [greeting, setGreeting] = useState<string>("");
   const [_personality, _setPersonality] = useState(50);
 
   useEffect(() => {
@@ -408,7 +414,7 @@ export default function AppOnboardingPage() {
                   <span
                     key={i}
                     className={`inline-block w-2.5 h-2.5 rounded-full ${
-                      i + 1 <= step ? "bg-white" : "bg-[var(--bg-inset)]"
+                      i + 1 <= step ? "bg-[var(--accent-primary)]" : "bg-[var(--bg-inset)]"
                     }`}
                     aria-hidden
                   />
@@ -507,7 +513,7 @@ export default function AppOnboardingPage() {
                       onClick={() => setMode(m.id)}
                       className={`rounded-2xl border p-4 text-left transition-colors ${
                         active
-                          ? "border-white bg-[var(--bg-inset)]"
+                          ? "border-[var(--accent-primary)] bg-[var(--bg-inset)]"
                           : "border-[var(--border-default)] bg-[var(--bg-base)] hover:border-[var(--border-default)]"
                       }`}
                     >

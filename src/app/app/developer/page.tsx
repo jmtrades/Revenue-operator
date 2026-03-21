@@ -719,7 +719,7 @@ export default function DeveloperPage() {
               type="button"
               onClick={() => setTab(tabDef.id)}
               className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 -mb-px transition-colors ${
-                tab === tabDef.id ? "border-white text-[var(--text-primary)]" : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-secondary)]"
+                tab === tabDef.id ? "border-[var(--accent-primary)] text-[var(--text-primary)]" : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-secondary)]"
               }`}
             >
               <tabDef.icon className="w-4 h-4" />

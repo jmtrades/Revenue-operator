@@ -79,7 +79,7 @@ async function getTimeline(req: NextRequest, id: string) {
     const { data: calls } = await db
       .from("call_sessions")
       .select("id, created_at, direction, duration_seconds, outcome, summary, transcript, recording_url")
-      .eq("contact_id", id)
+      .eq("lead_id", id)
       .order("created_at", { ascending: false })
       .limit(limit);
     (calls ?? []).forEach((c: Record<string, unknown>) =>
@@ -104,7 +104,7 @@ async function getTimeline(req: NextRequest, id: string) {
     const { data: messages } = await db
       .from("messages")
       .select("id, created_at, channel, direction, status, content")
-      .eq("contact_id", id)
+      .eq("lead_id", id)
       .order("created_at", { ascending: false })
       .limit(limit);
     (messages ?? []).forEach((m: Record<string, unknown>) =>
@@ -127,7 +127,7 @@ async function getTimeline(req: NextRequest, id: string) {
     const { data: bookings } = await db
       .from("bookings")
       .select("id, created_at, scheduled_at, service_type, status, estimated_value, attribution_source")
-      .eq("contact_id", id)
+      .eq("lead_id", id)
       .order("created_at", { ascending: false })
       .limit(limit);
     (bookings ?? []).forEach((b: Record<string, unknown>) =>
@@ -151,7 +151,7 @@ async function getTimeline(req: NextRequest, id: string) {
     const { data: enrollments } = await db
       .from("workflow_enrollments")
       .select("id, enrolled_at, workflow_id, status, next_step_at, stop_reason")
-      .eq("contact_id", id)
+      .eq("lead_id", id)
       .order("enrolled_at", { ascending: false })
       .limit(limit);
     (enrollments ?? []).forEach((e: Record<string, unknown>) =>
@@ -174,7 +174,7 @@ async function getTimeline(req: NextRequest, id: string) {
     const { data: enrollments } = await db
       .from("campaign_enrollments")
       .select("id, enrolled_at, campaign_id, status, current_step, outcome")
-      .eq("contact_id", id)
+      .eq("lead_id", id)
       .order("enrolled_at", { ascending: false })
       .limit(limit);
     (enrollments ?? []).forEach((e: Record<string, unknown>) =>

@@ -20,7 +20,7 @@ async function getContacts(req: NextRequest) {
     .eq("workspace_id", workspaceId)
     .order("last_activity_at", { ascending: false, nullsFirst: false });
   if (error) {
-    console.error("[API Error] contacts GET:", error.message);
+    console.error("[API Error] contacts GET:", error);
     return NextResponse.json({ error: GENERIC_ERROR }, { status: 500 });
   }
   return NextResponse.json({ contacts: data ?? [] });
@@ -48,7 +48,7 @@ async function postContact(req: NextRequest) {
     .select()
     .maybeSingle();
   if (error) {
-    console.error("[API Error] contacts POST:", error.message);
+    console.error("[API Error] contacts POST:", error);
     return NextResponse.json({ error: GENERIC_ERROR }, { status: 500 });
   }
   return NextResponse.json(contact);

@@ -140,7 +140,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
     <AnimatePresence>
       {open && (
         <div
-          className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 backdrop-blur-sm pt-24 px-4"
+          className="fixed inset-0 z-50 flex items-start justify-center bg-[var(--overlay)] backdrop-blur-sm pt-24 px-4"
           onClick={onClose}
         >
           <motion.div

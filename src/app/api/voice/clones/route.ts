@@ -39,7 +39,8 @@ export async function GET(req: NextRequest) {
     .order("created_at", { ascending: false });
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("[voice/clones GET]", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 
   // Get plan limits
@@ -175,7 +176,8 @@ export async function DELETE(req: NextRequest) {
     .eq("is_cloned", true);
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("[voice/clones DELETE]", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 
   return NextResponse.json({ ok: true, message: "Voice clone deleted." });

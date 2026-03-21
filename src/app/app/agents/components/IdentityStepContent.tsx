@@ -271,7 +271,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
                   type="button"
                   className={`inline-flex items-center justify-center rounded-full border px-3 py-1 text-xs transition ${
                     selected
-                      ? "border-white bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
+                      ? "border-[var(--accent-primary)] bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
                       : "border-[var(--border-subtle)] bg-black/40 text-[var(--text-secondary)] hover:border-[var(--border-default)] hover:text-[var(--text-primary)]"
                   }`}
                   onClick={() => {
@@ -337,7 +337,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
                     type="button"
                     className={`flex-1 min-w-fit rounded-xl border px-3 py-2 text-[11px] font-medium whitespace-nowrap transition ${
                       selected
-                        ? "border-white bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
+                        ? "border-[var(--accent-primary)] bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
                         : "border-[var(--border-subtle)] bg-black/40 text-[var(--text-secondary)] hover:border-[var(--border-default)] hover:text-[var(--text-primary)]"
                     }`}
                     onClick={() => onChange({ purpose: value })}
@@ -413,7 +413,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
               type="button"
               onClick={handleWebsiteExtract}
               disabled={extracting || !websiteUrl.trim()}
-              className="h-9 rounded-xl bg-white px-4 text-xs font-semibold text-[var(--text-on-accent)] disabled:cursor-not-allowed disabled:bg-white/40"
+              className="h-9 rounded-xl bg-[var(--accent-primary)] px-4 text-xs font-semibold text-[var(--text-on-accent)] disabled:cursor-not-allowed disabled:opacity-40"
             >
               {extracting ? t("identityStep.reading") : t("identityStep.fillFromSite")}
             </button>
@@ -479,7 +479,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
                 onClick={() => applyTemplate(tpl)}
                 className={`group flex flex-col items-start gap-1.5 rounded-2xl border p-3 text-left transition ${
                   selected
-                    ? "border-white bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
+                    ? "border-[var(--accent-primary)] bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
                     : "border-[var(--border-subtle)] bg-black/40 text-[var(--text-secondary)] hover:border-[var(--border-default)] hover:text-[var(--text-primary)]"
                 }`}
               >
@@ -507,7 +507,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
         <button
           type="button"
           onClick={handleContinue}
-          className="rounded-xl bg-white px-5 py-2 text-xs font-semibold text-[var(--text-on-accent)] disabled:cursor-not-allowed disabled:bg-white/40"
+          className="rounded-xl bg-[var(--accent-primary)] px-5 py-2 text-xs font-semibold text-[var(--text-on-accent)] disabled:cursor-not-allowed disabled:opacity-40"
           disabled={!canContinue}
         >
           {t("identityStep.continueToVoice")}

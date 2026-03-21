@@ -1,5 +1,7 @@
 /**
- * POST /api/leads/import — Bulk create leads from CSV/JSON (e.g. name, phone, email).
+ * POST /api/contacts/import — Bulk create contacts from CSV/JSON (e.g. name, phone, email).
+ * Works identically to /api/leads/import but targets the contacts endpoint.
+ * Contacts and leads share the same underlying table (leads table).
  */
 
 export const dynamic = "force-dynamic";
@@ -40,7 +42,7 @@ export async function POST(req: NextRequest) {
   if (err) return err;
 
   const contentType = req.headers.get("content-type") || "";
-  let rows: Array<{ name?: string; phone?: string; email?: string; service_requested?: string; notes?: string }> = [];
+  let rows: Array<{ name?: string; phone?: string; email?: string; company?: string; notes?: string }> = [];
 
   // Check if CSV or form data
   if (contentType.includes("multipart/form-data") || contentType.includes("text/csv")) {
@@ -51,7 +53,7 @@ export async function POST(req: NextRequest) {
         name: r.name || r.full_name || r.contact_name || "",
         phone: r.phone || r.phone_number || r.contact_phone || "",
         email: r.email || r.email_address || r.contact_email || "",
-        service_requested: r.company || r.service || r.service_requested || "",
+        company: r.company || r.organization || r.business_name || "",
         notes: r.notes || r.comments || r.description || "",
       }));
     } catch {
@@ -59,13 +61,13 @@ export async function POST(req: NextRequest) {
     }
   } else {
     // JSON format
-    let body: { leads?: Array<{ name?: string; phone?: string; email?: string; service_requested?: string; notes?: string }> };
+    let body: { contacts?: Array<{ name?: string; phone?: string; email?: string; company?: string; notes?: string }> };
     try {
       body = await req.json();
     } catch {
       return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
     }
-    rows = Array.isArray(body.leads) ? body.leads : [];
+    rows = Array.isArray(body.contacts) ? body.contacts : [];
   }
 
   const valid = rows
@@ -73,7 +75,7 @@ export async function POST(req: NextRequest) {
       name: (r.name ?? "").toString().trim(),
       phone: (r.phone ?? "").toString().trim().replace(/\s/g, ""),
       email: (r.email ?? "").toString().trim() || null,
-      service_requested: (r.service_requested ?? "").toString().trim() || null,
+      company: (r.company ?? "").toString().trim() || null,
       notes: (r.notes ?? "").toString().trim() || null,
     }))
     .filter((r) => {
@@ -84,7 +86,7 @@ export async function POST(req: NextRequest) {
     });
 
   if (valid.length === 0) {
-    return NextResponse.json({ error: "No valid leads (need name and phone with at least 10 digits)" }, { status: 400 });
+    return NextResponse.json({ error: "No valid contacts (need name and phone with at least 10 digits)" }, { status: 400 });
   }
 
   const db = getDb();
@@ -93,9 +95,9 @@ export async function POST(req: NextRequest) {
     name: r.name,
     phone: r.phone,
     email: r.email,
-    company: r.service_requested,
+    company: r.company,
     state: "new",
-    metadata: { source: "csv_import", service_requested: r.service_requested, notes: r.notes, score: 40 },
+    metadata: { source: "csv_import", notes: r.notes, score: 40 },
   }));
 
   const { data, error } = await db.from("leads").insert(toInsert).select("id");

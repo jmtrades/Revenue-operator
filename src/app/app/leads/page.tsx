@@ -721,7 +721,7 @@ export default function LeadsPage() {
                     onClick={() => toggleStatusFilter(status)}
                     className={`px-2.5 py-1 rounded-full border text-[11px] ${
                       active
-                        ? "border-white bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
+                        ? "border-[var(--accent-primary)] bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
                         : "border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
                     }`}
                   >
@@ -841,7 +841,7 @@ export default function LeadsPage() {
                 onClick={() => toggleSourceFilter(source)}
                 className={`px-2.5 py-1 rounded-full border ${
                   active
-                    ? "border-white bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
+                    ? "border-[var(--accent-primary)] bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
                     : "border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
                 }`}
               >

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { HeroRevenueWidget } from "@/components/sections/HeroRevenueWidget";
 import { ROUTES, SOCIAL_PROOF } from "@/lib/constants";
@@ -15,6 +16,7 @@ const HERO_DEMO_SAMPLES = [
 ] as const;
 
 function HeroVoiceDemo() {
+  const t = useTranslations("marketing.hero.voiceDemo");
   const [playing, setPlaying] = useState(false);
   const [loading, setLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -27,7 +29,7 @@ function HeroVoiceDemo() {
   const playWithFallback = useCallback(async (text: string) => {
     try {
       const res = await fetch(
-        `/api/demo/voice-preview?voice_id=us-female-warm-receptionist&text=${encodeURIComponent(text)}`
+        `/api/demo/voice-preview?voice_id=us-female-warm-agent&text=${encodeURIComponent(text)}`
       );
       if (res.ok) {
         const blob = await res.blob();
@@ -81,7 +83,7 @@ function HeroVoiceDemo() {
     const value = phone.trim();
     const digits = value.replace(/\D/g, "");
     if (!value || digits.length < 10 || digits.length > 15) {
-      setCallError("Enter a valid phone number with area code.");
+      setCallError(t("invalidPhone"));
       return;
     }
     setCallLoading(true);
@@ -99,12 +101,12 @@ function HeroVoiceDemo() {
         error?: string;
       };
       if (res.ok && data.ok) {
-        setCallStatus(data.message ?? "Calling you now! Pick up to hear it live.");
+        setCallStatus(data.message ?? t("callStatus"));
       } else {
-        setCallError(data.error ?? "Could not start the call. Try again.");
+        setCallError(data.error ?? t("callError"));
       }
     } catch {
-      setCallError("Could not connect. Please try again.");
+      setCallError(t("connectionError"));
     } finally {
       setCallLoading(false);
     }
@@ -132,7 +134,7 @@ function HeroVoiceDemo() {
           ) : (
             <Play className="w-4 h-4" />
           )}
-          {loading ? "Loading..." : playing ? "Stop" : "Hear the voice"}
+          {loading ? t("loading") : playing ? t("stopButton") : t("playButton")}
         </button>
         {playing && (
           <div className="flex items-center gap-[3px] h-4">
@@ -159,7 +161,7 @@ function HeroVoiceDemo() {
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleDemoCall()}
-            placeholder="(555) 123-4567"
+            placeholder={t("placeholder")}
             className="w-full pl-9 pr-3 py-2.5 rounded-[10px] text-sm transition-colors focus:outline-none"
             style={{
               background: "var(--bg-inset)",
@@ -174,7 +176,7 @@ function HeroVoiceDemo() {
           disabled={callLoading}
           className="btn-marketing-blue px-5 py-2.5 text-sm whitespace-nowrap"
         >
-          {callLoading ? "Calling..." : "Get a demo call"}
+          {callLoading ? t("calling") : t("demoCall")}
         </button>
       </div>
       {callStatus && (
@@ -186,7 +188,7 @@ function HeroVoiceDemo() {
         <p className="text-xs" style={{ color: "var(--accent-danger)" }}>{callError}</p>
       )}
       <p className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>
-        Free. No signup required. We call your phone in under 10 seconds.
+        {t("disclaimer")}
       </p>
 
     </div>
@@ -194,6 +196,7 @@ function HeroVoiceDemo() {
 }
 
 export function Hero() {
+  const t = useTranslations("marketing.hero");
 
   return (
     <section
@@ -209,7 +212,7 @@ export function Hero() {
               color: "var(--accent-primary)",
               border: "1px solid rgba(37, 99, 235, 0.1)",
             }}>
-              AI phone infrastructure for revenue teams
+              {t("badge")}
             </div>
 
             <h1
@@ -221,20 +224,18 @@ export function Hero() {
                 color: "var(--text-primary)",
               }}
             >
-              Every call answered.{" "}
+              {t("heading1")}{" "}
               <br className="hidden sm:block" />
-              Every lead followed up.{" "}
+              {t("heading2")}{" "}
               <br className="hidden sm:block" />
-              Every dollar recovered.
+              {t("heading3")}
             </h1>
 
             <p
               className="text-base md:text-[1.125rem] max-w-lg mb-5 leading-relaxed"
               style={{ color: "var(--text-secondary)" }}
             >
-              Recall Touch runs your phone operation with AI that handles inbound,
-              outbound, follow-up, and booking — 24/7. Natural voice quality.
-              Real conversations. Full revenue attribution.
+              {t("description")}
             </p>
 
             {/* Social proof ABOVE CTAs — builds trust before the ask */}
@@ -248,10 +249,10 @@ export function Hero() {
                 <span className="text-xs ml-1" style={{ color: "var(--text-tertiary)" }}>4.9/5</span>
               </div>
               <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-                <strong style={{ color: "var(--text-secondary)" }}>{SOCIAL_PROOF.businessCount}</strong> businesses
+                <strong style={{ color: "var(--text-secondary)" }}>{SOCIAL_PROOF.businessCount}</strong> {t("socialProof")}
               </span>
               <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-                <strong style={{ color: "var(--text-secondary)" }}>{SOCIAL_PROOF.revenueRecovered}</strong> recovered
+                <strong style={{ color: "var(--text-secondary)" }}>{SOCIAL_PROOF.revenueRecovered}</strong> {t("socialProofRecovered")}
               </span>
             </div>
 
@@ -261,18 +262,18 @@ export function Hero() {
                 href={ROUTES.START}
                 className="btn-marketing-blue btn-lg group no-underline flex items-center justify-center gap-2 w-full sm:w-auto"
               >
-                Start free trial
+                {t("startFreeTrial")}
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
               <Link
                 href="/demo"
                 className="btn-marketing-ghost btn-lg no-underline flex items-center justify-center w-full sm:w-auto"
               >
-                Watch demo
+                {t("watchDemo")}
               </Link>
             </div>
             <p className="text-xs mb-5" style={{ color: "var(--text-tertiary)" }}>
-              No credit card required. Live in under 3 minutes.
+              {t("creditCard")}
             </p>
 
             <HeroVoiceDemo />
@@ -290,28 +291,28 @@ export function Hero() {
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-                  Revenue Dashboard
+                  {t("dashboardTitle")}
                 </h3>
                 <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{
                   background: "var(--bg-hover)",
                   color: "var(--text-tertiary)",
                 }}>
-                  Preview
+                  {t("dashboardPreview")}
                 </span>
               </div>
               <HeroRevenueWidget />
               <div className="mt-4 pt-4 grid grid-cols-3 gap-3 text-center" style={{ borderTop: "1px solid var(--border-default)" }}>
                 <div>
-                  <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>24/7</p>
-                  <p className="text-[10px] font-medium" style={{ color: "var(--text-tertiary)" }}>Coverage</p>
+                  <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>{t("coverage24_7")}</p>
+                  <p className="text-[10px] font-medium" style={{ color: "var(--text-tertiary)" }}>{t("coverageLabel")}</p>
                 </div>
                 <div>
-                  <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>&lt;0.8s</p>
-                  <p className="text-[10px] font-medium" style={{ color: "var(--text-tertiary)" }}>Response</p>
+                  <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>{t("responseTime")}</p>
+                  <p className="text-[10px] font-medium" style={{ color: "var(--text-tertiary)" }}>{t("responseLabel")}</p>
                 </div>
                 <div>
-                  <p className="text-lg font-semibold" style={{ color: "var(--accent-primary)" }}>32</p>
-                  <p className="text-[10px] font-medium" style={{ color: "var(--text-tertiary)" }}>Voices</p>
+                  <p className="text-lg font-semibold" style={{ color: "var(--accent-primary)" }}>{t("voiceCount")}</p>
+                  <p className="text-[10px] font-medium" style={{ color: "var(--text-tertiary)" }}>{t("voiceLabel")}</p>
                 </div>
               </div>
             </div>
@@ -321,7 +322,7 @@ export function Hero() {
         {/* Compliance bar */}
         <div className="max-w-4xl mx-auto mt-16 text-center">
           <Link href="/security" className="inline-flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium no-underline hover:opacity-80 transition-opacity" style={{ color: "var(--text-tertiary)" }}>
-            {["SOC 2 Type II", "HIPAA", "TCPA", "GDPR", "256-bit SSL"].map((label) => (
+            {t.raw("compliance").map((label: string) => (
               <span key={label} className="flex items-center gap-1.5">
                 <svg className="w-3.5 h-3.5" style={{ color: "var(--accent-secondary)" }} viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd"/>

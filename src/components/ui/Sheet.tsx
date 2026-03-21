@@ -36,7 +36,7 @@ export function Sheet({ open, onClose, title, children }: SheetProps) {
       {open && (
         <>
           <div
-            className="fixed inset-0 z-40 bg-black/50"
+            className="fixed inset-0 z-40 bg-[var(--overlay)]"
             onClick={onClose}
             aria-hidden="true"
           />
