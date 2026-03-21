@@ -417,8 +417,8 @@ export default function AppShellClient({
                   sidebarCollapsed ? "md:justify-center md:px-0 p-5 md:p-3" : "p-5 justify-between"
                 )}>
                   <div className={cn("flex items-center min-w-0", sidebarCollapsed && "md:justify-center")}>
-                    <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shrink-0">
-                      <span className="text-black font-bold text-sm">RT</span>
+                    <div className="w-8 h-8 bg-[var(--accent-primary)] rounded-lg flex items-center justify-center shrink-0">
+                      <span className="text-[var(--text-on-accent)] font-bold text-sm">RT</span>
                     </div>
                     {!sidebarCollapsed && (
                       <WorkspaceName
@@ -430,7 +430,7 @@ export default function AppShellClient({
                   <button
                     type="button"
                     onClick={() => setMobileSidebarOpen(false)}
-                    className="md:hidden p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
+                    className="md:hidden p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
                     aria-label={t("common.close")}
                   >
                     <X className="w-5 h-5" />
@@ -462,11 +462,11 @@ export default function AppShellClient({
                                     : undefined
                               }
                               className={cn(
-                                "flex items-center border-l-2 py-2.5 rounded-r-xl text-[13px] font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none",
+                                "flex items-center border-l-2 py-2.5 rounded-r-xl text-[13px] font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none",
                                 sidebarCollapsed ? "md:justify-center md:px-0 md:pl-0 md:pr-0 px-3" : "gap-2.5 px-3",
                                 active
                                   ? "border-l-[var(--accent-primary)] bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]"
-                                  : "border-l-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/[0.03]"
+                                  : "border-l-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
                               )}
                               aria-current={active ? "page" : undefined}
                             >
@@ -509,10 +509,10 @@ export default function AppShellClient({
                         support@recall-touch.com
                       </a>
                       <div className="px-1 pt-1 text-[10px] text-[var(--text-secondary)]">
-                        <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[var(--text-tertiary)]">
+                        <kbd className="bg-[var(--bg-inset)] px-1.5 py-0.5 rounded text-[var(--text-tertiary)]">
                           ⌘
                         </kbd>
-                        <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[var(--text-tertiary)] ml-0.5">
+                        <kbd className="bg-[var(--bg-inset)] px-1.5 py-0.5 rounded text-[var(--text-tertiary)] ml-0.5">
                           K
                         </kbd>
                         <span className="ml-1.5">{t("accessibility.quickSearch")}</span>
@@ -526,7 +526,7 @@ export default function AppShellClient({
                     type="button"
                     onClick={toggleSidebarCollapse}
                     className={cn(
-                      "hidden md:flex w-full items-center justify-center gap-2 py-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/[0.03] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none",
+                      "hidden md:flex w-full items-center justify-center gap-2 py-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none",
                       sidebarCollapsed && "md:justify-center"
                     )}
                     aria-label={sidebarCollapsed ? t("accessibility.expandSidebar") : t("accessibility.collapseSidebar")}
@@ -545,7 +545,7 @@ export default function AppShellClient({
               <button
                 type="button"
                 onClick={() => setMobileSidebarOpen(true)}
-                className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-[var(--bg-card)] border border-[var(--border-default)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
+                className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-[var(--bg-card)] border border-[var(--border-default)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
                 aria-label={t("accessibility.openMenu")}
                 aria-expanded={mobileSidebarOpen}
               >
@@ -564,7 +564,7 @@ export default function AppShellClient({
                   <button
                     type="button"
                     onClick={() => setCommandPaletteOpen(true)}
-                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/[0.03] border border-[var(--border-default)] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]/50 border border-[var(--border-default)] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
                     aria-label={t("nav.shortcutCommandPalette")}
                   >
                     <CommandIcon className="w-3.5 h-3.5" />
@@ -594,7 +594,7 @@ export default function AppShellClient({
                   <Link
                     key={href}
                     href={href}
-className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w-[64px] flex-1 text-center touch-manipulation focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-inset focus-visible:outline-none rounded-lg ${
+className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w-[64px] flex-1 text-center touch-manipulation focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:ring-inset focus-visible:outline-none rounded-lg ${
                     isActive(href) ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"
                   }`}
                     aria-current={isActive(href) ? "page" : undefined}
@@ -617,7 +617,7 @@ className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w
                 <button
                   type="button"
                   onClick={() => setMobileMoreOpen(true)}
-                  className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w-[64px] flex-1 text-center touch-manipulation focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-inset focus-visible:outline-none rounded-lg ${
+                  className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w-[64px] flex-1 text-center touch-manipulation focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:ring-inset focus-visible:outline-none rounded-lg ${
                     isMoreActive ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"
                   }`}
                   aria-label={t("accessibility.moreMenu")}
@@ -628,10 +628,10 @@ className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w
                 </button>
               </nav>
               <div className="hidden md:block border-t border-[var(--border-default)] px-4 py-2 text-[10px] text-[var(--text-tertiary)]">
-                <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[var(--text-muted)]">
+                <kbd className="bg-[var(--bg-inset)] px-1.5 py-0.5 rounded text-[var(--text-tertiary)]">
                   ⌘
                 </kbd>
-                <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[var(--text-muted)] ml-0.5">
+                <kbd className="bg-[var(--bg-inset)] px-1.5 py-0.5 rounded text-[var(--text-tertiary)] ml-0.5">
                   K
                 </kbd>
                 <span className="ml-1.5">{t("accessibility.quickSearch")}</span>
@@ -649,7 +649,7 @@ className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w
                       <button
                         type="button"
                         onClick={() => setMobileMoreOpen(false)}
-className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
+className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
                                         aria-label={t("accessibility.closeMoreMenu")}
                       >
                         <X className="h-4 w-4" />
@@ -661,7 +661,7 @@ className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-pr
                           key={href}
                           href={href}
                           onClick={() => setMobileMoreOpen(false)}
-                          className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none ${
+                          className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none ${
                             isActive(href) ? "bg-[var(--bg-hover)] text-[var(--text-primary)]" : "text-[var(--text-secondary)]"
                           }`}
                         >
@@ -679,7 +679,7 @@ className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-pr
                   onClick={() => setShowShortcuts(false)}
                 >
                   <div
-                    className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-6 w-full max-w-md shadow-2xl"
+                    className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-6 w-full max-w-md shadow-2xl"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="flex items-center justify-between mb-5">
@@ -717,7 +717,7 @@ className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-pr
                             {shortcut.keys.map((key) => (
                               <kbd
                                 key={key}
-                                className="bg-white/[0.04] border border-white/[0.06] px-2 py-1 rounded-lg text-xs text-[var(--text-primary)] font-mono min-w-[28px] text-center"
+                                className="bg-[var(--bg-inset)] border border-[var(--border-default)] px-2 py-1 rounded-lg text-xs text-[var(--text-primary)] font-mono min-w-[28px] text-center"
                               >
                                 {key}
                               </kbd>
@@ -726,13 +726,13 @@ className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-pr
                         </div>
                       ))}
                     </div>
-                    <p className="text-xs text-[var(--text-tertiary)] mt-5 pt-4 border-t border-white/[0.06]">
+                    <p className="text-xs text-[var(--text-tertiary)] mt-5 pt-4 border-t border-[var(--border-default)]">
                       Press{" "}
-                      <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[var(--text-muted)]">
+                      <kbd className="bg-[var(--bg-inset)] px-1.5 py-0.5 rounded text-[var(--text-tertiary)]">
                         Esc
                       </kbd>{" "}
                       or{" "}
-                      <kbd className="bg-white/[0.04] px-1.5 py-0.5 rounded text-[var(--text-muted)]">
+                      <kbd className="bg-[var(--bg-inset)] px-1.5 py-0.5 rounded text-[var(--text-tertiary)]">
                         ?
                       </kbd>{" "}
                       to close
@@ -761,8 +761,8 @@ function OnboardingSidebar({ initialWorkspaceName }: { initialWorkspaceName?: st
   return (
     <aside className="hidden md:flex md:w-52 flex-col shrink-0 bg-[var(--bg-surface)] border-r border-[var(--border-default)] py-5 px-4">
       <Link href="/" className="flex flex-col items-center gap-1 mb-6">
-        <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-          <span className="text-black font-bold text-sm">RT</span>
+        <div className="w-10 h-10 bg-[var(--accent-primary)] rounded-lg flex items-center justify-center">
+          <span className="text-[var(--text-on-accent)] font-bold text-sm">RT</span>
         </div>
         <WorkspaceName initialName={initialWorkspaceName} className="text-[10px] text-[var(--text-secondary)] text-center block" />
       </Link>
@@ -777,7 +777,7 @@ function OnboardingSidebar({ initialWorkspaceName }: { initialWorkspaceName?: st
                 key={stepNum}
                 type="button"
                 onClick={() => setStep?.(stepNum)}
-                className="flex items-center gap-3 w-full text-left rounded-lg py-1 -ml-1 pl-1 hover:bg-[var(--bg-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+                className="flex items-center gap-3 w-full text-left rounded-lg py-1 -ml-1 pl-1 hover:bg-[var(--bg-hover)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
                 aria-current={isCurrent ? "step" : undefined}
                 aria-label={`Step ${stepNum}: ${label}`}
               >

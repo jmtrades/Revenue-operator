@@ -278,7 +278,7 @@ export default function VoiceSelector({ value, onChange, planTier = 'enterprise'
                 <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700">
                   {voice.tone}
                 </span>
-                <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-[var(--bg-inset)] text-[var(--text-secondary)]">
                   {voice.accent}
                 </span>
               </div>

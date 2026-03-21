@@ -161,7 +161,7 @@ export function TestStepContent({
           type="button"
           onClick={onNext}
           aria-label={t("testStep.continueToGoLive")}
-          className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="rounded-xl bg-[var(--bg-surface)] px-6 py-2.5 text-sm font-semibold text-[var(--text-primary)] hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           {t("testStep.continue")}
         </button>

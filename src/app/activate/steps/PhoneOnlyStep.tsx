@@ -42,7 +42,7 @@ export function PhoneOnlyStep({
           type="button"
           onClick={goNext}
           disabled={!canGoNext}
-          className="rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-black hover:bg-slate-100 disabled:opacity-50"
+          className="rounded-xl bg-[var(--bg-surface)] px-5 py-2.5 text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-hover)] disabled:opacity-50"
         >
           Continue
         </button>

@@ -124,7 +124,7 @@ export default function SignInForm() {
       <div className="w-full max-w-[420px] space-y-5">
         <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl p-8 shadow-2xl shadow-black/40">
           <div className="flex justify-center mb-5">
-            <div className="w-11 h-11 rounded-full bg-white text-gray-900 flex items-center justify-center font-bold text-sm tracking-tight">
+            <div className="w-11 h-11 rounded-full bg-[var(--bg-surface)] text-[var(--text-primary)] flex items-center justify-center font-bold text-sm tracking-tight">
               RT
             </div>
           </div>
@@ -204,7 +204,7 @@ export default function SignInForm() {
               type="submit"
               disabled={busy}
               aria-label={t("signIn.button")}
-              className="w-full py-2.5 bg-white text-gray-900 font-semibold text-[15px] rounded-xl hover:bg-white/90 active:opacity-90 disabled:opacity-50 transition-all duration-150 shadow-lg shadow-white/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)]"
+              className="w-full py-2.5 bg-[var(--bg-surface)] text-[var(--text-primary)] font-semibold text-[15px] rounded-xl hover:bg-[var(--bg-hover)] active:opacity-90 disabled:opacity-50 transition-all duration-150 shadow-lg shadow-white/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)]"
             >
               {busy ? t("signingIn") : `${t("signIn.button")} →`}
             </button>

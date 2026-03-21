@@ -148,7 +148,7 @@ export function AgentStep({
 
       <div className="flex items-center justify-between gap-3 pt-2">
         <button type="button" onClick={goBack} className="text-xs md:text-sm text-slate-400 hover:text-slate-100">{t("back")}</button>
-        <button type="button" onClick={goNext} disabled={!canGoNext} className="inline-flex items-center justify-center rounded-xl bg-white px-5 py-2.5 text-xs md:text-sm font-semibold text-black hover:bg-slate-100 disabled:opacity-60">{t("next")}</button>
+        <button type="button" onClick={goNext} disabled={!canGoNext} className="inline-flex items-center justify-center rounded-xl bg-[var(--bg-surface)] px-5 py-2.5 text-xs md:text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-hover)] disabled:opacity-60">{t("next")}</button>
       </div>
     </div>
   );

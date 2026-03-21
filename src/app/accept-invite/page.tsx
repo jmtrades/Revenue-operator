@@ -87,7 +87,7 @@ export default function AcceptInvitePage() {
           <>
             <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-2">{t("acceptInvite.invalidLink")}</h1>
             <p className="text-[var(--text-secondary)] text-sm mb-6">{t("acceptInvite.invalidLinkDesc")}</p>
-            <Link href="/" className="inline-block px-6 py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none">
+            <Link href="/" className="inline-block px-6 py-3 rounded-xl text-sm font-semibold bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none">
               {t("acceptInvite.goHome")}
             </Link>
           </>
@@ -96,7 +96,7 @@ export default function AcceptInvitePage() {
           <>
             <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-2">{t("acceptInvite.expiredTitle")}</h1>
             <p className="text-[var(--text-secondary)] text-sm mb-6">{t("acceptInvite.expiredDesc")}</p>
-            <Link href="/" className="inline-block px-6 py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none">
+            <Link href="/" className="inline-block px-6 py-3 rounded-xl text-sm font-semibold bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none">
               {t("acceptInvite.goHome")}
             </Link>
           </>
@@ -113,7 +113,7 @@ export default function AcceptInvitePage() {
                 type="button"
                 onClick={handleAccept}
                 disabled={accepting}
-                className="w-full py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-gray-100 disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
+                className="w-full py-3 rounded-xl text-sm font-semibold bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
               >
                 {accepting ? t("acceptInvite.accepting") : t("acceptInvite.acceptButton")}
               </button>

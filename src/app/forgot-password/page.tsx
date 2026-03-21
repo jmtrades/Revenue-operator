@@ -78,7 +78,7 @@ export default function ForgotPasswordPage() {
           <button
             type="submit"
             disabled={busy}
-            className="w-full rounded-xl bg-white px-6 py-3 text-sm font-semibold text-gray-900 transition hover:bg-gray-100 disabled:opacity-60 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
+            className="w-full rounded-xl bg-[var(--bg-surface)] px-6 py-3 text-sm font-semibold text-[var(--text-primary)] transition hover:bg-[var(--bg-hover)] disabled:opacity-60 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
           >
             {busy ? t("resetPassword.sending") : t("resetPassword.submitLabel")}
           </button>

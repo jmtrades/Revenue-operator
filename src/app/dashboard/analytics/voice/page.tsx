@@ -72,12 +72,12 @@ function getMOSColor(score: number): string {
 
 function KPICard({ label, value, unit, trend }: { label: string; value: number; unit: string; trend?: number }) {
   return (
-    <div className="p-4 bg-white rounded-lg border border-gray-200">
-      <p className="text-sm text-gray-600 mb-2">{label}</p>
+    <div className="p-4 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-default)]">
+      <p className="text-sm text-[var(--text-secondary)] mb-2">{label}</p>
       <div className="flex items-baseline justify-between">
-        <p className="text-2xl font-bold text-gray-900">
+        <p className="text-2xl font-bold text-[var(--text-primary)]">
           {value.toFixed(1)}
-          <span className="text-lg text-gray-500 ml-1">{unit}</span>
+          <span className="text-lg text-[var(--text-tertiary)] ml-1">{unit}</span>
         </p>
         {trend !== undefined && (
           <span className={`text-sm font-semibold ${trend < 0 ? 'text-green-600' : 'text-red-600'}`}>
@@ -145,7 +145,7 @@ export default function VoiceAnalyticsDashboard() {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <KPICard label="Avg TTFB" value={kpi.avgTTFB} unit="ms" trend={kpi.ttfbTrend} />
-        <div className={`p-4 rounded-lg border border-gray-200 ${getMOSColor(kpi.avgMOS)}`}>
+        <div className={`p-4 rounded-lg border border-[var(--border-default)] ${getMOSColor(kpi.avgMOS)}`}>
           <p className="text-sm mb-2 font-semibold">Avg MOS Score</p>
           <p className="text-2xl font-bold">{kpi.avgMOS.toFixed(2)}</p>
           <p className="text-xs mt-1">out of 5.0</p>
@@ -269,22 +269,22 @@ export default function VoiceAnalyticsDashboard() {
             <CardBody>
               <div className="space-y-4">
                 <div>
-                  <p className="text-xs text-gray-600 mb-1">Total Calls</p>
-                  <p className="text-2xl font-bold text-gray-900">{model.calls.toLocaleString()}</p>
+                  <p className="text-xs text-[var(--text-secondary)] mb-1">Total Calls</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{model.calls.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-600 mb-1">Avg Latency</p>
-                  <p className="text-2xl font-bold text-gray-900">{model.latency}ms</p>
+                  <p className="text-xs text-[var(--text-secondary)] mb-1">Avg Latency</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{model.latency}ms</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-600 mb-1">Quality (MOS)</p>
+                  <p className="text-xs text-[var(--text-secondary)] mb-1">Quality (MOS)</p>
                   <p className={`text-2xl font-bold ${getMOSColor(model.quality)}`}>
                     {model.quality.toFixed(1)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-600 mb-1">Cost Per Minute</p>
-                  <p className="text-2xl font-bold text-gray-900">${model.costPerMin.toFixed(2)}</p>
+                  <p className="text-xs text-[var(--text-secondary)] mb-1">Cost Per Minute</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">${model.costPerMin.toFixed(2)}</p>
                 </div>
               </div>
             </CardBody>
@@ -300,7 +300,7 @@ export default function VoiceAnalyticsDashboard() {
         <CardBody>
           <div className="space-y-3">
             {issues.length === 0 ? (
-              <p className="text-gray-500 text-center py-6">No quality issues detected</p>
+              <p className="text-[var(--text-tertiary)] text-center py-6">No quality issues detected</p>
             ) : (
               issues.map((issue, idx) => (
                 <div key={idx} className="flex items-start p-3 bg-red-50 border border-red-200 rounded">
@@ -313,11 +313,11 @@ export default function VoiceAnalyticsDashboard() {
                             ? 'Audio Glitch'
                             : 'High Latency'}
                       </span>
-                      <span className="text-sm font-medium text-gray-900">{issue.voice}</span>
-                      <span className="text-sm text-gray-500">({issue.callId})</span>
+                      <span className="text-sm font-medium text-[var(--text-primary)]">{issue.voice}</span>
+                      <span className="text-sm text-[var(--text-tertiary)]">({issue.callId})</span>
                     </div>
-                    <p className="text-sm text-gray-700 mb-2">Value: {issue.value}</p>
-                    <p className="text-xs text-gray-500">{issue.timestamp}</p>
+                    <p className="text-sm text-[var(--text-secondary)] mb-2">Value: {issue.value}</p>
+                    <p className="text-xs text-[var(--text-tertiary)]">{issue.timestamp}</p>
                   </div>
                 </div>
               ))
@@ -336,7 +336,7 @@ export default function VoiceAnalyticsDashboard() {
             <div className="space-y-4">
               {voices.map((voice) => (
                 <div key={voice.name} className="flex items-center justify-between">
-                  <span className="text-sm text-gray-700">{voice.name}</span>
+                  <span className="text-sm text-[var(--text-secondary)]">{voice.name}</span>
                   <div className="flex-1 mx-3 bg-zinc-800 rounded-full h-2">
                     <div
                       className="bg-zinc-100 h-2 rounded-full"
@@ -366,14 +366,14 @@ export default function VoiceAnalyticsDashboard() {
                 <p className="text-sm text-zinc-400 mb-2">Our Solution</p>
                 <p className="text-3xl font-bold text-white">${totalCost.toFixed(2)}</p>
               </div>
-              <div className="bg-gray-50 p-4 rounded border border-gray-200">
-                <p className="text-sm text-gray-600 mb-2">External Estimate</p>
-                <p className="text-3xl font-bold text-gray-900">${externalEstimate.toFixed(2)}</p>
+              <div className="bg-[var(--bg-inset)] p-4 rounded border border-[var(--border-default)]">
+                <p className="text-sm text-[var(--text-secondary)] mb-2">External Estimate</p>
+                <p className="text-3xl font-bold text-[var(--text-primary)]">${externalEstimate.toFixed(2)}</p>
               </div>
               <div className="bg-green-50 p-4 rounded border border-green-200">
-                <p className="text-sm text-gray-600 mb-2">Monthly Savings</p>
+                <p className="text-sm text-[var(--text-secondary)] mb-2">Monthly Savings</p>
                 <p className="text-3xl font-bold text-green-600">${savings.toFixed(2)}</p>
-                <p className="text-xs text-gray-600 mt-1">
+                <p className="text-xs text-[var(--text-secondary)] mt-1">
                   {((savings / externalEstimate) * 100).toFixed(0)}% cost reduction
                 </p>
               </div>

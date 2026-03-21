@@ -284,7 +284,7 @@ export function GoLiveStepContent({
           disabled={!allowActivate || activating}
           aria-label={t("goLive.activateAgentAria")}
           title={!testCallCompleted ? "Complete your test call to enable Go Live." : undefined}
-          className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="rounded-xl bg-[var(--bg-surface)] px-6 py-2.5 text-sm font-semibold text-[var(--text-primary)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           {activating ? t("goLive.activating") : t("goLive.activateAgent")}
         </button>
