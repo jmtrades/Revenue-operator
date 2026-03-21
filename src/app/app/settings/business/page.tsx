@@ -83,7 +83,7 @@ export default function AppSettingsBusinessPage() {
           lastSavedRef.current = { ...lastSavedRef.current, timezone: data.timezone };
         }
       })
-      .catch(() => {});
+      .catch((err) => console.error("[settings/business] Failed to load timezone:", err));
   }, []);
 
   const handleSave = async () => {

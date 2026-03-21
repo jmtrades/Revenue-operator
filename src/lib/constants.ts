@@ -18,6 +18,16 @@ export const ROUTES = {
   BOOK_DEMO: "/demo",
 } as const;
 
+/** Single source of truth for marketing social proof stats.
+ *  Update here — not in individual components. */
+export const SOCIAL_PROOF = {
+  businessCount: "12,400+",
+  callsHandled: "8.7M+",
+  revenueRecovered: "$340M+",
+  industryCount: "200+",
+  stateCount: "47",
+} as const;
+
 export const NAV_LINKS = [
   { href: ROUTES.PRODUCT, labelKey: "product" },
   { href: ROUTES.PRICING, labelKey: "pricing" },

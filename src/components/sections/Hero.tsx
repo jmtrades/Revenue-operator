@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { HeroRevenueWidget } from "@/components/sections/HeroRevenueWidget";
-import { ROUTES } from "@/lib/constants";
+import { ROUTES, SOCIAL_PROOF } from "@/lib/constants";
 import { ArrowRight, Play, Pause, Phone, PhoneCall } from "lucide-react";
 
 
@@ -248,10 +248,10 @@ export function Hero() {
                 <span className="text-xs ml-1" style={{ color: "var(--text-tertiary)" }}>4.9/5</span>
               </div>
               <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-                <strong style={{ color: "var(--text-secondary)" }}>12,400+</strong> businesses
+                <strong style={{ color: "var(--text-secondary)" }}>{SOCIAL_PROOF.businessCount}</strong> businesses
               </span>
               <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-                <strong style={{ color: "var(--text-secondary)" }}>$340M+</strong> recovered
+                <strong style={{ color: "var(--text-secondary)" }}>{SOCIAL_PROOF.revenueRecovered}</strong> recovered
               </span>
             </div>
 

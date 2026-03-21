@@ -210,7 +210,7 @@ export function PricingPreview() {
                   href={
                     ctaText === "Talk to sales"
                       ? ROUTES.CONTACT
-                      : ROUTES.START
+                      : `${ROUTES.START}?plan=${tier.name.toLowerCase()}`
                   }
                   className={`${
                     tier.popular

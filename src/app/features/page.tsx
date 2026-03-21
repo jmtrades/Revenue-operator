@@ -17,7 +17,7 @@ const FEATURES = [
     icon: AudioWaveform,
     title: "32 Human-Quality AI Voices",
     description:
-      "Every voice in the Recall Touch library was engineered to be indistinguishable from a real person. Natural pauses, real intonation, pitch variation, conversational warmth, and even subtle breathing. Over 90% of callers don't realize they're speaking with AI. Choose from 32 voices across 8 accents, 3 genders, and 10 tonal styles — or clone your own voice.",
+      "Every voice in the Recall Touch library was engineered for natural conversation. Natural pauses, real intonation, pitch variation, conversational warmth, and even subtle breathing. Most callers can't tell the difference — but don't take our word for it, listen for yourself. Choose from 32 voices across 8 accents, 3 genders, and 10 tonal styles — or clone your own voice.",
     href: "/demo/voice",
     color: "#10B981",
   },

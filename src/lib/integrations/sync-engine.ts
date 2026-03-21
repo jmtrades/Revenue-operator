@@ -209,14 +209,13 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
       }
       const leadRecord = lead as LeadRecord;
       const payload = applyMapping(leadRecord, mappingConfig as FieldMappingConfig);
-      // Stub: actual push to CRM would go here (e.g. HubSpot API, Salesforce API).
-      // For now we just mark completed and log.
+      // TODO: Implement actual CRM push (HubSpot, Salesforce, Pipedrive APIs).
+      // Until then, mark as pending_integration so dashboards don't show false success.
       await db
         .from("sync_queue")
         .update({
-          status: "completed",
+          status: "pending_integration",
           updated_at: new Date().toISOString(),
-          completed_at: new Date().toISOString(),
         })
         .eq("id", jobId);
       await appendSyncLog({
@@ -224,8 +223,8 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
         provider: row.provider,
         direction: "outbound",
         entityId: row.entity_id,
-        action: "updated",
-        summary: `Outbound sync queued (${Object.keys(payload).length} fields). CRM API push not yet implemented.`,
+        action: "skipped",
+        summary: `Outbound sync prepared (${Object.keys(payload).length} fields). Awaiting CRM provider integration.`,
         payloadSnapshot: payload,
       });
       return { ok: true };

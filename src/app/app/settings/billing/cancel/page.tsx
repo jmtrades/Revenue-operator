@@ -71,7 +71,7 @@ export default function BillingCancelPage() {
         if (!data) return;
         setRenewalAt(typeof data.renewal_at === "string" ? data.renewal_at : null);
       })
-      .catch(() => {});
+      .catch((err) => console.error("[billing/cancel] Failed to load billing status:", err));
 
     return () => controller.abort();
   }, [workspaceId]);

@@ -5,19 +5,28 @@ import Link from "next/link";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
 import { Container } from "@/components/ui/Container";
 import { DemoVoiceButton } from "@/components/demo/DemoVoiceButton";
-import { ROUTES } from "@/lib/constants";
+import { ROUTES, SOCIAL_PROOF } from "@/lib/constants";
 import { ArrowRight } from "lucide-react";
 
 export function FinalCTA() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleEmailSubmit = (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !email.includes("@")) return;
-    // Redirect to signup with email pre-filled
-    window.location.href = `${ROUTES.START}?email=${encodeURIComponent(email.trim())}`;
     setSubmitted(true);
+    // Capture the lead before redirecting — don't lose it if they bounce from signup
+    try {
+      await fetch("/api/leads/capture", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), source: "final_cta" }),
+      });
+    } catch {
+      // Non-blocking — still redirect even if capture fails
+    }
+    window.location.href = `${ROUTES.START}?email=${encodeURIComponent(email.trim())}`;
   };
 
   return (
@@ -119,7 +128,7 @@ export function FinalCTA() {
 
           <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
             <Link
-              href="/book-demo"
+              href="/demo"
               className="btn-marketing-ghost no-underline text-sm px-5 py-2.5"
             >
               Book a live demo
@@ -139,7 +148,7 @@ export function FinalCTA() {
 
           {/* Social proof below demo */}
           <p className="text-xs mt-10" style={{ color: "var(--text-tertiary)" }}>
-            Join 12,400+ businesses that stopped losing revenue to voicemail.
+            Join {SOCIAL_PROOF.businessCount} businesses that stopped losing revenue to voicemail.
           </p>
         </AnimateOnScroll>
       </Container>

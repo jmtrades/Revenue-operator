@@ -25,6 +25,34 @@ import {
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/Skeleton";
 
+/** Read CSS custom properties at runtime so charts respect light/dark mode. */
+function useChartColors() {
+  const [colors, setColors] = useState({
+    tickFill: "#71757E",
+    tooltipBg: "#FFFFFF",
+    tooltipBorder: "rgba(0,0,0,0.08)",
+    tooltipLabel: "#4B5563",
+    accent: "#2563EB",
+    accentSecondary: "#16a34a",
+    textPrimary: "#0F172A",
+  });
+
+  useEffect(() => {
+    const cs = getComputedStyle(document.documentElement);
+    setColors({
+      tickFill: cs.getPropertyValue("--text-tertiary").trim() || "#71757E",
+      tooltipBg: cs.getPropertyValue("--bg-surface").trim() || "#FFFFFF",
+      tooltipBorder: cs.getPropertyValue("--border-default").trim() || "rgba(0,0,0,0.08)",
+      tooltipLabel: cs.getPropertyValue("--text-secondary").trim() || "#4B5563",
+      accent: cs.getPropertyValue("--accent-primary").trim() || "#2563EB",
+      accentSecondary: cs.getPropertyValue("--accent-secondary").trim() || "#16a34a",
+      textPrimary: cs.getPropertyValue("--text-primary").trim() || "#0F172A",
+    });
+  }, []);
+
+  return colors;
+}
+
 type AnalyticsData = {
   kpis: {
     callsHandled: number;
@@ -116,6 +144,7 @@ export default function AgentAnalyticsPage({
     );
   }
 
+  const cc = useChartColors();
   const { kpis, dailyVolume, successRateTrend, topOutcomes, commonIntents, comparison, recommendations } = data;
   const volumeChartData = dailyVolume.map((d) => ({
     day: new Date(d.date).toLocaleDateString(undefined, { month: "short", day: "numeric" }),
@@ -186,14 +215,14 @@ export default function AgentAnalyticsPage({
               <AreaChart data={volumeChartData}>
                 <defs>
                   <linearGradient id="agentVolGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#fff" stopOpacity={0.15} />
-                    <stop offset="95%" stopColor="#fff" stopOpacity={0.02} />
+                    <stop offset="5%" stopColor={cc.accent} stopOpacity={0.3} />
+                    <stop offset="95%" stopColor={cc.accent} stopOpacity={0.02} />
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} width={32} allowDecimals={false} />
-                <Tooltip contentStyle={{ backgroundColor: "#18181b", borderRadius: 8, border: "1px solid #3f3f46", fontSize: 12 }} labelStyle={{ color: "#E4E4E7" }} />
-                <Area type="monotone" dataKey="calls" stroke="#fff" strokeWidth={2} fill="url(#agentVolGrad)" />
+                <XAxis dataKey="day" tick={{ fontSize: 11, fill: cc.tickFill }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: cc.tickFill }} axisLine={false} tickLine={false} width={32} allowDecimals={false} />
+                <Tooltip contentStyle={{ backgroundColor: cc.tooltipBg, borderRadius: 8, border: `1px solid ${cc.tooltipBorder}`, fontSize: 12 }} labelStyle={{ color: cc.tooltipLabel }} />
+                <Area type="monotone" dataKey="calls" stroke={cc.accent} strokeWidth={2} fill="url(#agentVolGrad)" />
               </AreaChart>
             </ResponsiveContainer>
           ) : (
@@ -209,10 +238,10 @@ export default function AgentAnalyticsPage({
           {successRateTrend.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={successRateTrend.map((w) => ({ ...w, weekLabel: new Date(w.week).toLocaleDateString(undefined, { month: "short", day: "numeric" }) }))}>
-                <XAxis dataKey="weekLabel" tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} />
-                <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: "#9CA3AF" }} axisLine={false} tickLine={false} width={32} />
-                <Tooltip contentStyle={{ backgroundColor: "#18181b", borderRadius: 8, border: "1px solid #3f3f46", fontSize: 12 }} />
-                <Bar dataKey="successRate" fill="#22c55e" radius={[4, 4, 0, 0]} name="Success %" />
+                <XAxis dataKey="weekLabel" tick={{ fontSize: 11, fill: cc.tickFill }} axisLine={false} tickLine={false} />
+                <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: cc.tickFill }} axisLine={false} tickLine={false} width={32} />
+                <Tooltip contentStyle={{ backgroundColor: cc.tooltipBg, borderRadius: 8, border: `1px solid ${cc.tooltipBorder}`, fontSize: 12 }} labelStyle={{ color: cc.tooltipLabel }} />
+                <Bar dataKey="successRate" fill={cc.accentSecondary} radius={[4, 4, 0, 0]} name="Success %" />
               </BarChart>
             </ResponsiveContainer>
           ) : (
@@ -280,7 +309,7 @@ export default function AgentAnalyticsPage({
           </p>
           <ul className="space-y-2">
             {recommendations.map((r, i) => (
-              <li key={i} className="text-sm text-zinc-300 flex gap-2">
+              <li key={i} className="text-sm text-[var(--text-secondary)] flex gap-2">
                 <span className="text-[var(--text-secondary)]">•</span>
                 {r}
               </li>

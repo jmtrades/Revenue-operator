@@ -74,7 +74,7 @@ export default function OutboundSettingsPage() {
         const oc = data?.settings?.outbound_config;
         if (oc && typeof oc === "object") setConfig({ ...DEFAULT_CONFIG, ...oc });
       })
-      .catch(() => {})
+      .catch((err) => console.error("[settings/outbound] Failed to load config:", err))
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
