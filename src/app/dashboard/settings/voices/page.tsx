@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { PageHeader, EmptyState } from "@/components/ui";
+import { RECALL_VOICES } from "@/lib/constants/recall-voices";
 
 const VOICE_SERVER_URL =
   process.env.NEXT_PUBLIC_VOICE_SERVER_URL || "http://localhost:8100";
@@ -51,85 +52,34 @@ interface WorkspaceVoiceConfig {
   industryPreset: string;
 }
 
-const DEMO_VOICES: Voice[] = [
-  {
-    id: "voice_alex",
-    name: "Alex",
-    gender: "male",
-    accent: "American",
-    tone: "Professional",
-    industries: ["Tech", "Finance", "Consulting"],
-  },
-  {
-    id: "voice_maya",
-    name: "Maya",
-    gender: "female",
-    accent: "British",
-    tone: "Warm",
-    industries: ["Healthcare", "Education", "Hospitality"],
-  },
-  {
-    id: "voice_river",
-    name: "River",
-    gender: "neutral",
-    accent: "American",
-    tone: "Friendly",
-    industries: ["Retail", "E-commerce", "Services"],
-  },
-  {
-    id: "voice_jordan",
-    name: "Jordan",
-    gender: "male",
-    accent: "Australian",
-    tone: "Energetic",
-    industries: ["Sales", "Marketing", "Startup"],
-  },
-  {
-    id: "voice_ash",
-    name: "Ash",
-    gender: "female",
-    accent: "Neutral",
-    tone: "Clinical",
-    industries: ["Legal", "Finance", "Enterprise"],
-  },
-];
+/* Map real RECALL_VOICES to the Voice interface for the library UI */
+const BUILT_IN_VOICES: Voice[] = RECALL_VOICES.map((v) => ({
+  id: v.id,
+  name: v.name,
+  gender: v.gender,
+  accent: v.accent,
+  tone: v.tone.charAt(0).toUpperCase() + v.tone.slice(1),
+  industries: v.bestFor.split(", ").map((s) => s.trim()),
+}));
 
-const DEMO_AB_TESTS: ABTest[] = [
-  {
-    id: "test_1",
-    voiceA: "voice_alex",
-    voiceB: "voice_maya",
-    trafficSplit: 50,
-    calls: 1250,
-    satisfaction: 82,
-    conversion: 28.5,
-    status: "running",
-  },
-  {
-    id: "test_2",
-    voiceA: "voice_river",
-    voiceB: "voice_jordan",
-    trafficSplit: 60,
-    calls: 920,
-    satisfaction: 75,
-    conversion: 24.2,
-    status: "running",
-  },
-];
+/* Default first voice ID for initial selection */
+const DEFAULT_VOICE_ID = BUILT_IN_VOICES[0]?.id ?? "us-female-warm-receptionist";
+const DEFAULT_VOICE_B_ID = BUILT_IN_VOICES[1]?.id ?? "us-female-confident-closer";
 
 export default function VoicesSettingsPage() {
   const { workspaceId } = useWorkspace();
-  const [voices, setVoices] = useState<Voice[]>(DEMO_VOICES);
-  const [selectedVoiceId, setSelectedVoiceId] = useState<string>("voice_alex");
+  const [voices, setVoices] = useState<Voice[]>(BUILT_IN_VOICES);
+  const [, setHasRealData] = useState(true);
+  const [selectedVoiceId, setSelectedVoiceId] = useState<string>(DEFAULT_VOICE_ID);
   const [voiceConfig, setVoiceConfig] = useState<WorkspaceVoiceConfig>({
-    activeVoiceId: "voice_alex",
+    activeVoiceId: DEFAULT_VOICE_ID,
     speed: 1,
     stability: 0.7,
     warmth: 0.5,
     emotionIntensity: 0.6,
     industryPreset: "tech",
   });
-  const [abTests, setAbTests] = useState<ABTest[]>(DEMO_AB_TESTS);
+  const [abTests, setAbTests] = useState<ABTest[]>([]);
   const [playingVoiceId, setPlayingVoiceId] = useState<string | null>(null);
   const [isCloning, setIsCloning] = useState(false);
   const [cloneFile, setCloneFile] = useState<File | null>(null);
@@ -137,8 +87,8 @@ export default function VoicesSettingsPage() {
   const [cloneDescription, setCloneDescription] = useState("");
   const [showCloneModal, setShowCloneModal] = useState(false);
   const [showTestModal, setShowTestModal] = useState(false);
-  const [testVoiceAId, setTestVoiceAId] = useState<string>("voice_alex");
-  const [testVoiceBId, setTestVoiceBId] = useState<string>("voice_maya");
+  const [testVoiceAId, setTestVoiceAId] = useState<string>(DEFAULT_VOICE_ID);
+  const [testVoiceBId, setTestVoiceBId] = useState<string>(DEFAULT_VOICE_B_ID);
   const [testTrafficSplit, setTestTrafficSplit] = useState<number>(50);
   const [filterGender, setFilterGender] = useState<string>("all");
   const [filterAccent, setFilterAccent] = useState<string>("all");
@@ -155,7 +105,10 @@ export default function VoicesSettingsPage() {
         });
         if (response.ok) {
           const data = await response.json();
-          setVoices(data.voices || DEMO_VOICES);
+          if (data.voices && data.voices.length > 0) {
+            setVoices(data.voices);
+            setHasRealData(true);
+          }
         }
       } catch {
         // Use demo data on error
@@ -471,7 +424,8 @@ export default function VoicesSettingsPage() {
             <button
               type="button"
               onClick={handleTestVoice}
-              className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 text-black font-semibold px-4 py-2.5 text-sm hover:bg-emerald-400 transition-colors"
+              className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 font-semibold px-4 py-2.5 text-sm hover:bg-emerald-400 transition-colors"
+              style={{ color: "var(--text-primary)" }}
             >
               <Play className="w-4 h-4" />
               Test Voice
@@ -652,8 +606,8 @@ export default function VoicesSettingsPage() {
                   <button
                     type="button"
                     onClick={() => handlePreviewVoice(voice.id)}
-                    className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg border px-2.5 py-1.5 text-xs text-white hover:bg-[var(--bg-inset)] transition-colors"
-                    style={{ borderColor: "var(--border-default)" }}
+                    className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg border px-2.5 py-1.5 text-xs hover:bg-[var(--bg-inset)] transition-colors"
+                    style={{ borderColor: "var(--border-default)", color: "var(--text-primary)" }}
                   >
                     {playingVoiceId === voice.id ? (
                       <>
@@ -670,7 +624,8 @@ export default function VoicesSettingsPage() {
                   <button
                     type="button"
                     onClick={() => handleSelectVoice(voice.id)}
-                    className="flex-1 rounded-lg bg-emerald-500 text-black font-semibold text-xs px-2.5 py-1.5 hover:bg-emerald-400 transition-colors"
+                    className="flex-1 rounded-lg bg-emerald-500 font-semibold text-xs px-2.5 py-1.5 hover:bg-emerald-400 transition-colors"
+                    style={{ color: "var(--text-primary)" }}
                   >
                     Select
                   </button>
@@ -904,7 +859,8 @@ export default function VoicesSettingsPage() {
                 type="button"
                 onClick={handleCloneVoice}
                 disabled={isCloning || !cloneFile || !cloneName.trim()}
-                className="flex-1 rounded-xl bg-emerald-500 text-black font-semibold py-2.5 text-sm hover:bg-emerald-400 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                className="flex-1 rounded-xl bg-emerald-500 font-semibold py-2.5 text-sm hover:bg-emerald-400 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                style={{ color: "var(--text-primary)" }}
               >
                 {isCloning ? "Cloning..." : "Clone Voice"}
               </button>
