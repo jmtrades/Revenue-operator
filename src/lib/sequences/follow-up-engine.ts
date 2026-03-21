@@ -600,17 +600,24 @@ export async function getNextDueEnrollments(
   const db = getDb();
   const now = new Date().toISOString();
 
-  const { data: enrollments, error } = await db
-    .from("sequence_enrollments")
-    .select("*")
-    .eq("workspace_id", workspaceId)
-    .eq("status", "active")
-    .lt("next_step_due_at", now)
-    .order("next_step_due_at", { ascending: true })
-    .limit(limit);
+  let enrollments: SequenceEnrollment[] | null = null;
+  try {
+    const { data, error } = await db
+      .from("sequence_enrollments")
+      .select("*")
+      .eq("workspace_id", workspaceId)
+      .eq("status", "active")
+      .lt("next_step_due_at", now)
+      .order("next_step_due_at", { ascending: true })
+      .limit(limit);
 
-  if (error) {
-    console.error("[Sequence] Error fetching due enrollments:", error);
+    if (error) {
+      // Table may not be provisioned yet — return empty silently
+      return [];
+    }
+    enrollments = data as SequenceEnrollment[];
+  } catch {
+    // Table doesn't exist yet — return empty
     return [];
   }
 
@@ -665,19 +672,19 @@ export async function getContactEnrollments(
 ): Promise<SequenceEnrollment[]> {
   const db = getDb();
 
-  const { data: enrollments, error } = await db
-    .from("sequence_enrollments")
-    .select("*")
-    .eq("workspace_id", workspaceId)
-    .eq("contact_id", contactId)
-    .order("enrolled_at", { ascending: false });
+  try {
+    const { data: enrollments, error } = await db
+      .from("sequence_enrollments")
+      .select("*")
+      .eq("workspace_id", workspaceId)
+      .eq("contact_id", contactId)
+      .order("enrolled_at", { ascending: false });
 
-  if (error) {
-    console.error("[Sequence] Error fetching contact enrollments:", error);
+    if (error) return [];
+    return (enrollments as SequenceEnrollment[]) ?? [];
+  } catch {
     return [];
   }
-
-  return (enrollments as SequenceEnrollment[]) ?? [];
 }
 
 /**
@@ -756,19 +763,19 @@ export async function getWorkspaceSequences(
 ): Promise<FollowUpSequence[]> {
   const db = getDb();
 
-  const { data: sequences, error } = await db
-    .from("follow_up_sequences")
-    .select("*")
-    .eq("workspace_id", workspaceId)
-    .eq("is_active", true)
-    .order("created_at", { ascending: false });
+  try {
+    const { data: sequences, error } = await db
+      .from("follow_up_sequences")
+      .select("*")
+      .eq("workspace_id", workspaceId)
+      .eq("is_active", true)
+      .order("created_at", { ascending: false });
 
-  if (error) {
-    console.error("[Sequence] Error fetching sequences:", error);
+    if (error) return [];
+    return (sequences as FollowUpSequence[]) ?? [];
+  } catch {
     return [];
   }
-
-  return (sequences as FollowUpSequence[]) ?? [];
 }
 
 /**
