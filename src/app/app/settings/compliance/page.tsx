@@ -87,8 +87,34 @@ export default function AppSettingsCompliancePage() {
     toast.success(tSettings("compliance.saved"));
   };
 
-  const handleExport = () => {
-    toast.info(tSettings("compliance.exportRequested"));
+  const handleExport = async () => {
+    try {
+      const res = await fetch("/api/workspace/recording-consent", { credentials: "include" });
+      const data = res.ok ? await res.json() : {};
+      const rows = [
+        ["Setting", "Value"],
+        ["Call Recording", recording ? "Enabled" : "Disabled"],
+        ["HIPAA Mode", hipaa ? "Enabled" : "Disabled"],
+        ["Data Retention (days)", retention],
+        ["Recording Consent Mode", recordingConsentMode],
+        ["Announcement Text", announcementText || "(default)"],
+        ["Pause on Sensitive", pauseOnSensitive ? "Yes" : "No"],
+        ["Exported At", new Date().toISOString()],
+      ];
+      const csvContent = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `recall-touch-compliance-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast.success(tSettings("compliance.exportRequested"));
+    } catch {
+      toast.error(tSettings("compliance.saveFailed"));
+    }
   };
 
   return (
@@ -103,7 +129,7 @@ export default function AppSettingsCompliancePage() {
             {tSettings("compliance.consentDescription")}
           </p>
           {consentLoading ? (
-            <div className="h-20 rounded-xl bg-white/5 animate-pulse" />
+            <div className="h-20 rounded-xl bg-[var(--bg-inset)] animate-pulse" />
           ) : (
             <>
               <div className="space-y-2 mb-3">
@@ -143,16 +169,16 @@ export default function AppSettingsCompliancePage() {
                   role="switch"
                   aria-checked={pauseOnSensitive}
                   onClick={() => setPauseOnSensitive((v) => !v)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${pauseOnSensitive ? "bg-white" : "bg-zinc-700"}`}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${pauseOnSensitive ? "bg-white" : "bg-[var(--bg-inset)]"}`}
                 >
-                  <span className={`inline-block h-4 w-4 transform rounded-full transition-transform ${pauseOnSensitive ? "translate-x-6 bg-black" : "translate-x-1 bg-zinc-400"}`} />
+                  <span className={`inline-block h-4 w-4 transform rounded-full transition-transform ${pauseOnSensitive ? "translate-x-6 bg-[var(--text-primary)]" : "translate-x-1 bg-[var(--text-tertiary)]"}`} />
                 </button>
               </div>
               <button
                 type="button"
                 onClick={handleSaveConsent}
                 disabled={consentSaving}
-                className="mt-3 px-4 py-2 rounded-xl text-sm font-medium bg-white text-black hover:bg-zinc-100 disabled:opacity-50"
+                className="mt-3 px-4 py-2 rounded-xl text-sm font-medium bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-50"
               >
                 {consentSaving ? tSettings("compliance.savingConsent") : tSettings("compliance.saveConsent")}
               </button>
@@ -166,8 +192,8 @@ export default function AppSettingsCompliancePage() {
               <p className="text-sm font-medium text-[var(--text-primary)]">{tSettings("compliance.callRecording")}</p>
               <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">{tSettings("compliance.callRecordingHelp")}</p>
             </div>
-            <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${recording ? "bg-white" : "bg-zinc-700"}`} onClick={() => setRecording(!recording)}>
-              <span className={`inline-block h-4 w-4 transform rounded-full transition-transform ${recording ? "translate-x-6 bg-black" : "translate-x-1 bg-zinc-400"}`} />
+            <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${recording ? "bg-white" : "bg-[var(--bg-inset)]"}`} onClick={() => setRecording(!recording)}>
+              <span className={`inline-block h-4 w-4 transform rounded-full transition-transform ${recording ? "translate-x-6 bg-[var(--text-primary)]" : "translate-x-1 bg-[var(--text-tertiary)]"}`} />
             </div>
           </label>
         </div>
@@ -178,8 +204,8 @@ export default function AppSettingsCompliancePage() {
               <p className="text-sm font-medium text-[var(--text-primary)]">{tSettings("compliance.hipaaMode")}</p>
               <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">{tSettings("compliance.hipaaModeHelp")}</p>
             </div>
-            <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${hipaa ? "bg-white" : "bg-zinc-700"}`} onClick={() => setHipaa(!hipaa)}>
-              <span className={`inline-block h-4 w-4 transform rounded-full transition-transform ${hipaa ? "translate-x-6 bg-black" : "translate-x-1 bg-zinc-400"}`} />
+            <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${hipaa ? "bg-white" : "bg-[var(--bg-inset)]"}`} onClick={() => setHipaa(!hipaa)}>
+              <span className={`inline-block h-4 w-4 transform rounded-full transition-transform ${hipaa ? "translate-x-6 bg-[var(--text-primary)]" : "translate-x-1 bg-[var(--text-tertiary)]"}`} />
             </div>
           </label>
         </div>
@@ -197,7 +223,7 @@ export default function AppSettingsCompliancePage() {
       </div>
 
       <div className="flex gap-3">
-        <button type="button" onClick={handleSave} className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 transition-colors">{tSettings("compliance.saveChanges")}</button>
+        <button type="button" onClick={handleSave} className="px-6 py-3 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 transition-colors">{tSettings("compliance.saveChanges")}</button>
         <button type="button" onClick={handleExport} className="px-4 py-3 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-medium)] transition-colors">{tSettings("compliance.exportData")}</button>
       </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { previewVoiceViaApi } from "@/lib/voice-preview";
@@ -18,10 +19,14 @@ import { track } from "@/lib/analytics/posthog";
 export function ActivateWizard() {
   const t = useTranslations("activate");
   const tTeam = useTranslations("team");
+  const searchParams = useSearchParams();
+  const prefillEmail = searchParams.get("email") ?? null;
+  const prefillPlan = searchParams.get("plan") ?? null;
   const [step, setStep] = useState<StepId>(1);
   const [emailVerified, setEmailVerified] = useState<boolean | null>(null);
-  const [accountEmail, setAccountEmail] = useState<string | null>(null);
+  const [accountEmail, setAccountEmail] = useState<string | null>(prefillEmail);
   const [resending, setResending] = useState(false);
+  const [selectedPlan] = useState<string | null>(prefillPlan);
   const [state, setState] = useState<ActivationState>(() => ({
     businessName: "",
     industry: null,
@@ -50,7 +55,7 @@ export function ActivateWizard() {
         if (!res.ok) return;
         const data = (await res.json().catch(() => null)) as { session?: { email?: string | null; emailVerified?: boolean } | null } | null;
         const s = data?.session ?? null;
-        setAccountEmail(s?.email ?? null);
+        setAccountEmail(s?.email ?? prefillEmail ?? null);
         if (typeof s?.emailVerified === "boolean") setEmailVerified(s.emailVerified);
       } catch {
         // Ignore: banner is best-effort
@@ -175,6 +180,7 @@ export function ActivateWizard() {
           knowledgeItems: state.services?.length ? state.services.map((s) => ({ type: "service", value: s })) : undefined,
           preferredLanguage: state.preferredLanguage || "en",
           voiceId: state.voiceId || undefined,
+          selectedPlan: selectedPlan || undefined,
         }),
       });
       if (!res.ok) {

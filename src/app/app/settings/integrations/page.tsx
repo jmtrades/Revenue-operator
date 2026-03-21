@@ -249,6 +249,9 @@ export default function AppSettingsIntegrationsPage() {
         {/* CRM Integration Hub */}
         <section>
           <h2 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">{t("hub.crmHeading")}</h2>
+          <div className="mb-3 px-4 py-3 rounded-xl border text-xs" style={{ borderColor: "var(--accent-warning, #f59e0b)", color: "var(--text-secondary)", background: "rgba(245,158,11,0.06)" }}>
+            CRM sync is in early access. Connections store credentials and map fields, but outbound data push to CRM providers is not yet active. Inbound webhooks work now.
+          </div>
           <div className="mb-4 p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
               <RefreshCw className="w-4 h-4 text-[var(--text-secondary)]" aria-hidden />
@@ -282,12 +285,12 @@ export default function AppSettingsIntegrationsPage() {
               return (
                 <div
                   key={crm.id}
-                  className={`bg-zinc-950 border border-white/[0.06] rounded-2xl p-5 flex flex-col ${
+                  className={`bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl p-5 flex flex-col ${
                     crm.comingSoon ? "opacity-60" : ""
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
-                    <div className="w-10 h-10 rounded-xl bg-white/[0.06] flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-xl bg-[var(--bg-inset)] flex items-center justify-center">
                       <Icon className="w-5 h-5 text-[var(--text-tertiary)]" aria-hidden />
                     </div>
                     {crm.comingSoon ? (
@@ -330,7 +333,7 @@ export default function AppSettingsIntegrationsPage() {
                     ) : (
                       <a
                         href={`/api/integrations/crm/${crm.id}/connect`}
-                        className="inline-block px-3 py-2 rounded-xl text-xs font-semibold bg-white text-black hover:bg-zinc-100 transition-colors"
+                        className="inline-block px-3 py-2 rounded-xl text-xs font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 transition-colors"
                       >
                         {t("button.connect")}
                       </a>
@@ -478,7 +481,7 @@ export default function AppSettingsIntegrationsPage() {
                 type="button"
                 onClick={handleSaveWebhook}
                 disabled={savingWebhook || !workspaceId}
-                className="px-4 py-2.5 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 disabled:opacity-60"
+                className="px-4 py-2.5 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-60"
               >
                 {savingWebhook ? t("hub.saving") : t("hub.saveWebhook")}
               </button>

@@ -46,8 +46,53 @@ export default function AppSettingsTeamPage() {
 
   // Fallback: show current user if API doesn't return members
   const displayMembers = members.length > 0 ? members : (loadingMembers ? [] : [
-    { name: t("team.memberYouOwner"), email: "you@email.com", role: t("team.roleAdmin"), status: t("team.statusActive") },
+    { name: t("team.memberYouOwner"), email: "", role: "admin", status: "active" },
   ]);
+
+  const handleRoleChange = async (email: string, newRole: string) => {
+    if (!workspaceId) return;
+    try {
+      const res = await fetch("/api/workspace/members/role", {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ workspace_id: workspaceId, email, role: newRole }),
+      });
+      if (res.ok) {
+        setMembers((prev) => prev.map((m) => m.email === email ? { ...m, role: newRole } : m));
+        setToast(t("team.roleUpdatedToast"));
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setToast((data as { error?: string }).error || "Failed to update role.");
+      }
+    } catch {
+      setToast("Network error. Please try again.");
+    }
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const handleRemoveMember = async (email: string) => {
+    if (!workspaceId) return;
+    if (!confirm(t("team.confirmRemove"))) return;
+    try {
+      const res = await fetch("/api/workspace/members/remove", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ workspace_id: workspaceId, email }),
+      });
+      if (res.ok) {
+        setMembers((prev) => prev.filter((m) => m.email !== email));
+        setToast(t("team.memberRemovedToast"));
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setToast((data as { error?: string }).error || "Failed to remove member.");
+      }
+    } catch {
+      setToast("Network error. Please try again.");
+    }
+    setTimeout(() => setToast(null), 3000);
+  };
 
   const handleInvite = async () => {
     if (!inviteEmail.trim() || !workspaceId) return;
@@ -90,8 +135,28 @@ export default function AppSettingsTeamPage() {
               <p className="text-xs text-[var(--text-secondary)]">{m.email}</p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--bg-inset)] text-zinc-300">{m.role}</span>
-              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-green-500/15 text-green-400">{m.status}</span>
+              <select
+                value={m.role}
+                onChange={(e) => handleRoleChange(m.email, e.target.value)}
+                className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--bg-inset)] text-[var(--text-secondary)] border-none focus:outline-none cursor-pointer"
+                disabled={!m.email}
+              >
+                <option value="admin">{t("team.roleAdmin")}</option>
+                <option value="manager">{t("team.roleManager")}</option>
+                <option value="viewer">{t("team.roleViewer")}</option>
+              </select>
+              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: "rgba(34,197,94,0.15)", color: "var(--accent-secondary)" }}>{m.status}</span>
+              {m.email && (
+                <button
+                  type="button"
+                  onClick={() => handleRemoveMember(m.email)}
+                  className="text-[10px] px-1.5 py-0.5 rounded-full hover:bg-red-500/15 transition-colors"
+                  style={{ color: "var(--text-tertiary)" }}
+                  title={t("team.removeMember")}
+                >
+                  ×
+                </button>
+              )}
             </div>
           </div>
         ))}
@@ -105,16 +170,16 @@ export default function AppSettingsTeamPage() {
             value={inviteEmail}
             onChange={(e) => setInviteEmail(e.target.value)}
             placeholder={t("team.invitePlaceholder")}
-            className="flex-1 px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
+            className="flex-1 px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
             onKeyDown={(e) => e.key === "Enter" && handleInvite()}
           />
-          <select value={inviteRole} onChange={(e) => setInviteRole(e.target.value)} className="px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-xs text-zinc-300 focus:outline-none">
+          <select value={inviteRole} onChange={(e) => setInviteRole(e.target.value)} className="px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-xs text-[var(--text-secondary)] focus:outline-none">
             <option value="admin">{t("team.roleAdmin")}</option>
             <option value="manager">{t("team.roleManager")}</option>
             <option value="viewer">{t("team.roleViewer")}</option>
           </select>
         </div>
-        <button type="button" onClick={handleInvite} disabled={!inviteEmail.trim()} className="mt-3 px-6 py-2.5 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 disabled:opacity-40 transition-colors">
+        <button type="button" onClick={handleInvite} disabled={!inviteEmail.trim()} className="mt-3 px-6 py-2.5 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-40 transition-colors">
           {t("team.sendInvite")}
         </button>
       </div>
@@ -123,14 +188,14 @@ export default function AppSettingsTeamPage() {
         <p className="text-sm font-medium text-[var(--text-primary)] mb-2">{t("team.escalationOrderTitle")}</p>
         <p className="text-xs text-[var(--text-secondary)]">{t("team.escalationOrderHint")}</p>
         <div className="mt-3 space-y-1.5">
-          <div className="flex items-center gap-2 p-2 rounded-xl bg-[var(--bg-inset)]/50 text-xs text-zinc-300">
+          <div className="flex items-center gap-2 p-2 rounded-xl bg-[var(--bg-inset)]/50 text-xs text-[var(--text-secondary)]">
             <span className="text-[var(--text-secondary)]">1.</span> {displayMembers[0]?.name || t("team.memberYouOwner")} — SMS + Push
           </div>
         </div>
       </div>
 
       {toast && (
-        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-zinc-200">{toast}</div>
+        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-[var(--text-primary)]">{toast}</div>
       )}
 
       <p className="mt-6"><Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{t("team.backToSettings")}</Link></p>

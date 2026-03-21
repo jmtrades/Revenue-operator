@@ -194,7 +194,7 @@ export default function BillingCancelPage() {
           <div className="flex gap-2 flex-wrap">
             <button
               type="button"
-              className="px-4 py-2 rounded-xl text-sm bg-white text-black font-medium disabled:opacity-60"
+              className="px-4 py-2 rounded-xl text-sm bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-medium disabled:opacity-60"
               disabled={!selectedReasonLabel || busy}
               onClick={() => {
                 track("subscription_cancel_offer_accepted", { reason: selectedReasonLabel ?? undefined });
@@ -206,7 +206,7 @@ export default function BillingCancelPage() {
 
             <button
               type="button"
-              className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-[var(--text-tertiary)] hover:bg-[var(--bg-inset)]"
+              className="px-4 py-2 rounded-xl text-sm border border-[var(--border-default)] text-[var(--text-tertiary)] hover:bg-[var(--bg-inset)]"
               disabled={!selectedReasonLabel || busy}
               onClick={() => {
                 if (!selectedReasonLabel || !selectedReason) return;
@@ -243,7 +243,7 @@ export default function BillingCancelPage() {
           <div className="flex gap-2 flex-wrap">
             <button
               type="button"
-              className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-[var(--text-tertiary)] hover:bg-[var(--bg-inset)]"
+              className="px-4 py-2 rounded-xl text-sm border border-[var(--border-default)] text-[var(--text-tertiary)] hover:bg-[var(--bg-inset)]"
               disabled={busy}
               onClick={() => setStep(2)}
             >
@@ -252,7 +252,7 @@ export default function BillingCancelPage() {
 
             <button
               type="button"
-              className="px-4 py-2 rounded-xl text-sm bg-white text-black font-medium disabled:opacity-60"
+              className="px-4 py-2 rounded-xl text-sm bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-medium disabled:opacity-60"
               disabled={busy}
               onClick={() => void openBillingPortalForCancellation()}
             >
@@ -278,7 +278,7 @@ export default function BillingCancelPage() {
           <div className="flex gap-2 flex-wrap">
             <button
               type="button"
-              className="px-4 py-2 rounded-xl text-sm border border-zinc-600 text-[var(--text-tertiary)] hover:bg-[var(--bg-inset)]"
+              className="px-4 py-2 rounded-xl text-sm border border-[var(--border-default)] text-[var(--text-tertiary)] hover:bg-[var(--bg-inset)]"
               onClick={() => router.push("/app/settings/billing")}
             >
               {t("back")}
