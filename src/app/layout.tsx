@@ -16,6 +16,7 @@ import { SwCleanup } from "@/components/SwCleanup";
 import { StaleBuildBanner } from "@/components/StaleBuildBanner";
 import TrackPageView from "@/components/TrackPageView";
 import { ExitIntentPopup } from "@/components/ExitIntentPopup";
+import { CookieConsent } from "@/components/shared/CookieConsent";
 
 const dmSans = DM_Sans({
   variable: "--font-body-sans",
@@ -174,6 +175,7 @@ export default async function RootLayout({
           <TrackPageView />
           <SpeedInsights />
           <Analytics />
+          <CookieConsent />
         </NextIntlClientProvider>
       </body>
     </html>

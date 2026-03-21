@@ -320,7 +320,7 @@ export function Hero() {
 
         {/* Compliance bar */}
         <div className="max-w-4xl mx-auto mt-16 text-center">
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium" style={{ color: "var(--text-tertiary)" }}>
+          <Link href="/security" className="inline-flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium no-underline hover:opacity-80 transition-opacity" style={{ color: "var(--text-tertiary)" }}>
             {["SOC 2 Type II", "HIPAA", "TCPA", "GDPR", "256-bit SSL"].map((label) => (
               <span key={label} className="flex items-center gap-1.5">
                 <svg className="w-3.5 h-3.5" style={{ color: "var(--accent-secondary)" }} viewBox="0 0 20 20" fill="currentColor">
@@ -329,7 +329,7 @@ export function Hero() {
                 {label}
               </span>
             ))}
-          </div>
+          </Link>
         </div>
       </Container>
     </section>

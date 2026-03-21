@@ -3673,7 +3673,11 @@
       "escalationOrderHint": "When your AI needs a human, it contacts team members in this order. Drag to reorder.",
       "backToSettings": "← Settings",
       "memberYouOwner": "You (Owner)",
-      "statusActive": "Active"
+      "statusActive": "Active",
+      "roleUpdatedToast": "Role updated",
+      "confirmRemove": "Are you sure you want to remove this team member?",
+      "memberRemovedToast": "Team member removed",
+      "removeMember": "Remove member"
     },
     "compliance": {
       "title": "Compliance",
