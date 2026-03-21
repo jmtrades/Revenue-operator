@@ -241,13 +241,13 @@ function DemoTranscript({
       <div className="space-y-3 min-h-[220px]">
         {(!started || showTyping) && (
           <div className="flex gap-2 items-center">
-            <span className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-zinc-700/50">
-              <Bot className="w-4 h-4 text-zinc-400" />
+            <span className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-[var(--bg-inset)]/50">
+              <Bot className="w-4 h-4 text-[var(--text-tertiary)]" />
             </span>
             <div className="flex gap-1">
-              <span className="w-2 h-2 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: "0ms" }} />
-              <span className="w-2 h-2 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: "150ms" }} />
-              <span className="w-2 h-2 rounded-full bg-zinc-500 animate-bounce" style={{ animationDelay: "300ms" }} />
+              <span className="w-2 h-2 rounded-full bg-[var(--bg-inset)] animate-bounce" style={{ animationDelay: "0ms" }} />
+              <span className="w-2 h-2 rounded-full bg-[var(--bg-inset)] animate-bounce" style={{ animationDelay: "150ms" }} />
+              <span className="w-2 h-2 rounded-full bg-[var(--bg-inset)] animate-bounce" style={{ animationDelay: "300ms" }} />
             </div>
           </div>
         )}
@@ -305,9 +305,9 @@ function DemoTranscript({
       </div>
 
       {showResult && (
-        <div className="mt-4 p-6 rounded-2xl bg-zinc-800/80 border border-zinc-700 animate-slide-up">
+        <div className="mt-4 p-6 rounded-2xl bg-[var(--bg-inset)]/80 border border-[var(--border-default)] animate-slide-up">
           <h3 className="text-lg font-semibold text-white mb-3">{t("simulator.resultsHeading")}</h3>
-          <div className="h-px bg-zinc-700 mb-4" />
+          <div className="h-px bg-[var(--bg-inset)] mb-4" />
           <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm mb-4">
             {script.resultDetails.map((d, i) => {
               const idx = d.indexOf(": ");
@@ -315,7 +315,7 @@ function DemoTranscript({
               const value = idx >= 0 ? d.slice(idx + 2) : d;
               return (
                 <div key={i}>
-                  <span className="text-xs text-zinc-500 block">{label || t("simulator.detailLabel")}</span>
+                  <span className="text-xs text-[var(--text-tertiary)] block">{label || t("simulator.detailLabel")}</span>
                   <span className="text-sm text-white font-medium">{value}</span>
                 </div>
               );
@@ -323,16 +323,16 @@ function DemoTranscript({
           </div>
           {script.score != null && (
             <>
-              <div className="h-px bg-zinc-700 mb-3" />
-              <p className="text-xs text-zinc-500 mb-1">{t("simulator.leadScore")}</p>
+              <div className="h-px bg-[var(--bg-inset)] mb-3" />
+              <p className="text-xs text-[var(--text-tertiary)] mb-1">{t("simulator.leadScore")}</p>
               <p className="text-green-400 font-bold text-lg">{script.score}</p>
-              <div className="h-2 rounded-full bg-zinc-800 overflow-hidden mt-1">
+              <div className="h-2 rounded-full bg-[var(--bg-inset)] overflow-hidden mt-1">
                 <div
                   className="h-full rounded-full bg-green-500 transition-all"
                   style={{ width: `${script.score}%` }}
                 />
               </div>
-              <p className="text-xs text-zinc-500 mt-1">
+              <p className="text-xs text-[var(--text-tertiary)] mt-1">
                 {script.score >= 80 ? t("simulator.highQualityLead") : script.score >= 60 ? t("simulator.qualifiedLead") : t("simulator.followUp")}
               </p>
             </>
@@ -404,7 +404,7 @@ export function CallSimulator() {
 
       {completedSeconds != null ? (
         <div className="mt-5 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] px-5 py-4 text-center">
-          <p className="text-sm text-zinc-400">
+          <p className="text-sm text-[var(--text-tertiary)]">
             {t("simulator.thatCallTook", { seconds: completedSeconds })}
           </p>
         </div>

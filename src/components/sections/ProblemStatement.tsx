@@ -76,23 +76,23 @@ export function ProblemStatement() {
             <div className="rounded-xl border border-red-500/20 bg-red-500/[0.05] p-5 text-center">
               <PhoneOff className="w-8 h-8 text-red-400 mx-auto mb-3" />
               <p className="text-sm font-medium text-white">Opportunities go unresponded</p>
-              <p className="text-xs text-white/50 mt-1">Inbound demand waits too long for a useful next step</p>
+              <p className="text-xs text-[var(--text-tertiary)] mt-1">Inbound demand waits too long for a useful next step</p>
             </div>
             <div className="rounded-xl border border-orange-500/20 bg-orange-500/[0.05] p-5 text-center">
               <Calendar className="w-8 h-8 text-orange-400 mx-auto mb-3" />
               <p className="text-sm font-medium text-white">Follow-up never happens</p>
-              <p className="text-xs text-white/50 mt-1">Leads cool off while manual outreach stalls</p>
+              <p className="text-xs text-[var(--text-tertiary)] mt-1">Leads cool off while manual outreach stalls</p>
             </div>
             <div className="rounded-xl border border-yellow-500/20 bg-yellow-500/[0.05] p-5 text-center">
               <UserX className="w-8 h-8 text-yellow-400 mx-auto mb-3" />
               <p className="text-sm font-medium text-white">Revenue is untracked</p>
-              <p className="text-xs text-white/50 mt-1">Teams cannot attribute recovered value to execution</p>
+              <p className="text-xs text-[var(--text-tertiary)] mt-1">Teams cannot attribute recovered value to execution</p>
             </div>
           </div>
 
           {/* Industry-specific pain */}
           <div className="space-y-4">
-            <p className="text-xs uppercase tracking-wide text-white/40">
+            <p className="text-xs uppercase tracking-wide text-[var(--text-tertiary)]">
               See the impact for your industry
             </p>
             <div className="flex flex-wrap justify-center gap-2">
@@ -124,7 +124,7 @@ export function ProblemStatement() {
                 <AnimatedNumber value={industry.annualLoss} />
                 <span className="text-lg text-red-400/70">/year</span>
               </p>
-              <p className="text-sm text-white/50">
+              <p className="text-sm text-[var(--text-tertiary)]">
                 Average {industry.label} booking: ${industry.avgJob} × {industry.missedPerWeek} revenue leaks/week × 52 weeks
               </p>
             </div>

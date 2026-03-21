@@ -301,14 +301,14 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
 
   if (compact) {
     return (
-      <div className="rounded-2xl border border-white/10 bg-black/40 backdrop-blur-sm p-5 max-w-md">
+      <div className="rounded-2xl border border-[var(--border-default)] bg-black/40 backdrop-blur-sm p-5 max-w-md">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
             <Volume2 className="w-5 h-5 text-emerald-400" />
           </div>
           <div>
             <p className="text-sm font-semibold text-white">Hear It Live</p>
-            <p className="text-xs text-white/50">Click play to hear our AI agent</p>
+            <p className="text-xs text-[var(--text-tertiary)]">Click play to hear our AI agent</p>
           </div>
         </div>
         <VoiceWaveform active={playing} />
@@ -329,7 +329,7 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
   }
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.03] to-black/40 backdrop-blur-sm overflow-hidden">
+    <div className="rounded-2xl border border-[var(--border-default)] bg-gradient-to-b from-white/[0.03] to-black/40 backdrop-blur-sm overflow-hidden">
       {/* Header */}
       <div className="px-6 pt-6 pb-4 border-b border-white/5">
         <div className="flex items-center gap-3 mb-3">
@@ -343,7 +343,7 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
                 Live Preview
               </span>
             </div>
-            <p className="text-xs text-white/50 mt-0.5">
+            <p className="text-xs text-[var(--text-tertiary)] mt-0.5">
               Real conversations. Real AI. Zero robots.
             </p>
           </div>
@@ -358,7 +358,7 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all whitespace-nowrap ${
                 selectedScenario === i
                   ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-400"
-                  : "border-white/10 text-white/50 hover:bg-white/5 hover:text-white/70"
+                  : "border-[var(--border-default)] text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] hover:text-white/70"
               }`}
             >
               <s.icon className="w-4 h-4" />
@@ -378,7 +378,7 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
             <p className="text-sm font-medium text-white mb-1">
               Press play to hear a live {scenario.industry} call
             </p>
-            <p className="text-xs text-white/40 max-w-xs">
+            <p className="text-xs text-[var(--text-tertiary)] max-w-xs">
               This is an actual AI voice — not a recording. It sounds this natural on every call, 24/7.
             </p>
           </div>
@@ -446,7 +446,7 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
           <VoiceWaveform active={playing} />
         </div>
         {!playing && currentLine === -1 && (
-          <p className="text-[11px] text-white/30 mt-2 flex items-center gap-1">
+          <p className="text-[11px] text-[var(--text-tertiary)] mt-2 flex items-center gap-1">
             <Volume2 className="w-3 h-3" />
             Turn your volume up for the best experience
           </p>

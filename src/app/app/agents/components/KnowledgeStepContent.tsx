@@ -109,13 +109,13 @@ export function KnowledgeStepContent({
               setImportError(null);
             }}
             placeholder={t("knowledgePanel.importUrlPlaceholder")}
-            className="flex-1 min-w-[200px] rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
+            className="flex-1 min-w-[200px] rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
           />
           <button
             type="button"
             onClick={handleImportFromWebsite}
             disabled={!importUrl.trim() || importing}
-            className="rounded-xl bg-[var(--bg-hover)] border border-[var(--border-default)] px-3 py-2 text-xs font-medium text-[var(--text-primary)] hover:bg-white/[0.06] disabled:opacity-50"
+            className="rounded-xl bg-[var(--bg-hover)] border border-[var(--border-default)] px-3 py-2 text-xs font-medium text-[var(--text-primary)] hover:bg-[var(--bg-inset)] disabled:opacity-50"
           >
             {importing ? t("knowledge.importing") : t("knowledge.importFromWebsite")}
           </button>
@@ -129,7 +129,7 @@ export function KnowledgeStepContent({
           onClick={seedFive}
           disabled={seeding}
           aria-busy={seeding}
-          className="rounded-xl bg-[var(--bg-hover)] border border-[var(--border-default)] px-3 py-2 text-xs font-medium text-[var(--text-primary)] hover:bg-white/[0.06] disabled:opacity-50"
+          className="rounded-xl bg-[var(--bg-hover)] border border-[var(--border-default)] px-3 py-2 text-xs font-medium text-[var(--text-primary)] hover:bg-[var(--bg-inset)] disabled:opacity-50"
         >
           {seeding ? t("knowledge.adding") : t("knowledge.suggestQAs")}
         </button>
@@ -145,7 +145,7 @@ export function KnowledgeStepContent({
           type="button"
           onClick={onBack}
           aria-label="Back to Voice"
-          className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           {t("knowledge.back")}
         </button>
@@ -153,7 +153,7 @@ export function KnowledgeStepContent({
           type="button"
           onClick={onNext}
           aria-label={t("knowledge.continueToBehavior")}
-          className="rounded-xl bg-[var(--bg-surface)] px-6 py-2.5 text-sm font-semibold text-[var(--text-primary)] hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="rounded-xl bg-[var(--bg-surface)] px-6 py-2.5 text-sm font-semibold text-[var(--text-primary)] hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           {t("knowledge.continue")}
         </button>

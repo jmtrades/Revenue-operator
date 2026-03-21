@@ -35,7 +35,7 @@ export function UseCaseSection() {
               className="rounded-xl p-6 border"
               style={{ background: "var(--bg-elevated)", borderColor: "var(--border-default)" }}
             >
-              <uc.icon className="w-6 h-6 text-zinc-400 mb-3" />
+              <uc.icon className="w-6 h-6 text-[var(--text-tertiary)] mb-3" />
               <h3 className="text-base font-semibold mb-1" style={{ color: "var(--text-primary)" }}>
                 {uc.title}
               </h3>

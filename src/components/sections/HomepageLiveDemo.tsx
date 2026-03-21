@@ -27,7 +27,7 @@ export function HomepageLiveDemo() {
   return (
     <section
       id="live-audio-demo"
-      className="py-16 md:py-20 border-t border-zinc-800/60"
+      className="py-16 md:py-20 border-t border-[var(--border-default)]/60"
       style={{ background: "#020617" }}
     >
       <Container>
@@ -36,7 +36,7 @@ export function HomepageLiveDemo() {
             <h2 className="text-2xl md:text-3xl font-semibold text-white">
               {t("heading")}
             </h2>
-            <p className="mt-2 text-sm md:text-base text-zinc-400">
+            <p className="mt-2 text-sm md:text-base text-[var(--text-tertiary)]">
               {t("subheading")}
             </p>
           </div>
@@ -52,7 +52,7 @@ export function HomepageLiveDemo() {
                   className={`px-3.5 py-1.5 rounded-full text-xs md:text-sm border transition-colors ${
                     isActive
                       ? "bg-white text-black border-white"
-                      : "border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-500"
+                      : "border-[var(--border-default)] text-[var(--text-secondary)] hover:text-white hover:border-[var(--border-default)]"
                   }`}
                 >
                   {u.label}
@@ -62,28 +62,28 @@ export function HomepageLiveDemo() {
           </div>
 
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5 md:p-6">
-            <p className="text-xs font-semibold uppercase text-zinc-500 mb-3">{active.label}</p>
+            <p className="text-xs font-semibold uppercase text-[var(--text-tertiary)] mb-3">{active.label}</p>
             <div className="space-y-3 text-sm">
-              <div className="rounded-xl px-3 py-2 bg-zinc-800/80 border border-zinc-700/60 text-zinc-200">
-                <p className="text-[11px] uppercase tracking-wide text-zinc-500 mb-1">{t("cardLabels.caller")}</p>
+              <div className="rounded-xl px-3 py-2 bg-[var(--bg-inset)]/80 border border-[var(--border-default)]/60 text-[var(--text-primary)]">
+                <p className="text-[11px] uppercase tracking-wide text-[var(--text-tertiary)] mb-1">{t("cardLabels.caller")}</p>
                 <p>{active.caller}</p>
               </div>
-              <div className="rounded-xl px-3 py-2 bg-zinc-800/80 border border-emerald-900/50 text-emerald-100 ml-4">
+              <div className="rounded-xl px-3 py-2 bg-[var(--bg-inset)]/80 border border-emerald-900/50 text-emerald-100 ml-4">
                 <p className="text-[11px] uppercase tracking-wide text-emerald-400/80 mb-1">{t("cardLabels.agent")}</p>
                 <p>{active.agent}</p>
               </div>
-              <div className="rounded-xl px-3 py-2 bg-zinc-800/50 border border-dashed border-zinc-600 text-zinc-400">
+              <div className="rounded-xl px-3 py-2 bg-[var(--bg-inset)]/50 border border-dashed border-[var(--border-default)] text-[var(--text-tertiary)]">
                 <p className="text-[11px] uppercase tracking-wide mb-1">{t("cardLabels.result")}</p>
                 <p>{active.result}</p>
               </div>
             </div>
-            <p className="text-xs text-zinc-500 mt-4">
+            <p className="text-xs text-[var(--text-tertiary)] mt-4">
               {t("sampleNote")}
             </p>
           </div>
 
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-zinc-800 pt-4">
-            <p className="text-sm text-zinc-400">
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border-default)] pt-4">
+            <p className="text-sm text-[var(--text-tertiary)]">
               {t("cta.text")}
             </p>
             <div className="flex items-center gap-3">
@@ -92,7 +92,7 @@ export function HomepageLiveDemo() {
                 onClick={() => {
                   window.location.href = "/demo";
                 }}
-                className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-zinc-700 text-zinc-300 hover:bg-white/5 hover:text-white transition-colors"
+                className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-white transition-colors"
                 aria-label={t("cta.ariaLabel")}
               >
                 <Mic2 className="w-4 h-4" />

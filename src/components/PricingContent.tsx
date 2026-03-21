@@ -267,7 +267,7 @@ function CostCalculator() {
               className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
                 planIndex === i
                   ? "border-emerald-500 bg-emerald-500/10 text-emerald-400"
-                  : "border-zinc-700 text-zinc-400 hover:bg-zinc-800"
+                  : "border-[var(--border-default)] text-[var(--text-tertiary)] hover:bg-[var(--bg-inset)]"
               }`}
             >
               {p.label}
@@ -276,21 +276,21 @@ function CostCalculator() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-white/10">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-[var(--border-default)]">
         <div className="text-center">
-          <p className="text-xs text-white/40 mb-1">Monthly Loss</p>
+          <p className="text-xs text-[var(--text-tertiary)] mb-1">Monthly Loss</p>
           <p className="text-xl font-bold text-red-400 tabular-nums">${result.monthlyLost.toLocaleString()}</p>
         </div>
         <div className="text-center">
-          <p className="text-xs text-white/40 mb-1">Annual Loss</p>
+          <p className="text-xs text-[var(--text-tertiary)] mb-1">Annual Loss</p>
           <p className="text-xl font-bold text-red-400 tabular-nums">${result.annualLost.toLocaleString()}</p>
         </div>
         <div className="text-center">
-          <p className="text-xs text-white/40 mb-1">Payback Period</p>
+          <p className="text-xs text-[var(--text-tertiary)] mb-1">Payback Period</p>
           <p className="text-xl font-bold text-emerald-400 tabular-nums">{result.paybackDays} days</p>
         </div>
         <div className="text-center">
-          <p className="text-xs text-white/40 mb-1">Annual ROI</p>
+          <p className="text-xs text-[var(--text-tertiary)] mb-1">Annual ROI</p>
           <p className="text-xl font-bold text-emerald-400 tabular-nums">{result.roiPercent.toLocaleString()}%</p>
         </div>
       </div>
@@ -485,7 +485,7 @@ export function PricingContent() {
                 className={
                   tier.popular
                     ? "group bg-emerald-500 text-black font-semibold rounded-xl py-3 text-center no-underline flex items-center justify-center gap-2 hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20"
-                    : "group border border-white/20 text-white font-semibold rounded-xl py-3 text-center no-underline flex items-center justify-center gap-2 hover:bg-white/5 transition-all"
+                    : "group border border-[var(--border-default)] text-white font-semibold rounded-xl py-3 text-center no-underline flex items-center justify-center gap-2 hover:bg-[var(--bg-hover)] transition-all"
                 }
               >
                 {tier.cta}
@@ -505,14 +505,14 @@ export function PricingContent() {
           </p>
           <div className="flex flex-wrap justify-center gap-2 mb-6">
             {ENTERPRISE.features.map((f) => (
-              <span key={f} className="px-3 py-1 rounded-full text-xs bg-white/5 text-white/60 border border-white/10">
+              <span key={f} className="px-3 py-1 rounded-full text-xs bg-white/5 text-[var(--text-secondary)] border border-[var(--border-default)]">
                 {f}
               </span>
             ))}
           </div>
           <Link
             href={ROUTES.CONTACT}
-            className="inline-flex items-center gap-2 border border-white/20 text-white font-semibold rounded-xl px-8 py-3 no-underline hover:bg-white/5 transition-all"
+            className="inline-flex items-center gap-2 border border-[var(--border-default)] text-white font-semibold rounded-xl px-8 py-3 no-underline hover:bg-[var(--bg-hover)] transition-all"
           >
             Talk to Sales
             <ArrowRight className="w-4 h-4" />
@@ -541,7 +541,7 @@ export function PricingContent() {
           ].map(({ icon: Icon, text }) => (
             <div
               key={text}
-              className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.02] text-xs"
+              className="flex items-center gap-2 px-4 py-2 rounded-full border border-[var(--border-default)] bg-white/[0.02] text-xs"
               style={{ color: "var(--text-secondary)" }}
             >
               <Icon className="w-3.5 h-3.5 text-emerald-400" />
@@ -598,13 +598,13 @@ export function PricingContent() {
         </h2>
         <div className="max-w-2xl mb-6">
           <div className="relative mb-4">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
             <input
               type="text"
               value={faqSearch}
               onChange={(e) => setFaqSearch(e.target.value)}
               placeholder="Search FAQs..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-emerald-500/50"
+              className="w-full pl-10 pr-4 py-2.5 rounded-lg text-sm bg-white/5 border border-[var(--border-default)] text-white placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-emerald-500/50"
             />
           </div>
           {filteredFaqs.map((faq, i) => (
@@ -616,9 +616,9 @@ export function PricingContent() {
               >
                 <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{faq.q}</span>
                 {openFaq === i ? (
-                  <ChevronUp className="w-4 h-4 text-white/40 shrink-0" />
+                  <ChevronUp className="w-4 h-4 text-[var(--text-tertiary)] shrink-0" />
                 ) : (
-                  <ChevronDown className="w-4 h-4 text-white/40 shrink-0" />
+                  <ChevronDown className="w-4 h-4 text-[var(--text-tertiary)] shrink-0" />
                 )}
               </button>
               {openFaq === i && (
@@ -678,7 +678,7 @@ export function PricingContent() {
               <Link href={ROUTES.DEMO} className="font-medium underline-offset-4 hover:underline text-emerald-400">
                 Hear the AI first →
               </Link>
-              <Link href={ROUTES.CONTACT} className="font-medium underline-offset-4 hover:underline text-white/50">
+              <Link href={ROUTES.CONTACT} className="font-medium underline-offset-4 hover:underline text-[var(--text-tertiary)]">
                 Talk to sales →
               </Link>
             </div>

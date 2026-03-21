@@ -87,7 +87,7 @@ export function OnboardingChecklist({
                 <Check className="h-4 w-4 text-emerald-400" />
               </div>
             ) : (
-              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white/[0.04]">
+              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--bg-inset)]">
                 <Circle className="h-3.5 w-3.5 text-[var(--text-secondary)]" />
               </div>
             )}

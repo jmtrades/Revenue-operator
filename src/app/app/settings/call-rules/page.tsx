@@ -89,7 +89,7 @@ export default function AppSettingsCallRulesPage() {
             {weekend.map((day) => (
               <div key={day} className="flex items-center justify-between text-xs">
                 <span className="text-[var(--text-tertiary)] w-8">{tRules(`days.${day}`)}</span>
-                <span className="text-zinc-600">{tRules("closed")}</span>
+                <span className="text-[var(--text-tertiary)]">{tRules("closed")}</span>
               </div>
             ))}
           </div>

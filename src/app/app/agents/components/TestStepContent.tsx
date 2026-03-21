@@ -59,7 +59,7 @@ export function TestStepContent({
           id="test-scenario"
           value={scenarioId}
           onChange={(e) => setScenarioId(e.target.value)}
-          className="w-full max-w-xs rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
+          className="w-full max-w-xs rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
         >
           {testScenarios.map((s) => (
             <option key={s.id} value={s.id}>
@@ -91,7 +91,7 @@ export function TestStepContent({
                 // ignore clipboard failures
               }
             }}
-            className="text-xs text-white/40 hover:text-white/60 border border-white/[0.08] rounded-lg px-3 py-1.5"
+            className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] border border-[var(--border-default)] rounded-lg px-3 py-1.5"
           >
             {t("testStep.copyLink")}
           </button>
@@ -112,7 +112,7 @@ export function TestStepContent({
                     {[1, 2, 3, 4, 5].map((i) => (
                       <span
                         key={i}
-                        className={i <= stars ? "text-amber-400" : "text-zinc-600"}
+                        className={i <= stars ? "text-amber-400" : "text-[var(--text-tertiary)]"}
                       >
                         ★
                       </span>
@@ -141,7 +141,7 @@ export function TestStepContent({
                 onNext();
                 setShowGoLiveCta(false);
               }}
-              className="text-sm font-medium text-[var(--text-primary)] hover:text-[var(--text-secondary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded"
+              className="text-sm font-medium text-[var(--text-primary)] hover:text-[var(--text-secondary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] rounded"
             >
               {t("testStep.continue")}
             </button>
@@ -153,7 +153,7 @@ export function TestStepContent({
           type="button"
           onClick={onBack}
           aria-label={t("testStep.backToBehavior")}
-          className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           {t("testStep.back")}
         </button>
@@ -161,7 +161,7 @@ export function TestStepContent({
           type="button"
           onClick={onNext}
           aria-label={t("testStep.continueToGoLive")}
-          className="rounded-xl bg-[var(--bg-surface)] px-6 py-2.5 text-sm font-semibold text-[var(--text-primary)] hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="rounded-xl bg-[var(--bg-surface)] px-6 py-2.5 text-sm font-semibold text-[var(--text-primary)] hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           {t("testStep.continue")}
         </button>

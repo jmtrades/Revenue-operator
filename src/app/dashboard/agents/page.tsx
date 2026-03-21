@@ -101,16 +101,16 @@ export default function AgentsPage() {
           <div className="w-full max-w-md rounded-2xl border p-6" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>Create New Agent</h3>
-              <button type="button" onClick={() => setShowCreate(false)} className="text-zinc-500 hover:text-zinc-300"><X className="w-5 h-5" /></button>
+              <button type="button" onClick={() => setShowCreate(false)} className="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"><X className="w-5 h-5" /></button>
             </div>
             <div className="space-y-4">
               <label className="block">
                 <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Agent Name *</span>
-                <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" placeholder="e.g., Sarah — Inbound" />
+                <input type="text" value={newName} onChange={(e) => setNewName(e.target.value)} className="mt-1.5 w-full rounded-lg border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-1 focus:ring-emerald-500" placeholder="e.g., Sarah — Inbound" />
               </label>
               <label className="block">
                 <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Purpose</span>
-                <select value={newPurpose} onChange={(e) => setNewPurpose(e.target.value)} className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                <select value={newPurpose} onChange={(e) => setNewPurpose(e.target.value)} className="mt-1.5 w-full rounded-lg border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-emerald-500">
                   <option value="inbound">Inbound Call Handling</option>
                   <option value="outbound">Outbound Campaigns</option>
                   <option value="follow_up">Follow-up Sequences</option>
@@ -147,7 +147,7 @@ export default function AgentsPage() {
               >
                 {creating ? "Creating…" : "Create Agent"}
               </button>
-              <button type="button" onClick={() => setShowCreate(false)} className="rounded-xl border border-zinc-700 px-4 py-2.5 text-sm text-zinc-300 hover:bg-zinc-800 transition-colors">
+              <button type="button" onClick={() => setShowCreate(false)} className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors">
                 Cancel
               </button>
             </div>

@@ -164,8 +164,8 @@ export default function VoiceAnalyticsDashboard() {
                 onClick={() => setTimeRange('7d')}
                 className={`px-3 py-1 text-sm rounded-xl border ${
                   timeRange === '7d'
-                    ? 'bg-white text-black border-zinc-700'
-                    : 'bg-zinc-900 text-zinc-300 border-zinc-800 hover:bg-zinc-800'
+                    ? 'bg-white text-black border-[var(--border-default)]'
+                    : 'bg-[var(--bg-card)] text-[var(--text-secondary)] border-[var(--border-default)] hover:bg-[var(--bg-inset)]'
                 }`}
               >
                 7 Days
@@ -174,8 +174,8 @@ export default function VoiceAnalyticsDashboard() {
                 onClick={() => setTimeRange('30d')}
                 className={`px-3 py-1 text-sm rounded-xl border ${
                   timeRange === '30d'
-                    ? 'bg-white text-black border-zinc-700'
-                    : 'bg-zinc-900 text-zinc-300 border-zinc-800 hover:bg-zinc-800'
+                    ? 'bg-white text-black border-[var(--border-default)]'
+                    : 'bg-[var(--bg-card)] text-[var(--text-secondary)] border-[var(--border-default)] hover:bg-[var(--bg-inset)]'
                 }`}
               >
                 30 Days
@@ -184,11 +184,11 @@ export default function VoiceAnalyticsDashboard() {
           </div>
         </CardHeader>
         <CardBody>
-              <div className="h-48 flex items-center justify-center rounded-2xl border border-zinc-800 bg-zinc-900/60">
+              <div className="h-48 flex items-center justify-center rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)]/60">
             <div className="text-center">
-              <p className="text-zinc-300 font-medium mb-2">TTFB Trend ({timeRange})</p>
+              <p className="text-[var(--text-secondary)] font-medium mb-2">TTFB Trend ({timeRange})</p>
               <p className="text-3xl font-bold text-white">{kpi.avgTTFB}ms</p>
-              <p className="text-sm text-zinc-500 mt-2">
+              <p className="text-sm text-[var(--text-tertiary)] mt-2">
                 {timeRange === '7d'
                   ? 'Steady performance across the week'
                   : 'Improved from 285ms last month'}
@@ -207,10 +207,10 @@ export default function VoiceAnalyticsDashboard() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-zinc-800">
-                  <th className="text-left py-3 px-4 font-semibold text-zinc-300">Voice</th>
+                <tr className="border-b border-[var(--border-default)]">
+                  <th className="text-left py-3 px-4 font-semibold text-[var(--text-secondary)]">Voice</th>
                   <th
-                    className="text-right py-3 px-4 font-semibold text-zinc-300 cursor-pointer hover:bg-zinc-900"
+                    className="text-right py-3 px-4 font-semibold text-[var(--text-secondary)] cursor-pointer hover:bg-[var(--bg-card)]"
                     onClick={() => {
                       setSortBy('calls');
                       setSortAsc(sortBy === 'calls' ? !sortAsc : false);
@@ -218,9 +218,9 @@ export default function VoiceAnalyticsDashboard() {
                   >
                     Calls {sortBy === 'calls' && (sortAsc ? '↑' : '↓')}
                   </th>
-                  <th className="text-right py-3 px-4 font-semibold text-zinc-300">Avg Duration</th>
+                  <th className="text-right py-3 px-4 font-semibold text-[var(--text-secondary)]">Avg Duration</th>
                   <th
-                    className="text-right py-3 px-4 font-semibold text-zinc-300 cursor-pointer hover:bg-zinc-900"
+                    className="text-right py-3 px-4 font-semibold text-[var(--text-secondary)] cursor-pointer hover:bg-[var(--bg-card)]"
                     onClick={() => {
                       setSortBy('avgTTFB');
                       setSortAsc(sortBy === 'avgTTFB' ? !sortAsc : false);
@@ -228,25 +228,25 @@ export default function VoiceAnalyticsDashboard() {
                   >
                     Avg TTFB {sortBy === 'avgTTFB' && (sortAsc ? '↑' : '↓')}
                   </th>
-                  <th className="text-right py-3 px-4 font-semibold text-zinc-300">MOS</th>
-                  <th className="text-right py-3 px-4 font-semibold text-zinc-300">Cost</th>
+                  <th className="text-right py-3 px-4 font-semibold text-[var(--text-secondary)]">MOS</th>
+                  <th className="text-right py-3 px-4 font-semibold text-[var(--text-secondary)]">Cost</th>
                 </tr>
               </thead>
               <tbody>
                 {sortedVoices.map((voice) => (
                   <tr
                     key={voice.name}
-                    className={`border-b border-zinc-800 ${
-                      voice.isActive ? 'bg-zinc-900/60' : 'hover:bg-zinc-900'
+                    className={`border-b border-[var(--border-default)] ${
+                      voice.isActive ? 'bg-[var(--bg-card)]/60' : 'hover:bg-[var(--bg-card)]'
                     }`}
                   >
                     <td className="py-3 px-4 font-medium text-white">
                       {voice.name}
-                      {voice.isActive && <span className="ml-2 text-xs bg-white text-black px-2 py-1 rounded-full border border-zinc-800">Active</span>}
+                      {voice.isActive && <span className="ml-2 text-xs bg-white text-black px-2 py-1 rounded-full border border-[var(--border-default)]">Active</span>}
                     </td>
-                    <td className="text-right py-3 px-4 text-zinc-400">{voice.calls.toLocaleString()}</td>
-                    <td className="text-right py-3 px-4 text-zinc-400">{voice.avgDuration}s</td>
-                    <td className="text-right py-3 px-4 text-zinc-400">{voice.avgTTFB}ms</td>
+                    <td className="text-right py-3 px-4 text-[var(--text-tertiary)]">{voice.calls.toLocaleString()}</td>
+                    <td className="text-right py-3 px-4 text-[var(--text-tertiary)]">{voice.avgDuration}s</td>
+                    <td className="text-right py-3 px-4 text-[var(--text-tertiary)]">{voice.avgTTFB}ms</td>
                     <td className={`text-right py-3 px-4 font-semibold ${getMOSColor(voice.mosScore)}`}>
                       {voice.mosScore.toFixed(1)}
                     </td>
@@ -337,7 +337,7 @@ export default function VoiceAnalyticsDashboard() {
               {voices.map((voice) => (
                 <div key={voice.name} className="flex items-center justify-between">
                   <span className="text-sm text-[var(--text-secondary)]">{voice.name}</span>
-                  <div className="flex-1 mx-3 bg-zinc-800 rounded-full h-2">
+                  <div className="flex-1 mx-3 bg-[var(--bg-inset)] rounded-full h-2">
                     <div
                       className="bg-zinc-100 h-2 rounded-full"
                       style={{ width: `${(voice.cost / totalCost) * 100}%` }}
@@ -362,8 +362,8 @@ export default function VoiceAnalyticsDashboard() {
           </CardHeader>
           <CardBody>
             <div className="space-y-4">
-              <div className="bg-zinc-900/60 p-4 rounded border border-zinc-800">
-                <p className="text-sm text-zinc-400 mb-2">Our Solution</p>
+              <div className="bg-[var(--bg-card)]/60 p-4 rounded border border-[var(--border-default)]">
+                <p className="text-sm text-[var(--text-tertiary)] mb-2">Our Solution</p>
                 <p className="text-3xl font-bold text-white">${totalCost.toFixed(2)}</p>
               </div>
               <div className="bg-[var(--bg-inset)] p-4 rounded border border-[var(--border-default)]">

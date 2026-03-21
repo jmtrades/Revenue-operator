@@ -62,7 +62,7 @@ export function WorkspaceName({
       aria-busy={isLoading}
     >
       {isLoading ? (
-        <span className="inline-block min-w-[7rem] h-4 rounded bg-zinc-800 animate-pulse" aria-hidden />
+        <span className="inline-block min-w-[7rem] h-4 rounded bg-[var(--bg-inset)] animate-pulse" aria-hidden />
       ) : (
         display
       )}

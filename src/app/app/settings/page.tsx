@@ -124,30 +124,30 @@ export default function AppSettingsPage() {
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">{tSettings("title")}</h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">{tSettings("pageSubtitle")}</p>
-      <div className="bg-[var(--bg-surface)] border border-white/[0.08] rounded-xl p-6 mb-6">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-6 mb-6">
         <h2 className="text-base font-medium text-[var(--text-primary)] mb-4">{tSettings("profile")}</h2>
         <div className="space-y-4">
           <div>
-            <label className="text-xs text-white/40 mb-1 block">{tSettings("emailLabel")}</label>
-            <p className="text-sm text-white/60">{email ?? "—"}</p>
+            <label className="text-xs text-[var(--text-tertiary)] mb-1 block">{tSettings("emailLabel")}</label>
+            <p className="text-sm text-[var(--text-secondary)]">{email ?? "—"}</p>
           </div>
           <div>
-            <label className="text-xs text-white/40 mb-1 block">
+            <label className="text-xs text-[var(--text-tertiary)] mb-1 block">
               {tSettings("displayNameLabel")}
             </label>
             <input
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               placeholder={tSettings("displayNamePlaceholder")}
-              className="w-full max-w-sm bg-[var(--bg-base)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] focus:border-zinc-500 focus:outline-none"
+              className="w-full max-w-sm bg-[var(--bg-base)] border border-[var(--border-default)] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] focus:border-[var(--border-default)] focus:outline-none"
             />
           </div>
           <div>
-            <label className="text-xs text-white/40 mb-1 block">{tSettings("timezoneLabel")}</label>
+            <label className="text-xs text-[var(--text-tertiary)] mb-1 block">{tSettings("timezoneLabel")}</label>
             <select
               value={timezone}
               onChange={(e) => setTimezone(e.target.value)}
-              className="bg-[var(--bg-base)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] focus:border-zinc-500 focus:outline-none max-w-sm"
+              className="bg-[var(--bg-base)] border border-[var(--border-default)] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] focus:border-[var(--border-default)] focus:outline-none max-w-sm"
             >
               {typeof Intl !== "undefined" &&
                 Intl.supportedValuesOf("timeZone")
@@ -174,7 +174,7 @@ export default function AppSettingsPage() {
           <Link
             key={s.href}
             href={s.href}
-            className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] hover:border-[var(--border-medium)] transition-colors group focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
+            className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] hover:border-[var(--border-medium)] transition-colors group focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
           >
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--bg-card)] text-[var(--text-secondary)]">
               <s.icon className="h-5 w-5" />
@@ -183,7 +183,7 @@ export default function AppSettingsPage() {
               <p className="font-medium text-[var(--text-primary)] group-hover:text-[var(--text-primary)]">{tSettings(`links.${s.linkKey}.label`)}</p>
               <p className="text-xs text-[var(--text-secondary)] mt-0.5">{tSettings(`links.${s.linkKey}.desc`)}</p>
             </div>
-            <ChevronRight className="h-4 w-4 shrink-0 text-zinc-600 transition-colors group-hover:text-[var(--text-tertiary)]" />
+            <ChevronRight className="h-4 w-4 shrink-0 text-[var(--text-tertiary)] transition-colors group-hover:text-[var(--text-tertiary)]" />
           </Link>
         ))}
       </div>
@@ -208,21 +208,21 @@ export default function AppSettingsPage() {
         <div className="rounded-xl border border-red-900/40 bg-red-950/20 p-4 space-y-3">
           <Link
             href="/app/settings/billing"
-            className="block text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded"
+            className="block text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded"
           >
             {tSettings("cancelSubscription")}
           </Link>
           <button
             type="button"
             onClick={() => setConfirm("data")}
-            className="block text-sm text-red-300 hover:text-red-200 transition-colors focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded text-left"
+            className="block text-sm text-red-300 hover:text-red-200 transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded text-left"
           >
             {tSettings("requestDeleteData")}
           </button>
           <button
             type="button"
             onClick={() => setConfirm("account")}
-            className="block text-sm text-red-300 hover:text-red-200 transition-colors focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded text-left"
+            className="block text-sm text-red-300 hover:text-red-200 transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded text-left"
           >
             {tSettings("requestDeleteAccount")}
           </button>
@@ -231,13 +231,13 @@ export default function AppSettingsPage() {
           type="button"
           onClick={handleSignOut}
           disabled={signingOut}
-          className="mt-4 px-4 py-2 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition disabled:opacity-60 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
+          className="mt-4 px-4 py-2 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition disabled:opacity-60 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
         >
           {signingOut ? tSettings("signingOut") : tSettings("signOut")}
         </button>
       </div>
       <p className="mt-6">
-        <Link href="/app/activity" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded">{tSettings("backToDashboard")}</Link>
+        <Link href="/app/activity" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded">{tSettings("backToDashboard")}</Link>
       </p>
       {confirm === "data" && (
         <ConfirmDialog

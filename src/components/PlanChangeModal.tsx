@@ -129,7 +129,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
         className="bg-[var(--bg-card-elevated)] border border-[var(--border-default)] rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-4 border-b border-zinc-800">
+        <div className="flex items-center justify-between p-4 border-b border-[var(--border-default)]">
           <h2 id="plan-change-title" className="text-lg font-semibold text-white">
             {step === "select"
               ? tPlan("title")
@@ -137,14 +137,14 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
                 ? tPlan("upgradeTitle", { planName: selectedPlan?.name ?? "" })
                 : tPlan("downgradeTitle", { planName: selectedPlan?.name ?? "" })}
           </h2>
-          <button type="button" onClick={() => { setStep("select"); setError(null); onClose(); }} className="p-2 rounded-lg text-zinc-400 hover:text-white" aria-label={t("close")}>
+          <button type="button" onClick={() => { setStep("select"); setError(null); onClose(); }} className="p-2 rounded-lg text-[var(--text-tertiary)] hover:text-white" aria-label={t("close")}>
             <X className="w-5 h-5" />
           </button>
         </div>
         <div className="p-4">
           {step === "select" ? (
             <>
-              <p className="text-sm text-zinc-400 mb-4">
+              <p className="text-sm text-[var(--text-tertiary)] mb-4">
                 {tPlan("currentlyOn", { planName: currentPlan.name })}
               </p>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
@@ -158,7 +158,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
                       onClick={() => setSelected(plan.id)}
                       className={`text-left p-4 rounded-xl border transition-all ${
                         isSelected
-                          ? "border-zinc-500 bg-zinc-800/80 ring-1 ring-zinc-500/30"
+                          ? "border-[var(--border-default)] bg-[var(--bg-inset)]/80 ring-1 ring-zinc-500/30"
                           : isCurrent
                           ? "border-[var(--accent-green)]/30 bg-[var(--accent-green)]/5"
                           : "border-[var(--border-default)] hover:border-[var(--border-medium)] hover:bg-[var(--bg-hover)]"
@@ -167,11 +167,11 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
                       <p className="text-sm font-medium text-white">{plan.name}</p>
                       <p className="text-lg font-bold text-white mt-1">
                         {plan.price != null ? `$${plan.price}` : tPlan("custom")}
-                        {plan.price != null && <span className="text-xs font-normal text-zinc-400">{tPlan("perMonth")}</span>}
+                        {plan.price != null && <span className="text-xs font-normal text-[var(--text-tertiary)]">{tPlan("perMonth")}</span>}
                       </p>
                       <ul className="mt-2 space-y-0.5">
                         {plan.features.slice(0, 4).map((f, i) => (
-                          <li key={i} className="text-xs text-zinc-400">• {f}</li>
+                          <li key={i} className="text-xs text-[var(--text-tertiary)]">• {f}</li>
                         ))}
                       </ul>
                       {isCurrent && (
@@ -192,7 +192,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
                   type="button"
                   onClick={handleContinue}
                   disabled={selected === currentPlanId}
-                  className="px-6 py-2.5 bg-[var(--bg-surface)] text-[var(--text-primary)] font-semibold rounded-xl text-sm disabled:opacity-30 hover:bg-[var(--bg-hover)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
+                  className="px-6 py-2.5 bg-[var(--bg-surface)] text-[var(--text-primary)] font-semibold rounded-xl text-sm disabled:opacity-30 hover:bg-[var(--bg-hover)] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
                 >
                   {tPlan("continue")}
                 </button>
@@ -200,16 +200,16 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
             </>
           ) : (
             <>
-              <p className="text-sm text-zinc-400 mb-4">
+              <p className="text-sm text-[var(--text-tertiary)] mb-4">
                 {isUpgrade ? tPlan("upgradeDescription") : tPlan("downgradeDescription")}
               </p>
-              <div className="rounded-xl border border-zinc-700 bg-zinc-800/50 p-4 mb-6">
+              <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-inset)]/50 p-4 mb-6">
                 <div className="flex justify-between text-sm">
-                  <span className="text-zinc-500">{tPlan("currentPlanLabel")}</span>
+                  <span className="text-[var(--text-tertiary)]">{tPlan("currentPlanLabel")}</span>
                   <span className="text-white">{currentPlan.name}{currentPlan.price != null ? ` — $${currentPlan.price}${tPlan("perMonth")}` : ""}</span>
                 </div>
                 <div className="flex justify-between text-sm mt-2">
-                  <span className="text-zinc-500">{tPlan("newPlanLabel")}</span>
+                  <span className="text-[var(--text-tertiary)]">{tPlan("newPlanLabel")}</span>
                   <span className="text-white font-medium">{selectedPlan?.name}{selectedPlan?.price != null ? ` — $${selectedPlan.price}${tPlan("perMonth")}` : ` — ${tPlan("contactUsPrice")}`}</span>
                 </div>
               </div>
@@ -222,7 +222,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
                   type="button"
                   onClick={handleConfirm}
                   disabled={loading}
-                  className="px-6 py-2.5 bg-[var(--bg-surface)] text-[var(--text-primary)] font-semibold rounded-xl text-sm disabled:opacity-50 hover:bg-[var(--bg-hover)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
+                  className="px-6 py-2.5 bg-[var(--bg-surface)] text-[var(--text-primary)] font-semibold rounded-xl text-sm disabled:opacity-50 hover:bg-[var(--bg-hover)] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
                 >
                   {loading ? tPlan("processing") : isUpgrade ? tPlan("upgradeNow") : tPlan("confirmDowngrade")}
                 </button>

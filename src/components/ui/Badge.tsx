@@ -27,7 +27,7 @@ export function Badge({ variant = "neutral", dot = false, className, children, .
     warning: "bg-[var(--accent-warning)]/15 text-[var(--accent-warning)] border border-[var(--accent-warning)]/30",
     error: "bg-red-500/15 text-red-400 border border-red-500/25",
     info: "bg-[var(--accent-primary)]/15 text-[var(--accent-primary)] border border-[var(--accent-primary)]/30",
-    neutral: "bg-zinc-700/40 text-zinc-300 border border-zinc-600",
+    neutral: "bg-[var(--bg-inset)]/40 text-[var(--text-secondary)] border border-[var(--border-default)]",
     lead: "bg-[var(--card-lead)]/15 text-[var(--card-lead)] border border-[var(--card-lead)]/30",
     appointment:
       "bg-[var(--card-appointment)]/15 text-[var(--card-appointment)] border border-[var(--card-appointment)]/30",

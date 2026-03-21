@@ -248,7 +248,7 @@ export default function AppMessagesPage() {
                   (active?.id ?? selected) === t.id ? "bg-[var(--bg-input)]" : "hover:bg-[var(--bg-card)]"
                 }`}
               >
-                <div className="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center text-[11px] font-medium text-[var(--text-primary)] shrink-0">
+                <div className="w-8 h-8 rounded-full bg-[var(--bg-inset)] flex items-center justify-center text-[11px] font-medium text-[var(--text-primary)] shrink-0">
                   {t.name
                     .split(" ")
                     .map((p) => p[0])
@@ -295,7 +295,7 @@ export default function AppMessagesPage() {
                         className={`max-w-[80%] rounded-2xl px-3 py-2 text-xs ${
                           m.from === "user"
                             ? "bg-zinc-200 text-zinc-900 rounded-br-sm"
-                            : "bg-[var(--bg-inset)] text-zinc-100 rounded-bl-sm"
+                            : "bg-[var(--bg-inset)] text-[var(--text-primary)] rounded-bl-sm"
                         }`}
                       >
                         <div className="flex items-center gap-1 mb-1">
@@ -343,7 +343,7 @@ export default function AppMessagesPage() {
         </div>
       </div>
       {toast && (
-        <div role="status" aria-live="polite" className="fixed bottom-4 right-4 z-40 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-sm text-zinc-100 shadow-lg">
+        <div role="status" aria-live="polite" className="fixed bottom-4 right-4 z-40 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-sm text-[var(--text-primary)] shadow-lg">
           {toast}
         </div>
       )}

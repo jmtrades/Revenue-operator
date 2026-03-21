@@ -509,7 +509,7 @@ function NavLink({ href, label, icon: Icon }: { href: string; label: string; ico
     <Link
       href={to}
       className={`flex items-center gap-2.5 py-2.5 px-3 rounded-lg text-sm focus-ring transition-colors ${
-        active ? "bg-zinc-800/50" : ""
+        active ? "bg-[var(--bg-inset)]/50" : ""
       }`}
       style={{
         color: active ? "var(--text-primary)" : "var(--text-muted)",

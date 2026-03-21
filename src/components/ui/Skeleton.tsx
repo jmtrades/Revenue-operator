@@ -18,7 +18,7 @@ export function Skeleton({
   lines = 1,
 }: SkeletonProps) {
   const baseClasses =
-    "relative overflow-hidden bg-white/[0.04] before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_1.5s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/[0.06] before:to-transparent";
+    "relative overflow-hidden bg-[var(--bg-inset)] before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_1.5s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/[0.06] before:to-transparent";
 
   if (variant === "text" && lines > 1) {
     return (

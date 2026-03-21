@@ -34,7 +34,7 @@ interface RecoveryStats {
 const STATUS_CONFIG = {
   recovered: { label: "Recovered", color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20", icon: CheckCircle2 },
   pending: { label: "Pending", color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20", icon: Clock },
-  in_progress: { label: "In Progress", color: "text-blue-400", bg: "bg-zinc-900/60", border: "border-zinc-800", icon: RefreshCw },
+  in_progress: { label: "In Progress", color: "text-blue-400", bg: "bg-[var(--bg-card)]/60", border: "border-[var(--border-default)]", icon: RefreshCw },
   lost: { label: "Lost", color: "text-red-400", bg: "bg-red-500/10", border: "border-red-500/20", icon: AlertTriangle },
 } as const;
 
@@ -156,7 +156,7 @@ export default function MissedCallRecoveryPage() {
             <p className="text-lg font-bold text-amber-400 tabular-nums">{stats.total_missed}</p>
             <p className="text-xs text-amber-400/70">Total Missed</p>
           </div>
-          <div className="text-center p-3 rounded-lg bg-zinc-900/60 border border-zinc-800">
+          <div className="text-center p-3 rounded-lg bg-[var(--bg-card)]/60 border border-[var(--border-default)]">
             <p className="text-lg font-bold text-blue-400 tabular-nums">{stats.pending}</p>
             <p className="text-xs text-blue-400/70">In Progress</p>
           </div>
@@ -199,7 +199,7 @@ export default function MissedCallRecoveryPage() {
           return (
             <div
               key={call.id}
-              className="rounded-xl border p-4 flex items-center gap-4 hover:border-white/20 transition-colors"
+              className="rounded-xl border p-4 flex items-center gap-4 hover:border-[var(--border-default)] transition-colors"
               style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}
             >
               <div className={`w-10 h-10 rounded-lg ${config.bg} border ${config.border} flex items-center justify-center shrink-0`}>

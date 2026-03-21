@@ -232,7 +232,7 @@ export default function DeveloperWebhooksPage() {
                     type="button"
                     onClick={() => handleTest(ep.id)}
                     disabled={!!testingId}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-zinc-500"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)]"
                   >
                     <Send className="w-3.5 h-3.5" /> {testingId === ep.id ? "Sending…" : "Test"}
                   </button>

@@ -45,13 +45,13 @@ export function OutcomeCardsSection() {
   );
 
   return (
-    <section className="py-16 md:py-20 border-t border-white/[0.06] bg-[var(--bg-base)]">
+    <section className="py-16 md:py-20 border-t border-[var(--border-default)] bg-[var(--bg-base)]">
       <Container>
         <div className="max-w-3xl mb-10">
           <h2 className="text-xl md:text-2xl font-semibold text-white">
             {t("heading")}
           </h2>
-          <p className="mt-2 text-sm text-white/50">
+          <p className="mt-2 text-sm text-[var(--text-tertiary)]">
             {t("subheading")}
           </p>
         </div>
@@ -67,7 +67,7 @@ export function OutcomeCardsSection() {
               <h3 className="text-base font-semibold text-white mb-2">
                 {title}
               </h3>
-              <p className="text-sm text-white/50 leading-relaxed">
+              <p className="text-sm text-[var(--text-tertiary)] leading-relaxed">
                 {description}
               </p>
             </div>
@@ -80,11 +80,11 @@ export function OutcomeCardsSection() {
               <h2 className="text-xl md:text-2xl font-semibold text-white">
                 {t("pricing.heading")}
               </h2>
-              <p className="mt-2 text-sm text-white/50 max-w-xl">
+              <p className="mt-2 text-sm text-[var(--text-tertiary)] max-w-xl">
                 {t("pricing.subheading")}
               </p>
             </div>
-            <p className="text-xs text-white/40">
+            <p className="text-xs text-[var(--text-tertiary)]">
               {t("pricing.trialNote")}
             </p>
           </div>
@@ -95,7 +95,7 @@ export function OutcomeCardsSection() {
                 key={tier.name}
                 className={`rounded-2xl border bg-[var(--bg-card)] p-6 flex flex-col ${
                   tier.badge
-                    ? "border-white/20 shadow-[0_0_40px_rgba(15,23,42,0.8)] relative overflow-hidden"
+                    ? "border-[var(--border-default)] shadow-[0_0_40px_rgba(15,23,42,0.8)] relative overflow-hidden"
                     : "border-[var(--border-default)]"
                 }`}
               >
@@ -111,15 +111,15 @@ export function OutcomeCardsSection() {
                   <h3 className="text-base font-semibold text-white">
                     {tier.name}
                   </h3>
-                  <p className="mt-1 text-sm text-white/50">{tier.tagline}</p>
+                  <p className="mt-1 text-sm text-[var(--text-tertiary)]">{tier.tagline}</p>
                 </div>
                 <div className="mb-5">
                   <span className="text-3xl font-semibold text-white">
                     {tier.price}
                   </span>
-                  <span className="text-sm text-white/40 ml-1">/month</span>
+                  <span className="text-sm text-[var(--text-tertiary)] ml-1">/month</span>
                 </div>
-                <ul className="space-y-2 mb-6 text-sm text-white/60">
+                <ul className="space-y-2 mb-6 text-sm text-[var(--text-secondary)]">
                   {tier.features.map((f) => (
                     <li key={f} className="flex items-start gap-2">
                       <span className="mt-1 h-1.5 w-1.5 rounded-full bg-white/50" />

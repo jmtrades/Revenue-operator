@@ -29,7 +29,7 @@ export default function AgencyPage() {
           </Link>
           <Link
             href={ROUTES.PRICING}
-            className="border border-[var(--border-default)] text-[var(--text-primary)] font-medium rounded-xl px-6 py-3 hover:bg-white/10 transition-colors no-underline text-center"
+            className="border border-[var(--border-default)] text-[var(--text-primary)] font-medium rounded-xl px-6 py-3 hover:bg-[var(--bg-hover)] transition-colors no-underline text-center"
           >
             {t("ctaPricing")} →
           </Link>
@@ -39,7 +39,7 @@ export default function AgencyPage() {
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
           <div className="flex items-start gap-3">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.06] border border-white/[0.08]">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--bg-inset)] border border-[var(--border-default)]">
               <Building2 className="h-5 w-5 text-white/80" />
             </span>
             <div>
@@ -61,7 +61,7 @@ export default function AgencyPage() {
 
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
           <div className="flex items-start gap-3">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.06] border border-white/[0.08]">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--bg-inset)] border border-[var(--border-default)]">
               <Users className="h-5 w-5 text-white/80" />
             </span>
             <div>
@@ -78,7 +78,7 @@ export default function AgencyPage() {
 
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
           <div className="flex items-start gap-3">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/[0.06] border border-white/[0.08]">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--bg-inset)] border border-[var(--border-default)]">
               <Palette className="h-5 w-5 text-white/80" />
             </span>
             <div>

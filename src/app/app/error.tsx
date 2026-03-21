@@ -37,7 +37,7 @@ export default function AppError({
               type="button"
               onClick={handleRetry}
               aria-label={t("retry")}
-              className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-gray-100 transition focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
+              className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-gray-100 transition focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
             >
               {t("tryAgain")}
               {retryCount > 0 && ` (${retryCount})`}
@@ -45,7 +45,7 @@ export default function AppError({
             <Link
               href="/app/activity"
               aria-label={t("goToDashboard")}
-              className="px-6 py-3 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
+              className="px-6 py-3 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
             >
               {t("goToDashboard")}
             </Link>

@@ -792,7 +792,7 @@ export default function LeadsPage() {
                 setAddLeadForm((prev) => ({ ...prev, name: e.target.value }))
               }
               placeholder={t("leads.inlineNamePlaceholder")}
-              className="flex-1 px-3 py-2 text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-100 placeholder:text-[var(--text-secondary)] focus:outline-none focus:border-[var(--border-medium)]"
+              className="flex-1 px-3 py-2 text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none focus:border-[var(--border-medium)]"
             />
             <input
               type="tel"
@@ -801,7 +801,7 @@ export default function LeadsPage() {
                 setAddLeadForm((prev) => ({ ...prev, phone: e.target.value }))
               }
               placeholder={t("leads.inlinePhonePlaceholder")}
-              className="flex-1 px-3 py-2 text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-100 placeholder:text-[var(--text-secondary)] focus:outline-none focus:border-[var(--border-medium)]"
+              className="flex-1 px-3 py-2 text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none focus:border-[var(--border-medium)]"
             />
             <input
               type="email"
@@ -810,7 +810,7 @@ export default function LeadsPage() {
                 setAddLeadForm((prev) => ({ ...prev, email: e.target.value }))
               }
               placeholder={t("leads.inlineEmailPlaceholder")}
-              className="flex-1 px-3 py-2 text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-100 placeholder:text-[var(--text-secondary)] focus:outline-none focus:border-[var(--border-medium)]"
+              className="flex-1 px-3 py-2 text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none focus:border-[var(--border-medium)]"
             />
             <button
               type="submit"

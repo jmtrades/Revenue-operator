@@ -652,7 +652,7 @@ export default function VoicesSettingsPage() {
                   <button
                     type="button"
                     onClick={() => handlePreviewVoice(voice.id)}
-                    className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg border px-2.5 py-1.5 text-xs text-white hover:bg-zinc-800 transition-colors"
+                    className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg border px-2.5 py-1.5 text-xs text-white hover:bg-[var(--bg-inset)] transition-colors"
                     style={{ borderColor: "var(--border-default)" }}
                   >
                     {playingVoiceId === voice.id ? (
@@ -686,7 +686,7 @@ export default function VoicesSettingsPage() {
                 </div>
 
                 {voice.cloneProgress !== undefined && voice.cloneProgress < 100 && (
-                  <div className="mt-3 bg-zinc-800 rounded-full h-1.5">
+                  <div className="mt-3 bg-[var(--bg-inset)] rounded-full h-1.5">
                     <div
                       className="bg-emerald-500 h-full rounded-full transition-all"
                       style={{ width: `${voice.cloneProgress}%` }}
@@ -819,7 +819,7 @@ export default function VoicesSettingsPage() {
               <button
                 type="button"
                 onClick={() => setShowCloneModal(false)}
-                className="text-zinc-500 hover:text-zinc-300"
+                className="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -853,7 +853,7 @@ export default function VoicesSettingsPage() {
                     </p>
                   ) : (
                     <>
-                      <Upload className="w-6 h-6 mx-auto mb-2 text-zinc-500" />
+                      <Upload className="w-6 h-6 mx-auto mb-2 text-[var(--text-tertiary)]" />
                       <p style={{ color: "var(--text-primary)" }} className="font-medium">
                         Drop file or click to browse
                       </p>
@@ -911,7 +911,7 @@ export default function VoicesSettingsPage() {
               <button
                 type="button"
                 onClick={() => setShowCloneModal(false)}
-                className="rounded-xl border border-zinc-700 px-4 py-2.5 text-sm text-zinc-300 hover:bg-zinc-800 transition-colors"
+                className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors"
               >
                 Cancel
               </button>
@@ -937,7 +937,7 @@ export default function VoicesSettingsPage() {
               <button
                 type="button"
                 onClick={() => setShowTestModal(false)}
-                className="text-zinc-500 hover:text-zinc-300"
+                className="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1020,7 +1020,7 @@ export default function VoicesSettingsPage() {
               <button
                 type="button"
                 onClick={() => setShowTestModal(false)}
-                className="rounded-xl border border-zinc-700 px-4 py-2.5 text-sm text-zinc-300 hover:bg-zinc-800 transition-colors"
+                className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors"
               >
                 Cancel
               </button>

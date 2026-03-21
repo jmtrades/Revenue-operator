@@ -44,7 +44,7 @@ export function EmptyState({
       )}
     >
       {Icon && (
-        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-800 text-[var(--text-tertiary)]">
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--bg-inset)] text-[var(--text-tertiary)]">
           <Icon className="h-6 w-6" />
         </div>
       )}

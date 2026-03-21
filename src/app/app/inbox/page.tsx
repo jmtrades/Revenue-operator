@@ -175,7 +175,7 @@ function ConversationList({
       <div className="flex-1 overflow-y-auto">
         {filtered.length === 0 ? (
           <div className="p-8 text-center">
-            <MessageSquare className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
+            <MessageSquare className="w-12 h-12 text-[var(--text-tertiary)] mx-auto mb-3" aria-hidden />
             <p className="text-sm font-medium text-[var(--text-secondary)] mb-1">
               {t("inbox.empty.title")}
             </p>

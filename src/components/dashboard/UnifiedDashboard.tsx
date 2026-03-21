@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { Phone, MessageSquare, Megaphone, LayoutList } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -36,6 +37,7 @@ function fmtTime(iso: string): string {
 }
 
 export function UnifiedDashboard() {
+  const t = useTranslations("dashboard");
   const { workspaceId } = useWorkspace();
   const [data, setData] = useState<Summary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -187,7 +189,7 @@ export function UnifiedDashboard() {
   if (!workspaceId) {
     return (
       <div className="p-6">
-        <EmptyState title="No workspace" description="Select or create a workspace to view the dashboard." />
+        <EmptyState title={t("noWorkspace", { defaultValue: "No workspace" })} description={t("selectWorkspace", { defaultValue: "Select or create a workspace to view the dashboard." })} />
       </div>
     );
   }
@@ -216,7 +218,7 @@ export function UnifiedDashboard() {
     <div className="space-y-6 p-4 md:p-6 max-w-6xl mx-auto">
       <div className="flex items-center gap-2 text-[var(--text-secondary)] text-sm">
         <LayoutList className="w-4 h-4" />
-        <span>Dashboard</span>
+        <span>{t("dashboard", { defaultValue: "Dashboard" })}</span>
       </div>
 
       {/* Hero */}
@@ -262,10 +264,10 @@ export function UnifiedDashboard() {
         )}
         <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { label: "Calls answered", value: data.calls_answered },
-            { label: "Appts booked", value: data.appointments_booked },
-            { label: "Follow-ups sent", value: data.follow_ups_sent },
-            { label: "Minutes", value: `${data.minutes_used}/${data.minutes_limit}` },
+            { label: t("kpis.callsHandled", { defaultValue: "Calls answered" }), value: data.calls_answered },
+            { label: t("kpis.appointmentsBooked", { defaultValue: "Appts booked" }), value: data.appointments_booked },
+            { label: t("kpis.followUpsSent", { defaultValue: "Follow-ups sent" }), value: data.follow_ups_sent },
+            { label: t("kpis.minutes", { defaultValue: "Minutes" }), value: `${data.minutes_used}/${data.minutes_limit}` },
           ].map((k) => (
             <div key={k.label} className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-inset)] px-4 py-3">
               <p className="text-2xl font-bold text-[var(--text-primary)] tabular-nums">{k.value}</p>
@@ -289,10 +291,10 @@ export function UnifiedDashboard() {
           data-product-tour="needsAttentionQueue"
         >
           <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">
-            Needs attention {data.needs_attention.length > 0 ? `(${data.needs_attention.length})` : ""}
+            {t("needsAttention.title", { defaultValue: "Needs attention" })} {data.needs_attention.length > 0 ? `(${data.needs_attention.length})` : ""}
           </h2>
           {data.needs_attention.length === 0 ? (
-            <p className="text-sm text-[var(--text-secondary)]">Nothing needs your action right now.</p>
+            <p className="text-sm text-[var(--text-secondary)]">{t("needsAttention.empty", { defaultValue: "Nothing needs your action right now." })}</p>
           ) : (
             <ul className="space-y-3">
               {data.needs_attention.slice(0, 7).map((item) => (
@@ -333,14 +335,14 @@ export function UnifiedDashboard() {
             </ul>
           )}
           <Link href="/app/leads" className="inline-block mt-3 text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)]">
-            View all →
+            {t("viewAll", { defaultValue: "View all" })} →
           </Link>
         </section>
 
         <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-5">
-          <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Today&apos;s activity</h2>
+          <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">{t("activity.title", { defaultValue: "Today's activity" })}</h2>
           {data.activity.length === 0 ? (
-            <p className="text-sm text-[var(--text-secondary)]">Activity will show as calls and messages come in.</p>
+            <p className="text-sm text-[var(--text-secondary)]">{t("activity.empty", { defaultValue: "Activity will show as calls and messages come in." })}</p>
           ) : (
             <ul className="space-y-2 max-h-64 overflow-y-auto">
               {data.activity.map((a) => (

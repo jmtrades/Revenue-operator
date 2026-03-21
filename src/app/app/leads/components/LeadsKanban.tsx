@@ -68,7 +68,7 @@ function BoardCard({ lead, onOpen, t }: { lead: LeadView; onOpen: () => void; t:
       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen(); } }}
       className={`w-full text-left rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-2 text-xs hover:border-[var(--border-medium)] cursor-grab active:cursor-grabbing ${isDragging ? "opacity-50" : ""}`}
     >
-      <p className="font-medium text-zinc-100 truncate">{lead.name}</p>
+      <p className="font-medium text-[var(--text-primary)] truncate">{lead.name}</p>
       <p className="text-[11px] text-[var(--text-tertiary)]">{lead.phone}</p>
       <p className="text-[11px] text-[var(--text-secondary)] truncate">{lead.service}</p>
       <div className="mt-1 flex items-center justify-between gap-2">
@@ -107,7 +107,7 @@ function BoardColumn({
           <BoardCard key={lead.id} lead={lead} onOpen={() => onOpenLead(lead)} t={t} />
         ))}
         {columnLeads.length === 0 && (
-          <p className="text-[11px] text-zinc-600">{t("noLeadsInStage")}</p>
+          <p className="text-[11px] text-[var(--text-tertiary)]">{t("noLeadsInStage")}</p>
         )}
       </div>
     </div>

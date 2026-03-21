@@ -112,7 +112,7 @@ export function LeadsList({
     return (
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-12 text-center">
         <Users
-          className="w-12 h-12 text-zinc-600 mx-auto mb-3"
+          className="w-12 h-12 text-[var(--text-tertiary)] mx-auto mb-3"
           aria-hidden
         />
         <p className="text-sm font-medium text-[var(--text-primary)] mb-1">
@@ -202,7 +202,7 @@ export function LeadsList({
                       onChange={() => toggleSelected(lead.id)}
                     />
                   </td>
-                  <td className="py-3 px-4 text-sm text-zinc-100">
+                  <td className="py-3 px-4 text-sm text-[var(--text-primary)]">
                     {lead.name}
                   </td>
                   <td className="py-3 px-4 text-xs text-[var(--text-tertiary)]">
@@ -259,7 +259,7 @@ export function LeadsList({
                 className="w-full text-left rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 flex flex-col gap-1.5"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <p className="text-sm font-medium text-zinc-100 truncate">
+                  <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                     {lead.name}
                   </p>
                   <span

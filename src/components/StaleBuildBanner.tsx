@@ -90,7 +90,7 @@ export function StaleBuildBanner() {
         type="button"
         onClick={handleRefresh}
         disabled={refreshing}
-        className="text-sm font-medium text-zinc-300 hover:text-white hover:underline whitespace-nowrap focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded"
+        className="text-sm font-medium text-[var(--text-secondary)] hover:text-white hover:underline whitespace-nowrap focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded"
       >
         {refreshing ? "Refreshing…" : "Refresh"}
       </button>

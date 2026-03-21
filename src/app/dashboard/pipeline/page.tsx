@@ -28,7 +28,7 @@ interface PipelineCard {
 }
 
 const STAGES: { key: StageKey; label: string; dotColor: string }[] = [
-  { key: "NEW", label: "New", dotColor: "bg-zinc-500" },
+  { key: "NEW", label: "New", dotColor: "bg-[var(--bg-inset)]" },
   { key: "CONTACTED", label: "Contacted", dotColor: "bg-zinc-400" },
   { key: "QUALIFIED", label: "Qualified", dotColor: "bg-amber-400" },
   { key: "BOOKED", label: "Booked", dotColor: "bg-emerald-400" },
@@ -185,11 +185,11 @@ export default function PipelinePage() {
                     <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
                       {stage.label}
                     </span>
-                    <span className="text-xs px-1.5 py-0.5 rounded-full bg-zinc-800 text-zinc-400">
+                    <span className="text-xs px-1.5 py-0.5 rounded-full bg-[var(--bg-inset)] text-[var(--text-tertiary)]">
                       {stageCards.length}
                     </span>
                   </div>
-                  <span className="text-xs font-medium text-zinc-500">
+                  <span className="text-xs font-medium text-[var(--text-tertiary)]">
                     ${stageTotal.toLocaleString()}
                   </span>
                 </div>
@@ -209,7 +209,7 @@ export default function PipelinePage() {
                       draggable
                       onDragStart={() => handleDragStart(card.id)}
                       onDragEnd={handleDragEnd}
-                      className={`rounded-xl border p-3 cursor-grab active:cursor-grabbing transition-all hover:border-zinc-600 ${
+                      className={`rounded-xl border p-3 cursor-grab active:cursor-grabbing transition-all hover:border-[var(--border-default)] ${
                         dragging === card.id ? "opacity-40 scale-95" : ""
                       }`}
                       style={{
@@ -228,7 +228,7 @@ export default function PipelinePage() {
                             </p>
                           )}
                         </div>
-                        <GripVertical className="w-4 h-4 flex-shrink-0 text-zinc-600" />
+                        <GripVertical className="w-4 h-4 flex-shrink-0 text-[var(--text-tertiary)]" />
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1.5">
@@ -238,8 +238,8 @@ export default function PipelinePage() {
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <SourceIcon className="w-3 h-3 text-zinc-500" />
-                          <span className="text-[10px] text-zinc-500">
+                          <SourceIcon className="w-3 h-3 text-[var(--text-tertiary)]" />
+                          <span className="text-[10px] text-[var(--text-tertiary)]">
                             {card.daysInStage}d
                           </span>
                         </div>
@@ -264,7 +264,7 @@ export default function PipelinePage() {
               <h3 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>
                 Add Lead to Pipeline
               </h3>
-              <button type="button" onClick={() => setShowAddModal(false)} className="text-zinc-500 hover:text-zinc-300">
+              <button type="button" onClick={() => setShowAddModal(false)} className="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -275,7 +275,7 @@ export default function PipelinePage() {
                   type="text"
                   value={newLead.name}
                   onChange={(e) => setNewLead((p) => ({ ...p, name: e.target.value }))}
-                  className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="mt-1.5 w-full rounded-lg border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   placeholder="Contact name"
                 />
               </label>
@@ -285,7 +285,7 @@ export default function PipelinePage() {
                   type="text"
                   value={newLead.company}
                   onChange={(e) => setNewLead((p) => ({ ...p, company: e.target.value }))}
-                  className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="mt-1.5 w-full rounded-lg border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   placeholder="Company name"
                 />
               </label>
@@ -295,7 +295,7 @@ export default function PipelinePage() {
                   type="number"
                   value={newLead.value}
                   onChange={(e) => setNewLead((p) => ({ ...p, value: e.target.value }))}
-                  className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="mt-1.5 w-full rounded-lg border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   placeholder="5000"
                 />
               </label>
@@ -312,7 +312,7 @@ export default function PipelinePage() {
               <button
                 type="button"
                 onClick={() => setShowAddModal(false)}
-                className="rounded-xl border border-zinc-700 px-4 py-2.5 text-sm text-zinc-300 hover:bg-zinc-800 transition-colors"
+                className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors"
               >
                 Cancel
               </button>

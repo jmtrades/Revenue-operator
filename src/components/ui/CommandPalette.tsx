@@ -168,13 +168,13 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
                 />
               </div>
               <div className="hidden md:flex items-center gap-1 text-[10px] text-[var(--text-tertiary)]">
-                <span className="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
+                <span className="px-1.5 py-0.5 rounded bg-[var(--bg-inset)] border border-[var(--border-default)]">
                   ⌘K
                 </span>
-                <span className="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
+                <span className="px-1.5 py-0.5 rounded bg-[var(--bg-inset)] border border-[var(--border-default)]">
                   ⌘/
                 </span>
-                <span className="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
+                <span className="px-1.5 py-0.5 rounded bg-[var(--bg-inset)] border border-[var(--border-default)]">
                   Esc
                 </span>
               </div>
@@ -221,20 +221,20 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
             </div>
             <div className="border-t border-[var(--border-default)] px-4 py-2 flex items-center justify-between text-[10px] text-[var(--text-tertiary)]">
               <div className="flex items-center gap-2">
-                <span className="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
+                <span className="px-1.5 py-0.5 rounded bg-[var(--bg-inset)] border border-[var(--border-default)]">
                   ⌘K
                 </span>
                 <span>{t("title")}</span>
               </div>
               <div className="flex items-center gap-3">
                 <span className="flex items-center gap-1">
-                  <span className="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
+                  <span className="px-1.5 py-0.5 rounded bg-[var(--bg-inset)] border border-[var(--border-default)]">
                     ⌘/
                   </span>
                   <span>{t("showShortcuts")}</span>
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/[0.06]">
+                  <span className="px-1.5 py-0.5 rounded bg-[var(--bg-inset)] border border-[var(--border-default)]">
                     Esc
                   </span>
                   <span>{t("close")}</span>

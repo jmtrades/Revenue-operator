@@ -19,7 +19,7 @@ const NeedsAttentionList = () => {
   const getUrgencyDot = (item: AttentionItem) => {
     if (item.isOverdue && item.overdueMins && item.overdueMins > 120) return 'bg-red-500';
     if (item.isOverdue || !item.overdueMins) return 'bg-amber-500/80';
-    return 'bg-zinc-500';
+    return 'bg-[var(--bg-inset)]';
   };
 
   const hasItems = items.length > 0;

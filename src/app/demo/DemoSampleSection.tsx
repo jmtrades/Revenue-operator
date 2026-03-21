@@ -12,8 +12,8 @@ export function DemoSampleSection() {
     <div className="max-w-3xl mx-auto px-4 mt-16">
       <div className="flex items-center justify-between gap-3 mb-6">
         <div>
-          <h2 className="text-xl font-semibold text-white">{t("watchSampleCall")}</h2>
-          <p className="text-sm text-zinc-400 mt-1">{t("watchSampleCallDesc")}</p>
+          <h2 className="text-xl font-semibold text-[var(--text-primary)]">{t("watchSampleCall")}</h2>
+          <p className="text-sm text-[var(--text-tertiary)] mt-1">{t("watchSampleCallDesc")}</p>
         </div>
         <Link
           href={ROUTES.START}

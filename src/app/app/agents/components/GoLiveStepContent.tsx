@@ -109,7 +109,7 @@ export function GoLiveStepContent({
               {task.complete ? (
                 <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" aria-hidden />
               ) : (
-                <span className="h-4 w-4 shrink-0 rounded-full border border-white/30 text-white/30" aria-hidden />
+                <span className="h-4 w-4 shrink-0 rounded-full border border-white/30 text-[var(--text-tertiary)]" aria-hidden />
               )}
               <span className={task.complete ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}>
                 {t(`goLive.${readinessLabelKeys[task.key] ?? task.key}`)}
@@ -119,7 +119,7 @@ export function GoLiveStepContent({
                   type="button"
                   onClick={() => void onActivate()}
                   disabled={activating}
-                  className="ml-auto rounded text-[11px] font-medium text-[var(--text-primary)] underline underline-offset-1 hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 disabled:opacity-50"
+                  className="ml-auto rounded text-[11px] font-medium text-[var(--text-primary)] underline underline-offset-1 hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] disabled:opacity-50"
                 >
                   {activating ? t("goLive.syncing") : t("goLive.retrySync")}
                 </button>
@@ -150,7 +150,7 @@ export function GoLiveStepContent({
         <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-4">{t("goLive.previewHeading")}</h3>
         <div className="space-y-4">
           <div>
-            <p className="text-xs text-white/40 mb-1">
+            <p className="text-xs text-[var(--text-tertiary)] mb-1">
               {t("goLive.callerBookAppt")}
             </p>
             <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-lg p-3">
@@ -172,7 +172,7 @@ export function GoLiveStepContent({
           </div>
 
           <div>
-            <p className="text-xs text-white/40 mb-1">{t("goLive.callerPricing")}</p>
+            <p className="text-xs text-[var(--text-tertiary)] mb-1">{t("goLive.callerPricing")}</p>
             <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-lg p-3">
               {(() => {
                 const faq = agent.faq ?? [];
@@ -200,7 +200,7 @@ export function GoLiveStepContent({
           </div>
 
           <div>
-            <p className="text-xs text-white/40 mb-1">{t("goLive.callerAfterHours")}</p>
+            <p className="text-xs text-[var(--text-tertiary)] mb-1">{t("goLive.callerAfterHours")}</p>
             <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-lg p-3">
               {(() => {
                 switch (agent.afterHoursMode) {
@@ -224,7 +224,7 @@ export function GoLiveStepContent({
             if (!priceObj) return null;
             return (
               <div>
-                <p className="text-xs text-white/40 mb-1">
+                <p className="text-xs text-[var(--text-tertiary)] mb-1">
                   {t("goLive.callerPriceHigh")}
                 </p>
                 <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-lg p-3">
@@ -242,7 +242,7 @@ export function GoLiveStepContent({
             if (!hasEscalationTriggers && !hasTransferNumber) return null;
             return (
               <div>
-                <p className="text-xs text-white/40 mb-1">
+                <p className="text-xs text-[var(--text-tertiary)] mb-1">
                   {t("goLive.callerSpeakToSomeone")}
                 </p>
                 <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-lg p-3">
@@ -255,12 +255,12 @@ export function GoLiveStepContent({
           })()}
         </div>
       </section>
-      <p className="text-xs text-white/40">{t("goLive.connectPhoneHint")}</p>
+      <p className="text-xs text-[var(--text-tertiary)]">{t("goLive.connectPhoneHint")}</p>
       <div className="grid gap-3 sm:grid-cols-2" role="list">
         <Link
           href="/app/settings/phone"
           aria-label={t("goLive.forwardExistingAria")}
-          className="flex flex-col rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 transition-colors hover:border-[var(--border-medium)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="flex flex-col rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 transition-colors hover:border-[var(--border-medium)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           <span className="text-sm font-medium text-[var(--text-primary)]">{t("goLive.forwardExistingTitle")}</span>
           <span className="mt-1 text-xs text-[var(--text-secondary)]">{t("goLive.forwardExistingDesc")}</span>
@@ -269,7 +269,7 @@ export function GoLiveStepContent({
         <Link
           href="/app/settings/phone"
           aria-label={t("goLive.getNewNumberAria")}
-          className="flex flex-col rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 transition-colors hover:border-[var(--border-medium)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="flex flex-col rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 transition-colors hover:border-[var(--border-medium)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           <span className="text-sm font-medium text-[var(--text-primary)]">{t("goLive.getNewNumberTitle")}</span>
           <span className="mt-1 text-xs text-[var(--text-secondary)]">{t("goLive.getNewNumberDesc")}</span>
@@ -277,14 +277,14 @@ export function GoLiveStepContent({
         </Link>
       </div>
       <div className="flex justify-between pt-4">
-        <button type="button" onClick={onBack} aria-label={t("goLive.backToTestAria")} className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">{t("goLive.backButton")}</button>
+        <button type="button" onClick={onBack} aria-label={t("goLive.backToTestAria")} className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black">{t("goLive.backButton")}</button>
         <button
           type="button"
           onClick={() => void onActivate()}
           disabled={!allowActivate || activating}
           aria-label={t("goLive.activateAgentAria")}
           title={!testCallCompleted ? "Complete your test call to enable Go Live." : undefined}
-          className="rounded-xl bg-[var(--bg-surface)] px-6 py-2.5 text-sm font-semibold text-[var(--text-primary)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="rounded-xl bg-[var(--bg-surface)] px-6 py-2.5 text-sm font-semibold text-[var(--text-primary)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           {activating ? t("goLive.activating") : t("goLive.activateAgent")}
         </button>

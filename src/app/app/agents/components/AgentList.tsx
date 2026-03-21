@@ -112,7 +112,7 @@ export function AgentList({
                 <button
                   type="button"
                   aria-label={agent.active ? t("actions.deactivate") : t("actions.activate")}
-                  className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-white/[0.06]"
+                  className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-inset)]"
                   onClick={async () => {
                     const next = { ...agent, active: !agent.active };
                     setAgents((current) =>
@@ -131,7 +131,7 @@ export function AgentList({
                 <button
                   type="button"
                   aria-label={t("actions.editAgent")}
-                  className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-white/[0.06]"
+                  className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-inset)]"
                   onClick={() => {
                     setSelectedId(agent.id);
                     setActiveStep(getFirstIncompleteStep(agent));

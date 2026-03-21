@@ -54,7 +54,7 @@ export default function ModeSelector({ onSelect, selected, disabled }: ModeSelec
   return (
     <div className="space-y-3">
       <h2 className="text-lg font-semibold text-white">How will you use Recall Touch?</h2>
-      <p className="text-sm text-zinc-400">This customizes your dashboard, templates, and default settings.</p>
+      <p className="text-sm text-[var(--text-tertiary)]">This customizes your dashboard, templates, and default settings.</p>
       <div className="grid md:grid-cols-3 gap-4 mt-4">
         {MODES.map((m) => {
           const isSelected = selected === m.id;
@@ -69,10 +69,10 @@ export default function ModeSelector({ onSelect, selected, disabled }: ModeSelec
               className={`
                 rounded-2xl border p-5 text-left transition-all duration-150
                 ${isSelected
-                  ? "border-white bg-zinc-800/80 ring-1 ring-white/20"
+                  ? "border-white bg-[var(--bg-inset)]/80 ring-1 ring-white/20"
                   : isHovering
-                    ? "border-zinc-600 bg-zinc-900"
-                    : "border-zinc-800 bg-zinc-950"
+                    ? "border-[var(--border-default)] bg-[var(--bg-card)]"
+                    : "border-[var(--border-default)] bg-[var(--bg-base)]"
                 }
                 ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
               `}
@@ -84,8 +84,8 @@ export default function ModeSelector({ onSelect, selected, disabled }: ModeSelec
                 })()}
               </div>
               <h3 className="text-white font-semibold text-base mb-1">{m.title}</h3>
-              <p className="text-sm text-zinc-400 mb-3">{m.description}</p>
-              <p className="text-xs text-zinc-500">{m.examples}</p>
+              <p className="text-sm text-[var(--text-tertiary)] mb-3">{m.description}</p>
+              <p className="text-xs text-[var(--text-tertiary)]">{m.examples}</p>
             </button>
           );
         })}

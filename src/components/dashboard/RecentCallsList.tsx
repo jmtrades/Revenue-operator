@@ -19,8 +19,8 @@ const RecentCallsList = () => {
   const getOutcomeBadge = (outcome: CallOutcome) => {
     const badgeConfig = {
       appointment: { bg: 'bg-green-500/10', text: 'text-green-400', label: 'Appointment booked' },
-      lead: { bg: 'bg-zinc-500/10', text: 'text-zinc-300', label: 'Lead captured' },
-      message: { bg: 'bg-zinc-500/10', text: 'text-zinc-300', label: 'Message taken' },
+      lead: { bg: 'bg-[var(--bg-inset)]/10', text: 'text-[var(--text-secondary)]', label: 'Lead captured' },
+      message: { bg: 'bg-[var(--bg-inset)]/10', text: 'text-[var(--text-secondary)]', label: 'Message taken' },
       transferred: { bg: 'bg-amber-500/10', text: 'text-amber-300', label: 'Transferred' },
       spam: { bg: 'bg-red-500/10', text: 'text-red-300', label: 'Spam' },
     };

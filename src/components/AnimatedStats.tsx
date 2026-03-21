@@ -166,7 +166,7 @@ export function AnimatedStats() {
               )}
             </p>
             <p className="text-xs font-semibold text-white/80">{stat.label}</p>
-            <p className="text-[10px] text-white/40 mt-0.5">{stat.sublabel}</p>
+            <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5">{stat.sublabel}</p>
           </div>
         );
       })}

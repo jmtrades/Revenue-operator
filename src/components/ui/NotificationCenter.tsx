@@ -138,7 +138,7 @@ export function NotificationCenter({
         ref={anchorRef}
         type="button"
         onClick={onToggle}
-        className="relative p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/[0.03] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
+        className="relative p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-inset)] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
         aria-label={t("center.title")}
         aria-expanded={open}
       >
@@ -166,7 +166,7 @@ export function NotificationCenter({
                   <button
                     type="button"
                     onClick={markAllRead}
-                    className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/[0.04]"
+                    className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-inset)]"
                   >
                     <CheckCheck className="w-3.5 h-3.5" />
                     {t("action.markAllRead")}
@@ -175,7 +175,7 @@ export function NotificationCenter({
                 <Link
                   href="/app/settings/notifications"
                   onClick={onClose}
-                  className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/[0.04]"
+                  className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-inset)]"
                   aria-label={t("action.preferences")}
                 >
                   <Settings className="w-4 h-4" />
@@ -233,7 +233,7 @@ export function NotificationCenter({
                                 <button
                                   type="button"
                                   onClick={() => markRead(n.id)}
-                                  className="shrink-0 p-1.5 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/[0.04]"
+                                  className="shrink-0 p-1.5 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-inset)]"
                                   aria-label={t("action.markRead")}
                                 >
                                   <Check className="w-4 h-4" />

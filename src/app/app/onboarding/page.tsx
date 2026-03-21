@@ -354,7 +354,7 @@ export default function AppOnboardingPage() {
               <div key={s.id} className="flex items-start gap-3">
                 <span
                   className={`mt-1 inline-flex h-2.5 w-2.5 rounded-full ${
-                    active ? "bg-white" : "bg-zinc-700"
+                    active ? "bg-white" : "bg-[var(--bg-inset)]"
                   }`}
                   aria-hidden
                 />
@@ -384,7 +384,7 @@ export default function AppOnboardingPage() {
                 <span
                   key={i}
                   className={`inline-block w-2.5 h-2.5 rounded-full ${
-                    i + 1 <= step ? "bg-white" : "bg-zinc-700"
+                    i + 1 <= step ? "bg-white" : "bg-[var(--bg-inset)]"
                   }`}
                   aria-hidden
                 />
@@ -408,7 +408,7 @@ export default function AppOnboardingPage() {
                   <span
                     key={i}
                     className={`inline-block w-2.5 h-2.5 rounded-full ${
-                      i + 1 <= step ? "bg-white" : "bg-zinc-700"
+                      i + 1 <= step ? "bg-white" : "bg-[var(--bg-inset)]"
                     }`}
                     aria-hidden
                   />
@@ -557,7 +557,7 @@ export default function AppOnboardingPage() {
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
                 placeholder={t("businessNamePlaceholder")}
-                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-zinc-500/40 focus:outline-none text-base"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-primary)]/40 focus:outline-none text-base"
               />
             </div>
             <div>
@@ -655,7 +655,7 @@ export default function AppOnboardingPage() {
                 onChange={(e) => setGreeting(e.target.value)}
                 placeholder={defaultGreeting}
                 rows={2}
-                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-zinc-500/40 focus:outline-none resize-none text-base"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-primary)]/40 focus:outline-none resize-none text-base"
               />
               <button
                 type="button"
@@ -707,7 +707,7 @@ export default function AppOnboardingPage() {
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   placeholder={t("addressPlaceholder")}
-                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-focus)] focus:ring-1 focus:ring-zinc-500/40 focus:outline-none"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-primary)]/40 focus:outline-none"
                 />
               </div>
               <div>
@@ -718,7 +718,7 @@ export default function AppOnboardingPage() {
                   value={businessHoursDisplay}
                   onChange={(e) => setBusinessHoursDisplay(e.target.value)}
                   placeholder={t("hoursPlaceholder")}
-                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-focus)] focus:ring-1 focus:ring-zinc-500/40 focus:outline-none"
+                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-primary)]/40 focus:outline-none"
                 />
               </div>
               <div>
@@ -748,7 +748,7 @@ export default function AppOnboardingPage() {
                     onChange={(e) => setServiceInput(e.target.value)}
                     onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addService(); } }}
                     placeholder={t("addServicePlaceholder")}
-                    className="flex-1 px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-focus)] focus:ring-1 focus:ring-zinc-500/40 focus:outline-none"
+                    className="flex-1 px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-primary)]/40 focus:outline-none"
                   />
                   <button
                     type="button"

@@ -259,7 +259,7 @@ function KnowledgeModal({
                       />
                       <button
                         type="button"
-                        className="text-sm font-medium text-[var(--text-primary)] bg-zinc-700 hover:bg-zinc-600 px-4 py-2 rounded-lg"
+                        className="text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-inset)] hover:bg-[var(--bg-inset)] px-4 py-2 rounded-lg"
                       >
                         {t("modal.chooseFile")}
                       </button>
@@ -293,7 +293,7 @@ function KnowledgeModal({
                   type="button"
                   onClick={handleMockFetch}
                   disabled={websiteFetchState === "fetching"}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-sm font-medium text-[var(--text-primary)] hover:bg-zinc-700 disabled:opacity-50"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-inset)] disabled:opacity-50"
                 >
                   <ExternalLink className="w-4 h-4" />
                   {websiteFetchState === "idle" && t("modal.fetch")}
@@ -804,7 +804,7 @@ export default function KnowledgePage() {
           <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
             {filtered.length === 0 ? (
               <div className="col-span-full py-12 text-center rounded-xl bg-[var(--bg-card)]/30 border border-[var(--border-default)]">
-                <BookOpen className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
+                <BookOpen className="w-12 h-12 text-[var(--text-tertiary)] mx-auto mb-3" aria-hidden />
                 <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{t("noEntries")}</p>
                 <p className="text-xs text-[var(--text-secondary)] mb-4">{t("noEntriesHint")}</p>
                 <button
@@ -838,7 +838,7 @@ export default function KnowledgePage() {
                           ? "bg-emerald-500/20 text-emerald-300"
                           : entry.status === "Processing"
                             ? "bg-amber-500/20 text-amber-300"
-                            : "bg-zinc-700 text-[var(--text-tertiary)]"
+                            : "bg-[var(--bg-inset)] text-[var(--text-tertiary)]"
                       }`}
                     >
                       {t(`status.${entry.status.toLowerCase()}`)}
@@ -913,7 +913,7 @@ export default function KnowledgePage() {
           </div>
         </div>
 
-        <div className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-6 mt-8">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-6 mt-8">
           <h3 className="text-sm font-medium text-[var(--text-primary)] mb-3">
             {t("testHeading")}
           </h3>
@@ -935,7 +935,7 @@ export default function KnowledgePage() {
                 }
               }}
               placeholder={t("testPlaceholder")}
-              className="flex-1 bg-[var(--bg-input)] border border-white/[0.06] rounded-xl px-4 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/50"
+              className="flex-1 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl px-4 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/50"
             />
             <button
               type="button"
@@ -947,7 +947,7 @@ export default function KnowledgePage() {
             </button>
           </div>
           {testAnswer && (
-            <div className="mt-4 bg-[var(--bg-input)] border border-white/[0.06] rounded-xl p-4">
+            <div className="mt-4 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl p-4">
               <p className="text-xs text-[var(--text-tertiary)] mb-1">{t("testAnswerLabel")}</p>
               <p className="text-sm text-[var(--text-primary)] leading-relaxed">{testAnswer}</p>
             </div>
