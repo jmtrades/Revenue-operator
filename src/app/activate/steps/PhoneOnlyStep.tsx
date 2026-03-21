@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { ActivationState } from "./types";
 
 export function PhoneOnlyStep({
@@ -15,15 +16,17 @@ export function PhoneOnlyStep({
   goBack: () => void;
   canGoNext: boolean;
 }) {
+  const t = useTranslations("activate");
+
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg md:text-xl font-semibold text-slate-50">Connect your phone</h2>
-        <p className="mt-1 text-sm text-slate-400">Step 3 of 5 — your main business number or one we&apos;ll forward to.</p>
+        <h2 className="text-lg md:text-xl font-semibold text-slate-50">{t("phoneStep.heading")}</h2>
+        <p className="mt-1 text-sm text-slate-400">{t("phoneStep.subtitle")}</p>
       </div>
       <div className="space-y-2">
         <label htmlFor="ph_main" className="block text-xs font-medium text-slate-300">
-          Phone number
+          {t("phoneStep.phoneNumber")}
         </label>
         <input
           id="ph_main"
@@ -36,7 +39,7 @@ export function PhoneOnlyStep({
       </div>
       <div className="flex items-center justify-between gap-3 pt-2">
         <button type="button" onClick={goBack} className="text-sm text-slate-400 hover:text-[var(--text-primary)]">
-          Back
+          {t("back")}
         </button>
         <button
           type="button"
@@ -44,7 +47,7 @@ export function PhoneOnlyStep({
           disabled={!canGoNext}
           className="rounded-xl bg-[var(--bg-surface)] px-5 py-2.5 text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-hover)] disabled:opacity-50"
         >
-          Continue
+          {t("continue")}
         </button>
       </div>
     </div>

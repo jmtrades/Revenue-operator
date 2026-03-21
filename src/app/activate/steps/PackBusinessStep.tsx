@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { INDUSTRY_PACKS } from "@/lib/industry-packs";
 import type { ActivationState } from "./types";
 
@@ -16,6 +17,8 @@ export function PackBusinessStep({
   goNext: () => void;
   canGoNext: boolean;
 }) {
+  const t = useTranslations("activate");
+
   const applyPack = (packId: string) => {
     const pack = INDUSTRY_PACKS[packId];
     if (!pack) return;
@@ -36,12 +39,12 @@ export function PackBusinessStep({
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg md:text-xl font-semibold text-slate-50">Your business</h2>
-        <p className="mt-1 text-sm text-slate-400">Step 2 of 5</p>
+        <h2 className="text-lg md:text-xl font-semibold text-slate-50">{t("businessStep.heading")}</h2>
+        <p className="mt-1 text-sm text-slate-400">{t("businessStep.subtitle")}</p>
       </div>
       <div className="space-y-2">
         <label htmlFor="ab_name" className="block text-xs font-medium text-slate-300">
-          Business name
+          {t("businessStep.businessName")}
         </label>
         <input
           id="ab_name"
@@ -57,7 +60,7 @@ export function PackBusinessStep({
               return { ...prev, businessName: v, greeting };
             });
           }}
-          placeholder="Acme Dental"
+          placeholder={t("businessStep.businessNamePlaceholder")}
           className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 placeholder:text-slate-500 focus:border-[var(--border-default)] focus:outline-none focus:ring-1 focus:ring-[var(--border-default)]"
         />
       </div>
@@ -74,7 +77,7 @@ export function PackBusinessStep({
           }}
           className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 focus:border-[var(--border-default)] focus:outline-none focus:ring-1 focus:ring-[var(--border-default)]"
         >
-          <option value="">Select industry…</option>
+          <option value="">{t("businessStep.selectIndustry")}</option>
           {PACK_ORDER.map((id) => (
             <option key={id} value={id}>
               {INDUSTRY_PACKS[id]?.name ?? id}
@@ -84,14 +87,14 @@ export function PackBusinessStep({
       </div>
       <div className="space-y-2">
         <label htmlFor="ab_loc" className="block text-xs font-medium text-slate-300">
-          City / region
+          {t("businessStep.cityRegion")}
         </label>
         <input
           id="ab_loc"
           type="text"
           value={state.businessLocation}
           onChange={(e) => setState((p) => ({ ...p, businessLocation: e.target.value }))}
-          placeholder="Austin, TX"
+          placeholder={t("businessStep.cityRegionPlaceholder")}
           className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 placeholder:text-slate-500 focus:border-[var(--border-default)] focus:outline-none focus:ring-1 focus:ring-[var(--border-default)]"
         />
       </div>
@@ -102,7 +105,7 @@ export function PackBusinessStep({
           disabled={!canGoNext}
           className="rounded-xl bg-[var(--bg-surface)] px-5 py-2.5 text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-hover)] disabled:opacity-50"
         >
-          Continue
+          {t("continue")}
         </button>
       </div>
     </div>

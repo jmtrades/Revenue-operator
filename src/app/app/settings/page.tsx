@@ -246,7 +246,27 @@ export default function AppSettingsPage() {
           message={tSettings("deleteAllDataMessage")}
           confirmLabel={tSettings("deleteAllDataConfirmLabel")}
           variant="danger"
-          onConfirm={() => toast.error("Please contact support@recall-touch.com to delete your account.")}
+          onConfirm={async () => {
+            try {
+              const res = await fetch("/api/support/request", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({
+                  type: "delete_data",
+                  email,
+                }),
+              });
+              if (res.ok) {
+                toast.success("Your request has been submitted. Our team will contact you within 24 hours.");
+                setConfirm(null);
+              } else {
+                toast.error("Could not submit request. Please email support@recall-touch.com directly.");
+              }
+            } catch {
+              toast.error("Could not submit request. Please email support@recall-touch.com directly.");
+            }
+          }}
           onClose={() => setConfirm(null)}
         />
       )}
@@ -257,7 +277,27 @@ export default function AppSettingsPage() {
           message={tSettings("deleteAccountMessage")}
           confirmLabel={tSettings("deleteAccountConfirmLabel")}
           variant="danger"
-          onConfirm={() => toast.error("Please contact support@recall-touch.com to delete your account.")}
+          onConfirm={async () => {
+            try {
+              const res = await fetch("/api/support/request", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({
+                  type: "delete_account",
+                  email,
+                }),
+              });
+              if (res.ok) {
+                toast.success("Your request has been submitted. Our team will contact you within 24 hours.");
+                setConfirm(null);
+              } else {
+                toast.error("Could not submit request. Please email support@recall-touch.com directly.");
+              }
+            } catch {
+              toast.error("Could not submit request. Please email support@recall-touch.com directly.");
+            }
+          }}
           onClose={() => setConfirm(null)}
         />
       )}

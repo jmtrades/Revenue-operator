@@ -250,7 +250,7 @@ export default function AppSettingsIntegrationsPage() {
         <section>
           <h2 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">{t("hub.crmHeading")}</h2>
           <div className="mb-3 px-4 py-3 rounded-xl border text-xs" style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)", background: "var(--bg-card)" }}>
-            Connect your CRM to sync leads and contacts automatically. Your data stays secure and in sync across all your business tools.
+            {t("hub.crmDescription")}
           </div>
           <div className="mb-4 p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
@@ -492,17 +492,17 @@ export default function AppSettingsIntegrationsPage() {
 
         {/* Other CRMs — webhook-based integration guidance */}
         <section>
-          <h2 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">Other CRMs (xLeads, Podio, etc.)</h2>
+          <h2 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">{t("hub.otherCrmsHeading")}</h2>
           <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5 space-y-3">
-            <p className="text-sm text-[var(--text-primary)] font-medium">Connect any CRM via webhooks</p>
+            <p className="text-sm text-[var(--text-primary)] font-medium">{t("hub.otherCrmsTitle")}</p>
             <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
-              For CRMs like xLeads, Podio, or any other platform, use the webhook configuration above to push lead and call data in real-time. Configure your webhook endpoint URL, select the events you want to send, and Recall Touch will POST JSON payloads whenever those events occur.
+              {t("hub.otherCrmsDesc")}
             </p>
             <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
-              You can also use <a href="https://zapier.com" target="_blank" rel="noopener noreferrer" className="text-[var(--text-secondary)] underline underline-offset-2 hover:text-[var(--text-primary)]">Zapier</a> as a bridge — connect Recall Touch webhooks to 5,000+ apps including xLeads and Podio without writing any code.
+              {t("hub.otherCrmsZapier")}
             </p>
             <p className="text-xs text-[var(--text-secondary)] mt-2">
-              Need help? Contact <a href="mailto:support@recall-touch.com" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline underline-offset-2">support@recall-touch.com</a>
+              {t("hub.needHelp")} <a href="mailto:support@recall-touch.com" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline underline-offset-2">{t("hub.contactSupport")}</a>
             </p>
           </div>
         </section>

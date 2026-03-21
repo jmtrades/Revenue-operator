@@ -1,12 +1,13 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { User, Building2, Users } from "lucide-react";
-import type { ActivationState } from "./types";
+import type { ActivationState, OrgTypeId } from "./types";
 
-const MODES: { id: NonNullable<ActivationState["orgType"]>; title: string; subtitle: string; Icon: typeof User }[] = [
-  { id: "solo", title: "Solo", subtitle: "Owner-operator", Icon: User },
-  { id: "business", title: "Service business", subtitle: "Single location team", Icon: Building2 },
-  { id: "agency", title: "Agency", subtitle: "Managing client workspaces", Icon: Users },
+const getModes = (t: ReturnType<typeof useTranslations>): { id: OrgTypeId; title: string; subtitle: string; Icon: typeof User }[] => [
+  { id: "solo", title: t("modeStep.solo"), subtitle: t("modeStep.soloDesc"), Icon: User },
+  { id: "business", title: t("modeStep.serviceBusiness"), subtitle: t("modeStep.serviceBusinessDesc"), Icon: Building2 },
+  { id: "agency", title: t("modeStep.agency"), subtitle: t("modeStep.agencyDesc"), Icon: Users },
 ];
 
 export function ModeStep({
@@ -20,11 +21,14 @@ export function ModeStep({
   goNext: () => void;
   canGoNext: boolean;
 }) {
+  const t = useTranslations("activate");
+  const MODES = getModes(t);
+
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg md:text-xl font-semibold text-slate-50">What best describes you?</h2>
-        <p className="mt-1 text-sm text-slate-400">Step 1 of 5 — we&apos;ll tailor your setup.</p>
+        <h2 className="text-lg md:text-xl font-semibold text-slate-50">{t("modeStep.heading")}</h2>
+        <p className="mt-1 text-sm text-slate-400">{t("modeStep.subtitle")}</p>
       </div>
       <div className="grid gap-3 sm:grid-cols-3">
         {MODES.map(({ id, title, subtitle, Icon }) => {
@@ -52,7 +56,7 @@ export function ModeStep({
           disabled={!canGoNext}
           className="rounded-xl bg-[var(--bg-surface)] px-5 py-2.5 text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-hover)] disabled:opacity-50"
         >
-          Continue
+          {t("continue")}
         </button>
       </div>
     </div>

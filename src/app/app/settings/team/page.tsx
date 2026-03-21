@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 interface TeamMember {
   name: string;
@@ -20,6 +21,7 @@ export default function AppSettingsTeamPage() {
   const [toast, setToast] = useState<string | null>(null);
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loadingMembers, setLoadingMembers] = useState(true);
+  const [removeConfirm, setRemoveConfirm] = useState<string | null>(null);
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -63,17 +65,20 @@ export default function AppSettingsTeamPage() {
         setToast(t("team.roleUpdatedToast"));
       } else {
         const data = await res.json().catch(() => ({}));
-        setToast((data as { error?: string }).error || "Failed to update role.");
+        setToast((data as { error?: string }).error || t("team.roleUpdateFailed"));
       }
     } catch {
-      setToast("Network error. Please try again.");
+      setToast(t("team.networkError"));
     }
     setTimeout(() => setToast(null), 3000);
   };
 
-  const handleRemoveMember = async (email: string) => {
+  const handleRemoveMember = (email: string) => {
+    setRemoveConfirm(email);
+  };
+
+  const confirmRemoveMember = async (email: string) => {
     if (!workspaceId) return;
-    if (!confirm(t("team.confirmRemove"))) return;
     try {
       const res = await fetch("/api/workspace/members/remove", {
         method: "POST",
@@ -86,10 +91,10 @@ export default function AppSettingsTeamPage() {
         setToast(t("team.memberRemovedToast"));
       } else {
         const data = await res.json().catch(() => ({}));
-        setToast((data as { error?: string }).error || "Failed to remove member.");
+        setToast((data as { error?: string }).error || t("team.removeFailed"));
       }
     } catch {
-      setToast("Network error. Please try again.");
+      setToast(t("team.networkError"));
     }
     setTimeout(() => setToast(null), 3000);
   };
@@ -108,10 +113,10 @@ export default function AppSettingsTeamPage() {
         setInviteEmail("");
       } else {
         const data = await res.json().catch(() => ({}));
-        setToast((data as { error?: string }).error || "Failed to send invite. Please try again.");
+        setToast((data as { error?: string }).error || t("team.inviteFailed"));
       }
     } catch {
-      setToast("Network error. Please try again.");
+      setToast(t("team.networkError"));
     }
     setTimeout(() => setToast(null), 3000);
   };
@@ -193,6 +198,21 @@ export default function AppSettingsTeamPage() {
           </div>
         </div>
       </div>
+
+      {removeConfirm && (
+        <ConfirmDialog
+          open
+          title={t("team.confirmRemoveTitle")}
+          message={t("team.confirmRemoveMessage", { email: removeConfirm })}
+          confirmLabel={t("team.confirmRemoveLabel")}
+          variant="danger"
+          onConfirm={async () => {
+            await confirmRemoveMember(removeConfirm);
+            setRemoveConfirm(null);
+          }}
+          onClose={() => setRemoveConfirm(null)}
+        />
+      )}
 
       {toast && (
         <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-[var(--text-primary)]">{toast}</div>
