@@ -20,25 +20,31 @@ export interface SequenceStep {
   id: string;
   sequence_id: string;
   step_order: number;
-  channel: "sms" | "email" | "call";
+  /** DB column is `type` — maps to channel kind */
+  type: "sms" | "email" | "call";
   delay_minutes: number;
-  template_content?: string;
-  conditions: Record<string, unknown>;
+  /** DB stores template content + conditions inside a JSONB `config` column */
+  config?: { template_content?: string; conditions?: Record<string, unknown>; [key: string]: unknown };
+  template_id?: string;
   created_at: string;
+  updated_at?: string;
 }
 
 export interface SequenceEnrollment {
   id: string;
   sequence_id: string;
-  contact_id: string;
+  /** DB column is `lead_id` */
+  lead_id: string;
   workspace_id: string;
+  run_id?: string;
   status: "active" | "completed" | "cancelled" | "paused";
   current_step: number;
   enrolled_at: string;
   completed_at?: string;
+  unenrolled_at?: string;
   next_step_due_at?: string;
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
 }
 
 export interface FollowUpSequence {
@@ -265,28 +271,28 @@ export async function enrollContact(
 
   if (!seq) return null;
 
-  // Safety: Check if contact already has too many active enrollments
+  // Safety: Check if lead already has too many active enrollments
   const { count: activeCount } = await db
     .from("sequence_enrollments")
     .select("id", { count: "exact", head: true })
-    .eq("contact_id", contactId)
+    .eq("lead_id", contactId)
     .eq("workspace_id", workspaceId)
     .eq("status", "active");
   if ((activeCount ?? 0) >= MAX_CONCURRENT_ENROLLMENTS_PER_CONTACT) {
-    console.warn(`[sequence-safety] Contact ${contactId} already has ${activeCount} active enrollments — skipping new enrollment`);
+    console.warn(`[sequence-safety] Lead ${contactId} already has ${activeCount} active enrollments — skipping new enrollment`);
     return null;
   }
 
-  // Safety: Check if contact is already enrolled in this specific sequence
+  // Safety: Check if lead is already enrolled in this specific sequence
   const { data: existing } = await db
     .from("sequence_enrollments")
     .select("id")
     .eq("sequence_id", sequenceId)
-    .eq("contact_id", contactId)
+    .eq("lead_id", contactId)
     .eq("status", "active")
     .maybeSingle();
   if (existing) {
-    console.warn(`[sequence-safety] Contact ${contactId} already enrolled in sequence ${sequenceId} — skipping duplicate`);
+    console.warn(`[sequence-safety] Lead ${contactId} already enrolled in sequence ${sequenceId} — skipping duplicate`);
     return null;
   }
 
@@ -312,7 +318,7 @@ export async function enrollContact(
     .from("sequence_enrollments")
     .insert({
       sequence_id: sequenceId,
-      contact_id: contactId,
+      lead_id: contactId,
       workspace_id: workspaceId,
       status: "active",
       current_step: 0, // Will increment to 1 on first execution
@@ -394,42 +400,42 @@ export async function advanceEnrollment(
   }
 
   let stepToExecute = nextStep;
-  if (nextStep.channel === "sms") {
+  if (nextStep.type === "sms") {
     const { data: lead } = await db
       .from("leads")
       .select("metadata")
       .eq("workspace_id", e.workspace_id)
-      .eq("id", e.contact_id)
+      .eq("id", e.lead_id)
       .maybeSingle();
     const metadata = ((lead as { metadata?: Record<string, unknown> | null } | null)?.metadata ?? {}) as Record<
       string,
       unknown
     >;
     if (metadata.sms_undeliverable === true) {
-      stepToExecute = { ...nextStep, channel: "call" };
+      stepToExecute = { ...nextStep, type: "call" };
     }
   }
 
   // Safety: Check per-lead 24h touch count before executing outbound action
-  if (stepToExecute.channel === "sms" || stepToExecute.channel === "call") {
+  if (stepToExecute.type === "sms" || stepToExecute.type === "call") {
     const twentyFourHoursAgo = new Date();
     twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
     const { count: recentTouches } = await db
       .from("call_sessions")
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", e.workspace_id)
-      .eq("lead_id", e.contact_id)
+      .eq("lead_id", e.lead_id)
       .gte("call_started_at", twentyFourHoursAgo.toISOString());
     // Also count recent outbound messages
     const { count: recentMessages } = await db
       .from("outbound_messages")
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", e.workspace_id)
-      .eq("lead_id", e.contact_id)
+      .eq("lead_id", e.lead_id)
       .gte("created_at", twentyFourHoursAgo.toISOString());
     const totalTouches = (recentTouches ?? 0) + (recentMessages ?? 0);
     if (totalTouches >= MAX_TOUCHES_PER_LEAD_24H) {
-      console.warn(`[sequence-safety] Lead ${e.contact_id} already has ${totalTouches} touches in 24h — skipping step, rescheduling`);
+      console.warn(`[sequence-safety] Lead ${e.lead_id} already has ${totalTouches} touches in 24h — skipping step, rescheduling`);
       // Reschedule this step for 6 hours later instead of executing now
       const laterDue = new Date();
       laterDue.setHours(laterDue.getHours() + 6);
@@ -443,11 +449,13 @@ export async function advanceEnrollment(
 
   // Execute the action: send SMS, email, or trigger outbound call
   try {
-    if (stepToExecute.channel === "sms") {
+    const templateContent = stepToExecute.config?.template_content as string | undefined;
+
+    if (stepToExecute.type === "sms") {
       const { data: leadRow } = await db
         .from("leads")
         .select("phone, name")
-        .eq("id", e.contact_id)
+        .eq("id", e.lead_id)
         .eq("workspace_id", e.workspace_id)
         .maybeSingle();
       const lead = leadRow as { phone?: string; name?: string } | null;
@@ -462,23 +470,23 @@ export async function advanceEnrollment(
         if (fromNumber) {
           const { getTelephonyService } = await import("@/lib/telephony");
           const svc = getTelephonyService();
-          const messageText = stepToExecute.template_content
-            ? stepToExecute.template_content
+          const messageText = templateContent
+            ? templateContent
                 .replace(/\{\{name\}\}/gi, lead.name ?? "there")
                 .replace(/\{\{phone\}\}/gi, lead.phone)
             : `Hi ${lead.name ?? "there"}, just following up. Let us know if you have any questions or would like to schedule a time to chat.`;
           await svc.sendSms({ from: fromNumber, to: lead.phone, text: messageText });
         }
       }
-    } else if (stepToExecute.channel === "call") {
+    } else if (stepToExecute.type === "call") {
       const { executeLeadOutboundCall } = await import("@/lib/outbound/execute-lead-call");
-      await executeLeadOutboundCall(e.workspace_id, e.contact_id, { campaignType: "lead_followup" });
-    } else if (stepToExecute.channel === "email") {
+      await executeLeadOutboundCall(e.workspace_id, e.lead_id, { campaignType: "lead_followup" });
+    } else if (stepToExecute.type === "email") {
       // Email delivery through workspace email config (if configured)
       const { data: leadRow } = await db
         .from("leads")
         .select("email, name")
-        .eq("id", e.contact_id)
+        .eq("id", e.lead_id)
         .eq("workspace_id", e.workspace_id)
         .maybeSingle();
       const lead = leadRow as { email?: string; name?: string } | null;
@@ -490,8 +498,8 @@ export async function advanceEnrollment(
           .maybeSingle();
         const businessName = (wsCtx as { business_name?: string } | null)?.business_name ?? "Our team";
         const subject = `Following up — ${businessName}`;
-        const body = stepToExecute.template_content
-          ? stepToExecute.template_content
+        const body = templateContent
+          ? templateContent
               .replace(/\{\{name\}\}/gi, lead.name ?? "there")
           : `Hi ${lead.name ?? "there"},\n\nJust wanted to follow up and see if you had any questions. We'd love to help.\n\nBest,\n${businessName}`;
 
@@ -513,7 +521,7 @@ export async function advanceEnrollment(
     log("error", "sequence_step_execution_error", {
       enrollment_id: enrollmentId,
       step_order: stepToExecute.step_order,
-      channel: stepToExecute.channel,
+      type: stepToExecute.type,
       error: execErr instanceof Error ? execErr.message : String(execErr),
     });
   }
@@ -641,7 +649,7 @@ export async function pauseOnLeadReply(
     .from("sequence_enrollments")
     .select("id")
     .eq("workspace_id", workspaceId)
-    .eq("contact_id", leadId)
+    .eq("lead_id", leadId)
     .eq("status", "active");
 
   const enrollments = (activeEnrollments ?? []) as Array<{ id: string }>;
@@ -677,7 +685,7 @@ export async function getContactEnrollments(
       .from("sequence_enrollments")
       .select("*")
       .eq("workspace_id", workspaceId)
-      .eq("contact_id", contactId)
+      .eq("lead_id", contactId)
       .order("enrolled_at", { ascending: false });
 
     if (error) return [];
@@ -849,22 +857,25 @@ export async function createSequence(
 export async function addSequenceStep(
   sequenceId: string,
   stepOrder: number,
-  channel: "sms" | "email" | "call",
+  type: "sms" | "email" | "call",
   delayMinutes: number = 0,
   templateContent?: string,
   conditions: Record<string, unknown> = {}
 ): Promise<SequenceStep | null> {
   const db = getDb();
 
+  const config: Record<string, unknown> = {};
+  if (templateContent) config.template_content = templateContent;
+  if (Object.keys(conditions).length > 0) config.conditions = conditions;
+
   const { data: step, error } = await db
     .from("sequence_steps")
     .insert({
       sequence_id: sequenceId,
       step_order: stepOrder,
-      channel,
+      type,
       delay_minutes: delayMinutes,
-      template_content: templateContent,
-      conditions,
+      config: Object.keys(config).length > 0 ? config : null,
     })
     .select("*")
     .maybeSingle();

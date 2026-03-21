@@ -59,7 +59,8 @@ export async function POST(
   if (err) return err;
 
   let body: {
-    channel: "sms" | "email" | "call";
+    type?: "sms" | "email" | "call";
+    channel?: "sms" | "email" | "call"; // legacy alias
     delay_minutes?: number;
     template_content?: string;
     conditions?: Record<string, unknown>;
@@ -70,11 +71,13 @@ export async function POST(
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { channel, delay_minutes = 0, template_content, conditions } = body;
+  // Accept either `type` (DB column name) or `channel` (legacy API compat)
+  const channel = body.type || body.channel;
+  const { delay_minutes = 0, template_content, conditions } = body;
 
-  if (!["sms", "email", "call"].includes(channel)) {
+  if (!channel || !["sms", "email", "call"].includes(channel)) {
     return NextResponse.json(
-      { error: "Invalid channel (must be sms, email, or call)" },
+      { error: "Invalid type/channel (must be sms, email, or call)" },
       { status: 400 }
     );
   }

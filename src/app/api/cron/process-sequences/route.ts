@@ -55,11 +55,12 @@ export async function GET(request: NextRequest) {
           );
         }
       } catch (error) {
+        const msg = error instanceof Error ? error.message : String(error);
         console.error(
-          `[Cron] Error processing workspace ${workspaceId}:`,
-          error
+          `[Cron] Error processing workspace ${workspaceId}: ${msg}`
         );
         results[workspaceId] = -1; // Indicate error
+        // Continue to next workspace — don't let one failure block others
       }
     }
 

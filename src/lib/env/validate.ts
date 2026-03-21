@@ -6,11 +6,15 @@
 
 const REQUIRED_VARS = {
   SUPABASE: ["NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"],
-  STRIPE: ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"],
-  STRIPE_PRICES: ["STRIPE_PRICE_SOLO_MONTH", "STRIPE_PRICE_BUSINESS_MONTH", "STRIPE_PRICE_SCALE_MONTH"],
   CRON: ["CRON_SECRET"],
   SESSION: ["SESSION_SECRET"],
-  TWILIO: ["TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN"],
+} as const;
+
+/** These vars are important but should only warn, never block startup */
+const OPTIONAL_VARS = {
+  STRIPE: ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"],
+  STRIPE_PRICES: ["STRIPE_PRICE_SOLO_MONTH", "STRIPE_PRICE_BUSINESS_MONTH", "STRIPE_PRICE_SCALE_MONTH"],
+  TWILIO_LEGACY: ["TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN"],
 } as const;
 
 /** Conditional checks — only warn when the related provider is active */
@@ -24,7 +28,13 @@ const CONDITIONAL_VARS: Record<string, { condition: () => boolean; vars: string[
 /** Required only when NODE_ENV === "production" */
 const PRODUCTION_ONLY_VARS = ["DOCTRINE_ENFORCED", "CRON_SECRET", "SESSION_SECRET"] as const;
 
+let _validated = false;
+
 export function validateEnv() {
+  // Only log once per serverless instance to avoid noisy production logs
+  if (_validated) return;
+  _validated = true;
+
   const missing: string[] = [];
   const warnings: string[] = [];
 
@@ -32,6 +42,15 @@ export function validateEnv() {
     for (const varName of vars) {
       if (!process.env[varName]) {
         missing.push(`${category}: ${varName}`);
+      }
+    }
+  }
+
+  // Optional vars — warn only, never block
+  for (const [category, vars] of Object.entries(OPTIONAL_VARS)) {
+    for (const varName of vars) {
+      if (!process.env[varName]) {
+        warnings.push(`${category}: ${varName}`);
       }
     }
   }
@@ -57,8 +76,8 @@ export function validateEnv() {
     }
   }
 
-  // Log warnings for conditional vars (never crash)
-  if (warnings.length > 0) {
+  // Log warnings for optional/conditional vars (never crash)
+  if (warnings.length > 0 && process.env.NODE_ENV !== "production") {
     console.warn(`[env] Missing optional environment variables (features may be degraded):\n${warnings.map((v) => `  - ${v}`).join("\n")}`);
   }
 
