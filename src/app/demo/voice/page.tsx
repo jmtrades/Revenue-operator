@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { Volume2, Phone, CheckCircle } from "lucide-react";
+import { Volume2, Phone, Check } from "lucide-react";
 
 const SCENARIOS = [
   "New Customer Inquiry",
@@ -71,7 +71,6 @@ export default function VoiceDemoPage() {
     try {
       const greeting = SCENARIO_GREETINGS[selectedScenario];
 
-      // Fetch audio from the voice preview endpoint
       const response = await fetch(
         `/api/demo/voice-preview?voice_id=${greeting.voiceId}&text=${encodeURIComponent(greeting.greeting)}&scenario=${selectedScenario}`
       );
@@ -84,7 +83,6 @@ export default function VoiceDemoPage() {
           audioRef.current.src = audioUrl;
           audioRef.current.play().catch(err => console.error("Playback error:", err));
 
-          // Add AI greeting to transcript with typing animation
           await new Promise(resolve => {
             setTimeout(() => {
               setTranscript(prev => [...prev, { speaker: "ai", text: greeting.greeting }]);
@@ -201,27 +199,42 @@ export default function VoiceDemoPage() {
 
       {/* Hero Section */}
       <section className="py-16 md:py-24 px-4 text-center max-w-4xl mx-auto">
-        <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-4 py-1.5 text-xs font-medium text-emerald-400 mb-6">
+        <div
+          className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium mb-6"
+          style={{
+            background: "var(--accent-primary-subtle)",
+            color: "var(--accent-primary)",
+            border: "1px solid rgba(37, 99, 235, 0.1)",
+          }}
+        >
           <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: "var(--accent-primary)" }} />
+            <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: "var(--accent-primary)" }} />
           </span>
           Live AI Voice Demo — No Signup Required
         </div>
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-tight" style={{ letterSpacing: "-0.03em" }}>
+        <h1
+          className="text-4xl md:text-5xl lg:text-6xl font-semibold mb-4"
+          style={{ letterSpacing: "-0.035em", lineHeight: 1.08, color: "var(--text-primary)" }}
+        >
           AI So Human, Your Callers<br />Won&apos;t Know the Difference
         </h1>
         <p className="text-lg md:text-xl mb-6 max-w-2xl mx-auto" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
           Hear how AI handles every common call scenario. No robotic voices. No awkward pauses. Just natural, revenue-generating conversations — 24/7.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-4 mb-8 text-sm" style={{ color: "var(--text-tertiary)" }}>
-          <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-400" /> 12,400+ businesses live</span>
-          <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-400" /> 8.7M+ calls handled</span>
-          <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-400" /> 99.97% uptime SLA</span>
+          {["12,400+ businesses live", "8.7M+ calls handled", "99.97% uptime SLA"].map((text) => (
+            <span key={text} className="flex items-center gap-1.5">
+              <svg className="w-4 h-4" style={{ color: "var(--accent-secondary)" }} viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd"/>
+              </svg>
+              {text}
+            </span>
+          ))}
         </div>
         <button
           onClick={() => document.getElementById("demo-section")?.scrollIntoView({ behavior: "smooth" })}
-          className="inline-flex items-center gap-2 px-8 py-4 bg-white text-black font-semibold rounded-xl hover:bg-gray-100 transition-all text-lg hover:scale-[1.02] active:scale-[0.98]"
+          className="btn-marketing-primary btn-lg inline-flex items-center gap-2"
         >
           <Phone className="w-5 h-5" />
           Try It Live — Free
@@ -229,9 +242,13 @@ export default function VoiceDemoPage() {
       </section>
 
       {/* Interactive Demo Section */}
-      <section id="demo-section" className="py-16 px-4 bg-[var(--bg-card)] border-t border-[var(--border)]">
+      <section
+        id="demo-section"
+        className="py-16 px-4"
+        style={{ background: "var(--bg-surface)", borderTop: "1px solid var(--border-default)" }}
+      >
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold mb-8 text-center">Choose a Scenario</h2>
+          <h2 className="text-3xl font-semibold mb-8 text-center" style={{ letterSpacing: "-0.025em" }}>Choose a Scenario</h2>
 
           {/* Scenario Selector */}
           <div className="flex flex-wrap gap-3 justify-center mb-12">
@@ -243,11 +260,13 @@ export default function VoiceDemoPage() {
                   setTranscript([]);
                   setConversationStep(0);
                 }}
-                className={`px-5 py-3 rounded-lg font-medium transition-all ${
-                  selectedScenario === scenario
-                    ? "bg-white text-black shadow-lg"
-                    : "bg-[var(--bg-primary)] text-[var(--text-primary)] border border-[var(--border)] hover:border-white"
-                }`}
+                className="px-5 py-3 rounded-lg font-medium transition-all text-sm"
+                style={{
+                  background: selectedScenario === scenario ? "var(--accent-primary)" : "var(--bg-primary)",
+                  color: selectedScenario === scenario ? "#fff" : "var(--text-primary)",
+                  border: selectedScenario === scenario ? "1px solid var(--accent-primary)" : "1px solid var(--border-default)",
+                  boxShadow: selectedScenario === scenario ? "var(--shadow-sm)" : undefined,
+                }}
               >
                 {scenario}
               </button>
@@ -256,9 +275,12 @@ export default function VoiceDemoPage() {
 
           {/* Mock Phone UI */}
           <div className="max-w-md mx-auto mb-8">
-            <div className="rounded-3xl border-8 border-gray-800 bg-black shadow-2xl overflow-hidden">
+            <div
+              className="rounded-3xl overflow-hidden"
+              style={{ border: "8px solid #1F2937", boxShadow: "var(--shadow-xl)" }}
+            >
               {/* Phone Header */}
-              <div className="bg-gray-900 px-6 py-3 flex justify-between items-center text-white text-sm">
+              <div className="px-6 py-3 flex justify-between items-center text-sm" style={{ background: "#111827", color: "#fff" }}>
                 <span>9:41</span>
                 <div className="flex gap-1">
                   <div className="w-1 h-1 bg-white rounded-full" />
@@ -268,7 +290,7 @@ export default function VoiceDemoPage() {
               </div>
 
               {/* Call Interface */}
-              <div className="bg-gradient-to-b from-zinc-800 to-zinc-900 px-6 py-12 text-white text-center">
+              <div className="px-6 py-12 text-center" style={{ background: "linear-gradient(to bottom, #1F2937, #111827)", color: "#fff" }}>
                 <div className="mb-4">
                   <Phone className="w-12 h-12 mx-auto mb-3 opacity-80" />
                 </div>
@@ -278,18 +300,18 @@ export default function VoiceDemoPage() {
               </div>
 
               {/* Transcript Area */}
-              <div className="bg-black px-4 py-4 min-h-64 max-h-64 overflow-y-auto space-y-3">
+              <div className="px-4 py-4 min-h-64 max-h-64 overflow-y-auto space-y-3" style={{ background: "#0A0A0B" }}>
                 {transcript.length === 0 && conversationStep === 0 && (
-                  <p className="text-gray-500 text-sm italic text-center mt-20">Tap &quot;Start Call&quot; to begin...</p>
+                  <p className="text-sm italic text-center mt-20" style={{ color: "#6B7280" }}>Tap &quot;Start Call&quot; to begin...</p>
                 )}
                 {transcript.map((msg, idx) => (
                   <div key={idx} className={`flex ${msg.speaker === "ai" ? "justify-start" : "justify-end"}`}>
                     <div
-                      className={`px-4 py-2 rounded-lg max-w-xs text-sm ${
-                        msg.speaker === "ai"
-                          ? "bg-zinc-800 text-white"
-                          : "bg-gray-700 text-white"
-                      }`}
+                      className="px-4 py-2 rounded-lg max-w-xs text-sm"
+                      style={{
+                        background: msg.speaker === "ai" ? "#1F2937" : "#374151",
+                        color: "#fff",
+                      }}
                     >
                       {msg.text}
                     </div>
@@ -299,13 +321,17 @@ export default function VoiceDemoPage() {
               </div>
 
               {/* Call Controls */}
-              <div className="bg-gray-900 px-4 py-4 flex justify-center gap-4">
+              <div className="px-4 py-4 flex justify-center gap-4" style={{ background: "#111827" }}>
                 <button
                   onClick={startCall}
                   disabled={isLoading}
-                  className="rounded-full bg-green-500 hover:bg-green-600 disabled:bg-gray-600 p-4 transition-colors"
+                  className="rounded-full p-4 transition-colors"
+                  style={{
+                    background: isLoading ? "#4B5563" : "var(--accent-secondary)",
+                    color: "#fff",
+                  }}
                 >
-                  <Phone className="w-6 h-6 text-white" />
+                  <Phone className="w-6 h-6" />
                 </button>
               </div>
             </div>
@@ -314,14 +340,19 @@ export default function VoiceDemoPage() {
           {/* Follow-up Prompts */}
           {conversationStep > 0 && conversationStep < 3 && (
             <div className="max-w-md mx-auto mb-8">
-              <p className="text-sm text-gray-400 mb-3 text-center">Try saying:</p>
+              <p className="text-sm mb-3 text-center" style={{ color: "var(--text-tertiary)" }}>Try saying:</p>
               <div className="space-y-2">
                 {FOLLOW_UP_PROMPTS.slice(0, 3 - (conversationStep - 1)).map((prompt, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleFollowUp(prompt)}
                     disabled={isLoading}
-                    className="w-full px-4 py-3 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg hover:border-white hover:bg-[var(--bg-primary)] transition-all disabled:opacity-50 text-sm text-left"
+                    className="w-full px-4 py-3 rounded-lg transition-all disabled:opacity-50 text-sm text-left"
+                    style={{
+                      background: "var(--bg-primary)",
+                      border: "1px solid var(--border-default)",
+                      color: "var(--text-primary)",
+                    }}
                   >
                     &quot;{prompt}&quot;
                   </button>
@@ -332,13 +363,20 @@ export default function VoiceDemoPage() {
 
           {/* Conversion CTA */}
           {conversationStep >= 3 && (
-            <div className="max-w-md mx-auto bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg p-6 text-white text-center">
-              <CheckCircle className="w-8 h-8 mx-auto mb-3" />
+            <div
+              className="max-w-md mx-auto rounded-xl p-6 text-center"
+              style={{
+                background: "var(--accent-primary)",
+                color: "#fff",
+              }}
+            >
+              <Check className="w-8 h-8 mx-auto mb-3" />
               <h3 className="text-lg font-semibold mb-2">Want this for your business?</h3>
               <p className="text-sm mb-4 opacity-90">Start capturing calls and converting them into revenue.</p>
               <button
                 onClick={() => document.getElementById("pricing-section")?.scrollIntoView({ behavior: "smooth" })}
-                className="w-full bg-white text-black font-semibold py-2 rounded hover:bg-zinc-100 transition-colors"
+                className="w-full font-semibold py-2.5 rounded-lg transition-colors text-sm"
+                style={{ background: "#fff", color: "var(--accent-primary)" }}
               >
                 See Pricing
               </button>
@@ -350,16 +388,19 @@ export default function VoiceDemoPage() {
       {/* Voice Comparison Section */}
       <section className="py-16 px-4">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold mb-12 text-center">The Quality Difference</h2>
+          <h2 className="text-3xl font-semibold mb-12 text-center" style={{ letterSpacing: "-0.025em" }}>The Quality Difference</h2>
 
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
+          <div className="grid md:grid-cols-2 gap-6 mb-12">
             {/* Robot Voice */}
-            <div className="bg-[var(--bg-card)] rounded-lg p-6 border border-[var(--border)]">
-              <h3 className="font-semibold mb-4 flex items-center gap-2">
+            <div
+              className="rounded-xl p-6"
+              style={{ background: "var(--bg-surface)", border: "1px solid var(--border-default)" }}
+            >
+              <h3 className="font-semibold mb-4 flex items-center gap-2" style={{ color: "var(--text-primary)" }}>
                 <Volume2 className="w-5 h-5" />
                 Typical AI Voice System
               </h3>
-              <div className="bg-black rounded-lg p-4 mb-4">
+              <div className="rounded-lg p-4 mb-4" style={{ background: "var(--bg-inset)", border: "1px solid var(--border-default)" }}>
                 <audio
                   ref={robotAudioRef}
                   controls
@@ -369,16 +410,22 @@ export default function VoiceDemoPage() {
                   <source src="/samples/robot.mp3" type="audio/mpeg" />
                 </audio>
               </div>
-              <p className="text-sm text-gray-400">&quot;Thank. You. For. Calling. Please. State. Your. Name.&quot;</p>
+              <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>&quot;Thank. You. For. Calling. Please. State. Your. Name.&quot;</p>
             </div>
 
             {/* Recall Touch Voice */}
-            <div className="bg-gradient-to-br from-green-600 to-emerald-600 rounded-lg p-6 text-white">
+            <div
+              className="rounded-xl p-6"
+              style={{
+                background: "var(--accent-primary)",
+                color: "#fff",
+              }}
+            >
               <h3 className="font-semibold mb-4 flex items-center gap-2">
                 <Volume2 className="w-5 h-5" />
                 Recall Touch AI
               </h3>
-              <div className="bg-black/30 rounded-lg p-4 mb-4">
+              <div className="rounded-lg p-4 mb-4" style={{ background: "rgba(0,0,0,0.15)" }}>
                 <audio
                   ref={humanAudioRef}
                   controls
@@ -392,127 +439,136 @@ export default function VoiceDemoPage() {
             </div>
           </div>
 
-          <div className="bg-zinc-900/60 border border-zinc-800 rounded-lg p-6 text-center">
-            <p className="text-lg font-semibold mb-2">Callers hang up when they hear a robot.</p>
-            <p className="text-xl font-bold text-green-400">Recall Touch sounds human. They stay on the line.</p>
+          <div
+            className="rounded-xl p-6 text-center"
+            style={{ background: "var(--bg-surface)", border: "1px solid var(--border-default)" }}
+          >
+            <p className="text-lg font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Callers hang up when they hear a robot.</p>
+            <p className="text-xl font-semibold" style={{ color: "var(--accent-primary)" }}>Recall Touch sounds human. They stay on the line.</p>
           </div>
         </div>
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing-section" className="py-16 px-4 bg-[var(--bg-card)] border-t border-[var(--border)]">
+      <section
+        id="pricing-section"
+        className="py-16 px-4"
+        style={{ background: "var(--bg-surface)", borderTop: "1px solid var(--border-default)" }}
+      >
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold mb-4 text-center">Simple, Transparent Pricing</h2>
-          <p className="text-center text-gray-400 mb-12 max-w-2xl mx-auto">
+          <h2 className="text-3xl font-semibold mb-4 text-center" style={{ letterSpacing: "-0.025em" }}>Simple, Transparent Pricing</h2>
+          <p className="text-center mb-12 max-w-2xl mx-auto" style={{ color: "var(--text-secondary)" }}>
             No hidden fees. Cancel anytime. 14-day free trial on every plan.
           </p>
 
-          <div className="grid md:grid-cols-4 gap-6 mb-12">
-            {/* Starter */}
-            <div className="bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-2xl font-bold mb-2">Starter</h3>
-              <p className="text-3xl font-bold mb-6">$97<span className="text-sm text-gray-400">/mo</span></p>
-              <ul className="space-y-3 mb-6 text-sm">
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> 1 AI agent</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> 500 voice minutes/month</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Appointment booking</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> SMS follow-up</li>
-              </ul>
-              <Link href="/activate" className="w-full block text-center bg-white text-black font-semibold py-2 rounded hover:bg-gray-100 transition-colors">
-                Try Free for 14 Days
-              </Link>
-            </div>
-
-            {/* Growth (Featured) */}
-            <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-lg p-6 transform md:scale-105">
-              <div className="mb-4 inline-block bg-yellow-400 text-black px-3 py-1 rounded-full text-xs font-semibold">
-                MOST POPULAR
+          <div className="grid md:grid-cols-4 gap-5 mb-12">
+            {[
+              {
+                name: "Starter", price: "$97", features: ["1 AI agent", "500 voice minutes/month", "Appointment booking", "SMS follow-up"], popular: false,
+              },
+              {
+                name: "Growth", price: "$297", features: ["5 AI agents", "2,500 voice minutes/month", "No-show recovery", "Revenue analytics", "Priority support"], popular: true,
+              },
+              {
+                name: "Business", price: "$597", features: ["15 AI agents", "6,000 voice minutes/month", "Outbound campaigns", "Advanced analytics + API", "Phone support"], popular: false,
+              },
+              {
+                name: "Agency", price: "$997", features: ["Unlimited AI agents", "15,000 voice minutes/month", "White-label branding", "Multi-client dashboard", "Dedicated account manager"], popular: false,
+              },
+            ].map((tier) => (
+              <div
+                key={tier.name}
+                className="rounded-xl p-6 flex flex-col"
+                style={{
+                  background: "var(--bg-primary)",
+                  border: tier.popular ? "2px solid var(--accent-primary)" : "1px solid var(--border-default)",
+                  boxShadow: tier.popular ? "var(--shadow-glow-primary)" : undefined,
+                }}
+              >
+                {tier.popular && (
+                  <div
+                    className="mb-4 inline-block self-start text-xs font-semibold px-3 py-1 rounded-full"
+                    style={{ background: "var(--accent-primary)", color: "#fff" }}
+                  >
+                    MOST POPULAR
+                  </div>
+                )}
+                <h3 className="text-2xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>{tier.name}</h3>
+                <p className="text-3xl font-semibold mb-6" style={{ color: "var(--text-primary)" }}>
+                  {tier.price}<span className="text-sm font-normal" style={{ color: "var(--text-tertiary)" }}>/mo</span>
+                </p>
+                <ul className="space-y-3 mb-6 text-sm flex-1">
+                  {tier.features.map((feat) => (
+                    <li key={feat} className="flex items-center gap-2" style={{ color: "var(--text-secondary)" }}>
+                      <Check className="w-4 h-4 shrink-0" style={{ color: "var(--accent-secondary)" }} />
+                      {feat}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  href="/activate"
+                  className={`${tier.popular ? "btn-marketing-primary" : "btn-marketing-ghost"} w-full block text-center py-2.5 rounded-lg no-underline text-sm`}
+                >
+                  Try Free for 14 Days
+                </Link>
               </div>
-              <h3 className="text-2xl font-bold mb-2 text-white">Growth</h3>
-              <p className="text-3xl font-bold mb-6 text-white">$297<span className="text-sm text-emerald-200">/mo</span></p>
-              <ul className="space-y-3 mb-6 text-sm text-white">
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-yellow-300" /> 5 AI agents</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-yellow-300" /> 2,500 voice minutes/month</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-yellow-300" /> No-show recovery</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-yellow-300" /> Revenue analytics</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-yellow-300" /> Priority support</li>
-              </ul>
-              <Link href="/activate" className="w-full block text-center bg-white text-emerald-600 font-semibold py-2 rounded hover:bg-gray-100 transition-colors no-underline">
-                Try Free for 14 Days
-              </Link>
-            </div>
-
-            {/* Business */}
-            <div className="bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-2xl font-bold mb-2">Business</h3>
-              <p className="text-3xl font-bold mb-6">$597<span className="text-sm text-gray-400">/mo</span></p>
-              <ul className="space-y-3 mb-6 text-sm">
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> 15 AI agents</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> 6,000 voice minutes/month</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Outbound campaigns</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Advanced analytics + API</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Phone support</li>
-              </ul>
-              <Link href="/activate" className="w-full block text-center bg-white text-black font-semibold py-2 rounded hover:bg-gray-100 transition-colors">
-                Try Free for 14 Days
-              </Link>
-            </div>
-
-            {/* Agency */}
-            <div className="bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg p-6">
-              <h3 className="text-2xl font-bold mb-2">Agency</h3>
-              <p className="text-3xl font-bold mb-6">$997<span className="text-sm text-gray-400">/mo</span></p>
-              <ul className="space-y-3 mb-6 text-sm">
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Unlimited AI agents</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> 15,000 voice minutes/month</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> White-label branding</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Multi-client dashboard</li>
-                <li className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Dedicated account manager</li>
-              </ul>
-              <Link href="/activate" className="w-full block text-center bg-white text-black font-semibold py-2 rounded hover:bg-gray-100 transition-colors">
-                Try Free for 14 Days
-              </Link>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Platform Stats Section */}
+      {/* Platform Stats */}
       <section className="py-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">The Industry&apos;s Leading AI Phone Platform</h2>
-          <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
+          <h2 className="text-3xl font-semibold mb-4" style={{ letterSpacing: "-0.025em" }}>The Industry&apos;s Leading AI Phone Platform</h2>
+          <p className="mb-8 max-w-2xl mx-auto" style={{ color: "var(--text-secondary)" }}>
             Trusted by 12,400+ businesses across 200+ industries in 47 states and 12 countries.
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-4">
-              <p className="text-2xl font-bold text-emerald-400">&lt;0.8s</p>
-              <p className="text-sm text-gray-400">Answer Time</p>
-            </div>
-            <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-4">
-              <p className="text-2xl font-bold text-emerald-400">24/7</p>
-              <p className="text-sm text-gray-400">Always On</p>
-            </div>
-            <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-4">
-              <p className="text-2xl font-bold text-emerald-400">99.97%</p>
-              <p className="text-sm text-gray-400">Uptime SLA</p>
-            </div>
-            <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-lg p-4">
-              <p className="text-2xl font-bold text-emerald-400">41</p>
-              <p className="text-sm text-gray-400">AI Voices</p>
-            </div>
+            {[
+              { stat: "<0.8s", label: "Answer Time" },
+              { stat: "24/7", label: "Always On" },
+              { stat: "99.97%", label: "Uptime SLA" },
+              { stat: "41", label: "AI Voices" },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="rounded-xl p-4"
+                style={{ background: "var(--bg-surface)", border: "1px solid var(--border-default)" }}
+              >
+                <p className="text-2xl font-semibold" style={{ color: "var(--accent-primary)" }}>{item.stat}</p>
+                <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>{item.label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Final CTA Section */}
-      <section className="py-20 px-4 text-center bg-gradient-to-r from-zinc-800 to-zinc-900 text-white">
+      {/* Final CTA */}
+      <section
+        className="py-20 px-4 text-center"
+        style={{ background: "var(--bg-surface)", borderTop: "1px solid var(--border-default)" }}
+      >
         <div className="max-w-2xl mx-auto">
-          <h2 className="text-4xl font-bold mb-6">Stop Losing Calls. Start Converting Them.</h2>
-          <p className="text-lg mb-8 opacity-90">Start your 14-day free trial. No credit card required.</p>
+          <h2
+            className="text-3xl md:text-4xl font-semibold mb-6"
+            style={{ letterSpacing: "-0.025em", color: "var(--text-primary)" }}
+          >
+            Stop Losing Calls. Start Converting Them.
+          </h2>
+          <p className="text-lg mb-8" style={{ color: "var(--text-secondary)" }}>
+            Start your 14-day free trial. No credit card required.
+          </p>
 
           {signupSuccess && (
-            <div className="bg-green-500/20 border border-green-500 rounded-lg p-4 mb-6 text-green-300">
+            <div
+              className="rounded-lg p-4 mb-6 text-sm"
+              style={{
+                background: "var(--accent-secondary-subtle)",
+                border: "1px solid var(--accent-secondary)",
+                color: "var(--accent-secondary)",
+              }}
+            >
               Check your email for next steps!
             </div>
           )}
@@ -524,25 +580,32 @@ export default function VoiceDemoPage() {
               value={signupEmail}
               onChange={(e) => setSignupEmail(e.target.value)}
               required
-              className="flex-1 px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:border-white"
+              className="flex-1 px-4 py-3 rounded-lg text-sm focus:outline-none transition-colors"
+              style={{
+                background: "var(--bg-primary)",
+                border: "1px solid var(--border-default)",
+                color: "var(--text-primary)",
+              }}
             />
             <button
               type="submit"
               disabled={signupLoading}
-              className="px-6 py-3 bg-white text-black font-semibold rounded-lg hover:bg-zinc-100 transition-colors disabled:opacity-50"
+              className="btn-marketing-primary px-6 py-3 disabled:opacity-50"
             >
               {signupLoading ? "..." : "Get Started Free"}
             </button>
           </form>
 
-          <p className="text-sm opacity-80 mb-6">No credit card required. 14-day free trial.</p>
+          <p className="text-sm mb-6" style={{ color: "var(--text-tertiary)" }}>
+            No credit card required. 14-day free trial.
+          </p>
 
-          <div className="flex flex-wrap justify-center gap-4 text-sm">
-            <Link href="/book-demo" className="hover:underline opacity-80 hover:opacity-100">Book a demo</Link>
-            <span className="opacity-30">•</span>
-            <Link href="#pricing-section" className="hover:underline opacity-80 hover:opacity-100">See pricing</Link>
-            <span className="opacity-30">•</span>
-            <Link href="/contact" className="hover:underline opacity-80 hover:opacity-100">Talk to sales</Link>
+          <div className="flex flex-wrap justify-center gap-4 text-sm" style={{ color: "var(--text-secondary)" }}>
+            <Link href="/book-demo" className="no-underline transition-colors" style={{ color: "var(--text-secondary)" }}>Book a demo</Link>
+            <span style={{ color: "var(--border-default)" }}>|</span>
+            <Link href="#pricing-section" className="no-underline transition-colors" style={{ color: "var(--text-secondary)" }}>See pricing</Link>
+            <span style={{ color: "var(--border-default)" }}>|</span>
+            <Link href="/contact" className="no-underline transition-colors" style={{ color: "var(--text-secondary)" }}>Talk to sales</Link>
           </div>
         </div>
       </section>

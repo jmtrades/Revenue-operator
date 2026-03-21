@@ -41,6 +41,9 @@ const FinalCTA = dynamic(
 const Footer = dynamic(
   () => import("@/components/sections/Footer").then((m) => m.Footer),
 );
+const StickyMobileCTA = dynamic(
+  () => import("@/components/sections/StickyMobileCTA").then((m) => m.StickyMobileCTA),
+);
 
 export default async function HomePage() {
   let initialAuthenticated = false;
@@ -131,6 +134,7 @@ export default async function HomePage() {
         <FinalCTA />
       </main>
       <Footer />
+      <StickyMobileCTA />
     </div>
   );
 }

@@ -18,7 +18,10 @@ export function DemoPageContent() {
   return (
     <>
       <div className="max-w-4xl mx-auto px-4 text-center mb-8">
-        <h1 className="font-bold text-3xl md:text-4xl mb-2" style={{ letterSpacing: "-0.02em" }}>
+        <h1
+          className="font-semibold text-3xl md:text-4xl mb-2"
+          style={{ letterSpacing: "-0.025em", color: "var(--text-primary)" }}
+        >
           {t("title")}
         </h1>
         <p className="text-base" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
@@ -27,15 +30,24 @@ export function DemoPageContent() {
       </div>
 
       <div className="max-w-5xl mx-auto px-4 grid md:grid-cols-[1fr_1.2fr] gap-6 md:gap-8 items-start">
-        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 flex flex-col items-center gap-4">
-          <div className="w-32 h-56 rounded-3xl border-2 border-[var(--border-medium)] bg-[var(--bg-card)] flex flex-col items-center justify-center gap-3 p-4 shadow-xl">
-            <div className="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center text-xl" aria-hidden>
-              <Mic className="h-5 w-5 text-zinc-300" />
+        <div
+          className="rounded-xl p-6 flex flex-col items-center gap-4"
+          style={{ border: "1px solid var(--border-default)", background: "var(--bg-surface)" }}
+        >
+          <div
+            className="w-32 h-56 rounded-3xl flex flex-col items-center justify-center gap-3 p-4"
+            style={{ border: "2px solid var(--border-default)", background: "var(--bg-primary)", boxShadow: "var(--shadow-lg)" }}
+          >
+            <div
+              className="w-12 h-12 rounded-full flex items-center justify-center"
+              style={{ background: "var(--bg-inset)", color: "var(--text-tertiary)" }}
+            >
+              <Mic className="h-5 w-5" />
             </div>
-            <p className="text-[10px] text-zinc-500 text-center">{t("tapMic")}</p>
+            <p className="text-[10px] text-center" style={{ color: "var(--text-tertiary)" }}>{t("tapMic")}</p>
           </div>
           <DemoVoiceButton />
-          <p className="text-xs text-zinc-500 text-center">{t("orTryScenario")}</p>
+          <p className="text-xs text-center" style={{ color: "var(--text-tertiary)" }}>{t("orTryScenario")}</p>
           <div className="flex flex-wrap justify-center gap-2 w-full">
             {SCENARIO_KEYS.map((key) => {
               const label = t(key);
@@ -45,7 +57,12 @@ export function DemoPageContent() {
                   type="button"
                   onClick={() => chatRef.current?.send(label)}
                   aria-label={`Try scenario: ${label}`}
-                  className="rounded-full border border-[var(--border-medium)] bg-zinc-800/80 px-3 py-1.5 text-xs text-zinc-300 hover:border-zinc-600 hover:text-white transition-colors"
+                  className="rounded-full px-3 py-1.5 text-xs transition-colors"
+                  style={{
+                    border: "1px solid var(--border-default)",
+                    background: "var(--bg-primary)",
+                    color: "var(--text-secondary)",
+                  }}
                 >
                   {label}
                 </button>
@@ -54,9 +71,15 @@ export function DemoPageContent() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden flex flex-col">
-          <div className="px-4 py-2 border-b border-[var(--border-default)] flex items-center justify-between">
-            <span className="text-xs font-medium text-zinc-500">{t("liveTranscript")}</span>
+        <div
+          className="rounded-xl overflow-hidden flex flex-col"
+          style={{ border: "1px solid var(--border-default)", background: "var(--bg-surface)" }}
+        >
+          <div
+            className="px-4 py-2 flex items-center justify-between"
+            style={{ borderBottom: "1px solid var(--border-default)" }}
+          >
+            <span className="text-xs font-medium" style={{ color: "var(--text-tertiary)" }}>{t("liveTranscript")}</span>
           </div>
           <LiveAgentChat
             ref={chatRef}
@@ -70,22 +93,25 @@ export function DemoPageContent() {
       </div>
 
       <div className="max-w-5xl mx-auto px-4 mt-8">
-        <p className="text-xs font-semibold uppercase text-zinc-500 mb-2">{t("voiceStyle")}</p>
-        <p className="text-sm text-zinc-400 mb-4">{t("voiceStyleHelp")}</p>
+        <p className="text-xs font-semibold uppercase" style={{ color: "var(--text-tertiary)" }}>{t("voiceStyle")}</p>
+        <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>{t("voiceStyleHelp")}</p>
       </div>
 
       {messageCount >= 3 && (
-        <div className="max-w-5xl mx-auto px-4 mt-8 rounded-2xl border border-[var(--border-medium)] bg-[var(--bg-card)]/80 p-6">
-          <h3 className="font-semibold text-white mb-3">{t("whatJustHappened")}</h3>
-          <p className="text-sm text-zinc-400 mb-2">{t("whatJustHappenedDesc")}</p>
-          <ul className="text-sm text-zinc-300 space-y-1 list-disc list-inside mb-4">
+        <div
+          className="max-w-5xl mx-auto px-4 mt-8 rounded-xl p-6"
+          style={{ border: "1px solid var(--border-default)", background: "var(--bg-surface)" }}
+        >
+          <h3 className="font-semibold mb-3" style={{ color: "var(--text-primary)" }}>{t("whatJustHappened")}</h3>
+          <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>{t("whatJustHappenedDesc")}</p>
+          <ul className="text-sm space-y-1 list-disc list-inside mb-4" style={{ color: "var(--text-secondary)" }}>
             <li>{t("bullet1")}</li>
             <li>{t("bullet2")}</li>
             <li>{t("bullet3")}</li>
           </ul>
           <Link
             href={ROUTES.START}
-            className="inline-flex items-center justify-center rounded-xl bg-white text-black font-semibold px-5 py-2.5 text-sm hover:bg-zinc-100"
+            className="btn-marketing-primary no-underline inline-flex items-center justify-center"
           >
             {t("setThisUp")}
           </Link>
@@ -93,23 +119,33 @@ export function DemoPageContent() {
       )}
 
       <div className="max-w-5xl mx-auto px-4 mt-8 text-center">
-        <p className="text-sm text-zinc-500 mb-2">{t("voiceWidgetHint")}</p>
-        <p className="text-xs text-zinc-500 mb-4">
+        <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>{t("voiceWidgetHint")}</p>
+        <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>
           You are hearing Recall Touch&apos;s real AI assistant responding live, not a recording.
         </p>
-        <Link href={ROUTES.START} className="text-sm font-medium text-zinc-300 hover:text-white transition-colors" aria-label={t("getThisForYourNumber")}>
+        <Link
+          href={ROUTES.START}
+          className="text-sm font-medium mt-2 inline-block no-underline"
+          style={{ color: "var(--accent-primary)" }}
+          aria-label={t("getThisForYourNumber")}
+        >
           {t("getThisForYourNumber")}
         </Link>
       </div>
 
-      {/* "See the full product" mockups */}
+      {/* Product mockups */}
       <div className="max-w-5xl mx-auto px-4 mt-16">
         <div className="max-w-2xl text-center mx-auto mb-10">
-          <p className="text-xs font-semibold uppercase text-zinc-500 mb-2">See the full product</p>
-          <h2 className="text-2xl md:text-3xl font-semibold text-white" style={{ letterSpacing: "-0.02em", lineHeight: 1.2 }}>
+          <p className="text-[11px] font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--accent-primary)" }}>
+            See the full product
+          </p>
+          <h2
+            className="text-2xl md:text-3xl font-semibold"
+            style={{ letterSpacing: "-0.025em", lineHeight: 1.2, color: "var(--text-primary)" }}
+          >
             Beyond voice: dashboard, campaigns, and timeline proof
           </h2>
-          <p className="mt-3 text-sm text-zinc-400" style={{ lineHeight: 1.7 }}>
+          <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
             These mockups show the non-voice parts you get when Recall Touch runs end-to-end: tracking, follow-up execution,
             and contact activity you can audit.
           </p>
@@ -117,46 +153,34 @@ export function DemoPageContent() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[
-            {
-              title: "Dashboard KPIs",
-              caption: "Calls answered, appointments booked, and revenue recovered.",
-            },
-            {
-              title: "Campaign builder",
-              caption: "Sequence templates with audiences, scheduling, and review.",
-            },
-            {
-              title: "Contact timeline",
-              caption: "Every touch is captured: calls, texts, bookings, and outcomes.",
-            },
-            {
-              title: "Analytics + attribution",
-              caption: "Conversion rates and revenue attribution you can act on.",
-            },
+            { title: "Dashboard KPIs", caption: "Calls answered, appointments booked, and revenue recovered." },
+            { title: "Campaign builder", caption: "Sequence templates with audiences, scheduling, and review." },
+            { title: "Contact timeline", caption: "Every touch is captured: calls, texts, bookings, and outcomes." },
+            { title: "Analytics + attribution", caption: "Conversion rates and revenue attribution you can act on." },
           ].map((card) => (
             <div
               key={card.title}
-              className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5 overflow-hidden"
+              className="rounded-xl p-5 overflow-hidden"
+              style={{ border: "1px solid var(--border-default)", background: "var(--bg-surface)" }}
             >
               <div className="flex items-center justify-between gap-3 mb-3">
-                <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-                  {card.title}
-                </h3>
-                <span className="text-[10px] px-2 py-1 rounded-full border border-white/10 text-zinc-400">
+                <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>{card.title}</h3>
+                <span
+                  className="text-[10px] px-2 py-1 rounded-full"
+                  style={{ border: "1px solid var(--border-default)", color: "var(--text-tertiary)" }}
+                >
                   Mockup
                 </span>
               </div>
-              <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-                {card.caption}
-              </p>
-              <div className="mt-4 rounded-xl border border-white/10 bg-black/30 p-3">
-                <div className="h-2 w-2/3 bg-white/10 rounded-full mb-2" />
-                <div className="h-2 w-full bg-white/10 rounded-full mb-2" />
-                <div className="h-2 w-3/4 bg-white/10 rounded-full mb-2" />
+              <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>{card.caption}</p>
+              <div className="mt-4 rounded-lg p-3" style={{ border: "1px solid var(--border-default)", background: "var(--bg-inset)" }}>
+                <div className="h-2 w-2/3 rounded-full mb-2" style={{ background: "var(--border-default)" }} />
+                <div className="h-2 w-full rounded-full mb-2" style={{ background: "var(--border-default)" }} />
+                <div className="h-2 w-3/4 rounded-full mb-2" style={{ background: "var(--border-default)" }} />
                 <div className="mt-3 grid grid-cols-3 gap-2">
-                  <div className="h-12 rounded-lg bg-white/5 border border-white/10" />
-                  <div className="h-12 rounded-lg bg-white/5 border border-white/10" />
-                  <div className="h-12 rounded-lg bg-white/5 border border-white/10" />
+                  <div className="h-12 rounded-lg" style={{ background: "var(--bg-surface)", border: "1px solid var(--border-default)" }} />
+                  <div className="h-12 rounded-lg" style={{ background: "var(--bg-surface)", border: "1px solid var(--border-default)" }} />
+                  <div className="h-12 rounded-lg" style={{ background: "var(--bg-surface)", border: "1px solid var(--border-default)" }} />
                 </div>
               </div>
             </div>

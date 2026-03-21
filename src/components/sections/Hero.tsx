@@ -2,29 +2,16 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
-import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Container } from "@/components/ui/Container";
 import { HeroRevenueWidget } from "@/components/sections/HeroRevenueWidget";
 import { ROUTES } from "@/lib/constants";
-import { ArrowRight, Play, Pause, Phone, Star, Shield, Users, Volume2, PhoneCall } from "lucide-react";
+import { ArrowRight, Play, Pause, Phone, PhoneCall } from "lucide-react";
 
-const USE_CASES = [
-  "Answers every call in under 1 second — 24/7/365",
-  "Sounds so human, 90% of callers don't know it's AI",
-  "Books appointments directly into your calendar",
-  "Follows up on every lead until the deal closes",
-  "Recovers revenue from missed and after-hours calls",
-  "Qualifies inbound leads before they go cold",
-  "Runs outbound campaigns while you sleep",
-  "Replaces your entire phone team at 1/10th the cost",
-];
 
-/* ── Inline Hero Voice Demo ── */
-// Industry-neutral samples that showcase different capabilities — every visitor sees something relevant
 const HERO_DEMO_SAMPLES = [
   "Hi, thanks for calling! This is Sarah. I'd love to help you today. We have a few openings tomorrow morning and Thursday afternoon — which works better for you?",
-  "Of course — let me pull that up for you. So it looks like your appointment is confirmed for Wednesday at 2 PM. I'll send you a text reminder the day before. Anything else I can help with?",
-  "I completely understand that's frustrating. Let me get this taken care of right away. I'm going to connect you with someone who can resolve this today — one moment.",
+  "Of course — let me pull that up for you. Your appointment is confirmed for Wednesday at 2 PM. I'll send you a text reminder the day before. Anything else I can help with?",
+  "I completely understand. Let me get this taken care of right away. I'm going to connect you with someone who can resolve this today.",
 ] as const;
 
 function HeroVoiceDemo() {
@@ -55,10 +42,7 @@ function HeroVoiceDemo() {
         await audio.play();
         return true;
       }
-    } catch {
-      // Fall through to browser TTS
-    }
-    // Browser TTS fallback — always works
+    } catch { /* fall through */ }
     if ("speechSynthesis" in window) {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 0.95;
@@ -79,7 +63,6 @@ function HeroVoiceDemo() {
       return;
     }
     setLoading(true);
-    // Rotate through samples so each click plays something new
     const text = HERO_DEMO_SAMPLES[sampleIndexRef.current % HERO_DEMO_SAMPLES.length];
     sampleIndexRef.current += 1;
     const ok = await playWithFallback(text);
@@ -128,20 +111,18 @@ function HeroVoiceDemo() {
   };
 
   return (
-    <div className="mt-6 space-y-4">
-      {/* One-click voice preview */}
-      <div className="flex items-center gap-3">
+    <div className="mt-8 space-y-3">
+      {/* Voice preview + phone input row */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 max-w-md">
         <button
           type="button"
           onClick={togglePlay}
           disabled={loading}
-          className="flex items-center gap-2.5 px-5 py-3 rounded-xl font-semibold text-sm transition-all"
+          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-[10px] text-sm font-medium transition-all"
           style={{
-            background: playing
-              ? "rgba(239,68,68,0.12)"
-              : "linear-gradient(135deg, rgba(16,185,129,0.15), rgba(52,211,153,0.08))",
-            color: playing ? "rgb(248,113,113)" : "rgb(52,211,153)",
-            border: `1px solid ${playing ? "rgba(239,68,68,0.3)" : "rgba(52,211,153,0.3)"}`,
+            background: playing ? "var(--accent-danger-subtle)" : "var(--bg-hover)",
+            color: playing ? "var(--accent-danger)" : "var(--text-primary)",
+            border: `1px solid ${playing ? "rgba(220,38,38,0.2)" : "var(--border-default)"}`,
           }}
         >
           {loading ? (
@@ -151,212 +132,204 @@ function HeroVoiceDemo() {
           ) : (
             <Play className="w-4 h-4" />
           )}
-          {loading ? "Loading..." : playing ? "Stop" : "Hear It Live"}
+          {loading ? "Loading..." : playing ? "Stop" : "Hear the voice"}
         </button>
         {playing && (
-          <div className="flex items-center gap-[2px] h-5">
-            {Array.from({ length: 16 }).map((_, i) => (
+          <div className="flex items-center gap-[3px] h-4">
+            {Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
-                className="w-[2px] rounded-full bg-emerald-400"
+                className="w-[2px] rounded-full"
                 style={{
-                  height: `${6 + Math.sin(i * 0.7) * 10}px`,
-                  animation: `heroWave ${0.5 + (i % 4) * 0.12}s ease-in-out infinite alternate`,
-                  animationDelay: `${i * 35}ms`,
+                  height: "10px",
+                  background: "var(--text-tertiary)",
+                  animation: `heroWave ${0.4 + i * 0.1}s ease-in-out infinite alternate`,
                 }}
               />
             ))}
           </div>
         )}
-        {!playing && !loading && (
-          <span className="text-xs text-white/30 flex items-center gap-1">
-            <Volume2 className="w-3 h-3" /> 5-second preview
-          </span>
-        )}
       </div>
 
-      {/* Phone demo CTA */}
-      <div className="flex flex-col sm:flex-row gap-2 max-w-sm">
+      <div className="flex flex-col sm:flex-row gap-2 max-w-md">
         <div className="relative flex-1">
-          <PhoneCall className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+          <PhoneCall className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "var(--text-tertiary)" }} />
           <input
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleDemoCall()}
             placeholder="(555) 123-4567"
-            className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-black/40 border border-white/10 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-emerald-500/40 transition-colors"
+            className="w-full pl-9 pr-3 py-2.5 rounded-[10px] text-sm transition-colors focus:outline-none"
+            style={{
+              background: "var(--bg-inset)",
+              border: "1px solid var(--border-default)",
+              color: "var(--text-primary)",
+            }}
           />
         </div>
         <button
           type="button"
           onClick={handleDemoCall}
           disabled={callLoading}
-          className="px-5 py-2.5 rounded-xl bg-emerald-500 text-black text-sm font-semibold hover:bg-emerald-400 disabled:opacity-60 transition-colors whitespace-nowrap"
+          className="btn-marketing-blue px-5 py-2.5 text-sm whitespace-nowrap"
         >
-          {callLoading ? "Calling..." : "Call Me Now"}
+          {callLoading ? "Calling..." : "Get a demo call"}
         </button>
       </div>
       {callStatus && (
-        <p className="text-xs text-emerald-300 flex items-center gap-1.5">
+        <p className="text-xs flex items-center gap-1.5" style={{ color: "var(--accent-secondary)" }}>
           <Phone className="w-3 h-3 animate-pulse" /> {callStatus}
         </p>
       )}
       {callError && (
-        <p className="text-xs text-red-400">{callError}</p>
+        <p className="text-xs" style={{ color: "var(--accent-danger)" }}>{callError}</p>
       )}
-      <p className="text-[11px] text-white/25">
-        Free · No signup · We&apos;ll call your phone in under 10 seconds
+      <p className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>
+        Free. No signup required. We call your phone in under 10 seconds.
       </p>
 
-      <style jsx>{`
-        @keyframes heroWave {
-          0% { transform: scaleY(0.3); }
-          100% { transform: scaleY(1); }
-        }
-      `}</style>
     </div>
   );
 }
 
 export function Hero() {
-  const [tickerIndex, setTickerIndex] = useState(0);
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setTickerIndex((i) => (i + 1) % USE_CASES.length);
-    }, 3000);
-    return () => clearInterval(id);
-  }, []);
 
   return (
-    <section className="min-h-[80vh] flex items-center pt-24 pb-16 md:pt-28 md:pb-24 bg-[var(--bg-primary)]">
+    <section
+      className="hero-atmosphere relative pt-28 pb-16 md:pt-36 md:pb-24"
+      style={{ background: "var(--bg-primary)" }}
+    >
       <Container className="relative z-10">
-        <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          {/* Left: Copy */}
           <div>
-            <SectionLabel>
-              AI That Sounds Human. Results That Are Real.
-            </SectionLabel>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-6" style={{
+              background: "var(--accent-primary-subtle)",
+              color: "var(--accent-primary)",
+              border: "1px solid rgba(37, 99, 235, 0.1)",
+            }}>
+              AI phone infrastructure for revenue teams
+            </div>
 
             <h1
-              className="font-bold max-w-xl mt-4 mb-4"
+              className="font-semibold max-w-xl mb-5"
               style={{
-                fontSize: "clamp(2.4rem, 4vw, 3.2rem)",
-                letterSpacing: "-0.03em",
-                lineHeight: 1.05,
+                fontSize: "clamp(2.25rem, 4.5vw, 3.5rem)",
+                letterSpacing: "-0.035em",
+                lineHeight: 1.08,
+                color: "var(--text-primary)",
               }}
             >
-              Never Miss Another Call. Never Lose Another Dollar.
+              Every call answered.{" "}
+              <br className="hidden sm:block" />
+              Every lead followed up.{" "}
+              <br className="hidden sm:block" />
+              Every dollar recovered.
             </h1>
 
-            <p className="text-base md:text-lg max-w-xl mb-5 text-[var(--text-secondary)] leading-relaxed">
-              Recall Touch answers every call with a voice so human, 90% of callers don&apos;t know it&apos;s AI. It qualifies leads, books appointments, follows up, and recovers revenue — all on autopilot, 24/7, with 32 premium voices that sound like your best employee.
+            <p
+              className="text-base md:text-[1.125rem] max-w-lg mb-5 leading-relaxed"
+              style={{ color: "var(--text-secondary)" }}
+            >
+              Recall Touch runs your phone operation with AI that handles inbound,
+              outbound, follow-up, and booking — 24/7. Natural voice quality.
+              Real conversations. Full revenue attribution.
             </p>
 
-            {/* Rotating use case ticker */}
-            <div
-              className="mb-6 h-8 flex items-center"
-              aria-live="polite"
-            >
-              <span
-                key={tickerIndex}
-                className="inline-flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-full border transition-opacity duration-500"
-                style={{
-                  borderColor: "var(--accent-primary)",
-                  color: "var(--accent-primary)",
-                  background: "rgba(13,110,110,0.08)",
-                }}
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                {USE_CASES[tickerIndex]}
-              </span>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center mb-2">
-              <Link
-                href={ROUTES.START}
-                className="group bg-white text-black font-semibold rounded-xl px-6 py-3 hover:bg-zinc-100 transition-colors no-underline w-full sm:w-auto text-center flex items-center justify-center gap-2"
-              >
-                Start free — no card needed
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
-              </Link>
-            </div>
-
-            {/* Instant voice demo — hear it or get called in seconds */}
-            <HeroVoiceDemo />
-
-            {/* Inline Social Proof */}
-            <div className="flex flex-wrap items-center gap-4">
+            {/* Social proof ABOVE CTAs — builds trust before the ask */}
+            <div className="flex flex-wrap items-center gap-4 mb-6">
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                  <svg key={i} className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="var(--accent-warning, #F59E0B)">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                  </svg>
                 ))}
-                <span className="text-xs ml-1 text-white/50">4.9/5</span>
+                <span className="text-xs ml-1" style={{ color: "var(--text-tertiary)" }}>4.9/5</span>
               </div>
-              <div className="w-px h-4 bg-white/10" />
-              <span className="text-xs text-white/50 flex items-center gap-1">
-                <Users className="w-3 h-3 text-emerald-400" />
-                <strong className="text-white/70">12,400+</strong> businesses
+              <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+                <strong style={{ color: "var(--text-secondary)" }}>12,400+</strong> businesses
               </span>
-              <div className="w-px h-4 bg-white/10" />
-              <span className="text-xs text-white/50 flex items-center gap-1">
-                <Phone className="w-3 h-3 text-emerald-400" />
-                <strong className="text-white/70">8.7M+</strong> calls handled
+              <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+                <strong style={{ color: "var(--text-secondary)" }}>$340M+</strong> recovered
               </span>
             </div>
+
+            {/* CTAs — primary is blue (highest contrast, highest conversion) */}
+            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center mb-2">
+              <Link
+                href={ROUTES.START}
+                className="btn-marketing-blue btn-lg group no-underline flex items-center justify-center gap-2 w-full sm:w-auto"
+              >
+                Start free trial
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+              <Link
+                href="/demo"
+                className="btn-marketing-ghost btn-lg no-underline flex items-center justify-center w-full sm:w-auto"
+              >
+                Watch demo
+              </Link>
+            </div>
+            <p className="text-xs mb-5" style={{ color: "var(--text-tertiary)" }}>
+              No credit card required. Live in under 3 minutes.
+            </p>
+
+            <HeroVoiceDemo />
           </div>
 
-          <div className="max-w-md lg:ml-auto">
-            <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-lg p-6 shadow-[var(--shadow-glow-primary)]">
-              <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-2">
-                Live Revenue Dashboard
-              </h3>
-              <p className="text-xs text-[var(--text-secondary)] mb-4">
-                See every answered call, booked appointment, and dollar recovered — in real time.
-              </p>
+          {/* Right: Dashboard preview card */}
+          <div className="max-w-md lg:ml-auto w-full">
+            <div
+              className="rounded-2xl p-6 transition-shadow"
+              style={{
+                background: "var(--bg-surface)",
+                border: "1px solid var(--border-default)",
+                boxShadow: "var(--shadow-lg)",
+              }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                  Revenue Dashboard
+                </h3>
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{
+                  background: "var(--bg-hover)",
+                  color: "var(--text-tertiary)",
+                }}>
+                  Preview
+                </span>
+              </div>
               <HeroRevenueWidget />
-              <div className="mt-3 pt-3 border-t" style={{ borderColor: "var(--border-default)" }}>
-                <div className="grid grid-cols-3 gap-2 text-center">
-                  <div>
-                    <p className="text-base font-bold" style={{ color: "var(--text-primary)" }}>24/7</p>
-                    <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>Coverage</p>
-                  </div>
-                  <div>
-                    <p className="text-base font-bold" style={{ color: "var(--text-primary)" }}>&lt;0.8s</p>
-                    <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>Response</p>
-                  </div>
-                  <div>
-                    <p className="text-base font-bold" style={{ color: "var(--accent-primary)" }}>32+</p>
-                    <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>Human-Quality Voices</p>
-                  </div>
+              <div className="mt-4 pt-4 grid grid-cols-3 gap-3 text-center" style={{ borderTop: "1px solid var(--border-default)" }}>
+                <div>
+                  <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>24/7</p>
+                  <p className="text-[10px] font-medium" style={{ color: "var(--text-tertiary)" }}>Coverage</p>
+                </div>
+                <div>
+                  <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>&lt;0.8s</p>
+                  <p className="text-[10px] font-medium" style={{ color: "var(--text-tertiary)" }}>Response</p>
+                </div>
+                <div>
+                  <p className="text-lg font-semibold" style={{ color: "var(--accent-primary)" }}>32</p>
+                  <p className="text-[10px] font-medium" style={{ color: "var(--text-tertiary)" }}>Voices</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Social proof bar */}
-        <div className="max-w-4xl mx-auto mt-12 text-center space-y-3">
-          <div className="flex flex-wrap items-center justify-center gap-6 text-sm" style={{ color: "var(--text-tertiary)" }}>
-            <span className="flex items-center gap-1.5">
-              <Shield className="w-4 h-4 text-emerald-400/60" /> SOC 2 Type II
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Shield className="w-4 h-4 text-emerald-400/60" /> HIPAA Compliant
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Shield className="w-4 h-4 text-emerald-400/60" /> TCPA Compliant
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Shield className="w-4 h-4 text-emerald-400/60" /> GDPR Ready
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Shield className="w-4 h-4 text-emerald-400/60" /> 256-bit Encryption
-            </span>
+        {/* Compliance bar */}
+        <div className="max-w-4xl mx-auto mt-16 text-center">
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium" style={{ color: "var(--text-tertiary)" }}>
+            {["SOC 2 Type II", "HIPAA", "TCPA", "GDPR", "256-bit SSL"].map((label) => (
+              <span key={label} className="flex items-center gap-1.5">
+                <svg className="w-3.5 h-3.5" style={{ color: "var(--accent-secondary)" }} viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd"/>
+                </svg>
+                {label}
+              </span>
+            ))}
           </div>
-          <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>
-            Trusted by 12,400+ businesses recovering revenue across 47 states
-          </p>
         </div>
       </Container>
     </section>

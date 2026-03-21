@@ -1,20 +1,32 @@
 export const colors = {
-  background: "#FAFAF8",
+  background: "#FFFFFF",
   surface: "#FFFFFF",
-  surfaceAlt: "#F5F5F0",
+  surfaceAlt: "#FAFBFC",
   text: {
-    primary: "#1A1A1A",
-    secondary: "#4A4A4A",
-    tertiary: "#8A8A8A",
+    primary: "#0A0A0B",
+    secondary: "#5E6270",
+    tertiary: "#71757E",
     inverse: "#FFFFFF",
+    onAccent: "#FFFFFF",
   },
   accent: {
-    teal: "#0D6E6E",
-    tealHover: "#0A5A5A",
-    tealLight: "#E6F2F2",
-    tealMuted: "#B8D8D8",
+    primary: "#2563EB",
+    primaryHover: "#1D4ED8",
+    primaryLight: "#EFF6FF",
+    primaryMuted: "#93C5FD",
+    primarySubtle: "rgba(37, 99, 235, 0.06)",
     amber: "#D4A853",
     amberLight: "#FDF5E6",
+    warning: "#D97706",
+    secondary: "#16A34A",
+    /** @deprecated use primary instead */
+    teal: "#2563EB",
+    /** @deprecated use primaryHover instead */
+    tealHover: "#1D4ED8",
+    /** @deprecated use primaryLight instead */
+    tealLight: "#EFF6FF",
+    /** @deprecated use primaryMuted instead */
+    tealMuted: "#93C5FD",
   },
   status: {
     success: "#16A34A",
@@ -27,17 +39,17 @@ export const colors = {
     infoLight: "#DBEAFE",
   },
   border: {
-    default: "#E5E5E0",
-    hover: "#D4D4CF",
-    focus: "#0D6E6E",
+    default: "rgba(0, 0, 0, 0.08)",
+    hover: "rgba(0, 0, 0, 0.14)",
+    focus: "#2563EB",
   },
 } as const;
 
 export const typography = {
-  fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+  fontFamily: "'DM Sans', 'SF Pro Display', -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
   heading: {
-    h1: { size: "clamp(2rem, 4vw, 3.5rem)", weight: 700, letterSpacing: "-0.02em", lineHeight: 1.1 },
-    h2: { size: "clamp(1.75rem, 3.5vw, 2.75rem)", weight: 700, letterSpacing: "-0.02em", lineHeight: 1.2 },
+    h1: { size: "clamp(2rem, 4vw, 3.5rem)", weight: 600, letterSpacing: "-0.025em", lineHeight: 1.1 },
+    h2: { size: "clamp(1.75rem, 3.5vw, 2.75rem)", weight: 600, letterSpacing: "-0.025em", lineHeight: 1.2 },
     h3: { size: "clamp(1.25rem, 2vw, 1.75rem)", weight: 600, letterSpacing: "-0.01em", lineHeight: 1.3 },
     h4: { size: "1.125rem", weight: 600, letterSpacing: "0", lineHeight: 1.4 },
   },
@@ -49,15 +61,15 @@ export const typography = {
 export const spacing = {
   sectionPadding: { desktop: "80px 0", mobile: "48px 0" },
   contentMaxWidth: "1200px",
-  cardPadding: "24px",
-  cardRadius: "12px",
-  buttonRadius: "8px",
-  inputRadius: "8px",
+  cardPadding: "32px",
+  cardRadius: "14px",
+  buttonRadius: "10px",
+  inputRadius: "10px",
 } as const;
 
 /** Chart / legacy consumers */
 export const tokens = {
   colors: {
-    accentPrimary: colors.accent.teal,
+    accentPrimary: colors.accent.primary,
   },
 } as const;

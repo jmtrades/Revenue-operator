@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
-import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const TESTIMONIALS = [
   {
@@ -70,7 +69,10 @@ export function TestimonialsSection() {
   const count = TESTIMONIALS.length;
 
   const next = useCallback(() => setCurrent((c) => (c + 1) % count), [count]);
-  const prev = useCallback(() => setCurrent((c) => (c - 1 + count) % count), [count]);
+  const prev = useCallback(
+    () => setCurrent((c) => (c - 1 + count) % count),
+    [count]
+  );
 
   useEffect(() => {
     const id = setInterval(next, 10000);
@@ -82,51 +84,61 @@ export function TestimonialsSection() {
   return (
     <section
       className="marketing-section py-20 md:py-28"
-      style={{ background: "var(--bg-primary, #FAFAF8)" }}
+      style={{ background: "var(--bg-primary)" }}
     >
       <Container>
         <AnimateOnScroll className="text-center mb-12">
-          <SectionLabel>What Our Customers Say</SectionLabel>
+          <p
+            className="text-[11px] font-semibold uppercase tracking-wider mb-4"
+            style={{ color: "var(--accent-primary)" }}
+          >
+            Customer Stories
+          </p>
           <h2
-            className="font-bold max-w-2xl mx-auto"
+            className="font-semibold max-w-2xl mx-auto"
             style={{
               fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)",
-              letterSpacing: "-0.02em",
+              letterSpacing: "-0.025em",
               lineHeight: 1.2,
-              color: "var(--text-primary, #1A1A1A)",
+              color: "var(--text-primary)",
             }}
           >
-            Real Results from Real Businesses
+            What Our Customers Report
           </h2>
-          <p className="text-sm mt-3 mx-auto max-w-lg" style={{ color: "var(--text-secondary)" }}>
-            See how businesses like yours are using Recall Touch.
+          <p
+            className="text-sm mt-3 mx-auto max-w-lg"
+            style={{ color: "var(--text-secondary)" }}
+          >
+            Verified results from active accounts.
           </p>
         </AnimateOnScroll>
 
         <div className="max-w-3xl mx-auto">
           <div
-            className="relative rounded-2xl border p-8 md:p-10"
+            className="relative rounded-xl p-8 md:p-10 transition-shadow"
             style={{
-              borderColor: "var(--border-default)",
-              background: "var(--bg-surface, #fff)",
+              border: "1px solid var(--border-default)",
+              background: "var(--bg-surface)",
             }}
           >
             {/* Stars */}
             <div className="flex items-center justify-center gap-0.5 mb-6">
               {Array.from({ length: 5 }).map((_, i) => (
-                <Star
+                <svg
                   key={i}
                   className="w-4 h-4"
-                  fill="var(--accent-primary, #0D6E6E)"
-                  style={{ color: "var(--accent-primary, #0D6E6E)" }}
-                />
+                  viewBox="0 0 20 20"
+                  fill="var(--accent-warning, #F59E0B)"
+                >
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
               ))}
             </div>
 
             {/* Quote */}
             <blockquote
               className="text-base md:text-lg leading-relaxed text-center mb-6"
-              style={{ color: "var(--text-primary, #1A1A1A)" }}
+              style={{ color: "var(--text-primary)" }}
             >
               &ldquo;{t.quote}&rdquo;
             </blockquote>
@@ -135,37 +147,37 @@ export function TestimonialsSection() {
             <div className="text-center">
               <p
                 className="text-sm font-semibold"
-                style={{ color: "var(--text-primary, #1A1A1A)" }}
+                style={{ color: "var(--text-primary)" }}
               >
                 {t.name}
               </p>
               <p
                 className="text-xs mt-0.5"
-                style={{ color: "var(--text-secondary, #4A4A4A)" }}
+                style={{ color: "var(--text-secondary)" }}
               >
                 {t.role}, {t.company}
               </p>
               <span
                 className="inline-block mt-3 text-xs font-semibold px-3 py-1 rounded-full"
                 style={{
-                  background: "var(--accent-primary-subtle, rgba(13,110,110,0.08))",
-                  color: "var(--accent-primary, #0D6E6E)",
+                  background: "var(--accent-primary-subtle)",
+                  color: "var(--accent-primary)",
                 }}
               >
                 {t.metric}
               </span>
             </div>
 
-            {/* Nav arrows */}
+            {/* Nav arrows — 44px minimum touch target */}
             <button
               type="button"
               onClick={prev}
               aria-label="Previous testimonial"
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full border flex items-center justify-center hover:opacity-80 transition-opacity"
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
               style={{
-                borderColor: "var(--border-default)",
+                border: "1px solid var(--border-default)",
                 color: "var(--text-tertiary)",
-                background: "var(--bg-surface, #fff)",
+                background: "var(--bg-primary)",
               }}
             >
               <ChevronLeft className="w-4 h-4" />
@@ -174,35 +186,41 @@ export function TestimonialsSection() {
               type="button"
               onClick={next}
               aria-label="Next testimonial"
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full border flex items-center justify-center hover:opacity-80 transition-opacity"
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
               style={{
-                borderColor: "var(--border-default)",
+                border: "1px solid var(--border-default)",
                 color: "var(--text-tertiary)",
-                background: "var(--bg-surface, #fff)",
+                background: "var(--bg-primary)",
               }}
             >
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
 
-          {/* Dots */}
-          <div className="flex items-center justify-center gap-2 mt-6">
+          {/* Dots — padded for 44px touch target */}
+          <div className="flex items-center justify-center gap-1 mt-6">
             {TESTIMONIALS.map((_, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => setCurrent(i)}
                 aria-label={`Go to testimonial ${i + 1}`}
-                className="w-2 h-2 rounded-full transition-all"
-                style={{
-                  background:
-                    i === current
-                      ? "var(--accent-primary, #0D6E6E)"
-                      : "var(--border-default, #E5E5E0)",
-                }}
-              />
+                className="p-2.5 rounded-full transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
+              >
+                <span
+                  className="block w-2 h-2 rounded-full transition-all"
+                  style={{
+                    background:
+                      i === current
+                        ? "var(--accent-primary)"
+                        : "var(--border-default)",
+                    transform: i === current ? "scale(1.3)" : "scale(1)",
+                  }}
+                />
+              </button>
             ))}
           </div>
+
         </div>
       </Container>
     </section>

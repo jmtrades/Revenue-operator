@@ -4,29 +4,40 @@ import Link from "next/link";
 import { ArrowRight, Headphones } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
-import { SectionLabel } from "@/components/ui/SectionLabel";
 import { VoicePreviewWidget } from "@/components/VoicePreviewWidget";
 import { ROUTES } from "@/lib/constants";
 
 export function HomepageVoicePreview() {
   return (
-    <section className="marketing-section py-16 md:py-24" style={{ background: "var(--bg-primary)" }}>
+    <section
+      className="marketing-section py-16 md:py-24"
+      style={{ background: "var(--bg-primary)" }}
+    >
       <Container>
         <AnimateOnScroll className="text-center mb-10">
-          <SectionLabel>AI That Sounds Human</SectionLabel>
+          <p
+            className="text-[11px] font-semibold uppercase tracking-wider mb-4"
+            style={{ color: "var(--accent-primary)" }}
+          >
+            Voice Library
+          </p>
           <h2
-            className="font-bold max-w-2xl mx-auto"
+            className="font-semibold max-w-2xl mx-auto"
             style={{
               fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)",
-              letterSpacing: "-0.02em",
+              letterSpacing: "-0.025em",
               lineHeight: 1.2,
-              color: "var(--text-primary, #1A1A1A)",
+              color: "var(--text-primary)",
             }}
           >
-            32 Premium Voices. Zero Robotic Sound.
+            32 Premium Voices. Hear Them Yourself.
           </h2>
-          <p className="text-base md:text-lg max-w-xl mx-auto mt-3" style={{ color: "var(--text-secondary)" }}>
-            Every voice in the Recall Touch library was engineered to be indistinguishable from a real person. Natural pauses. Real intonation. Warmth that builds trust from the first word.
+          <p
+            className="text-base md:text-lg max-w-xl mx-auto mt-3"
+            style={{ color: "var(--text-secondary)" }}
+          >
+            Natural pauses, real intonation, conversational tone.
+            Play any voice below and judge for yourself.
           </p>
         </AnimateOnScroll>
 
@@ -37,7 +48,7 @@ export function HomepageVoicePreview() {
         <div className="text-center mt-8">
           <Link
             href={ROUTES.DEMO}
-            className="inline-flex items-center gap-2 border border-[var(--border-default)] text-[var(--text-primary)] font-semibold rounded-xl px-6 py-3 no-underline hover:bg-white/5 transition-all"
+            className="btn-marketing-ghost no-underline inline-flex items-center gap-2"
           >
             <Headphones className="w-4 h-4" />
             Hear all 32 voices

@@ -8,209 +8,112 @@ import { ROUTES } from "@/lib/constants";
 export function Footer() {
   const t = useTranslations("footer");
   const year = new Date().getFullYear();
+
+  const linkStyle = { color: "var(--text-tertiary)" };
+  const linkClass = "block text-[13px] py-1 no-underline transition-colors hover:text-[var(--text-primary)]";
+
   return (
     <footer
-      className="border-t py-12 px-6"
-      style={{ background: "var(--bg-primary)", borderColor: "var(--border-default)" }}
+      className="py-16 px-6"
+      style={{
+        background: "var(--bg-primary)",
+        borderTop: "1px solid var(--border-default)",
+      }}
     >
       <Container>
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          <div className="space-y-3">
-            <span className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>
+        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+          {/* Brand */}
+          <div className="col-span-2 md:col-span-1 space-y-3 pr-4">
+            <span className="text-[15px] font-semibold" style={{ color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
               Recall Touch
             </span>
-            <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
+            <p className="text-[13px] leading-relaxed" style={{ color: "var(--text-tertiary)" }}>
               {t("tagline")}
             </p>
-            <div style={{ borderTop: "1px solid var(--border-default)", paddingTop: 14 }}>
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-12 h-12 rounded-full border flex items-center justify-center shrink-0"
-                  style={{
-                    borderColor: "var(--border-default)",
-                    background: "rgba(255,255,255,0.02)",
-                  }}
-                >
-                  <svg
-                    width="26"
-                    height="26"
-                    viewBox="0 0 64 64"
-                    role="img"
-                    aria-label={t("founderPhotoAlt")}
-                  >
-                    <path
-                      d="M32 34c8 0 15-6.2 15-14 0-8-7-14-15-14S17 12 17 20c0 7.8 7 14 15 14Z"
-                      fill="var(--text-primary)"
-                      opacity="0.9"
-                    />
-                    <path
-                      d="M12 60c2-14 11-22 20-22s18 8 20 22H12Z"
-                      fill="var(--accent-primary)"
-                      opacity="0.35"
-                    />
-                    <text
-                      x="32"
-                      y="38"
-                      textAnchor="middle"
-                      fontSize="22"
-                      fontFamily="ui-sans-serif, system-ui"
-                      fill="var(--text-primary)"
-                      opacity="0.95"
-                      fontWeight="700"
-                    >
-                      J
-                    </text>
-                  </svg>
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-                    {t("founderName")}
-                  </p>
-                  <p className="text-xs" style={{ color: "var(--text-tertiary)", lineHeight: 1.4 }}>
-                    {t("founderBio")}
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
-          <div className="space-y-2 text-sm">
-            <p className="font-semibold" style={{ color: "var(--text-primary)" }}>
+
+          {/* Product */}
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--text-secondary)" }}>
               {t("product")}
             </p>
-            <Link href={ROUTES.PRODUCT} className="block hover:opacity-80 transition-opacity">
-              {t("features")}
-            </Link>
-            <Link href={ROUTES.PRICING} className="block hover:opacity-80 transition-opacity">
-              {t("pricing")}
-            </Link>
-            <Link href="/demo" className="block hover:opacity-80 transition-opacity">
-              {t("demo")}
-            </Link>
-            <Link href="/results" className="block hover:opacity-80 transition-opacity">
-              Results
-            </Link>
-            <Link href="/security" className="block hover:opacity-80 transition-opacity">
-              Security
-            </Link>
-            <Link href="/outbound" className="block hover:opacity-80 transition-opacity">
-              Outbound
-            </Link>
-            <Link href="/enterprise" className="block hover:opacity-80 transition-opacity">
-              Enterprise
-            </Link>
-            <Link href={ROUTES.DOCS} className="block hover:opacity-80 transition-opacity">
-              {t("docs")}
-            </Link>
+            <nav className="space-y-0.5">
+              <Link href={ROUTES.PRODUCT} className={linkClass} style={linkStyle}>{t("features")}</Link>
+              <Link href={ROUTES.PRICING} className={linkClass} style={linkStyle}>{t("pricing")}</Link>
+              <Link href="/demo" className={linkClass} style={linkStyle}>{t("demo")}</Link>
+              <Link href="/outbound" className={linkClass} style={linkStyle}>Outbound</Link>
+              <Link href="/enterprise" className={linkClass} style={linkStyle}>Enterprise</Link>
+              <Link href={ROUTES.DOCS} className={linkClass} style={linkStyle}>{t("docs")}</Link>
+            </nav>
           </div>
-          <div className="space-y-2 text-sm">
-            <p className="font-semibold" style={{ color: "var(--text-primary)" }}>
+
+          {/* Industries */}
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--text-secondary)" }}>
+              Industries
+            </p>
+            <nav className="space-y-0.5">
+              {[
+                ["Dental", "/industries/dental"],
+                ["Healthcare", "/industries/healthcare"],
+                ["Legal", "/industries/legal"],
+                ["Real Estate", "/industries/real-estate"],
+                ["Plumbing & HVAC", "/industries/plumbing-hvac"],
+                ["Insurance", "/industries/insurance"],
+                ["Med Spa", "/industries/med-spa"],
+              ].map(([label, href]) => (
+                <Link key={href} href={href} className={linkClass} style={linkStyle}>{label}</Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* Company */}
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--text-secondary)" }}>
               {t("company")}
             </p>
-            <a href="mailto:team@recall-touch.com" className="block hover:opacity-80 transition-opacity">
-              {t("emailUs")}
-            </a>
-            <Link href="/blog" className="block hover:opacity-80 transition-opacity">
-              {t("blog")}
-            </Link>
-            <Link href="/contact" className="block hover:opacity-80 transition-opacity">
-              {t("contact")}
-            </Link>
-            <div className="pt-2">
-              <p className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>
-                Industries
-              </p>
-              <div className="mt-2 space-y-1">
-                <Link href="/industries/plumbing-hvac" className="block hover:opacity-80 transition-opacity">
-                  Plumbing & HVAC
-                </Link>
-                <Link href="/industries/dental" className="block hover:opacity-80 transition-opacity">
-                  Dental
-                </Link>
-                <Link href="/industries/legal" className="block hover:opacity-80 transition-opacity">
-                  Legal
-                </Link>
-                <Link href="/industries/real-estate" className="block hover:opacity-80 transition-opacity">
-                  Real Estate
-                </Link>
-                <Link href="/industries/healthcare" className="block hover:opacity-80 transition-opacity">
-                  Healthcare
-                </Link>
-                <Link href="/industries/roofing" className="block hover:opacity-80 transition-opacity">
-                  Roofing
-                </Link>
-                <Link href="/industries/med-spa" className="block hover:opacity-80 transition-opacity">
-                  Med Spa
-                </Link>
-                <Link href="/industries/recruiting" className="block hover:opacity-80 transition-opacity">
-                  Recruiting
-                </Link>
-                <Link href="/industries/auto-repair" className="block hover:opacity-80 transition-opacity">
-                  Auto Repair
-                </Link>
-                <Link href="/industries/insurance" className="block hover:opacity-80 transition-opacity">
-                  Insurance
-                </Link>
-                <Link href="/industries/construction" className="block hover:opacity-80 transition-opacity">
-                  Construction
-                </Link>
-              </div>
-            </div>
-            <div className="pt-2">
-              <p className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>
-                Resources
-              </p>
-              <div className="mt-2 space-y-1">
-                <Link href="/demo" className="block hover:opacity-80 transition-opacity">
-                  Live Demo
-                </Link>
-                <Link href="/demo/voice" className="block hover:opacity-80 transition-opacity">
-                  Voice Library
-                </Link>
-                <Link href="/pricing" className="block hover:opacity-80 transition-opacity">
-                  Pricing
-                </Link>
-                <Link href="/contact" className="block hover:opacity-80 transition-opacity">
-                  Contact Sales
-                </Link>
-              </div>
-            </div>
+            <nav className="space-y-0.5">
+              <a href="mailto:team@recall-touch.com" className={linkClass} style={linkStyle}>{t("emailUs")}</a>
+              <Link href="/blog" className={linkClass} style={linkStyle}>{t("blog")}</Link>
+              <Link href="/contact" className={linkClass} style={linkStyle}>{t("contact")}</Link>
+              <Link href="/results" className={linkClass} style={linkStyle}>Results</Link>
+              <Link href="/security" className={linkClass} style={linkStyle}>Security</Link>
+            </nav>
           </div>
-          <div className="space-y-2 text-sm">
-            <p className="font-semibold" style={{ color: "var(--text-primary)" }}>
+
+          {/* Legal */}
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--text-secondary)" }}>
               {t("legalSecurity")}
             </p>
-            <Link href="/privacy" className="block hover:opacity-80 transition-opacity">
-              {t("privacyPolicy")}
-            </Link>
-            <Link href="/terms" className="block hover:opacity-80 transition-opacity">
-              {t("termsOfService")}
-            </Link>
-            <a href="https://status.recall-touch.com" target="_blank" rel="noopener noreferrer" className="block hover:opacity-80 transition-opacity">
-              System Status
-            </a>
-            <div className="flex flex-wrap gap-2 mt-3">
-              {[
-                { label: "256-bit SSL", icon: "" },
-                { label: "GDPR-ready", icon: "" },
-              ].map((badge) => (
+            <nav className="space-y-0.5">
+              <Link href="/privacy" className={linkClass} style={linkStyle}>{t("privacyPolicy")}</Link>
+              <Link href="/terms" className={linkClass} style={linkStyle}>{t("termsOfService")}</Link>
+              <a href="https://status.recall-touch.com" target="_blank" rel="noopener noreferrer" className={linkClass} style={linkStyle}>System Status</a>
+            </nav>
+            <div className="flex flex-wrap gap-1.5 mt-4">
+              {["SOC 2", "HIPAA", "GDPR", "SSL"].map((badge) => (
                 <span
-                  key={badge.label}
-                  className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-medium border"
+                  key={badge}
+                  className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium"
                   style={{
-                    borderColor: "var(--border-default)",
+                    border: "1px solid var(--border-default)",
                     color: "var(--text-tertiary)",
-                    background: "rgba(255,255,255,0.02)",
                   }}
                 >
-                  <span aria-hidden>{badge.icon}</span>
-                  {badge.label}
+                  {badge}
                 </span>
               ))}
             </div>
           </div>
         </div>
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+
+        {/* Bottom bar */}
+        <div
+          className="max-w-6xl mx-auto pt-6 flex flex-col sm:flex-row items-center justify-between gap-3"
+          style={{ borderTop: "1px solid var(--border-default)" }}
+        >
+          <p className="text-[12px]" style={{ color: "var(--text-tertiary)" }}>
             {t("copyright", { year })}
           </p>
         </div>
