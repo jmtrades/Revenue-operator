@@ -34,7 +34,7 @@ export async function sendGoLiveEmail(email: string, workspaceName?: string | nu
   if (!process.env.RESEND_API_KEY) return false;
 
   const safeName = workspaceName?.trim() || "Your workspace";
-  const subject = "Your AI agent is live — first call is in!";
+  const subject = "You're live — your AI agent is ready";
   const html = `<!DOCTYPE html>
 <html><head><meta charset="utf-8"></head>
 <body style="margin:0;padding:0;background:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
@@ -45,17 +45,17 @@ export async function sendGoLiveEmail(email: string, workspaceName?: string | nu
   <span style="font-size:20px;font-weight:700;color:#fff;">Recall Touch</span>
 </td></tr>
 <tr><td style="background:#141414;border:1px solid #262626;border-radius:16px;padding:40px 32px;">
-  <div style="text-align:center;margin-bottom:16px;"><span style="font-size:48px;">🎉</span></div>
-  <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#fff;text-align:center;">You're live!</h1>
+  <div style="text-align:center;margin-bottom:16px;"><div style="width:56px;height:56px;border-radius:50%;background:#10b981;margin:0 auto;display:flex;align-items:center;justify-content:center;"><span style="font-size:24px;color:#fff;font-weight:700;">RT</span></div></div>
+  <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#fff;text-align:center;">Your AI Agent Is Live.</h1>
   <p style="margin:0 0 24px;font-size:15px;color:#a3a3a3;text-align:center;line-height:1.6;">
-    <strong style="color:#fff;">${safeName}</strong> just completed its first call with Recall Touch. Your AI agent is now handling calls 24/7.
+    <strong style="color:#fff;">${safeName}</strong> is now powered by Recall Touch. Your AI agent is answering calls, qualifying leads, and booking appointments — 24/7, starting right now.
   </p>
   <table cellpadding="0" cellspacing="0" style="margin:0 auto 24px;">
   <tr><td style="background:#10b981;border-radius:12px;">
-    <a href="${APP_URL}/app/activity" style="display:inline-block;padding:14px 32px;color:#000;font-size:15px;font-weight:700;text-decoration:none;">View Call Activity →</a>
+    <a href="${APP_URL}/app/activity" style="display:inline-block;padding:14px 32px;color:#000;font-size:15px;font-weight:700;text-decoration:none;">View Your Dashboard →</a>
   </td></tr>
   </table>
-  <p style="margin:0;font-size:14px;color:#e5e5e5;">— Junior, Founder of Recall Touch</p>
+  <p style="margin:0;font-size:14px;color:#e5e5e5;">— The Recall Touch Team</p>
 </td></tr>
 <tr><td style="padding-top:24px;text-align:center;">
   <p style="margin:0;font-size:12px;color:#525252;">Recall Touch Inc. · AI that makes and takes your phone calls</p>

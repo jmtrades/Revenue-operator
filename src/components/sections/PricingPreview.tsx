@@ -132,7 +132,7 @@ export function PricingPreview() {
         </p>
         <p className="text-center mt-3">
           <Link href={ROUTES.PRICING} className="text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 rounded" style={{ color: "var(--accent-primary)" }}>
-            {t("cta.link")}
+            Compare all plan features
           </Link>
         </p>
       </Container>

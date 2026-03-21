@@ -4,54 +4,29 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Volume2, Phone, CheckCircle } from "lucide-react";
 
-const INDUSTRIES = [
-  "HVAC",
-  "Dental",
-  "Plumbing",
-  "Roofing",
-  "Legal",
-  "Medical",
-  "Salon",
-  "Restaurant",
-  "Auto"
+const SCENARIOS = [
+  "New Customer Inquiry",
+  "Appointment Booking",
+  "After-Hours Call",
+  "Follow-Up Call"
 ];
 
-const INDUSTRY_GREETINGS: Record<string, { greeting: string; voiceId: string }> = {
-  HVAC: {
-    greeting: "Thank you for calling ABC Heating and Cooling. How can we help you with your comfort needs today?",
-    voiceId: "hvac_pro"
+const SCENARIO_GREETINGS: Record<string, { greeting: string; voiceId: string }> = {
+  "New Customer Inquiry": {
+    greeting: "Thank you for calling. How can I help you today?",
+    voiceId: "us-female-warm-receptionist"
   },
-  Dental: {
-    greeting: "Welcome to Smile Dental. We're here to help with your dental care. What brings you in today?",
-    voiceId: "dental_receptionist"
+  "Appointment Booking": {
+    greeting: "Hi there, I'd be happy to help you schedule an appointment. What day works best for you?",
+    voiceId: "us-female-professional"
   },
-  Plumbing: {
-    greeting: "Thanks for calling Premier Plumbing. What plumbing issue can we help you with?",
-    voiceId: "plumbing_pro"
+  "After-Hours Call": {
+    greeting: "Thank you for calling. Our office is currently closed, but I can absolutely help you right now. What do you need?",
+    voiceId: "us-male-warm"
   },
-  Roofing: {
-    greeting: "Hello and thank you for choosing Reliable Roofing. Do you have a leak, inspection, or are you ready for a new roof?",
-    voiceId: "roofing_expert"
-  },
-  Legal: {
-    greeting: "Good day. This is Legal Associates. How may we assist you with your legal matter?",
-    voiceId: "legal_counsel"
-  },
-  Medical: {
-    greeting: "Thank you for calling Premier Health Clinic. What is the nature of your visit today?",
-    voiceId: "medical_receptionist"
-  },
-  Salon: {
-    greeting: "Welcome to Luxe Salon. Do you need to book an appointment or ask about our services?",
-    voiceId: "salon_host"
-  },
-  Restaurant: {
-    greeting: "Welcome to Bella Italia. Would you like to make a reservation or hear about our specials?",
-    voiceId: "restaurant_host"
-  },
-  Auto: {
-    greeting: "Thank you for contacting AutoCare. Are you calling about a service appointment or inquiry?",
-    voiceId: "auto_specialist"
+  "Follow-Up Call": {
+    greeting: "Hi, this is a follow-up call from earlier. I wanted to make sure we got everything taken care of for you.",
+    voiceId: "us-male-confident"
   }
 };
 
@@ -70,7 +45,7 @@ interface TranscriptMessage {
 }
 
 export default function VoiceDemoPage() {
-  const [selectedIndustry, setSelectedIndustry] = useState<string>("HVAC");
+  const [selectedScenario, setSelectedScenario] = useState<string>("New Customer Inquiry");
   const [_isPlaying, setIsPlaying] = useState(false);
   const [transcript, setTranscript] = useState<TranscriptMessage[]>([]);
   const [conversationStep, setConversationStep] = useState(0);
@@ -94,11 +69,11 @@ export default function VoiceDemoPage() {
     setConversationStep(0);
 
     try {
-      const greeting = INDUSTRY_GREETINGS[selectedIndustry];
+      const greeting = SCENARIO_GREETINGS[selectedScenario];
 
       // Fetch audio from the voice preview endpoint
       const response = await fetch(
-        `/api/demo/voice-preview?voice_id=${greeting.voiceId}&text=${encodeURIComponent(greeting.greeting)}&industry=${selectedIndustry}`
+        `/api/demo/voice-preview?voice_id=${greeting.voiceId}&text=${encodeURIComponent(greeting.greeting)}&scenario=${selectedScenario}`
       );
 
       if (response.ok) {
@@ -135,7 +110,7 @@ export default function VoiceDemoPage() {
 
     try {
       const response = await fetch(
-        `/api/demo/voice-preview?voice_id=${INDUSTRY_GREETINGS[selectedIndustry].voiceId}&text=${encodeURIComponent(generateAIResponse(prompt, selectedIndustry))}&industry=${selectedIndustry}`
+        `/api/demo/voice-preview?voice_id=${SCENARIO_GREETINGS[selectedScenario].voiceId}&text=${encodeURIComponent(generateAIResponse(prompt, selectedScenario))}&scenario=${selectedScenario}`
       );
 
       if (response.ok) {
@@ -151,7 +126,7 @@ export default function VoiceDemoPage() {
             }, 500);
           });
 
-          const aiResponse = generateAIResponse(prompt, selectedIndustry);
+          const aiResponse = generateAIResponse(prompt, selectedScenario);
           setTranscript(prev => [...prev, { speaker: "ai", text: aiResponse }]);
         }
       }
@@ -162,56 +137,31 @@ export default function VoiceDemoPage() {
     }
   };
 
-  const generateAIResponse = (userInput: string, industry: string): string => {
+  const generateAIResponse = (userInput: string, scenario: string): string => {
     const responses: Record<string, string[]> = {
-      HVAC: [
-        "I'd be happy to schedule that for you. We have availability tomorrow at 2 PM or Thursday at 9 AM. Which works better?",
-        "Absolutely. Can you tell me a bit more about the issue you're experiencing? Is it heating or cooling?",
-        "Perfect. Let me get your information. What's the best phone number to reach you?"
+      "New Customer Inquiry": [
+        "I'd be happy to help with that. Can you tell me a bit more about what you're looking for?",
+        "Absolutely. Let me get some details so I can better assist you.",
+        "Perfect. What's the best way to reach you so we can follow up?"
       ],
-      Dental: [
-        "Of course! Dr. Chen has openings this week. Would you prefer morning or afternoon?",
-        "What type of appointment are you looking for? Cleaning, checkup, or something specific?",
-        "Great! Can I get your name and phone number for the appointment?"
+      "Appointment Booking": [
+        "Great! I can check our availability. Do you have a preferred time in mind?",
+        "Perfect. Let me get your name and contact information to secure the booking.",
+        "Excellent. You're all set. Is there anything else I can help you with?"
       ],
-      Plumbing: [
-        "We can dispatch someone today. Is this an emergency situation?",
-        "I understand. That's one of our most common calls. We have emergency availability right now.",
-        "Perfect. Let me send you a service confirmation. What's the best way to reach you?"
+      "After-Hours Call": [
+        "Of course, I can definitely help you with that. What's your main concern right now?",
+        "I understand. Let me capture your information so our team can follow up first thing in the morning.",
+        "Thank you for calling. We've got all your details and will reach out to you soon."
       ],
-      Roofing: [
-        "A roof inspection usually takes about an hour. We can schedule you this week.",
-        "How soon are you looking to get started? We offer same-day assessments.",
-        "Let me get your details. What's your address and best phone number?"
-      ],
-      Legal: [
-        "I can connect you with an attorney who specializes in that area.",
-        "We have availability for a consultation. When works best for you?",
-        "Excellent. Let me get some basic information for the consultation."
-      ],
-      Medical: [
-        "Is this a new patient visit or a follow-up?",
-        "I can get you scheduled with our next available provider. Do you prefer any specific doctor?",
-        "Perfect. Let me confirm your appointment details."
-      ],
-      Salon: [
-        "Which service are you interested in? We have stylists available throughout the week.",
-        "Excellent. What time would work best for you?",
-        "Let me confirm your booking details."
-      ],
-      Restaurant: [
-        "How many guests will be dining?",
-        "Perfect. What time would you prefer?",
-        "Great! Let me get your name for the reservation."
-      ],
-      Auto: [
-        "What type of service does your vehicle need?",
-        "I can schedule that for you. What's your preferred time?",
-        "Let me get your contact information and vehicle details."
+      "Follow-Up Call": [
+        "Great to hear from you. Did you have a chance to review the information we sent over?",
+        "Fantastic. Is there anything else you'd like to discuss or any questions I can answer?",
+        "Perfect. We're all set then. Thank you for choosing us."
       ]
     };
 
-    return responses[industry][Math.min(conversationStep - 1, 2)];
+    return responses[scenario][Math.min(conversationStep - 1, 2)];
   };
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -226,7 +176,7 @@ export default function VoiceDemoPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: signupEmail,
-          industry: selectedIndustry,
+          scenario: selectedScenario,
           source: "voice-demo"
         })
       });
@@ -262,7 +212,7 @@ export default function VoiceDemoPage() {
           AI So Human, Your Callers<br />Won&apos;t Know the Difference
         </h1>
         <p className="text-lg md:text-xl mb-6 max-w-2xl mx-auto" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-          Listen to real AI conversations across 9 industries. No robotic voices. No awkward pauses. Just natural, revenue-generating conversations — 24/7.
+          Hear how AI handles every common call scenario. No robotic voices. No awkward pauses. Just natural, revenue-generating conversations — 24/7.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-4 mb-8 text-sm" style={{ color: "var(--text-tertiary)" }}>
           <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4 text-emerald-400" /> 12,400+ businesses live</span>
@@ -281,25 +231,25 @@ export default function VoiceDemoPage() {
       {/* Interactive Demo Section */}
       <section id="demo-section" className="py-16 px-4 bg-[var(--bg-card)] border-t border-[var(--border)]">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold mb-8 text-center">Pick Your Industry</h2>
+          <h2 className="text-3xl font-bold mb-8 text-center">Choose a Scenario</h2>
 
-          {/* Industry Selector */}
+          {/* Scenario Selector */}
           <div className="flex flex-wrap gap-3 justify-center mb-12">
-            {INDUSTRIES.map(industry => (
+            {SCENARIOS.map(scenario => (
               <button
-                key={industry}
+                key={scenario}
                 onClick={() => {
-                  setSelectedIndustry(industry);
+                  setSelectedScenario(scenario);
                   setTranscript([]);
                   setConversationStep(0);
                 }}
                 className={`px-5 py-3 rounded-lg font-medium transition-all ${
-                  selectedIndustry === industry
+                  selectedScenario === scenario
                     ? "bg-white text-black shadow-lg"
                     : "bg-[var(--bg-primary)] text-[var(--text-primary)] border border-[var(--border)] hover:border-white"
                 }`}
               >
-                {industry}
+                {scenario}
               </button>
             ))}
           </div>
@@ -323,7 +273,7 @@ export default function VoiceDemoPage() {
                   <Phone className="w-12 h-12 mx-auto mb-3 opacity-80" />
                 </div>
                 <p className="text-sm opacity-80">Incoming Call</p>
-                <p className="text-xl font-semibold">{selectedIndustry} Business</p>
+                <p className="text-xl font-semibold">{selectedScenario}</p>
                 <p className="text-sm opacity-80 mt-1">You</p>
               </div>
 
@@ -407,7 +357,7 @@ export default function VoiceDemoPage() {
             <div className="bg-[var(--bg-card)] rounded-lg p-6 border border-[var(--border)]">
               <h3 className="font-semibold mb-4 flex items-center gap-2">
                 <Volume2 className="w-5 h-5" />
-                Generic Robot Voice
+                Typical AI Voice System
               </h3>
               <div className="bg-black rounded-lg p-4 mb-4">
                 <audio
@@ -419,7 +369,7 @@ export default function VoiceDemoPage() {
                   <source src="/samples/robot.mp3" type="audio/mpeg" />
                 </audio>
               </div>
-              <p className="text-sm text-gray-400">&quot;Thank you for calling. Please say your name.&quot;</p>
+              <p className="text-sm text-gray-400">&quot;Thank. You. For. Calling. Please. State. Your. Name.&quot;</p>
             </div>
 
             {/* Recall Touch Voice */}
@@ -438,7 +388,7 @@ export default function VoiceDemoPage() {
                   <source src="/samples/human.mp3" type="audio/mpeg" />
                 </audio>
               </div>
-              <p className="text-sm opacity-90">&quot;Thank you for calling. What can I help you with today?&quot;</p>
+              <p className="text-sm opacity-90">&quot;Hey, thanks for calling — what can I help you with today?&quot;</p>
             </div>
           </div>
 

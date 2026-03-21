@@ -116,6 +116,7 @@ export default function AppShellClient({
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [activeCalls, setActiveCalls] = useState(0);
   const [minutesUsage, setMinutesUsage] = useState<{ used: number; limit: number } | null>(null);
+  const [billingInfo, setBillingInfo] = useState<{ billing_status?: string; billing_tier?: string; renewal_at?: string | null } | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     if (typeof window === "undefined") return false;
     try {
@@ -127,7 +128,7 @@ export default function AppShellClient({
   });
   const [showShortcuts, setShowShortcuts] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const inboxUnread = 0;
+  const [inboxUnread, setInboxUnread] = useState(0);
 
   const toggleSidebarCollapse = () => {
     setSidebarCollapsed((prev) => {
@@ -248,10 +249,20 @@ export default function AppShellClient({
         if (!wid) return;
         fetch(`/api/billing/status?workspace_id=${encodeURIComponent(wid)}`, { credentials: "include" })
           .then((res) => (res.ok ? res.json() : null))
-          .then((billing: { minutes_used?: number; minutes_limit?: number } | null) => {
+          .then((billing: { minutes_used?: number; minutes_limit?: number; billing_status?: string; billing_tier?: string; renewal_at?: string | null } | null) => {
             if (billing && typeof billing.minutes_used === "number") {
               setMinutesUsage({ used: billing.minutes_used, limit: billing.minutes_limit ?? 400 });
             }
+            if (billing) {
+              setBillingInfo({ billing_status: billing.billing_status, billing_tier: billing.billing_tier, renewal_at: billing.renewal_at });
+            }
+          })
+          .catch(() => {});
+        // Fetch unread inbox count
+        fetch(`/api/inbox/unread?workspace_id=${encodeURIComponent(wid)}`, { credentials: "include" })
+          .then((res) => (res.ok ? res.json() : null))
+          .then((data: { count?: number } | null) => {
+            if (data && typeof data.count === "number") setInboxUnread(data.count);
           })
           .catch(() => {});
       })
@@ -472,9 +483,18 @@ export default function AppShellClient({
                   {!sidebarCollapsed && (
                     <>
                       <div className="rounded-lg bg-[var(--accent-amber)]/10 border border-[var(--accent-amber)]/20 px-3 py-2">
-                        <span className="block text-xs font-medium text-[var(--text-primary)]">Starter · Trial</span>
+                        <span className="block text-xs font-medium text-[var(--text-primary)]">
+                          {billingInfo?.billing_tier
+                            ? `${billingInfo.billing_tier.charAt(0).toUpperCase()}${billingInfo.billing_tier.slice(1)}`
+                            : "Starter"}
+                          {billingInfo?.billing_status === "trial" ? " · Trial" : billingInfo?.billing_status === "active" ? "" : billingInfo?.billing_status ? ` · ${billingInfo.billing_status.charAt(0).toUpperCase()}${billingInfo.billing_status.slice(1)}` : " · Trial"}
+                        </span>
                         <span className="block text-[12px] text-[var(--text-secondary)]">
-                          12 days left
+                          {billingInfo?.billing_status === "trial" && billingInfo?.renewal_at
+                            ? `${Math.max(0, Math.ceil((new Date(billingInfo.renewal_at).getTime() - Date.now()) / 86400000))} days left`
+                            : billingInfo?.billing_status === "active"
+                            ? "Active subscription"
+                            : ""}
                           {(workspaceMeta?.stats?.calls ?? 0) > 0
                             ? ` · ${workspaceMeta?.stats?.calls ?? 0} calls answered`
                             : ""}
@@ -791,8 +811,8 @@ function OnboardingSidebar({ initialWorkspaceName }: { initialWorkspaceName?: st
       </nav>
       <div className="mt-4 pt-4 border-t border-[var(--border-default)] space-y-2">
         <div className="px-3 py-2 rounded-lg bg-[var(--accent-amber)]/10 border border-[var(--accent-amber)]/20">
-          <span className="block text-xs font-medium text-[var(--text-primary)]">Starter · Trial</span>
-          <span className="block text-[10px] text-[var(--text-secondary)]">14 days left</span>
+          <span className="block text-xs font-medium text-[var(--text-primary)]">Starter · Free Trial</span>
+          <span className="block text-[10px] text-[var(--text-secondary)]">14-day trial</span>
         </div>
       </div>
     </aside>

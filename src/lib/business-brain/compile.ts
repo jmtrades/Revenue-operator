@@ -8,6 +8,7 @@
 
 import { resolveIndustryPack } from "@/lib/industry-packs";
 import { getCallScriptBlocksForDomain } from "@/lib/voice/call-script-blocks";
+import { resolveCallObjective, formatObjectiveForPrompt, type CallContext } from "@/lib/voice/call-objective";
 
 export interface BusinessBrainInput {
   business_name: string;
@@ -35,6 +36,15 @@ export interface BusinessBrainInput {
   when_pricing?: string;
   when_competitor?: string;
   learned_behaviors?: string[];
+  /** Dynamic call context for objective routing */
+  call_context?: {
+    direction?: "inbound" | "outbound";
+    isBusinessHours?: boolean;
+    isReturningCaller?: boolean;
+    leadState?: "cold" | "warm" | "hot" | "customer" | "churned";
+    campaignType?: "reminder" | "follow_up" | "reactivation" | "no_show" | "sales";
+    leadScore?: number;
+  };
   /** Previous call context for returning callers */
   call_history?: Array<{
     date: string;
@@ -165,6 +175,36 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
   if (learned.length > 0) missionParts.push("Learned behaviors (from real calls): " + learned.map((b) => b.trim()).join(". "));
   const layer2b = missionParts.length > 0 ? "MISSION / STRATEGY:\n" + missionParts.join("\n") : "";
 
+  // Layer 2c: Call objective — dynamically resolved per-call using the objective router.
+  // When full call_context is provided (direction, hours, lead state, campaign type),
+  // the router picks the optimal objective. Falls back to primary_goal as a static default.
+  let layer2c = "";
+  if (input.call_context) {
+    const callCtx: CallContext = {
+      direction: input.call_context.direction ?? "inbound",
+      isBusinessHours: input.call_context.isBusinessHours ?? true,
+      isReturningCaller: input.call_context.isReturningCaller ?? !!call_history?.length,
+      leadState: input.call_context.leadState,
+      campaignType: input.call_context.campaignType,
+      agentPrimaryGoal: primary_goal,
+      leadScore: input.call_context.leadScore ?? lead_context?.score,
+    };
+    const resolved = resolveCallObjective(callCtx);
+    layer2c = formatObjectiveForPrompt(resolved);
+  } else if (primary_goal) {
+    // Static fallback when no call_context is provided
+    const objectiveInstructions: Record<string, string> = {
+      answer_route: "Your objective this call: Answer the caller's question completely, or route them to the right person. Success = caller got their answer or was connected. Do NOT push for a booking unless they ask.",
+      book_appointments: "Your objective this call: Get this caller booked. Guide the conversation toward confirming a date, time, and service. Be helpful first, but always steer toward the booking.",
+      qualify_leads: "Your objective this call: Determine if this caller is a good fit. Ask qualifying questions naturally (name, need, timeline, budget range). Capture their info for human follow-up. Don't sell — qualify.",
+      support: "Your objective this call: Resolve the caller's issue. Listen fully, acknowledge their frustration if any, and either solve it or escalate to a human. Success = caller feels heard and has a resolution path.",
+      sales: "Your objective this call: Move this caller closer to a purchase. Build rapport, understand their need, present the offer, handle objections, and close or book a follow-up. Be confident but never pushy.",
+      follow_up: "Your objective this call: Re-engage this contact. Reference previous conversations if available. Check if they have questions, offer to help, and try to book next steps. Be warm — they already know us.",
+    };
+    const instruction = objectiveInstructions[primary_goal];
+    if (instruction) layer2c = "CALL OBJECTIVE:\n" + instruction;
+  }
+
   // Layer 3: Conversation skills
   const layer3 = [
     "CONVERSATION RULES:",
@@ -177,6 +217,12 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
     "- If you don't understand: \"I'm sorry, could you repeat that?\" — never guess.",
     "- If the caller wants a human: \"Absolutely, let me connect you. One moment.\" → transfer or take a message.",
     "- Always end every call with a clear next step. Never hang up without confirming what happens next.",
+    "- NEVER respond to every question with the same timing. Simple questions = fast answer. Hard questions = pause and think.",
+    "- After the caller finishes a long explanation, pause for 500ms before replying. This shows you listened.",
+    "- NEVER start 3 consecutive responses with the same word. Rotate your openers.",
+    "- If the caller says something emotional, respond to the EMOTION first, then the content.",
+    "- Mirror the caller's vocabulary. If they say 'appointment', don't say 'booking'. If they say 'AC unit', don't say 'HVAC system'.",
+    "- On longer calls (3+ minutes), vary your energy. Don't sound the same at minute 1 and minute 5.",
     "",
     "NATURAL SPEECH:",
     "- Use contractions: \"I'll\", \"we're\", \"that's\", \"don't\", \"can't\"",
@@ -185,6 +231,10 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
     "- Keep it conversational: \"Let me check on that for you\" not \"I will now look up that information\"",
     "- Vary your sentence length. Mix short affirmations (\"Got it.\") with longer explanations.",
     "- Pause briefly before important information. \"So your appointment is... Wednesday at 2 PM.\"",
+    "- NEVER use the same filler word twice in a row. If you just said 'Absolutely', use 'Of course' or 'You got it' next.",
+    "- On phone numbers and dates, slow down and pause between groups: 'That's... 5-5-5... 1-2-3... 4-5-6-7.'",
+    "- When the caller interrupts you, stop immediately and say 'Oh—' or 'Sure—' before listening. Never just go silent.",
+    "- If you need to look something up, say 'Let me check on that for you' — never go silent for more than 1 second.",
     "",
     "PHONE-SPECIFIC:",
     "- Keep responses to 1-2 sentences. Phone callers can't read — they need to process by ear.",
@@ -307,8 +357,10 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
     "→ \"Are you still there?\" or \"Take your time — I'm here whenever you're ready.\"",
     "",
     "When caller asks something you don't know:",
-    "→ \"That's a great question. Let me have someone from the team get back to you with the exact answer.\"",
+    "→ FIRST try to answer from your knowledge base and industry knowledge.",
+    "→ If you truly don't know: \"That's a great question — let me have someone from our team get back to you with the exact details.\"",
     "→ Capture their callback info. Never guess or make up information.",
+    "→ If the question is common (pricing, hours, location, services), you should KNOW the answer. Check your context first.",
   ].join("\n");
 
   // Layer 9: Compliance disclosures (auto-loaded from industry)
@@ -373,6 +425,7 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
   // caller context → call history → industry → objections → compliance → guardrails
   const blocks = [layer1, layer2];
   if (layer2b) blocks.push(layer2b);
+  if (layer2c) blocks.push(layer2c);
   blocks.push(layer3, layer4);
   if (layer5) blocks.push(layer5); // Lead context early so agent can personalize
   if (layer6) blocks.push(layer6); // Call history for returning callers

@@ -142,10 +142,20 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
     setCurrentLine(0);
     setAudioLoading(true);
 
+    // Map scenario voice names to real Recall voice IDs for maximum human realism
+    const voiceIdMap: Record<string, string> = {
+      hvac: "us-female-warm-receptionist",       // Sarah — warm, empathetic
+      dental: "us-female-casual",                 // Emma — casual, friendly
+      legal: "us-male-professional",              // Alex — professional, authoritative
+      roofing: "us-female-warm-receptionist",     // Sarah — warm, reassuring
+      restaurant: "us-female-casual",             // Emma — casual, friendly
+    };
+    const voiceId = voiceIdMap[scenario.id] || "us-female-warm-receptionist";
+
     // Try to play the AI greeting via voice API
     try {
       const res = await fetch(
-        `/api/demo/voice-preview?voice_id=sarah&text=${encodeURIComponent(scenario.greeting)}`
+        `/api/demo/voice-preview?voice_id=${voiceId}&text=${encodeURIComponent(scenario.greeting)}`
       );
       if (res.ok) {
         const blob = await res.blob();
@@ -171,10 +181,10 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
           const el = containerRef.current.querySelector(`[data-line="${i}"]`);
           el?.scrollIntoView({ behavior: "smooth", block: "nearest" });
         }
-        // Try to play AI lines via voice API
+        // Try to play AI lines via voice API with proper human-quality voice
         if (line.role === "ai" && i > 0) {
           fetch(
-            `/api/demo/voice-preview?voice_id=sarah&text=${encodeURIComponent(line.text)}`
+            `/api/demo/voice-preview?voice_id=${voiceId}&text=${encodeURIComponent(line.text)}`
           )
             .then((r) => (r.ok ? r.blob() : null))
             .then((blob) => {

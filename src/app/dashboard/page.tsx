@@ -117,7 +117,7 @@ export default function SituationPage() {
             Ready to get started?
           </h1>
           <p className="text-base mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-            Set up your AI receptionist and start handling calls, capturing leads, and booking appointments automatically.
+            Set up your AI phone agent and start handling calls, capturing leads, and booking appointments automatically.
           </p>
           <Link
             href="/activate"
@@ -213,10 +213,16 @@ export default function SituationPage() {
               <TrendingUp size={20} color="white" />
             </div>
           </div>
-          <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
-            $0
-          </p>
-          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Revenue Recovered</p>
+          {(stats?.recent_calls ?? 0) > 0 ? (
+            <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
+              ${((stats?.recent_calls ?? 0) * 47).toLocaleString()}
+            </p>
+          ) : (
+            <p className="text-xl font-semibold mb-1" style={{ color: "var(--text-tertiary)" }}>
+              Starts after first call
+            </p>
+          )}
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Est. Revenue Recovered</p>
         </div>
 
         <div className="rounded-lg border p-6" style={{ borderColor: "var(--border-default)", background: "var(--card)", borderWidth: "1px" }}>
@@ -277,7 +283,7 @@ export default function SituationPage() {
               <ChevronRight size={18} style={{ color: "var(--text-tertiary)" }} className="group-hover:translate-x-1 transition-transform" />
             </div>
             <h3 className="font-semibold mb-1" style={{ color: "var(--text-primary)" }}>Set Up Your Number</h3>
-            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Configure your AI receptionist's phone</p>
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Configure your AI agent's phone number</p>
           </Link>
 
           <Link
@@ -383,16 +389,24 @@ export default function SituationPage() {
         </div>
 
         {currentState.length === 0 && recentChange.length === 0 ? (
-          <div className="rounded-lg border p-12 text-center" style={{ borderColor: "var(--border-default)", background: "var(--card)", borderStyle: "dashed" }}>
+          <div className="rounded-lg border p-12 text-center" style={{ borderColor: "var(--border-default)", background: "var(--card)" }}>
             <div className="flex justify-center mb-4">
-              <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: "var(--accent-primary-subtle)" }}>
-                <Clock size={24} style={{ color: "var(--accent-primary)" }} />
+              <div className="w-14 h-14 rounded-full flex items-center justify-center" style={{ background: "var(--accent-primary-subtle)" }}>
+                <Phone size={24} style={{ color: "var(--accent-primary)" }} />
               </div>
             </div>
-            <h3 className="font-semibold mb-2" style={{ color: "var(--text-primary)" }}>No activity yet</h3>
-            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-              Once calls start coming in, you&apos;ll see a summary here
+            <h3 className="font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Your activity feed is ready</h3>
+            <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>
+              Once your AI agent handles its first call, you&apos;ll see real-time updates here
             </p>
+            <Link
+              href={`/dashboard/settings/phone${searchParams.get("workspace_id") ? `?workspace_id=${searchParams.get("workspace_id")}` : ""}`}
+              className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+              style={{ background: "var(--accent-primary)", color: "#fff" }}
+            >
+              Set Up Your Phone Number
+              <ChevronRight size={14} />
+            </Link>
           </div>
         ) : (
           <div className="space-y-6">

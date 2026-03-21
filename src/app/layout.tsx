@@ -133,6 +133,8 @@ export default async function RootLayout({
     <html lang={locale} dir={isRTL(locale) ? "rtl" : "ltr"} suppressHydrationWarning>
       <head suppressHydrationWarning>
         <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        {/* One-time locale reset: clear stale auto-detected locale cookies (v2 migration) */}
+        <script dangerouslySetInnerHTML={{ __html: `(function(){try{if(!document.cookie.includes('rt_locale_v2=1')){document.cookie='rt_locale=;path=/;max-age=0';document.cookie='rt_locale_v2=1;path=/;max-age=31536000;SameSite=Lax';if(document.cookie.includes('rt_locale=')){location.reload();}}}catch(e){}})();` }} />
       </head>
       <body
         suppressHydrationWarning

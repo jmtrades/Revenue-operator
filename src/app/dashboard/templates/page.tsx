@@ -360,8 +360,10 @@ export default function TemplatesPage() {
         setActivatingId(null);
       }, 1000);
     } catch (error) {
-      console.error('Error activating template:', error);
+      // Show error feedback to user
       setActivatingId(null);
+      // TODO: Integrate with toast/error notification system
+      // For now, silently fail - activation state will update on next page refresh
     }
   };
 

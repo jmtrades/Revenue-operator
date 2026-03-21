@@ -1942,7 +1942,7 @@
       "scratch": "Agent personnalisé"
     },
     "greetings": {
-      "receptionist": "Bonjour, merci d'avoir appelé. Je suis votre réceptionniste IA — je recueille les informations et ne laisse rien passer.",
+      "receptionist": "Bonjour, merci d'avoir appelé. Je suis votre agent IA — je recueille les informations et ne laisse rien passer.",
       "after_hours": "Bonjour, c'est votre réceptionniste IA Recall Touch pour les appels hors horaires. Comment puis-je vous aider ?",
       "emergency": "C'est votre ligne d'urgence. J'agis vite, je vous rassure et j'alerte la bonne personne.",
       "lead_qualifier": "Merci de votre contact. Je vais poser quelques questions pour vous orienter.",
@@ -1992,7 +1992,7 @@
       "defaultHours": "Lun–Ven 9h–17h",
       "yourBusiness": "votre entreprise",
       "greeting": "Merci d'avoir appelé {business}. Comment puis-je vous aider aujourd'hui ?",
-      "receptionist": "Réceptionniste",
+      "receptionist": "Agent IA",
       "hasBudget": "A un budget",
       "hasTimeline": "A des délais",
       "isDecisionMaker": "Est décideur",
@@ -3597,7 +3597,7 @@
       "complianceAndSecurity": "Conformité et Sécurité",
       "optionalUpdates": "Optionnel : recevoir les actualités produit.",
       "notifyMe": "M'alerter",
-      "onList": "Vous êtes sur la liste ! 🎉",
+      "onList": "Vous êtes sur la liste !",
       "getUpdates": "Recevoir les actualités",
       "emailPlaceholder": "vous@entreprise.com",
       "emailAriaLabel": "E-mail pour les actualités produit"
@@ -4204,15 +4204,15 @@
       "cards": {
         "1": {
           "summary": "Consultation de rendez-vous",
-          "outcome": "✅ Réservé 14h"
+          "outcome": "Réservé 14h"
         },
         "2": {
           "summary": "Question tarifaire",
-          "outcome": "✅ Info envoyée par SMS"
+          "outcome": "Info envoyée par SMS"
         },
         "3": {
           "summary": "Demande de rappel",
-          "outcome": "✅ Relance dans 30 min"
+          "outcome": "Relance dans 30 min"
         }
       }
     },
@@ -4527,9 +4527,9 @@
       "missedCallsPerWeek": "Appels manqués par semaine",
       "avgValuePerCall": "Valeur moyenne par appel ($)",
       "monthlyRecovered": "Revenus récupérés par mois",
-      "annualBaseline": "Base annuelle réceptionniste",
+      "annualBaseline": "Base annuelle d'embauche",
       "annualProtected": "Revenus annuels que Recall Touch protège",
-      "receptionistCost": "coût réceptionniste.",
+      "receptionistCost": "coût d'embauche.",
       "recommendedPlan": "Forfait recommandé :",
       "description": "Calculez votre potentiel de recouvrement avec notre calculateur ROI."
     },
@@ -6628,5 +6628,45 @@
   },
   "legal": {
     "languageNotice": "Ce document n'est disponible qu'en anglais."
+  },
+  "compare": {
+    "title": "Recall Touch vs {name}",
+    "subtitle": "See how the AI Revenue Execution System compares.",
+    "cta": "Start free"
+  },
+  "agency": {
+    "kicker": "Partner operations",
+    "title": "Agency",
+    "subtitle": "Set up and manage client workspaces with a repeatable, ROI-first onboarding flow.",
+    "ctaCreateWorkspace": "Create a client workspace",
+    "ctaPricing": "View pricing",
+    "cards": {
+      "workspaces": {
+        "title": "Client workspaces",
+        "description": "Create separate workspaces for each client to isolate data and manage access."
+      },
+      "whitelabel": {
+        "title": "White-label",
+        "description": "Brand the platform as your own with custom logos, colors, and domains."
+      },
+      "support": {
+        "title": "Support",
+        "description": "We handle onboarding, training, and technical support for your clients."
+      }
+    }
+  },
+  "followUps": {
+    "title": "Follow-ups",
+    "create": "Create Sequence",
+    "tabs": {
+      "templates": "Templates",
+      "active": "Active enrollments"
+    },
+    "empty": {
+      "templatesTitle": "No sequences yet.",
+      "templatesDescription": "Create a custom sequence to automatically follow up with contacts.",
+      "activeTitle": "No active enrollments",
+      "activeDescription": "Active enrollments appear here."
+    }
   }
 }

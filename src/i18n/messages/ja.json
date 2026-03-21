@@ -1948,7 +1948,7 @@
       "scratch": "カスタムエージェント"
     },
     "greetings": {
-      "receptionist": "お電話ありがとうございます。AI受付です。必要な情報をお聞きし、取りこぼしのないようにします。",
+      "receptionist": "お電話ありがとうございます。AIエージェントです。必要な情報をお聞きし、取りこぼしのないようにします。",
       "after_hours": "お電話ありがとうございます。Recall Touchの時間外AI受付です。どのようなご用件でしょうか。",
       "emergency": "緊急用回線です。迅速に対応し、適切な担当者に連絡します。",
       "lead_qualifier": "お問い合わせありがとうございます。いくつかお伺いして、次のステップをご案内します。",
@@ -1998,7 +1998,7 @@
       "defaultHours": "月〜金 9:00〜17:00",
       "yourBusiness": "御社",
       "greeting": "{business} にお電話ありがとうございます。本日はどのようなご用件でしょうか？",
-      "receptionist": "受付",
+      "receptionist": "AIエージェント",
       "hasBudget": "予算あり",
       "hasTimeline": "スケジュールあり",
       "isDecisionMaker": "意思決定者",
@@ -3600,7 +3600,7 @@
       "ctaStartFree": "無料で開始 →",
       "optionalUpdates": "オプション：製品アップデートを受け取る",
       "notifyMe": "通知する",
-      "onList": "リストに追加されました！🎉",
+      "onList": "リストに追加されました！",
       "getUpdates": "アップデートを受け取る",
       "emailPlaceholder": "you@company.com",
       "emailAriaLabel": "製品アップデート用メール"
@@ -4207,15 +4207,15 @@
       "cards": {
         "1": {
           "summary": "相談のスケジュール",
-          "outcome": "✅ 14時予約"
+          "outcome": "14時予約"
         },
         "2": {
           "summary": "料金の質問",
-          "outcome": "✅ テキストで情報送信"
+          "outcome": "テキストで情報送信"
         },
         "3": {
           "summary": "折り返し希望",
-          "outcome": "✅ 30分後にフォロー"
+          "outcome": "30分後にフォロー"
         }
       }
     },
@@ -4530,9 +4530,9 @@
       "missedCallsPerWeek": "週あたりの取りこぼし着信数",
       "avgValuePerCall": "1通話あたりの平均価値（$）",
       "monthlyRecovered": "月間回収収入",
-      "annualBaseline": "年間受付ベースライン",
+      "annualBaseline": "年間採用ベースライン",
       "annualProtected": "Recall Touchが守る年間収入",
-      "receptionistCost": "受付コスト。",
+      "receptionistCost": "採用コスト。",
       "recommendedPlan": "おすすめプラン：",
       "description": "ROI計算機で収益回復の可能性を計算できます。"
     },
@@ -6631,5 +6631,45 @@
   },
   "legal": {
     "languageNotice": "このドキュメントは英語のみで利用できます。"
+  },
+  "compare": {
+    "title": "Recall Touch vs {name}",
+    "subtitle": "See how the AI Revenue Execution System compares.",
+    "cta": "Start free"
+  },
+  "agency": {
+    "kicker": "Partner operations",
+    "title": "Agency",
+    "subtitle": "Set up and manage client workspaces with a repeatable, ROI-first onboarding flow.",
+    "ctaCreateWorkspace": "Create a client workspace",
+    "ctaPricing": "View pricing",
+    "cards": {
+      "workspaces": {
+        "title": "Client workspaces",
+        "description": "Create separate workspaces for each client to isolate data and manage access."
+      },
+      "whitelabel": {
+        "title": "White-label",
+        "description": "Brand the platform as your own with custom logos, colors, and domains."
+      },
+      "support": {
+        "title": "Support",
+        "description": "We handle onboarding, training, and technical support for your clients."
+      }
+    }
+  },
+  "followUps": {
+    "title": "Follow-ups",
+    "create": "Create Sequence",
+    "tabs": {
+      "templates": "Templates",
+      "active": "Active enrollments"
+    },
+    "empty": {
+      "templatesTitle": "No sequences yet.",
+      "templatesDescription": "Create a custom sequence to automatically follow up with contacts.",
+      "activeTitle": "No active enrollments",
+      "activeDescription": "Active enrollments appear here."
+    }
   }
 }

@@ -414,28 +414,36 @@ interface UpgradeModalProps {
 
 const PLAN_DETAILS: Record<string, PlanComparison> = {
   Starter: {
-    calls: 1000,
-    messages: 5000,
+    calls: 500,
+    messages: 2000,
     customIntegrations: false,
     analytics: false,
     support: 'Email',
-    price: 29,
+    price: 97,
   },
-  Professional: {
-    calls: 10000,
-    messages: 50000,
+  Growth: {
+    calls: 2500,
+    messages: 10000,
     customIntegrations: true,
     analytics: true,
     support: 'Priority',
-    price: 99,
+    price: 297,
   },
-  Scale: {
-    calls: 100000,
-    messages: 500000,
+  Business: {
+    calls: 6000,
+    messages: 25000,
     customIntegrations: true,
     analytics: true,
-    support: '24/7 Dedicated',
-    price: 399,
+    support: 'Phone',
+    price: 597,
+  },
+  Agency: {
+    calls: 15000,
+    messages: 50000,
+    customIntegrations: true,
+    analytics: true,
+    support: 'Dedicated Account Manager',
+    price: 997,
   },
 };
 
@@ -729,7 +737,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
             >
               All plans include a 14-day free trial. Cancel anytime. Need a custom plan?{' '}
               <a
-                href="mailto:sales@example.com"
+                href="mailto:support@recall-touch.com"
                 style={{ color: themeVars.accentPrimary, textDecoration: 'none' }}
               >
                 Contact sales

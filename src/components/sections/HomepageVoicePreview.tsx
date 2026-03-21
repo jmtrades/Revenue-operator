@@ -13,7 +13,7 @@ export function HomepageVoicePreview() {
     <section className="marketing-section py-16 md:py-24" style={{ background: "var(--bg-primary)" }}>
       <Container>
         <AnimateOnScroll className="text-center mb-10">
-          <SectionLabel>Hear It to Believe It</SectionLabel>
+          <SectionLabel>AI That Sounds Human</SectionLabel>
           <h2
             className="font-bold max-w-2xl mx-auto"
             style={{
@@ -23,10 +23,10 @@ export function HomepageVoicePreview() {
               color: "var(--text-primary, #1A1A1A)",
             }}
           >
-            The Voice Your Callers Will Trust
+            32 Premium Voices. Zero Robotic Sound.
           </h2>
           <p className="text-base md:text-lg max-w-xl mx-auto mt-3" style={{ color: "var(--text-secondary)" }}>
-            Hear how Recall Touch handles real conversations — from first ring to booked appointment.
+            Every voice in the Recall Touch library was engineered to be indistinguishable from a real person. Natural pauses. Real intonation. Warmth that builds trust from the first word.
           </p>
         </AnimateOnScroll>
 
@@ -40,7 +40,7 @@ export function HomepageVoicePreview() {
             className="inline-flex items-center gap-2 border border-[var(--border-default)] text-[var(--text-primary)] font-semibold rounded-xl px-6 py-3 no-underline hover:bg-white/5 transition-all"
           >
             <Headphones className="w-4 h-4" />
-            Experience the full demo
+            Hear all 32 voices
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

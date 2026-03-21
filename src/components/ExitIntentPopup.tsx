@@ -72,11 +72,9 @@ export function ExitIntentPopup() {
         setTimeout(() => {
           dismiss();
         }, 2000);
-      } else {
-        console.error("Submission failed");
       }
-    } catch (error) {
-      console.error("Error submitting email:", error);
+    } catch {
+      // Silently handle — popup is best-effort
     } finally {
       setLoading(false);
     }

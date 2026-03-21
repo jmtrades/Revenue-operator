@@ -1954,7 +1954,7 @@
       "scratch": "Agente personalizado"
     },
     "greetings": {
-      "receptionist": "Hola, gracias por llamar. Soy tu recepcionista IA; recogeré los datos y no dejaremos nada en el tintero.",
+      "receptionist": "Hola, gracias por llamar. Soy tu agente IA; recogeré los datos y no dejaremos nada en el tintero.",
       "after_hours": "Hola, soy tu recepcionista IA de Recall Touch para llamadas fuera de horario. ¿En qué puedo ayudarte hoy?",
       "emergency": "Es tu línea de emergencia. Iré rápido, te calmaré y avisaré a la persona adecuada.",
       "lead_qualifier": "Gracias por contactar. Haré unas preguntas para llevarte al siguiente paso.",
@@ -2004,7 +2004,7 @@
       "defaultHours": "Lun–Vie 9:00–17:00",
       "yourBusiness": "tu negocio",
       "greeting": "Gracias por llamar a {business}. ¿En qué puedo ayudarle hoy?",
-      "receptionist": "Receptionista",
+      "receptionist": "Agente IA",
       "hasBudget": "Tiene presupuesto",
       "hasTimeline": "Tiene plazos",
       "isDecisionMaker": "Es quien decide",
@@ -3609,7 +3609,7 @@
       "complianceAndSecurity": "Cumplimiento y Seguridad",
       "optionalUpdates": "Opcional: recibe novedades del producto.",
       "notifyMe": "Avísame",
-      "onList": "¡Estás en la lista! 🎉",
+      "onList": "¡Estás en la lista!",
       "getUpdates": "Recibir novedades",
       "emailPlaceholder": "tu@empresa.com",
       "emailAriaLabel": "Email para novedades del producto"
@@ -4216,15 +4216,15 @@
       "cards": {
         "1": {
           "summary": "Consulta de cita",
-          "outcome": "✅ Reservado 14:00"
+          "outcome": "Reservado 14:00"
         },
         "2": {
           "summary": "Pregunta de precios",
-          "outcome": "✅ Info enviada por SMS"
+          "outcome": "Info enviada por SMS"
         },
         "3": {
           "summary": "Solicitud de devolución de llamada",
-          "outcome": "✅ Seguimiento en 30 min"
+          "outcome": "Seguimiento en 30 min"
         }
       }
     },
@@ -4539,9 +4539,9 @@
       "missedCallsPerWeek": "Llamadas perdidas por semana",
       "avgValuePerCall": "Valor medio por llamada ($)",
       "monthlyRecovered": "Ingresos recuperados al mes",
-      "annualBaseline": "Base anual de recepcionista",
+      "annualBaseline": "Base anual de contratación",
       "annualProtected": "Ingresos anuales que Recall Touch protege",
-      "receptionistCost": "coste de recepcionista.",
+      "receptionistCost": "coste de contratación.",
       "recommendedPlan": "Plan recomendado:",
       "description": "Calcula tu potencial recuperación de ingresos con nuestra calculadora de ROI."
     },
@@ -6640,5 +6640,45 @@
   },
   "legal": {
     "languageNotice": "Este documento solo está disponible en inglés."
+  },
+  "compare": {
+    "title": "Recall Touch vs {name}",
+    "subtitle": "See how the AI Revenue Execution System compares.",
+    "cta": "Start free"
+  },
+  "agency": {
+    "kicker": "Partner operations",
+    "title": "Agency",
+    "subtitle": "Set up and manage client workspaces with a repeatable, ROI-first onboarding flow.",
+    "ctaCreateWorkspace": "Create a client workspace",
+    "ctaPricing": "View pricing",
+    "cards": {
+      "workspaces": {
+        "title": "Client workspaces",
+        "description": "Create separate workspaces for each client to isolate data and manage access."
+      },
+      "whitelabel": {
+        "title": "White-label",
+        "description": "Brand the platform as your own with custom logos, colors, and domains."
+      },
+      "support": {
+        "title": "Support",
+        "description": "We handle onboarding, training, and technical support for your clients."
+      }
+    }
+  },
+  "followUps": {
+    "title": "Follow-ups",
+    "create": "Create Sequence",
+    "tabs": {
+      "templates": "Templates",
+      "active": "Active enrollments"
+    },
+    "empty": {
+      "templatesTitle": "No sequences yet.",
+      "templatesDescription": "Create a custom sequence to automatically follow up with contacts.",
+      "activeTitle": "No active enrollments",
+      "activeDescription": "Active enrollments appear here."
+    }
   }
 }
