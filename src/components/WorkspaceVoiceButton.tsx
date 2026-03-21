@@ -73,7 +73,7 @@ export function WorkspaceVoiceButton({
           type="button"
           onClick={startCall}
           disabled={loading}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-black hover:bg-zinc-100 disabled:opacity-60"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-black hover:bg-[var(--bg-hover)] disabled:opacity-60"
         >
           <Phone className="h-4 w-4" />
           {loading ? "Calling your phone…" : startLabel}

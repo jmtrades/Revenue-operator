@@ -81,7 +81,7 @@ export default function AboutPage() {
           <p className="mt-6">
             <Link
               href="/activate"
-              className="inline-flex rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-zinc-100"
+              className="inline-flex rounded-xl bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-[var(--bg-hover)]"
             >
               Start free trial
             </Link>

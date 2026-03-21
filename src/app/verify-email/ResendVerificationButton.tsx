@@ -33,7 +33,7 @@ export function ResendVerificationButton({ email }: { email: string }) {
           setBusy(false);
         }
       }}
-      className="inline-flex items-center justify-center gap-2 rounded-xl bg-white text-black font-semibold px-6 py-3 hover:bg-zinc-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+      className="inline-flex items-center justify-center gap-2 rounded-xl bg-white text-black font-semibold px-6 py-3 hover:bg-[var(--bg-hover)] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
       disabled={busy || !trimmed}
       aria-label="Resend verification email"
     >

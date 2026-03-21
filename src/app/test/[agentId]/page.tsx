@@ -72,14 +72,14 @@ export default function PublicAgentTestPage({
           <h1 className="text-lg font-semibold">
             Test this agent in your browser
           </h1>
-          <p className="text-xs text-zinc-400">
+          <p className="text-xs text-[var(--text-tertiary)]">
             This sandbox lets your team try the agent&apos;s call behavior without
             logging in.
           </p>
         </header>
-        <section className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-4">
+        <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-inset)] p-4">
           {loading && (
-            <p className="text-xs text-zinc-400">Loading agent configuration…</p>
+            <p className="text-xs text-[var(--text-tertiary)]">Loading agent configuration…</p>
           )}
           {error && !loading && (
             <p className="text-xs text-red-400" role="alert">

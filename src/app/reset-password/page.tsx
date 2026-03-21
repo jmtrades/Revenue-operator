@@ -98,7 +98,7 @@ export default function ResetPasswordPage() {
               minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:outline-none focus:ring-1 focus:ring-zinc-500/40"
+              className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]/50"
             />
           </div>
 
@@ -113,12 +113,12 @@ export default function ResetPasswordPage() {
               minLength={6}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:outline-none focus:ring-1 focus:ring-zinc-500/40"
+              className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]/50"
             />
           </div>
 
           {!ready && !message ? (
-            <div className="rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-[var(--text-secondary)]">
+            <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-inset)] px-4 py-3 text-sm text-[var(--text-secondary)]">
               Open the email reset link first, then return to this page if needed.
             </div>
           ) : null}
@@ -138,7 +138,7 @@ export default function ResetPasswordPage() {
           <button
             type="submit"
             disabled={busy || !ready}
-            className="w-full rounded-xl bg-[var(--bg-surface)] px-6 py-3 text-sm font-semibold text-[var(--text-primary)] transition hover:bg-[var(--bg-hover)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none disabled:opacity-60"
+            className="w-full rounded-xl bg-[var(--bg-surface)] px-6 py-3 text-sm font-semibold text-[var(--text-primary)] transition hover:bg-[var(--bg-hover)] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none disabled:opacity-60"
           >
             {busy ? t("resetPassword.saving") : t("resetPassword.savePassword")}
           </button>

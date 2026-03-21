@@ -274,7 +274,7 @@ export function ComparisonContent({ competitor }: ComparisonContentProps) {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/activate"
-            className="inline-flex items-center justify-center rounded-xl bg-white px-8 py-4 text-black font-semibold hover:bg-zinc-100 transition-colors"
+            className="inline-flex items-center justify-center rounded-xl bg-white px-8 py-4 text-black font-semibold hover:bg-[var(--bg-hover)] transition-colors"
           >
             Start free trial
           </Link>

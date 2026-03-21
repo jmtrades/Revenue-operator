@@ -122,10 +122,10 @@ export default function SmithAiComparisonPage() {
                         {r.note && <div className="mt-1 text-xs" style={{ color: "var(--text-tertiary)" }}>{r.note}</div>}
                       </td>
                       <td className="px-6 py-4 text-center">
-                        {r.recall ? <CheckCircle2 className="w-5 h-5 mx-auto text-emerald-400" aria-hidden /> : <XCircle className="w-5 h-5 mx-auto text-zinc-600" aria-hidden />}
+                        {r.recall ? <CheckCircle2 className="w-5 h-5 mx-auto text-emerald-400" aria-hidden /> : <XCircle className="w-5 h-5 mx-auto text-[var(--text-tertiary)]" aria-hidden />}
                       </td>
                       <td className="px-6 py-4 text-center">
-                        {r.smith ? <CheckCircle2 className="w-5 h-5 mx-auto text-emerald-400" aria-hidden /> : <XCircle className="w-5 h-5 mx-auto text-zinc-600" aria-hidden />}
+                        {r.smith ? <CheckCircle2 className="w-5 h-5 mx-auto text-emerald-400" aria-hidden /> : <XCircle className="w-5 h-5 mx-auto text-[var(--text-tertiary)]" aria-hidden />}
                       </td>
                     </tr>
                   ))}
