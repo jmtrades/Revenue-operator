@@ -37,7 +37,7 @@ export default function AppError({
               type="button"
               onClick={handleRetry}
               aria-label={t("retry")}
-              className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-gray-100 transition focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
+              className="px-6 py-3 rounded-xl text-sm font-semibold bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
             >
               {t("tryAgain")}
               {retryCount > 0 && ` (${retryCount})`}

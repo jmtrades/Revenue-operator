@@ -532,7 +532,7 @@ export default function CallIntelligencePage() {
                 <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
                   <Link
                     href="/app/calls"
-                    className="inline-flex items-center gap-1.5 rounded-xl bg-white px-4 py-2 text-sm font-semibold text-black hover:opacity-90"
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--bg-surface)] px-4 py-2 text-sm font-semibold text-[var(--text-primary)] hover:opacity-90"
                   >
                     {t("empty.cta")} →
                   </Link>

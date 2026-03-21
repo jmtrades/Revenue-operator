@@ -107,7 +107,7 @@ export function LeadDetail({
         <ol className="space-y-2 text-xs">
           {lead.timeline.map((item) => (
             <li key={`${item.at}-${item.label}`} className="flex items-start gap-2">
-              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-400" />
+              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--text-tertiary)]" />
               <div>
                 <p className="text-[var(--text-primary)]">{item.label}</p>
                 <p className="text-[11px] text-[var(--text-secondary)]">{formatDate(item.at)}</p>

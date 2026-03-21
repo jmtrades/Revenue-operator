@@ -78,7 +78,7 @@ export function ConfirmDialog({
             className={
               variant === "danger"
                 ? "rounded-xl px-4 py-2 text-sm font-semibold bg-red-600 text-white hover:bg-red-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
-                : "rounded-xl bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
+                : "rounded-xl bg-white px-4 py-2 text-sm font-semibold text-black hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
             }
           >
             {confirmText}

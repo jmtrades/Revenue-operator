@@ -58,7 +58,7 @@ export function PackBusinessStep({
             });
           }}
           placeholder="Acme Dental"
-          className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 placeholder:text-slate-500 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500"
+          className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 placeholder:text-slate-500 focus:border-[var(--border-default)] focus:outline-none focus:ring-1 focus:ring-[var(--border-default)]"
         />
       </div>
       <div className="space-y-2">
@@ -72,7 +72,7 @@ export function PackBusinessStep({
             const id = e.target.value;
             if (id) applyPack(id);
           }}
-          className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500"
+          className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 focus:border-[var(--border-default)] focus:outline-none focus:ring-1 focus:ring-[var(--border-default)]"
         >
           <option value="">Select industry…</option>
           {PACK_ORDER.map((id) => (
@@ -92,7 +92,7 @@ export function PackBusinessStep({
           value={state.businessLocation}
           onChange={(e) => setState((p) => ({ ...p, businessLocation: e.target.value }))}
           placeholder="Austin, TX"
-          className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 placeholder:text-slate-500 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500"
+          className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 placeholder:text-slate-500 focus:border-[var(--border-default)] focus:outline-none focus:ring-1 focus:ring-[var(--border-default)]"
         />
       </div>
       <div className="flex justify-end pt-2">

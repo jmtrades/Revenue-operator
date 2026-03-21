@@ -20,7 +20,7 @@ function AppShellSkeleton() {
       </div>
       <div className="flex-1 flex items-center justify-center min-w-0">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-[var(--bg-base)] text-sm font-bold">
+          <div className="w-10 h-10 rounded-xl bg-[var(--bg-surface)] flex items-center justify-center text-[var(--text-primary)] text-sm font-bold">
             RT
           </div>
           <p className="text-sm text-[var(--text-tertiary)]">Loading…</p>

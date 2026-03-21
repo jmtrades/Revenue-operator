@@ -432,7 +432,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
               <div className="flex gap-2">
                 <button
                   type="button"
-                  className="rounded-xl bg-white px-3 py-1.5 text-xs font-semibold text-black"
+                  className="rounded-xl bg-[var(--bg-surface)] px-3 py-1.5 text-xs font-semibold text-[var(--text-primary)]"
                   onClick={() => {
                     applyExtractedDetails(pendingExtract);
                     setPendingExtract(null);

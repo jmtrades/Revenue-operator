@@ -463,7 +463,7 @@ export default function CallsPage() {
               return (
                 <tr
                   key={c.id}
-                  className="group border-t border-zinc-900/70 hover:bg-[var(--bg-hover)] cursor-pointer"
+                  className="group border-t border-[var(--border-default)]/70 hover:bg-[var(--bg-hover)] cursor-pointer"
                   onClick={() => handleRowClick(c.id)}
                 >
                   <td className="py-3 px-4 text-xs text-[var(--text-tertiary)] whitespace-nowrap">

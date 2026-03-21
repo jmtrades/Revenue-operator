@@ -94,7 +94,7 @@ export function HomepageTestCallCTA() {
               <button
                 type="submit"
                 disabled={busy}
-                className="bg-white text-black font-semibold rounded-xl px-6 py-3 hover:bg-zinc-100 transition-colors disabled:opacity-60"
+                className="bg-white text-black font-semibold rounded-xl px-6 py-3 hover:opacity-90 transition-colors disabled:opacity-60"
               >
                 {busy ? "Starting…" : "Start setup →"}
               </button>

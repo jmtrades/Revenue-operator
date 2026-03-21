@@ -164,7 +164,7 @@ export default function VoiceAnalyticsDashboard() {
                 onClick={() => setTimeRange('7d')}
                 className={`px-3 py-1 text-sm rounded-xl border ${
                   timeRange === '7d'
-                    ? 'bg-white text-black border-[var(--border-default)]'
+                    ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] border-[var(--border-default)]'
                     : 'bg-[var(--bg-card)] text-[var(--text-secondary)] border-[var(--border-default)] hover:bg-[var(--bg-inset)]'
                 }`}
               >
@@ -174,7 +174,7 @@ export default function VoiceAnalyticsDashboard() {
                 onClick={() => setTimeRange('30d')}
                 className={`px-3 py-1 text-sm rounded-xl border ${
                   timeRange === '30d'
-                    ? 'bg-white text-black border-[var(--border-default)]'
+                    ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] border-[var(--border-default)]'
                     : 'bg-[var(--bg-card)] text-[var(--text-secondary)] border-[var(--border-default)] hover:bg-[var(--bg-inset)]'
                 }`}
               >
@@ -242,7 +242,7 @@ export default function VoiceAnalyticsDashboard() {
                   >
                     <td className="py-3 px-4 font-medium text-white">
                       {voice.name}
-                      {voice.isActive && <span className="ml-2 text-xs bg-white text-black px-2 py-1 rounded-full border border-[var(--border-default)]">Active</span>}
+                      {voice.isActive && <span className="ml-2 text-xs bg-[var(--bg-surface)] text-[var(--text-primary)] px-2 py-1 rounded-full border border-[var(--border-default)]">Active</span>}
                     </td>
                     <td className="text-right py-3 px-4 text-[var(--text-tertiary)]">{voice.calls.toLocaleString()}</td>
                     <td className="text-right py-3 px-4 text-[var(--text-tertiary)]">{voice.avgDuration}s</td>
@@ -339,7 +339,7 @@ export default function VoiceAnalyticsDashboard() {
                   <span className="text-sm text-[var(--text-secondary)]">{voice.name}</span>
                   <div className="flex-1 mx-3 bg-[var(--bg-inset)] rounded-full h-2">
                     <div
-                      className="bg-zinc-100 h-2 rounded-full"
+                      className="bg-[var(--bg-inset)] h-2 rounded-full"
                       style={{ width: `${(voice.cost / totalCost) * 100}%` }}
                     />
                   </div>

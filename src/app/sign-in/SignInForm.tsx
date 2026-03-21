@@ -152,7 +152,7 @@ export default function SignInForm() {
                 placeholder={t("signIn.emailPlaceholder")}
                 autoComplete="email"
                 aria-label="Email address"
-                className="w-full px-3.5 py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-zinc-500/40 focus:border-[var(--border-focus)] transition-all"
+                className="w-full px-3.5 py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--border-default)]/40 focus:border-[var(--border-focus)] transition-all"
               />
             </div>
             <div>
@@ -169,7 +169,7 @@ export default function SignInForm() {
                   placeholder={t("signIn.passwordPlaceholder")}
                   autoComplete="current-password"
                   aria-label={t("password.label")}
-                  className="w-full px-3.5 py-2.5 pr-16 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-zinc-500/40 focus:border-[var(--border-focus)] transition-all"
+                  className="w-full px-3.5 py-2.5 pr-16 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--border-default)]/40 focus:border-[var(--border-focus)] transition-all"
                 />
                 <button
                   type="button"

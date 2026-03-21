@@ -235,7 +235,7 @@ function OnboardingWizard() {
         <div className="max-w-lg text-center">
           <h1 className="text-2xl font-semibold mb-2" style={{ color: "var(--text-primary)" }}>{t("getStartedHeading")}</h1>
           <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>{t("getStartedSubtitle")}</p>
-          <Link href="/activate" className="inline-block py-2.5 px-4 rounded-xl font-semibold text-sm bg-white text-black hover:bg-zinc-100 transition-colors">{t("startFree")}</Link>
+          <Link href="/activate" className="inline-block py-2.5 px-4 rounded-xl font-semibold text-sm bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-inset)] transition-colors">{t("startFree")}</Link>
         </div>
       </div>
     );
@@ -632,7 +632,7 @@ function OnboardingWizard() {
                 <Phone size={32} style={{ color: "var(--accent-primary)", margin: "0 auto 12px" }} />
                 <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>{t("callThisNumber")}</p>
                 <p className="text-4xl font-bold mb-4" style={{ color: "var(--accent-primary)" }}>{phoneNumber}</p>
-                <div className="bg-white bg-opacity-50 rounded-lg p-3 mb-4">
+                <div className="bg-[var(--bg-surface)] bg-opacity-50 rounded-lg p-3 mb-4">
                   <p className="text-xs font-medium mb-2" style={{ color: "var(--text-primary)" }}>{t("tryPhrase")}</p>
                   <p className="text-sm italic" style={{ color: "var(--text-secondary)" }}>"What services do you offer?"</p>
                 </div>

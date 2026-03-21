@@ -183,7 +183,7 @@ export default function DeveloperWebhooksPage() {
         <button
           type="button"
           onClick={() => setAddModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:bg-zinc-200"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:opacity-90"
         >
           <Plus className="w-4 h-4" /> Add endpoint
         </button>
@@ -362,7 +362,7 @@ export default function DeveloperWebhooksPage() {
                 type="button"
                 onClick={handleAdd}
                 disabled={!formUrl.trim() || saving}
-                className="px-4 py-2 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:bg-zinc-200 disabled:opacity-50"
+                className="px-4 py-2 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-50"
               >
                 {saving ? tDev("adding") : tDev("addButton")}
               </button>

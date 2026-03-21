@@ -115,7 +115,7 @@ export function ActivateStep({
         <button
           type="button"
           onClick={(e) => void onFinalize(e)}
-          className="inline-flex items-center justify-center rounded-xl bg-emerald-500 px-5 py-2.5 text-xs md:text-sm font-semibold text-white hover:bg-emerald-400"
+          className="inline-flex items-center justify-center rounded-xl bg-emerald-500 px-5 py-2.5 text-xs md:text-sm font-semibold text-[var(--text-on-accent)] hover:bg-emerald-400"
         >
           {t("activateCta")}
         </button>

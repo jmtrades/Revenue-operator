@@ -150,7 +150,7 @@ function ApiKeysTab({
         <button
           type="button"
           onClick={() => setCreateModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:bg-zinc-200"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:opacity-90"
         >
           <Plus className="w-4 h-4" />
           {t("createApiKey")}
@@ -308,7 +308,7 @@ function ApiKeysTab({
               <button type="button" onClick={() => setCreateModal(false)} className="px-4 py-2 rounded-xl text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] border border-[var(--border-medium)]">
                 {tCommon("cancel")}
               </button>
-              <button type="button" onClick={handleCreateSubmit} disabled={!createLabel.trim()} className="px-4 py-2 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:bg-zinc-200 disabled:opacity-50">
+              <button type="button" onClick={handleCreateSubmit} disabled={!createLabel.trim()} className="px-4 py-2 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-50">
                 {t("create")}
               </button>
             </div>
@@ -330,7 +330,7 @@ function ApiKeysTab({
               onClick={() => {
                 copyToClipboard(newKeyModal.fullKey, () => onCopyKey(newKeyModal.fullKey));
               }}
-              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:bg-zinc-200"
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:opacity-90"
             >
               <Copy className="w-4 h-4" /> {t("copyKeyButton")}
             </button>
@@ -416,7 +416,7 @@ function WebhooksTab({
         <button
           type="button"
           onClick={() => setAddModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:bg-zinc-200"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:opacity-90"
         >
           <Plus className="w-4 h-4" /> {t("addWebhook")}
         </button>
@@ -513,7 +513,7 @@ function WebhooksTab({
             </div>
             <div className="flex justify-end gap-2 mt-6">
               <button type="button" onClick={() => setAddModal(false)} className="px-4 py-2 rounded-xl text-sm text-[var(--text-tertiary)] border border-[var(--border-medium)]">{t("cancel")}</button>
-              <button type="button" onClick={handleAddSubmit} disabled={!newUrl.trim()} className="px-4 py-2 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:bg-zinc-200 disabled:opacity-50">{tCommon("save")}</button>
+              <button type="button" onClick={handleAddSubmit} disabled={!newUrl.trim()} className="px-4 py-2 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-50">{tCommon("save")}</button>
             </div>
           </div>
         </div>

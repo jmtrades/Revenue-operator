@@ -76,7 +76,7 @@ export function TrialBanner() {
         </div>
         <Link
           href="/dashboard/continue-protection"
-          className="px-4 py-2 rounded-lg font-medium shrink-0 bg-emerald-500 text-zinc-950 hover:bg-emerald-400"
+          className="px-4 py-2 rounded-lg font-medium shrink-0 bg-emerald-500 text-black hover:bg-emerald-400"
         >
           {t("continueCoverage")}
         </Link>
@@ -98,7 +98,7 @@ export function TrialBanner() {
         <div className="flex items-center gap-2">
           <Link
             href="/dashboard/continue-protection"
-            className="px-4 py-2 rounded-lg font-medium shrink-0 bg-emerald-500 text-zinc-950 hover:bg-emerald-400"
+            className="px-4 py-2 rounded-lg font-medium shrink-0 bg-emerald-500 text-black hover:bg-emerald-400"
           >
             {t("continueCoverage")}
           </Link>

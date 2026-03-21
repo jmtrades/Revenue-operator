@@ -195,7 +195,7 @@ export function ActivateForm() {
         <button
           type="button"
           onClick={() => router.push("/app")}
-          className="w-full max-w-[320px] py-3.5 bg-white text-black rounded-xl font-semibold hover:bg-zinc-200 transition"
+          className="w-full max-w-[320px] py-3.5 bg-white text-black rounded-xl font-semibold hover:bg-zinc-100 transition"
         >
           {t("setUpAgent")}
         </button>
@@ -298,7 +298,7 @@ export function ActivateForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full max-w-[320px] py-3.5 bg-white text-black rounded-xl font-semibold hover:bg-zinc-200 transition disabled:opacity-60"
+        className="w-full max-w-[320px] py-3.5 bg-white text-black rounded-xl font-semibold hover:bg-zinc-100 transition disabled:opacity-60"
       >
         {submitting ? t("creatingAccount") : t("getStartedFree")}
       </button>
@@ -322,7 +322,7 @@ export function ActivateForm() {
           <button
             type="button"
             onClick={() => setError(null)}
-            className="w-full py-2 px-4 rounded-lg text-sm font-medium bg-white text-black hover:bg-zinc-200 transition"
+            className="w-full py-2 px-4 rounded-lg text-sm font-medium bg-white text-black hover:bg-zinc-100 transition"
           >
             {t("tryAgain")}
           </button>

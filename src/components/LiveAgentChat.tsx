@@ -228,9 +228,9 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
             <div className="flex justify-start">
               <div className="bg-[var(--bg-inset)]/80 text-[var(--text-primary)] rounded-2xl rounded-tl-md px-3 py-2">
                 <div className="flex gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-bounce" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-bounce [animation-delay:120ms]" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-bounce [animation-delay:240ms]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--text-tertiary)] animate-bounce" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--text-tertiary)] animate-bounce [animation-delay:120ms]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--text-tertiary)] animate-bounce [animation-delay:240ms]" />
                 </div>
               </div>
             </div>
@@ -273,7 +273,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
                 send(input);
               }
             }}
-            className="flex-1 w-full bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl px-4 py-3 text-white placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-default)] focus:ring-1 focus:ring-zinc-600 outline-none"
+            className="flex-1 w-full bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl px-4 py-3 text-white placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-default)] focus:ring-1 focus:ring-[var(--border-default)] outline-none"
             placeholder={t("inputPlaceholder")}
             aria-label={t("liveChat.messageInputLabel")}
           />
@@ -281,7 +281,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
             type="button"
             onClick={() => send(input)}
             disabled={!input.trim() || loading || atLimit}
-            className="bg-white text-black font-medium rounded-xl px-5 py-2.5 hover:bg-zinc-200 disabled:opacity-60 transition-colors"
+            className="bg-white text-black font-medium rounded-xl px-5 py-2.5 hover:bg-zinc-100 disabled:opacity-60 transition-colors"
             aria-label={t("liveChat.sendMessageLabel")}
           >
             →

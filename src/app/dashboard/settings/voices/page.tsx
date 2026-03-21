@@ -577,7 +577,7 @@ export default function VoicesSettingsPage() {
           <button
             type="button"
             onClick={() => setShowCloneModal(true)}
-            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-white text-black font-semibold px-3 py-2 text-sm hover:bg-zinc-100 transition-colors"
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[var(--bg-surface)] text-[var(--text-primary)] font-semibold px-3 py-2 text-sm hover:bg-[var(--bg-inset)] transition-colors"
           >
             <Plus className="w-4 h-4" />
             Clone Voice
@@ -717,7 +717,7 @@ export default function VoicesSettingsPage() {
           <button
             type="button"
             onClick={() => setShowTestModal(true)}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-white text-black font-semibold px-4 py-2 text-sm hover:bg-zinc-100 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--bg-surface)] text-[var(--text-primary)] font-semibold px-4 py-2 text-sm hover:bg-[var(--bg-inset)] transition-colors"
           >
             <TrendingUp className="w-4 h-4" />
             New Test
@@ -1013,7 +1013,7 @@ export default function VoicesSettingsPage() {
               <button
                 type="button"
                 onClick={handleCreateABTest}
-                className="flex-1 rounded-xl bg-white text-black font-semibold py-2.5 text-sm hover:bg-zinc-100 transition-colors"
+                className="flex-1 rounded-xl bg-[var(--bg-surface)] text-[var(--text-primary)] font-semibold py-2.5 text-sm hover:bg-[var(--bg-inset)] transition-colors"
               >
                 Create Test
               </button>

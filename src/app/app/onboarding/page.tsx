@@ -340,7 +340,7 @@ export default function AppOnboardingPage() {
 
   return (
     <div className="min-h-screen bg-black text-[var(--text-primary)] flex">
-      <aside className="hidden md:flex w-64 flex-col border-r border-zinc-900 bg-[var(--bg-base)] px-6 py-8 gap-8">
+      <aside className="hidden md:flex w-64 flex-col border-r border-[var(--border-default)] bg-[var(--bg-base)] px-6 py-8 gap-8">
         <div>
           <p className="text-xs font-semibold tracking-wide text-[var(--text-tertiary)]">
             Recall Touch
@@ -589,7 +589,7 @@ export default function AppOnboardingPage() {
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
                 placeholder={t("websitePlaceholder")}
-                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-[var(--border-default)] focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-[var(--border-default)] focus:ring-1 focus:ring-[var(--border-default)] focus:outline-none"
               />
               <p className="mt-1 text-[11px] text-[var(--text-secondary)]">
                 {t("websiteHint")}
@@ -603,7 +603,7 @@ export default function AppOnboardingPage() {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder={t("addressPlaceholder")}
-                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-[var(--border-default)] focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-[var(--border-default)] focus:ring-1 focus:ring-[var(--border-default)] focus:outline-none"
               />
               <p className="mt-1 text-[11px] text-[var(--text-secondary)]">
                 {t("addressHint")}
@@ -617,7 +617,7 @@ export default function AppOnboardingPage() {
                 value={businessPhone}
                 onChange={(e) => setBusinessPhone(e.target.value)}
                 placeholder={t("phonePlaceholder")}
-                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-[var(--border-default)] focus:ring-1 focus:ring-zinc-600 focus:outline-none"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-[var(--border-default)] focus:ring-1 focus:ring-[var(--border-default)] focus:outline-none"
               />
             </div>
             <div className="flex gap-2">

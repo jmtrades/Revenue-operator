@@ -92,14 +92,14 @@ export function HomepageLiveDemo() {
                 onClick={() => {
                   window.location.href = "/demo";
                 }}
-                className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-white transition-colors"
+                className="inline-flex items-center justify-center h-10 w-10 rounded-full border border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] hover:text-white transition-colors"
                 aria-label={t("cta.ariaLabel")}
               >
                 <Mic2 className="w-4 h-4" />
               </button>
               <a
                 href="/activate"
-                className="bg-white text-black font-semibold rounded-xl px-5 py-2.5 text-sm hover:bg-zinc-100 transition-colors"
+                className="bg-white text-black font-semibold rounded-xl px-5 py-2.5 text-sm hover:opacity-90 transition-colors"
               >
                 {t("cta.button")}
               </a>
