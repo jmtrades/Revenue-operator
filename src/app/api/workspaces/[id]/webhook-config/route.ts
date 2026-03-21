@@ -21,7 +21,8 @@ export async function GET(
     .maybeSingle();
 
   if (error && error.code !== "PGRST116") {
-    return NextResponse.json({ error: String(error) }, { status: 500 });
+    console.error("[workspaces/[id]/webhook-config GET]", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
   const row = data as ({
     endpoint_url?: string;
@@ -118,6 +119,9 @@ export async function PUT(
     .select()
     .maybeSingle();
 
-  if (error) return NextResponse.json({ error: String(error) }, { status: 500 });
+  if (error) {
+    console.error("[workspaces/[id]/webhook-config PUT]", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
   return NextResponse.json(data);
 }

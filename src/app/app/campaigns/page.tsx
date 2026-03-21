@@ -318,7 +318,7 @@ export default function CampaignsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-[var(--text-primary)]">
+    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto">
         <div className="flex items-center justify-between gap-4 mb-6">
           <div>

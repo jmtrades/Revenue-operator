@@ -17,7 +17,8 @@ export async function GET(
     .maybeSingle();
 
   if (error && error.code !== "PGRST116") {
-    return NextResponse.json({ error: String(error) }, { status: 500 });
+    console.error("[workspaces/[id]/business-context GET]", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 
   // Return defaults if not found
@@ -75,6 +76,9 @@ export async function PUT(
     .select()
     .maybeSingle();
 
-  if (error) return NextResponse.json({ error: String(error) }, { status: 500 });
+  if (error) {
+    console.error("[workspaces/[id]/business-context PUT]", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
   return NextResponse.json(data);
 }

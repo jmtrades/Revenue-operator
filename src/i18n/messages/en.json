@@ -3126,6 +3126,10 @@
       "added": "Lead added successfully."
     },
     "unknownLead": "Unknown lead",
+    "emptyTitle": "Import contacts or add manually",
+    "emptySubtitle": "Import contacts or add manually",
+    "importCsv": "Import CSV",
+    "addContact": "Add Contact",
     "errors": {
       "loadFailed": "Failed to load leads.",
       "nameRequired": "Name is required.",
@@ -5700,6 +5704,16 @@
       "noShow": "No-show"
     }
   },
+  "partners": {
+    "title": "Agency Partner Dashboard",
+    "subtitle": "Revenue share model (15%)"
+  },
+  "industryTemplates": {
+    "breadcrumb": "Industry Templates",
+    "title": "Industry Templates",
+    "description": "Production-ready templates for AI agents across",
+    "emptyState": "No industry templates available yet."
+  },
   "messages": {
     "pageTitle": "Messages — Recall Touch",
     "title": "Messages",
@@ -5766,6 +5780,10 @@
       "title": "No conversations yet",
       "body": "When your AI starts texting and messaging contacts, every conversation will appear here.",
       "action": "Review recent activity"
+    },
+    "errors": {
+      "unauthorized": "Unauthorized. Please log in again.",
+      "loadFailed": "Failed to load contacts. Using cached data."
     }
   },
   "developer": {
@@ -6051,7 +6069,9 @@
     "errors": {
       "firstNameRequired": "First name is required",
       "lastNameRequired": "Last name is required",
-      "phoneRequired": "Phone is required"
+      "phoneRequired": "Phone is required",
+      "unauthorized": "Unauthorized. Please log in again.",
+      "loadFailed": "Failed to load contacts. Using cached data."
     },
     "toast": {
       "added": "Contact added",

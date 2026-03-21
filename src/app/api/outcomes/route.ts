@@ -31,7 +31,10 @@ export async function GET(req: NextRequest) {
   }
 
   const { data, error } = await q;
-  if (error) return NextResponse.json({ error: String(error) }, { status: 500 });
+  if (error) {
+    console.error("[outcomes]", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 
   return NextResponse.json({ outcomes: data ?? [] });
 }

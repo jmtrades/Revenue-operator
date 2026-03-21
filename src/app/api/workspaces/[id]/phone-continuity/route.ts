@@ -23,7 +23,8 @@ export async function GET(
     .maybeSingle();
 
   if (error && error.code !== "PGRST116") {
-    return NextResponse.json({ error: String(error) }, { status: 500 });
+    console.error("[workspaces/[id]/phone-continuity GET]", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 
   const cfg = data as { mode?: string; proxy_number?: string; forwarding_number?: string; status?: string } | null;
@@ -76,6 +77,9 @@ export async function PUT(
     .select()
     .maybeSingle();
 
-  if (error) return NextResponse.json({ error: String(error) }, { status: 500 });
+  if (error) {
+    console.error("[workspaces/[id]/phone-continuity PUT]", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
   return NextResponse.json(data);
 }

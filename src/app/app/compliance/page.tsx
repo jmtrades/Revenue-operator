@@ -114,7 +114,7 @@ export default function CompliancePage() {
   const totalPages = Math.ceil(filteredAudit.length / PAGE_SIZE);
 
   return (
-    <div className="min-h-screen bg-black text-[var(--text-primary)]">
+    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="p-4 md:p-6 lg:p-8 space-y-8">
         <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)]">{t("title")}</h1>
 
@@ -218,7 +218,7 @@ export default function CompliancePage() {
                   className={`relative w-10 h-6 rounded-full transition-colors ${policies.piiRedaction ? "bg-emerald-600" : "bg-[var(--border-medium)]"}`}
                 >
                   <span
-                    className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${policies.piiRedaction ? "left-5" : "left-1"}`}
+                    className={`absolute top-1 w-4 h-4 rounded-full bg-[var(--text-primary)] transition-transform ${policies.piiRedaction ? "left-5" : "left-1"}`}
                   />
                 </button>
               </div>
@@ -232,7 +232,7 @@ export default function CompliancePage() {
                   className={`relative w-10 h-6 rounded-full transition-colors ${policies.autoTranscribe ? "bg-emerald-600" : "bg-[var(--border-medium)]"}`}
                 >
                   <span
-                    className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${policies.autoTranscribe ? "left-5" : "left-1"}`}
+                    className={`absolute top-1 w-4 h-4 rounded-full bg-[var(--text-primary)] transition-transform ${policies.autoTranscribe ? "left-5" : "left-1"}`}
                   />
                 </button>
               </div>

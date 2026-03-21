@@ -137,7 +137,8 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (insertErr) {
-    return NextResponse.json({ error: insertErr.message }, { status: 500 });
+    console.error("[voice/clones POST]", insertErr);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 
   // In production: queue voice cloning job to voice server

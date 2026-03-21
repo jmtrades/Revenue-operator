@@ -44,6 +44,7 @@ interface IndustryTemplate {
 export default function IndustryTemplatesPage() {
   const _t = useTranslations("common");
   const tNav = useTranslations("nav");
+  const tTemplates = useTranslations("industryTemplates");
   const [templates, setTemplates] = useState<IndustryTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedSlug, setExpandedSlug] = useState<string | null>(null);
@@ -85,7 +86,7 @@ export default function IndustryTemplatesPage() {
         <Breadcrumbs
           items={[
             { label: tNav("settings"), href: "/app/settings" },
-            { label: "Industry Templates", href: "/app/settings/industry-templates" },
+            { label: tTemplates("breadcrumb"), href: "/app/settings/industry-templates" },
           ]}
         />
         <div className="animate-pulse">
@@ -105,20 +106,20 @@ export default function IndustryTemplatesPage() {
       <Breadcrumbs
         items={[
           { label: tNav("settings"), href: "/app/settings" },
-          { label: "Industry Templates", href: "/app/settings/industry-templates" },
+          { label: tTemplates("breadcrumb"), href: "/app/settings/industry-templates" },
         ]}
       />
 
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">Industry Templates</h1>
+        <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">{tTemplates("title")}</h1>
         <p className="text-[var(--text-tertiary)]">
-          Production-ready templates for AI agents across {templates.length} industry verticals. Use these as starter packs when creating new agents.
+          {tTemplates("description")} {templates.length} industry verticals. Use these as starter packs when creating new agents.
         </p>
       </div>
 
       {templates.length === 0 ? (
         <div className="rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] p-8 text-center">
-          <p className="text-[var(--text-tertiary)]">No industry templates available yet.</p>
+          <p className="text-[var(--text-tertiary)]">{tTemplates("emptyState")}</p>
         </div>
       ) : (
         <div className="space-y-4">

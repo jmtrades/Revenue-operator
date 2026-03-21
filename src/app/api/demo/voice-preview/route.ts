@@ -142,7 +142,7 @@ export async function GET(req: NextRequest) {
       );
     }
   } catch (error) {
-    log("error", "voice_preview.endpoint_error", { error: error instanceof Error ? error.message : String(error) });
+    log("error", "voice_preview.endpoint_error", { error });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

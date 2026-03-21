@@ -85,7 +85,8 @@ export async function POST(req: NextRequest) {
     });
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      console.error("[admin/track]", error);
+      return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 
     return NextResponse.json({
@@ -93,6 +94,7 @@ export async function POST(req: NextRequest) {
       rate_limit_remaining: rateLimit.remaining,
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Failed to track event" }, { status: 500 });
+    console.error("[admin/track catch]", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

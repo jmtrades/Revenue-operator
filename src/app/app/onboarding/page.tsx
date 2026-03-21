@@ -339,7 +339,7 @@ export default function AppOnboardingPage() {
   const greetingToPlay = greeting.trim() || defaultGreeting;
 
   return (
-    <div className="min-h-screen bg-black text-[var(--text-primary)] flex">
+    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] flex">
       <aside className="hidden md:flex w-64 flex-col border-r border-[var(--border-default)] bg-[var(--bg-base)] px-6 py-8 gap-8">
         <div>
           <p className="text-xs font-semibold tracking-wide text-[var(--text-tertiary)]">
@@ -354,7 +354,7 @@ export default function AppOnboardingPage() {
               <div key={s.id} className="flex items-start gap-3">
                 <span
                   className={`mt-1 inline-flex h-2.5 w-2.5 rounded-full ${
-                    active ? "bg-white" : "bg-[var(--bg-inset)]"
+                    active ? "bg-[var(--accent-primary)]" : "bg-[var(--bg-inset)]"
                   }`}
                   aria-hidden
                 />
@@ -384,7 +384,7 @@ export default function AppOnboardingPage() {
                 <span
                   key={i}
                   className={`inline-block w-2.5 h-2.5 rounded-full ${
-                    i + 1 <= step ? "bg-white" : "bg-[var(--bg-inset)]"
+                    i + 1 <= step ? "bg-[var(--accent-primary)]" : "bg-[var(--bg-inset)]"
                   }`}
                   aria-hidden
                 />
@@ -461,7 +461,7 @@ export default function AppOnboardingPage() {
                         <Icon className={`w-5 h-5 ${isSelected ? "text-emerald-400" : "text-[var(--text-tertiary)]"}`} />
                         {isSelected && (
                           <div className="w-5 h-5 rounded-full bg-emerald-500 border-2 border-emerald-400 flex items-center justify-center">
-                            <span className="w-2 h-2 rounded-full bg-white" />
+                            <span className="w-2 h-2 rounded-full bg-[var(--text-primary)]" />
                           </div>
                         )}
                       </div>

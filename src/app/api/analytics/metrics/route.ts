@@ -132,9 +132,9 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error("Failed to fetch metrics:", error);
+    console.error("[analytics/metrics]", error);
     return NextResponse.json(
-      { error: "Failed to fetch metrics", details: error instanceof Error ? error.message : String(error) },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
