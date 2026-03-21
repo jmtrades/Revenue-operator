@@ -68,7 +68,7 @@ const SCORE_COLORS: Record<ScoreBucket, string> = {
   high: "bg-emerald-500/15 text-emerald-300 border-emerald-500/40",
   medium: "bg-amber-500/15 text-amber-200 border-amber-500/40",
   low: "bg-rose-500/15 text-rose-200 border-rose-500/40",
-  all: "bg-[var(--bg-card)] text-zinc-300 border-[var(--border-medium)]",
+  all: "bg-[var(--bg-card)] text-[var(--text-secondary)] border-[var(--border-medium)]",
 };
 
 function scoreBucket(score: number): ScoreBucket {
@@ -642,12 +642,12 @@ export default function LeadsPage() {
             <button
               type="button"
               onClick={() => { setAddLeadOpen(true); setAddLeadError(null); }}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-white text-black text-xs font-semibold px-4 py-2 hover:bg-zinc-100"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-xs font-semibold px-4 py-2 hover:opacity-90"
             >
               <Plus className="w-4 h-4" />
               {t("leads.addLead")}
             </button>
-            <span className="inline-flex items-center rounded-full border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-1 text-xs text-zinc-300">
+            <span className="inline-flex items-center rounded-full border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-1 text-xs text-[var(--text-secondary)]">
               {t("leads.total")} <span className="ml-1 font-semibold text-[var(--text-primary)]">{totalCount}</span>
             </span>
             <button
@@ -681,7 +681,7 @@ export default function LeadsPage() {
                   toast.error(t("leads.toast.exportFailed"));
                 }
               }}
-              className="hidden md:inline-flex items-center rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-1.5 text-xs text-zinc-300 hover:bg-[var(--bg-input)]"
+              className="hidden md:inline-flex items-center rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--bg-input)]"
             >
               {t("leads.exportCsv")}
             </button>
@@ -721,8 +721,8 @@ export default function LeadsPage() {
                     onClick={() => toggleStatusFilter(status)}
                     className={`px-2.5 py-1 rounded-full border text-[11px] ${
                       active
-                        ? "border-white bg-white text-black"
-                        : "border-[var(--border-medium)] text-zinc-300 hover:border-[var(--border-medium)]"
+                        ? "border-white bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
+                        : "border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
                     }`}
                   >
                     {t(`leads.board.columns.${status === "Appointment Set" ? "appointment" : status.toLowerCase()}`)}
@@ -819,7 +819,7 @@ export default function LeadsPage() {
                 !addLeadForm.name.trim() ||
                 !addLeadForm.phone.trim()
               }
-              className="px-4 py-2 text-xs font-semibold rounded-xl bg-white text-black hover:bg-zinc-100 disabled:opacity-50"
+              className="px-4 py-2 text-xs font-semibold rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-50"
             >
               {t("leads.inlineAdd")}
             </button>
@@ -841,8 +841,8 @@ export default function LeadsPage() {
                 onClick={() => toggleSourceFilter(source)}
                 className={`px-2.5 py-1 rounded-full border ${
                   active
-                    ? "border-white bg-white text-black"
-                    : "border-[var(--border-medium)] text-zinc-300 hover:border-[var(--border-medium)]"
+                    ? "border-white bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
+                    : "border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
                 }`}
               >
                 {sourceLabel(source)}
@@ -853,7 +853,7 @@ export default function LeadsPage() {
             <select
               value={scoreFilter}
               onChange={(e) => setScoreFilter(e.target.value as ScoreBucket)}
-              className="text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-2.5 py-1 text-zinc-200 focus:outline-none focus:border-[var(--border-medium)]"
+              className="text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-2.5 py-1 text-[var(--text-primary)] focus:outline-none focus:border-[var(--border-medium)]"
             >
               <option value="all">{t("leads.scoreFilter.all")}</option>
               <option value="high">{t("leads.scoreFilter.high")}</option>
@@ -863,7 +863,7 @@ export default function LeadsPage() {
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
-              className="text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-2.5 py-1 text-zinc-200 focus:outline-none focus:border-[var(--border-medium)]"
+              className="text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-2.5 py-1 text-[var(--text-primary)] focus:outline-none focus:border-[var(--border-medium)]"
             >
               <option value="newest">{t("leads.sortOptions.newest")}</option>
               <option value="score">{t("leads.sortOptions.highestScore")}</option>
@@ -880,7 +880,7 @@ export default function LeadsPage() {
             <button
               type="button"
               onClick={() => setSelectedIds(new Set())}
-              className="inline-flex items-center gap-1 text-[var(--text-tertiary)] hover:text-zinc-200"
+              className="inline-flex items-center gap-1 text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
             >
               <X className="w-3 h-3" />
               {t("leads.clear")}
@@ -892,7 +892,7 @@ export default function LeadsPage() {
                 key={status}
                 type="button"
                 onClick={() => bulkChangeStatus(status)}
-                className="px-2 py-1 rounded-full border border-[var(--border-default)] text-[11px] text-zinc-300 hover:border-[var(--border-medium)]"
+                className="px-2 py-1 rounded-full border border-[var(--border-default)] text-[11px] text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
               >
                 {t(`leads.board.columns.${status === "Appointment Set" ? "appointment" : status.toLowerCase()}`)}
               </button>
@@ -904,7 +904,7 @@ export default function LeadsPage() {
                 key={agent.id}
                 type="button"
                 onClick={() => bulkAssignAgent(agent.name || "")}
-                className="px-2 py-1 rounded-full border border-[var(--border-default)] text-[11px] text-zinc-300 hover:border-[var(--border-medium)]"
+                className="px-2 py-1 rounded-full border border-[var(--border-default)] text-[11px] text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
               >
                 {agent.name || t("leads.unknownAgent")}
               </button>
@@ -1004,7 +1004,7 @@ export default function LeadsPage() {
                 <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{t("leads.modal.sourceLabel")}</label>
                 <div className="flex flex-wrap gap-3 mt-1">
                   {(["website", "referral", "inbound_call", "other"] as const).map((src) => (
-                    <label key={src} className="flex items-center gap-1.5 text-xs text-zinc-300 cursor-pointer">
+                    <label key={src} className="flex items-center gap-1.5 text-xs text-[var(--text-secondary)] cursor-pointer">
                       <input
                         type="radio"
                         name="source"
@@ -1043,14 +1043,14 @@ export default function LeadsPage() {
                 <button
                   type="button"
                   onClick={() => { setAddLeadOpen(false); setAddLeadError(null); setCsvPreviewRows([]); }}
-                  className="flex-1 py-2.5 rounded-xl border border-[var(--border-medium)] text-zinc-300 text-sm font-medium hover:border-[var(--border-medium)]"
+                  className="flex-1 py-2.5 rounded-xl border border-[var(--border-medium)] text-[var(--text-secondary)] text-sm font-medium hover:border-[var(--border-medium)]"
                 >
                   {t("leads.modal.cancel")}
                 </button>
                 <button
                   type="submit"
                   disabled={addLeadSaving || !addLeadForm.name.trim() || !addLeadForm.phone.trim()}
-                  className="flex-1 py-2.5 rounded-xl bg-white text-black text-sm font-semibold hover:bg-zinc-100 disabled:opacity-50"
+                  className="flex-1 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold hover:opacity-90 disabled:opacity-50"
                 >
                   {addLeadSaving ? t("leads.modal.saving") : t("leads.modal.save")}
                 </button>
@@ -1060,7 +1060,7 @@ export default function LeadsPage() {
               <div className="mt-6 pt-4 border-t border-[var(--border-default)]">
                 <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{t("leads.csvPreview", { count: csvPreviewRows.length })}</p>
                 <p className="text-[11px] text-[var(--text-secondary)] mb-2">{t("leads.csvPreviewLabel")}</p>
-                <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-2 max-h-32 overflow-y-auto text-xs text-zinc-300">
+                <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-2 max-h-32 overflow-y-auto text-xs text-[var(--text-secondary)]">
                   {csvPreviewRows.slice(0, 5).map((r, i) => (
                     <div key={i} className="py-1 border-b border-[var(--border-default)] last:border-0">
                       {r.name} · {r.phone}
@@ -1072,7 +1072,7 @@ export default function LeadsPage() {
                   <button
                     type="button"
                     onClick={() => setCsvPreviewRows([])}
-                    className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-zinc-300 text-xs"
+                    className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-[var(--text-secondary)] text-xs"
                   >
                     {t("leads.csvCancel")}
                   </button>
@@ -1105,7 +1105,7 @@ export default function LeadsPage() {
                         setCsvImporting(false);
                       }
                     }}
-                    className="flex-1 py-2 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100 disabled:opacity-50"
+                    className="flex-1 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-xs font-semibold hover:opacity-90 disabled:opacity-50"
                   >
                     {csvImporting ? t("leads.csvImporting") : t("leads.csvImportAll", { count: csvPreviewRows.length })}
                   </button>
@@ -1114,8 +1114,8 @@ export default function LeadsPage() {
             ) : (
             <div className="mt-6 pt-4 border-t border-[var(--border-default)]">
               <p className="text-xs text-[var(--text-secondary)] mb-2">{t("leads.csvOr")}</p>
-              <label className="flex items-center gap-2 text-sm text-zinc-300 hover:text-[var(--text-primary)] cursor-pointer">
-                <span className="text-base text-zinc-400">+</span>
+              <label className="flex items-center gap-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer">
+                <span className="text-base text-[var(--text-tertiary)]">+</span>
                 {t("leads.importFromCsv")}
                 <input
                   type="file"

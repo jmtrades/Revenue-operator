@@ -212,7 +212,7 @@ export default function AppSettingsAgentPage() {
             value={config.businessName}
             onChange={(e) => setConfig((c) => ({ ...c, businessName: e.target.value }))}
             placeholder={tSettings("agent.businessNamePlaceholder")}
-            className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
+            className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
           />
         </div>
         <div>
@@ -223,7 +223,7 @@ export default function AppSettingsAgentPage() {
             value={config.agentName}
             onChange={(e) => setConfig((c) => ({ ...c, agentName: e.target.value }))}
             placeholder={tSettings("agent.agentNamePlaceholder")}
-            className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
+            className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
           />
         </div>
         <div>
@@ -235,7 +235,7 @@ export default function AppSettingsAgentPage() {
             value={config.greeting}
             onChange={(e) => setConfig((c) => ({ ...c, greeting: e.target.value }))}
             placeholder={tSettings("agent.greetingPlaceholderDefault", { business: config.businessName || tSettings("agent.defaultBusiness") })}
-            className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none resize-none"
+            className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none resize-none"
           />
           <button type="button" onClick={playGreeting} className="mt-1 text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{tSettings("agent.previewVoice")}</button>
         </div>
@@ -287,14 +287,14 @@ export default function AppSettingsAgentPage() {
                   value={item.q ?? ""}
                   onChange={(e) => updateKnowledge(idx, "q", e.target.value)}
                   placeholder={tSettings("agent.questionPlaceholder")}
-                  className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:outline-none"
+                  className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
                 <input
                   type="text"
                   value={item.a ?? ""}
                   onChange={(e) => updateKnowledge(idx, "a", e.target.value)}
                   placeholder={tSettings("agent.answerPlaceholder")}
-                  className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:outline-none"
+                  className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
                 <button type="button" onClick={() => setPendingKnowledgeDelete(idx)} className="shrink-0 text-[var(--text-secondary)] hover:text-red-400 text-sm px-1" aria-label={tSettings("agent.removeAria")}>×</button>
               </div>
@@ -311,7 +311,7 @@ export default function AppSettingsAgentPage() {
         type="button"
         onClick={handleSave}
         disabled={saving}
-        className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 disabled:opacity-60 transition-colors"
+        className="px-6 py-3 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-60 transition-colors"
       >
         {saving ? tSettings("agent.saving") : tSettings("agent.saveAndUpdateAgent")}
       </button>
@@ -327,7 +327,7 @@ export default function AppSettingsAgentPage() {
       </div>
 
       {inlineToast && (
-        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-zinc-200">
+        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-[var(--text-primary)]">
           {inlineToast}
         </div>
       )}

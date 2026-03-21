@@ -94,7 +94,7 @@ function CallRecordingPlayer({ src }: { src: string }) {
         <button
           type="button"
           onClick={togglePlay}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-black hover:bg-zinc-200 transition"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:bg-zinc-200 transition"
           aria-label={isPlaying ? "Pause" : "Play"}
         >
           {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 ml-0.5" />}
@@ -122,7 +122,7 @@ function CallRecordingPlayer({ src }: { src: string }) {
             key={s}
             type="button"
             onClick={() => setSpeed(s)}
-            className={`text-xs px-2 py-1 rounded ${speed === s ? "bg-white text-black" : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)] bg-[var(--border-default)]"}`}
+            className={`text-xs px-2 py-1 rounded ${speed === s ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]" : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)] bg-[var(--border-default)]"}`}
           >
             {s}x
           </button>
@@ -345,7 +345,7 @@ export default function AppCallDetailPage() {
             </span>
           </p>
         </div>
-        <div className="flex flex-wrap gap-2 text-xs text-zinc-300">
+        <div className="flex flex-wrap gap-2 text-xs text-[var(--text-secondary)]">
           {call.outcome && (
             <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-3 py-1">
               Outcome: {call.outcome}
@@ -379,7 +379,7 @@ export default function AppCallDetailPage() {
             <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">
               Call summary
             </h2>
-            <p className="text-sm text-zinc-200 leading-relaxed">
+            <p className="text-sm text-[var(--text-primary)] leading-relaxed">
               {summaryText}
             </p>
           </section>
@@ -390,11 +390,11 @@ export default function AppCallDetailPage() {
             <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">
               Recommended follow-up
             </h2>
-            <p className="text-sm text-zinc-300 leading-relaxed">{followupPlan}</p>
+            <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{followupPlan}</p>
             {(call.lead_id ?? call.matched_lead?.id) && (
               <Link
                 href="/app/inbox"
-                className="inline-flex items-center gap-1.5 mt-3 text-xs font-medium text-zinc-300 hover:text-[var(--text-primary)]"
+                className="inline-flex items-center gap-1.5 mt-3 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               >
                 Follow up in inbox →
               </Link>
@@ -421,7 +421,7 @@ export default function AppCallDetailPage() {
             {(call.lead_id ?? call.matched_lead?.id) && (
               <Link
                 href="/app/leads"
-                className="inline-flex items-center gap-1.5 mt-2 text-xs font-medium text-zinc-300 hover:text-[var(--text-primary)]"
+                className="inline-flex items-center gap-1.5 mt-2 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               >
                 View lead →
               </Link>
@@ -446,7 +446,7 @@ export default function AppCallDetailPage() {
                   <div className="shrink-0 mt-0.5">
                     {u.speaker === "agent" ? (
                       <div className="w-7 h-7 rounded-full bg-zinc-500/20 flex items-center justify-center">
-                        <Bot className="w-3.5 h-3.5 text-zinc-300" />
+                        <Bot className="w-3.5 h-3.5 text-[var(--text-secondary)]" />
                       </div>
                     ) : (
                       <div className="w-7 h-7 rounded-full bg-white/[0.06] flex items-center justify-center">
@@ -459,7 +459,7 @@ export default function AppCallDetailPage() {
                       <span
                         className={cn(
                           "text-xs font-medium",
-                          u.speaker === "agent" ? "text-zinc-300" : "text-[var(--text-tertiary)]",
+                          u.speaker === "agent" ? "text-[var(--text-secondary)]" : "text-[var(--text-tertiary)]",
                         )}
                       >
                         {formatSpeaker(u.speaker)}
@@ -473,7 +473,7 @@ export default function AppCallDetailPage() {
               ))}
             </div>
           ) : call.transcript_text ? (
-            <pre className="text-sm whitespace-pre-wrap font-sans p-4 rounded-xl bg-[var(--bg-card)] text-zinc-300 leading-relaxed">
+            <pre className="text-sm whitespace-pre-wrap font-sans p-4 rounded-xl bg-[var(--bg-card)] text-[var(--text-secondary)] leading-relaxed">
               {call.transcript_text}
             </pre>
           ) : (

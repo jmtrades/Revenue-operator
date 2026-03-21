@@ -202,7 +202,7 @@ export default function AgentVoiceTestPage() {
                   setPlayingId(null);
                 }
               }}
-              className="px-3 py-2 rounded-xl border border-[var(--border-default)] text-zinc-300 text-sm hover:bg-[var(--bg-hover)] disabled:opacity-50"
+              className="px-3 py-2 rounded-xl border border-[var(--border-default)] text-[var(--text-secondary)] text-sm hover:bg-[var(--bg-hover)] disabled:opacity-50"
             >
               Play A
             </button>
@@ -217,21 +217,21 @@ export default function AgentVoiceTestPage() {
                   setPlayingId(null);
                 }
               }}
-              className="px-3 py-2 rounded-xl border border-[var(--border-default)] text-zinc-300 text-sm hover:bg-[var(--bg-hover)] disabled:opacity-50"
+              className="px-3 py-2 rounded-xl border border-[var(--border-default)] text-[var(--text-secondary)] text-sm hover:bg-[var(--bg-hover)] disabled:opacity-50"
             >
               Play B
             </button>
             <button
               type="button"
               onClick={() => { setSelectedVoiceId(abVoiceA); setAbWinner("A"); }}
-              className={cn("px-3 py-2 rounded-xl text-sm border", abWinner === "A" ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-300" : "border-[var(--border-default)] text-zinc-300 hover:bg-[var(--bg-hover)]")}
+              className={cn("px-3 py-2 rounded-xl text-sm border", abWinner === "A" ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-300" : "border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]")}
             >
               Pick A
             </button>
             <button
               type="button"
               onClick={() => { setSelectedVoiceId(abVoiceB); setAbWinner("B"); }}
-              className={cn("px-3 py-2 rounded-xl text-sm border", abWinner === "B" ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-300" : "border-[var(--border-default)] text-zinc-300 hover:bg-[var(--bg-hover)]")}
+              className={cn("px-3 py-2 rounded-xl text-sm border", abWinner === "B" ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-300" : "border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]")}
             >
               Pick B
             </button>
@@ -281,7 +281,7 @@ export default function AgentVoiceTestPage() {
                   className={cn(
                     "text-xs px-2.5 py-1.5 rounded-lg border",
                     selectedVoiceId === voice.id
-                      ? "bg-white text-black border-white"
+                      ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)] border-white"
                       : "border-[var(--border-default)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
                   )}
                 >
@@ -305,7 +305,7 @@ export default function AgentVoiceTestPage() {
           type="button"
           disabled={!selectedVoiceId || applying}
           onClick={() => void handleApply()}
-          className="px-4 py-2.5 rounded-xl bg-white text-black font-medium text-sm hover:bg-zinc-100 disabled:opacity-50 flex items-center gap-2"
+          className="px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-medium text-sm hover:opacity-90 disabled:opacity-50 flex items-center gap-2"
         >
           {applying ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
           {t("applyToAgent")}

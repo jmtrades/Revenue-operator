@@ -103,7 +103,7 @@ export default function IntegrationsSyncLogPage() {
         <button
           type="button"
           onClick={() => fetchLog(0)}
-          className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-zinc-300 hover:border-zinc-500"
+          className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-zinc-500"
         >
           <RefreshCw className="w-4 h-4" /> {tSettings("syncLog.refresh")}
         </button>

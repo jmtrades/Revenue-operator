@@ -83,7 +83,7 @@ export default function AppSettingsCallRulesPage() {
             {weekdays.map((day) => (
               <div key={day} className="flex items-center justify-between text-xs">
                 <span className="text-[var(--text-tertiary)] w-8">{tRules(`days.${day}`)}</span>
-                <span className="text-zinc-300">{tRules("timeRange")}</span>
+                <span className="text-[var(--text-secondary)]">{tRules("timeRange")}</span>
               </div>
             ))}
             {weekend.map((day) => (
@@ -123,10 +123,10 @@ export default function AppSettingsCallRulesPage() {
         </div>
       </div>
 
-      <button type="button" onClick={() => void handleSave()} disabled={saving || !workspaceId} className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 disabled:opacity-60 transition-colors">{saving ? "…" : tRules("saveChanges")}</button>
+      <button type="button" onClick={() => void handleSave()} disabled={saving || !workspaceId} className="px-6 py-3 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-60 transition-colors">{saving ? "…" : tRules("saveChanges")}</button>
 
       {toast && (
-        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-medium)] shadow-lg text-sm text-zinc-200">{toast}</div>
+        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-medium)] shadow-lg text-sm text-[var(--text-primary)]">{toast}</div>
       )}
 
       <p className="mt-6"><Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{tRules("backToSettings")}</Link></p>

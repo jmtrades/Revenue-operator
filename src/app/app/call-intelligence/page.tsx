@@ -421,7 +421,7 @@ export default function CallIntelligencePage() {
                     className={cn(
                       "px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
                       qualityTrendDays === d
-                        ? "bg-white text-black"
+                        ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
                         : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)] bg-[var(--bg-inset)]/50",
                     )}
                   >
@@ -461,7 +461,7 @@ export default function CallIntelligencePage() {
                 <ul className="space-y-2">
                   {commonIssues.map((issue) => (
                     <li key={issue.label} className="flex items-center justify-between text-sm">
-                      <span className="text-zinc-300">{issue.label}</span>
+                      <span className="text-[var(--text-secondary)]">{issue.label}</span>
                       <span className="text-amber-400 font-medium">{issue.count} {t("commonIssues.calls")}</span>
                     </li>
                   ))}
@@ -476,7 +476,7 @@ export default function CallIntelligencePage() {
                 <ol className="space-y-2">
                   {agentLeaderboard.map((row, idx) => (
                     <li key={row.agentId ?? "_unknown_"} className="flex items-center justify-between text-sm">
-                      <span className="text-zinc-300">
+                      <span className="text-[var(--text-secondary)]">
                         {idx + 1}. {row.agentName}
                       </span>
                       <span className="text-[var(--text-primary)] font-medium">{row.avgScore} · {row.calls} {t("commonIssues.calls")}</span>
@@ -532,14 +532,14 @@ export default function CallIntelligencePage() {
                 <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
                   <Link
                     href="/app/calls"
-                    className="inline-flex items-center gap-1.5 rounded-xl bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-zinc-100"
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-white px-4 py-2 text-sm font-semibold text-black hover:opacity-90"
                   >
                     {t("empty.cta")} →
                   </Link>
                   <button
                     type="button"
                     onClick={() => setActiveTab("manual")}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-600 px-4 py-2 text-sm font-medium text-zinc-300 hover:bg-[var(--bg-inset)] hover:text-[var(--text-primary)]"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-default)] px-4 py-2 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] hover:text-[var(--text-primary)]"
                   >
                     {t("empty.ctaSecondary")}
                   </button>
@@ -809,7 +809,7 @@ export default function CallIntelligencePage() {
                                   <button
                                     type="button"
                                     onClick={() => handleDismiss(i.id)}
-                                    className="text-xs text-[var(--text-secondary)] hover:text-zinc-300 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded"
+                                    className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-secondary)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded"
                                   >
                                     {t("dismiss")}
                                   </button>
@@ -911,7 +911,7 @@ export default function CallIntelligencePage() {
             disabled={analyzing || pasteText.trim().length < 100}
             className={cn(
               "mt-1 inline-flex items-center justify-center px-6 py-2.5 rounded-xl text-sm font-semibold transition-all",
-              "bg-white text-black hover:bg-zinc-100 disabled:opacity-40 disabled:pointer-events-none",
+              "bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-40 disabled:pointer-events-none",
             )}
           >
             {analyzing ? t("analyzing") : t("analyzeTranscript")}
@@ -920,7 +920,7 @@ export default function CallIntelligencePage() {
       )}
 
       {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2 rounded-xl bg-[var(--bg-surface)] border border-zinc-700 text-[var(--text-primary)] text-sm shadow-lg z-50">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm shadow-lg z-50">
           {toast}
         </div>
       )}
@@ -942,7 +942,7 @@ export default function CallIntelligencePage() {
                     key={a.id}
                     type="button"
                     onClick={() => handleApply(applyModal.insightId, a.id)}
-                    className="w-full px-4 py-2 rounded-xl border border-zinc-700 text-zinc-300 text-sm hover:bg-[var(--bg-inset)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
+                    className="w-full px-4 py-2 rounded-xl border border-[var(--border-default)] text-[var(--text-secondary)] text-sm hover:bg-[var(--bg-inset)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
                   >
                     {a.name}
                   </button>

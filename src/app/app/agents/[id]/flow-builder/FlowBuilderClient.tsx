@@ -54,7 +54,7 @@ function BaseFlowNode({
     end_call: "bg-red-500/20 border-red-500/50",
     custom_action: "bg-zinc-500/20 border-zinc-500/50",
   };
-  const style = colors[nodeType ?? ""] ?? "bg-[var(--bg-inset)] border-zinc-600";
+  const style = colors[nodeType ?? ""] ?? "bg-[var(--bg-inset)] border-[var(--border-default)]";
 
   return (
     <div className={`px-4 py-2 rounded-xl border min-w-[140px] ${style}`}>
@@ -202,13 +202,13 @@ export default function FlowBuilderClient({
         <h1 className="text-xl font-semibold text-[var(--text-primary)]">Conversation flow</h1>
         <div className="flex items-center gap-2">
           {toast && <span className="text-sm text-[var(--text-tertiary)]">{toast}</span>}
-          <div className="flex flex-wrap gap-1 border border-zinc-700 rounded-xl p-1.5 bg-[var(--bg-surface)] max-w-xl">
+          <div className="flex flex-wrap gap-1 border border-[var(--border-default)] rounded-xl p-1.5 bg-[var(--bg-surface)] max-w-xl">
             {NODE_TYPES_LIST.map(({ type, label }) => (
               <button
                 key={type}
                 type="button"
                 onClick={() => addNode(type, label)}
-                className="flex items-center gap-1 px-2 py-1 text-xs text-zinc-300 hover:text-[var(--text-primary)] hover:bg-zinc-700 rounded-lg"
+                className="flex items-center gap-1 px-2 py-1 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-zinc-700 rounded-lg"
                 title={`Add ${label}`}
               >
                 <Plus className="w-3 h-3 flex-shrink-0" />
@@ -220,14 +220,14 @@ export default function FlowBuilderClient({
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-1.5 bg-white text-black font-semibold rounded-xl px-4 py-2 text-sm hover:bg-zinc-100 disabled:opacity-50"
+            className="flex items-center gap-1.5 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl px-4 py-2 text-sm hover:opacity-90 disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
             Save flow
           </button>
         </div>
       </div>
-      <div className="flex-1 rounded-2xl border border-[var(--border-default)] bg-zinc-950 overflow-hidden">
+      <div className="flex-1 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-base)] overflow-hidden">
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -236,11 +236,11 @@ export default function FlowBuilderClient({
           onConnect={onConnect}
           nodeTypes={nodeTypes}
           fitView
-          className="bg-zinc-950"
+          className="bg-[var(--bg-base)]"
         >
           <Background color="#3f3f46" gap={16} />
-          <Controls className="!bg-[var(--bg-surface)] !border-zinc-700 !rounded-xl" />
-          <MiniMap className="!bg-[var(--bg-surface)] !border-zinc-700" />
+          <Controls className="!bg-[var(--bg-surface)] !border-[var(--border-default)] !rounded-xl" />
+          <MiniMap className="!bg-[var(--bg-surface)] !border-[var(--border-default)]" />
           <Panel position="top-left" className="text-xs text-[var(--text-secondary)]">
             Drag nodes to connect. Use the toolbar to add nodes.
           </Panel>

@@ -593,7 +593,7 @@ export default function AppAnalyticsPage() {
                 onClick={() => setRange(opt.key)}
                 className={`px-3 py-1.5 rounded-lg ${
                   range === opt.key
-                    ? "bg-white text-black font-medium"
+                    ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-medium"
                     : "text-[var(--text-tertiary)]"
                 }`}
               >
@@ -607,14 +607,14 @@ export default function AppAnalyticsPage() {
                 type="date"
                 value={dateFrom}
                 onChange={(e) => setDateFrom(e.target.value)}
-                className="rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] px-2.5 py-1.5 text-zinc-200"
+                className="rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] px-2.5 py-1.5 text-[var(--text-primary)]"
               />
               <span className="text-[var(--text-secondary)]">→</span>
               <input
                 type="date"
                 value={dateTo}
                 onChange={(e) => setDateTo(e.target.value)}
-                className="rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] px-2.5 py-1.5 text-zinc-200"
+                className="rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] px-2.5 py-1.5 text-[var(--text-primary)]"
               />
             </div>
           )}
@@ -622,7 +622,7 @@ export default function AppAnalyticsPage() {
             type="button"
             onClick={handleExportCsv}
             disabled={!hasData || scope === "outbound"}
-            className="ml-auto inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-1.5 text-xs text-zinc-200 hover:bg-[var(--bg-hover)] disabled:opacity-50"
+            className="ml-auto inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-1.5 text-xs text-[var(--text-primary)] hover:bg-[var(--bg-hover)] disabled:opacity-50"
           >
             {t("analytics.exportCsv")}
           </button>
@@ -645,7 +645,7 @@ export default function AppAnalyticsPage() {
             onClick={() => setScope(key)}
             className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-medium transition-colors ${
               scope === key
-                ? "border-white bg-white text-black"
+                ? "border-white bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
                 : "border-[var(--border-default)] bg-[var(--bg-card)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
             }`}
           >
@@ -681,10 +681,10 @@ export default function AppAnalyticsPage() {
                   return (
                     <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 text-center">
                       <Send className="w-10 h-10 text-zinc-600 mx-auto mb-3" aria-hidden />
-                      <p className="text-sm text-zinc-300 mb-4">{t("analytics.outboundTab.empty")}</p>
+                      <p className="text-sm text-[var(--text-secondary)] mb-4">{t("analytics.outboundTab.empty")}</p>
                       <Link
                         href="/app/campaigns"
-                        className="inline-flex rounded-xl bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-zinc-100"
+                        className="inline-flex rounded-xl bg-white px-4 py-2 text-sm font-semibold text-black hover:opacity-90"
                       >
                         {t("analytics.outboundTab.goCampaigns")} →
                       </Link>
@@ -736,7 +736,7 @@ export default function AppAnalyticsPage() {
                           </thead>
                           <tbody>
                             {om.campaigns.map((c) => (
-                              <tr key={c.id} className="border-b border-[var(--border-default)]/50 text-zinc-300">
+                              <tr key={c.id} className="border-b border-[var(--border-default)]/50 text-[var(--text-secondary)]">
                                 <td className="py-2 pr-3 text-[var(--text-primary)]">{c.name}</td>
                                 <td className="py-2 pr-3 capitalize">{c.status}</td>
                                 <td className="py-2 pr-3 text-right">{c.called}</td>
@@ -866,7 +866,7 @@ export default function AppAnalyticsPage() {
             <p className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
               {t("analytics.atAGlance", { label: summaryLabel })}
             </p>
-            <p className="text-sm text-zinc-300 mt-1">
+            <p className="text-sm text-[var(--text-secondary)] mt-1">
               {hasData
                 ? t("analytics.glanceSummary", {
                     totalCalls: totalCalls.toString(),
@@ -976,22 +976,22 @@ export default function AppAnalyticsPage() {
                 <>
                   <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]">
                     <TrendingUp className="h-4 w-4 shrink-0 text-emerald-400 mt-0.5" />
-                    <p className="text-sm text-zinc-300">{t("analytics.insightBusyHour")}</p>
+                    <p className="text-sm text-[var(--text-secondary)]">{t("analytics.insightBusyHour")}</p>
                   </div>
                   <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]">
                     <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400 mt-0.5" />
                     <div>
-                      <p className="text-sm text-zinc-300">{t("analytics.insightAvailability")}</p>
+                      <p className="text-sm text-[var(--text-secondary)]">{t("analytics.insightAvailability")}</p>
                       <Link href="/app/agents" className="text-xs text-[var(--accent-primary)] mt-1 inline-block">{t("analytics.addToKnowledge")} →</Link>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]">
                     <BadgeCheck className="h-4 w-4 shrink-0 text-emerald-400 mt-0.5" />
-                    <p className="text-sm text-zinc-300">{t("analytics.insightLiveAnswer")}</p>
+                    <p className="text-sm text-[var(--text-secondary)]">{t("analytics.insightLiveAnswer")}</p>
                   </div>
                   <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]">
                     <Lightbulb className="h-4 w-4 shrink-0 text-[var(--text-tertiary)] mt-0.5" />
-                    <p className="text-sm text-zinc-300">{t("analytics.insightPricing")}</p>
+                    <p className="text-sm text-[var(--text-secondary)]">{t("analytics.insightPricing")}</p>
                   </div>
                 </>
               )}

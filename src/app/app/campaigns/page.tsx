@@ -330,7 +330,7 @@ export default function CampaignsPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
-            className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-zinc-300 text-sm"
+            className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-secondary)] text-sm"
           >
             <option value="all">{t("statusFilter.all")}</option>
             <option value="draft">{t("statusFilter.draft")}</option>
@@ -397,10 +397,10 @@ export default function CampaignsPage() {
                         })()}
                       </p>
                       <div className="mt-2 flex flex-wrap gap-2">
-                        <span className="rounded-full border border-[var(--border-medium)] px-2.5 py-1 text-[11px] text-zinc-300 capitalize">
+                        <span className="rounded-full border border-[var(--border-medium)] px-2.5 py-1 text-[11px] text-[var(--text-secondary)] capitalize">
                           {t.has(`campaignType.${campaign.type}`) ? t(`campaignType.${campaign.type}` as never) : campaign.type.replace(/_/g, " ")}
                         </span>
-                        <span className="rounded-full border border-[var(--border-medium)] px-2.5 py-1 text-[11px] text-zinc-300 capitalize">
+                        <span className="rounded-full border border-[var(--border-medium)] px-2.5 py-1 text-[11px] text-[var(--text-secondary)] capitalize">
                           {t.has(`statusFilter.${campaign.status}`) ? t(`statusFilter.${campaign.status}` as never) : campaign.status}
                         </span>
                       </div>
@@ -409,7 +409,7 @@ export default function CampaignsPage() {
                     <button
                       type="button"
                       onClick={() => loadCampaignIntoForm(campaign)}
-                      className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-medium text-zinc-300 hover:border-[var(--border-medium)]"
+                      className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-medium text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
                     >
                       {t("edit")}
                     </button>
@@ -613,7 +613,7 @@ export default function CampaignsPage() {
                   {LEAD_STATUS_OPTIONS.map((status) => {
                     const checked = form.audienceStatuses.includes(status);
                     return (
-                      <label key={status} className="flex items-center gap-1.5 text-xs text-zinc-300">
+                      <label key={status} className="flex items-center gap-1.5 text-xs text-[var(--text-secondary)]">
                         <input
                           type="checkbox"
                           checked={checked}
@@ -767,7 +767,7 @@ export default function CampaignsPage() {
                             sequence: prev.sequence.filter((_, i) => i !== idx),
                           }))
                         }
-                        className="p-2 rounded-lg border border-zinc-700 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] text-xs"
+                        className="p-2 rounded-lg border border-[var(--border-default)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] text-xs"
                         aria-label={t("removeStep")}
                       >
                         {t("removeStep")}
@@ -782,7 +782,7 @@ export default function CampaignsPage() {
                         sequence: [...prev.sequence, { type: "call" }],
                       }))
                     }
-                    className="mt-1 px-3 py-2 rounded-xl border border-zinc-700 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] text-xs"
+                    className="mt-1 px-3 py-2 rounded-xl border border-[var(--border-default)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] text-xs"
                   >
                     {t("addStep")}
                   </button>
@@ -792,7 +792,7 @@ export default function CampaignsPage() {
                 type="button"
                 onClick={() => { void createCampaign(); }}
                 disabled={saving || !form.name.trim()}
-                className="w-full px-4 py-3 rounded-xl bg-white text-black text-sm font-semibold hover:bg-zinc-100 disabled:opacity-60"
+                className="w-full px-4 py-3 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold hover:opacity-90 disabled:opacity-60"
               >
                 {saving
                   ? editingId

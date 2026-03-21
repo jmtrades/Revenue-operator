@@ -153,7 +153,7 @@ export function GoLiveStepContent({
             <p className="text-xs text-white/40 mb-1">
               {t("goLive.callerBookAppt")}
             </p>
-            <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-zinc-700 rounded-lg p-3">
+            <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-lg p-3">
               {(() => {
                 const greeting = agent.greeting?.trim();
                 if (greeting) {
@@ -173,7 +173,7 @@ export function GoLiveStepContent({
 
           <div>
             <p className="text-xs text-white/40 mb-1">{t("goLive.callerPricing")}</p>
-            <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-zinc-700 rounded-lg p-3">
+            <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-lg p-3">
               {(() => {
                 const faq = agent.faq ?? [];
                 const pricingFromFaq = faq.find((e) => {
@@ -201,7 +201,7 @@ export function GoLiveStepContent({
 
           <div>
             <p className="text-xs text-white/40 mb-1">{t("goLive.callerAfterHours")}</p>
-            <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-zinc-700 rounded-lg p-3">
+            <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-lg p-3">
               {(() => {
                 switch (agent.afterHoursMode) {
                   case "forward":
@@ -227,7 +227,7 @@ export function GoLiveStepContent({
                 <p className="text-xs text-white/40 mb-1">
                   {t("goLive.callerPriceHigh")}
                 </p>
-                <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-zinc-700 rounded-lg p-3">
+                <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-lg p-3">
                   {priceObj.slice(0, 160) + (priceObj.length > 160 ? "…" : "")}
                 </p>
               </div>
@@ -245,7 +245,7 @@ export function GoLiveStepContent({
                 <p className="text-xs text-white/40 mb-1">
                   {t("goLive.callerSpeakToSomeone")}
                 </p>
-                <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-zinc-700 rounded-lg p-3">
+                <p className="text-sm text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-lg p-3">
                   {hasTransferNumber
                     ? t("goLive.escalationWithTransfer")
                     : t("goLive.escalationNoTransfer")}
@@ -284,7 +284,7 @@ export function GoLiveStepContent({
           disabled={!allowActivate || activating}
           aria-label={t("goLive.activateAgentAria")}
           title={!testCallCompleted ? "Complete your test call to enable Go Live." : undefined}
-          className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           {activating ? t("goLive.activating") : t("goLive.activateAgent")}
         </button>

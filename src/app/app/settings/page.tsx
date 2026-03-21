@@ -125,7 +125,7 @@ export default function AppSettingsPage() {
       <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">{tSettings("title")}</h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">{tSettings("pageSubtitle")}</p>
       <div className="bg-[var(--bg-surface)] border border-white/[0.08] rounded-xl p-6 mb-6">
-        <h2 className="text-base font-medium text-white/90 mb-4">{tSettings("profile")}</h2>
+        <h2 className="text-base font-medium text-[var(--text-primary)] mb-4">{tSettings("profile")}</h2>
         <div className="space-y-4">
           <div>
             <label className="text-xs text-white/40 mb-1 block">{tSettings("emailLabel")}</label>
@@ -139,7 +139,7 @@ export default function AppSettingsPage() {
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               placeholder={tSettings("displayNamePlaceholder")}
-              className="w-full max-w-sm bg-zinc-950 border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] focus:border-zinc-500 focus:outline-none"
+              className="w-full max-w-sm bg-[var(--bg-base)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] focus:border-zinc-500 focus:outline-none"
             />
           </div>
           <div>
@@ -147,7 +147,7 @@ export default function AppSettingsPage() {
             <select
               value={timezone}
               onChange={(e) => setTimezone(e.target.value)}
-              className="bg-zinc-950 border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] focus:border-zinc-500 focus:outline-none max-w-sm"
+              className="bg-[var(--bg-base)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] focus:border-zinc-500 focus:outline-none max-w-sm"
             >
               {typeof Intl !== "undefined" &&
                 Intl.supportedValuesOf("timeZone")
@@ -163,7 +163,7 @@ export default function AppSettingsPage() {
             type="button"
             onClick={handleSaveProfile}
             disabled={savingProfile}
-            className="px-4 py-2 bg-white text-gray-900 font-semibold rounded-lg text-sm hover:bg-gray-100 transition-colors disabled:opacity-60"
+            className="px-4 py-2 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-lg text-sm hover:opacity-90 transition-colors disabled:opacity-60"
           >
             {savingProfile ? tSettings("savingProfile") : tSettings("saveProfile")}
           </button>
@@ -198,7 +198,7 @@ export default function AppSettingsPage() {
         </div>
         <Link
           href="/activate"
-          className="px-4 py-2 bg-white text-black font-semibold rounded-xl text-xs hover:bg-zinc-100 transition-colors whitespace-nowrap"
+          className="px-4 py-2 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl text-xs hover:opacity-90 transition-colors whitespace-nowrap"
         >
           {tSettings("openSetup")}
         </Link>

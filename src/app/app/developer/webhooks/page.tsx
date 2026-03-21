@@ -183,7 +183,7 @@ export default function DeveloperWebhooksPage() {
         <button
           type="button"
           onClick={() => setAddModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-black font-semibold text-sm hover:bg-zinc-200"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:bg-zinc-200"
         >
           <Plus className="w-4 h-4" /> Add endpoint
         </button>
@@ -232,7 +232,7 @@ export default function DeveloperWebhooksPage() {
                     type="button"
                     onClick={() => handleTest(ep.id)}
                     disabled={!!testingId}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-zinc-300 hover:border-zinc-500"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-zinc-500"
                   >
                     <Send className="w-3.5 h-3.5" /> {testingId === ep.id ? "Sending…" : "Test"}
                   </button>
@@ -260,7 +260,7 @@ export default function DeveloperWebhooksPage() {
                           className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-3 text-sm"
                         >
                           <div className="flex items-center justify-between gap-2 flex-wrap">
-                            <span className="text-zinc-300">{d.event}</span>
+                            <span className="text-[var(--text-secondary)]">{d.event}</span>
                             <span className="text-xs text-[var(--text-secondary)]">{formatTime(d.created_at)}</span>
                           </div>
                           <div className="flex items-center gap-3 mt-1.5 text-xs">
@@ -344,7 +344,7 @@ export default function DeveloperWebhooksPage() {
                         onChange={() => toggleEvent(e)}
                         className="rounded border-[var(--border-medium)] text-[var(--text-primary)]"
                       />
-                      <span className="text-xs text-zinc-300">{e}</span>
+                      <span className="text-xs text-[var(--text-secondary)]">{e}</span>
                     </label>
                   ))}
                 </div>
@@ -362,7 +362,7 @@ export default function DeveloperWebhooksPage() {
                 type="button"
                 onClick={handleAdd}
                 disabled={!formUrl.trim() || saving}
-                className="px-4 py-2 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-200 disabled:opacity-50"
+                className="px-4 py-2 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:bg-zinc-200 disabled:opacity-50"
               >
                 {saving ? tDev("adding") : tDev("addButton")}
               </button>

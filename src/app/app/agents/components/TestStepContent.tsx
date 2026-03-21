@@ -141,7 +141,7 @@ export function TestStepContent({
                 onNext();
                 setShowGoLiveCta(false);
               }}
-              className="text-sm font-medium text-[var(--text-primary)] hover:text-zinc-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded"
+              className="text-sm font-medium text-[var(--text-primary)] hover:text-[var(--text-secondary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded"
             >
               {t("testStep.continue")}
             </button>
@@ -161,7 +161,7 @@ export function TestStepContent({
           type="button"
           onClick={onNext}
           aria-label={t("testStep.continueToGoLive")}
-          className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="rounded-xl bg-white px-6 py-2.5 text-sm font-semibold text-gray-900 hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           {t("testStep.continue")}
         </button>

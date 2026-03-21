@@ -1,6 +1,7 @@
 "use client";
 
 import { Star } from "lucide-react";
+import { SOCIAL_PROOF } from "@/lib/constants";
 
 const TESTIMONIALS = [
   {
@@ -73,7 +74,7 @@ export function PricingTestimonials() {
           What Our Customers Say
         </p>
         <h2 className="text-2xl md:text-3xl font-bold" style={{ color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
-          12,400+ businesses can&apos;t be wrong
+          {SOCIAL_PROOF.businessCount} businesses can&apos;t be wrong
         </h2>
       </div>
 

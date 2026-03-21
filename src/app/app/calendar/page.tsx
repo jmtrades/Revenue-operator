@@ -195,7 +195,7 @@ export default function AppCalendarPage() {
           <h1 className="text-lg md:text-xl font-semibold text-[var(--text-primary)]">{t("calendar.heading")}</h1>
           <button
             type="button"
-            className="px-2 py-1 rounded-xl border border-[var(--border-medium)] text-[11px] text-zinc-300 hover:border-[var(--border-medium)]"
+            className="px-2 py-1 rounded-xl border border-[var(--border-medium)] text-[11px] text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
           >
             {t("calendar.today")}
           </button>
@@ -206,7 +206,7 @@ export default function AppCalendarPage() {
               type="button"
               onClick={() => setView("week")}
               className={`px-3 py-1.5 rounded-xl text-[11px] font-medium ${
-                view === "week" ? "bg-white text-black" : "bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-tertiary)]"
+                view === "week" ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]" : "bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-tertiary)]"
               }`}
             >
               {t("calendar.viewWeek")}
@@ -215,7 +215,7 @@ export default function AppCalendarPage() {
               type="button"
               onClick={() => setView("month")}
               className={`px-3 py-1.5 rounded-xl text-[11px] font-medium ${
-                view === "month" ? "bg-white text-black" : "bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-tertiary)]"
+                view === "month" ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]" : "bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-tertiary)]"
               }`}
             >
               {t("calendar.viewMonth")}
@@ -224,7 +224,7 @@ export default function AppCalendarPage() {
           <button
             type="button"
             onClick={() => setShowNew(true)}
-            className="hidden sm:inline-flex items-center gap-1.5 bg-white text-black font-semibold rounded-xl px-4 py-2 text-sm hover:bg-zinc-100"
+            className="hidden sm:inline-flex items-center gap-1.5 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl px-4 py-2 text-sm hover:opacity-90"
           >
             {t("calendar.newAppointment")}
           </button>
@@ -234,7 +234,7 @@ export default function AppCalendarPage() {
       <button
         type="button"
         onClick={() => setShowNew(true)}
-        className="sm:hidden mb-3 w-full bg-white text-black font-semibold rounded-xl px-4 py-2 text-sm hover:bg-zinc-100"
+        className="sm:hidden mb-3 w-full bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl px-4 py-2 text-sm hover:opacity-90"
       >
         {t("calendar.newAppointment")}
       </button>
@@ -319,7 +319,7 @@ export default function AppCalendarPage() {
           ) : (
             <a
               href="/api/integrations/google-calendar/auth"
-              className="self-start sm:self-auto px-4 py-2 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100"
+              className="self-start sm:self-auto px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-xs font-semibold hover:opacity-90"
             >
               {t("calendar.connect")}
             </a>
@@ -376,7 +376,7 @@ export default function AppCalendarPage() {
               <button
                 type="button"
                 onClick={() => setDeleteConfirm(selected)}
-                className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-[11px] text-zinc-300 hover:border-[var(--border-medium)]"
+                className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-[11px] text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
               >
                 {t("calendar.removeAppointment").replace("?", "").trim()}
               </button>
@@ -416,7 +416,7 @@ export default function AppCalendarPage() {
                   type="text"
                   value={formContact}
                   onChange={(e) => setFormContact(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none"
                   placeholder={t("calendar.contactPlaceholder")}
                 />
               </div>
@@ -426,7 +426,7 @@ export default function AppCalendarPage() {
                   type="text"
                   value={formPhone}
                   onChange={(e) => setFormPhone(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none"
                   placeholder={t("calendar.phonePlaceholder")}
                 />
               </div>
@@ -436,7 +436,7 @@ export default function AppCalendarPage() {
                   type="text"
                   value={formService}
                   onChange={(e) => setFormService(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none"
+                  className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none"
                   placeholder={t("calendar.servicePlaceholder")}
                 />
               </div>
@@ -481,7 +481,7 @@ export default function AppCalendarPage() {
               <button
                 type="button"
                 onClick={() => setShowNew(false)}
-                className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)]"
+                className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
               >
                 {tCommon("cancel")}
               </button>
@@ -489,7 +489,7 @@ export default function AppCalendarPage() {
                 type="button"
                 onClick={handleSaveNew}
                 disabled={saving}
-                className="px-4 py-2 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100 disabled:opacity-50"
+                className="px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-xs font-semibold hover:opacity-90 disabled:opacity-50"
               >
                 {saving ? tForms("saving") : tCommon("save")}
               </button>

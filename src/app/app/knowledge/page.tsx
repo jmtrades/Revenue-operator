@@ -327,8 +327,8 @@ function KnowledgeModal({
                   onClick={() => setStatus(s.value)}
                   className={`px-4 py-2 rounded-xl text-sm font-medium border transition-colors ${
                     status === s.value
-                      ? "bg-white text-black border-white"
-                      : "bg-[var(--bg-input)] border-[var(--border-medium)] text-zinc-300 hover:border-[var(--border-medium)]"
+                      ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)] border-white"
+                      : "bg-[var(--bg-input)] border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
                   }`}
                 >
                   {t(`status.${s.value.toLowerCase()}`)}
@@ -341,14 +341,14 @@ function KnowledgeModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2.5 rounded-xl text-sm font-medium text-zinc-300 border border-[var(--border-medium)] hover:bg-[var(--bg-input)]"
+            className="px-4 py-2.5 rounded-xl text-sm font-medium text-[var(--text-secondary)] border border-[var(--border-medium)] hover:bg-[var(--bg-input)]"
           >
             {tCommon("cancel")}
           </button>
           <button
             type="button"
             onClick={handleSave}
-            className="px-4 py-2.5 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-200"
+            className="px-4 py-2.5 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:bg-zinc-200"
           >
             {tCommon("save")}
           </button>
@@ -588,7 +588,7 @@ export default function KnowledgePage() {
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value as KnowledgeType | "all")}
-              className="px-3 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] text-zinc-300 text-sm focus:border-[var(--border-medium)] focus:outline-none"
+              className="px-3 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] text-[var(--text-secondary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
             >
               <option value="all">{t("allTypes")}</option>
               {getTypeOptions().map((o) => (
@@ -598,7 +598,7 @@ export default function KnowledgePage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as KnowledgeStatus | "all")}
-              className="px-3 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] text-zinc-300 text-sm focus:border-[var(--border-medium)] focus:outline-none"
+              className="px-3 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] text-[var(--text-secondary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
             >
               <option value="all">{t("allStatuses")}</option>
               {getStatusOptions().map((o) => (
@@ -609,7 +609,7 @@ export default function KnowledgePage() {
               <button
                 type="button"
                 onClick={() => openAddModal()}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-black font-semibold text-sm hover:bg-zinc-200"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:bg-zinc-200"
               >
                 <Plus className="w-4 h-4" />
                 {t("addEntry")}
@@ -620,12 +620,12 @@ export default function KnowledgePage() {
                   setShowImport((prev) => !prev);
                   setImportError(null);
                 }}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--border-default)] text-sm text-zinc-200 hover:bg-[var(--bg-card)]"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--border-default)] text-sm text-[var(--text-primary)] hover:bg-[var(--bg-card)]"
               >
                 <Globe className="w-4 h-4" />
                 {t("importUrl")}
               </button>
-              <label className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--border-default)] text-sm text-zinc-200 hover:bg-[var(--bg-card)] cursor-pointer">
+              <label className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--border-default)] text-sm text-[var(--text-primary)] hover:bg-[var(--bg-card)] cursor-pointer">
                 <Upload className="w-4 h-4" />
                 {t("bulkUpload")}
                 <input
@@ -743,7 +743,7 @@ export default function KnowledgePage() {
                     setImporting(false);
                   }
                 }}
-                className="px-4 py-2.5 rounded-xl bg-white text-black text-sm font-semibold disabled:opacity-60 hover:bg-zinc-200"
+                className="px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold disabled:opacity-60 hover:bg-zinc-200"
               >
                 {importing ? t("importButtonLoading") : t("importButton")}
               </button>
@@ -783,7 +783,7 @@ export default function KnowledgePage() {
                           },
                         ]);
                       }}
-                      className="w-full text-left rounded-lg border border-[var(--border-default)] bg-[var(--bg-input)] px-3 py-2 text-xs text-zinc-200 hover:border-[var(--border-medium)]"
+                      className="w-full text-left rounded-lg border border-[var(--border-default)] bg-[var(--bg-input)] px-3 py-2 text-xs text-[var(--text-primary)] hover:border-[var(--border-medium)]"
                     >
                       <p className="font-semibold mb-1 line-clamp-1">
                         {entry.question}
@@ -874,7 +874,7 @@ export default function KnowledgePage() {
               <ul className="space-y-2">
                 {knowledgeGaps.map((gap) => (
                   <li key={gap.id} className="flex items-center justify-between gap-2">
-                    <span className="text-sm text-zinc-300">
+                    <span className="text-sm text-[var(--text-secondary)]">
                       {gap.topic} <span className="text-[var(--text-secondary)]">({gap.askCount}×)</span>
                     </span>
                     <button
@@ -897,7 +897,7 @@ export default function KnowledgePage() {
                 {mostReferenced.map((entry) => (
                   <div key={entry.id}>
                     <div className="flex items-center justify-between gap-2 mb-1">
-                      <span className="text-xs text-zinc-300 truncate">{entry.title}</span>
+                      <span className="text-xs text-[var(--text-secondary)] truncate">{entry.title}</span>
                       <span className="text-[10px] text-[var(--text-secondary)]">{entry.usageCount}×</span>
                     </div>
                     <div className="h-1.5 rounded-full bg-[var(--bg-input)] overflow-hidden">

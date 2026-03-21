@@ -208,7 +208,7 @@ export default function AppointmentsPage() {
                       <td className="py-3 px-4 text-[var(--text-primary)]">
                         {formatDate(apt.date, t)} · {apt.time}
                       </td>
-                      <td className="py-3 px-4 text-zinc-300">{apt.contactName}</td>
+                      <td className="py-3 px-4 text-[var(--text-secondary)]">{apt.contactName}</td>
                       <td className="py-3 px-4 text-[var(--text-tertiary)]">{apt.type}</td>
                       <td className="py-3 px-4">
                         <span
@@ -236,7 +236,7 @@ export default function AppointmentsPage() {
           </div>
         ) : (
           view === "calendar" && (
-            <div className="bg-zinc-950 border border-white/[0.06] rounded-2xl p-6">
+            <div className="bg-[var(--bg-base)] border border-white/[0.06] rounded-2xl p-6">
               <div className="flex items-center justify-between mb-4">
                 <button
                   type="button"
@@ -398,7 +398,7 @@ export default function AppointmentsPage() {
               </div>
               <div className="flex justify-between gap-4">
                 <dt className="text-[var(--text-secondary)]">{t("appointments.typeLabel")}</dt>
-                <dd className="text-zinc-300">{selected.type}</dd>
+                <dd className="text-[var(--text-secondary)]">{selected.type}</dd>
               </div>
               <div className="flex justify-between gap-4">
                 <dt className="text-[var(--text-secondary)]">{t("appointments.statusLabel")}</dt>
@@ -417,7 +417,7 @@ export default function AppointmentsPage() {
               <button
                 type="button"
                 onClick={() => setSelected(null)}
-                className="px-4 py-2 rounded-xl border border-[var(--border-medium)] text-sm font-medium text-zinc-300 hover:bg-[var(--bg-hover)]"
+                className="px-4 py-2 rounded-xl border border-[var(--border-medium)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
               >
                 {t("appointments.close")}
               </button>

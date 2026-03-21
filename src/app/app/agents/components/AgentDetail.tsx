@@ -277,7 +277,7 @@ export function AgentDetail(props: AgentDetailProps) {
             type="button"
             onClick={() => void handleStepChange("identity")}
             aria-label={t("quickActions.editAria")}
-            className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-[var(--text-secondary)] hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           >
             {t("quickActions.edit")}
           </button>
@@ -285,7 +285,7 @@ export function AgentDetail(props: AgentDetailProps) {
             type="button"
             onClick={() => void handleStepChange("test")}
             aria-label={t("quickActions.testAria")}
-            className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-[var(--text-secondary)] hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           >
             {t("quickActions.test")}
           </button>
@@ -295,7 +295,7 @@ export function AgentDetail(props: AgentDetailProps) {
             aria-label={t("quickActions.goLiveAria")}
             disabled={!testCallCompleted}
             title={!testCallCompleted ? "Complete your test call to enable Go Live." : undefined}
-            className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-[var(--text-secondary)] hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {t("quickActions.goLive")}
           </button>
@@ -305,7 +305,7 @@ export function AgentDetail(props: AgentDetailProps) {
             type="button"
             onClick={handleDelete}
             aria-label={t("actions.deleteAria")}
-            className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-zinc-300 hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-[var(--text-secondary)] hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           >
             {tCommon("delete")}
           </button>
@@ -318,7 +318,7 @@ export function AgentDetail(props: AgentDetailProps) {
                 ? t("actions.savingAria")
                 : t("actions.saveAndSyncAria")
             }
-            className="px-4 py-1.5 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="px-4 py-1.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-xs font-semibold hover:opacity-90 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           >
             {saving ? tForms("saving") : tCommon("save")}
           </button>

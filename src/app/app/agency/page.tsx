@@ -23,13 +23,13 @@ export default function AgencyPage() {
         <div className="flex flex-col sm:flex-row gap-3 mt-4 md:mt-0">
           <Link
             href={ROUTES.START}
-            className="bg-white text-black font-semibold rounded-xl px-6 py-3 hover:bg-zinc-100 transition-colors no-underline text-center"
+            className="bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl px-6 py-3 hover:opacity-90 transition-colors no-underline text-center"
           >
             {t("ctaCreateWorkspace")} →
           </Link>
           <Link
             href={ROUTES.PRICING}
-            className="border border-zinc-700 text-zinc-200 font-medium rounded-xl px-6 py-3 hover:bg-white/10 transition-colors no-underline text-center"
+            className="border border-[var(--border-default)] text-[var(--text-primary)] font-medium rounded-xl px-6 py-3 hover:bg-white/10 transition-colors no-underline text-center"
           >
             {t("ctaPricing")} →
           </Link>
@@ -52,7 +52,7 @@ export default function AgencyPage() {
           <div className="mt-5 flex flex-col gap-2">
             <Link
               href={ROUTES.START}
-              className="text-sm font-semibold text-white/90 hover:text-[var(--text-primary)] transition-colors no-underline inline-flex items-center gap-2"
+              className="text-sm font-semibold text-[var(--text-primary)] hover:text-[var(--text-primary)] transition-colors no-underline inline-flex items-center gap-2"
             >
               {t("cards.workspaces.link")} <ArrowUpRight className="h-4 w-4" />
             </Link>
@@ -91,7 +91,7 @@ export default function AgencyPage() {
           <div className="mt-5">
             <Link
               href={ROUTES.CONTACT}
-              className="text-sm font-semibold text-white/90 hover:text-[var(--text-primary)] transition-colors no-underline inline-flex items-center gap-2"
+              className="text-sm font-semibold text-[var(--text-primary)] hover:text-[var(--text-primary)] transition-colors no-underline inline-flex items-center gap-2"
             >
               {t("cards.branding.link")} <ArrowUpRight className="h-4 w-4" />
             </Link>

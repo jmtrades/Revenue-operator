@@ -284,7 +284,7 @@ export default function ContactDetailPage() {
               className={cn(
                 "inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold",
                 phone
-                  ? "bg-white text-black hover:bg-zinc-100"
+                  ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90"
                   : "bg-[var(--bg-input)] text-[var(--text-tertiary)] cursor-not-allowed",
               )}
               aria-disabled={!phone}

@@ -323,13 +323,13 @@ export default function AppMessagesPage() {
                   }}
                   placeholder={active.lead_id ? t("inputPlaceholder") : t("inputPlaceholderNoContact")}
                   disabled={!active.lead_id}
-                  className="flex-1 px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-zinc-600 focus:border-[var(--border-medium)] focus:outline-none disabled:opacity-60"
+                  className="flex-1 px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-medium)] focus:outline-none disabled:opacity-60"
                 />
                 <button
                   type="button"
                   disabled={!canSend}
                   onClick={() => void handleSend()}
-                  className="px-4 py-2 rounded-xl bg-white text-black text-xs font-semibold hover:bg-zinc-100 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-xs font-semibold hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   {sending ? "Sending…" : "Send"}
                 </button>

@@ -505,7 +505,7 @@ export default function AppShellClient({
                           </span>
                         )}
                       </div>
-                      <a href="mailto:support@recall-touch.com" className="block text-[10px] text-[var(--text-secondary)] hover:text-zinc-300 transition-colors px-1">
+                      <a href="mailto:support@recall-touch.com" className="block text-[10px] text-[var(--text-secondary)] hover:text-[var(--text-secondary)] transition-colors px-1">
                         support@recall-touch.com
                       </a>
                       <div className="px-1 pt-1 text-[10px] text-[var(--text-secondary)]">
@@ -787,7 +787,7 @@ function OnboardingSidebar({ initialWorkspaceName }: { initialWorkspaceName?: st
                       isComplete
                         ? "bg-green-500 text-[var(--text-primary)]"
                         : isCurrent
-                          ? "bg-white text-black"
+                          ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
                           : "bg-[var(--bg-input)] text-[var(--text-tertiary)]"
                     } ${isCurrent ? "ring-2 ring-white/50" : ""}`}
                   >

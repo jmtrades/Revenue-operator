@@ -14,7 +14,7 @@ const SCORE_COLORS: Record<ScoreBucket, string> = {
   high: "bg-emerald-500/15 text-emerald-300 border-emerald-500/40",
   medium: "bg-amber-500/15 text-amber-200 border-amber-500/40",
   low: "bg-rose-500/15 text-rose-200 border-rose-500/40",
-  all: "bg-[var(--bg-card)] text-zinc-300 border-[var(--border-medium)]",
+  all: "bg-[var(--bg-card)] text-[var(--text-secondary)] border-[var(--border-medium)]",
 };
 
 function scoreBucket(score: number): ScoreBucket {
@@ -235,7 +235,7 @@ export function LeadsList({
                   <td className="py-3 px-4 text-xs text-[var(--text-tertiary)]">
                     {timeSince(lead.lastContactAt, tLeads)}
                   </td>
-                  <td className="py-3 px-4 text-xs text-zinc-300">
+                  <td className="py-3 px-4 text-xs text-[var(--text-secondary)]">
                     {lead.assignedAgent}
                   </td>
                 </tr>
@@ -271,7 +271,7 @@ export function LeadsList({
                 <p className="text-xs text-[var(--text-tertiary)]">{lead.phone}</p>
                 <p className="text-xs text-[var(--text-secondary)]">{lead.service}</p>
                 <div className="mt-1 flex items-center justify-between gap-2">
-                  <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-2 py-0.5 text-[11px] text-zinc-200">
+                  <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-2 py-0.5 text-[11px] text-[var(--text-primary)]">
                     {getStatusDisplay(lead.status, t)}
                   </span>
                   <span className="text-[11px] text-[var(--text-secondary)]">

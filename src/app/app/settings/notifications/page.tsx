@@ -169,7 +169,7 @@ export default function AppSettingsNotificationsPage() {
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 transition-colors disabled:opacity-60"
+            className="px-6 py-3 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 transition-colors disabled:opacity-60"
           >
             {saving ? tSettings("notifications.saving") : tSettings("notifications.savePreferences")}
           </button>

@@ -150,7 +150,7 @@ function ApiKeysTab({
         <button
           type="button"
           onClick={() => setCreateModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-black font-semibold text-sm hover:bg-zinc-200"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:bg-zinc-200"
         >
           <Plus className="w-4 h-4" />
           {t("createApiKey")}
@@ -188,7 +188,7 @@ function ApiKeysTab({
                   </button>
                 </td>
                 <td className="py-3 px-4">
-                  <span className="inline-flex px-2 py-0.5 rounded-md text-[10px] font-medium bg-zinc-700 text-zinc-300">
+                  <span className="inline-flex px-2 py-0.5 rounded-md text-[10px] font-medium bg-zinc-700 text-[var(--text-secondary)]">
                     {key.permission === "admin" ? t("permissionAdmin") : key.permission === "read_write" ? t("permissionReadWrite") : t("permissionReadOnly")}
                   </span>
                 </td>
@@ -296,7 +296,7 @@ function ApiKeysTab({
                         onChange={() => setCreatePermission(p)}
                         className="rounded-full border-[var(--border-medium)] text-[var(--text-primary)] focus:ring-[var(--border-medium)]"
                       />
-                      <span className="text-sm text-zinc-300">
+                      <span className="text-sm text-[var(--text-secondary)]">
                         {p === "read" ? t("permissionReadOnly") : p === "read_write" ? t("permissionReadPlusWrite") : t("permissionAdmin")}
                       </span>
                     </label>
@@ -308,7 +308,7 @@ function ApiKeysTab({
               <button type="button" onClick={() => setCreateModal(false)} className="px-4 py-2 rounded-xl text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] border border-[var(--border-medium)]">
                 {tCommon("cancel")}
               </button>
-              <button type="button" onClick={handleCreateSubmit} disabled={!createLabel.trim()} className="px-4 py-2 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-200 disabled:opacity-50">
+              <button type="button" onClick={handleCreateSubmit} disabled={!createLabel.trim()} className="px-4 py-2 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:bg-zinc-200 disabled:opacity-50">
                 {t("create")}
               </button>
             </div>
@@ -323,14 +323,14 @@ function ApiKeysTab({
             <h3 className="text-lg font-semibold text-amber-200 mb-2">{t("apiKeyCreatedTitle", { label: newKeyModal.label })}</h3>
             <p className="text-sm text-amber-200/80 mb-4">{t("saveKeyWarning")}</p>
             <div className="p-3 rounded-xl bg-black/40 border border-[var(--border-medium)] mb-4">
-              <code className="font-mono text-xs text-zinc-300 break-all">{newKeyModal.fullKey}</code>
+              <code className="font-mono text-xs text-[var(--text-secondary)] break-all">{newKeyModal.fullKey}</code>
             </div>
             <button
               type="button"
               onClick={() => {
                 copyToClipboard(newKeyModal.fullKey, () => onCopyKey(newKeyModal.fullKey));
               }}
-              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white text-black font-semibold text-sm hover:bg-zinc-200"
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:bg-zinc-200"
             >
               <Copy className="w-4 h-4" /> {t("copyKeyButton")}
             </button>
@@ -409,14 +409,14 @@ function WebhooksTab({
       <div className="flex justify-end gap-2">
         <a
           href="/app/developer/webhooks"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[var(--border-medium)] text-zinc-300 text-sm font-medium hover:text-[var(--text-primary)] hover:border-zinc-500"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[var(--border-medium)] text-[var(--text-secondary)] text-sm font-medium hover:text-[var(--text-primary)] hover:border-zinc-500"
         >
           {t("manageWebhooks")}
         </a>
         <button
           type="button"
           onClick={() => setAddModal(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-black font-semibold text-sm hover:bg-zinc-200"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:bg-zinc-200"
         >
           <Plus className="w-4 h-4" /> {t("addWebhook")}
         </button>
@@ -433,7 +433,7 @@ function WebhooksTab({
               <div className="flex items-center gap-3 min-w-0">
                 {expandedId === wh.id ? <ChevronDown className="w-4 h-4 text-[var(--text-secondary)] shrink-0" /> : <ChevronRight className="w-4 h-4 text-[var(--text-secondary)] shrink-0" />}
                 <div className="min-w-0">
-                  <p className="font-mono text-sm text-zinc-300 truncate">{truncateUrl(wh.url)}</p>
+                  <p className="font-mono text-sm text-[var(--text-secondary)] truncate">{truncateUrl(wh.url)}</p>
                   <div className="flex items-center gap-2 mt-1 flex-wrap">
                     {wh.events.map((ev) => (
                       <span key={ev} className="px-2 py-0.5 rounded text-[10px] bg-[var(--bg-card)] text-[var(--text-tertiary)]">{ev}</span>
@@ -504,7 +504,7 @@ function WebhooksTab({
                 <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto">
                   {availableEvents.map((ev) => (
                     <label key={ev} className="flex items-center gap-2 cursor-pointer">
-                      <input type="checkbox" checked={newEvents.includes(ev)} onChange={() => toggleEvent(ev)} className="rounded border-zinc-600 text-[var(--text-primary)]" />
+                      <input type="checkbox" checked={newEvents.includes(ev)} onChange={() => toggleEvent(ev)} className="rounded border-[var(--border-default)] text-[var(--text-primary)]" />
                       <span className="text-xs text-[var(--text-tertiary)] font-mono">{ev}</span>
                     </label>
                   ))}
@@ -513,7 +513,7 @@ function WebhooksTab({
             </div>
             <div className="flex justify-end gap-2 mt-6">
               <button type="button" onClick={() => setAddModal(false)} className="px-4 py-2 rounded-xl text-sm text-[var(--text-tertiary)] border border-[var(--border-medium)]">{t("cancel")}</button>
-              <button type="button" onClick={handleAddSubmit} disabled={!newUrl.trim()} className="px-4 py-2 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-200 disabled:opacity-50">{tCommon("save")}</button>
+              <button type="button" onClick={handleAddSubmit} disabled={!newUrl.trim()} className="px-4 py-2 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:bg-zinc-200 disabled:opacity-50">{tCommon("save")}</button>
             </div>
           </div>
         </div>
@@ -526,7 +526,7 @@ function WebhooksTab({
               <h3 className="text-sm font-semibold text-[var(--text-primary)]">{t("payload")}</h3>
               <button type="button" onClick={() => setPayloadModal(null)} className="p-2 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"><X className="w-4 h-4" /></button>
             </div>
-            <pre className="p-4 overflow-auto text-xs font-mono text-zinc-300 bg-black/40 flex-1 whitespace-pre-wrap break-words">
+            <pre className="p-4 overflow-auto text-xs font-mono text-[var(--text-secondary)] bg-black/40 flex-1 whitespace-pre-wrap break-words">
               <code>{payloadModal}</code>
             </pre>
           </div>
@@ -565,7 +565,7 @@ function EventLogTab({ events, kindFilter, statusFilter, onKindFilter, onStatusF
             className={`px-3 py-1.5 rounded-lg text-xs font-medium ${
               kindFilter === k
                 ? "bg-zinc-700 text-[var(--text-primary)]"
-                : "bg-[var(--bg-card)]/50 text-[var(--text-tertiary)] hover:text-zinc-300"
+                : "bg-[var(--bg-card)]/50 text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
             }`}
           >
             {k === "all" ? tCommon("all") : k === "api_call" ? t("apiCall") : t("webhookDelivery")}
@@ -580,7 +580,7 @@ function EventLogTab({ events, kindFilter, statusFilter, onKindFilter, onStatusF
             className={`px-3 py-1.5 rounded-lg text-xs font-medium ${
               statusFilter === s
                 ? "bg-zinc-700 text-[var(--text-primary)]"
-                : "bg-[var(--bg-card)]/50 text-[var(--text-tertiary)] hover:text-zinc-300"
+                : "bg-[var(--bg-card)]/50 text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
             }`}
           >
             {s === "all" ? tCommon("all") : s === "success" ? t("success") : t("failed")}
@@ -603,7 +603,7 @@ function EventLogTab({ events, kindFilter, statusFilter, onKindFilter, onStatusF
             {filtered.map((row) => (
               <tr key={row.id} className="border-b border-[var(--border-default)]/80 hover:bg-[var(--bg-card)]">
                 <td className="py-3 px-4 text-[var(--text-secondary)] text-xs">{formatRelative(row.timestamp, t)}</td>
-                <td className="py-3 px-4 text-zinc-300">{row.kind === "api_call" ? t("apiCall") : t("webhookDelivery")}</td>
+                <td className="py-3 px-4 text-[var(--text-secondary)]">{row.kind === "api_call" ? t("apiCall") : t("webhookDelivery")}</td>
                 <td className="py-3 px-4 font-mono text-xs text-[var(--text-tertiary)]">
                   {row.kind === "api_call" ? `${row.method} ${row.endpoint}` : row.webhookUrl}
                 </td>
@@ -624,7 +624,7 @@ function EventLogTab({ events, kindFilter, statusFilter, onKindFilter, onStatusF
               <span className="text-xs text-[var(--text-secondary)]">{formatRelative(row.timestamp, t)}</span>
               <span className={`font-mono text-xs ${row.statusCode >= 200 && row.statusCode < 300 ? "text-emerald-400" : "text-red-400"}`}>{row.statusCode}</span>
             </div>
-            <p className="text-sm text-zinc-300">{row.kind === "api_call" ? t("apiCall") : t("webhookDelivery")}</p>
+            <p className="text-sm text-[var(--text-secondary)]">{row.kind === "api_call" ? t("apiCall") : t("webhookDelivery")}</p>
             <p className="font-mono text-xs text-[var(--text-secondary)] truncate">{row.kind === "api_call" ? `${row.method} ${row.endpoint}` : row.webhookUrl}</p>
             <p className="text-[10px] text-zinc-600 mt-1">{row.responseTimeMs}ms</p>
           </div>
@@ -719,7 +719,7 @@ export default function DeveloperPage() {
               type="button"
               onClick={() => setTab(tabDef.id)}
               className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 -mb-px transition-colors ${
-                tab === tabDef.id ? "border-white text-[var(--text-primary)]" : "border-transparent text-[var(--text-secondary)] hover:text-zinc-300"
+                tab === tabDef.id ? "border-white text-[var(--text-primary)]" : "border-transparent text-[var(--text-secondary)] hover:text-[var(--text-secondary)]"
               }`}
             >
               <tabDef.icon className="w-4 h-4" />

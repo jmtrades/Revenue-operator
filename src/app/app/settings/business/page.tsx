@@ -153,15 +153,15 @@ export default function AppSettingsBusinessPage() {
       <div className="space-y-4 mb-6">
         <div>
           <label htmlFor="biz-name" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{tSettings("businessPage.nameLabel")}</label>
-          <input id="biz-name" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder={tSettings("businessPage.namePlaceholder")} className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none" />
+          <input id="biz-name" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder={tSettings("businessPage.namePlaceholder")} className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none" />
         </div>
         <div>
           <label htmlFor="biz-address" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{tSettings("businessPage.addressLabel")}</label>
-          <input id="biz-address" type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder={tSettings("businessPage.addressPlaceholder")} className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none" />
+          <input id="biz-address" type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder={tSettings("businessPage.addressPlaceholder")} className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none" />
         </div>
         <div>
           <label htmlFor="biz-website" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{tSettings("businessPage.websiteLabel")}</label>
-          <input id="biz-website" type="url" value={website} onChange={(e) => setWebsite(e.target.value)} placeholder={tSettings("businessPage.websitePlaceholder")} className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-zinc-600 text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none" />
+          <input id="biz-website" type="url" value={website} onChange={(e) => setWebsite(e.target.value)} placeholder={tSettings("businessPage.websitePlaceholder")} className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none" />
         </div>
         <div>
           <label htmlFor="biz-tz" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{tSettings("businessPage.timezoneLabel")}</label>
@@ -185,7 +185,7 @@ export default function AppSettingsBusinessPage() {
           </select>
         </div>
       </div>
-      <button type="button" disabled={loading || saving} onClick={handleSave} className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 transition-colors disabled:opacity-60">
+      <button type="button" disabled={loading || saving} onClick={handleSave} className="px-6 py-3 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 transition-colors disabled:opacity-60">
         {saving ? tForms("saving") : t("saveChanges")}
       </button>
 
@@ -202,10 +202,10 @@ export default function AppSettingsBusinessPage() {
           <div className="w-full max-w-md rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-xl">
             <h3 id="delete-dialog-title" className="text-lg font-semibold text-[var(--text-primary)]">{tSettings("businessPage.deleteWorkspaceTitle")}</h3>
             <p className="mt-2 text-sm text-[var(--text-tertiary)]">{tSettings("businessPage.deleteWorkspaceBody")}</p>
-            <p className="mt-2 text-xs text-[var(--text-secondary)]">{tSettings("businessPage.workspaceNameLabel")} <strong className="text-zinc-300">{(workspaceSnapshot?.name ?? name ?? "").trim() || tSettings("businessPage.workspaceNameFallback")}</strong></p>
+            <p className="mt-2 text-xs text-[var(--text-secondary)]">{tSettings("businessPage.workspaceNameLabel")} <strong className="text-[var(--text-secondary)]">{(workspaceSnapshot?.name ?? name ?? "").trim() || tSettings("businessPage.workspaceNameFallback")}</strong></p>
             <input type="text" value={deleteConfirmName} onChange={(e) => setDeleteConfirmName(e.target.value)} placeholder={tSettings("businessPage.confirmPlaceholder")} className="mt-3 w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm placeholder:text-[var(--text-secondary)]" />
             <div className="mt-4 flex gap-3 justify-end">
-              <button type="button" onClick={() => { setDeleteConfirmOpen(false); setDeleteConfirmName(""); }} className="px-4 py-2 rounded-xl border border-zinc-600 text-zinc-300 text-sm hover:bg-[var(--bg-inset)]">{t("cancel")}</button>
+              <button type="button" onClick={() => { setDeleteConfirmOpen(false); setDeleteConfirmName(""); }} className="px-4 py-2 rounded-xl border border-[var(--border-default)] text-[var(--text-secondary)] text-sm hover:bg-[var(--bg-inset)]">{t("cancel")}</button>
               <button type="button" onClick={handleDeleteWorkspace} disabled={deleting} className="px-4 py-2 rounded-xl bg-[var(--accent-danger)] text-[var(--text-primary)] text-sm font-medium hover:opacity-90 disabled:opacity-60">
                 {deleting ? tForms("deleting") : t("deletePermanently")}
               </button>
@@ -215,7 +215,7 @@ export default function AppSettingsBusinessPage() {
       )}
 
       {inlineToast && (
-        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-zinc-200">
+        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-[var(--text-primary)]">
           {inlineToast}
         </div>
       )}

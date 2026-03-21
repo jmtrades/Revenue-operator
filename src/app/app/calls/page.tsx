@@ -267,7 +267,7 @@ export default function CallsPage() {
         </div>
         <Link
           href="/app/calls/live"
-          className="inline-flex items-center gap-1.5 border border-zinc-700 text-zinc-300 rounded-xl px-4 py-2 text-sm font-medium hover:bg-[var(--bg-inset)] hover:text-[var(--text-primary)]"
+          className="inline-flex items-center gap-1.5 border border-[var(--border-default)] text-[var(--text-secondary)] rounded-xl px-4 py-2 text-sm font-medium hover:bg-[var(--bg-inset)] hover:text-[var(--text-primary)]"
         >
           {t("calls.liveLabel")}
         </Link>
@@ -300,7 +300,7 @@ export default function CallsPage() {
               toast.error(t("calls.errors.exportFailed"));
             }
           }}
-          className="text-xs md:text-sm rounded-xl border border-[var(--border-default)] px-4 py-2 text-zinc-200 hover:bg-[var(--bg-input)]"
+          className="text-xs md:text-sm rounded-xl border border-[var(--border-default)] px-4 py-2 text-[var(--text-primary)] hover:bg-[var(--bg-input)]"
         >
           {t("calls.exportCsv")}
         </button>
@@ -327,7 +327,7 @@ export default function CallsPage() {
               setOutcomeFilter(e.target.value as NonNullable<CallOutcome> | "all");
               setPage(1);
             }}
-            className="text-xs md:text-sm rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-1.5 text-zinc-200 focus:outline-none focus:border-[var(--border-medium)]"
+            className="text-xs md:text-sm rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-1.5 text-[var(--text-primary)] focus:outline-none focus:border-[var(--border-medium)]"
             aria-label={t("calls.filterOutcome")}
           >
             <option value="all">{t("calls.all")}</option>
@@ -344,7 +344,7 @@ export default function CallsPage() {
               setSentimentFilter(e.target.value as NonNullable<CallSentiment> | "all");
               setPage(1);
             }}
-            className="text-xs md:text-sm rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-1.5 text-zinc-200 focus:outline-none focus:border-[var(--border-medium)]"
+            className="text-xs md:text-sm rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-1.5 text-[var(--text-primary)] focus:outline-none focus:border-[var(--border-medium)]"
             aria-label={t("calls.filterSentiment")}
           >
             <option value="all">{t("calls.all")}</option>
@@ -355,7 +355,7 @@ export default function CallsPage() {
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value as SortKey)}
-            className="text-xs md:text-sm rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-1.5 text-zinc-200 focus:outline-none focus:border-[var(--border-medium)]"
+            className="text-xs md:text-sm rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-1.5 text-[var(--text-primary)] focus:outline-none focus:border-[var(--border-medium)]"
           >
             <option value="newest">{t("calls.sort.newest")}</option>
             <option value="duration">{t("calls.sort.longest")}</option>
@@ -411,7 +411,7 @@ export default function CallsPage() {
           <button
             type="button"
             onClick={() => { setError(null); setLoading(true); setRetryTrigger((c) => c + 1); }}
-            className="px-4 py-2 rounded-xl bg-white text-black text-sm font-medium hover:bg-zinc-100"
+            className="px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-medium hover:opacity-90"
           >
             {t("common.retry")}
           </button>
@@ -458,7 +458,7 @@ export default function CallsPage() {
                 null;
               const _kind: Exclude<CallType, null> = "inbound";
               const outcomeKey = (c.outcome ?? "lead") as Exclude<CallOutcome, null>;
-              const sentimentIcon = sentiment === "positive" ? <Smile className="w-4 h-4 text-emerald-400" /> : sentiment === "negative" ? <Frown className="w-4 h-4 text-red-400" /> : sentiment === "neutral" ? <Minus className="w-4 h-4 text-zinc-400" /> : null;
+              const sentimentIcon = sentiment === "positive" ? <Smile className="w-4 h-4 text-emerald-400" /> : sentiment === "negative" ? <Frown className="w-4 h-4 text-red-400" /> : sentiment === "neutral" ? <Minus className="w-4 h-4 text-[var(--text-tertiary)]" /> : null;
               const durationLabel = durSec > 0 ? `${durMin}m ${(durSec % 60).toString().padStart(2, "0")}s` : "—";
               return (
                 <tr
@@ -486,12 +486,12 @@ export default function CallsPage() {
                       {outcomeLabels[outcomeKey] ?? c.outcome ?? "—"}
                     </Badge>
                   </td>
-                  <td className="py-3 px-4 text-xs text-zinc-200">
+                  <td className="py-3 px-4 text-xs text-[var(--text-primary)]">
                     {sentimentIcon && <span aria-hidden className="flex items-center gap-1">{sentimentIcon}</span>}
                     {!sentimentIcon && sentiment && <span>{sentimentLabels[sentiment]}</span>}
                     {!sentiment && !sentimentIcon && <span className="text-[var(--text-secondary)]">—</span>}
                   </td>
-                  <td className="py-3 px-4 text-xs text-zinc-300">
+                  <td className="py-3 px-4 text-xs text-[var(--text-secondary)]">
                     {c.matched_lead?.name ? t("calls.table.agent") : "—"}
                   </td>
                   <td className="py-3 px-4 text-right">
@@ -578,7 +578,7 @@ export default function CallsPage() {
                 {c.matched_lead?.email ?? "—"}
               </p>
               <div className="mt-2 flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2 text-[11px] text-zinc-300">
+                <div className="flex items-center gap-2 text-[11px] text-[var(--text-secondary)]">
                   <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-2 py-0.5">
                     {typeLabels[kind]}
                   </span>
@@ -586,7 +586,7 @@ export default function CallsPage() {
                     {outcomeLabels[(c.outcome ?? "lead") as Exclude<CallOutcome, null>]}
                   </span>
                 </div>
-                <span className="text-xs text-zinc-300">
+                <span className="text-xs text-[var(--text-secondary)]">
                   {durSec > 0 ? (
                     <>
                       {durMin}m {durSec.toString().padStart(2, "0")}s
@@ -617,7 +617,7 @@ export default function CallsPage() {
             type="button"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={pageSafe === 1}
-            className="inline-flex items-center justify-center h-7 w-7 rounded-full border border-[var(--border-default)] text-zinc-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg-input)]"
+            className="inline-flex items-center justify-center h-7 w-7 rounded-full border border-[var(--border-default)] text-[var(--text-secondary)] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg-input)]"
           >
             <ChevronLeft className="w-3 h-3" />
           </button>
@@ -628,7 +628,7 @@ export default function CallsPage() {
             type="button"
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={pageSafe === totalPages}
-            className="inline-flex items-center justify-center h-7 w-7 rounded-full border border-[var(--border-default)] text-zinc-300 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg-input)]"
+            className="inline-flex items-center justify-center h-7 w-7 rounded-full border border-[var(--border-default)] text-[var(--text-secondary)] disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[var(--bg-input)]"
           >
             <ChevronRight className="w-3 h-3" />
           </button>
