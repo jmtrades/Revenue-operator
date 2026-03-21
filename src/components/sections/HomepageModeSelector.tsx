@@ -105,7 +105,7 @@ export function HomepageModeSelector() {
             <div className="mt-7 flex flex-col sm:flex-row gap-3">
               <Link
                 href={ROUTES.START}
-                className="bg-white text-black font-semibold rounded-xl px-6 py-3 hover:bg-zinc-100 transition-colors no-underline text-center"
+                className="bg-white text-black font-semibold rounded-xl px-6 py-3 hover:opacity-90 transition-colors no-underline text-center"
               >
                 Start free →
               </Link>

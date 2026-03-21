@@ -264,7 +264,7 @@ export default function AppMessagesPage() {
                   <p className="text-[11px] text-[var(--text-secondary)] truncate">{t.preview}</p>
                 </div>
                 {t.unread && (
-                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-zinc-300 mt-2 shrink-0" />
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--accent-secondary)] mt-2 shrink-0" />
                 )}
               </button>
             ))
@@ -294,7 +294,7 @@ export default function AppMessagesPage() {
                       <div
                         className={`max-w-[80%] rounded-2xl px-3 py-2 text-xs ${
                           m.from === "user"
-                            ? "bg-zinc-200 text-zinc-900 rounded-br-sm"
+                            ? "bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-br-sm"
                             : "bg-[var(--bg-inset)] text-[var(--text-primary)] rounded-bl-sm"
                         }`}
                       >

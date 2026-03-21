@@ -22,25 +22,25 @@ export default function GlobalError({
   return (
     <html>
       <body>
-        <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "#0c0f13", color: "#e5e7eb" }}>
+        <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--bg-base)", color: "var(--text-primary)" }}>
           <div className="max-w-md w-full text-center">
-            <h1 className="text-xl font-semibold mb-3" style={{ color: "#e5e7eb" }}>
+            <h1 className="text-xl font-semibold mb-3" style={{ color: "var(--text-primary)" }}>
               {t("heading")}
             </h1>
-            <p className="text-sm mb-6" style={{ color: "#9ca3af" }}>
+            <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
               {t("loadPageError")}
             </p>
             <div className="flex gap-3 justify-center flex-wrap">
               <button
                 type="button"
                 onClick={() => reset()}
-                className="px-6 py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-zinc-100 transition"
+                className="px-6 py-3 rounded-xl text-sm font-semibold bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition"
               >
                 {t("tryAgain")}
               </button>
               <Link
                 href="/"
-                className="px-6 py-3 rounded-xl text-sm font-medium border border-zinc-700 text-zinc-300 hover:text-white transition"
+                className="px-6 py-3 rounded-xl text-sm font-medium border border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition"
               >
                 {t("goHome")}
               </Link>

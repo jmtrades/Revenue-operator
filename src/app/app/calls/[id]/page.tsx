@@ -94,7 +94,7 @@ function CallRecordingPlayer({ src }: { src: string }) {
         <button
           type="button"
           onClick={togglePlay}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:bg-zinc-200 transition"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 transition"
           aria-label={isPlaying ? "Pause" : "Play"}
         >
           {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 ml-0.5" />}

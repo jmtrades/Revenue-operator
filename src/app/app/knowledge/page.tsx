@@ -348,7 +348,7 @@ function KnowledgeModal({
           <button
             type="button"
             onClick={handleSave}
-            className="px-4 py-2.5 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:bg-zinc-200"
+            className="px-4 py-2.5 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90"
           >
             {tCommon("save")}
           </button>
@@ -609,7 +609,7 @@ export default function KnowledgePage() {
               <button
                 type="button"
                 onClick={() => openAddModal()}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:bg-zinc-200"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:opacity-90"
               >
                 <Plus className="w-4 h-4" />
                 {t("addEntry")}
@@ -743,7 +743,7 @@ export default function KnowledgePage() {
                     setImporting(false);
                   }
                 }}
-                className="px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold disabled:opacity-60 hover:bg-zinc-200"
+                className="px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold disabled:opacity-60 hover:opacity-90"
               >
                 {importing ? t("importButtonLoading") : t("importButton")}
               </button>

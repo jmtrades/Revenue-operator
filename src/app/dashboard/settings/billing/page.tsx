@@ -146,7 +146,7 @@ export default function SettingsBillingPage() {
           </div>
           <button
             type="button"
-            className="inline-flex items-center gap-1.5 rounded-xl bg-white text-black text-sm font-semibold px-4 py-2 hover:bg-zinc-100 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm font-semibold px-4 py-2 hover:bg-[var(--bg-inset)] transition-colors"
           >
             Change Plan
             <ExternalLink className="w-3.5 h-3.5" />

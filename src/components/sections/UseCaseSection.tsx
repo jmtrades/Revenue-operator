@@ -46,7 +46,7 @@ export function UseCaseSection() {
         <p className="text-center mt-8">
           <Link
             href={ROUTES.START}
-            className="inline-flex items-center justify-center bg-white text-black font-semibold rounded-xl px-6 py-3 hover:bg-zinc-100 transition-colors"
+            className="inline-flex items-center justify-center bg-white text-black font-semibold rounded-xl px-6 py-3 hover:opacity-90 transition-colors"
           >
             {t("cta.button")}
           </Link>

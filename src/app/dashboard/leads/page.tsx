@@ -326,7 +326,7 @@ export default function LeadsPage() {
           <button
             type="button"
             onClick={onAddLead}
-            className="ml-auto inline-flex items-center gap-1 rounded-xl bg-white text-black text-xs font-semibold px-3 py-1.5 hover:bg-zinc-100 transition-colors"
+            className="ml-auto inline-flex items-center gap-1 rounded-xl bg-[var(--bg-surface)] text-[var(--text-primary)] text-xs font-semibold px-3 py-1.5 hover:bg-[var(--bg-inset)] transition-colors"
           >
             + Add lead
           </button>

@@ -300,7 +300,7 @@ export default function TeamPage() {
           <button
             type="button"
             onClick={() => setInviteModalOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:bg-zinc-200"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:opacity-90"
           >
             <Plus className="w-4 h-4" />
             {t("inviteMember")}
@@ -507,7 +507,7 @@ export default function TeamPage() {
               <button type="button" onClick={() => { setInviteModalOpen(false); setInviteError(null); }} className="px-4 py-2 rounded-xl text-sm text-[var(--text-tertiary)] border border-[var(--border-medium)] hover:bg-[var(--bg-card)]">
                 Cancel
               </button>
-              <button type="button" onClick={handleSendInvite} disabled={!inviteEmail.trim() || inviteSending} className="px-4 py-2 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:bg-zinc-200 disabled:opacity-50">
+              <button type="button" onClick={handleSendInvite} disabled={!inviteEmail.trim() || inviteSending} className="px-4 py-2 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-50">
                 {inviteSending ? t("sending") : t("sendInvite")}
               </button>
             </div>

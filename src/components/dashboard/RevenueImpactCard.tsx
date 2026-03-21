@@ -49,7 +49,7 @@ const RevenueImpactCard = () => {
               className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
                 period === p
                   ? 'bg-white text-black'
-                  : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]'
+                  : 'bg-[var(--bg-inset)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]'
               }`}
             >
               {p === 'today' ? 'Today' : p === 'week' ? 'This Week' : 'This Month'}

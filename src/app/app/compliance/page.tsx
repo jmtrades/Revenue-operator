@@ -249,7 +249,7 @@ export default function CompliancePage() {
             <button
               type="button"
               onClick={handleSavePolicies}
-              className="mt-4 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:bg-zinc-200"
+              className="mt-4 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:opacity-90"
             >
               {t("saveChanges")}
             </button>

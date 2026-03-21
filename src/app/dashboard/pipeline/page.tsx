@@ -29,7 +29,7 @@ interface PipelineCard {
 
 const STAGES: { key: StageKey; label: string; dotColor: string }[] = [
   { key: "NEW", label: "New", dotColor: "bg-[var(--bg-inset)]" },
-  { key: "CONTACTED", label: "Contacted", dotColor: "bg-zinc-400" },
+  { key: "CONTACTED", label: "Contacted", dotColor: "bg-[var(--text-tertiary)]" },
   { key: "QUALIFIED", label: "Qualified", dotColor: "bg-amber-400" },
   { key: "BOOKED", label: "Booked", dotColor: "bg-emerald-400" },
   { key: "WON", label: "Won", dotColor: "bg-emerald-400" },
@@ -149,7 +149,7 @@ export default function PipelinePage() {
           <button
             type="button"
             onClick={() => setShowAddModal(true)}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-white text-black text-sm font-semibold px-4 py-2 hover:bg-zinc-100 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm font-semibold px-4 py-2 hover:bg-[var(--bg-inset)] transition-colors"
           >
             <Plus className="w-4 h-4" />
             Add Lead

@@ -684,7 +684,7 @@ export default function AppAnalyticsPage() {
                       <p className="text-sm text-[var(--text-secondary)] mb-4">{t("analytics.outboundTab.empty")}</p>
                       <Link
                         href="/app/campaigns"
-                        className="inline-flex rounded-xl bg-white px-4 py-2 text-sm font-semibold text-black hover:opacity-90"
+                        className="inline-flex rounded-xl bg-[var(--bg-surface)] px-4 py-2 text-sm font-semibold text-[var(--text-primary)] hover:opacity-90"
                       >
                         {t("analytics.outboundTab.goCampaigns")} →
                       </Link>

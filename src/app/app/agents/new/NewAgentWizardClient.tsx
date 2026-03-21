@@ -329,7 +329,7 @@ export default function NewAgentWizardClient({
               type="text"
               value={state.name}
               onChange={(e) => setState((p) => ({ ...p, name: e.target.value }))}
-              className="w-full bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-4 py-2.5 text-[var(--text-primary)] placeholder-zinc-500 focus:border-[var(--border-default)] focus:ring-1 focus:ring-zinc-600"
+              className="w-full bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-4 py-2.5 text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-default)] focus:ring-1 focus:ring-[var(--border-default)]"
               placeholder={t("namePlaceholder")}
             />
           </>

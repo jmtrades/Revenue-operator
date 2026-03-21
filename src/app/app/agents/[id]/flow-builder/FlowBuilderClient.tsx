@@ -48,7 +48,7 @@ function BaseFlowNode({
     start: "bg-green-500/20 border-green-500/50",
     greeting: "bg-[var(--bg-inset)]/20 border-[var(--border-default)]/50",
     question: "bg-amber-500/20 border-amber-500/50",
-    branch: "bg-[var(--bg-inset)]/20 border-zinc-400/50",
+    branch: "bg-[var(--bg-inset)]/20 border-[var(--text-tertiary)]/50",
     transfer: "bg-orange-500/20 border-orange-500/50",
     book_appointment: "bg-emerald-500/20 border-emerald-500/50",
     end_call: "bg-red-500/20 border-red-500/50",
@@ -58,9 +58,9 @@ function BaseFlowNode({
 
   return (
     <div className={`px-4 py-2 rounded-xl border min-w-[140px] ${style}`}>
-      {!isSource && <Handle type="target" position={Position.Left} className="!w-2 !h-2 !bg-zinc-400" />}
+      {!isSource && <Handle type="target" position={Position.Left} className="!w-2 !h-2 !bg-[var(--text-tertiary)]" />}
       <span className="text-sm font-medium text-[var(--text-primary)] capitalize">{String(label).replace(/_/g, " ")}</span>
-      {nodeType !== "end_call" && <Handle type="source" position={Position.Right} className="!w-2 !h-2 !bg-zinc-400" />}
+      {nodeType !== "end_call" && <Handle type="source" position={Position.Right} className="!w-2 !h-2 !bg-[var(--text-tertiary)]" />}
     </div>
   );
 }
