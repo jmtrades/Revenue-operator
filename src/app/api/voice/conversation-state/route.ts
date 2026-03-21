@@ -31,6 +31,9 @@ import { log } from "@/lib/logger";
 // In production, this would be Redis — but for single-server it's fine.
 const callStates = new Map<string, ConversationState>();
 
+// Hard cap to prevent unbounded memory growth under load
+const MAX_CONCURRENT_SESSIONS = 500;
+
 // Clean up old sessions after 30 minutes
 const SESSION_TTL_MS = 30 * 60 * 1000;
 setInterval(() => {
@@ -63,17 +66,35 @@ export async function POST(req: NextRequest) {
 
   const { call_session_id, turn, init } = payload;
 
-  if (!call_session_id || !turn?.text) {
+  if (!call_session_id || !turn?.text || typeof call_session_id !== "string") {
     return NextResponse.json(
       { error: "call_session_id and turn are required" },
       { status: 400 },
     );
   }
 
+  // Cap turn text to prevent memory abuse (voice turns are typically <500 chars)
+  if (turn.text.length > 5000) {
+    turn.text = turn.text.slice(0, 5000);
+  }
+
   try {
     // Get or create state
     let state = callStates.get(call_session_id);
     if (!state || init) {
+      // Enforce max concurrent sessions to prevent memory exhaustion
+      if (callStates.size >= MAX_CONCURRENT_SESSIONS && !callStates.has(call_session_id)) {
+        // Evict oldest session to make room
+        let oldestId: string | null = null;
+        let oldestTime = Infinity;
+        for (const [id, s] of callStates.entries()) {
+          if (s.startedAt < oldestTime) {
+            oldestTime = s.startedAt;
+            oldestId = id;
+          }
+        }
+        if (oldestId) callStates.delete(oldestId);
+      }
       state = createConversationState(call_session_id);
       callStates.set(call_session_id, state);
     }

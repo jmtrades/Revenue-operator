@@ -51,8 +51,16 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
     if (body[k] === undefined) continue;
     if (k === "personality" && typeof body[k] === "string" && !validPersonality.includes(body[k] as (typeof validPersonality)[number])) continue;
     if (k === "purpose" && typeof body[k] === "string" && !validPurpose.includes(body[k] as (typeof validPurpose)[number])) continue;
-    if (k === "name" && typeof body[k] === "string") {
-      updates[k] = body[k].trim().slice(0, 500) || "Primary Agent";
+    if (k === "voice_id" && typeof body[k] === "string") {
+      // Validate voice_id against known voices
+      try {
+        const { RECALL_VOICES } = await import("@/lib/constants/recall-voices");
+        const validVoiceIds = RECALL_VOICES.map((v: { id: string }) => v.id);
+        if (!validVoiceIds.includes(body[k] as string)) continue; // Skip invalid voice_id silently
+      } catch { /* allow if list can't be loaded */ }
+      updates[k] = body[k];
+    } else if (k === "name" && typeof body[k] === "string") {
+      updates[k] = (body[k] as string).trim().slice(0, 100) || "Primary Agent";
     } else if (k === "greeting" && typeof body[k] === "string") {
       updates[k] = body[k].trim().slice(0, 2000);
     } else if (k === "tested_at") {

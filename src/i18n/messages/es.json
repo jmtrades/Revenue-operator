@@ -2884,79 +2884,6 @@
   "campaigns": {
     "title": "Campañas",
     "pageTitle": "Campañas — Recall Touch",
-    "create": "Crear campaña",
-    "loading": "Cargando campañas…",
-    "statTotal": "Total de campañas",
-    "statActive": "Campañas activas",
-    "statContacted": "Contactados",
-    "statConverted": "Convertidos",
-    "estRoi": "ROI est.",
-    "roiSummary": "Coste ~{cost} · Ingresos ~{revenue}",
-    "roiCampaign": "Coste est. ~{cost} · Ingresos est. ~{revenue}",
-    "createdDate": "Creado {date}",
-    "metricContacts": "Contactos",
-    "metricContacted": "Contactados",
-    "metricReached": "Alcanzados",
-    "metricConverted": "Convertidos",
-    "edit": "Editar",
-    "pause": "Pausar",
-    "launchCampaign": "Lanzar campaña",
-    "pauseConfirmTitle": "¿Pausar esta campaña?",
-    "pauseConfirmMessage": "¿Pausar «{name}»? Puedes reanudarla más tarde desde esta página.",
-    "remaining": "Restantes",
-    "failed": "Fallidos",
-    "form": {
-      "typeLabel": "Tipo",
-      "sourceLabel": "Origen",
-      "leaveEmptyForAllStatuses": "Dejar vacío para todos los estados",
-      "titleCreate": "Crear campaña",
-      "titleEdit": "Editar campaña",
-      "subtitle": "Manténlo ligado a resultados reales: seguimiento, recordatorios, recuperación o reactivación.",
-      "cancelEdit": "Cancelar",
-      "campaignTypeLabel": "Tipo de campaña",
-      "campaignNameLabel": "Nombre de la campaña",
-      "audienceLabel": "Etiqueta de audiencia",
-      "audiencePlaceholder": "p. ej. Leads pendientes de seguimiento",
-      "leadStatusOptionalLabel": "Estado del lead (opcional)",
-      "quickTypes": {
-        "followup": {
-          "label": "Seguimiento de leads",
-          "desc": "Llama a leads que mostraron interés"
-        },
-        "reactivation": {
-          "label": "Reactivación",
-          "desc": "Reengancha leads fríos"
-        },
-        "reminder": {
-          "label": "Recordatorio de cita",
-          "desc": "Confirma próximas citas"
-        },
-        "qualification": {
-          "label": "Cualificación",
-          "desc": "Califica nuevos leads por teléfono"
-        }
-      }
-    },
-    "type": {
-      "leadFollowup": "Cualificación / seguimiento de leads",
-      "appointmentReminder": "Agendado / recordatorio de citas",
-      "reactivation": "Reactivación",
-      "coldOutreach": "Anuncios / prospección en frío",
-      "reviewRequest": "Solicitud de reseñas",
-      "custom": "Personalizado"
-    },
-    "source": {
-      "any": "Cualquier origen",
-      "inboundCall": "Llamada entrante",
-      "outbound": "Acciones salientes",
-      "website": "Sitio web",
-      "referral": "Referencia"
-    },
-    "empty": {
-      "title": "Aún no hay campañas",
-      "body": "Usa campañas para recuperar llamadas perdidas, reactivar leads antiguos y llenar tu calendario.",
-      "description": "Crea tu primera campaña para dar seguimiento a leads, enviar recordatorios de citas o reactivar contactos."
-    },
     "create": {
       "back": "Back to campaigns",
       "title": "Create campaign",
@@ -3032,6 +2959,78 @@
         "launched": "Campaign launched.",
         "createdButLaunchFailed": "Campaign created, but launch failed."
       }
+    },
+    "loading": "Cargando campañas…",
+    "statTotal": "Total de campañas",
+    "statActive": "Campañas activas",
+    "statContacted": "Contactados",
+    "statConverted": "Convertidos",
+    "estRoi": "ROI est.",
+    "roiSummary": "Coste ~{cost} · Ingresos ~{revenue}",
+    "roiCampaign": "Coste est. ~{cost} · Ingresos est. ~{revenue}",
+    "createdDate": "Creado {date}",
+    "metricContacts": "Contactos",
+    "metricContacted": "Contactados",
+    "metricReached": "Alcanzados",
+    "metricConverted": "Convertidos",
+    "edit": "Editar",
+    "pause": "Pausar",
+    "launchCampaign": "Lanzar campaña",
+    "pauseConfirmTitle": "¿Pausar esta campaña?",
+    "pauseConfirmMessage": "¿Pausar «{name}»? Puedes reanudarla más tarde desde esta página.",
+    "remaining": "Restantes",
+    "failed": "Fallidos",
+    "form": {
+      "typeLabel": "Tipo",
+      "sourceLabel": "Origen",
+      "leaveEmptyForAllStatuses": "Dejar vacío para todos los estados",
+      "titleCreate": "Crear campaña",
+      "titleEdit": "Editar campaña",
+      "subtitle": "Manténlo ligado a resultados reales: seguimiento, recordatorios, recuperación o reactivación.",
+      "cancelEdit": "Cancelar",
+      "campaignTypeLabel": "Tipo de campaña",
+      "campaignNameLabel": "Nombre de la campaña",
+      "audienceLabel": "Etiqueta de audiencia",
+      "audiencePlaceholder": "p. ej. Leads pendientes de seguimiento",
+      "leadStatusOptionalLabel": "Estado del lead (opcional)",
+      "quickTypes": {
+        "followup": {
+          "label": "Seguimiento de leads",
+          "desc": "Llama a leads que mostraron interés"
+        },
+        "reactivation": {
+          "label": "Reactivación",
+          "desc": "Reengancha leads fríos"
+        },
+        "reminder": {
+          "label": "Recordatorio de cita",
+          "desc": "Confirma próximas citas"
+        },
+        "qualification": {
+          "label": "Cualificación",
+          "desc": "Califica nuevos leads por teléfono"
+        }
+      }
+    },
+    "type": {
+      "leadFollowup": "Cualificación / seguimiento de leads",
+      "appointmentReminder": "Agendado / recordatorio de citas",
+      "reactivation": "Reactivación",
+      "coldOutreach": "Anuncios / prospección en frío",
+      "reviewRequest": "Solicitud de reseñas",
+      "custom": "Personalizado"
+    },
+    "source": {
+      "any": "Cualquier origen",
+      "inboundCall": "Llamada entrante",
+      "outbound": "Acciones salientes",
+      "website": "Sitio web",
+      "referral": "Referencia"
+    },
+    "empty": {
+      "title": "Aún no hay campañas",
+      "body": "Usa campañas para recuperar llamadas perdidas, reactivar leads antiguos y llenar tu calendario.",
+      "description": "Crea tu primera campaña para dar seguimiento a leads, enviar recordatorios de citas o reactivar contactos."
     },
     "heading": "Campañas",
     "description": "Llega a tus leads con llamadas y mensajes salientes automatizados.",
@@ -3126,7 +3125,11 @@
     "agentPageTitle": "Ajustes del agente — Recall Touch",
     "title": "Ajustes",
     "pageSubtitle": "Preferencias y configuración",
-    "profile": "Perfil",
+    "profile": {
+      "title": "Perfil",
+      "saved": "Perfil guardado.",
+      "saveFailed": "No se pudo guardar el perfil. Inténtalo de nuevo."
+    },
     "emailLabel": "Correo",
     "revisitOnboarding": "¿Necesitas revisar el onboarding?",
     "revisitOnboardingDesc": "Ejecuta de nuevo el setup de 5 pasos para ajustar tu agente y teléfono.",
@@ -3206,10 +3209,46 @@
       "team": "Equipo",
       "compliance": "Cumplimiento"
     },
-    "business": "Empresa",
-    "phone": "Teléfono y números",
+    "business": {
+      "title": "Empresa",
+      "saveFailed": "No se pudieron guardar los datos de la empresa. Inténtalo de nuevo.",
+      "nameNoMatch": "El nombre del espacio no coincide. Escríbelo exactamente para confirmar.",
+      "deleted": "Espacio eliminado. Redirigiendo…",
+      "deleteWorkspaceError": "No se pudo eliminar el espacio de trabajo."
+    },
+    "phone": {
+      "title": "Teléfono y números",
+      "searchFailed": "La búsqueda falló. Ajusta los filtros e inténtalo de nuevo.",
+      "provisionFailed": "No se pudo aprovisionar el número. Inténtalo de nuevo.",
+      "provisioned": "Número añadido a tu espacio de trabajo."
+    },
     "notifications": {
-      "title": "Notificaciones"
+      "title": "Notificaciones",
+      "heading": "Notificaciones",
+      "description": "Elige cómo y cuándo quieres recibir notificaciones.",
+      "loadingPrefs": "Cargando preferencias de notificación…",
+      "saving": "Guardando…",
+      "savePreferences": "Guardar preferencias",
+      "backToSettings": "← Ajustes",
+      "events": {
+        "call_received": "Llamada recibida",
+        "call_receivedDesc": "Cada vez que tu IA contesta una llamada",
+        "lead_captured": "Lead capturado",
+        "lead_capturedDesc": "Cuando el llamante se identifica como nuevo lead",
+        "appointment_booked": "Cita reservada",
+        "appointment_bookedDesc": "Cuando tu IA reserva una cita",
+        "urgent_call": "Llamada urgente",
+        "urgent_callDesc": "Llamadas de emergencia o alta prioridad",
+        "voicemail": "Buzón de voz dejado",
+        "voicemailDesc": "Cuando el llamante deja un mensaje de voz"
+      },
+      "channels": {
+        "push": "Push",
+        "sms": "SMS",
+        "email": "Correo electrónico"
+      },
+      "loadFailed": "No se pudieron cargar las preferencias de notificación. Usando valores predeterminados.",
+      "saved": "Preferencias de notificación guardadas."
     },
     "billing": {
       "title": "Planes y facturación"
@@ -3258,8 +3297,12 @@
       "retentionHelp": "Las grabaciones y transcripciones anteriores a esto se eliminan automáticamente.",
       "saveChanges": "Guardar cambios",
       "exportData": "Exportar todos los datos",
-      "exportRequested": "Exportación solicitada. Te avisaremos por correo cuando esté lista.",
-      "backToSettings": "← Ajustes"
+      "exportRequested": "Exportación de datos solicitada — recibirás un correo en 24 horas.",
+      "backToSettings": "← Ajustes",
+      "loadFailed": "No se pudieron cargar los ajustes de consentimiento de grabación.",
+      "saveFailed": "No se pudieron guardar los ajustes de cumplimiento. Inténtalo de nuevo.",
+      "recordingSaved": "Ajustes de consentimiento de grabación guardados.",
+      "saved": "Ajustes de cumplimiento guardados."
     },
     "errorReports": "Informes de errores",
     "errorsPage": {
@@ -3292,9 +3335,9 @@
       "viewLeadsHint": "Ver prospectos para ver puntuaciones. Se actualizan automáticamente después de cada llamada.",
       "viewLeadsLink": "Ver prospectos",
       "viewLeadsHintSuffix": " para ver puntuaciones. Se actualizan automáticamente después de cada llamada.",
-      "loadFailed": "Error al cargar la configuración de puntuación.",
-      "saved": "Pesos guardados.",
-      "usingDefaults": "Usando pesos predeterminados.",
+      "loadFailed": "No se pudo cargar la configuración de puntuación de leads.",
+      "saved": "Pesos de puntuación de leads guardados. Las puntuaciones se actualizarán en la próxima llamada o recálculo.",
+      "usingDefaults": "Usando los pesos predeterminados. Guarda para persistir.",
       "weights": {
         "baseScore": "Puntuación base (0–100)",
         "baseScoreHelp": "Puntuación inicial antes de cualquier evento",
@@ -3310,10 +3353,6 @@
     },
     "activityLog": "Registro de actividad",
     "deleteAccountTitle": "Eliminar cuenta",
-    "business.saveFailed": "No se pudieron guardar los datos de la empresa. Inténtalo de nuevo.",
-    "business.nameNoMatch": "El nombre del espacio no coincide. Escríbelo exactamente para confirmar.",
-    "business.deleted": "Espacio eliminado. Redirigiendo…",
-    "business.deleteWorkspaceError": "No se pudo eliminar el espacio de trabajo.",
     "businessPage": {
       "heading": "Empresa",
       "description": "Los datos de tu empresa ayudan a tu IA a responder llamadas con precisión.",
@@ -3336,51 +3375,6 @@
       "confirmPlaceholder": "Escribe el nombre del espacio",
       "backToSettings": "← Ajustes"
     },
-    "agent.loading": "Cargando ajustes del agente…",
-    "agent.testTitle": "Probar tu agente",
-    "agent.loadFailed": "No se pudieron cargar los ajustes del agente. Inténtalo de nuevo.",
-    "agent.saveFailed": "No se pudieron guardar los ajustes del agente. Inténtalo de nuevo.",
-    "agent.voiceSyncFailed": "Guardado, pero no se pudo actualizar el agente de voz. Inténtalo de nuevo.",
-    "agent.updated": "Agente actualizado. Tus próximas llamadas usarán la nueva configuración.",
-    "agent.heading": "Agente",
-    "agent.description": "Controla tu agente de voz: saludo, voz, idioma y conocimiento.",
-    "agent.businessNameLabel": "Nombre de la empresa",
-    "agent.businessNamePlaceholder": "Tu empresa",
-    "agent.agentNameLabel": "Nombre del agente",
-    "agent.agentNamePlaceholder": "Recepcionista",
-    "agent.openingGreetingLabel": "Saludo de apertura",
-    "agent.openingGreetingHelp": "Así es como tu IA contesta el teléfono. Después mantiene una conversación natural según tu conocimiento.",
-    "agent.greetingPlaceholderDefault": "Gracias por llamar a {business}. ¿En qué puedo ayudarte hoy?",
-    "agent.previewVoice": "Vista previa de voz →",
-    "agent.voiceLabel": "Voz",
-    "agent.languageLabel": "Idioma",
-    "agent.knowledgeLabel": "Conocimiento (preguntas y respuestas que puede usar el agente)",
-    "agent.knowledgeAdd": "+ Añadir",
-    "agent.questionPlaceholder": "Pregunta",
-    "agent.answerPlaceholder": "Respuesta",
-    "agent.playingVoicePreview": "Reproduciendo vista previa de voz…",
-    "agent.saveAndUpdateAgent": "Guardar y actualizar agente",
-    "agent.saving": "Guardando…",
-    "agent.backToSettings": "← Ajustes",
-    "agent.testDescription": "Haz una llamada en vivo con tu asistente actual y revisa la transcripción antes de guardar más cambios.",
-    "agent.startLiveTest": "Iniciar prueba en vivo",
-    "agent.endLiveTest": "Finalizar prueba en vivo",
-    "agent.removeAria": "Eliminar",
-    "agent.knowledgeDeleteConfirmTitle": "¿Eliminar entrada de conocimiento?",
-    "agent.knowledgeDeleteConfirmMessage": "Esta entrada se eliminará permanentemente de la base de conocimiento del agente.",
-    "agent.defaultAgentName": "Recepcionista",
-    "agent.defaultGreeting": "Gracias por llamar a {business}. ¿En qué puedo ayudarle?",
-    "agent.voicePreviewText": "Gracias por llamar. ¿En qué puedo ayudarle hoy?",
-    "agent.defaultBusiness": "tu empresa",
-    "agent.defaultWorkspaceName": "Mi espacio",
-    "compliance.loadFailed": "No se pudieron cargar los ajustes de consentimiento de grabación.",
-    "compliance.saveFailed": "No se pudieron guardar los ajustes de cumplimiento. Inténtalo de nuevo.",
-    "compliance.recordingSaved": "Ajustes de consentimiento de grabación guardados.",
-    "compliance.saved": "Ajustes de cumplimiento guardados.",
-    "compliance.exportRequested": "Exportación de datos solicitada — recibirás un correo en 24 horas.",
-    "leadScoring.loadFailed": "No se pudo cargar la configuración de puntuación de leads.",
-    "leadScoring.saved": "Pesos de puntuación de leads guardados. Las puntuaciones se actualizarán en la próxima llamada o recálculo.",
-    "leadScoring.usingDefaults": "Usando los pesos predeterminados. Guarda para persistir.",
     "integrations": {
       "defaultsLoaded": "Valores predeterminados cargados.",
       "testSuccess": "Prueba completada. Consulta el resultado abajo.",
@@ -3419,72 +3413,70 @@
       },
       "crmFallback": "CRM"
     },
-    "syncLog.breadcrumb": "Registro de sincronización",
-    "syncLog.heading": "Registro de sincronización",
-    "syncLog.description": "Registro de eventos de sincronización CRM: salida (Recall Touch → CRM) y entrada (CRM → Recall Touch).",
-    "syncLog.allProviders": "Todos los proveedores",
-    "syncLog.allDirections": "Todas las direcciones",
-    "syncLog.outbound": "Salida",
-    "syncLog.inbound": "Entrada",
-    "syncLog.refresh": "Actualizar",
-    "syncLog.loading": "Cargando…",
-    "syncLog.empty": "Aún no hay eventos de sincronización. Aparecerán aquí cuando conectes un CRM y envíes o recibas actualizaciones.",
-    "syncLog.loadMore": "Cargar más ({count} restantes)",
-    "notifications.heading": "Notificaciones",
-    "notifications.description": "Elige cómo y cuándo quieres recibir notificaciones.",
-    "notifications.loadingPrefs": "Cargando preferencias de notificación…",
-    "notifications.saving": "Guardando…",
-    "notifications.savePreferences": "Guardar preferencias",
-    "notifications.backToSettings": "← Ajustes",
-    "notifications.events.call_received": "Llamada recibida",
-    "notifications.events.call_receivedDesc": "Cada vez que tu IA contesta una llamada",
-    "notifications.events.lead_captured": "Lead capturado",
-    "notifications.events.lead_capturedDesc": "Cuando un llamante se identifica como nuevo lead",
-    "notifications.events.appointment_booked": "Cita reservada",
-    "notifications.events.appointment_bookedDesc": "Cuando tu IA reserva una cita",
-    "notifications.events.urgent_call": "Llamada urgente",
-    "notifications.events.urgent_callDesc": "Llamadas de emergencia o alta prioridad",
-    "notifications.events.voicemail": "Buzón de voz",
-    "notifications.events.voicemailDesc": "Cuando un llamante deja un mensaje de voz",
-    "notifications.channels.push": "Push",
-    "notifications.channels.sms": "SMS",
-    "notifications.channels.email": "Email",
-    "activity.heading": "Registro de actividad",
-    "activity.description": "Cambios recientes en ajustes y espacio de trabajo.",
-    "activity.loading": "Cargando…",
-    "activity.empty": "Aún no hay actividad. Los cambios en el perfil y los ajustes aparecerán aquí.",
-    "activity.backToSettings": "← Ajustes",
-    "activity.actions.settings_update": "Ajustes actualizados",
-    "activity.actions.settings_business_update": "Ajustes de empresa actualizados",
-    "phone.searchFailed": "La búsqueda falló. Ajusta los filtros e inténtalo de nuevo.",
-    "phone.provisionFailed": "No se pudo aprovisionar el número. Inténtalo de nuevo.",
-    "phone.provisioned": "Número añadido a tu espacio de trabajo.",
-    "profile.saved": "Perfil guardado.",
-    "profile.saveFailed": "No se pudo guardar el perfil. Inténtalo de nuevo.",
-    "notifications.loadFailed": "No se pudieron cargar las preferencias de notificación. Usando valores predeterminados.",
-    "notifications.saved": "Preferencias de notificación guardadas.",
     "deleteDataInfo": "Contacta con soporte para eliminar tus datos de forma permanente.",
     "deleteAccountInfo": "Contacta con soporte para eliminar tu cuenta de forma permanente.",
-    "notifications.events": {
-      "call_received": "Llamada recibida",
-      "call_receivedDesc": "Cada vez que tu IA contesta una llamada",
-      "lead_captured": "Lead capturado",
-      "lead_capturedDesc": "Cuando el llamante se identifica como nuevo lead",
-      "appointment_booked": "Cita reservada",
-      "appointment_bookedDesc": "Cuando tu IA reserva una cita",
-      "urgent_call": "Llamada urgente",
-      "urgent_callDesc": "Llamadas de emergencia o alta prioridad",
-      "voicemail": "Buzón de voz dejado",
-      "voicemailDesc": "Cuando el llamante deja un mensaje de voz"
+    "agent": {
+      "loading": "Cargando ajustes del agente…",
+      "testTitle": "Probar tu agente",
+      "loadFailed": "No se pudieron cargar los ajustes del agente. Inténtalo de nuevo.",
+      "saveFailed": "No se pudieron guardar los ajustes del agente. Inténtalo de nuevo.",
+      "voiceSyncFailed": "Guardado, pero no se pudo actualizar el agente de voz. Inténtalo de nuevo.",
+      "updated": "Agente actualizado. Tus próximas llamadas usarán la nueva configuración.",
+      "heading": "Agente",
+      "description": "Controla tu agente de voz: saludo, voz, idioma y conocimiento.",
+      "businessNameLabel": "Nombre de la empresa",
+      "businessNamePlaceholder": "Tu empresa",
+      "agentNameLabel": "Nombre del agente",
+      "agentNamePlaceholder": "Recepcionista",
+      "openingGreetingLabel": "Saludo de apertura",
+      "openingGreetingHelp": "Así es como tu IA contesta el teléfono. Después mantiene una conversación natural según tu conocimiento.",
+      "greetingPlaceholderDefault": "Gracias por llamar a {business}. ¿En qué puedo ayudarte hoy?",
+      "previewVoice": "Vista previa de voz →",
+      "voiceLabel": "Voz",
+      "languageLabel": "Idioma",
+      "knowledgeLabel": "Conocimiento (preguntas y respuestas que puede usar el agente)",
+      "knowledgeAdd": "+ Añadir",
+      "questionPlaceholder": "Pregunta",
+      "answerPlaceholder": "Respuesta",
+      "playingVoicePreview": "Reproduciendo vista previa de voz…",
+      "saveAndUpdateAgent": "Guardar y actualizar agente",
+      "saving": "Guardando…",
+      "backToSettings": "← Ajustes",
+      "testDescription": "Haz una llamada en vivo con tu asistente actual y revisa la transcripción antes de guardar más cambios.",
+      "startLiveTest": "Iniciar prueba en vivo",
+      "endLiveTest": "Finalizar prueba en vivo",
+      "removeAria": "Eliminar",
+      "knowledgeDeleteConfirmTitle": "¿Eliminar entrada de conocimiento?",
+      "knowledgeDeleteConfirmMessage": "Esta entrada se eliminará permanentemente de la base de conocimiento del agente.",
+      "defaultAgentName": "Recepcionista",
+      "defaultGreeting": "Gracias por llamar a {business}. ¿En qué puedo ayudarle?",
+      "voicePreviewText": "Gracias por llamar. ¿En qué puedo ayudarle hoy?",
+      "defaultBusiness": "tu empresa",
+      "defaultWorkspaceName": "Mi espacio"
     },
-    "notifications.channels": {
-      "push": "Push",
-      "sms": "SMS",
-      "email": "Correo electrónico"
+    "syncLog": {
+      "breadcrumb": "Registro de sincronización",
+      "heading": "Registro de sincronización",
+      "description": "Registro de eventos de sincronización CRM: salida (Recall Touch → CRM) y entrada (CRM → Recall Touch).",
+      "allProviders": "Todos los proveedores",
+      "allDirections": "Todas las direcciones",
+      "outbound": "Salida",
+      "inbound": "Entrada",
+      "refresh": "Actualizar",
+      "loading": "Cargando…",
+      "empty": "Aún no hay eventos de sincronización. Aparecerán aquí cuando conectes un CRM y envíes o recibas actualizaciones.",
+      "loadMore": "Cargar más ({count} restantes)"
     },
-    "activity.actions": {
-      "settings_update": "Ajustes actualizados",
-      "settings_business_update": "Ajustes del negocio actualizados"
+    "activity": {
+      "heading": "Registro de actividad",
+      "description": "Cambios recientes en ajustes y espacio de trabajo.",
+      "loading": "Cargando…",
+      "empty": "Aún no hay actividad. Los cambios en el perfil y los ajustes aparecerán aquí.",
+      "backToSettings": "← Ajustes",
+      "actions": {
+        "settings_update": "Ajustes actualizados",
+        "settings_business_update": "Ajustes del negocio actualizados"
+      }
     }
   },
   "hero": {
@@ -3662,6 +3654,7 @@
     "thanksReply": "¡Gracias! Te responderemos en 4 horas.",
     "sending": "Enviando…",
     "sendMessage": "Enviar mensaje",
+    "sendError": "Algo salió mal. Por favor, inténtalo de nuevo.",
     "responseTime": "Respuesta en 4 horas",
     "salesEnterprise": "Ventas y Enterprise",
     "salesEnterpriseDesc": "Habla con el equipo sobre planes Team, cumplimiento y precios por volumen.",
@@ -4572,10 +4565,22 @@
     "jurisdictionLabel": "Jurisdicción",
     "jurisdictionHint": "La jurisdicción determina los límites de cumplimiento.",
     "jurisdictions": [
-      { "value": "United States", "label": "Estados Unidos" },
-      { "value": "UK", "label": "Reino Unido" },
-      { "value": "EU", "label": "Unión Europea" },
-      { "value": "Other", "label": "Otro" }
+      {
+        "value": "United States",
+        "label": "Estados Unidos"
+      },
+      {
+        "value": "UK",
+        "label": "Reino Unido"
+      },
+      {
+        "value": "EU",
+        "label": "Unión Europea"
+      },
+      {
+        "value": "Other",
+        "label": "Otro"
+      }
     ],
     "reviewStep": {
       "title": "Estructura de revisión",
@@ -4584,18 +4589,36 @@
     "reviewLabel": "Estructura de revisión",
     "reviewHint": "La estructura de revisión determina el comportamiento de escalada.",
     "reviewLevels": [
-      { "value": "Preview required", "label": "Vista previa requerida" },
-      { "value": "Approval required", "label": "Aprobación requerida" },
-      { "value": "Standard", "label": "Estándar" }
+      {
+        "value": "Preview required",
+        "label": "Vista previa requerida"
+      },
+      {
+        "value": "Approval required",
+        "label": "Aprobación requerida"
+      },
+      {
+        "value": "Standard",
+        "label": "Estándar"
+      }
     ],
     "sourceStep": {
       "title": "Registrar fuente principal",
       "description": "La ejecución comienza solo después de registrar una fuente."
     },
     "sourceOptions": [
-      { "id": "csv", "label": "Cargar fuente" },
-      { "id": "calendar", "label": "Conectar calendario" },
-      { "id": "phone", "label": "Conectar teléfono" }
+      {
+        "id": "csv",
+        "label": "Cargar fuente"
+      },
+      {
+        "id": "calendar",
+        "label": "Conectar calendario"
+      },
+      {
+        "id": "phone",
+        "label": "Conectar teléfono"
+      }
     ],
     "sourceHint1": "Sin fuente. Sin ejecución.",
     "sourceHint2": "Las fuentes incluyen listas de contactos cargadas, líneas telefónicas e inquietudes del calendario.",
@@ -4605,12 +4628,30 @@
       "description": "El propósito determina el objetivo y las condiciones de parada."
     },
     "purposeOptions": [
-      { "value": "Qualify", "label": "Calificar" },
-      { "value": "Confirm", "label": "Confirmar" },
-      { "value": "Collect", "label": "Recopilar" },
-      { "value": "Reactivate", "label": "Reactivar" },
-      { "value": "Route", "label": "Enrutar" },
-      { "value": "Recover", "label": "Recuperar" }
+      {
+        "value": "Qualify",
+        "label": "Calificar"
+      },
+      {
+        "value": "Confirm",
+        "label": "Confirmar"
+      },
+      {
+        "value": "Collect",
+        "label": "Recopilar"
+      },
+      {
+        "value": "Reactivate",
+        "label": "Reactivar"
+      },
+      {
+        "value": "Route",
+        "label": "Enrutar"
+      },
+      {
+        "value": "Recover",
+        "label": "Recuperar"
+      }
     ],
     "purposeHint": "El propósito dirige los objetivos y resultados.",
     "governanceStep": {

@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
 import { Container } from "@/components/ui/Container";
+import { DemoVoiceButton } from "@/components/demo/DemoVoiceButton";
 import { ROUTES } from "@/lib/constants";
-import { ArrowRight, Shield, Clock, CreditCard } from "lucide-react";
+import { ArrowRight, Shield, Clock, CreditCard, Phone } from "lucide-react";
 
 export function FinalCTA() {
   return (
@@ -42,6 +43,15 @@ export function FinalCTA() {
             >
               Book a Live Demo
             </Link>
+          </div>
+
+          {/* Instant demo call CTA */}
+          <div className="mt-8 flex flex-col items-center">
+            <p className="text-sm text-white/50 mb-3 flex items-center gap-1.5">
+              <Phone className="w-3.5 h-3.5 text-emerald-400" />
+              Still not sure? Hear it for yourself — we&apos;ll call you right now.
+            </p>
+            <DemoVoiceButton />
           </div>
 
           {/* Trust signals */}

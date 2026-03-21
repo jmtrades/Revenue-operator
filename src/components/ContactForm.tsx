@@ -31,14 +31,17 @@ export function ContactForm() {
       } catch {
         // ignore storage failures
       }
-      await fetch("/api/contact", {
+      const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
-      }).catch(() => {});
+      });
+      if (!res.ok) throw new Error("Request failed");
+      setSubmitted(true);
+    } catch {
+      setError(t("sendError") ?? "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
-      setSubmitted(true);
     }
   }
 

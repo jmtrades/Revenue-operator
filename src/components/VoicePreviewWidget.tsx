@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Play, Pause, Phone, Mic, Volume2, ChevronRight, Sparkles, Wrench, HeartPulse, Scale, Home, UtensilsCrossed } from "lucide-react";
+import { Play, Pause, Phone, Mic, Volume2, ChevronRight, Sparkles, Wrench, HeartPulse, Scale, Home, UtensilsCrossed, Building2, Dumbbell, Scissors, Car } from "lucide-react";
 
 /* ─── Conversation Scripts ─── */
 const SCENARIOS = [
@@ -79,6 +79,48 @@ const SCENARIOS = [
       { role: "ai" as const, text: "Happy birthday to the guest of honor! Absolutely — we'll bring out our house-made tiramisu with a candle, and Chef Marco can prepare a special prix fixe menu for the table if you'd like. It's sixty-five per person and includes four courses with wine pairings. Our guests love it for celebrations. Want me to set that up?", delay: 6500 },
     ],
   },
+  {
+    id: "realestate",
+    industry: "Real Estate",
+    label: "Listing Inquiry",
+    icon: Building2,
+    greeting: "Thanks for calling Pinnacle Realty Group. This is Sarah, how can I help you today?",
+    conversation: [
+      { role: "ai" as const, text: "Thanks for calling Pinnacle Realty Group. This is Sarah, how can I help you today?", delay: 0 },
+      { role: "caller" as const, text: "I saw a listing online for a 3-bedroom on Oak Street. Is it still available?", delay: 3000 },
+      { role: "ai" as const, text: "Great taste — that one's getting a lot of interest! Yes, it's still available. It's listed at four twenty-five, 3 bed 2 bath with a renovated kitchen and a backyard. Would you like to schedule a showing?", delay: 5000 },
+      { role: "caller" as const, text: "Yeah, what do you have this weekend?", delay: 2500 },
+      { role: "ai" as const, text: "I have Saturday at 11 AM or Sunday at 1 PM with our listing agent, David. He knows that property inside and out. Which works better for you?", delay: 4500 },
+    ],
+  },
+  {
+    id: "medspa",
+    industry: "Med Spa / Salon",
+    label: "Appointment Booking",
+    icon: Scissors,
+    greeting: "Glow Aesthetics, this is Emma. Thanks for calling — how can I help?",
+    conversation: [
+      { role: "ai" as const, text: "Glow Aesthetics, this is Emma. Thanks for calling — how can I help?", delay: 0 },
+      { role: "caller" as const, text: "I'm interested in getting Botox. I've never done it before — what should I know?", delay: 3200 },
+      { role: "ai" as const, text: "Great question! Botox is one of our most popular treatments — it's quick, about fifteen minutes, and most clients see results within three to five days. Our nurse injector, Michelle, does a free consultation first so she can customize the treatment for your goals. Would you like to book that?", delay: 6000 },
+      { role: "caller" as const, text: "Sure, how much is the consultation?", delay: 2200 },
+      { role: "ai" as const, text: "The consultation is completely free, and if you decide to go ahead, we're running a new client special right now — twenty percent off your first treatment. I have availability tomorrow at 3 PM or Friday at 11 AM. Which works?", delay: 5500 },
+    ],
+  },
+  {
+    id: "auto",
+    industry: "Auto Service",
+    label: "Oil Change & Repair",
+    icon: Car,
+    greeting: "Precision Auto Care, this is Alex. How can I help you today?",
+    conversation: [
+      { role: "ai" as const, text: "Precision Auto Care, this is Alex. How can I help you today?", delay: 0 },
+      { role: "caller" as const, text: "My check engine light came on this morning. Can I bring it in today?", delay: 3000 },
+      { role: "ai" as const, text: "Absolutely — we don't want you driving around worried about that. I can get you in for a diagnostic today at 2 PM. The diagnostic is forty-nine ninety-five, and that gets applied to any repair we do. What kind of vehicle do you drive?", delay: 5500 },
+      { role: "caller" as const, text: "It's a 2019 Honda Accord.", delay: 2000 },
+      { role: "ai" as const, text: "Perfect, our technicians work on Hondas all the time. I've got you down for 2 PM today. We'll run the diagnostic, give you a full report, and you'll know exactly what's going on before we do any work. Can I grab your name and number to confirm?", delay: 6000 },
+    ],
+  },
 ] as const;
 
 /* ─── Animated Waveform ─── */
@@ -128,6 +170,10 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
       audioRef.current.pause();
       audioRef.current = null;
     }
+    // Also cancel any browser TTS
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
     setPlaying(false);
     setCurrentLine(-1);
   }, []);
@@ -149,10 +195,13 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
       legal: "us-male-professional",              // Alex — professional, authoritative
       roofing: "us-female-warm-receptionist",     // Sarah — warm, reassuring
       restaurant: "us-female-casual",             // Emma — casual, friendly
+      realestate: "us-female-warm-receptionist",  // Sarah — warm, knowledgeable
+      medspa: "us-female-casual",                 // Emma — friendly, informative
+      auto: "us-male-professional",               // Alex — confident, technical
     };
     const voiceId = voiceIdMap[scenario.id] || "us-female-warm-receptionist";
 
-    // Try to play the AI greeting via voice API
+    // Try to play the AI greeting via voice API, with browser TTS fallback
     try {
       const res = await fetch(
         `/api/demo/voice-preview?voice_id=${voiceId}&text=${encodeURIComponent(scenario.greeting)}`
@@ -164,9 +213,23 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
         audioRef.current = audio;
         audio.onended = () => URL.revokeObjectURL(url);
         await audio.play();
+      } else {
+        // Fallback: browser TTS
+        if ("speechSynthesis" in window) {
+          const utterance = new SpeechSynthesisUtterance(scenario.greeting);
+          utterance.rate = 0.95;
+          utterance.pitch = 1.05;
+          window.speechSynthesis.speak(utterance);
+        }
       }
     } catch {
-      // Voice API unavailable — continue with visual-only playback
+      // Voice API unavailable — use browser TTS
+      if ("speechSynthesis" in window) {
+        const utterance = new SpeechSynthesisUtterance(scenario.greeting);
+        utterance.rate = 0.95;
+        utterance.pitch = 1.05;
+        window.speechSynthesis.speak(utterance);
+      }
     }
     setAudioLoading(false);
 
@@ -194,9 +257,23 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
                 audioRef.current = a;
                 a.onended = () => URL.revokeObjectURL(url);
                 a.play().catch(() => {});
+              } else if ("speechSynthesis" in window) {
+                // Fallback: browser TTS
+                const utterance = new SpeechSynthesisUtterance(line.text);
+                utterance.rate = 0.95;
+                utterance.pitch = 1.05;
+                window.speechSynthesis.speak(utterance);
               }
             })
-            .catch(() => {});
+            .catch(() => {
+              // Fallback: browser TTS
+              if ("speechSynthesis" in window) {
+                const utterance = new SpeechSynthesisUtterance(line.text);
+                utterance.rate = 0.95;
+                utterance.pitch = 1.05;
+                window.speechSynthesis.speak(utterance);
+              }
+            });
         }
       }, cumulativeDelay);
       timeoutsRef.current.push(t);

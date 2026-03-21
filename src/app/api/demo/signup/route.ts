@@ -40,7 +40,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const body = await req.json();
+    let body: { email?: string; industry?: string; source?: string };
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json(
+        { error: "Invalid request body." },
+        { status: 400 }
+      );
+    }
     const { email, industry, source } = body;
 
     // Validate input
@@ -61,8 +69,12 @@ export async function POST(req: NextRequest) {
 
     const db = getDb();
 
+    // Use the demo workspace for website signups, or the first available workspace
+    const DEMO_WORKSPACE_ID = process.env.DEMO_WORKSPACE_ID || "027ac617-5ab8-4e26-bcb3-1a2f5ad6bef9";
+
     // Insert into leads table with "NEW" state and website_demo source
     const { error } = await db.from("leads").insert({
+      workspace_id: DEMO_WORKSPACE_ID,
       email,
       channel: industry,
       state: "NEW",
@@ -70,9 +82,9 @@ export async function POST(req: NextRequest) {
         source: source || "website_demo",
         industry,
         demo_origin: "voice_demo",
-        captured_at: new Date().toISOString()
+        captured_at: new Date().toISOString(),
       },
-      detected_behaviour: "voice_demo_signup"
+      detected_behaviour: "voice_demo_signup",
     });
 
     if (error) {

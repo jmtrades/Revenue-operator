@@ -330,7 +330,7 @@ export async function initiateCall(
         metadata: {
           direction: "outbound",
           voice_id: voiceId,
-          ab_test_variant: abVariant ? "a" : "none",
+          ab_test_variant: abVariant ? "b" : "a",
           ...params.metadata,
         },
       })

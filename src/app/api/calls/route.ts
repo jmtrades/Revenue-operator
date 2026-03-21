@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
     const db = getDb();
 
     let sessionsList: unknown[] = [];
-    const { data: byWorkspace } = await db
+    const { data: byWorkspace, error: callsErr } = await db
     .from("call_sessions")
     .select(`
       id, lead_id, current_node, outcome, started_at, ended_at,
@@ -32,6 +32,10 @@ export async function GET(req: NextRequest) {
     .eq("workspace_id", workspaceId)
     .order("started_at", { ascending: false })
     .limit(50);
+    if (callsErr) {
+      console.error("[calls] GET query failed:", callsErr.message);
+      return NextResponse.json({ error: "Failed to load calls" }, { status: 500 });
+    }
 
   if ((byWorkspace?.length ?? 0) > 0) {
     sessionsList = byWorkspace ?? [];

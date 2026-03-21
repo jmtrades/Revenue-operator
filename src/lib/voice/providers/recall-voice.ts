@@ -274,7 +274,9 @@ export class RecallVoiceProvider implements VoiceProvider {
 
       const result = await telephony.createOutboundCall({
         to: params.phoneNumber,
-        from: process.env.TELNYX_PHONE_NUMBER || process.env.TWILIO_PHONE_NUMBER || "",
+        from: process.env.TELNYX_PHONE_NUMBER || process.env.TWILIO_PHONE_NUMBER || (() => {
+          throw new Error("No outbound phone number configured — set TELNYX_PHONE_NUMBER or TWILIO_PHONE_NUMBER");
+        })(),
         webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/telnyx/voice`,
         metadata: {
           assistant_id: params.assistantId,

@@ -109,11 +109,15 @@ function isPublicApi(pathname: string): boolean {
   // Voice server callback routes — called by Python voice server during live calls, not by browsers
   if (pathname.startsWith("/api/voice/")) return true;
   if (pathname.startsWith("/api/command-center")) return true;
-  if (pathname.startsWith("/api/dev/simulate-inbound")) return true;
+  // Dev simulation routes: only public in non-production
+  if (pathname.startsWith("/api/dev/simulate-inbound") && process.env.NODE_ENV === "development") return true;
   if (pathname.startsWith("/api/integrations/twilio/auto-provision")) return true;
-  if (pathname.startsWith("/api/conversations/") && pathname.includes("/messages")) return true;
+  // Conversation messages: only public for voice server webhook callbacks (POST)
+  // Browser requests should go through auth — this is kept for legacy webhook compatibility
+  if (pathname.startsWith("/api/conversations/") && pathname.endsWith("/messages")) return true;
   if (pathname === "/api/signup" || pathname === "/api/contact" || pathname === "/api/waitlist") return true;
-  if (pathname === "/api/demo/call") return true;
+  // All demo routes are public (call, voice-preview, signup) — they have their own rate limiting
+  if (pathname.startsWith("/api/demo/")) return true;
   return false;
 }
 

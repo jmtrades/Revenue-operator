@@ -31,12 +31,16 @@ export async function GET(req: NextRequest) {
   if (authErr) return authErr;
 
   const db = getDb();
-  const { data: leads } = await db
+  const { data: leads, error: leadsErr } = await db
     .from("leads")
     .select("id, name, email, phone, company, state, last_activity_at, opt_out, metadata")
     .eq("workspace_id", workspaceId)
     .order("last_activity_at", { ascending: false })
     .limit(100);
+  if (leadsErr) {
+    console.error("[leads] GET query failed:", leadsErr.message);
+    return NextResponse.json({ error: "Failed to load leads" }, { status: 500 });
+  }
 
   const leadIds = (leads ?? []).map((l: { id: string }) => l.id);
   const { data: deals } = leadIds.length

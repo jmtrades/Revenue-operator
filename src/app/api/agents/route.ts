@@ -87,8 +87,24 @@ export async function POST(req: NextRequest) {
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const { workspace_id, name } = body;
+  const { workspace_id } = body;
+  const name = typeof body.name === "string" ? body.name.trim() : "";
   if (!workspace_id || !name) return NextResponse.json({ error: "workspace_id and name required" }, { status: 400 });
+  if (name.length > 100) return NextResponse.json({ error: "Agent name must be 100 characters or less" }, { status: 400 });
+
+  // Validate voice_id against known voices if provided
+  if (body.voice_id) {
+    try {
+      const { RECALL_VOICES } = await import("@/lib/constants/recall-voices");
+      const validVoiceIds = RECALL_VOICES.map((v: { id: string }) => v.id);
+      if (!validVoiceIds.includes(body.voice_id)) {
+        return NextResponse.json({ error: "Invalid voice_id. Please select a valid voice." }, { status: 400 });
+      }
+    } catch {
+      // If voice list can't be loaded, allow any voice_id (graceful degradation)
+    }
+  }
+
   const err = await requireWorkspaceAccess(req, workspace_id);
   if (err) return err;
 

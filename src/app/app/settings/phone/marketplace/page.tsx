@@ -120,7 +120,7 @@ export default function PhoneMarketplacePage() {
       <Breadcrumbs
         items={[
           { label: tSettings("integrations.breadcrumbSettings"), href: "/app/settings" },
-          { label: tSettings("phone"), href: "/app/settings/phone" },
+          { label: tSettings("phone.title"), href: "/app/settings/phone" },
           { label: tPhone("marketplaceBreadcrumb") },
         ]}
       />

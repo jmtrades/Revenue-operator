@@ -215,15 +215,16 @@ function buildObjectiveConfig(objective: CallObjective, ctx: CallContext): Resol
  * Generate the objective instruction block for the system prompt.
  */
 export function formatObjectiveForPrompt(resolved: ResolvedObjective): string {
-  // Map assertiveness to a human-readable tone directive
+  // Map assertiveness (0-100) to a human-readable tone directive
+  const a = Math.max(0, Math.min(100, resolved.assertiveness ?? 50));
   const toneDirective =
-    resolved.assertiveness <= 35
+    a <= 35
       ? "Tone: Be gentle and patient — let the caller lead."
-      : resolved.assertiveness <= 50
+      : a <= 50
         ? "Tone: Be warm but clear — balance helpfulness with direction."
-        : resolved.assertiveness >= 60
-          ? "Tone: Be confident and direct — guide the conversation proactively."
-          : "Tone: Be moderately assertive — helpful but purposeful.";
+        : a <= 65
+          ? "Tone: Be moderately assertive — helpful but purposeful."
+          : "Tone: Be confident and direct — guide the conversation proactively.";
 
   const lines = [
     `CALL OBJECTIVE: ${resolved.objective.replace(/_/g, " ").toUpperCase()}`,

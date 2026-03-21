@@ -110,6 +110,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Validate duration is a positive number within reasonable bounds (max 2 hours)
+    const safeDuration = Number(duration_seconds);
+    if (isNaN(safeDuration) || safeDuration <= 0 || safeDuration > 7200) {
+      return NextResponse.json(
+        { error: "duration_seconds must be a positive number (max 7200)" },
+        { status: 400 }
+      );
+    }
+
     // Record the usage
     const usageRecord: VoiceUsageRecord = {
       workspace_id: workspaceId,

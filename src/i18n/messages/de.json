@@ -1482,8 +1482,14 @@
     "am": "AM",
     "pm": "PM",
     "description": "Sehen Sie, wie Gespräche zu Terminen und Umsatz werden.",
-    "tabs": { "overview": "Überblick", "inbound": "Eingehend", "outbound": "Ausgehend" },
-    "inboundTab": { "hint": "Eingehende Anrufe, Ergebnisse und Conversion im Zeitraum." },
+    "tabs": {
+      "overview": "Überblick",
+      "inbound": "Eingehend",
+      "outbound": "Ausgehend"
+    },
+    "inboundTab": {
+      "hint": "Eingehende Anrufe, Ergebnisse und Conversion im Zeitraum."
+    },
     "outboundTab": {
       "hint": "SMS-Follow-ups und Kampagnen im Zeitraum.",
       "smsSent": "Ausgehende SMS",
@@ -2878,79 +2884,6 @@
   "campaigns": {
     "title": "Kampagnen",
     "pageTitle": "Kampagnen — Recall Touch",
-    "create": "Kampagne erstellen",
-    "loading": "Kampagnen werden geladen…",
-    "statTotal": "Kampagnen gesamt",
-    "statActive": "Aktive Kampagnen",
-    "statContacted": "Kontaktiert",
-    "statConverted": "Konvertiert",
-    "estRoi": "Gesch. ROI",
-    "roiSummary": "Kosten ~{cost} · Umsatz ~{revenue}",
-    "roiCampaign": "Gesch. Kosten ~{cost} · Gesch. Umsatz ~{revenue}",
-    "createdDate": "Erstellt {date}",
-    "metricContacts": "Kontakte",
-    "metricContacted": "Kontaktiert",
-    "metricReached": "Erreicht",
-    "metricConverted": "Konvertiert",
-    "edit": "Bearbeiten",
-    "pause": "Pause",
-    "launchCampaign": "Kampagne starten",
-    "pauseConfirmTitle": "Diese Kampagne pausieren?",
-    "pauseConfirmMessage": "«{name}» pausieren? Sie können sie später auf dieser Seite fortsetzen.",
-    "remaining": "Verbleibend",
-    "failed": "Fehlgeschlagen",
-    "form": {
-      "typeLabel": "Typ",
-      "sourceLabel": "Quelle",
-      "leaveEmptyForAllStatuses": "Leer lassen für alle Status",
-      "titleCreate": "Kampagne erstellen",
-      "titleEdit": "Kampagne bearbeiten",
-      "subtitle": "An echte Ergebnisse koppeln: Follow-up, Erinnerungen, Rückgewinnung oder Reaktivierung.",
-      "cancelEdit": "Abbrechen",
-      "campaignTypeLabel": "Kampagnentyp",
-      "campaignNameLabel": "Kampagnenname",
-      "audienceLabel": "Zielgruppen-Label",
-      "audiencePlaceholder": "z. B. Leads mit Follow-up",
-      "leadStatusOptionalLabel": "Lead-Status (optional)",
-      "quickTypes": {
-        "followup": {
-          "label": "Lead-Follow-up",
-          "desc": "Interessierte Leads anrufen"
-        },
-        "reactivation": {
-          "label": "Reaktivierung",
-          "desc": "Kalte Leads reaktivieren"
-        },
-        "reminder": {
-          "label": "Terminerinnerung",
-          "desc": "Kommende Termine bestätigen"
-        },
-        "qualification": {
-          "label": "Qualifizierung",
-          "desc": "Neue Leads telefonisch qualifizieren"
-        }
-      }
-    },
-    "type": {
-      "leadFollowup": "Lead-Qualifizierung / Nachverfolgung",
-      "appointmentReminder": "Terminvereinbarung / -erinnerung",
-      "reactivation": "Reaktivierung",
-      "coldOutreach": "Ankündigung / Kaltakquise",
-      "reviewRequest": "Bewertungsanfrage",
-      "custom": "Benutzerdefiniert"
-    },
-    "source": {
-      "any": "Beliebige Quelle",
-      "inboundCall": "Eingehender Anruf",
-      "outbound": "Ausgehende Kampagne",
-      "website": "Webseite",
-      "referral": "Empfehlung"
-    },
-    "empty": {
-      "title": "Noch keine Kampagnen",
-      "body": "Nutze Kampagnen, um verpasste Anrufe zurückzugewinnen, alte Leads zu reaktivieren und deinen Kalender zu füllen.",
-      "description": "Erstelle deine erste Kampagne, um Leads nachzuverfolgen, Terminerinnerungen zu senden oder Kontakte zu reaktivieren."
-    },
     "create": {
       "back": "Back to campaigns",
       "title": "Create campaign",
@@ -3026,6 +2959,78 @@
         "launched": "Campaign launched.",
         "createdButLaunchFailed": "Campaign created, but launch failed."
       }
+    },
+    "loading": "Kampagnen werden geladen…",
+    "statTotal": "Kampagnen gesamt",
+    "statActive": "Aktive Kampagnen",
+    "statContacted": "Kontaktiert",
+    "statConverted": "Konvertiert",
+    "estRoi": "Gesch. ROI",
+    "roiSummary": "Kosten ~{cost} · Umsatz ~{revenue}",
+    "roiCampaign": "Gesch. Kosten ~{cost} · Gesch. Umsatz ~{revenue}",
+    "createdDate": "Erstellt {date}",
+    "metricContacts": "Kontakte",
+    "metricContacted": "Kontaktiert",
+    "metricReached": "Erreicht",
+    "metricConverted": "Konvertiert",
+    "edit": "Bearbeiten",
+    "pause": "Pause",
+    "launchCampaign": "Kampagne starten",
+    "pauseConfirmTitle": "Diese Kampagne pausieren?",
+    "pauseConfirmMessage": "«{name}» pausieren? Sie können sie später auf dieser Seite fortsetzen.",
+    "remaining": "Verbleibend",
+    "failed": "Fehlgeschlagen",
+    "form": {
+      "typeLabel": "Typ",
+      "sourceLabel": "Quelle",
+      "leaveEmptyForAllStatuses": "Leer lassen für alle Status",
+      "titleCreate": "Kampagne erstellen",
+      "titleEdit": "Kampagne bearbeiten",
+      "subtitle": "An echte Ergebnisse koppeln: Follow-up, Erinnerungen, Rückgewinnung oder Reaktivierung.",
+      "cancelEdit": "Abbrechen",
+      "campaignTypeLabel": "Kampagnentyp",
+      "campaignNameLabel": "Kampagnenname",
+      "audienceLabel": "Zielgruppen-Label",
+      "audiencePlaceholder": "z. B. Leads mit Follow-up",
+      "leadStatusOptionalLabel": "Lead-Status (optional)",
+      "quickTypes": {
+        "followup": {
+          "label": "Lead-Follow-up",
+          "desc": "Interessierte Leads anrufen"
+        },
+        "reactivation": {
+          "label": "Reaktivierung",
+          "desc": "Kalte Leads reaktivieren"
+        },
+        "reminder": {
+          "label": "Terminerinnerung",
+          "desc": "Kommende Termine bestätigen"
+        },
+        "qualification": {
+          "label": "Qualifizierung",
+          "desc": "Neue Leads telefonisch qualifizieren"
+        }
+      }
+    },
+    "type": {
+      "leadFollowup": "Lead-Qualifizierung / Nachverfolgung",
+      "appointmentReminder": "Terminvereinbarung / -erinnerung",
+      "reactivation": "Reaktivierung",
+      "coldOutreach": "Ankündigung / Kaltakquise",
+      "reviewRequest": "Bewertungsanfrage",
+      "custom": "Benutzerdefiniert"
+    },
+    "source": {
+      "any": "Beliebige Quelle",
+      "inboundCall": "Eingehender Anruf",
+      "outbound": "Ausgehende Kampagne",
+      "website": "Webseite",
+      "referral": "Empfehlung"
+    },
+    "empty": {
+      "title": "Noch keine Kampagnen",
+      "body": "Nutze Kampagnen, um verpasste Anrufe zurückzugewinnen, alte Leads zu reaktivieren und deinen Kalender zu füllen.",
+      "description": "Erstelle deine erste Kampagne, um Leads nachzuverfolgen, Terminerinnerungen zu senden oder Kontakte zu reaktivieren."
     },
     "heading": "Kampagnen",
     "description": "Erreiche deine Leads mit automatisierten ausgehenden Anrufen und Nachrichten.",
@@ -3120,7 +3125,11 @@
     "agentPageTitle": "Agent-Einstellungen — Recall Touch",
     "title": "Einstellungen",
     "pageSubtitle": "Einstellungen und Konfiguration",
-    "profile": "Profil",
+    "profile": {
+      "title": "Profil",
+      "saved": "Profil gespeichert.",
+      "saveFailed": "Profil konnte nicht gespeichert werden. Bitte erneut versuchen."
+    },
     "emailLabel": "E-Mail",
     "revisitOnboarding": "Onboarding erneut durchgehen?",
     "revisitOnboardingDesc": "Starte die 5 Schritte erneut, um Agent und Telefon anzupassen.",
@@ -3200,10 +3209,46 @@
       "team": "Team",
       "compliance": "Compliance"
     },
-    "business": "Unternehmen",
-    "phone": "Telefon & Nummern",
+    "business": {
+      "title": "Unternehmen",
+      "saveFailed": "Unternehmenseinstellungen konnten nicht gespeichert werden. Bitte erneut versuchen.",
+      "nameNoMatch": "Der Arbeitsbereichsname stimmt nicht überein. Gib ihn zur Bestätigung exakt ein.",
+      "deleted": "Arbeitsbereich gelöscht. Weiterleitung…",
+      "deleteWorkspaceError": "Arbeitsbereich konnte nicht gelöscht werden."
+    },
+    "phone": {
+      "title": "Telefon & Nummern",
+      "searchFailed": "Suche fehlgeschlagen. Filter anpassen und erneut versuchen.",
+      "provisionFailed": "Nummer konnte nicht bereitgestellt werden. Bitte erneut versuchen.",
+      "provisioned": "Nummer wurde zu deinem Arbeitsbereich hinzugefügt."
+    },
     "notifications": {
-      "title": "Benachrichtigungen"
+      "title": "Benachrichtigungen",
+      "heading": "Benachrichtigungen",
+      "description": "Wählen Sie, wie und wann Sie benachrichtigt werden möchten.",
+      "loadingPrefs": "Benachrichtigungseinstellungen werden geladen…",
+      "saving": "Speichern…",
+      "savePreferences": "Einstellungen speichern",
+      "backToSettings": "← Einstellungen",
+      "events": {
+        "call_received": "Anruf erhalten",
+        "call_receivedDesc": "Jedes Mal, wenn Ihre KI einen Anruf beantwortet",
+        "lead_captured": "Interessent erfasst",
+        "lead_capturedDesc": "Wenn ein Anrufer als neuer Interessent erkannt wird",
+        "appointment_booked": "Termin gebucht",
+        "appointment_bookedDesc": "Wenn Ihre KI einen Termin bucht",
+        "urgent_call": "Dringender Anruf",
+        "urgent_callDesc": "Notfall- oder prioritäre Anrufe",
+        "voicemail": "Sprachnachricht hinterlassen",
+        "voicemailDesc": "Wenn ein Anrufer eine Sprachnachricht hinterlässt"
+      },
+      "channels": {
+        "push": "Push",
+        "sms": "SMS",
+        "email": "E-Mail"
+      },
+      "loadFailed": "Benachrichtigungseinstellungen konnten nicht geladen werden. Standardwerte werden verwendet.",
+      "saved": "Benachrichtigungseinstellungen gespeichert."
     },
     "billing": {
       "title": "Pläne & Abrechnung"
@@ -3252,8 +3297,12 @@
       "retentionHelp": "Ältere Aufzeichnungen und Transkripte werden automatisch gelöscht.",
       "saveChanges": "Änderungen speichern",
       "exportData": "Alle Daten exportieren",
-      "exportRequested": "Export angefordert. Wir mailen, wenn fertig.",
-      "backToSettings": "← Einstellungen"
+      "exportRequested": "Datenexport angefordert — du erhältst innerhalb von 24 Stunden eine E-Mail.",
+      "backToSettings": "← Einstellungen",
+      "loadFailed": "Einstellungen für Aufzeichnungs-Einwilligung konnten nicht geladen werden.",
+      "saveFailed": "Compliance-Einstellungen konnten nicht gespeichert werden. Bitte erneut versuchen.",
+      "recordingSaved": "Einstellungen für Aufzeichnungs-Einwilligung gespeichert.",
+      "saved": "Compliance-Einstellungen gespeichert."
     },
     "errorReports": "Fehlerberichte",
     "errorsPage": {
@@ -3286,9 +3335,9 @@
       "viewLeadsHint": "Leads anzeigen für Scores. Aktualisierung nach jedem Anruf.",
       "viewLeadsLink": "Leads anzeigen",
       "viewLeadsHintSuffix": ", um Scores zu sehen. Scores aktualisieren sich nach jedem Anruf.",
-      "loadFailed": "Konfiguration konnte nicht geladen werden.",
-      "saved": "Gewichtungen gespeichert.",
-      "usingDefaults": "Standardgewichtungen werden verwendet.",
+      "loadFailed": "Lead-Scoring-Konfiguration konnte nicht geladen werden.",
+      "saved": "Lead-Scoring-Gewichtungen gespeichert. Scores werden beim nächsten Anruf oder Recalc aktualisiert.",
+      "usingDefaults": "Standardgewichtungen werden verwendet. Zum Beibehalten speichern.",
       "weights": {
         "baseScore": "Basis-Score (0–100)",
         "baseScoreHelp": "Startscore vor Ereignissen",
@@ -3304,10 +3353,6 @@
     },
     "activityLog": "Aktivitätsprotokoll",
     "deleteAccountTitle": "Konto löschen",
-    "business.saveFailed": "Unternehmenseinstellungen konnten nicht gespeichert werden. Bitte erneut versuchen.",
-    "business.nameNoMatch": "Der Arbeitsbereichsname stimmt nicht überein. Gib ihn zur Bestätigung exakt ein.",
-    "business.deleted": "Arbeitsbereich gelöscht. Weiterleitung…",
-    "business.deleteWorkspaceError": "Arbeitsbereich konnte nicht gelöscht werden.",
     "businessPage": {
       "heading": "Unternehmen",
       "description": "Ihre Unternehmensdaten helfen Ihrer KI, Anrufe präzise zu beantworten.",
@@ -3330,51 +3375,6 @@
       "confirmPlaceholder": "Namen des Arbeitsbereichs eingeben",
       "backToSettings": "← Einstellungen"
     },
-    "agent.loading": "Agenten-Einstellungen werden geladen…",
-    "agent.testTitle": "Agent testen",
-    "agent.loadFailed": "Agenten-Einstellungen konnten nicht geladen werden. Bitte erneut versuchen.",
-    "agent.saveFailed": "Agenten-Einstellungen konnten nicht gespeichert werden. Bitte erneut versuchen.",
-    "agent.voiceSyncFailed": "Gespeichert, aber der Sprachagent konnte nicht aktualisiert werden. Bitte erneut versuchen.",
-    "agent.updated": "Agent aktualisiert. Deine nächsten Anrufe verwenden die neue Konfiguration.",
-    "agent.heading": "Agent",
-    "agent.description": "Steuere deinen Sprachagenten: Begrüßung, Stimme, Sprache und Wissen.",
-    "agent.businessNameLabel": "Firmenname",
-    "agent.businessNamePlaceholder": "Dein Unternehmen",
-    "agent.agentNameLabel": "Agentenname",
-    "agent.agentNamePlaceholder": "Empfang",
-    "agent.openingGreetingLabel": "Eröffnungsbegrüßung",
-    "agent.openingGreetingHelp": "So beantwortet deine KI das Telefon. Danach führt sie ein natürliches Gespräch auf Basis deines Wissens.",
-    "agent.greetingPlaceholderDefault": "Danke für Ihren Anruf bei {business}. Wie kann ich Ihnen helfen?",
-    "agent.previewVoice": "Stimmenvorschau →",
-    "agent.voiceLabel": "Stimme",
-    "agent.languageLabel": "Sprache",
-    "agent.knowledgeLabel": "Wissen (F&A, die der Agent nutzen kann)",
-    "agent.knowledgeAdd": "+ Hinzufügen",
-    "agent.questionPlaceholder": "Frage",
-    "agent.answerPlaceholder": "Antwort",
-    "agent.playingVoicePreview": "Stimmenvorschau wird abgespielt…",
-    "agent.saveAndUpdateAgent": "Speichern und Agent aktualisieren",
-    "agent.saving": "Speichern…",
-    "agent.backToSettings": "← Einstellungen",
-    "agent.testDescription": "Führe einen Live-Anruf mit deinem aktuellen Assistenten durch und prüfe die Transkription, bevor du weitere Änderungen speicherst.",
-    "agent.startLiveTest": "Live-Test starten",
-    "agent.endLiveTest": "Live-Test beenden",
-    "agent.removeAria": "Entfernen",
-    "agent.knowledgeDeleteConfirmTitle": "Wissenseintrag entfernen?",
-    "agent.knowledgeDeleteConfirmMessage": "Dieser Eintrag wird dauerhaft aus der Wissensbasis des Agenten entfernt.",
-    "agent.defaultAgentName": "Empfang",
-    "agent.defaultGreeting": "Danke für Ihren Anruf bei {business}. Wie kann ich Ihnen helfen?",
-    "agent.voicePreviewText": "Danke für Ihren Anruf. Wie kann ich Ihnen heute helfen?",
-    "agent.defaultBusiness": "dein Unternehmen",
-    "agent.defaultWorkspaceName": "Mein Arbeitsbereich",
-    "compliance.loadFailed": "Einstellungen für Aufzeichnungs-Einwilligung konnten nicht geladen werden.",
-    "compliance.saveFailed": "Compliance-Einstellungen konnten nicht gespeichert werden. Bitte erneut versuchen.",
-    "compliance.recordingSaved": "Einstellungen für Aufzeichnungs-Einwilligung gespeichert.",
-    "compliance.saved": "Compliance-Einstellungen gespeichert.",
-    "compliance.exportRequested": "Datenexport angefordert — du erhältst innerhalb von 24 Stunden eine E-Mail.",
-    "leadScoring.loadFailed": "Lead-Scoring-Konfiguration konnte nicht geladen werden.",
-    "leadScoring.saved": "Lead-Scoring-Gewichtungen gespeichert. Scores werden beim nächsten Anruf oder Recalc aktualisiert.",
-    "leadScoring.usingDefaults": "Standardgewichtungen werden verwendet. Zum Beibehalten speichern.",
     "integrations": {
       "defaultsLoaded": "Standardwerte geladen.",
       "testSuccess": "Testlauf abgeschlossen. Ausgabe siehe unten.",
@@ -3413,72 +3413,70 @@
       },
       "crmFallback": "CRM"
     },
-    "syncLog.breadcrumb": "Sync-Protokoll",
-    "syncLog.heading": "Sync-Protokoll",
-    "syncLog.description": "Überblick über CRM-Sync-Ereignisse: ausgehend (Recall Touch → CRM) und eingehend (CRM → Recall Touch).",
-    "syncLog.allProviders": "Alle Anbieter",
-    "syncLog.allDirections": "Alle Richtungen",
-    "syncLog.outbound": "Ausgehend",
-    "syncLog.inbound": "Eingehend",
-    "syncLog.refresh": "Aktualisieren",
-    "syncLog.loading": "Laden…",
-    "syncLog.empty": "Noch keine Sync-Ereignisse. Aktivität erscheint hier, wenn Sie ein CRM verbinden.",
-    "syncLog.loadMore": "Mehr laden ({count} übrig)",
-    "notifications.heading": "Benachrichtigungen",
-    "notifications.description": "Wählen Sie, wie und wann Sie benachrichtigt werden möchten.",
-    "notifications.loadingPrefs": "Benachrichtigungseinstellungen werden geladen…",
-    "notifications.saving": "Speichern…",
-    "notifications.savePreferences": "Einstellungen speichern",
-    "notifications.backToSettings": "← Einstellungen",
-    "notifications.events.call_received": "Anruf erhalten",
-    "notifications.events.call_receivedDesc": "Jedes Mal, wenn Ihre KI einen Anruf annimmt",
-    "notifications.events.lead_captured": "Lead erfasst",
-    "notifications.events.lead_capturedDesc": "Wenn ein Anrufer als neuer Lead identifiziert wird",
-    "notifications.events.appointment_booked": "Termin gebucht",
-    "notifications.events.appointment_bookedDesc": "Wenn Ihre KI einen Termin bucht",
-    "notifications.events.urgent_call": "Dringender Anruf",
-    "notifications.events.urgent_callDesc": "Notfälle oder hohe Priorität",
-    "notifications.events.voicemail": "Mailbox",
-    "notifications.events.voicemailDesc": "Wenn ein Anrufer eine Nachricht hinterlässt",
-    "notifications.channels.push": "Push",
-    "notifications.channels.sms": "SMS",
-    "notifications.channels.email": "E-Mail",
-    "activity.heading": "Aktivitätsprotokoll",
-    "activity.description": "Letzte Einstellungs- und Arbeitsbereichsänderungen.",
-    "activity.loading": "Laden…",
-    "activity.empty": "Noch keine Aktivität. Änderungen erscheinen hier.",
-    "activity.backToSettings": "← Einstellungen",
-    "activity.actions.settings_update": "Einstellungen aktualisiert",
-    "activity.actions.settings_business_update": "Unternehmenseinstellungen aktualisiert",
-    "phone.searchFailed": "Suche fehlgeschlagen. Filter anpassen und erneut versuchen.",
-    "phone.provisionFailed": "Nummer konnte nicht bereitgestellt werden. Bitte erneut versuchen.",
-    "phone.provisioned": "Nummer wurde zu deinem Arbeitsbereich hinzugefügt.",
-    "profile.saved": "Profil gespeichert.",
-    "profile.saveFailed": "Profil konnte nicht gespeichert werden. Bitte erneut versuchen.",
-    "notifications.loadFailed": "Benachrichtigungseinstellungen konnten nicht geladen werden. Standardwerte werden verwendet.",
-    "notifications.saved": "Benachrichtigungseinstellungen gespeichert.",
     "deleteDataInfo": "Wende dich an den Support, um deine Daten dauerhaft löschen zu lassen.",
     "deleteAccountInfo": "Wende dich an den Support, um dein Konto dauerhaft löschen zu lassen.",
-    "notifications.events": {
-      "call_received": "Anruf erhalten",
-      "call_receivedDesc": "Jedes Mal, wenn Ihre KI einen Anruf beantwortet",
-      "lead_captured": "Interessent erfasst",
-      "lead_capturedDesc": "Wenn ein Anrufer als neuer Interessent erkannt wird",
-      "appointment_booked": "Termin gebucht",
-      "appointment_bookedDesc": "Wenn Ihre KI einen Termin bucht",
-      "urgent_call": "Dringender Anruf",
-      "urgent_callDesc": "Notfall- oder prioritäre Anrufe",
-      "voicemail": "Sprachnachricht hinterlassen",
-      "voicemailDesc": "Wenn ein Anrufer eine Sprachnachricht hinterlässt"
+    "agent": {
+      "loading": "Agenten-Einstellungen werden geladen…",
+      "testTitle": "Agent testen",
+      "loadFailed": "Agenten-Einstellungen konnten nicht geladen werden. Bitte erneut versuchen.",
+      "saveFailed": "Agenten-Einstellungen konnten nicht gespeichert werden. Bitte erneut versuchen.",
+      "voiceSyncFailed": "Gespeichert, aber der Sprachagent konnte nicht aktualisiert werden. Bitte erneut versuchen.",
+      "updated": "Agent aktualisiert. Deine nächsten Anrufe verwenden die neue Konfiguration.",
+      "heading": "Agent",
+      "description": "Steuere deinen Sprachagenten: Begrüßung, Stimme, Sprache und Wissen.",
+      "businessNameLabel": "Firmenname",
+      "businessNamePlaceholder": "Dein Unternehmen",
+      "agentNameLabel": "Agentenname",
+      "agentNamePlaceholder": "Empfang",
+      "openingGreetingLabel": "Eröffnungsbegrüßung",
+      "openingGreetingHelp": "So beantwortet deine KI das Telefon. Danach führt sie ein natürliches Gespräch auf Basis deines Wissens.",
+      "greetingPlaceholderDefault": "Danke für Ihren Anruf bei {business}. Wie kann ich Ihnen helfen?",
+      "previewVoice": "Stimmenvorschau →",
+      "voiceLabel": "Stimme",
+      "languageLabel": "Sprache",
+      "knowledgeLabel": "Wissen (F&A, die der Agent nutzen kann)",
+      "knowledgeAdd": "+ Hinzufügen",
+      "questionPlaceholder": "Frage",
+      "answerPlaceholder": "Antwort",
+      "playingVoicePreview": "Stimmenvorschau wird abgespielt…",
+      "saveAndUpdateAgent": "Speichern und Agent aktualisieren",
+      "saving": "Speichern…",
+      "backToSettings": "← Einstellungen",
+      "testDescription": "Führe einen Live-Anruf mit deinem aktuellen Assistenten durch und prüfe die Transkription, bevor du weitere Änderungen speicherst.",
+      "startLiveTest": "Live-Test starten",
+      "endLiveTest": "Live-Test beenden",
+      "removeAria": "Entfernen",
+      "knowledgeDeleteConfirmTitle": "Wissenseintrag entfernen?",
+      "knowledgeDeleteConfirmMessage": "Dieser Eintrag wird dauerhaft aus der Wissensbasis des Agenten entfernt.",
+      "defaultAgentName": "Empfang",
+      "defaultGreeting": "Danke für Ihren Anruf bei {business}. Wie kann ich Ihnen helfen?",
+      "voicePreviewText": "Danke für Ihren Anruf. Wie kann ich Ihnen heute helfen?",
+      "defaultBusiness": "dein Unternehmen",
+      "defaultWorkspaceName": "Mein Arbeitsbereich"
     },
-    "notifications.channels": {
-      "push": "Push",
-      "sms": "SMS",
-      "email": "E-Mail"
+    "syncLog": {
+      "breadcrumb": "Sync-Protokoll",
+      "heading": "Sync-Protokoll",
+      "description": "Überblick über CRM-Sync-Ereignisse: ausgehend (Recall Touch → CRM) und eingehend (CRM → Recall Touch).",
+      "allProviders": "Alle Anbieter",
+      "allDirections": "Alle Richtungen",
+      "outbound": "Ausgehend",
+      "inbound": "Eingehend",
+      "refresh": "Aktualisieren",
+      "loading": "Laden…",
+      "empty": "Noch keine Sync-Ereignisse. Aktivität erscheint hier, wenn Sie ein CRM verbinden.",
+      "loadMore": "Mehr laden ({count} übrig)"
     },
-    "activity.actions": {
-      "settings_update": "Einstellungen aktualisiert",
-      "settings_business_update": "Geschäftseinstellungen aktualisiert"
+    "activity": {
+      "heading": "Aktivitätsprotokoll",
+      "description": "Letzte Einstellungs- und Arbeitsbereichsänderungen.",
+      "loading": "Laden…",
+      "empty": "Noch keine Aktivität. Änderungen erscheinen hier.",
+      "backToSettings": "← Einstellungen",
+      "actions": {
+        "settings_update": "Einstellungen aktualisiert",
+        "settings_business_update": "Geschäftseinstellungen aktualisiert"
+      }
     }
   },
   "hero": {
@@ -3649,6 +3647,7 @@
     "supportDesc": "Hilfe zu Konto, technischen Problemen oder Abrechnung?",
     "emailSupport": "E-Mail-Support →",
     "sendMessage": "Nachricht senden",
+    "sendError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
     "scheduleCall": "Anruf planen →",
     "startFree": "Kostenlos starten →",
     "backToHome": "Zurück zur Startseite",
@@ -4565,10 +4564,22 @@
     "jurisdictionLabel": "Gerichtsbarkeit",
     "jurisdictionHint": "Die Gerichtsbarkeit bestimmt die Compliance-Grenzen.",
     "jurisdictions": [
-      { "value": "United States", "label": "Vereinigte Staaten" },
-      { "value": "UK", "label": "Vereinigtes Königreich" },
-      { "value": "EU", "label": "Europäische Union" },
-      { "value": "Other", "label": "Sonstiges" }
+      {
+        "value": "United States",
+        "label": "Vereinigte Staaten"
+      },
+      {
+        "value": "UK",
+        "label": "Vereinigtes Königreich"
+      },
+      {
+        "value": "EU",
+        "label": "Europäische Union"
+      },
+      {
+        "value": "Other",
+        "label": "Sonstiges"
+      }
     ],
     "reviewStep": {
       "title": "Überprüfungsstruktur",
@@ -4577,18 +4588,36 @@
     "reviewLabel": "Überprüfungsstruktur",
     "reviewHint": "Die Überprüfungsstruktur bestimmt das Eskalationsverhalten.",
     "reviewLevels": [
-      { "value": "Preview required", "label": "Vorschau erforderlich" },
-      { "value": "Approval required", "label": "Genehmigung erforderlich" },
-      { "value": "Standard", "label": "Standard" }
+      {
+        "value": "Preview required",
+        "label": "Vorschau erforderlich"
+      },
+      {
+        "value": "Approval required",
+        "label": "Genehmigung erforderlich"
+      },
+      {
+        "value": "Standard",
+        "label": "Standard"
+      }
     ],
     "sourceStep": {
       "title": "Primäre Quelle aufzeichnen",
       "description": "Die Ausführung beginnt nur nach der Aufzeichnung einer Quelle."
     },
     "sourceOptions": [
-      { "id": "csv", "label": "Quelle hochladen" },
-      { "id": "calendar", "label": "Kalender verbinden" },
-      { "id": "phone", "label": "Telefon verbinden" }
+      {
+        "id": "csv",
+        "label": "Quelle hochladen"
+      },
+      {
+        "id": "calendar",
+        "label": "Kalender verbinden"
+      },
+      {
+        "id": "phone",
+        "label": "Telefon verbinden"
+      }
     ],
     "sourceHint1": "Keine Quelle. Keine Ausführung.",
     "sourceHint2": "Zu den Quellen gehören hochgeladene Kontaktlisten, Telefonleitungen und Kalenderanfragen.",
@@ -4598,12 +4627,30 @@
       "description": "Der Zweck bestimmt das Ziel und die Stoppbedingungen."
     },
     "purposeOptions": [
-      { "value": "Qualify", "label": "Qualifizieren" },
-      { "value": "Confirm", "label": "Bestätigen" },
-      { "value": "Collect", "label": "Sammeln" },
-      { "value": "Reactivate", "label": "Reaktivieren" },
-      { "value": "Route", "label": "Leiten" },
-      { "value": "Recover", "label": "Wiederherstellen" }
+      {
+        "value": "Qualify",
+        "label": "Qualifizieren"
+      },
+      {
+        "value": "Confirm",
+        "label": "Bestätigen"
+      },
+      {
+        "value": "Collect",
+        "label": "Sammeln"
+      },
+      {
+        "value": "Reactivate",
+        "label": "Reaktivieren"
+      },
+      {
+        "value": "Route",
+        "label": "Leiten"
+      },
+      {
+        "value": "Recover",
+        "label": "Wiederherstellen"
+      }
     ],
     "purposeHint": "Der Zweck bestimmt die Ziele und Ergebnisse.",
     "governanceStep": {

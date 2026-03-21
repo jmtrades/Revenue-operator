@@ -210,9 +210,9 @@ export const OPTIMIZED_MARGINS = {
  */
 export function getModelForPhase(
   phase: CallPhase,
-  forcePremuim = false,
+  forcePremium = false,
 ): ModelConfig {
-  if (forcePremuim) return MODEL_TIERS.premium;
+  if (forcePremium) return MODEL_TIERS.premium;
   const tier = PHASE_MODEL_MAP[phase];
   return MODEL_TIERS[tier];
 }
@@ -226,7 +226,8 @@ export function estimateCallCost(
 ): { totalCostCents: number; breakdown: Array<{ phase: CallPhase; durationSeconds: number; costCents: number; model: string }> } {
   const breakdown = phases.map(({ phase, durationSeconds }) => {
     const model = getModelForPhase(phase);
-    const durationMinutes = durationSeconds / 60;
+    const safeDuration = Math.max(0, durationSeconds || 0); // Prevent negative/NaN
+    const durationMinutes = safeDuration / 60;
     const costCents = Math.round(durationMinutes * model.costPerMinuteCents * 100) / 100;
     return { phase, durationSeconds, costCents, model: model.llm };
   });
