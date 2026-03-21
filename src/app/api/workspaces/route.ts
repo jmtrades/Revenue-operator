@@ -21,7 +21,10 @@ export async function GET(req: NextRequest) {
       .select("id, name, created_at")
       .eq("owner_id", session.userId)
       .order("created_at", { ascending: false });
-    if (error) return NextResponse.json({ error: error?.message ?? String(error) }, { status: 500 });
+    if (error) {
+      console.error("[workspaces GET session]", error);
+      return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    }
     return NextResponse.json({ workspaces: data ?? [] });
   }
   // Session disabled (dev): never list all workspaces in production — would leak tenant ids/names.
@@ -29,7 +32,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const { data, error } = await db.from("workspaces").select("id, name, created_at").order("created_at", { ascending: false });
-  if (error) return NextResponse.json({ error: error?.message ?? String(error) }, { status: 500 });
+  if (error) {
+    console.error("[workspaces GET dev]", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
   return NextResponse.json({ workspaces: data ?? [] });
 }
 

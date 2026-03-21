@@ -270,7 +270,7 @@ function ApiKeysTab({
 
       {/* Create key modal */}
       {createModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" onClick={(e) => e.target === e.currentTarget && setCreateModal(false)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)]" onClick={(e) => e.target === e.currentTarget && setCreateModal(false)}>
           <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">{t("createApiKey")}</h3>
             <div className="space-y-4">
@@ -318,11 +318,11 @@ function ApiKeysTab({
 
       {/* New key shown once */}
       {newKeyModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" onClick={(e) => e.target === e.currentTarget && setNewKeyModal(null)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)]" onClick={(e) => e.target === e.currentTarget && setNewKeyModal(null)}>
           <div className="bg-[var(--bg-card)] border border-amber-500/30 rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-amber-200 mb-2">{t("apiKeyCreatedTitle", { label: newKeyModal.label })}</h3>
             <p className="text-sm text-amber-200/80 mb-4">{t("saveKeyWarning")}</p>
-            <div className="p-3 rounded-xl bg-black/40 border border-[var(--border-medium)] mb-4">
+            <div className="p-3 rounded-xl bg-[var(--bg-inset)] border border-[var(--border-medium)] mb-4">
               <code className="font-mono text-xs text-[var(--text-secondary)] break-all">{newKeyModal.fullKey}</code>
             </div>
             <button
@@ -478,7 +478,7 @@ function WebhooksTab({
       </div>
 
       {addModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 overflow-y-auto" onClick={(e) => e.target === e.currentTarget && setAddModal(false)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)] overflow-y-auto" onClick={(e) => e.target === e.currentTarget && setAddModal(false)}>
           <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-md p-6 my-8" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">{t("addWebhookTitle")}</h3>
             <div className="space-y-4">
@@ -520,13 +520,13 @@ function WebhooksTab({
       )}
 
       {payloadModal !== null && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" onClick={(e) => e.target === e.currentTarget && setPayloadModal(null)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)]" onClick={(e) => e.target === e.currentTarget && setPayloadModal(null)}>
           <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between p-4 border-b border-[var(--border-default)]">
               <h3 className="text-sm font-semibold text-[var(--text-primary)]">{t("payload")}</h3>
               <button type="button" onClick={() => setPayloadModal(null)} className="p-2 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"><X className="w-4 h-4" /></button>
             </div>
-            <pre className="p-4 overflow-auto text-xs font-mono text-[var(--text-secondary)] bg-black/40 flex-1 whitespace-pre-wrap break-words">
+            <pre className="p-4 overflow-auto text-xs font-mono text-[var(--text-secondary)] bg-[var(--bg-inset)] flex-1 whitespace-pre-wrap break-words">
               <code>{payloadModal}</code>
             </pre>
           </div>
@@ -704,7 +704,7 @@ export default function DeveloperPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-black text-[var(--text-primary)]">
+    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="p-4 md:p-6 lg:p-8">
         <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] mb-2">{t("heading")}</h1>
         <p className="text-sm text-[var(--text-secondary)] mb-6">

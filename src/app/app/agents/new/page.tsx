@@ -33,7 +33,7 @@ export default async function NewAgentPage() {
   const context = await getWorkspaceContext();
   if (!context) redirect("/app/agents");
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-[var(--bg-primary)]">
       <NewAgentWizardClient
         workspaceId={context.workspaceId}
         workspaceName={context.workspaceName}

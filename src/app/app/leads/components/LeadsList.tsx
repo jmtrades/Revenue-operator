@@ -116,21 +116,21 @@ export function LeadsList({
           aria-hidden
         />
         <p className="text-sm font-medium text-[var(--text-primary)] mb-1">
-          Import contacts or add manually
+          {tLeads("emptyTitle")}
         </p>
         <p className="text-xs text-[var(--text-secondary)] mb-4">
-          Import contacts or add manually
+          {tLeads("emptySubtitle")}
         </p>
         <EmptyState
           icon={Users}
-          title="Import contacts or add manually"
+          title={tLeads("emptyTitle")}
           description="Import a CSV to bulk add leads, or add a contact manually to start qualifying and booking appointments."
           primaryAction={{
-            label: "Import CSV",
+            label: tLeads("importCsv"),
             href: "/app/leads?import=1",
           }}
           secondaryAction={{
-            label: "Add Contact",
+            label: tLeads("addContact"),
             href: "/app/leads?add=1",
           }}
         />

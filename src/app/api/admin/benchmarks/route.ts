@@ -38,7 +38,8 @@ export async function GET(req: NextRequest) {
     const { data, error } = await query;
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      console.error("[admin/benchmarks]", error);
+      return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 
     return NextResponse.json({
@@ -51,6 +52,7 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Failed to fetch benchmarks" }, { status: 500 });
+    console.error("[admin/benchmarks catch]", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

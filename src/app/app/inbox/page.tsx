@@ -606,7 +606,7 @@ export default function InboxPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-[var(--text-primary)]">
+    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="p-4 md:p-6 lg:p-8 h-full">
         <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] mb-4">{t("inbox.title")}</h1>
         <p className="text-sm text-[var(--text-tertiary)] mb-4">{t("inbox.subtitle")}</p>

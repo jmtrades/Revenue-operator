@@ -195,9 +195,9 @@ export default function AppContactsPage() {
 
         if (!res.ok) {
           if (res.status === 401) {
-            setApiError("Unauthorized. Please log in again.");
+            setApiError(t("errors.unauthorized"));
           } else {
-            setApiError("Failed to load contacts. Using cached data.");
+            setApiError(t("errors.loadFailed"));
           }
           return;
         }

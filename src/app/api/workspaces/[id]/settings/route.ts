@@ -23,7 +23,8 @@ export async function GET(
     .maybeSingle();
 
   if (error && error.code !== "PGRST116") {
-    return NextResponse.json({ error: String(error) }, { status: 500 });
+    console.error("[workspaces/[id]/settings GET]", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
   return NextResponse.json(data ?? {
     risk_level: "balanced",
@@ -71,7 +72,10 @@ export async function PATCH(
     .select()
     .maybeSingle();
 
-  if (error) return NextResponse.json({ error: String(error) }, { status: 500 });
+  if (error) {
+    console.error("[workspaces/[id]/settings PATCH]", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 
   if (nextProfile && nextProfile !== prevProfile) {
     const { recordOrientationStatement } = await import("@/lib/orientation/records");

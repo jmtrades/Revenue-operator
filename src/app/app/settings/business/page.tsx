@@ -198,7 +198,7 @@ export default function AppSettingsBusinessPage() {
       </div>
 
       {deleteConfirmOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" role="dialog" aria-modal="true" aria-labelledby="delete-dialog-title">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)]" role="dialog" aria-modal="true" aria-labelledby="delete-dialog-title">
           <div className="w-full max-w-md rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-xl">
             <h3 id="delete-dialog-title" className="text-lg font-semibold text-[var(--text-primary)]">{tSettings("businessPage.deleteWorkspaceTitle")}</h3>
             <p className="mt-2 text-sm text-[var(--text-tertiary)]">{tSettings("businessPage.deleteWorkspaceBody")}</p>

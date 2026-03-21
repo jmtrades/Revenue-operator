@@ -65,30 +65,30 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params;
-  const session = await getSession(req);
-  if (!session?.workspaceId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const workspaceId = session.workspaceId;
-  const err = await requireWorkspaceAccess(req, workspaceId);
-  if (err) return err;
-
-  let body: { contact_id: string };
   try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
-  }
+    const { id } = await params;
+    const session = await getSession(req);
+    if (!session?.workspaceId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-  const { contact_id } = body;
+    const workspaceId = session.workspaceId;
+    const err = await requireWorkspaceAccess(req, workspaceId);
+    if (err) return err;
 
-  if (!contact_id?.trim()) {
-    return NextResponse.json({ error: "contact_id required" }, { status: 400 });
-  }
+    let body: { contact_id: string };
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    }
 
-  try {
+    const { contact_id } = body;
+
+    if (!contact_id?.trim()) {
+      return NextResponse.json({ error: "contact_id required" }, { status: 400 });
+    }
+
     // Verify sequence exists and belongs to workspace
     const result = await getSequenceWithSteps(id, workspaceId);
     if (!result) {
@@ -116,13 +116,18 @@ export async function POST(
     }
 
     // Check if contact is already enrolled in this sequence
-    const { data: existingEnrollment } = await db
+    const { data: existingEnrollment, error: enrollmentCheckErr } = await db
       .from("sequence_enrollments")
       .select("id")
       .eq("sequence_id", id)
       .eq("contact_id", contact_id)
       .in("status", ["active", "paused"])
       .maybeSingle();
+
+    if (enrollmentCheckErr) {
+      console.error("[sequences/[id]/enroll POST enrollment check]", enrollmentCheckErr);
+      return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    }
 
     if (existingEnrollment) {
       return NextResponse.json(
@@ -143,9 +148,9 @@ export async function POST(
 
     return NextResponse.json({ enrollment }, { status: 201 });
   } catch (error) {
-    console.error("[Sequences] Error enrolling contact:", error);
+    console.error("[sequences/[id]/enroll POST]", error);
     return NextResponse.json(
-      { error: "Failed to enroll contact" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

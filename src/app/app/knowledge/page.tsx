@@ -162,7 +162,7 @@ function KnowledgeModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/70"
+      className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-[var(--overlay)]"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
@@ -564,7 +564,7 @@ export default function KnowledgePage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-[var(--text-primary)]">
+    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="p-4 md:p-6 lg:p-8">
         {/* Top bar */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">

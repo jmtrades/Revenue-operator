@@ -286,7 +286,7 @@ export default function DeveloperWebhooksPage() {
                             {payloadExpand === d.id ? tDev("hidePayload") : tDev("showPayload")}
                           </button>
                           {payloadExpand === d.id && (
-                            <pre className="mt-2 p-2 rounded-lg bg-black/40 text-[10px] text-[var(--text-tertiary)] overflow-x-auto max-h-40 overflow-y-auto">
+                            <pre className="mt-2 p-2 rounded-lg bg-[var(--bg-inset)] text-[10px] text-[var(--text-tertiary)] overflow-x-auto max-h-40 overflow-y-auto">
                               {JSON.stringify(d.payload, null, 2)}
                             </pre>
                           )}
@@ -303,7 +303,7 @@ export default function DeveloperWebhooksPage() {
 
       {addModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)]"
           onClick={(e) => e.target === e.currentTarget && setAddModal(false)}
         >
           <div

@@ -30,7 +30,7 @@ async function fetchJsonWithTimeout(url: string, timeoutMs: number): Promise<{ o
     const body = await resp.json().catch(() => null);
     return { ok: resp.ok, status: resp.status, body };
   } catch (error) {
-    return { ok: false, body: { error: error instanceof Error ? error.message : String(error) } };
+    return { ok: false, body: null };
   } finally {
     clearTimeout(timeout);
   }

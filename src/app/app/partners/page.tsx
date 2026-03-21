@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
 type SummaryResponse = {
@@ -8,6 +9,7 @@ type SummaryResponse = {
 };
 
 export default function PartnersPage() {
+  const t = useTranslations("partners");
   const { workspaceId, workspaceName } = useWorkspace();
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,10 +48,10 @@ export default function PartnersPage() {
       <div className="flex items-center justify-between gap-4 mb-6">
         <div className="min-w-0">
           <h1 className="text-xl md:text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>
-            Agency Partner Dashboard
+            {t("title")}
           </h1>
           <p className="text-sm" style={{ color: "var(--text-secondary)", marginTop: 4 }}>
-            {workspaceName ? `${workspaceName}` : "Workspace"} · Revenue share model (15%)
+            {workspaceName ? `${workspaceName}` : "Workspace"} · {t("subtitle")}
           </p>
         </div>
       </div>

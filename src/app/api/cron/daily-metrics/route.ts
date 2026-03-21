@@ -33,12 +33,9 @@ export async function GET(request: NextRequest) {
       workspaces_failed: failed,
     });
   } catch (error) {
-    console.error("Daily metrics cron failed:", error);
+    console.error("[cron/daily-metrics]", error);
     return NextResponse.json(
-      {
-        error: "Failed to process daily metrics",
-        details: error instanceof Error ? error.message : String(error),
-      },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }

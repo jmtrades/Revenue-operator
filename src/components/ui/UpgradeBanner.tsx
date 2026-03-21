@@ -19,7 +19,7 @@ export function UpgradeBanner({ title, description, ctaLabel, href }: UpgradeBan
       </div>
       <Link
         href={href}
-        className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-white text-black text-xs font-semibold px-4 py-2 hover:opacity-90 transition-colors whitespace-nowrap"
+        className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-xs font-semibold px-4 py-2 hover:opacity-90 transition-colors whitespace-nowrap"
       >
         {ctaLabel}
         <ArrowRight className="h-3.5 w-3.5" />
