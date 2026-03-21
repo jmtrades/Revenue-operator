@@ -474,7 +474,7 @@ export default function CallsPage() {
                         })}`
                       : "—"}
                   </td>
-                  <td className="py-3 px-4 text-sm text-zinc-100">{name}</td>
+                  <td className="py-3 px-4 text-sm text-[var(--text-primary)]">{name}</td>
                   <td className="py-3 px-4 text-xs text-[var(--text-tertiary)]">
                     {(c.matched_lead as { phone?: string | null } | undefined)?.phone ?? c.matched_lead?.email ?? "—"}
                   </td>
@@ -499,7 +499,7 @@ export default function CallsPage() {
                       <button
                         type="button"
                         aria-label={t("calls.playRecording")}
-                        className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-white/10"
+                        className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
                         onClick={() => handleRowClick(c.id)}
                       >
                         <Play className="h-3.5 w-3.5" />
@@ -507,7 +507,7 @@ export default function CallsPage() {
                       <button
                         type="button"
                         aria-label={t("calls.viewTranscript")}
-                        className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-white/10"
+                        className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
                         onClick={() => handleRowClick(c.id)}
                       >
                         <FileText className="h-3.5 w-3.5" />
@@ -552,7 +552,7 @@ export default function CallsPage() {
                 className="w-full text-left rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 flex flex-col gap-1.5"
               >
               <div className="flex items-center justify-between gap-2">
-                <p className="text-sm font-medium text-zinc-100 truncate">{name}</p>
+                <p className="text-sm font-medium text-[var(--text-primary)] truncate">{name}</p>
                 <span className="inline-flex items-center gap-1 text-[11px] text-[var(--text-tertiary)]">
                   {sentiment ? (
                     <>

@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { PageHeader, EmptyState } from "@/components/ui";
+import { RECALL_VOICES } from "@/lib/constants/recall-voices";
 
 const VOICE_SERVER_URL =
   process.env.NEXT_PUBLIC_VOICE_SERVER_URL || "http://localhost:8100";
@@ -51,112 +52,35 @@ interface WorkspaceVoiceConfig {
   industryPreset: string;
 }
 
-/* Fallback voices shown when voice server is unavailable — uses real Recall voice IDs */
-const DEMO_VOICES: Voice[] = [
-  {
-    id: "us-female-warm-receptionist",
-    name: "Sarah",
-    gender: "female",
-    accent: "American",
-    tone: "Warm & Welcoming",
-    industries: ["Customer Service", "Healthcare", "Reception"],
-  },
-  {
-    id: "us-female-professional",
-    name: "Jennifer",
-    gender: "female",
-    accent: "American",
-    tone: "Professional",
-    industries: ["Corporate", "Finance", "Legal"],
-  },
-  {
-    id: "us-female-casual",
-    name: "Emma",
-    gender: "female",
-    accent: "American",
-    tone: "Casual & Friendly",
-    industries: ["Startups", "Retail", "Restaurants"],
-  },
-  {
-    id: "us-male-professional",
-    name: "Adam",
-    gender: "male",
-    accent: "American",
-    tone: "Professional",
-    industries: ["Corporate", "Finance", "Consulting"],
-  },
-  {
-    id: "us-male-warm",
-    name: "James",
-    gender: "male",
-    accent: "American",
-    tone: "Warm & Reassuring",
-    industries: ["Home Services", "Insurance", "Support"],
-  },
-  {
-    id: "uk-female-warm",
-    name: "Charlotte",
-    gender: "female",
-    accent: "British",
-    tone: "Warm & Elegant",
-    industries: ["Hospitality", "Education", "Luxury"],
-  },
-  {
-    id: "us-female-calm",
-    name: "Rachel",
-    gender: "female",
-    accent: "American",
-    tone: "Calm & Empathetic",
-    industries: ["Healthcare", "Mental Health", "Support"],
-  },
-  {
-    id: "us-male-confident",
-    name: "Sam",
-    gender: "male",
-    accent: "American",
-    tone: "Confident & Energetic",
-    industries: ["Sales", "Real Estate", "Marketing"],
-  },
-];
+/* Map real RECALL_VOICES to the Voice interface for the library UI */
+const BUILT_IN_VOICES: Voice[] = RECALL_VOICES.map((v) => ({
+  id: v.id,
+  name: v.name,
+  gender: v.gender,
+  accent: v.accent,
+  tone: v.tone.charAt(0).toUpperCase() + v.tone.slice(1),
+  industries: v.bestFor.split(", ").map((s) => s.trim()),
+}));
 
-/* Fallback voices shown when voice server is unavailable */
-const DEMO_AB_TESTS: ABTest[] = [
-  {
-    id: "test_1",
-    voiceA: "voice_alex",
-    voiceB: "voice_maya",
-    trafficSplit: 50,
-    calls: 1250,
-    satisfaction: 82,
-    conversion: 28.5,
-    status: "running",
-  },
-  {
-    id: "test_2",
-    voiceA: "voice_river",
-    voiceB: "voice_jordan",
-    trafficSplit: 60,
-    calls: 920,
-    satisfaction: 75,
-    conversion: 24.2,
-    status: "running",
-  },
-];
+/* Default first voice ID for initial selection */
+const DEFAULT_VOICE_ID = BUILT_IN_VOICES[0]?.id ?? "us-female-warm-receptionist";
+const DEFAULT_VOICE_B_ID = BUILT_IN_VOICES[1]?.id ?? "us-female-confident-closer";
 
 export default function VoicesSettingsPage() {
   const { workspaceId } = useWorkspace();
-  const [voices, setVoices] = useState<Voice[]>(DEMO_VOICES);
-  const [hasRealData, setHasRealData] = useState(false);
-  const [selectedVoiceId, setSelectedVoiceId] = useState<string>("voice_alex");
+  const [voices, setVoices] = useState<Voice[]>(BUILT_IN_VOICES);
+  // Voice server can override built-in voices with live data
+  const [, setHasRealData] = useState(true);
+  const [selectedVoiceId, setSelectedVoiceId] = useState<string>(DEFAULT_VOICE_ID);
   const [voiceConfig, setVoiceConfig] = useState<WorkspaceVoiceConfig>({
-    activeVoiceId: "voice_alex",
+    activeVoiceId: DEFAULT_VOICE_ID,
     speed: 1,
     stability: 0.7,
     warmth: 0.5,
     emotionIntensity: 0.6,
     industryPreset: "tech",
   });
-  const [abTests, setAbTests] = useState<ABTest[]>(DEMO_AB_TESTS);
+  const [abTests, setAbTests] = useState<ABTest[]>([]);
   const [playingVoiceId, setPlayingVoiceId] = useState<string | null>(null);
   const [isCloning, setIsCloning] = useState(false);
   const [cloneFile, setCloneFile] = useState<File | null>(null);
@@ -165,8 +89,8 @@ export default function VoicesSettingsPage() {
   const [cloneError, setCloneError] = useState<string | null>(null);
   const [showCloneModal, setShowCloneModal] = useState(false);
   const [showTestModal, setShowTestModal] = useState(false);
-  const [testVoiceAId, setTestVoiceAId] = useState<string>("voice_alex");
-  const [testVoiceBId, setTestVoiceBId] = useState<string>("voice_maya");
+  const [testVoiceAId, setTestVoiceAId] = useState<string>(DEFAULT_VOICE_ID);
+  const [testVoiceBId, setTestVoiceBId] = useState<string>(DEFAULT_VOICE_B_ID);
   const [testTrafficSplit, setTestTrafficSplit] = useState<number>(50);
   const [filterGender, setFilterGender] = useState<string>("all");
   const [filterAccent, setFilterAccent] = useState<string>("all");
@@ -603,28 +527,12 @@ export default function VoicesSettingsPage() {
           Voice Library
         </h2>
 
-        {!hasRealData ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center max-w-sm">
-              <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-4">
-                <Crown className="w-8 h-8 text-emerald-400" />
-              </div>
-              <h3 style={{ color: "var(--text-primary)" }} className="text-lg font-semibold mb-2">
-                Configure your first AI voice
-              </h3>
-              <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
-                Choose from 41 premium voices or clone your own
-              </p>
-              <button
-                type="button"
-                onClick={() => setShowCloneModal(true)}
-                className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 text-black font-semibold px-4 py-2 text-sm hover:bg-emerald-400 transition-colors"
-              >
-                <Crown className="w-4 h-4" />
-                Browse Voices
-              </button>
-            </div>
-          </div>
+        {voices.length === 0 ? (
+          <EmptyState
+            icon="pulse"
+            title="No voices available"
+            subtitle="Voice library is loading..."
+          />
         ) : (
           <>
             {/* Filters */}
@@ -834,33 +742,17 @@ export default function VoicesSettingsPage() {
           >
             A/B Testing
           </h2>
-          {hasRealData && (
-            <button
-              type="button"
-              onClick={() => setShowTestModal(true)}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold px-4 py-2 text-sm hover:opacity-90 transition-colors"
-            >
-              <TrendingUp className="w-4 h-4" />
-              New Test
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => setShowTestModal(true)}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold px-4 py-2 text-sm hover:opacity-90 transition-colors"
+          >
+            <TrendingUp className="w-4 h-4" />
+            New Test
+          </button>
         </div>
 
-        {!hasRealData ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center max-w-sm">
-              <div className="w-16 h-16 rounded-full bg-blue-500/10 flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="w-8 h-8 text-blue-400" />
-              </div>
-              <h3 style={{ color: "var(--text-primary)" }} className="text-lg font-semibold mb-2">
-                No active voice tests
-              </h3>
-              <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                Create your first A/B test to optimize call performance
-              </p>
-            </div>
-          </div>
-        ) : abTests.length === 0 ? (
+        {abTests.length === 0 ? (
           <EmptyState
             icon="pulse"
             title="No A/B tests yet"

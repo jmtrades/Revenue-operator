@@ -55,7 +55,7 @@ export function TestStep({
           <button
             type="button"
             onClick={() => onThumb("up")}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-2 text-xs font-semibold text-black hover:bg-slate-100"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--bg-surface)] px-5 py-2 text-xs font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
           >
             <ThumbsUp className="h-4 w-4" />
             {t("looksGreat")}

@@ -107,7 +107,7 @@ export default function CallsLivePage() {
 
           {!data?.active?.length ? (
             <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-8 text-center">
-              <Phone className="w-12 h-12 text-zinc-600 mx-auto mb-3" />
+              <Phone className="w-12 h-12 text-[var(--text-tertiary)] mx-auto mb-3" />
               <p className="text-[var(--text-tertiary)]">{t("calls.live.noActiveCalls")}</p>
               <p className="text-[var(--text-secondary)] text-sm mt-1">{t("calls.live.noActiveCallsHint")}</p>
             </div>

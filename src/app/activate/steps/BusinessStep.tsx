@@ -137,7 +137,7 @@ export function BusinessStep({
           type="button"
           onClick={goNext}
           disabled={!canGoNext}
-          className="inline-flex items-center justify-center rounded-xl bg-white px-5 py-2.5 text-xs md:text-sm font-semibold text-black hover:bg-slate-100 disabled:opacity-60"
+          className="inline-flex items-center justify-center rounded-xl bg-[var(--bg-surface)] px-5 py-2.5 text-xs md:text-sm font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-hover)] disabled:opacity-60"
         >
           {t("next")}
         </button>

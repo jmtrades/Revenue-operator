@@ -2601,7 +2601,10 @@
       "description": "Connect your number and it will answer every call within 3 seconds, 24/7.",
       "connectNumber": "Connect Number",
       "testAgent": "Test your agent",
-      "body": "Once your agents start handling calls, you'll see them all here."
+      "body": "Once your agents start handling calls, you'll see them all here.",
+      "emptyTitle": "Make your first test call",
+      "emptyDescription": "Choose a primary agent and place a quick test call to unlock call intelligence.",
+      "testCall": "Test Call"
     },
     "table": {
       "dateTime": "Date / time",
@@ -5551,6 +5554,8 @@
   },
   "messages": {
     "pageTitle": "Messages — Recall Touch",
+    "title": "Messages",
+    "backToActivity": "← Activity",
     "liveChat": {
       "misheard": "Sorry — could you say that again?",
       "misheardCatch": "Sorry — I didn't catch that. Could you say it one more time?",

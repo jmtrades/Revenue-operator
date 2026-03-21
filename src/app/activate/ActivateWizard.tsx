@@ -230,7 +230,7 @@ export function ActivateWizard() {
                     setResending(false);
                   }
                 }}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-white text-black font-semibold px-6 py-2 hover:bg-zinc-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--bg-surface)] text-[var(--text-primary)] font-semibold px-6 py-2 hover:bg-[var(--bg-hover)] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                 disabled={!accountEmail || resending}
               >
                 {resending ? tTeam("sending") : t("resendVerificationCta")}

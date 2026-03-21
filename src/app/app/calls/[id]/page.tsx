@@ -407,7 +407,7 @@ export default function AppCallDetailPage() {
             <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">
               Contact
             </h2>
-            <p className="text-sm text-zinc-100">
+            <p className="text-sm text-[var(--text-primary)]">
               {call.matched_lead.name || "—"}
             </p>
             {call.matched_lead.email && (
@@ -440,16 +440,16 @@ export default function AppCallDetailPage() {
                   key={u.id}
                   className={cn(
                     "flex gap-3 p-3 rounded-xl mb-1",
-                    u.speaker === "agent" ? "bg-zinc-500/10" : "bg-white/[0.02]",
+                    u.speaker === "agent" ? "bg-[var(--bg-inset)]" : "bg-[var(--bg-inset)]",
                   )}
                 >
                   <div className="shrink-0 mt-0.5">
                     {u.speaker === "agent" ? (
-                      <div className="w-7 h-7 rounded-full bg-zinc-500/20 flex items-center justify-center">
+                      <div className="w-7 h-7 rounded-full bg-[var(--bg-inset)] flex items-center justify-center">
                         <Bot className="w-3.5 h-3.5 text-[var(--text-secondary)]" />
                       </div>
                     ) : (
-                      <div className="w-7 h-7 rounded-full bg-white/[0.06] flex items-center justify-center">
+                      <div className="w-7 h-7 rounded-full bg-[var(--bg-inset)] flex items-center justify-center">
                         <User className="w-3.5 h-3.5 text-[var(--text-tertiary)]" />
                       </div>
                     )}
@@ -465,7 +465,7 @@ export default function AppCallDetailPage() {
                         {formatSpeaker(u.speaker)}
                       </span>
                     </div>
-                    <p className="text-sm text-zinc-100 leading-relaxed">
+                    <p className="text-sm text-[var(--text-primary)] leading-relaxed">
                       {u.text}
                     </p>
                   </div>

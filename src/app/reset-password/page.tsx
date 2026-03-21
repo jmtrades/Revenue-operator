@@ -138,7 +138,7 @@ export default function ResetPasswordPage() {
           <button
             type="submit"
             disabled={busy || !ready}
-            className="w-full rounded-xl bg-white px-6 py-3 text-sm font-semibold text-gray-900 transition hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none disabled:opacity-60"
+            className="w-full rounded-xl bg-[var(--bg-surface)] px-6 py-3 text-sm font-semibold text-[var(--text-primary)] transition hover:bg-[var(--bg-hover)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none disabled:opacity-60"
           >
             {busy ? t("resetPassword.saving") : t("resetPassword.savePassword")}
           </button>

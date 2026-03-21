@@ -192,7 +192,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
                   type="button"
                   onClick={handleContinue}
                   disabled={selected === currentPlanId}
-                  className="px-6 py-2.5 bg-white text-gray-900 font-semibold rounded-xl text-sm disabled:opacity-30 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
+                  className="px-6 py-2.5 bg-[var(--bg-surface)] text-[var(--text-primary)] font-semibold rounded-xl text-sm disabled:opacity-30 hover:bg-[var(--bg-hover)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
                 >
                   {tPlan("continue")}
                 </button>
@@ -222,7 +222,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
                   type="button"
                   onClick={handleConfirm}
                   disabled={loading}
-                  className="px-6 py-2.5 bg-white text-gray-900 font-semibold rounded-xl text-sm disabled:opacity-50 hover:bg-gray-100 focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
+                  className="px-6 py-2.5 bg-[var(--bg-surface)] text-[var(--text-primary)] font-semibold rounded-xl text-sm disabled:opacity-50 hover:bg-[var(--bg-hover)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
                 >
                   {loading ? tPlan("processing") : isUpgrade ? tPlan("upgradeNow") : tPlan("confirmDowngrade")}
                 </button>
