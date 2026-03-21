@@ -52,7 +52,7 @@ const TIERS = [
       "Email support",
     ],
     cta: "Try it free for 14 days",
-    href: "/activate",
+    href: "/activate?plan=starter",
     popular: false,
   },
   {
@@ -80,7 +80,7 @@ const TIERS = [
       "Priority support",
     ],
     cta: "Try it free for 14 days",
-    href: "/activate",
+    href: "/activate?plan=growth",
     popular: true,
   },
   {
@@ -108,7 +108,7 @@ const TIERS = [
       "Phone support",
     ],
     cta: "Try it free for 14 days",
-    href: "/activate",
+    href: "/activate?plan=business",
     popular: false,
   },
   {
@@ -136,7 +136,7 @@ const TIERS = [
       "SLA guarantee",
     ],
     cta: "Try it free for 14 days",
-    href: "/activate",
+    href: "/activate?plan=agency",
     popular: false,
   },
 ] as const;

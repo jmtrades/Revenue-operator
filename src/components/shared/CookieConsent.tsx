@@ -19,9 +19,7 @@ export function CookieConsent() {
       const stored = localStorage.getItem(CONSENT_KEY);
       if (stored === "accepted" || stored === "declined") {
         // Already made a choice — set flag and don't show
-        if (stored === "accepted") {
-          (window as unknown as Record<string, boolean>).__RT_CONSENT__ = true;
-        }
+        (window as unknown as Record<string, boolean>).__RT_CONSENT__ = stored === "accepted";
         return;
       }
     } catch {
@@ -44,6 +42,7 @@ export function CookieConsent() {
   const handleDecline = () => {
     try {
       localStorage.setItem(CONSENT_KEY, "declined");
+      (window as unknown as Record<string, boolean>).__RT_CONSENT__ = false;
     } catch {
       // localStorage unavailable
     }
