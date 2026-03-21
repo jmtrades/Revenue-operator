@@ -1,4 +1,5 @@
 {
+  "contactSupport": "Help & Support",
   "notFoundPage": {
     "title": "Seite nicht gefunden",
     "description": "Diese Seite existiert nicht.",
@@ -104,6 +105,7 @@
     "callIntelligence": "Anrufintelligenz",
     "compliance": "Compliance",
     "billing": "Abrechnung",
+    "developer": "Developer",
     "signOut": "Abmelden",
     "notifications": "Benachrichtigungen",
     "sectionMain": "Haupt",
