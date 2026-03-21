@@ -1,11 +1,12 @@
 /**
- * GET /api/integrations/outlook-calendar/status — Outlook Calendar status (Task 20).
- * Returns connected: false until Outlook OAuth and sync are implemented.
+ * GET /api/integrations/outlook-calendar/status — Outlook Calendar status.
+ * Checks if workspace has valid Outlook/Microsoft OAuth token and returns connected status.
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { getDb } from "@/lib/db/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -17,5 +18,26 @@ export async function GET(req: NextRequest) {
   const authErr = await requireWorkspaceAccess(req, session.workspaceId);
   if (authErr) return authErr;
 
-  return NextResponse.json({ connected: false });
+  try {
+    const db = getDb();
+    const { data: token } = await db
+      .from("oauth_tokens")
+      .select("id, expires_at")
+      .eq("workspace_id", session.workspaceId)
+      .in("provider", ["outlook", "microsoft"])
+      .maybeSingle();
+
+    if (!token) {
+      return NextResponse.json({ connected: false });
+    }
+
+    // Check if token is expired
+    const expiresAt = token.expires_at as string | null;
+    const isExpired = expiresAt && new Date(expiresAt) < new Date();
+    const connected = !isExpired;
+
+    return NextResponse.json({ connected });
+  } catch {
+    return NextResponse.json({ connected: false });
+  }
 }

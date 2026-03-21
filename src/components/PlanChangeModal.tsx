@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
 import { track } from "@/lib/analytics/posthog";
+import { BILLING_PLANS } from "@/lib/billing-plans";
 
 export type PlanId = "starter" | "growth" | "scale" | "enterprise";
 
@@ -18,11 +19,20 @@ export type PlanOption = {
 
 const PLAN_ORDER: PlanId[] = ["starter", "growth", "scale", "enterprise"];
 
-const PLAN_PRICES: Record<PlanId, { price: number | null; minutes: number | null }> = {
-  starter: { price: 97, minutes: 500 },
-  growth: { price: 297, minutes: 2500 },
-  scale: { price: 597, minutes: 6000 },
-  enterprise: { price: 997, minutes: 15000 },
+const getPlanPrices = (): Record<PlanId, { price: number | null; minutes: number | null }> => {
+  const planMap: Record<PlanId, string> = {
+    starter: "solo",
+    growth: "business",
+    scale: "scale",
+    enterprise: "enterprise",
+  };
+
+  return {
+    starter: { price: BILLING_PLANS.solo.monthlyPrice / 100, minutes: BILLING_PLANS.solo.includedMinutes },
+    growth: { price: BILLING_PLANS.business.monthlyPrice / 100, minutes: BILLING_PLANS.business.includedMinutes },
+    scale: { price: BILLING_PLANS.scale.monthlyPrice / 100, minutes: BILLING_PLANS.scale.includedMinutes },
+    enterprise: { price: BILLING_PLANS.enterprise.monthlyPrice / 100, minutes: BILLING_PLANS.enterprise.includedMinutes },
+  };
 };
 
 type PlanChangeModalProps = {
@@ -42,7 +52,8 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
   const [error, setError] = useState<string | null>(null);
 
   const getPlanOption = (id: PlanId): PlanOption => {
-    const prices = PLAN_PRICES[id];
+    const planPrices = getPlanPrices();
+    const prices = planPrices[id];
     const name = tPlan(`plans.${id}.name`);
     const featuresRaw = tPlan.raw(`plans.${id}.features`) as string[] | undefined;
     const features = Array.isArray(featuresRaw) ? featuresRaw : [];

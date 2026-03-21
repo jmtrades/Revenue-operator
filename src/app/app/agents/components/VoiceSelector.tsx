@@ -50,7 +50,7 @@ function RangeSetting({
         step={step}
         value={value}
         onChange={(e) => onChange(parseFloat(e.target.value))}
-        className="mt-2 w-full accent-white"
+        className="mt-2 w-full accent-[var(--accent-primary)]"
       />
       {note ? <p className="mt-1 text-[10px] text-[var(--text-secondary)]">{note}</p> : null}
     </div>
@@ -215,7 +215,7 @@ export function VoiceSelector({
                   },
                 })
               }
-              className="accent-white"
+              className="accent-[var(--accent-primary)]"
             />
             {t("voiceSelector.backchannelLabel")}
           </label>
@@ -231,7 +231,7 @@ export function VoiceSelector({
                   },
                 })
               }
-              className="accent-white"
+              className="accent-[var(--accent-primary)]"
             />
             {t("voiceSelector.denoisingLabel")}
           </label>

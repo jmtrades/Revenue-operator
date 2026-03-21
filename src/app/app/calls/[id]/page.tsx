@@ -106,7 +106,7 @@ function CallRecordingPlayer({ src }: { src: string }) {
             max={duration || 100}
             value={currentTime}
             onChange={seek}
-            className="w-full h-2 rounded-full appearance-none bg-[var(--border-default)] accent-white cursor-pointer"
+            className="w-full h-2 rounded-full appearance-none bg-[var(--border-default)] accent-[var(--accent-primary)] cursor-pointer"
             aria-label={t("seekAria")}
           />
           <div className="flex justify-between text-[11px] text-[var(--text-secondary)]">
@@ -220,7 +220,7 @@ function persistCallDetailSnapshot(
 }
 
 export default function AppCallDetailPage() {
-  const t = useTranslations();
+  const t = useTranslations("calls.detail");
   const params = useParams();
   const { workspaceId } = useWorkspace();
   const id = typeof params.id === "string" ? params.id : "";
@@ -348,17 +348,17 @@ export default function AppCallDetailPage() {
         <div className="flex flex-wrap gap-2 text-xs text-[var(--text-secondary)]">
           {call.outcome && (
             <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-3 py-1">
-              Outcome: {call.outcome}
+              {t("outcome", { defaultValue: "Outcome:" })} {call.outcome}
             </span>
           )}
           {call.analysis_outcome && (
             <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-3 py-1">
-              AI: {call.analysis_outcome}
+              {t("ai", { defaultValue: "AI:" })} {call.analysis_outcome}
             </span>
           )}
           {sentiment && (
             <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-3 py-1">
-              Sentiment: {sentiment}
+              {t("sentiment", { defaultValue: "Sentiment:" })} {sentiment}
             </span>
           )}
         </div>
@@ -368,7 +368,7 @@ export default function AppCallDetailPage() {
         {call.recording_url && (
           <section>
             <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">
-              Recording
+              {t("recording", { defaultValue: "Recording" })}
             </h2>
             <CallRecordingPlayer src={call.recording_url} />
           </section>
@@ -377,7 +377,7 @@ export default function AppCallDetailPage() {
         {summaryText && (
           <section>
             <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">
-              Call summary
+              {t("callSummary", { defaultValue: "Call summary" })}
             </h2>
             <p className="text-sm text-[var(--text-primary)] leading-relaxed">
               {summaryText}
@@ -388,7 +388,7 @@ export default function AppCallDetailPage() {
         {followupPlan && (
           <section>
             <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">
-              Recommended follow-up
+              {t("recommendedFollowUp", { defaultValue: "Recommended follow-up" })}
             </h2>
             <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{followupPlan}</p>
             {(call.lead_id ?? call.matched_lead?.id) && (
@@ -405,7 +405,7 @@ export default function AppCallDetailPage() {
         {call.matched_lead && (
           <section>
             <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">
-              Contact
+              {t("contact", { defaultValue: "Contact" })}
             </h2>
             <p className="text-sm text-[var(--text-primary)]">
               {call.matched_lead.name || "—"}
@@ -431,7 +431,7 @@ export default function AppCallDetailPage() {
 
         <section>
           <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">
-            Transcript
+            {t("transcript", { defaultValue: "Transcript" })}
           </h2>
           {utterances && utterances.length > 0 ? (
             <div className="space-y-2 max-h-[420px] overflow-y-auto pr-1">

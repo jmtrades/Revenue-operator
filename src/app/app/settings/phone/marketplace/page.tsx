@@ -85,6 +85,12 @@ export default function PhoneMarketplacePage() {
   }, [country, type]);
 
   const handleProvision = async (num: AvailableNumber) => {
+    const costPerMonth = formatCurrencyCents(num.monthly_cost_cents, "USD", locale);
+    const confirmed = window.confirm(
+      `Purchase this number for ${costPerMonth}/month? This will be charged to your account immediately.`
+    );
+    if (!confirmed) return;
+
     setProvisioning(num.phone_number);
     setLastProvisionAttempt(num);
     try {

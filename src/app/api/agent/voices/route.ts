@@ -15,7 +15,7 @@ const PLAN_LIMITS: Record<string, number> = {
   starter: 8,
   growth: 12,
   scale: 16,
-  enterprise: 16,
+  enterprise: 41,
 };
 
 export async function GET(req: NextRequest) {

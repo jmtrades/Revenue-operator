@@ -44,52 +44,17 @@ export async function GET(
       return NextResponse.json(existing);
     }
   } catch {
-    // Table may not exist yet — generate coaching inline
-  }
-
-  const s = session as { lead_id: string; transcript?: unknown[]; outcome?: string; current_node?: string };
-  const transcriptText = Array.isArray(s.transcript)
-    ? (s.transcript as Array<{ role?: string; content?: string }>)
-        .map((t) => `${t.role ?? "unknown"}: ${t.content ?? ""}`)
-        .join("\n")
-    : "";
-
-  const { data: lead } = await db.from("leads").select("state, company").eq("id", s.lead_id).maybeSingle();
-  const _state = (lead as { state?: string })?.state ?? "unknown";
-
-  const whatWorked = s.outcome === "booked" || s.outcome === "qualified"
-    ? "Clear qualification and next-step agreement."
-    : s.current_node === "routing"
-      ? "Reached routing; good progression through dialogue."
-      : "Call progressed to discovery.";
-
-  const missedSignals = transcriptText.length < 100
-    ? "Limited transcript—ensure recording/capture is active."
-    : "Review transcript for buying signals or objections.";
-
-  const recommendedNextStep =
-    s.outcome === "booked"
-      ? "Send confirmation and prep materials."
-      : s.outcome === "qualified"
-        ? "Follow up with proposal or booking link."
-        : "Schedule follow-up call or send value content.";
-
-  // Persist coaching if table exists (non-blocking)
-  try {
-    await db.from("call_coaching").insert({
-      call_session_id: callId,
-      what_worked: whatWorked,
-      missed_signals: missedSignals,
-      recommended_next_step: recommendedNextStep,
+    // Table does not exist yet — return null/unavailable
+    return NextResponse.json({
+      coaching: null,
+      available: false,
     });
-  } catch {
-    // Table may not be provisioned yet — coaching still returned inline
   }
 
+  // Fallback if table exists but no coaching record yet
   return NextResponse.json({
-    what_worked: whatWorked,
-    missed_signals: missedSignals,
-    recommended_next_step: recommendedNextStep,
+    coaching: null,
+    available: false,
   });
   } catch (error) {
     console.error("[API] calls/[id]/coaching error:", error);

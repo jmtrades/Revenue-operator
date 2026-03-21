@@ -486,22 +486,22 @@ export default function AppShellClient({
                         <span className="block text-xs font-medium text-[var(--text-primary)]">
                           {billingInfo?.billing_tier
                             ? `${billingInfo.billing_tier.charAt(0).toUpperCase()}${billingInfo.billing_tier.slice(1)}`
-                            : "Starter"}
-                          {billingInfo?.billing_status === "trial" ? " · Trial" : billingInfo?.billing_status === "active" ? "" : billingInfo?.billing_status ? ` · ${billingInfo.billing_status.charAt(0).toUpperCase()}${billingInfo.billing_status.slice(1)}` : " · Trial"}
+                            : t("sidebar.tier", { defaultValue: "Starter" })}
+                          {billingInfo?.billing_status === "trial" ? t("sidebar.trial", { defaultValue: " · Trial" }) : billingInfo?.billing_status === "active" ? "" : billingInfo?.billing_status ? ` · ${billingInfo.billing_status.charAt(0).toUpperCase()}${billingInfo.billing_status.slice(1)}` : t("sidebar.trial", { defaultValue: " · Trial" })}
                         </span>
                         <span className="block text-[12px] text-[var(--text-secondary)]">
                           {billingInfo?.billing_status === "trial" && billingInfo?.renewal_at
                             ? `${Math.max(0, Math.ceil((new Date(billingInfo.renewal_at).getTime() - Date.now()) / 86400000))} days left`
                             : billingInfo?.billing_status === "active"
-                            ? "Active subscription"
+                            ? t("sidebar.activeSubscription", { defaultValue: "Active subscription" })
                             : ""}
                           {(workspaceMeta?.stats?.calls ?? 0) > 0
-                            ? ` · ${workspaceMeta?.stats?.calls ?? 0} calls answered`
+                            ? ` · ${workspaceMeta?.stats?.calls ?? 0} ${t("sidebar.callsAnswered", { defaultValue: "calls answered" })}`
                             : ""}
                         </span>
                         {minutesUsage && (
                           <span className="block text-[11px] text-[var(--text-tertiary)] mt-1">
-                            {minutesUsage.used}/{minutesUsage.limit} min used
+                            {minutesUsage.used}/{minutesUsage.limit} {t("sidebar.minUsed", { defaultValue: "min used" })}
                           </span>
                         )}
                       </div>

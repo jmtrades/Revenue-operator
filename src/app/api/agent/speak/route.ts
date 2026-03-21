@@ -6,12 +6,32 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { getDb } from "@/lib/db/queries";
+import { getSession } from "@/lib/auth/request-session";
 
 const DEFAULT_VOICE_ID = "us-female-warm-receptionist"; // Default Recall voice
 
 async function getHumanVoiceDefaults() {
   const { HUMAN_VOICE_DEFAULTS } = await import("@/lib/voice/human-voice-defaults");
   return HUMAN_VOICE_DEFAULTS;
+}
+
+async function getVoiceConfigFromDb(workspaceId: string) {
+  try {
+    const db = getDb();
+    const { data } = await db
+      .from("workspaces")
+      .select("voice_config")
+      .eq("id", workspaceId)
+      .maybeSingle();
+
+    if (data?.voice_config && typeof data.voice_config === "object") {
+      return data.voice_config;
+    }
+  } catch {
+    // Table may not have voice_config column yet, fall back to defaults
+  }
+  return null;
 }
 
 function getVoiceServerUrl(): string {
@@ -53,7 +73,17 @@ export async function POST(req: NextRequest) {
       ? body.voiceId.trim()
       : DEFAULT_VOICE_ID;
 
-  const voiceDefaults = await getHumanVoiceDefaults();
+  // Try to get voice config from database, fall back to defaults
+  const session = await getSession(req);
+  let voiceConfig = await getHumanVoiceDefaults();
+
+  if (session?.workspaceId) {
+    const dbConfig = await getVoiceConfigFromDb(session.workspaceId);
+    if (dbConfig) {
+      voiceConfig = { ...voiceConfig, ...dbConfig };
+    }
+  }
+
   const voiceServerUrl = getVoiceServerUrl();
 
   try {
@@ -68,10 +98,10 @@ export async function POST(req: NextRequest) {
         body: JSON.stringify({
           voice_id: voiceId,
           text: text.slice(0, 5000),
-          stability: voiceDefaults.stability,
-          similarity_boost: voiceDefaults.similarityBoost,
-          style: voiceDefaults.style,
-          use_speaker_boost: voiceDefaults.useSpeakerBoost,
+          stability: voiceConfig.stability,
+          similarity_boost: voiceConfig.similarityBoost,
+          style: voiceConfig.style,
+          use_speaker_boost: voiceConfig.useSpeakerBoost,
         }),
       }
     );

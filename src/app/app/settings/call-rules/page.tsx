@@ -100,7 +100,7 @@ export default function AppSettingsCallRulesPage() {
           <div className="space-y-2">
             {afterHoursOptions.map((opt) => (
               <label key={opt.value} className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${afterHours === opt.value ? "border-[var(--border-medium)] bg-[var(--bg-card)]" : "border-[var(--border-default)] hover:border-[var(--border-medium)]"}`}>
-                <input type="radio" name="afterHours" checked={afterHours === opt.value} onChange={() => setAfterHours(opt.value)} className="mt-0.5 accent-white" />
+                <input type="radio" name="afterHours" checked={afterHours === opt.value} onChange={() => setAfterHours(opt.value)} className="mt-0.5 accent-[var(--accent-primary)]" />
                 <div>
                   <p className="text-sm font-medium text-[var(--text-primary)]">{tRules(opt.labelKey)}</p>
                   <p className="text-[11px] text-[var(--text-secondary)]">{tRules(opt.descKey)}</p>

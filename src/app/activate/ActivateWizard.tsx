@@ -180,17 +180,17 @@ export function ActivateWizard() {
           knowledgeItems: state.services?.length ? state.services.map((s) => ({ type: "service", value: s })) : undefined,
           preferredLanguage: state.preferredLanguage || "en",
           voiceId: state.voiceId || undefined,
-          selectedPlan: selectedPlan || undefined,
+          billingTier: selectedPlan || undefined,
         }),
       });
       if (!res.ok) {
         console.error("[activate] Onboard API returned", res.status);
-        setError("Something went wrong setting up your workspace. Please try again.");
+        setError(t("errors.setupFailed", { defaultValue: "Something went wrong setting up your workspace. Please try again." }));
         return;
       }
     } catch (err) {
       console.error("[activate] Onboard failed:", err instanceof Error ? err.message : err);
-      setError("Connection error. Please check your internet and try again.");
+      setError(t("errors.connectionError", { defaultValue: "Connection error. Please check your internet and try again." }));
       return;
     }
     if (typeof localStorage !== "undefined") localStorage.setItem("rt_onboarded", "true");
@@ -202,9 +202,9 @@ export function ActivateWizard() {
       <div className="max-w-4xl mx-auto">
         {error && (
           <div className="mb-6 rounded-2xl border border-red-500/30 bg-red-950/30 px-5 py-4">
-            <p className="text-sm font-semibold text-red-300">Setup Error</p>
+            <p className="text-sm font-semibold text-red-300">{t("errors.title", { defaultValue: "Setup Error" })}</p>
             <p className="mt-1 text-sm text-red-200/80">{error}</p>
-            <button type="button" onClick={() => setError(null)} className="mt-2 text-xs text-red-400 hover:text-red-300 underline">Dismiss</button>
+            <button type="button" onClick={() => setError(null)} className="mt-2 text-xs text-red-400 hover:text-red-300 underline">{t("errors.dismiss", { defaultValue: "Dismiss" })}</button>
           </div>
         )}
         {emailVerified === false && (

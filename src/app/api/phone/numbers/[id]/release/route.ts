@@ -54,6 +54,22 @@ export async function POST(
     }
   }
 
+  // Release from provider FIRST, before updating database
+  const providerSid = number.provider_sid;
+  if (providerSid) {
+    const telephony = getTelephonyService();
+    try {
+      await telephony.releaseNumber(providerSid);
+    } catch (e) {
+      console.error("Failed to release number from provider:", e);
+      return NextResponse.json(
+        { error: "Failed to release number from provider. Please try again.", details: String(e) },
+        { status: 500 }
+      );
+    }
+  }
+
+  // Update database AFTER provider release succeeds
   const { error } = await db
     .from("phone_numbers")
     .update({
@@ -97,16 +113,6 @@ export async function POST(
           updated_at: new Date().toISOString(),
         })
         .eq("workspace_id", session.workspaceId);
-    }
-  }
-
-  const providerSid = number.provider_sid;
-  if (providerSid) {
-    const telephony = getTelephonyService();
-    try {
-      await telephony.releaseNumber(providerSid);
-    } catch (e) {
-      console.error("Failed to release number:", e);
     }
   }
 

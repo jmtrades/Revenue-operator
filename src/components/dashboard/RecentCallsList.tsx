@@ -1,6 +1,8 @@
 'use client';
 
 import { Phone } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useWorkspace } from '@/components/WorkspaceContext';
 
 type CallOutcome = 'appointment' | 'lead' | 'message' | 'transferred' | 'spam';
 
@@ -13,8 +15,35 @@ interface Call {
 }
 
 const RecentCallsList = () => {
-  // Placeholder: currently no backend wiring for this widget.
-  const calls: Call[] = [];
+  const { workspaceId } = useWorkspace();
+  const [calls, setCalls] = useState<Call[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!workspaceId) {
+      setLoading(false);
+      return;
+    }
+
+    const fetchCalls = async () => {
+      try {
+        const response = await fetch(`/api/calls/recent?workspace_id=${encodeURIComponent(workspaceId)}&limit=10`, {
+          credentials: 'include',
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setCalls(data.calls || []);
+        }
+      } catch (error) {
+        console.error('Failed to fetch recent calls:', error);
+        setCalls([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCalls();
+  }, [workspaceId]);
 
   const getOutcomeBadge = (outcome: CallOutcome) => {
     const badgeConfig = {
@@ -42,7 +71,11 @@ const RecentCallsList = () => {
         Recent Calls
       </h2>
 
-      {!hasCalls ? (
+      {loading ? (
+        <p className="text-[var(--text-secondary)] text-sm py-8 text-center">
+          Loading...
+        </p>
+      ) : !hasCalls ? (
         <p className="text-[var(--text-secondary)] text-sm py-8 text-center">
           No calls yet. Once your AI starts handling calls, they will appear here.
         </p>

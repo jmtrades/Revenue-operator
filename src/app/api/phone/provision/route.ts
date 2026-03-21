@@ -178,8 +178,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "This number is already provisioned to a workspace." }, { status: 409 });
   }
 
-  // Pricing: $3/mo local, $5/mo toll-free (Twilio cost ~$1.15/$2.15 → healthy margin)
-  const monthlyCost = number_type === "toll_free" ? 500 : 300;
+  // Pricing: $5/mo local, $8/mo toll-free (canonical from telephony/index.ts)
+  const monthlyCost = number_type === "toll_free" ? 800 : 500;
   const setupFeeCents = 100; // $1.00 one-time setup fee
   const { data: inserted, error } = await db
     .from("phone_numbers")

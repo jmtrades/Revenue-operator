@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { ArrowLeft, Upload } from "lucide-react";
 
@@ -20,7 +21,7 @@ export default function PhonePortPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      await fetch("/api/phone/port-request", {
+      const response = await fetch("/api/phone/port-request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -31,7 +32,17 @@ export default function PhonePortPage() {
           account_pin: accountPin || null,
         }),
       });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ error: "Unknown error" }));
+        toast.error(error.error || "Failed to submit port request");
+        return;
+      }
+
       setSubmitted(true);
+    } catch (error) {
+      toast.error("Failed to submit port request");
+      console.error("Port request error:", error);
     } finally {
       setLoading(false);
     }

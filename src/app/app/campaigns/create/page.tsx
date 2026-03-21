@@ -44,22 +44,22 @@ type SequenceStep = {
   template: string;
 };
 
-const CAMPAIGN_TYPES: Array<{
+const getCampaignTypes = (t: any): Array<{
   id: CampaignType;
   icon: React.ComponentType<{ className?: string }>;
   label: string;
   description: string;
-}> = [
-  { id: "speed_to_lead", icon: Zap, label: "Speed-to-Lead", description: "Text in 5 minutes, call if no reply." },
-  { id: "lead_qualification", icon: ClipboardCheck, label: "Lead Qualification", description: "Qualify interest and book the next step." },
-  { id: "appointment_setting", icon: CalendarClock, label: "Appointment Setting", description: "Call and text until an appointment is set." },
-  { id: "appointment_reminder", icon: Calendar, label: "Appointment Reminder", description: "24h and 1h reminders to reduce no-shows." },
-  { id: "no_show_recovery", icon: RefreshCw, label: "No-Show Recovery", description: "Recover missed appointments with follow-up." },
-  { id: "reactivation", icon: Snowflake, label: "Reactivation", description: "Re-engage inactive contacts." },
-  { id: "quote_chase", icon: FileText, label: "Quote Chase", description: "Follow up on pending quotes." },
-  { id: "review_request", icon: Star, label: "Review Request", description: "Request a review after completion." },
-  { id: "cold_outreach", icon: Megaphone, label: "Cold Outreach", description: "Reach a list with a controlled cadence." },
-  { id: "custom", icon: SlidersHorizontal, label: "Custom", description: "Build your own sequence." },
+}> => [
+  { id: "speed_to_lead", icon: Zap, label: t("types.speedToLead.label", { defaultValue: "Speed-to-Lead" }), description: t("types.speedToLead.desc", { defaultValue: "Text in 5 minutes, call if no reply." }) },
+  { id: "lead_qualification", icon: ClipboardCheck, label: t("types.leadQualification.label", { defaultValue: "Lead Qualification" }), description: t("types.leadQualification.desc", { defaultValue: "Qualify interest and book the next step." }) },
+  { id: "appointment_setting", icon: CalendarClock, label: t("types.appointmentSetting.label", { defaultValue: "Appointment Setting" }), description: t("types.appointmentSetting.desc", { defaultValue: "Call and text until an appointment is set." }) },
+  { id: "appointment_reminder", icon: Calendar, label: t("types.appointmentReminder.label", { defaultValue: "Appointment Reminder" }), description: t("types.appointmentReminder.desc", { defaultValue: "24h and 1h reminders to reduce no-shows." }) },
+  { id: "no_show_recovery", icon: RefreshCw, label: t("types.noShowRecovery.label", { defaultValue: "No-Show Recovery" }), description: t("types.noShowRecovery.desc", { defaultValue: "Recover missed appointments with follow-up." }) },
+  { id: "reactivation", icon: Snowflake, label: t("types.reactivation.label", { defaultValue: "Reactivation" }), description: t("types.reactivation.desc", { defaultValue: "Re-engage inactive contacts." }) },
+  { id: "quote_chase", icon: FileText, label: t("types.quoteChase.label", { defaultValue: "Quote Chase" }), description: t("types.quoteChase.desc", { defaultValue: "Follow up on pending quotes." }) },
+  { id: "review_request", icon: Star, label: t("types.reviewRequest.label", { defaultValue: "Review Request" }), description: t("types.reviewRequest.desc", { defaultValue: "Request a review after completion." }) },
+  { id: "cold_outreach", icon: Megaphone, label: t("types.coldOutreach.label", { defaultValue: "Cold Outreach" }), description: t("types.coldOutreach.desc", { defaultValue: "Reach a list with a controlled cadence." }) },
+  { id: "custom", icon: SlidersHorizontal, label: t("types.custom.label", { defaultValue: "Custom" }), description: t("types.custom.desc", { defaultValue: "Build your own sequence." }) },
 ];
 
 const DEFAULT_TEMPLATES: Record<CampaignType, SequenceStep[]> = {
@@ -137,6 +137,8 @@ export default function CampaignCreatePage() {
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
+  const campaignTypes = useMemo(() => getCampaignTypes(t), [t]);
+
   useEffect(() => {
     setSequence(DEFAULT_TEMPLATES[type]);
   }, [type]);
@@ -178,9 +180,9 @@ export default function CampaignCreatePage() {
   }, [dailyLimit, hourlyThrottle, hoursOnly, minScore, notContactedDays, sequence, source, startAt, statuses]);
 
   const inferredName = useMemo(() => {
-    const base = CAMPAIGN_TYPES.find((x) => x.id === type)?.label ?? "Campaign";
+    const base = campaignTypes.find((x) => x.id === type)?.label ?? "Campaign";
     return `${base} — ${new Date().toLocaleDateString()}`;
-  }, [type]);
+  }, [type, campaignTypes]);
 
   const createCampaign = async (launch: boolean) => {
     if (!effectiveWorkspaceId) {
@@ -284,7 +286,7 @@ export default function CampaignCreatePage() {
           <div>
             <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">{t("type.heading")}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {CAMPAIGN_TYPES.map((ct) => {
+              {campaignTypes.map((ct) => {
                 const Icon = ct.icon;
                 const selected = ct.id === type;
                 return (
@@ -570,7 +572,7 @@ export default function CampaignCreatePage() {
             <h2 className="text-sm font-semibold text-[var(--text-primary)]">{t("review.heading")}</h2>
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-input)] p-4 text-sm text-[var(--text-secondary)] space-y-2">
               <p><span className="text-[var(--text-tertiary)]">{t("review.name")}:</span> <span className="text-[var(--text-primary)] font-medium">{(name || inferredName).trim()}</span></p>
-              <p><span className="text-[var(--text-tertiary)]">{t("review.type")}:</span> <span className="text-[var(--text-primary)] font-medium">{CAMPAIGN_TYPES.find((x) => x.id === type)?.label}</span></p>
+              <p><span className="text-[var(--text-tertiary)]">{t("review.type")}:</span> <span className="text-[var(--text-primary)] font-medium">{campaignTypes.find((x) => x.id === type)?.label}</span></p>
               <p><span className="text-[var(--text-tertiary)]">{t("review.steps")}:</span> <span className="text-[var(--text-primary)] font-medium">{sequence.length}</span></p>
               <p><span className="text-[var(--text-tertiary)]">{t("review.schedule")}:</span> <span className="text-[var(--text-primary)] font-medium">{hoursOnly ? t("review.hoursOn") : t("review.hoursOff")}</span></p>
               <p className="text-[11px] text-[var(--text-tertiary)]">{t("review.note")}</p>

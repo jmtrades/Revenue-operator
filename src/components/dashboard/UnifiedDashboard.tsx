@@ -229,13 +229,13 @@ export function UnifiedDashboard() {
         {usageRatio >= 0.8 && (
           <div className={`mb-4 rounded-xl border px-4 py-3 ${usageRatio >= 1 ? "border-red-600/40 dark:border-red-500/40 bg-red-600/10 dark:bg-red-500/10" : "border-amber-600/40 dark:border-amber-500/40 bg-amber-600/10 dark:bg-amber-500/10"}`}>
             <p className="text-sm text-[var(--text-primary)]">
-              You&apos;ve used{" "}
+              {t("minutesUsed", { defaultValue: "You've used" })}{" "}
               <span className="font-semibold tabular-nums">
                 {data.minutes_used}/{data.minutes_limit}
               </span>{" "}
-              minutes this month.{" "}
+              {t("minutesThisMonth", { defaultValue: "minutes this month." })}{" "}
               <Link href="/app/settings/billing" className="underline font-semibold">
-                Upgrade →
+                {t("upgrade", { defaultValue: "Upgrade →" })}
               </Link>
             </p>
             {usageRatio >= 1 && (
@@ -248,7 +248,7 @@ export function UnifiedDashboard() {
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--text-secondary)]">This month</p>
         <div className="mt-2 flex flex-wrap items-baseline gap-3">
           <h1 className="text-2xl md:text-3xl font-bold text-green-600 dark:text-green-400 tabular-nums">
-            Revenue recovered: {fmtMoney(data.revenue_recovered_cents)}
+            {t("revenueRecovered", { defaultValue: "Revenue recovered:" })} {fmtMoney(data.revenue_recovered_cents)}
           </h1>
           {data.revenue_trend_pct !== 0 && (
             <span className={`text-sm font-medium ${data.revenue_trend_pct >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
@@ -321,12 +321,12 @@ export function UnifiedDashboard() {
                       onClick={() => void onCall(item.id)}
                     >
                       <Phone className="w-3.5 h-3.5 mr-1" />
-                      Call
+                      {t("call", { defaultValue: "Call" })}
                     </Button>
                     <Link href={`/app/inbox`}>
                       <Button type="button" variant="ghost" size="sm" className="h-8 px-2">
                         <MessageSquare className="w-3.5 h-3.5 mr-1" />
-                        Text
+                        {t("text", { defaultValue: "Text" })}
                       </Button>
                     </Link>
                   </div>
@@ -360,10 +360,10 @@ export function UnifiedDashboard() {
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-sm font-semibold text-[var(--text-primary)] flex items-center gap-2">
             <Megaphone className="w-4 h-4" />
-            Active outbound campaigns
+            {t("activeCampaigns", { defaultValue: "Active outbound campaigns" })}
           </h2>
           <Link href="/app/campaigns" className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)]">
-            Create campaign →
+            {t("createCampaign", { defaultValue: "Create campaign →" })}
           </Link>
         </div>
         {data.campaigns.length === 0 ? (
