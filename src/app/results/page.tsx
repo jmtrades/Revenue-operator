@@ -82,13 +82,13 @@ export default async function ResultsPage() {
             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
               <Link
                 href="/activate"
-                className="inline-flex px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-zinc-100 transition-colors"
+                className="inline-flex px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-[var(--bg-hover)] transition-colors"
               >
                 Start Your Free Trial
               </Link>
               <Link
                 href="/demo"
-                className="inline-flex px-6 py-3 rounded-xl border border-zinc-300 text-[var(--text-primary)] font-semibold hover:bg-[var(--bg-hover)] transition-colors"
+                className="inline-flex px-6 py-3 rounded-xl border border-[var(--border-default)] text-[var(--text-primary)] font-semibold hover:bg-[var(--bg-hover)] transition-colors"
               >
                 Watch the demo
               </Link>
@@ -152,13 +152,13 @@ export default async function ResultsPage() {
               <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                 <Link
                   href="/demo"
-                  className="inline-flex px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-zinc-100 transition-colors"
+                  className="inline-flex px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-[var(--bg-hover)] transition-colors"
                 >
                   Watch Demo
                 </Link>
                 <Link
                   href="/activate"
-                  className="inline-flex px-6 py-3 rounded-xl border border-zinc-300 font-semibold" style={{ color: "var(--text-primary)" }}
+                  className="inline-flex px-6 py-3 rounded-xl border border-[var(--border-default)] font-semibold" style={{ color: "var(--text-primary)" }}
                 >
                   Start Free Trial
                 </Link>

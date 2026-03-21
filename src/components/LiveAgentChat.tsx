@@ -281,7 +281,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
             type="button"
             onClick={() => send(input)}
             disabled={!input.trim() || loading || atLimit}
-            className="bg-white text-black font-medium rounded-xl px-5 py-2.5 hover:bg-zinc-100 disabled:opacity-60 transition-colors"
+            className="bg-white text-black font-medium rounded-xl px-5 py-2.5 hover:bg-[var(--bg-hover)] disabled:opacity-60 transition-colors"
             aria-label={t("liveChat.sendMessageLabel")}
           >
             →

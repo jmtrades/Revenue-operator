@@ -116,7 +116,7 @@ export default function VoiceSelector({ value, onChange, planTier = 'enterprise'
       case 'female': return 'bg-pink-100 text-pink-700';
       case 'male': return 'bg-blue-100 text-blue-700';
       case 'neutral': return 'bg-purple-100 text-purple-700';
-      default: return 'bg-gray-100 text-gray-700';
+      default: return 'bg-[var(--bg-inset)] text-[var(--text-secondary)]';
     }
   };
 

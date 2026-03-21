@@ -56,7 +56,7 @@ export default function SecurityPage() {
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <Link
                   href="/contact"
-                  className="inline-flex px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-zinc-100 transition-colors"
+                  className="inline-flex px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-[var(--bg-hover)] transition-colors"
                 >
                   Questions about security? Contact us.
                 </Link>
@@ -141,7 +141,7 @@ export default function SecurityPage() {
                 <div className="mt-4">
                   <Link
                     href="/contact"
-                    className="inline-flex px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-zinc-100 transition-colors"
+                    className="inline-flex px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-[var(--bg-hover)] transition-colors"
                   >
                     Contact security →
                   </Link>

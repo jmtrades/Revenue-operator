@@ -170,7 +170,7 @@ export default function FeaturesPage() {
             </p>
             <Link
               href="/activate"
-              className="inline-flex items-center gap-2 bg-white text-black font-semibold rounded-xl px-8 py-4 hover:bg-zinc-100 transition-colors no-underline text-lg"
+              className="inline-flex items-center gap-2 bg-white text-black font-semibold rounded-xl px-8 py-4 hover:bg-[var(--bg-hover)] transition-colors no-underline text-lg"
             >
               Start Free Trial
               <ArrowRight className="w-5 h-5" />

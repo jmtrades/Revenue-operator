@@ -85,7 +85,7 @@ export default function OutboundPage() {
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <Link
                   href="/activate"
-                  className="inline-flex px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-zinc-100 transition-colors"
+                  className="inline-flex px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-[var(--bg-hover)] transition-colors"
                 >
                   Start Free Trial
                 </Link>
