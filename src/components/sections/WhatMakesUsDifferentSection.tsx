@@ -33,7 +33,7 @@ export function WhatMakesUsDifferentSection() {
 
   return (
     <section
-      className="py-16 md:py-20 border-t border-white/[0.06]"
+      className="py-16 md:py-20 border-t border-[var(--border-default)]"
       style={{ background: "var(--bg-primary)" }}
     >
       <Container>
@@ -41,7 +41,7 @@ export function WhatMakesUsDifferentSection() {
           <h2 className="text-xl md:text-2xl font-semibold text-white">
             {t("heading")}
           </h2>
-          <p className="mt-2 text-sm text-zinc-400">
+          <p className="mt-2 text-sm text-[var(--text-tertiary)]">
             {t("subheading")}
           </p>
         </div>
@@ -59,7 +59,7 @@ export function WhatMakesUsDifferentSection() {
               </div>
               <ul className="space-y-2">
                 {items.map((item) => (
-                  <li key={item} className="text-xs text-zinc-400 flex items-start gap-2">
+                  <li key={item} className="text-xs text-[var(--text-tertiary)] flex items-start gap-2">
                     <span className="mt-0.5 shrink-0">·</span>
                     <span>{item}</span>
                   </li>

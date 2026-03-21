@@ -121,7 +121,7 @@ export function BehaviorStepContent({
             id="custom-never-do"
             type="text"
             placeholder={t("behavior.customRulePlaceholder")}
-            className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl px-3 py-2 text-xs text-[var(--text-primary)] placeholder:text-white/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl px-3 py-2 text-xs text-[var(--text-primary)] placeholder:text-white/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 const value = e.currentTarget.value.trim();
@@ -139,11 +139,11 @@ export function BehaviorStepContent({
         <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
           {t("behavior.qualTitle")}
         </h3>
-        <p className="text-xs text-white/40 mb-2">
+        <p className="text-xs text-[var(--text-tertiary)] mb-2">
           {t("behavior.qualHint")}
         </p>
         <div className="mb-3 flex flex-wrap items-center gap-2">
-          <span className="text-[11px] text-white/40">{t("behavior.presetLabel")}</span>
+          <span className="text-[11px] text-[var(--text-tertiary)]">{t("behavior.presetLabel")}</span>
           {(["bant", "meddic", "custom"] as const).map((preset) => (
             <button
               key={preset}
@@ -162,7 +162,7 @@ export function BehaviorStepContent({
               className={`px-2.5 py-1 rounded-full border text-[11px] ${
                 preset === "custom"
                   ? "border-white bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
-                  : "border-white/20 text-[var(--text-secondary)] hover:border-white/40"
+                  : "border-[var(--border-default)] text-[var(--text-secondary)] hover:border-white/40"
               }`}
             >
               {preset === "bant"
@@ -180,7 +180,7 @@ export function BehaviorStepContent({
             <input
               value={q}
               onChange={(e) => updateQuestion(i, e.target.value)}
-              className="flex-1 bg-[var(--bg-input)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] focus:border-zinc-500 focus:outline-none"
+              className="flex-1 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] focus:border-[var(--border-default)] focus:outline-none"
             />
             <button
               type="button"
@@ -195,7 +195,7 @@ export function BehaviorStepContent({
         <button
           type="button"
           onClick={() => addQuestion("")}
-          className="mt-2 text-xs text-white/40 hover:text-white/60"
+          className="mt-2 text-xs text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
         >
           {t("behavior.addQuestion")}
         </button>
@@ -207,7 +207,7 @@ export function BehaviorStepContent({
                 key={preset}
                 type="button"
                 onClick={() => addQuestion(preset)}
-                className="text-xs px-3 py-1.5 border border-white/[0.08] rounded-lg text-white/40 hover:bg-white/[0.04]"
+                className="text-xs px-3 py-1.5 border border-[var(--border-default)] rounded-lg text-[var(--text-tertiary)] hover:bg-[var(--bg-inset)]"
               >
                 {preset}
               </button>
@@ -219,7 +219,7 @@ export function BehaviorStepContent({
         <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
           {t("behavior.objectionTitle")}
         </h3>
-        <p className="text-xs text-white/40 mb-3">
+        <p className="text-xs text-[var(--text-tertiary)] mb-3">
           {t("behavior.objectionHint")}
         </p>
 
@@ -239,7 +239,7 @@ export function BehaviorStepContent({
                 onChange={(e) => setObjection(obj.id, e.target.value)}
                 rows={2}
                 placeholder={t(`behavior.${obj.placeholderKey}`)}
-                className="w-full bg-[var(--bg-input)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-white/20 focus:border-zinc-500 focus:outline-none resize-none"
+                className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-white/20 focus:border-[var(--border-default)] focus:outline-none resize-none"
               />
             </div>
           ))}
@@ -249,7 +249,7 @@ export function BehaviorStepContent({
         <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
           {t("behavior.escalationTitle")}
         </h3>
-        <p className="text-xs text-white/40 mb-3">
+        <p className="text-xs text-[var(--text-tertiary)] mb-3">
           {t("behavior.escalationHint")}
         </p>
 
@@ -262,7 +262,7 @@ export function BehaviorStepContent({
               value={agent.transferPhone || ""}
               onChange={(e) => onChange({ transferPhone: e.target.value })}
               placeholder={t("behavior.transferPhonePlaceholder")}
-              className="w-full bg-[var(--bg-input)] border border-white/[0.08] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-white/25 focus:border-zinc-500 focus:outline-none"
+              className="w-full bg-[var(--bg-input)] border border-[var(--border-default)] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-white/25 focus:border-[var(--border-default)] focus:outline-none"
             />
           </div>
 
@@ -284,7 +284,7 @@ export function BehaviorStepContent({
                 >
                   <input
                     type="checkbox"
-                    className="rounded border-white/20 bg-transparent"
+                    className="rounded border-[var(--border-default)] bg-transparent"
                     checked={(agent.escalationTriggers || []).includes(id)}
                     onChange={(e) => {
                       const current = agent.escalationTriggers || [];
@@ -302,8 +302,8 @@ export function BehaviorStepContent({
         </div>
       </section>
       <div className="flex justify-between pt-4">
-        <button type="button" onClick={onBack} aria-label={t("nav.backToKnowledge")} className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">{tCommon("back")}</button>
-        <button type="button" onClick={onNext} aria-label={t("nav.continueToTest")} className="rounded-xl bg-[var(--bg-surface)] px-6 py-2.5 text-sm font-semibold text-[var(--text-primary)] hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black">{tCommon("continue")}</button>
+        <button type="button" onClick={onBack} aria-label={t("nav.backToKnowledge")} className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black">{tCommon("back")}</button>
+        <button type="button" onClick={onNext} aria-label={t("nav.continueToTest")} className="rounded-xl bg-[var(--bg-surface)] px-6 py-2.5 text-sm font-semibold text-[var(--text-primary)] hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black">{tCommon("continue")}</button>
       </div>
     </div>
   );

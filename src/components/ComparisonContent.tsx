@@ -155,59 +155,59 @@ export function ComparisonContent({ competitor }: ComparisonContentProps) {
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white">
           Recall Touch vs {data.name}
         </h1>
-        <p className="text-xl text-zinc-300">{data.description}</p>
+        <p className="text-xl text-[var(--text-secondary)]">{data.description}</p>
       </section>
 
       {/* Key Stats */}
       <section className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-        <div className="rounded-xl bg-zinc-900/50 border border-zinc-800 p-6">
-          <div className="text-sm text-zinc-400 mb-2">Recall Touch Cost</div>
+        <div className="rounded-xl bg-[var(--bg-card)]/50 border border-[var(--border-default)] p-6">
+          <div className="text-sm text-[var(--text-tertiary)] mb-2">Recall Touch Cost</div>
           <div className="text-2xl font-bold text-white">$297-$497/mo</div>
-          <div className="text-xs text-zinc-500 mt-2">No setup, 14-day trial</div>
+          <div className="text-xs text-[var(--text-tertiary)] mt-2">No setup, 14-day trial</div>
         </div>
-        <div className="rounded-xl bg-zinc-900/50 border border-zinc-800 p-6">
-          <div className="text-sm text-zinc-400 mb-2">{data.name} Cost</div>
+        <div className="rounded-xl bg-[var(--bg-card)]/50 border border-[var(--border-default)] p-6">
+          <div className="text-sm text-[var(--text-tertiary)] mb-2">{data.name} Cost</div>
           <div className="text-2xl font-bold text-white">{data.pricing.range}</div>
-          <div className="text-xs text-zinc-500 mt-2">{data.pricing.details}</div>
+          <div className="text-xs text-[var(--text-tertiary)] mt-2">{data.pricing.details}</div>
         </div>
-        <div className="rounded-xl bg-zinc-900/50 border border-zinc-800 p-6">
-          <div className="text-sm text-zinc-400 mb-2">Call Capacity</div>
+        <div className="rounded-xl bg-[var(--bg-card)]/50 border border-[var(--border-default)] p-6">
+          <div className="text-sm text-[var(--text-tertiary)] mb-2">Call Capacity</div>
           <div className="text-2xl font-bold text-white">Unlimited</div>
-          <div className="text-xs text-zinc-500 mt-2">vs {data.callCapacity}</div>
+          <div className="text-xs text-[var(--text-tertiary)] mt-2">vs {data.callCapacity}</div>
         </div>
       </section>
 
       {/* Feature Comparison Table */}
       <section className="max-w-4xl mx-auto">
         <h2 className="text-3xl font-bold text-white mb-8">Feature Comparison</h2>
-        <div className="rounded-xl border border-zinc-800 overflow-hidden">
+        <div className="rounded-xl border border-[var(--border-default)] overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="bg-zinc-900/50 border-b border-zinc-800">
+              <tr className="bg-[var(--bg-card)]/50 border-b border-[var(--border-default)]">
                 <th className="text-left px-6 py-4 text-white font-semibold">Feature</th>
                 <th className="text-center px-6 py-4 text-white font-semibold">Recall Touch</th>
-                <th className="text-center px-6 py-4 text-zinc-400 font-semibold">{data.name}</th>
+                <th className="text-center px-6 py-4 text-[var(--text-tertiary)] font-semibold">{data.name}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-800">
+            <tbody className="divide-y divide-[var(--border-default)]">
               {getFeatureRows(competitor).map((row, idx) => (
                 <tr
                   key={idx}
-                  className="bg-black/50 hover:bg-zinc-900/30 transition-colors"
+                  className="bg-black/50 hover:bg-[var(--bg-card)]/30 transition-colors"
                 >
-                  <td className="px-6 py-4 text-zinc-200">{row.feature}</td>
+                  <td className="px-6 py-4 text-[var(--text-primary)]">{row.feature}</td>
                   <td className="px-6 py-4 text-center">
                     {row.recall ? (
                       <CheckCircle className="w-5 h-5 text-emerald-400 mx-auto" />
                     ) : (
-                      <XCircle className="w-5 h-5 text-zinc-600 mx-auto" />
+                      <XCircle className="w-5 h-5 text-[var(--text-tertiary)] mx-auto" />
                     )}
                   </td>
                   <td className="px-6 py-4 text-center">
                     {row.competitor ? (
                       <CheckCircle className="w-5 h-5 text-emerald-400 mx-auto" />
                     ) : (
-                      <XCircle className="w-5 h-5 text-zinc-600 mx-auto" />
+                      <XCircle className="w-5 h-5 text-[var(--text-tertiary)] mx-auto" />
                     )}
                   </td>
                 </tr>
@@ -227,7 +227,7 @@ export function ComparisonContent({ competitor }: ComparisonContentProps) {
             {data.strengths.map((strength, idx) => (
               <li key={idx} className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
-                <span className="text-zinc-300">{strength}</span>
+                <span className="text-[var(--text-secondary)]">{strength}</span>
               </li>
             ))}
           </ul>
@@ -240,7 +240,7 @@ export function ComparisonContent({ competitor }: ComparisonContentProps) {
             {data.weaknesses.map((weakness, idx) => (
               <li key={idx} className="flex items-start gap-3">
                 <XCircle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
-                <span className="text-zinc-300">{weakness}</span>
+                <span className="text-[var(--text-secondary)]">{weakness}</span>
               </li>
             ))}
           </ul>
@@ -257,7 +257,7 @@ export function ComparisonContent({ competitor }: ComparisonContentProps) {
           {data.recallTouchAdvantage.map((advantage, idx) => (
             <li key={idx} className="flex items-start gap-3">
               <div className="w-2 h-2 rounded-full bg-emerald-400 mt-2 flex-shrink-0" />
-              <span className="text-zinc-200">{advantage}</span>
+              <span className="text-[var(--text-primary)]">{advantage}</span>
             </li>
           ))}
         </ul>
@@ -268,7 +268,7 @@ export function ComparisonContent({ competitor }: ComparisonContentProps) {
         <h2 className="text-3xl font-bold text-white">
           Ready to see the difference?
         </h2>
-        <p className="text-xl text-zinc-300">
+        <p className="text-xl text-[var(--text-secondary)]">
           14-day free trial. No credit card required. Full access to all features.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -280,7 +280,7 @@ export function ComparisonContent({ competitor }: ComparisonContentProps) {
           </Link>
           <Link
             href="/demo"
-            className="inline-flex items-center justify-center rounded-xl border border-zinc-700 px-8 py-4 text-white font-semibold hover:bg-zinc-900 transition-colors"
+            className="inline-flex items-center justify-center rounded-xl border border-[var(--border-default)] px-8 py-4 text-white font-semibold hover:bg-[var(--bg-card)] transition-colors"
           >
             See it in action
           </Link>
@@ -294,9 +294,9 @@ export function ComparisonContent({ competitor }: ComparisonContentProps) {
           {getFAQs(competitor).map((faq, idx) => (
             <details
               key={idx}
-              className="group rounded-xl border border-zinc-800 bg-zinc-900/30 hover:bg-zinc-900/50 transition-colors"
+              className="group rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]/30 hover:bg-[var(--bg-card)]/50 transition-colors"
             >
-              <summary className="flex cursor-pointer items-center justify-between px-6 py-4 font-semibold text-white hover:text-zinc-100">
+              <summary className="flex cursor-pointer items-center justify-between px-6 py-4 font-semibold text-white hover:text-[var(--text-primary)]">
                 {faq.q}
                 <span className="transition-transform group-open:rotate-180">
                   <svg
@@ -314,7 +314,7 @@ export function ComparisonContent({ competitor }: ComparisonContentProps) {
                   </svg>
                 </span>
               </summary>
-              <div className="px-6 pb-4 text-zinc-300 border-t border-zinc-800/50 pt-4">
+              <div className="px-6 pb-4 text-[var(--text-secondary)] border-t border-[var(--border-default)]/50 pt-4">
                 {faq.a}
               </div>
             </details>

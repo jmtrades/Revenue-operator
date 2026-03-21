@@ -357,7 +357,7 @@ export default function CallIntelligencePage() {
       </div>
 
       {/* Tab bar */}
-      <div className="flex gap-1 bg-[var(--bg-surface)] border border-white/[0.06] rounded-xl p-1 mb-2">
+      <div className="flex gap-1 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-1 mb-2">
         <button
           type="button"
           onClick={() => setActiveTab("analyzed")}
@@ -488,7 +488,7 @@ export default function CallIntelligencePage() {
           </div>
 
           {/* Analyzed calls list */}
-          <div className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-6">
+          <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-6">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
               <h2 className="text-base font-medium text-[var(--text-primary)]">
                 {t("tabs.analyzed")}
@@ -501,7 +501,7 @@ export default function CallIntelligencePage() {
                     "inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors",
                     qualityFilter === "flagged"
                       ? "bg-red-500/20 border-red-500/40 text-red-300"
-                      : "border-white/[0.08] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]",
+                      : "border-[var(--border-default)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]",
                   )}
                 >
                   <Flag className="w-3.5 h-3.5" />
@@ -510,7 +510,7 @@ export default function CallIntelligencePage() {
                 <select
                   value={qualityFilter}
                   onChange={(e) => setQualityFilter(e.target.value as QualityBucket)}
-                  className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-xl px-3 py-1.5 text-xs text-[var(--text-primary)] outline-none"
+                  className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-3 py-1.5 text-xs text-[var(--text-primary)] outline-none"
                 >
                   <option value="all">{t("filters.quality.all")}</option>
                   <option value="excellent">{t("filters.quality.excellent")}</option>
@@ -522,8 +522,8 @@ export default function CallIntelligencePage() {
             </div>
             {loading && callExamples.length === 0 ? (
               <div className="py-6 flex flex-col items-center justify-center text-center">
-                <div className="h-8 w-48 rounded-xl bg-white/[0.04] animate-pulse mb-3" />
-                <div className="h-4 w-32 rounded-xl bg-white/[0.04] animate-pulse" />
+                <div className="h-8 w-48 rounded-xl bg-[var(--bg-inset)] animate-pulse mb-3" />
+                <div className="h-4 w-32 rounded-xl bg-[var(--bg-inset)] animate-pulse" />
               </div>
             ) : callExamples.length === 0 ? (
               <div className="py-8 px-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]/50 text-center">
@@ -576,7 +576,7 @@ export default function CallIntelligencePage() {
                   return (
                     <div
                       key={call.id}
-                      className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-xl px-4 py-3"
+                      className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-4 py-3"
                     >
                       <button
                         type="button"
@@ -590,7 +590,7 @@ export default function CallIntelligencePage() {
                             <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                               {call.title || t("untitledCall")}
                             </p>
-                            <span className="inline-flex items-center rounded-full border border-white/[0.08] px-2 py-0.5 text-[11px] text-[var(--text-secondary)]">
+                            <span className="inline-flex items-center rounded-full border border-[var(--border-default)] px-2 py-0.5 text-[11px] text-[var(--text-secondary)]">
                               {badgeLabel}
                             </span>
                             <span
@@ -626,7 +626,7 @@ export default function CallIntelligencePage() {
                       </button>
 
                       {isExpanded && (
-                        <div className="mt-3 pt-3 border-t border-white/[0.06] space-y-3">
+                        <div className="mt-3 pt-3 border-t border-[var(--border-default)] space-y-3">
                           {call.audio_url && (
                             <div className="rounded-xl bg-[var(--bg-surface)]/80 p-3">
                               <p className="text-[11px] font-medium text-[var(--text-secondary)] mb-2 flex items-center gap-1.5">
@@ -657,7 +657,7 @@ export default function CallIntelligencePage() {
                               onChange={(e) => setCallNotes((prev) => ({ ...prev, [call.id]: e.target.value }))}
                               placeholder={t("notePlaceholder")}
                               rows={2}
-                              className="w-full px-3 py-2 rounded-lg bg-[var(--bg-surface)] border border-white/[0.06] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-[var(--accent-primary)] focus:outline-none resize-y"
+                              className="w-full px-3 py-2 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-[var(--accent-primary)] focus:outline-none resize-y"
                             />
                             <button
                               type="button"
@@ -802,14 +802,14 @@ export default function CallIntelligencePage() {
                                     onClick={() =>
                                       setApplyModal({ insightId: i.id, insight: i.insight })
                                     }
-                                    className="text-xs font-medium text-[var(--text-primary)] hover:underline focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded"
+                                    className="text-xs font-medium text-[var(--text-primary)] hover:underline focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded"
                                   >
                                     Apply to agent
                                   </button>
                                   <button
                                     type="button"
                                     onClick={() => handleDismiss(i.id)}
-                                    className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-secondary)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded"
+                                    className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-secondary)] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded"
                                   >
                                     {t("dismiss")}
                                   </button>
@@ -870,7 +870,7 @@ export default function CallIntelligencePage() {
       )}
 
       {activeTab === "manual" && (
-        <div className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-6 space-y-4">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-6 space-y-4">
           <div>
             <h2 className="text-base font-medium text-[var(--text-primary)]">
               {t("analyze.title")}
@@ -884,12 +884,12 @@ export default function CallIntelligencePage() {
             placeholder={t("titlePlaceholder")}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full bg-[var(--bg-surface)] border border-white/[0.06] rounded-xl px-4 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent-primary)] focus:outline-none"
+            className="w-full bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-4 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent-primary)] focus:outline-none"
           />
           <select
             value={callType}
             onChange={(e) => setCallType(e.target.value)}
-            className="w-full bg-[var(--bg-surface)] border border-white/[0.06] rounded-xl px-4 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--accent-primary)] focus:outline-none"
+            className="w-full bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-4 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--accent-primary)] focus:outline-none"
           >
             <option value="">{t("callTypeOptional")}</option>
             {Object.entries(callTypeLabels).map(([k, v]) => (
@@ -903,7 +903,7 @@ export default function CallIntelligencePage() {
             value={pasteText}
             onChange={(e) => setPasteText(e.target.value)}
             rows={8}
-            className="w-full bg-[var(--bg-surface)] border border-white/[0.06] rounded-xl px-4 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent-primary)] focus:outline-none resize-none"
+            className="w-full bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl px-4 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent-primary)] focus:outline-none resize-none"
           />
           <button
             type="button"
@@ -942,7 +942,7 @@ export default function CallIntelligencePage() {
                     key={a.id}
                     type="button"
                     onClick={() => handleApply(applyModal.insightId, a.id)}
-                    className="w-full px-4 py-2 rounded-xl border border-[var(--border-default)] text-[var(--text-secondary)] text-sm hover:bg-[var(--bg-inset)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
+                    className="w-full px-4 py-2 rounded-xl border border-[var(--border-default)] text-[var(--text-secondary)] text-sm hover:bg-[var(--bg-inset)] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
                   >
                     {a.name}
                   </button>
@@ -952,7 +952,7 @@ export default function CallIntelligencePage() {
             <button
               type="button"
               onClick={() => setApplyModal(null)}
-              className="mt-4 w-full px-4 py-2 rounded-xl text-[var(--text-tertiary)] text-sm hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none"
+              className="mt-4 w-full px-4 py-2 rounded-xl text-[var(--text-tertiary)] text-sm hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
             >
               Cancel
             </button>

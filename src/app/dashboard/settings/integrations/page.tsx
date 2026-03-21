@@ -39,7 +39,7 @@ const INTEGRATIONS: Integration[] = [
     description: "Sync appointments automatically. Your AI books directly into your calendar.",
     icon: Calendar,
     color: "text-blue-400",
-    bg: "bg-zinc-900/60",
+    bg: "bg-[var(--bg-card)]/60",
     status: "connected",
     detail: "Connected as jmtrades1990@gmail.com",
     actionLabel: "Disconnect",
@@ -62,7 +62,7 @@ const INTEGRATIONS: Integration[] = [
     description: "Get real-time notifications for calls, bookings, and missed-call recovery.",
     icon: MessageSquare,
     color: "text-purple-400",
-    bg: "bg-zinc-900/60",
+    bg: "bg-[var(--bg-card)]/60",
     status: "not_connected",
     actionLabel: "Connect Slack",
   },
@@ -117,7 +117,7 @@ function StatusDot({ status }: { status: ConnectionStatus }) {
     );
   }
   return (
-    <span className="inline-flex items-center gap-1 text-xs text-zinc-500">
+    <span className="inline-flex items-center gap-1 text-xs text-[var(--text-tertiary)]">
       <Circle className="w-3 h-3" />
       Not connected
     </span>
@@ -150,7 +150,7 @@ export default function IntegrationsPage() {
     <div className="p-8 max-w-5xl mx-auto">
       <PageHeader title="Integrations" subtitle="Connect your tools and automate workflows." />
 
-      <div className="flex items-center gap-2 mb-6 text-xs text-zinc-400">
+      <div className="flex items-center gap-2 mb-6 text-xs text-[var(--text-tertiary)]">
         <span className="px-2 py-0.5 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-300">
           Preview
         </span>
@@ -164,7 +164,7 @@ export default function IntegrationsPage() {
           return (
             <div
               key={integration.id}
-              className="rounded-xl border p-5 transition-colors hover:border-zinc-600"
+              className="rounded-xl border p-5 transition-colors hover:border-[var(--border-default)]"
               style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}
             >
               <div className="flex items-start justify-between mb-3">
@@ -193,7 +193,7 @@ export default function IntegrationsPage() {
                   className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
                     integration.status === "not_connected"
                       ? "border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/10"
-                      : "border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+                      : "border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-inset)]"
                   }`}
                 >
                   {integration.actionLabel}
@@ -205,7 +205,7 @@ export default function IntegrationsPage() {
                   className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
                     integration.status === "not_connected"
                       ? "border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/10"
-                      : "border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+                      : "border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-inset)]"
                   }`}
                 >
                   {integration.actionLabel}
@@ -229,14 +229,14 @@ export default function IntegrationsPage() {
         </p>
         <div className="flex items-center gap-2">
           <div
-            className="flex-1 rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm font-mono text-zinc-300 truncate"
+            className="flex-1 rounded-lg border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-2 text-sm font-mono text-[var(--text-secondary)] truncate"
           >
             {webhookUrl}
           </div>
           <button
             type="button"
             onClick={handleCopyWebhook}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-800 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-default)] px-3 py-2 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors"
           >
             {copied ? (
               <>

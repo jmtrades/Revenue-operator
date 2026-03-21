@@ -267,23 +267,23 @@ export function AgentTestPanel({
         <button
           type="button"
           onClick={() => startTest(defaultScenarioPrompt)}
-          className="w-full py-3 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl hover:opacity-90 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
+          className="w-full py-3 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl hover:opacity-90 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
         >
           {tAgents("startConversation")}
         </button>
 
         <div>
-          <p className="text-xs text-white/40 mb-3">{tAgents("orTryScenario")}</p>
+          <p className="text-xs text-[var(--text-tertiary)] mb-3">{tAgents("orTryScenario")}</p>
           <div className="grid grid-cols-1 gap-2">
             {scenarios.map((s) => (
               <button
                 key={s.label}
                 type="button"
                 onClick={() => startTest(s.prompt)}
-                className="text-left px-4 py-2.5 rounded-xl border border-white/[0.08] hover:bg-white/[0.04] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
+                className="text-left px-4 py-2.5 rounded-xl border border-[var(--border-default)] hover:bg-[var(--bg-inset)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
               >
                 <p className="text-sm font-medium text-[var(--text-primary)]">{s.label}</p>
-                <p className="text-xs text-white/40 mt-0.5">{s.prompt}</p>
+                <p className="text-xs text-[var(--text-tertiary)] mt-0.5">{s.prompt}</p>
               </button>
             ))}
           </div>
@@ -310,7 +310,7 @@ export function AgentTestPanel({
             setMessages([]);
             setIsSpeaking(false);
           }}
-          className="text-xs text-white/40 hover:text-white/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 rounded"
+          className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] rounded"
         >
           {tAgents("reset")}
         </button>
@@ -322,7 +322,7 @@ export function AgentTestPanel({
             key={i}
             className={`rounded-xl p-3 ${
               msg.role === "caller"
-                ? "bg-white/[0.04] mr-8"
+                ? "bg-[var(--bg-inset)] mr-8"
                 : "bg-[var(--bg-inset)]/80 border border-[var(--border-default)]/50 ml-8"
             }`}
           >
@@ -376,7 +376,7 @@ export function AgentTestPanel({
                 </button>
               )}
             </div>
-            <p className="text-center text-[11px] text-white/40">
+            <p className="text-center text-[11px] text-[var(--text-tertiary)]">
               {tAgents("hint.micOrType")}
             </p>
           </>
@@ -405,7 +405,7 @@ export function AgentTestPanel({
             type="button"
             onClick={() => sendMessage()}
             disabled={loading || isListening || !input.trim()}
-            className="px-4 py-2.5 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl text-sm disabled:opacity-30 hover:opacity-90 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
+            className="px-4 py-2.5 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl text-sm disabled:opacity-30 hover:opacity-90 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
           >
             {tAgents("send")}
           </button>

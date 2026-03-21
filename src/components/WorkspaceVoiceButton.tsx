@@ -59,7 +59,7 @@ export function WorkspaceVoiceButton({
   return (
     <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
       <p className="text-sm font-medium text-white">{title}</p>
-      <p className="mt-1 text-xs text-zinc-500">
+      <p className="mt-1 text-xs text-[var(--text-tertiary)]">
         {description}
       </p>
       <div className="mt-4 flex items-center gap-3">

@@ -96,7 +96,7 @@ export function RevenueRecoveredCard() {
       </div>
 
       <div className="grid grid-cols-3 gap-3">
-        <div className="rounded-lg bg-white/5 border border-white/10 p-3">
+        <div className="rounded-lg bg-white/5 border border-[var(--border-default)] p-3">
           <p className="text-xs font-medium text-[var(--text-tertiary)] mb-1">
             Calls Answered
           </p>
@@ -105,7 +105,7 @@ export function RevenueRecoveredCard() {
           </p>
         </div>
 
-        <div className="rounded-lg bg-white/5 border border-white/10 p-3">
+        <div className="rounded-lg bg-white/5 border border-[var(--border-default)] p-3">
           <p className="text-xs font-medium text-[var(--text-tertiary)] mb-1">
             No-Shows Recovered
           </p>
@@ -114,7 +114,7 @@ export function RevenueRecoveredCard() {
           </p>
         </div>
 
-        <div className="rounded-lg bg-white/5 border border-white/10 p-3">
+        <div className="rounded-lg bg-white/5 border border-[var(--border-default)] p-3">
           <p className="text-xs font-medium text-[var(--text-tertiary)] mb-1">
             Reactivations
           </p>

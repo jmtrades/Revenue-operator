@@ -352,7 +352,7 @@ export default function TeamPage() {
                                 setRoleModalMember(member);
                                 setMenuMemberId(null);
                               }}
-                              className="block w-full text-left px-3 py-2 text-sm text-[var(--text-secondary)] hover:bg-zinc-700"
+                              className="block w-full text-left px-3 py-2 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)]"
                             >
                               Change role
                             </button>
@@ -362,7 +362,7 @@ export default function TeamPage() {
                                 setRemoveConfirmMember(member);
                                 setMenuMemberId(null);
                               }}
-                              className="block w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-zinc-700"
+                              className="block w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-[var(--bg-inset)]"
                             >
                               Remove member
                             </button>
@@ -378,17 +378,17 @@ export default function TeamPage() {
                       member.role === "owner"
                         ? "bg-amber-500/20 text-amber-300"
                         : member.role === "admin"
-                          ? "bg-zinc-600 text-[var(--text-primary)]"
+                          ? "bg-[var(--bg-inset)] text-[var(--text-primary)]"
                           : member.role === "manager"
-                            ? "bg-zinc-700 text-[var(--text-secondary)]"
-                            : "bg-zinc-700 text-[var(--text-tertiary)]"
+                            ? "bg-[var(--bg-inset)] text-[var(--text-secondary)]"
+                            : "bg-[var(--bg-inset)] text-[var(--text-tertiary)]"
                     }`}
                   >
                     {roleLabels[member.role]}
                   </span>
                   <span className="text-[10px] text-[var(--text-secondary)]">Last active {formatRelative(member.lastActive, t)}</span>
                 </div>
-                <p className="text-[10px] text-zinc-600 mt-1">Joined {formatDate(member.joinedAt)}</p>
+                <p className="text-[10px] text-[var(--text-tertiary)] mt-1">Joined {formatDate(member.joinedAt)}</p>
               </div>
             );
           })}
@@ -407,7 +407,7 @@ export default function TeamPage() {
                       <span className="ml-2 text-xs text-[var(--text-secondary)]">— {roleLabels[inv.role]}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] text-zinc-600">Invited {formatRelative(inv.invitedAt, t)}</span>
+                      <span className="text-[10px] text-[var(--text-tertiary)]">Invited {formatRelative(inv.invitedAt, t)}</span>
                       <button
                         type="button"
                         onClick={() => handleResendInvite(inv.id)}
@@ -458,10 +458,10 @@ export default function TeamPage() {
                   {permissionsMatrix.map((row) => (
                     <tr key={row.id} className="border-b border-[var(--border-default)]/80">
                       <td className="py-2.5 pr-4 text-[var(--text-secondary)]">{row.label}</td>
-                      <td className="py-2.5 px-2 text-center">{row.roles.owner ? <Check className="w-4 h-4 text-emerald-400 mx-auto" /> : <Minus className="w-4 h-4 text-zinc-600 mx-auto" />}</td>
-                      <td className="py-2.5 px-2 text-center">{row.roles.admin ? <Check className="w-4 h-4 text-emerald-400 mx-auto" /> : <Minus className="w-4 h-4 text-zinc-600 mx-auto" />}</td>
-                      <td className="py-2.5 px-2 text-center">{row.roles.manager ? <Check className="w-4 h-4 text-emerald-400 mx-auto" /> : <Minus className="w-4 h-4 text-zinc-600 mx-auto" />}</td>
-                      <td className="py-2.5 px-2 text-center">{row.roles.agent ? <Check className="w-4 h-4 text-emerald-400 mx-auto" /> : <Minus className="w-4 h-4 text-zinc-600 mx-auto" />}</td>
+                      <td className="py-2.5 px-2 text-center">{row.roles.owner ? <Check className="w-4 h-4 text-emerald-400 mx-auto" /> : <Minus className="w-4 h-4 text-[var(--text-tertiary)] mx-auto" />}</td>
+                      <td className="py-2.5 px-2 text-center">{row.roles.admin ? <Check className="w-4 h-4 text-emerald-400 mx-auto" /> : <Minus className="w-4 h-4 text-[var(--text-tertiary)] mx-auto" />}</td>
+                      <td className="py-2.5 px-2 text-center">{row.roles.manager ? <Check className="w-4 h-4 text-emerald-400 mx-auto" /> : <Minus className="w-4 h-4 text-[var(--text-tertiary)] mx-auto" />}</td>
+                      <td className="py-2.5 px-2 text-center">{row.roles.agent ? <Check className="w-4 h-4 text-emerald-400 mx-auto" /> : <Minus className="w-4 h-4 text-[var(--text-tertiary)] mx-auto" />}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -527,7 +527,7 @@ export default function TeamPage() {
                   key={r}
                   type="button"
                   onClick={() => handleChangeRole(roleModalMember.id, r)}
-                  className={`block w-full text-left px-3 py-2.5 rounded-lg text-sm ${roleModalMember.role === r ? "bg-zinc-700 text-[var(--text-primary)]" : "text-[var(--text-tertiary)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)]"}`}
+                  className={`block w-full text-left px-3 py-2.5 rounded-lg text-sm ${roleModalMember.role === r ? "bg-[var(--bg-inset)] text-[var(--text-primary)]" : "text-[var(--text-tertiary)] hover:bg-[var(--bg-card)] hover:text-[var(--text-primary)]"}`}
                 >
                   {roleLabels[r]}
                 </button>

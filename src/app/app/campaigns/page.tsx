@@ -365,9 +365,9 @@ export default function CampaignsPage() {
             ) : filtered.length === 0 ? (
               <EmptyState
                 icon={Megaphone}
-                title="Create your first campaign"
-                description="Launch an AI follow-up campaign to convert leads into appointments."
-                primaryAction={{ label: "Create Campaign", href: "/app/campaigns/create" }}
+                title={t("empty.title")}
+                description={t("empty.body")}
+                primaryAction={{ label: t("createCampaign"), href: "/app/campaigns/create" }}
               />
             ) : (
               filtered.map((campaign) => (
@@ -420,7 +420,7 @@ export default function CampaignsPage() {
                           ? setPauseConfirm(campaign)
                           : void toggleCampaign(campaign)
                       }
-                      className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-semibold text-zinc-100 hover:border-[var(--border-medium)]"
+                      className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-semibold text-[var(--text-primary)] hover:border-[var(--border-medium)]"
                     >
                       {campaign.status === "active" ? t("pause") : t("launchCampaign")}
                     </button>
@@ -534,7 +534,7 @@ export default function CampaignsPage() {
             </div>
             <div className="mt-4 space-y-4">
               <div className="mb-4">
-                <label className="text-xs text-white/40 mb-2 block">{t("form.campaignTypeLabel")}</label>
+                <label className="text-xs text-[var(--text-tertiary)] mb-2 block">{t("form.campaignTypeLabel")}</label>
                 <div className="grid grid-cols-2 gap-2">
                   {[
                     { id: "followup", labelKey: "form.quickTypes.followup.label", descKey: "form.quickTypes.followup.desc" },
@@ -559,11 +559,11 @@ export default function CampaignsPage() {
                           }));
                         }}
                         className={`p-3 rounded-lg border text-left text-xs transition-colors ${
-                          selected ? "border-zinc-500/50 bg-[var(--bg-inset)]/50" : "border-white/[0.08] hover:bg-white/[0.04]"
+                          selected ? "border-[var(--border-default)]/50 bg-[var(--bg-inset)]/50" : "border-[var(--border-default)] hover:bg-[var(--bg-inset)]"
                         }`}
                       >
                         <p className="font-medium text-[var(--text-primary)]">{t(typeOption.labelKey)}</p>
-                        <p className="text-white/40 mt-0.5">{t(typeOption.descKey)}</p>
+                        <p className="text-[var(--text-tertiary)] mt-0.5">{t(typeOption.descKey)}</p>
                       </button>
                     );
                   })}
@@ -820,7 +820,7 @@ export default function CampaignsPage() {
           />
         )}
         {toast && (
-          <div className="fixed bottom-4 right-4 z-50 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-4 py-2 text-sm text-zinc-100 shadow-xl">
+          <div className="fixed bottom-4 right-4 z-50 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-4 py-2 text-sm text-[var(--text-primary)] shadow-xl">
             {toast}
           </div>
         )}

@@ -86,9 +86,9 @@ type SourceFilter = LeadSource | "all";
 function statusBadge(status: LeadStatus): { label: string; className: string } {
   switch (status) {
     case "NEW":
-      return { label: "New", className: "bg-zinc-900/60 text-blue-400 border-zinc-800" };
+      return { label: "New", className: "bg-[var(--bg-card)]/60 text-blue-400 border-[var(--border-default)]" };
     case "CONTACTED":
-      return { label: "Contacted", className: "bg-zinc-900/60 text-purple-400 border-zinc-800" };
+      return { label: "Contacted", className: "bg-[var(--bg-card)]/60 text-purple-400 border-[var(--border-default)]" };
     case "QUALIFIED":
       return { label: "Qualified", className: "bg-amber-500/10 text-amber-400 border-amber-500/30" };
     case "BOOKED":
@@ -98,7 +98,7 @@ function statusBadge(status: LeadStatus): { label: string; className: string } {
     case "LOST":
       return { label: "Lost", className: "bg-red-500/10 text-red-400 border-red-500/30" };
     default:
-      return { label: status, className: "bg-zinc-800 text-zinc-300 border-zinc-700" };
+      return { label: status, className: "bg-[var(--bg-inset)] text-[var(--text-secondary)] border-[var(--border-default)]" };
   }
 }
 
@@ -283,23 +283,23 @@ export default function LeadsPage() {
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
         <div className="relative w-full md:max-w-sm">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-zinc-500" />
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-[var(--text-tertiary)]" />
           <input
             type="search"
             placeholder="Search by name, email, phone, or company"
-            className="w-full pl-9 pr-3 py-2 rounded-lg border border-zinc-800 bg-zinc-950 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+            className="w-full pl-9 pr-3 py-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-base)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
           />
         </div>
         <div className="flex flex-wrap items-center gap-2 text-xs">
-          <div className="inline-flex items-center gap-1 rounded-full border border-zinc-800 bg-zinc-950 px-3 py-1">
-            <Filter className="w-3 h-3 text-zinc-500" />
-            <span className="text-zinc-400">Status</span>
+          <div className="inline-flex items-center gap-1 rounded-full border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-1">
+            <Filter className="w-3 h-3 text-[var(--text-tertiary)]" />
+            <span className="text-[var(--text-tertiary)]">Status</span>
             <select
               value={statusFilter}
               onChange={(event) => setStatusFilter(event.target.value as StatusFilter)}
-              className="bg-transparent border-none text-xs text-zinc-100 focus:outline-none"
+              className="bg-transparent border-none text-xs text-[var(--text-primary)] focus:outline-none"
             >
               {statusOptions.map((o) => (
                 <option key={o.key} value={o.key} className="bg-black">
@@ -308,13 +308,13 @@ export default function LeadsPage() {
               ))}
             </select>
           </div>
-          <div className="inline-flex items-center gap-1 rounded-full border border-zinc-800 bg-zinc-950 px-3 py-1">
-            <ArrowLeftRight className="w-3 h-3 text-zinc-500" />
-            <span className="text-zinc-400">Source</span>
+          <div className="inline-flex items-center gap-1 rounded-full border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-1">
+            <ArrowLeftRight className="w-3 h-3 text-[var(--text-tertiary)]" />
+            <span className="text-[var(--text-tertiary)]">Source</span>
             <select
               value={sourceFilter}
               onChange={(event) => setSourceFilter(event.target.value as SourceFilter)}
-              className="bg-transparent border-none text-xs text-zinc-100 focus:outline-none"
+              className="bg-transparent border-none text-xs text-[var(--text-primary)] focus:outline-none"
             >
               {sourceOptions.map((o) => (
                 <option key={o.key} value={o.key} className="bg-black">
@@ -334,7 +334,7 @@ export default function LeadsPage() {
       </div>
 
       {!liveLeads && (
-        <div className="flex items-center gap-2 mb-3 text-xs text-zinc-400">
+        <div className="flex items-center gap-2 mb-3 text-xs text-[var(--text-tertiary)]">
           <span className="px-2 py-0.5 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-300">
             Sample data
           </span>
@@ -350,20 +350,20 @@ export default function LeadsPage() {
         />
       ) : (
         <div
-          className="rounded-2xl border border-zinc-800 overflow-hidden bg-zinc-950/80"
+          className="rounded-2xl border border-[var(--border-default)] overflow-hidden bg-[var(--bg-base)]/80"
         >
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-zinc-800 bg-zinc-950/70">
+            <thead className="border-b border-[var(--border-default)] bg-[var(--bg-base)]/70">
               <tr>
-                <th className="py-3 px-4 font-medium text-zinc-400">Name</th>
-                <th className="py-3 px-4 font-medium text-zinc-400">Email</th>
-                <th className="py-3 px-4 font-medium text-zinc-400">Phone</th>
-                <th className="py-3 px-4 font-medium text-zinc-400">Company</th>
-                <th className="py-3 px-4 font-medium text-zinc-400">Status</th>
-                <th className="py-3 px-4 font-medium text-zinc-400">Score</th>
-                <th className="py-3 px-4 font-medium text-zinc-400">Source</th>
-                <th className="py-3 px-4 font-medium text-zinc-400">Created</th>
-                <th className="py-3 px-4 font-medium text-zinc-400 text-right">
+                <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">Name</th>
+                <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">Email</th>
+                <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">Phone</th>
+                <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">Company</th>
+                <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">Status</th>
+                <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">Score</th>
+                <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">Source</th>
+                <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">Created</th>
+                <th className="py-3 px-4 font-medium text-[var(--text-tertiary)] text-right">
                   Actions
                 </th>
               </tr>
@@ -383,23 +383,23 @@ export default function LeadsPage() {
                 return (
                   <tr
                     key={lead.id}
-                    className="border-t border-zinc-800/80 hover:bg-zinc-900/80 transition-colors"
+                    className="border-t border-[var(--border-default)]/80 hover:bg-[var(--bg-card)]/80 transition-colors"
                   >
                     <td className="py-3 px-4">
                       <Link
                         href={`/dashboard/leads/${lead.id}`}
-                        className="text-sm font-medium text-zinc-100 hover:text-emerald-300"
+                        className="text-sm font-medium text-[var(--text-primary)] hover:text-emerald-300"
                       >
                         {lead.name}
                       </Link>
                     </td>
-                    <td className="py-3 px-4 text-xs text-zinc-300">
+                    <td className="py-3 px-4 text-xs text-[var(--text-secondary)]">
                       {lead.email ?? "—"}
                     </td>
-                    <td className="py-3 px-4 text-xs text-zinc-300">
+                    <td className="py-3 px-4 text-xs text-[var(--text-secondary)]">
                       {lead.phone ?? "—"}
                     </td>
-                    <td className="py-3 px-4 text-xs text-zinc-300">
+                    <td className="py-3 px-4 text-xs text-[var(--text-secondary)]">
                       {lead.company ?? "—"}
                     </td>
                     <td className="py-3 px-4">
@@ -417,23 +417,23 @@ export default function LeadsPage() {
                         {lead.score}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-xs text-zinc-300">
+                    <td className="py-3 px-4 text-xs text-[var(--text-secondary)]">
                       {sourceLabel(lead.source)}
                     </td>
-                    <td className="py-3 px-4 text-xs text-zinc-400">
+                    <td className="py-3 px-4 text-xs text-[var(--text-tertiary)]">
                       {created.toLocaleDateString()}
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex items-center justify-end gap-2 text-xs">
                         <Link
                           href={`/dashboard/messages?lead=${lead.id}`}
-                          className="px-3 py-1.5 rounded-full border border-zinc-700 text-zinc-200 hover:bg-zinc-800 transition-colors"
+                          className="px-3 py-1.5 rounded-full border border-[var(--border-default)] text-[var(--text-primary)] hover:bg-[var(--bg-inset)] transition-colors"
                         >
                           Message
                         </Link>
                         <Link
                           href={`/dashboard/calendar?lead=${lead.id}`}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full border border-zinc-700 text-zinc-200 hover:bg-zinc-800 transition-colors"
+                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full border border-[var(--border-default)] text-[var(--text-primary)] hover:bg-[var(--bg-inset)] transition-colors"
                         >
                           <Calendar className="w-3 h-3" />
                           Schedule
@@ -442,24 +442,24 @@ export default function LeadsPage() {
                           <button
                             type="button"
                             onClick={() => setActionMenu(actionMenu === lead.id ? null : lead.id)}
-                            className="px-3 py-1.5 rounded-full border border-zinc-700 text-zinc-200 hover:bg-zinc-800 transition-colors"
+                            className="px-3 py-1.5 rounded-full border border-[var(--border-default)] text-[var(--text-primary)] hover:bg-[var(--bg-inset)] transition-colors"
                           >
                             More…
                           </button>
                           {actionMenu === lead.id && (
-                            <div className="absolute right-0 top-full mt-1 z-20 w-40 rounded-xl border border-zinc-700 bg-zinc-900 shadow-xl py-1">
-                              <Link href={`/dashboard/leads/${lead.id}`} className="flex items-center gap-2 px-3 py-2 text-xs text-zinc-200 hover:bg-zinc-800">
+                            <div className="absolute right-0 top-full mt-1 z-20 w-40 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] shadow-xl py-1">
+                              <Link href={`/dashboard/leads/${lead.id}`} className="flex items-center gap-2 px-3 py-2 text-xs text-[var(--text-primary)] hover:bg-[var(--bg-inset)]">
                                 View details
                               </Link>
                               {lead.phone && (
-                                <Link href={`/dashboard/activity?call=${lead.id}`} className="flex items-center gap-2 px-3 py-2 text-xs text-zinc-200 hover:bg-zinc-800">
+                                <Link href={`/dashboard/activity?call=${lead.id}`} className="flex items-center gap-2 px-3 py-2 text-xs text-[var(--text-primary)] hover:bg-[var(--bg-inset)]">
                                   <Phone className="w-3 h-3" /> Call
                                 </Link>
                               )}
                               <button
                                 type="button"
                                 onClick={() => { setActionMenu(null); }}
-                                className="flex items-center gap-2 w-full px-3 py-2 text-xs text-red-400 hover:bg-zinc-800"
+                                className="flex items-center gap-2 w-full px-3 py-2 text-xs text-red-400 hover:bg-[var(--bg-inset)]"
                               >
                                 <Trash2 className="w-3 h-3" /> Archive
                               </button>
@@ -473,21 +473,21 @@ export default function LeadsPage() {
               })}
             </tbody>
           </table>
-          <div className="flex items-center justify-between px-4 py-3 border-t border-zinc-800 text-xs text-zinc-500">
+          <div className="flex items-center justify-between px-4 py-3 border-t border-[var(--border-default)] text-xs text-[var(--text-tertiary)]">
             <span>
               Showing {pageLeads.length} of {filtered.length} leads
             </span>
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                className="px-2 py-1 rounded border border-zinc-800 text-zinc-400 hover:bg-zinc-900"
+                className="px-2 py-1 rounded border border-[var(--border-default)] text-[var(--text-tertiary)] hover:bg-[var(--bg-card)]"
                 disabled
               >
                 Previous
               </button>
               <button
                 type="button"
-                className="px-2 py-1 rounded border border-zinc-800 text-zinc-400 hover:bg-zinc-900"
+                className="px-2 py-1 rounded border border-[var(--border-default)] text-[var(--text-tertiary)] hover:bg-[var(--bg-card)]"
                 disabled
               >
                 Next
@@ -502,33 +502,33 @@ export default function LeadsPage() {
           <div className="w-full max-w-md rounded-2xl border p-6" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>Add New Lead</h3>
-              <button type="button" onClick={() => setShowAddModal(false)} className="text-zinc-500 hover:text-zinc-300">
+              <button type="button" onClick={() => setShowAddModal(false)} className="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="space-y-4">
               <label className="block">
                 <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Name *</span>
-                <input type="text" value={newLeadName} onChange={(e) => setNewLeadName(e.target.value)} className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" placeholder="John Smith" />
+                <input type="text" value={newLeadName} onChange={(e) => setNewLeadName(e.target.value)} className="mt-1.5 w-full rounded-lg border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-1 focus:ring-emerald-500" placeholder="John Smith" />
               </label>
               <label className="block">
                 <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Phone</span>
-                <input type="tel" value={newLeadPhone} onChange={(e) => setNewLeadPhone(e.target.value)} className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" placeholder="+1 (480) 555-0100" />
+                <input type="tel" value={newLeadPhone} onChange={(e) => setNewLeadPhone(e.target.value)} className="mt-1.5 w-full rounded-lg border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-1 focus:ring-emerald-500" placeholder="+1 (480) 555-0100" />
               </label>
               <label className="block">
                 <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Email</span>
-                <input type="email" value={newLeadEmail} onChange={(e) => setNewLeadEmail(e.target.value)} className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" placeholder="john@example.com" />
+                <input type="email" value={newLeadEmail} onChange={(e) => setNewLeadEmail(e.target.value)} className="mt-1.5 w-full rounded-lg border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-1 focus:ring-emerald-500" placeholder="john@example.com" />
               </label>
               <label className="block">
                 <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Company</span>
-                <input type="text" value={newLeadCompany} onChange={(e) => setNewLeadCompany(e.target.value)} className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" placeholder="Acme Corp" />
+                <input type="text" value={newLeadCompany} onChange={(e) => setNewLeadCompany(e.target.value)} className="mt-1.5 w-full rounded-lg border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-1 focus:ring-emerald-500" placeholder="Acme Corp" />
               </label>
             </div>
             <div className="flex items-center gap-3 mt-6">
               <button type="button" onClick={handleCreateLead} disabled={addingLead || !newLeadName.trim()} className="flex-1 rounded-xl bg-emerald-500 text-black font-semibold py-2.5 text-sm hover:bg-emerald-400 transition-colors disabled:opacity-60">
                 {addingLead ? "Creating…" : "Create Lead"}
               </button>
-              <button type="button" onClick={() => setShowAddModal(false)} className="rounded-xl border border-zinc-700 px-4 py-2.5 text-sm text-zinc-300 hover:bg-zinc-800 transition-colors">
+              <button type="button" onClick={() => setShowAddModal(false)} className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors">
                 Cancel
               </button>
             </div>

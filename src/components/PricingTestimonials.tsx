@@ -82,7 +82,7 @@ export function PricingTestimonials() {
         {TESTIMONIALS.map((t) => (
           <div
             key={t.name}
-            className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 flex flex-col hover:border-white/20 transition-all"
+            className="rounded-2xl border border-[var(--border-default)] bg-white/[0.02] p-6 flex flex-col hover:border-[var(--border-default)] transition-all"
           >
             {/* Stars */}
             <div className="flex gap-0.5 mb-3">
@@ -104,14 +104,14 @@ export function PricingTestimonials() {
 
             {/* Author */}
             <div className="flex items-center gap-3 pt-4 border-t border-white/5">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-500/30 to-blue-500/30 flex items-center justify-center text-xs font-bold text-white/80 border border-white/10">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-500/30 to-blue-500/30 flex items-center justify-center text-xs font-bold text-white/80 border border-[var(--border-default)]">
                 {t.avatar}
               </div>
               <div className="flex-1">
                 <p className="text-sm font-semibold text-white/90">{t.name}</p>
-                <p className="text-xs text-white/40">{t.role}, {t.company}</p>
+                <p className="text-xs text-[var(--text-tertiary)]">{t.role}, {t.company}</p>
               </div>
-              <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-white/5 text-white/40 border border-white/10">
+              <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-white/5 text-[var(--text-tertiary)] border border-[var(--border-default)]">
                 {t.plan}
               </span>
             </div>

@@ -188,7 +188,7 @@ function ApiKeysTab({
                   </button>
                 </td>
                 <td className="py-3 px-4">
-                  <span className="inline-flex px-2 py-0.5 rounded-md text-[10px] font-medium bg-zinc-700 text-[var(--text-secondary)]">
+                  <span className="inline-flex px-2 py-0.5 rounded-md text-[10px] font-medium bg-[var(--bg-inset)] text-[var(--text-secondary)]">
                     {key.permission === "admin" ? t("permissionAdmin") : key.permission === "read_write" ? t("permissionReadWrite") : t("permissionReadOnly")}
                   </span>
                 </td>
@@ -409,7 +409,7 @@ function WebhooksTab({
       <div className="flex justify-end gap-2">
         <a
           href="/app/developer/webhooks"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[var(--border-medium)] text-[var(--text-secondary)] text-sm font-medium hover:text-[var(--text-primary)] hover:border-zinc-500"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-[var(--border-medium)] text-[var(--text-secondary)] text-sm font-medium hover:text-[var(--text-primary)] hover:border-[var(--border-default)]"
         >
           {t("manageWebhooks")}
         </a>
@@ -455,7 +455,7 @@ function WebhooksTab({
                     <div key={d.id} className="flex items-center justify-between gap-2 py-2 border-b border-[var(--border-default)]/80 last:border-0">
                       <div>
                         <span className="text-xs text-[var(--text-tertiary)]">{d.eventType}</span>
-                        <span className="text-[10px] text-zinc-600 ml-2">{formatRelative(d.timestamp, t)}</span>
+                        <span className="text-[10px] text-[var(--text-tertiary)] ml-2">{formatRelative(d.timestamp, t)}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className={`text-xs font-mono ${d.statusCode === 200 ? "text-emerald-400" : "text-red-400"}`}>{d.statusCode}</span>
@@ -564,7 +564,7 @@ function EventLogTab({ events, kindFilter, statusFilter, onKindFilter, onStatusF
             onClick={() => onKindFilter(k === "all" ? "all" : k)}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium ${
               kindFilter === k
-                ? "bg-zinc-700 text-[var(--text-primary)]"
+                ? "bg-[var(--bg-inset)] text-[var(--text-primary)]"
                 : "bg-[var(--bg-card)]/50 text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
             }`}
           >
@@ -579,7 +579,7 @@ function EventLogTab({ events, kindFilter, statusFilter, onKindFilter, onStatusF
             onClick={() => onStatusFilter(s === "all" ? "all" : s)}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium ${
               statusFilter === s
-                ? "bg-zinc-700 text-[var(--text-primary)]"
+                ? "bg-[var(--bg-inset)] text-[var(--text-primary)]"
                 : "bg-[var(--bg-card)]/50 text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
             }`}
           >
@@ -626,7 +626,7 @@ function EventLogTab({ events, kindFilter, statusFilter, onKindFilter, onStatusF
             </div>
             <p className="text-sm text-[var(--text-secondary)]">{row.kind === "api_call" ? t("apiCall") : t("webhookDelivery")}</p>
             <p className="font-mono text-xs text-[var(--text-secondary)] truncate">{row.kind === "api_call" ? `${row.method} ${row.endpoint}` : row.webhookUrl}</p>
-            <p className="text-[10px] text-zinc-600 mt-1">{row.responseTimeMs}ms</p>
+            <p className="text-[10px] text-[var(--text-tertiary)] mt-1">{row.responseTimeMs}ms</p>
           </div>
         ))}
       </div>

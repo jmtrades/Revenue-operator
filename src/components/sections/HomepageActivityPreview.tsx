@@ -12,15 +12,15 @@ const CARDS = [
 const CARD_STYLES: Record<string, { border: string; badge: string }> = {
   lead: {
     border: "border-l-blue-500",
-    badge: "bg-zinc-900/40 text-blue-300 border-blue-500/30",
+    badge: "bg-[var(--bg-card)]/40 text-blue-300 border-blue-500/30",
   },
   appointment: {
     border: "border-l-green-500",
-    badge: "bg-zinc-900/40 text-green-300 border-green-500/30",
+    badge: "bg-[var(--bg-card)]/40 text-green-300 border-green-500/30",
   },
   "follow-up": {
     border: "border-l-purple-500",
-    badge: "bg-zinc-900/40 text-purple-300 border-purple-500/30",
+    badge: "bg-[var(--bg-card)]/40 text-purple-300 border-purple-500/30",
   },
 };
 
@@ -75,7 +75,7 @@ export function HomepageActivityPreview() {
         </h3>
         <ul className="space-y-3">
           {CARDS.map((card, i) => {
-            const style = CARD_STYLES[card.type] ?? { border: "border-l-zinc-500", badge: "bg-zinc-500/10 text-zinc-400 border-zinc-500/20" };
+            const style = CARD_STYLES[card.type] ?? { border: "border-l-zinc-500", badge: "bg-[var(--bg-inset)]/10 text-[var(--text-tertiary)] border-[var(--border-default)]/20" };
             const outcomeColor =
               card.type === "lead"
                 ? "text-blue-400"
@@ -85,7 +85,7 @@ export function HomepageActivityPreview() {
             return (
               <li
                 key={card.id}
-                className={`rounded-xl border-l-[3px] overflow-hidden transition-all duration-300 bg-zinc-900/80 border border-zinc-800/50 ${style.border} ${
+                className={`rounded-xl border-l-[3px] overflow-hidden transition-all duration-300 bg-[var(--bg-card)]/80 border border-[var(--border-default)]/50 ${style.border} ${
                   visible.includes(i) ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
                 }`}
                 style={{
@@ -95,13 +95,13 @@ export function HomepageActivityPreview() {
                 <div className="p-3 flex items-start justify-between gap-2">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-[10px] text-zinc-500">{card.time}</span>
+                      <span className="text-[10px] text-[var(--text-tertiary)]">{card.time}</span>
                       <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${style.badge}`}>
                         {typeLabels[card.type]}
                       </span>
                     </div>
                     <p className="text-sm font-semibold text-white mt-1 truncate">{card.name}</p>
-                    <p className="text-xs text-zinc-500 truncate mt-0.5">{t(`cards.${card.id}.summary`)}</p>
+                    <p className="text-xs text-[var(--text-tertiary)] truncate mt-0.5">{t(`cards.${card.id}.summary`)}</p>
                   </div>
                   <span className={`text-xs ${outcomeColor} shrink-0 font-medium`}>
                     {t(`cards.${card.id}.outcome`)}

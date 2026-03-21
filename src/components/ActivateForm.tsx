@@ -189,7 +189,7 @@ export function ActivateForm() {
           </div>
         </div>
         <h2 className="text-xl font-bold text-white mb-3">{t("welcomeAboard")}</h2>
-        <p className="text-sm mb-6 text-zinc-400">
+        <p className="text-sm mb-6 text-[var(--text-tertiary)]">
           {t("aiReady")}
         </p>
         <button
@@ -199,7 +199,7 @@ export function ActivateForm() {
         >
           {t("setUpAgent")}
         </button>
-        <p className="text-xs mt-4 text-zinc-500">
+        <p className="text-xs mt-4 text-[var(--text-tertiary)]">
           {t("takes2Min")}
         </p>
       </div>
@@ -209,7 +209,7 @@ export function ActivateForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label htmlFor="name" className="block text-xs font-medium mb-1.5 text-zinc-400">
+        <label htmlFor="name" className="block text-xs font-medium mb-1.5 text-[var(--text-tertiary)]">
           {t("formName")}
         </label>
         <input
@@ -222,7 +222,7 @@ export function ActivateForm() {
         />
       </div>
       <div>
-        <label htmlFor="business_name" className="block text-xs font-medium mb-1.5 text-zinc-400">
+        <label htmlFor="business_name" className="block text-xs font-medium mb-1.5 text-[var(--text-tertiary)]">
           {t("formBusinessName")}
         </label>
         <input
@@ -235,7 +235,7 @@ export function ActivateForm() {
         />
       </div>
       <div>
-        <label htmlFor="email" className="block text-xs font-medium mb-1.5 text-zinc-400">
+        <label htmlFor="email" className="block text-xs font-medium mb-1.5 text-[var(--text-tertiary)]">
           {t("formEmail")}
         </label>
         <input
@@ -249,7 +249,7 @@ export function ActivateForm() {
         />
       </div>
       <div>
-        <label htmlFor="phone" className="block text-xs font-medium mb-1.5 text-zinc-400">
+        <label htmlFor="phone" className="block text-xs font-medium mb-1.5 text-[var(--text-tertiary)]">
           {t("formPhone")}
         </label>
         <input
@@ -262,10 +262,10 @@ export function ActivateForm() {
         />
       </div>
       <div>
-        <label htmlFor="website" className="block text-xs font-medium mb-1.5 text-zinc-400">
+        <label htmlFor="website" className="block text-xs font-medium mb-1.5 text-[var(--text-tertiary)]">
           {t("formWebsite")}
         </label>
-        <p className="text-[11px] mb-1 text-zinc-600">{t("formWebsiteHint")}</p>
+        <p className="text-[11px] mb-1 text-[var(--text-tertiary)]">{t("formWebsiteHint")}</p>
         <input
           id="website"
           type="url"
@@ -276,7 +276,7 @@ export function ActivateForm() {
         />
       </div>
       <div>
-        <span className="block text-xs font-medium mb-2 text-zinc-400">{t("formBusinessType")}</span>
+        <span className="block text-xs font-medium mb-2 text-[var(--text-tertiary)]">{t("formBusinessType")}</span>
         <div className="flex flex-wrap gap-2">
           {businessTypeChips.map(({ value, label }) => (
             <button
@@ -286,7 +286,7 @@ export function ActivateForm() {
               className={`px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${
                 businessType === value
                   ? "bg-white/10 border-white text-white"
-                  : "bg-zinc-800/50 border-zinc-700 text-zinc-400 hover:border-zinc-500"
+                  : "bg-[var(--bg-inset)]/50 border-[var(--border-default)] text-[var(--text-tertiary)] hover:border-[var(--border-default)]"
               }`}
             >
               {label}
@@ -302,17 +302,17 @@ export function ActivateForm() {
       >
         {submitting ? t("creatingAccount") : t("getStartedFree")}
       </button>
-      <p className="text-xs text-center mt-2 text-zinc-500">
+      <p className="text-xs text-center mt-2 text-[var(--text-tertiary)]">
         {t("noCardRequired")}
       </p>
-      <p className="text-sm text-center text-zinc-400">
+      <p className="text-sm text-center text-[var(--text-tertiary)]">
         {t("alreadyHaveAccount")}{" "}
         <Link href="/sign-in" className="underline">
           {t("signInLink")}
         </Link>
       </p>
       {submitting && submitMessage && (
-        <p className="text-sm text-center mt-2 text-zinc-500" aria-live="polite">
+        <p className="text-sm text-center mt-2 text-[var(--text-tertiary)]" aria-live="polite">
           {submitMessage}
         </p>
       )}
@@ -328,7 +328,7 @@ export function ActivateForm() {
           </button>
         </div>
       )}
-      <p className="text-xs mt-6 text-center text-zinc-600">
+      <p className="text-xs mt-6 text-center text-[var(--text-tertiary)]">
         {t("bySigningUp")}{" "}
         <Link href="/terms" className="underline">
           {t("terms")}

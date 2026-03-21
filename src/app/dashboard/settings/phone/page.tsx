@@ -163,17 +163,17 @@ export default function SettingsPhonePage() {
           {numbers.map((num) => (
             <div
               key={num.id}
-              className="rounded-xl border p-5 transition-colors hover:border-zinc-600"
+              className="rounded-xl border p-5 transition-colors hover:border-[var(--border-default)]"
               style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4">
                   <div
                     className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                      num.status === "active" ? "bg-emerald-500/10" : "bg-zinc-800"
+                      num.status === "active" ? "bg-emerald-500/10" : "bg-[var(--bg-inset)]"
                     }`}
                   >
-                    <Phone className={`w-5 h-5 ${num.status === "active" ? "text-emerald-400" : "text-zinc-500"}`} />
+                    <Phone className={`w-5 h-5 ${num.status === "active" ? "text-emerald-400" : "text-[var(--text-tertiary)]"}`} />
                   </div>
                   <div>
                     <div className="flex items-center gap-2 mb-1">
@@ -190,7 +190,7 @@ export default function SettingsPhonePage() {
                         className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] ${
                           num.status === "active"
                             ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                            : "bg-zinc-800 text-zinc-400 border-zinc-700"
+                            : "bg-[var(--bg-inset)] text-[var(--text-tertiary)] border-[var(--border-default)]"
                         }`}
                       >
                         {num.status === "active" ? (
@@ -225,7 +225,7 @@ export default function SettingsPhonePage() {
                     <button
                       type="button"
                       onClick={() => handleSetDefault(num.id)}
-                      className="inline-flex items-center gap-1 rounded-lg border border-zinc-700 px-2.5 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800 transition-colors"
+                      className="inline-flex items-center gap-1 rounded-lg border border-[var(--border-default)] px-2.5 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors"
                     >
                       <Star className="w-3 h-3" />
                       Set Default
@@ -234,7 +234,7 @@ export default function SettingsPhonePage() {
                   <button
                     type="button"
                     onClick={() => handleToggleStatus(num.id)}
-                    className="inline-flex items-center gap-1 rounded-lg border border-zinc-700 px-2.5 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800 transition-colors"
+                    className="inline-flex items-center gap-1 rounded-lg border border-[var(--border-default)] px-2.5 py-1.5 text-xs text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors"
                   >
                     {num.status === "active" ? "Deactivate" : "Activate"}
                   </button>
@@ -270,7 +270,7 @@ export default function SettingsPhonePage() {
           </div>
           <Link
             href="/dashboard/settings/call-rules"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 px-3 py-1.5 text-sm text-zinc-300 hover:bg-zinc-800 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-default)] px-3 py-1.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors"
           >
             <Edit3 className="w-4 h-4" />
             Configure
@@ -289,7 +289,7 @@ export default function SettingsPhonePage() {
               <h3 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>
                 Provision New Number
               </h3>
-              <button type="button" onClick={() => setShowAddModal(false)} className="text-zinc-500 hover:text-zinc-300">
+              <button type="button" onClick={() => setShowAddModal(false)} className="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -301,7 +301,7 @@ export default function SettingsPhonePage() {
                   type="text"
                   value={newLabel}
                   onChange={(e) => setNewLabel(e.target.value)}
-                  className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="mt-1.5 w-full rounded-lg border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   placeholder="e.g., After Hours Line"
                 />
               </label>
@@ -313,7 +313,7 @@ export default function SettingsPhonePage() {
                   type="text"
                   value={newAreaCode}
                   onChange={(e) => setNewAreaCode(e.target.value.replace(/\D/g, "").slice(0, 3))}
-                  className="mt-1.5 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  className="mt-1.5 w-full rounded-lg border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   placeholder="480"
                   maxLength={3}
                 />
@@ -342,7 +342,7 @@ export default function SettingsPhonePage() {
               <button
                 type="button"
                 onClick={() => setShowAddModal(false)}
-                className="rounded-xl border border-zinc-700 px-4 py-2.5 text-sm text-zinc-300 hover:bg-zinc-800 transition-colors"
+                className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors"
               >
                 Cancel
               </button>

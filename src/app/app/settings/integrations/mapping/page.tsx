@@ -208,7 +208,7 @@ export default function IntegrationsMappingPage() {
                   <button
                     type="button"
                     onClick={() => removeMapping(index)}
-                    className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-red-400 hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-zinc-500"
+                    className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-red-400 hover:bg-[var(--bg-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
                     aria-label="Remove mapping"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -220,14 +220,14 @@ export default function IntegrationsMappingPage() {
               <button
                 type="button"
                 onClick={addMapping}
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-zinc-500 transition-colors"
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)] transition-colors"
               >
                 <Plus className="w-4 h-4" /> {tSettings("integrations.addMapping")}
               </button>
               <button
                 type="button"
                 onClick={loadDefaults}
-                className="inline-flex items-center gap-2 ml-2 px-3 py-2 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-zinc-500 transition-colors"
+                className="inline-flex items-center gap-2 ml-2 px-3 py-2 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)] transition-colors"
               >
                 <RotateCcw className="w-4 h-4" /> {tSettings("integrations.loadDefaults")}
               </button>
@@ -238,7 +238,7 @@ export default function IntegrationsMappingPage() {
             <button
               type="button"
               onClick={handleTest}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-zinc-500 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)] transition-colors"
             >
               <Play className="w-4 h-4" /> {tSettings("integrations.testWithSampleData")}
             </button>

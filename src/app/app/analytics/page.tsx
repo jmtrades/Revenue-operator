@@ -680,7 +680,7 @@ export default function AppAnalyticsPage() {
                 if (!hasOb) {
                   return (
                     <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 text-center">
-                      <Send className="w-10 h-10 text-zinc-600 mx-auto mb-3" aria-hidden />
+                      <Send className="w-10 h-10 text-[var(--text-tertiary)] mx-auto mb-3" aria-hidden />
                       <p className="text-sm text-[var(--text-secondary)] mb-4">{t("analytics.outboundTab.empty")}</p>
                       <Link
                         href="/app/campaigns"
@@ -763,7 +763,7 @@ export default function AppAnalyticsPage() {
       )}
 
       {scope !== "outbound" && !loading && (
-        <div className="bg-[var(--bg-surface)] border border-white/[0.06] rounded-2xl p-5 mb-6">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-5 mb-6">
           <div className="flex items-center gap-2 mb-3">
             <Sparkles className="w-4 h-4 text-[var(--accent-primary)]" />
             <h3 className="text-sm font-medium text-[var(--text-primary)]">{t("analytics.periodSummary.title")}</h3>
@@ -798,7 +798,7 @@ export default function AppAnalyticsPage() {
       {error && <p className="text-sm text-[var(--accent-red)] mb-4" role="alert">{error}</p>}
       {!hasData && !loading && !error && (
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 mb-6 text-center">
-          <BarChart3 className="w-12 h-12 text-zinc-600 mx-auto mb-3" aria-hidden />
+          <BarChart3 className="w-12 h-12 text-[var(--text-tertiary)] mx-auto mb-3" aria-hidden />
           <p className="text-sm font-medium text-[var(--text-secondary)] mb-1">Analytics appear after your first calls</p>
           <p className="text-xs text-[var(--text-secondary)] mb-4">Make a test call to unlock conversion and revenue insights.</p>
         </div>

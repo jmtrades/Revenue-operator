@@ -258,7 +258,7 @@ export default function AgentVoiceTestPage() {
                   type="button"
                   disabled={playingId !== null}
                   onClick={() => void handlePlay(voice)}
-                  className="p-2 rounded-lg bg-[var(--bg-hover)] text-[var(--text-primary)] hover:bg-white/10 disabled:opacity-50 shrink-0"
+                  className="p-2 rounded-lg bg-[var(--bg-hover)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] disabled:opacity-50 shrink-0"
                   aria-label={`Play ${voice.name}`}
                 >
                   {playingId === voice.id ? (

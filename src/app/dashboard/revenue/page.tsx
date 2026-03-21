@@ -123,8 +123,8 @@ export default function RevenuePage() {
 
   const sourceBreakdown = useMemo(() => {
     const sources = [
-      { name: "Inbound Calls", value: totals.inbound, icon: Phone, color: "text-blue-400", bg: "bg-zinc-900/60" },
-      { name: "Follow-Up Sequences", value: totals.followUps, icon: MessageSquare, color: "text-purple-400", bg: "bg-zinc-900/60" },
+      { name: "Inbound Calls", value: totals.inbound, icon: Phone, color: "text-blue-400", bg: "bg-[var(--bg-card)]/60" },
+      { name: "Follow-Up Sequences", value: totals.followUps, icon: MessageSquare, color: "text-purple-400", bg: "bg-[var(--bg-card)]/60" },
       { name: "Outbound Campaigns", value: totals.outbound, icon: Megaphone, color: "text-amber-400", bg: "bg-amber-500/10" },
       { name: "No-Show Recovery", value: totals.noShowRecovery, icon: Calendar, color: "text-emerald-400", bg: "bg-emerald-500/10" },
     ];
@@ -175,18 +175,18 @@ export default function RevenuePage() {
             <select
               value={period}
               onChange={(e) => setPeriod(e.target.value as Period)}
-              className="appearance-none rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 pr-8 text-sm text-zinc-100 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="appearance-none rounded-lg border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-2 pr-8 text-sm text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-emerald-500"
             >
               <option value="7d">Last 7 days</option>
               <option value="30d">Last 30 days</option>
               <option value="90d">Last 90 days</option>
               <option value="all">All time</option>
             </select>
-            <ChevronDown className="absolute right-2 top-2.5 w-4 h-4 text-zinc-500 pointer-events-none" />
+            <ChevronDown className="absolute right-2 top-2.5 w-4 h-4 text-[var(--text-tertiary)] pointer-events-none" />
           </div>
           <button
             type="button"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-800 px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-800 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-default)] px-3 py-2 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors"
           >
             <Download className="w-4 h-4" />
             Export
@@ -241,7 +241,7 @@ export default function RevenuePage() {
                 <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
                   {source.pct}% of total
                 </span>
-                <div className="w-16 h-1.5 rounded-full bg-zinc-800 overflow-hidden">
+                <div className="w-16 h-1.5 rounded-full bg-[var(--bg-inset)] overflow-hidden">
                   <div
                     className={`h-full rounded-full ${source.color.replace("text-", "bg-")}`}
                     style={{ width: `${source.pct}%` }}
@@ -276,8 +276,8 @@ export default function RevenuePage() {
                   style={{ height: `${heightPct}%` }}
                 />
                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-10">
-                  <div className="bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-xs whitespace-nowrap shadow-lg">
-                    <p className="font-medium text-zinc-100">{formatShortDate(d.date)}</p>
+                  <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-lg px-3 py-2 text-xs whitespace-nowrap shadow-lg">
+                    <p className="font-medium text-[var(--text-primary)]">{formatShortDate(d.date)}</p>
                     <p className="text-emerald-400 font-semibold">${dayTotal.toLocaleString()}</p>
                   </div>
                 </div>
@@ -307,7 +307,7 @@ export default function RevenuePage() {
                 <div className="flex items-center gap-3">
                   <span
                     className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                      idx === 0 ? "bg-emerald-500/20 text-emerald-400" : "bg-zinc-800 text-zinc-400"
+                      idx === 0 ? "bg-emerald-500/20 text-emerald-400" : "bg-[var(--bg-inset)] text-[var(--text-tertiary)]"
                     }`}
                   >
                     {idx + 1}
@@ -334,17 +334,17 @@ export default function RevenuePage() {
           </h3>
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-zinc-800">
-                <th className="text-left py-2 font-medium text-zinc-400">Source</th>
-                <th className="text-right py-2 font-medium text-zinc-400">Revenue</th>
-                <th className="text-right py-2 font-medium text-zinc-400">% Total</th>
+              <tr className="border-b border-[var(--border-default)]">
+                <th className="text-left py-2 font-medium text-[var(--text-tertiary)]">Source</th>
+                <th className="text-right py-2 font-medium text-[var(--text-tertiary)]">Revenue</th>
+                <th className="text-right py-2 font-medium text-[var(--text-tertiary)]">% Total</th>
               </tr>
             </thead>
             <tbody>
               {sourceBreakdown.map((source) => {
                 const Icon = source.icon;
                 return (
-                  <tr key={source.name} className="border-b border-zinc-800/50">
+                  <tr key={source.name} className="border-b border-[var(--border-default)]/50">
                     <td className="py-3">
                       <div className="flex items-center gap-2">
                         <Icon className={`w-4 h-4 ${source.color}`} />

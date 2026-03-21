@@ -236,7 +236,7 @@ export default function AppointmentsPage() {
           </div>
         ) : (
           view === "calendar" && (
-            <div className="bg-[var(--bg-base)] border border-white/[0.06] rounded-2xl p-6">
+            <div className="bg-[var(--bg-base)] border border-[var(--border-default)] rounded-2xl p-6">
               <div className="flex items-center justify-between mb-4">
                 <button
                   type="button"
@@ -248,11 +248,11 @@ export default function AppointmentsPage() {
                       ),
                     )
                   }
-                  className="p-2 rounded-lg hover:bg-white/[0.04] text-[var(--text-tertiary)] hover:text-zinc-100 transition-colors"
+                  className="p-2 rounded-lg hover:bg-[var(--bg-inset)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
-                <h3 className="text-sm font-medium text-zinc-100">
+                <h3 className="text-sm font-medium text-[var(--text-primary)]">
                   {currentMonth.toLocaleDateString(undefined, {
                     month: "long",
                     year: "numeric",
@@ -268,7 +268,7 @@ export default function AppointmentsPage() {
                       ),
                     )
                   }
-                  className="p-2 rounded-lg hover:bg-white/[0.04] text-[var(--text-tertiary)] hover:text-zinc-100 transition-colors"
+                  className="p-2 rounded-lg hover:bg-[var(--bg-inset)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
                 >
                   <ChevronRight className="w-5 h-5" />
                 </button>
@@ -299,13 +299,13 @@ export default function AppointmentsPage() {
                       className={[
                         "aspect-square rounded-xl flex flex-col items-center justify-center gap-1 text-sm transition-all",
                         isSelected
-                          ? "bg-white/10 border border-white/20"
-                          : "hover:bg-white/[0.04]",
+                          ? "bg-white/10 border border-[var(--border-default)]"
+                          : "hover:bg-[var(--bg-inset)]",
                         !isSelected && isToday
                           ? "border border-white/[0.12]"
                           : "",
                         dayAppts.length > 0
-                          ? "text-zinc-100"
+                          ? "text-[var(--text-primary)]"
                           : "text-[var(--text-secondary)]",
                       ]
                         .filter(Boolean)
@@ -327,8 +327,8 @@ export default function AppointmentsPage() {
                 })}
               </div>
               {selectedDay && (
-                <div className="mt-4 pt-4 border-t border-white/[0.06]">
-                  <h4 className="text-sm font-medium text-zinc-100 mb-3">
+                <div className="mt-4 pt-4 border-t border-[var(--border-default)]">
+                  <h4 className="text-sm font-medium text-[var(--text-primary)] mb-3">
                     {selectedDay.toLocaleDateString(undefined, {
                       weekday: "long",
                       month: "long",
@@ -342,9 +342,9 @@ export default function AppointmentsPage() {
                       {getAppointmentsForDay(selectedDay).map((appt) => (
                         <div
                           key={appt.id}
-                          className="bg-black border border-white/[0.06] rounded-xl p-3"
+                          className="bg-black border border-[var(--border-default)] rounded-xl p-3"
                         >
-                          <p className="text-sm text-zinc-100">
+                          <p className="text-sm text-[var(--text-primary)]">
                             {appt.type || appt.contactName}
                           </p>
                           <p className="text-xs text-[var(--text-secondary)] mt-0.5">

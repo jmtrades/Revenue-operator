@@ -93,7 +93,7 @@ function VoiceCard({
       aria-label={`${voice.name}, ${voice.description}. ${
         selected ? selectedLabel : selectThisVoiceLabel
       }`}
-      className={`relative cursor-pointer rounded-xl p-3 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
+      className={`relative cursor-pointer rounded-xl p-3 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
         selected
           ? "border-2 border-white bg-[var(--bg-hover)] ring-1 ring-white/20"
           : "border border-[var(--border-default)] bg-[var(--bg-card)] hover:border-[var(--border-medium)]"
@@ -106,7 +106,7 @@ function VoiceCard({
           onPreview();
         }}
         aria-label={previewAriaLabel}
-        className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-[var(--bg-hover)] transition-colors hover:bg-white/[0.12] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+        className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-[var(--bg-hover)] transition-colors hover:bg-white/[0.12] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
       >
         {previewing ? (
           <Square className="h-3 w-3 fill-current text-[var(--text-secondary)]" />
@@ -117,7 +117,7 @@ function VoiceCard({
       <p className="text-sm font-medium text-[var(--text-primary)]">
         {voice.name}
       </p>
-      <p className="mt-0.5 text-xs text-white/40">{voice.description}</p>
+      <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">{voice.description}</p>
       <p className="mt-0.5 text-xs text-[var(--text-tertiary)]">
         {voice.accent}
       </p>

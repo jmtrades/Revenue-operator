@@ -73,14 +73,14 @@ export function HomepageTestCallCTA() {
 
           <form
             onSubmit={onSubmit}
-            className="mt-8 rounded-2xl border border-white/[0.08] bg-zinc-900/50 p-4 sm:p-5"
+            className="mt-8 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)]/50 p-4 sm:p-5"
           >
             <div className="flex flex-col sm:flex-row gap-3 items-stretch">
               <label className="sr-only" htmlFor="test-call-phone">
                 Phone number
               </label>
-              <div className="flex items-center gap-2 rounded-xl border border-white/[0.08] bg-black/20 px-4 py-3 flex-1">
-                <Phone className="h-4 w-4 text-white/50" />
+              <div className="flex items-center gap-2 rounded-xl border border-[var(--border-default)] bg-black/20 px-4 py-3 flex-1">
+                <Phone className="h-4 w-4 text-[var(--text-tertiary)]" />
                 <input
                   id="test-call-phone"
                   value={phone}
@@ -88,7 +88,7 @@ export function HomepageTestCallCTA() {
                   placeholder="Your phone number"
                   inputMode="tel"
                   autoComplete="tel"
-                  className="w-full bg-transparent outline-none text-sm text-white placeholder:text-white/30"
+                  className="w-full bg-transparent outline-none text-sm text-white placeholder:text-[var(--text-tertiary)]"
                 />
               </div>
               <button

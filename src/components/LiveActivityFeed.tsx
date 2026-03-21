@@ -95,9 +95,9 @@ export function LiveActivityFeed() {
   }, []);
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-black/30 p-5 max-w-sm w-full">
+    <div className="rounded-2xl border border-[var(--border-default)] bg-black/30 p-5 max-w-sm w-full">
       <div className="flex items-center gap-2 mb-4">
-        <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">
+        <span className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
           What businesses are doing with Recall Touch
         </span>
       </div>
@@ -127,7 +127,7 @@ export function LiveActivityFeed() {
                   <span className="font-medium text-white/90">{item.activity.industry}</span>{" "}
                   {item.activity.verb}
                 </p>
-                <p className="text-[10px] text-white/30 mt-0.5 flex items-center gap-1">
+                <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5 flex items-center gap-1">
                   <Clock className="w-2.5 h-2.5" />
                   {item.time} · {item.activity.location}
                 </p>

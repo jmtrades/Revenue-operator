@@ -15,8 +15,8 @@ const CallSimulator = dynamic(
 function DemoSimulatorLoading() {
   const t = useTranslations("hero");
   return (
-    <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-6 min-h-[280px] flex items-center justify-center">
-      <p className="text-sm text-zinc-500">{t("simulator.loading")}</p>
+    <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]/50 p-6 min-h-[280px] flex items-center justify-center">
+      <p className="text-sm text-[var(--text-tertiary)]">{t("simulator.loading")}</p>
     </div>
   );
 }

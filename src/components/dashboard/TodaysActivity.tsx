@@ -30,7 +30,7 @@ const TodaysActivity = () => {
       label: 'Follow-ups sent',
       value: stats.followUpsSent,
       icon: Calendar,
-      color: 'text-zinc-400',
+      color: 'text-[var(--text-tertiary)]',
     },
     {
       label: 'Appointments booked',

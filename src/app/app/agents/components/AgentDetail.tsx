@@ -187,7 +187,7 @@ export function AgentDetail(props: AgentDetailProps) {
                 void handleStepChange(e.target.value as StepId)
               }
               aria-label={t("setup.jumpAria")}
-              className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500"
+              className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
             >
               {SETUP_STEPS.map((step, i) => (
                 <option key={step.id} value={step.id}>
@@ -217,7 +217,7 @@ export function AgentDetail(props: AgentDetailProps) {
                       ? "Complete your test call to enable Go Live."
                       : undefined
                   }
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
                     active
                       ? "bg-[var(--bg-hover)] border border-[var(--border-medium)]"
                       : "hover:bg-[var(--bg-card)] border border-transparent"
@@ -238,7 +238,7 @@ export function AgentDetail(props: AgentDetailProps) {
                         aria-hidden
                       />
                     ) : (
-                      <span className="text-xs text-white/30">
+                      <span className="text-xs text-[var(--text-tertiary)]">
                         {i + 1}
                       </span>
                     )}
@@ -277,7 +277,7 @@ export function AgentDetail(props: AgentDetailProps) {
             type="button"
             onClick={() => void handleStepChange("identity")}
             aria-label={t("quickActions.editAria")}
-            className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-[var(--text-secondary)] hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-[var(--text-secondary)] hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           >
             {t("quickActions.edit")}
           </button>
@@ -285,7 +285,7 @@ export function AgentDetail(props: AgentDetailProps) {
             type="button"
             onClick={() => void handleStepChange("test")}
             aria-label={t("quickActions.testAria")}
-            className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-[var(--text-secondary)] hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-[var(--text-secondary)] hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           >
             {t("quickActions.test")}
           </button>
@@ -295,7 +295,7 @@ export function AgentDetail(props: AgentDetailProps) {
             aria-label={t("quickActions.goLiveAria")}
             disabled={!testCallCompleted}
             title={!testCallCompleted ? "Complete your test call to enable Go Live." : undefined}
-            className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-[var(--text-secondary)] hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-[var(--text-secondary)] hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {t("quickActions.goLive")}
           </button>
@@ -305,7 +305,7 @@ export function AgentDetail(props: AgentDetailProps) {
             type="button"
             onClick={handleDelete}
             aria-label={t("actions.deleteAria")}
-            className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-[var(--text-secondary)] hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-xs text-[var(--text-secondary)] hover:border-[var(--border-medium)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           >
             {tCommon("delete")}
           </button>
@@ -318,7 +318,7 @@ export function AgentDetail(props: AgentDetailProps) {
                 ? t("actions.savingAria")
                 : t("actions.saveAndSyncAria")
             }
-            className="px-4 py-1.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-xs font-semibold hover:opacity-90 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="px-4 py-1.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-xs font-semibold hover:opacity-90 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           >
             {saving ? tForms("saving") : tCommon("save")}
           </button>
@@ -332,7 +332,7 @@ export function AgentDetail(props: AgentDetailProps) {
         aria-labelledby="agent-step-heading"
       >
         {saving && (
-          <div className="absolute top-3 right-3 text-xs text-white/30">
+          <div className="absolute top-3 right-3 text-xs text-[var(--text-tertiary)]">
             {tForms("saving")}
           </div>
         )}

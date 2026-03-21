@@ -94,7 +94,7 @@ export function LeadDetail({
         <select
           value={lead.status}
           onChange={(e) => onStatusChange(lead.id, e.target.value as LeadStatus)}
-          className="w-full rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-[var(--border-medium)]"
+          className="w-full rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--border-medium)]"
         >
           {STATUS_ORDER.map((s) => (
             <option key={s} value={s}>{getStatusDisplay(s, tRoot)}</option>
@@ -109,7 +109,7 @@ export function LeadDetail({
             <li key={`${item.at}-${item.label}`} className="flex items-start gap-2">
               <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-400" />
               <div>
-                <p className="text-zinc-100">{item.label}</p>
+                <p className="text-[var(--text-primary)]">{item.label}</p>
                 <p className="text-[11px] text-[var(--text-secondary)]">{formatDate(item.at)}</p>
               </div>
             </li>
@@ -118,7 +118,7 @@ export function LeadDetail({
             <li key={call.id} className="flex items-start gap-2">
               <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent-primary)]" />
               <div>
-                <Link href={`/app/calls/${call.id}`} className="text-zinc-100 hover:underline">
+                <Link href={`/app/calls/${call.id}`} className="text-[var(--text-primary)] hover:underline">
                   {t("detail.callPrefix")} {call.call_started_at ? formatDate(call.call_started_at) : ""} {call.outcome ? ` · ${call.outcome}` : ""}
                 </Link>
               </div>
@@ -135,7 +135,7 @@ export function LeadDetail({
           onBlur={(e) => onNotesBlur(lead.id, e.target.value.trim())}
           placeholder={t("detail.notesPlaceholder")}
           rows={3}
-          className="w-full rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-2 text-sm text-zinc-100 placeholder:text-[var(--text-secondary)] focus:outline-none focus:border-[var(--border-medium)] resize-none"
+          className="w-full rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none focus:border-[var(--border-medium)] resize-none"
         />
       </section>
 

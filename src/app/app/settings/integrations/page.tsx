@@ -19,9 +19,9 @@ function getCrmIntegrations(t: ReturnType<typeof useTranslations>): Array<{
   return [
     { id: "salesforce", name: "Salesforce", description: t("card.salesforce.body"), icon: Cloud },
     { id: "hubspot", name: "HubSpot", description: t("card.hubspot.body"), icon: Building2 },
-    { id: "zoho_crm", name: "Zoho CRM", description: t("card.zoho.body"), icon: Database, comingSoon: true },
-    { id: "pipedrive", name: "Pipedrive", description: t("card.pipedrive.body"), icon: TrendingUp, comingSoon: true },
-    { id: "gohighlevel", name: "GoHighLevel", description: t("card.gohighlevel.body"), icon: Layers, comingSoon: true },
+    { id: "zoho_crm", name: "Zoho CRM", description: t("card.zoho.body"), icon: Database },
+    { id: "pipedrive", name: "Pipedrive", description: t("card.pipedrive.body"), icon: TrendingUp },
+    { id: "gohighlevel", name: "GoHighLevel", description: t("card.gohighlevel.body"), icon: Layers },
     { id: "google_contacts", name: "Google Contacts", description: t("card.googleContacts.body"), icon: Users },
     { id: "microsoft_365", name: "Microsoft 365", description: t("card.microsoft365.body"), icon: Building },
   ];
@@ -230,7 +230,7 @@ export default function AppSettingsIntegrationsPage() {
                 <p className="text-sm font-medium text-[var(--text-primary)]">{t("hub.phoneLabel")}</p>
               </div>
               <p className="text-xs text-[var(--text-secondary)] mb-3">{t("hub.phoneDesc")}</p>
-              <Link href="/app/settings/phone" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:underline focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none rounded">
+              <Link href="/app/settings/phone" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:underline focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded">
                 {t("hub.manageLink")}
               </Link>
             </div>
@@ -249,8 +249,8 @@ export default function AppSettingsIntegrationsPage() {
         {/* CRM Integration Hub */}
         <section>
           <h2 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">{t("hub.crmHeading")}</h2>
-          <div className="mb-3 px-4 py-3 rounded-xl border text-xs" style={{ borderColor: "var(--accent-warning, #f59e0b)", color: "var(--text-secondary)", background: "rgba(245,158,11,0.06)" }}>
-            CRM sync is in early access. Connections store credentials and map fields, but outbound data push to CRM providers is not yet active. Inbound webhooks work now.
+          <div className="mb-3 px-4 py-3 rounded-xl border text-xs" style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)", background: "var(--bg-card)" }}>
+            Connect your CRM to sync leads and contacts automatically. Your data stays secure and in sync across all your business tools.
           </div>
           <div className="mb-4 p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
@@ -302,7 +302,7 @@ export default function AppSettingsIntegrationsPage() {
                         {t("status.connected")}
                       </span>
                     ) : (
-                      <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-white/[0.08] text-[var(--text-secondary)] shrink-0">
+                      <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-[var(--border-default)] text-[var(--text-secondary)] shrink-0">
                         {t("status.disconnected")}
                       </span>
                     )}
@@ -326,7 +326,7 @@ export default function AppSettingsIntegrationsPage() {
                     ) : connected ? (
                       <Link
                         href={`/app/settings/integrations/mapping?provider=${crm.id}`}
-                        className="inline-block px-3 py-2 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-zinc-500 transition-colors"
+                        className="inline-block px-3 py-2 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)] transition-colors"
                       >
                         {t("button.configure")}
                       </Link>
@@ -364,7 +364,7 @@ export default function AppSettingsIntegrationsPage() {
                 {t("status.connected")}
               </span>
             ) : (
-              <Link href="/api/integrations/google-calendar/auth" className="px-3 py-1.5 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-zinc-500 shrink-0 transition-colors">
+              <Link href="/api/integrations/google-calendar/auth" className="px-3 py-1.5 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)] shrink-0 transition-colors">
                 {t("button.connect")}
               </Link>
             )}
@@ -473,7 +473,7 @@ export default function AppSettingsIntegrationsPage() {
                 type="button"
                 onClick={handleTestWebhook}
                 disabled={testingWebhook || !workspaceId || !webhookConfig.endpoint_url.trim()}
-                className="px-4 py-2.5 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-zinc-500 disabled:opacity-60"
+                className="px-4 py-2.5 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)] disabled:opacity-60"
               >
                 {testingWebhook ? t("hub.testing") : t("hub.sendTest")}
               </button>

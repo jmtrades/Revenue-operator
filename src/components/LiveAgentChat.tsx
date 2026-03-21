@@ -15,7 +15,7 @@ function getAgents(t: (k: string) => string): Record<AgentId, { id: AgentId; nam
       name: t("liveChat.agents.professional.name"),
       initials: "P",
       pill: t("liveChat.agents.professional.name"),
-      avatarBg: "bg-zinc-600/30 text-zinc-300 border-zinc-500/30",
+      avatarBg: "bg-[var(--bg-inset)]/30 text-[var(--text-secondary)] border-[var(--border-default)]/30",
       greeting: t("liveChat.agents.professional.greeting"),
     },
     alex: {
@@ -23,7 +23,7 @@ function getAgents(t: (k: string) => string): Record<AgentId, { id: AgentId; nam
       name: t("liveChat.agents.friendly.name"),
       initials: "F",
       pill: t("liveChat.agents.friendly.name"),
-      avatarBg: "bg-zinc-600/30 text-zinc-300 border-zinc-500/30",
+      avatarBg: "bg-[var(--bg-inset)]/30 text-[var(--text-secondary)] border-[var(--border-default)]/30",
       greeting: t("liveChat.agents.friendly.greeting"),
     },
     emma: {
@@ -31,7 +31,7 @@ function getAgents(t: (k: string) => string): Record<AgentId, { id: AgentId; nam
       name: t("liveChat.agents.concise.name"),
       initials: "C",
       pill: t("liveChat.agents.concise.name"),
-      avatarBg: "bg-zinc-600/30 text-zinc-300 border-zinc-500/30",
+      avatarBg: "bg-[var(--bg-inset)]/30 text-[var(--text-secondary)] border-[var(--border-default)]/30",
       greeting: t("liveChat.agents.concise.greeting"),
     },
   };
@@ -181,10 +181,10 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
 
   return (
     <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden">
-      <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-zinc-800 bg-zinc-950/40">
+      <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-[var(--border-default)] bg-[var(--bg-base)]/40">
         <div className="flex items-center gap-2 min-w-0">
-          <span className="text-xs font-medium text-zinc-500 shrink-0">Recall Touch</span>
-          <span className="text-zinc-600">·</span>
+          <span className="text-xs font-medium text-[var(--text-tertiary)] shrink-0">Recall Touch</span>
+          <span className="text-[var(--text-tertiary)]">·</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5">
@@ -196,7 +196,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
                   type="button"
                   onClick={() => setAgent(id)}
                   className={`px-3 py-1.5 rounded-full text-[11px] font-semibold border transition-colors ${
-                    active ? "bg-white/10 border-white text-white" : "bg-zinc-900 border-zinc-700 text-zinc-400 hover:border-zinc-500"
+                    active ? "bg-white/10 border-white text-white" : "bg-[var(--bg-card)] border-[var(--border-default)] text-[var(--text-tertiary)] hover:border-[var(--border-default)]"
                   }`}
                   aria-label={t("liveChat.switchAgentTo", { name: agentPills[id] })}
                 >
@@ -215,8 +215,8 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
               <div
                 className={`max-w-[80%] px-3 py-2 text-sm leading-snug ${
                   m.role === "user"
-                    ? "bg-zinc-700/50 text-white rounded-2xl rounded-tr-md"
-                    : "bg-zinc-800/80 text-zinc-100 rounded-2xl rounded-tl-md"
+                    ? "bg-[var(--bg-inset)]/50 text-white rounded-2xl rounded-tr-md"
+                    : "bg-[var(--bg-inset)]/80 text-[var(--text-primary)] rounded-2xl rounded-tl-md"
                 }`}
               >
                 {m.content}
@@ -226,7 +226,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
 
           {loading && (
             <div className="flex justify-start">
-              <div className="bg-zinc-800/80 text-zinc-100 rounded-2xl rounded-tl-md px-3 py-2">
+              <div className="bg-[var(--bg-inset)]/80 text-[var(--text-primary)] rounded-2xl rounded-tl-md px-3 py-2">
                 <div className="flex gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-bounce" />
                   <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 animate-bounce [animation-delay:120ms]" />
@@ -238,7 +238,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
         </div>
       </div>
 
-      <div className="px-4 py-3 border-t border-zinc-800 bg-zinc-950/30">
+      <div className="px-4 py-3 border-t border-[var(--border-default)] bg-[var(--bg-base)]/30">
         {showChips && (
           <div className="flex flex-wrap gap-2 mb-3">
             {suggestions.map((s) => (
@@ -246,7 +246,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
                 key={s}
                 type="button"
                 onClick={() => send(s)}
-                className="bg-zinc-800 border border-zinc-700 rounded-full px-3 py-1 text-xs text-zinc-300 hover:border-zinc-600 transition-colors"
+                className="bg-[var(--bg-inset)] border border-[var(--border-default)] rounded-full px-3 py-1 text-xs text-[var(--text-secondary)] hover:border-[var(--border-default)] transition-colors"
               >
                 {s}
               </button>
@@ -258,7 +258,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
             <button
               type="button"
               onClick={startMic}
-              className="w-10 h-10 rounded-xl border border-zinc-700 text-zinc-300 hover:border-zinc-500 flex items-center justify-center"
+              className="w-10 h-10 rounded-xl border border-[var(--border-default)] text-[var(--text-secondary)] hover:border-[var(--border-default)] flex items-center justify-center"
               aria-label={t("liveChat.voiceInputLabel")}
             >
               <Mic className="h-4 w-4" />
@@ -273,7 +273,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
                 send(input);
               }
             }}
-            className="flex-1 w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white placeholder:text-zinc-600 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 outline-none"
+            className="flex-1 w-full bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl px-4 py-3 text-white placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-default)] focus:ring-1 focus:ring-zinc-600 outline-none"
             placeholder={t("inputPlaceholder")}
             aria-label={t("liveChat.messageInputLabel")}
           />
@@ -289,7 +289,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
         </div>
 
         <div className="mt-2 flex items-center justify-between">
-          <p className="text-[11px] text-zinc-500">
+          <p className="text-[11px] text-[var(--text-tertiary)]">
             {variant === "mini" ? t("liveChat.testHint") : t("liveChat.tryAsking")}
           </p>
           {atLimit && <p className="text-[11px] text-amber-400">{t("liveChat.sessionLimit")}</p>}

@@ -91,7 +91,7 @@ export default function SettingsBillingPage() {
   const tierColor = useMemo(() => {
     switch (_plan.tier) {
       case "business": return "bg-emerald-500/10 text-emerald-400 border-emerald-500/30";
-      default: return "bg-zinc-800 text-zinc-300 border-zinc-700";
+      default: return "bg-[var(--bg-inset)] text-[var(--text-secondary)] border-[var(--border-default)]";
     }
   }, [_plan.tier]);
 
@@ -108,7 +108,7 @@ export default function SettingsBillingPage() {
     <div className="p-8 max-w-4xl mx-auto">
       <PageHeader title="Billing & Subscription" subtitle="Manage your plan, usage, and payment." />
 
-      <div className="flex items-center gap-2 mb-6 text-xs text-zinc-400">
+      <div className="flex items-center gap-2 mb-6 text-xs text-[var(--text-tertiary)]">
         <span className="px-2 py-0.5 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-300">
           Preview
         </span>
@@ -131,7 +131,7 @@ export default function SettingsBillingPage() {
                 {_plan.name}
               </span>
               {_plan.isAnnual && (
-                <span className="rounded-full bg-zinc-900/60 text-blue-400 border border-zinc-800 px-2 py-0.5 text-xs">
+                <span className="rounded-full bg-[var(--bg-card)]/60 text-blue-400 border border-[var(--border-default)] px-2 py-0.5 text-xs">
                   Annual
                 </span>
               )}
@@ -172,14 +172,14 @@ export default function SettingsBillingPage() {
               <div key={meter.label}>
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <Icon className="w-4 h-4 text-zinc-500" />
+                    <Icon className="w-4 h-4 text-[var(--text-tertiary)]" />
                     <span className="text-sm" style={{ color: "var(--text-primary)" }}>{meter.label}</span>
                   </div>
                   <span className={`text-sm font-medium tabular-nums ${textColor}`}>
                     {meter.used} / {meter.limit}
                   </span>
                 </div>
-                <div className="w-full h-2 rounded-full bg-zinc-800 overflow-hidden">
+                <div className="w-full h-2 rounded-full bg-[var(--bg-inset)] overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all ${barColor}`}
                     style={{ width: `${pct}%` }}
@@ -208,8 +208,8 @@ export default function SettingsBillingPage() {
         </h3>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-7 rounded border border-zinc-700 bg-zinc-800 flex items-center justify-center">
-              <CreditCard className="w-5 h-5 text-zinc-400" />
+            <div className="w-10 h-7 rounded border border-[var(--border-default)] bg-[var(--bg-inset)] flex items-center justify-center">
+              <CreditCard className="w-5 h-5 text-[var(--text-tertiary)]" />
             </div>
             <div>
               <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
@@ -222,7 +222,7 @@ export default function SettingsBillingPage() {
           </div>
           <button
             type="button"
-            className="text-sm text-zinc-300 border border-zinc-700 rounded-lg px-3 py-1.5 hover:bg-zinc-800 transition-colors"
+            className="text-sm text-[var(--text-secondary)] border border-[var(--border-default)] rounded-lg px-3 py-1.5 hover:bg-[var(--bg-inset)] transition-colors"
           >
             Update
           </button>
@@ -241,11 +241,11 @@ export default function SettingsBillingPage() {
         </div>
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-zinc-800/80">
-              <th className="py-3 px-6 font-medium text-left text-zinc-400">Date</th>
-              <th className="py-3 px-6 font-medium text-left text-zinc-400">Description</th>
-              <th className="py-3 px-6 font-medium text-right text-zinc-400">Amount</th>
-              <th className="py-3 px-6 font-medium text-right text-zinc-400">Status</th>
+            <tr className="border-b border-[var(--border-default)]/80">
+              <th className="py-3 px-6 font-medium text-left text-[var(--text-tertiary)]">Date</th>
+              <th className="py-3 px-6 font-medium text-left text-[var(--text-tertiary)]">Description</th>
+              <th className="py-3 px-6 font-medium text-right text-[var(--text-tertiary)]">Amount</th>
+              <th className="py-3 px-6 font-medium text-right text-[var(--text-tertiary)]">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -253,8 +253,8 @@ export default function SettingsBillingPage() {
               const badge = statusBadge(inv.status);
               const BadgeIcon = badge.Icon;
               return (
-                <tr key={inv.id} className="border-t border-zinc-800/60 hover:bg-zinc-900/60 transition-colors">
-                  <td className="py-3 px-6 text-zinc-300">
+                <tr key={inv.id} className="border-t border-[var(--border-default)]/60 hover:bg-[var(--bg-card)]/60 transition-colors">
+                  <td className="py-3 px-6 text-[var(--text-secondary)]">
                     {new Date(inv.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                   </td>
                   <td className="py-3 px-6" style={{ color: "var(--text-primary)" }}>

@@ -40,7 +40,7 @@ export function WhoUsesSection() {
               <Link key={persona.name} href="/activate">
                 <motion.div
                   variants={fadeUpVariants}
-                  className="card-marketing p-6 flex flex-col h-full hover:border-zinc-700 transition-colors min-w-0"
+                  className="card-marketing p-6 flex flex-col h-full hover:border-[var(--border-default)] transition-colors min-w-0"
                 >
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-4" style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}>
                     <Icon className="w-5 h-5" />

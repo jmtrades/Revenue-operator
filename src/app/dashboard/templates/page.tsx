@@ -224,7 +224,7 @@ function PreviewModal({ template, isOpen, onClose }: PreviewModalProps) {
           </div>
 
           {template.isPaid && (
-            <div className="bg-zinc-900/60 border border-zinc-800 p-3 rounded-lg">
+            <div className="bg-[var(--bg-card)]/60 border border-[var(--border-default)] p-3 rounded-lg">
               <p className="text-sm text-blue-300">
                 Available with Business+ plan - includes priority support and advanced analytics
               </p>
@@ -271,7 +271,7 @@ function TemplateCard({
           </div>
         </div>
         {template.isPaid && (
-          <span className="inline-block px-2.5 py-1 text-xs font-medium bg-zinc-900/60 text-zinc-300 border border-zinc-700 rounded whitespace-nowrap ml-2">
+          <span className="inline-block px-2.5 py-1 text-xs font-medium bg-[var(--bg-card)]/60 text-[var(--text-secondary)] border border-[var(--border-default)] rounded whitespace-nowrap ml-2">
             Business+
           </span>
         )}

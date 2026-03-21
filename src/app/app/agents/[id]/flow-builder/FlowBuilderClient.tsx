@@ -46,13 +46,13 @@ function BaseFlowNode({
   const isSource = nodeType === "start" || nodeType === "end_call";
   const colors: Record<string, string> = {
     start: "bg-green-500/20 border-green-500/50",
-    greeting: "bg-zinc-600/20 border-zinc-500/50",
+    greeting: "bg-[var(--bg-inset)]/20 border-[var(--border-default)]/50",
     question: "bg-amber-500/20 border-amber-500/50",
-    branch: "bg-zinc-500/20 border-zinc-400/50",
+    branch: "bg-[var(--bg-inset)]/20 border-zinc-400/50",
     transfer: "bg-orange-500/20 border-orange-500/50",
     book_appointment: "bg-emerald-500/20 border-emerald-500/50",
     end_call: "bg-red-500/20 border-red-500/50",
-    custom_action: "bg-zinc-500/20 border-zinc-500/50",
+    custom_action: "bg-[var(--bg-inset)]/20 border-[var(--border-default)]/50",
   };
   const style = colors[nodeType ?? ""] ?? "bg-[var(--bg-inset)] border-[var(--border-default)]";
 
@@ -208,7 +208,7 @@ export default function FlowBuilderClient({
                 key={type}
                 type="button"
                 onClick={() => addNode(type, label)}
-                className="flex items-center gap-1 px-2 py-1 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-zinc-700 rounded-lg"
+                className="flex items-center gap-1 px-2 py-1 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-inset)] rounded-lg"
                 title={`Add ${label}`}
               >
                 <Plus className="w-3 h-3 flex-shrink-0" />

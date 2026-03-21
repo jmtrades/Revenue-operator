@@ -117,7 +117,7 @@ export default function IndustrySelector({ onSelect, selected, disabled }: Indus
   return (
     <div className="space-y-3">
       <h2 className="text-lg font-semibold text-white">What industry are you in?</h2>
-      <p className="text-sm text-zinc-400">
+      <p className="text-sm text-[var(--text-tertiary)]">
         We&apos;ll load scripts, templates, and follow-up cadences tuned for your business.
       </p>
       <input
@@ -125,11 +125,11 @@ export default function IndustrySelector({ onSelect, selected, disabled }: Indus
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         placeholder="Search industries..."
-        className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-zinc-600 focus:outline-none focus:ring-1 focus:ring-white/20"
+        className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-base)] px-4 py-2.5 text-sm text-white placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-default)] focus:outline-none focus:ring-1 focus:ring-white/20"
       />
       {Object.entries(groupedByCategory).map(([category, industries]) => (
         <div key={category}>
-          <p className="text-xs font-medium text-zinc-500 uppercase tracking-wider mt-4 mb-2">
+          <p className="text-xs font-medium text-[var(--text-tertiary)] uppercase tracking-wider mt-4 mb-2">
             {category}
           </p>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
@@ -146,10 +146,10 @@ export default function IndustrySelector({ onSelect, selected, disabled }: Indus
                   className={`
                     rounded-xl border p-3 text-left transition-all duration-150
                     ${isSelected
-                      ? "border-white bg-zinc-800/80 ring-1 ring-white/20"
+                      ? "border-white bg-[var(--bg-inset)]/80 ring-1 ring-white/20"
                       : isHovering
-                        ? "border-zinc-600 bg-zinc-900"
-                        : "border-zinc-800 bg-zinc-950"
+                        ? "border-[var(--border-default)] bg-[var(--bg-card)]"
+                        : "border-[var(--border-default)] bg-[var(--bg-base)]"
                     }
                     ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
                   `}
@@ -165,7 +165,7 @@ export default function IndustrySelector({ onSelect, selected, disabled }: Indus
         </div>
       ))}
       {filtered.length === 0 && (
-        <p className="text-sm text-zinc-500 py-4 text-center">
+        <p className="text-sm text-[var(--text-tertiary)] py-4 text-center">
           No match found. Select &quot;Other / General&quot; and we&apos;ll customize for you.
         </p>
       )}
