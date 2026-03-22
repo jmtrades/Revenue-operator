@@ -7457,12 +7457,12 @@
     "calmLine": "Les décisions restent sur les rails."
   },
   "demoVoice": {
-    "enterPhone": "Entrez un numéro de téléphone pour recevoir un appel de démo.",
+    "enterPhone": "Enter your phone number with country code to receive a demo call.",
     "callingNow": "Appel en cours. Répondez pour parler avec l'agent IA.",
     "couldNotStart": "Impossible de démarrer l'appel de démo. Réessayez.",
     "calling": "Appel…",
     "callMe": "Appelez-moi",
-    "placeholder": "+1 (555) 123-4567"
+    "placeholder": "+1 555 123 4567"
   },
   "accessibility": {
     "skipToContent": "Aller au contenu principal",
@@ -8121,13 +8121,13 @@
         "playButton": "Écouter la voix",
         "stopButton": "Arrêter",
         "loading": "Chargement...",
-        "placeholder": "(555) 123-4567",
+        "placeholder": "+1 555 123 4567",
         "demoCall": "Recevoir un appel démo",
         "calling": "Appel en cours...",
         "callStatus": "Nous vous appelons maintenant ! Décrochez pour l'écouter en direct.",
         "callError": "Impossible de lancer l'appel. Réessayez.",
         "connectionError": "Connexion échouée. Veuillez réessayer.",
-        "invalidPhone": "Entrez un numéro de téléphone valide avec indicatif.",
+        "invalidPhone": "Enter a valid phone number with country code (e.g. +44, +61).",
         "disclaimer": "Gratuit. Sans inscription. Nous vous appelons en moins de 10 secondes."
       },
       "compliance": [

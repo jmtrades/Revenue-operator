@@ -7457,12 +7457,12 @@
     "calmLine": "Entscheidungen bleiben auf Kurs."
   },
   "demoVoice": {
-    "enterPhone": "Gib eine Telefonnummer ein, um einen Demo-Anruf zu erhalten.",
+    "enterPhone": "Enter your phone number with country code to receive a demo call.",
     "callingNow": "Wir rufen dich gleich an. Nimm ab, um mit dem KI-Agenten zu sprechen.",
     "couldNotStart": "Demo-Anruf konnte nicht gestartet werden. Bitte erneut versuchen.",
     "calling": "Anruf…",
     "callMe": "Ruf mich an",
-    "placeholder": "+1 (555) 123-4567"
+    "placeholder": "+1 555 123 4567"
   },
   "accessibility": {
     "skipToContent": "Zum Hauptinhalt springen",
@@ -8121,13 +8121,13 @@
         "playButton": "Stimme anhören",
         "stopButton": "Stopp",
         "loading": "Wird geladen...",
-        "placeholder": "(555) 123-4567",
+        "placeholder": "+1 555 123 4567",
         "demoCall": "Demo-Anruf erhalten",
         "calling": "Ruft an...",
         "callStatus": "Wir rufen Sie jetzt an! Nehmen Sie ab, um es live zu hören.",
         "callError": "Anruf konnte nicht gestartet werden. Versuchen Sie es erneut.",
         "connectionError": "Verbindung fehlgeschlagen. Bitte erneut versuchen.",
-        "invalidPhone": "Geben Sie eine gültige Telefonnummer mit Vorwahl ein.",
+        "invalidPhone": "Enter a valid phone number with country code (e.g. +44, +61).",
         "disclaimer": "Kostenlos. Keine Anmeldung. Wir rufen in unter 10 Sekunden an."
       },
       "compliance": [

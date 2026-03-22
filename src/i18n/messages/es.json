@@ -6840,12 +6840,12 @@
     "calmLine": "Las decisiones siguen su curso."
   },
   "demoVoice": {
-    "enterPhone": "Introduce un número de teléfono para recibir una llamada de demostración.",
+    "enterPhone": "Enter your phone number with country code to receive a demo call.",
     "callingNow": "Llamando ahora. Responde para hablar con el agente IA.",
     "couldNotStart": "No se pudo iniciar la llamada de demostración. Inténtalo de nuevo.",
     "calling": "Llamando…",
     "callMe": "Llámame",
-    "placeholder": "+1 (555) 123-4567"
+    "placeholder": "+1 555 123 4567"
   },
   "proofDrawer": {
     "title": "Cómo progresó",
@@ -8121,13 +8121,13 @@
         "playButton": "Escucha la voz",
         "stopButton": "Parar",
         "loading": "Cargando...",
-        "placeholder": "(555) 123-4567",
+        "placeholder": "+1 555 123 4567",
         "demoCall": "Recibir llamada demo",
         "calling": "Llamando...",
         "callStatus": "¡Te estamos llamando! Contesta para escucharlo en vivo.",
         "callError": "No se pudo iniciar la llamada. Inténtalo de nuevo.",
         "connectionError": "No se pudo conectar. Inténtalo de nuevo.",
-        "invalidPhone": "Ingresa un número de teléfono válido con código de área.",
+        "invalidPhone": "Enter a valid phone number with country code (e.g. +44, +61).",
         "disclaimer": "Gratis. Sin registro. Te llamamos en menos de 10 segundos."
       },
       "compliance": [

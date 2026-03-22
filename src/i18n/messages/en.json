@@ -7074,12 +7074,12 @@
     "calmLine": "Decisions remain on track."
   },
   "demoVoice": {
-    "enterPhone": "Enter a phone number to receive a demo call.",
+    "enterPhone": "Enter your phone number with country code to receive a demo call.",
     "callingNow": "Calling you now. Answer to talk with the AI agent.",
     "couldNotStart": "Could not start demo call. Please try again.",
     "calling": "Calling…",
     "callMe": "Call me",
-    "placeholder": "+1 (555) 123-4567"
+    "placeholder": "+1 555 123 4567"
   },
   "proofDrawer": {
     "title": "How it progressed",
@@ -8237,13 +8237,13 @@
         "playButton": "Hear the voice",
         "stopButton": "Stop",
         "loading": "Loading...",
-        "placeholder": "(555) 123-4567",
+        "placeholder": "+1 555 123 4567",
         "demoCall": "Get a demo call",
         "calling": "Calling...",
         "callStatus": "Calling you now! Pick up to hear it live.",
         "callError": "Could not start the call. Try again.",
         "connectionError": "Could not connect. Please try again.",
-        "invalidPhone": "Enter a valid phone number with area code.",
+        "invalidPhone": "Enter a valid phone number with country code (e.g. +44, +61).",
         "disclaimer": "Free. No signup required. We call your phone in under 10 seconds."
       },
       "compliance": [
