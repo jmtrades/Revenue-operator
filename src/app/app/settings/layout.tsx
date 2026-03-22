@@ -23,6 +23,7 @@ export default function SettingsLayout({ children }: { children: ReactNode }) {
         >
           <AccordionItem title={tNav("sectionBusiness")} defaultOpen>
             <div className="space-y-1.5">
+              <NavLink href="/app/settings/auto-setup" label="Auto Setup (AI)" pathname={pathname} />
               <NavLink href="/app/settings/business" label={tNav("business")} pathname={pathname} />
               <NavLink href="/app/settings/call-rules" label={tNav("callRules")} pathname={pathname} />
               <NavLink href="/app/settings/industry-templates" label={tNav("industryTemplates")} pathname={pathname} />
