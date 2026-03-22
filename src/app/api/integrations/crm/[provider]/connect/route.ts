@@ -1,13 +1,14 @@
 /**
- * GET /api/integrations/crm/[provider]/connect — Start OAuth flow for CRM provider.
+ * GET /api/integrations/crm/[provider]/connect â Start OAuth flow for CRM provider.
  * Redirects to OAuth authorization URL if configured, or back to integrations if not.
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { createOAuthState } from "@/lib/integrations/oauth-state";
+import { randomBytes, createHash } from "crypto";
 
-const ALLOWED_PROVIDERS = ["salesforce", "hubspot", "zoho_crm", "pipedrive", "gohighlevel", "google_contacts", "microsoft_365"];
+const ALLOWED_PROVIDERS = ["salesforce", "hubspot", "zoho_crm", "pipedrive", "gohighlevel", "google_contacts", "microsoft_365", "airtable"];
 
 const OAUTH_CONFIG: Record<string, { clientIdEnv: string; redirectUriPath: string; authUrl: (clientId: string, redirectUri: string) => string }> = {
   salesforce: {
@@ -45,6 +46,11 @@ const OAUTH_CONFIG: Record<string, { clientIdEnv: string; redirectUriPath: strin
     redirectUriPath: "/api/integrations/crm/microsoft_365/callback",
     authUrl: (clientId, redirectUri) => `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=Contacts.ReadWrite%20offline_access`,
   },
+  airtable: {
+    clientIdEnv: "AIRTABLE_CLIENT_ID",
+    redirectUriPath: "/api/integrations/crm/airtable/callback",
+    authUrl: (clientId, redirectUri) => `https://airtable.com/oauth2/v1/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=data.records:read%20data.records:write%20schema.bases:read&code_challenge_method=S256`,
+  },
 };
 
 export const dynamic = "force-dynamic";
@@ -77,8 +83,25 @@ export async function GET(
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin;
   const redirectUri = `${appUrl}${config.redirectUriPath}`;
   const state = createOAuthState(session.workspaceId);
-  const baseAuthUrl = config.authUrl(clientId, encodeURIComponent(redirectUri));
-  const authUrl = `${baseAuthUrl}&state=${encodeURIComponent(state)}`;
+  let baseAuthUrl = config.authUrl(clientId, encodeURIComponent(redirectUri));
+  let authUrl = `${baseAuthUrl}&state=${encodeURIComponent(state)}`;
+
+  // Airtable requires PKCE (S256 code challenge)
+  if (provider === "airtable") {
+    const codeVerifier = randomBytes(64).toString("base64url");
+    const codeChallenge = createHash("sha256").update(codeVerifier).digest("base64url");
+    authUrl += `&code_challenge=${encodeURIComponent(codeChallenge)}`;
+    // Store verifier in a short-lived cookie for the callback
+    const res = NextResponse.redirect(authUrl);
+    res.cookies.set("airtable_code_verifier", codeVerifier, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      maxAge: 600, // 10 minutes
+      path: "/api/integrations/crm/airtable/callback",
+    });
+    return res;
+  }
 
   return NextResponse.redirect(authUrl);
 }
