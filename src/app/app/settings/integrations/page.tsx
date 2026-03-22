@@ -25,6 +25,7 @@ function getCrmIntegrations(t: ReturnType<typeof useTranslations>): Array<{
     { id: "gohighlevel", name: "GoHighLevel", description: t("card.gohighlevel.body"), icon: Layers },
     { id: "google_contacts", name: "Google Contacts", description: t("card.googleContacts.body"), icon: Users },
     { id: "microsoft_365", name: "Microsoft 365", description: t("card.microsoft365.body"), icon: Building },
+    { id: "airtable", name: "Airtable", description: t("card.airtable.body"), icon: Database },
   ];
 }
 
