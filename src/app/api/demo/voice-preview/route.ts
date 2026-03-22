@@ -360,6 +360,14 @@ export async function GET(req: NextRequest) {
     const voiceServerUrl = process.env.NEXT_PUBLIC_VOICE_SERVER_URL;
     const deepgramApiKey = process.env.DEEPGRAM_API_KEY;
 
+    // Diagnostic: log provider availability (no secrets exposed)
+    log("info", "voice_preview.providers", {
+      hasVoiceServer: !!voiceServerUrl,
+      hasDeepgram: !!deepgramApiKey,
+      deepgramKeyLength: deepgramApiKey?.length ?? 0,
+      voiceId,
+    });
+
     // ── Priority 1: Self-hosted voice server ($0 marginal cost) ──
     if (voiceServerUrl) {
       const result = await handleVoiceServerTTS(
@@ -397,8 +405,20 @@ export async function GET(req: NextRequest) {
     }
 
     // ── No provider available ──
+    log("error", "voice_preview.no_provider", {
+      hasVoiceServer: !!voiceServerUrl,
+      hasDeepgram: !!deepgramApiKey,
+      envKeys: Object.keys(process.env).filter(k => k.toLowerCase().includes("deepgram") || k.toLowerCase().includes("voice")).sort(),
+    });
     return NextResponse.json(
-      { error: "Voice preview unavailable" },
+      {
+        error: "Voice preview unavailable",
+        debug: {
+          hasVoiceServer: !!voiceServerUrl,
+          hasDeepgram: !!deepgramApiKey,
+          matchingEnvKeys: Object.keys(process.env).filter(k => k.toLowerCase().includes("deepgram")).length,
+        },
+      },
       { status: 503 }
     );
   } catch (error) {
