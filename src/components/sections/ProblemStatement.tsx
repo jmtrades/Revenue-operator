@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
 import { PhoneOff, Calendar, UserX, Flame, Wrench, HeartPulse, Home, Scale, Sparkles, Droplet, Building2 } from "lucide-react";
@@ -39,6 +40,7 @@ function AnimatedNumber({ value, prefix = "$" }: { value: number; prefix?: strin
 }
 
 export function ProblemStatement() {
+  const t = useTranslations("homepage.problemStatement");
   const [selectedIndustry, setSelectedIndustry] = useState(0);
   const industry = INDUSTRY_DATA[selectedIndustry];
 
@@ -59,41 +61,41 @@ export function ProblemStatement() {
                 color: "var(--text-primary)",
               }}
             >
-              Your Revenue Operations Have Gaps.{" "}
-              <span className="text-red-400">Here Is What They Cost.</span>
+              {t("title")}{" "}
+              <span className="text-red-400">{t("subtitle")}</span>
             </h2>
             <p
               className="text-base md:text-lg max-w-2xl mx-auto"
               style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}
             >
-              Unanswered inquiries, stalled pipelines, and inconsistent execution cost businesses{" "}
-              <span className="text-red-400 font-semibold">$5K–$50K/month</span> from broken follow-up, manual outreach delays, and no attribution.
+              {t("description")}{" "}
+              <span className="text-red-400 font-semibold">{t("costRange")}</span> {t("descriptionSuffix")}
             </p>
           </div>
 
-          {/* "Without Recall Touch" grid */}
+          {/* Problem areas grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
             <div className="rounded-xl border border-red-500/20 bg-red-500/[0.05] p-5 text-center">
               <PhoneOff className="w-8 h-8 text-red-400 mx-auto mb-3" />
-              <p className="text-sm font-medium text-white">Opportunities go unresponded</p>
-              <p className="text-xs text-[var(--text-tertiary)] mt-1">Inbound demand waits too long for a useful next step</p>
+              <p className="text-sm font-medium text-white">{t("problem1.title")}</p>
+              <p className="text-xs text-[var(--text-tertiary)] mt-1">{t("problem1.description")}</p>
             </div>
             <div className="rounded-xl border border-orange-500/20 bg-orange-500/[0.05] p-5 text-center">
               <Calendar className="w-8 h-8 text-orange-400 mx-auto mb-3" />
-              <p className="text-sm font-medium text-white">Follow-up never happens</p>
-              <p className="text-xs text-[var(--text-tertiary)] mt-1">Leads cool off while manual outreach stalls</p>
+              <p className="text-sm font-medium text-white">{t("problem2.title")}</p>
+              <p className="text-xs text-[var(--text-tertiary)] mt-1">{t("problem2.description")}</p>
             </div>
             <div className="rounded-xl border border-yellow-500/20 bg-yellow-500/[0.05] p-5 text-center">
               <UserX className="w-8 h-8 text-yellow-400 mx-auto mb-3" />
-              <p className="text-sm font-medium text-white">Revenue is untracked</p>
-              <p className="text-xs text-[var(--text-tertiary)] mt-1">Teams cannot attribute recovered value to execution</p>
+              <p className="text-sm font-medium text-white">{t("problem3.title")}</p>
+              <p className="text-xs text-[var(--text-tertiary)] mt-1">{t("problem3.description")}</p>
             </div>
           </div>
 
           {/* Industry-specific pain */}
           <div className="space-y-4">
             <p className="text-xs uppercase tracking-wide text-[var(--text-tertiary)]">
-              See the impact for your industry
+              {t("industryLabel")}
             </p>
             <div className="flex flex-wrap justify-center gap-2">
               {INDUSTRY_DATA.map((ind, i) => (
@@ -117,15 +119,15 @@ export function ProblemStatement() {
               <div className="flex items-center gap-2 text-red-400">
                 <Flame className="w-5 h-5" />
                 <p className="text-xs uppercase tracking-wide">
-                  {industry.label} — estimated annual loss
+                  {industry.label} — {t("estimatedAnnualLoss")}
                 </p>
               </div>
               <p className="text-3xl md:text-4xl font-bold text-red-400">
                 <AnimatedNumber value={industry.annualLoss} />
-                <span className="text-lg text-red-400/70">/year</span>
+                <span className="text-lg text-red-400/70">{t("perYear")}</span>
               </p>
               <p className="text-sm text-[var(--text-tertiary)]">
-                Average {industry.label} booking: ${industry.avgJob} × {industry.missedPerWeek} revenue leaks/week × 52 weeks
+                {t("calculationPrefix")} {industry.label} {t("calculationMiddle")}: ${industry.avgJob} × {industry.missedPerWeek} {t("calculationSuffix")}
               </p>
             </div>
           </div>

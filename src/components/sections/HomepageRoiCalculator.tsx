@@ -2,10 +2,12 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
 export function HomepageRoiCalculator() {
+  const t = useTranslations("homepage.roiCalculator");
   const [monthlyOpportunities, setMonthlyOpportunities] = useState(220);
   const [avgDealValue, setAvgDealValue] = useState(1000);
   const [revenueGapPct, setRevenueGapPct] = useState(22);
@@ -55,7 +57,7 @@ export function HomepageRoiCalculator() {
               className="text-[11px] font-semibold uppercase tracking-wider mb-3"
               style={{ color: "var(--accent-primary)" }}
             >
-              Revenue math
+              {t("sectionLabel")}
             </p>
             <h2
               className="font-semibold text-2xl md:text-3xl mb-4"
@@ -65,20 +67,18 @@ export function HomepageRoiCalculator() {
                 color: "var(--text-primary)",
               }}
             >
-              Calculate your revenue operations gap.
+              {t("heading")}
             </h2>
             <p
               className="text-sm md:text-base max-w-xl leading-relaxed"
               style={{ color: "var(--text-secondary)" }}
             >
-              Drag the sliders. We estimate your monthly revenue operations gap,
-              then show what Recall Touch can recover with consistent automation
-              and follow-up execution.
+              {t("description")}
             </p>
             <ul className="mt-6 space-y-2 text-sm">
               {[
-                "Uses conservative 70% recovery rate based on aggregated call data.",
-                "Shows monthly recovery and whether Growth plan pays for itself.",
+                t("disclaimer1"),
+                t("disclaimer2"),
               ].map((text) => (
                 <li
                   key={text}
@@ -116,7 +116,7 @@ export function HomepageRoiCalculator() {
                   className="text-sm font-medium"
                   style={{ color: "var(--text-primary)" }}
                 >
-                  Monthly opportunities
+                  {t("sliderMonthlyOpportunitiesLabel")}
                 </span>
                 <div className="flex items-center gap-3 mt-2">
                   <input
@@ -145,7 +145,7 @@ export function HomepageRoiCalculator() {
                   className="text-sm font-medium"
                   style={{ color: "var(--text-primary)" }}
                 >
-                  Revenue gap (%)
+                  {t("sliderRevenueGapLabel")}
                 </span>
                 <div className="flex items-center gap-3 mt-2">
                   <input
@@ -174,7 +174,7 @@ export function HomepageRoiCalculator() {
                   className="text-sm font-medium"
                   style={{ color: "var(--text-primary)" }}
                 >
-                  Average deal value
+                  {t("sliderAverageDealValueLabel")}
                 </span>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {AVG_VALUE_OPTIONS.map((opt) => {
@@ -211,36 +211,20 @@ export function HomepageRoiCalculator() {
               }}
             >
               <p style={{ color: "var(--text-secondary)" }}>
-                You&apos;re currently{" "}
-                <span
-                  className="font-semibold"
-                  style={{ color: "var(--accent-primary)" }}
-                >
-                  losing about ${monthlyLost.toLocaleString()}/month
-                </span>{" "}
-                in revenue leak.
+                {t("resultMonthlyLost", {
+                  amount: monthlyLost.toLocaleString(),
+                })}
               </p>
               <p style={{ color: "var(--text-secondary)" }}>
-                With Recall Touch answering 24/7 and running recovery follow-up,
-                you could recover around{" "}
-                <span
-                  className="font-semibold"
-                  style={{ color: "var(--accent-primary)" }}
-                >
-                  ${monthlyRecovered.toLocaleString()}/month
-                </span>{" "}
-                and ${annualRecovered.toLocaleString()}/year in recovered
-                bookings and no-show rescue.
+                {t("resultMonthlyRecovered", {
+                  monthlyAmount: monthlyRecovered.toLocaleString(),
+                  annualAmount: annualRecovered.toLocaleString(),
+                })}
               </p>
               <p style={{ color: "var(--text-primary)" }}>
-                Business plan pays for itself at{" "}
-                <span
-                  className="font-semibold"
-                  style={{ color: "var(--accent-primary)" }}
-                >
-                  {paysForItself.toFixed(1)}x
-                </span>
-                .
+                {t("resultPaysForItself", {
+                  multiple: paysForItself.toFixed(1),
+                })}
               </p>
             </div>
 
@@ -249,14 +233,13 @@ export function HomepageRoiCalculator() {
                 href={ROUTES.START}
                 className="btn-marketing-blue w-full text-center no-underline block"
               >
-                Get full ROI report
+                {t("ctaButtonText")}
               </Link>
               <p
                 className="text-xs text-center"
                 style={{ color: "var(--text-tertiary)" }}
               >
-                Share your email on the next step and we&apos;ll send a detailed
-                breakdown by call volume, channel, and plan.
+                {t("ctaDescription")}
               </p>
             </div>
           </div>

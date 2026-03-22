@@ -6,7 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { Phone, UserPlus, CalendarCheck } from "lucide-react";
 
 export function OutcomeCardsSection() {
-  const t = useTranslations("homepage.outcomes");
+  const t = useTranslations("homepage.outcomeCards");
 
   const cards = useMemo(
     () => [
@@ -21,21 +21,21 @@ export function OutcomeCardsSection() {
     () => [
       {
         name: t("pricingTiers.starter.name"),
-        price: "$97",
+        price: t("pricingTiers.starter.price"),
         tagline: t("pricingTiers.starter.tagline"),
         features: [t("pricingTiers.starter.f1"), t("pricingTiers.starter.f2"), t("pricingTiers.starter.f3"), t("pricingTiers.starter.f4")],
         badge: null as string | null,
       },
       {
         name: t("pricingTiers.growth.name"),
-        price: "$297",
+        price: t("pricingTiers.growth.price"),
         tagline: t("pricingTiers.growth.tagline"),
         features: [t("pricingTiers.growth.f1"), t("pricingTiers.growth.f2"), t("pricingTiers.growth.f3"), t("pricingTiers.growth.f4")],
         badge: t("pricingTiers.badgePopular"),
       },
       {
         name: t("pricingTiers.scale.name"),
-        price: "$597",
+        price: t("pricingTiers.scale.price"),
         tagline: t("pricingTiers.scale.tagline"),
         features: [t("pricingTiers.scale.f1"), t("pricingTiers.scale.f2"), t("pricingTiers.scale.f3"), t("pricingTiers.scale.f4")],
         badge: null as string | null,
@@ -117,7 +117,7 @@ export function OutcomeCardsSection() {
                   <span className="text-3xl font-semibold text-white">
                     {tier.price}
                   </span>
-                  <span className="text-sm text-[var(--text-tertiary)] ml-1">/month</span>
+                  <span className="text-sm text-[var(--text-tertiary)] ml-1">{t("pricingTiers.billingPeriod")}</span>
                 </div>
                 <ul className="space-y-2 mb-6 text-sm text-[var(--text-secondary)]">
                   {tier.features.map((f) => (

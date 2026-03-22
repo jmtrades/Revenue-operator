@@ -8,32 +8,32 @@ import { AnimateOnScroll, StaggerChildren, fadeUpVariants } from "@/components/s
 import { motion } from "framer-motion";
 
 export function HowItWorks() {
-  const _t = useTranslations("homepage.howItWorks");
+  const t = useTranslations("homepage.howItWorks");
   const steps = useMemo(
     () => [
       {
         num: 1,
         icon: PhoneForwarded,
-        title: "Connect Your Number",
-        subtitle: "in minutes",
-        desc: "Keep your existing business number or get a new one. Forward calls to Recall Touch and your AI agent picks up instantly — no hardware, no apps, no IT team needed.",
+        title: t("steps.0.title"),
+        subtitle: t("steps.0.subtitle"),
+        desc: t("steps.0.description"),
       },
       {
         num: 2,
         icon: Zap,
-        title: "AI Handles Everything",
-        subtitle: "Automatically",
-        desc: "Every call is answered in under a second. Leads are qualified, appointments are booked, follow-ups are scheduled, and high-value calls are routed to the right person — automatically.",
+        title: t("steps.1.title"),
+        subtitle: t("steps.1.subtitle"),
+        desc: t("steps.1.description"),
       },
       {
         num: 3,
         icon: MessageSquareText,
-        title: "Revenue Shows Up in Your Dashboard",
-        subtitle: "Live",
-        desc: "See exactly which calls converted, how much revenue your AI recovered, and where every lead stands. Real attribution, not guesswork.",
+        title: t("steps.2.title"),
+        subtitle: t("steps.2.subtitle"),
+        desc: t("steps.2.description"),
       },
     ],
-    []
+    [t]
   );
 
   return (
@@ -48,7 +48,7 @@ export function HowItWorks() {
             className="text-[11px] font-semibold uppercase tracking-wider mb-4"
             style={{ color: "var(--accent-primary)" }}
           >
-            How it works
+            {t("label")}
           </p>
           <h2
             className="font-semibold max-w-2xl mx-auto"
@@ -59,13 +59,13 @@ export function HowItWorks() {
               color: "var(--text-primary)",
             }}
           >
-            Live in 3 Minutes. Recovering Revenue in 24 Hours.
+            {t("title")}
           </h2>
           <p
             className="text-base mt-4 max-w-xl mx-auto"
             style={{ color: "var(--text-secondary)" }}
           >
-            No engineers. No complicated setup. No new phone number.
+            {t("description")}
           </p>
         </AnimateOnScroll>
 
@@ -85,7 +85,7 @@ export function HowItWorks() {
                   className="text-xs font-semibold mb-3"
                   style={{ color: "var(--text-tertiary)" }}
                 >
-                  Step {step.num}
+                  {t("stepLabel", { num: step.num })}
                 </p>
                 <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center mb-4 mx-auto"
@@ -119,10 +119,10 @@ export function HowItWorks() {
           style={{ color: "var(--text-tertiary)" }}
         >
           {[
-            ["Setup:", "Under 3 minutes"],
-            ["First test call:", "Immediate"],
-            ["Time to first recovered lead:", "Same day"],
-          ].map(([label, value]) => (
+            { label: t("timeline.0.label"), value: t("timeline.0.value") },
+            { label: t("timeline.1.label"), value: t("timeline.1.value") },
+            { label: t("timeline.2.label"), value: t("timeline.2.value") },
+          ].map(({ label, value }) => (
             <div key={label} className="flex items-center gap-2">
               <svg
                 className="w-4 h-4"

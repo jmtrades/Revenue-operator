@@ -239,7 +239,7 @@ export function ActivateWizard() {
           <p className="text-xs font-semibold tracking-[0.18em] uppercase text-sky-400">
             {t("wizardHeading")}
           </p>
-          <h1 className="mt-3 text-2xl md:text-3xl font-semibold text-slate-50">
+          <h1 className="mt-3 text-2xl md:text-3xl font-semibold" style={{ color: "var(--text-primary)" }}>
             {t("wizardTitle")}
           </h1>
           <p className="mt-2 text-sm text-slate-400 max-w-xl">

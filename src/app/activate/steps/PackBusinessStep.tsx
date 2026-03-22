@@ -66,7 +66,7 @@ export function PackBusinessStep({
       </div>
       <div className="space-y-2">
         <label htmlFor="ab_industry" className="block text-xs font-medium text-slate-300">
-          Industry
+          {t("businessStep.industry")}
         </label>
         <select
           id="ab_industry"
