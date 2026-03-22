@@ -44,15 +44,9 @@ function HeroVoiceDemo() {
         await audio.play();
         return true;
       }
-    } catch { /* fall through */ }
-    if ("speechSynthesis" in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.95;
-      utterance.pitch = 1.1;
-      utterance.onend = () => setPlaying(false);
-      window.speechSynthesis.speak(utterance);
-      return true;
-    }
+    } catch { /* API unavailable — do NOT fall back to robot browser TTS */ }
+    // No fallback to speechSynthesis — better to show nothing than a robot voice
+    setPlaying(false);
     return false;
   }, []);
 

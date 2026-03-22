@@ -213,23 +213,10 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
         audioRef.current = audio;
         audio.onended = () => URL.revokeObjectURL(url);
         await audio.play();
-      } else {
-        // Fallback: browser TTS
-        if ("speechSynthesis" in window) {
-          const utterance = new SpeechSynthesisUtterance(scenario.greeting);
-          utterance.rate = 0.95;
-          utterance.pitch = 1.05;
-          window.speechSynthesis.speak(utterance);
-        }
       }
+      // No fallback to browser TTS — better silent than robotic
     } catch {
-      // Voice API unavailable — use browser TTS
-      if ("speechSynthesis" in window) {
-        const utterance = new SpeechSynthesisUtterance(scenario.greeting);
-        utterance.rate = 0.95;
-        utterance.pitch = 1.05;
-        window.speechSynthesis.speak(utterance);
-      }
+      // Voice API unavailable — do NOT fall back to robot browser TTS
     }
     setAudioLoading(false);
 
@@ -257,22 +244,11 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
                 audioRef.current = a;
                 a.onended = () => URL.revokeObjectURL(url);
                 a.play().catch(() => {});
-              } else if ("speechSynthesis" in window) {
-                // Fallback: browser TTS
-                const utterance = new SpeechSynthesisUtterance(line.text);
-                utterance.rate = 0.95;
-                utterance.pitch = 1.05;
-                window.speechSynthesis.speak(utterance);
               }
+              // No fallback to browser TTS — silence > robot voice
             })
             .catch(() => {
-              // Fallback: browser TTS
-              if ("speechSynthesis" in window) {
-                const utterance = new SpeechSynthesisUtterance(line.text);
-                utterance.rate = 0.95;
-                utterance.pitch = 1.05;
-                window.speechSynthesis.speak(utterance);
-              }
+              // Voice API unavailable — do NOT fall back to robot browser TTS
             });
         }
       }, cumulativeDelay);
