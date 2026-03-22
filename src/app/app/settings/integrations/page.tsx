@@ -107,7 +107,38 @@ export default function AppSettingsIntegrationsPage() {
       const id = setTimeout(() => setToast(null), 3000);
       return () => clearTimeout(id);
     }
-  }, [crmParam, t]);
+    if (crmParam === "connected") {
+      const provider = searchParams.get("provider") ?? "";
+      setToast(`${provider.charAt(0).toUpperCase() + provider.slice(1).replace(/_/g, " ")} connected successfully!`);
+      // Refresh CRM status
+      fetch("/api/integrations/crm/status", { credentials: "include" })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data: CrmStatusResponse | null) => data && setCrmStatus(data))
+        .catch(() => {});
+      const id = setTimeout(() => setToast(null), 4000);
+      return () => clearTimeout(id);
+    }
+    if (crmParam === "error") {
+      const reason = searchParams.get("reason") ?? "";
+      const provider = searchParams.get("provider") ?? "";
+      const providerName = provider.charAt(0).toUpperCase() + provider.slice(1).replace(/_/g, " ");
+      const msg = reason === "token_exchange_failed"
+        ? `${providerName} connection failed. Please check your credentials and try again.`
+        : reason === "invalid_state"
+        ? "Connection expired. Please try again."
+        : `Could not connect to ${providerName}. Please try again.`;
+      setToast(msg);
+      const id = setTimeout(() => setToast(null), 5000);
+      return () => clearTimeout(id);
+    }
+    if (crmParam === "config") {
+      const provider = searchParams.get("provider") ?? "";
+      const providerName = provider.charAt(0).toUpperCase() + provider.slice(1).replace(/_/g, " ");
+      setToast(`${providerName} is not yet configured. Contact support to set up the integration.`);
+      const id = setTimeout(() => setToast(null), 5000);
+      return () => clearTimeout(id);
+    }
+  }, [crmParam, searchParams, t]);
 
   useEffect(() => {
     fetch("/api/integrations/google-calendar/status", { credentials: "include" })
@@ -300,7 +331,7 @@ export default function AppSettingsIntegrationsPage() {
               <span>
                 {t("hub.lastSyncLabel")} {crmStatus?.global.lastSyncAt
                   ? new Date(crmStatus.global.lastSyncAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })
-                  : "—"}
+                  : "â"}
               </span>
             </div>
             <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
@@ -582,7 +613,7 @@ export default function AppSettingsIntegrationsPage() {
           </div>
         </section>
 
-        {/* Other CRMs — webhook-based integration guidance */}
+        {/* Other CRMs â webhook-based integration guidance */}
         <section>
           <h2 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">{t("hub.otherCrmsHeading")}</h2>
           <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5 space-y-3">
