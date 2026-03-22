@@ -18,7 +18,7 @@ const OAUTH_CONFIG: Record<string, { clientIdEnv: string; redirectUriPath: strin
   hubspot: {
     clientIdEnv: "HUBSPOT_CLIENT_ID",
     redirectUriPath: "/api/integrations/crm/hubspot/callback",
-    authUrl: (clientId, redirectUri) => `https://app.hubspot.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=contacts%20deals&response_type=code`,
+    authUrl: (clientId, redirectUri) => `https://app.hubspot.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=crm.objects.contacts.write%20crm.objects.contacts.read%20crm.objects.deals.read&response_type=code`,
   },
   zoho_crm: {
     clientIdEnv: "ZOHO_CLIENT_ID",
@@ -38,12 +38,12 @@ const OAUTH_CONFIG: Record<string, { clientIdEnv: string; redirectUriPath: strin
   google_contacts: {
     clientIdEnv: "GOOGLE_CLIENT_ID",
     redirectUriPath: "/api/integrations/crm/google_contacts/callback",
-    authUrl: (clientId, redirectUri) => `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=https://www.googleapis.com/auth/contacts.readonly`,
+    authUrl: (clientId, redirectUri) => `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=https://www.googleapis.com/auth/contacts&access_type=offline&prompt=consent`,
   },
   microsoft_365: {
     clientIdEnv: "MICROSOFT_CLIENT_ID",
     redirectUriPath: "/api/integrations/crm/microsoft_365/callback",
-    authUrl: (clientId, redirectUri) => `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=Contacts.Read`,
+    authUrl: (clientId, redirectUri) => `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=Contacts.ReadWrite%20offline_access`,
   },
 };
 
