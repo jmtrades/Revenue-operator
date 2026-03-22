@@ -10,9 +10,9 @@ import { ArrowRight, Play, Pause, Phone, PhoneCall } from "lucide-react";
 
 
 const HERO_DEMO_SAMPLES = [
-  "Hi, thanks for calling! This is Sarah. I'd love to help you today. We have a few openings tomorrow morning and Thursday afternoon — which works better for you?",
-  "Of course — let me pull that up for you. Your appointment is confirmed for Wednesday at 2 PM. I'll send you a text reminder the day before. Anything else I can help with?",
-  "I completely understand. Let me get this taken care of right away. I'm going to connect you with someone who can resolve this today.",
+  "Hi there, thanks so much for calling! This is Sarah. I'd love to help you out today. We actually have a couple openings tomorrow morning and Thursday afternoon, which one works better for you?",
+  "Absolutely, let me pull that right up for you. Okay, so your appointment's confirmed for Wednesday at two. I'll send you a quick text reminder the day before. Is there anything else I can help you with?",
+  "Oh, I totally understand, and I'm really sorry about that. Let me get this taken care of for you right away. I'm going to connect you with someone who can get this resolved today, sound good?",
 ] as const;
 
 function HeroVoiceDemo() {
