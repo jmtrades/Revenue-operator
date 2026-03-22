@@ -1,6 +1,6 @@
 /**
  * Contact/lead field mapping engine for CRM integrations (Task 18).
- * Recall Touch fields ↔ CRM fields; default mappings; transformation rules; test with sample data.
+ * Recall Touch fields â CRM fields; default mappings; transformation rules; test with sample data.
  */
 
 export type CrmProviderId =
@@ -10,7 +10,8 @@ export type CrmProviderId =
   | "pipedrive"
   | "gohighlevel"
   | "google_contacts"
-  | "microsoft_365";
+  | "microsoft_365"
+  | "airtable";
 
 export interface FieldDef {
   key: string;
@@ -85,6 +86,13 @@ export const CRM_FIELDS_BY_PROVIDER: Record<CrmProviderId, FieldDef[]> = {
     { key: "mobilePhone", label: "Phone", type: "phone" },
     { key: "companyName", label: "Company", type: "string" },
   ],
+  airtable: [
+    { key: "Name", label: "Name", type: "string" },
+    { key: "Email", label: "Email", type: "email" },
+    { key: "Phone", label: "Phone", type: "phone" },
+    { key: "Company", label: "Company", type: "string" },
+    { key: "Status", label: "Status", type: "picklist" },
+  ],
 };
 
 export type TransformationType = "format_phone" | "map_status" | "concatenate" | "none";
@@ -107,7 +115,7 @@ export interface FieldMappingConfig {
   customCrmFields?: Array<{ key: string; label: string }>;
 }
 
-/** Default mappings: Recall Touch → CRM for each provider. */
+/** Default mappings: Recall Touch â CRM for each provider. */
 export function getDefaultMappings(provider: CrmProviderId): MapEntry[] {
   const defaults: Record<CrmProviderId, MapEntry[]> = {
     salesforce: [
@@ -155,6 +163,13 @@ export function getDefaultMappings(provider: CrmProviderId): MapEntry[] {
       { rtField: "email", crmField: "mail", transformation: "none" },
       { rtField: "phone", crmField: "mobilePhone", transformation: "format_phone" },
       { rtField: "company", crmField: "companyName", transformation: "none" },
+    ],
+    airtable: [
+      { rtField: "name", crmField: "Name", transformation: "none" },
+      { rtField: "email", crmField: "Email", transformation: "none" },
+      { rtField: "phone", crmField: "Phone", transformation: "format_phone" },
+      { rtField: "company", crmField: "Company", transformation: "none" },
+      { rtField: "state", crmField: "Status", transformation: "map_status", statusMap: { NEW: "New", CONTACTED: "Contacted", QUALIFIED: "Qualified", WON: "Won", LOST: "Lost" } },
     ],
   };
   return defaults[provider] ?? [];
