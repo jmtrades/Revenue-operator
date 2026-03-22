@@ -1,103 +1,360 @@
 "use client";
 
-import Link from "next/link";
-import { useTranslations } from "next-intl";
-import { Building2, Users, Palette, ArrowUpRight } from "lucide-react";
-import { ROUTES } from "@/lib/constants";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { Building2, Plus, Trash2, Eye } from "lucide-react";
+
+interface SubAccount {
+  id: string;
+  child_workspace_id: string;
+  plan: string;
+  status: string;
+  monthly_calls_limit: number | null;
+  monthly_leads_limit: number | null;
+  created_at: string;
+  updated_at: string;
+  child_workspace?: {
+    id: string;
+    name: string;
+    created_at: string;
+  };
+}
+
+interface Analytics {
+  total_sub_accounts: number;
+  active_sub_accounts: number;
+  total_calls: number;
+  total_leads: number;
+  total_revenue: number;
+  mrr: number;
+  usage_by_account: Array<{
+    id: string;
+    name: string;
+    calls: number;
+    leads: number;
+    revenue: number;
+    status: string;
+  }>;
+}
 
 export default function AgencyPage() {
-  const t = useTranslations("agency");
+  const [loading, setLoading] = useState(true);
+  const [analytics, setAnalytics] = useState<Analytics | null>(null);
+  const [subAccounts, setSubAccounts] = useState<SubAccount[]>([]);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    owner_email: "",
+    plan: "standard",
+  });
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [analyticsRes, subAccountsRes] = await Promise.all([
+          fetch("/api/white-label/analytics", { credentials: "include" }),
+          fetch("/api/white-label/sub-accounts", { credentials: "include" }),
+        ]);
+
+        if (!analyticsRes.ok || !subAccountsRes.ok) {
+          throw new Error("Failed to load data");
+        }
+
+        const analyticsData = await analyticsRes.json();
+        const subAccountsData = await subAccountsRes.json();
+
+        setAnalytics(analyticsData.analytics);
+        setSubAccounts(subAccountsData.sub_accounts);
+      } catch (err) {
+        console.error("[agency] Failed to load data:", err);
+        toast.error("Failed to load agency dashboard");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  const handleCreateSubAccount = async () => {
+    if (!formData.name || !formData.owner_email) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    setCreating(true);
+    try {
+      const res = await fetch("/api/white-label/sub-accounts", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          owner_email: formData.owner_email,
+          plan: formData.plan,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to create sub-account");
+
+      const data = await res.json();
+      setSubAccounts([data.sub_account, ...subAccounts]);
+      setFormData({ name: "", owner_email: "", plan: "standard" });
+      setShowCreateModal(false);
+      toast.success("Sub-account created successfully");
+    } catch (err) {
+      console.error("[agency] Failed to create sub-account:", err);
+      toast.error("Failed to create sub-account");
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const handleDeleteSubAccount = async (subAccountId: string) => {
+    if (!confirm("Are you sure you want to deactivate this sub-account?")) return;
+
+    setDeleting(subAccountId);
+    try {
+      const res = await fetch(`/api/white-label/sub-accounts/${subAccountId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      if (!res.ok) throw new Error("Failed to delete sub-account");
+
+      setSubAccounts(subAccounts.filter((s) => s.id !== subAccountId));
+      toast.success("Sub-account deactivated");
+    } catch (err) {
+      console.error("[agency] Failed to delete sub-account:", err);
+      toast.error("Failed to deactivate sub-account");
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="p-6 md:p-8 max-w-7xl mx-auto">
+        <div className="animate-pulse">
+          <div className="h-8 w-64 bg-[var(--bg-inset)] rounded mb-8" />
+          <div className="grid grid-cols-4 gap-4 mb-8">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="h-24 bg-[var(--bg-inset)] rounded" />
+            ))}
+          </div>
+          <div className="h-96 bg-[var(--bg-inset)] rounded" />
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-6 md:p-8 max-w-6xl mx-auto">
-      <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between mb-8">
+    <div className="p-6 md:p-8 max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <div>
-          <p className="text-sm text-[var(--text-secondary)]">{t("kicker")}</p>
-          <h1 className="text-2xl md:text-3xl font-semibold text-[var(--text-primary)] mt-1">
-            {t("title")}
-          </h1>
-          <p className="text-sm text-[var(--text-tertiary)] mt-2 max-w-2xl leading-relaxed">
-            {t("subtitle")}
-          </p>
+          <h1 className="text-2xl md:text-3xl font-semibold text-[var(--text-primary)]">Reseller Dashboard</h1>
+          <p className="text-sm text-[var(--text-tertiary)] mt-2">Manage your sub-accounts and track performance</p>
         </div>
-        <div className="flex flex-col sm:flex-row gap-3 mt-4 md:mt-0">
-          <Link
-            href={ROUTES.START}
-            className="bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl px-6 py-3 hover:opacity-90 transition-colors no-underline text-center"
-          >
-            {t("ctaCreateWorkspace")} →
-          </Link>
-          <Link
-            href={ROUTES.PRICING}
-            className="border border-[var(--border-default)] text-[var(--text-primary)] font-medium rounded-xl px-6 py-3 hover:bg-[var(--bg-hover)] transition-colors no-underline text-center"
-          >
-            {t("ctaPricing")} →
-          </Link>
+        <button
+          onClick={() => setShowCreateModal(true)}
+          className="mt-4 md:mt-0 bg-[var(--accent-primary)] text-white font-semibold py-3 px-6 rounded-lg hover:opacity-90 transition-colors flex items-center gap-2 justify-center"
+        >
+          <Plus className="h-5 w-5" />
+          Create Sub-Account
+        </button>
+      </div>
+
+      {/* Stats Cards */}
+      {analytics && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
+            <p className="text-xs text-[var(--text-tertiary)] font-medium">Total Sub-Accounts</p>
+            <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">{analytics.total_sub_accounts}</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-2">
+              {analytics.active_sub_accounts} active
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
+            <p className="text-xs text-[var(--text-tertiary)] font-medium">Total Calls</p>
+            <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">{analytics.total_calls.toLocaleString()}</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-2">This month</p>
+          </div>
+
+          <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
+            <p className="text-xs text-[var(--text-tertiary)] font-medium">Total Leads</p>
+            <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">{analytics.total_leads.toLocaleString()}</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-2">This month</p>
+          </div>
+
+          <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
+            <p className="text-xs text-[var(--text-tertiary)] font-medium">Monthly Revenue</p>
+            <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">${analytics.mrr.toFixed(2)}</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-2">MRR</p>
+          </div>
+        </div>
+      )}
+
+      {/* Sub-Accounts Table */}
+      <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-[var(--border-default)] bg-[var(--bg-inset)]">
+                <th className="text-left px-6 py-4 font-semibold text-[var(--text-primary)]">Name</th>
+                <th className="text-left px-6 py-4 font-semibold text-[var(--text-primary)]">Plan</th>
+                <th className="text-right px-6 py-4 font-semibold text-[var(--text-primary)]">Calls</th>
+                <th className="text-right px-6 py-4 font-semibold text-[var(--text-primary)]">Leads</th>
+                <th className="text-right px-6 py-4 font-semibold text-[var(--text-primary)]">Revenue</th>
+                <th className="text-left px-6 py-4 font-semibold text-[var(--text-primary)]">Status</th>
+                <th className="text-right px-6 py-4 font-semibold text-[var(--text-primary)]">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {subAccounts.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-12 text-center">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <Building2 className="h-8 w-8 text-[var(--text-tertiary)]" />
+                      <p className="text-[var(--text-secondary)]">No sub-accounts yet</p>
+                      <button
+                        onClick={() => setShowCreateModal(true)}
+                        className="mt-4 text-sm text-[var(--accent-primary)] font-medium hover:underline"
+                      >
+                        Create your first sub-account
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                subAccounts.map((account) => {
+                  const accountAnalytics = analytics?.usage_by_account.find((a) => a.id === account.child_workspace_id);
+                  return (
+                    <tr key={account.id} className="border-b border-[var(--border-default)] hover:bg-[var(--bg-inset)] transition-colors">
+                      <td className="px-6 py-4">
+                        <p className="font-medium text-[var(--text-primary)]">{account.child_workspace?.name}</p>
+                        <p className="text-xs text-[var(--text-tertiary)]">{account.child_workspace_id}</p>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-[var(--bg-inset)] text-[var(--text-primary)]">
+                          {account.plan}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right text-[var(--text-primary)] font-medium">
+                        {accountAnalytics?.calls || 0}
+                      </td>
+                      <td className="px-6 py-4 text-right text-[var(--text-primary)] font-medium">
+                        {accountAnalytics?.leads || 0}
+                      </td>
+                      <td className="px-6 py-4 text-right text-[var(--text-primary)] font-medium">
+                        ${accountAnalytics?.revenue.toFixed(2) || "0.00"}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${
+                            account.status === "active"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-gray-100 text-gray-700"
+                          }`}
+                        >
+                          {account.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex gap-2 justify-end">
+                          <button
+                            className="p-2 hover:bg-[var(--bg-hover)] rounded transition-colors text-[var(--text-secondary)]"
+                            title="View details"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteSubAccount(account.id)}
+                            disabled={deleting === account.id}
+                            className="p-2 hover:bg-red-100 rounded transition-colors text-red-600 disabled:opacity-50"
+                            title="Deactivate"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
-          <div className="flex items-start gap-3">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--bg-inset)] border border-[var(--border-default)]">
-              <Building2 className="h-5 w-5 text-white/80" />
-            </span>
-            <div>
-              <p className="text-sm font-semibold text-[var(--text-primary)]">{t("cards.workspaces.title")}</p>
-              <p className="mt-1 text-sm text-[var(--text-tertiary)] leading-relaxed">
-                {t("cards.workspaces.body")}
-              </p>
-            </div>
-          </div>
-          <div className="mt-5 flex flex-col gap-2">
-            <Link
-              href={ROUTES.START}
-              className="text-sm font-semibold text-[var(--text-primary)] hover:text-[var(--text-primary)] transition-colors no-underline inline-flex items-center gap-2"
-            >
-              {t("cards.workspaces.link")} <ArrowUpRight className="h-4 w-4" />
-            </Link>
-          </div>
-        </div>
+      {/* Create Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-[var(--bg-surface)] rounded-xl border border-[var(--border-default)] p-6 max-w-md w-full mx-4">
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Create Sub-Account</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                  Sub-Account Name
+                </label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="e.g., Acme Sales"
+                  className="w-full px-4 py-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-inset)] text-[var(--text-primary)] placeholder-[var(--text-tertiary)]"
+                />
+              </div>
 
-        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
-          <div className="flex items-start gap-3">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--bg-inset)] border border-[var(--border-default)]">
-              <Users className="h-5 w-5 text-white/80" />
-            </span>
-            <div>
-              <p className="text-sm font-semibold text-[var(--text-primary)]">{t("cards.provisioning.title")}</p>
-              <p className="mt-1 text-sm text-[var(--text-tertiary)] leading-relaxed">
-                {t("cards.provisioning.body")}
-              </p>
-            </div>
-          </div>
-          <p className="mt-5 text-xs text-[var(--text-secondary)] leading-relaxed">
-            {t("cards.provisioning.note")}
-          </p>
-        </div>
+              <div>
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                  Owner Email
+                </label>
+                <input
+                  type="email"
+                  value={formData.owner_email}
+                  onChange={(e) => setFormData({ ...formData, owner_email: e.target.value })}
+                  placeholder="owner@example.com"
+                  className="w-full px-4 py-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-inset)] text-[var(--text-primary)] placeholder-[var(--text-tertiary)]"
+                />
+              </div>
 
-        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
-          <div className="flex items-start gap-3">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--bg-inset)] border border-[var(--border-default)]">
-              <Palette className="h-5 w-5 text-white/80" />
-            </span>
-            <div>
-              <p className="text-sm font-semibold text-[var(--text-primary)]">{t("cards.branding.title")}</p>
-              <p className="mt-1 text-sm text-[var(--text-tertiary)] leading-relaxed">
-                {t("cards.branding.body")}
-              </p>
+              <div>
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Plan</label>
+                <select
+                  value={formData.plan}
+                  onChange={(e) => setFormData({ ...formData, plan: e.target.value })}
+                  className="w-full px-4 py-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-inset)] text-[var(--text-primary)]"
+                >
+                  <option value="starter">Starter</option>
+                  <option value="standard">Standard</option>
+                  <option value="professional">Professional</option>
+                  <option value="enterprise">Enterprise</option>
+                </select>
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  onClick={() => setShowCreateModal(false)}
+                  className="flex-1 px-4 py-2 rounded-lg border border-[var(--border-default)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCreateSubAccount}
+                  disabled={creating}
+                  className="flex-1 px-4 py-2 rounded-lg bg-[var(--accent-primary)] text-white font-medium hover:opacity-90 transition-colors disabled:opacity-50"
+                >
+                  {creating ? "Creating..." : "Create"}
+                </button>
+              </div>
             </div>
           </div>
-          <div className="mt-5">
-            <Link
-              href={ROUTES.CONTACT}
-              className="text-sm font-semibold text-[var(--text-primary)] hover:text-[var(--text-primary)] transition-colors no-underline inline-flex items-center gap-2"
-            >
-              {t("cards.branding.link")} <ArrowUpRight className="h-4 w-4" />
-            </Link>
-          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

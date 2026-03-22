@@ -884,7 +884,7 @@ export async function createSequence(
 export async function addSequenceStep(
   sequenceId: string,
   stepOrder: number,
-  type: "sms" | "email" | "call",
+  type: "sms" | "email" | "call" | "wait" | "webhook",
   delayMinutes: number = 0,
   templateContent?: string,
   conditions: Record<string, unknown> = {}

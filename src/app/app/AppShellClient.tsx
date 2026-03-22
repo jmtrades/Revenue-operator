@@ -32,6 +32,12 @@ import {
   CreditCard,
   Code,
   LogOut,
+  Snowflake,
+  Brain,
+  MessageCircle,
+  Building2,
+  DollarSign,
+  Zap,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { PageTransition } from "@/components/ui/PageTransition";
@@ -83,12 +89,14 @@ export default function AppShellClient({
           { href: "/app/calls", label: t("nav.calls"), icon: PhoneCall },
           { href: "/app/contacts", label: t("nav.contacts"), icon: Users },
           { href: "/app/leads", label: t("nav.leads"), icon: UserPlus },
+          { href: "/app/cold-leads", label: t("nav.coldLeads"), icon: Snowflake },
         ],
       },
       {
         label: t("nav.sectionCommunication"),
         items: [
           { href: "/app/inbox", label: t("nav.inbox"), icon: MessageSquare },
+          { href: "/app/inbox/live-chat", label: "Live Chat", icon: MessageCircle },
           { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
           { href: "/app/follow-ups", label: t("nav.followUps"), icon: Clock },
           { href: "/app/calendar", label: t("nav.calendar"), icon: Calendar },
@@ -98,6 +106,9 @@ export default function AppShellClient({
         label: t("nav.intelligence"),
         items: [
           { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
+          { href: "/app/analytics/conversations", label: "Conversations", icon: Brain },
+          { href: "/app/analytics/roi", label: "ROI & Revenue", icon: DollarSign },
+          { href: "/app/call-intelligence", label: t("nav.callIntelligence"), icon: Zap },
           { href: "/app/knowledge", label: t("nav.knowledge"), icon: BookOpen },
         ],
       },
@@ -105,6 +116,7 @@ export default function AppShellClient({
         label: t("nav.sectionWorkspace"),
         items: [
           { href: "/app/settings", label: t("nav.settings"), icon: Settings },
+          { href: "/app/agency", label: "Agency / Reseller", icon: Building2 },
           { href: "/app/billing", label: t("nav.billing"), icon: CreditCard },
           { href: "/app/developer", label: t("nav.developer"), icon: Code },
           { href: "/app/help", label: t("contactSupport"), icon: HelpCircle },
@@ -126,6 +138,7 @@ export default function AppShellClient({
       { href: "/app/agents", label: t("nav.agents"), icon: Bot },
       { href: "/app/contacts", label: t("nav.contacts"), icon: Users },
       { href: "/app/leads", label: t("nav.leads"), icon: UserPlus },
+      { href: "/app/cold-leads", label: t("nav.coldLeads"), icon: Snowflake },
       { href: "/app/calendar", label: t("nav.calendar"), icon: Calendar },
       { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
       { href: "/app/follow-ups", label: t("nav.followUps"), icon: Clock },

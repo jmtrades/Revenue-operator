@@ -103,7 +103,7 @@ export async function POST(
       );
     }
 
-    // Verify contact exists
+    // Verify contact exists and check workspace communication/agent mode constraints
     const db = getDb();
     const { data: contact } = await db
       .from("leads")
@@ -114,6 +114,48 @@ export async function POST(
 
     if (!contact) {
       return NextResponse.json({ error: "Contact not found" }, { status: 404 });
+    }
+
+    // Check workspace communication_mode and agent_mode constraints
+    const { data: ws, error: wsError } = await db
+      .from("workspaces")
+      .select("communication_mode, agent_mode")
+      .eq("id", workspaceId)
+      .maybeSingle();
+
+    if (wsError) {
+      return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+    }
+
+    if (ws) {
+      const workspace = ws as { communication_mode?: string | null; agent_mode?: string | null };
+
+      // Check communication_mode constraints
+      if (workspace.communication_mode === "texts_only") {
+        const hasCallSteps = result.steps.some((s) => s.type === "call");
+        if (hasCallSteps) {
+          return NextResponse.json(
+            { error: "Cannot enroll contact in sequence with call steps: workspace is in text-only mode. Update communication settings to allow calls." },
+            { status: 400 }
+          );
+        }
+      } else if (workspace.communication_mode === "calls_only") {
+        const hasSmsSteps = result.steps.some((s) => s.type === "sms");
+        if (hasSmsSteps) {
+          return NextResponse.json(
+            { error: "Cannot enroll contact in sequence with SMS steps: workspace is in calls-only mode. Update communication settings to allow texts." },
+            { status: 400 }
+          );
+        }
+      }
+
+      // Check agent_mode constraint - inbound_only cannot do outbound sequences
+      if (workspace.agent_mode === "inbound_only") {
+        return NextResponse.json(
+          { error: "Cannot enroll contact in outbound sequence: workspace is configured for inbound calls only. Update agent settings to allow outbound sequences." },
+          { status: 400 }
+        );
+      }
     }
 
     // Check if contact is already enrolled in this sequence

@@ -59,8 +59,8 @@ export async function POST(
   if (err) return err;
 
   let body: {
-    type?: "sms" | "email" | "call";
-    channel?: "sms" | "email" | "call"; // legacy alias
+    type?: "sms" | "email" | "call" | "wait" | "webhook";
+    channel?: "sms" | "email" | "call" | "wait" | "webhook"; // legacy alias
     delay_minutes?: number;
     template_content?: string;
     conditions?: Record<string, unknown>;
@@ -75,9 +75,9 @@ export async function POST(
   const channel = body.type || body.channel;
   const { delay_minutes = 0, template_content, conditions } = body;
 
-  if (!channel || !["sms", "email", "call"].includes(channel)) {
+  if (!channel || !["sms", "email", "call", "wait", "webhook"].includes(channel)) {
     return NextResponse.json(
-      { error: "Invalid type/channel (must be sms, email, or call)" },
+      { error: "Invalid type/channel (must be sms, email, call, wait, or webhook)" },
       { status: 400 }
     );
   }
