@@ -89,7 +89,7 @@
   "nav": {
     "dashboard": "Tableau de bord",
     "agents": "Agents",
-    "calls": "Appels",
+    "calls": "Calls",
     "leads": "Prospects",
     "contacts": "Contacts",
     "messages": "Messages",
@@ -137,7 +137,7 @@
     "edit": "Modifier",
     "close": "Fermer",
     "continue": "Continuer",
-    "back": "Retour",
+    "back": "Back",
     "next": "Suivant",
     "previous": "Précédent",
     "submit": "Envoyer",
@@ -173,7 +173,43 @@
     "title": "Titre",
     "url": "URL",
     "genericErrorTryAgain": "Something went wrong. Please try again.",
-    "genericErrorRetry": "Something went wrong. Try again."
+    "genericErrorRetry": "Something went wrong. Try again.",
+    "calendar": {
+      "defaultContact": "Contact",
+      "pageTitle": "Calendar",
+      "heading": "Calendar",
+      "today": "Today",
+      "viewWeek": "Week",
+      "viewMonth": "Month",
+      "newAppointment": "New Appointment",
+      "timeRangeWeek": "This Week",
+      "timeRangeMonth": "This Month",
+      "appointmentCount": "{count} appointment{count, plural, one {} other {s}}",
+      "loadingCalendar": "Loading calendar...",
+      "monthViewHint": "Switch to month view for a better overview",
+      "googleCalendar": "Google Calendar",
+      "googleSynced": "Google Calendar connected",
+      "googleNotSynced": "Google Calendar not connected",
+      "connected": "Connected",
+      "connect": "Connect",
+      "outlookCalendar": "Outlook Calendar",
+      "outlookComingSoon": "Outlook Calendar integration coming soon",
+      "backToActivity": "Back to Activity",
+      "syncedToCalendar": "Synced to calendar",
+      "removeAppointment": "Remove Appointment",
+      "removeConfirm": "Are you sure you want to remove this appointment?",
+      "newAppointmentHeading": "Schedule New Appointment",
+      "contactLabel": "Contact",
+      "contactPlaceholder": "Select a contact",
+      "phoneLabel": "Phone Number",
+      "phonePlaceholder": "Enter phone number",
+      "serviceLabel": "Service",
+      "servicePlaceholder": "Select a service",
+      "dateLabel": "Date",
+      "timeLabel": "Time",
+      "durationLabel": "Duration",
+      "availableTimes": "Available Times"
+    }
   },
   "toast": {
     "saved": "Paramètres enregistrés",
@@ -233,7 +269,151 @@
     "webhookTestError": "Failed to webhook test",
     "webhookTestFailed": "Webhook test failed",
     "whatsappEmailRequired": "Whatsapp email required",
-    "whatsappWaitlisted": "Whatsapp waitlisted"
+    "whatsappWaitlisted": "Whatsapp waitlisted",
+    "leads": {
+      "status": {
+        "new": "New",
+        "contacted": "Contacted",
+        "qualified": "Qualified",
+        "appointmentSet": "Appointment Set",
+        "won": "Won",
+        "lost": "Lost"
+      },
+      "sources": {
+        "inboundCall": "Inbound Call",
+        "outbound": "Outbound",
+        "website": "Website",
+        "referral": "Referral",
+        "other": "Other"
+      },
+      "defaultName": "New Lead",
+      "defaultService": "Service",
+      "defaultDescription": "Lead description",
+      "timeline": {
+        "created": "Lead created",
+        "addedToPipeline": "Added to pipeline"
+      },
+      "pageTitle": "Leads",
+      "errors": {
+        "loadFailed": "Failed to load leads",
+        "nameRequired": "Name is required",
+        "phoneRequired": "Phone number is required",
+        "workspaceMissing": "Workspace information missing",
+        "addFailed": "Failed to add lead",
+        "csvNoValidRows": "No valid rows found in CSV"
+      },
+      "unknownLead": "Unknown Lead",
+      "toast": {
+        "newLead": "New lead created: {name}",
+        "added": "Lead added successfully",
+        "callStarted": "Call started",
+        "callFailed": "Failed to start call",
+        "exportSuccess": "Leads exported successfully",
+        "exportFailed": "Failed to export leads",
+        "importSuccess": "Imported {count} lead(s)",
+        "importFailed": "Failed to import leads"
+      },
+      "exportCsv": "Export as CSV",
+      "viewTable": "Table View",
+      "viewBoard": "Board View",
+      "searchPlaceholder": "Search leads...",
+      "filters": "Filters",
+      "inlineNamePlaceholder": "Name",
+      "inlinePhonePlaceholder": "Phone",
+      "inlineEmailPlaceholder": "Email",
+      "inlineAdd": "Add Lead",
+      "scoreFilter": {
+        "all": "All Scores",
+        "high": "High Score",
+        "medium": "Medium Score",
+        "low": "Low Score"
+      },
+      "sortOptions": {
+        "newest": "Newest First",
+        "highestScore": "Highest Score",
+        "recentContact": "Recent Contact"
+      },
+      "selectedCount": "{count} selected",
+      "clear": "Clear",
+      "changeStatus": "Change Status",
+      "assign": "Assign",
+      "unknownAgent": "Unknown Agent",
+      "modal": {
+        "title": "Lead Details",
+        "nameLabel": "Name",
+        "namePlaceholder": "Enter name",
+        "phoneLabel": "Phone",
+        "phonePlaceholder": "Enter phone number",
+        "emailLabel": "Email",
+        "emailPlaceholder": "Enter email",
+        "companyLabel": "Company",
+        "companyPlaceholder": "Enter company name",
+        "needLabel": "Need/Service",
+        "needPlaceholder": "What do they need?",
+        "sourceLabel": "Source",
+        "statusLabel": "Status",
+        "notesLabel": "Notes",
+        "notesPlaceholder": "Enter notes",
+        "cancel": "Cancel",
+        "saving": "Saving...",
+        "save": "Save"
+      },
+      "csvPreview": "CSV Preview",
+      "csvPreviewLabel": "Preview of CSV data",
+      "csvCancel": "Cancel Import",
+      "csvImporting": "Importing...",
+      "csvImportAll": "Import All",
+      "csvOr": "or",
+      "importFromCsv": "Import from CSV",
+      "csvUploadHint": "Drag and drop a CSV file or click to select",
+      "drawerTitle": "Lead Details",
+      "drawerTitleFallback": "Lead Information",
+      "heading": "Leads",
+      "description": "Manage your leads",
+      "addLead": "Add Lead",
+      "total": "{count} leads"
+    },
+    "agents": {
+      "voiceTest": {
+        "defaultPreviewText": "Please enter a script for voice testing",
+        "toast": {
+          "played": "Voice preview played for {name}",
+          "applied": "Voice applied to agent"
+        },
+        "errors": {
+          "previewFailed": "Failed to preview voice",
+          "applyFailed": "Failed to apply voice to agent"
+        },
+        "noAgent": "Agent not found",
+        "backToAgents": "Back to Agents",
+        "scriptSection": "Test Script",
+        "scriptPlaceholder": "Enter text to preview the voice",
+        "scriptHelp": "This text will be used to preview the voice quality",
+        "abComparison": "Voice A/B Comparison",
+        "voiceA": "Voice A",
+        "voiceB": "Voice B",
+        "allVoices": "All Voices",
+        "applyToAgent": "Apply to Agent",
+        "selected": "Selected",
+        "selectVoicePrompt": "Select a voice to preview"
+      }
+    },
+    "integrations": {
+      "toast": {
+        "syncFailed": "Sync failed"
+      },
+      "whatsappComingSoon": "WhatsApp integration coming soon"
+    },
+    "settings": {
+      "integrations": {
+        "transformations": {
+          "none": "None",
+          "format_phone": "Format Phone Number",
+          "map_status": "Map Status",
+          "concatenate": "Concatenate Fields"
+        }
+      }
+    }
   },
   "auth": {
     "signIn": {
@@ -479,7 +659,10 @@
       "answerRate": "Taux de réponse",
       "leadsCreated": "Leads créés",
       "appointmentsBooked": "Rendez-vous pris",
-      "revenueProtected": "Revenus protégés"
+      "revenueProtected": "Revenus protégés",
+      "recovered": "Récupérés",
+      "followUpsSent": "Relances envoyées",
+      "minutes": "minutes"
     },
     "quickActions": {
       "title": "Actions rapides",
@@ -527,7 +710,10 @@
       "title": "Bienvenue sur Recall Touch",
       "body": "Nous garderons cet espace prêt jusqu'à l'arrivée de vos premiers appels."
     },
-    "needsAttention": "À surveiller",
+    "needsAttention": {
+      "title": "Requiert votre attention",
+      "empty": "Rien ne nécessite votre action pour le moment."
+    },
     "activity": {
       "selectWorkspace": "Sélectionnez un espace de travail pour voir l'activité.",
       "title": "Activité",
@@ -569,7 +755,8 @@
       "viewDetails": "Voir le détail",
       "markDone": "Marquer fait",
       "requiresAttention": "À traiter",
-      "callFailed": "Appel échoué"
+      "callFailed": "Appel échoué",
+      "empty": "L'activité s'affichera dès que des appels et messages arrivent."
     },
     "pageTitle": "Tableau de bord — Recall Touch",
     "importContacts": "Importer vos contacts",
@@ -658,7 +845,8 @@
       "searchByNameEmailCompany": "Rechercher par nom, e-mail, entreprise…",
       "protectionScopeTitle": "Périmètre de protection",
       "protectionScopeSubtitle": "Ce qui continue ici",
-      "noTeamYet": "Pas encore de membres. Ajoutez-en dans les paramètres."
+      "noTeamYet": "Pas encore de membres. Ajoutez-en dans les paramètres.",
+      "leadsAppearHere": "Leads will appear here once created"
     },
     "pages": {
       "analytics": {
@@ -774,6 +962,10 @@
       },
       "record": {
         "title": "Enregistrement"
+      },
+      "leads": {
+        "title": "Leads",
+        "subtitle": "Manage your leads"
       }
     },
     "agentDetail": {
@@ -1598,7 +1790,10 @@
     "call": "Call",
     "text": "Text",
     "activeCampaigns": "Active outbound campaigns",
-    "createCampaign": "Create campaign →"
+    "createCampaign": "Create campaign →",
+    "viewAll": "Voir tout",
+    "noWorkspace": "Aucun espace de travail sélectionné",
+    "selectWorkspace": "Sélectionnez un espace de travail pour voir votre tableau de bord."
   },
   "analytics": {
     "pageTitle": "Analyses — Recall Touch",
@@ -2575,6 +2770,29 @@
     "continue": "Continue",
     "voiceStep": {
       "heading": "How should your agent sound?"
+    },
+    "voiceTest": {
+      "defaultPreviewText": "Please enter a script for voice testing",
+      "toast": {
+        "played": "Voice preview played for {name}",
+        "applied": "Voice applied to agent"
+      },
+      "errors": {
+        "previewFailed": "Failed to preview voice",
+        "applyFailed": "Failed to apply voice to agent"
+      },
+      "noAgent": "Agent not found",
+      "backToAgents": "Back to Agents",
+      "scriptSection": "Test Script",
+      "scriptPlaceholder": "Enter text to preview the voice",
+      "scriptHelp": "This text will be used to preview the voice quality",
+      "abComparison": "Voice A/B Comparison",
+      "voiceA": "Voice A",
+      "voiceB": "Voice B",
+      "allVoices": "All Voices",
+      "applyToAgent": "Apply to Agent",
+      "selected": "Selected",
+      "selectVoicePrompt": "Select a voice to preview"
     }
   },
   "calls": {
@@ -2613,15 +2831,15 @@
       "voicemail": "Messagerie vocale"
     },
     "detail": {
-      "pageTitle": "Appel — Recall Touch",
-      "backToCalls": "Retour aux appels",
-      "breadcrumbDetail": "Détail de l'appel",
-      "notFound": "Cet appel est introuvable.",
+      "pageTitle": "Call Details",
+      "backToCalls": "Back to Calls",
+      "breadcrumbDetail": "Call Detail",
+      "notFound": "Call not found",
       "playAria": "Lecture",
       "pauseAria": "Pause",
       "seekAria": "Rechercher",
       "playbackSpeed": "Vitesse",
-      "speakerAgent": "Agent IA",
+      "speakerAgent": "Agent",
       "summaryTitle": "Résumé de l'appel",
       "sentiment": "Sentiment",
       "outcome": "Résultat",
@@ -2650,7 +2868,23 @@
       "ai": "AI:",
       "callSummary": "Call summary",
       "recommendedFollowUp": "Recommended follow-up",
-      "contact": "Contact"
+      "contact": "Contact",
+      "calls": {
+        "detail": {
+          "notFound": "Call not found",
+          "pageTitle": "Call Details",
+          "speakerAgent": "Agent",
+          "backToCalls": "Back to Calls",
+          "breadcrumbDetail": "Call Detail"
+        },
+        "defaultCaller": "Caller"
+      },
+      "common": {
+        "back": "Back"
+      },
+      "nav": {
+        "calls": "Calls"
+      }
     },
     "empty": {
       "title": "Aucun appel pour le moment",
@@ -2676,7 +2910,7 @@
       "inbound": "Entrant",
       "outbound": "Sortant"
     },
-    "defaultCaller": "Appelant",
+    "defaultCaller": "Caller",
     "aiSummary": "Résumé IA",
     "noSummary": "Aucun résumé disponible.",
     "callIntelligenceLabel": "Intelligence d'appel",
@@ -2935,7 +3169,7 @@
   },
   "leads": {
     "title": "Prospects",
-    "pageTitle": "Prospects — Recall Touch",
+    "pageTitle": "Leads",
     "heading": "Prospects",
     "noLeadsInStage": "Pas encore de leads à cette étape.",
     "detailNotesHeading": "Notes",
@@ -2947,82 +3181,82 @@
     "description": "Chaque opportunité captée, du premier appel à la décision.",
     "addLead": "Ajouter un lead",
     "total": "Total :",
-    "exportCsv": "Exporter CSV",
-    "viewTable": "Tableau",
-    "viewBoard": "Tableau",
-    "searchPlaceholder": "Rechercher par nom, tél. ou email…",
-    "filters": "Filtres",
-    "inlineNamePlaceholder": "Nom",
-    "inlinePhonePlaceholder": "Téléphone",
-    "inlineEmailPlaceholder": "Email (optionnel)",
-    "inlineAdd": "+ Ajouter",
+    "exportCsv": "Export as CSV",
+    "viewTable": "Table View",
+    "viewBoard": "Board View",
+    "searchPlaceholder": "Search leads...",
+    "filters": "Filters",
+    "inlineNamePlaceholder": "Name",
+    "inlinePhonePlaceholder": "Phone",
+    "inlineEmailPlaceholder": "Email",
+    "inlineAdd": "Add Lead",
     "scoreFilter": {
-      "all": "Tous les scores",
-      "high": "Élevé (70+)",
-      "medium": "Moyen (40–69)",
-      "low": "Faible (0–39)"
+      "all": "All Scores",
+      "high": "High Score",
+      "medium": "Medium Score",
+      "low": "Low Score"
     },
     "sortOptions": {
-      "newest": "Plus récents",
-      "highestScore": "Score le plus élevé",
-      "recentContact": "Contact le plus récent"
+      "newest": "Newest First",
+      "highestScore": "Highest Score",
+      "recentContact": "Recent Contact"
     },
-    "selectedCount": "{count} sélectionnés",
-    "clear": "Effacer",
-    "changeStatus": "Changer le statut :",
-    "assign": "Assigner :",
+    "selectedCount": "{count} selected",
+    "clear": "Clear",
+    "changeStatus": "Change Status",
+    "assign": "Assign",
     "modal": {
-      "title": "Ajouter un lead",
-      "nameLabel": "Nom *",
-      "namePlaceholder": "Nom complet",
-      "phoneLabel": "Téléphone *",
-      "phonePlaceholder": "+1 (555) 000-0000",
-      "emailLabel": "E-mail",
-      "emailPlaceholder": "email@exemple.com",
-      "companyLabel": "Entreprise",
-      "companyPlaceholder": "Nom de l'entreprise",
-      "needLabel": "De quoi ont-ils besoin ?",
-      "needPlaceholder": "ex. nettoyage mensuel, consultation",
+      "title": "Lead Details",
+      "nameLabel": "Name",
+      "namePlaceholder": "Enter name",
+      "phoneLabel": "Phone",
+      "phonePlaceholder": "Enter phone number",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Enter email",
+      "companyLabel": "Company",
+      "companyPlaceholder": "Enter company name",
+      "needLabel": "Need/Service",
+      "needPlaceholder": "What do they need?",
       "sourceLabel": "Source",
-      "statusLabel": "Statut",
+      "statusLabel": "Status",
       "notesLabel": "Notes",
-      "notesPlaceholder": "Notes optionnelles",
-      "cancel": "Annuler",
-      "saving": "Ajout…",
-      "save": "Enregistrer le lead"
+      "notesPlaceholder": "Enter notes",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "save": "Save"
     },
     "sources": {
-      "inboundCall": "Appel entrant",
-      "outbound": "Prospection",
-      "website": "Site web",
-      "referral": "Parrainage",
-      "other": "Autre"
+      "inboundCall": "Inbound Call",
+      "outbound": "Outbound",
+      "website": "Website",
+      "referral": "Referral",
+      "other": "Other"
     },
-    "csvPreview": "Nous avons trouvé {count} leads",
-    "csvPreviewLabel": "Aperçu (5 premiers) :",
-    "csvCancel": "Annuler",
-    "csvImporting": "Importation…",
-    "csvImportAll": "Importer les {count} leads",
-    "csvOr": "— ou —",
-    "importFromCsv": "Importer depuis CSV",
-    "csvUploadHint": "Téléchargez un CSV avec colonnes nom, tél., email",
-    "drawerTitle": "{name} · Prospect",
-    "drawerTitleFallback": "Prospect",
+    "csvPreview": "CSV Preview",
+    "csvPreviewLabel": "Preview of CSV data",
+    "csvCancel": "Cancel Import",
+    "csvImporting": "Importing...",
+    "csvImportAll": "Import All",
+    "csvOr": "or",
+    "importFromCsv": "Import from CSV",
+    "csvUploadHint": "Drag and drop a CSV file or click to select",
+    "drawerTitle": "Lead Details",
+    "drawerTitleFallback": "Lead Information",
     "scoreLabel": "Score",
     "status": {
-      "new": "Nouveau",
-      "contacted": "Contacté",
-      "qualified": "Qualifié",
-      "appointmentSet": "Rendez-vous programmé",
-      "won": "Gagné",
-      "lost": "Perdu"
+      "new": "New",
+      "contacted": "Contacted",
+      "qualified": "Qualified",
+      "appointmentSet": "Appointment Set",
+      "won": "Won",
+      "lost": "Lost"
     },
-    "defaultName": "Prospect",
-    "defaultService": "Demande de service",
-    "defaultDescription": "Prospect capté lors d'une conversation récente et conservé dans votre pipeline.",
+    "defaultName": "New Lead",
+    "defaultService": "Service",
+    "defaultDescription": "Lead description",
     "timeline": {
-      "created": "Créé à partir de l'activité récente",
-      "addedToPipeline": "Prospect ajouté au pipeline actif"
+      "created": "Lead created",
+      "addedToPipeline": "Added to pipeline"
     },
     "board": {
       "columns": {
@@ -3078,23 +3312,23 @@
     },
     "saveLead": "Enregistrer le lead",
     "toast": {
-      "callStarted": "Appel lancé. Consultez l’état dans Appels.",
+      "callStarted": "Call started",
       "callFailed": "Impossible de lancer l’appel.",
-      "exportFailed": "Échec de l’export. Réessayez.",
-      "exportSuccess": "Leads exportés. Vérifiez vos téléchargements.",
-      "importFailed": "Échec de l’import.",
-      "importSuccess": "{count} leads importés.",
-      "added": "Lead ajouté avec succès.",
-      "newLead": "Nouveau lead : {name}"
+      "exportFailed": "Failed to export leads",
+      "exportSuccess": "Leads exported successfully",
+      "importFailed": "Failed to import leads",
+      "importSuccess": "Leads imported successfully",
+      "added": "Lead added successfully",
+      "newLead": "New lead created"
     },
-    "unknownLead": "Lead inconnu",
+    "unknownLead": "Unknown Lead",
     "errors": {
-      "loadFailed": "Échec du chargement des leads.",
-      "nameRequired": "Le nom est requis.",
-      "phoneRequired": "Le numéro de téléphone est requis.",
-      "workspaceMissing": "Aucun espace de travail sélectionné.",
-      "addFailed": "Échec de l'ajout du lead.",
-      "csvNoValidRows": "Aucune ligne valide trouvée dans le CSV."
+      "loadFailed": "Failed to load leads",
+      "nameRequired": "Name is required",
+      "phoneRequired": "Phone number is required",
+      "workspaceMissing": "Workspace information missing",
+      "addFailed": "Failed to add lead",
+      "csvNoValidRows": "No valid rows found in CSV"
     },
     "timeToday": "Aujourd'hui",
     "timeDaysAgo": "Il y a {count} jours",
@@ -3105,7 +3339,7 @@
     "emptySubtitle": "Import contacts or add manually",
     "importCsv": "Import CSV",
     "addContact": "Add Contact",
-    "unknownAgent": "Unknown agent"
+    "unknownAgent": "Unknown Agent"
   },
   "campaigns": {
     "title": "Campagnes",
@@ -3726,10 +3960,10 @@
         "microsoft_365": "Microsoft 365"
       },
       "transformations": {
-        "none": "Aucune",
-        "format_phone": "Formater le téléphone (E.164)",
-        "map_status": "Mapper le statut",
-        "concatenate": "Concaténer les champs"
+        "none": "None",
+        "format_phone": "Format Phone Number",
+        "map_status": "Map Status",
+        "concatenate": "Concatenate Fields"
       },
       "crmFallback": "CRM"
     },
@@ -4283,12 +4517,12 @@
           "f4": "Support prioritaire"
         },
         "scale": {
-          "name": "Business",
-          "tagline": "Pour équipes multi-sites et gros volume.",
-          "f1": "6 000 min entrants inclus",
-          "f2": "10 numéros",
-          "f3": "Success partner dédié",
-          "f4": "Reporting et intégrations sur mesure"
+          "name": "Scale Plan",
+          "tagline": "For scaling operations",
+          "f1": "Feature 1",
+          "f2": "Feature 2",
+          "f3": "Feature 3",
+          "f4": "Feature 4"
         },
         "badgePopular": "Plus populaire",
         "business": {
@@ -5414,7 +5648,16 @@
     "toast": {
       "saved": "Progression de l’onboarding enregistrée",
       "complete": "Onboarding terminé. Redirection vers le tableau de bord."
-    }
+    },
+    "modeLabel": "Select Mode",
+    "modeSoloTitle": "Solo Mode",
+    "modeSoloDesc": "Use Recall Touch for personal calls",
+    "modeSalesTitle": "Sales Mode",
+    "modeSalesDesc": "Use Recall Touch for outbound sales calls",
+    "modeBusinessTitle": "Business Mode",
+    "modeBusinessDesc": "Use Recall Touch for business operations",
+    "businessHeading": "Business Information",
+    "businessSubtitle": "Tell us about your business"
   },
   "agents.testPanel": {
     "errors": {
@@ -5593,7 +5836,43 @@
       "loading": "Chargement…",
       "creating": "Création…",
       "importing": "Importation…",
-      "uploading": "Téléversement…"
+      "uploading": "Téléversement…",
+      "calendar": {
+        "defaultContact": "Contact",
+        "pageTitle": "Calendar",
+        "heading": "Calendar",
+        "today": "Today",
+        "viewWeek": "Week",
+        "viewMonth": "Month",
+        "newAppointment": "New Appointment",
+        "timeRangeWeek": "This Week",
+        "timeRangeMonth": "This Month",
+        "appointmentCount": "{count} appointment{count, plural, one {} other {s}}",
+        "loadingCalendar": "Loading calendar...",
+        "monthViewHint": "Switch to month view for a better overview",
+        "googleCalendar": "Google Calendar",
+        "googleSynced": "Google Calendar connected",
+        "googleNotSynced": "Google Calendar not connected",
+        "connected": "Connected",
+        "connect": "Connect",
+        "outlookCalendar": "Outlook Calendar",
+        "outlookComingSoon": "Outlook Calendar integration coming soon",
+        "backToActivity": "Back to Activity",
+        "syncedToCalendar": "Synced to calendar",
+        "removeAppointment": "Remove Appointment",
+        "removeConfirm": "Are you sure you want to remove this appointment?",
+        "newAppointmentHeading": "Schedule New Appointment",
+        "contactLabel": "Contact",
+        "contactPlaceholder": "Select a contact",
+        "phoneLabel": "Phone Number",
+        "phonePlaceholder": "Enter phone number",
+        "serviceLabel": "Service",
+        "servicePlaceholder": "Select a service",
+        "dateLabel": "Date",
+        "timeLabel": "Time",
+        "durationLabel": "Duration",
+        "availableTimes": "Available Times"
+      }
     }
   },
   "search": {
@@ -5767,38 +6046,38 @@
   "calendar": {
     "defaultContact": "Contact",
     "removeAppointmentTitle": "Supprimer le rendez-vous ?",
-    "pageTitle": "Calendrier — Recall Touch",
-    "heading": "Calendrier",
-    "today": "Aujourd'hui",
-    "viewWeek": "Semaine",
-    "viewMonth": "Mois",
-    "newAppointment": "+ Nouveau rendez-vous",
-    "timeRangeWeek": "8 h – 20 h · Cette semaine",
-    "timeRangeMonth": "8 h – 20 h · Ce mois",
-    "loadingCalendar": "Chargement du calendrier…",
-    "appointmentCount": "{count} rendez-vous",
-    "monthViewHint": "La vue mois est simplifiée. La vue semaine affiche les blocs détaillés.",
+    "pageTitle": "Calendar",
+    "heading": "Calendar",
+    "today": "Today",
+    "viewWeek": "Week",
+    "viewMonth": "Month",
+    "newAppointment": "New Appointment",
+    "timeRangeWeek": "This Week",
+    "timeRangeMonth": "This Month",
+    "loadingCalendar": "Loading calendar...",
+    "appointmentCount": "{count} appointment{count, plural, one {} other {s}}",
+    "monthViewHint": "Switch to month view for a better overview",
     "googleCalendar": "Google Calendar",
-    "googleSynced": "Synchronisé. Disponibilités et réservations synchronisées dans les deux sens.",
-    "googleNotSynced": "Synchronisez les disponibilités pour aligner votre IA et votre calendrier.",
-    "connected": "Connecté",
-    "connect": "Connecter",
-    "outlookCalendar": "Microsoft Outlook",
-    "backToActivity": "Activité",
-    "syncedToCalendar": "Synchronisé avec le calendrier",
-    "removeAppointment": "Supprimer le rendez-vous ?",
-    "removeConfirm": "Supprimer « {contact} — {service} » ? Cette action est irréversible.",
-    "newAppointmentHeading": "Nouveau rendez-vous",
+    "googleSynced": "Google Calendar connected",
+    "googleNotSynced": "Google Calendar not connected",
+    "connected": "Connected",
+    "connect": "Connect",
+    "outlookCalendar": "Outlook Calendar",
+    "backToActivity": "Back to Activity",
+    "syncedToCalendar": "Synced to calendar",
+    "removeAppointment": "Remove Appointment",
+    "removeConfirm": "Are you sure you want to remove this appointment?",
+    "newAppointmentHeading": "Schedule New Appointment",
     "contactLabel": "Contact",
-    "contactPlaceholder": "Jane Smith",
-    "phoneLabel": "Téléphone",
-    "phonePlaceholder": "+1 555 000 0000",
+    "contactPlaceholder": "Select a contact",
+    "phoneLabel": "Phone Number",
+    "phonePlaceholder": "Enter phone number",
     "serviceLabel": "Service",
-    "servicePlaceholder": "Nettoyage, devis, consultation…",
+    "servicePlaceholder": "Select a service",
     "dateLabel": "Date",
-    "timeLabel": "Heure",
-    "durationLabel": "Durée (min)",
-    "availableTimes": "Créneaux disponibles (Google)",
+    "timeLabel": "Time",
+    "durationLabel": "Duration",
+    "availableTimes": "Available Times",
     "days": {
       "mon": "Lun",
       "tue": "Mar",
@@ -5808,7 +6087,7 @@
       "sat": "Sam",
       "sun": "Dim"
     },
-    "outlookComingSoon": "La synchronisation bidirectionnelle avec Outlook Calendar arrive bientôt. Vous serez averti dès qu’elle sera prête.",
+    "outlookComingSoon": "Outlook Calendar integration coming soon",
     "empty": {
       "title": "Aucun rendez-vous pour le moment",
       "body": "À mesure que votre IA prendra des rendez-vous, ils apparaîtront dans ce calendrier."
@@ -6306,7 +6585,7 @@
       "subtitle": "Votre IA utilisera ces informations lors des futurs appels."
     },
     "form": {
-      "addTag": "+ Ajouter un tag",
+      "addTag": "Add Tag",
       "firstNameLabel": "Prénom*",
       "firstNamePlaceholder": "Mike",
       "lastNameLabel": "Nom*",
@@ -7220,7 +7499,8 @@
       "calendarNotConfigured": "Google Calendar n'est pas configuré.",
       "whatsappEmailRequired": "Entrez votre e-mail pour rejoindre la liste d'attente WhatsApp.",
       "whatsappWaitlisted": "Vous êtes sur la liste. Nous vous préviendrons quand WhatsApp sera disponible.",
-      "error": "Une erreur s'est produite. Réessayez."
+      "error": "Une erreur s'est produite. Réessayez.",
+      "syncFailed": "Sync failed"
     },
     "hub": {
       "title": "Intégrations",
@@ -7324,7 +7604,8 @@
       "format_phone": "Format phone",
       "map_status": "Map status",
       "none": "None"
-    }
+    },
+    "whatsappComingSoon": "WhatsApp integration coming soon"
   },
   "email": {
     "templates": {
@@ -9426,5 +9707,55 @@
     "checksPassed": "{passed}/{total} checks passed",
     "ready": "Ready",
     "actionNeeded": "Action needed"
+  },
+  "voices": {
+    "previewText": "I'm an AI assistant. How can I help you today?",
+    "cloneErrorFormat": "Invalid audio format. Please use MP3, WAV, or M4A",
+    "cloneErrorSize": "Audio file too large. Maximum size is 25MB",
+    "cloneErrorDuration": "Audio file too short. Minimum duration is 10 seconds",
+    "cloneErrorGeneric": "Failed to clone voice",
+    "genderMale": "Male",
+    "genderFemale": "Female",
+    "genderNeutral": "Neutral",
+    "pageTitle": "Voice Configuration",
+    "pageSubtitle": "Configure and manage voice settings",
+    "selectWorkspace": "Select Workspace",
+    "selectWorkspaceDesc": "Choose a workspace to configure",
+    "activeConfig": "Active Configuration",
+    "voiceLabel": "Voice",
+    "industryPreset": "Industry Preset",
+    "presetTech": "Technology",
+    "presetFinance": "Finance",
+    "presetHealthcare": "Healthcare",
+    "presetSales": "Sales",
+    "toneLabel": "Tone",
+    "speedLabel": "Speed",
+    "stabilityLabel": "Stability",
+    "warmthLabel": "Warmth",
+    "emotionLabel": "Emotion",
+    "testVoice": "Test Voice",
+    "testPlaceholder": "Enter text to test",
+    "libraryTitle": "Voice Library",
+    "noVoices": "No voices available",
+    "voicesLoading": "Loading voices...",
+    "searchPlaceholder": "Search voices...",
+    "allGenders": "All Genders",
+    "allAccents": "All Accents",
+    "allIndustries": "All Industries",
+    "cloneVoice": "Clone Voice",
+    "select": "Select",
+    "abTesting": "A/B Testing",
+    "newTest": "New Test",
+    "noTests": "No tests yet",
+    "noTestsDesc": "Create your first A/B test to compare voices",
+    "calls": "Calls",
+    "satisfaction": "Satisfaction",
+    "conversion": "Conversion",
+    "cloning": "Cloning...",
+    "cancel": "Cancel",
+    "createTest": "Create Test",
+    "trafficSplit": "Traffic Split",
+    "voiceA": "Voice A",
+    "voiceB": "Voice B"
   }
 }

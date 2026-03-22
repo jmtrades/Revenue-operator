@@ -89,7 +89,7 @@
   "nav": {
     "dashboard": "ダッシュボード",
     "agents": "エージェント",
-    "calls": "通話",
+    "calls": "Calls",
     "leads": "リード",
     "contacts": "連絡先",
     "messages": "メッセージ",
@@ -137,7 +137,7 @@
     "edit": "編集",
     "close": "閉じる",
     "continue": "続行",
-    "back": "戻る",
+    "back": "Back",
     "next": "次へ",
     "previous": "前へ",
     "submit": "送信",
@@ -173,7 +173,43 @@
     "title": "タイトル",
     "url": "URL",
     "genericErrorTryAgain": "Something went wrong. Please try again.",
-    "genericErrorRetry": "Something went wrong. Try again."
+    "genericErrorRetry": "Something went wrong. Try again.",
+    "calendar": {
+      "defaultContact": "Contact",
+      "pageTitle": "Calendar",
+      "heading": "Calendar",
+      "today": "Today",
+      "viewWeek": "Week",
+      "viewMonth": "Month",
+      "newAppointment": "New Appointment",
+      "timeRangeWeek": "This Week",
+      "timeRangeMonth": "This Month",
+      "appointmentCount": "{count} appointment{count, plural, one {} other {s}}",
+      "loadingCalendar": "Loading calendar...",
+      "monthViewHint": "Switch to month view for a better overview",
+      "googleCalendar": "Google Calendar",
+      "googleSynced": "Google Calendar connected",
+      "googleNotSynced": "Google Calendar not connected",
+      "connected": "Connected",
+      "connect": "Connect",
+      "outlookCalendar": "Outlook Calendar",
+      "outlookComingSoon": "Outlook Calendar integration coming soon",
+      "backToActivity": "Back to Activity",
+      "syncedToCalendar": "Synced to calendar",
+      "removeAppointment": "Remove Appointment",
+      "removeConfirm": "Are you sure you want to remove this appointment?",
+      "newAppointmentHeading": "Schedule New Appointment",
+      "contactLabel": "Contact",
+      "contactPlaceholder": "Select a contact",
+      "phoneLabel": "Phone Number",
+      "phonePlaceholder": "Enter phone number",
+      "serviceLabel": "Service",
+      "servicePlaceholder": "Select a service",
+      "dateLabel": "Date",
+      "timeLabel": "Time",
+      "durationLabel": "Duration",
+      "availableTimes": "Available Times"
+    }
   },
   "toast": {
     "saved": "設定を保存しました",
@@ -233,7 +269,151 @@
     "webhookTestError": "Failed to webhook test",
     "webhookTestFailed": "Webhook test failed",
     "whatsappEmailRequired": "Whatsapp email required",
-    "whatsappWaitlisted": "Whatsapp waitlisted"
+    "whatsappWaitlisted": "Whatsapp waitlisted",
+    "leads": {
+      "status": {
+        "new": "New",
+        "contacted": "Contacted",
+        "qualified": "Qualified",
+        "appointmentSet": "Appointment Set",
+        "won": "Won",
+        "lost": "Lost"
+      },
+      "sources": {
+        "inboundCall": "Inbound Call",
+        "outbound": "Outbound",
+        "website": "Website",
+        "referral": "Referral",
+        "other": "Other"
+      },
+      "defaultName": "New Lead",
+      "defaultService": "Service",
+      "defaultDescription": "Lead description",
+      "timeline": {
+        "created": "Lead created",
+        "addedToPipeline": "Added to pipeline"
+      },
+      "pageTitle": "Leads",
+      "errors": {
+        "loadFailed": "Failed to load leads",
+        "nameRequired": "Name is required",
+        "phoneRequired": "Phone number is required",
+        "workspaceMissing": "Workspace information missing",
+        "addFailed": "Failed to add lead",
+        "csvNoValidRows": "No valid rows found in CSV"
+      },
+      "unknownLead": "Unknown Lead",
+      "toast": {
+        "newLead": "New lead created: {name}",
+        "added": "Lead added successfully",
+        "callStarted": "Call started",
+        "callFailed": "Failed to start call",
+        "exportSuccess": "Leads exported successfully",
+        "exportFailed": "Failed to export leads",
+        "importSuccess": "Imported {count} lead(s)",
+        "importFailed": "Failed to import leads"
+      },
+      "exportCsv": "Export as CSV",
+      "viewTable": "Table View",
+      "viewBoard": "Board View",
+      "searchPlaceholder": "Search leads...",
+      "filters": "Filters",
+      "inlineNamePlaceholder": "Name",
+      "inlinePhonePlaceholder": "Phone",
+      "inlineEmailPlaceholder": "Email",
+      "inlineAdd": "Add Lead",
+      "scoreFilter": {
+        "all": "All Scores",
+        "high": "High Score",
+        "medium": "Medium Score",
+        "low": "Low Score"
+      },
+      "sortOptions": {
+        "newest": "Newest First",
+        "highestScore": "Highest Score",
+        "recentContact": "Recent Contact"
+      },
+      "selectedCount": "{count} selected",
+      "clear": "Clear",
+      "changeStatus": "Change Status",
+      "assign": "Assign",
+      "unknownAgent": "Unknown Agent",
+      "modal": {
+        "title": "Lead Details",
+        "nameLabel": "Name",
+        "namePlaceholder": "Enter name",
+        "phoneLabel": "Phone",
+        "phonePlaceholder": "Enter phone number",
+        "emailLabel": "Email",
+        "emailPlaceholder": "Enter email",
+        "companyLabel": "Company",
+        "companyPlaceholder": "Enter company name",
+        "needLabel": "Need/Service",
+        "needPlaceholder": "What do they need?",
+        "sourceLabel": "Source",
+        "statusLabel": "Status",
+        "notesLabel": "Notes",
+        "notesPlaceholder": "Enter notes",
+        "cancel": "Cancel",
+        "saving": "Saving...",
+        "save": "Save"
+      },
+      "csvPreview": "CSV Preview",
+      "csvPreviewLabel": "Preview of CSV data",
+      "csvCancel": "Cancel Import",
+      "csvImporting": "Importing...",
+      "csvImportAll": "Import All",
+      "csvOr": "or",
+      "importFromCsv": "Import from CSV",
+      "csvUploadHint": "Drag and drop a CSV file or click to select",
+      "drawerTitle": "Lead Details",
+      "drawerTitleFallback": "Lead Information",
+      "heading": "Leads",
+      "description": "Manage your leads",
+      "addLead": "Add Lead",
+      "total": "{count} leads"
+    },
+    "agents": {
+      "voiceTest": {
+        "defaultPreviewText": "Please enter a script for voice testing",
+        "toast": {
+          "played": "Voice preview played for {name}",
+          "applied": "Voice applied to agent"
+        },
+        "errors": {
+          "previewFailed": "Failed to preview voice",
+          "applyFailed": "Failed to apply voice to agent"
+        },
+        "noAgent": "Agent not found",
+        "backToAgents": "Back to Agents",
+        "scriptSection": "Test Script",
+        "scriptPlaceholder": "Enter text to preview the voice",
+        "scriptHelp": "This text will be used to preview the voice quality",
+        "abComparison": "Voice A/B Comparison",
+        "voiceA": "Voice A",
+        "voiceB": "Voice B",
+        "allVoices": "All Voices",
+        "applyToAgent": "Apply to Agent",
+        "selected": "Selected",
+        "selectVoicePrompt": "Select a voice to preview"
+      }
+    },
+    "integrations": {
+      "toast": {
+        "syncFailed": "Sync failed"
+      },
+      "whatsappComingSoon": "WhatsApp integration coming soon"
+    },
+    "settings": {
+      "integrations": {
+        "transformations": {
+          "none": "None",
+          "format_phone": "Format Phone Number",
+          "map_status": "Map Status",
+          "concatenate": "Concatenate Fields"
+        }
+      }
+    }
   },
   "auth": {
     "signIn": {
@@ -479,7 +659,10 @@
       "answerRate": "応答率",
       "leadsCreated": "作成されたリード",
       "appointmentsBooked": "予約件数",
-      "revenueProtected": "保護された売上"
+      "revenueProtected": "保護された売上",
+      "recovered": "回収済み",
+      "followUpsSent": "フォローアップ送信",
+      "minutes": "分"
     },
     "quickActions": {
       "title": "クイックアクション",
@@ -527,7 +710,10 @@
       "title": "Recall Touch へようこそ",
       "body": "最初の通話が入るまで、このスペースを準備しておきます。"
     },
-    "needsAttention": "要対応",
+    "needsAttention": {
+      "title": "対応が必要",
+      "empty": "現在対応が必要な項目はありません。"
+    },
     "activity": {
       "selectWorkspace": "ワークスペースを選ぶとアクティビティが表示されます。",
       "title": "アクティビティ",
@@ -569,7 +755,8 @@
       "viewDetails": "詳細",
       "markDone": "完了にする",
       "requiresAttention": "要対応",
-      "callFailed": "通話に失敗"
+      "callFailed": "通話に失敗",
+      "empty": "通話やメッセージが届くとアクティビティが表示されます。"
     },
     "pageTitle": "ダッシュボード — Recall Touch",
     "importContacts": "連絡先をインポート",
@@ -658,7 +845,8 @@
       "searchByNameEmailCompany": "名前、メール、会社で検索…",
       "protectionScopeTitle": "保護範囲",
       "protectionScopeSubtitle": "ここで継続する内容",
-      "noTeamYet": "まだメンバーがいません。設定で追加してください。"
+      "noTeamYet": "まだメンバーがいません。設定で追加してください。",
+      "leadsAppearHere": "Leads will appear here once created"
     },
     "pages": {
       "analytics": {
@@ -774,6 +962,10 @@
       },
       "record": {
         "title": "記録"
+      },
+      "leads": {
+        "title": "Leads",
+        "subtitle": "Manage your leads"
       }
     },
     "agentDetail": {
@@ -1598,7 +1790,10 @@
     "call": "Call",
     "text": "Text",
     "activeCampaigns": "Active outbound campaigns",
-    "createCampaign": "Create campaign →"
+    "createCampaign": "Create campaign →",
+    "viewAll": "すべて見る",
+    "noWorkspace": "ワークスペースが選択されていません",
+    "selectWorkspace": "ダッシュボードを表示するにはワークスペースを選択してください。"
   },
   "analytics": {
     "pageTitle": "分析 — Recall Touch",
@@ -2575,6 +2770,29 @@
     "continue": "Continue",
     "voiceStep": {
       "heading": "How should your agent sound?"
+    },
+    "voiceTest": {
+      "defaultPreviewText": "Please enter a script for voice testing",
+      "toast": {
+        "played": "Voice preview played for {name}",
+        "applied": "Voice applied to agent"
+      },
+      "errors": {
+        "previewFailed": "Failed to preview voice",
+        "applyFailed": "Failed to apply voice to agent"
+      },
+      "noAgent": "Agent not found",
+      "backToAgents": "Back to Agents",
+      "scriptSection": "Test Script",
+      "scriptPlaceholder": "Enter text to preview the voice",
+      "scriptHelp": "This text will be used to preview the voice quality",
+      "abComparison": "Voice A/B Comparison",
+      "voiceA": "Voice A",
+      "voiceB": "Voice B",
+      "allVoices": "All Voices",
+      "applyToAgent": "Apply to Agent",
+      "selected": "Selected",
+      "selectVoicePrompt": "Select a voice to preview"
     }
   },
   "calls": {
@@ -2613,15 +2831,15 @@
       "voicemail": "留守番電話"
     },
     "detail": {
-      "pageTitle": "通話 — Recall Touch",
-      "backToCalls": "通話一覧に戻る",
-      "breadcrumbDetail": "通話の詳細",
-      "notFound": "この通話が見つかりませんでした。",
+      "pageTitle": "Call Details",
+      "backToCalls": "Back to Calls",
+      "breadcrumbDetail": "Call Detail",
+      "notFound": "Call not found",
       "playAria": "再生",
       "pauseAria": "一時停止",
       "seekAria": "シーク",
       "playbackSpeed": "速度",
-      "speakerAgent": "AIエージェント",
+      "speakerAgent": "Agent",
       "summaryTitle": "通話サマリー",
       "sentiment": "感情",
       "outcome": "結果",
@@ -2650,7 +2868,23 @@
       "ai": "AI:",
       "callSummary": "Call summary",
       "recommendedFollowUp": "Recommended follow-up",
-      "contact": "Contact"
+      "contact": "Contact",
+      "calls": {
+        "detail": {
+          "notFound": "Call not found",
+          "pageTitle": "Call Details",
+          "speakerAgent": "Agent",
+          "backToCalls": "Back to Calls",
+          "breadcrumbDetail": "Call Detail"
+        },
+        "defaultCaller": "Caller"
+      },
+      "common": {
+        "back": "Back"
+      },
+      "nav": {
+        "calls": "Calls"
+      }
     },
     "empty": {
       "title": "まだ通話がありません",
@@ -2676,7 +2910,7 @@
       "inbound": "着信",
       "outbound": "発信"
     },
-    "defaultCaller": "発信者",
+    "defaultCaller": "Caller",
     "aiSummary": "AIサマリー",
     "noSummary": "サマリーはありません。",
     "callIntelligenceLabel": "通話インテリジェンス",
@@ -2935,7 +3169,7 @@
   },
   "leads": {
     "title": "リード",
-    "pageTitle": "リード — Recall Touch",
+    "pageTitle": "Leads",
     "heading": "リード",
     "noLeadsInStage": "このステージにはまだリードがありません。",
     "detailNotesHeading": "メモ",
@@ -2947,82 +3181,82 @@
     "description": "最初の通話から決定まで、キャプチャした機会をすべて表示。",
     "addLead": "リードを追加",
     "total": "合計:",
-    "exportCsv": "CSV をエクスポート",
-    "viewTable": "テーブル",
-    "viewBoard": "ボード",
-    "searchPlaceholder": "名前、電話、メールで検索…",
-    "filters": "フィルター",
-    "inlineNamePlaceholder": "名前",
-    "inlinePhonePlaceholder": "電話",
-    "inlineEmailPlaceholder": "メール（任意）",
-    "inlineAdd": "+ 追加",
+    "exportCsv": "Export as CSV",
+    "viewTable": "Table View",
+    "viewBoard": "Board View",
+    "searchPlaceholder": "Search leads...",
+    "filters": "Filters",
+    "inlineNamePlaceholder": "Name",
+    "inlinePhonePlaceholder": "Phone",
+    "inlineEmailPlaceholder": "Email",
+    "inlineAdd": "Add Lead",
     "scoreFilter": {
-      "all": "すべてのスコア",
-      "high": "高 (70+)",
-      "medium": "中 (40–69)",
-      "low": "低 (0–39)"
+      "all": "All Scores",
+      "high": "High Score",
+      "medium": "Medium Score",
+      "low": "Low Score"
     },
     "sortOptions": {
-      "newest": "新しい順",
-      "highestScore": "スコア順",
-      "recentContact": "連絡日順"
+      "newest": "Newest First",
+      "highestScore": "Highest Score",
+      "recentContact": "Recent Contact"
     },
-    "selectedCount": "{count} 件選択中",
-    "clear": "クリア",
-    "changeStatus": "ステータスを変更:",
-    "assign": "担当:",
+    "selectedCount": "{count} selected",
+    "clear": "Clear",
+    "changeStatus": "Change Status",
+    "assign": "Assign",
     "modal": {
-      "title": "リードを追加",
-      "nameLabel": "名前 *",
-      "namePlaceholder": "氏名",
-      "phoneLabel": "電話 *",
-      "phonePlaceholder": "+1 (555) 000-0000",
-      "emailLabel": "メール",
-      "emailPlaceholder": "email@example.com",
-      "companyLabel": "会社",
-      "companyPlaceholder": "会社名",
-      "needLabel": "必要なものは？",
-      "needPlaceholder": "例: 月次清掃、相談",
-      "sourceLabel": "ソース",
-      "statusLabel": "ステータス",
-      "notesLabel": "メモ",
-      "notesPlaceholder": "任意のメモ",
-      "cancel": "キャンセル",
-      "saving": "追加中…",
-      "save": "リードを保存"
+      "title": "Lead Details",
+      "nameLabel": "Name",
+      "namePlaceholder": "Enter name",
+      "phoneLabel": "Phone",
+      "phonePlaceholder": "Enter phone number",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Enter email",
+      "companyLabel": "Company",
+      "companyPlaceholder": "Enter company name",
+      "needLabel": "Need/Service",
+      "needPlaceholder": "What do they need?",
+      "sourceLabel": "Source",
+      "statusLabel": "Status",
+      "notesLabel": "Notes",
+      "notesPlaceholder": "Enter notes",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "save": "Save"
     },
     "sources": {
-      "inboundCall": "着信",
-      "outbound": "アウトバウンド",
-      "website": "ウェブサイト",
-      "referral": "紹介",
-      "other": "その他"
+      "inboundCall": "Inbound Call",
+      "outbound": "Outbound",
+      "website": "Website",
+      "referral": "Referral",
+      "other": "Other"
     },
-    "csvPreview": "{count} 件のリードが見つかりました",
-    "csvPreviewLabel": "プレビュー（最初の5件）:",
-    "csvCancel": "キャンセル",
-    "csvImporting": "インポート中…",
-    "csvImportAll": "{count} 件のリードをインポート",
-    "csvOr": "— または —",
-    "importFromCsv": "CSV からインポート",
-    "csvUploadHint": "名前、電話、メールの列を含む CSV をアップロード",
-    "drawerTitle": "{name} · リード",
-    "drawerTitleFallback": "リード",
+    "csvPreview": "CSV Preview",
+    "csvPreviewLabel": "Preview of CSV data",
+    "csvCancel": "Cancel Import",
+    "csvImporting": "Importing...",
+    "csvImportAll": "Import All",
+    "csvOr": "or",
+    "importFromCsv": "Import from CSV",
+    "csvUploadHint": "Drag and drop a CSV file or click to select",
+    "drawerTitle": "Lead Details",
+    "drawerTitleFallback": "Lead Information",
     "scoreLabel": "スコア",
     "status": {
-      "new": "新規",
-      "contacted": "連絡済み",
-      "qualified": "認定",
-      "appointmentSet": "予約済み",
-      "won": "受注",
-      "lost": "失注"
+      "new": "New",
+      "contacted": "Contacted",
+      "qualified": "Qualified",
+      "appointmentSet": "Appointment Set",
+      "won": "Won",
+      "lost": "Lost"
     },
-    "defaultName": "リード",
-    "defaultService": "サービス依頼",
-    "defaultDescription": "最近の会話から取得したリードで、パイプラインに保存されています。",
+    "defaultName": "New Lead",
+    "defaultService": "Service",
+    "defaultDescription": "Lead description",
     "timeline": {
-      "created": "最近のアクティビティから作成",
-      "addedToPipeline": "アクティブなパイプラインに追加"
+      "created": "Lead created",
+      "addedToPipeline": "Added to pipeline"
     },
     "board": {
       "columns": {
@@ -3078,23 +3312,23 @@
     },
     "saveLead": "リードを保存",
     "toast": {
-      "callStarted": "通話を開始しました。「通話」ページでステータスを確認できます。",
+      "callStarted": "Call started",
       "callFailed": "通話を開始できませんでした。",
-      "exportFailed": "エクスポートに失敗しました。もう一度お試しください。",
-      "exportSuccess": "リードをエクスポートしました。ダウンロードを確認してください。",
-      "importFailed": "インポートに失敗しました。",
-      "importSuccess": "{count} 件のリードをインポートしました。",
-      "added": "リードが正常に追加されました。",
-      "newLead": "新規リード: {name}"
+      "exportFailed": "Failed to export leads",
+      "exportSuccess": "Leads exported successfully",
+      "importFailed": "Failed to import leads",
+      "importSuccess": "Leads imported successfully",
+      "added": "Lead added successfully",
+      "newLead": "New lead created"
     },
-    "unknownLead": "不明なリード",
+    "unknownLead": "Unknown Lead",
     "errors": {
-      "loadFailed": "リードの読み込みに失敗しました。",
-      "nameRequired": "名前は必須です。",
-      "phoneRequired": "電話番号は必須です。",
-      "workspaceMissing": "ワークスペースが選択されていません。",
-      "addFailed": "リードの追加に失敗しました。",
-      "csvNoValidRows": "CSVに有効な行が見つかりません。"
+      "loadFailed": "Failed to load leads",
+      "nameRequired": "Name is required",
+      "phoneRequired": "Phone number is required",
+      "workspaceMissing": "Workspace information missing",
+      "addFailed": "Failed to add lead",
+      "csvNoValidRows": "No valid rows found in CSV"
     },
     "timeToday": "今日",
     "timeDaysAgo": "{count}日前",
@@ -3105,7 +3339,7 @@
     "emptySubtitle": "Import contacts or add manually",
     "importCsv": "Import CSV",
     "addContact": "Add Contact",
-    "unknownAgent": "Unknown agent"
+    "unknownAgent": "Unknown Agent"
   },
   "campaigns": {
     "title": "キャンペーン",
@@ -3726,10 +3960,10 @@
         "microsoft_365": "Microsoft 365"
       },
       "transformations": {
-        "none": "なし",
-        "format_phone": "電話をフォーマット (E.164)",
-        "map_status": "ステータスをマッピング",
-        "concatenate": "フィールドを連結"
+        "none": "None",
+        "format_phone": "Format Phone Number",
+        "map_status": "Map Status",
+        "concatenate": "Concatenate Fields"
       },
       "crmFallback": "CRM"
     },
@@ -4283,12 +4517,12 @@
           "f4": "優先サポート"
         },
         "scale": {
-          "name": "スケール",
-          "tagline": "複数拠点・高ボリューム向け。",
-          "f1": "着信5,000分込み",
-          "f2": "番号10本",
-          "f3": "専任サクセスパートナー",
-          "f4": "カスタムレポート・連携"
+          "name": "Scale Plan",
+          "tagline": "For scaling operations",
+          "f1": "Feature 1",
+          "f2": "Feature 2",
+          "f3": "Feature 3",
+          "f4": "Feature 4"
         },
         "badgePopular": "人気",
         "business": {
@@ -5414,7 +5648,16 @@
     "toast": {
       "saved": "オンボーディングの進行状況を保存しました",
       "complete": "オンボーディングが完了しました。ダッシュボードへ移動します。"
-    }
+    },
+    "modeLabel": "Select Mode",
+    "modeSoloTitle": "Solo Mode",
+    "modeSoloDesc": "Use Recall Touch for personal calls",
+    "modeSalesTitle": "Sales Mode",
+    "modeSalesDesc": "Use Recall Touch for outbound sales calls",
+    "modeBusinessTitle": "Business Mode",
+    "modeBusinessDesc": "Use Recall Touch for business operations",
+    "businessHeading": "Business Information",
+    "businessSubtitle": "Tell us about your business"
   },
   "agents.testPanel": {
     "errors": {
@@ -5593,7 +5836,43 @@
       "loading": "読み込み中…",
       "creating": "作成中…",
       "importing": "インポート中…",
-      "uploading": "アップロード中…"
+      "uploading": "アップロード中…",
+      "calendar": {
+        "defaultContact": "Contact",
+        "pageTitle": "Calendar",
+        "heading": "Calendar",
+        "today": "Today",
+        "viewWeek": "Week",
+        "viewMonth": "Month",
+        "newAppointment": "New Appointment",
+        "timeRangeWeek": "This Week",
+        "timeRangeMonth": "This Month",
+        "appointmentCount": "{count} appointment{count, plural, one {} other {s}}",
+        "loadingCalendar": "Loading calendar...",
+        "monthViewHint": "Switch to month view for a better overview",
+        "googleCalendar": "Google Calendar",
+        "googleSynced": "Google Calendar connected",
+        "googleNotSynced": "Google Calendar not connected",
+        "connected": "Connected",
+        "connect": "Connect",
+        "outlookCalendar": "Outlook Calendar",
+        "outlookComingSoon": "Outlook Calendar integration coming soon",
+        "backToActivity": "Back to Activity",
+        "syncedToCalendar": "Synced to calendar",
+        "removeAppointment": "Remove Appointment",
+        "removeConfirm": "Are you sure you want to remove this appointment?",
+        "newAppointmentHeading": "Schedule New Appointment",
+        "contactLabel": "Contact",
+        "contactPlaceholder": "Select a contact",
+        "phoneLabel": "Phone Number",
+        "phonePlaceholder": "Enter phone number",
+        "serviceLabel": "Service",
+        "servicePlaceholder": "Select a service",
+        "dateLabel": "Date",
+        "timeLabel": "Time",
+        "durationLabel": "Duration",
+        "availableTimes": "Available Times"
+      }
     }
   },
   "search": {
@@ -5765,40 +6044,40 @@
     }
   },
   "calendar": {
-    "defaultContact": "連絡先",
+    "defaultContact": "Contact",
     "removeAppointmentTitle": "予定を削除しますか？",
-    "pageTitle": "カレンダー — Recall Touch",
-    "heading": "カレンダー",
-    "today": "今日",
-    "viewWeek": "週",
-    "viewMonth": "月",
-    "newAppointment": "+ 新規予約",
-    "timeRangeWeek": "8:00–20:00 · 今週",
-    "timeRangeMonth": "8:00–20:00 · 今月",
-    "loadingCalendar": "カレンダーを読み込み中…",
-    "appointmentCount": "{count} 件の予約",
-    "monthViewHint": "月表示は簡略化されています。週表示で詳細ブロックを確認できます。",
-    "googleCalendar": "Google カレンダー",
-    "googleSynced": "同期済み。空き状況と予約が双方向で同期されます。",
-    "googleNotSynced": "空き状況を同期して、AIとカレンダーを連携させましょう。",
-    "connected": "接続済み",
-    "connect": "接続",
-    "outlookCalendar": "Microsoft Outlook",
-    "backToActivity": "アクティビティ",
-    "syncedToCalendar": "カレンダーと同期済み",
-    "removeAppointment": "予定を削除しますか？",
-    "removeConfirm": "「{contact} — {service}」を削除しますか？元に戻せません。",
-    "newAppointmentHeading": "新規予約",
-    "contactLabel": "連絡先",
-    "contactPlaceholder": "Jane Smith",
-    "phoneLabel": "電話",
-    "phonePlaceholder": "+1 555 000 0000",
-    "serviceLabel": "サービス",
-    "servicePlaceholder": "清掃、見積もり、相談…",
-    "dateLabel": "日付",
-    "timeLabel": "時刻",
-    "durationLabel": "時間（分）",
-    "availableTimes": "利用可能な時間（Google）",
+    "pageTitle": "Calendar",
+    "heading": "Calendar",
+    "today": "Today",
+    "viewWeek": "Week",
+    "viewMonth": "Month",
+    "newAppointment": "New Appointment",
+    "timeRangeWeek": "This Week",
+    "timeRangeMonth": "This Month",
+    "loadingCalendar": "Loading calendar...",
+    "appointmentCount": "{count} appointment{count, plural, one {} other {s}}",
+    "monthViewHint": "Switch to month view for a better overview",
+    "googleCalendar": "Google Calendar",
+    "googleSynced": "Google Calendar connected",
+    "googleNotSynced": "Google Calendar not connected",
+    "connected": "Connected",
+    "connect": "Connect",
+    "outlookCalendar": "Outlook Calendar",
+    "backToActivity": "Back to Activity",
+    "syncedToCalendar": "Synced to calendar",
+    "removeAppointment": "Remove Appointment",
+    "removeConfirm": "Are you sure you want to remove this appointment?",
+    "newAppointmentHeading": "Schedule New Appointment",
+    "contactLabel": "Contact",
+    "contactPlaceholder": "Select a contact",
+    "phoneLabel": "Phone Number",
+    "phonePlaceholder": "Enter phone number",
+    "serviceLabel": "Service",
+    "servicePlaceholder": "Select a service",
+    "dateLabel": "Date",
+    "timeLabel": "Time",
+    "durationLabel": "Duration",
+    "availableTimes": "Available Times",
     "days": {
       "mon": "月",
       "tue": "火",
@@ -5808,7 +6087,7 @@
       "sat": "土",
       "sun": "日"
     },
-    "outlookComingSoon": "Outlook カレンダーとの双方向同期は近日提供予定です。利用可能になり次第お知らせします。",
+    "outlookComingSoon": "Outlook Calendar integration coming soon",
     "empty": {
       "title": "まだ予約はありません",
       "body": "AI が予約を作成すると、このカレンダーに表示されます。"
@@ -6306,7 +6585,7 @@
       "subtitle": "AIは今後の通話でこの情報を利用します。"
     },
     "form": {
-      "addTag": "+ タグを追加",
+      "addTag": "Add Tag",
       "firstNameLabel": "名*",
       "firstNamePlaceholder": "Mike",
       "lastNameLabel": "姓*",
@@ -7220,7 +7499,8 @@
       "calendarNotConfigured": "Googleカレンダーが設定されていません。",
       "whatsappEmailRequired": "WhatsAppのウェイトリストに登録するにはメールを入力してください。",
       "whatsappWaitlisted": "リストに登録されました。WhatsAppが利用可能になり次第お知らせします。",
-      "error": "問題が発生しました。もう一度お試しください。"
+      "error": "問題が発生しました。もう一度お試しください。",
+      "syncFailed": "Sync failed"
     },
     "hub": {
       "title": "インテグレーション",
@@ -7324,7 +7604,8 @@
       "format_phone": "Format phone",
       "map_status": "Map status",
       "none": "None"
-    }
+    },
+    "whatsappComingSoon": "WhatsApp integration coming soon"
   },
   "email": {
     "templates": {
@@ -9426,5 +9707,55 @@
     "checksPassed": "{passed}/{total} checks passed",
     "ready": "Ready",
     "actionNeeded": "Action needed"
+  },
+  "voices": {
+    "previewText": "I'm an AI assistant. How can I help you today?",
+    "cloneErrorFormat": "Invalid audio format. Please use MP3, WAV, or M4A",
+    "cloneErrorSize": "Audio file too large. Maximum size is 25MB",
+    "cloneErrorDuration": "Audio file too short. Minimum duration is 10 seconds",
+    "cloneErrorGeneric": "Failed to clone voice",
+    "genderMale": "Male",
+    "genderFemale": "Female",
+    "genderNeutral": "Neutral",
+    "pageTitle": "Voice Configuration",
+    "pageSubtitle": "Configure and manage voice settings",
+    "selectWorkspace": "Select Workspace",
+    "selectWorkspaceDesc": "Choose a workspace to configure",
+    "activeConfig": "Active Configuration",
+    "voiceLabel": "Voice",
+    "industryPreset": "Industry Preset",
+    "presetTech": "Technology",
+    "presetFinance": "Finance",
+    "presetHealthcare": "Healthcare",
+    "presetSales": "Sales",
+    "toneLabel": "Tone",
+    "speedLabel": "Speed",
+    "stabilityLabel": "Stability",
+    "warmthLabel": "Warmth",
+    "emotionLabel": "Emotion",
+    "testVoice": "Test Voice",
+    "testPlaceholder": "Enter text to test",
+    "libraryTitle": "Voice Library",
+    "noVoices": "No voices available",
+    "voicesLoading": "Loading voices...",
+    "searchPlaceholder": "Search voices...",
+    "allGenders": "All Genders",
+    "allAccents": "All Accents",
+    "allIndustries": "All Industries",
+    "cloneVoice": "Clone Voice",
+    "select": "Select",
+    "abTesting": "A/B Testing",
+    "newTest": "New Test",
+    "noTests": "No tests yet",
+    "noTestsDesc": "Create your first A/B test to compare voices",
+    "calls": "Calls",
+    "satisfaction": "Satisfaction",
+    "conversion": "Conversion",
+    "cloning": "Cloning...",
+    "cancel": "Cancel",
+    "createTest": "Create Test",
+    "trafficSplit": "Traffic Split",
+    "voiceA": "Voice A",
+    "voiceB": "Voice B"
   }
 }
