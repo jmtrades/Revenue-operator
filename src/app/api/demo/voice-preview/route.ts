@@ -3,17 +3,20 @@
  *
  * Priority chain (optimized for maximum quality at zero/near-zero cost):
  *   1. Self-hosted Recall voice server — $0 marginal cost, unlimited
- *   2. Deepgram Aura — $0.015/1K chars, $200 free credit, best free-tier TTS
+ *   2. Deepgram Aura-2 — enterprise-grade TTS, 44+ voices, 48kHz MP3
  *
- * No paid TTS providers (ElevenLabs, etc.). All voice quality comes from:
- *   - Careful model selection per voice persona
+ * Uses Deepgram Aura-2 (next-gen model, NOT the original Aura):
+ *   - Human-like prosody with natural breathing and emotional range
+ *   - Hand-picked best voice per persona from 44+ English voices
+ *   - 48kHz sample rate for studio-quality audio output
  *   - Aggressive 24h caching (same text+voice = one API call ever)
  *   - Rate limiting to prevent abuse
  *
  * Cost model at scale:
  *   - Self-hosted: $0 (GPU already provisioned for call handling)
- *   - Deepgram fallback: ~$0.003 per preview (avg 200 chars)
+ *   - Deepgram Aura-2: ~$0.006 per preview (avg 200 chars at $0.030/1K)
  *   - With 24h cache: effectively free after first play
+ *   - $200 free credit covers ~33,000 previews uncached
  */
 
 export const dynamic = "force-dynamic";
@@ -96,80 +99,100 @@ function setCachedAudio(
   audioCache.set(key, { buffer, contentType, cachedAt: Date.now() });
 }
 
-/* ─── Deepgram Aura — best model mapping ─── */
+/* ─── Deepgram Aura-2 — next-gen voice mapping ─── */
 
 /**
- * Map Recall voice IDs → Deepgram Aura models.
+ * Map Recall voice IDs → Deepgram Aura-2 models.
  *
- * Deepgram Aura voice quality ranking (best → good):
- *   Female: aura-asteria-en (clear, professional, most natural)
- *           aura-stella-en  (warm, friendly)
- *           aura-luna-en    (soft, calm)
- *   Male:   aura-orion-en   (deep, confident, most natural)
- *           aura-arcas-en   (authoritative)
- *           aura-helios-en  (warm, approachable)
- *           aura-zeus-en    (powerful, commanding)
+ * Aura-2 is Deepgram's enterprise-grade TTS — dramatically more natural
+ * than the original Aura models. 44+ English voices with human-like
+ * prosody, natural breathing, and emotional range.
  *
- * Each voice is mapped to the Deepgram model that best matches
- * its persona for maximum realism at zero cost.
+ * Hand-picked voices for each persona based on Deepgram's voice profiles:
+ *
+ *   Warm Female:        aura-2-helena-en  (Caring, Natural, Positive, Friendly, Raspy)
+ *   Professional Female: aura-2-athena-en  (Calm, Smooth, Professional)
+ *   Casual Female:      aura-2-andromeda-en (Casual, Expressive, Comfortable)
+ *   Empathetic Female:  aura-2-vesta-en   (Natural, Expressive, Patient, Empathetic)
+ *   Energetic Female:   aura-2-thalia-en  (Clear, Confident, Energetic, Enthusiastic)
+ *
+ *   Confident Male:     aura-2-orpheus-en (Professional, Clear, Confident, Trustworthy)
+ *   Warm Male:          aura-2-aries-en   (Warm, Energetic, Caring)
+ *   Deep Male:          aura-2-zeus-en    (Deep, Trustworthy, Smooth)
+ *   Professional Male:  aura-2-odysseus-en (Calm, Smooth, Comfortable, Professional)
+ *   Calm Male:          aura-2-pluto-en   (Smooth, Calm, Empathetic, Baritone)
+ *
+ *   British Female:     aura-2-pandora-en (Smooth, Calm, Melodic, Breathy)
+ *   British Male:       aura-2-draco-en   (Warm, Approachable, Trustworthy, Baritone)
+ *   Australian Female:  aura-2-theia-en   (Expressive, Polite, Sincere)
+ *   Australian Male:    aura-2-hyperion-en (Caring, Warm, Empathetic)
  */
 function mapVoiceToDeepgram(voiceId: string): string {
   const map: Record<string, string> = {
     // ── Female voices ──
-    // Sarah (warm receptionist / agent) → Stella (warmest female)
-    "us-female-warm-receptionist": "aura-stella-en",
-    "us-female-warm-agent": "aura-stella-en",
-    "us-female-warm": "aura-stella-en",
-    "us-female-friendly": "aura-stella-en",
-    "us-female-empathetic": "aura-stella-en",
-    "warm-female": "aura-stella-en",
+    // Sarah (warm receptionist / agent) → Helena (Caring, Natural, Friendly, Raspy)
+    "us-female-warm-receptionist": "aura-2-helena-en",
+    "us-female-warm-agent": "aura-2-helena-en",
+    "us-female-warm": "aura-2-helena-en",
+    "us-female-friendly": "aura-2-cordelia-en",
+    "us-female-empathetic": "aura-2-vesta-en",
+    "warm-female": "aura-2-helena-en",
 
-    // Jennifer (professional) → Asteria (clearest, most professional)
-    "us-female-professional": "aura-asteria-en",
-    "us-female-authoritative": "aura-asteria-en",
+    // Jennifer (professional) → Athena (Calm, Smooth, Professional)
+    "us-female-professional": "aura-2-athena-en",
+    "us-female-authoritative": "aura-2-electra-en",
+    "professional-female": "aura-2-athena-en",
 
-    // Emma (casual) → Luna (soft, approachable)
-    "us-female-casual": "aura-luna-en",
-    "us-female-energetic": "aura-asteria-en",
-    "us-female-calm": "aura-luna-en",
+    // Emma (casual) → Andromeda (Casual, Expressive, Comfortable)
+    "us-female-casual": "aura-2-andromeda-en",
+    "us-female-energetic": "aura-2-thalia-en",
+    "us-female-calm": "aura-2-harmonia-en",
 
     // ── Male voices ──
-    // Alex (confident) → Orion (deep, most natural male)
-    "us-male-confident": "aura-orion-en",
-    "us-male-professional": "aura-orion-en",
-    "us-male-deep": "aura-orion-en",
+    // Alex (confident) → Orpheus (Professional, Clear, Confident, Trustworthy)
+    "us-male-confident": "aura-2-orpheus-en",
+    "us-male-professional": "aura-2-odysseus-en",
+    "us-male-deep": "aura-2-zeus-en",
+    "confident-male": "aura-2-orpheus-en",
+    "professional-male": "aura-2-odysseus-en",
 
-    // Marcus (warm) → Helios (warm, approachable)
-    "us-male-warm": "aura-helios-en",
-    "us-male-friendly": "aura-helios-en",
-    "us-male-casual": "aura-helios-en",
-    "us-male-energetic": "aura-helios-en",
-    "us-male-calm": "aura-helios-en",
-
-    // ── Generic shorthand voices ──
-    "warm-male": "aura-helios-en",
-    "professional-female": "aura-asteria-en",
-    "professional-male": "aura-orion-en",
-    "confident-male": "aura-orion-en",
+    // Marcus (warm) → Aries (Warm, Energetic, Caring)
+    "us-male-warm": "aura-2-aries-en",
+    "us-male-friendly": "aura-2-atlas-en",
+    "us-male-casual": "aura-2-apollo-en",
+    "us-male-energetic": "aura-2-hermes-en",
+    "us-male-calm": "aura-2-pluto-en",
+    "warm-male": "aura-2-aries-en",
 
     // ── British voices ──
-    "uk-female-professional": "aura-asteria-en",
-    "uk-female-warm": "aura-stella-en",
-    "uk-female-casual": "aura-luna-en",
-    "uk-female-authoritative": "aura-asteria-en",
-    "uk-male-professional": "aura-orion-en",
-    "uk-male-warm": "aura-helios-en",
-    "uk-male-casual": "aura-helios-en",
-    "uk-male-deep": "aura-orion-en",
+    "uk-female-professional": "aura-2-pandora-en",
+    "uk-female-warm": "aura-2-pandora-en",
+    "uk-female-casual": "aura-2-pandora-en",
+    "uk-female-authoritative": "aura-2-pandora-en",
+    "uk-male-professional": "aura-2-draco-en",
+    "uk-male-warm": "aura-2-draco-en",
+    "uk-male-casual": "aura-2-draco-en",
+    "uk-male-deep": "aura-2-draco-en",
+
+    // ── Australian voices ──
+    "au-female-warm": "aura-2-theia-en",
+    "au-female-professional": "aura-2-theia-en",
+    "au-male-warm": "aura-2-hyperion-en",
+    "au-male-professional": "aura-2-hyperion-en",
   };
 
-  // Default: Stella (warm female) — most universally appealing for demos
-  return map[voiceId] || "aura-stella-en";
+  // Default: Helena (Caring, Natural, Positive, Friendly) — the most human-sounding
+  // voice for first impressions. Warm and natural with a slight rasp that
+  // makes it sound like a real person, not a machine.
+  return map[voiceId] || "aura-2-helena-en";
 }
 
 /**
- * Deepgram Aura TTS — primary cloud provider.
- * $0.015 per 1,000 characters. With caching, effectively free.
+ * Deepgram Aura-2 TTS — enterprise-grade voice synthesis.
+ * Next-gen model with human-like prosody, natural breathing,
+ * and emotional range. 48kHz MP3 for studio-quality output.
+ * $0.030 per 1,000 characters ($0.027 at Growth tier).
+ * With 24h caching, effectively free for demo previews.
  */
 async function handleDeepgramTTS(
   voiceId: string,
@@ -178,7 +201,7 @@ async function handleDeepgramTTS(
 ): Promise<NextResponse | null> {
   try {
     const model = mapVoiceToDeepgram(voiceId);
-    const url = `https://api.deepgram.com/v1/speak?model=${encodeURIComponent(model)}&encoding=mp3&sample_rate=24000`;
+    const url = `https://api.deepgram.com/v1/speak?model=${encodeURIComponent(model)}&encoding=mp3&sample_rate=48000`;
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);

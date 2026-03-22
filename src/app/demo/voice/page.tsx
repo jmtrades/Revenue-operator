@@ -14,19 +14,19 @@ const SCENARIOS = [
 
 const SCENARIO_GREETINGS: Record<string, { greeting: string; voiceId: string }> = {
   "New Customer Inquiry": {
-    greeting: "Thank you for calling. How can I help you today?",
+    greeting: "Hi there, thanks so much for calling! This is Sarah. I'd love to help you out, what can I do for you today?",
     voiceId: "us-female-warm-agent"
   },
   "Appointment Booking": {
-    greeting: "Hi there, I'd be happy to help you schedule an appointment. What day works best for you?",
+    greeting: "Hey, I'd be happy to get you scheduled. Let me take a quick look at what we have open. What day works best for you?",
     voiceId: "us-female-professional"
   },
   "After-Hours Call": {
-    greeting: "Thank you for calling. Our office is currently closed, but I can absolutely help you right now. What do you need?",
+    greeting: "Thanks for calling! So our office is closed right now, but don't worry, I can absolutely help you. What's going on?",
     voiceId: "us-male-warm"
   },
   "Follow-Up Call": {
-    greeting: "Hi, this is a follow-up call from earlier. I wanted to make sure we got everything taken care of for you.",
+    greeting: "Hi, this is Alex. I'm just following up from our conversation earlier. I wanted to make sure we got everything squared away for you.",
     voiceId: "us-male-confident"
   }
 };
