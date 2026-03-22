@@ -7933,6 +7933,10 @@
       "gohighlevel": {
         "title": "GoHighLevel",
         "body": "Push qualified leads and calls into your GoHighLevel pipelines."
+      },
+      "airtable": {
+        "title": "Airtable",
+        "body": "Sync leads and contacts to your Airtable bases automatically."
       }
     },
     "status": {
@@ -8559,6 +8563,9 @@
     },
     "zoho": {
       "body": "Body"
+    },
+    "airtable": {
+      "body": "Sync leads and contacts to your Airtable bases automatically."
     }
   },
   "cardLabels": {

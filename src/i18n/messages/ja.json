@@ -7868,6 +7868,10 @@
       "gohighlevel": {
         "title": "GoHighLevel",
         "body": "有望なリードと通話を GoHighLevel のパイプラインに押し込みます。"
+      },
+      "airtable": {
+        "title": "Airtable",
+        "body": "リードと連絡先をAirtableのベースに自動同期します。"
       }
     },
     "status": {

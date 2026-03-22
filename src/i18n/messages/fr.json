@@ -7868,6 +7868,10 @@
       "gohighlevel": {
         "title": "GoHighLevel",
         "body": "Envoyez les leads qualifiés et appels dans vos pipelines GoHighLevel."
+      },
+      "airtable": {
+        "title": "Airtable",
+        "body": "Synchronisez leads et contacts avec vos bases Airtable automatiquement."
       }
     },
     "status": {
