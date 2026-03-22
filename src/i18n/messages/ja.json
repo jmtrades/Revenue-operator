@@ -7457,12 +7457,12 @@
     "calmLine": "決定は予定どおり進んでいます。"
   },
   "demoVoice": {
-    "enterPhone": "デモ通話を受けるには電話番号を入力してください。",
+    "enterPhone": "Enter your phone number with country code to receive a demo call.",
     "callingNow": "かけています。AIエージェントと話すにはお電話に出てください。",
     "couldNotStart": "デモ通話を開始できませんでした。もう一度お試しください。",
     "calling": "通話中…",
     "callMe": "電話して",
-    "placeholder": "+1 (555) 123-4567"
+    "placeholder": "+1 555 123 4567"
   },
   "accessibility": {
     "skipToContent": "メインコンテンツへスキップ",
@@ -8121,13 +8121,13 @@
         "playButton": "音声を聴く",
         "stopButton": "停止",
         "loading": "読み込み中...",
-        "placeholder": "(555) 123-4567",
+        "placeholder": "+1 555 123 4567",
         "demoCall": "デモ通話を受ける",
         "calling": "発信中...",
         "callStatus": "今お電話しています！電話に出てライブで聴いてください。",
         "callError": "通話を開始できませんでした。もう一度お試しください。",
         "connectionError": "接続できませんでした。もう一度お試しください。",
-        "invalidPhone": "市外局番付きの有効な電話番号を入力してください。",
+        "invalidPhone": "Enter a valid phone number with country code (e.g. +44, +61).",
         "disclaimer": "無料。登録不要。10秒以内にお電話します。"
       },
       "compliance": [

@@ -15,6 +15,41 @@ import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { createOutboundCall } from "@/lib/telephony/telnyx-voice";
 import { log } from "@/lib/logger";
 
+/**
+ * Normalize a phone number to E.164 format.
+ * Supports:
+ *  - Numbers already in E.164: +44 7911 123456 → +447911123456
+ *  - Numbers with 00 prefix: 0044 7911 123456 → +447911123456
+ *  - Bare US/CA numbers (10 digits): 5551234567 → +15551234567
+ *  - Numbers with leading country code but no +: 447911123456 → +447911123456
+ * Returns null if the number doesn't look valid.
+ */
+function normalizeToE164(input: string): string | null {
+  // Strip all non-digit characters except leading +
+  const hasPlus = input.startsWith("+");
+  const digits = input.replace(/\D/g, "");
+
+  // E.164 allows 7–15 digits (after the +)
+  if (digits.length < 7 || digits.length > 15) return null;
+
+  // Already has + prefix — trust it
+  if (hasPlus) return `+${digits}`;
+
+  // International dialing with 00 prefix (common in Europe/Asia)
+  if (digits.startsWith("00") && digits.length >= 9) {
+    return `+${digits.slice(2)}`;
+  }
+
+  // 10-digit bare number — assume US/Canada (+1)
+  if (digits.length === 10) return `+1${digits}`;
+
+  // 11 digits starting with 1 — already includes US country code
+  if (digits.length === 11 && digits.startsWith("1")) return `+${digits}`;
+
+  // Anything else with 7–15 digits — prepend + and let Telnyx validate
+  return `+${digits}`;
+}
+
 export async function POST(req: NextRequest) {
   /* ── Rate limit by IP ────────────────────────────────── */
   const ip = getClientIp(req);
@@ -35,21 +70,20 @@ export async function POST(req: NextRequest) {
   }
 
   const phone = body.phone_number?.trim();
-  const digitsOnly = phone?.replace(/\D/g, "") ?? "";
-  // Allow 10 digits (US) up to 15 digits (international E.164 max)
-  if (!phone || digitsOnly.length < 10 || digitsOnly.length > 15) {
+  if (!phone) {
     return NextResponse.json(
-      { ok: false, error: "Please enter a valid phone number with area code." },
+      { ok: false, error: "Please enter a valid phone number with country code." },
       { status: 400 },
     );
   }
 
-  // Normalize to E.164 format
-  let e164Phone = digitsOnly;
-  if (e164Phone.length === 10) {
-    e164Phone = `+1${e164Phone}`; // US number
-  } else if (!e164Phone.startsWith("+")) {
-    e164Phone = `+${e164Phone}`;
+  // Normalize to E.164 format — support any country
+  let e164Phone = normalizeToE164(phone);
+  if (!e164Phone) {
+    return NextResponse.json(
+      { ok: false, error: "Please enter a valid phone number including your country code (e.g. +44 for UK, +61 for Australia)." },
+      { status: 400 },
+    );
   }
 
   /* ── Verify Telnyx credentials are available ─────────── */
@@ -84,7 +118,7 @@ export async function POST(req: NextRequest) {
     const DEMO_WORKSPACE = process.env.DEMO_WORKSPACE_ID || "027ac617-5ab8-4e26-bcb3-1a2f5ad6bef9";
     await db.from("leads").insert({
       workspace_id: DEMO_WORKSPACE,
-      phone: digitsOnly,
+      phone: e164Phone,
       state: "NEW",
       channel: "demo_call",
       metadata: {
