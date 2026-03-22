@@ -17,6 +17,7 @@ import { StaleBuildBanner } from "@/components/StaleBuildBanner";
 import TrackPageView from "@/components/TrackPageView";
 import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 import { CookieConsent } from "@/components/shared/CookieConsent";
+import SkipToContent from "@/components/ui/SkipToContent";
 
 const dmSans = DM_Sans({
   variable: "--font-body-sans",
@@ -154,9 +155,7 @@ export default async function RootLayout({
           <SwCleanup />
           <StaleBuildBanner />
           <ExitIntentPopup />
-          <a href="#main" className="skip-link">
-            {t("skipToContent")}
-          </a>
+          <SkipToContent />
           {children}
           <Toaster
             position="bottom-right"

@@ -82,7 +82,7 @@ function HeroVoiceDemo() {
   const handleDemoCall = async () => {
     const value = phone.trim();
     const digits = value.replace(/\D/g, "");
-    if (!value || digits.length < 10 || digits.length > 15) {
+    if (!value || digits.length < 7 || digits.length > 15) {
       setCallError(t("invalidPhone"));
       return;
     }

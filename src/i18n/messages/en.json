@@ -4770,9 +4770,11 @@
       "text": "Trusted by operators who can't afford to miss decisive calls."
     },
     "industries": {
-      "label": "Works Across Every Industry",
-      "heading": "Built for every business that generates revenue",
-      "subheading": "From solo consultants to enterprise sales teams. Recall Touch adapts to your workflows, your rules, and your revenue goals.",
+      "label": "Industry Examples",
+      "heading": "Works Across Industries",
+      "subheading": "From healthcare to home services, legal to real estate — any business that runs on phone calls can use Recall Touch. Here are a few examples.",
+      "footer": "Don't see your industry? Recall Touch works for any service business.",
+      "footerCta": "Start free trial →",
       "industries": {
         "plumbing": {
           "name": "HVAC",
@@ -6675,6 +6677,11 @@
       "agency": "Agency",
       "agencyDesc": "Managing client workspaces"
     },
+    "goalStep": {
+      "heading": "What do you want your AI agent to do?",
+      "subtitle": "Select one or more goals. You can always change this later.",
+      "selected": "✓ Selected"
+    },
     "businessStep": {
       "heading": "Your business",
       "subtitle": "Step 2 of 5",
@@ -7312,6 +7319,18 @@
       "none": "None"
     }
   },
+  "integrationsHealth": {
+    "title": "Integration Health",
+    "empty": "No integrations connected yet. Connect your CRM or calendar to get started.",
+    "browse": "Browse integrations",
+    "neverSynced": "Never synced",
+    "googleCalendar": "Google Calendar",
+    "connected": "Connected",
+    "synced": "{count} synced",
+    "syncErrors": "{count} sync error",
+    "syncErrorsPlural": "{count} sync errors",
+    "viewSyncLog": "View sync log"
+  },
   "email": {
     "templates": {
       "title": "Email templates",
@@ -7556,10 +7575,10 @@
   "marketing": {
     "hero": {
       "badge": "AI phone infrastructure for revenue teams",
-      "heading1": "Every call answered.",
-      "heading2": "Every lead followed up.",
-      "heading3": "Every dollar recovered.",
-      "description": "Recall Touch runs your phone operation with AI that handles inbound, outbound, follow-up, and booking — 24/7. Natural voice quality. Real conversations. Full revenue attribution.",
+      "heading1": "AI That Runs Your Phones",
+      "heading2": "Inbound, Outbound,",
+      "heading3": "and Everything Between",
+      "description": "Answer every call. Follow up with every lead. Book appointments, qualify prospects, recover no-shows, and route to the right person — all on autopilot.",
       "socialProof": "businesses",
       "socialProofRecovered": "recovered",
       "startFreeTrial": "Start free trial",
@@ -8526,6 +8545,13 @@
       "sms": "Sms"
     }
   },
+  "operations": {
+    "avgResponseTime": "Avg Response Time",
+    "noShowRate": "No-Show Rate",
+    "reactivationRate": "Reactivation Rate",
+    "followUpRate": "Follow-Up Rate",
+    "loadError": "Failed to load operations metrics"
+  },
   "pages": {
     "agent": {
       "subtitle": "Manage your agent settings",
@@ -8709,6 +8735,20 @@
       "tagline": "Tagline"
     }
   },
+  "pipeline": {
+    "title": "Pipeline Funnel",
+    "empty": "No pipeline data available",
+    "loadError": "Failed to load pipeline data",
+    "fromPrevious": "{pct}% from previous",
+    "leakage": "⚠️ {pct}% leakage",
+    "biggestLeakagePoint": "Biggest Leakage Point",
+    "leakageDescription": "{pct}% of leads drop off between {from} → {to}",
+    "stageNew": "New",
+    "stageContacted": "Contacted",
+    "stageQualified": "Qualified",
+    "stageBooked": "Booked",
+    "stageWon": "Won"
+  },
   "profile": {
     "activeOnNumber": "Active on number",
     "agentNameLabel": "Agent name",
@@ -8748,6 +8788,12 @@
   "readDashboard": {
     "desc": "Desc",
     "title": "Read dashboard"
+  },
+  "readinessChecklist": {
+    "title": "System Readiness",
+    "checksPassed": "{passed}/{total} checks passed",
+    "ready": "Ready",
+    "actionNeeded": "Action needed"
   },
   "recordLead": {
     "authorityActions": "Authority actions",
@@ -9117,7 +9163,8 @@
     "stopIfBooked": "Stop if booked",
     "stopIfReply": "Stop if reply",
     "template": "Template",
-    "type": "Type"
+    "type": "Type",
+    "next": "Continue"
   },
   "stuck": {
     "desc1": "Desc1",

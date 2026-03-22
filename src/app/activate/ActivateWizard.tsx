@@ -9,7 +9,7 @@ import { RECALL_VOICES, DEFAULT_RECALL_VOICE_ID } from "@/lib/constants/recall-v
 import { getServicesForIndustry } from "@/lib/constants/industries";
 import type { ActivationState, VoiceOption, StepId } from "./steps/types";
 import { DEFAULT_HOURS, STEPS } from "./steps/types";
-import { ModeStep } from "./steps/ModeStep";
+import { GoalStep } from "./steps/GoalStep";
 import { PackBusinessStep } from "./steps/PackBusinessStep";
 import { PhoneOnlyStep } from "./steps/PhoneOnlyStep";
 import { CustomizeStep } from "./steps/CustomizeStep";
@@ -43,6 +43,7 @@ export function ActivateWizard() {
     lastTestFeedback: null,
     preferredLanguage: "en",
     voiceId: DEFAULT_RECALL_VOICE_ID,
+    goals: [],
   }));
   const [error, setError] = useState<string | null>(null);
 
@@ -73,17 +74,13 @@ export function ActivateWizard() {
 
   const canGoNext = useMemo(() => {
     if (step === 1) {
-      return state.orgType === "solo" || state.orgType === "business" || state.orgType === "agency";
+      return state.goals.length > 0;
     }
     if (step === 2) {
-      return (
-        state.businessName.trim().length > 0 &&
-        Boolean(state.industryPackId) &&
-        state.businessLocation.trim().length > 0
-      );
+      return state.businessPhone.replace(/\D/g, "").length >= 10;
     }
     if (step === 3) {
-      return state.businessPhone.replace(/\D/g, "").length >= 10;
+      return true;
     }
     if (step === 4) {
       return state.agentName.trim().length > 0 && state.greeting.trim().length > 0;
@@ -96,7 +93,7 @@ export function ActivateWizard() {
     const current = step;
     if (current >= 1 && current <= 4) {
       const name =
-        current === 1 ? "industry" : current === 2 ? "phone_number" : current === 3 ? "voice" : "hours";
+        current === 1 ? "goals" : current === 2 ? "phone_number" : current === 3 ? "integrations" : "voice";
       track("onboarding_step_completed", { step: current, name });
     }
     setStep((prev) => {
@@ -291,12 +288,9 @@ export function ActivateWizard() {
           onKeyDown={step <= 3 ? handleKeyDownAdvance : undefined}
         >
           {step === 1 && (
-            <ModeStep state={state} setState={setState} goNext={goNext} canGoNext={canGoNext} />
+            <GoalStep state={state} onUpdate={(patch) => setState((p) => ({ ...p, ...patch }))} onNext={goNext} />
           )}
           {step === 2 && (
-            <PackBusinessStep state={state} setState={setState} goNext={goNext} canGoNext={canGoNext} />
-          )}
-          {step === 3 && (
             <PhoneOnlyStep
               state={state}
               setState={setState}
@@ -304,6 +298,9 @@ export function ActivateWizard() {
               goBack={goBack}
               canGoNext={canGoNext}
             />
+          )}
+          {step === 3 && (
+            <PackBusinessStep state={state} setState={setState} goNext={goNext} canGoNext={canGoNext} />
           )}
           {step === 4 && (
             <CustomizeStep

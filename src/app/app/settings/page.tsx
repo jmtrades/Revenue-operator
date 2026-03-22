@@ -5,6 +5,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { ReadinessChecklist } from "@/components/settings/ReadinessChecklist";
 import {
   AlertTriangle,
   Bell,
@@ -168,6 +169,9 @@ export default function AppSettingsPage() {
             {savingProfile ? tSettings("savingProfile") : tSettings("saveProfile")}
           </button>
         </div>
+      </div>
+      <div className="mb-6">
+        <ReadinessChecklist />
       </div>
       <div className="grid gap-3">
         {SETTINGS_LINKS.map((s) => {

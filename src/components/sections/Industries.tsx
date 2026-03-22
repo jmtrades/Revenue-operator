@@ -66,6 +66,14 @@ export function Industries() {
             </motion.div>
           </Link>
         </StaggerChildren>
+        <AnimateOnScroll className="mt-12 text-center">
+          <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>
+            {t("footer")}
+          </p>
+          <Link href="/activate" className="inline-flex items-center gap-2 text-sm font-medium no-underline hover:opacity-80 transition-opacity" style={{ color: "var(--accent-primary)" }}>
+            {t("footerCta")}
+          </Link>
+        </AnimateOnScroll>
       </Container>
     </section>
   );

@@ -4628,7 +4628,9 @@
           "name": "Votre secteur",
           "desc": "Vous ne voyez pas votre activité ? Recall Touch convient à toute entreprise qui décroche le téléphone."
         }
-      }
+      },
+      "footer": "Don't see your industry? Recall Touch works for any service business.",
+      "footerCta": "Start free trial →"
     },
     "bentoVisuals": {
       "timelineLabels": {
@@ -6672,6 +6674,11 @@
       "connectionError": "Connection error. Please check your internet and try again.",
       "title": "Setup Error",
       "dismiss": "Dismiss"
+    },
+    "goalStep": {
+      "heading": "What do you want your AI agent to do?",
+      "subtitle": "Select one or more goals. You can always change this later.",
+      "selected": "✓ Selected"
     }
   },
   "onboard": {
@@ -9194,7 +9201,8 @@
     "stopIfBooked": "Stop if booked",
     "stopIfReply": "Stop if reply",
     "template": "Template",
-    "type": "Type"
+    "type": "Type",
+    "next": "Continue"
   },
   "stuck": {
     "desc1": "Desc1",
@@ -9379,5 +9387,44 @@
     "heading": "Voicemail",
     "scriptHint": "Tip: script",
     "scriptLabel": "Script"
+  },
+  "integrationsHealth": {
+    "title": "Integration Health",
+    "empty": "No integrations connected yet. Connect your CRM or calendar to get started.",
+    "browse": "Browse integrations",
+    "neverSynced": "Never synced",
+    "googleCalendar": "Google Calendar",
+    "connected": "Connected",
+    "synced": "{count} synced",
+    "syncErrors": "{count} sync error",
+    "syncErrorsPlural": "{count} sync errors",
+    "viewSyncLog": "View sync log"
+  },
+  "operations": {
+    "avgResponseTime": "Avg Response Time",
+    "noShowRate": "No-Show Rate",
+    "reactivationRate": "Reactivation Rate",
+    "followUpRate": "Follow-Up Rate",
+    "loadError": "Failed to load operations metrics"
+  },
+  "pipeline": {
+    "title": "Pipeline Funnel",
+    "empty": "No pipeline data available",
+    "loadError": "Failed to load pipeline data",
+    "fromPrevious": "{pct}% from previous",
+    "leakage": "⚠️ {pct}% leakage",
+    "biggestLeakagePoint": "Biggest Leakage Point",
+    "leakageDescription": "{pct}% of leads drop off between {from} → {to}",
+    "stageNew": "New",
+    "stageContacted": "Contacted",
+    "stageQualified": "Qualified",
+    "stageBooked": "Booked",
+    "stageWon": "Won"
+  },
+  "readinessChecklist": {
+    "title": "System Readiness",
+    "checksPassed": "{passed}/{total} checks passed",
+    "ready": "Ready",
+    "actionNeeded": "Action needed"
   }
 }

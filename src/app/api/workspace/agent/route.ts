@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
     const db = getDb();
     const { data, error } = await db
       .from("workspaces")
-      .select("id, name, greeting, agent_name, preferred_language, voice_id, phone, working_hours, knowledge_items, agent_template")
+      .select("id, name, greeting, agent_name, preferred_language, voice_id, phone, working_hours, knowledge_items, agent_template, qualification_method, tone_preset, transfer_policy, transfer_number, escalation_threshold, escalation_triggers, allowed_actions, forbidden_actions, objections, custom_qualification_questions")
       .eq("id", session.workspaceId)
       .maybeSingle();
 
@@ -42,6 +42,16 @@ export async function GET(req: NextRequest) {
       working_hours?: unknown;
       knowledge_items?: unknown;
       agent_template?: string | null;
+      qualification_method?: string | null;
+      tone_preset?: string | null;
+      transfer_policy?: string | null;
+      transfer_number?: string | null;
+      escalation_threshold?: string | null;
+      escalation_triggers?: string | null;
+      allowed_actions?: unknown;
+      forbidden_actions?: unknown;
+      objections?: unknown;
+      custom_qualification_questions?: unknown;
     };
 
     // For backwards compatibility, return elevenlabsVoiceId if it exists, otherwise empty string
@@ -58,6 +68,16 @@ export async function GET(req: NextRequest) {
       workingHours: row.working_hours ?? undefined,
       knowledgeItems: Array.isArray(row.knowledge_items) ? row.knowledge_items : [],
       agentTemplate: row.agent_template ?? null,
+      qualificationMethod: row.qualification_method ?? "None",
+      tonePreset: row.tone_preset ?? "Professional",
+      transferPolicy: row.transfer_policy ?? "Never",
+      transferNumber: row.transfer_number ?? "",
+      escalationThreshold: row.escalation_threshold ?? "Balanced",
+      escalationTriggers: row.escalation_triggers ?? "",
+      allowedActions: Array.isArray(row.allowed_actions) ? row.allowed_actions : [],
+      forbiddenActions: Array.isArray(row.forbidden_actions) ? row.forbidden_actions : [],
+      objections: Array.isArray(row.objections) ? row.objections : [],
+      customQualificationQuestions: Array.isArray(row.custom_qualification_questions) ? row.custom_qualification_questions : [],
     });
   } catch {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
@@ -103,6 +123,17 @@ export async function PATCH(req: NextRequest) {
     whenCompetitor?: string;
     offerSummary?: string;
     businessHours?: Record<string, { start: string; end: string } | null>;
+    // New agent behavior fields
+    qualificationMethod?: string;
+    customQualificationQuestions?: Array<{ q?: string; a?: string }>;
+    tonePreset?: string;
+    transferPolicy?: string;
+    transferNumber?: string;
+    escalationThreshold?: string;
+    escalationTriggers?: string;
+    allowedActions?: string[];
+    forbiddenActions?: string[];
+    objections?: Array<{ objection?: string; response?: string }>;
   };
 
   try {
@@ -146,6 +177,18 @@ export async function PATCH(req: NextRequest) {
   if (typeof voiceIdValue === "string") update.voice_id = voiceIdValue.trim() || null;
   if (Array.isArray(body.knowledgeItems)) update.knowledge_items = body.knowledgeItems;
   if (body.workingHours && typeof body.workingHours === "object") update.working_hours = body.workingHours;
+
+  // New agent behavior fields
+  if (typeof body.qualificationMethod === "string") update.qualification_method = body.qualificationMethod.trim() || "None";
+  if (Array.isArray(body.customQualificationQuestions)) update.custom_qualification_questions = body.customQualificationQuestions;
+  if (typeof body.tonePreset === "string") update.tone_preset = body.tonePreset.trim() || "Professional";
+  if (typeof body.transferPolicy === "string") update.transfer_policy = body.transferPolicy.trim() || "Never";
+  if (typeof body.transferNumber === "string") update.transfer_number = body.transferNumber.trim() || null;
+  if (typeof body.escalationThreshold === "string") update.escalation_threshold = body.escalationThreshold.trim() || "Balanced";
+  if (typeof body.escalationTriggers === "string") update.escalation_triggers = body.escalationTriggers.trim() || null;
+  if (Array.isArray(body.allowedActions)) update.allowed_actions = body.allowedActions;
+  if (Array.isArray(body.forbiddenActions)) update.forbidden_actions = body.forbiddenActions;
+  if (Array.isArray(body.objections)) update.objections = body.objections;
 
   try {
     const db = getDb();

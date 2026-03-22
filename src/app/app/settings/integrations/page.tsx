@@ -5,8 +5,9 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useSearchParams } from "next/navigation";
-import { Phone, MessageCircle, Cloud, Building2, Database, TrendingUp, Layers, Users, Building, RefreshCw, AlertCircle } from "lucide-react";
+import { Phone, MessageCircle, Cloud, Building2, Database, TrendingUp, Layers, Users, Building, RefreshCw, AlertCircle, Loader } from "lucide-react";
 import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
+import { IntegrationsHealthWidget } from "@/components/settings/IntegrationsHealthWidget";
 import type { CrmProviderId, CrmStatusResponse } from "@/app/api/integrations/crm/status/route";
 
 function getCrmIntegrations(t: ReturnType<typeof useTranslations>): Array<{
@@ -63,6 +64,7 @@ export default function AppSettingsIntegrationsPage() {
   const [whatsappEmail, setWhatsappEmail] = useState("");
   const [_whatsappSubmitting, setWhatsappSubmitting] = useState(false);
   const [crmStatus, setCrmStatus] = useState<CrmStatusResponse | null>(null);
+  const [syncingProvider, setSyncingProvider] = useState<CrmProviderId | null>(null);
   const searchParams = useSearchParams();
   const calendarParam = searchParams.get("calendar");
   const crmParam = searchParams.get("crm");
@@ -214,11 +216,46 @@ export default function AppSettingsIntegrationsPage() {
     }
   };
 
+  const handleSyncNow = async (provider: CrmProviderId) => {
+    setSyncingProvider(provider);
+    try {
+      const res = await fetch(`/api/integrations/crm/${provider}/batch-sync`, {
+        method: "POST",
+        credentials: "include",
+      });
+      const data = (await res.json().catch(() => null)) as { enqueued?: number; error?: string } | null;
+      if (!res.ok) {
+        setToast(data?.error ?? t("toast.syncFailed"));
+        return;
+      }
+      const enqueued = data?.enqueued ?? 0;
+      setToast(
+        enqueued > 0
+          ? `Sync started for ${enqueued} lead${enqueued !== 1 ? "s" : ""}`
+          : "Sync started"
+      );
+      // Refresh CRM status after a short delay
+      setTimeout(() => {
+        fetch("/api/integrations/crm/status", { credentials: "include" })
+          .then((r) => (r.ok ? r.json() : null))
+          .then((data: CrmStatusResponse | null) => data && setCrmStatus(data))
+          .catch(() => {});
+      }, 1000);
+    } catch {
+      setToast(t("toast.syncFailed"));
+    } finally {
+      setSyncingProvider(null);
+      setTimeout(() => setToast(null), 4000);
+    }
+  };
+
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       <Breadcrumbs items={[{ label: t("hub.breadcrumbSettings"), href: "/app/settings" }, { label: t("hub.title") }]} />
       <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">{t("hub.title")}</h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">{t("hub.subtitle")}</p>
+
+      <IntegrationsHealthWidget />
 
       <div className="space-y-6">
         <section>
@@ -319,12 +356,24 @@ export default function AppSettingsIntegrationsPage() {
                   </div>
                   <h4 className="text-sm font-medium text-[var(--text-primary)]">{t(`card.${crm.id === "zoho_crm" ? "zoho" : crm.id === "google_contacts" ? "googleContacts" : crm.id === "microsoft_365" ? "microsoft365" : crm.id}.title`)}</h4>
                   <p className="text-xs text-[var(--text-secondary)] mt-1 flex-1">{t(`card.${crm.id === "zoho_crm" ? "zoho" : crm.id === "google_contacts" ? "googleContacts" : crm.id === "microsoft_365" ? "microsoft365" : crm.id}.body`)}</p>
-                  {connected && status?.lastSyncAt && (
-                    <p className="text-[11px] text-[var(--text-secondary)] mt-2">
-                      {t("hub.lastSyncLabel")} {new Date(status.lastSyncAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })}
-                    </p>
+                  {connected && (
+                    <div className="mt-3 space-y-1.5">
+                      {status?.lastSyncAt && (
+                        <p className="text-[11px] text-[var(--text-secondary)]">
+                          <span className="font-medium">Last synced:</span> {new Date(status.lastSyncAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })}
+                        </p>
+                      )}
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] text-[var(--text-secondary)]"><span className="font-medium">Synced:</span> {status?.recordsSynced ?? 0} records</span>
+                        {(status?.errorCount ?? 0) > 0 && (
+                          <span className="text-[10px] font-medium text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded">
+                            {status?.errorCount} error{(status?.errorCount ?? 0) !== 1 ? "s" : ""}
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   )}
-                  <div className="mt-4">
+                  <div className="mt-4 flex gap-2">
                     {crm.comingSoon ? (
                       <button
                         type="button"
@@ -334,12 +383,32 @@ export default function AppSettingsIntegrationsPage() {
                         {t("comingSoon")}
                       </button>
                     ) : connected ? (
-                      <Link
-                        href={`/app/settings/integrations/mapping?provider=${crm.id}`}
-                        className="inline-block px-3 py-2 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)] transition-colors"
-                      >
-                        {t("button.configure")}
-                      </Link>
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => handleSyncNow(crm.id)}
+                          disabled={syncingProvider === crm.id}
+                          className="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)] transition-colors disabled:opacity-60"
+                        >
+                          {syncingProvider === crm.id ? (
+                            <>
+                              <Loader className="w-3 h-3 animate-spin" />
+                              Syncing...
+                            </>
+                          ) : (
+                            <>
+                              <RefreshCw className="w-3 h-3" />
+                              Sync Now
+                            </>
+                          )}
+                        </button>
+                        <Link
+                          href={`/app/settings/integrations/mapping?provider=${crm.id}`}
+                          className="inline-block px-3 py-2 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)] transition-colors"
+                        >
+                          {t("button.configure")}
+                        </Link>
+                      </>
                     ) : (
                       <a
                         href={`/api/integrations/crm/${crm.id}/connect`}
