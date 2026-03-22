@@ -1,6 +1,7 @@
 "use client";
 
 import type { CSSProperties, ComponentType } from "react";
+import { useTranslations } from "next-intl";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
@@ -26,41 +27,45 @@ interface ComparisonRow {
   icon: ComponentType<{ className?: string; style?: CSSProperties }>;
 }
 
-const COMPARISON_DATA: ComparisonRow[] = [
+interface ComparisonDataProvider {
+  (t: ReturnType<typeof useTranslations>): ComparisonRow[];
+}
+
+const getComparisonData: ComparisonDataProvider = (t) => [
   {
-    feature: "Answer Speed",
-    recallTouch: "< 3 seconds",
-    humanServices: "15–30 seconds",
-    basicAI: "5–10 seconds",
-    diyPlatforms: "Build it yourself",
+    feature: t("features.0.name"),
+    recallTouch: t("features.0.recallTouch"),
+    humanServices: t("features.0.humanServices"),
+    basicAI: t("features.0.basicAI"),
+    diyPlatforms: t("features.0.diyPlatforms"),
     icon: Zap,
   },
   {
-    feature: "24/7 Coverage",
+    feature: t("features.1.name"),
     recallTouch: true,
-    humanServices: "Business hours only",
+    humanServices: t("features.1.humanServices"),
     basicAI: true,
     diyPlatforms: true,
     icon: Clock,
   },
   {
-    feature: "Appointment Booking",
+    feature: t("features.2.name"),
     recallTouch: true,
     humanServices: true,
-    basicAI: "Limited",
-    diyPlatforms: "Build it yourself",
+    basicAI: t("features.2.basicAI"),
+    diyPlatforms: t("features.2.diyPlatforms"),
     icon: Phone,
   },
   {
-    feature: "Follow-Up Sequences",
-    recallTouch: "Automated SMS + email",
+    feature: t("features.3.name"),
+    recallTouch: t("features.3.recallTouch"),
     humanServices: false,
-    basicAI: "Basic SMS only",
-    diyPlatforms: "Build it yourself",
+    basicAI: t("features.3.basicAI"),
+    diyPlatforms: t("features.3.diyPlatforms"),
     icon: MessageSquare,
   },
   {
-    feature: "No-Show Recovery",
+    feature: t("features.4.name"),
     recallTouch: true,
     humanServices: false,
     basicAI: false,
@@ -68,60 +73,69 @@ const COMPARISON_DATA: ComparisonRow[] = [
     icon: Phone,
   },
   {
-    feature: "Revenue Dashboard",
-    recallTouch: "Real-time $ recovered",
+    feature: t("features.5.name"),
+    recallTouch: t("features.5.recallTouch"),
     humanServices: false,
     basicAI: false,
     diyPlatforms: false,
     icon: BarChart3,
   },
   {
-    feature: "Industry Templates",
-    recallTouch: "8 verticals, auto-seeded",
-    humanServices: "Generic scripts",
-    basicAI: "1–2 templates",
+    feature: t("features.6.name"),
+    recallTouch: t("features.6.recallTouch"),
+    humanServices: t("features.6.humanServices"),
+    basicAI: t("features.6.basicAI"),
     diyPlatforms: false,
     icon: Building2,
   },
   {
-    feature: "Setup Time",
-    recallTouch: "< 3 minutes",
-    humanServices: "1–2 weeks",
-    basicAI: "30–60 minutes",
-    diyPlatforms: "Weeks to months",
+    feature: t("features.7.name"),
+    recallTouch: t("features.7.recallTouch"),
+    humanServices: t("features.7.humanServices"),
+    basicAI: t("features.7.basicAI"),
+    diyPlatforms: t("features.7.diyPlatforms"),
     icon: Clock,
   },
   {
-    feature: "Outbound Campaigns",
+    feature: t("features.8.name"),
     recallTouch: true,
     humanServices: false,
     basicAI: false,
-    diyPlatforms: "Build it yourself",
+    diyPlatforms: t("features.8.diyPlatforms"),
     icon: Phone,
   },
   {
-    feature: "Transparent Pricing",
-    recallTouch: "$97–$997/mo flat",
-    humanServices: "$4–10/call or /min",
-    basicAI: "$0.50/caller + fees",
-    diyPlatforms: "$0.05–0.15/min + infra",
+    feature: t("features.9.name"),
+    recallTouch: t("features.9.recallTouch"),
+    humanServices: t("features.9.humanServices"),
+    basicAI: t("features.9.basicAI"),
+    diyPlatforms: t("features.9.diyPlatforms"),
     icon: DollarSign,
   },
   {
-    feature: "HIPAA / SOC 2",
+    feature: t("features.10.name"),
     recallTouch: true,
     humanServices: true,
-    basicAI: "Extra cost",
-    diyPlatforms: "Your responsibility",
+    basicAI: t("features.10.basicAI"),
+    diyPlatforms: t("features.10.diyPlatforms"),
     icon: Shield,
   },
 ];
 
-const COMPETITOR_COLS = [
-  { key: "recallTouch" as const, label: "Recall Touch", highlight: true },
-  { key: "humanServices" as const, label: "Human Services", subtitle: "Smith.ai, Ruby" },
-  { key: "basicAI" as const, label: "Basic AI", subtitle: "Goodcall, MyAIFrontDesk" },
-  { key: "diyPlatforms" as const, label: "DIY Platforms", subtitle: "Bland, Retell, Others" },
+interface CompetitorColProvider {
+  (t: ReturnType<typeof useTranslations>): Array<{
+    key: "recallTouch" | "humanServices" | "basicAI" | "diyPlatforms";
+    label: string;
+    subtitle?: string;
+    highlight?: boolean;
+  }>;
+}
+
+const getCompetitorCols: CompetitorColProvider = (t) => [
+  { key: "recallTouch" as const, label: t("competitors.0.name"), highlight: true },
+  { key: "humanServices" as const, label: t("competitors.1.name"), subtitle: t("competitors.1.subtitle") },
+  { key: "basicAI" as const, label: t("competitors.2.name"), subtitle: t("competitors.2.subtitle") },
+  { key: "diyPlatforms" as const, label: t("competitors.3.name"), subtitle: t("competitors.3.subtitle") },
 ];
 
 function CellValue({ value }: { value: string | boolean }) {
@@ -147,6 +161,9 @@ function CellValue({ value }: { value: string | boolean }) {
 }
 
 export function CompetitorComparison() {
+  const t = useTranslations("homepage.comparison");
+  const COMPARISON_DATA = getComparisonData(t);
+  const COMPETITOR_COLS = getCompetitorCols(t);
   const visibleRows = COMPARISON_DATA.slice(0, 5);
 
   return (
@@ -157,7 +174,7 @@ export function CompetitorComparison() {
     >
       <Container>
         <AnimateOnScroll className="text-center mb-12 md:mb-16">
-          <SectionLabel>The Full Revenue Operations Stack</SectionLabel>
+          <SectionLabel>{t("sectionLabel")}</SectionLabel>
           <h2
             className="font-bold max-w-3xl mx-auto"
             style={{
@@ -167,15 +184,13 @@ export function CompetitorComparison() {
               color: "var(--text-primary)",
             }}
           >
-            Not Just Another Point Solution.
+            {t("heading")}
           </h2>
           <p
             className="text-base mt-4 max-w-2xl mx-auto"
             style={{ color: "var(--text-secondary)" }}
           >
-            Most tools handle one step. Recall Touch runs the full execution loop:
-            qualification, booking, follow-up, reactivation, and clear attribution
-            so teams can measure outcomes in one system.
+            {t("description")}
           </p>
         </AnimateOnScroll>
 
@@ -341,7 +356,7 @@ export function CompetitorComparison() {
             className="text-sm mb-4"
             style={{ color: "var(--text-secondary)" }}
           >
-            Still comparing? Try a free test call and hear the difference.
+            {t("ctaDescription")}
           </p>
           <a
             href="/activate"
@@ -352,7 +367,7 @@ export function CompetitorComparison() {
             }}
           >
             <Phone className="w-4 h-4" />
-            Try Recall Touch Free
+            {t("ctaButton")}
           </a>
         </div>
       </Container>

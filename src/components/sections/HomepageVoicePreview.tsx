@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ArrowRight, Headphones } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
@@ -8,6 +9,7 @@ import { VoicePreviewWidget } from "@/components/VoicePreviewWidget";
 import { ROUTES } from "@/lib/constants";
 
 export function HomepageVoicePreview() {
+  const t = useTranslations("homepage.voicePreview");
   return (
     <section
       className="marketing-section py-16 md:py-24"
@@ -19,7 +21,7 @@ export function HomepageVoicePreview() {
             className="text-[11px] font-semibold uppercase tracking-wider mb-4"
             style={{ color: "var(--accent-primary)" }}
           >
-            Voice Library
+            {t("label")}
           </p>
           <h2
             className="font-semibold max-w-2xl mx-auto"
@@ -30,14 +32,13 @@ export function HomepageVoicePreview() {
               color: "var(--text-primary)",
             }}
           >
-            32 Premium Voices. Hear Them Yourself.
+            {t("title")}
           </h2>
           <p
             className="text-base md:text-lg max-w-xl mx-auto mt-3"
             style={{ color: "var(--text-secondary)" }}
           >
-            Natural pauses, real intonation, conversational tone.
-            Play any voice below and judge for yourself.
+            {t("description")}
           </p>
         </AnimateOnScroll>
 
@@ -51,7 +52,7 @@ export function HomepageVoicePreview() {
             className="btn-marketing-ghost no-underline inline-flex items-center gap-2"
           >
             <Headphones className="w-4 h-4" />
-            Hear all 32 voices
+            {t("cta")}
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

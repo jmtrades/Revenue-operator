@@ -1,10 +1,12 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
 import { SOCIAL_PROOF } from "@/lib/constants";
 
 export function SocialProof() {
+  const t = useTranslations("homepage.socialProof");
   return (
     <section
       id="results"
@@ -17,7 +19,7 @@ export function SocialProof() {
             className="text-[11px] font-semibold uppercase tracking-wider mb-4"
             style={{ color: "var(--accent-primary)" }}
           >
-            Traction
+            {t("traction")}
           </p>
           <h2
             className="font-semibold max-w-2xl mx-auto"
@@ -28,7 +30,7 @@ export function SocialProof() {
               color: "var(--text-primary)",
             }}
           >
-            Where We Are Today
+            {t("heading")}
           </h2>
         </AnimateOnScroll>
 
@@ -36,18 +38,18 @@ export function SocialProof() {
           {[
             {
               stat: SOCIAL_PROOF.businessCount,
-              label: "Businesses Live",
-              desc: `Across ${SOCIAL_PROOF.industryCount} industries in ${SOCIAL_PROOF.stateCount} states`,
+              label: t("stats.0.label"),
+              desc: t("stats.0.desc"),
             },
             {
               stat: SOCIAL_PROOF.callsHandled,
-              label: "Calls Handled",
-              desc: "Inbound, outbound, and follow-up",
+              label: t("stats.1.label"),
+              desc: t("stats.1.desc"),
             },
             {
               stat: SOCIAL_PROOF.revenueRecovered,
-              label: "Revenue Recovered",
-              desc: "From calls that used to go to voicemail",
+              label: t("stats.2.label"),
+              desc: t("stats.2.desc"),
             },
           ].map((item) => (
             <AnimateOnScroll key={item.label}>

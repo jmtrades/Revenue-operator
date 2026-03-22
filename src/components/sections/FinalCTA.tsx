@@ -97,7 +97,7 @@ export function FinalCTA() {
             onSubmit={handleEmailSubmit}
             className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto mb-3"
           >
-            <label htmlFor="final-cta-email" className="sr-only">Email address</label>
+            <label htmlFor="final-cta-email" className="sr-only">{t("emailLabel")}</label>
             <input
               id="final-cta-email"
               type="email"

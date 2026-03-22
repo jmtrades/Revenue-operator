@@ -1,22 +1,25 @@
 "use client";
 
 import React from "react";
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 
-const INDUSTRIES = [
-  "Healthcare",
-  "Legal",
-  "Real Estate",
-  "Home Services",
-  "Automotive",
-  "Dental",
-  "Insurance",
-  "Financial Services",
-  "Recruiting",
-  "SaaS",
+const INDUSTRY_KEYS = [
+  "healthcare",
+  "legal",
+  "realEstate",
+  "homeServices",
+  "automotive",
+  "dental",
+  "insurance",
+  "financialServices",
+  "recruiting",
+  "saas",
 ];
 
 export function CustomerLogosBar() {
+  const t = useTranslations("homepage.customerLogos");
+
   return (
     <section
       className="py-5"
@@ -31,22 +34,22 @@ export function CustomerLogosBar() {
             className="text-xs font-medium mr-1"
             style={{ color: "var(--text-tertiary)" }}
           >
-            Built for:
+            {t("builtFor")}
           </span>
-          {INDUSTRIES.map((name, i) => (
-            <React.Fragment key={name}>
+          {INDUSTRY_KEYS.map((key, i) => (
+            <React.Fragment key={key}>
               <span
                 className="text-xs"
                 style={{ color: "var(--text-secondary)" }}
               >
-                {name}
+                {t(`industries.${key}`)}
               </span>
-              {i < INDUSTRIES.length - 1 && (
+              {i < INDUSTRY_KEYS.length - 1 && (
                 <span
                   className="text-xs"
                   style={{ color: "var(--border-hover)" }}
                 >
-                  /
+                  {t("separator")}
                 </span>
               )}
             </React.Fragment>

@@ -1,72 +1,25 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const TESTIMONIALS = [
-  {
-    quote:
-      "We were losing 40% of after-hours calls — that's $23K in missed revenue every month. Within a week of going live, Recall Touch was booking appointments at 2 AM, recovering storm damage leads at midnight, and following up with quotes before my crew even woke up. First month: $23K in recovered revenue. It paid for the entire year in 12 days.",
-    name: "Marcus Johnson",
-    role: "Owner",
-    company: "Premier Plumbing & HVAC — Houston, TX",
-    metric: "+$23K/mo recovered",
-  },
-  {
-    quote:
-      "We have 4 locations and our front desk was drowning — 200+ calls a day, half going to voicemail. Recall Touch handles every single one now. No-shows dropped 52% because the AI actually follows up with reminders and reschedules cancellations automatically. We've added $180K in annual revenue without hiring a single person.",
-    name: "Dr. Lisa Chen",
-    role: "Practice Owner",
-    company: "Bright Smile Dental Group — Miami, FL",
-    metric: "+$180K/year",
-  },
-  {
-    quote:
-      "I was dead skeptical about AI handling our legal intake. Then it booked 3 consultations its first night — at 2 AM — from people who'd been in car accidents and were searching for a lawyer. Those turned into $45K in retained cases. The voice quality is so natural that clients thank 'Alex' by name. I'm a full believer now.",
-    name: "David Roth",
-    role: "Managing Partner",
-    company: "Roth & Associates Law — Chicago, IL",
-    metric: "68% intake conversion",
-  },
-  {
-    quote:
-      "We manage 14 crews across 3 states. Storm season used to mean 60% of calls went to voicemail — those are $5K-$15K jobs just evaporating. Recall Touch answers every call in under a second, qualifies the lead, books the inspection, and routes it to the right crew. Revenue is up 34% year-over-year and we process 500+ calls a day without breaking a sweat.",
-    name: "Mike Torres",
-    role: "CEO",
-    company: "Apex Roofing Group — Dallas, TX",
-    metric: "500+ calls/day",
-  },
-  {
-    quote:
-      "I tested 6 AI phone products before finding Recall Touch. The difference is night and day — this one actually books appointments, follows up on quotes, and routes urgent calls to my cell. Connected my existing number and it was handling the full workflow within an hour. First week ROI was 11x.",
-    name: "Sarah Kim",
-    role: "Owner",
-    company: "AutoCare Express — Atlanta, GA",
-    metric: "11x ROI in week one",
-  },
-  {
-    quote:
-      "I white-label Recall Touch for 12 clients and make $4K/mo in pure margin. My clients think the AI is a real person on their team. Zero complaints in 8 months. When I showed my agency partner the demo, he signed up the same day and put 6 of his clients on it. This is the best agency tool nobody's talking about yet.",
-    name: "Chris Martinez",
-    role: "Founder",
-    company: "Scale Digital Agency — Los Angeles, CA",
-    metric: "$4K/mo agency profit",
-  },
-  {
-    quote:
-      "As a solo practitioner, I was losing patients to the big clinics because I couldn't answer during appointments. Recall Touch runs my entire patient communication — scheduling, follow-ups, no-show recovery, reactivation campaigns for lapsed patients. My patient volume increased 40% in the first quarter without adding any staff. It's a full operations layer, not just a phone tool.",
-    name: "Dr. James Park",
-    role: "Chiropractor",
-    company: "Park Wellness Center — Denver, CO",
-    metric: "+40% patient volume",
-  },
+const TESTIMONIALS_KEYS = [
+  "items.0",
+  "items.1",
+  "items.2",
+  "items.3",
+  "items.4",
+  "items.5",
+  "items.6",
 ];
 
 export function TestimonialsSection() {
+  const t = useTranslations("homepage.testimonials");
   const [current, setCurrent] = useState(0);
-  const count = TESTIMONIALS.length;
+  const count = TESTIMONIALS_KEYS.length;
 
   const next = useCallback(() => setCurrent((c) => (c + 1) % count), [count]);
   const prev = useCallback(
@@ -79,7 +32,7 @@ export function TestimonialsSection() {
     return () => clearInterval(id);
   }, [next]);
 
-  const t = TESTIMONIALS[current];
+  const testimonialKey = TESTIMONIALS_KEYS[current];
 
   return (
     <section
@@ -92,7 +45,7 @@ export function TestimonialsSection() {
             className="text-[11px] font-semibold uppercase tracking-wider mb-4"
             style={{ color: "var(--accent-primary)" }}
           >
-            Customer Stories
+            {t("label")}
           </p>
           <h2
             className="font-semibold max-w-2xl mx-auto"
@@ -103,13 +56,13 @@ export function TestimonialsSection() {
               color: "var(--text-primary)",
             }}
           >
-            What Our Customers Report
+            {t("title")}
           </h2>
           <p
             className="text-sm mt-3 mx-auto max-w-lg"
             style={{ color: "var(--text-secondary)" }}
           >
-            Verified results from active accounts.
+            {t("description")}
           </p>
         </AnimateOnScroll>
 
@@ -140,7 +93,7 @@ export function TestimonialsSection() {
               className="text-base md:text-lg leading-relaxed text-center mb-6"
               style={{ color: "var(--text-primary)" }}
             >
-              &ldquo;{t.quote}&rdquo;
+              &ldquo;{t(`${testimonialKey}.quote`)}&rdquo;
             </blockquote>
 
             {/* Attribution */}
@@ -149,13 +102,13 @@ export function TestimonialsSection() {
                 className="text-sm font-semibold"
                 style={{ color: "var(--text-primary)" }}
               >
-                {t.name}
+                {t(`${testimonialKey}.name`)}
               </p>
               <p
                 className="text-xs mt-0.5"
                 style={{ color: "var(--text-secondary)" }}
               >
-                {t.role}, {t.company}
+                {t(`${testimonialKey}.role`)}, {t(`${testimonialKey}.company`)}
               </p>
               <span
                 className="inline-block mt-3 text-xs font-semibold px-3 py-1 rounded-full"
@@ -164,7 +117,7 @@ export function TestimonialsSection() {
                   color: "var(--accent-primary)",
                 }}
               >
-                {t.metric}
+                {t(`${testimonialKey}.metric`)}
               </span>
             </div>
 
@@ -199,12 +152,12 @@ export function TestimonialsSection() {
 
           {/* Dots — padded for 44px touch target */}
           <div className="flex items-center justify-center gap-1 mt-6">
-            {TESTIMONIALS.map((_, i) => (
+            {TESTIMONIALS_KEYS.map((_, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => setCurrent(i)}
-                aria-label={`Go to testimonial ${i + 1}`}
+                aria-label={t("goToTestimonial", { number: i + 1 })}
                 className="p-2.5 rounded-full transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
               >
                 <span

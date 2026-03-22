@@ -4428,6 +4428,22 @@
           "title": "Listo",
           "desc": "Cada llamada atendida. Cada lead capturado. Cada seguimiento enviado."
         }
+      },
+      "description": "Three steps. Then it runs.",
+      "stepLabel": "Step {num}",
+      "timeline": {
+        "0": {
+          "label": "Setup",
+          "value": "< 3 minutes"
+        },
+        "1": {
+          "label": "Testing",
+          "value": "< 2 minutes"
+        },
+        "2": {
+          "label": "Live",
+          "value": "Immediately"
+        }
       }
     },
     "liveDemo": {
@@ -5001,6 +5017,277 @@
       },
       "cta": {
         "link": "Saber más →"
+      }
+    },
+    "socialProof": {
+      "traction": "Traction",
+      "heading": "Where We Are Today",
+      "stats": {
+        "0": {
+          "label": "Businesses Live",
+          "desc": "Across 12 industries in 50 states"
+        },
+        "1": {
+          "label": "Calls Handled",
+          "desc": "Inbound, outbound, and follow-up"
+        },
+        "2": {
+          "label": "Revenue Recovered",
+          "desc": "From calls that used to go to voicemail"
+        }
+      }
+    },
+    "voicePreview": {
+      "label": "Voice Library",
+      "title": "32 Premium Voices. Hear Them Yourself.",
+      "description": "Natural pauses, real intonation, conversational tone. Play any voice below and judge for yourself.",
+      "cta": "Hear all 32 voices"
+    },
+    "problemStatement": {
+      "title": "Your Revenue Operations Have Gaps.",
+      "subtitle": "Here Is What They Cost.",
+      "description": "Unanswered inquiries, stalled pipelines, and inconsistent execution cost businesses",
+      "costRange": "$5K–$50K/month",
+      "descriptionSuffix": "from broken follow-up, manual outreach delays, and no attribution.",
+      "problem1": {
+        "title": "Opportunities go unresponded",
+        "description": "Inbound demand waits too long for a useful next step"
+      },
+      "problem2": {
+        "title": "Follow-up never happens",
+        "description": "Leads cool off while manual outreach stalls"
+      },
+      "problem3": {
+        "title": "Revenue is untracked",
+        "description": "Teams cannot attribute recovered value to execution"
+      },
+      "industryLabel": "See the impact for your industry",
+      "estimatedAnnualLoss": "estimated annual loss",
+      "perYear": "/year",
+      "calculationPrefix": "Average",
+      "calculationMiddle": "booking",
+      "calculationSuffix": "revenue leaks/week × 52 weeks"
+    },
+    "comparison": {
+      "sectionLabel": "The Full Revenue Operations Stack",
+      "heading": "Not Just Another Point Solution.",
+      "description": "Most tools handle one step. Recall Touch runs the full execution loop: qualification, booking, follow-up, reactivation, and clear attribution so teams can measure outcomes in one system.",
+      "features": {
+        "0": {
+          "name": "Answer Speed",
+          "recallTouch": "< 3 seconds",
+          "humanServices": "15–30 seconds",
+          "basicAI": "5–10 seconds",
+          "diyPlatforms": "Build it yourself"
+        },
+        "1": {
+          "name": "24/7 Coverage",
+          "humanServices": "Business hours only"
+        },
+        "2": {
+          "name": "Appointment Booking",
+          "basicAI": "Limited",
+          "diyPlatforms": "Build it yourself"
+        },
+        "3": {
+          "name": "Follow-Up Sequences",
+          "recallTouch": "Automated SMS + email",
+          "basicAI": "Basic SMS only",
+          "diyPlatforms": "Build it yourself"
+        },
+        "4": {
+          "name": "No-Show Recovery"
+        },
+        "5": {
+          "name": "Revenue Dashboard",
+          "recallTouch": "Real-time $ recovered"
+        },
+        "6": {
+          "name": "Industry Templates",
+          "recallTouch": "8 verticals, auto-seeded",
+          "humanServices": "Generic scripts",
+          "basicAI": "1–2 templates"
+        },
+        "7": {
+          "name": "Setup Time",
+          "recallTouch": "< 3 minutes",
+          "humanServices": "1–2 weeks",
+          "basicAI": "30–60 minutes",
+          "diyPlatforms": "Weeks to months"
+        },
+        "8": {
+          "name": "Outbound Campaigns",
+          "diyPlatforms": "Build it yourself"
+        },
+        "9": {
+          "name": "Transparent Pricing",
+          "recallTouch": "$97–$997/mo flat",
+          "humanServices": "$4–10/call or /min",
+          "basicAI": "$0.50/caller + fees",
+          "diyPlatforms": "$0.05–0.15/min + infra"
+        },
+        "10": {
+          "name": "HIPAA / SOC 2",
+          "basicAI": "Extra cost",
+          "diyPlatforms": "Your responsibility"
+        }
+      },
+      "competitors": {
+        "0": {
+          "name": "Recall Touch"
+        },
+        "1": {
+          "name": "Human Services",
+          "subtitle": "Smith.ai, Ruby"
+        },
+        "2": {
+          "name": "Basic AI",
+          "subtitle": "Goodcall, MyAIFrontDesk"
+        },
+        "3": {
+          "name": "DIY Platforms",
+          "subtitle": "Bland, Retell, Others"
+        }
+      },
+      "ctaDescription": "Still comparing? Try a free test call and hear the difference.",
+      "ctaButton": "Try Recall Touch Free"
+    },
+    "roiCalculator": {
+      "sectionLabel": "Revenue math",
+      "heading": "Calculate your revenue operations gap.",
+      "description": "Drag the sliders. We estimate your monthly revenue operations gap, then show what Recall Touch can recover with consistent automation and follow-up execution.",
+      "disclaimer1": "Uses conservative 70% recovery rate based on aggregated call data.",
+      "disclaimer2": "Shows monthly recovery and whether Growth plan pays for itself.",
+      "sliderMonthlyOpportunitiesLabel": "Monthly opportunities",
+      "sliderRevenueGapLabel": "Revenue gap (%)",
+      "sliderAverageDealValueLabel": "Average deal value",
+      "resultMonthlyLost": "You're currently losing about {amount}/month in revenue leak.",
+      "resultMonthlyRecovered": "With Recall Touch answering 24/7 and running recovery follow-up, you could recover around {monthlyAmount}/month and {annualAmount}/year in recovered bookings and no-show rescue.",
+      "resultPaysForItself": "Business plan pays for itself at {multiple}x.",
+      "ctaButtonText": "Get full ROI report",
+      "ctaDescription": "Share your email on the next step and we'll send a detailed breakdown by call volume, channel, and plan."
+    },
+    "customerLogos": {
+      "builtFor": "Built for:",
+      "separator": "/",
+      "industries": {
+        "healthcare": "Healthcare",
+        "legal": "Legal",
+        "realEstate": "Real Estate",
+        "homeServices": "Home Services",
+        "automotive": "Automotive",
+        "dental": "Dental",
+        "insurance": "Insurance",
+        "financialServices": "Financial Services",
+        "recruiting": "Recruiting",
+        "saas": "SaaS"
+      }
+    },
+    "faq": {
+      "label": "FAQ",
+      "title": "Common Questions",
+      "items": {
+        "0": {
+          "question": "How fast can I be live?",
+          "answer": "Most teams are live within minutes. Connect your number, configure your workflows, run a test, and go live. You can refine sequences and agent behavior after you see it working."
+        },
+        "1": {
+          "question": "Is there a free trial?",
+          "answer": "Yes. 14 days. No credit card required. Full access to all features on your plan."
+        },
+        "2": {
+          "question": "Can I use my existing business number?",
+          "answer": "Yes. Keep your current number and forward to Recall Touch, or provision new numbers directly."
+        },
+        "3": {
+          "question": "What exactly does Recall Touch do?",
+          "answer": "Recall Touch is an AI revenue operations platform. It handles inbound and outbound communication, automated follow-up sequences, appointment booking, lead qualification, escalation to your team, and full revenue attribution. Think of it as the execution layer that runs your revenue operations automatically."
+        },
+        "4": {
+          "question": "Does the AI sound robotic?",
+          "answer": "Not even close. Recall Touch uses 32 premium AI voices engineered with natural pauses, real intonation, pitch variation, and conversational warmth. Play a sample on our voice preview above and judge for yourself."
+        },
+        "5": {
+          "question": "Who is this for?",
+          "answer": "Any business or team that generates revenue through conversations. Solo consultants, sales teams, agencies, service businesses, clinics, law firms, real estate teams, recruiters, multi-location operators, and more. If you have leads, appointments, or follow-up to manage, Recall Touch runs it."
+        },
+        "6": {
+          "question": "Do I need to replace my CRM?",
+          "answer": "No. Recall Touch is the execution layer that sits on top of your CRM. It handles communication, follow-up, booking, and attribution. Your CRM stays as your system of record."
+        },
+        "7": {
+          "question": "How do you prevent bad automation?",
+          "answer": "Every agent has configurable guardrails: per-contact frequency limits, business hours enforcement, opt-out compliance, confidence thresholds, and human escalation rules. You can require approval before any action executes. Every action is logged and reviewable."
+        },
+        "8": {
+          "question": "Does this work for outbound too?",
+          "answer": "Yes. Recall Touch supports 10 outbound campaign types including speed-to-lead, appointment setting, reactivation, quote follow-up, and cold outreach. Outbound runs with the same guardrails, compliance, and attribution as inbound."
+        },
+        "9": {
+          "question": "How is ROI measured?",
+          "answer": "Every call, follow-up, and booking is attributed to revenue outcomes. Your dashboard shows exactly what the system produced, broken down by workflow, campaign, and agent. Weekly digest emails summarize performance."
+        },
+        "10": {
+          "question": "What if the AI makes a mistake?",
+          "answer": "Full transparency. Review transcripts and recordings for any call. Adjust agent behavior, scripts, and escalation rules in real time. Run agents in sandbox mode to preview before going live. Every action has an audit trail."
+        }
+      }
+    },
+    "outcomeCards": {
+      "heading": "Success Outcomes",
+      "subheading": "See how our solution delivers measurable results",
+      "cards": {
+        "missedCalls": {
+          "title": "Never Miss a Call",
+          "desc": "Automatically capture all incoming calls"
+        },
+        "leads": {
+          "title": "Qualified Leads",
+          "desc": "Convert conversations into actionable leads"
+        },
+        "appointments": {
+          "title": "Booked Appointments",
+          "desc": "Schedule meetings directly from conversations"
+        }
+      },
+      "pricing": {
+        "heading": "Simple, Transparent Pricing",
+        "subheading": "Choose the plan that fits your business",
+        "trialNote": "14-day free trial, no credit card required"
+      },
+      "pricingTiers": {
+        "starter": {
+          "name": "Starter",
+          "price": "$97",
+          "tagline": "Perfect for getting started",
+          "f1": "Up to 100 minutes/month",
+          "f2": "Basic analytics",
+          "f3": "Email support",
+          "f4": "1 user account"
+        },
+        "growth": {
+          "name": "Growth",
+          "price": "$297",
+          "tagline": "For scaling businesses",
+          "f1": "Up to 500 minutes/month",
+          "f2": "Advanced analytics",
+          "f3": "Priority support",
+          "f4": "Up to 5 user accounts"
+        },
+        "scale": {
+          "name": "Scale",
+          "price": "$597",
+          "tagline": "For enterprise needs",
+          "f1": "Unlimited minutes",
+          "f2": "Custom integrations",
+          "f3": "24/7 dedicated support",
+          "f4": "Unlimited user accounts"
+        },
+        "badgePopular": "Most Popular",
+        "billingPeriod": "/month"
+      },
+      "cta": {
+        "button": "Start Free Trial"
       }
     }
   },
@@ -6967,7 +7254,8 @@
       "businessNamePlaceholder": "Acme Dental",
       "selectIndustry": "Select industry…",
       "cityRegion": "City / region",
-      "cityRegionPlaceholder": "Austin, TX"
+      "cityRegionPlaceholder": "Austin, TX",
+      "industry": "Industry"
     },
     "phoneStep": {
       "heading": "Connect your phone",
@@ -7922,7 +8210,8 @@
       "liveInMinutes": "Activo en menos de 3 minutos. Cancela cuando quieras.",
       "bookDemo": "Agendar demo en vivo",
       "stillNotSure": "¿Aún no estás seguro? Escúchalo tú mismo — te llamamos ahora.",
-      "joinBusinesses": "Únete a {count} negocios que dejaron de perder ingresos por buzón de voz."
+      "joinBusinesses": "Únete a {count} negocios que dejaron de perder ingresos por buzón de voz.",
+      "emailLabel": "Email address"
     },
     "footer": {
       "outbound": "Saliente",
