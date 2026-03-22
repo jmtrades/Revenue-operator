@@ -6934,7 +6934,7 @@
     },
     "businessStep": {
       "heading": "Your business",
-      "subtitle": "Step 2 of 5",
+      "subtitle": "Step 3 of 5",
       "businessName": "Business name",
       "businessNamePlaceholder": "Acme Dental",
       "selectIndustry": "Select industry…",
@@ -6943,7 +6943,7 @@
     },
     "phoneStep": {
       "heading": "Connect your phone",
-      "subtitle": "Step 3 of 5 — your main business number or one we'll forward to.",
+      "subtitle": "Step 2 of 5 — your main business number or one we'll forward to.",
       "phoneNumber": "Phone number"
     },
     "back": "Back",
