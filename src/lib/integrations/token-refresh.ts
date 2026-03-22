@@ -64,7 +64,7 @@ export async function getValidTokens(
     const bufferMs = 5 * 60 * 1000; // 5 minutes
 
     if (now >= expiresAt - bufferMs) {
-      // Token is expired or about to expire â refresh it
+      // Token is expired or about to expire — refresh it
       if (!tokens.refresh_token) {
         log("warn", "crm_token.no_refresh_token", { provider, workspaceId });
         return null;

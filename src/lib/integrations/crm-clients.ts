@@ -36,13 +36,13 @@ export async function pushContactToCrm(
   }
 }
 
-// âââ HubSpot âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ─── HubSpot ───────────────────────────────────────────────────────────
 
 async function pushToHubSpot(
   tokens: CrmTokens,
   payload: Record<string, unknown>
 ): Promise<PushResult> {
-  // HubSpot Contacts API v3 â Create a contact
+  // HubSpot Contacts API v3 — Create a contact
   // https://developers.hubspot.com/docs/api/crm/contacts
   const res = await fetch("https://api.hubapi.com/crm/v3/objects/contacts", {
     method: "POST",
@@ -54,7 +54,7 @@ async function pushToHubSpot(
   });
 
   if (res.status === 409) {
-    // Contact already exists â try to find and update
+    // Contact already exists — try to find and update
     const email = payload.email as string | undefined;
     if (email) {
       return updateHubSpotContact(tokens, email, payload);
@@ -119,13 +119,13 @@ async function updateHubSpotContact(
   return { ok: true, externalId: contactId };
 }
 
-// âââ Salesforce ââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ─── Salesforce ────────────────────────────────────────────────────────
 
 async function pushToSalesforce(
   tokens: CrmTokens,
   payload: Record<string, unknown>
 ): Promise<PushResult> {
-  // Salesforce REST API â Create a Lead
+  // Salesforce REST API — Create a Lead
   // https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_sobject_create.htm
   const instanceUrl = tokens.instance_url ?? "https://login.salesforce.com";
   const apiUrl = `${instanceUrl}/services/data/v59.0/sobjects/Lead`;
@@ -185,13 +185,13 @@ async function upsertSalesforceLead(
   return { ok: true, externalId: data.id ?? email };
 }
 
-// âââ Zoho CRM ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ─── Zoho CRM ──────────────────────────────────────────────────────────
 
 async function pushToZoho(
   tokens: CrmTokens,
   payload: Record<string, unknown>
 ): Promise<PushResult> {
-  // Zoho CRM API v2 â Insert/Upsert Leads
+  // Zoho CRM API v2 — Insert/Upsert Leads
   // https://www.zoho.com/crm/developer/docs/api/v2/upsert-records.html
   const res = await fetch("https://www.zohoapis.com/crm/v2/Leads/upsert", {
     method: "POST",
@@ -221,13 +221,13 @@ async function pushToZoho(
   return { ok: true, externalId: record?.details?.id };
 }
 
-// âââ Pipedrive âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ─── Pipedrive ─────────────────────────────────────────────────────────
 
 async function pushToPipedrive(
   tokens: CrmTokens,
   payload: Record<string, unknown>
 ): Promise<PushResult> {
-  // Pipedrive API â Add a Person
+  // Pipedrive API — Add a Person
   // https://developers.pipedrive.com/docs/api/v1/Persons#addPerson
   // Pipedrive requires email and phone as arrays of objects
   const pipedrivePayload: Record<string, unknown> = { ...payload };
@@ -260,13 +260,13 @@ async function pushToPipedrive(
   return { ok: true, externalId: data.data?.id?.toString() };
 }
 
-// âââ GoHighLevel âââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ─── GoHighLevel ───────────────────────────────────────────────────────
 
 async function pushToGoHighLevel(
   tokens: CrmTokens,
   payload: Record<string, unknown>
 ): Promise<PushResult> {
-  // GoHighLevel API v2 â Create or Update Contact
+  // GoHighLevel API v2 — Create or Update Contact
   // https://highlevel.stoplight.io/docs/integrations/
   const res = await fetch("https://services.leadconnectorhq.com/contacts/upsert", {
     method: "POST",
@@ -288,13 +288,13 @@ async function pushToGoHighLevel(
   return { ok: true, externalId: data.contact?.id };
 }
 
-// âââ Google Contacts (People API) ââââââââââââââââââââââââââââââââââââââ
+// ─── Google Contacts (People API) ──────────────────────────────────────
 
 async function pushToGoogleContacts(
   tokens: CrmTokens,
   payload: Record<string, unknown>
 ): Promise<PushResult> {
-  // Google People API â Create Contact
+  // Google People API — Create Contact
   // https://developers.google.com/people/api/rest/v1/people/createContact
   // Convert flat payload to Google People API format
   const personPayload: Record<string, unknown> = {};
@@ -345,13 +345,13 @@ async function pushToGoogleContacts(
   return { ok: true, externalId: data.resourceName };
 }
 
-// âââ Microsoft 365 (Graph API) âââââââââââââââââââââââââââââââââââââââââ
+// ─── Microsoft 365 (Graph API) ─────────────────────────────────────────
 
 async function pushToMicrosoft365(
   tokens: CrmTokens,
   payload: Record<string, unknown>
 ): Promise<PushResult> {
-  // Microsoft Graph API â Create Contact
+  // Microsoft Graph API — Create Contact
   // https://learn.microsoft.com/en-us/graph/api/user-post-contacts
   const graphPayload: Record<string, unknown> = { ...payload };
 
@@ -383,13 +383,13 @@ async function pushToMicrosoft365(
   return { ok: true, externalId: data.id };
 }
 
-// âââ Airtable ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ─── Airtable ───────────────────────────────────────────────────────────
 
 async function pushToAirtable(
   tokens: CrmTokens,
   payload: Record<string, unknown>
 ): Promise<PushResult> {
-  // Airtable API â Create a Record
+  // Airtable API — Create a Record
   // https://airtable.com/developers/web/api/create-records
   // Requires AIRTABLE_BASE_ID and AIRTABLE_TABLE_NAME env vars
   const baseId = process.env.AIRTABLE_BASE_ID;
@@ -447,7 +447,7 @@ async function pushToAirtable(
   return { ok: true, externalId: recordId };
 }
 
-// âââ Provider handler map ââââââââââââââââââââââââââââââââââââââââââââââ
+// ─── Provider handler map ──────────────────────────────────────────────
 
 const PROVIDER_HANDLERS: Record<
   CrmProviderId,
