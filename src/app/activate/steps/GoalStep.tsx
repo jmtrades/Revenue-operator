@@ -18,8 +18,8 @@ export function GoalStep({
   onUpdate: (patch: Partial<ActivationState>) => void;
   onNext: () => void;
 }) {
-  const t = useTranslations("goalStep");
-  const tSteps = useTranslations("steps");
+  const t = useTranslations("activate.goalStep");
+  const tActivate = useTranslations("activate");
   const goals = state.goals ?? [];
 
   const toggle = (id: string) => {
@@ -72,7 +72,7 @@ export function GoalStep({
         disabled={goals.length === 0}
         className="w-full py-3 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-40 transition-colors"
       >
-        {tSteps("next", { defaultValue: "Continue" })}
+        {tActivate("continue")}
       </button>
     </div>
   );
