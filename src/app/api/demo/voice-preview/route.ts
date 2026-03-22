@@ -1,14 +1,19 @@
 /**
  * Voice Preview Proxy Endpoint
  *
- * Priority chain:
- *   1. ElevenLabs Turbo v2.5 (best human quality — primary)
- *   2. Self-hosted voice server (if configured)
- *   3. Deepgram Aura (fallback)
+ * Priority chain (optimized for maximum quality at zero/near-zero cost):
+ *   1. Self-hosted Recall voice server — $0 marginal cost, unlimited
+ *   2. Deepgram Aura — $0.015/1K chars, $200 free credit, best free-tier TTS
  *
- * Uses ElevenLabs' most natural voices with tuned settings from
- * human-voice-defaults.ts to produce audio indistinguishable from a
- * real person. Responses are cached for 24 hours to control costs.
+ * No paid TTS providers (ElevenLabs, etc.). All voice quality comes from:
+ *   - Careful model selection per voice persona
+ *   - Aggressive 24h caching (same text+voice = one API call ever)
+ *   - Rate limiting to prevent abuse
+ *
+ * Cost model at scale:
+ *   - Self-hosted: $0 (GPU already provisioned for call handling)
+ *   - Deepgram fallback: ~$0.003 per preview (avg 200 chars)
+ *   - With 24h cache: effectively free after first play
  */
 
 export const dynamic = "force-dynamic";
@@ -16,10 +21,24 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { log } from "@/lib/logger";
 
+/* ─── In-memory caches ─── */
+
 // Rate limiting: IP -> { count, resetAt }
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
-function checkRateLimit(ip: string, maxRequests: number = 20, windowMs: number = 60000): boolean {
+// Audio cache: "voiceId:textHash" -> { buffer, contentType, cachedAt }
+const audioCache = new Map<
+  string,
+  { buffer: ArrayBuffer; contentType: string; cachedAt: number }
+>();
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+const MAX_CACHE_ENTRIES = 200;
+
+function checkRateLimit(
+  ip: string,
+  maxRequests: number = 20,
+  windowMs: number = 60000
+): boolean {
   const now = Date.now();
   const record = rateLimitMap.get(ip);
   if (!record || record.resetAt < now) {
@@ -27,86 +46,133 @@ function checkRateLimit(ip: string, maxRequests: number = 20, windowMs: number =
     return true;
   }
   if (record.count >= maxRequests) {
-    log("warn", "voice_preview.rate_limit_exceeded", { ip, count: record.count, maxRequests });
+    log("warn", "voice_preview.rate_limit_exceeded", {
+      ip,
+      count: record.count,
+    });
     return false;
   }
   record.count++;
   return true;
 }
 
-/* ─── ElevenLabs voice mapping ─── */
+/** Simple hash for cache keys — not cryptographic, just dedup */
+function simpleHash(str: string): string {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash |= 0;
+  }
+  return hash.toString(36);
+}
+
+function getCacheKey(voiceId: string, text: string): string {
+  return `${voiceId}:${simpleHash(text)}`;
+}
+
+function getCachedAudio(
+  key: string
+): { buffer: ArrayBuffer; contentType: string } | null {
+  const entry = audioCache.get(key);
+  if (!entry) return null;
+  if (Date.now() - entry.cachedAt > CACHE_TTL_MS) {
+    audioCache.delete(key);
+    return null;
+  }
+  return { buffer: entry.buffer, contentType: entry.contentType };
+}
+
+function setCachedAudio(
+  key: string,
+  buffer: ArrayBuffer,
+  contentType: string
+): void {
+  // Evict oldest if at capacity
+  if (audioCache.size >= MAX_CACHE_ENTRIES) {
+    const firstKey = audioCache.keys().next().value;
+    if (firstKey) audioCache.delete(firstKey);
+  }
+  audioCache.set(key, { buffer, contentType, cachedAt: Date.now() });
+}
+
+/* ─── Deepgram Aura — best model mapping ─── */
 
 /**
- * Map Recall voice IDs to the best ElevenLabs voice IDs.
+ * Map Recall voice IDs → Deepgram Aura models.
  *
- * Selected for maximum human realism on phone calls:
- * - Rachel (21m00Tcm4TlvDq8ikWAM): warm, natural, empathetic — best female receptionist
- * - Bella (EXAVITQu4vr4xnSDxMaL):  casual, friendly, young — perfect for modern brands
- * - Josh (TxGEqnHWrfWFTfGW9XjX):   professional, confident male — authoritative but warm
- * - Elli (MF3mGyEYCl7XYWbV9V6O):    warm, soft, caring — great for empathetic contexts
- * - Antoni (ErXwobaYiN019PkySvjV):   professional male — articulate, trustworthy
+ * Deepgram Aura voice quality ranking (best → good):
+ *   Female: aura-asteria-en (clear, professional, most natural)
+ *           aura-stella-en  (warm, friendly)
+ *           aura-luna-en    (soft, calm)
+ *   Male:   aura-orion-en   (deep, confident, most natural)
+ *           aura-arcas-en   (authoritative)
+ *           aura-helios-en  (warm, approachable)
+ *           aura-zeus-en    (powerful, commanding)
+ *
+ * Each voice is mapped to the Deepgram model that best matches
+ * its persona for maximum realism at zero cost.
  */
-function mapVoiceIdToElevenLabs(voiceId: string): string {
-  const voiceMap: Record<string, string> = {
-    // Sarah voices → Rachel (warm, welcoming, human)
-    "us-female-warm-receptionist": "21m00Tcm4TlvDq8ikWAM",
-    "us-female-friendly": "21m00Tcm4TlvDq8ikWAM",
-    "us-female-empathetic": "21m00Tcm4TlvDq8ikWAM",
+function mapVoiceToDeepgram(voiceId: string): string {
+  const map: Record<string, string> = {
+    // ── Female voices ──
+    // Sarah (warm receptionist) → Stella (warmest female)
+    "us-female-warm-receptionist": "aura-stella-en",
+    "us-female-friendly": "aura-stella-en",
+    "us-female-empathetic": "aura-stella-en",
 
-    // Emma voices → Bella (casual, friendly, young)
-    "us-female-casual": "EXAVITQu4vr4xnSDxMaL",
-    "us-female-energetic": "EXAVITQu4vr4xnSDxMaL",
+    // Jennifer (professional) → Asteria (clearest, most professional)
+    "us-female-professional": "aura-asteria-en",
+    "us-female-authoritative": "aura-asteria-en",
 
-    // Professional female → Elli (articulate, clear)
-    "us-female-professional": "MF3mGyEYCl7XYWbV9V6O",
-    "us-female-authoritative": "MF3mGyEYCl7XYWbV9V6O",
-    "us-female-calm": "MF3mGyEYCl7XYWbV9V6O",
+    // Emma (casual) → Luna (soft, approachable)
+    "us-female-casual": "aura-luna-en",
+    "us-female-energetic": "aura-asteria-en",
+    "us-female-calm": "aura-luna-en",
 
-    // Alex voices → Josh (confident, warm male)
-    "us-male-professional": "TxGEqnHWrfWFTfGW9XjX",
-    "us-male-confident": "TxGEqnHWrfWFTfGW9XjX",
-    "us-male-warm": "TxGEqnHWrfWFTfGW9XjX",
+    // ── Male voices ──
+    // Alex (confident) → Orion (deep, most natural male)
+    "us-male-confident": "aura-orion-en",
+    "us-male-professional": "aura-orion-en",
+    "us-male-deep": "aura-orion-en",
 
-    // Casual male → Antoni (friendly, approachable)
-    "us-male-casual": "ErXwobaYiN019PkySvjV",
-    "us-male-friendly": "ErXwobaYiN019PkySvjV",
-    "us-male-energetic": "ErXwobaYiN019PkySvjV",
-    "us-male-calm": "ErXwobaYiN019PkySvjV",
-    "us-male-deep": "TxGEqnHWrfWFTfGW9XjX",
+    // Marcus (warm) → Helios (warm, approachable)
+    "us-male-warm": "aura-helios-en",
+    "us-male-friendly": "aura-helios-en",
+    "us-male-casual": "aura-helios-en",
+    "us-male-energetic": "aura-helios-en",
+    "us-male-calm": "aura-helios-en",
 
-    // British voices → map to closest match
-    "uk-female-professional": "MF3mGyEYCl7XYWbV9V6O",
-    "uk-female-warm": "21m00Tcm4TlvDq8ikWAM",
-    "uk-female-casual": "EXAVITQu4vr4xnSDxMaL",
-    "uk-female-authoritative": "MF3mGyEYCl7XYWbV9V6O",
-    "uk-male-professional": "TxGEqnHWrfWFTfGW9XjX",
-    "uk-male-warm": "ErXwobaYiN019PkySvjV",
-    "uk-male-casual": "ErXwobaYiN019PkySvjV",
-    "uk-male-deep": "TxGEqnHWrfWFTfGW9XjX",
+    // ── British voices ──
+    "uk-female-professional": "aura-asteria-en",
+    "uk-female-warm": "aura-stella-en",
+    "uk-female-casual": "aura-luna-en",
+    "uk-female-authoritative": "aura-asteria-en",
+    "uk-male-professional": "aura-orion-en",
+    "uk-male-warm": "aura-helios-en",
+    "uk-male-casual": "aura-helios-en",
+    "uk-male-deep": "aura-orion-en",
   };
 
-  // Default to Rachel — the most universally natural-sounding voice
-  return voiceMap[voiceId] || "21m00Tcm4TlvDq8ikWAM";
+  // Default: Stella (warm female) — most universally appealing for demos
+  return map[voiceId] || "aura-stella-en";
 }
 
 /**
- * ElevenLabs TTS — primary provider.
- * Uses Turbo v2.5 for lowest latency + highest quality.
- * Voice settings tuned from human-voice-defaults.ts for phone-grade realism.
+ * Deepgram Aura TTS — primary cloud provider.
+ * $0.015 per 1,000 characters. With caching, effectively free.
  */
-async function handleElevenLabsTTS(
+async function handleDeepgramTTS(
   voiceId: string,
   text: string,
   apiKey: string
 ): Promise<NextResponse | null> {
   try {
-    const elevenLabsVoiceId = mapVoiceIdToElevenLabs(voiceId);
-
-    // Turbo v2.5: fastest + most natural. eleven_turbo_v2_5
-    const url = `https://api.elevenlabs.io/v1/text-to-speech/${elevenLabsVoiceId}`;
+    const model = mapVoiceToDeepgram(voiceId);
+    const url = `https://api.deepgram.com/v1/speak?model=${encodeURIComponent(model)}&encoding=mp3&sample_rate=24000`;
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 12000);
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
 
     let response;
     try {
@@ -114,111 +180,9 @@ async function handleElevenLabsTTS(
         method: "POST",
         signal: controller.signal,
         headers: {
-          "xi-api-key": apiKey,
-          "Content-Type": "application/json",
-          Accept: "audio/mpeg",
-        },
-        body: JSON.stringify({
-          text,
-          model_id: "eleven_turbo_v2_5",
-          voice_settings: {
-            // These match HUMAN_VOICE_DEFAULTS for maximum realism:
-            stability: 0.38,           // Low = expressive, human variation
-            similarity_boost: 0.82,    // High clarity without over-processing
-            style: 0.48,               // Natural emphasis on key words
-            use_speaker_boost: true,    // Clearer on phone/speakers
-          },
-        }),
-      });
-    } finally {
-      clearTimeout(timeoutId);
-    }
-
-    if (!response.ok) {
-      const errText = await response.text().catch(() => "");
-      log("error", "voice_preview.elevenlabs_error", {
-        status: response.status,
-        response: errText,
-        voiceId: elevenLabsVoiceId,
-      });
-      // Return null to fall through to next provider
-      return null;
-    }
-
-    const audioBuffer = await response.arrayBuffer();
-
-    return new NextResponse(audioBuffer, {
-      status: 200,
-      headers: {
-        "Content-Type": "audio/mpeg",
-        "Content-Length": audioBuffer.byteLength.toString(),
-        "Cache-Control": "public, max-age=86400", // 24h cache — save API cost
-        "Access-Control-Allow-Origin":
-          process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com",
-      },
-    });
-  } catch (error) {
-    const err = error as Error;
-    log("error", "voice_preview.elevenlabs_error", {
-      error: err.name === "AbortError" ? "timeout" : err.message,
-    });
-    return null; // Fall through to next provider
-  }
-}
-
-/* ─── Deepgram mapping (unchanged, used as final fallback) ─── */
-
-function mapVoiceIdToDeepgramModel(voiceId: string): string {
-  const voiceMap: Record<string, string> = {
-    "us-female-warm-receptionist": "aura-stella-en",
-    "us-female-professional": "aura-asteria-en",
-    "us-female-casual": "aura-luna-en",
-    "us-female-energetic": "aura-stella-en",
-    "us-female-calm": "aura-luna-en",
-    "us-female-authoritative": "aura-asteria-en",
-    "us-female-friendly": "aura-stella-en",
-    "us-female-empathetic": "aura-luna-en",
-    "us-male-confident": "aura-orion-en",
-    "us-male-casual": "aura-orion-en",
-    "us-male-professional": "aura-asteria-en",
-    "us-male-warm": "aura-orion-en",
-    "us-male-energetic": "aura-stella-en",
-    "us-male-calm": "aura-luna-en",
-    "us-male-deep": "aura-orion-en",
-    "us-male-friendly": "aura-orion-en",
-    "uk-female-professional": "aura-asteria-en",
-    "uk-female-warm": "aura-stella-en",
-    "uk-female-casual": "aura-luna-en",
-    "uk-female-authoritative": "aura-asteria-en",
-    "uk-male-professional": "aura-asteria-en",
-    "uk-male-warm": "aura-orion-en",
-    "uk-male-casual": "aura-orion-en",
-    "uk-male-deep": "aura-orion-en",
-  };
-  return voiceMap[voiceId] || "aura-luna-en";
-}
-
-async function handleDeepgramFallback(
-  voiceId: string,
-  text: string,
-  apiKey: string
-): Promise<NextResponse> {
-  try {
-    const model = mapVoiceIdToDeepgramModel(voiceId);
-    const deepgramUrl = `https://api.deepgram.com/v1/speak?model=${encodeURIComponent(model)}`;
-
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-    let response;
-    try {
-      response = await fetch(deepgramUrl, {
-        method: "POST",
-        signal: controller.signal,
-        headers: {
           Authorization: `Token ${apiKey}`,
           "Content-Type": "application/json",
-          "User-Agent": "RecallTouch-DemoProxy/1.0",
+          "User-Agent": "RecallTouch/1.0",
         },
         body: JSON.stringify({ text }),
       });
@@ -227,28 +191,85 @@ async function handleDeepgramFallback(
     }
 
     if (!response.ok) {
-      return NextResponse.json(
-        { error: "Voice service temporarily unavailable" },
-        { status: 503 }
-      );
+      const errText = await response.text().catch(() => "");
+      log("error", "voice_preview.deepgram_error", {
+        status: response.status,
+        model,
+        response: errText,
+      });
+      return null;
     }
 
     const audioBuffer = await response.arrayBuffer();
+    const contentType =
+      response.headers.get("content-type") || "audio/mpeg";
+
     return new NextResponse(audioBuffer, {
       status: 200,
       headers: {
-        "Content-Type": response.headers.get("content-type") || "audio/mpeg",
+        "Content-Type": contentType,
         "Content-Length": audioBuffer.byteLength.toString(),
-        "Cache-Control": "public, max-age=3600",
+        "Cache-Control": "public, max-age=86400",
         "Access-Control-Allow-Origin":
           process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com",
+        "X-Voice-Provider": "deepgram",
+        "X-Voice-Model": model,
+      },
+    });
+  } catch (error) {
+    const err = error as Error;
+    log("error", "voice_preview.deepgram_error", {
+      error: err.name === "AbortError" ? "timeout" : err.message,
+    });
+    return null;
+  }
+}
+
+/**
+ * Self-hosted Recall voice server TTS — zero marginal cost.
+ */
+async function handleVoiceServerTTS(
+  voiceId: string,
+  text: string,
+  voiceServerUrl: string
+): Promise<NextResponse | null> {
+  try {
+    const ttsUrl = new URL(`${voiceServerUrl}/tts/preview`);
+    ttsUrl.searchParams.set("voice_id", voiceId);
+    ttsUrl.searchParams.set("text", text);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+    let response;
+    try {
+      response = await fetch(ttsUrl.toString(), {
+        signal: controller.signal,
+        headers: { "User-Agent": "RecallTouch/1.0" },
+      });
+    } finally {
+      clearTimeout(timeoutId);
+    }
+
+    if (!response.ok) return null;
+
+    const audioBuffer = await response.arrayBuffer();
+    const contentType =
+      response.headers.get("content-type") || "audio/mpeg";
+
+    return new NextResponse(audioBuffer, {
+      status: 200,
+      headers: {
+        "Content-Type": contentType,
+        "Content-Length": audioBuffer.byteLength.toString(),
+        "Cache-Control": "public, max-age=86400",
+        "Access-Control-Allow-Origin":
+          process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com",
+        "X-Voice-Provider": "recall-voice-server",
       },
     });
   } catch {
-    return NextResponse.json(
-      { error: "Could not connect to voice service" },
-      { status: 503 }
-    );
+    return null;
   }
 }
 
@@ -256,7 +277,10 @@ async function handleDeepgramFallback(
 
 export async function GET(req: NextRequest) {
   try {
-    const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
+    const ip =
+      req.headers.get("x-forwarded-for") ||
+      req.headers.get("x-real-ip") ||
+      "unknown";
 
     if (!checkRateLimit(ip, 20, 60000)) {
       return NextResponse.json(
@@ -283,62 +307,66 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const elevenLabsKey = process.env.ELEVENLABS_API_KEY;
+    // ── Check in-memory cache first (costs $0) ──
+    const cacheKey = getCacheKey(voiceId, text);
+    const cached = getCachedAudio(cacheKey);
+    if (cached) {
+      return new NextResponse(cached.buffer, {
+        status: 200,
+        headers: {
+          "Content-Type": cached.contentType,
+          "Content-Length": cached.buffer.byteLength.toString(),
+          "Cache-Control": "public, max-age=86400",
+          "X-Voice-Cache": "hit",
+          "Access-Control-Allow-Origin":
+            process.env.NEXT_PUBLIC_APP_URL ||
+            "https://www.recall-touch.com",
+        },
+      });
+    }
+
     const voiceServerUrl = process.env.NEXT_PUBLIC_VOICE_SERVER_URL;
     const deepgramApiKey = process.env.DEEPGRAM_API_KEY;
 
-    // ── Priority 1: ElevenLabs (best quality) ──
-    if (elevenLabsKey) {
-      const result = await handleElevenLabsTTS(voiceId, text, elevenLabsKey);
-      if (result) return result;
-      // If ElevenLabs failed, fall through to next provider
-    }
-
-    // ── Priority 2: Self-hosted voice server ──
+    // ── Priority 1: Self-hosted voice server ($0 marginal cost) ──
     if (voiceServerUrl) {
-      try {
-        const ttsUrl = new URL(`${voiceServerUrl}/tts/preview`);
-        ttsUrl.searchParams.set("voice_id", voiceId);
-        ttsUrl.searchParams.set("text", text);
-
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-        let response;
-        try {
-          response = await fetch(ttsUrl.toString(), {
-            signal: controller.signal,
-            headers: { "User-Agent": "RecallTouch-DemoProxy/1.0" },
-          });
-        } finally {
-          clearTimeout(timeoutId);
-        }
-
-        if (response.ok) {
-          const audioBuffer = await response.arrayBuffer();
-          return new NextResponse(audioBuffer, {
-            status: 200,
-            headers: {
-              "Content-Type": response.headers.get("content-type") || "audio/mpeg",
-              "Content-Length": audioBuffer.byteLength.toString(),
-              "Cache-Control": "public, max-age=3600",
-              "Access-Control-Allow-Origin":
-                process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com",
-            },
-          });
-        }
-      } catch {
-        // Voice server unavailable — fall through
+      const result = await handleVoiceServerTTS(
+        voiceId,
+        text,
+        voiceServerUrl
+      );
+      if (result) {
+        // Cache the response for next time
+        const cloned = result.clone();
+        const buf = await cloned.arrayBuffer();
+        setCachedAudio(
+          cacheKey,
+          buf,
+          cloned.headers.get("Content-Type") || "audio/mpeg"
+        );
+        return result;
       }
     }
 
-    // ── Priority 3: Deepgram Aura (last resort) ──
+    // ── Priority 2: Deepgram Aura ($0.015/1K chars, cached 24h) ──
     if (deepgramApiKey) {
-      return handleDeepgramFallback(voiceId, text, deepgramApiKey);
+      const result = await handleDeepgramTTS(voiceId, text, deepgramApiKey);
+      if (result) {
+        // Cache the response for next time
+        const cloned = result.clone();
+        const buf = await cloned.arrayBuffer();
+        setCachedAudio(
+          cacheKey,
+          buf,
+          cloned.headers.get("Content-Type") || "audio/mpeg"
+        );
+        return result;
+      }
     }
 
+    // ── No provider available ──
     return NextResponse.json(
-      { error: "No voice provider configured" },
+      { error: "Voice preview unavailable" },
       { status: 503 }
     );
   } catch (error) {
