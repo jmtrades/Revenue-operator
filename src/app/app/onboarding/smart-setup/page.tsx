@@ -1,207 +1,158 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { ChevronDown, ArrowRight, Check } from "lucide-react";
-import Link from "next/link";
+import { PLAYBOOKS, getPlaybooksByCategory, type Playbook } from "@/lib/ai/playbooks";
 
-type SetupStep = "method" | "context" | "loading" | "preview";
+type SetupStep = "select-playbook" | "preview-agent" | "loading";
 
-interface SetupInput {
-  website_url?: string;
-  business_description?: string;
-  industry?: string;
-  product_or_service?: string;
-  target_audience?: string;
-  price_range?: string;
-  selling_for?: string;
-  use_case?: string;
-  tone?: string;
-  additional_context?: string;
+interface ChatMessage {
+  id: string;
+  type: "lead" | "agent";
+  text: string;
+  isVisible: boolean;
 }
-
-interface GeneratedIntelligence {
-  agentGreetingScript: string;
-  faqPairs: Array<{ question: string; answer: string }>;
-  objectionHandlers: Array<{ objection: string; handler: string }>;
-  followUpTexts: string[];
-  followUpEmails: string[];
-  keyPhrases: string[];
-  qualifyingQuestions: string[];
-}
-
-const INDUSTRIES = [
-  "Real Estate",
-  "Insurance",
-  "Solar",
-  "Home Services",
-  "Dental/Medical",
-  "Legal",
-  "Financial Services",
-  "SaaS/Tech",
-  "Consulting",
-  "Automotive",
-  "Fitness/Wellness",
-  "E-commerce",
-  "Construction",
-  "Roofing",
-  "HVAC",
-  "Landscaping",
-];
-
-const USE_CASES = [
-  { value: "appointment_setting", label: "Book Appointments" },
-  { value: "lead_qualification", label: "Qualify Leads" },
-  { value: "sales_closing", label: "Close Sales" },
-  { value: "customer_support", label: "Customer Support" },
-  { value: "follow_up", label: "Follow Up" },
-  { value: "reactivation", label: "Reactivate Cold Leads" },
-  { value: "all", label: "All of the Above" },
-];
-
-const TONES = [
-  { value: "friendly", label: "Friendly & Warm" },
-  { value: "professional", label: "Professional" },
-  { value: "consultative", label: "Consultative" },
-  { value: "direct_confident", label: "Direct & Confident" },
-  { value: "casual", label: "Casual" },
-];
-
-const LOADING_MESSAGES = [
-  "Understanding your business...",
-  "Building your sales playbook...",
-  "Creating objection handlers...",
-  "Generating follow-up sequences...",
-  "Configuring your AI agent...",
-  "Done! Your agent is ready.",
-];
 
 export default function SmartSetupPage() {
-  const [step, setStep] = useState<SetupStep>("method");
-  const [setupInput, setSetupInput] = useState<SetupInput>({});
-  const [loadingMessages, setLoadingMessages] = useState<string[]>([]);
-  const [generatedIntelligence, setGeneratedIntelligence] =
-    useState<GeneratedIntelligence | null>(null);
-  const [expandedSections, setExpandedSections] = useState({
-    greeting: true,
-    faqs: false,
-    objections: false,
-  });
+  const router = useRouter();
+  const [step, setStep] = useState<SetupStep>("select-playbook");
+  const [selectedPlaybook, setSelectedPlaybook] = useState<Playbook | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isActivating, setIsActivating] = useState(false);
+  const [agentName, setAgentName] = useState("");
+  const [businessName, setBusinessName] = useState("");
+  const [showCustomization, setShowCustomization] = useState(false);
 
-  const handleMethodSelect = (method: "website" | "description" | "client") => {
-    if (method === "website") {
-      setSetupInput({ website_url: "" });
-    } else if (method === "description") {
-      setSetupInput({ business_description: "" });
-    } else {
-      setSetupInput({ selling_for: "", business_description: "" });
-    }
-    setStep("context");
-  };
+  const router_internal = useRouter();
 
-  const handleContextInputChange = (
-    field: keyof SetupInput,
-    value: string
-  ) => {
-    setSetupInput((prev) => ({ ...prev, [field]: value }));
-  };
+  // Get all unique categories
+  const categories = ["All", ...Object.keys(getPlaybooksByCategory()).sort()];
 
-  const handleChipSelect = (
-    field: keyof SetupInput,
-    value: string,
-    isToggle = false
-  ) => {
-    setSetupInput((prev) => {
-      if (isToggle && prev[field] === value) {
-        return { ...prev, [field]: undefined };
-      }
-      return { ...prev, [field]: value };
+  // Filter playbooks by category
+  const filteredPlaybooks =
+    selectedCategory === "All"
+      ? PLAYBOOKS
+      : PLAYBOOKS.filter((p) => p.category === selectedCategory);
+
+  // Handle playbook selection -> move to preview
+  const handlePlaybookSelect = (playbook: Playbook) => {
+    setSelectedPlaybook(playbook);
+    setAgentName(playbook.agent_name_suggestion);
+    setBusinessName("");
+    setChatMessages([]);
+    setShowCustomization(false);
+    setStep("preview-agent");
+
+    // Animate chat messages
+    playbook.sample_scenarios.slice(0, 5).forEach((scenario, idx) => {
+      setTimeout(() => {
+        setChatMessages((prev) => [
+          ...prev,
+          {
+            id: `lead-${idx}`,
+            type: "lead",
+            text: scenario.scenario,
+            isVisible: true,
+          },
+          {
+            id: `agent-${idx}`,
+            type: "agent",
+            text: scenario.agent_response,
+            isVisible: true,
+          },
+        ]);
+      }, idx * 800);
     });
   };
 
-  const canProceedToLoading = () => {
-    return (
-      setupInput.website_url ||
-      setupInput.business_description ||
-      setupInput.industry ||
-      setupInput.product_or_service
-    );
-  };
+  // Handle activate agent
+  const handleActivateAgent = async () => {
+    if (!selectedPlaybook) return;
 
-  const handleProceedToLoading = async () => {
-    if (!canProceedToLoading()) {
-      toast.error("Please provide at least some information about your business");
-      return;
-    }
-
-    setStep("loading");
-    setLoadingMessages([]);
-
-    let messageIndex = 0;
-    const messageInterval = setInterval(() => {
-      if (messageIndex < LOADING_MESSAGES.length) {
-        setLoadingMessages((prev) => [...prev, LOADING_MESSAGES[messageIndex]]);
-        messageIndex++;
-      } else {
-        clearInterval(messageInterval);
-      }
-    }, 1500);
-
+    setIsActivating(true);
     try {
-      const response = await fetch("/api/workspace/auto-setup", {
+      // Get workspace_id from URL or session
+      const workspaceId = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "").get(
+        "workspace_id"
+      );
+
+      if (!workspaceId) {
+        throw new Error("Workspace ID not found");
+      }
+
+      const response = await fetch("/api/workspace/apply-playbook", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(setupInput),
+        body: JSON.stringify({
+          workspace_id: workspaceId,
+          playbook_id: selectedPlaybook.id,
+          customizations: {
+            agent_name: agentName,
+            business_name: businessName,
+          },
+        }),
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to generate agent setup");
+        const error = await response.json();
+        throw new Error(error.error || "Failed to apply playbook");
       }
 
-      const data = await response.json();
-      clearInterval(messageInterval);
-      setLoadingMessages(LOADING_MESSAGES);
+      setStep("loading");
+      toast.success("Your agent is live and ready to take calls!");
 
-      setGeneratedIntelligence(data.generatedIntelligence || data.intelligence);
-      setStep("preview");
-    } catch (error) {
-      clearInterval(messageInterval);
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to generate setup";
-      toast.error(errorMessage);
-      setStep("context");
-    }
-  };
-
-  const toggleSection = (section: keyof typeof expandedSections) => {
-    setExpandedSections((prev) => ({
-      ...prev,
-      [section]: !prev[section],
-    }));
-  };
-
-  const handleActivateAgent = async () => {
-    setIsActivating(true);
-    try {
-      // The one-click-setup endpoint already saved everything
-      toast.success("Your AI agent is ready to make calls!");
-      // Redirect after brief delay
+      // Redirect to dashboard
       setTimeout(() => {
-        window.location.href = "/app/agents";
-      }, 1500);
+        router_internal.push("/app/dashboard");
+      }, 2000);
     } catch (error) {
-      toast.error("Failed to activate agent");
+      const msg = error instanceof Error ? error.message : "Failed to activate agent";
+      toast.error(msg);
       setIsActivating(false);
     }
   };
 
+  // Handle custom business description fallback
+  const handleCustomDescription = async (description: string) => {
+    try {
+      const workspaceId = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "").get(
+        "workspace_id"
+      );
+
+      if (!workspaceId) {
+        throw new Error("Workspace ID not found");
+      }
+
+      setStep("loading");
+      toast.success("Building your agent...");
+
+      const response = await fetch("/api/workspace/auto-setup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          workspace_id: workspaceId,
+          business_description: description,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to process custom description");
+      }
+
+      setTimeout(() => {
+        router_internal.push("/app/dashboard");
+      }, 2000);
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : "Failed to process description";
+      toast.error(msg);
+      setStep("preview-agent");
+    }
+  };
+
   return (
-    <div
-      className="min-h-screen p-4 lg:p-8"
-      style={{ backgroundColor: "var(--bg-primary)" }}
-    >
+    <div className="min-h-screen" style={{ backgroundColor: "var(--bg-primary)" }}>
       <style>{`
         @keyframes fadeInUp {
           from {
@@ -216,713 +167,461 @@ export default function SmartSetupPage() {
         .animate-fade-in-up {
           animation: fadeInUp 0.5s ease-out;
         }
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
+        @keyframes slideInLeft {
+          from {
+            opacity: 0;
+            transform: translateX(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
         }
-        .animate-spin-slow {
-          animation: spin 3s linear infinite;
+        .animate-slide-in {
+          animation: slideInLeft 0.4s ease-out;
         }
-        .expandable-content {
-          max-height: 0;
-          overflow: hidden;
-          transition: max-height 0.3s ease-out;
+        .chat-bubble {
+          border-radius: var(--rounded-xl, 1.25rem);
+          padding: 12px 16px;
+          max-width: 90%;
+          word-wrap: break-word;
         }
-        .expandable-content.expanded {
-          max-height: 2000px;
+        .chat-bubble.lead {
+          background-color: var(--bg-surface);
+          color: var(--text-primary);
+          margin-right: auto;
+        }
+        .chat-bubble.agent {
+          background-color: var(--accent-primary);
+          color: white;
+          margin-left: auto;
+        }
+        .playbook-card {
+          border-radius: 1.25rem;
+          border: 2px solid var(--border-default);
+          background-color: var(--bg-surface);
+          transition: all 0.3s ease;
+          cursor: pointer;
+        }
+        .playbook-card:hover {
+          border-color: var(--accent-primary);
+          transform: translateY(-4px);
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .playbook-card.selected {
+          border-color: var(--accent-primary);
+          background-color: var(--bg-hover);
+        }
+        .category-pill {
+          padding: 8px 16px;
+          border-radius: 2rem;
+          font-size: 0.875rem;
+          font-weight: 500;
+          cursor: pointer;
+          border: 1px solid var(--border-default);
+          background-color: var(--bg-surface);
+          color: var(--text-primary);
+          transition: all 0.2s ease;
+        }
+        .category-pill.active {
+          background-color: var(--accent-primary);
+          color: white;
+          border-color: var(--accent-primary);
+        }
+        .category-pill:hover {
+          border-color: var(--accent-primary);
+        }
+        .input-field {
+          width: 100%;
+          padding: 12px 16px;
+          border-radius: 0.75rem;
+          border: 1px solid var(--border-default);
+          background-color: var(--bg-surface);
+          color: var(--text-primary);
+          font-size: 0.875rem;
+          transition: all 0.2s ease;
+        }
+        .input-field:focus {
+          outline: none;
+          border-color: var(--accent-primary);
+          box-shadow: 0 0 0 3px rgba(var(--accent-primary-rgb), 0.1);
+        }
+        .btn-primary {
+          padding: 12px 24px;
+          border-radius: 0.75rem;
+          font-weight: 600;
+          font-size: 0.875rem;
+          background-color: var(--accent-primary);
+          color: white;
+          border: none;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        .btn-primary:hover:not(:disabled) {
+          opacity: 0.9;
+          transform: translateY(-1px);
+        }
+        .btn-primary:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+        .btn-secondary {
+          padding: 12px 24px;
+          border-radius: 0.75rem;
+          font-weight: 500;
+          font-size: 0.875rem;
+          background-color: var(--bg-surface);
+          color: var(--text-primary);
+          border: 1px solid var(--border-default);
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        .btn-secondary:hover {
+          border-color: var(--text-primary);
         }
       `}</style>
 
-      <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <div className="mb-12 animate-fade-in-up text-center">
-          <h1
-            className="text-4xl font-bold mb-3"
-            style={{ color: "var(--text-primary)" }}
-          >
-            {step === "method"
-              ? "Let's set up your AI agent"
-              : step === "context"
-              ? "Tell us about your business"
-              : step === "loading"
-              ? "Building your agent..."
-              : "Almost there!"}
-          </h1>
-          <p style={{ color: "var(--text-secondary)" }} className="text-lg">
-            {step === "method"
-              ? "Choose how you'd like to set up your AI sales agent"
-              : step === "context"
-              ? "The more details you provide, the better your agent will perform"
-              : step === "loading"
-              ? "This usually takes 1-2 minutes"
-              : "Review and activate your agent"}
-          </p>
-        </div>
-
-        {/* STEP 1: Choose Setup Method */}
-        {step === "method" && (
-          <div className="space-y-4 animate-fade-in-up">
-            <button
-              onClick={() => handleMethodSelect("website")}
-              className="w-full p-6 rounded-2xl border-2 transition-all text-left group hover:border-current"
-              style={{
-                backgroundColor: "var(--bg-surface)",
-                borderColor: "var(--border-default)",
-              }}
-            >
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3
-                    className="font-semibold text-lg mb-2"
-                    style={{ color: "var(--text-primary)" }}
-                  >
-                    I have a website
-                  </h3>
-                  <p style={{ color: "var(--text-secondary)" }} className="text-sm">
-                    We'll analyze your site to set up the perfect playbook
-                  </p>
-                </div>
-                <ArrowRight
-                  size={20}
-                  style={{ color: "var(--text-secondary)" }}
-                  className="group-hover:translate-x-1 transition-transform"
-                />
-              </div>
-            </button>
-
-            <button
-              onClick={() => handleMethodSelect("description")}
-              className="w-full p-6 rounded-2xl border-2 transition-all text-left group hover:border-current"
-              style={{
-                backgroundColor: "var(--bg-surface)",
-                borderColor: "var(--border-default)",
-              }}
-            >
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3
-                    className="font-semibold text-lg mb-2"
-                    style={{ color: "var(--text-primary)" }}
-                  >
-                    I'll describe my business
-                  </h3>
-                  <p style={{ color: "var(--text-secondary)" }} className="text-sm">
-                    Tell us what you do and we'll build everything from scratch
-                  </p>
-                </div>
-                <ArrowRight
-                  size={20}
-                  style={{ color: "var(--text-secondary)" }}
-                  className="group-hover:translate-x-1 transition-transform"
-                />
-              </div>
-            </button>
-
-            <button
-              onClick={() => handleMethodSelect("client")}
-              className="w-full p-6 rounded-2xl border-2 transition-all text-left group hover:border-current"
-              style={{
-                backgroundColor: "var(--bg-surface)",
-                borderColor: "var(--border-default)",
-              }}
-            >
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3
-                    className="font-semibold text-lg mb-2"
-                    style={{ color: "var(--text-primary)" }}
-                  >
-                    I'm setting up for a client
-                  </h3>
-                  <p style={{ color: "var(--text-secondary)" }} className="text-sm">
-                    Set up an agent for a client business (agency, contractor, etc)
-                  </p>
-                </div>
-                <ArrowRight
-                  size={20}
-                  style={{ color: "var(--text-secondary)" }}
-                  className="group-hover:translate-x-1 transition-transform"
-                />
-              </div>
-            </button>
-          </div>
-        )}
-
-        {/* STEP 2: Gather Context */}
-        {step === "context" && (
-          <div className="space-y-8 animate-fade-in-up">
-            {/* Website URL Input */}
-            {setupInput.website_url !== undefined && (
-              <div>
-                <label
-                  htmlFor="website-url"
-                  className="block text-sm font-medium mb-3"
-                  style={{ color: "var(--text-primary)" }}
-                >
-                  Website URL
-                </label>
-                <input
-                  id="website-url"
-                  type="url"
-                  placeholder="https://yourcompany.com"
-                  value={setupInput.website_url}
-                  onChange={(e) =>
-                    handleContextInputChange("website_url", e.target.value)
-                  }
-                  className="w-full px-4 py-3 rounded-lg border transition-all focus:outline-none focus:ring-2"
-                  style={{
-                    backgroundColor: "var(--bg-surface)",
-                    borderColor: "var(--border-default)",
-                    color: "var(--text-primary)",
-                    "--tw-ring-color": "var(--accent-primary)",
-                  } as any}
-                />
-              </div>
-            )}
-
-            {/* Selling For */}
-            {setupInput.selling_for !== undefined && (
-              <div>
-                <label
-                  htmlFor="selling-for"
-                  className="block text-sm font-medium mb-3"
-                  style={{ color: "var(--text-primary)" }}
-                >
-                  Client Name
-                </label>
-                <input
-                  id="selling-for"
-                  type="text"
-                  placeholder="e.g., SunPower Solar, ABC Real Estate"
-                  value={setupInput.selling_for}
-                  onChange={(e) =>
-                    handleContextInputChange("selling_for", e.target.value)
-                  }
-                  className="w-full px-4 py-3 rounded-lg border transition-all focus:outline-none focus:ring-2"
-                  style={{
-                    backgroundColor: "var(--bg-surface)",
-                    borderColor: "var(--border-default)",
-                    color: "var(--text-primary)",
-                    "--tw-ring-color": "var(--accent-primary)",
-                  } as any}
-                />
-              </div>
-            )}
-
-            {/* Business Description */}
-            {setupInput.business_description !== undefined && (
-              <div>
-                <label
-                  htmlFor="business-desc"
-                  className="block text-sm font-medium mb-3"
-                  style={{ color: "var(--text-primary)" }}
-                >
-                  What do you do?
-                </label>
-                <textarea
-                  id="business-desc"
-                  placeholder="e.g., We sell premium solar panels door-to-door to homeowners in California. We focus on high-ticket installations ($15k-$30k)."
-                  value={setupInput.business_description}
-                  onChange={(e) =>
-                    handleContextInputChange("business_description", e.target.value)
-                  }
-                  className="w-full px-4 py-3 rounded-lg border transition-all focus:outline-none focus:ring-2 min-h-24"
-                  style={{
-                    backgroundColor: "var(--bg-surface)",
-                    borderColor: "var(--border-default)",
-                    color: "var(--text-primary)",
-                    "--tw-ring-color": "var(--accent-primary)",
-                  } as any}
-                />
-              </div>
-            )}
-
-            {/* Industry */}
-            <div>
-              <label
-                className="block text-sm font-medium mb-3"
+      {/* STEP 1: Select Playbook */}
+      {step === "select-playbook" && (
+        <div className="min-h-screen p-6 lg:p-8">
+          <div className="max-w-7xl mx-auto">
+            {/* Header */}
+            <div className="mb-12 text-center animate-fade-in-up">
+              <h1
+                className="text-4xl lg:text-5xl font-bold mb-3"
                 style={{ color: "var(--text-primary)" }}
               >
-                Industry (optional)
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                {INDUSTRIES.map((ind) => (
-                  <button
-                    key={ind}
-                    onClick={() => handleChipSelect("industry", ind, true)}
-                    className="px-3 py-2 rounded-lg text-sm font-medium transition-all border"
-                    style={{
-                      backgroundColor:
-                        setupInput.industry === ind
-                          ? "var(--accent-primary)"
-                          : "var(--bg-surface)",
-                      borderColor:
-                        setupInput.industry === ind
-                          ? "var(--accent-primary)"
-                          : "var(--border-default)",
-                      color:
-                        setupInput.industry === ind
-                          ? "white"
-                          : "var(--text-primary)",
-                    }}
-                  >
-                    {ind}
-                  </button>
-                ))}
-              </div>
+                What do you do?
+              </h1>
+              <p
+                style={{ color: "var(--text-secondary)" }}
+                className="text-lg"
+              >
+                Pick your role and we'll show you your agent in action
+              </p>
             </div>
 
-            {/* Product/Service */}
-            {!setupInput.website_url && (
-              <div>
-                <label
-                  htmlFor="product"
-                  className="block text-sm font-medium mb-3"
-                  style={{ color: "var(--text-primary)" }}
-                >
-                  Product or Service (optional)
-                </label>
-                <input
-                  id="product"
-                  type="text"
-                  placeholder="e.g., Home solar panel installation"
-                  value={setupInput.product_or_service || ""}
-                  onChange={(e) =>
-                    handleContextInputChange("product_or_service", e.target.value)
-                  }
-                  className="w-full px-4 py-3 rounded-lg border transition-all focus:outline-none focus:ring-2"
+            {/* Category Filter */}
+            <div className="mb-8 flex flex-wrap gap-2 justify-center animate-fade-in-up">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className="category-pill"
                   style={{
-                    backgroundColor: "var(--bg-surface)",
-                    borderColor: "var(--border-default)",
-                    color: "var(--text-primary)",
-                    "--tw-ring-color": "var(--accent-primary)",
-                  } as any}
-                />
-              </div>
-            )}
-
-            {/* Use Case */}
-            <div>
-              <label
-                className="block text-sm font-medium mb-3"
-                style={{ color: "var(--text-primary)" }}
-              >
-                What's the primary use? (optional)
-              </label>
-              <div className="space-y-2">
-                {USE_CASES.map((uc) => (
-                  <button
-                    key={uc.value}
-                    onClick={() => handleChipSelect("use_case", uc.value, true)}
-                    className="w-full px-4 py-2 rounded-lg text-sm font-medium transition-all border text-left"
-                    style={{
-                      backgroundColor:
-                        setupInput.use_case === uc.value
-                          ? "var(--accent-primary)"
-                          : "var(--bg-surface)",
-                      borderColor:
-                        setupInput.use_case === uc.value
-                          ? "var(--accent-primary)"
-                          : "var(--border-default)",
-                      color:
-                        setupInput.use_case === uc.value
-                          ? "white"
-                          : "var(--text-primary)",
-                    }}
-                  >
-                    {uc.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Tone */}
-            <div>
-              <label
-                className="block text-sm font-medium mb-3"
-                style={{ color: "var(--text-primary)" }}
-              >
-                Agent Tone (optional)
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                {TONES.map((t) => (
-                  <button
-                    key={t.value}
-                    onClick={() => handleChipSelect("tone", t.value, true)}
-                    className="px-3 py-2 rounded-lg text-sm font-medium transition-all border"
-                    style={{
-                      backgroundColor:
-                        setupInput.tone === t.value
-                          ? "var(--accent-primary)"
-                          : "var(--bg-surface)",
-                      borderColor:
-                        setupInput.tone === t.value
-                          ? "var(--accent-primary)"
-                          : "var(--border-default)",
-                      color:
-                        setupInput.tone === t.value
-                          ? "white"
-                          : "var(--text-primary)",
-                    }}
-                  >
-                    {t.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Additional Context */}
-            <div>
-              <label
-                htmlFor="additional"
-                className="block text-sm font-medium mb-3"
-                style={{ color: "var(--text-primary)" }}
-              >
-                Anything else? (optional)
-              </label>
-              <textarea
-                id="additional"
-                placeholder="e.g., We work with home builders, unique selling point is our 25-year warranty..."
-                value={setupInput.additional_context || ""}
-                onChange={(e) =>
-                  handleContextInputChange("additional_context", e.target.value)
-                }
-                className="w-full px-4 py-3 rounded-lg border transition-all focus:outline-none focus:ring-2 min-h-20"
-                style={{
-                  backgroundColor: "var(--bg-surface)",
-                  borderColor: "var(--border-default)",
-                  color: "var(--text-primary)",
-                  "--tw-ring-color": "var(--accent-primary)",
-                } as any}
-              />
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-3 pt-4">
-              <button
-                onClick={() => {
-                  setStep("method");
-                  setSetupInput({});
-                }}
-                className="px-6 py-3 rounded-lg font-medium border transition-all"
-                style={{
-                  borderColor: "var(--border-default)",
-                  color: "var(--text-primary)",
-                  backgroundColor: "var(--bg-surface)",
-                }}
-              >
-                Back
-              </button>
-              <button
-                onClick={handleProceedToLoading}
-                disabled={!canProceedToLoading()}
-                className="flex-1 px-6 py-3 rounded-lg font-medium transition-all"
-                style={{
-                  backgroundColor: canProceedToLoading()
-                    ? "var(--accent-primary)"
-                    : "var(--border-default)",
-                  color: "white",
-                  opacity: canProceedToLoading() ? 1 : 0.5,
-                  cursor: canProceedToLoading() ? "pointer" : "not-allowed",
-                }}
-              >
-                Build My Agent
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 3: Loading */}
-        {step === "loading" && (
-          <div className="animate-fade-in-up text-center space-y-8">
-            <div
-              className="w-24 h-24 mx-auto rounded-full flex items-center justify-center animate-spin-slow"
-              style={{
-                backgroundColor: "var(--bg-surface)",
-              }}
-            >
-              <div
-                className="w-20 h-20 rounded-full"
-                style={{
-                  background: "conic-gradient(var(--accent-primary), var(--border-default))",
-                }}
-              />
-            </div>
-
-            <div className="space-y-3">
-              {loadingMessages.map((msg, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center gap-3 p-3 rounded-lg"
-                  style={{ backgroundColor: "var(--bg-surface)" }}
+                    backgroundColor:
+                      selectedCategory === cat
+                        ? "var(--accent-primary)"
+                        : "var(--bg-surface)",
+                    color: selectedCategory === cat ? "white" : "var(--text-primary)",
+                    borderColor:
+                      selectedCategory === cat
+                        ? "var(--accent-primary)"
+                        : "var(--border-default)",
+                  }}
                 >
-                  <div
-                    className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{ backgroundColor: "var(--accent-secondary)" }}
-                  >
-                    <Check size={14} color="white" />
-                  </div>
-                  <span
-                    style={{ color: "var(--text-secondary)" }}
-                    className="text-sm"
-                  >
-                    {msg}
-                  </span>
-                </div>
+                  {cat}
+                </button>
               ))}
-              {loadingMessages.length < LOADING_MESSAGES.length && (
-                <div className="flex items-center gap-3 p-3 rounded-lg" style={{ backgroundColor: "var(--bg-surface)" }}>
-                  <div
-                    className="animate-spin w-5 h-5 border-2 rounded-full"
-                    style={{
-                      borderColor: "var(--accent-primary)",
-                      borderTopColor: "transparent",
-                    }}
-                  />
-                  <span
-                    style={{ color: "var(--text-tertiary)" }}
-                    className="text-sm"
+            </div>
+
+            {/* Playbook Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 animate-fade-in-up">
+              {filteredPlaybooks.map((playbook) => (
+                <button
+                  key={playbook.id}
+                  onClick={() => handlePlaybookSelect(playbook)}
+                  className="playbook-card text-left p-6 hover:shadow-lg"
+                >
+                  <div className="text-5xl mb-4">{playbook.icon}</div>
+                  <h3
+                    className="text-xl font-bold mb-2"
+                    style={{ color: "var(--text-primary)" }}
                   >
-                    {LOADING_MESSAGES[loadingMessages.length]}
-                  </span>
-                </div>
-              )}
+                    {playbook.title}
+                  </h3>
+                  <p
+                    className="text-sm"
+                    style={{ color: "var(--text-secondary)" }}
+                  >
+                    {playbook.subtitle}
+                  </p>
+                </button>
+              ))}
+            </div>
+
+            {/* Fallback to Custom Description */}
+            <div className="text-center animate-fade-in-up">
+              <p style={{ color: "var(--text-secondary)" }} className="text-sm mb-3">
+                Don't see your role?{" "}
+                <button
+                  onClick={() => {
+                    const description = prompt(
+                      "Describe what you do and who you're selling to:"
+                    );
+                    if (description) {
+                      handleCustomDescription(description);
+                    }
+                  }}
+                  className="underline hover:opacity-80 transition-opacity font-medium"
+                  style={{ color: "var(--accent-primary)" }}
+                >
+                  Describe it instead
+                </button>
+              </p>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* STEP 4: Preview */}
-        {step === "preview" && generatedIntelligence && (
-          <div className="space-y-6 animate-fade-in-up">
-            {/* Greeting Preview */}
+      {/* STEP 2: Preview Agent */}
+      {step === "preview-agent" && selectedPlaybook && (
+        <div className="min-h-screen p-6 lg:p-8">
+          <div className="max-w-6xl mx-auto">
+            {/* Header */}
+            <div className="mb-8 animate-fade-in-up">
+              <button
+                onClick={() => setStep("select-playbook")}
+                className="text-sm font-medium mb-4"
+                style={{ color: "var(--accent-primary)" }}
+              >
+                ← Back to selection
+              </button>
+              <h1
+                className="text-4xl font-bold mb-2"
+                style={{ color: "var(--text-primary)" }}
+              >
+                Meet your agent
+              </h1>
+              <p style={{ color: "var(--text-secondary)" }}>
+                Here's how {selectedPlaybook.title} handles real situations
+              </p>
+            </div>
+
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Left: Chat Preview (60%) */}
+              <div className="lg:col-span-2 animate-fade-in-up">
+                <div
+                  className="p-6 rounded-2xl border"
+                  style={{
+                    backgroundColor: "var(--bg-surface)",
+                    borderColor: "var(--border-default)",
+                    minHeight: "500px",
+                  }}
+                >
+                  {/* Chat Messages */}
+                  <div className="space-y-4 overflow-y-auto max-h-96 mb-6">
+                    {chatMessages.length === 0 ? (
+                      <div className="text-center py-12">
+                        <p
+                          style={{ color: "var(--text-tertiary)" }}
+                          className="text-sm"
+                        >
+                          Loading scenarios...
+                        </p>
+                      </div>
+                    ) : (
+                      chatMessages.map((msg, idx) => (
+                        <div
+                          key={msg.id}
+                          className={`chat-bubble animate-slide-in ${msg.type}`}
+                          style={{
+                            animationDelay: `${idx * 0.1}s`,
+                          }}
+                        >
+                          {msg.type === "lead" ? "Lead: " : "Agent: "}
+                          {msg.text}
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  {/* Stats */}
+                  <div
+                    className="p-4 rounded-lg border-t pt-6"
+                    style={{
+                      borderColor: "var(--border-default)",
+                      backgroundColor: "var(--bg-primary)",
+                    }}
+                  >
+                    <p
+                      className="text-sm"
+                      style={{ color: "var(--text-secondary)" }}
+                    >
+                      Your agent knows:
+                    </p>
+                    <ul
+                      className="text-xs mt-3 space-y-1"
+                      style={{ color: "var(--text-tertiary)" }}
+                    >
+                      <li>✓ {selectedPlaybook.objection_handlers.length} objection handlers</li>
+                      <li>✓ {selectedPlaybook.faqs.length} FAQs</li>
+                      <li>✓ {selectedPlaybook.follow_up_sms_templates.length} follow-up templates</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: Config & Activate (40%) */}
+              <div className="lg:col-span-1 animate-fade-in-up">
+                <div
+                  className="p-6 rounded-2xl border sticky top-8"
+                  style={{
+                    backgroundColor: "var(--bg-surface)",
+                    borderColor: "var(--border-default)",
+                  }}
+                >
+                  {/* Playbook Header */}
+                  <div className="mb-6">
+                    <div className="text-4xl mb-3">{selectedPlaybook.icon}</div>
+                    <h2
+                      className="text-2xl font-bold"
+                      style={{ color: "var(--text-primary)" }}
+                    >
+                      {selectedPlaybook.title}
+                    </h2>
+                    <p
+                      className="text-sm mt-1"
+                      style={{ color: "var(--text-secondary)" }}
+                    >
+                      {selectedPlaybook.subtitle}
+                    </p>
+                  </div>
+
+                  {/* Agent Name Input */}
+                  <div className="mb-4">
+                    <label
+                      htmlFor="agent-name"
+                      className="block text-sm font-medium mb-2"
+                      style={{ color: "var(--text-primary)" }}
+                    >
+                      Agent Name
+                    </label>
+                    <input
+                      id="agent-name"
+                      type="text"
+                      value={agentName}
+                      onChange={(e) => setAgentName(e.target.value)}
+                      className="input-field"
+                      placeholder={selectedPlaybook.agent_name_suggestion}
+                    />
+                  </div>
+
+                  {/* Business Name Input */}
+                  <div className="mb-6">
+                    <label
+                      htmlFor="business-name"
+                      className="block text-sm font-medium mb-2"
+                      style={{ color: "var(--text-primary)" }}
+                    >
+                      Business Name (Optional)
+                    </label>
+                    <input
+                      id="business-name"
+                      type="text"
+                      value={businessName}
+                      onChange={(e) => setBusinessName(e.target.value)}
+                      className="input-field"
+                      placeholder="Your company name"
+                    />
+                  </div>
+
+                  {/* Activate Button */}
+                  <button
+                    onClick={handleActivateAgent}
+                    disabled={isActivating}
+                    className="btn-primary w-full mb-4"
+                  >
+                    {isActivating ? "Activating..." : "Activate Agent"}
+                  </button>
+
+                  {/* Customization Link */}
+                  <div className="border-t pt-4" style={{ borderColor: "var(--border-default)" }}>
+                    <button
+                      onClick={() => setShowCustomization(!showCustomization)}
+                      className="text-sm font-medium w-full text-left"
+                      style={{ color: "var(--accent-primary)" }}
+                    >
+                      {showCustomization ? "Hide customization →" : "Show customization →"}
+                    </button>
+
+                    {/* Expandable Customization Section */}
+                    {showCustomization && (
+                      <div className="mt-4 space-y-4 pt-4 border-t" style={{ borderColor: "var(--border-default)" }}>
+                        {/* Greeting Script */}
+                        <div>
+                          <h4
+                            className="text-sm font-medium mb-2"
+                            style={{ color: "var(--text-primary)" }}
+                          >
+                            Greeting Script
+                          </h4>
+                          <textarea
+                            value={selectedPlaybook.greeting_script}
+                            readOnly
+                            className="input-field text-xs min-h-20 resize-none opacity-75"
+                          />
+                        </div>
+
+                        {/* Sample FAQs */}
+                        <div>
+                          <h4
+                            className="text-sm font-medium mb-2"
+                            style={{ color: "var(--text-primary)" }}
+                          >
+                            Sample FAQs
+                          </h4>
+                          <div className="space-y-3">
+                            {selectedPlaybook.faqs.slice(0, 2).map((faq, idx) => (
+                              <div key={idx} className="text-xs">
+                                <p
+                                  className="font-medium mb-1"
+                                  style={{ color: "var(--accent-primary)" }}
+                                >
+                                  Q: {faq.q}
+                                </p>
+                                <p style={{ color: "var(--text-secondary)" }}>
+                                  A: {faq.a.substring(0, 80)}...
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* STEP 3: Loading */}
+      {step === "loading" && (
+        <div className="min-h-screen flex items-center justify-center p-6">
+          <div className="text-center">
             <div
-              className="p-6 rounded-2xl border"
+              className="w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center animate-spin"
               style={{
                 backgroundColor: "var(--bg-surface)",
-                borderColor: "var(--border-default)",
+                borderTop: "3px solid var(--accent-primary)",
+                borderRight: "3px solid transparent",
               }}
+            />
+            <h2
+              className="text-2xl font-bold mb-2"
+              style={{ color: "var(--text-primary)" }}
             >
-              <button
-                onClick={() => toggleSection("greeting")}
-                className="w-full flex items-center justify-between text-left hover:opacity-80 transition-opacity"
-              >
-                <h3
-                  className="font-semibold text-lg"
-                  style={{ color: "var(--text-primary)" }}
-                >
-                  Agent Greeting
-                </h3>
-                <ChevronDown
-                  size={20}
-                  style={{
-                    color: "var(--text-secondary)",
-                    transform: expandedSections.greeting
-                      ? "rotate(180deg)"
-                      : "rotate(0)",
-                  }}
-                  className="transition-transform"
-                />
-              </button>
-              <div
-                className={`expandable-content ${
-                  expandedSections.greeting ? "expanded" : ""
-                }`}
-              >
-                <p
-                  className="mt-4 p-4 rounded-lg italic"
-                  style={{
-                    backgroundColor: "var(--bg-primary)",
-                    color: "var(--text-secondary)",
-                  }}
-                >
-                  "{generatedIntelligence.agentGreetingScript}"
-                </p>
-              </div>
-            </div>
-
-            {/* FAQs Preview */}
-            {generatedIntelligence.faqPairs.length > 0 && (
-              <div
-                className="p-6 rounded-2xl border"
-                style={{
-                  backgroundColor: "var(--bg-surface)",
-                  borderColor: "var(--border-default)",
-                }}
-              >
-                <button
-                  onClick={() => toggleSection("faqs")}
-                  className="w-full flex items-center justify-between text-left hover:opacity-80 transition-opacity"
-                >
-                  <h3
-                    className="font-semibold text-lg"
-                    style={{ color: "var(--text-primary)" }}
-                  >
-                    Sample FAQs ({generatedIntelligence.faqPairs.length})
-                  </h3>
-                  <ChevronDown
-                    size={20}
-                    style={{
-                      color: "var(--text-secondary)",
-                      transform: expandedSections.faqs
-                        ? "rotate(180deg)"
-                        : "rotate(0)",
-                    }}
-                    className="transition-transform"
-                  />
-                </button>
-                <div
-                  className={`expandable-content ${
-                    expandedSections.faqs ? "expanded" : ""
-                  }`}
-                >
-                  <div className="mt-4 space-y-4 border-t pt-4" style={{ borderColor: "var(--border-default)" }}>
-                    {generatedIntelligence.faqPairs.slice(0, 2).map((faq, idx) => (
-                      <div key={idx}>
-                        <p
-                          className="font-medium text-sm mb-2"
-                          style={{ color: "var(--text-primary)" }}
-                        >
-                          Q: {faq.question}
-                        </p>
-                        <p
-                          className="text-sm"
-                          style={{ color: "var(--text-secondary)" }}
-                        >
-                          A: {faq.answer}
-                        </p>
-                      </div>
-                    ))}
-                    {generatedIntelligence.faqPairs.length > 2 && (
-                      <p
-                        style={{ color: "var(--text-tertiary)" }}
-                        className="text-sm italic pt-2"
-                      >
-                        ...and {generatedIntelligence.faqPairs.length - 2} more
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Objections Preview */}
-            {generatedIntelligence.objectionHandlers.length > 0 && (
-              <div
-                className="p-6 rounded-2xl border"
-                style={{
-                  backgroundColor: "var(--bg-surface)",
-                  borderColor: "var(--border-default)",
-                }}
-              >
-                <button
-                  onClick={() => toggleSection("objections")}
-                  className="w-full flex items-center justify-between text-left hover:opacity-80 transition-opacity"
-                >
-                  <h3
-                    className="font-semibold text-lg"
-                    style={{ color: "var(--text-primary)" }}
-                  >
-                    Objection Handlers ({generatedIntelligence.objectionHandlers.length})
-                  </h3>
-                  <ChevronDown
-                    size={20}
-                    style={{
-                      color: "var(--text-secondary)",
-                      transform: expandedSections.objections
-                        ? "rotate(180deg)"
-                        : "rotate(0)",
-                    }}
-                    className="transition-transform"
-                  />
-                </button>
-                <div
-                  className={`expandable-content ${
-                    expandedSections.objections ? "expanded" : ""
-                  }`}
-                >
-                  <div className="mt-4 space-y-4 border-t pt-4" style={{ borderColor: "var(--border-default)" }}>
-                    {generatedIntelligence.objectionHandlers.slice(0, 2).map((obj, idx) => (
-                      <div key={idx}>
-                        <p
-                          className="font-medium text-sm mb-2"
-                          style={{ color: "var(--accent-warning)" }}
-                        >
-                          {obj.objection}
-                        </p>
-                        <p
-                          className="text-sm"
-                          style={{ color: "var(--text-secondary)" }}
-                        >
-                          {obj.handler}
-                        </p>
-                      </div>
-                    ))}
-                    {generatedIntelligence.objectionHandlers.length > 2 && (
-                      <p
-                        style={{ color: "var(--text-tertiary)" }}
-                        className="text-sm italic pt-2"
-                      >
-                        ...and{" "}
-                        {generatedIntelligence.objectionHandlers.length - 2} more
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Success Message */}
-            <div
-              className="p-4 rounded-lg border"
-              style={{
-                backgroundColor: "var(--accent-secondary-subtle)",
-                borderColor: "var(--accent-secondary)",
-              }}
-            >
-              <div className="flex items-center gap-2">
-                <Check
-                  size={20}
-                  style={{ color: "var(--accent-secondary)" }}
-                />
-                <p
-                  style={{ color: "var(--accent-secondary)" }}
-                  className="text-sm font-medium"
-                >
-                  Your agent is configured and ready!
-                </p>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-3">
-              <button
-                onClick={() => setStep("context")}
-                className="px-6 py-3 rounded-lg font-medium border transition-all"
-                style={{
-                  borderColor: "var(--border-default)",
-                  color: "var(--text-primary)",
-                  backgroundColor: "var(--bg-surface)",
-                }}
-              >
-                Edit Details
-              </button>
-              <button
-                onClick={handleActivateAgent}
-                disabled={isActivating}
-                className="flex-1 px-6 py-3 rounded-lg font-medium transition-all"
-                style={{
-                  backgroundColor: "var(--accent-primary)",
-                  color: "white",
-                  opacity: isActivating ? 0.8 : 1,
-                  cursor: isActivating ? "not-allowed" : "pointer",
-                }}
-              >
-                {isActivating ? "Activating..." : "Activate Agent"}
-              </button>
-            </div>
+              Activating your agent...
+            </h2>
+            <p style={{ color: "var(--text-secondary)" }}>
+              This usually takes a few seconds
+            </p>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
