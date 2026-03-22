@@ -5,26 +5,37 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getDb } from "@/lib/db/queries";
-import { scrapeAndAnalyze } from "@/lib/ai/website-intelligence";
+import {
+  scrapeAndAnalyze,
+  generateBusinessIntelligence,
+  type SetupInput,
+} from "@/lib/ai/website-intelligence";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { url, workspace_id } = body as {
-      url?: string;
-      workspace_id?: string;
-    };
-
-    if (!url || typeof url !== "string") {
-      return NextResponse.json(
-        { error: "url is required" },
-        { status: 400 }
-      );
-    }
+    const input = body as SetupInput & { workspace_id?: string };
+    const { workspace_id } = input;
 
     if (!workspace_id || typeof workspace_id !== "string") {
       return NextResponse.json(
         { error: "workspace_id is required" },
+        { status: 400 }
+      );
+    }
+
+    // Validate that at least one input is provided
+    if (
+      !input.website_url &&
+      !input.business_description &&
+      !input.industry &&
+      !input.product_or_service
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "At least one of: website_url, business_description, industry, or product_or_service is required",
+        },
         { status: 400 }
       );
     }
@@ -45,22 +56,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Validate URL
-    let parsedUrl: URL;
-    try {
-      parsedUrl = new URL(url);
-    } catch {
-      return NextResponse.json(
-        { error: "Invalid URL format" },
-        { status: 400 }
-      );
+    // Validate URL if provided
+    if (input.website_url && typeof input.website_url === "string") {
+      try {
+        new URL(input.website_url);
+      } catch {
+        return NextResponse.json(
+          { error: "Invalid website URL format" },
+          { status: 400 }
+        );
+      }
     }
 
-    // Scrape and analyze
-    const intelligence = await scrapeAndAnalyze(
-      parsedUrl.toString(),
-      workspace_id
-    );
+    // Generate business intelligence
+    const intelligence = await generateBusinessIntelligence(input);
 
     // Save to workspace knowledge base
     const db = getDb();
@@ -102,10 +111,12 @@ export async function POST(req: NextRequest) {
       objectionHandlers: intelligence.objectionHandlers,
       bookingScript: intelligence.bookingScript,
       followUpTexts: intelligence.followUpTexts,
+      followUpEmails: intelligence.followUpEmails,
       recommendedTone: intelligence.recommendedTone,
       recommendedPersonality: intelligence.recommendedPersonality,
       keyPhrases: intelligence.keyPhrases,
       thingToNeverSay: intelligence.thingToNeverSay,
+      qualifyingQuestions: intelligence.qualifyingQuestions,
       generatedAt: new Date().toISOString(),
     };
 
@@ -141,8 +152,7 @@ export async function POST(req: NextRequest) {
       {
         success: true,
         intelligence,
-        message:
-          "Website analyzed successfully. Agent knowledge base updated.",
+        message: "Business profile analyzed successfully. Agent knowledge base updated.",
       },
       { status: 200 }
     );
@@ -150,17 +160,33 @@ export async function POST(req: NextRequest) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("Auto-setup error:", message, err);
 
-    if (message.includes("Unable to fetch") || message.includes("HTTP")) {
+    if (
+      message.includes("Unable to fetch") ||
+      message.includes("HTTP") ||
+      message.includes("not accessible")
+    ) {
       return NextResponse.json(
-        { error: "Unable to fetch website. Please check the URL." },
+        {
+          error:
+            "Could not process the provided website. If you provided a URL, please verify it's correct and publicly accessible. Otherwise, provide a business description instead.",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (message.includes("At least one of")) {
+      return NextResponse.json(
+        {
+          error:
+            "Please provide at least one of: website URL, business description, industry, or product/service.",
+        },
         { status: 400 }
       );
     }
 
     return NextResponse.json(
       {
-        error:
-          "Setup failed. Please try again or check your website accessibility.",
+        error: "Setup failed. Please ensure your inputs are valid and try again.",
       },
       { status: 500 }
     );

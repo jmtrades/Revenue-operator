@@ -95,8 +95,8 @@ export default function AutoSetupPage() {
   }, []);
 
   const handleReanalyze = async () => {
-    if (!url.trim()) {
-      toast.error("Please enter a website URL");
+    if (!url.trim() && !industry.trim()) {
+      toast.error("Please enter a website URL or select an industry");
       return;
     }
 
@@ -117,7 +117,10 @@ export default function AutoSetupPage() {
       const response = await fetch("/api/workspace/auto-setup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: url.trim() }),
+        body: JSON.stringify({
+          website_url: url.trim() || undefined,
+          industry: industry.trim() || undefined,
+        }),
       });
 
       if (!response.ok) {
@@ -169,14 +172,8 @@ export default function AutoSetupPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          website_url: url,
-          industry: industry || analysis.industry,
-          businessName: analysis.businessName,
-          greeting: analysis.greeting,
-          faqs: analysis.faqs,
-          objections: analysis.objections,
-          templates: analysis.templates,
-          overwrite: true,
+          website_url: url.trim() || undefined,
+          industry: industry || analysis.industry || undefined,
         }),
       });
 

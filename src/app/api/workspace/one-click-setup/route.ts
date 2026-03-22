@@ -5,7 +5,11 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getDb } from "@/lib/db/queries";
-import { scrapeAndAnalyze } from "@/lib/ai/website-intelligence";
+import {
+  scrapeAndAnalyze,
+  generateBusinessIntelligence,
+  type SetupInput,
+} from "@/lib/ai/website-intelligence";
 
 interface SetupResult {
   success: boolean;
@@ -25,22 +29,28 @@ interface SetupResult {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { website_url, industry, workspace_id } = body as {
-      website_url?: string;
-      industry?: string;
-      workspace_id?: string;
-    };
-
-    if (!website_url || typeof website_url !== "string") {
-      return NextResponse.json(
-        { error: "website_url is required" },
-        { status: 400 }
-      );
-    }
+    const input = body as SetupInput & { workspace_id?: string };
+    const { workspace_id } = input;
 
     if (!workspace_id || typeof workspace_id !== "string") {
       return NextResponse.json(
         { error: "workspace_id is required" },
+        { status: 400 }
+      );
+    }
+
+    // Validate that at least one input is provided
+    if (
+      !input.website_url &&
+      !input.business_description &&
+      !input.industry &&
+      !input.product_or_service
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "At least one of: website_url, business_description, industry, or product_or_service is required",
+        },
         { status: 400 }
       );
     }
@@ -61,24 +71,22 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Validate URL
-    let parsedUrl: URL;
-    try {
-      parsedUrl = new URL(website_url);
-    } catch {
-      return NextResponse.json(
-        { error: "Invalid website URL format" },
-        { status: 400 }
-      );
+    // Validate URL if provided
+    if (input.website_url && typeof input.website_url === "string") {
+      try {
+        new URL(input.website_url);
+      } catch {
+        return NextResponse.json(
+          { error: "Invalid website URL format" },
+          { status: 400 }
+        );
+      }
     }
 
     const db = getDb();
 
-    // Step 1: Scrape website and generate knowledge base
-    const intelligence = await scrapeAndAnalyze(
-      parsedUrl.toString(),
-      workspace_id
-    );
+    // Step 1: Generate business intelligence
+    const intelligence = await generateBusinessIntelligence(input);
 
     // Step 2: Store the full intelligence in workspace knowledge
     const knowledgeBase = {
@@ -98,10 +106,12 @@ export async function POST(req: NextRequest) {
       objectionHandlers: intelligence.objectionHandlers,
       bookingScript: intelligence.bookingScript,
       followUpTexts: intelligence.followUpTexts,
+      followUpEmails: intelligence.followUpEmails,
       recommendedTone: intelligence.recommendedTone,
       recommendedPersonality: intelligence.recommendedPersonality,
       keyPhrases: intelligence.keyPhrases,
       thingToNeverSay: intelligence.thingToNeverSay,
+      qualifyingQuestions: intelligence.qualifyingQuestions,
       generatedAt: new Date().toISOString(),
       setupMethod: "auto_one_click",
     };
@@ -243,14 +253,46 @@ export async function POST(req: NextRequest) {
       estimatedReadyTime: "Immediately - system is ready for outbound calls",
     };
 
-    return NextResponse.json(result, { status: 200 });
+    // Return the full intelligence for preview/confirmation
+    return NextResponse.json(
+      {
+        ...result,
+        generatedIntelligence: {
+          agentGreetingScript: intelligence.agentGreetingScript,
+          faqPairs: intelligence.faqPairs.slice(0, 3),
+          objectionHandlers: intelligence.objectionHandlers.slice(0, 3),
+          followUpTexts: intelligence.followUpTexts,
+          followUpEmails: intelligence.followUpEmails,
+          keyPhrases: intelligence.keyPhrases,
+          qualifyingQuestions: intelligence.qualifyingQuestions,
+        },
+      },
+      { status: 200 }
+    );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("One-click setup error:", message, err);
 
-    if (message.includes("Unable to fetch") || message.includes("HTTP")) {
+    if (
+      message.includes("Unable to fetch") ||
+      message.includes("HTTP") ||
+      message.includes("not accessible")
+    ) {
       return NextResponse.json(
-        { error: "Unable to fetch website. Please verify the URL is correct and publicly accessible." },
+        {
+          error:
+            "Could not process the provided website. If you provided a URL, please verify it's correct and publicly accessible. Otherwise, provide a business description instead.",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (message.includes("At least one of")) {
+      return NextResponse.json(
+        {
+          error:
+            "Please provide at least one of: website URL, business description, industry, or product/service.",
+        },
         { status: 400 }
       );
     }
@@ -258,7 +300,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         error:
-          "One-click setup failed. Please ensure your website is accessible and try again.",
+          "Setup failed. Please ensure your inputs are valid and try again.",
       },
       { status: 500 }
     );
