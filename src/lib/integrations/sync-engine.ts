@@ -4,8 +4,11 @@
  */
 
 import { getDb } from "@/lib/db/queries";
-import { applyMapping, type FieldMappingConfig, type LeadRecord } from "./field-mapper";
+import { applyMapping, getDefaultMappings, type FieldMappingConfig, type LeadRecord } from "./field-mapper";
 import type { CrmProviderId } from "./field-mapper";
+import { getValidTokens } from "./token-refresh";
+import { pushContactToCrm } from "./crm-clients";
+import { log } from "@/lib/logger";
 
 export type SyncDirection = "inbound" | "outbound";
 export type SyncStatus = "pending" | "processing" | "completed" | "failed";
@@ -188,14 +191,20 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
         .eq("config_type", "field_mapping")
         .maybeSingle();
       const mappingConfig = (configRow as { config?: FieldMappingConfig } | null)?.config;
-      if (!mappingConfig || !Array.isArray(mappingConfig.mappings) || mappingConfig.mappings.length === 0) {
+      const leadRecord = lead as LeadRecord;
+
+      // Use custom mapping config if available, otherwise use defaults
+      let effectiveConfig = mappingConfig as FieldMappingConfig;
+      if (!effectiveConfig || !Array.isArray(effectiveConfig.mappings) || effectiveConfig.mappings.length === 0) {
+        effectiveConfig = { mappings: getDefaultMappings(row.provider as CrmProviderId) };
+      }
+
+      const payload = applyMapping(leadRecord, effectiveConfig);
+
+      if (Object.keys(payload).length === 0) {
         await db
           .from("sync_queue")
-          .update({
-            status: "completed",
-            updated_at: new Date().toISOString(),
-            completed_at: new Date().toISOString(),
-          })
+          .update({ status: "completed", updated_at: new Date().toISOString(), completed_at: new Date().toISOString() })
           .eq("id", jobId);
         await appendSyncLog({
           workspaceId: row.workspace_id,
@@ -203,28 +212,70 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
           direction: "outbound",
           entityId: row.entity_id,
           action: "skipped",
-          summary: "No mapping config",
+          summary: "No fields to sync after mapping",
         });
         return { ok: true };
       }
-      const leadRecord = lead as LeadRecord;
-      const payload = applyMapping(leadRecord, mappingConfig as FieldMappingConfig);
-      // TODO: Implement actual CRM push (HubSpot, Salesforce, Pipedrive APIs).
-      // Until then, mark as pending_integration so dashboards don't show false success.
+
+      // Get valid OAuth tokens (auto-refreshes if expired)
+      const tokens = await getValidTokens(row.workspace_id, row.provider as CrmProviderId);
+      if (!tokens) {
+        throw new Error(`No valid OAuth tokens for ${row.provider}. Reconnect the integration.`);
+      }
+
+      // Push to CRM
+      const result = await pushContactToCrm(row.provider as CrmProviderId, tokens, payload);
+
+      if (!result.ok) {
+        throw new Error(result.error ?? `CRM push failed for ${row.provider}`);
+      }
+
+      // Success — mark completed and update sync stats
       await db
         .from("sync_queue")
         .update({
-          status: "pending_integration",
+          status: "completed",
           updated_at: new Date().toISOString(),
+          completed_at: new Date().toISOString(),
         })
         .eq("id", jobId);
+
+      // Update connection sync stats (increment records_synced, update last_sync_at)
+      try {
+        const { data: connRow } = await db
+          .from("workspace_crm_connections")
+          .select("records_synced")
+          .eq("workspace_id", row.workspace_id)
+          .eq("provider", row.provider)
+          .maybeSingle();
+        const currentCount = (connRow as { records_synced?: number } | null)?.records_synced ?? 0;
+        await db
+          .from("workspace_crm_connections")
+          .update({
+            records_synced: currentCount + 1,
+            last_sync_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq("workspace_id", row.workspace_id)
+          .eq("provider", row.provider);
+      } catch {
+        // Non-blocking — sync succeeded even if stats update fails
+      }
+
+      log("info", "crm_sync.pushed", {
+        provider: row.provider,
+        entityId: row.entity_id,
+        externalId: result.externalId,
+        fields: Object.keys(payload).length,
+      });
+
       await appendSyncLog({
         workspaceId: row.workspace_id,
         provider: row.provider,
         direction: "outbound",
         entityId: row.entity_id,
-        action: "skipped",
-        summary: `Outbound sync prepared (${Object.keys(payload).length} fields). Awaiting CRM provider integration.`,
+        action: "created",
+        summary: `Pushed to ${row.provider}${result.externalId ? ` (ID: ${result.externalId})` : ""} — ${Object.keys(payload).length} fields`,
         payloadSnapshot: payload,
       });
       return { ok: true };
