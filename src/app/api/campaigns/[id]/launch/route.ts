@@ -44,13 +44,13 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     status: string;
     type: string;
     target_filter: TargetFilter | null;
-    sequence_steps?: Array<{ channel: "sms" | "email"; message?: string; subject?: string | null }>;
+    sequence_steps?: Array<{ channel: string; message?: string; subject?: string | null }>;
   };
 
   // Safeguard: only allow launch when workspace has an active subscription (not paused/expired).
   const { data: ws, error: wsError } = await db
     .from("workspaces")
-    .select("billing_status, stripe_subscription_id, pause_reason")
+    .select("billing_status, stripe_subscription_id, pause_reason, communication_mode, agent_mode")
     .eq("id", workspaceId)
     .maybeSingle();
   if (wsError) {
@@ -59,7 +59,13 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   if (!ws) {
     return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
   }
-  const billing = ws as { billing_status?: string | null; stripe_subscription_id?: string | null; pause_reason?: string | null };
+  const billing = ws as {
+    billing_status?: string | null;
+    stripe_subscription_id?: string | null;
+    pause_reason?: string | null;
+    communication_mode?: string | null;
+    agent_mode?: string | null;
+  };
   const isActive =
     (billing.billing_status === "active" || billing.billing_status === "trial") &&
     !billing.pause_reason &&
@@ -68,6 +74,34 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     return NextResponse.json(
       { error: "Workspace subscription inactive. Update billing to launch campaigns." },
       { status: 402 },
+    );
+  }
+
+  // Check communication_mode constraints
+  const steps = campaign.sequence_steps ?? [];
+  if (billing.communication_mode === "texts_only") {
+    const hasCallSteps = steps.some((s) => s.channel === "call");
+    if (hasCallSteps) {
+      return NextResponse.json(
+        { error: "Cannot launch campaign with call steps: workspace is in text-only mode. Update communication settings to allow calls." },
+        { status: 400 }
+      );
+    }
+  } else if (billing.communication_mode === "calls_only") {
+    const hasSmsSteps = steps.some((s) => s.channel === "sms");
+    if (hasSmsSteps) {
+      return NextResponse.json(
+        { error: "Cannot launch campaign with SMS steps: workspace is in calls-only mode. Update communication settings to allow texts." },
+        { status: 400 }
+      );
+    }
+  }
+
+  // Check agent_mode constraint - inbound_only cannot do outbound campaigns
+  if (billing.agent_mode === "inbound_only") {
+    return NextResponse.json(
+      { error: "Cannot launch outbound campaign: workspace is configured for inbound calls only. Update agent settings to allow outbound campaigns." },
+      { status: 400 }
     );
   }
 

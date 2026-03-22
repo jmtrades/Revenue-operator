@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { MessageSquare } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { AccordionItem } from "@/components/ui/Accordion";
 
@@ -26,7 +27,10 @@ export default function SettingsLayout({ children }: { children: ReactNode }) {
               <NavLink href="/app/settings/call-rules" label={tNav("callRules")} pathname={pathname} />
               <NavLink href="/app/settings/industry-templates" label={tNav("industryTemplates")} pathname={pathname} />
               <NavLink href="/app/settings/outbound" label={tNav("outbound")} pathname={pathname} />
+              <NavLink href="/app/settings/communication" label={tNav("communication")} pathname={pathname} />
               <NavLink href="/app/settings/lead-scoring" label={tNav("leadScoring")} pathname={pathname} />
+              <NavLink href="/app/settings/chat-widget" label="Chat Widget" pathname={pathname} />
+              <NavLink href="/app/settings/white-label" label="White Label" pathname={pathname} />
               <NavLink href="/app/settings/agent" label={tNav("agent")} pathname={pathname} />
             </div>
           </AccordionItem>
