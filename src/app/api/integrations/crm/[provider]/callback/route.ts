@@ -1,5 +1,5 @@
 /**
- * GET /api/integrations/crm/[provider]/callback — OAuth callback for CRM providers.
+ * GET /api/integrations/crm/[provider]/callback â OAuth callback for CRM providers.
  * Exchanges authorization code for access_token + refresh_token, stores in workspace_crm_connections, redirects.
  */
 
@@ -17,6 +17,7 @@ const OAUTH_TOKEN_URLS: Record<string, string> = {
   gohighlevel: "https://services.leadconnectorhq.com/oauth/token",
   google_contacts: "https://oauth2.googleapis.com/token",
   microsoft_365: "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+  airtable: "https://airtable.com/oauth2/v1/token",
 };
 
 const ALLOWED_PROVIDERS = Object.keys(OAUTH_TOKEN_URLS);
@@ -65,6 +66,7 @@ export async function GET(
     gohighlevel: "GOHIGHLEVEL",
     google_contacts: "GOOGLE",
     microsoft_365: "MICROSOFT",
+    airtable: "AIRTABLE",
   };
   const prefix = ENV_PREFIX[provider] ?? provider.toUpperCase();
   const clientIdEnv = `${prefix}_CLIENT_ID`;
@@ -92,20 +94,25 @@ export async function GET(
   try {
     const body = new URLSearchParams();
     body.append("code", code);
-    body.append("client_id", clientId);
-    body.append("client_secret", clientSecret);
     body.append("redirect_uri", redirectUri);
+    body.append("grant_type", "authorization_code");
 
-    // Provider-specific grant type handling
-    if (provider === "zoho_crm") {
-      body.append("grant_type", "authorization_code");
+    // Airtable uses HTTP Basic auth and requires PKCE code_verifier
+    const headers: Record<string, string> = { "Content-Type": "application/x-www-form-urlencoded" };
+    if (provider === "airtable") {
+      headers["Authorization"] = `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString("base64")}`;
+      const codeVerifier = req.cookies.get("airtable_code_verifier")?.value;
+      if (codeVerifier) {
+        body.append("code_verifier", codeVerifier);
+      }
     } else {
-      body.append("grant_type", "authorization_code");
+      body.append("client_id", clientId);
+      body.append("client_secret", clientSecret);
     }
 
     const tokenRes = await fetch(tokenUrl, {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      headers,
       body: body.toString(),
     });
 
