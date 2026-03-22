@@ -40,6 +40,7 @@ export interface ActivationState {
   lastTestFeedback: TestFeedback;
   preferredLanguage: string;
   voiceId: string;
+  goals: string[];
 }
 
 export const ORG_TYPES: { id: OrgTypeId; label: string }[] = [
@@ -60,12 +61,21 @@ export const USE_CASE_OPTIONS: { id: UseCaseId; label: string }[] = [
   { id: "route", label: "Route and triage calls" },
 ];
 
+export const GOAL_OPTIONS = [
+  { id: "recover_missed", label: "Recover missed calls", desc: "AI answers when you can't — no call goes unanswered", icon: "PhoneIncoming" },
+  { id: "outbound_followup", label: "Outbound follow-up", desc: "Automatically follow up with leads via call, SMS, or email", icon: "PhoneOutgoing" },
+  { id: "book_appointments", label: "Book appointments", desc: "Qualify callers and book directly into your calendar", icon: "CalendarCheck" },
+  { id: "reactivation", label: "Reactivate past clients", desc: "Win back dormant leads and past customers", icon: "UserPlus" },
+  { id: "support_triage", label: "Support triage", desc: "Route calls to the right person or handle FAQs", icon: "Headphones" },
+  { id: "speed_to_lead", label: "Speed-to-lead", desc: "Call new leads within 60 seconds of form submission", icon: "Zap" },
+] as const;
+
 export const STEPS: { id: StepId; label: string }[] = [
-  { id: 1, label: "You" },
-  { id: 2, label: "Business" },
-  { id: 3, label: "Phone" },
-  { id: 4, label: "AI setup" },
-  { id: 5, label: "Go live" },
+  { id: 1, label: "Goal" },
+  { id: 2, label: "Phone" },
+  { id: 3, label: "Connect" },
+  { id: 4, label: "Configure" },
+  { id: 5, label: "Test" },
 ];
 
 export const DAYS: DayId[] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];

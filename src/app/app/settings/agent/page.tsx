@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
@@ -20,6 +21,16 @@ type AgentConfig = {
   preferredLanguage: string;
   voiceId: string;
   knowledgeItems: Array<{ q?: string; a?: string }>;
+  qualificationMethod: "None" | "BANT" | "Custom Questions";
+  customQualificationQuestions: Array<{ q?: string; a?: string }>;
+  tonePreset: "Professional" | "Casual & Friendly" | "Concise & Direct" | "Empathetic & Warm";
+  transferPolicy: "Never" | "If caller requests" | "On escalation trigger" | "Always";
+  transferNumber: string;
+  escalationThreshold: "Conservative — transfer often" | "Balanced" | "Aggressive — AI handles most";
+  escalationTriggers: string;
+  allowedActions: string[];
+  forbiddenActions: string[];
+  objections: Array<{ objection?: string; response?: string }>;
 };
 
 const AGENT_SETTINGS_SNAPSHOT_PREFIX = "rt_agent_settings_snapshot:";
@@ -64,6 +75,19 @@ export default function AppSettingsAgentPage() {
       preferredLanguage: "en",
       voiceId: DEFAULT_RECALL_VOICE_ID,
       knowledgeItems: [],
+      qualificationMethod: "None",
+      customQualificationQuestions: [],
+      tonePreset: "Professional",
+      transferPolicy: "Never",
+      transferNumber: "",
+      escalationThreshold: "Balanced",
+      escalationTriggers: "",
+      allowedActions: ["Book appointments", "Collect contact info", "Send SMS follow-up", "Transfer to human", "Leave voicemail"],
+      forbiddenActions: [],
+      objections: [
+        { objection: "Too expensive", response: "I understand budget is important. Let me share what's included and we can find the right option for you." },
+        { objection: "I need to think about it", response: "Of course! Can I send you a summary and follow up tomorrow?" },
+      ],
     },
   );
   const lastSavedRef = useRef<string>(JSON.stringify(config));
@@ -82,6 +106,16 @@ export default function AppSettingsAgentPage() {
           preferredLanguage: data.preferredLanguage ?? "en",
           voiceId: data.voiceId || DEFAULT_RECALL_VOICE_ID,
           knowledgeItems: Array.isArray(data.knowledgeItems) ? data.knowledgeItems : [],
+          qualificationMethod: data.qualificationMethod ?? "None",
+          customQualificationQuestions: Array.isArray(data.customQualificationQuestions) ? data.customQualificationQuestions : [],
+          tonePreset: data.tonePreset ?? "Professional",
+          transferPolicy: data.transferPolicy ?? "Never",
+          transferNumber: data.transferNumber ?? "",
+          escalationThreshold: data.escalationThreshold ?? "Balanced",
+          escalationTriggers: data.escalationTriggers ?? "",
+          allowedActions: Array.isArray(data.allowedActions) ? data.allowedActions : ["Book appointments", "Collect contact info", "Send SMS follow-up", "Transfer to human", "Leave voicemail"],
+          forbiddenActions: Array.isArray(data.forbiddenActions) ? data.forbiddenActions : [],
+          objections: Array.isArray(data.objections) ? data.objections : [],
         };
         setConfig(nextConfig);
         persistAgentSettingsSnapshot(snapshotWorkspaceId, nextConfig);
@@ -117,6 +151,16 @@ export default function AppSettingsAgentPage() {
           preferredLanguage: config.preferredLanguage,
           voiceId: config.voiceId || null,
           knowledgeItems: config.knowledgeItems.filter((i) => (i.q ?? "").trim()),
+          qualificationMethod: config.qualificationMethod,
+          customQualificationQuestions: config.customQualificationQuestions.filter((i) => (i.q ?? "").trim()),
+          tonePreset: config.tonePreset,
+          transferPolicy: config.transferPolicy,
+          transferNumber: config.transferNumber,
+          escalationThreshold: config.escalationThreshold,
+          escalationTriggers: config.escalationTriggers,
+          allowedActions: config.allowedActions,
+          forbiddenActions: config.forbiddenActions,
+          objections: config.objections.filter((i) => (i.objection ?? "").trim()),
         }),
       });
       if (!patchRes.ok) {
@@ -166,6 +210,106 @@ export default function AppSettingsAgentPage() {
     setConfig((prev) => ({
       ...prev,
       knowledgeItems: prev.knowledgeItems.filter((_, i) => i !== idx),
+    }));
+  };
+
+  const addCustomQuestion = () => {
+    setConfig((prev) => ({
+      ...prev,
+      customQualificationQuestions: [...prev.customQualificationQuestions, { q: "", a: "" }],
+    }));
+  };
+
+  const updateCustomQuestion = (idx: number, field: "q" | "a", value: string) => {
+    setConfig((prev) => {
+      const next = [...prev.customQualificationQuestions];
+      if (!next[idx]) next[idx] = { q: "", a: "" };
+      next[idx] = { ...next[idx], [field]: value };
+      return { ...prev, customQualificationQuestions: next };
+    });
+  };
+
+  const removeCustomQuestion = (idx: number) => {
+    setConfig((prev) => ({
+      ...prev,
+      customQualificationQuestions: prev.customQualificationQuestions.filter((_, i) => i !== idx),
+    }));
+  };
+
+  const addObjection = () => {
+    setConfig((prev) => ({
+      ...prev,
+      objections: [...prev.objections, { objection: "", response: "" }],
+    }));
+  };
+
+  const updateObjection = (idx: number, field: "objection" | "response", value: string) => {
+    setConfig((prev) => {
+      const next = [...prev.objections];
+      if (!next[idx]) next[idx] = { objection: "", response: "" };
+      next[idx] = { ...next[idx], [field]: value };
+      return { ...prev, objections: next };
+    });
+  };
+
+  const removeObjection = (idx: number) => {
+    setConfig((prev) => ({
+      ...prev,
+      objections: prev.objections.filter((_, i) => i !== idx),
+    }));
+  };
+
+  const toggleAllowedAction = (action: string) => {
+    setConfig((prev) => ({
+      ...prev,
+      allowedActions: prev.allowedActions.includes(action)
+        ? prev.allowedActions.filter((a) => a !== action)
+        : [...prev.allowedActions, action],
+    }));
+  };
+
+  const toggleForbiddenAction = (action: string) => {
+    setConfig((prev) => ({
+      ...prev,
+      forbiddenActions: prev.forbiddenActions.includes(action)
+        ? prev.forbiddenActions.filter((a) => a !== action)
+        : [...prev.forbiddenActions, action],
+    }));
+  };
+
+  const BANT_QUESTIONS = [
+    "What's your budget for this solution?",
+    "Who is the decision maker on your team?",
+    "What specific business need are you trying to address?",
+    "What's your timeline for implementing a solution?",
+  ];
+
+  const ALLOWED_ACTIONS_LIST = [
+    "Book appointments",
+    "Collect contact info",
+    "Send SMS follow-up",
+    "Transfer to human",
+    "Leave voicemail",
+  ];
+
+  const FORBIDDEN_ACTIONS_LIST = [
+    "Take payments",
+    "Share pricing without approval",
+    "Make promises about timelines",
+    "Discuss competitors",
+  ];
+
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    behavior: false,
+    escalation: false,
+    actions: false,
+    objections: false,
+  });
+
+  const toggleSection = (section: string) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
     }));
   };
 
@@ -301,6 +445,269 @@ export default function AppSettingsAgentPage() {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Section A: Behavior & Qualification */}
+      <div className="mb-6 border border-[var(--border-default)] rounded-xl overflow-hidden">
+        <button
+          type="button"
+          onClick={() => toggleSection("behavior")}
+          className="w-full px-4 py-3 flex items-center justify-between bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] transition-colors"
+        >
+          <div className="text-left">
+            <h3 className="text-sm font-semibold text-[var(--text-primary)]">Behavior & Qualification</h3>
+            <p className="text-xs text-[var(--text-secondary)] mt-0.5">Configure qualification methods and tone</p>
+          </div>
+          <ChevronDown className={`w-4 h-4 text-[var(--text-tertiary)] transition-transform ${expandedSections.behavior ? "rotate-180" : ""}`} />
+        </button>
+        {expandedSections.behavior && (
+          <div className="px-4 py-4 space-y-4 border-t border-[var(--border-default)]">
+            <div>
+              <label htmlFor="qual-method" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">Qualification Method</label>
+              <select
+                id="qual-method"
+                value={config.qualificationMethod}
+                onChange={(e) => setConfig((c) => ({ ...c, qualificationMethod: e.target.value as "None" | "BANT" | "Custom Questions" }))}
+                className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
+              >
+                <option value="None">None</option>
+                <option value="BANT">BANT</option>
+                <option value="Custom Questions">Custom Questions</option>
+              </select>
+            </div>
+
+            {config.qualificationMethod === "BANT" && (
+              <div>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-2">BANT Questions (Read-only Examples)</label>
+                <div className="space-y-2">
+                  {BANT_QUESTIONS.map((q, idx) => (
+                    <div key={idx} className="p-2 rounded-lg bg-[var(--bg-inset)] border border-[var(--border-default)]">
+                      <p className="text-xs text-[var(--text-primary)]">{idx + 1}. {q}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {config.qualificationMethod === "Custom Questions" && (
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-xs font-medium text-[var(--text-tertiary)]">Custom Questions</label>
+                  <button type="button" onClick={addCustomQuestion} className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">+ Add</button>
+                </div>
+                <div className="space-y-2">
+                  {config.customQualificationQuestions.map((item, idx) => (
+                    <div key={idx} className="flex gap-2 items-start">
+                      <input
+                        type="text"
+                        value={item.q ?? ""}
+                        onChange={(e) => updateCustomQuestion(idx, "q", e.target.value)}
+                        placeholder="Question"
+                        className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
+                      />
+                      <input
+                        type="text"
+                        value={item.a ?? ""}
+                        onChange={(e) => updateCustomQuestion(idx, "a", e.target.value)}
+                        placeholder="Expected answer"
+                        className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
+                      />
+                      <button type="button" onClick={() => removeCustomQuestion(idx)} className="shrink-0 text-[var(--text-secondary)] hover:text-red-400 text-sm px-1">×</button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div>
+              <label htmlFor="tone-preset" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">Tone Preset</label>
+              <select
+                id="tone-preset"
+                value={config.tonePreset}
+                onChange={(e) => setConfig((c) => ({ ...c, tonePreset: e.target.value as typeof config.tonePreset }))}
+                className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
+              >
+                <option value="Professional">Professional</option>
+                <option value="Casual & Friendly">Casual & Friendly</option>
+                <option value="Concise & Direct">Concise & Direct</option>
+                <option value="Empathetic & Warm">Empathetic & Warm</option>
+              </select>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Section B: Escalation & Transfer Rules */}
+      <div className="mb-6 border border-[var(--border-default)] rounded-xl overflow-hidden">
+        <button
+          type="button"
+          onClick={() => toggleSection("escalation")}
+          className="w-full px-4 py-3 flex items-center justify-between bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] transition-colors"
+        >
+          <div className="text-left">
+            <h3 className="text-sm font-semibold text-[var(--text-primary)]">Escalation & Transfer Rules</h3>
+            <p className="text-xs text-[var(--text-secondary)] mt-0.5">Configure when to transfer to humans</p>
+          </div>
+          <ChevronDown className={`w-4 h-4 text-[var(--text-tertiary)] transition-transform ${expandedSections.escalation ? "rotate-180" : ""}`} />
+        </button>
+        {expandedSections.escalation && (
+          <div className="px-4 py-4 space-y-4 border-t border-[var(--border-default)]">
+            <div>
+              <label htmlFor="transfer-policy" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">Transfer Policy</label>
+              <select
+                id="transfer-policy"
+                value={config.transferPolicy}
+                onChange={(e) => setConfig((c) => ({ ...c, transferPolicy: e.target.value as typeof config.transferPolicy }))}
+                className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
+              >
+                <option value="Never">Never</option>
+                <option value="If caller requests">If caller requests</option>
+                <option value="On escalation trigger">On escalation trigger</option>
+                <option value="Always">Always</option>
+              </select>
+            </div>
+
+            {config.transferPolicy !== "Never" && (
+              <div>
+                <label htmlFor="transfer-number" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">Transfer Phone Number</label>
+                <input
+                  id="transfer-number"
+                  type="tel"
+                  value={config.transferNumber}
+                  onChange={(e) => setConfig((c) => ({ ...c, transferNumber: e.target.value }))}
+                  placeholder="+1 (555) 000-0000"
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
+                />
+              </div>
+            )}
+
+            <div>
+              <label htmlFor="escalation-threshold" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">Confidence Threshold</label>
+              <select
+                id="escalation-threshold"
+                value={config.escalationThreshold}
+                onChange={(e) => setConfig((c) => ({ ...c, escalationThreshold: e.target.value as typeof config.escalationThreshold }))}
+                className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
+              >
+                <option value="Conservative — transfer often">Conservative — transfer often</option>
+                <option value="Balanced">Balanced</option>
+                <option value="Aggressive — AI handles most">Aggressive — AI handles most</option>
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="escalation-triggers" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">Escalation Triggers</label>
+              <p className="text-[11px] text-[var(--text-secondary)] mb-1">Describe situations when the agent should transfer to a human</p>
+              <textarea
+                id="escalation-triggers"
+                rows={3}
+                value={config.escalationTriggers}
+                onChange={(e) => setConfig((c) => ({ ...c, escalationTriggers: e.target.value }))}
+                placeholder="E.g., Angry customer, technical issue, competitor comparison..."
+                className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none resize-none"
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Section C: Allowed & Forbidden Actions */}
+      <div className="mb-6 border border-[var(--border-default)] rounded-xl overflow-hidden">
+        <button
+          type="button"
+          onClick={() => toggleSection("actions")}
+          className="w-full px-4 py-3 flex items-center justify-between bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] transition-colors"
+        >
+          <div className="text-left">
+            <h3 className="text-sm font-semibold text-[var(--text-primary)]">Allowed & Forbidden Actions</h3>
+            <p className="text-xs text-[var(--text-secondary)] mt-0.5">Control what the agent can and cannot do</p>
+          </div>
+          <ChevronDown className={`w-4 h-4 text-[var(--text-tertiary)] transition-transform ${expandedSections.actions ? "rotate-180" : ""}`} />
+        </button>
+        {expandedSections.actions && (
+          <div className="px-4 py-4 space-y-4 border-t border-[var(--border-default)]">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-2">Allowed Actions</label>
+                <div className="space-y-2">
+                  {ALLOWED_ACTIONS_LIST.map((action) => (
+                    <label key={action} className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={config.allowedActions.includes(action)}
+                        onChange={() => toggleAllowedAction(action)}
+                        className="w-4 h-4 rounded border-[var(--border-default)] text-[var(--accent-primary)] focus:ring-[var(--accent-primary)]"
+                      />
+                      <span className="text-xs text-[var(--text-primary)]">{action}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-2">Forbidden Actions</label>
+                <div className="space-y-2">
+                  {FORBIDDEN_ACTIONS_LIST.map((action) => (
+                    <label key={action} className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={config.forbiddenActions.includes(action)}
+                        onChange={() => toggleForbiddenAction(action)}
+                        className="w-4 h-4 rounded border-[var(--border-default)] text-red-500 focus:ring-red-500"
+                      />
+                      <span className="text-xs text-[var(--text-primary)]">{action}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Section D: Objection Handling */}
+      <div className="mb-6 border border-[var(--border-default)] rounded-xl overflow-hidden">
+        <button
+          type="button"
+          onClick={() => toggleSection("objections")}
+          className="w-full px-4 py-3 flex items-center justify-between bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] transition-colors"
+        >
+          <div className="text-left">
+            <h3 className="text-sm font-semibold text-[var(--text-primary)]">Objection Handling</h3>
+            <p className="text-xs text-[var(--text-secondary)] mt-0.5">Pre-built responses to common objections</p>
+          </div>
+          <ChevronDown className={`w-4 h-4 text-[var(--text-tertiary)] transition-transform ${expandedSections.objections ? "rotate-180" : ""}`} />
+        </button>
+        {expandedSections.objections && (
+          <div className="px-4 py-4 space-y-4 border-t border-[var(--border-default)]">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-xs font-medium text-[var(--text-tertiary)]">Objection/Response Pairs</label>
+                <button type="button" onClick={addObjection} className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">+ Add</button>
+              </div>
+              <div className="space-y-2">
+                {config.objections.map((item, idx) => (
+                  <div key={idx} className="flex gap-2 items-start">
+                    <input
+                      type="text"
+                      value={item.objection ?? ""}
+                      onChange={(e) => updateObjection(idx, "objection", e.target.value)}
+                      placeholder="Objection"
+                      className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
+                    />
+                    <input
+                      type="text"
+                      value={item.response ?? ""}
+                      onChange={(e) => updateObjection(idx, "response", e.target.value)}
+                      placeholder="Response"
+                      className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
+                    />
+                    <button type="button" onClick={() => removeObjection(idx)} className="shrink-0 text-[var(--text-secondary)] hover:text-red-400 text-sm px-1">×</button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {previewing && (

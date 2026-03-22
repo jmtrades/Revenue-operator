@@ -20,9 +20,12 @@ import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { KPIRow } from "@/components/ui/KPIRow";
 import { StatCard } from "@/components/ui/StatCard";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { apiFetch, ApiError } from "@/lib/api";
 import { useTranslations } from "next-intl";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
+import { PipelineFunnel } from "@/components/analytics/PipelineFunnel";
+import { OperationsSummary } from "@/components/analytics/OperationsSummary";
 
 type RangeKey = "today" | "7d" | "30d" | "90d" | "custom";
 
@@ -797,10 +800,17 @@ export default function AppAnalyticsPage() {
       {loading && <AnalyticsSkeleton />}
       {error && <p className="text-sm text-[var(--accent-red)] mb-4" role="alert">{error}</p>}
       {!hasData && !loading && !error && (
-        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 mb-6 text-center">
-          <BarChart3 className="w-12 h-12 text-[var(--text-tertiary)] mx-auto mb-3" aria-hidden />
-          <p className="text-sm font-medium text-[var(--text-secondary)] mb-1">Analytics appear after your first calls</p>
-          <p className="text-xs text-[var(--text-secondary)] mb-4">Make a test call to unlock conversion and revenue insights.</p>
+        <div className="mb-6">
+          <EmptyState
+            icon={BarChart3}
+            title="Analytics appear after your first calls"
+            description="Make a test call to unlock conversion and revenue insights."
+            ariaLabel="No analytics available yet"
+            primaryAction={{
+              label: "Make a test call",
+              href: "/app/calls/live",
+            }}
+          />
         </div>
       )}
 
@@ -1024,6 +1034,29 @@ export default function AppAnalyticsPage() {
             </Link>
           </div>
         )}
+
+      {/* Pipeline & Operations Section — shown for overview & inbound scopes */}
+      {(scope === "overview" || scope === "inbound") && (
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
+            <BarChart3 className="w-5 h-5 text-[var(--text-tertiary)]" />
+            Pipeline &amp; Operations
+          </h2>
+
+          <div className="grid gap-6 lg:grid-cols-2 mb-6">
+            <PipelineFunnel workspaceId={workspaceId} />
+
+            <div>
+              <h3 className="text-sm font-medium text-[var(--text-primary)] mb-4">Operational Metrics</h3>
+              <OperationsSummary
+                workspaceId={workspaceId}
+                startDate={rangeStart.toISOString().split("T")[0]}
+                endDate={rangeEnd.toISOString().split("T")[0]}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Row 4: sentiment overview */}
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5">

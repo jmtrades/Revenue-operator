@@ -18,6 +18,7 @@ import {
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { PageHeader, EmptyState } from "@/components/ui";
 import { RECALL_VOICES } from "@/lib/constants/recall-voices";
+import { HUMAN_VOICE_DEFAULTS } from "@/lib/voice/human-voice-defaults";
 
 const VOICE_SERVER_URL =
   process.env.NEXT_PUBLIC_VOICE_SERVER_URL || "http://localhost:8100";
@@ -32,6 +33,7 @@ interface Voice {
   previewUrl?: string;
   isClone?: boolean;
   cloneProgress?: number;
+  tier?: "free" | "growth" | "business" | "agency";
 }
 
 interface ABTest {
@@ -54,14 +56,23 @@ interface WorkspaceVoiceConfig {
   industryPreset: string;
 }
 
+/* Map voice index to tier */
+const getTierForVoiceIndex = (index: number): "free" | "growth" | "business" | "agency" => {
+  if (index < 8) return "free";
+  if (index < 16) return "growth";
+  if (index < 32) return "business";
+  return "agency";
+};
+
 /* Map real RECALL_VOICES to the Voice interface for the library UI */
-const BUILT_IN_VOICES: Voice[] = RECALL_VOICES.map((v) => ({
+const BUILT_IN_VOICES: Voice[] = RECALL_VOICES.map((v, index) => ({
   id: v.id,
   name: v.name,
   gender: v.gender,
   accent: v.accent,
   tone: v.tone.charAt(0).toUpperCase() + v.tone.slice(1),
   industries: v.bestFor.split(", ").map((s) => s.trim()),
+  tier: getTierForVoiceIndex(index),
 }));
 
 /* Default first voice ID for initial selection */
@@ -77,10 +88,10 @@ export default function VoicesSettingsPage() {
   const [selectedVoiceId, setSelectedVoiceId] = useState<string>(DEFAULT_VOICE_ID);
   const [voiceConfig, setVoiceConfig] = useState<WorkspaceVoiceConfig>({
     activeVoiceId: DEFAULT_VOICE_ID,
-    speed: 1,
-    stability: 0.7,
-    warmth: 0.5,
-    emotionIntensity: 0.6,
+    speed: HUMAN_VOICE_DEFAULTS.speed,
+    stability: HUMAN_VOICE_DEFAULTS.stability,
+    warmth: HUMAN_VOICE_DEFAULTS.warmth,
+    emotionIntensity: HUMAN_VOICE_DEFAULTS.style,
     industryPreset: "tech",
   });
   const [abTests, setAbTests] = useState<ABTest[]>([]);
@@ -133,37 +144,85 @@ export default function VoicesSettingsPage() {
   const handlePreviewVoice = useCallback(async (voiceId: string) => {
     setPlayingVoiceId(voiceId === playingVoiceId ? null : voiceId);
     if (voiceId !== playingVoiceId) {
+      const previewText = t("previewText");
+      let audioUrl: string | null = null;
+      let previewMethod = "none";
+
       try {
-        // Check if voice server is configured
-        if (!process.env.NEXT_PUBLIC_VOICE_SERVER_URL) {
-          toast.error("Voice preview unavailable — voice server not configured");
-          setPlayingVoiceId(null);
-          return;
+        // Method 1: Try voice server /tts/preview endpoint
+        if (process.env.NEXT_PUBLIC_VOICE_SERVER_URL) {
+          try {
+            const response = await fetch(`${VOICE_SERVER_URL}/tts/preview`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+              body: JSON.stringify({
+                voice_id: voiceId,
+                text: previewText,
+              }),
+            });
+            if (response.ok) {
+              const data = await response.json();
+              if (data.audio_url) {
+                audioUrl = data.audio_url;
+                previewMethod = "voice-server";
+              }
+            }
+          } catch {
+            // Fall through to next method
+          }
         }
 
-        const response = await fetch(`${VOICE_SERVER_URL}/tts/preview`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({
-            voice_id: voiceId,
-            text: t("previewText"),
-          }),
-        });
-        if (response.ok) {
-          const data = await response.json();
-          if (data.audio_url) {
-            const audio = new Audio(data.audio_url);
-            audio.play().catch(() => {
+        // Method 2: Try /api/demo/voice-preview endpoint
+        if (!audioUrl) {
+          try {
+            const demoResponse = await fetch(
+              `/api/demo/voice-preview?voice_id=${encodeURIComponent(voiceId)}&text=${encodeURIComponent(previewText)}`
+            );
+            if (demoResponse.ok) {
+              const demoData = await demoResponse.json();
+              if (demoData.audio_url) {
+                audioUrl = demoData.audio_url;
+                previewMethod = "demo-api";
+              }
+            }
+          } catch {
+            // Fall through to next method
+          }
+        }
+
+        // Method 3: Fall back to browser Web Speech API
+        if (!audioUrl) {
+          previewMethod = "web-speech";
+          if ("speechSynthesis" in window) {
+            const utterance = new SpeechSynthesisUtterance(previewText);
+            utterance.onend = () => setPlayingVoiceId(null);
+            utterance.onerror = () => {
+              toast.error("Voice preview unavailable");
               setPlayingVoiceId(null);
-            });
-            audio.onended = () => setPlayingVoiceId(null);
+            };
+            window.speechSynthesis.speak(utterance);
+            toast.info("Using browser speech synthesis");
+            return;
+          }
+        }
+
+        // Play audio if we have a URL
+        if (audioUrl) {
+          const audio = new Audio(audioUrl);
+          audio.play().catch(() => {
+            setPlayingVoiceId(null);
+          });
+          audio.onended = () => setPlayingVoiceId(null);
+
+          // Show which method was used
+          if (previewMethod === "demo-api") {
+            toast.info("Preview using demo API");
+          } else if (previewMethod === "voice-server") {
+            toast.info("Preview using voice server");
           }
         } else {
-          // Handle error responses
-          const errorData = await response.json().catch(() => ({}));
-          const errorMsg = errorData.error || "Voice preview failed";
-          toast.error(errorMsg);
+          toast.error("Voice preview unavailable");
           setPlayingVoiceId(null);
         }
       } catch (error) {
@@ -172,7 +231,7 @@ export default function VoicesSettingsPage() {
         setPlayingVoiceId(null);
       }
     }
-  }, [playingVoiceId]);
+  }, [playingVoiceId, t]);
 
   const handleSelectVoice = useCallback((voiceId: string) => {
     setSelectedVoiceId(voiceId);
@@ -683,9 +742,50 @@ export default function VoicesSettingsPage() {
                           {voice.accent}
                         </p>
                       </div>
-                      {voice.id === selectedVoiceId && (
-                        <Check className="w-5 h-5 text-emerald-400" />
-                      )}
+                      <div className="flex items-center gap-2">
+                        {voice.tier && (
+                          <span
+                            className="text-[10px] font-semibold px-2 py-1 rounded-full border"
+                            style={{
+                              borderColor:
+                                voice.tier === "free"
+                                  ? "rgba(34, 197, 94, 0.3)"
+                                  : voice.tier === "growth"
+                                  ? "rgba(59, 130, 246, 0.3)"
+                                  : voice.tier === "business"
+                                  ? "rgba(147, 51, 234, 0.3)"
+                                  : "rgba(202, 138, 4, 0.3)",
+                              background:
+                                voice.tier === "free"
+                                  ? "rgba(34, 197, 94, 0.1)"
+                                  : voice.tier === "growth"
+                                  ? "rgba(59, 130, 246, 0.1)"
+                                  : voice.tier === "business"
+                                  ? "rgba(147, 51, 234, 0.1)"
+                                  : "rgba(202, 138, 4, 0.1)",
+                              color:
+                                voice.tier === "free"
+                                  ? "#22c55e"
+                                  : voice.tier === "growth"
+                                  ? "#3b82f6"
+                                  : voice.tier === "business"
+                                  ? "#9333ea"
+                                  : "#ca8a04",
+                            }}
+                          >
+                            {voice.tier === "free"
+                              ? "Free"
+                              : voice.tier === "growth"
+                              ? "Growth+"
+                              : voice.tier === "business"
+                              ? "Business+"
+                              : "Agency"}
+                          </span>
+                        )}
+                        {voice.id === selectedVoiceId && (
+                          <Check className="w-5 h-5 text-emerald-400" />
+                        )}
+                      </div>
                     </div>
 
                     <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>

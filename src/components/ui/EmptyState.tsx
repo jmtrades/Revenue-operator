@@ -21,6 +21,7 @@ interface EmptyStateProps {
   secondaryAction?: ActionLink;
   footnote?: string;
   className?: string;
+  ariaLabel?: string;
 }
 
 export function EmptyState({
@@ -32,25 +33,33 @@ export function EmptyState({
   secondaryAction,
   footnote,
   className,
+  ariaLabel,
 }: EmptyStateProps) {
   const Icon =
     typeof iconProp === "string" ? STRING_ICONS[iconProp] ?? Watch : iconProp;
   const desc = description ?? subtitle;
+  const finalAriaLabel = ariaLabel || title;
+
   return (
     <div
+      role="region"
+      aria-label={finalAriaLabel}
       className={cn(
         "flex flex-col items-center justify-center text-center px-8 py-16 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)]",
         className,
       )}
     >
       {Icon && (
-        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--bg-inset)] text-[var(--text-tertiary)]">
-          <Icon className="h-6 w-6" />
+        <div
+          className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--bg-inset)]"
+          aria-hidden="true"
+        >
+          <Icon className="h-8 w-8 text-[var(--text-secondary)]" />
         </div>
       )}
-      <h3 className="text-lg font-semibold text-[var(--text-secondary)]">{title}</h3>
+      <h3 className="text-lg font-semibold text-[var(--text-primary)]">{title}</h3>
       {desc && (
-        <p className="mt-2 max-w-md text-sm text-[var(--text-secondary)]">{desc}</p>
+        <p className="mt-3 max-w-md text-sm text-[var(--text-secondary)]">{desc}</p>
       )}
       {(primaryAction || secondaryAction) && (
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
@@ -78,7 +87,7 @@ export function EmptyState({
         </div>
       )}
       {footnote && (
-        <p className="mt-4 text-xs text-[var(--text-tertiary)] max-w-md">{footnote}</p>
+        <p className="mt-4 text-xs text-[var(--text-secondary)] max-w-md">{footnote}</p>
       )}
     </div>
   );
