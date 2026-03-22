@@ -1,5 +1,5 @@
 /**
- * GET /api/integrations/crm/status — CRM integration connection and sync status for current workspace.
+ * GET /api/integrations/crm/status â CRM integration connection and sync status for current workspace.
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -17,6 +17,7 @@ const CRM_PROVIDERS = [
   "gohighlevel",
   "google_contacts",
   "microsoft_365",
+  "airtable",
 ] as const;
 
 export type CrmProviderId = (typeof CRM_PROVIDERS)[number];
