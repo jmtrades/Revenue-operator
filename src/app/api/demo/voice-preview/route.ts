@@ -1,7 +1,14 @@
 /**
  * Voice Preview Proxy Endpoint
- * Proxies TTS requests to voice server and handles rate limiting
- * Prevents CORS issues between demo page and Python voice server
+ *
+ * Priority chain:
+ *   1. ElevenLabs Turbo v2.5 (best human quality — primary)
+ *   2. Self-hosted voice server (if configured)
+ *   3. Deepgram Aura (fallback)
+ *
+ * Uses ElevenLabs' most natural voices with tuned settings from
+ * human-voice-defaults.ts to produce audio indistinguishable from a
+ * real person. Responses are cached for 24 hours to control costs.
  */
 
 export const dynamic = "force-dynamic";
@@ -12,35 +19,157 @@ import { log } from "@/lib/logger";
 // Rate limiting: IP -> { count, resetAt }
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
-function checkRateLimit(ip: string, maxRequests: number = 10, windowMs: number = 60000): boolean {
+function checkRateLimit(ip: string, maxRequests: number = 20, windowMs: number = 60000): boolean {
   const now = Date.now();
   const record = rateLimitMap.get(ip);
-
-  // Reset if window has expired
   if (!record || record.resetAt < now) {
     rateLimitMap.set(ip, { count: 1, resetAt: now + windowMs });
     return true;
   }
-
-  // Check if limit exceeded
   if (record.count >= maxRequests) {
     log("warn", "voice_preview.rate_limit_exceeded", { ip, count: record.count, maxRequests });
     return false;
   }
-
-  // Increment counter
   record.count++;
   return true;
 }
 
+/* ─── ElevenLabs voice mapping ─── */
+
 /**
- * Map internal voice IDs to Deepgram Aura model names
+ * Map Recall voice IDs to the best ElevenLabs voice IDs.
+ *
+ * Selected for maximum human realism on phone calls:
+ * - Rachel (21m00Tcm4TlvDq8ikWAM): warm, natural, empathetic — best female receptionist
+ * - Bella (EXAVITQu4vr4xnSDxMaL):  casual, friendly, young — perfect for modern brands
+ * - Josh (TxGEqnHWrfWFTfGW9XjX):   professional, confident male — authoritative but warm
+ * - Elli (MF3mGyEYCl7XYWbV9V6O):    warm, soft, caring — great for empathetic contexts
+ * - Antoni (ErXwobaYiN019PkySvjV):   professional male — articulate, trustworthy
  */
+function mapVoiceIdToElevenLabs(voiceId: string): string {
+  const voiceMap: Record<string, string> = {
+    // Sarah voices → Rachel (warm, welcoming, human)
+    "us-female-warm-receptionist": "21m00Tcm4TlvDq8ikWAM",
+    "us-female-friendly": "21m00Tcm4TlvDq8ikWAM",
+    "us-female-empathetic": "21m00Tcm4TlvDq8ikWAM",
+
+    // Emma voices → Bella (casual, friendly, young)
+    "us-female-casual": "EXAVITQu4vr4xnSDxMaL",
+    "us-female-energetic": "EXAVITQu4vr4xnSDxMaL",
+
+    // Professional female → Elli (articulate, clear)
+    "us-female-professional": "MF3mGyEYCl7XYWbV9V6O",
+    "us-female-authoritative": "MF3mGyEYCl7XYWbV9V6O",
+    "us-female-calm": "MF3mGyEYCl7XYWbV9V6O",
+
+    // Alex voices → Josh (confident, warm male)
+    "us-male-professional": "TxGEqnHWrfWFTfGW9XjX",
+    "us-male-confident": "TxGEqnHWrfWFTfGW9XjX",
+    "us-male-warm": "TxGEqnHWrfWFTfGW9XjX",
+
+    // Casual male → Antoni (friendly, approachable)
+    "us-male-casual": "ErXwobaYiN019PkySvjV",
+    "us-male-friendly": "ErXwobaYiN019PkySvjV",
+    "us-male-energetic": "ErXwobaYiN019PkySvjV",
+    "us-male-calm": "ErXwobaYiN019PkySvjV",
+    "us-male-deep": "TxGEqnHWrfWFTfGW9XjX",
+
+    // British voices → map to closest match
+    "uk-female-professional": "MF3mGyEYCl7XYWbV9V6O",
+    "uk-female-warm": "21m00Tcm4TlvDq8ikWAM",
+    "uk-female-casual": "EXAVITQu4vr4xnSDxMaL",
+    "uk-female-authoritative": "MF3mGyEYCl7XYWbV9V6O",
+    "uk-male-professional": "TxGEqnHWrfWFTfGW9XjX",
+    "uk-male-warm": "ErXwobaYiN019PkySvjV",
+    "uk-male-casual": "ErXwobaYiN019PkySvjV",
+    "uk-male-deep": "TxGEqnHWrfWFTfGW9XjX",
+  };
+
+  // Default to Rachel — the most universally natural-sounding voice
+  return voiceMap[voiceId] || "21m00Tcm4TlvDq8ikWAM";
+}
+
+/**
+ * ElevenLabs TTS — primary provider.
+ * Uses Turbo v2.5 for lowest latency + highest quality.
+ * Voice settings tuned from human-voice-defaults.ts for phone-grade realism.
+ */
+async function handleElevenLabsTTS(
+  voiceId: string,
+  text: string,
+  apiKey: string
+): Promise<NextResponse | null> {
+  try {
+    const elevenLabsVoiceId = mapVoiceIdToElevenLabs(voiceId);
+
+    // Turbo v2.5: fastest + most natural. eleven_turbo_v2_5
+    const url = `https://api.elevenlabs.io/v1/text-to-speech/${elevenLabsVoiceId}`;
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 12000);
+
+    let response;
+    try {
+      response = await fetch(url, {
+        method: "POST",
+        signal: controller.signal,
+        headers: {
+          "xi-api-key": apiKey,
+          "Content-Type": "application/json",
+          Accept: "audio/mpeg",
+        },
+        body: JSON.stringify({
+          text,
+          model_id: "eleven_turbo_v2_5",
+          voice_settings: {
+            // These match HUMAN_VOICE_DEFAULTS for maximum realism:
+            stability: 0.38,           // Low = expressive, human variation
+            similarity_boost: 0.82,    // High clarity without over-processing
+            style: 0.48,               // Natural emphasis on key words
+            use_speaker_boost: true,    // Clearer on phone/speakers
+          },
+        }),
+      });
+    } finally {
+      clearTimeout(timeoutId);
+    }
+
+    if (!response.ok) {
+      const errText = await response.text().catch(() => "");
+      log("error", "voice_preview.elevenlabs_error", {
+        status: response.status,
+        response: errText,
+        voiceId: elevenLabsVoiceId,
+      });
+      // Return null to fall through to next provider
+      return null;
+    }
+
+    const audioBuffer = await response.arrayBuffer();
+
+    return new NextResponse(audioBuffer, {
+      status: 200,
+      headers: {
+        "Content-Type": "audio/mpeg",
+        "Content-Length": audioBuffer.byteLength.toString(),
+        "Cache-Control": "public, max-age=86400", // 24h cache — save API cost
+        "Access-Control-Allow-Origin":
+          process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com",
+      },
+    });
+  } catch (error) {
+    const err = error as Error;
+    log("error", "voice_preview.elevenlabs_error", {
+      error: err.name === "AbortError" ? "timeout" : err.message,
+    });
+    return null; // Fall through to next provider
+  }
+}
+
+/* ─── Deepgram mapping (unchanged, used as final fallback) ─── */
+
 function mapVoiceIdToDeepgramModel(voiceId: string): string {
-  // Map recall-touch voice IDs to Deepgram Aura models
-  // Deepgram Aura models: aura-asteria-en, aura-luna-en, aura-orion-en, aura-stella-en, etc.
-  const voiceMap: { [key: string]: string } = {
-    // Female voices
+  const voiceMap: Record<string, string> = {
     "us-female-warm-receptionist": "aura-stella-en",
     "us-female-professional": "aura-asteria-en",
     "us-female-casual": "aura-luna-en",
@@ -49,8 +178,6 @@ function mapVoiceIdToDeepgramModel(voiceId: string): string {
     "us-female-authoritative": "aura-asteria-en",
     "us-female-friendly": "aura-stella-en",
     "us-female-empathetic": "aura-luna-en",
-
-    // Male voices
     "us-male-confident": "aura-orion-en",
     "us-male-casual": "aura-orion-en",
     "us-male-professional": "aura-asteria-en",
@@ -59,27 +186,18 @@ function mapVoiceIdToDeepgramModel(voiceId: string): string {
     "us-male-calm": "aura-luna-en",
     "us-male-deep": "aura-orion-en",
     "us-male-friendly": "aura-orion-en",
-
-    // British voices - default to available models
     "uk-female-professional": "aura-asteria-en",
     "uk-female-warm": "aura-stella-en",
     "uk-female-casual": "aura-luna-en",
     "uk-female-authoritative": "aura-asteria-en",
-
     "uk-male-professional": "aura-asteria-en",
     "uk-male-warm": "aura-orion-en",
     "uk-male-casual": "aura-orion-en",
     "uk-male-deep": "aura-orion-en",
-
-    // Default to Aura Luna for unmapped voices
   };
-
   return voiceMap[voiceId] || "aura-luna-en";
 }
 
-/**
- * Handle TTS request via Deepgram API fallback
- */
 async function handleDeepgramFallback(
   voiceId: string,
   text: string,
@@ -87,7 +205,6 @@ async function handleDeepgramFallback(
 ): Promise<NextResponse> {
   try {
     const model = mapVoiceIdToDeepgramModel(voiceId);
-
     const deepgramUrl = `https://api.deepgram.com/v1/speak?model=${encodeURIComponent(model)}`;
 
     const controller = new AbortController();
@@ -110,26 +227,6 @@ async function handleDeepgramFallback(
     }
 
     if (!response.ok) {
-      const responseText = await response.text();
-      log("error", "voice_preview.deepgram_error", {
-        status: response.status,
-        response: responseText,
-      });
-
-      if (response.status === 401) {
-        return NextResponse.json(
-          { error: "Deepgram API key invalid" },
-          { status: 401 }
-        );
-      }
-
-      if (response.status === 404) {
-        return NextResponse.json(
-          { error: `Voice model ${model} not found` },
-          { status: 404 }
-        );
-      }
-
       return NextResponse.json(
         { error: "Voice service temporarily unavailable" },
         { status: 503 }
@@ -137,7 +234,6 @@ async function handleDeepgramFallback(
     }
 
     const audioBuffer = await response.arrayBuffer();
-
     return new NextResponse(audioBuffer, {
       status: 200,
       headers: {
@@ -148,18 +244,7 @@ async function handleDeepgramFallback(
           process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com",
       },
     });
-  } catch (error) {
-    const err = error as Error;
-
-    if (err.name === "AbortError") {
-      log("error", "voice_preview.deepgram_timeout", { error: "request timeout" });
-      return NextResponse.json(
-        { error: "Voice service timeout" },
-        { status: 504 }
-      );
-    }
-
-    log("error", "voice_preview.deepgram_error", { error: err.message });
+  } catch {
     return NextResponse.json(
       { error: "Could not connect to voice service" },
       { status: 503 }
@@ -167,12 +252,13 @@ async function handleDeepgramFallback(
   }
 }
 
+/* ─── Main handler ─── */
+
 export async function GET(req: NextRequest) {
   try {
     const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
 
-    // Rate limit: 10 requests per minute per IP
-    if (!checkRateLimit(ip, 10, 60000)) {
+    if (!checkRateLimit(ip, 20, 60000)) {
       return NextResponse.json(
         { error: "Rate limit exceeded. Please wait before trying again." },
         { status: 429 }
@@ -182,9 +268,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const voiceId = searchParams.get("voice_id");
     const text = searchParams.get("text");
-    const industry = searchParams.get("industry");
 
-    // Validate parameters
     if (!voiceId || !text) {
       return NextResponse.json(
         { error: "voice_id and text parameters required" },
@@ -192,7 +276,6 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Validate text length (prevent abuse)
     if (text.length > 500) {
       return NextResponse.json(
         { error: "Text too long (max 500 characters)" },
@@ -200,97 +283,64 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Get voice server URL from environment
+    const elevenLabsKey = process.env.ELEVENLABS_API_KEY;
     const voiceServerUrl = process.env.NEXT_PUBLIC_VOICE_SERVER_URL;
     const deepgramApiKey = process.env.DEEPGRAM_API_KEY;
 
-    if (!voiceServerUrl && !deepgramApiKey) {
-      return NextResponse.json(
-        { error: "Voice server not configured" },
-        { status: 503 }
-      );
+    // ── Priority 1: ElevenLabs (best quality) ──
+    if (elevenLabsKey) {
+      const result = await handleElevenLabsTTS(voiceId, text, elevenLabsKey);
+      if (result) return result;
+      // If ElevenLabs failed, fall through to next provider
     }
 
-    // Use Deepgram as fallback if voice server is not available
-    if (!voiceServerUrl && deepgramApiKey) {
+    // ── Priority 2: Self-hosted voice server ──
+    if (voiceServerUrl) {
+      try {
+        const ttsUrl = new URL(`${voiceServerUrl}/tts/preview`);
+        ttsUrl.searchParams.set("voice_id", voiceId);
+        ttsUrl.searchParams.set("text", text);
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+        let response;
+        try {
+          response = await fetch(ttsUrl.toString(), {
+            signal: controller.signal,
+            headers: { "User-Agent": "RecallTouch-DemoProxy/1.0" },
+          });
+        } finally {
+          clearTimeout(timeoutId);
+        }
+
+        if (response.ok) {
+          const audioBuffer = await response.arrayBuffer();
+          return new NextResponse(audioBuffer, {
+            status: 200,
+            headers: {
+              "Content-Type": response.headers.get("content-type") || "audio/mpeg",
+              "Content-Length": audioBuffer.byteLength.toString(),
+              "Cache-Control": "public, max-age=3600",
+              "Access-Control-Allow-Origin":
+                process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com",
+            },
+          });
+        }
+      } catch {
+        // Voice server unavailable — fall through
+      }
+    }
+
+    // ── Priority 3: Deepgram Aura (last resort) ──
+    if (deepgramApiKey) {
       return handleDeepgramFallback(voiceId, text, deepgramApiKey);
     }
 
-    // Build the request to the voice server
-    const ttsUrl = new URL(`${voiceServerUrl}/tts/preview`);
-    ttsUrl.searchParams.set("voice_id", voiceId);
-    ttsUrl.searchParams.set("text", text);
-    if (industry) {
-      ttsUrl.searchParams.set("industry", industry);
-    }
-
-    try {
-      // Fetch from voice server with 10 second timeout
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-      let response;
-      try {
-        response = await fetch(ttsUrl.toString(), {
-          signal: controller.signal,
-          headers: {
-            "User-Agent": "RecallTouch-DemoProxy/1.0"
-          }
-        });
-      } finally {
-        clearTimeout(timeoutId);
-      }
-
-      if (!response.ok) {
-        const responseText = await response.text();
-        log("error", "voice_preview.server_error", { status: response.status, response: responseText });
-
-        // Return fallback audio or error
-        if (response.status === 404) {
-          return NextResponse.json(
-            { error: `Voice ${voiceId} not found` },
-            { status: 404 }
-          );
-        }
-
-        return NextResponse.json(
-          { error: "Voice service temporarily unavailable. Please try again." },
-          { status: 503 }
-        );
-      }
-
-      // Get the audio blob
-      const audioBuffer = await response.arrayBuffer();
-
-      // Stream the audio response
-      return new NextResponse(audioBuffer, {
-        status: 200,
-        headers: {
-          "Content-Type": response.headers.get("content-type") || "audio/mpeg",
-          "Content-Length": audioBuffer.byteLength.toString(),
-          "Cache-Control": "public, max-age=3600", // Cache for 1 hour
-          "Access-Control-Allow-Origin": process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com"
-        }
-      });
-    } catch (fetchError) {
-      const err = fetchError as Error;
-
-      if (err.name === "AbortError") {
-        log("error", "voice_preview.timeout", { error: "request timeout" });
-        return NextResponse.json(
-          { error: "Voice service timeout. Please try again." },
-          { status: 504 }
-        );
-      }
-
-      log("error", "voice_preview.connection_error", { error: err.message });
-
-      // Fallback: return a silent audio or error response
-      return NextResponse.json(
-        { error: "Could not connect to voice service. Please check your internet connection." },
-        { status: 503 }
-      );
-    }
+    return NextResponse.json(
+      { error: "No voice provider configured" },
+      { status: 503 }
+    );
   } catch (error) {
     log("error", "voice_preview.endpoint_error", { error });
     return NextResponse.json(
