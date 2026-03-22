@@ -770,7 +770,7 @@
       "title": "Tu agente de IA está listo",
       "description": "Conecta tu número de teléfono para empezar a recibir llamadas reales.",
       "connectPhone": "Conectar teléfono",
-      "footnote": "Negocios como el tuyo recuperan más de 2.400 €/mes en llamadas perdidas."
+      "footnote": "Negocios como el tuyo recuperan más de 2.$400/mo en llamadas perdidas."
     },
     "nextActions": {
       "title": "Qué hacer ahora",
@@ -795,7 +795,7 @@
     },
     "roi": {
       "title": "ROI estimado",
-      "body": "Negocios en tu etapa suelen recuperar más de 2.400 €/mes cuando cada llamada perdida se convierte en un lead capturado."
+      "body": "Negocios en tu etapa suelen recuperar más de 2.$400/mo cuando cada llamada perdida se convierte en un lead capturado."
     },
     "systemEvents": {
       "title": "Eventos del sistema recientes",
@@ -1622,7 +1622,7 @@
       "idealCustomer": "Cliente ideal",
       "idealCustomerPlaceholder": "Para quién es",
       "pricingOptional": "Precios (opcional)",
-      "pricingPlaceholder": "ej., Desde 500 €",
+      "pricingPlaceholder": "ej., Desde $500",
       "bookingLink": "Enlace de reserva",
       "bookingLinkPlaceholder": "https://calendly.com/...",
       "bookingLinkRecommended": "(recomendado)",
@@ -4719,7 +4719,7 @@
             "100 SMS",
             "1 agente IA",
             "1 número",
-            "Exceso: 0,25 €/min"
+            "Exceso: $0.25/min"
           ],
           "cta": "Empieza gratis"
         },
@@ -4735,7 +4735,7 @@
             "Reserva de citas",
             "Secuencias de seguimiento",
             "Analíticas",
-            "Exceso: 0,10 €/min"
+            "Exceso: $0.10/min"
           ],
           "cta": "Empieza gratis"
         },
@@ -4752,7 +4752,7 @@
             "Cumplimiento",
             "API",
             "Soporte prioritario",
-            "Exceso: 0,08 €/min"
+            "Exceso: $0.08/min"
           ],
           "cta": "Empieza gratis"
         },
@@ -4937,7 +4937,7 @@
           "time": "10:32",
           "name": "Sarah Mitchell",
           "meta": "Presupuesto reforma cocina",
-          "detail": "Presupuesto: 15–20k € · Puntuación: 85"
+          "detail": "Presupuesto: $15–20k · Puntuación: 85"
         },
         "appointment": {
           "label": "CITA RESERVADA",
@@ -5089,7 +5089,7 @@
         "f3": "100 SMS",
         "f4": "1 agente IA",
         "f5": "1 número de teléfono",
-        "f6": "Exceso: 0,25 €/min"
+        "f6": "Exceso: $0.25/min"
       },
       "growth": {
         "name": "Crecimiento",
@@ -5101,7 +5101,7 @@
         "f5": "3 números",
         "f6": "Reserva de citas",
         "f7": "Secuencias de seguimiento",
-        "f8": "Exceso: 0,10 €/min"
+        "f8": "Exceso: $0.10/min"
       },
       "scale": {
         "name": "Escala",
@@ -5115,7 +5115,7 @@
         "f7": "Cumplimiento",
         "f8": "API",
         "f9": "Soporte prioritario",
-        "f10": "Exceso: 0,08 €/min"
+        "f10": "Exceso: $0.08/min"
       },
       "enterprise": {
         "name": "Empresa",
@@ -5218,7 +5218,7 @@
       },
       {
         "q": "¿Qué voces hay disponibles?",
-        "a": "6 incluidas, premium como add-on 29 €/mes."
+        "a": "6 incluidas, premium como add-on $29/mo."
       },
       {
         "q": "¿Hay contrato?",
@@ -5226,7 +5226,7 @@
       },
       {
         "q": "¿Soportan HIPAA?",
-        "a": "Sí, add-on 99 €/mes con BAA."
+        "a": "Sí, add-on $99/mo con BAA."
       },
       {
         "q": "¿Qué integraciones?",
@@ -6962,7 +6962,7 @@
     },
     "businessStep": {
       "heading": "Your business",
-      "subtitle": "Step 2 of 5",
+      "subtitle": "Step 3 of 5",
       "businessName": "Business name",
       "businessNamePlaceholder": "Acme Dental",
       "selectIndustry": "Select industry…",
@@ -6971,7 +6971,7 @@
     },
     "phoneStep": {
       "heading": "Connect your phone",
-      "subtitle": "Step 3 of 5 — your main business number or one we'll forward to.",
+      "subtitle": "Step 2 of 5 — your main business number or one we'll forward to.",
       "phoneNumber": "Phone number"
     },
     "back": "Back",

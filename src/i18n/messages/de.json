@@ -770,7 +770,7 @@
       "title": "Ihr KI-Agent ist bereit",
       "description": "Verbinden Sie Ihre Rufnummer, um echte Anrufe zu erhalten.",
       "connectPhone": "Telefon verbinden",
-      "footnote": "Unternehmen wie Ihres holen 2.400 €+/Monat an verpassten Anrufen wieder herein."
+      "footnote": "Unternehmen wie Ihres holen 2.$400+/Monat an verpassten Anrufen wieder herein."
     },
     "nextActions": {
       "title": "Nächste Schritte",
@@ -795,7 +795,7 @@
     },
     "roi": {
       "title": "Geschätzter ROI",
-      "body": "Unternehmen in Ihrer Phase holen typischerweise 2.400 €+/Monat herein, sobald jeder verpasste Anruf zu einem erfassten Lead wird."
+      "body": "Unternehmen in Ihrer Phase holen typischerweise 2.$400+/Monat herein, sobald jeder verpasste Anruf zu einem erfassten Lead wird."
     },
     "systemEvents": {
       "title": "Aktuelle Systemereignisse",
@@ -1570,7 +1570,7 @@
       "apptCalendar": "Direkt in meinen Kalender buchen",
       "apptCapture": "Daten erfassen, ich bestätige später",
       "anythingCallersAsk": "Was fragen Anrufer oft? (optional)",
-      "faqPlaceholder": "Serviceeinsatz ab 89 €. Großraum Portland. Kostenlose Kostenschätzungen für Umbau.",
+      "faqPlaceholder": "Serviceeinsatz ab $89. Großraum Portland. Kostenlose Kostenschätzungen für Umbau.",
       "yourBusinessNumber": "Ihre Geschäftsnummer",
       "youllGetNumber": "Sie erhalten eine Nummer für Ihren Agenten. Sie können Ihre bestehende Nummer weiterleiten oder diese als Hauptnummer nutzen.",
       "getMyNumber": "Meine Nummer holen",
@@ -1622,7 +1622,7 @@
       "idealCustomer": "Ideal-Kunde",
       "idealCustomerPlaceholder": "Für wen",
       "pricingOptional": "Preise (optional)",
-      "pricingPlaceholder": "z. B. Ab 500 €",
+      "pricingPlaceholder": "z. B. Ab $500",
       "bookingLink": "Buchungslink",
       "bookingLinkPlaceholder": "https://calendly.com/...",
       "bookingLinkRecommended": "(empfohlen)",
@@ -4386,7 +4386,7 @@
     "complianceHeading": "Compliance & Governance",
     "complianceBody": "Jeder Anruf wird aufgezeichnet und transkribiert. Nachvollziehbare Aufzeichnungen, Audit Trail und Aufbewahrungskette. HIPAA-Modus. Aufbewahrung 30-365 Tage.",
     "complianceBullets": "Aufzeichnung & Transkription · HIPAA-Option · Aufbewahrung 30-365 Tage · Audit",
-    "ctaSubtext": "Recall Touch ab 297 €/Monat, Einrichtung in 5 Minuten.",
+    "ctaSubtext": "Recall Touch ab $297/mo, Einrichtung in 5 Minuten.",
     "ctaHeading": "Bereit, jeden Anruf, jede Nachricht und jedes Follow-up automatisch zu verwalten?",
     "ctaBody": "Starten Sie in unter 60 Sekunden. Keine Kreditkarte nötig.",
     "ctaButton": "Kostenlos starten → 5 Minuten",
@@ -4719,7 +4719,7 @@
             "100 SMS",
             "1 KI-Agent",
             "1 Rufnummer",
-            "Mehrverbrauch: 0,25 €/Min"
+            "Mehrverbrauch: $0.25/min"
           ],
           "cta": "Kostenlos starten"
         },
@@ -4735,7 +4735,7 @@
             "Terminbuchung",
             "Follow-up-Sequenzen",
             "Analysen",
-            "Mehrverbrauch: 0,10 €/Min"
+            "Mehrverbrauch: $0.10/min"
           ],
           "cta": "Kostenlos starten"
         },
@@ -4752,7 +4752,7 @@
             "Compliance",
             "API",
             "Prioritäts-Support",
-            "Mehrverbrauch: 0,08 €/Min"
+            "Mehrverbrauch: $0.08/min"
           ],
           "cta": "Kostenlos starten"
         },
@@ -5089,7 +5089,7 @@
         "f3": "100 SMS",
         "f4": "1 KI-Agent",
         "f5": "1 Rufnummer",
-        "f6": "Mehrverbrauch: 0,25 €/Min."
+        "f6": "Mehrverbrauch: $0.25/min"
       },
       "growth": {
         "name": "Wachstum",
@@ -5101,7 +5101,7 @@
         "f5": "3 Nummern",
         "f6": "Terminbuchung",
         "f7": "Nachfass-Sequenzen",
-        "f8": "Mehrverbrauch: 0,10 €/Min."
+        "f8": "Mehrverbrauch: $0.10/min"
       },
       "scale": {
         "name": "Skalierung",
@@ -5115,7 +5115,7 @@
         "f7": "Compliance",
         "f8": "API",
         "f9": "Prioritäts-Support",
-        "f10": "Mehrverbrauch: 0,08 €/Min."
+        "f10": "Mehrverbrauch: $0.08/min"
       },
       "enterprise": {
         "name": "Unternehmen",
@@ -5218,7 +5218,7 @@
       },
       {
         "q": "Welche Stimmen gibt es?",
-        "a": "6 inklusive, Premium als Add-on 29 €/Monat."
+        "a": "6 inklusive, Premium als Add-on $29/mo."
       },
       {
         "q": "Gibt es einen Vertrag?",
@@ -5226,7 +5226,7 @@
       },
       {
         "q": "Unterstützt ihr HIPAA?",
-        "a": "Ja, Add-on 99 €/Monat mit BAA."
+        "a": "Ja, Add-on $99/mo mit BAA."
       },
       {
         "q": "Welche Integrationen?",
@@ -6934,7 +6934,7 @@
     },
     "businessStep": {
       "heading": "Your business",
-      "subtitle": "Step 2 of 5",
+      "subtitle": "Step 3 of 5",
       "businessName": "Business name",
       "businessNamePlaceholder": "Acme Dental",
       "selectIndustry": "Select industry…",
@@ -6943,7 +6943,7 @@
     },
     "phoneStep": {
       "heading": "Connect your phone",
-      "subtitle": "Step 3 of 5 — your main business number or one we'll forward to.",
+      "subtitle": "Step 2 of 5 — your main business number or one we'll forward to.",
       "phoneNumber": "Phone number"
     },
     "back": "Back",

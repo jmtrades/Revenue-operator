@@ -770,7 +770,7 @@
       "title": "Votre agent IA est prêt",
       "description": "Connectez votre numéro pour commencer à recevoir de vrais appels.",
       "connectPhone": "Connecter le téléphone",
-      "footnote": "Des entreprises comme la vôtre récupèrent plus de 2 400 €/mois en appels manqués."
+      "footnote": "Des entreprises comme la vôtre récupèrent plus de 2 $400/mo en appels manqués."
     },
     "nextActions": {
       "title": "Prochaines étapes",
@@ -795,7 +795,7 @@
     },
     "roi": {
       "title": "ROI estimé",
-      "body": "Les entreprises à votre stade récupèrent généralement plus de 2 400 €/mois une fois chaque appel manqué transformé en lead capté."
+      "body": "Les entreprises à votre stade récupèrent généralement plus de 2 $400/mo une fois chaque appel manqué transformé en lead capté."
     },
     "systemEvents": {
       "title": "Événements système récents",
@@ -1570,7 +1570,7 @@
       "apptCalendar": "Réserver directement dans mon calendrier",
       "apptCapture": "Saisir les infos et je confirme plus tard",
       "anythingCallersAsk": "Questions récurrentes des appelants ? (optionnel)",
-      "faqPlaceholder": "Intervention à partir de 89 €. Zone du Grand Portland. Devis gratuits pour rénovations.",
+      "faqPlaceholder": "Intervention à partir de $89. Zone du Grand Portland. Devis gratuits pour rénovations.",
       "yourBusinessNumber": "Votre numéro professionnel",
       "youllGetNumber": "Vous obtiendrez un numéro pour que votre agent réponde. Vous pouvez transférer votre numéro actuel ou l'utiliser comme ligne principale.",
       "getMyNumber": "Obtenir mon numéro",
@@ -1622,7 +1622,7 @@
       "idealCustomer": "Client idéal",
       "idealCustomerPlaceholder": "Pour qui c'est",
       "pricingOptional": "Tarifs (optionnel)",
-      "pricingPlaceholder": "ex., À partir de 500 €",
+      "pricingPlaceholder": "ex., À partir de $500",
       "bookingLink": "Lien de réservation",
       "bookingLinkPlaceholder": "https://calendly.com/...",
       "bookingLinkRecommended": "(recommandé)",
@@ -4386,7 +4386,7 @@
     "complianceHeading": "Conformité et gouvernance",
     "complianceBody": "Chaque appel enregistré et transcrit. Traçabilité et chaîne de custode. Mode HIPAA. Rétention 30-365 jours.",
     "complianceBullets": "Enregistrement et transcription · Option HIPAA · Rétention 30-365 jours · Audit",
-    "ctaSubtext": "Recall Touch à partir de 297 €/mois, configuration en 5 minutes.",
+    "ctaSubtext": "Recall Touch à partir de $297/mo, configuration en 5 minutes.",
     "ctaHeading": "Prêt à gérer chaque appel, SMS et suivi automatiquement ?",
     "ctaBody": "Démarrez en moins de 60 secondes. Sans carte bancaire.",
     "ctaButton": "Commencer gratuit → 5 minutes",
@@ -4719,7 +4719,7 @@
             "100 SMS",
             "1 agent IA",
             "1 numéro",
-            "Dépassement : 0,25 €/min"
+            "Dépassement : $0.25/min"
           ],
           "cta": "Commencer gratuit"
         },
@@ -4735,7 +4735,7 @@
             "Réservation",
             "Séquences de suivi",
             "Analytiques",
-            "Dépassement : 0,10 €/min"
+            "Dépassement : $0.10/min"
           ],
           "cta": "Commencer gratuit"
         },
@@ -4752,7 +4752,7 @@
             "Conformité",
             "API",
             "Support prioritaire",
-            "Dépassement : 0,08 €/min"
+            "Dépassement : $0.08/min"
           ],
           "cta": "Commencer gratuit"
         },
@@ -4937,7 +4937,7 @@
           "time": "10h32",
           "name": "Sarah Mitchell",
           "meta": "Devis rénovation cuisine",
-          "detail": "Budget 15–20k € · Score lead 85"
+          "detail": "Budget $15–20k · Score lead 85"
         },
         "appointment": {
           "label": "RDV PRIS",
@@ -5089,7 +5089,7 @@
         "f3": "100 SMS",
         "f4": "1 agent IA",
         "f5": "1 numéro",
-        "f6": "Dépassement : 0,25 €/min"
+        "f6": "Dépassement : $0.25/min"
       },
       "growth": {
         "name": "Croissance",
@@ -5101,7 +5101,7 @@
         "f5": "3 numéros",
         "f6": "Prise de rendez-vous",
         "f7": "Séquences de relance",
-        "f8": "Dépassement : 0,10 €/min"
+        "f8": "Dépassement : $0.10/min"
       },
       "scale": {
         "name": "Business",
@@ -5115,7 +5115,7 @@
         "f7": "Conformité",
         "f8": "API",
         "f9": "Support prioritaire",
-        "f10": "Dépassement : 0,08 €/min"
+        "f10": "Dépassement : $0.08/min"
       },
       "enterprise": {
         "name": "Entreprise",
@@ -5218,7 +5218,7 @@
       },
       {
         "q": "Quelles voix sont disponibles ?",
-        "a": "6 incluses, premium en option 29 €/mois."
+        "a": "6 incluses, premium en option $29/mo."
       },
       {
         "q": "Y a-t-il un contrat ?",
@@ -5226,7 +5226,7 @@
       },
       {
         "q": "Prenez-vous en charge HIPAA ?",
-        "a": "Oui, option 99 €/mois avec BAA."
+        "a": "Oui, option $99/mo avec BAA."
       },
       {
         "q": "Quelles intégrations ?",
@@ -5565,7 +5565,7 @@
     "appointmentDirect": "Réserver directement dans mon calendrier",
     "appointmentCapture": "Noter les infos et je confirme plus tard",
     "faqExtraLabel": "Questions récurrentes des appelants ? (optionnel)",
-    "faqExtraPlaceholder": "ex. Nous intervenons sur Portland. Déplacement à partir de 89 €.",
+    "faqExtraPlaceholder": "ex. Nous intervenons sur Portland. Déplacement à partir de $89.",
     "step4Heading": "Votre numéro IA est prêt.",
     "step4Subtitle": "Nous provisionnons un numéro. Comment l'utiliser :",
     "option1": "Option 1 : Transférez votre numéro actuel vers celui-ci.",
@@ -6934,7 +6934,7 @@
     },
     "businessStep": {
       "heading": "Your business",
-      "subtitle": "Step 2 of 5",
+      "subtitle": "Step 3 of 5",
       "businessName": "Business name",
       "businessNamePlaceholder": "Acme Dental",
       "selectIndustry": "Select industry…",
@@ -6943,7 +6943,7 @@
     },
     "phoneStep": {
       "heading": "Connect your phone",
-      "subtitle": "Step 3 of 5 — your main business number or one we'll forward to.",
+      "subtitle": "Step 2 of 5 — your main business number or one we'll forward to.",
       "phoneNumber": "Phone number"
     },
     "back": "Back",
