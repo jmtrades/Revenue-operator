@@ -18,6 +18,7 @@ const CRM_PROVIDER_NAMES: Record<CrmProviderId, string> = {
   gohighlevel: "GoHighLevel",
   google_contacts: "Google Contacts",
   microsoft_365: "Microsoft 365",
+  airtable: "Airtable",
 };
 
 export function IntegrationsHealthWidget() {
