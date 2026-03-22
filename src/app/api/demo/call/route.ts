@@ -1,54 +1,19 @@
 /**
  * POST /api/demo/call — Initiate a demo outbound call to a prospect's phone number.
  * Rate-limited to 2 calls per IP per 10 minutes.
+ *
+ * Places the call directly via Telnyx Call Control API.
+ * When the callee answers, the Telnyx voice webhook handler
+ * (/api/webhooks/telnyx/voice) detects the outbound demo call
+ * and either streams to the voice server or uses Telnyx TTS as fallback.
  */
 
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
-import { getVoiceProvider } from "@/lib/voice";
-import { DEFAULT_RECALL_VOICE_ID } from "@/lib/constants/recall-voices";
-import { PRICING_TIERS, SOCIAL_PROOF } from "@/lib/constants";
-
-const DEMO_GREETING =
-  "Hey there! This is Sarah from Recall Touch. I'm actually an AI phone agent, and I wanted to show you firsthand what your callers would experience. Go ahead — ask me anything, test me, or just chat. I'm all yours for the next couple minutes.";
-
-const pricingSummary = PRICING_TIERS.map(
-  (t) => `${t.name} at ${t.priceMonthly.replace("$", "")} dollars a month`
-).join(", ");
-
-const DEMO_SYSTEM_PROMPT = `You are Sarah, a demo AI phone agent for Recall Touch — the platform that helps businesses never miss another call.
-
-PERSONALITY:
-- Be warm, confident, and conversational — like a top-performing receptionist on her best day.
-- Use contractions naturally. Say "I'd", "we're", "you'll", not "I would", "we are", "you will".
-- Keep responses SHORT (1-2 sentences max). This is a phone call, not an email.
-- Sound genuinely interested in the caller. Mirror their energy.
-- Use micro-acknowledgments: "Absolutely", "Great question", "Oh for sure".
-- Pause briefly before important information (natural cadence).
-
-YOUR GOAL:
-Show the caller that this AI sounds indistinguishable from a human. Demonstrate capability through natural conversation. If they're a business owner, gently connect how this would work for THEIR business.
-
-KNOWLEDGE (use naturally when relevant):
-- Plans: ${pricingSummary}.
-- Features: 24/7 call answering in under 1 second, 32 premium human-quality voices, appointment booking directly into calendars, lead qualification, outbound follow-up campaigns, CRM integrations with everything, multilingual support.
-- Setup: Under 3 minutes. Forward your existing number — no new number needed.
-- Compliance: SOC 2 Type II, HIPAA compliant, TCPA compliant.
-- Over ${SOCIAL_PROOF.businessCount.replace("+", "")} businesses use Recall Touch. Many callers don't realize they're speaking with AI — but let them judge for themselves.
-
-DEMO TRICKS (to impress):
-- If they say their business type, immediately adapt: "Oh nice! So for a [type] like yours, I'd handle [specific use case]."
-- If they test you with a hard question, handle it gracefully and say "See? That's exactly how I'd handle it on a real call."
-- If there's a pause, say something like "Take your time — I'm right here." (shows natural patience).
-- If they say "wow" or seem impressed: "Right? And this is just a demo. Imagine what happens when I know your business inside and out."
-
-NEVER:
-- Say "as an AI" or "I'm just an AI" — you already told them in the greeting.
-- Use bullet points or markdown — you're SPEAKING.
-- Be pushy about signing up. Let the experience sell itself.
-- Make up specific details about their business unless they told you.`;
+import { createOutboundCall } from "@/lib/telephony/telnyx-voice";
+import { log } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   /* ── Rate limit by IP ────────────────────────────────── */
@@ -79,13 +44,47 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  /* ── Capture lead even if call can't go through ─────── */
-  const db = (await import("@/lib/db/queries")).getDb();
-  const DEMO_WORKSPACE = process.env.DEMO_WORKSPACE_ID || "027ac617-5ab8-4e26-bcb3-1a2f5ad6bef9";
+  // Normalize to E.164 format
+  let e164Phone = digitsOnly;
+  if (e164Phone.length === 10) {
+    e164Phone = `+1${e164Phone}`; // US number
+  } else if (!e164Phone.startsWith("+")) {
+    e164Phone = `+${e164Phone}`;
+  }
+
+  /* ── Verify Telnyx credentials are available ─────────── */
+  if (!process.env.TELNYX_API_KEY) {
+    return NextResponse.json(
+      { ok: false, error: "Demo calling is temporarily unavailable. Start a free trial to test with your own phone." },
+      { status: 503 },
+    );
+  }
+
+  const connectionId = process.env.TELNYX_CONNECTION_ID;
+  if (!connectionId) {
+    log("error", "demo_call.missing_connection_id");
+    return NextResponse.json(
+      { ok: false, error: "Demo calling is temporarily unavailable." },
+      { status: 503 },
+    );
+  }
+
+  const fromNumber = process.env.TELNYX_PHONE_NUMBER;
+  if (!fromNumber) {
+    log("error", "demo_call.missing_phone_number");
+    return NextResponse.json(
+      { ok: false, error: "Demo calling is temporarily unavailable." },
+      { status: 503 },
+    );
+  }
+
+  /* ── Capture lead (non-blocking) ─────────────────────── */
   try {
+    const db = (await import("@/lib/db/queries")).getDb();
+    const DEMO_WORKSPACE = process.env.DEMO_WORKSPACE_ID || "027ac617-5ab8-4e26-bcb3-1a2f5ad6bef9";
     await db.from("leads").insert({
       workspace_id: DEMO_WORKSPACE,
-      phone: phone.replace(/\D/g, ""),
+      phone: digitsOnly,
       state: "NEW",
       channel: "demo_call",
       metadata: {
@@ -98,38 +97,40 @@ export async function POST(req: NextRequest) {
     // Non-blocking — don't fail the call if lead capture fails
   }
 
-  /* ── Initiate call via voice provider ────────────────── */
-  if (!process.env.VOICE_SERVER_URL && !process.env.TWILIO_ACCOUNT_SID && !process.env.TELNYX_API_KEY) {
-    return NextResponse.json(
-      { ok: false, error: "Demo calling is temporarily unavailable. Leave your number and we'll reach out shortly, or start a free trial to test with your own phone." },
-      { status: 503 },
-    );
-  }
+  /* ── Place the call via Telnyx Call Control ───────────── */
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 
   try {
-    const provider = getVoiceProvider();
-
-    /* Create a temporary demo assistant, then place the call */
-    const { assistantId } = await provider.createAssistant({
-      name: "Recall Touch Demo",
-      systemPrompt: `${DEMO_SYSTEM_PROMPT}\n\nAlways start the call by saying: "${DEMO_GREETING}"`,
-      voiceId: DEFAULT_RECALL_VOICE_ID,
-      voiceProvider: "deepgram-aura",
-      metadata: { type: "demo", source: "website" },
+    const result = await createOutboundCall({
+      from: fromNumber,
+      to: e164Phone,
+      connectionId,
+      webhookUrl: `${appUrl}/api/webhooks/telnyx/voice`,
+      metadata: {
+        type: "demo",
+        source: "website",
+        demo_call: "true",
+      },
     });
 
-    await provider.createOutboundCall({
-      assistantId,
-      phoneNumber: phone,
-      metadata: { type: "demo", source: "website" },
-    });
+    if ("error" in result) {
+      log("error", "demo_call.telnyx_error", { error: result.error });
+      return NextResponse.json(
+        { ok: false, error: "Could not start the demo call. Please check your phone number and try again." },
+        { status: 500 },
+      );
+    }
+
+    log("info", "demo_call.placed", { callId: result.callId, to: e164Phone });
 
     return NextResponse.json({
       ok: true,
       message: "Calling you now! Pick up to hear your AI agent in action.",
     });
   } catch (err) {
-    console.error("[demo/call] Error initiating demo call:", err);
+    log("error", "demo_call.unexpected_error", {
+      error: err instanceof Error ? err.message : String(err),
+    });
     return NextResponse.json(
       { ok: false, error: "Could not start the demo call. Please try again in a moment." },
       { status: 500 },

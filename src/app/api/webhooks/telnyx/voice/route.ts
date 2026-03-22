@@ -187,7 +187,29 @@ export async function POST(req: NextRequest) {
       }
 
       case "call.answered": {
-        log("info", "telnyx_voice.call_answered", { sessionId: callInfo.callSessionId, workspaceId: resolvedWorkspaceId });
+        const isOutbound = direction === "outgoing";
+        log("info", "telnyx_voice.call_answered", { sessionId: callInfo.callSessionId, workspaceId: resolvedWorkspaceId, direction });
+
+        // For outbound demo calls (no workspace), answer and stream to voice server directly
+        if (isOutbound && !resolvedWorkspaceId && callInfo.callControlId) {
+          log("info", "telnyx_voice.demo_outbound_answered", { callControlId: callInfo.callControlId });
+          const voiceServerUrl = process.env.VOICE_SERVER_URL || process.env.NEXT_PUBLIC_VOICE_SERVER_URL || "http://localhost:8080";
+          const wsUrl = voiceServerUrl.replace(/^http:/, "ws:").replace(/^https:/, "wss:") + "/ws/conversation";
+
+          const streamResult = await startStreamingAudio(callInfo.callControlId, wsUrl);
+          if ("error" in streamResult) {
+            log("error", "telnyx_voice.demo_streaming_failed", { error: streamResult.error });
+            // Fallback: speak a greeting using Telnyx built-in TTS
+            await speakText(
+              callInfo.callControlId,
+              "Hey there! This is Sarah from Recall Touch. I'm an AI phone agent, and I wanted to show you what your callers would experience. Unfortunately I'm having a small technical issue connecting to my full brain right now, but normally I'd be chatting with you just like a real person. Try us again in a moment, or start a free trial at recall dash touch dot com. Thanks for checking us out!",
+              "female"
+            );
+          } else {
+            log("info", "telnyx_voice.demo_streaming_started", { callControlId: callInfo.callControlId, wsUrl });
+          }
+          break;
+        }
 
         // After workspace is resolved, try to handle the call with the voice AI
         if (callInfo.callSessionId && resolvedWorkspaceId) {
