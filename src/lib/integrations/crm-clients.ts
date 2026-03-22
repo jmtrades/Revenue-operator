@@ -439,7 +439,7 @@ async function pushToAirtable(
       return { ok: false, error: `Airtable API error (${res.status}): ${errBody.slice(0, 200)}` };
     }
 
-    return { ok: false, error: `Airtable API error (${res.status}): ${errBody.slice 0, 200)}` };
+    return { ok: false, error: `Airtable API error (${res.status}): ${errBody.slice(0, 200)}` };
   }
 
   const data = (await res.json()) as { records?: Array<{ id?: string }> };
