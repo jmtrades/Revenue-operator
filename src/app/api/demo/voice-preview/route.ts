@@ -198,7 +198,7 @@ async function handleDeepgramTTS(
   voiceId: string,
   text: string,
   apiKey: string
-): Promise<NextResponse | null> {
+): Promise<{ response: NextResponse | null; error?: string }> {
   try {
     const model = mapVoiceToDeepgram(voiceId);
     const url = `https://api.deepgram.com/v1/speak?model=${encodeURIComponent(model)}&encoding=mp3&sample_rate=48000`;
@@ -224,36 +224,38 @@ async function handleDeepgramTTS(
 
     if (!response.ok) {
       const errText = await response.text().catch(() => "");
+      const errMsg = `Deepgram ${response.status}: ${errText.slice(0, 200)}`;
       log("error", "voice_preview.deepgram_error", {
         status: response.status,
         model,
         response: errText,
       });
-      return null;
+      return { response: null, error: errMsg };
     }
 
     const audioBuffer = await response.arrayBuffer();
     const contentType =
       response.headers.get("content-type") || "audio/mpeg";
 
-    return new NextResponse(audioBuffer, {
-      status: 200,
-      headers: {
-        "Content-Type": contentType,
-        "Content-Length": audioBuffer.byteLength.toString(),
-        "Cache-Control": "public, max-age=86400",
-        "Access-Control-Allow-Origin":
-          process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com",
-        "X-Voice-Provider": "deepgram",
-        "X-Voice-Model": model,
-      },
-    });
+    return {
+      response: new NextResponse(audioBuffer, {
+        status: 200,
+        headers: {
+          "Content-Type": contentType,
+          "Content-Length": audioBuffer.byteLength.toString(),
+          "Cache-Control": "public, max-age=86400",
+          "Access-Control-Allow-Origin":
+            process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com",
+          "X-Voice-Provider": "deepgram",
+          "X-Voice-Model": model,
+        },
+      }),
+    };
   } catch (error) {
     const err = error as Error;
-    log("error", "voice_preview.deepgram_error", {
-      error: err.name === "AbortError" ? "timeout" : err.message,
-    });
-    return null;
+    const errMsg = err.name === "AbortError" ? "timeout" : err.message;
+    log("error", "voice_preview.deepgram_error", { error: errMsg });
+    return { response: null, error: `Deepgram exception: ${errMsg}` };
   }
 }
 
@@ -264,7 +266,7 @@ async function handleVoiceServerTTS(
   voiceId: string,
   text: string,
   voiceServerUrl: string
-): Promise<NextResponse | null> {
+): Promise<{ response: NextResponse | null; error?: string }> {
   try {
     const ttsUrl = new URL(`${voiceServerUrl}/tts/preview`);
     ttsUrl.searchParams.set("voice_id", voiceId);
@@ -283,25 +285,31 @@ async function handleVoiceServerTTS(
       clearTimeout(timeoutId);
     }
 
-    if (!response.ok) return null;
+    if (!response.ok) {
+      return { response: null, error: `VoiceServer ${response.status} from ${voiceServerUrl}` };
+    }
 
     const audioBuffer = await response.arrayBuffer();
     const contentType =
       response.headers.get("content-type") || "audio/mpeg";
 
-    return new NextResponse(audioBuffer, {
-      status: 200,
-      headers: {
-        "Content-Type": contentType,
-        "Content-Length": audioBuffer.byteLength.toString(),
-        "Cache-Control": "public, max-age=86400",
-        "Access-Control-Allow-Origin":
-          process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com",
-        "X-Voice-Provider": "recall-voice-server",
-      },
-    });
-  } catch {
-    return null;
+    return {
+      response: new NextResponse(audioBuffer, {
+        status: 200,
+        headers: {
+          "Content-Type": contentType,
+          "Content-Length": audioBuffer.byteLength.toString(),
+          "Cache-Control": "public, max-age=86400",
+          "Access-Control-Allow-Origin":
+            process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com",
+          "X-Voice-Provider": "recall-voice-server",
+        },
+      }),
+    };
+  } catch (error) {
+    const err = error as Error;
+    const errMsg = err.name === "AbortError" ? "timeout" : err.message;
+    return { response: null, error: `VoiceServer exception: ${errMsg}` };
   }
 }
 
@@ -368,15 +376,16 @@ export async function GET(req: NextRequest) {
       voiceId,
     });
 
+    const errors: string[] = [];
+
     // ── Priority 1: Self-hosted voice server ($0 marginal cost) ──
     if (voiceServerUrl) {
-      const result = await handleVoiceServerTTS(
+      const { response: result, error } = await handleVoiceServerTTS(
         voiceId,
         text,
         voiceServerUrl
       );
       if (result) {
-        // Cache the response for next time
         const cloned = result.clone();
         const buf = await cloned.arrayBuffer();
         setCachedAudio(
@@ -386,13 +395,13 @@ export async function GET(req: NextRequest) {
         );
         return result;
       }
+      if (error) errors.push(error);
     }
 
-    // ── Priority 2: Deepgram Aura ($0.015/1K chars, cached 24h) ──
+    // ── Priority 2: Deepgram Aura-2 ──
     if (deepgramApiKey) {
-      const result = await handleDeepgramTTS(voiceId, text, deepgramApiKey);
+      const { response: result, error } = await handleDeepgramTTS(voiceId, text, deepgramApiKey);
       if (result) {
-        // Cache the response for next time
         const cloned = result.clone();
         const buf = await cloned.arrayBuffer();
         setCachedAudio(
@@ -402,13 +411,14 @@ export async function GET(req: NextRequest) {
         );
         return result;
       }
+      if (error) errors.push(error);
     }
 
-    // ── No provider available ──
+    // ── No provider succeeded ──
     log("error", "voice_preview.no_provider", {
       hasVoiceServer: !!voiceServerUrl,
       hasDeepgram: !!deepgramApiKey,
-      envKeys: Object.keys(process.env).filter(k => k.toLowerCase().includes("deepgram") || k.toLowerCase().includes("voice")).sort(),
+      errors,
     });
     return NextResponse.json(
       {
@@ -416,7 +426,8 @@ export async function GET(req: NextRequest) {
         debug: {
           hasVoiceServer: !!voiceServerUrl,
           hasDeepgram: !!deepgramApiKey,
-          matchingEnvKeys: Object.keys(process.env).filter(k => k.toLowerCase().includes("deepgram")).length,
+          deepgramKeyLength: deepgramApiKey?.length ?? 0,
+          errors,
         },
       },
       { status: 503 }
