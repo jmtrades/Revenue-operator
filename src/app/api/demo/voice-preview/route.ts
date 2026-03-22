@@ -8,7 +8,7 @@
  * Uses Deepgram Aura-2 (next-gen model, NOT the original Aura):
  *   - Human-like prosody with natural breathing and emotional range
  *   - Hand-picked best voice per persona from 44+ English voices
- *   - 48kHz sample rate for studio-quality audio output
+ *   - MP3 encoding for universal browser compatibility
  *   - Aggressive 24h caching (same text+voice = one API call ever)
  *   - Rate limiting to prevent abuse
  *
@@ -190,7 +190,7 @@ function mapVoiceToDeepgram(voiceId: string): string {
 /**
  * Deepgram Aura-2 TTS — enterprise-grade voice synthesis.
  * Next-gen model with human-like prosody, natural breathing,
- * and emotional range. 48kHz MP3 for studio-quality output.
+ * and emotional range. MP3 encoding for browser compatibility.
  * $0.030 per 1,000 characters ($0.027 at Growth tier).
  * With 24h caching, effectively free for demo previews.
  */
@@ -201,7 +201,7 @@ async function handleDeepgramTTS(
 ): Promise<{ response: NextResponse | null; error?: string }> {
   try {
     const model = mapVoiceToDeepgram(voiceId);
-    const url = `https://api.deepgram.com/v1/speak?model=${encodeURIComponent(model)}&encoding=mp3&sample_rate=48000`;
+    const url = `https://api.deepgram.com/v1/speak?model=${encodeURIComponent(model)}&encoding=mp3`;
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -278,6 +278,7 @@ async function handleVoiceServerTTS(
     let response;
     try {
       response = await fetch(ttsUrl.toString(), {
+        method: "POST",
         signal: controller.signal,
         headers: { "User-Agent": "RecallTouch/1.0" },
       });
