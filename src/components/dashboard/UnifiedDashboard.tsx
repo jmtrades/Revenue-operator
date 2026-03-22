@@ -14,8 +14,13 @@ type Summary = {
   revenue_recovered_cents: number;
   revenue_trend_pct: number;
   calls_answered: number;
+  inbound_calls: number;
+  outbound_calls: number;
   appointments_booked: number;
   follow_ups_sent: number;
+  missed_calls_recovered: number;
+  qualified_leads: number;
+  conversion_rate: number;
   minutes_used: number;
   minutes_limit: number;
   phone_number_configured?: boolean;
@@ -58,8 +63,13 @@ export function UnifiedDashboard() {
             revenue_recovered_cents: 0,
             revenue_trend_pct: 0,
             calls_answered: 0,
+            inbound_calls: 0,
+            outbound_calls: 0,
             appointments_booked: 0,
             follow_ups_sent: 0,
+            missed_calls_recovered: 0,
+            qualified_leads: 0,
+            conversion_rate: 0,
             minutes_used: 0,
             minutes_limit: 500,
             needs_attention: [],
@@ -73,8 +83,13 @@ export function UnifiedDashboard() {
           revenue_recovered_cents: 0,
           revenue_trend_pct: 0,
           calls_answered: 0,
+          inbound_calls: 0,
+          outbound_calls: 0,
           appointments_booked: 0,
           follow_ups_sent: 0,
+          missed_calls_recovered: 0,
+          qualified_leads: 0,
+          conversion_rate: 0,
           minutes_used: 0,
           minutes_limit: 500,
           needs_attention: [],
@@ -301,16 +316,21 @@ export function UnifiedDashboard() {
         )}
         <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { label: t("kpis.callsHandled", { defaultValue: "Calls answered" }), value: data.calls_answered },
-            { label: t("kpis.appointmentsBooked", { defaultValue: "Appts booked" }), value: data.appointments_booked },
-            { label: t("kpis.followUpsSent", { defaultValue: "Follow-ups sent" }), value: data.follow_ups_sent },
-            { label: t("kpis.minutes", { defaultValue: "Minutes" }), value: `${data.minutes_used}/${data.minutes_limit}` },
+            { label: t("kpis.callsHandled", { defaultValue: "Calls answered" }), value: data.calls_answered, sub: `${data.inbound_calls ?? 0} in · ${data.outbound_calls ?? 0} out` },
+            { label: t("kpis.appointmentsBooked", { defaultValue: "Appts booked" }), value: data.appointments_booked, sub: data.conversion_rate > 0 ? `${data.conversion_rate}% conversion` : undefined },
+            { label: t("kpis.recovered", { defaultValue: "Recovered" }), value: data.missed_calls_recovered ?? 0, sub: data.qualified_leads > 0 ? `${data.qualified_leads} qualified` : undefined },
+            { label: t("kpis.followUpsSent", { defaultValue: "Follow-ups sent" }), value: data.follow_ups_sent, sub: undefined },
           ].map((k) => (
             <div key={k.label} className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-inset)] px-4 py-3">
               <p className="text-2xl font-bold text-[var(--text-primary)] tabular-nums">{k.value}</p>
               <p className="text-xs text-[var(--text-secondary)] mt-0.5">{k.label}</p>
+              {k.sub && <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5">{k.sub}</p>}
             </div>
           ))}
+        </div>
+        {/* Minutes usage */}
+        <div className="mt-3 flex items-center gap-2 text-xs text-[var(--text-secondary)]">
+          <span className="tabular-nums font-medium">{data.minutes_used}/{data.minutes_limit} {t("kpis.minutes", { defaultValue: "minutes" })}</span>
         </div>
         <div className="mt-4 h-2 rounded-full bg-[var(--bg-hover)] overflow-hidden">
           <div

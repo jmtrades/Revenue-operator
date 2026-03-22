@@ -131,7 +131,9 @@
     "setupCta": "Set up →",
     "collapse": "Collapse",
     "more": "More",
-    "shortcutsHeading": "Keyboard Shortcuts"
+    "shortcutsHeading": "Keyboard Shortcuts",
+    "backToKnowledge": "Back to knowledge",
+    "continueToTest": "Continue to test"
   },
   "agency": {
     "kicker": "Partner operations",
@@ -215,7 +217,52 @@
     "exportFailed": "Export failed. Try again.",
     "importFailed": "Import failed.",
     "searchFailed": "Search failed.",
-    "createAgentFirst": "Create an agent first in the Agents section, then try again."
+    "createAgentFirst": "Create an agent first in the Agents section, then try again.",
+    "activateError": "Failed to activate",
+    "active": "Active",
+    "addContactFirst": "Add contact first",
+    "added": "Added",
+    "analysisFailed": "Analysis failed",
+    "analysisSuccess": "Analysis saved successfully",
+    "applied": "Applied",
+    "applyFailed": "Apply failed",
+    "calendarConnected": "Calendar connected",
+    "calendarError": "Failed to calendar",
+    "calendarNotConfigured": "Calendar not configured",
+    "callSummaryDraftAdded": "Call summary draft added",
+    "changesSaved": "Changes saved",
+    "createError": "Failed to create",
+    "createFailed": "Create failed",
+    "created": "Created",
+    "createdButLaunchFailed": "Created but launch failed",
+    "dismissFailed": "Dismiss failed",
+    "draftSaved": "Draft saved",
+    "invalidIntegration": "Invalid integration",
+    "inviteResendFailed": "Invite resend failed",
+    "inviteResent": "Invite resent",
+    "inviteRevokeFailed": "Invite revoke failed",
+    "inviteRevoked": "Invite cancelled",
+    "inviteSent": "Invite sent",
+    "launchFailed": "Launch failed",
+    "launched": "Launched",
+    "launchedWithCount": "Launched with count",
+    "loadFailed": "Load failed",
+    "minTranscript": "Min transcript",
+    "oauthComingSoon": "Oauth coming soon",
+    "paused": "Paused",
+    "played": "Played",
+    "reportGenerated": "Report generated",
+    "saveError": "Failed to save",
+    "saveFailed": "Save failed",
+    "sent": "Sent",
+    "updateFailed": "Update failed",
+    "webhookSaveFailed": "Webhook save failed",
+    "webhookSaved": "Webhook saved",
+    "webhookTestDelivered": "Webhook test delivered",
+    "webhookTestError": "Failed to webhook test",
+    "webhookTestFailed": "Webhook test failed",
+    "whatsappEmailRequired": "Whatsapp email required",
+    "whatsappWaitlisted": "Whatsapp waitlisted"
   },
   "auth": {
     "signIn": {
@@ -1723,7 +1770,16 @@
     "periodSummaryText": "{count} calls with a {rate}% answer rate",
     "periodAppointments": "{count} appointments, converting {pct}% of qualified leads.",
     "periodRevenue": "Estimated revenue impact: ${amount}.",
-    "periodDuration": "Average call duration: {duration}."
+    "periodDuration": "Average call duration: {duration}.",
+    "breadcrumbAgents": "Agent Analytics",
+    "commonTopics": "Common Topics",
+    "noCallData": "No call data available for this period.",
+    "noOutcomes": "No outcomes recorded yet.",
+    "noSummaryData": "No summary data available.",
+    "noTrendData": "Not enough data to show trends.",
+    "otherAgents": "Other Agents",
+    "outcomeBreakdown": "Outcome Breakdown",
+    "successRateOverTime": "Success Rate Over Time"
   },
   "agents": {
     "pageTitle": "Agents — Recall Touch",
@@ -2778,7 +2834,10 @@
       "listenInComingSoon": "Listen in requires an active call.",
       "whisperComingSoon": "Whisper mode requires an active call.",
       "bargeInComingSoon": "Barge in requires an active call."
-    }
+    },
+    "emptyDescription": "Empty description",
+    "emptyTitle": "Empty title",
+    "testCall": "Test call"
   },
   "callIntelligence": {
     "pageTitle": "Call Intelligence — Recall Touch",
@@ -3156,7 +3215,8 @@
       "workspaceMissing": "No workspace selected.",
       "addFailed": "Failed to add lead.",
       "csvNoValidRows": "No valid rows found in CSV."
-    }
+    },
+    "unknownAgent": "Unknown agent"
   },
   "knowledge": {
     "pageTitle": "Knowledge — Recall Touch",
@@ -3241,7 +3301,18 @@
       "active": "Active",
       "draft": "Draft",
       "processing": "Processing"
-    }
+    },
+    "adding": "Adding",
+    "back": "Back",
+    "continue": "Continue",
+    "continueToBehavior": "Continue to behavior",
+    "importError": "Failed to import",
+    "importFromWebsite": "Import from website",
+    "importing": "Importing",
+    "minQAHint": "Tip: min q a",
+    "quickStartHint": "Tip: quick start",
+    "suggestQAs": "Suggest q as",
+    "title": "Knowledge Base"
   },
   "campaigns": {
     "title": "Campaigns",
@@ -3531,7 +3602,8 @@
       "launchFailed": "Could not launch campaign.",
       "launched": "Campaign launched.",
       "launchedWithCount": "Campaign launched. {count} contacts queued."
-    }
+    },
+    "body": "Body"
   },
   "settings": {
     "pageTitle": "Settings — Recall Touch",
@@ -3967,7 +4039,83 @@
       "backToSettings": "← Settings"
     },
     "deleteDataInfo": "Contact support to permanently delete your data.",
-    "deleteAccountInfo": "Contact support to permanently delete your account."
+    "deleteAccountInfo": "Contact support to permanently delete your account.",
+    "account": "Account",
+    "allowDiscountsInNegotiations": "Allow discounts in negotiations",
+    "body": "Body",
+    "bookingLink": "Booking link",
+    "bookingLinkPlaceholder": "Enter booking link",
+    "bookingLinkRecommended": "Booking link recommended",
+    "businessContext": "Business context",
+    "businessContextIntro": "Business context intro",
+    "businessName": "Business name",
+    "businessNamePlaceholder": "Enter business name",
+    "cancel": "Cancel",
+    "connect": "Connect",
+    "connectCalendar": "Connect calendar",
+    "connectCalendarIntro": "Connect calendar intro",
+    "consultativeOption": "Consultative option",
+    "continueCoverage": "Continue coverage",
+    "copy": "Copy",
+    "coverageContinues": "Coverage continues",
+    "coverageEndsOn": "Coverage ends on",
+    "coverageScope": "Coverage scope",
+    "coverageSelectDesc": "Coverage select desc",
+    "directOption": "Direct option",
+    "disconnectAnyway": "Disconnect anyway",
+    "disconnectZoom": "Disconnect zoom",
+    "done": "Done",
+    "draftOnlyLabel": "Draft only",
+    "email": "Email",
+    "eventNotificationUrl": "Event notification url",
+    "eventNotificationUrlPlaceholder": "Enter event notification url",
+    "externalSources": "External sources",
+    "externalSourcesHint": "Tip: external sources",
+    "generalPreferences": "General preferences",
+    "handOffLabel": "Hand off",
+    "handlingCoverage": "Handling coverage",
+    "hideBusinessContext": "Hide business context",
+    "hideSources": "Hide sources",
+    "howWeSound": "How we sound",
+    "idealCustomer": "Ideal customer",
+    "idealCustomerPlaceholder": "Enter ideal customer",
+    "inPlace": "In place",
+    "inPlaceShort": "In place short",
+    "inboundAddress": "Inbound address",
+    "logOut": "Log out",
+    "maintainContinuityLabel": "Maintain continuity",
+    "notConfigured": "Not configured",
+    "notInPlace": "Not in place",
+    "operatingProfile": "Operating profile",
+    "operatingProfileCreator": "Operating profile creator",
+    "operatingProfileCustomerSuccess": "Operating profile customer saved successfully",
+    "operatingProfileLegal": "Operating profile legal",
+    "operatingProfileOrg": "Operating profile org",
+    "operatingProfileRecruiting": "Operating profile recruiting",
+    "operatingProfileSolo": "Operating profile solo",
+    "operatingProfileVendor": "Operating profile vendor",
+    "pauseCoverage": "Pause coverage",
+    "pauseProtectionMessage": "Pause protection message",
+    "pauseProtectionTitle": "Pause protection title",
+    "presence": "Presence",
+    "pricingOptional": "Pricing optional",
+    "pricingPlaceholder": "Enter pricing",
+    "requestStructure": "Request structure",
+    "responsibilityRemains": "Responsibility remains",
+    "save": "Save",
+    "sectionsAria": "Sections",
+    "showBusinessContext": "Show business context",
+    "showSources": "Show sources",
+    "signedInAs": "Signed in as",
+    "sources": "Sources",
+    "sourcesIntro": "Sources intro",
+    "teamAwarenessHint": "Tip: team awareness",
+    "teamAwarenessLabel": "Team awareness",
+    "teamAwarenessPlaceholder": "Enter team awareness",
+    "toneForFollowThrough": "Tone for follow through",
+    "whatYouOffer": "What you offer",
+    "whatYouOfferPlaceholder": "Enter what you offer",
+    "whenWeAskBeforeActing": "When we ask before acting"
   },
   "hero": {
     "title": "Your Revenue Operations Run on Autopilot.",
@@ -5049,7 +5197,10 @@
       "overageAnswer": "We simply bill overage at your plan’s per-minute rate with no penalties.",
       "cancel": "Can I cancel anytime?",
       "cancelAnswer": "Yes — you can cancel or change plans at any time from the billing settings."
-    }
+    },
+    "heading": "Pricing",
+    "subheading": "Subheading",
+    "trialNote": "Trial note"
   },
   "stripePricingTable": {
     "configError": "Configure NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY and NEXT_PUBLIC_STRIPE_PRICING_TABLE_ID to show the pricing table."
@@ -5467,7 +5618,26 @@
     "somethingWrong": "Something went wrong",
     "loadPageError": "We couldn't load this page. Try again or go back.",
     "unexpectedError": "An unexpected error occurred. You can try again or report the issue.",
-    "reportIssue": "Report issue"
+    "reportIssue": "Report issue",
+    "applyFailed": "Apply failed",
+    "connectionError": "Failed to connection",
+    "createFailed": "Create failed",
+    "dismiss": "Dismiss",
+    "firstNameRequired": "First name required",
+    "inviteFailed": "Invite failed",
+    "lastNameRequired": "Last name required",
+    "loadFailed": "Load failed",
+    "nameRequired": "Name required",
+    "noResponse": "No response",
+    "noWorkspace": "No workspace",
+    "phoneRequired": "Phone required",
+    "previewFailed": "Preview failed",
+    "setupFailed": "Setup failed",
+    "stepFailed": "Step failed",
+    "testFailed": "Test failed",
+    "title": "Errors",
+    "unauthorized": "Unauthorized",
+    "updateFailed": "Update failed"
   },
   "forms": {
     "validation": {
@@ -5505,7 +5675,8 @@
     "placeholderCalls": "Search by caller or phone…",
     "placeholderDocs": "Search docs…",
     "placeholderEntries": "Search entries…",
-    "placeholderActions": "Search actions…"
+    "placeholderActions": "Search actions…",
+    "placeholder": "Placeholder"
   },
   "connect": {
     "testing": "Testing…",
@@ -5970,7 +6141,29 @@
       "inviteResendFailed": "Failed to resend.",
       "inviteRevoked": "Invite revoked.",
       "inviteRevokeFailed": "Failed to revoke."
-    }
+    },
+    "backToSettings": "Back to settings",
+    "confirmRemoveLabel": "Confirm remove",
+    "confirmRemoveMessage": "Confirm remove message",
+    "confirmRemoveTitle": "Confirm remove title",
+    "escalationOrderHint": "Tip: escalation order",
+    "escalationOrderTitle": "Escalation order title",
+    "inviteFailed": "Invite failed",
+    "invitePlaceholder": "Enter invite",
+    "inviteSectionTitle": "Invite section title",
+    "inviteSentToast": "Invite sent toast",
+    "memberRemovedToast": "Member removed toast",
+    "memberYouOwner": "Member you owner",
+    "networkError": "Failed to network",
+    "pageTitle": "Page title",
+    "removeFailed": "Remove failed",
+    "removeMember": "Remove member",
+    "roleAdmin": "Role admin",
+    "roleManager": "Role manager",
+    "roleUpdateFailed": "Role update failed",
+    "roleUpdatedToast": "Role updated toast",
+    "roleViewer": "Role viewer",
+    "subtitle": "Manage team members and their permissions"
   },
   "filter": {
     "byOutcome": "Filter by outcome",
@@ -5989,7 +6182,51 @@
     "filters": {
       "title": "No items match your filters",
       "body": "Clear some filters to see more results."
-    }
+    },
+    "action": "Action",
+    "activeBody": "Active body",
+    "activeTitle": "Active title",
+    "agentsAppearHere": "Agents appear here",
+    "analyticsAppearHere": "Analytics appear here",
+    "analyzed": "Analyzed",
+    "backToContacts": "Back to contacts",
+    "body": "Body",
+    "calendarAppearHere": "Calendar appear here",
+    "callsAppearHere": "Calls appear here",
+    "callsStable": "Calls stable",
+    "campaignsAppearHere": "Campaigns appear here",
+    "chooseTemplate": "Choose template",
+    "chooseWorkspaceFirst": "Choose workspace first",
+    "complianceAppearHere": "Compliance appear here",
+    "composeAppearHere": "Compose appear here",
+    "contactsAppearHere": "Contacts appear here",
+    "createFirstAgent": "Create first agent",
+    "cta": "Cta",
+    "ctaSecondary": "Cta secondary",
+    "description": "Nothing to display.",
+    "detail": "Detail",
+    "escalationsAppearHere": "Escalations appear here",
+    "followUpQueueAppearHere": "Follow up queue appear here",
+    "handlingContinuesSubtitle": "Handling continues subtitle",
+    "handlingContinuesTitle": "Handling continues title",
+    "importCsv": "Import csv",
+    "integrationsAppearHere": "Integrations appear here",
+    "leadsAppearHere": "Leads appear here",
+    "loadAgentsError": "Failed to load agents",
+    "noAgentsYet": "No agents yet",
+    "noAgentsYetHint": "Tip: no agents yet",
+    "noCallsForContact": "No calls for contact",
+    "noDataYet": "No data yet",
+    "noTeamYet": "No team yet",
+    "protectionScopeSubtitle": "Protection scope subtitle",
+    "protectionScopeTitle": "Protection scope title",
+    "recordNotFound": "Record not found",
+    "searchByNameEmailCompany": "Search by name email company",
+    "selectContext": "Select context",
+    "subtitle": "Get started by performing your first action.",
+    "templatesBody": "Templates body",
+    "templatesTitle": "Templates title",
+    "title": "Nothing Here Yet"
   },
   "commandPalette": {
     "title": "Quick search",
@@ -6694,6 +6931,18 @@
       "warm": "Warm",
       "cool": "Cool",
       "cold": "Cold"
+    },
+    "weights": {
+      "baseScore": "Base score",
+      "baseScoreHelp": "Base score help",
+      "booked": "Booked",
+      "callCount": "Call count",
+      "durationOver2Min": "Duration over2 min",
+      "justBrowsing": "Just browsing",
+      "negativeSentiment": "Negative sentiment",
+      "positiveSentiment": "Positive sentiment",
+      "pricingQuestion": "Pricing question",
+      "returnCaller": "Return caller"
     }
   },
   "quality": {
@@ -7055,7 +7304,13 @@
       "errors": "Sync errors",
       "viewLog": "View sync log"
     },
-    "comingSoon": "Connect now"
+    "comingSoon": "Connect now",
+    "transformations": {
+      "concatenate": "Concatenate",
+      "format_phone": "Format phone",
+      "map_status": "Map status",
+      "none": "None"
+    }
   },
   "email": {
     "templates": {
@@ -7072,7 +7327,8 @@
         "sendTest": "Send test email",
         "save": "Save template"
       }
-    }
+    },
+    "label": "Label"
   },
   "slack": {
     "title": "Slack notifications",
@@ -7219,7 +7475,25 @@
     "trial": " · Trial",
     "activeSubscription": "Active subscription",
     "callsAnswered": "calls answered",
-    "minUsed": "min used"
+    "minUsed": "min used",
+    "agentConfig": "Agent Config",
+    "api": "API",
+    "billing": "Billing",
+    "call": "Calls",
+    "callForwarding": "Call Forwarding",
+    "campaigns": "Campaigns",
+    "changelog": "Changelog",
+    "faq": "FAQ",
+    "heading": "Documentation",
+    "inbox": "Inbox",
+    "integrations": "Integrations",
+    "noEmail": "No email",
+    "noPhone": "No phone",
+    "noRevenue": "No revenue data",
+    "noTags": "No tags",
+    "quickStart": "Quick Start",
+    "sdkExamples": "SDK Examples",
+    "workspaceNote": "Workspace"
   },
   "help": {
     "breadcrumbs": {
@@ -7312,7 +7586,13 @@
         "invalidPhone": "Enter a valid phone number with area code.",
         "disclaimer": "Free. No signup required. We call your phone in under 10 seconds."
       },
-      "compliance": ["SOC 2 Type II", "HIPAA", "TCPA", "GDPR", "256-bit SSL"]
+      "compliance": [
+        "SOC 2 Type II",
+        "HIPAA",
+        "TCPA",
+        "GDPR",
+        "256-bit SSL"
+      ]
     },
     "features": {
       "label": "What it does",
@@ -7403,5 +7683,1624 @@
       "security": "Security",
       "systemStatus": "System Status"
     }
+  },
+  "acceptInvite": {
+    "acceptButton": "Accept Invite",
+    "accepting": "Accepting invitation…",
+    "checkingInvite": "Checking invitation…",
+    "createAccount": "Create Account",
+    "defaultInviter": "A team member",
+    "expiredDesc": "This invitation has expired. Ask the sender to send a new one.",
+    "expiredTitle": "Invitation Expired",
+    "goHome": "Go Home",
+    "invalidLink": "Invalid Invitation",
+    "invalidLinkDesc": "This invitation link is not valid. Please check the link and try again.",
+    "invitedYou": "{name} invited you to join their workspace",
+    "joinTitle": "Join Workspace",
+    "noAccount": "Don't have an account?",
+    "signIn": "Sign in to accept"
+  },
+  "action": {
+    "markAllRead": "Mark all as read",
+    "markRead": "Mark as read",
+    "preferences": "Notification preferences"
+  },
+  "actions": {
+    "activate": "Activate",
+    "addFromSuggestions": "Add from suggestions",
+    "addObjection": "Add objection",
+    "deactivate": "Deactivate",
+    "deleteAgent": "Delete Agent",
+    "deleteAria": "Delete",
+    "editAgent": "Edit Agent",
+    "on": "On",
+    "pause": "Pause",
+    "remove": "Remove",
+    "saveAndSyncAria": "Save and sync",
+    "savingAria": "Saving…"
+  },
+  "activatePage": {
+    "description": "Set up your AI phone agent in minutes",
+    "title": "Activate Your Agent"
+  },
+  "activity": {
+    "empty": "No activity yet. Activity will appear here as your agent handles calls.",
+    "title": "Activity Log"
+  },
+  "agentDetail": {
+    "activeLabel": "Active",
+    "agentNotFound": "Agent not found",
+    "backToAgents": "← Back to Agents",
+    "calling": "Calling…",
+    "callsSuffix": "calls",
+    "greetingLabel": "Greeting",
+    "paused": "Paused",
+    "personalityLabel": "Personality",
+    "statsLabel": "Stats",
+    "testCall": "Test Call",
+    "testCallFailed": "Test call failed. Please try again.",
+    "testCallOptionalLabel": "Optional: enter your phone number",
+    "testCallRequested": "Test call requested! Your phone will ring shortly.",
+    "testPhonePlaceholder": "Enter phone number",
+    "voiceIdLabel": "Voice",
+    "voicePlaceholder": "Select a voice"
+  },
+  "analyze": {
+    "subtitle": "AI-powered analysis of your call performance",
+    "title": "Call Analysis"
+  },
+  "audience": {
+    "csvHint": "Upload a CSV or select from your existing contacts",
+    "heading": "Target Audience",
+    "minScoreLabel": "Minimum Lead Score",
+    "minScorePlaceholder": "e.g. 50",
+    "notContactedLabel": "Not contacted in (days)",
+    "notContactedPlaceholder": "e.g. 30",
+    "sourceAny": "Any source",
+    "sourceInbound": "Inbound",
+    "sourceLabel": "Lead Source",
+    "sourceOutbound": "Outbound",
+    "sourceReferral": "Referral",
+    "sourceWebsite": "Website",
+    "statusLabel": "Lead Status",
+    "subtext": "Define who this campaign targets"
+  },
+  "audit": {
+    "allActions": "All actions",
+    "allUsers": "All users",
+    "columns": {
+      "action": "Action",
+      "ipAddress": "IP Address",
+      "resource": "Resource",
+      "timestamp": "Timestamp",
+      "user": "User"
+    },
+    "line1": "All workspace actions are logged for security and compliance.",
+    "line2": "Logs are retained for 90 days.",
+    "line3": "Export available for enterprise plans.",
+    "next": "Next",
+    "previous": "Previous",
+    "searchPlaceholder": "Search audit log…",
+    "showing": "Showing {count} entries"
+  },
+  "basics": {
+    "active": "Active",
+    "heading": "Campaign Basics",
+    "name": "Campaign Name",
+    "namePlaceholder": "Enter campaign name",
+    "trigger": "Trigger"
+  },
+  "behavior": {
+    "addQuestion": "Add Question",
+    "bant": {
+      "q1": "What is your budget for this project?",
+      "q2": "Who is the decision maker?",
+      "q3": "What is your timeline?",
+      "q4": "What specific need are you trying to address?"
+    },
+    "customRuleLabel": "Custom Rule",
+    "customRulePlaceholder": "e.g. Always ask for the caller's name first",
+    "escalationHint": "Define when the agent should transfer to a human",
+    "escalationTitle": "Escalation Rules",
+    "meddic": {
+      "q1": "Q1",
+      "q2": "Q2",
+      "q3": "Q3",
+      "q4": "Q4"
+    },
+    "neverDoHint": "Tip: never do",
+    "neverDoTitle": "Never do title",
+    "objectionHint": "Tip: objection",
+    "objectionTitle": "Objection title",
+    "placeholderQ1": "Placeholder q1",
+    "placeholderQ2": "Placeholder q2",
+    "placeholderQ3": "Placeholder q3",
+    "placeholderQ4": "Placeholder q4",
+    "presetLabel": "Preset",
+    "presets": {
+      "noAfterHours": "No after hours",
+      "noCompetitors": "No competitors",
+      "noInternal": "No internal",
+      "noPricing": "No pricing",
+      "noPromises": "No promises"
+    },
+    "qualHint": "Tip: qual",
+    "qualTitle": "Qual title",
+    "remove": "Remove",
+    "title": "Behavior",
+    "transferPhoneLabel": "Transfer phone",
+    "transferPhonePlaceholder": "Enter transfer phone",
+    "transferWhen": "Transfer when"
+  },
+  "breadcrumbs": {
+    "help": "Help",
+    "newAgent": "New agent",
+    "settings": "Settings"
+  },
+  "businessStep": {
+    "businessName": "Business name",
+    "businessNamePlaceholder": "Enter business name",
+    "cityRegion": "City region",
+    "cityRegionPlaceholder": "Enter city region",
+    "heading": "Business step",
+    "selectIndustry": "Select industry",
+    "subtitle": "Manage your business step settings"
+  },
+  "button": {
+    "configure": "Configure",
+    "connect": "Connect"
+  },
+  "calendarPage": {
+    "activityLink": "Activity link",
+    "connectCalendar": "Connect calendar",
+    "loadError": "Failed to load",
+    "noAppointmentsHint": "Tip: no appointments",
+    "noAppointmentsYet": "No appointments yet",
+    "retry": "Retry"
+  },
+  "callingHours": {
+    "end": "End",
+    "heading": "Calling hours",
+    "respectRecipientTimezone": "Respect recipient timezone",
+    "start": "Start",
+    "timezone": "Timezone"
+  },
+  "callsCalendarPage": {
+    "accessDetails": "Access details",
+    "confirmationRecommended": "Confirmation recommended"
+  },
+  "campaignsPage": {
+    "launchFirstCampaign": "Launch first campaign",
+    "loadError": "Failed to load",
+    "newCampaignLink": "New campaign link",
+    "noCampaignsHint": "Tip: no campaigns",
+    "noCampaignsYet": "No campaigns yet",
+    "retry": "Retry"
+  },
+  "card": {
+    "gohighlevel": {
+      "body": "Body"
+    },
+    "googleContacts": {
+      "body": "Body"
+    },
+    "hubspot": {
+      "body": "Body"
+    },
+    "microsoft365": {
+      "body": "Body"
+    },
+    "pipedrive": {
+      "body": "Body"
+    },
+    "salesforce": {
+      "body": "Body"
+    },
+    "zoho": {
+      "body": "Body"
+    }
+  },
+  "cardLabels": {
+    "agent": "Agent",
+    "caller": "Caller",
+    "result": "Result"
+  },
+  "cards": {
+    "apiReference": {
+      "desc": "Desc",
+      "title": "Api reference"
+    },
+    "appointments": {
+      "desc": "Desc",
+      "title": "Appointments"
+    },
+    "branding": {
+      "body": "Body",
+      "link": "Link",
+      "title": "Branding"
+    },
+    "compliance": {
+      "desc": "Desc",
+      "title": "Compliance"
+    },
+    "contactForAccess": "Contact for access",
+    "faq": {
+      "desc": "Desc",
+      "title": "Faq"
+    },
+    "gettingStarted": {
+      "desc": "Desc",
+      "title": "Getting started"
+    },
+    "integrations": {
+      "desc": "Desc",
+      "title": "Integrations"
+    },
+    "leads": {
+      "desc": "Desc",
+      "title": "Leads"
+    },
+    "missedCalls": {
+      "desc": "Desc",
+      "title": "Missed calls"
+    },
+    "provisioning": {
+      "body": "Body",
+      "note": "Note",
+      "title": "Provisioning"
+    },
+    "support": {
+      "desc": "Desc",
+      "title": "Support"
+    },
+    "viewLink": "View link",
+    "workspaces": {
+      "body": "Body",
+      "link": "Link",
+      "title": "Workspaces"
+    }
+  },
+  "center": {
+    "empty": {
+      "title": "Empty"
+    },
+    "emptyBodyAlt": "Empty body alt",
+    "loading": "Loading center…",
+    "title": "Center"
+  },
+  "channels": {
+    "message": "Message",
+    "payment": "Payment",
+    "voice": "Voice"
+  },
+  "chart": {
+    "avgQuality": "Avg quality",
+    "noData": "No data",
+    "qualityTrends": "Quality trends"
+  },
+  "charts": {
+    "callVolumeTitle": "Call volume title",
+    "outcomeBreakdown": "Outcome breakdown"
+  },
+  "chips": {
+    "all": "All",
+    "leads": "Leads",
+    "needsAction": "Needs action"
+  },
+  "commonIssues": {
+    "calls": "Calls",
+    "empty": "No common issues yet",
+    "title": "Common issues"
+  },
+  "compliancePage": {
+    "auditTrailBody": "Audit trail body",
+    "auditTrailTitle": "Audit trail title",
+    "exportPdf": "Export pdf",
+    "overviewBody": "Overview body",
+    "overviewTitle": "Overview title",
+    "policiesLink": "Policies link"
+  },
+  "complianceRecord": {
+    "chain": "Chain",
+    "chainValue": "Chain value",
+    "compliant": "Compliant",
+    "duration": "Duration",
+    "governedRecord": "Governed record",
+    "jurisdiction": "Jurisdiction",
+    "reviewDepth": "Review depth",
+    "standard": "Standard",
+    "status": "Status",
+    "verified": "Verified"
+  },
+  "composeHints": {
+    "backToMessages": "Back to messages",
+    "hint1": "Hint1",
+    "hint2": "Hint2"
+  },
+  "configureAgent": {
+    "agent": "Agent",
+    "desc1": "Desc1",
+    "desc2": "Desc2",
+    "title": "Configure agent"
+  },
+  "connectNumber": {
+    "desc1": "Desc1",
+    "desc2": "Desc2",
+    "phone": "Phone",
+    "title": "Connect number"
+  },
+  "contactsPage": {
+    "activityLink": "Activity link",
+    "importLink": "Import link",
+    "loadError": "Failed to load",
+    "noContactsHint": "Tip: no contacts",
+    "noContactsYet": "No contacts yet",
+    "retry": "Retry"
+  },
+  "createCampaign": {
+    "campaigns": "Campaigns",
+    "desc1": "Desc1",
+    "desc2": "Desc2",
+    "title": "Create campaign"
+  },
+  "cta": {
+    "ariaLabel": "Aria",
+    "back": "Back",
+    "button": "Button",
+    "finish": "Finish",
+    "link": "Link",
+    "next": "Next",
+    "skip": "Skip",
+    "text": "Text"
+  },
+  "defaultObjections": {
+    "alreadyWorking": "Already working",
+    "alreadyWorkingResponse": "Already working response",
+    "thinkAboutIt": "Think about it",
+    "thinkAboutItResponse": "Think about it response",
+    "tooExpensive": "Too expensive",
+    "tooExpensiveResponse": "Too expensive response"
+  },
+  "defaultTransfer": {
+    "angryFrustrated": "Angry frustrated",
+    "billingPayments": "Billing payments",
+    "cannotAnswerAttempts": "Cannot answer attempts",
+    "explicitlyAsksHuman": "Explicitly asks human"
+  },
+  "defaults": {
+    "audience": "Audience",
+    "followupAudience": "Followup audience",
+    "followupTemplate": "Followup template",
+    "qualifyAudience": "Qualify audience",
+    "qualifyTemplate": "Qualify template",
+    "reactivationAudience": "Reactivation audience",
+    "reactivationTemplate": "Reactivation template",
+    "reminderAudience": "Reminder audience",
+    "reminderTemplate": "Reminder template",
+    "template": "Template"
+  },
+  "detail": {
+    "addNote": "Add note",
+    "agent": "Agent",
+    "archive": "Archive",
+    "callPrefix": "Call prefix",
+    "callTypeLabel": "Call type",
+    "callTypes": {
+      "default": "Default",
+      "followUp": "Follow up",
+      "reminder": "Reminder"
+    },
+    "contact": "Contact",
+    "created": "Created",
+    "email": "Email",
+    "haveAiCall": "Have ai call",
+    "name": "Name",
+    "notes": "Notes",
+    "notesPlaceholder": "Enter notes",
+    "phone": "Phone",
+    "stage": "Stage",
+    "startingCall": "Starting call",
+    "textButton": "Text",
+    "timeline": "Timeline",
+    "whatTheyNeed": "What they need"
+  },
+  "dnc": {
+    "disclaimer": "Disclaimer",
+    "heading": "Dnc",
+    "toggleLabel": "Toggle"
+  },
+  "drawer": {
+    "subtitle": "Manage your drawer settings",
+    "title": "Drawer"
+  },
+  "error": {
+    "generic": "Generic"
+  },
+  "errorsPage": {
+    "backToSettings": "Back to settings",
+    "description": "Configure and manage errors page",
+    "empty": "No errors page yet",
+    "loading": "Loading errors page…",
+    "title": "Errors page"
+  },
+  "escalation": {
+    "agent": "Agent",
+    "director": "Director",
+    "manager": "Manager"
+  },
+  "escalationsPage": {
+    "approvalsLink": "Approvals link",
+    "level": "Level",
+    "noActiveEscalations": "No active escalations",
+    "reason": "Reason",
+    "record": "Record",
+    "since": "Since"
+  },
+  "failureBanner": {
+    "message": "Message",
+    "preferencesLink": "Preferences link",
+    "primary": "Primary"
+  },
+  "filters": {
+    "flagged": "Flagged",
+    "quality": {
+      "all": "All",
+      "excellent": "Excellent",
+      "flagged": "Flagged",
+      "good": "Good",
+      "review": "Review"
+    }
+  },
+  "followUpsPage": {
+    "viewRecord": "View record"
+  },
+  "form": {
+    "addTag": "Add tag",
+    "audienceLabel": "Audience",
+    "audiencePlaceholder": "Enter audience",
+    "campaignNameLabel": "Campaign name",
+    "campaignTypeLabel": "Campaign type",
+    "cancelEdit": "Cancel edit",
+    "duration": "Duration",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter email address",
+    "firstNameLabel": "First name",
+    "firstNamePlaceholder": "Enter first name",
+    "lastNameLabel": "Last name",
+    "lastNamePlaceholder": "Enter last name",
+    "leadStatusOptionalLabel": "Lead status optional",
+    "leaveEmptyForAllStatuses": "Leave empty for all statuses",
+    "notesLabel": "Notes",
+    "notesPlaceholder": "Add any notes…",
+    "phoneLabel": "Phone Number",
+    "phonePlaceholder": "Enter phone number",
+    "saveContact": "Save contact",
+    "sourceLabel": "Source",
+    "subtitle": "Manage your form settings",
+    "tagsLabel": "Tags",
+    "tagsPlaceholder": "Enter tags",
+    "testName": "Test name",
+    "titleCreate": "Title create",
+    "titleEdit": "Title edit",
+    "trafficSplit": "Traffic split",
+    "type": {
+      "customer": "Customer",
+      "lead": "Lead",
+      "vip": "Vip"
+    },
+    "typeLabel": "Type",
+    "voiceA": "Voice a",
+    "voiceAShort": "Voice a short",
+    "voiceB": "Voice b",
+    "voiceBShort": "Voice b short"
+  },
+  "generic": {
+    "title": "Generic"
+  },
+  "goLive": {
+    "activateAgent": "Activate agent",
+    "activateAgentAria": "Activate agent",
+    "activating": "Activating",
+    "afterHoursClosed": "After hours closed",
+    "afterHoursDefault": "After hours default",
+    "afterHoursEmergency": "After hours emergency",
+    "afterHoursForward": "After hours forward",
+    "afterHoursMessages": "After hours messages",
+    "assignAria": "Assign",
+    "assigned": "Assigned",
+    "backButton": "Back",
+    "backToTestAria": "Back to test",
+    "callerAfterHours": "Caller after hours",
+    "callerBookAppt": "Caller book appt",
+    "callerPriceHigh": "Caller price high",
+    "callerPricing": "Caller pricing",
+    "callerSpeakToSomeone": "Caller speak to someone",
+    "carrierAria": "Carrier",
+    "carrierAtt": "Carrier att",
+    "carrierAttBody": "Carrier att body",
+    "carrierOther": "Carrier other",
+    "carrierOtherBody": "Carrier other body",
+    "carrierTMobile": "Carrier t mobile",
+    "carrierTMobileBody": "Carrier t mobile body",
+    "carrierVerizon": "Carrier verizon",
+    "carrierVerizonBody": "Carrier verizon body",
+    "connectPhoneHint": "Tip: connect phone",
+    "defaultGreetingBook": "Default greeting book",
+    "defaultGreetingMessage": "Default greeting message",
+    "escalationNoTransfer": "Escalation no transfer",
+    "escalationWithTransfer": "Escalation with transfer",
+    "forwardExistingAria": "Forward existing",
+    "forwardExistingCta": "Forward existing",
+    "forwardExistingDesc": "Forward existing desc",
+    "forwardExistingTitle": "Forward existing title",
+    "forwardNumber": "Forward number",
+    "getNewNumberAria": "Get new number",
+    "getNewNumberCta": "Get new number",
+    "getNewNumberDesc": "Get new number desc",
+    "getNewNumberTitle": "Get new number title",
+    "heading": "Go Live",
+    "noNumbers": "No numbers",
+    "none": "None",
+    "phoneDescription": "Phone description",
+    "phoneLabel": "Phone",
+    "phoneSectionAria": "Phone section",
+    "previewAria": "Preview",
+    "previewHeading": "Preview heading",
+    "pricingDefault": "Pricing default",
+    "pricingEnabled": "Pricing enabled",
+    "pricingNeverSay": "Pricing never say",
+    "readiness": "Readiness",
+    "readinessChecklist": "Readiness checklist",
+    "retrySync": "Retry sync",
+    "syncing": "Syncing",
+    "thisAgent": "This agent"
+  },
+  "governanceStep": {
+    "title": "Governance step"
+  },
+  "hub": {
+    "automationHeading": "Automation heading",
+    "backToSettings": "Back to settings",
+    "breadcrumbSettings": "Breadcrumb settings",
+    "calendarDesc": "Calendar desc",
+    "calendarHeading": "Calendar heading",
+    "channelsHeading": "Channels heading",
+    "contactSupport": "Contact support",
+    "crmDescription": "Crm description",
+    "crmHeading": "Crm heading",
+    "eventAppointmentBooked": "Event appointment booked",
+    "eventDealAtRisk": "Event deal at risk",
+    "eventLeadCaptured": "Event lead captured",
+    "eventReactivatedLead": "Event reactivated lead",
+    "eventsList": "Events list",
+    "eventsYouCanSend": "Events you can send",
+    "googleCalendarLabel": "Google calendar",
+    "lastSyncLabel": "Last sync",
+    "manageLink": "Manage link",
+    "needHelp": "Need help",
+    "otherCrmsDesc": "Other crms desc",
+    "otherCrmsHeading": "Other crms heading",
+    "otherCrmsTitle": "Other crms title",
+    "otherCrmsZapier": "Other crms zapier",
+    "phoneDesc": "Phone desc",
+    "phoneLabel": "Phone",
+    "recordsSyncedLabel": "Records synced",
+    "retryAttempts": "Retry attempts",
+    "saveWebhook": "Save webhook",
+    "saving": "Saving",
+    "sendTest": "Send test",
+    "signingSecretLabel": "Signing secret",
+    "signingSecretPlaceholderNew": "Signing secret placeholder new",
+    "signingSecretPlaceholderSaved": "Signing secret placeholder saved",
+    "signingSecretStored": "Signing secret stored",
+    "subtitle": "Manage your contacts, leads, and customers",
+    "syncError": "Failed to sync",
+    "syncErrors": "Sync errors",
+    "testing": "Testing",
+    "title": "Contact Hub",
+    "todaysSlots": "Todays slots",
+    "viewSyncLog": "View sync log",
+    "webhookDesc": "Webhook desc",
+    "webhookDestinationDesc": "Webhook destination desc",
+    "webhookDestinationTitle": "Webhook destination title",
+    "webhookHeading": "Webhook heading",
+    "webhookUrlPlaceholder": "Enter webhook url",
+    "whatsappLabel": "Whatsapp"
+  },
+  "identity": {
+    "industry": {
+      "general": "General"
+    }
+  },
+  "identityStep": {
+    "agentNameLabel": "Agent Name",
+    "applyDetails": "Apply details",
+    "callDirectionLabel": "Call direction",
+    "continueToVoice": "Continue to voice",
+    "describeHint": "Tip: describe",
+    "dismiss": "Dismiss",
+    "fillFromSite": "Fill from site",
+    "greetingError": "Failed to greeting",
+    "greetingPlaceholder": "Hi, thanks for calling {business}! This is {agent}, how can I help?",
+    "industryLabel": "Industry Template",
+    "nameError": "Failed to name",
+    "openingLineLabel": "Opening line",
+    "playbooksHint": "Tip: playbooks",
+    "playbooksLabel": "Playbooks",
+    "purposeLabel": "Purpose",
+    "reading": "Reading",
+    "selectIndustry": "Select industry",
+    "stepIndicator": "Step indicator",
+    "targetAudienceLabel": "Target audience",
+    "targetAudiencePlaceholder": "Enter target audience",
+    "toneLabel": "Tone",
+    "websiteDetailsBody": "Website details body",
+    "websiteDetailsReady": "Website details ready",
+    "websiteError": "Failed to website",
+    "websiteLabel": "Website",
+    "websiteNoDetails": "Website no details",
+    "websitePlaceholder": "Enter website",
+    "websitePrivacy": "Website privacy",
+    "websiteReadError": "Failed to website read"
+  },
+  "importPage": {
+    "confirm": "Confirm",
+    "conversationsGovernance": "Conversations governance",
+    "csvFileLabel": "Csv file",
+    "executionFollowPurpose": "Execution follow purpose",
+    "hint": "Hint",
+    "importing": "Importing",
+    "ingestionRecorded": "Ingestion recorded",
+    "purposeLabel": "Purpose",
+    "returnToStart": "Return to start",
+    "rowsDetected": "Rows detected",
+    "selectWorkspace": "Select workspace",
+    "title": "Import Contacts"
+  },
+  "industries": {
+    "custom": {
+      "desc": "Desc",
+      "name": "Name"
+    }
+  },
+  "insights": {
+    "empty": "No insights yet",
+    "title": "Insights"
+  },
+  "integrationsPage": {
+    "connect": "Connect",
+    "crm": "Crm",
+    "crmDesc": "Crm desc",
+    "googleCalendar": "Google calendar",
+    "googleCalendarDesc": "Google calendar desc",
+    "settingsLink": "Settings link"
+  },
+  "inviteTeam": {
+    "desc1": "Desc1",
+    "desc2": "Desc2",
+    "team": "Team",
+    "title": "Invite team"
+  },
+  "issues": {
+    "missedVoicemail": "Missed voicemail",
+    "negativeTone": "Negative tone",
+    "shortCall": "Short call"
+  },
+  "jurisdictionStep": {
+    "description": "Configure and manage jurisdiction step",
+    "title": "Jurisdiction step"
+  },
+  "knowledgePanel": {
+    "importUrlPlaceholder": "Enter import url"
+  },
+  "kpis": {
+    "appointmentsBooked": "Appointments booked",
+    "callsHandled": "Calls handled",
+    "followUpsSent": "Follow ups sent",
+    "minutes": "Minutes"
+  },
+  "labels": {
+    "confusedCallerHandling": "Confused caller handling",
+    "customCriterion": "Custom criterion",
+    "ifNotInterested": "If not interested",
+    "ifTheySay": "If they say",
+    "offTopicHandling": "Off topic handling",
+    "openingStrategy": "Opening strategy",
+    "outboundGoal": "Outbound goal",
+    "response": "Response",
+    "voicemailBehavior": "Voicemail behavior",
+    "voicemailTemplates": "Voicemail templates"
+  },
+  "layout": {
+    "contextLabel": "Context",
+    "handlingBanner": "Handling banner",
+    "mobileNavAria": "Mobile nav",
+    "moreLabel": "More",
+    "navLabels": {
+      "import": "Import"
+    },
+    "normalConditionsNotPresent": "Normal conditions not present",
+    "notificationsAria": "Notifications",
+    "reconnecting": "Reconnecting",
+    "setUpCallHandling": "Set up call handling",
+    "switchContext": "Switch context"
+  },
+  "limits": {
+    "dailyOutboundLimit": "Daily outbound limit",
+    "heading": "Limits",
+    "tierHint": "Tip: tier"
+  },
+  "links": {
+    "analytics": "Analytics",
+    "flow": "Flow"
+  },
+  "liveChat": {
+    "agents": {
+      "concise": {
+        "greeting": "Greeting",
+        "name": "Name"
+      },
+      "friendly": {
+        "greeting": "Greeting",
+        "name": "Name"
+      },
+      "professional": {
+        "greeting": "Greeting",
+        "name": "Name"
+      }
+    },
+    "messageInputLabel": "Message input",
+    "misheard": "Misheard",
+    "misheardCatch": "Misheard catch",
+    "sendMessageLabel": "Send message",
+    "sessionLimit": "Session limit",
+    "suggestionAppointment": "Suggestion appointment",
+    "suggestionPricing": "Suggestion pricing",
+    "suggestionServices": "Suggestion services",
+    "switchAgentTo": "Switch agent to",
+    "testHint": "Tip: test",
+    "tryAsking": "Try asking",
+    "voiceConcise": "Voice concise",
+    "voiceFriendly": "Voice friendly",
+    "voiceInputLabel": "Voice input",
+    "voiceProfessional": "Voice professional"
+  },
+  "loadError": {
+    "retry": "Retry"
+  },
+  "modal": {
+    "addEntry": "Add entry",
+    "answer": "Answer",
+    "chooseFile": "Choose file",
+    "content": "Content",
+    "contentPlaceholder": "Enter content",
+    "editEntry": "Edit entry",
+    "fetch": "Fetch",
+    "indexedFile": "Indexed file",
+    "indexedPages": "Indexed pages",
+    "indexing": "Indexing",
+    "question": "Question",
+    "questionPlaceholder": "Enter question",
+    "status": "Status",
+    "titlePlaceholder": "Enter title",
+    "type": "Type",
+    "uploadFile": "Upload file",
+    "uploadHint": "Tip: upload"
+  },
+  "modeStep": {
+    "agency": "Agency",
+    "agencyDesc": "Agency desc",
+    "heading": "Mode step",
+    "serviceBusiness": "Service business",
+    "serviceBusinessDesc": "Service business desc",
+    "solo": "Solo",
+    "soloDesc": "Solo desc",
+    "subtitle": "Manage your mode step settings"
+  },
+  "needsAttention": {
+    "body": "Body",
+    "empty": "No needs attention yet",
+    "title": "Needs attention"
+  },
+  "notes": {
+    "label": "Label",
+    "save": "Save",
+    "saveFailed": "Save failed",
+    "saved": "Saved"
+  },
+  "options": {
+    "notInterested": {
+      "askHelp": "Ask help",
+      "callback": "Callback",
+      "thankEnd": "Thank end"
+    },
+    "outboundGoal": {
+      "book": "Book",
+      "custom": "Custom",
+      "deliver": "Deliver",
+      "qualify": "Qualify"
+    },
+    "voicemail": {
+      "hangup": "Hangup",
+      "leave": "Leave",
+      "sms": "Sms"
+    }
+  },
+  "pages": {
+    "agent": {
+      "subtitle": "Manage your agent settings",
+      "title": "Agent"
+    },
+    "agents": {
+      "subtitle": "Manage your agents settings",
+      "subtitleShort": "Subtitle short",
+      "title": "Agents"
+    },
+    "billing": {
+      "subtitle": "Manage your billing settings",
+      "subtitleShort": "Subtitle short",
+      "title": "Billing"
+    },
+    "businessSettings": {
+      "subtitle": "Manage your business settings settings",
+      "title": "Business settings"
+    },
+    "calendar": {
+      "subtitle": "Manage your calendar settings",
+      "subtitleShort": "Subtitle short",
+      "title": "Calendar"
+    },
+    "callRulesSettings": {
+      "subtitle": "Manage your call rules settings settings",
+      "title": "Call rules settings"
+    },
+    "callsCalendar": {
+      "subtitle": "Manage your calls calendar settings",
+      "subtitleShort": "Subtitle short",
+      "title": "Calls calendar"
+    },
+    "campaigns": {
+      "subtitle": "Manage your campaigns settings",
+      "subtitleShort": "Subtitle short",
+      "title": "Campaigns"
+    },
+    "compliance": {
+      "subtitle": "Manage your compliance settings",
+      "title": "Compliance"
+    },
+    "complianceSettings": {
+      "subtitle": "Manage your compliance settings settings",
+      "title": "Compliance settings"
+    },
+    "compose": {
+      "subtitle": "Manage your compose settings",
+      "title": "Compose"
+    },
+    "contacts": {
+      "subtitle": "Manage your contacts settings",
+      "subtitleShort": "Subtitle short",
+      "title": "Contacts"
+    },
+    "escalations": {
+      "subtitle": "Manage your escalations settings",
+      "title": "Escalations"
+    },
+    "followUps": {
+      "subtitle": "Manage your follow ups settings",
+      "title": "Follow-ups"
+    },
+    "integrations": {
+      "subtitle": "Manage your integrations settings",
+      "subtitleShort": "Subtitle short",
+      "title": "Integrations"
+    },
+    "leads": {
+      "subtitle": "Manage your leads settings",
+      "title": "Leads"
+    },
+    "newCampaign": {
+      "subtitle": "Manage your new campaign settings",
+      "subtitleShort": "Subtitle short",
+      "title": "New campaign"
+    },
+    "notificationsSettings": {
+      "subtitle": "Manage your notifications settings settings",
+      "title": "Notifications settings"
+    },
+    "operatorsSettings": {
+      "subtitle": "Manage your operators settings settings",
+      "title": "Operators settings"
+    },
+    "record": {
+      "title": "Record"
+    },
+    "team": {
+      "subtitle": "Manage your team settings",
+      "subtitleShort": "Subtitle short",
+      "title": "Team"
+    },
+    "teamSettings": {
+      "subtitle": "Manage your team settings settings",
+      "title": "Team settings"
+    }
+  },
+  "password": {
+    "label": "Label"
+  },
+  "permissions": {
+    "accountSettings": "Account settings",
+    "billing": "Billing",
+    "manageAgents": "Manage agents",
+    "manageTeam": "Manage team",
+    "viewAnalytics": "View analytics",
+    "viewCalls": "View calls"
+  },
+  "phoneStep": {
+    "heading": "Phone step",
+    "phoneNumber": "Phone number",
+    "subtitle": "Manage your phone step settings"
+  },
+  "placeholders": {
+    "confusedCaller": "Confused caller",
+    "customCriterion": "Custom criterion",
+    "describeGoal": "Describe goal",
+    "objectionResponse": "Objection response",
+    "objectionTrigger": "Objection trigger",
+    "offTopic": "Off topic",
+    "outboundOpening": "Outbound opening",
+    "voicemailMessage": "Voicemail message"
+  },
+  "portPage": {
+    "accountPlaceholder": "Enter account",
+    "back": "Back",
+    "backToPhone": "Back to phone",
+    "backToPhoneSettings": "Back to phone settings",
+    "breadcrumbPhone": "Breadcrumb phone",
+    "breadcrumbPort": "Breadcrumb port",
+    "breadcrumbSettings": "Breadcrumb settings",
+    "carrierPlaceholder": "e.g. AT&T, Verizon",
+    "next": "Next",
+    "numberPlaceholder": "Enter your business phone number",
+    "pinLabel": "Account PIN",
+    "pinPlaceholder": "Your carrier account PIN",
+    "requestReceived": "Request received",
+    "requestReceivedBody": "Request received body",
+    "step1Title": "Step1 title",
+    "step2Body": "Step2 body",
+    "step2Title": "Step2 title",
+    "step3Body": "Step3 body",
+    "step3Title": "Step3 title",
+    "submitLabel": "Submit",
+    "submitting": "Submitting",
+    "subtitle": "Manage your port page settings",
+    "title": "Port Your Number",
+    "uploadFormats": "Upload formats",
+    "uploadHint": "Tip: upload"
+  },
+  "porting": {
+    "accountNumber": "Account number",
+    "carrierLabel": "Carrier",
+    "numberLabel": "Number"
+  },
+  "pricingTiers": {
+    "badgePopular": "Badge popular",
+    "growth": {
+      "f1": "F1",
+      "f2": "F2",
+      "f3": "F3",
+      "f4": "F4",
+      "name": "Growth",
+      "tagline": "Tagline"
+    },
+    "scale": {
+      "f1": "F1",
+      "f2": "F2",
+      "f3": "F3",
+      "f4": "F4",
+      "name": "Name",
+      "tagline": "Tagline"
+    },
+    "starter": {
+      "f1": "F1",
+      "f2": "F2",
+      "f3": "F3",
+      "f4": "F4",
+      "name": "Starter",
+      "tagline": "Tagline"
+    }
+  },
+  "profile": {
+    "activeOnNumber": "Active on number",
+    "agentNameLabel": "Agent name",
+    "agentNamePlaceholder": "Enter agent name",
+    "callStyleLabel": "Call style",
+    "callsSoFar": "Calls so far",
+    "greetingPlaceholder": "Enter greeting",
+    "inactive": "Inactive",
+    "openingGreetingHint": "Tip: opening greeting",
+    "openingGreetingLabel": "Opening greeting",
+    "personalityLabel": "Personality",
+    "personalityRange": "Personality range"
+  },
+  "purpose": {
+    "both": "Both",
+    "inbound": "Inbound",
+    "outbound": "Outbound"
+  },
+  "purposeStep": {
+    "description": "Configure and manage purpose step",
+    "title": "Purpose step"
+  },
+  "questions": {
+    "desc": "Desc",
+    "empty": "No questions yet",
+    "title": "Questions"
+  },
+  "quickActions": {
+    "edit": "Edit",
+    "editAria": "Edit",
+    "goLive": "Go live",
+    "goLiveAria": "Go live",
+    "label": "Label",
+    "test": "Test",
+    "testAria": "Test"
+  },
+  "readDashboard": {
+    "desc": "Desc",
+    "title": "Read dashboard"
+  },
+  "recordLead": {
+    "authorityActions": "Authority actions",
+    "authorityNoteLabel": "Authority note",
+    "authorityNotePlaceholder": "Enter authority note",
+    "beyondScope": "Beyond scope",
+    "callsHeading": "Calls heading",
+    "continueWithoutRecord": "Continue without record",
+    "enterOutcome": "Enter outcome",
+    "entryStored": "Entry stored",
+    "noEntries": "No entries",
+    "noRecord": "No record",
+    "outcomeNotInRecord": "Outcome not in record",
+    "outsideAuthority": "Outside authority",
+    "publicRecordLabel": "Public record",
+    "recordBreadcrumb": "Record breadcrumb",
+    "recordHeading": "Record heading",
+    "recordNote": "Record note",
+    "recordOutcome": "Record outcome",
+    "roleInbound": "Role inbound",
+    "roleMessage": "Role message",
+    "roleOutbound": "Role outbound"
+  },
+  "resetPassword": {
+    "authNotConfigured": "Auth not configured",
+    "backToSignIn": "Back to sign in",
+    "chooseNewPassword": "Choose new password",
+    "confirmPassword": "Confirm password",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter your email address",
+    "errorNetwork": "Error network",
+    "errorSendFailed": "Error send failed",
+    "newPassword": "New Password",
+    "openResetLinkThenSet": "Open reset link then set",
+    "passwordMinLength": "Password min length",
+    "passwordSavedMessage": "Password saved message",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "savePassword": "Save password",
+    "saving": "Saving",
+    "sending": "Sending…",
+    "setPasswordError": "Failed to set password",
+    "submitLabel": "Submit",
+    "subtitle": "Manage your reset password settings",
+    "successMessage": "Success message",
+    "title": "Reset Your Password"
+  },
+  "revenue": {
+    "body": "Body",
+    "title": "Revenue"
+  },
+  "review": {
+    "heading": "Review & Launch",
+    "hoursOff": "Hours off",
+    "hoursOn": "Hours on",
+    "launch": "Launch",
+    "launching": "Launching",
+    "name": "Name",
+    "note": "Note",
+    "saveDraft": "Save draft",
+    "saving": "Saving",
+    "schedule": "Schedule",
+    "steps": "Steps",
+    "type": "Type"
+  },
+  "reviewStep": {
+    "description": "Configure and manage review step",
+    "title": "Review step"
+  },
+  "roles": {
+    "admin": "Admin",
+    "agent": "Agent",
+    "manager": "Manager",
+    "owner": "Owner"
+  },
+  "rows": {
+    "generic": {
+      "i1": "I1",
+      "i2": "I2",
+      "i3": "I3",
+      "label": "Label"
+    },
+    "manual": {
+      "i1": "I1",
+      "i2": "I2",
+      "i3": "I3",
+      "label": "Label"
+    },
+    "recallTouch": {
+      "i1": "I1",
+      "i2": "I2",
+      "i3": "I3",
+      "label": "Label"
+    }
+  },
+  "rulesTab": {
+    "agentCanBook": "Agent can book",
+    "appointmentBooking": "Appointment booking",
+    "assertiveness": "Assertiveness",
+    "availableSlotsHint": "Tip: available slots",
+    "conversationPaceAria": "Conversation pace",
+    "conversationPreviewSubtitle": "Conversation preview subtitle",
+    "conversationStyle": "Conversation style",
+    "conversational": "Conversational",
+    "defaultDurationAria": "Default duration",
+    "defaultDurationLabel": "Default duration",
+    "followUpBehavior": "Follow up behavior",
+    "generatedFromKnowledge": "Generated from knowledge",
+    "gentleDirect": "Gentle direct",
+    "high": "High",
+    "howYourAiHandlesCalls": "How your ai handles calls",
+    "low": "Low",
+    "maxCallDurationAria": "Max call duration",
+    "maxCallDurationLabel": "Max call duration",
+    "medium": "Medium",
+    "neverSayLabel": "Never say",
+    "notifyOwnerOnLead": "Notify owner on lead",
+    "outboundPersistenceAria": "Outbound persistence",
+    "paceLabel": "Pace",
+    "persistenceOutbound": "Persistence outbound",
+    "previewAiLabel": "Preview ai",
+    "previewOffTopicAnswer": "Preview off topic answer",
+    "previewOffTopicQuestion": "Preview off topic question",
+    "previewRobotAnswer": "Preview robot answer",
+    "previewRobotQuestion": "Preview robot question",
+    "previewTransferAnswer": "Preview transfer answer",
+    "previewTransferQuestion": "Preview transfer question",
+    "qualificationFramework": "Qualification framework",
+    "quick": "Quick",
+    "sendFollowUpSMS": "Send follow up s m s",
+    "sendSummaryEmail": "Send summary email",
+    "thorough": "Thorough",
+    "transferToHumanWhen": "Transfer to human when",
+    "whatMakesQualified": "What makes qualified",
+    "whenCallerCompetitor": "When caller competitor",
+    "whenCallerHesitates": "When caller hesitates",
+    "whenCallerPricing": "When caller pricing",
+    "whenCallerThinkAboutIt": "When caller think about it"
+  },
+  "schedule": {
+    "businessHours": "Business hours",
+    "dailyLimit": "Daily limit",
+    "heading": "Schedule",
+    "hourlyThrottle": "Hourly throttle",
+    "optOutConfirm": "Opt out confirm",
+    "startAt": "Start at",
+    "subtext": "Manage your schedule settings"
+  },
+  "scheduleLabel": {
+    "once": "Once",
+    "recurring": "Recurring"
+  },
+  "scheduleTypes": {
+    "manual": "Manual",
+    "once": "Once",
+    "recurring": "Recurring",
+    "trigger": "Trigger"
+  },
+  "sections": {
+    "aiAgents": {
+      "description": "Configure and manage ai agents",
+      "title": "Ai agents"
+    },
+    "api": {
+      "contactCta": "Contact",
+      "description": "Configure and manage api",
+      "exampleCurl": "Example curl",
+      "leadsCreateDesc": "Leads create desc",
+      "requestBody": "Request body",
+      "title": "Api",
+      "workspaceMeDesc": "Workspace me desc"
+    },
+    "billing": {
+      "cta": "Cta",
+      "description": "Configure and manage billing",
+      "title": "Billing"
+    },
+    "callForwarding": {
+      "att": "Att",
+      "carrierSteps": "Carrier steps",
+      "comcast": "Comcast",
+      "description": "Configure and manage call forwarding",
+      "googleVoice": "Google voice",
+      "title": "Call forwarding",
+      "tmobile": "Tmobile",
+      "verizon": "Verizon"
+    },
+    "campaigns": {
+      "description": "Configure and manage campaigns",
+      "title": "Campaigns"
+    },
+    "changelog": {
+      "description": "Configure and manage changelog",
+      "entry202501": "Entry202501",
+      "entry202502": "Entry202502",
+      "entry202503": "Entry202503",
+      "title": "Changelog"
+    },
+    "faq": {
+      "cta": "Cta",
+      "description": "Configure and manage faq",
+      "title": "Faq"
+    },
+    "inboundSettings": "Inbound settings",
+    "integrations": {
+      "actionsHeading": "Actions heading",
+      "authorizeLabel": "Authorize",
+      "description": "Configure and manage integrations",
+      "title": "Integrations",
+      "tokenLabel": "Token",
+      "triggersHeading": "Triggers heading",
+      "zapierDesc": "Zapier desc",
+      "zapierHeading": "Zapier heading"
+    },
+    "objectionDesc": "Objection desc",
+    "objectionHandling": "Objection handling",
+    "outboundSettings": "Outbound settings",
+    "quickStart": {
+      "cta": "Cta",
+      "description": "Configure and manage quick start",
+      "step1": "Step1",
+      "step1Label": "Step1",
+      "step2": "Step2",
+      "step2Label": "Step2",
+      "step3": "Step3",
+      "step3Label": "Step3",
+      "step4": "Step4",
+      "step4Label": "Step4",
+      "step5": "Step5",
+      "step5Label": "Step5",
+      "title": "Quick start"
+    },
+    "sdk": {
+      "createLeadHeading": "Create lead heading",
+      "curlTitle": "Curl title",
+      "description": "Configure and manage sdk",
+      "pythonTitle": "Python title",
+      "title": "Sdk"
+    }
+  },
+  "sequence": {
+    "addStep": "Add step",
+    "call": "Call",
+    "channel": "Channel",
+    "delayHours": "Delay hours",
+    "email": "Email",
+    "heading": "Sequence",
+    "remove": "Remove",
+    "sms": "Sms",
+    "subtext": "Manage your sequence settings",
+    "template": "Template"
+  },
+  "settingsSubpages": {
+    "backToSettings": "Back to settings",
+    "businessUpdateHint": "Tip: business update",
+    "callRulesHint": "Tip: call rules",
+    "complianceConfigureHint": "Tip: compliance configure",
+    "notificationsHint": "Tip: notifications",
+    "openFullSettingsBusiness": "Open full settings business",
+    "openFullSettingsCallRules": "Open full settings call rules",
+    "openFullSettingsCompliance": "Open full settings compliance",
+    "openFullSettingsNotifications": "Open full settings notifications",
+    "openFullSettingsTeam": "Open full settings team",
+    "operatorManagementHint": "Tip: operator management",
+    "operators": "Operators",
+    "teamManageHint": "Tip: team manage"
+  },
+  "setup": {
+    "completed": "Completed",
+    "current": "Current",
+    "currentlyOn": "Currently on",
+    "jumpAria": "Jump",
+    "stepOf": "Step of",
+    "title": "Setup"
+  },
+  "sidebarNav": {
+    "body": "Body",
+    "title": "Sidebar nav"
+  },
+  "signIn": {
+    "button": "Button",
+    "emailPlaceholder": "you@company.com",
+    "hidePassword": "Hide password",
+    "hidePasswordAria": "Hide password",
+    "noAccountPrefix": "No account prefix",
+    "passwordPlaceholder": "Enter your password",
+    "showPassword": "Show password",
+    "showPasswordAria": "Show password",
+    "startFreeCta": "Start free",
+    "subtitle": "Manage your sign in settings",
+    "title": "Sign in"
+  },
+  "simulator": {
+    "aiAgent": "Ai agent",
+    "callInProgress": "Call in progress",
+    "caller": "Caller",
+    "conversationPreview": "Conversation preview",
+    "ctaStartFree": "Cta start free",
+    "detailLabel": "Detail",
+    "disclaimer": "Disclaimer",
+    "followUp": "Follow up",
+    "highQualityLead": "High quality lead",
+    "leadScore": "Lead score",
+    "loading": "Connecting…",
+    "qualifiedLead": "Qualified lead",
+    "readyHeading": "Ready heading",
+    "readySubtext": "Ready subtext",
+    "resultsHeading": "Results heading",
+    "script0Result": "Script0 result",
+    "script0Title": "Script0 title",
+    "script1Result": "Script1 result",
+    "script1Title": "Script1 title",
+    "script2Result": "Script2 result",
+    "script2Title": "Script2 title",
+    "skipToResult": "Skip to result",
+    "subtitle": "Hear your AI agent handle real conversations",
+    "tabAppointment": "Tab appointment",
+    "tabFollowUp": "Tab follow up",
+    "tabInbound": "Tab inbound",
+    "thatCallTook": "That call took"
+  },
+  "sort": {
+    "name": "Name",
+    "newest": "Newest",
+    "score": "Score"
+  },
+  "sourceStep": {
+    "description": "Configure and manage source step",
+    "title": "Source step"
+  },
+  "stats": {
+    "appliedToAgent": "Applied to agent",
+    "avgQuality": "Avg quality",
+    "callsAnalyzed": "Calls analyzed",
+    "insightsExtracted": "Insights extracted"
+  },
+  "status": {
+    "active": "Active",
+    "calls": "Calls",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "inactive": "Inactive",
+    "ready": "Ready"
+  },
+  "statusFilter": {
+    "active": "Active",
+    "all": "All",
+    "completed": "Completed",
+    "draft": "Draft",
+    "paused": "Paused"
+  },
+  "steps": {
+    "add": "Add",
+    "audience": "Audience",
+    "call": "Call",
+    "channel": "Channel",
+    "days": "Days",
+    "delay": "Delay",
+    "email": "Email",
+    "heading": "Steps",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "remove": "Remove",
+    "review": "Review",
+    "schedule": "Schedule",
+    "sequence": "Sequence",
+    "sms": "Sms",
+    "stopIfBooked": "Stop if booked",
+    "stopIfReply": "Stop if reply",
+    "template": "Template",
+    "type": "Type"
+  },
+  "stuck": {
+    "desc1": "Desc1",
+    "desc2": "Desc2",
+    "title": "Stuck"
+  },
+  "suppression": {
+    "cooldownConversion": "Cooldown conversion",
+    "cooldownDecline": "Cooldown decline",
+    "heading": "Suppression",
+    "maxCallsPerDay": "Max calls per day",
+    "maxCallsPerWeek": "Max calls per week",
+    "maxSmsPerDay": "Max sms per day"
+  },
+  "tabs": {
+    "active": "Active",
+    "analyzed": "Analyzed",
+    "manual": "Manual",
+    "templates": "Templates"
+  },
+  "testStep": {
+    "back": "Back",
+    "backToBehavior": "Back to behavior",
+    "continue": "Continue",
+    "continueToGoLive": "Continue to go live",
+    "copyLink": "Copy link",
+    "description": "Make a test call to hear your AI agent in action",
+    "readyTitle": "Ready title",
+    "scenarioLabel": "Scenario",
+    "scenarios": {
+      "booking": "Booking",
+      "bookingPrompt": "Booking prompt",
+      "complaint": "Complaint",
+      "complaintPrompt": "Complaint prompt",
+      "general": "General",
+      "generalPrompt": "General prompt",
+      "pricing": "Pricing",
+      "pricingPrompt": "Pricing prompt"
+    },
+    "scorecard": {
+      "booking": "Booking",
+      "greeting": "Greeting",
+      "knowledge": "Knowledge",
+      "tone": "Tone"
+    },
+    "scorecardTitle": "Scorecard title",
+    "starsAria": "Stars",
+    "title": "Test Call"
+  },
+  "time": {
+    "dayAgo": "Day ago",
+    "daysAgo": "Days ago",
+    "hourAgo": "Hour ago",
+    "hoursAgo": "Hours ago",
+    "justNow": "Just now",
+    "minAgo": "Min ago",
+    "yesterday": "Yesterday"
+  },
+  "timeline": {
+    "bookingTitle": "Booking title",
+    "callTitle": "Call title",
+    "campaignTitle": "Campaign title",
+    "duration": "Duration",
+    "estimatedValue": "Estimated value",
+    "heading": "Timeline",
+    "messageTitle": "Message title",
+    "outcome": "Outcome",
+    "scheduledFor": "Scheduled for",
+    "step": "Step",
+    "workflowTitle": "Workflow title"
+  },
+  "timelineLabels": {
+    "call": "Call",
+    "close": "Close",
+    "confirm": "Confirm",
+    "followUp": "Follow up"
+  },
+  "toasts": {
+    "signInFailed": "Sign in failed"
+  },
+  "toggle": {
+    "annual": "Annual",
+    "monthly": "Monthly",
+    "savings": "Savings"
+  },
+  "touchpointTypes": {
+    "call": "Call",
+    "email": "Email",
+    "sms": "Sms",
+    "wait": "Wait"
+  },
+  "triggers": {
+    "booked": "Booked",
+    "bookingCompleted": "Booking completed",
+    "bookingConfirmed": "Booking confirmed",
+    "bookingNoShow": "Booking no show",
+    "leadCaptured": "Lead captured",
+    "manual": "Manual",
+    "noAnswer": "No answer",
+    "voicemailLeft": "Voicemail left"
+  },
+  "troubleshooting": {
+    "callsCutOffDesc": "Calls cut off desc",
+    "callsCutOffTitle": "Calls cut off title",
+    "crmSyncDesc": "Crm sync desc",
+    "crmSyncTitle": "Crm sync title",
+    "noCallsDesc": "No calls desc",
+    "noCallsTitle": "No calls title",
+    "noVoiceDesc": "No voice desc",
+    "noVoiceTitle": "No voice title",
+    "title": "Troubleshooting"
+  },
+  "type": {
+    "heading": "Type",
+    "nameLabel": "Name"
+  },
+  "types": {
+    "appointmentReminder": {
+      "desc": "Desc",
+      "label": "Label"
+    },
+    "appointmentSetting": {
+      "desc": "Desc",
+      "label": "Label"
+    },
+    "booking": "Booking",
+    "coldOutreach": {
+      "desc": "Desc",
+      "label": "Label"
+    },
+    "custom": {
+      "desc": "Desc",
+      "label": "Label"
+    },
+    "followUp": "Follow up",
+    "leadQualification": {
+      "desc": "Desc",
+      "label": "Label"
+    },
+    "noShowRecovery": {
+      "desc": "Desc",
+      "label": "Label"
+    },
+    "qualification": "Qualification",
+    "quoteChase": {
+      "desc": "Desc",
+      "label": "Label"
+    },
+    "reactivation": {
+      "desc": "Desc",
+      "label": "Label"
+    },
+    "reviewRequest": {
+      "desc": "Desc",
+      "label": "Label"
+    },
+    "sales": "Sales",
+    "speedToLead": {
+      "desc": "Desc",
+      "label": "Label"
+    },
+    "support": "Support"
+  },
+  "voiceSelector": {
+    "advancedVoiceSettings": "Advanced voice settings",
+    "backchannelLabel": "Backchannel",
+    "denoisingLabel": "Denoising",
+    "previewVoiceAria": "Preview voice",
+    "responseDelay": "Response delay",
+    "responseDelayNote": "Response delay note",
+    "selectThisVoiceLabel": "Select this voice",
+    "selectedLabel": "Selected",
+    "speed": "Speed",
+    "stability": "Stability",
+    "stabilityNote": "Stability note",
+    "voiceLabel": "Voice"
+  },
+  "voiceStep": {
+    "heading": "Voice step"
+  },
+  "voicemail": {
+    "heading": "Voicemail",
+    "scriptHint": "Tip: script",
+    "scriptLabel": "Script"
   }
 }
