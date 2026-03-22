@@ -121,6 +121,7 @@ export async function GET(
       access_token?: string;
       refresh_token?: string;
       expires_in?: number;
+      instance_url?: string; // Salesforce returns this
     };
 
     if (!tokens.access_token) {
@@ -145,6 +146,7 @@ export async function GET(
           access_token: tokens.access_token,
           refresh_token: tokens.refresh_token ?? null,
           expires_at: expiresAt,
+          instance_url: tokens.instance_url ?? null,
           updated_at: new Date().toISOString(),
         },
         { onConflict: "workspace_id,provider" }
