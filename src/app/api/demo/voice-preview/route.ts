@@ -116,10 +116,13 @@ function setCachedAudio(
 function mapVoiceToDeepgram(voiceId: string): string {
   const map: Record<string, string> = {
     // ── Female voices ──
-    // Sarah (warm receptionist) → Stella (warmest female)
+    // Sarah (warm receptionist / agent) → Stella (warmest female)
     "us-female-warm-receptionist": "aura-stella-en",
+    "us-female-warm-agent": "aura-stella-en",
+    "us-female-warm": "aura-stella-en",
     "us-female-friendly": "aura-stella-en",
     "us-female-empathetic": "aura-stella-en",
+    "warm-female": "aura-stella-en",
 
     // Jennifer (professional) → Asteria (clearest, most professional)
     "us-female-professional": "aura-asteria-en",
@@ -142,6 +145,12 @@ function mapVoiceToDeepgram(voiceId: string): string {
     "us-male-casual": "aura-helios-en",
     "us-male-energetic": "aura-helios-en",
     "us-male-calm": "aura-helios-en",
+
+    // ── Generic shorthand voices ──
+    "warm-male": "aura-helios-en",
+    "professional-female": "aura-asteria-en",
+    "professional-male": "aura-orion-en",
+    "confident-male": "aura-orion-en",
 
     // ── British voices ──
     "uk-female-professional": "aura-asteria-en",
@@ -377,4 +386,3 @@ export async function GET(req: NextRequest) {
     );
   }
 }
-// Trigger redeploy to pick up DEEPGRAM_API_KEY env var
