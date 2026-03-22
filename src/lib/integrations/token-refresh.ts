@@ -22,6 +22,7 @@ const TOKEN_URLS: Record<CrmProviderId, string> = {
   gohighlevel: "https://services.leadconnectorhq.com/oauth/token",
   google_contacts: "https://oauth2.googleapis.com/token",
   microsoft_365: "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+  airtable: "https://airtable.com/oauth2/v1/token",
 };
 
 const ENV_PREFIX: Record<CrmProviderId, string> = {
@@ -32,6 +33,7 @@ const ENV_PREFIX: Record<CrmProviderId, string> = {
   gohighlevel: "GOHIGHLEVEL",
   google_contacts: "GOOGLE",
   microsoft_365: "MICROSOFT",
+  airtable: "AIRTABLE",
 };
 
 /**
