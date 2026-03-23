@@ -18,17 +18,16 @@ export interface CreateOutboundCallParams {
 export interface OutboundCallResponse {
   data?: {
     id?: string;
-    type?: string;
-    attributes?: {
-      id?: string;
-      call_session_id?: string;
-      call_leg_id?: string;
-      to?: string;
-      from?: string;
-      state?: string;
-      direction?: string;
-      created_at?: string;
-    };
+    record_type?: string;
+    call_control_id?: string;
+    call_session_id?: string;
+    call_leg_id?: string;
+    to?: string;
+    from?: string;
+    state?: string;
+    direction?: string;
+    is_alive?: boolean;
+    created_at?: string;
   };
 }
 
@@ -55,13 +54,11 @@ export async function createOutboundCall(
       body: JSON.stringify(body),
     });
 
-    const callId = response.data?.attributes?.call_session_id || response.data?.id || "";
-    const callSessionId =
-      response.data?.attributes?.call_session_id ||
-      response.data?.attributes?.call_leg_id ||
-      "";
+    const d = response.data;
+    const callId = d?.call_control_id || d?.call_session_id || d?.id || "";
+    const callSessionId = d?.call_session_id || d?.call_leg_id || d?.id || "";
 
-    if (!callId || !callSessionId) {
+    if (!callId) {
       return { error: "No call ID returned from Telnyx" };
     }
 
@@ -167,15 +164,15 @@ export async function getCallStatus(
       }
     );
 
-    const attributes = response.data?.attributes;
-    if (!attributes) {
+    const d = response.data;
+    if (!d) {
       return { error: "Call not found" };
     }
 
     return {
-      state: attributes.state || "unknown",
-      to: attributes.to || "",
-      from: attributes.from || "",
+      state: d.state || "unknown",
+      to: d.to || "",
+      from: d.from || "",
     };
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : String(err);
