@@ -133,7 +133,8 @@
     "more": "More",
     "shortcutsHeading": "Keyboard Shortcuts",
     "backToKnowledge": "Back to knowledge",
-    "continueToTest": "Continue to test"
+    "continueToTest": "Continue to test",
+    "coldLeads": "Cold Leads"
   },
   "agency": {
     "kicker": "Partner operations",
@@ -238,7 +239,8 @@
       "timeLabel": "Time",
       "durationLabel": "Duration",
       "availableTimes": "Available Times"
-    }
+    },
+    "dashboard": "Dashboard"
   },
   "toast": {
     "saved": "Settings saved",
@@ -1830,7 +1832,8 @@
     "createCampaign": "Create campaign →",
     "viewAll": "View all",
     "noWorkspace": "No workspace selected",
-    "selectWorkspace": "Select a workspace to view your dashboard."
+    "selectWorkspace": "Select a workspace to view your dashboard.",
+    "dashboard": "Dashboard"
   },
   "analytics": {
     "pageTitle": "Analytics — Recall Touch",
