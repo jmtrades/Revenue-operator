@@ -36,10 +36,11 @@ export async function GET(req: NextRequest) {
       status,
       reason,
       priority,
-      strategy,
+      reengagement_strategy,
       next_attempt_at,
-      attempt_count,
-      last_attempted_at,
+      attempts,
+      last_attempt_at,
+      max_attempts,
       created_at,
       updated_at
       `,
@@ -51,13 +52,13 @@ export async function GET(req: NextRequest) {
     query = query.eq("status", status);
   }
 
-  let orderColumn: "priority" | "next_attempt_at" | "created_at" | "attempt_count" = "next_attempt_at";
+  let orderColumn: "priority" | "next_attempt_at" | "created_at" | "attempts" = "next_attempt_at";
   if (sortBy === "priority") {
     orderColumn = "priority";
   } else if (sortBy === "created_at") {
     orderColumn = "created_at";
-  } else if (sortBy === "attempt_count") {
-    orderColumn = "attempt_count";
+  } else if (sortBy === "attempts" || sortBy === "attempt_count") {
+    orderColumn = "attempts";
   }
 
   const { data, error, count } = await query
@@ -85,14 +86,14 @@ export async function POST(req: NextRequest) {
   const authErr = await requireWorkspaceAccess(req, session.workspaceId);
   if (authErr) return authErr;
 
-  let body: { lead_id: string; reason?: string; priority?: string; strategy?: string };
+  let body: { lead_id: string; reason?: string; priority?: string; reengagement_strategy?: string };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { lead_id, reason, priority, strategy } = body;
+  const { lead_id, reason, priority, reengagement_strategy } = body;
 
   if (!lead_id?.trim()) {
     return NextResponse.json({ error: "lead_id is required" }, { status: 400 });
@@ -133,8 +134,8 @@ export async function POST(req: NextRequest) {
       status: "pending",
       reason: (reason ?? "").trim() || null,
       priority: (priority ?? "medium").trim() || "medium",
-      strategy: (strategy ?? "").trim() || null,
-      attempt_count: 0,
+      reengagement_strategy: (reengagement_strategy ?? "").trim() || null,
+      attempts: 0,
       created_at: now,
       updated_at: now,
     })

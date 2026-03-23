@@ -132,7 +132,7 @@ export async function POST(req: NextRequest) {
             // Store inbound message for inbox
             await db.from("chat_widget_messages").insert({
               workspace_id: workspaceId,
-              sender: "visitor",
+              sender_type: "visitor",
               content: messageInfo.text?.slice(0, 2000) ?? "",
               channel: "sms",
               metadata: { from: fromPhone, to: toPhone, message_id: messageInfo.messageId },
