@@ -11,7 +11,7 @@ interface ChatSession {
   workspace_id: string;
   visitor_name: string;
   visitor_email?: string;
-  session_token: string;
+  visitor_token: string;
   status: string;
   created_at: string;
   updated_at: string;
@@ -21,10 +21,9 @@ interface ChatSession {
 interface ChatMessage {
   id: string;
   session_id: string;
-  message_text: string;
+  content: string;
   sender_type: "visitor" | "agent";
-  sender_name?: string;
-  is_read: boolean;
+  channel?: string;
   created_at: string;
 }
 
@@ -118,9 +117,8 @@ export default function LiveChatInboxPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           session_id: selectedSessionId,
-          message_text: text,
+          content: text,
           sender_type: "agent",
-          sender_name: "Agent",
         }),
       });
 
@@ -294,7 +292,7 @@ export default function LiveChatInboxPage() {
                             : "bg-gray-200 text-gray-900 rounded-bl-none"
                         }`}
                       >
-                        <p className="text-sm">{msg.message_text}</p>
+                        <p className="text-sm">{msg.content}</p>
                         <p className="text-xs mt-1 opacity-75">
                           {new Date(msg.created_at).toLocaleTimeString()}
                         </p>
