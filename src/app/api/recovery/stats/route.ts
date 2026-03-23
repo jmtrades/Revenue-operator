@@ -69,19 +69,19 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Also pull from daily_metrics for no_show recovery data
+    // Also pull from daily_metrics for recovery data
     try {
       const { data: metrics } = await db
         .from("daily_metrics")
-        .select("no_shows, no_shows_recovered, revenue_estimated_cents")
+        .select("missed_calls, recovered_calls, total_revenue_cents")
         .eq("workspace_id", workspaceId)
         .gte("date", thirtyDaysAgo.toISOString().slice(0, 10));
 
       for (const m of metrics ?? []) {
-        const dm = m as { no_shows: number | null; no_shows_recovered: number | null; revenue_estimated_cents: number | null };
-        if (dm.no_shows_recovered) {
-          recovered += dm.no_shows_recovered;
-          totalRevenueRecovered += (dm.no_shows_recovered * 450);
+        const dm = m as { missed_calls: number | null; recovered_calls: number | null; total_revenue_cents: number | null };
+        if (dm.recovered_calls) {
+          recovered += dm.recovered_calls;
+          totalRevenueRecovered += (dm.recovered_calls * 450);
         }
       }
     } catch {
