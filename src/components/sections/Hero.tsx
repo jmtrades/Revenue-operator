@@ -156,11 +156,12 @@ function HeroVoiceDemo() {
             onChange={(e) => setPhone(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleDemoCall()}
             placeholder={t("placeholder")}
-            className="w-full pl-9 pr-3 py-2.5 rounded-[10px] text-sm transition-colors focus:outline-none"
+            className="w-full pl-9 pr-3 py-2.5 text-sm transition-colors focus:outline-none"
             style={{
               background: "var(--bg-inset)",
               border: "1px solid var(--border-default)",
               color: "var(--text-primary)",
+              borderRadius: "var(--radius-btn)"
             }}
           />
         </div>
@@ -233,7 +234,7 @@ export function Hero() {
             </p>
 
             {/* Social proof ABOVE CTAs — builds trust before the ask */}
-            <div className="flex flex-wrap items-center gap-4 mb-6">
+            <div className="flex flex-wrap items-center gap-3 mb-6">
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => (
                   <svg key={i} className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="var(--accent-warning, #F59E0B)">
@@ -276,7 +277,7 @@ export function Hero() {
           {/* Right: Dashboard preview card */}
           <div className="max-w-md lg:ml-auto w-full">
             <div
-              className="rounded-2xl p-6 transition-shadow"
+              className="rounded-2xl p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
               style={{
                 background: "var(--bg-surface)",
                 border: "1px solid var(--border-default)",

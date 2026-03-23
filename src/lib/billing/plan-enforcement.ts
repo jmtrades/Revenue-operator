@@ -39,6 +39,21 @@ function suggestUpgrade(current: PlanSlug): PlanSlug | undefined {
   return undefined;
 }
 
+/** Block all billable actions if workspace billing is suspended */
+const ACTIVE_STATUSES = new Set(["active", "trial"]);
+function checkBillingActive(billingStatus: string | null | undefined): EnforcementResult | null {
+  if (!billingStatus || ACTIVE_STATUSES.has(billingStatus)) return null;
+  return {
+    allowed: false,
+    reason: "no_subscription",
+    message: billingStatus === "payment_failed"
+      ? "Your payment failed. Please update your billing info to continue."
+      : billingStatus === "paused"
+        ? "Your account is paused. Resume your subscription to continue."
+        : "An active subscription is required for this action.",
+  };
+}
+
 /** Check if workspace can create another AI agent */
 export async function canCreateAgent(workspaceId: string): Promise<EnforcementResult> {
   const db = getDb();
@@ -50,6 +65,9 @@ export async function canCreateAgent(workspaceId: string): Promise<EnforcementRe
 
   const ws = wsRes.data as { billing_tier?: string; billing_status?: string } | null;
   if (!ws) return { allowed: false, reason: "no_subscription", message: "Workspace not found" };
+
+  const billingBlock = checkBillingActive(ws.billing_status);
+  if (billingBlock) return billingBlock;
 
   const tier = getPlan(ws.billing_tier);
   const plan = BILLING_PLANS[tier];
@@ -81,6 +99,9 @@ export async function canProvisionNumber(workspaceId: string): Promise<Enforceme
   const ws = wsRes.data as { billing_tier?: string; billing_status?: string } | null;
   if (!ws) return { allowed: false, reason: "no_subscription", message: "Workspace not found" };
 
+  const billingBlock = checkBillingActive(ws.billing_status);
+  if (billingBlock) return billingBlock;
+
   const tier = getPlan(ws.billing_tier);
   const plan = BILLING_PLANS[tier];
   const count = numRes.count ?? 0;
@@ -103,9 +124,12 @@ export async function canProvisionNumber(workspaceId: string): Promise<Enforceme
 export async function canMakeOutboundCall(workspaceId: string): Promise<EnforcementResult> {
   const db = getDb();
 
-  const wsRes = await db.from("workspaces").select("billing_tier").eq("id", workspaceId).maybeSingle();
-  const ws = wsRes.data as { billing_tier?: string } | null;
+  const wsRes = await db.from("workspaces").select("billing_tier, billing_status").eq("id", workspaceId).maybeSingle();
+  const ws = wsRes.data as { billing_tier?: string; billing_status?: string } | null;
   if (!ws) return { allowed: false, reason: "no_subscription", message: "Workspace not found" };
+
+  const billingBlock = checkBillingActive(ws.billing_status);
+  if (billingBlock) return billingBlock;
 
   const tier = getPlan(ws.billing_tier);
   const plan = BILLING_PLANS[tier];
@@ -145,9 +169,12 @@ export async function canUseFeature(
 ): Promise<EnforcementResult> {
   const db = getDb();
 
-  const wsRes = await db.from("workspaces").select("billing_tier").eq("id", workspaceId).maybeSingle();
-  const ws = wsRes.data as { billing_tier?: string } | null;
+  const wsRes = await db.from("workspaces").select("billing_tier, billing_status").eq("id", workspaceId).maybeSingle();
+  const ws = wsRes.data as { billing_tier?: string; billing_status?: string } | null;
   if (!ws) return { allowed: false, reason: "no_subscription", message: "Workspace not found" };
+
+  const billingBlock = checkBillingActive(ws.billing_status);
+  if (billingBlock) return billingBlock;
 
   const tier = getPlan(ws.billing_tier);
   const plan = BILLING_PLANS[tier];
@@ -171,12 +198,15 @@ export async function canInviteSeat(workspaceId: string): Promise<EnforcementRes
   const db = getDb();
 
   const [wsRes, memberRes] = await Promise.all([
-    db.from("workspaces").select("billing_tier").eq("id", workspaceId).maybeSingle(),
+    db.from("workspaces").select("billing_tier, billing_status").eq("id", workspaceId).maybeSingle(),
     db.from("workspace_members").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId),
   ]);
 
-  const ws = wsRes.data as { billing_tier?: string } | null;
+  const ws = wsRes.data as { billing_tier?: string; billing_status?: string } | null;
   if (!ws) return { allowed: false, reason: "no_subscription", message: "Workspace not found" };
+
+  const billingBlock = checkBillingActive(ws.billing_status);
+  if (billingBlock) return billingBlock;
 
   const tier = getPlan(ws.billing_tier);
   const plan = BILLING_PLANS[tier];

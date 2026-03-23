@@ -506,10 +506,10 @@ export default function AppContactsPage() {
                       onClick={() => setSelectedId(c.id)}
                       className={`w-full text-left flex items-center gap-4 p-4 rounded-2xl border bg-[var(--bg-card)] ${
                         typeStyles(c.type)
-                      } border-[var(--border-default)] hover:bg-[var(--bg-input)] transition-colors ${selectedId === c.id ? "ring-1 ring-[var(--border-medium)]" : ""}`}
+                      } border-[var(--border-default)] hover:bg-[var(--bg-input)] transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/30 ${selectedId === c.id ? "ring-1 ring-[var(--border-medium)]" : ""}`}
                     >
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold text-[var(--text-primary)] shrink-0 ${avatarColorFromName(
+                        className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold text-[var(--text-primary)] shrink-0 ring-1 ring-[var(--border-default)] ${avatarColorFromName(
                           fullName
                         )}`}
                       >

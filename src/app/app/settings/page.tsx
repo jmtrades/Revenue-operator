@@ -126,7 +126,7 @@ export default function AppSettingsPage() {
       <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">{tSettings("title")}</h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">{tSettings("pageSubtitle")}</p>
       <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-6 mb-6">
-        <h2 className="text-base font-medium text-[var(--text-primary)] mb-4">{tSettings("profile")}</h2>
+        <h2 className="text-base font-medium text-[var(--text-primary)] mb-4">{tSettings("profileTitle")}</h2>
         <div className="space-y-4">
           <div>
             <label className="text-xs text-[var(--text-tertiary)] mb-1 block">{tSettings("emailLabel")}</label>

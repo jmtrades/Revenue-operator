@@ -105,6 +105,8 @@ function isPublicApi(pathname: string): boolean {
   if (pathname.startsWith("/api/auth/")) return true;
   // Vapi routes removed — ElevenLabs is the active voice provider
   if (pathname === "/api/agent/speak" || pathname === "/api/agent/voices") return true;
+  // Voice server LLM endpoint — called by Fly.io voice server during live calls (no browser cookies)
+  if (pathname === "/api/agent/respond" || pathname === "/api/agent/chat") return true;
   if (pathname.startsWith("/api/webhooks/") || pathname.startsWith("/api/integrations/twilio")) return true;
   // Voice server callback routes — called by Python voice server during live calls, not by browsers
   if (pathname.startsWith("/api/voice/")) return true;

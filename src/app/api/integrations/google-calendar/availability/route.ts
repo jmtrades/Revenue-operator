@@ -28,7 +28,8 @@ async function getAccessToken(workspaceId: string): Promise<string | null> {
 
   const clientId = getGoogleCalendarClientId();
   const clientSecret = getGoogleCalendarClientSecret();
-  if (!clientId || !clientSecret || !row.refresh_token) return row.access_token;
+  // If we can't refresh, return null (expired token would cause 401 at Google API)
+  if (!clientId || !clientSecret || !row.refresh_token) return null;
 
   const body = new URLSearchParams({
     client_id: clientId,

@@ -91,12 +91,13 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 h-[60px] flex items-center transition-all duration-200"
+      className="fixed top-0 left-0 right-0 z-50 h-[60px] flex items-center transition-all duration-300"
       style={{
-        background: scrolled ? "rgba(255, 255, 255, 0.85)" : "transparent",
-        backdropFilter: scrolled ? "saturate(180%) blur(16px)" : "none",
-        WebkitBackdropFilter: scrolled ? "saturate(180%) blur(16px)" : "none",
+        background: scrolled ? "var(--bg-surface-glass, rgba(255, 255, 255, 0.82))" : "transparent",
+        backdropFilter: scrolled ? "saturate(180%) blur(20px)" : "none",
+        WebkitBackdropFilter: scrolled ? "saturate(180%) blur(20px)" : "none",
         borderBottom: scrolled ? "1px solid var(--border-default)" : "1px solid transparent",
+        boxShadow: scrolled ? "0 1px 3px rgba(0,0,0,0.04)" : "none",
       }}
     >
       <Container className="flex items-center justify-between w-full">
@@ -113,19 +114,32 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
         <nav className="hidden lg:flex items-center gap-7">
           <Link
             href={ROUTES.PRODUCT}
-            className="text-[13px] font-medium transition-colors duration-150 no-underline"
+            className="text-[13px] font-medium transition-colors duration-150 no-underline relative pb-1 group"
             style={{
               color: pathname === ROUTES.PRODUCT ? "var(--text-primary)" : "var(--text-secondary)",
             }}
           >
             {t("product")}
+            {pathname === ROUTES.PRODUCT && (
+              <span
+                className="absolute bottom-0 left-0 h-0.5 bg-current transition-all duration-200"
+                style={{ width: "100%" }}
+              />
+            )}
+            {pathname !== ROUTES.PRODUCT && (
+              <span
+                className="absolute bottom-0 left-0 h-0.5 bg-current transition-all duration-200"
+                style={{ width: "0%", background: "var(--text-primary)" }}
+                aria-hidden="true"
+              />
+            )}
           </Link>
 
           {/* Solutions dropdown */}
           <div className="relative group">
             <button
               type="button"
-              className="flex items-center gap-1 text-[13px] font-medium transition-colors duration-150"
+              className="flex items-center gap-1 text-[13px] font-medium transition-colors duration-150 px-2 py-1 rounded-md group-hover:bg-[var(--bg-hover)]"
               style={{
                 color: pathname.startsWith("/industries/") ? "var(--text-primary)" : "var(--text-secondary)",
               }}
@@ -135,13 +149,13 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
               {t("solutions")}
               <ChevronDown className="w-3.5 h-3.5 opacity-50" />
             </button>
-            <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150" style={{ minWidth: "200px" }}>
+            <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2.5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-1 group-hover:translate-y-0" style={{ minWidth: "210px" }}>
               <div
                 className="rounded-xl py-1.5"
                 style={{
                   background: "var(--bg-surface)",
                   border: "1px solid var(--border-default)",
-                  boxShadow: "var(--shadow-lg)",
+                  boxShadow: "var(--shadow-xl, 0 20px 40px rgba(0,0,0,0.1))",
                 }}
               >
                 {SOLUTIONS_LINKS.map((s) => (
@@ -172,12 +186,18 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
               <Link
                 key={l.href}
                 href={l.href}
-                className="text-[13px] font-medium transition-colors duration-150 no-underline"
+                className="text-[13px] font-medium transition-colors duration-150 no-underline relative pb-1 px-2 py-1 rounded-md hover:bg-[var(--bg-hover)]"
                 style={{
                   color: isActive ? "var(--text-primary)" : "var(--text-secondary)",
                 }}
               >
                 {t(l.labelKey)}
+                {isActive && (
+                  <span
+                    className="absolute bottom-0 left-2 h-0.5 bg-current transition-all duration-200"
+                    style={{ width: "calc(100% - 1rem)" }}
+                  />
+                )}
               </Link>
             );
           })}
@@ -199,7 +219,7 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
           ) : null}
           <Link
             href={desktopPrimaryHref}
-            className="btn-marketing-blue text-[13px] px-4 py-2 no-underline"
+            className="btn-marketing-blue text-[13px] px-4 py-2.5 no-underline"
           >
             {desktopPrimaryLabel}
           </Link>
@@ -222,10 +242,11 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
       {mobileOpen && (
         <div
           ref={menuRef}
-          className="lg:hidden fixed inset-0 top-[60px] z-40 flex flex-col p-8 pt-10 overflow-y-auto"
+          className="lg:hidden fixed inset-0 top-[60px] z-40 flex flex-col p-8 pt-10 overflow-y-auto animate-slideDown"
           style={{
             background: "var(--bg-primary)",
             borderTop: "1px solid var(--border-default)",
+            animation: "slideDown 300ms ease-out"
           }}
         >
           <nav className="flex flex-col gap-1">

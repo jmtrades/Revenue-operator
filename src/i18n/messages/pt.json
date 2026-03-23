@@ -1659,6 +1659,9 @@
       "responsibilityRemains": "A responsabilidade do acompanhamento permanece durante este período.",
       "connectCalendar": "Conecte seu calendário",
       "nav": {
+        "sectionBusiness": "Negócio",
+        "sectionIntegrations": "Integrações e voz",
+        "sectionAccount": "Conta",
         "business": "Negócio",
         "phone": "Telefone",
         "callRules": "Regras de chamadas",
@@ -1666,7 +1669,20 @@
         "notifications": "Notificações",
         "integrations": "Integrações",
         "compliance": "Conformidade",
-        "billing": "Faturamento"
+        "billing": "Faturamento",
+        "communication": "Comunicação",
+        "outbound": "Saída",
+        "leadScoring": "Pontuação de leads",
+        "industryTemplates": "Modelos do setor",
+        "agent": "Agente",
+        "marketplace": "Marketplace",
+        "porting": "Portar número",
+        "mapping": "Mapeamento de campos",
+        "syncLog": "Registro de sincronização",
+        "voiceSettings": "Configurações de voz",
+        "cancellation": "Cancelar plano",
+        "errorsAuditLog": "Erros e registro",
+        "activity": "Atividade"
       },
       "sourcesIntro": "Conecte de onde vêm seus leads",
       "copy": "Copiar",
@@ -3744,7 +3760,11 @@
       "activity": "Activity",
       "sectionBusiness": "Your Business",
       "sectionIntegrations": "Integrations",
-      "sectionAccount": "Account"
+      "sectionAccount": "Account",
+      "communication": "Comunicação",
+      "autoSetup": "Config. Automática (IA)",
+      "chatWidget": "Widget de Chat",
+      "whiteLabel": "Marca Branca"
     },
     "business": {
       "title": "Empresa",
@@ -4165,7 +4185,10 @@
     "toneForFollowThrough": "Tone for follow through",
     "whatYouOffer": "What you offer",
     "whatYouOfferPlaceholder": "Enter what you offer",
-    "whenWeAskBeforeActing": "When we ask before acting"
+    "whenWeAskBeforeActing": "When we ask before acting",
+    "profileTitle": "Perfil",
+    "requestDeleteData": "Solicitar exclusão de dados",
+    "requestDeleteAccount": "Solicitar exclusão de conta"
   },
   "hero": {
     "title": "Nesta semana atendemos 12.847 ligações que iriam para a caixa postal.",

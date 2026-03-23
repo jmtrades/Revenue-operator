@@ -56,7 +56,7 @@ export function Tooltip({ content, side = "top", children }: TooltipProps) {
             animate={{ opacity: 1, y: 0, transition: { duration: 0.15, ease: "easeOut" as const } }}
             exit={{ opacity: 0, y: 4, transition: { duration: 0.1, ease: "easeOut" as const } }}
             className={cn(
-              "pointer-events-none absolute z-50 rounded-md border border-[var(--border-default)] bg-[var(--bg-elevated)] px-2 py-1 text-xs text-[var(--text-primary)] shadow-lg",
+              "pointer-events-none absolute z-50 whitespace-nowrap rounded-[var(--radius-btn)] border border-[var(--border-default)] bg-[var(--bg-elevated)] px-2.5 py-1 text-[11px] font-medium text-[var(--text-primary)] shadow-[var(--shadow-md)]",
               positionClasses[side],
             )}
             role="tooltip"

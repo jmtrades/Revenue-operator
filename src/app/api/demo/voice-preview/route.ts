@@ -472,6 +472,56 @@ export async function GET(req: NextRequest) {
       if (error) errors.push(error);
     }
 
+    // ── Priority 3: Edge TTS via voice server /tts endpoint ($0, no API key) ──
+    // The voice server's /tts endpoint uses whatever TTS engine is configured
+    // (Edge TTS in production). This is a second attempt with different params.
+    if (voiceServerUrl && errors.length > 0) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+        let edgeResp;
+        try {
+          edgeResp = await fetch(`${voiceServerUrl}/tts`, {
+            method: "POST",
+            signal: controller.signal,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              text,
+              voice_id: normalizeVoiceId(voiceId),
+              engine: "edge-tts",
+            }),
+          });
+        } finally {
+          clearTimeout(timeoutId);
+        }
+
+        if (edgeResp.ok) {
+          const audioBuffer = await edgeResp.arrayBuffer();
+          const contentType = edgeResp.headers.get("content-type") || "audio/wav";
+
+          setCachedAudio(cacheKey, audioBuffer, contentType);
+
+          return new NextResponse(audioBuffer, {
+            status: 200,
+            headers: {
+              "Content-Type": contentType,
+              "Content-Length": audioBuffer.byteLength.toString(),
+              "Cache-Control": "public, max-age=86400",
+              "Access-Control-Allow-Origin":
+                process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com",
+              "X-Voice-Provider": "edge-tts",
+              "X-Voice-Id": normalizeVoiceId(voiceId),
+            },
+          });
+        }
+        errors.push(`EdgeTTS fallback ${edgeResp.status}`);
+      } catch (edgeErr) {
+        const e = edgeErr as Error;
+        errors.push(`EdgeTTS fallback: ${e.name === "AbortError" ? "timeout" : e.message}`);
+      }
+    }
+
     // ── No provider succeeded ──
     log("error", "voice_preview.no_provider", {
       hasVoiceServer: !!voiceServerUrl,

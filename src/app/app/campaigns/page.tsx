@@ -330,7 +330,7 @@ export default function CampaignsPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
-            className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-secondary)] text-sm"
+            className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-secondary)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/30"
           >
             <option value="all">{t("statusFilter.all")}</option>
             <option value="draft">{t("statusFilter.draft")}</option>
@@ -340,7 +340,7 @@ export default function CampaignsPage() {
           </select>
         </div>
 
-        <div className="mb-6 grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="mb-6 grid grid-cols-2 md:grid-cols-5 gap-4 drop-shadow-sm">
           <StatCard label={t("statTotal")} value={campaigns.length} color="blue" />
           <StatCard label={t("statActive")} value={campaigns.filter((c) => c.status === "active").length} color="emerald" />
           <StatCard label={t("statContacted")} value={campaigns.reduce((sum, c) => sum + c.called, 0)} color="cyan" />

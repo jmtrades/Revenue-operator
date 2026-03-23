@@ -609,7 +609,10 @@ async def websocket_conversation(websocket: WebSocket):
     → {"type": "end"}
     """
     await websocket.accept()
-    logger.info("WebSocket connection established")
+
+    # Extract workspace_id from query params (passed by Telnyx webhook)
+    ws_workspace_id = websocket.query_params.get("workspace_id")
+    logger.info(f"WebSocket connection established (workspace_id={ws_workspace_id})")
 
     engine: Optional[ConversationEngine] = None
     conversation_id: Optional[str] = None
@@ -659,6 +662,7 @@ async def websocket_conversation(websocket: WebSocket):
                         "stream_sid": stream_sid,
                         "assistant_id": assistant_id,
                         "client_type": "twilio",
+                        "workspace_id": ws_workspace_id or custom.get("workspace_id"),
                     })
                     conversation_id = session.conversation_id
 
@@ -724,6 +728,7 @@ async def websocket_conversation(websocket: WebSocket):
                     session = engine.create_session({
                         "assistant_id": assistant_id,
                         "client_type": "native",
+                        "workspace_id": ws_workspace_id or message.get("workspace_id"),
                     })
                     conversation_id = session.conversation_id
 
@@ -1045,10 +1050,19 @@ async def _get_llm_response(
             },
         ]
 
+        # Include workspace_id if available in session metadata
+        llm_payload = {
+            "messages": messages,
+            "conversation_id": conversation_id,
+        }
+        ws_id = session.metadata.get("workspace_id") if hasattr(session, "metadata") and isinstance(getattr(session, "metadata", None), dict) else None
+        if ws_id:
+            llm_payload["workspace_id"] = ws_id
+
         async with httpx.AsyncClient(timeout=15.0) as client:
             resp = await client.post(
                 engine.llm_endpoint,
-                json={"messages": messages, "conversation_id": conversation_id},
+                json=llm_payload,
             )
             resp.raise_for_status()
             data = resp.json()
@@ -1260,7 +1274,11 @@ async def startup_event():
     # Initialize TTS
     # Support both env names to avoid config drift across deploy targets.
     preferred_tts = os.getenv("TTS_ENGINE", os.getenv("TTS_MODEL", "orpheus")).lower()
-    if "fish" in preferred_tts:
+    if "edge" in preferred_tts:
+        preferred_tts = "edge-tts"
+    elif "eleven" in preferred_tts:
+        preferred_tts = "elevenlabs"
+    elif "fish" in preferred_tts:
         preferred_tts = "fish-speech"
     elif "kokoro" in preferred_tts:
         preferred_tts = "kokoro"

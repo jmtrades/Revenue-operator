@@ -173,13 +173,15 @@ export async function POST(req: NextRequest) {
 
           // 5. Start streaming audio after answering
           const voiceServerUrl = process.env.VOICE_SERVER_URL || "http://localhost:8080";
-          const wsUrl = voiceServerUrl.replace(/^http:/, "ws:").replace(/^https:/, "wss:") + "/ws/conversation";
+          // Pass workspace_id as query param so voice server can forward it to LLM endpoint
+          const wsBase = voiceServerUrl.replace(/^http:/, "ws:").replace(/^https:/, "wss:") + "/ws/conversation";
+          const wsUrl = workspaceId ? `${wsBase}?workspace_id=${encodeURIComponent(workspaceId)}` : wsBase;
 
           const streamResult = await startStreamingAudio(callInfo.callControlId, wsUrl);
           if ("error" in streamResult) {
             log("error", "telnyx_voice.streaming_start_failed", { error: streamResult.error, callControlId: callInfo.callControlId });
           } else {
-            log("info", "telnyx_voice.streaming_started", { callControlId: callInfo.callControlId, wsUrl });
+            log("info", "telnyx_voice.streaming_started", { callControlId: callInfo.callControlId, wsUrl: wsBase, workspaceId });
           }
         }
 
@@ -271,6 +273,61 @@ export async function POST(req: NextRequest) {
       case "call.streaming.stopped":
         log("info", `telnyx_voice.${eventType.replace(/\./g, "_")}`, { sessionId: callInfo.callSessionId });
         break;
+
+      case "call.machine.detected": {
+        // Answering machine detected — log and optionally leave voicemail
+        const machineType = payload.data?.record?.state; // "machine_start" | "human" | "fax_detected"
+        log("info", "telnyx_voice.machine_detected", { sessionId: callInfo.callSessionId, machineType, workspaceId: resolvedWorkspaceId });
+
+        if (machineType === "fax_detected" && callInfo.callControlId) {
+          // Fax line — hang up immediately
+          await hangupCall(callInfo.callControlId);
+        }
+        // For voicemail machines, the voice server will handle the conversation naturally
+        // It will detect silence and wrap up. No special handling needed.
+        break;
+      }
+
+      case "call.machine.greeting.ended": {
+        // Voicemail greeting finished — the AI can now leave a message
+        log("info", "telnyx_voice.machine_greeting_ended", { sessionId: callInfo.callSessionId, workspaceId: resolvedWorkspaceId });
+        // Voice server is already streaming — it will naturally speak after the beep
+        break;
+      }
+
+      case "call.speak.ended": {
+        // Telnyx TTS finished speaking (used in fallback scenarios)
+        log("info", "telnyx_voice.speak_ended", { sessionId: callInfo.callSessionId });
+        break;
+      }
+
+      case "call.dtmf.received": {
+        // DTMF keypress detected — could be used for menu navigation
+        const digit = payload.data?.record?.state; // The pressed digit
+        log("info", "telnyx_voice.dtmf_received", { sessionId: callInfo.callSessionId, digit, workspaceId: resolvedWorkspaceId });
+        // Future: route to different departments based on keypress
+        break;
+      }
+
+      case "call.bridged": {
+        // Call was bridged/transferred to another party
+        log("info", "telnyx_voice.call_bridged", { sessionId: callInfo.callSessionId, workspaceId: resolvedWorkspaceId });
+        if (callInfo.callSessionId && resolvedWorkspaceId) {
+          await db
+            .from("call_sessions")
+            .update({ transferred_at: new Date().toISOString() })
+            .eq("external_meeting_id", callInfo.callSessionId)
+            .eq("workspace_id", resolvedWorkspaceId);
+        }
+        break;
+      }
+
+      case "call.recording.saved": {
+        // Call recording saved — store the recording URL
+        log("info", "telnyx_voice.recording_saved", { sessionId: callInfo.callSessionId, workspaceId: resolvedWorkspaceId });
+        // Future: save recording_url to call_sessions for playback
+        break;
+      }
 
       default:
         log("info", "telnyx_voice.unhandled_event", { eventType });

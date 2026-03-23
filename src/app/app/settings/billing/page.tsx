@@ -45,18 +45,21 @@ export default function AppSettingsBillingPage() {
   const tNav = useTranslations("nav");
   const tBilling = useTranslations("billing");
   const [cancelStep, setCancelStep] = useState<CancelStep>(0);
-  const [usage, setUsage] = useState(() => {
-    if (typeof window === "undefined") return defaultUsage;
-    const snapshot = getWorkspaceMeSnapshotSync() as { stats?: typeof defaultUsage } | null;
-    return snapshot?.stats && typeof snapshot.stats === "object"
-      ? { ...defaultUsage, ...snapshot.stats }
-      : defaultUsage;
-  });
-  const [workspaceId, setWorkspaceId] = useState<string | null>(() => {
-    if (typeof window === "undefined") return null;
-    const snapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
-    return snapshot && typeof snapshot.id === "string" ? snapshot.id : null;
-  });
+  const [usage, setUsage] = useState(defaultUsage);
+  const [workspaceId, setWorkspaceId] = useState<string | null>(null);
+
+  /* Restore from sync snapshot AFTER hydration */
+  useEffect(() => {
+    try {
+      const snapshot = getWorkspaceMeSnapshotSync() as { id?: string | null; stats?: typeof defaultUsage } | null;
+      if (snapshot?.stats && typeof snapshot.stats === "object") {
+        setUsage({ ...defaultUsage, ...snapshot.stats });
+      }
+      if (snapshot && typeof snapshot.id === "string") {
+        setWorkspaceId(snapshot.id);
+      }
+    } catch { /* ignore */ }
+  }, []);
   const [billingStatus, setBillingStatus] = useState<string | null>(null);
   const [renewalAt, setRenewalAt] = useState<string | null>(null);
   const [pendingTier, setPendingTier] = useState<string | null>(null);

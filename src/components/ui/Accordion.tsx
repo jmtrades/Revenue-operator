@@ -14,25 +14,25 @@ export function AccordionItem({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div style={{ borderBottom: "1px solid var(--border-default)" }}>
+    <div className="border-b border-[var(--border-default)]">
       <button
         type="button"
-        className="w-full flex justify-between items-center py-5 text-left bg-none border-none cursor-pointer transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-primary)] rounded"
-        style={{ color: "var(--text-primary)", fontSize: "1rem", fontWeight: 500 }}
+        className="w-full flex justify-between items-center py-4 text-left cursor-pointer transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:ring-offset-2 rounded-[var(--radius-btn)] text-[15px] font-medium text-[var(--text-primary)] hover:text-[var(--accent-primary)]"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
       >
         {title}
         <ChevronDown
-          className="w-5 h-5 shrink-0 transition-transform duration-200"
-          style={{ color: "var(--text-tertiary)", transform: open ? "rotate(180deg)" : "none" }}
+          className={`w-4 h-4 shrink-0 text-[var(--text-tertiary)] transition-transform duration-250 ${open ? "rotate-180" : ""}`}
         />
       </button>
-      {open && (
-        <div className="pb-5 text-[0.9375rem] leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+      <div
+        className={`overflow-hidden transition-all duration-250 ease-[cubic-bezier(0.25,0.1,0.25,1)] ${open ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}
+      >
+        <div className="pb-4 text-[14px] leading-relaxed text-[var(--text-secondary)]">
           {children}
         </div>
-      )}
+      </div>
     </div>
   );
 }

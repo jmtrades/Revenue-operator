@@ -194,8 +194,8 @@ function AnalyticsSkeleton() {
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {Array.from({ length: 5 }).map((_, i) => (
-           
-          <Skeleton key={i} variant="card" className="h-24" />
+
+          <div key={i} style={{ animationDelay: `${i * 100}ms` }}><Skeleton variant="card" className="h-24" /></div>
         ))}
       </div>
 

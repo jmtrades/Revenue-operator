@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Sheet } from "@/components/ui/Sheet";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { Card } from "@/components/ui/Card";
 import { apiFetch, ApiError } from "@/lib/api";
 import { useTranslations } from "next-intl";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -428,7 +429,7 @@ export default function CallsPage() {
           />
         </div>
       ) : (
-      <div className="hidden md:block rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-x-auto">
+      <Card className="hidden md:block overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="border-b border-[var(--border-default)] bg-[var(--bg-surface)]">
             <tr>
@@ -463,7 +464,7 @@ export default function CallsPage() {
               return (
                 <tr
                   key={c.id}
-                  className="group border-t border-[var(--border-default)]/70 hover:bg-[var(--bg-hover)] cursor-pointer"
+                  className="group border-t border-[var(--border-default)]/70 hover:bg-[var(--bg-hover)] cursor-pointer transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/30"
                   onClick={() => handleRowClick(c.id)}
                 >
                   <td className="py-3 px-4 text-xs text-[var(--text-tertiary)] whitespace-nowrap">
@@ -526,7 +527,7 @@ export default function CallsPage() {
             )}
           </tbody>
         </table>
-      </div>
+      </Card>
       )}
 
       <div className="md:hidden space-y-3 mt-2">
