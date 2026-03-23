@@ -893,6 +893,135 @@ textarea:focus {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
+   PREMIUM DASHBOARD CARDS — $10B SaaS aesthetic
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.kpi-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
+  padding: 20px;
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+.kpi-card:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-sm);
+}
+.kpi-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: var(--kpi-accent, var(--accent-primary));
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+.kpi-card:hover::before {
+  opacity: 1;
+}
+
+/* Dashboard section cards */
+.dash-section {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+.dash-section:hover {
+  border-color: var(--border-hover);
+}
+
+/* Premium gradient accent for hero metrics */
+.metric-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
+}
+.metric-hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
+  opacity: 0.5;
+}
+
+/* Activity timeline item */
+.activity-item {
+  position: relative;
+  padding-left: 20px;
+  border-left: 2px solid var(--border-default);
+  transition: border-color var(--transition-fast);
+}
+.activity-item:hover {
+  border-left-color: var(--accent-primary);
+}
+.activity-item::before {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 2px solid var(--border-default);
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+.activity-item:hover::before {
+  border-color: var(--accent-primary);
+  background: var(--accent-primary-subtle);
+}
+
+/* Attention item with left accent */
+.attention-item {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+.attention-item:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-xs);
+}
+
+/* Progress bar with animated fill */
+.progress-bar {
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--bg-hover);
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 600ms cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* Onboarding step card with hover state */
+.onboard-card {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
+  padding: 24px;
+  transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base);
+}
+.onboard-card:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
    SECTION ENTRANCE — Staggered fade-up on scroll
    ═══════════════════════════════════════════════════════════════════════════ */
 
