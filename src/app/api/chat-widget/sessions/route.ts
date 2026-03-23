@@ -12,11 +12,12 @@ interface ChatSession {
   workspace_id: string;
   visitor_name: string;
   visitor_email?: string;
-  session_token: string;
+  visitor_token: string;
   status: string;
+  unread_count: number;
+  resolved_at?: string | null;
   created_at: string;
   updated_at: string;
-  unread_count?: number;
 }
 
 /**
@@ -47,8 +48,10 @@ export async function GET(req: NextRequest) {
         workspace_id,
         visitor_name,
         visitor_email,
-        session_token,
+        visitor_token,
         status,
+        unread_count,
+        resolved_at,
         created_at,
         updated_at
       `
@@ -61,26 +64,7 @@ export async function GET(req: NextRequest) {
 
     const { data } = await query.order("created_at", { ascending: false });
 
-    const sessions = (data || []) as ChatSession[];
-
-    // Count unread messages for each session
-    const sessionsWithUnread = await Promise.all(
-      sessions.map(async (s) => {
-        const { count } = await db
-          .from("chat_widget_messages")
-          .select("*", { count: "exact", head: true })
-          .eq("session_id", s.id)
-          .eq("is_read", false)
-          .eq("sender_type", "visitor");
-
-        return {
-          ...s,
-          unread_count: count || 0,
-        };
-      })
-    );
-
-    return NextResponse.json(sessionsWithUnread, { status: 200 });
+    return NextResponse.json(data || [], { status: 200 });
   } catch (error) {
     console.error("[chat-widget/sessions GET]", error);
     return NextResponse.json(
@@ -135,17 +119,19 @@ export async function POST(req: NextRequest) {
 
     const db = getDb();
 
-    // Generate unique session token
-    const sessionToken = crypto.randomBytes(16).toString("hex");
+    // Generate unique visitor token
+    const visitorToken = crypto.randomBytes(16).toString("hex");
 
+    // Actual columns: workspace_id, visitor_name, visitor_email, visitor_token, status, unread_count
     const { data, error } = await db
       .from("chat_widget_sessions")
       .insert({
         workspace_id,
         visitor_name: trimmedName,
         visitor_email: trimmedEmail,
-        session_token: sessionToken,
+        visitor_token: visitorToken,
         status: "active",
+        unread_count: 0,
       })
       .select()
       .single();

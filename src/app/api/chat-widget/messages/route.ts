@@ -9,20 +9,21 @@ import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 interface ChatMessage {
   id: string;
   session_id: string;
-  message_text: string;
+  workspace_id: string;
   sender_type: "visitor" | "agent";
-  sender_name?: string;
-  is_read: boolean;
+  content: string;
   created_at: string;
+  channel?: string;
+  metadata?: Record<string, unknown> | null;
 }
 
 /**
  * GET /api/chat-widget/messages?session_id=xxx
- * List messages for a chat session (requires valid session token or workspace auth)
+ * List messages for a chat session (requires valid visitor_token or workspace auth)
  */
 export async function GET(req: NextRequest) {
   const sessionId = req.nextUrl.searchParams.get("session_id");
-  const sessionToken = req.nextUrl.searchParams.get("session_token");
+  const visitorToken = req.nextUrl.searchParams.get("session_token") || req.nextUrl.searchParams.get("visitor_token");
 
   if (!sessionId) {
     return NextResponse.json(
@@ -34,10 +35,10 @@ export async function GET(req: NextRequest) {
   try {
     const db = getDb();
 
-    // Verify access: either valid session token or workspace auth
+    // Verify access: either valid visitor token or workspace auth
     const { data: sessionData } = await db
       .from("chat_widget_sessions")
-      .select("id, session_token, workspace_id")
+      .select("id, visitor_token, workspace_id")
       .eq("id", sessionId)
       .maybeSingle();
 
@@ -48,8 +49,8 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Check if visitor has valid session token OR user has workspace auth
-    const isVisitor = sessionToken && sessionData.session_token === sessionToken;
+    // Check if visitor has valid token OR user has workspace auth
+    const isVisitor = visitorToken && sessionData.visitor_token === visitorToken;
     const isAgent = await (async () => {
       const session = await getSession(req);
       if (!session?.workspaceId) return false;
@@ -69,19 +70,6 @@ export async function GET(req: NextRequest) {
       .select("*")
       .eq("session_id", sessionId)
       .order("created_at", { ascending: true });
-
-    // Mark all unread messages from agent as read (for visitor)
-    if (isVisitor && data && data.length > 0) {
-      const unreadMessages = (data as ChatMessage[]).filter(
-        (m) => m.sender_type === "agent" && !m.is_read
-      );
-      if (unreadMessages.length > 0) {
-        await db
-          .from("chat_widget_messages")
-          .update({ is_read: true })
-          .in("id", unreadMessages.map((m) => m.id));
-      }
-    }
 
     return NextResponse.json(data || [], { status: 200 });
   } catch (error) {
@@ -112,24 +100,26 @@ export async function POST(req: NextRequest) {
     const body = (await req.json()) as {
       session_id: string;
       session_token?: string;
-      message_text: string;
+      visitor_token?: string;
+      content?: string;
+      message_text?: string; // backwards compat
       sender_type: "visitor" | "agent";
-      sender_name?: string;
     };
 
-    const { session_id, session_token, message_text, sender_type, sender_name } =
-      body;
+    const { session_id, sender_type } = body;
+    // Accept both 'content' and 'message_text' for backwards compatibility
+    const rawContent = body.content ?? body.message_text;
+    const visitorToken = body.visitor_token ?? body.session_token;
 
-    if (!session_id || !message_text?.trim() || !sender_type) {
+    if (!session_id || !rawContent?.trim() || !sender_type) {
       return NextResponse.json(
-        { error: "session_id, message_text, and sender_type are required" },
+        { error: "session_id, content, and sender_type are required" },
         { status: 400 }
       );
     }
 
     // Enforce message length limit (5000 chars max)
-    const trimmedMessage = message_text.trim().slice(0, 5000);
-    const trimmedSenderName = sender_name?.trim().slice(0, 200) || null;
+    const trimmedContent = rawContent.trim().slice(0, 5000);
 
     if (!["visitor", "agent"].includes(sender_type)) {
       return NextResponse.json(
@@ -143,7 +133,7 @@ export async function POST(req: NextRequest) {
     // Verify access
     const { data: sessionData } = await db
       .from("chat_widget_sessions")
-      .select("id, session_token, workspace_id")
+      .select("id, visitor_token, workspace_id")
       .eq("id", session_id)
       .maybeSingle();
 
@@ -154,7 +144,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const isVisitor = session_token && sessionData.session_token === session_token;
+    const isVisitor = visitorToken && sessionData.visitor_token === visitorToken;
     const isAgent = await (async () => {
       const session = await getSession(req);
       if (!session?.workspaceId) return false;
@@ -183,15 +173,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Insert message
+    // Insert message — actual columns: session_id, workspace_id, sender_type, content, channel, metadata
     const { data, error } = await db
       .from("chat_widget_messages")
       .insert({
         session_id,
-        message_text: trimmedMessage,
+        workspace_id: sessionData.workspace_id,
         sender_type,
-        sender_name: trimmedSenderName,
-        is_read: false,
+        content: trimmedContent,
+        channel: "web",
       })
       .select()
       .single();
@@ -204,10 +194,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // If this is a visitor message, generate auto-response (in future: use AI)
+    // Update unread count on session if visitor message
     if (isVisitor) {
-      // TODO: Generate AI auto-response using workspace's knowledge base/agent config
-      // For now, we'll just return the message
+      try {
+        const { data: sess } = await db
+          .from("chat_widget_sessions")
+          .select("unread_count")
+          .eq("id", session_id)
+          .maybeSingle();
+        const currentCount = (sess as { unread_count?: number })?.unread_count ?? 0;
+        await db
+          .from("chat_widget_sessions")
+          .update({ unread_count: currentCount + 1, updated_at: new Date().toISOString() })
+          .eq("id", session_id);
+      } catch { /* non-critical */ }
     }
 
     return NextResponse.json(data, { status: 201 });
