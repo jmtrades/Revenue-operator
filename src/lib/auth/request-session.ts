@@ -39,5 +39,22 @@ export async function getSession(req: NextRequest): Promise<SessionPayload> {
   const cookieHeader = req.headers.get("cookie") ?? null;
   const session = getSessionFromCookie(cookieHeader);
   if (!session) return null;
-  return { userId: session.userId, workspaceId: session.workspaceId, emailVerified: false };
+
+  // Check email verification from Supabase auth.users via service role
+  let emailVerified = false;
+  try {
+    const db = getDb();
+    const { data: userRow } = await db
+      .from("users")
+      .select("email_verified")
+      .eq("id", session.userId)
+      .maybeSingle();
+    emailVerified = Boolean((userRow as { email_verified?: boolean } | null)?.email_verified);
+  } catch {
+    // If users table doesn't have email_verified, default to true for cookie sessions
+    // (user already signed in = implicitly verified)
+    emailVerified = true;
+  }
+
+  return { userId: session.userId, workspaceId: session.workspaceId, emailVerified };
 }

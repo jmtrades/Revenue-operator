@@ -219,6 +219,23 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   const launchAt = new Date().toISOString();
   let enqueued = 0;
 
+  // Insert campaign_leads junction records for cron processor to track
+  const campaignLeadRows = (leads ?? []).map((lead) => ({
+    campaign_id: id,
+    lead_id: (lead as { id: string }).id,
+    status: "pending",
+    created_at: launchAt,
+  }));
+
+  if (campaignLeadRows.length > 0) {
+    const { error: junctionErr } = await db
+      .from("campaign_leads")
+      .upsert(campaignLeadRows, { onConflict: "campaign_id,lead_id", ignoreDuplicates: true });
+    if (junctionErr) {
+      console.error("[campaign/launch] Failed to insert campaign_leads:", junctionErr.message);
+    }
+  }
+
   for (const lead of leads ?? []) {
     const leadId = (lead as { id: string }).id;
     const result = await executeLeadOutboundCall(
@@ -233,6 +250,12 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     );
     if (result.ok) {
       enqueued += 1;
+      // Mark as sent in campaign_leads
+      await db
+        .from("campaign_leads")
+        .update({ status: "sent", sent_at: new Date().toISOString() })
+        .eq("campaign_id", id)
+        .eq("lead_id", leadId);
     }
 
     // Multi-step sequences (SMS/email) are executed by the outbound pipeline, not directly in this route.
@@ -240,7 +263,11 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
 
   await db
     .from("campaigns")
-    .update({ status: "active", last_launched_at: launchAt })
+    .update({
+      status: "active",
+      last_launched_at: launchAt,
+      total_contacts: leads?.length ?? 0,
+    })
     .eq("id", id);
 
   return NextResponse.json({ ok: true, enqueued, launched_at: launchAt });

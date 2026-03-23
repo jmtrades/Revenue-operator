@@ -107,3 +107,43 @@ export async function PATCH(
   }
   return NextResponse.json(updated);
 }
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const session = await getSession(req);
+  if (!session?.userId || !session?.workspaceId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const authErr = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErr) return authErr;
+
+  const db = getDb();
+
+  // Verify the lead belongs to this workspace
+  const { data: existing } = await db
+    .from("leads")
+    .select("id, workspace_id")
+    .eq("id", id)
+    .eq("workspace_id", session.workspaceId)
+    .maybeSingle();
+
+  if (!existing) {
+    return NextResponse.json({ error: "Lead not found" }, { status: 404 });
+  }
+
+  const { error } = await db
+    .from("leads")
+    .delete()
+    .eq("id", id)
+    .eq("workspace_id", session.workspaceId);
+
+  if (error) {
+    console.error("[leads/delete]", error.message);
+    return NextResponse.json({ error: "Failed to delete lead" }, { status: 500 });
+  }
+
+  return NextResponse.json({ ok: true });
+}
