@@ -1,12 +1,10 @@
 "use client";
 
 import { useState, useEffect, type ReactNode } from "react";
-import { useTranslations } from "next-intl";
 import AppShellClient, { type AppShellWorkspaceMeta } from "./AppShellClient";
 
 /** Static skeleton only. No dynamic data so server and client output match. */
 function AppShellSkeleton() {
-  const t = useTranslations("common");
   return (
     <div className="flex h-screen bg-[var(--bg-base)]" aria-busy="true" aria-label="Loading app">
       <div className="hidden md:block w-[200px] bg-[var(--bg-surface)] border-r border-[var(--border-default)] shrink-0">
@@ -25,7 +23,7 @@ function AppShellSkeleton() {
           <div className="w-10 h-10 rounded-xl bg-[var(--bg-surface)] flex items-center justify-center text-[var(--text-primary)] text-sm font-bold">
             RT
           </div>
-          <p className="text-sm text-[var(--text-tertiary)]">{t("loading", { defaultValue: "Loading…" })}</p>
+          <p className="text-sm text-[var(--text-tertiary)]">Loading…</p>
         </div>
       </div>
     </div>
@@ -55,7 +53,6 @@ export default function HydrationGate({
     }
   }, []);
   useEffect(() => {
-    // Defer so setState is not synchronous in effect (avoids lint); ensures client-only render of app.
     const t = setTimeout(() => setMounted(true), 0);
     return () => clearTimeout(t);
   }, []);
@@ -64,7 +61,6 @@ export default function HydrationGate({
     return <AppShellSkeleton />;
   }
 
-  // Only render interactive app after mount. No server HTML for this subtree = no hydration mismatch.
   return (
     <AppShellClient
       initialWorkspaceId={initialShellData.workspaceId}

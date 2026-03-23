@@ -128,7 +128,8 @@
     "intelligence": "AI Intelligence",
     "agency": "Agency",
     "backToKnowledge": "Back to knowledge",
-    "continueToTest": "Continue to test"
+    "continueToTest": "Continue to test",
+    "coldLeads": "Prospects froids"
   },
   "common": {
     "save": "Enregistrer",
@@ -209,7 +210,8 @@
       "timeLabel": "Time",
       "durationLabel": "Duration",
       "availableTimes": "Available Times"
-    }
+    },
+    "dashboard": "Tableau de bord"
   },
   "toast": {
     "saved": "Paramètres enregistrés",
@@ -1793,7 +1795,8 @@
     "createCampaign": "Create campaign →",
     "viewAll": "Voir tout",
     "noWorkspace": "Aucun espace de travail sélectionné",
-    "selectWorkspace": "Sélectionnez un espace de travail pour voir votre tableau de bord."
+    "selectWorkspace": "Sélectionnez un espace de travail pour voir votre tableau de bord.",
+    "dashboard": "Tableau de bord"
   },
   "analytics": {
     "pageTitle": "Analyses — Recall Touch",

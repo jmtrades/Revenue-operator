@@ -128,7 +128,8 @@
     "intelligence": "AI Intelligence",
     "agency": "Agency",
     "backToKnowledge": "Back to knowledge",
-    "continueToTest": "Continue to test"
+    "continueToTest": "Continue to test",
+    "coldLeads": "コールドリード"
   },
   "common": {
     "save": "保存",
@@ -209,7 +210,8 @@
       "timeLabel": "Time",
       "durationLabel": "Duration",
       "availableTimes": "Available Times"
-    }
+    },
+    "dashboard": "ダッシュボード"
   },
   "toast": {
     "saved": "設定を保存しました",
@@ -1793,7 +1795,8 @@
     "createCampaign": "Create campaign →",
     "viewAll": "すべて見る",
     "noWorkspace": "ワークスペースが選択されていません",
-    "selectWorkspace": "ダッシュボードを表示するにはワークスペースを選択してください。"
+    "selectWorkspace": "ダッシュボードを表示するにはワークスペースを選択してください。",
+    "dashboard": "ダッシュボード"
   },
   "analytics": {
     "pageTitle": "分析 — Recall Touch",
