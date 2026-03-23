@@ -176,40 +176,67 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Auth guard: redirect to sign-in if session cookie is missing or invalid (replaces middleware.ts)
+  // Auth guard: redirect to sign-in if no valid session exists.
+  // Check both revenue_session cookie AND Supabase auth (Google OAuth sets only the Supabase cookie).
   const cookieStore = await cookies();
   const rawSessionCookie = cookieStore.get("revenue_session")?.value;
 
-  if (!rawSessionCookie) {
-    const { redirect } = await import("next/navigation");
-    redirect("/sign-in");
-  } else {
-    // Build a Cookie header string for HMAC/session verification.
+  let hasValidSession = false;
+
+  if (rawSessionCookie) {
+    // Verify the HMAC-signed revenue_session cookie
     const cookieHeader = cookieStore
       .getAll()
       .map(({ name, value }) => `${name}=${value}`)
       .join("; ");
-
     const session = getSessionFromCookie(cookieHeader);
-    if (!session?.userId) {
-      const { redirect } = await import("next/navigation");
-      redirect("/sign-in");
+    if (session?.userId) {
+      hasValidSession = true;
     }
   }
 
-  // If a user session exists but email is not verified, route them to verification.
-  try {
-    const supabase = await createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (user?.id && !user.email_confirmed_at) {
-      const { redirect } = await import("next/navigation");
-      const email = (user.email ?? "").trim();
-      redirect(email ? `/verify-email?email=${encodeURIComponent(email)}` : "/verify-email");
+  // Fallback: check Supabase auth (covers Google OAuth, magic links, etc.)
+  if (!hasValidSession) {
+    try {
+      const supabase = await createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user?.id) {
+        hasValidSession = true;
+
+        // If email is not confirmed, redirect to verification instead of the app
+        if (!user.email_confirmed_at) {
+          const { redirect } = await import("next/navigation");
+          const email = (user.email ?? "").trim();
+          redirect(email ? `/verify-email?email=${encodeURIComponent(email)}` : "/verify-email");
+        }
+      }
+    } catch {
+      // Supabase unavailable — fall through to redirect
     }
-  } catch {
-    // If we can't read the auth user, let the shell render and client-side redirect handle it.
+  }
+
+  if (!hasValidSession) {
+    const { redirect } = await import("next/navigation");
+    redirect("/sign-in");
+  }
+
+  // If user is authenticated via revenue_session, also check email verification via Supabase
+  if (rawSessionCookie) {
+    try {
+      const supabase = await createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user?.id && !user.email_confirmed_at) {
+        const { redirect } = await import("next/navigation");
+        const email = (user.email ?? "").trim();
+        redirect(email ? `/verify-email?email=${encodeURIComponent(email)}` : "/verify-email");
+      }
+    } catch {
+      // If we can't read the auth user, let the shell render and client-side redirect handle it.
+    }
   }
 
   const t = await getTranslations("app");
