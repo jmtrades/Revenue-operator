@@ -22,7 +22,7 @@ export async function PATCH(
   const authErr = await requireWorkspaceAccess(req, session.workspaceId);
   if (authErr) return authErr;
 
-  let body: { status?: string; next_attempt_at?: string; strategy?: string; attempt_count?: number };
+  let body: { status?: string; next_attempt_at?: string; reengagement_strategy?: string; attempts?: number };
   try {
     body = await req.json();
   } catch {
@@ -68,13 +68,13 @@ export async function PATCH(
     updates.next_attempt_at = dateStr || null;
   }
 
-  if (typeof body.strategy === "string") {
-    updates.strategy = body.strategy.trim() || null;
+  if (typeof body.reengagement_strategy === "string") {
+    updates.reengagement_strategy = body.reengagement_strategy.trim() || null;
   }
 
-  if (typeof body.attempt_count === "number" && body.attempt_count >= 0) {
-    updates.attempt_count = body.attempt_count;
-    updates.last_attempted_at = new Date().toISOString();
+  if (typeof body.attempts === "number" && body.attempts >= 0) {
+    updates.attempts = body.attempts;
+    updates.last_attempt_at = new Date().toISOString();
   }
 
   const { data: updated, error } = await db

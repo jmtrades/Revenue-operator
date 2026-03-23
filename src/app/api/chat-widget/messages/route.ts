@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 interface ChatMessage {
   id: string;
@@ -97,6 +98,16 @@ export async function GET(req: NextRequest) {
  * Send a message (from visitor or agent)
  */
 export async function POST(req: NextRequest) {
+  // Rate limit: 30 messages per minute per IP
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit(`chat-widget-msg:${ip}`, 30, 60_000);
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many messages. Please slow down." },
+      { status: 429 }
+    );
+  }
+
   try {
     const body = (await req.json()) as {
       session_id: string;
@@ -109,9 +120,20 @@ export async function POST(req: NextRequest) {
     const { session_id, session_token, message_text, sender_type, sender_name } =
       body;
 
-    if (!session_id || !message_text || !sender_type) {
+    if (!session_id || !message_text?.trim() || !sender_type) {
       return NextResponse.json(
         { error: "session_id, message_text, and sender_type are required" },
+        { status: 400 }
+      );
+    }
+
+    // Enforce message length limit (5000 chars max)
+    const trimmedMessage = message_text.trim().slice(0, 5000);
+    const trimmedSenderName = sender_name?.trim().slice(0, 200) || null;
+
+    if (!["visitor", "agent"].includes(sender_type)) {
+      return NextResponse.json(
+        { error: "sender_type must be 'visitor' or 'agent'" },
         { status: 400 }
       );
     }
@@ -166,9 +188,9 @@ export async function POST(req: NextRequest) {
       .from("chat_widget_messages")
       .insert({
         session_id,
-        message_text,
+        message_text: trimmedMessage,
         sender_type,
-        sender_name: sender_name || null,
+        sender_name: trimmedSenderName,
         is_read: false,
       })
       .select()

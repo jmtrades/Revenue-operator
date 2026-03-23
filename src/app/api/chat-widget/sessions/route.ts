@@ -114,9 +114,21 @@ export async function POST(req: NextRequest) {
 
     const { workspace_id, visitor_name, visitor_email } = body;
 
-    if (!workspace_id || !visitor_name) {
+    if (!workspace_id || !visitor_name?.trim()) {
       return NextResponse.json(
         { error: "workspace_id and visitor_name are required" },
+        { status: 400 }
+      );
+    }
+
+    // Sanitize inputs
+    const trimmedName = visitor_name.trim().slice(0, 200);
+    const trimmedEmail = visitor_email?.trim().slice(0, 320) || null;
+
+    // Basic email format check if provided
+    if (trimmedEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      return NextResponse.json(
+        { error: "Invalid email format" },
         { status: 400 }
       );
     }
@@ -130,8 +142,8 @@ export async function POST(req: NextRequest) {
       .from("chat_widget_sessions")
       .insert({
         workspace_id,
-        visitor_name,
-        visitor_email: visitor_email || null,
+        visitor_name: trimmedName,
+        visitor_email: trimmedEmail,
         session_token: sessionToken,
         status: "active",
       })
