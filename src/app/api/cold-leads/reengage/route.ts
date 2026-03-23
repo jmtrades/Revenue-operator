@@ -20,14 +20,14 @@ export async function POST(req: NextRequest) {
   const authErr = await requireWorkspaceAccess(req, session.workspaceId);
   if (authErr) return authErr;
 
-  let body: { lead_ids?: string[]; strategy?: string };
+  let body: { lead_ids?: string[]; reengagement_strategy?: string };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { lead_ids, strategy } = body;
+  const { lead_ids, reengagement_strategy } = body;
   const db = getDb();
 
   // Get workspace communication mode
@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
       status,
       reason,
       priority,
-      strategy
+      reengagement_strategy
       `
     )
     .eq("workspace_id", session.workspaceId)
@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
     status: string;
     reason?: string;
     priority?: string;
-    strategy?: string;
+    reengagement_strategy?: string;
   }>;
 
   if (itemsToProcess.length === 0) {
@@ -125,7 +125,7 @@ export async function POST(req: NextRequest) {
       .from("cold_lead_queue")
       .update({
         status: "in_progress",
-        strategy: strategy ?? item.strategy ?? null,
+        reengagement_strategy: reengagement_strategy ?? item.reengagement_strategy ?? null,
         updated_at: new Date().toISOString(),
       })
       .eq("id", item.id);
