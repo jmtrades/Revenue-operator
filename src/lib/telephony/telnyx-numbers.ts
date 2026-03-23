@@ -1,9 +1,25 @@
 /**
  * Telnyx phone number management API functions.
  * Handles searching, purchasing, and releasing phone numbers.
+ *
+ * Telnyx v2 API response format for available_phone_numbers:
+ * {
+ *   data: [{
+ *     record_type: "available_phone_number",
+ *     phone_number: "+19705555098",
+ *     vanity_format: "",
+ *     best_effort: false,
+ *     quickship: true,
+ *     reservable: true,
+ *     region_information: [{ region_type: "country_code", region_name: "US" }],
+ *     cost_information: { upfront_cost: "3.21", monthly_cost: "6.54", currency: "USD" },
+ *     features: [{ name: "sms" }, { name: "voice" }]
+ *   }],
+ *   meta: { total_results: 100, best_effort_results: 50 }
+ * }
  */
 
-import { telnyxRequest, parseTelnyxError } from "./telnyx-client";
+import { telnyxRequest } from "./telnyx-client";
 
 export interface SearchAvailableNumbersParams {
   countryCode?: string;
@@ -21,6 +37,9 @@ export interface AvailableNumberData {
     sms: boolean;
     mms: boolean;
   };
+  monthly_cost?: string;
+  upfront_cost?: string;
+  currency?: string;
 }
 
 export interface PurchaseNumberParams {
@@ -32,19 +51,95 @@ export interface PurchaseNumberParams {
   webhookUrl?: string;
 }
 
-export interface PhoneNumberOrderResponse {
+/* ── Telnyx API response types ──────────────────────────────── */
+
+interface TelnyxAvailableNumber {
+  record_type?: string;
+  phone_number?: string;
+  vanity_format?: string;
+  best_effort?: boolean;
+  quickship?: boolean;
+  reservable?: boolean;
+  region_information?: Array<{
+    region_type?: string;
+    region_name?: string;
+  }>;
+  cost_information?: {
+    upfront_cost?: string;
+    monthly_cost?: string;
+    currency?: string;
+  };
+  features?: Array<{ name?: string }>;
+}
+
+interface TelnyxAvailableNumbersResponse {
+  data?: TelnyxAvailableNumber[];
+  errors?: Array<{ detail?: string; title?: string; code?: string }>;
+  meta?: { total_results?: number; best_effort_results?: number };
+}
+
+interface TelnyxNumberOrderResponse {
   data?: {
     id?: string;
-    type?: string;
-    attributes?: {
+    record_type?: string;
+    phone_numbers_count?: number;
+    status?: string;
+    phone_numbers?: Array<{
       id?: string;
       phone_number?: string;
+      record_type?: string;
+      regulatory_requirements?: unknown[];
+      requirements_met?: boolean;
       status?: string;
-      carrier?: string;
-      country?: string;
-      created_at?: string;
-    };
+    }>;
+    connection_id?: string;
+    messaging_profile_id?: string;
+    created_at?: string;
   };
+  errors?: Array<{ detail?: string; title?: string; code?: string }>;
+}
+
+interface TelnyxPhoneNumberResponse {
+  data?: {
+    id?: string;
+    record_type?: string;
+    phone_number?: string;
+    status?: string;
+    connection_id?: string;
+    tags?: string[];
+    messaging_profile_id?: string;
+  };
+  errors?: Array<{ detail?: string; title?: string; code?: string }>;
+}
+
+/* ── Helper: extract capabilities from Telnyx features array ── */
+function extractCapabilities(features?: Array<{ name?: string }>): {
+  voice: boolean;
+  sms: boolean;
+  mms: boolean;
+} {
+  if (!features || features.length === 0) {
+    return { voice: true, sms: true, mms: false };
+  }
+  const names = features.map((f) => f.name?.toLowerCase() || "");
+  return {
+    voice: names.includes("voice"),
+    sms: names.includes("sms"),
+    mms: names.includes("mms"),
+  };
+}
+
+/* ── Helper: extract region name from region_information ────── */
+function extractRegionName(
+  regionInfo?: Array<{ region_type?: string; region_name?: string }>
+): string | undefined {
+  if (!regionInfo || regionInfo.length === 0) return undefined;
+  // Prefer state/rate_center over country_code
+  const state = regionInfo.find((r) => r.region_type === "state");
+  if (state?.region_name) return state.region_name;
+  const rateCenter = regionInfo.find((r) => r.region_type === "rate_center");
+  if (rateCenter?.region_name) return rateCenter.region_name;
+  return regionInfo[0]?.region_name;
 }
 
 /**
@@ -54,16 +149,21 @@ export async function searchAvailableNumbers(
   params: SearchAvailableNumbersParams
 ): Promise<AvailableNumberData[] | { error: string }> {
   try {
+    const apiKey = process.env.TELNYX_API_KEY;
+    if (!apiKey) {
+      return { error: "TELNYX_API_KEY not configured" };
+    }
+
     const url = new URL("https://api.telnyx.com/v2/available_phone_numbers");
 
     if (params.countryCode) {
       url.searchParams.set("filter[country_code]", params.countryCode);
     }
     if (params.areaCode) {
-      url.searchParams.set("filter[area_code]", params.areaCode);
+      url.searchParams.set("filter[national_destination_code]", params.areaCode);
     }
     if (params.state) {
-      url.searchParams.set("filter[state]", params.state);
+      url.searchParams.set("filter[administrative_area]", params.state);
     }
 
     const numberType = params.phoneType || "local";
@@ -76,84 +176,80 @@ export async function searchAvailableNumbers(
     }
 
     url.searchParams.set("page[size]", String(params.limit || 20));
-    url.searchParams.set("filter[features]", "sms");
-
-    const apiKey = process.env.TELNYX_API_KEY;
-    if (!apiKey) {
-      throw new Error("TELNYX_API_KEY not configured");
-    }
 
     const response = await fetch(url.toString(), {
       method: "GET",
       headers: {
-        "Authorization": `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
     });
 
-    const data = (await response.json()) as {
-      data?: Array<{
-        id?: string;
-        attributes?: {
-          phone_number?: string;
-          region_name?: string;
-          capabilities?: {
-            sms?: boolean;
-            voice?: boolean;
-            mms?: boolean;
-          };
-        };
-      }>;
-      errors?: Array<{ detail?: string; title?: string }>;
-    };
+    const json = (await response.json()) as TelnyxAvailableNumbersResponse;
 
     if (!response.ok) {
-      const error = Array.isArray(data.errors) && data.errors[0]?.detail
-        ? data.errors[0].detail
-        : "Failed to search available numbers";
-      return { error };
+      const errMsg =
+        Array.isArray(json.errors) && json.errors[0]?.detail
+          ? json.errors[0].detail
+          : `Telnyx API error (${response.status})`;
+      console.error("[telnyx-numbers] search error:", errMsg);
+      return { error: errMsg };
     }
 
-    const numbers: AvailableNumberData[] = (data.data || [])
+    if (!json.data || json.data.length === 0) {
+      return [];
+    }
+
+    // Map Telnyx flat response to our AvailableNumberData shape
+    const numbers: AvailableNumberData[] = json.data
       .map((item) => ({
-        phone_number: item.attributes?.phone_number || "",
-        region_name: item.attributes?.region_name,
-        capabilities: {
-          voice: item.attributes?.capabilities?.voice ?? true,
-          sms: item.attributes?.capabilities?.sms ?? true,
-          mms: item.attributes?.capabilities?.mms ?? false,
-        },
+        phone_number: item.phone_number || "",
+        region_name: extractRegionName(item.region_information),
+        capabilities: extractCapabilities(item.features),
+        monthly_cost: item.cost_information?.monthly_cost,
+        upfront_cost: item.cost_information?.upfront_cost,
+        currency: item.cost_information?.currency,
       }))
       .filter((n) => n.phone_number);
 
     return numbers;
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : String(err);
+    console.error("[telnyx-numbers] search exception:", errorMessage);
     return { error: errorMessage };
   }
 }
 
 /**
- * Purchase a phone number and configure it with voice/SMS webhook.
+ * Purchase a phone number via Telnyx number orders API.
+ *
+ * POST /v2/number_orders
+ * Body: { phone_numbers: [{ phone_number: "+1..." }], connection_id?, messaging_profile_id? }
  */
 export async function purchaseNumber(
   params: PurchaseNumberParams
-): Promise<{ numberId: string; phoneNumber: string; status: string } | { error: string }> {
+): Promise<
+  { numberId: string; phoneNumber: string; status: string } | { error: string }
+> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "";
-    const voiceWebhookUrl = params.webhookUrl || `${baseUrl}/api/webhooks/telnyx/voice`;
-    const smsWebhookUrl = `${baseUrl}/api/webhooks/telnyx/inbound`;
-
-    const body = {
-      phone_number: params.phoneNumberE164,
-      address_id: null, // Optional: address for regulatory requirements
-      connection_id: params.connectionId || process.env.TELNYX_CONNECTION_ID,
-      messaging_profile_id: params.messagingProfileId || process.env.TELNYX_MESSAGING_PROFILE_ID,
-      webhook_url: voiceWebhookUrl,
-      webhook_url_method: "POST",
+    const body: Record<string, unknown> = {
+      phone_numbers: [{ phone_number: params.phoneNumberE164 }],
     };
 
-    const response = await telnyxRequest<PhoneNumberOrderResponse>(
+    // Attach connection and messaging profile if available
+    const connectionId =
+      params.connectionId || process.env.TELNYX_CONNECTION_ID;
+    if (connectionId) {
+      body.connection_id = connectionId;
+    }
+
+    const messagingProfileId =
+      params.messagingProfileId || process.env.TELNYX_MESSAGING_PROFILE_ID;
+    if (messagingProfileId) {
+      body.messaging_profile_id = messagingProfileId;
+    }
+
+    const response = await telnyxRequest<TelnyxNumberOrderResponse>(
       "/number_orders",
       {
         method: "POST",
@@ -161,22 +257,29 @@ export async function purchaseNumber(
       }
     );
 
-    const numberId = response.data?.id || response.data?.attributes?.id || "";
-    const phoneNumber = response.data?.attributes?.phone_number || params.phoneNumberE164;
+    const orderId = response.data?.id || "";
+    const status = response.data?.status || "pending";
 
-    if (!numberId) {
-      return { error: "No number ID returned from Telnyx" };
+    // The order contains phone_numbers array — get the first one's ID
+    const firstNumber = response.data?.phone_numbers?.[0];
+    const numberId = firstNumber?.id || orderId;
+    const phoneNumber = firstNumber?.phone_number || params.phoneNumberE164;
+
+    if (!numberId && !orderId) {
+      return { error: "No order ID returned from Telnyx" };
     }
 
-    return { numberId, phoneNumber, status: response.data?.attributes?.status || "pending" };
+    return { numberId, phoneNumber, status };
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : String(err);
+    console.error("[telnyx-numbers] purchase error:", errorMessage);
     return { error: errorMessage };
   }
 }
 
 /**
  * Release/disconnect a purchased phone number.
+ * DELETE /v2/phone_numbers/{id}
  */
 export async function releaseNumber(
   phoneNumberId: string
@@ -195,40 +298,34 @@ export async function releaseNumber(
 
 /**
  * Get details about a provisioned phone number.
+ * GET /v2/phone_numbers/{id}
  */
 export async function getPhoneNumberDetails(
   phoneNumberId: string
-): Promise<{ phoneNumber: string; status: string; capabilities: AvailableNumberData["capabilities"] } | { error: string }> {
+): Promise<
+  | {
+      phoneNumber: string;
+      status: string;
+      capabilities: AvailableNumberData["capabilities"];
+    }
+  | { error: string }
+> {
   try {
-    const response = await telnyxRequest<{
-      data?: {
-        attributes?: {
-          phone_number?: string;
-          status?: string;
-          capabilities?: {
-            voice?: boolean;
-            sms?: boolean;
-            mms?: boolean;
-          };
-        };
-      };
-    }>(`/phone_numbers/${phoneNumberId}`, {
-      method: "GET",
-    });
+    const response = await telnyxRequest<TelnyxPhoneNumberResponse>(
+      `/phone_numbers/${phoneNumberId}`,
+      { method: "GET" }
+    );
 
-    const attributes = response.data?.attributes;
-    if (!attributes?.phone_number) {
+    const data = response.data;
+    if (!data?.phone_number) {
       return { error: "Phone number not found" };
     }
 
     return {
-      phoneNumber: attributes.phone_number,
-      status: attributes.status || "unknown",
-      capabilities: {
-        voice: attributes.capabilities?.voice ?? true,
-        sms: attributes.capabilities?.sms ?? true,
-        mms: attributes.capabilities?.mms ?? false,
-      },
+      phoneNumber: data.phone_number,
+      status: data.status || "unknown",
+      // Provisioned numbers don't have a features array, assume full capabilities
+      capabilities: { voice: true, sms: true, mms: false },
     };
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : String(err);
