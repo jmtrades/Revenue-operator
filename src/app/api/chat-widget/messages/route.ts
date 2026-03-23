@@ -169,7 +169,7 @@ export async function POST(req: NextRequest) {
         message_text,
         sender_type,
         sender_name: sender_name || null,
-        is_read: sender_type === "agent" ? false : true,
+        is_read: false,
       })
       .select()
       .single();

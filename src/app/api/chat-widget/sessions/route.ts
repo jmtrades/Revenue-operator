@@ -70,7 +70,7 @@ export async function GET(req: NextRequest) {
           .select("*", { count: "exact", head: true })
           .eq("session_id", s.id)
           .eq("is_read", false)
-          .eq("sender_type", "agent");
+          .eq("sender_type", "visitor");
 
         return {
           ...s,
