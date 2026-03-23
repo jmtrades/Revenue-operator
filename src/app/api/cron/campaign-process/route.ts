@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
   try {
     const { data: active } = await db
       .from("campaigns")
-      .select("id, workspace_id, total_contacts, called, campaign_type, metadata")
+      .select("id, workspace_id, total_contacts, called, type, metadata")
       .eq("status", "active")
       .limit(50);
     const activeRows = (active ?? []) as Array<{
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
       workspace_id: string;
       total_contacts: number;
       called: number;
-      campaign_type?: string;
+      type?: string;
       metadata?: Record<string, unknown>;
     }>;
     if (activeRows.length === 0) {
@@ -109,7 +109,7 @@ export async function GET(req: NextRequest) {
         continue;
       }
 
-      const campaignType = (row.campaign_type ?? "lead_followup") as import("@/lib/campaigns/prompt").CampaignType;
+      const campaignType = (row.type ?? "lead_followup") as import("@/lib/campaigns/prompt").CampaignType;
       let callsMade = 0;
 
       for (const cl of leads) {

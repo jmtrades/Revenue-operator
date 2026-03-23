@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
 
       if (decision.transitionOccurred) {
         await db.from("leads").update({
-          state: decision.newState,
+          status: decision.newState,
           updated_at: new Date().toISOString(),
         }).eq("id", l.id);
 

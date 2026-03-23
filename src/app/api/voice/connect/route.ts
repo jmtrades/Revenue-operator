@@ -97,7 +97,7 @@ export async function POST(req: NextRequest) {
           if (!leadId) {
             const { data: created } = await db
               .from("leads")
-              .insert({ workspace_id: workspaceId, name: "Inbound caller", phone: from ?? undefined, state: "NEW" })
+              .insert({ workspace_id: workspaceId, name: "Inbound caller", phone: from ?? undefined, status: "NEW" })
               .select("id")
               .maybeSingle();
             leadId = (created as { id: string })?.id;

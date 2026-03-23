@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
           const { data: lead } = await db.from("leads").select("id").eq("workspace_id", workspaceId).or(`phone.eq.${from},phone.eq.${phone}`).limit(1).maybeSingle();
           leadId = (lead as { id: string } | null)?.id ?? null;
           if (!leadId) {
-            const { data: created } = await db.from("leads").insert({ workspace_id: workspaceId, name: "Inbound caller", phone: from ?? undefined, state: "NEW" }).select("id").maybeSingle();
+            const { data: created } = await db.from("leads").insert({ workspace_id: workspaceId, name: "Inbound caller", phone: from ?? undefined, status: "NEW" }).select("id").maybeSingle();
             leadId = (created as { id: string })?.id;
           }
         }

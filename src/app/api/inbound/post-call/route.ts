@@ -61,7 +61,7 @@ async function ensureLeadForCaller(input: {
         workspace_id: input.workspaceId,
         phone,
         name: "Inbound caller",
-        state: "NEW",
+        status: "NEW",
       })
       .select("id")
       .maybeSingle();

@@ -226,7 +226,7 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
     }).select("id").maybeSingle();
 
     await db.from("leads").update({
-      state: decision.newState,
+      status: decision.newState,
       updated_at: new Date().toISOString(),
       last_activity_at: new Date().toISOString(),
     }).eq("id", lead.id);
