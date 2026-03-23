@@ -8556,6 +8556,9 @@
     },
     "zoho": {
       "body": "Body"
+    },
+    "airtable": {
+      "body": "Sincronize leads e contatos com suas bases do Airtable automaticamente."
     }
   },
   "cardLabels": {
