@@ -15,31 +15,27 @@ export type DailyMetricRow = {
   id: string;
   workspace_id: string;
   date: string;
-  calls_answered: number;
-  calls_missed: number;
-  appointments_booked: number;
-  no_shows: number;
-  no_shows_recovered: number;
-  follow_ups_sent: number;
-  leads_captured: number;
-  revenue_estimated_cents: number;
-  response_time_avg_seconds: number | null;
+  total_calls: number;
+  total_leads: number;
+  total_appointments: number;
+  total_revenue_cents: number;
+  avg_call_duration_seconds: number;
+  missed_calls: number;
+  recovered_calls: number;
+  metadata: Record<string, unknown> | null;
   created_at: string;
-  updated_at: string;
 };
 
 export type MetricsResponse = {
   metrics: DailyMetricRow[];
   totals: {
-    calls_answered: number;
-    calls_missed: number;
-    appointments_booked: number;
-    no_shows: number;
-    no_shows_recovered: number;
-    follow_ups_sent: number;
-    leads_captured: number;
-    revenue_estimated_cents: number;
-    response_time_avg_seconds: number | null;
+    total_calls: number;
+    total_leads: number;
+    total_appointments: number;
+    total_revenue_cents: number;
+    avg_call_duration_seconds: number | null;
+    missed_calls: number;
+    recovered_calls: number;
     date_range_days: number;
   };
 };
@@ -86,35 +82,31 @@ export async function GET(req: NextRequest) {
 
     // Calculate totals
     const totals = {
-      calls_answered: 0,
-      calls_missed: 0,
-      appointments_booked: 0,
-      no_shows: 0,
-      no_shows_recovered: 0,
-      follow_ups_sent: 0,
-      leads_captured: 0,
-      revenue_estimated_cents: 0,
-      response_time_avg_seconds: null as number | null,
+      total_calls: 0,
+      total_leads: 0,
+      total_appointments: 0,
+      total_revenue_cents: 0,
+      avg_call_duration_seconds: null as number | null,
+      missed_calls: 0,
+      recovered_calls: 0,
     };
 
-    const responseTimes: number[] = [];
+    const durations: number[] = [];
     for (const row of rows) {
-      totals.calls_answered += row.calls_answered;
-      totals.calls_missed += row.calls_missed;
-      totals.appointments_booked += row.appointments_booked;
-      totals.no_shows += row.no_shows;
-      totals.no_shows_recovered += row.no_shows_recovered;
-      totals.follow_ups_sent += row.follow_ups_sent;
-      totals.leads_captured += row.leads_captured;
-      totals.revenue_estimated_cents += row.revenue_estimated_cents;
-      if (row.response_time_avg_seconds !== null) {
-        responseTimes.push(row.response_time_avg_seconds);
+      totals.total_calls += row.total_calls ?? 0;
+      totals.total_leads += row.total_leads ?? 0;
+      totals.total_appointments += row.total_appointments ?? 0;
+      totals.total_revenue_cents += row.total_revenue_cents ?? 0;
+      totals.missed_calls += row.missed_calls ?? 0;
+      totals.recovered_calls += row.recovered_calls ?? 0;
+      if (row.avg_call_duration_seconds != null && row.avg_call_duration_seconds > 0) {
+        durations.push(row.avg_call_duration_seconds);
       }
     }
 
-    // Calculate average response time (average of daily averages)
-    if (responseTimes.length > 0) {
-      totals.response_time_avg_seconds = Math.round(responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length);
+    // Calculate average call duration (average of daily averages)
+    if (durations.length > 0) {
+      totals.avg_call_duration_seconds = Math.round(durations.reduce((a, b) => a + b, 0) / durations.length);
     }
 
     // Calculate date range

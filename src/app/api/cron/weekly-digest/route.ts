@@ -12,15 +12,13 @@ import { assertCronAuthorized } from "@/lib/runtime";
 import { sendEmail } from "@/lib/integrations/email";
 
 interface DailyMetricRow {
-  calls_answered: number;
-  calls_missed: number;
-  appointments_booked: number;
-  no_shows: number;
-  no_shows_recovered: number;
-  follow_ups_sent: number;
-  leads_captured: number;
-  revenue_estimated_cents: number;
-  response_time_avg_seconds: number;
+  total_calls: number;
+  missed_calls: number;
+  total_appointments: number;
+  recovered_calls: number;
+  total_leads: number;
+  total_revenue_cents: number;
+  avg_call_duration_seconds: number;
 }
 
 export async function GET(req: NextRequest) {
@@ -65,7 +63,7 @@ export async function GET(req: NextRequest) {
       // Fetch weekly metrics
       const { data: rows } = await db
         .from("daily_metrics")
-        .select("calls_answered, calls_missed, appointments_booked, no_shows, no_shows_recovered, follow_ups_sent, leads_captured, revenue_estimated_cents, response_time_avg_seconds")
+        .select("total_calls, missed_calls, total_appointments, recovered_calls, total_leads, total_revenue_cents, avg_call_duration_seconds")
         .eq("workspace_id", ws.id)
         .gte("date", startDate)
         .lte("date", endDate);
@@ -76,34 +74,31 @@ export async function GET(req: NextRequest) {
 
       const totals = metrics.reduce(
         (acc, row) => ({
-          calls_answered: acc.calls_answered + (row.calls_answered ?? 0),
-          calls_missed: acc.calls_missed + (row.calls_missed ?? 0),
-          appointments_booked: acc.appointments_booked + (row.appointments_booked ?? 0),
-          no_shows_recovered: acc.no_shows_recovered + (row.no_shows_recovered ?? 0),
-          follow_ups_sent: acc.follow_ups_sent + (row.follow_ups_sent ?? 0),
-          leads_captured: acc.leads_captured + (row.leads_captured ?? 0),
-          revenue_estimated_cents: acc.revenue_estimated_cents + (row.revenue_estimated_cents ?? 0),
+          total_calls: acc.total_calls + (row.total_calls ?? 0),
+          missed_calls: acc.missed_calls + (row.missed_calls ?? 0),
+          total_appointments: acc.total_appointments + (row.total_appointments ?? 0),
+          recovered_calls: acc.recovered_calls + (row.recovered_calls ?? 0),
+          total_leads: acc.total_leads + (row.total_leads ?? 0),
+          total_revenue_cents: acc.total_revenue_cents + (row.total_revenue_cents ?? 0),
         }),
         {
-          calls_answered: 0,
-          calls_missed: 0,
-          appointments_booked: 0,
-          no_shows_recovered: 0,
-          follow_ups_sent: 0,
-          leads_captured: 0,
-          revenue_estimated_cents: 0,
+          total_calls: 0,
+          missed_calls: 0,
+          total_appointments: 0,
+          recovered_calls: 0,
+          total_leads: 0,
+          total_revenue_cents: 0,
         },
       );
 
       // Skip if no meaningful activity at all
       if (
-        totals.calls_answered === 0 &&
-        totals.follow_ups_sent === 0 &&
-        totals.leads_captured === 0 &&
-        totals.revenue_estimated_cents === 0
+        totals.total_calls === 0 &&
+        totals.total_leads === 0 &&
+        totals.total_revenue_cents === 0
       ) continue;
 
-      const revenue = (totals.revenue_estimated_cents / 100).toLocaleString("en-US", {
+      const revenue = (totals.total_revenue_cents / 100).toLocaleString("en-US", {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
       });
@@ -145,13 +140,13 @@ export async function GET(req: NextRequest) {
       <tr>
         <td width="50%" style="padding: 6px;">
           <div class="stat">
-            <div class="stat-value">${totals.calls_answered}</div>
-            <div class="stat-label">Calls answered</div>
+            <div class="stat-value">${totals.total_calls}</div>
+            <div class="stat-label">Total calls</div>
           </div>
         </td>
         <td width="50%" style="padding: 6px;">
           <div class="stat">
-            <div class="stat-value">${totals.appointments_booked}</div>
+            <div class="stat-value">${totals.total_appointments}</div>
             <div class="stat-label">Appointments booked</div>
           </div>
         </td>
@@ -159,14 +154,14 @@ export async function GET(req: NextRequest) {
       <tr>
         <td width="50%" style="padding: 6px;">
           <div class="stat">
-            <div class="stat-value">${totals.follow_ups_sent}</div>
-            <div class="stat-label">Follow-ups executed</div>
+            <div class="stat-value">${totals.total_leads}</div>
+            <div class="stat-label">Leads captured</div>
           </div>
         </td>
         <td width="50%" style="padding: 6px;">
           <div class="stat">
-            <div class="stat-value">${totals.no_shows_recovered}</div>
-            <div class="stat-label">No-shows recovered</div>
+            <div class="stat-value">${totals.recovered_calls}</div>
+            <div class="stat-label">Calls recovered</div>
           </div>
         </td>
       </tr>

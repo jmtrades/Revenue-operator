@@ -376,7 +376,7 @@ async function handleVoiceServerTTS(
 export async function GET(req: NextRequest) {
   try {
     const ip =
-      req.headers.get("x-forwarded-for") ||
+      (req.headers.get("x-forwarded-for") ?? "").split(",")[0]?.trim() ||
       req.headers.get("x-real-ip") ||
       "unknown";
 
