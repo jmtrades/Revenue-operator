@@ -119,7 +119,7 @@ export async function POST(req: NextRequest) {
     await db.from("leads").insert({
       workspace_id: DEMO_WORKSPACE,
       phone: e164Phone,
-      state: "NEW",
+      status: "NEW",
       channel: "demo_call",
       metadata: {
         source: "website_hero",

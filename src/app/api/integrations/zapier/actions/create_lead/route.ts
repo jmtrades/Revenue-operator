@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       phone,
       email: (body.email ?? "").toString().trim() || null,
       company: (body.company ?? "").toString().trim() || null,
-      state: "new",
+      status: "new",
       metadata: { source: "zapier" },
     })
     .select("id, name, phone, email, company, state, created_at")

@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
       phone,
       email,
       company: service_requested,
-      state: "new",
+      status: "new",
       metadata: { source, service_requested, notes, score },
     })
     .select("id")

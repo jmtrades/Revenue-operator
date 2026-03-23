@@ -197,3 +197,11 @@ export function useWorkspace() {
   if (!ctx) throw new Error("useWorkspace must be used within WorkspaceProvider");
   return ctx;
 }
+
+/**
+ * Safe variant that returns null instead of throwing when used outside the
+ * provider (e.g. during SSR / hydration race conditions).
+ */
+export function useWorkspaceSafe(): WorkspaceContextValue | null {
+  return useContext(WorkspaceContext);
+}

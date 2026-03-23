@@ -123,14 +123,14 @@ export async function GET(req: NextRequest) {
 
   try {
     const { data: daily } = await db
-      .from("analytics_daily")
-      .select("estimated_revenue, date")
+      .from("daily_metrics")
+      .select("total_revenue_cents, date")
       .eq("workspace_id", workspaceId)
       .gte("date", monthStart.slice(0, 10));
     if (daily?.length) {
       for (const row of daily) {
-        const v = Number(row.estimated_revenue);
-        if (!Number.isNaN(v)) revenueCents += Math.round(v * 100);
+        const v = Number((row as { total_revenue_cents?: number }).total_revenue_cents);
+        if (!Number.isNaN(v)) revenueCents += v;
       }
     }
   } catch { /* ignore */ }

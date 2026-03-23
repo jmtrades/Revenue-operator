@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
       phone: phoneStr,
       email: (email ?? "").trim() || null,
       company: (company ?? service_requested ?? "").trim() || null,
-      state: dbState,
+      status: dbState,
       metadata,
     })
     .select()

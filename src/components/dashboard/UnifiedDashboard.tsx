@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useWorkspace } from "@/components/WorkspaceContext";
+import { useWorkspaceSafe } from "@/components/WorkspaceContext";
 import {
   Phone,
   MessageSquare,
@@ -82,7 +82,8 @@ function fmtTime(iso: string): string {
 
 export function UnifiedDashboard() {
   const t = useTranslations("dashboard");
-  const { workspaceId } = useWorkspace();
+  const ws = useWorkspaceSafe();
+  const workspaceId = ws?.workspaceId ?? "";
   const [data, setData] = useState<Summary | null>(null);
   const [loading, setLoading] = useState(true);
   const [callingId, setCallingId] = useState<string | null>(null);

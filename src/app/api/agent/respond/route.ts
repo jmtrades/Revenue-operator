@@ -48,13 +48,20 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  let body: {
+    messages?: Message[];
+    conversation_id?: string;
+    workspace_id?: string;
+    call_session_id?: string;
+  };
   try {
-    const body = (await req.json()) as {
-      messages?: Message[];
-      conversation_id?: string;
-      workspace_id?: string;
-      call_session_id?: string;
-    };
+    body = (await req.json()) as typeof body;
+  } catch {
+    // Voice server sent malformed JSON (e.g. empty body, partial stream)
+    return NextResponse.json({ text: "Sorry, could you say that again?" });
+  }
+
+  try {
 
     const rawMessages = body?.messages ?? [];
     if (rawMessages.length === 0) {
@@ -71,14 +78,23 @@ export async function POST(req: NextRequest) {
         // Load business context for this workspace
         const { data: ctx } = await db
           .from("workspace_business_context")
-          .select("business_name, industry, services, hours, area, pricing, greeting, agent_name, agent_style")
+          .select("business_name, industry, services, business_hours, address, pricing_range, tone_guidelines")
           .eq("workspace_id", wsId)
           .maybeSingle();
 
+        // Also load agent name + greeting from workspaces table
+        const { data: wsRow } = await db
+          .from("workspaces")
+          .select("agent_name, greeting, voice_id")
+          .eq("id", wsId)
+          .maybeSingle();
+
         if (ctx?.business_name) {
-          const agentName = ctx.agent_name || "the receptionist";
+          const agentName = (wsRow as { agent_name?: string } | null)?.agent_name || "the receptionist";
+          const greeting = (wsRow as { greeting?: string } | null)?.greeting;
+          const style = (ctx as { tone_guidelines?: string }).tone_guidelines || "warm and professional";
           systemPrompt = `You are ${agentName} answering the phone for ${ctx.business_name}.
-Style: ${ctx.agent_style || "warm and professional"}.
+Style: ${style}.
 
 CRITICAL RULES:
 - You are ON A LIVE PHONE CALL. Speak naturally like a human.
@@ -90,12 +106,12 @@ CRITICAL RULES:
 
 Business info:
 - Name: ${ctx.business_name}
-- Industry: ${ctx.industry || "general"}
-- Services: ${ctx.services || "various services"}
-- Hours: ${ctx.hours || "regular business hours"}
-- Area: ${ctx.area || "local area"}
-- Pricing: ${ctx.pricing || "varies by service — offer to have someone follow up with details"}
-${ctx.greeting ? `- Opening greeting: "${ctx.greeting}"` : ""}`;
+- Industry: ${(ctx as { industry?: string }).industry || "general"}
+- Services: ${(ctx as { services?: string }).services || "various services"}
+- Hours: ${(ctx as { business_hours?: string }).business_hours || "regular business hours"}
+- Area: ${(ctx as { address?: string }).address || "local area"}
+- Pricing: ${(ctx as { pricing_range?: string }).pricing_range || "varies by service — offer to have someone follow up with details"}
+${greeting ? `- Opening greeting: "${greeting}"` : ""}`;
         }
       } catch {
         // Fall through to default prompt — don't break the call
