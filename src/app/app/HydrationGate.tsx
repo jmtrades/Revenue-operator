@@ -1,34 +1,7 @@
 "use client";
 
-import { useState, useEffect, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import AppShellClient, { type AppShellWorkspaceMeta } from "./AppShellClient";
-
-/** Static skeleton only. No dynamic data so server and client output match. */
-function AppShellSkeleton() {
-  return (
-    <div className="flex h-screen bg-[var(--bg-base)]" aria-busy="true" aria-label="Loading app">
-      <div className="hidden md:block w-[200px] bg-[var(--bg-surface)] border-r border-[var(--border-default)] shrink-0">
-        <div className="p-4 space-y-3">
-          <div className="h-8 w-8 rounded-full bg-[var(--bg-card)]" />
-          <div className="h-4 w-24 rounded bg-[var(--bg-card)]" />
-          <div className="space-y-2 mt-6">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="h-8 rounded bg-[var(--bg-card)]" />
-            ))}
-          </div>
-        </div>
-      </div>
-      <div className="flex-1 flex items-center justify-center min-w-0">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[var(--bg-surface)] flex items-center justify-center text-[var(--text-primary)] text-sm font-bold">
-            RT
-          </div>
-          <p className="text-sm text-[var(--text-tertiary)]">Loading…</p>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export type HydrationGateInitialData = {
   workspaceId: string;
@@ -36,6 +9,15 @@ export type HydrationGateInitialData = {
   workspaceMeta: AppShellWorkspaceMeta;
 };
 
+/**
+ * HydrationGate — thin wrapper that renders AppShellClient directly.
+ *
+ * Previous implementation deferred rendering behind a `mounted` state gate
+ * (showing a skeleton until a useEffect fired). This caused infinite "Loading
+ * app" screens when React's selective hydration silently failed to reach the
+ * component. Rendering AppShellClient directly avoids the dead-end and lets
+ * Next.js error boundaries surface real issues.
+ */
 export default function HydrationGate({
   initialShellData,
   children,
@@ -43,7 +25,6 @@ export default function HydrationGate({
   initialShellData: HydrationGateInitialData;
   children: ReactNode;
 }) {
-  const [mounted, setMounted] = useState(false);
   useEffect(() => {
     // Unregister service workers so deploys don't serve stale cached responses
     if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
@@ -52,14 +33,6 @@ export default function HydrationGate({
       });
     }
   }, []);
-  useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 0);
-    return () => clearTimeout(t);
-  }, []);
-
-  if (!mounted) {
-    return <AppShellSkeleton />;
-  }
 
   return (
     <AppShellClient
