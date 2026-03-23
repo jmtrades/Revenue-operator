@@ -130,15 +130,17 @@ export async function POST(req: NextRequest) {
             }
 
             // Store inbound message for inbox
-            await db.from("chat_widget_messages").insert({
-              workspace_id: workspaceId,
-              sender_type: "visitor",
-              content: messageInfo.text?.slice(0, 2000) ?? "",
-              channel: "sms",
-              metadata: { from: fromPhone, to: toPhone, message_id: messageInfo.messageId },
-            }).then(() => {}).catch((err) => {
+            try {
+              await db.from("chat_widget_messages").insert({
+                workspace_id: workspaceId,
+                sender_type: "visitor",
+                content: messageInfo.text?.slice(0, 2000) ?? "",
+                channel: "sms",
+                metadata: { from: fromPhone, to: toPhone, message_id: messageInfo.messageId },
+              });
+            } catch (err) {
               log("error", "telnyx_sms.inbound_store_failed", { error: err instanceof Error ? err.message : String(err) });
-            });
+            }
           }
         } else {
           log("info", "telnyx_sms.unhandled_event", { eventType });

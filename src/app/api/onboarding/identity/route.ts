@@ -17,16 +17,30 @@ export async function POST(req: NextRequest) {
   const db = getDb();
   const userId = randomUUID();
   const workspaceId = randomUUID();
+  const trialEnd = new Date();
+  trialEnd.setDate(trialEnd.getDate() + 14);
   const { error: wsErr } = await db.from("workspaces").insert({
     id: workspaceId,
     name: business_name.trim(),
     owner_id: userId,
     autonomy_level: "assisted",
     kill_switch: false,
+    status: "active",
+    billing_status: "trial",
+    billing_tier: "solo",
+    trial_ends_at: trialEnd.toISOString(),
+    industry: industry?.trim() || null,
+    business_name: business_name.trim(),
   });
   if (wsErr) {
     console.error("[onboarding/identity] workspace insert failed:", wsErr.message);
     return NextResponse.json({ error: "Failed to create workspace. Please try again." }, { status: 500 });
+  }
+  // Create workspace member record for the owner
+  try {
+    await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
+  } catch {
+    // Non-blocking — membership can be retried
   }
   const { error: settingsErr } = await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
   if (settingsErr) {
