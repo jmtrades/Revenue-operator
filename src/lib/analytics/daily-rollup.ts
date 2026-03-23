@@ -6,15 +6,13 @@
 import { getDb } from "@/lib/db/queries";
 
 export type DailyMetrics = {
-  calls_answered: number;
-  calls_missed: number;
-  appointments_booked: number;
-  no_shows: number;
-  no_shows_recovered: number;
-  follow_ups_sent: number;
-  leads_captured: number;
-  revenue_estimated_cents: number;
-  response_time_avg_seconds: number | null;
+  total_calls: number;
+  missed_calls: number;
+  total_appointments: number;
+  total_leads: number;
+  recovered_calls: number;
+  total_revenue_cents: number;
+  avg_call_duration_seconds: number | null;
 };
 
 /**
@@ -31,19 +29,18 @@ export async function computeDailyMetrics(
   const startOfDay = `${date}T00:00:00Z`;
   const endOfDay = `${date}T23:59:59Z`;
 
-  // 1. Calls answered: call_ended_at IS NOT NULL (completed calls)
-  const { count: callsAnsweredCount } = await db
+  // 1. Total calls (all calls in the period)
+  const { count: totalCallsCount } = await db
     .from("call_sessions")
     .select("id", { count: "exact", head: true })
     .eq("workspace_id", workspaceId)
     .gte("call_started_at", startOfDay)
-    .lt("call_started_at", endOfDay)
-    .not("call_ended_at", "is", null);
+    .lt("call_started_at", endOfDay);
 
-  const calls_answered = callsAnsweredCount ?? 0;
+  const total_calls = totalCallsCount ?? 0;
 
-  // 2. Calls missed: outcome = 'no_answer' or 'voicemail' (missed calls)
-  const { count: callsMissedCount } = await db
+  // 2. Missed calls: outcome = 'no_answer' or 'voicemail'
+  const { count: missedCallsCount } = await db
     .from("call_sessions")
     .select("id", { count: "exact", head: true })
     .eq("workspace_id", workspaceId)
@@ -51,10 +48,10 @@ export async function computeDailyMetrics(
     .lt("call_started_at", endOfDay)
     .in("outcome", ["no_answer", "voicemail"]);
 
-  const calls_missed = callsMissedCount ?? 0;
+  const missed_calls = missedCallsCount ?? 0;
 
   // 3. Appointments booked: status = 'confirmed' and created within date
-  const { count: appointmentsBookedCount } = await db
+  const { count: appointmentsCount } = await db
     .from("appointments")
     .select("id", { count: "exact", head: true })
     .eq("workspace_id", workspaceId)
@@ -62,22 +59,19 @@ export async function computeDailyMetrics(
     .gte("created_at", startOfDay)
     .lt("created_at", endOfDay);
 
-  const appointments_booked = appointmentsBookedCount ?? 0;
+  const total_appointments = appointmentsCount ?? 0;
 
-  // 4. No-shows: status = 'no_show' and created within date
-  const { count: noShowsCount } = await db
-    .from("appointments")
+  // 4. Leads captured
+  const { count: leadsCount } = await db
+    .from("leads")
     .select("id", { count: "exact", head: true })
     .eq("workspace_id", workspaceId)
-    .eq("status", "no_show")
     .gte("created_at", startOfDay)
     .lt("created_at", endOfDay);
 
-  const no_shows = noShowsCount ?? 0;
+  const total_leads = leadsCount ?? 0;
 
-  // 5. No-shows recovered: look for appointments that were no_show and subsequently converted to completed
-  // For now, we'll count no_shows that have a follow-up message or a new appointment booked on the same contact
-  // This is estimated by checking if there's activity after the no_show
+  // 5. Recovered calls: missed calls that were later returned/answered
   const { data: noShowAppointments } = await db
     .from("appointments")
     .select("id, lead_id")
@@ -86,7 +80,7 @@ export async function computeDailyMetrics(
     .gte("created_at", startOfDay)
     .lt("created_at", endOfDay);
 
-  let no_shows_recovered = 0;
+  let recovered_calls = 0;
   if (noShowAppointments && noShowAppointments.length > 0) {
     const noShowLeadIds = (noShowAppointments as Array<{ id: string; lead_id: string }>).map((a) => a.lead_id);
     if (noShowLeadIds.length > 0) {
@@ -99,82 +93,48 @@ export async function computeDailyMetrics(
         .gte("created_at", startOfDay)
         .lt("created_at", endOfDay);
 
-      no_shows_recovered = recoveredCount ?? 0;
+      recovered_calls = recoveredCount ?? 0;
     }
   }
 
-  // 6. Follow-ups sent: messages with direction='outbound' and trigger contains 'followup'
-  const { count: followUpsCount } = await db
-    .from("messages")
-    .select("id", { count: "exact", head: true })
-    .eq("workspace_id", workspaceId)
-    .eq("direction", "outbound")
-    .gte("sent_at", startOfDay)
-    .lt("sent_at", endOfDay);
-
-  const follow_ups_sent = followUpsCount ?? 0;
-
-  // 7. Leads captured: leads with created_at within date
-  const { count: leadsCapturedCount } = await db
-    .from("leads")
-    .select("id", { count: "exact", head: true })
-    .eq("workspace_id", workspaceId)
-    .gte("created_at", startOfDay)
-    .lt("created_at", endOfDay);
-
-  const leads_captured = leadsCapturedCount ?? 0;
-
-  // 8. Response time average (seconds): time between call_created_at and call_started_at
-  // Note: using started_at and call_started_at as proxy for when call actually began
-  const { data: callSessionsForResponseTime } = await db
+  // 6. Average call duration (seconds)
+  const { data: callDurations } = await db
     .from("call_sessions")
-    .select("started_at, call_started_at")
+    .select("call_started_at, call_ended_at")
     .eq("workspace_id", workspaceId)
     .gte("call_started_at", startOfDay)
     .lt("call_started_at", endOfDay)
-    .not("call_started_at", "is", null);
+    .not("call_ended_at", "is", null);
 
-  let response_time_avg_seconds: number | null = null;
-  const sessions = callSessionsForResponseTime ?? [];
-  if (sessions.length > 0) {
-    type ResponseTimeSession = {
-      started_at: string;
-      call_started_at: string;
-    };
-    const responseTimes = sessions
-      .filter((s): s is ResponseTimeSession => {
-        const candidate = s as { started_at?: string | null; call_started_at?: string | null } | null | undefined;
-        return Boolean(candidate?.started_at && candidate?.call_started_at);
+  let avg_call_duration_seconds: number | null = null;
+  const durSessions = callDurations ?? [];
+  if (durSessions.length > 0) {
+    type DurSession = { call_started_at: string; call_ended_at: string };
+    const durations = durSessions
+      .filter((s): s is DurSession => {
+        const c = s as { call_started_at?: string | null; call_ended_at?: string | null } | null;
+        return Boolean(c?.call_started_at && c?.call_ended_at);
       })
-      .map((s) => {
-        const createdTime = new Date(s.started_at).getTime();
-        const callStartTime = new Date(s.call_started_at).getTime();
-        return (callStartTime - createdTime) / 1000; // convert to seconds
-      })
-      .filter((t: number) => t >= 0 && t < 3600); // filter out outliers (0-60 minutes)
+      .map((s) => (new Date(s.call_ended_at).getTime() - new Date(s.call_started_at).getTime()) / 1000)
+      .filter((t: number) => t >= 0 && t < 7200);
 
-    if (responseTimes.length > 0) {
-      response_time_avg_seconds = Math.round(responseTimes.reduce((a: number, b: number) => a + b, 0) / responseTimes.length);
+    if (durations.length > 0) {
+      avg_call_duration_seconds = Math.round(durations.reduce((a: number, b: number) => a + b, 0) / durations.length);
     }
   }
 
-  // 9. Revenue estimated (cents)
-  // Strategy: appointments_booked × estimated deal value per vertical
-  // Default multiplier: $1500 per appointment booked = 150000 cents
-  // This can be overridden by workspace settings later
-  const estimatedDealValueCents = 150000; // $1500 default
-  const revenue_estimated_cents = appointments_booked * estimatedDealValueCents;
+  // 7. Revenue estimated (cents): appointments × $1500 default deal value
+  const estimatedDealValueCents = 150000;
+  const total_revenue_cents = total_appointments * estimatedDealValueCents;
 
   return {
-    calls_answered,
-    calls_missed,
-    appointments_booked,
-    no_shows,
-    no_shows_recovered,
-    follow_ups_sent,
-    leads_captured,
-    revenue_estimated_cents,
-    response_time_avg_seconds,
+    total_calls,
+    missed_calls,
+    total_appointments,
+    total_leads,
+    recovered_calls,
+    total_revenue_cents,
+    avg_call_duration_seconds,
   };
 }
 
@@ -195,15 +155,13 @@ export async function upsertDailyMetrics(
       {
         workspace_id: workspaceId,
         date: date,
-        calls_answered: metrics.calls_answered,
-        calls_missed: metrics.calls_missed,
-        appointments_booked: metrics.appointments_booked,
-        no_shows: metrics.no_shows,
-        no_shows_recovered: metrics.no_shows_recovered,
-        follow_ups_sent: metrics.follow_ups_sent,
-        leads_captured: metrics.leads_captured,
-        revenue_estimated_cents: metrics.revenue_estimated_cents,
-        response_time_avg_seconds: metrics.response_time_avg_seconds,
+        total_calls: metrics.total_calls,
+        missed_calls: metrics.missed_calls,
+        total_appointments: metrics.total_appointments,
+        total_leads: metrics.total_leads,
+        recovered_calls: metrics.recovered_calls,
+        total_revenue_cents: metrics.total_revenue_cents,
+        avg_call_duration_seconds: metrics.avg_call_duration_seconds,
       },
       {
         onConflict: "workspace_id,date",
