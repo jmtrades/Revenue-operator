@@ -461,7 +461,17 @@
       "showPassword": "Show",
       "hidePassword": "Hide",
       "showPasswordAria": "Show password",
-      "hidePasswordAria": "Hide password"
+      "hidePasswordAria": "Hide password",
+      "emailLabel": "Email address",
+      "passwordLabel": "Password",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "forgotPassword": "Forgot password?",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up",
+      "orContinueWith": "Or continue with",
+      "errorInvalid": "Invalid email or password",
+      "errorGeneric": "Something went wrong. Please try again."
     },
     "email": {
       "label": "Email address"
@@ -1154,7 +1164,10 @@
       "guidanceDay57Period": "Day 5–7",
       "guidanceDay57Line": "Monitor commitments and confirmations.",
       "handlingStale": "Handling not observed recently.",
-      "copyRecordFallback": "Copy record"
+      "copyRecordFallback": "Copy record",
+      "checkout": "Checkout",
+      "declared_posture": "Declared Posture",
+      "first_win_shown": "First Win Shown"
     },
     "recordLead": {
       "authorityNoteLabel": "Record authority note",
@@ -1223,7 +1236,11 @@
       "filterAuthority": "Authority",
       "emptyWhatHappened": "What actually happened.",
       "emptyNoEntriesInView": "No entries in this view.",
-      "connectSourceHint": "Connect a source to begin handling calls."
+      "connectSourceHint": "Connect a source to begin handling calls.",
+      "all": "All",
+      "authority": "Authority",
+      "loadingMessage": "Loading…",
+      "outcomes": "Outcomes"
     },
     "policyEdit": {
       "selectWorkspace": "Select a workspace.",
@@ -1232,7 +1249,9 @@
       "approvalModeLabel": "Approval mode",
       "requiredDisclaimersLabel": "Required disclaimers (one per line)",
       "forbiddenPhrasesLabel": "Forbidden phrases (one per line)",
-      "requiredPhrasesLabel": "Required phrases (one per line)"
+      "requiredPhrasesLabel": "Required phrases (one per line)",
+      "loadingMessage": "Loading…",
+      "save": "Save"
     },
     "callDetail": {
       "loadingTitle": "Record",
@@ -1250,7 +1269,13 @@
       "text": "Text",
       "markDone": "Mark done",
       "transcript": "Transcript",
-      "noTranscript": "No transcript available for this call."
+      "noTranscript": "No transcript available for this call.",
+      "backToActivity": "Back to Activity",
+      "backToCalls": "Back to Calls",
+      "empty": {
+        "recordNotFound": "Call not found"
+      },
+      "loadingMessage": "Loading call details…"
     },
     "approvalsPage": {
       "selectWorkspace": "Approvals appear when operation is in place.",
@@ -1268,7 +1293,8 @@
       "stateInProgress": "In progress.",
       "stateConfirmation": "Confirmation in progress.",
       "stateRecovery": "Recovery in progress.",
-      "stateFollowThrough": "Follow-through in progress."
+      "stateFollowThrough": "Follow-through in progress.",
+      "loadingMessage": "Loading…"
     },
     "integrationsPage": {
       "googleCalendar": "Google Calendar",
@@ -1325,7 +1351,11 @@
       "creating": "Creating…",
       "createCampaign": "Create campaign",
       "cancel": "Cancel",
-      "createError": "Failed to create campaign."
+      "createError": "Failed to create campaign.",
+      "newCampaignPlaceholder": "e.g. Spring Reactivation",
+      "empty": {
+        "chooseWorkspaceFirst": "Choose a workspace first"
+      }
     },
     "billingPage": {
       "billingUnavailable": "Billing information unavailable.",
@@ -1433,7 +1463,11 @@
       "followThroughInProgress": "Follow-through in progress",
       "accessContext": "Access context",
       "ifProtectionStops": "If protection stops",
-      "ifProtectionStopsBody": "Response continuity, decision completion, and attendance stability will no longer be protected for in-progress work. Some decisions may stall. Attendance may no longer be stabilized."
+      "ifProtectionStopsBody": "Response continuity, decision completion, and attendance stability will no longer be protected for in-progress work. Some decisions may stall. Attendance may no longer be stabilized.",
+      "empty": {
+        "protectionScopeSubtitle": "No data available yet"
+      },
+      "loadingMessage": "Loading…"
     },
     "callsCalendarPage": {
       "confirmationRecommended": "Confirmation recommended",
@@ -1476,7 +1510,23 @@
       "SHOWED": "Appointment completed.",
       "LOST": "Conversation paused.",
       "REACTIVATE": "Conversation paused.",
-      "fallback": "Conversation in progress."
+      "fallback": "Conversation in progress.",
+      "beyondScope": "Beyond scope",
+      "dataRemainsFromLastView": "Data remains from last view",
+      "enterOutcome": "Enter outcome",
+      "entryExistsForRecord": "Entry exists for this record",
+      "entryRestoresReliance": "Entry restores reliance",
+      "entryStored": "Entry stored",
+      "followThrough": "Follow-through",
+      "handled": "Handled",
+      "howItProgressed": "How it progressed",
+      "normalConditionsNotPresentResume": "Normal conditions not present — resume",
+      "outcome": "Outcome",
+      "outsideAuthority": "Outside authority",
+      "record": "Record",
+      "recordIntegrityDemonstrable": "Record integrity demonstrable",
+      "unknown": "Unknown",
+      "unrecordedOutcomesCreateExposure": "Unrecorded outcomes create exposure"
     },
     "leadDetailPage": {
       "loadingMessage": "One moment…",
@@ -1496,7 +1546,10 @@
       "unrecordedOutcomesCreateExposure": "Unrecorded outcomes create exposure.",
       "entryRestoresReliance": "Entry restores reliance.",
       "enterOutcome": "Enter outcome",
-      "howItProgressed": "How it progressed"
+      "howItProgressed": "How it progressed",
+      "empty": {
+        "recordNotFound": "This lead doesn't exist or has been removed."
+      }
     },
     "onboardingWizard": {
       "getStartedHeading": "Get started",
@@ -1628,7 +1681,8 @@
       "addNumberLaterInSettings": "You can add a phone number later in Settings. Your agent is set up and ready.",
       "takeMeToDashboard": "Take me to my dashboard →",
       "skipTestLater": "Skip — I'll test later",
-      "oneMoment": "One moment…"
+      "oneMoment": "One moment…",
+      "capture": "Capture"
     },
     "followThroughEmptyTitle": "Follow-through in progress appears here.",
     "followThroughEmptySubtitle": "In place.",
@@ -1696,6 +1750,9 @@
       "responsibilityRemains": "Responsibility for follow-through remains in place during this period.",
       "connectCalendar": "Connect your calendar",
       "nav": {
+        "sectionBusiness": "Business",
+        "sectionIntegrations": "Integrations & Voice",
+        "sectionAccount": "Account",
         "business": "Business",
         "phone": "Phone",
         "callRules": "Call rules",
@@ -1703,7 +1760,20 @@
         "notifications": "Notifications",
         "integrations": "Integrations",
         "compliance": "Compliance",
-        "billing": "Billing"
+        "billing": "Billing",
+        "communication": "Communication",
+        "outbound": "Outbound",
+        "leadScoring": "Lead scoring",
+        "industryTemplates": "Industry templates",
+        "agent": "Agent",
+        "marketplace": "Marketplace",
+        "porting": "Port number",
+        "mapping": "Field mapping",
+        "syncLog": "Sync log",
+        "voiceSettings": "Voice settings",
+        "cancellation": "Cancel plan",
+        "errorsAuditLog": "Errors & audit log",
+        "activity": "Activity"
       },
       "sourcesIntro": "Connect where your leads come from",
       "copy": "Copy",
@@ -2998,7 +3068,11 @@
       },
       "nav": {
         "calls": "Calls"
-      }
+      },
+      "speakerCaller": "Caller",
+      "status": "Status",
+      "summary": "Summary",
+      "noRecording": "No recording available"
     },
     "empty": {
       "title": "Your AI is ready.",
@@ -3948,7 +4022,11 @@
       "activity": "Activity",
       "sectionBusiness": "Your Business",
       "sectionIntegrations": "Integrations",
-      "sectionAccount": "Account"
+      "sectionAccount": "Account",
+      "communication": "Communication",
+      "autoSetup": "Auto Setup (AI)",
+      "chatWidget": "Chat Widget",
+      "whiteLabel": "White Label"
     },
     "activity": {
       "backToSettings": "← Settings",
@@ -4358,7 +4436,10 @@
     "toneForFollowThrough": "Tone for follow through",
     "whatYouOffer": "What you offer",
     "whatYouOfferPlaceholder": "Enter what you offer",
-    "whenWeAskBeforeActing": "When we ask before acting"
+    "whenWeAskBeforeActing": "When we ask before acting",
+    "profileTitle": "Profile",
+    "requestDeleteData": "Request data deletion",
+    "requestDeleteAccount": "Request account deletion"
   },
   "hero": {
     "title": "Your Revenue Operations Run on Autopilot.",
@@ -6309,7 +6390,8 @@
         "timeLabel": "Time",
         "durationLabel": "Duration",
         "availableTimes": "Available Times"
-      }
+      },
+      "processing": "Processing…"
     }
   },
   "search": {

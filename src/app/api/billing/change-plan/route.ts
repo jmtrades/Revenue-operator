@@ -194,7 +194,7 @@ export async function POST(req: NextRequest) {
 
     await stripe.subscriptions.update(row.stripe_subscription_id, {
       items: [{ id: itemId, price: priceResult.price_id }],
-      proration_behavior: isDowngrade ? "none" : "always_invoice",
+      proration_behavior: isDowngrade ? "none" : "create_prorations",
       billing_cycle_anchor: "unchanged",
     });
 

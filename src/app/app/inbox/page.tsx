@@ -191,7 +191,7 @@ function ConversationList({
               key={thread.id}
               type="button"
               onClick={() => onSelect(thread.id)}
-              className={`w-full flex items-start gap-3 px-3 py-3 border-b border-[var(--border-default)] text-left hover:bg-[var(--bg-hover)] ${
+              className={`w-full flex items-start gap-3 px-3 py-3.5 border-b border-[var(--border-default)] text-left hover:bg-[var(--bg-hover)] transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/30 ${
                 isActive ? "bg-[var(--bg-card)] border-l-2 border-l-[var(--accent-primary)]" : ""
               }`}
             >
@@ -211,7 +211,7 @@ function ConversationList({
                     </span>
                     <Icon className="w-3.5 h-3.5 text-[var(--text-secondary)] shrink-0" />
                   </div>
-                  <span className="text-[10px] text-[var(--text-secondary)] shrink-0">
+                  <span className="text-[11px] text-[var(--text-secondary)] shrink-0">
                     {formatRelative(thread.lastMessageAt, t)}
                   </span>
                 </div>
@@ -351,7 +351,7 @@ function ConversationDetail({
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-2">
+      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3">
         <AnimatePresence initial={false}>
           {thread.messages.map((m) => {
             if (m.isCall) {

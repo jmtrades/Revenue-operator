@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import crypto from "crypto";
 
 interface ChatSession {
@@ -94,6 +95,16 @@ export async function GET(req: NextRequest) {
  * Create a new chat session (public endpoint for visitors)
  */
 export async function POST(req: NextRequest) {
+  // Rate limit: 10 new sessions per minute per IP (prevents abuse from public endpoint)
+  const ip = getClientIp(req);
+  const rl = await checkRateLimit(`chat-widget-session:${ip}`, 10, 60_000);
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again in a moment." },
+      { status: 429 }
+    );
+  }
+
   try {
     const body = (await req.json()) as {
       workspace_id: string;

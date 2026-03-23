@@ -1659,6 +1659,9 @@
       "responsibilityRemains": "この期間中もフォローの責任は維持されます。",
       "connectCalendar": "カレンダーを接続",
       "nav": {
+        "sectionBusiness": "ビジネス",
+        "sectionIntegrations": "連携と音声",
+        "sectionAccount": "アカウント",
         "business": "ビジネス",
         "phone": "電話",
         "callRules": "通話ルール",
@@ -1666,7 +1669,20 @@
         "notifications": "通知",
         "integrations": "連携",
         "compliance": "コンプライアンス",
-        "billing": "請求"
+        "billing": "請求",
+        "communication": "コミュニケーション",
+        "outbound": "アウトバウンド",
+        "leadScoring": "リードスコアリング",
+        "industryTemplates": "業界テンプレート",
+        "agent": "エージェント",
+        "marketplace": "マーケットプレイス",
+        "porting": "番号ポート",
+        "mapping": "フィールドマッピング",
+        "syncLog": "同期ログ",
+        "voiceSettings": "音声設定",
+        "cancellation": "プラン解約",
+        "errorsAuditLog": "エラーとログ",
+        "activity": "アクティビティ"
       },
       "sourcesIntro": "リードの送信元を接続",
       "copy": "コピー",
@@ -3744,7 +3760,11 @@
       "activity": "Activity",
       "sectionBusiness": "Your Business",
       "sectionIntegrations": "Integrations",
-      "sectionAccount": "Account"
+      "sectionAccount": "Account",
+      "communication": "コミュニケーション",
+      "autoSetup": "自動セットアップ (AI)",
+      "chatWidget": "チャットウィジェット",
+      "whiteLabel": "ホワイトラベル"
     },
     "business": {
       "title": "ビジネス",
@@ -4165,7 +4185,10 @@
     "toneForFollowThrough": "Tone for follow through",
     "whatYouOffer": "What you offer",
     "whatYouOfferPlaceholder": "Enter what you offer",
-    "whenWeAskBeforeActing": "When we ask before acting"
+    "whenWeAskBeforeActing": "When we ask before acting",
+    "profileTitle": "プロフィール",
+    "requestDeleteData": "データ削除をリクエスト",
+    "requestDeleteAccount": "アカウント削除をリクエスト"
   },
   "hero": {
     "title": "今週だけで、本来は留守番電話行きだった12,847件の電話に応答しました。",

@@ -1659,6 +1659,9 @@
       "responsibilityRemains": "La responsabilidad del seguimiento se mantiene durante este período.",
       "connectCalendar": "Conecta tu calendario",
       "nav": {
+        "sectionBusiness": "Negocio",
+        "sectionIntegrations": "Integraciones y voz",
+        "sectionAccount": "Cuenta",
         "business": "Negocio",
         "phone": "Teléfono",
         "callRules": "Reglas de llamadas",
@@ -1666,7 +1669,20 @@
         "notifications": "Notificaciones",
         "integrations": "Integraciones",
         "compliance": "Cumplimiento",
-        "billing": "Facturación"
+        "billing": "Facturación",
+        "communication": "Comunicación",
+        "outbound": "Saliente",
+        "leadScoring": "Puntuación de leads",
+        "industryTemplates": "Plantillas de industria",
+        "agent": "Agente",
+        "marketplace": "Mercado",
+        "porting": "Portar número",
+        "mapping": "Mapeo de campos",
+        "syncLog": "Registro de sincronización",
+        "voiceSettings": "Configuración de voz",
+        "cancellation": "Cancelar plan",
+        "errorsAuditLog": "Errores y registro",
+        "activity": "Actividad"
       },
       "sourcesIntro": "Conecta de dónde vienen tus prospectos",
       "copy": "Copiar",
@@ -3744,7 +3760,11 @@
       "activity": "Activity",
       "sectionBusiness": "Your Business",
       "sectionIntegrations": "Integrations",
-      "sectionAccount": "Account"
+      "sectionAccount": "Account",
+      "communication": "Comunicación",
+      "autoSetup": "Configuración Auto (IA)",
+      "chatWidget": "Widget de Chat",
+      "whiteLabel": "Marca Blanca"
     },
     "business": {
       "title": "Empresa",
@@ -4165,7 +4185,10 @@
     "toneForFollowThrough": "Tone for follow through",
     "whatYouOffer": "What you offer",
     "whatYouOfferPlaceholder": "Enter what you offer",
-    "whenWeAskBeforeActing": "When we ask before acting"
+    "whenWeAskBeforeActing": "When we ask before acting",
+    "profileTitle": "Perfil",
+    "requestDeleteData": "Solicitar eliminación de datos",
+    "requestDeleteAccount": "Solicitar eliminación de cuenta"
   },
   "hero": {
     "title": "Esta semana atendimos 12.847 llamadas que habrían ido al buzón de voz.",

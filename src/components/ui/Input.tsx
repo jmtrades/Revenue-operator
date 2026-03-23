@@ -27,7 +27,7 @@ export function Input({
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-sm font-medium text-[var(--text-secondary)]"
+          className="block text-[13px] font-medium text-[var(--text-secondary)] tracking-wide"
         >
           {label}
         </label>
@@ -41,10 +41,10 @@ export function Input({
         <input
           id={inputId}
           className={cn(
-            "w-full rounded-lg border bg-[var(--bg-surface)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent-primary)] focus:outline-none focus:ring-0 disabled:opacity-60 disabled:cursor-not-allowed",
-            Icon ? "pl-9 pr-3 py-2.5" : "px-3 py-2.5",
+            "w-full rounded-[var(--radius-btn)] border bg-[var(--bg-surface)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)]/70 transition-[border-color,box-shadow] duration-150 focus:border-[var(--accent-primary)] focus:shadow-[0_0_0_3px_var(--accent-primary-subtle)] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed",
+            Icon ? "pl-9 pr-3 py-2.5 h-10" : "px-3 py-2.5 h-10",
             error
-              ? "border-[var(--accent-danger)]"
+              ? "border-[var(--accent-danger)] bg-[var(--accent-danger-subtle)] focus:shadow-[0_0_0_3px_var(--accent-danger-subtle)]"
               : "border-[var(--border-default)] hover:border-[var(--border-hover)]",
             className,
           )}
@@ -53,9 +53,9 @@ export function Input({
         />
       </div>
       {error ? (
-        <p className="text-xs text-[var(--accent-danger)]">{error}</p>
+        <p className="text-[13px] text-[var(--accent-danger)] mt-0.5">{error}</p>
       ) : helperText ? (
-        <p className="text-xs text-[var(--text-tertiary)]">{helperText}</p>
+        <p className="text-[13px] text-[var(--text-tertiary)]">{helperText}</p>
       ) : null}
     </div>
   );

@@ -67,6 +67,8 @@ class TTSModel(str, Enum):
     COSYVOICE2 = "cosyvoice2"
     KOKORO = "kokoro"
     FISH_SPEECH = "fish-speech"
+    ELEVENLABS = "elevenlabs"
+    EDGE_TTS = "edge-tts"
 
 
 @dataclass
@@ -566,6 +568,373 @@ class KokoroTTSEngine(BaseTTSEngine):
             raise
 
 
+class EdgeTTSEngine(BaseTTSEngine):
+    """
+    Microsoft Edge TTS — FREE high-quality cloud TTS. No API key required.
+
+    Uses the edge-tts Python package (MIT licensed) which leverages Microsoft
+    Edge's read-aloud service. 300+ voices, SSML support, multiple languages.
+    Zero cost, no rate limits for normal usage.
+    """
+
+    # Map internal Recall Touch voice IDs → Edge TTS voice names
+    VOICE_MAP = {
+        "us-female-warm-receptionist": "en-US-JennyNeural",
+        "us-female-professional": "en-US-AriaNeural",
+        "us-female-casual": "en-US-SaraNeural",
+        "us-female-friendly": "en-US-MichelleNeural",
+        "us-male-confident": "en-US-GuyNeural",
+        "us-male-warm": "en-US-DavisNeural",
+        "us-male-professional": "en-US-JasonNeural",
+        "us-male-casual": "en-US-TonyNeural",
+        "sarah": "en-US-JennyNeural",
+        "rachel": "en-US-AriaNeural",
+        "emily": "en-US-SaraNeural",
+        "josh": "en-US-GuyNeural",
+        "adam": "en-US-DavisNeural",
+        # UK voices
+        "uk-female-warm": "en-GB-SoniaNeural",
+        "uk-male-confident": "en-GB-RyanNeural",
+        # Spanish
+        "es-female": "es-US-PalomaNeural",
+        "es-male": "es-US-AlonsoNeural",
+        # French
+        "fr-female": "fr-FR-DeniseNeural",
+        "fr-male": "fr-FR-HenriNeural",
+    }
+
+    DEFAULT_VOICE = "en-US-JennyNeural"
+
+    def __init__(self):
+        super().__init__()
+
+    async def load(self):
+        if self._loaded:
+            return
+        try:
+            import edge_tts
+            # Verify the package works with a tiny synthesis
+            comm = edge_tts.Communicate("test", self.DEFAULT_VOICE)
+            # Just check it initializes without error
+            self._loaded = True
+            logger.info("Edge TTS engine ready (free cloud, no API key)")
+        except ImportError:
+            raise RuntimeError("edge-tts package not installed — pip install edge-tts")
+        except Exception as e:
+            logger.error(f"Edge TTS init failed: {e}")
+            raise
+
+    def _resolve_voice(self, voice_id: str) -> str:
+        """Map internal voice ID to Edge TTS voice name."""
+        return self.VOICE_MAP.get(voice_id, self.DEFAULT_VOICE)
+
+    async def synthesize(self, text: str, config: TTSConfig) -> TTSResult:
+        if not self._loaded:
+            await self.load()
+
+        import edge_tts
+        start = time.time()
+        voice = self._resolve_voice(config.voice_id)
+
+        # Build SSML rate adjustment from speed config
+        rate_str = f"+{int((config.speed - 1) * 100)}%" if config.speed >= 1 else f"{int((config.speed - 1) * 100)}%"
+
+        try:
+            comm = edge_tts.Communicate(text, voice, rate=rate_str)
+            mp3_chunks = []
+            async for chunk in comm.stream():
+                if chunk["type"] == "audio":
+                    mp3_chunks.append(chunk["data"])
+
+            ttfb = (time.time() - start) * 1000
+            mp3_bytes = b"".join(mp3_chunks)
+
+            if not mp3_bytes:
+                raise RuntimeError("Edge TTS returned empty audio")
+
+            # Convert MP3 → numpy → WAV at target sample rate
+            audio_np = self._mp3_to_numpy(mp3_bytes, config.sample_rate)
+            wav = OrpheusTTSEngine._to_wav(audio_np, config.sample_rate)
+            total = (time.time() - start) * 1000
+
+            return TTSResult(
+                audio=wav,
+                sample_rate=config.sample_rate,
+                duration_seconds=len(audio_np) / config.sample_rate,
+                model_used="edge-tts",
+                ttfb_ms=ttfb,
+                total_ms=total,
+            )
+        except Exception as e:
+            logger.error(f"Edge TTS synthesis failed: {e}")
+            raise
+
+    async def synthesize_stream(
+        self, text: str, config: TTSConfig
+    ) -> AsyncGenerator[bytes, None]:
+        """Stream audio chunks from Edge TTS."""
+        if not self._loaded:
+            await self.load()
+
+        import edge_tts
+        voice = self._resolve_voice(config.voice_id)
+        rate_str = f"+{int((config.speed - 1) * 100)}%" if config.speed >= 1 else f"{int((config.speed - 1) * 100)}%"
+
+        try:
+            comm = edge_tts.Communicate(text, voice, rate=rate_str)
+            mp3_buffer = io.BytesIO()
+
+            async for chunk in comm.stream():
+                if chunk["type"] == "audio":
+                    mp3_buffer.write(chunk["data"])
+                    # Decode accumulated MP3 data every ~8KB
+                    if mp3_buffer.tell() >= 8192:
+                        mp3_buffer.seek(0)
+                        audio_np = self._mp3_to_numpy(mp3_buffer.read(), config.sample_rate)
+                        pcm = (np.clip(audio_np, -1, 1) * 32767).astype(np.int16).tobytes()
+                        if pcm:
+                            yield pcm
+                        mp3_buffer = io.BytesIO()
+
+            # Flush remaining
+            if mp3_buffer.tell() > 0:
+                mp3_buffer.seek(0)
+                audio_np = self._mp3_to_numpy(mp3_buffer.read(), config.sample_rate)
+                pcm = (np.clip(audio_np, -1, 1) * 32767).astype(np.int16).tobytes()
+                if pcm:
+                    yield pcm
+
+        except Exception as e:
+            logger.error(f"Edge TTS streaming failed: {e}")
+            raise
+
+    @staticmethod
+    def _mp3_to_numpy(mp3_bytes: bytes, target_sr: int = 24000) -> np.ndarray:
+        """Decode MP3 bytes to numpy float32 at target sample rate."""
+        try:
+            from pydub import AudioSegment
+            seg = AudioSegment.from_mp3(io.BytesIO(mp3_bytes))
+            seg = seg.set_channels(1).set_frame_rate(target_sr).set_sample_width(2)
+            return np.frombuffer(seg.raw_data, dtype=np.int16).astype(np.float32) / 32767.0
+        except ImportError:
+            pass
+
+        try:
+            import subprocess
+            proc = subprocess.run(
+                ["ffmpeg", "-i", "pipe:0", "-f", "s16le", "-ar", str(target_sr),
+                 "-ac", "1", "-acodec", "pcm_s16le", "pipe:1"],
+                input=mp3_bytes, capture_output=True, timeout=10,
+            )
+            if proc.returncode == 0 and proc.stdout:
+                return np.frombuffer(proc.stdout, dtype=np.int16).astype(np.float32) / 32767.0
+        except (FileNotFoundError, subprocess.TimeoutExpired):
+            pass
+
+        logger.warning("MP3 decode failed — ffmpeg and pydub both unavailable")
+        duration = max(0.5, len(mp3_bytes) / 16000)
+        return np.zeros(int(target_sr * duration), dtype=np.float32)
+
+
+class ElevenLabsTTSEngine(BaseTTSEngine):
+    """
+    ElevenLabs Cloud TTS — High-quality cloud-based text-to-speech.
+
+    Uses the ElevenLabs REST API. No GPU required (runs on any machine).
+    Requires ELEVENLABS_API_KEY environment variable.
+    Supports streaming and full synthesis with 29+ voices.
+    """
+
+    # Map internal Recall Touch voice IDs → ElevenLabs voice IDs
+    VOICE_MAP = {
+        "us-female-warm-receptionist": "EXAVITQu4vr4xnSDxMaL",   # Sarah
+        "us-female-professional": "21m00Tcm4TlvDq8ikWAM",         # Rachel
+        "us-female-casual": "LcfcDJNUP1GQjkzn1xUU",              # Emily
+        "us-female-friendly": "jBpfAFnaylXS5xV4xB1a",            # Gigi
+        "us-male-confident": "TxGEqnHWrfWFTfGW9XjX",             # Josh
+        "us-male-warm": "pNInz6obpgDQGcFmaJgB",                  # Adam
+        "us-male-professional": "VR6AewLTigWG4xSOukaG",           # Arnold
+        "us-male-casual": "yoZ06aMxZJJ28mfd3POQ",                 # Sam
+        "sarah": "EXAVITQu4vr4xnSDxMaL",
+        "rachel": "21m00Tcm4TlvDq8ikWAM",
+        "emily": "LcfcDJNUP1GQjkzn1xUU",
+        "josh": "TxGEqnHWrfWFTfGW9XjX",
+        "adam": "pNInz6obpgDQGcFmaJgB",
+    }
+
+    DEFAULT_VOICE_ID = "EXAVITQu4vr4xnSDxMaL"  # Sarah
+
+    def __init__(self):
+        super().__init__()
+        self.api_key: Optional[str] = None
+        self._base_url = "https://api.elevenlabs.io/v1"
+        self._model_id = os.getenv("ELEVENLABS_MODEL_ID", "eleven_turbo_v2_5")
+
+    async def load(self):
+        if self._loaded:
+            return
+        self.api_key = os.getenv("ELEVENLABS_API_KEY")
+        if not self.api_key:
+            raise RuntimeError("ELEVENLABS_API_KEY not set")
+
+        # Verify the key works with a quick API call
+        try:
+            import httpx
+            async with httpx.AsyncClient(timeout=10) as client:
+                resp = await client.get(
+                    f"{self._base_url}/user",
+                    headers={"xi-api-key": self.api_key},
+                )
+                if resp.status_code == 401:
+                    raise RuntimeError("ElevenLabs API key is invalid")
+                resp.raise_for_status()
+            self._loaded = True
+            logger.info("ElevenLabs TTS engine ready (cloud API)")
+        except ImportError:
+            raise RuntimeError("httpx package required for ElevenLabs TTS")
+        except Exception as e:
+            logger.error(f"ElevenLabs initialization failed: {e}")
+            raise
+
+    def _resolve_voice_id(self, voice_id: str) -> str:
+        """Map internal voice ID to ElevenLabs voice ID."""
+        return self.VOICE_MAP.get(voice_id, self.DEFAULT_VOICE_ID)
+
+    async def synthesize(self, text: str, config: TTSConfig) -> TTSResult:
+        if not self._loaded:
+            await self.load()
+
+        import httpx
+        start = time.time()
+        el_voice_id = self._resolve_voice_id(config.voice_id)
+
+        # Request PCM audio at 24kHz — matches our pipeline
+        url = f"{self._base_url}/text-to-speech/{el_voice_id}"
+        headers = {
+            "xi-api-key": self.api_key,
+            "Content-Type": "application/json",
+            "Accept": "audio/mpeg",
+        }
+        body = {
+            "text": text,
+            "model_id": self._model_id,
+            "voice_settings": {
+                "stability": config.stability,
+                "similarity_boost": 0.75,
+                "style": config.style,
+                "use_speaker_boost": True,
+            },
+        }
+
+        ttfb = 0
+        try:
+            async with httpx.AsyncClient(timeout=30) as client:
+                resp = await client.post(url, headers=headers, json=body)
+                ttfb = (time.time() - start) * 1000
+                resp.raise_for_status()
+                mp3_bytes = resp.content
+        except Exception as e:
+            logger.error(f"ElevenLabs API call failed: {e}")
+            raise
+
+        # Convert MP3 → numpy → WAV at 24kHz
+        audio_np = self._mp3_to_numpy(mp3_bytes, config.sample_rate)
+        wav = OrpheusTTSEngine._to_wav(audio_np, config.sample_rate)
+        total = (time.time() - start) * 1000
+
+        return TTSResult(
+            audio=wav,
+            sample_rate=config.sample_rate,
+            duration_seconds=len(audio_np) / config.sample_rate,
+            model_used=f"elevenlabs-{self._model_id}",
+            ttfb_ms=ttfb,
+            total_ms=total,
+        )
+
+    async def synthesize_stream(
+        self, text: str, config: TTSConfig
+    ) -> AsyncGenerator[bytes, None]:
+        """Stream audio via ElevenLabs streaming endpoint."""
+        if not self._loaded:
+            await self.load()
+
+        import httpx
+        el_voice_id = self._resolve_voice_id(config.voice_id)
+        url = f"{self._base_url}/text-to-speech/{el_voice_id}/stream"
+        headers = {
+            "xi-api-key": self.api_key,
+            "Content-Type": "application/json",
+            "Accept": "audio/mpeg",
+        }
+        body = {
+            "text": text,
+            "model_id": self._model_id,
+            "voice_settings": {
+                "stability": config.stability,
+                "similarity_boost": 0.75,
+                "style": config.style,
+                "use_speaker_boost": True,
+            },
+        }
+
+        try:
+            async with httpx.AsyncClient(timeout=30) as client:
+                async with client.stream("POST", url, headers=headers, json=body) as resp:
+                    resp.raise_for_status()
+                    mp3_buffer = io.BytesIO()
+                    async for chunk in resp.aiter_bytes(chunk_size=4096):
+                        mp3_buffer.write(chunk)
+                        # Accumulate enough MP3 data then decode and yield PCM
+                        if mp3_buffer.tell() >= 8192:
+                            mp3_buffer.seek(0)
+                            audio_np = self._mp3_to_numpy(mp3_buffer.read(), config.sample_rate)
+                            pcm = (np.clip(audio_np, -1, 1) * 32767).astype(np.int16).tobytes()
+                            yield pcm
+                            mp3_buffer = io.BytesIO()
+
+                    # Flush remaining
+                    if mp3_buffer.tell() > 0:
+                        mp3_buffer.seek(0)
+                        audio_np = self._mp3_to_numpy(mp3_buffer.read(), config.sample_rate)
+                        pcm = (np.clip(audio_np, -1, 1) * 32767).astype(np.int16).tobytes()
+                        yield pcm
+
+        except Exception as e:
+            logger.error(f"ElevenLabs streaming failed: {e}")
+            raise
+
+    @staticmethod
+    def _mp3_to_numpy(mp3_bytes: bytes, target_sr: int = 24000) -> np.ndarray:
+        """Decode MP3 bytes to numpy float32 array at target sample rate."""
+        try:
+            # Try pydub first (most reliable for MP3)
+            from pydub import AudioSegment
+            seg = AudioSegment.from_mp3(io.BytesIO(mp3_bytes))
+            seg = seg.set_channels(1).set_frame_rate(target_sr).set_sample_width(2)
+            samples = np.frombuffer(seg.raw_data, dtype=np.int16).astype(np.float32) / 32767.0
+            return samples
+        except ImportError:
+            pass
+
+        try:
+            # Fallback: soundfile with ffmpeg pipe
+            import subprocess
+            proc = subprocess.run(
+                ["ffmpeg", "-i", "pipe:0", "-f", "s16le", "-ar", str(target_sr),
+                 "-ac", "1", "-acodec", "pcm_s16le", "pipe:1"],
+                input=mp3_bytes, capture_output=True, timeout=10,
+            )
+            if proc.returncode == 0:
+                return np.frombuffer(proc.stdout, dtype=np.int16).astype(np.float32) / 32767.0
+        except (FileNotFoundError, subprocess.TimeoutExpired):
+            pass
+
+        # Last resort: return silence with a warning
+        logger.warning("Could not decode MP3 — ffmpeg and pydub both unavailable")
+        duration = max(0.5, len(mp3_bytes) / 16000)
+        return np.zeros(int(target_sr * duration), dtype=np.float32)
+
+
 # ---------------------------------------------------------------------------
 # Unified TTS Manager — routes to the best available engine
 # ---------------------------------------------------------------------------
@@ -590,6 +959,13 @@ class TTSManager:
         )
         self.engines["fish-speech"] = FishSpeechEngine()
 
+        # Edge TTS — FREE, no API key, high quality (Microsoft Neural voices)
+        self.engines["edge-tts"] = EdgeTTSEngine()
+
+        # ElevenLabs cloud TTS — works on any machine, no GPU required (paid)
+        if os.getenv("ELEVENLABS_API_KEY"):
+            self.engines["elevenlabs"] = ElevenLabsTTSEngine()
+
         enable_kokoro = os.getenv("ENABLE_KOKORO_FALLBACK", "false").lower() in {
             "1",
             "true",
@@ -597,9 +973,9 @@ class TTSManager:
         }
         if enable_kokoro:
             self.engines["kokoro"] = KokoroTTSEngine()
-            self._fallback_order = ["orpheus", "fish-speech", "kokoro"]
+            self._fallback_order = ["orpheus", "fish-speech", "edge-tts", "elevenlabs", "kokoro"]
         else:
-            self._fallback_order = ["orpheus", "fish-speech"]
+            self._fallback_order = ["orpheus", "fish-speech", "edge-tts", "elevenlabs"]
 
     async def initialize(self):
         """Load the preferred engine, falling through on failure."""

@@ -32,5 +32,9 @@ snac>=0.2.0
 faster-whisper==1.0.3
 ctranslate2>=4.4.0
 
+# Edge TTS — FREE Microsoft Neural voices (no API key, no cost)
+edge-tts>=6.1.0
+pydub>=0.25.1
+
 # Optional: vLLM for maximum TTS throughput (16+ concurrent streams)
 # pip install vllm>=0.4.0

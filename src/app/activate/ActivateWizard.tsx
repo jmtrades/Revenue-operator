@@ -198,16 +198,16 @@ export function ActivateWizard() {
     <Container>
       <div className="max-w-4xl mx-auto">
         {error && (
-          <div className="mb-6 rounded-2xl border border-red-500/30 bg-red-950/30 px-5 py-4">
-            <p className="text-sm font-semibold text-red-300">{t("errors.title", { defaultValue: "Setup Error" })}</p>
-            <p className="mt-1 text-sm text-red-200/80">{error}</p>
-            <button type="button" onClick={() => setError(null)} className="mt-2 text-xs text-red-400 hover:text-red-300 underline">{t("errors.dismiss", { defaultValue: "Dismiss" })}</button>
+          <div className="mb-6 rounded-2xl border border-[var(--accent-danger)]/30 bg-[var(--accent-danger-subtle)] px-5 py-4">
+            <p className="text-sm font-semibold text-[var(--accent-danger)]">{t("errors.title", { defaultValue: "Setup Error" })}</p>
+            <p className="mt-1 text-sm text-[var(--accent-danger)]/80">{error}</p>
+            <button type="button" onClick={() => setError(null)} className="mt-2 text-xs text-[var(--accent-danger)] hover:text-[var(--accent-danger-hover)] underline">{t("errors.dismiss", { defaultValue: "Dismiss" })}</button>
           </div>
         )}
         {emailVerified === false && (
-          <div className="mb-6 rounded-2xl border border-slate-800 bg-slate-950/40 px-5 py-4">
-            <p className="text-sm font-semibold text-slate-50">{t("emailNotVerifiedBannerTitle")}</p>
-            <p className="mt-1 text-sm text-slate-300">{t("emailNotVerifiedBannerBody")}</p>
+          <div className="mb-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)]/80 px-5 py-4">
+            <p className="text-sm font-semibold text-[var(--text-primary)]">{t("emailNotVerifiedBannerTitle")}</p>
+            <p className="mt-1 text-sm text-[var(--text-secondary)]">{t("emailNotVerifiedBannerBody")}</p>
             <div className="mt-3">
               <button
                 type="button"
@@ -239,20 +239,20 @@ export function ActivateWizard() {
           <p className="text-xs font-semibold tracking-[0.18em] uppercase text-sky-400">
             {t("wizardHeading")}
           </p>
-          <h1 className="mt-3 text-2xl md:text-3xl font-semibold" style={{ color: "var(--text-primary)" }}>
+          <h1 className="mt-3 text-2xl md:text-3xl font-semibold tracking-tight" style={{ color: "var(--text-primary)" }}>
             {t("wizardTitle")}
           </h1>
-          <p className="mt-2 text-sm text-slate-400 max-w-xl">
+          <p className="mt-2 text-sm text-[var(--text-tertiary)] max-w-xl">
             {t("wizardSubtitle")}
           </p>
         </header>
 
         <div className="mb-8">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-xs font-medium text-slate-400">
+            <p className="text-xs font-medium text-[var(--text-tertiary)]">
               Step {currentIndex + 1} of {STEPS.length}
             </p>
-            <p className="text-xs text-slate-500 hidden sm:block">
+            <p className="text-xs text-[var(--text-tertiary)] hidden sm:block">
               {STEPS[currentIndex]?.label}
             </p>
           </div>
@@ -264,17 +264,17 @@ export function ActivateWizard() {
                 <div key={s.id} className="flex-1 flex items-center gap-2">
                   <button
                     type="button"
-                    className={`h-2.5 w-2.5 rounded-full border transition-colors ${
+                    className={`h-2.5 w-2.5 rounded-full border transition-colors duration-200 ${
                       isActive
                         ? "bg-sky-400 border-sky-300"
                         : isCompleted
                           ? "bg-sky-500/50 border-sky-400/70"
-                          : "border-slate-600"
+                          : "border-[var(--border-default)]"
                     }`}
                     aria-label={s.label}
                     onClick={() => setStep(s.id)}
                   />
-                  <span className="hidden md:inline text-[11px] text-slate-500">
+                  <span className="hidden md:inline text-[11px] text-[var(--text-tertiary)]">
                     {s.label}
                   </span>
                 </div>
@@ -284,7 +284,7 @@ export function ActivateWizard() {
         </div>
 
         <section
-          className="rounded-2xl border border-slate-800 bg-slate-950/40 px-5 py-6 md:px-7 md:py-7 shadow-[0_18px_50px_rgba(15,23,42,0.7)] transition-[opacity,transform] duration-200"
+          className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-inset)] px-5 py-6 md:px-7 md:py-7 shadow-[0_18px_50px_rgba(15,23,42,0.7)] transition-[opacity,transform] duration-200"
           onKeyDown={step <= 3 ? handleKeyDownAdvance : undefined}
         >
           {step === 1 && (

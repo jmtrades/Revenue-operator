@@ -610,7 +610,6 @@ async function handleStripeWebhookEvent(
         // Day-7 (4th failure): mark billing state to trigger in-app banner.
         if (failureNumber >= 4) {
           await db.from("workspaces").update({
-            status: "payment_failed",
             billing_status: "payment_failed",
             updated_at: new Date().toISOString(),
           }).eq("id", workspaceId);

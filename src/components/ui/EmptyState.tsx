@@ -45,31 +45,30 @@ export function EmptyState({
       role="region"
       aria-label={finalAriaLabel}
       className={cn(
-        "flex flex-col items-center justify-center text-center px-8 py-16 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)]",
+        "flex flex-col items-center justify-center text-center px-8 py-20 rounded-[var(--radius-card)] border border-[var(--border-default)] bg-[var(--bg-card)]",
         className,
       )}
     >
       {Icon && (
         <div
-          className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--bg-inset)]"
+          className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--accent-primary)]/[0.08] ring-1 ring-[var(--accent-primary)]/15"
           aria-hidden="true"
         >
-          <Icon className="h-8 w-8 text-[var(--text-secondary)]" />
+          <Icon className="h-7 w-7 text-[var(--accent-primary)]" strokeWidth={1.5} />
         </div>
       )}
-      <h3 className="text-lg font-semibold text-[var(--text-primary)]">{title}</h3>
+      <h3 className="text-base font-semibold text-[var(--text-primary)] tracking-tight">{title}</h3>
       {desc && (
-        <p className="mt-3 max-w-md text-sm text-[var(--text-secondary)]">{desc}</p>
+        <p className="mt-2 max-w-sm text-sm text-[var(--text-secondary)] leading-relaxed">{desc}</p>
       )}
       {(primaryAction || secondaryAction) && (
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+        <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
           {primaryAction && (
             <Button
               variant="primary"
               size="md"
               onClick={primaryAction.onClick}
               asChild={Boolean(primaryAction.href)}
-              className="px-6 py-3 rounded-xl"
             >
               {primaryAction.href ? <a href={primaryAction.href}>{primaryAction.label}</a> : primaryAction.label}
             </Button>
@@ -87,7 +86,7 @@ export function EmptyState({
         </div>
       )}
       {footnote && (
-        <p className="mt-4 text-xs text-[var(--text-secondary)] max-w-md">{footnote}</p>
+        <p className="mt-5 text-xs text-[var(--text-tertiary)] max-w-sm">{footnote}</p>
       )}
     </div>
   );

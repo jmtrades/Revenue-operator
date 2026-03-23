@@ -122,7 +122,7 @@ export default function SignInForm() {
   return (
     <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center px-4">
       <div className="w-full max-w-[420px] space-y-5">
-        <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl p-8 shadow-2xl shadow-black/40">
+        <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl p-8 shadow-[var(--shadow-xl)]">
           <div className="flex justify-center mb-5">
             <div className="w-11 h-11 rounded-full bg-[var(--bg-surface)] text-[var(--text-primary)] flex items-center justify-center font-bold text-sm tracking-tight">
               RT
@@ -152,7 +152,7 @@ export default function SignInForm() {
                 placeholder={t("signIn.emailPlaceholder")}
                 autoComplete="email"
                 aria-label="Email address"
-                className="w-full px-3.5 py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--border-default)]/40 focus:border-[var(--border-focus)] transition-all"
+                className="w-full px-3.5 py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:ring-offset-2 transition-all"
               />
             </div>
             <div>
@@ -169,13 +169,13 @@ export default function SignInForm() {
                   placeholder={t("signIn.passwordPlaceholder")}
                   autoComplete="current-password"
                   aria-label={t("password.label")}
-                  className="w-full px-3.5 py-2.5 pr-16 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--border-default)]/40 focus:border-[var(--border-focus)] transition-all"
+                  className="w-full px-3.5 py-2.5 pr-16 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:ring-offset-2 transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPw(!showPw)}
                   aria-label={showPw ? t("signIn.hidePasswordAria") : t("signIn.showPasswordAria")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] text-[13px] font-medium transition"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] text-[13px] font-medium transition-colors duration-200"
                 >
                   {showPw ? t("signIn.hidePassword") : t("signIn.showPassword")}
                 </button>
@@ -194,7 +194,7 @@ export default function SignInForm() {
                     </Link>
                   </div>
                 ) : (
-                  <div className="px-3.5 py-2.5 bg-[var(--accent-red)]/10 border border-[var(--accent-red)]/20 rounded-xl text-[var(--accent-red)] text-[13px]">
+                  <div className="px-3.5 py-2.5 bg-[var(--accent-danger-subtle)] border border-[var(--accent-danger-subtle)]/60 rounded-xl text-[var(--accent-danger)] text-[13px]">
                     {err || oauthErrorMessage}
                   </div>
                 )}

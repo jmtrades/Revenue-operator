@@ -161,16 +161,16 @@ export default function AppShellClient({
   const [activeCalls, setActiveCalls] = useState(0);
   const [minutesUsage, setMinutesUsage] = useState<{ used: number; limit: number } | null>(null);
   const [billingInfo, setBillingInfo] = useState<{ billing_status?: string; billing_tier?: string; renewal_at?: string | null } | null>(null);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
-    if (typeof window === "undefined") return false;
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
+
+  /* Restore sidebar state from localStorage AFTER hydration to avoid mismatch */
+  useEffect(() => {
     try {
       const stored = safeGetItem("rt_sidebar");
-      return stored === "collapsed";
-    } catch {
-      return false;
-    }
-  });
-  const [showShortcuts, setShowShortcuts] = useState(false);
+      if (stored === "collapsed") setSidebarCollapsed(true);
+    } catch { /* ignore */ }
+  }, []);
   const [showNotifications, setShowNotifications] = useState(false);
   const [inboxUnread, setInboxUnread] = useState(0);
 
@@ -455,48 +455,54 @@ export default function AppShellClient({
               <>
               <aside
                 className={cn(
-                  "fixed inset-y-0 left-0 z-40 flex flex-col shrink-0 bg-[var(--bg-surface)] border-r border-[var(--border-default)] transform transition-all duration-200 ease-out",
+                  "fixed inset-y-0 left-0 z-40 flex flex-col shrink-0 bg-[var(--bg-surface)] border-r border-[var(--border-default)] transform transition-[transform,width] duration-250 ease-[cubic-bezier(0.25,0.1,0.25,1)]",
                   mobileSidebarOpen ? "translate-x-0" : "-translate-x-full",
                   "md:relative md:translate-x-0",
-                  sidebarCollapsed ? "md:w-16" : "md:w-[220px]",
-                  "w-[220px] md:transition-[width]"
+                  sidebarCollapsed ? "md:w-[60px]" : "md:w-[232px]",
+                  "w-[260px]"
                 )}
                 data-product-tour="sidebarNav"
                 aria-label={t("accessibility.appNav")}
               >
+                {/* Brand header */}
                 <div className={cn(
-                  "border-b border-[var(--border-default)] flex items-center gap-2 shrink-0 transition-all duration-200",
-                  sidebarCollapsed ? "md:justify-center md:px-0 p-5 md:p-3" : "p-5 justify-between"
+                  "border-b border-[var(--border-default)] flex items-center gap-2.5 shrink-0 transition-all duration-250",
+                  sidebarCollapsed ? "md:justify-center md:px-0 px-5 py-4 md:py-4" : "px-5 py-4 justify-between"
                 )}>
                   <div className={cn("flex items-center min-w-0", sidebarCollapsed && "md:justify-center")}>
-                    <div className="w-8 h-8 bg-[var(--accent-primary)] rounded-lg flex items-center justify-center shrink-0">
-                      <span className="text-[var(--text-on-accent)] font-bold text-sm">RT</span>
+                    <div className="w-8 h-8 bg-[var(--accent-primary)] rounded-[var(--radius-btn)] flex items-center justify-center shrink-0 shadow-[0_1px_3px_rgba(0,0,0,0.12)]">
+                      <span className="text-[var(--text-on-accent)] font-bold text-sm leading-none">RT</span>
                     </div>
                     {!sidebarCollapsed && (
                       <WorkspaceName
                         initialName={initialWorkspaceName}
-                        className="truncate block text-[15px] font-semibold text-[var(--text-primary)] ml-2"
+                        className="truncate block text-[14px] font-semibold text-[var(--text-primary)] ml-2.5 tracking-[-0.01em]"
                       />
                     )}
                   </div>
                   <button
                     type="button"
                     onClick={() => setMobileSidebarOpen(false)}
-                    className="md:hidden p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
+                    className="md:hidden p-1.5 rounded-[var(--radius-btn)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
                     aria-label={t("common.close")}
                   >
-                    <X className="w-5 h-5" />
+                    <X className="w-4 h-4" />
                   </button>
                 </div>
-                <nav className="flex-1 p-3 space-y-4 overflow-y-auto" aria-label={t("nav.appNavigation")}>
-                  {sidebarGroups.map((group) => (
-                    <div key={group.label}>
+
+                {/* Navigation groups */}
+                <nav className="flex-1 px-3 py-2 overflow-y-auto" aria-label={t("nav.appNavigation")}>
+                  {sidebarGroups.map((group, groupIdx) => (
+                    <div key={group.label} className={groupIdx > 0 ? "mt-5" : "mt-2"}>
                       {!sidebarCollapsed && (
-                        <p className="text-[10px] uppercase tracking-[0.1em] text-[var(--text-tertiary)] px-4 pt-6 pb-1.5 font-medium">
+                        <p className="text-[10px] uppercase tracking-[0.08em] text-[var(--text-tertiary)] px-3 pb-1.5 font-semibold select-none">
                           {group.label}
                         </p>
                       )}
-                      <div className="space-y-0.5">
+                      {sidebarCollapsed && groupIdx > 0 && (
+                        <div className="mx-3 mb-2 border-t border-[var(--border-default)]" />
+                      )}
+                      <div className="space-y-px">
                         {group.items.map(({ href, label, icon: Icon }) => {
                           const effectiveLabel =
                             href === "/app/inbox" && inboxUnread > 0 ? `Inbox (${inboxUnread})` : label;
@@ -514,16 +520,26 @@ export default function AppShellClient({
                                     : undefined
                               }
                               className={cn(
-                                "flex items-center border-l-2 py-2.5 rounded-r-xl text-[13px] font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none",
-                                sidebarCollapsed ? "md:justify-center md:px-0 md:pl-0 md:pr-0 px-3" : "gap-2.5 px-3",
+                                "group relative flex items-center rounded-[var(--radius-btn)] text-[13px] font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none",
+                                sidebarCollapsed ? "md:justify-center md:px-0 px-3 py-2" : "gap-2.5 px-3 py-[7px]",
                                 active
-                                  ? "border-l-[var(--accent-primary)] bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]"
-                                  : "border-l-transparent text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
+                                  ? "bg-[var(--accent-primary)]/[0.08] text-[var(--accent-primary)]"
+                                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
                               )}
                               aria-current={active ? "page" : undefined}
                             >
-                              <Icon className="w-4 h-4 shrink-0" strokeWidth={1.5} />
-                              {!sidebarCollapsed && <span>{effectiveLabel}</span>}
+                              {active && (
+                                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-4 rounded-r-full bg-[var(--accent-primary)]" />
+                              )}
+                              <Icon className={cn("w-[18px] h-[18px] shrink-0 transition-colors duration-150", active ? "text-[var(--accent-primary)]" : "text-[var(--text-tertiary)] group-hover:text-[var(--text-secondary)]")} strokeWidth={1.75} />
+                              {!sidebarCollapsed && (
+                                <span className="truncate">{effectiveLabel}</span>
+                              )}
+                              {!sidebarCollapsed && href === "/app/inbox" && inboxUnread > 0 && (
+                                <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--accent-primary)] px-1.5 text-[10px] font-semibold text-white">
+                                  {inboxUnread}
+                                </span>
+                              )}
                             </Link>
                           );
                         })}
@@ -531,63 +547,68 @@ export default function AppShellClient({
                     </div>
                   ))}
                 </nav>
-                <div className="p-3 border-t border-[var(--border-default)] space-y-2">
+
+                {/* Sidebar footer */}
+                <div className="px-3 py-3 border-t border-[var(--border-default)] space-y-2">
                   {!sidebarCollapsed && (
                     <>
-                      <div className="rounded-lg bg-[var(--accent-amber)]/10 border border-[var(--accent-amber)]/20 px-3 py-2">
-                        <span className="block text-xs font-medium text-[var(--text-primary)]">
-                          {billingInfo?.billing_tier
-                            ? `${billingInfo.billing_tier.charAt(0).toUpperCase()}${billingInfo.billing_tier.slice(1)}`
-                            : t("sidebar.tier", { defaultValue: "Starter" })}
-                          {billingInfo?.billing_status === "trial" ? t("sidebar.trial", { defaultValue: " · Trial" }) : billingInfo?.billing_status === "active" ? "" : billingInfo?.billing_status ? ` · ${billingInfo.billing_status.charAt(0).toUpperCase()}${billingInfo.billing_status.slice(1)}` : t("sidebar.trial", { defaultValue: " · Trial" })}
-                        </span>
-                        <span className="block text-[12px] text-[var(--text-secondary)]">
+                      <div className="rounded-[var(--radius-btn)] bg-[var(--bg-inset)]/60 border border-[var(--border-default)] px-3 py-2.5">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-semibold text-[var(--text-primary)] tracking-[-0.01em]">
+                            {billingInfo?.billing_tier
+                              ? `${billingInfo.billing_tier.charAt(0).toUpperCase()}${billingInfo.billing_tier.slice(1)}`
+                              : t("sidebar.tier", { defaultValue: "Starter" })}
+                          </span>
+                          <span className={cn(
+                            "text-[10px] font-medium px-1.5 py-0.5 rounded-full",
+                            billingInfo?.billing_status === "active"
+                              ? "bg-emerald-500/15 text-emerald-400"
+                              : "bg-[var(--accent-amber)]/15 text-[var(--accent-amber)]"
+                          )}>
+                            {billingInfo?.billing_status === "trial" ? "Trial" : billingInfo?.billing_status === "active" ? "Active" : billingInfo?.billing_status ? billingInfo.billing_status.charAt(0).toUpperCase() + billingInfo.billing_status.slice(1) : "Trial"}
+                          </span>
+                        </div>
+                        <span className="block text-[11px] text-[var(--text-tertiary)] mt-1">
                           {billingInfo?.billing_status === "trial" && billingInfo?.renewal_at
                             ? `${Math.max(0, Math.ceil((new Date(billingInfo.renewal_at).getTime() - Date.now()) / 86400000))} days left`
                             : billingInfo?.billing_status === "active"
                             ? t("sidebar.activeSubscription", { defaultValue: "Active subscription" })
                             : ""}
                           {(workspaceMeta?.stats?.calls ?? 0) > 0
-                            ? ` · ${workspaceMeta?.stats?.calls ?? 0} ${t("sidebar.callsAnswered", { defaultValue: "calls answered" })}`
+                            ? ` · ${workspaceMeta?.stats?.calls ?? 0} ${t("sidebar.callsAnswered", { defaultValue: "calls" })}`
                             : ""}
                         </span>
                         {minutesUsage && (
-                          <span className="block text-[11px] text-[var(--text-tertiary)] mt-1">
-                            {minutesUsage.used}/{minutesUsage.limit} {t("sidebar.minUsed", { defaultValue: "min used" })}
-                          </span>
+                          <div className="mt-2">
+                            <div className="flex items-center justify-between text-[10px] text-[var(--text-tertiary)] mb-1">
+                              <span>{minutesUsage.used}/{minutesUsage.limit} {t("sidebar.minUsed", { defaultValue: "min" })}</span>
+                              <span>{Math.round((minutesUsage.used / minutesUsage.limit) * 100)}%</span>
+                            </div>
+                            <div className="h-1 rounded-full bg-[var(--border-default)] overflow-hidden">
+                              <div
+                                className="h-full rounded-full bg-[var(--accent-primary)] transition-all duration-500"
+                                style={{ width: `${Math.min(100, (minutesUsage.used / minutesUsage.limit) * 100)}%` }}
+                              />
+                            </div>
+                          </div>
                         )}
-                      </div>
-                      <a href="mailto:support@recall-touch.com" className="block text-[10px] text-[var(--text-secondary)] hover:text-[var(--text-secondary)] transition-colors px-1">
-                        support@recall-touch.com
-                      </a>
-                      <div className="px-1 pt-1 text-[10px] text-[var(--text-secondary)]">
-                        <kbd className="bg-[var(--bg-inset)] px-1.5 py-0.5 rounded text-[var(--text-tertiary)]">
-                          ⌘
-                        </kbd>
-                        <kbd className="bg-[var(--bg-inset)] px-1.5 py-0.5 rounded text-[var(--text-tertiary)] ml-0.5">
-                          K
-                        </kbd>
-                        <span className="ml-1.5">{t("accessibility.quickSearch")}</span>
                       </div>
                       <button
                         type="button"
                         onClick={handleSignOut}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-[13px] font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-[var(--radius-btn)] text-[13px] font-medium text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
                         aria-label={t("nav.signOut")}
                       >
-                        <LogOut className="w-4 h-4 shrink-0" strokeWidth={1.5} />
+                        <LogOut className="w-4 h-4 shrink-0" strokeWidth={1.75} />
                         <span>{t("nav.signOut")}</span>
                       </button>
-                      <div className="pt-2">
-                        <LanguageSwitcher className="w-full" />
-                      </div>
                     </>
                   )}
                   <button
                     type="button"
                     onClick={toggleSidebarCollapse}
                     className={cn(
-                      "hidden md:flex w-full items-center justify-center gap-2 py-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none",
+                      "hidden md:flex w-full items-center justify-center gap-2 py-1.5 rounded-[var(--radius-btn)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none",
                       sidebarCollapsed && "md:justify-center"
                     )}
                     aria-label={sidebarCollapsed ? t("accessibility.expandSidebar") : t("accessibility.collapseSidebar")}
@@ -597,7 +618,7 @@ export default function AppShellClient({
                     ) : (
                       <>
                         <PanelLeftClose className="w-4 h-4" />
-                        <span className="text-xs">{t("nav.collapse")}</span>
+                        <span className="text-[11px]">{t("nav.collapse")}</span>
                       </>
                     )}
                   </button>
@@ -621,15 +642,15 @@ export default function AppShellClient({
               role="main"
             >
               {!isOnboarding && (
-                <div className="sticky top-0 z-10 shrink-0 flex items-center justify-end gap-2 px-4 py-2 border-b border-[var(--border-default)] bg-[var(--bg-surface)]/80 backdrop-blur-sm">
+                <div className="sticky top-0 z-10 shrink-0 flex items-center justify-end gap-1.5 px-4 py-2 border-b border-[var(--border-default)] bg-[var(--bg-surface)]/80 backdrop-blur-md">
                   <button
                     type="button"
                     onClick={() => setCommandPaletteOpen(true)}
-                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]/50 border border-[var(--border-default)] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[var(--radius-btn)] text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] border border-[var(--border-default)] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
                     aria-label={t("nav.shortcutCommandPalette")}
                   >
                     <CommandIcon className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">⌘K</span>
+                    <span className="hidden sm:inline font-medium">⌘K</span>
                   </button>
                   <NotificationCenter
                     open={showNotifications}
@@ -648,55 +669,58 @@ export default function AppShellClient({
           {!isOnboarding && (
             <>
               <nav
-                className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around bg-[var(--bg-surface)] border-t border-[var(--border-default)] safe-area-pb"
+                className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around bg-[var(--bg-surface)]/95 backdrop-blur-md border-t border-[var(--border-default)] safe-area-pb"
                 aria-label={t("accessibility.mobileNav")}
               >
-                {mobileTabs.map(({ href, label, icon: Icon }) => (
-                  <Link
-                    key={href}
-                    href={href}
-className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w-[64px] flex-1 text-center touch-manipulation focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:ring-inset focus-visible:outline-none rounded-lg ${
-                    isActive(href) ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"
-                  }`}
-                    aria-current={isActive(href) ? "page" : undefined}
-                  >
-                    <div className="relative">
-                      <Icon className="w-5 h-5 shrink-0" strokeWidth={1.5} aria-hidden />
-                      {href === "/app/calls" && activeCalls > 0 && (
-                        <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                          <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-[var(--accent-secondary)] opacity-75" />
-                          <span className="relative inline-flex h-3 w-3 rounded-full bg-[var(--accent-secondary)]" />
-                        </span>
+                {mobileTabs.map(({ href, label, icon: Icon }) => {
+                  const active = isActive(href);
+                  return (
+                    <Link
+                      key={href}
+                      href={href}
+                      className={cn(
+                        "relative flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w-[64px] flex-1 text-center touch-manipulation focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:ring-inset focus-visible:outline-none rounded-lg transition-colors duration-150",
+                        active ? "text-[var(--accent-primary)]" : "text-[var(--text-tertiary)]"
                       )}
-                    </div>
-                    <span className="text-[10px] font-medium">
-                      {label}
-                      {href === "/app/calls" && activeCalls > 0 ? ` · ${activeCalls}` : ""}
-                    </span>
-                  </Link>
-                ))}
+                      aria-current={active ? "page" : undefined}
+                    >
+                      {active && (
+                        <span className="absolute top-1 left-1/2 -translate-x-1/2 w-4 h-[3px] rounded-full bg-[var(--accent-primary)]" />
+                      )}
+                      <div className="relative">
+                        <Icon className="w-5 h-5 shrink-0" strokeWidth={active ? 2 : 1.5} aria-hidden />
+                        {href === "/app/calls" && activeCalls > 0 && (
+                          <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                            <span className="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-[var(--accent-secondary)] opacity-75" />
+                            <span className="relative inline-flex h-3 w-3 rounded-full bg-[var(--accent-secondary)]" />
+                          </span>
+                        )}
+                      </div>
+                      <span className={cn("text-[10px]", active ? "font-semibold" : "font-medium")}>
+                        {label}
+                        {href === "/app/calls" && activeCalls > 0 ? ` · ${activeCalls}` : ""}
+                      </span>
+                    </Link>
+                  );
+                })}
                 <button
                   type="button"
                   onClick={() => setMobileMoreOpen(true)}
-                  className={`flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w-[64px] flex-1 text-center touch-manipulation focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:ring-inset focus-visible:outline-none rounded-lg ${
-                    isMoreActive ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"
-                  }`}
+                  className={cn(
+                    "relative flex flex-col items-center justify-center gap-0.5 min-h-[56px] min-w-[64px] flex-1 text-center touch-manipulation focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:ring-inset focus-visible:outline-none rounded-lg transition-colors duration-150",
+                    isMoreActive ? "text-[var(--accent-primary)]" : "text-[var(--text-tertiary)]"
+                  )}
                   aria-label={t("accessibility.moreMenu")}
                   aria-expanded={mobileMoreOpen}
                 >
-                  <Menu className="w-5 h-5 shrink-0 mx-auto" strokeWidth={1.5} aria-hidden />
-                  <span className="text-[10px] font-medium">{t("nav.more")}</span>
+                  {isMoreActive && (
+                    <span className="absolute top-1 left-1/2 -translate-x-1/2 w-4 h-[3px] rounded-full bg-[var(--accent-primary)]" />
+                  )}
+                  <Menu className="w-5 h-5 shrink-0 mx-auto" strokeWidth={isMoreActive ? 2 : 1.5} aria-hidden />
+                  <span className={cn("text-[10px]", isMoreActive ? "font-semibold" : "font-medium")}>{t("nav.more")}</span>
                 </button>
               </nav>
-              <div className="hidden md:block border-t border-[var(--border-default)] px-4 py-2 text-[10px] text-[var(--text-tertiary)]">
-                <kbd className="bg-[var(--bg-inset)] px-1.5 py-0.5 rounded text-[var(--text-tertiary)]">
-                  ⌘
-                </kbd>
-                <kbd className="bg-[var(--bg-inset)] px-1.5 py-0.5 rounded text-[var(--text-tertiary)] ml-0.5">
-                  K
-                </kbd>
-                <span className="ml-1.5">{t("accessibility.quickSearch")}</span>
-              </div>
+              {/* ⌘K hint removed — already shown in sidebar footer and top bar */}
               {mobileMoreOpen && (
                 <div className="md:hidden fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label={t("accessibility.moreMenu")}>
                   <div

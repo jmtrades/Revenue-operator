@@ -84,10 +84,29 @@ export async function purchaseTelnyxPhoneNumber(params: {
     body: JSON.stringify(body),
   });
 
-  if (!res.ok) return { providerSid: null };
+  if (!res.ok) {
+    const errText = await res.text().catch(() => "");
+    console.error("[telnyx] Number order failed:", res.status, errText.slice(0, 300));
+    return { providerSid: null };
+  }
 
-  const json = (await res.json()) as { data?: { id?: string } };
-  const providerSid = (json.data?.id ?? null) as string | null;
+  const json = (await res.json()) as {
+    data?: {
+      id?: string;
+      phone_numbers?: Array<{ id?: string; phone_number?: string }>;
+      status?: string;
+    };
+  };
+
+  // IMPORTANT: Use the phone_number resource ID (not the order ID).
+  // The order ID is data.id, but to release/manage the number later we need
+  // the phone_number ID from data.phone_numbers[0].id.
+  // If no phone_numbers array (async provisioning), fall back to order ID and
+  // resolve the phone number ID later via GET /v2/phone_numbers?filter[phone_number]=...
+  const phoneNumberId = json.data?.phone_numbers?.[0]?.id;
+  const orderId = json.data?.id;
+  const providerSid = (phoneNumberId ?? orderId ?? null) as string | null;
+
   return { providerSid };
 }
 

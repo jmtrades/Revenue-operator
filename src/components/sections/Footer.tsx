@@ -11,7 +11,7 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   const linkStyle = { color: "var(--text-tertiary)" };
-  const linkClass = "block text-[13px] py-1 no-underline transition-colors hover:text-[var(--text-primary)]";
+  const linkClass = "block text-[13px] py-1 px-2 no-underline transition-colors duration-200 hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] rounded-md";
 
   return (
     <footer
@@ -35,10 +35,10 @@ export function Footer() {
 
           {/* Product */}
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--text-secondary)" }}>
+            <p className="text-[11px] font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--accent-primary)" }}>
               {t("product")}
             </p>
-            <nav className="space-y-0.5">
+            <nav className="space-y-1.5">
               <Link href={ROUTES.PRODUCT} className={linkClass} style={linkStyle}>{t("features")}</Link>
               <Link href={ROUTES.PRICING} className={linkClass} style={linkStyle}>{t("pricing")}</Link>
               <Link href="/demo" className={linkClass} style={linkStyle}>{t("demo")}</Link>
@@ -50,10 +50,10 @@ export function Footer() {
 
           {/* Industries */}
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--text-secondary)" }}>
+            <p className="text-[11px] font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--accent-primary)" }}>
               {tMarketing("industries")}
             </p>
-            <nav className="space-y-0.5">
+            <nav className="space-y-1.5">
               {[
                 [tMarketing("dental"), "/industries/dental"],
                 [tMarketing("healthcare"), "/industries/healthcare"],
@@ -70,10 +70,10 @@ export function Footer() {
 
           {/* Company */}
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--text-secondary)" }}>
+            <p className="text-[11px] font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--accent-primary)" }}>
               {t("company")}
             </p>
-            <nav className="space-y-0.5">
+            <nav className="space-y-1.5">
               <a href="mailto:team@recall-touch.com" className={linkClass} style={linkStyle}>{t("emailUs")}</a>
               <Link href="/blog" className={linkClass} style={linkStyle}>{t("blog")}</Link>
               <Link href="/contact" className={linkClass} style={linkStyle}>{t("contact")}</Link>
@@ -84,10 +84,10 @@ export function Footer() {
 
           {/* Legal */}
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--text-secondary)" }}>
+            <p className="text-[11px] font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--accent-primary)" }}>
               {t("legalSecurity")}
             </p>
-            <nav className="space-y-0.5">
+            <nav className="space-y-1.5">
               <Link href="/privacy" className={linkClass} style={linkStyle}>{t("privacyPolicy")}</Link>
               <Link href="/terms" className={linkClass} style={linkStyle}>{t("termsOfService")}</Link>
               <a href="https://status.recall-touch.com" target="_blank" rel="noopener noreferrer" className={linkClass} style={linkStyle}>{tMarketing("systemStatus")}</a>
@@ -96,10 +96,11 @@ export function Footer() {
               {["SOC 2", "HIPAA", "GDPR", "SSL"].map((badge) => (
                 <span
                   key={badge}
-                  className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium"
+                  className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium transition-colors duration-200"
                   style={{
                     border: "1px solid var(--border-default)",
                     color: "var(--text-tertiary)",
+                    background: "var(--accent-primary-subtle)"
                   }}
                 >
                   {badge}

@@ -12,23 +12,17 @@ interface LoadingStateProps {
 export function LoadingState({ message = "In progress.", submessage, className = "" }: LoadingStateProps) {
   return (
     <div
-      className={`flex flex-col items-center justify-center rounded-xl border py-12 px-6 text-center ${className}`}
-      style={{
-        background: "var(--card)",
-        borderColor: "var(--border)",
-        borderWidth: "1px",
-      }}
+      className={`flex flex-col items-center justify-center rounded-[var(--radius-card)] border border-[var(--border-default)] bg-[var(--bg-card)] py-12 px-6 text-center ${className}`}
     >
       <span
-        className="mb-3 inline-block h-3 w-3 rounded-full animate-pulse"
-        style={{ background: "var(--accent)" }}
+        className="mb-4 inline-block h-5 w-5 rounded-full border-2 border-[var(--accent-primary)] border-t-transparent animate-spin"
         aria-hidden
       />
-      <p className="font-medium" style={{ color: "var(--text-primary)" }}>
+      <p className="text-sm font-medium text-[var(--text-primary)]">
         {message}
       </p>
       {submessage && (
-        <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
+        <p className="mt-1.5 text-[13px] text-[var(--text-secondary)]">
           {submessage}
         </p>
       )}
@@ -47,21 +41,20 @@ export function LoadingScreen({ message = "One moment…", onRetry }: { message?
   }, []);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-6 px-6" style={{ background: "var(--background)" }}>
+    <div className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 bg-[var(--bg-base)]">
       {!showFallback ? (
         <>
           <span
-            className="inline-block h-4 w-4 rounded-full border-2 animate-spin"
-            style={{ borderColor: "var(--accent)", borderTopColor: "transparent" }}
+            className="inline-block h-5 w-5 rounded-full border-2 border-[var(--accent-primary)] border-t-transparent animate-spin"
             aria-hidden
           />
-          <p className="text-base font-medium" style={{ color: "var(--text-primary)" }}>
+          <p className="text-sm font-medium text-[var(--text-primary)]">
             {message}
           </p>
         </>
       ) : (
-        <div className="flex flex-col items-center gap-4 text-center max-w-sm">
-          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+        <div className="flex flex-col items-center gap-5 text-center max-w-sm">
+          <p className="text-[13px] text-[var(--text-secondary)]">
             This is taking longer than usual.
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
@@ -69,12 +62,12 @@ export function LoadingScreen({ message = "One moment…", onRetry }: { message?
               <button
                 type="button"
                 onClick={onRetry}
-                className="btn-primary px-5 py-2.5 text-sm"
+                className="inline-flex items-center justify-center rounded-[var(--radius-btn)] bg-[var(--accent-primary)] px-5 py-2.5 text-sm font-medium text-white hover:bg-[var(--accent-primary-hover)] shadow-[0_1px_2px_rgba(0,0,0,0.12)] transition-all duration-150"
               >
                 Retry
               </button>
             )}
-            <Link href="/" className="btn-secondary px-5 py-2.5 text-sm inline-block">
+            <Link href="/" className="inline-flex items-center justify-center rounded-[var(--radius-btn)] border border-[var(--border-default)] px-5 py-2.5 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] transition-all duration-150">
               Back to home
             </Link>
           </div>

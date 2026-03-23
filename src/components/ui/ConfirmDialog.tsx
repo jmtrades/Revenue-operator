@@ -51,21 +51,21 @@ export function ConfirmDialog({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] shadow-xl p-6 space-y-4"
+        className="w-full max-w-sm rounded-[var(--radius-xl)] border border-[var(--border-default)] bg-[var(--bg-surface)] shadow-[var(--shadow-xl)] p-6 space-y-3"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 id="confirm-dialog-title" className="text-base font-semibold text-[var(--text-on-accent)]">
+        <h2 id="confirm-dialog-title" className="text-sm font-semibold text-[var(--text-primary)] tracking-tight">
           {title}
         </h2>
-        <p id="confirm-dialog-desc" className="text-sm text-[var(--text-tertiary)]">
+        <p id="confirm-dialog-desc" className="text-[13px] text-[var(--text-secondary)] leading-relaxed">
           {message}
         </p>
-        <div className="flex justify-end gap-2 pt-2">
+        <div className="flex justify-end gap-2 pt-3">
           <button
             ref={cancelRef}
             type="button"
             onClick={onClose}
-            className="rounded-xl border border-[var(--border-default)] px-4 py-2 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
+            className="rounded-[var(--radius-btn)] border border-[var(--border-default)] px-4 py-2 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:border-[var(--border-hover)] transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50"
           >
             {cancelText}
           </button>
@@ -77,8 +77,8 @@ export function ConfirmDialog({
             }}
             className={
               variant === "danger"
-                ? "rounded-xl px-4 py-2 text-sm font-semibold bg-red-600 text-white hover:bg-red-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
-                : "rounded-xl bg-[var(--accent-primary)] px-4 py-2 text-sm font-semibold text-[var(--text-on-accent)] hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
+                ? "rounded-[var(--radius-btn)] px-4 py-2 text-sm font-semibold bg-[var(--accent-danger)] text-white hover:bg-red-500 shadow-[0_1px_2px_rgba(0,0,0,0.12)] transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400/50"
+                : "rounded-[var(--radius-btn)] bg-[var(--accent-primary)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--accent-primary-hover)] shadow-[0_1px_2px_rgba(0,0,0,0.12)] transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50"
             }
           >
             {confirmText}
