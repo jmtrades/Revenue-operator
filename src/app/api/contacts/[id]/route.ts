@@ -41,7 +41,7 @@ export async function PATCH(
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const allowed = ["name", "phone", "email", "company", "state"];
+  const allowed = ["name", "phone", "email", "company", "status"];
   const updates: Record<string, unknown> = { updated_at: new Date().toISOString(), last_activity_at: new Date().toISOString() };
   for (const k of allowed) {
     if (body[k] !== undefined) updates[k] = body[k];
