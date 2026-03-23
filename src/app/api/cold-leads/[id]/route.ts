@@ -1,5 +1,5 @@
 /**
- * PATCH /api/cold-leads/[id] — Update cold lead queue item (status, next_attempt_at, strategy).
+ * PATCH /api/cold-leads/[id] — Update cold lead queue item (status, next_attempt_at, reengagement_strategy).
  * DELETE /api/cold-leads/[id] — Remove from cold lead queue.
  */
 

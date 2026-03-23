@@ -1,6 +1,6 @@
 /**
  * POST /api/cold-leads/reengage — Trigger re-engagement for pending cold leads.
- * Accepts { lead_ids?: string[], strategy?: string }.
+ * Accepts { lead_ids?: string[], reengagement_strategy?: string }.
  * For each lead, checks if workspace communication_mode and lead channel_preferences allow engagement,
  * then marks as in_progress.
  */

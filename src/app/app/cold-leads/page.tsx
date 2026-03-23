@@ -21,7 +21,7 @@ interface ColdLead {
   phone?: string;
   reason: ColdLeadReason;
   priority: ColdLeadPriority;
-  attempt_count: number;
+  attempts: number;
   max_attempts: number;
   last_attempt_at?: string;
   next_attempt_at?: string;
@@ -267,7 +267,7 @@ export default function ColdLeadsPage() {
         case "recent":
           return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
         case "attempts":
-          return b.attempt_count - a.attempt_count;
+          return b.attempts - a.attempts;
         default:
           return 0;
       }
@@ -610,7 +610,7 @@ export default function ColdLeadsPage() {
                 {/* Attempts */}
                 <div className="md:col-span-1">
                   <span className="text-sm text-[var(--text-primary)]">
-                    {lead.attempt_count} of {lead.max_attempts}
+                    {lead.attempts} of {lead.max_attempts}
                   </span>
                 </div>
 
