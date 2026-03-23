@@ -201,7 +201,7 @@ export async function GET(req: NextRequest) {
 
     const costPerLead = totalLeads > 0 ? totalCost / totalLeads : 0;
     const costPerAppointment = totalAppointments > 0 ? totalCost / totalAppointments : 0;
-    const costPerConversion = totalLeads > 0 ? totalCost / totalLeads : 0;
+    const costPerConversion = totalAppointments > 0 ? totalCost / totalAppointments : 0;
     const revenuePerCall = totalCalls > 0 ? totalRevenue / totalCalls : 0;
 
     const roiPercentage =
