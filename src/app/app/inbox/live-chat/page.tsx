@@ -139,7 +139,7 @@ export default function LiveChatInboxPage() {
         { credentials: "include" }
       );
       if (messagesRes.ok) {
-        const data = (await res.json()) as ChatMessage[];
+        const data = (await messagesRes.json()) as ChatMessage[];
         setMessages(data);
       }
     } catch (error) {

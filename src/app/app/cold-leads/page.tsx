@@ -205,10 +205,10 @@ export default function ColdLeadsPage() {
       credentials: "include",
       signal: controller.signal,
     })
-      .then((res) => (res.ok ? res.json() : { cold_leads: [] }))
-      .then((data: { cold_leads?: ColdLead[] }) => {
+      .then((res) => (res.ok ? res.json() : { items: [] }))
+      .then((data: { items?: ColdLead[] }) => {
         if (cancelled) return;
-        const next = data.cold_leads ?? [];
+        const next = data.items ?? [];
         setLeads(next);
         persistColdLeadsSnapshot(workspaceId, next);
       })

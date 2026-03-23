@@ -1,7 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { PhoneIncoming, PhoneOutgoing, CalendarCheck, UserPlus, Headphones, Zap } from "lucide-react";
+import Link from "next/link";
+import { PhoneIncoming, PhoneOutgoing, CalendarCheck, UserPlus, Headphones, Zap, Sparkles } from "lucide-react";
 import { GOAL_OPTIONS } from "./types";
 import type { ActivationState } from "./types";
 
@@ -29,6 +30,33 @@ export function GoalStep({
 
   return (
     <div className="space-y-6">
+      {/* Quick AI Setup — prominent shortcut */}
+      <Link
+        href="/app/onboarding/smart-setup"
+        className="block w-full p-5 rounded-2xl border-2 border-[var(--accent-primary)] bg-gradient-to-r from-[var(--accent-primary)]/10 to-[var(--accent-primary)]/5 hover:from-[var(--accent-primary)]/15 hover:to-[var(--accent-primary)]/10 transition-all group"
+      >
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-[var(--accent-primary)] flex items-center justify-center shrink-0">
+            <Sparkles className="w-6 h-6 text-white" />
+          </div>
+          <div className="flex-1">
+            <p className="text-base font-bold text-[var(--text-primary)] group-hover:text-[var(--accent-primary)] transition-colors">
+              Quick AI Setup — Pick your role, agent is ready in 2 taps
+            </p>
+            <p className="text-sm text-[var(--text-secondary)] mt-0.5">
+              32 pre-built playbooks for sales, real estate, insurance, home services, and more. No setup required.
+            </p>
+          </div>
+          <span className="text-[var(--accent-primary)] font-semibold text-sm shrink-0">Start →</span>
+        </div>
+      </Link>
+
+      <div className="flex items-center gap-3">
+        <div className="flex-1 h-px bg-[var(--border-default)]" />
+        <span className="text-xs text-[var(--text-tertiary)] font-medium uppercase tracking-wider">or customize manually</span>
+        <div className="flex-1 h-px bg-[var(--border-default)]" />
+      </div>
+
       <div>
         <h2 className="text-xl font-semibold text-[var(--text-primary)]">{t("heading")}</h2>
         <p className="mt-1 text-sm text-[var(--text-secondary)]">{t("subtitle")}</p>

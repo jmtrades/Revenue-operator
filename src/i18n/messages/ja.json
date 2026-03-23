@@ -8556,6 +8556,9 @@
     },
     "zoho": {
       "body": "Body"
+    },
+    "airtable": {
+      "body": "リードと連絡先をAirtableのベースに自動同期します。"
     }
   },
   "cardLabels": {
