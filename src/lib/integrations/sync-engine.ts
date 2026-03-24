@@ -410,7 +410,7 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
           email: updateFields.email ?? null,
           phone: updateFields.phone ?? null,
           company: updateFields.company ?? null,
-          status: updateFields.status ?? "new",
+          status: updateFields.status ?? "NEW",
           metadata: {
             source: `crm_${provider}`,
             imported_at: new Date().toISOString(),
@@ -571,6 +571,7 @@ const CRM_PROVIDERS: CrmProviderId[] = [
   "gohighlevel",
   "google_contacts",
   "microsoft_365",
+  "airtable",
 ];
 
 /**
@@ -582,7 +583,7 @@ export async function getConnectedCrmProviders(workspaceId: string): Promise<Crm
     .from("workspace_crm_connections")
     .select("provider")
     .eq("workspace_id", workspaceId)
-    .not("connected_at", "is", null)
+    .eq("status", "active")
     .in("provider", CRM_PROVIDERS);
   const providers = (data ?? []).map((r: { provider: string }) => r.provider as CrmProviderId);
   return providers.filter((p): p is CrmProviderId => CRM_PROVIDERS.includes(p));

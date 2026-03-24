@@ -94,7 +94,7 @@ export async function POST(req: NextRequest) {
     phone: r.phone,
     email: r.email,
     company: r.service_requested,
-    status: "new",
+    status: "NEW",
     metadata: { source: "csv_import", service_requested: r.service_requested, notes: r.notes, score: 40 },
   }));
 

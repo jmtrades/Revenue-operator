@@ -69,7 +69,6 @@ function mapLeadToContact(lead: {
   state?: string | null;
   last_activity_at?: string | null;
   created_at?: string | null;
-  tags?: string[] | null;
   metadata?: Record<string, unknown> | null;
   source?: string | null;
   channel?: string | null;
@@ -80,7 +79,8 @@ function mapLeadToContact(lead: {
   const lastName = parts[1] ?? "";
   const phone = (lead.phone ?? "").trim();
 
-  if (!firstName || !lastName || !phone) return null;
+  if (!firstName && !lastName) return null;
+  if (!phone && !lead.email) return null;
 
   const stateMap: Record<string, ContactType> = {
     new: "lead",
@@ -103,7 +103,7 @@ function mapLeadToContact(lead: {
     phone,
     email: (lead.email ?? "").trim() || undefined,
     type,
-    tags: Array.isArray(lead.tags) ? lead.tags : [],
+    tags: [],
     lastContact,
     source,
     channel: lead.channel ?? undefined,

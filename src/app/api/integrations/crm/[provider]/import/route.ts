@@ -35,7 +35,8 @@ function isAllowed(s: string): s is CrmProviderId {
 async function fetchCrmContacts(
   provider: CrmProviderId,
   tokens: { access_token: string; instance_url: string | null },
-  limit: number
+  limit: number,
+  workspaceId: string
 ): Promise<Record<string, unknown>[]> {
   const headers = { Authorization: `Bearer ${tokens.access_token}`, "Content-Type": "application/json" };
   const signal = AbortSignal.timeout(30_000);
@@ -116,18 +117,18 @@ async function fetchCrmContacts(
     }
 
     case "airtable": {
-      // Airtable needs base ID and table name from workspace config
+      // Airtable needs base ID and table name from workspace connection metadata
       const db = getDb();
       const { data: cfg } = await db
         .from("workspace_crm_connections")
-        .select("config")
-        .eq("workspace_id", tokens.instance_url ?? "")
+        .select("metadata, instance_url")
+        .eq("workspace_id", workspaceId)
         .eq("provider", "airtable")
         .maybeSingle();
-      const config = (cfg as { config?: { base_id?: string; table_name?: string } } | null)?.config;
-      const baseId = config?.base_id;
-      const tableName = config?.table_name ?? "Contacts";
-      if (!baseId) throw new Error("Airtable base ID not configured");
+      const meta = (cfg as { metadata?: { base_id?: string; table_name?: string } | null; instance_url?: string | null } | null);
+      const baseId = meta?.metadata?.base_id ?? meta?.instance_url;
+      const tableName = meta?.metadata?.table_name ?? "Contacts";
+      if (!baseId) throw new Error("Airtable base ID not configured. Please set your base ID in integration settings.");
 
       const res = await fetch(
         `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}?maxRecords=${Math.min(limit, 100)}&sort%5B0%5D%5Bfield%5D=Created&sort%5B0%5D%5Bdirection%5D=desc`,
@@ -191,7 +192,7 @@ export async function POST(
   );
 
   try {
-    const contacts = await fetchCrmContacts(provider, tokens, limit);
+    const contacts = await fetchCrmContacts(provider, tokens, limit, session.workspaceId);
 
     if (contacts.length === 0) {
       return NextResponse.json({ imported: 0, message: "No contacts found in CRM." });

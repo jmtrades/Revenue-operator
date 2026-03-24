@@ -60,13 +60,13 @@ export async function GET(req: NextRequest) {
     const counterDate = new Date().toISOString().slice(0, 10);
     const { data: existingCounters } = await db
       .from("campaign_daily_counters")
-      .select("workspace_id, processed_count")
-      .eq("counter_date", counterDate)
+      .select("workspace_id, calls_made")
+      .eq("date_key", counterDate)
       .in("workspace_id", workspaceIds);
     const processedByWorkspace = new Map<string, number>(
-      ((existingCounters ?? []) as Array<{ workspace_id: string; processed_count: number }>).map((r) => [
+      ((existingCounters ?? []) as Array<{ workspace_id: string; calls_made: number }>).map((r) => [
         r.workspace_id,
-        Number(r.processed_count) || 0,
+        Number(r.calls_made) || 0,
       ]),
     );
 
@@ -175,14 +175,13 @@ export async function GET(req: NextRequest) {
 
     const counterRows = [...processedByWorkspace.entries()].map(([workspace_id, count]) => ({
       workspace_id,
-      counter_date: counterDate,
-      processed_count: count,
-      updated_at: new Date().toISOString(),
+      date_key: counterDate,
+      calls_made: count,
     }));
     if (counterRows.length > 0) {
       await db
         .from("campaign_daily_counters")
-        .upsert(counterRows, { onConflict: "workspace_id,counter_date" });
+        .upsert(counterRows, { onConflict: "workspace_id,date_key" });
     }
   } catch (err) {
     log("error", "campaign_process_cron_error", { error: err instanceof Error ? err.message : String(err) });

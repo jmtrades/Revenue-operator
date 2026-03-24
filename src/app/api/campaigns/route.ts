@@ -79,6 +79,21 @@ export async function POST(req: NextRequest) {
     status: "draft",
   };
   if (target_filter && typeof target_filter === "object" && Object.keys(target_filter).length > 0) {
+    // Extract sequence_steps from target_filter and save to dedicated column
+    const tf = target_filter as Record<string, unknown>;
+    if (Array.isArray(tf.sequence) && tf.sequence.length > 0) {
+      // Map wizard format {channel, delay_hours, template} to launch-expected format {channel, message, delay_hours}
+      insertPayload.sequence_steps = (tf.sequence as Array<Record<string, unknown>>).map((s) => ({
+        channel: s.channel ?? "sms",
+        message: s.template ?? s.message ?? "",
+        subject: s.subject ?? null,
+        delay_hours: s.delay_hours ?? 0,
+      }));
+    }
+    // Extract schedule into metadata if present
+    if (tf.schedule && typeof tf.schedule === "object") {
+      insertPayload.schedule = tf.schedule;
+    }
     insertPayload.target_filter = target_filter;
   }
   try {

@@ -43,7 +43,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const allowed = ["name", "voice_id", "personality", "purpose", "greeting", "knowledge_base", "rules", "is_active", "tested_at", "conversation_flow", "template"];
+  const allowed = ["name", "voice_id", "personality", "purpose", "greeting", "knowledge_base", "rules", "is_active", "tested_at", "test_call_completed", "conversation_flow", "template"];
   const validPersonality = ["friendly", "professional", "casual", "empathetic"] as const;
   const validPurpose = ["inbound", "outbound", "both"] as const;
   const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
@@ -65,8 +65,11 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
       updates[k] = body[k].trim().slice(0, 2000);
     } else if (k === "tested_at") {
       if (typeof body[k] === "string" && body[k]) {
-        // Rely on Postgres to validate timestamp format; just trim.
         updates[k] = (body[k] as string).trim();
+      }
+    } else if (k === "test_call_completed") {
+      if (typeof body[k] === "boolean") {
+        updates[k] = body[k];
       }
     } else {
       updates[k] = body[k];
