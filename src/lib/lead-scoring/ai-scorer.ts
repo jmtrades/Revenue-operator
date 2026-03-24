@@ -51,7 +51,7 @@ interface MessageData {
 
 interface AppointmentData {
   id: string;
-  scheduled_at: string | null;
+  start_time: string | null;
   status: string;
 }
 
@@ -126,10 +126,10 @@ async function aggregateLeadData(
 
   const { data: appointments } = await db
     .from("appointments")
-    .select("id, scheduled_at, status")
+    .select("id, start_time, status")
     .eq("lead_id", leadId)
     .eq("workspace_id", workspaceId)
-    .order("scheduled_at", { ascending: false });
+    .order("start_time", { ascending: false });
 
   const { data: campaigns } = await db
     .from("campaign_enrollments")
@@ -269,7 +269,7 @@ MESSAGE HISTORY (Recent):
 ${messageHistory || "No messages found"}
 
 APPOINTMENT HISTORY:
-${appointments.map((a) => `- Scheduled: ${a.scheduled_at}, Status: ${a.status}`).join("\n") || "No appointments"}
+${appointments.map((a) => `- Scheduled: ${a.start_time}, Status: ${a.status}`).join("\n") || "No appointments"}
 
 ${campaignInfo}
 

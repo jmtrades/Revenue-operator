@@ -162,16 +162,16 @@ async function getPendingItems(
   // Get upcoming appointments
   const { data: appointments } = await db
     .from("appointments")
-    .select("scheduled_at, type")
+    .select("start_time, title")
     .eq("lead_id", leadId)
     .eq("workspace_id", workspaceId)
-    .gt("scheduled_at", new Date().toISOString())
-    .order("scheduled_at", { ascending: true })
+    .gt("start_time", new Date().toISOString())
+    .order("start_time", { ascending: true })
     .limit(5);
 
   const appointmentList = (appointments || []).map((a) => ({
-    date: new Date((a as { scheduled_at: string }).scheduled_at),
-    type: (a as { type: string }).type || "meeting",
+    date: new Date((a as { start_time: string }).start_time),
+    type: (a as { title: string }).title || "meeting",
   }));
 
   // Get pending deals

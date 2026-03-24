@@ -29,24 +29,24 @@ export async function GET(req: NextRequest) {
     const prevMonthStart = new Date(startOfMonth);
     prevMonthStart.setMonth(prevMonthStart.getMonth() - 1);
 
-    // 1. Knowledge items count
+    // 1. Knowledge items count — derive from knowledge_gaps (resolved) + agent knowledge_base FAQ
     let knowledgeItems = 0;
     let knowledgeItemsAddedThisMonth = 0;
     try {
-      const { data: kbTotal } = await db
-        .from("knowledge_items")
+      const { count: kbTotal } = await db
+        .from("knowledge_gaps")
         .select("id", { count: "exact", head: true })
         .eq("workspace_id", workspaceId);
-      knowledgeItems = kbTotal?.length ?? 0;
+      knowledgeItems = kbTotal ?? 0;
 
-      const { data: kbMonth } = await db
-        .from("knowledge_items")
+      const { count: kbMonth } = await db
+        .from("knowledge_gaps")
         .select("id", { count: "exact", head: true })
         .eq("workspace_id", workspaceId)
         .gte("created_at", startOfMonth.toISOString());
-      knowledgeItemsAddedThisMonth = kbMonth?.length ?? 0;
+      knowledgeItemsAddedThisMonth = kbMonth ?? 0;
     } catch {
-      // knowledge_items table may not exist
+      // knowledge_gaps table may not exist
     }
 
     // 2. Call analysis — topics, sentiment, patterns from call_sessions
@@ -137,12 +137,12 @@ export async function GET(req: NextRequest) {
     // 4. Objection patterns — count from knowledge items tagged as objection or from call transcripts
     let objectionPatterns = 0;
     try {
-      const { data: objections } = await db
-        .from("knowledge_items")
+      const { count: objectionCount } = await db
+        .from("knowledge_gaps")
         .select("id", { count: "exact", head: true })
         .eq("workspace_id", workspaceId)
         .ilike("question", "%objection%");
-      objectionPatterns = objections?.length ?? 0;
+      objectionPatterns = objectionCount ?? 0;
     } catch {
       // Not critical
     }
@@ -188,10 +188,10 @@ export async function GET(req: NextRequest) {
     let commonQuestions: string[] = [];
     try {
       const { data: kbItems } = await db
-        .from("knowledge_items")
+        .from("knowledge_gaps")
         .select("question")
         .eq("workspace_id", workspaceId)
-        .order("created_at", { ascending: false })
+        .order("last_seen_at", { ascending: false })
         .limit(5);
 
       if (kbItems) {
