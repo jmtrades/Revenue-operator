@@ -83,7 +83,6 @@ export async function POST(req: NextRequest) {
       content: content.trim(),
       channel,
       status: "queued",
-      metadata: { trigger: "manual" },
     })
     .select("id")
     .maybeSingle();
