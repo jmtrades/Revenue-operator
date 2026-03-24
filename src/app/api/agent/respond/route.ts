@@ -166,6 +166,7 @@ ${greeting ? `- Opening greeting: "${greeting}"` : ""}`;
         system: systemPrompt,
         messages,
       }),
+      signal: AbortSignal.timeout(10_000),
     });
 
     if (!res.ok) {

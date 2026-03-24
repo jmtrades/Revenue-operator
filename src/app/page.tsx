@@ -16,9 +16,6 @@ const HomepageRoiCalculator = dynamic(
 const SocialProof = dynamic(
   () => import("@/components/sections/SocialProof").then((m) => m.SocialProof),
 );
-const CustomerLogosBar = dynamic(
-  () => import("@/components/sections/CustomerLogosBar").then((m) => m.CustomerLogosBar),
-);
 // ProblemStatement removed — loss-psychology framing replaced by ROI calculator
 const HowItWorks = dynamic(
   () => import("@/components/sections/HowItWorks").then((m) => m.HowItWorks),
@@ -123,11 +120,10 @@ export default async function HomePage() {
       <Navbar initialAuthenticated={initialAuthenticated} />
       <main id="main">
         <Hero />
-        <CustomerLogosBar />
-        <SocialProof />
+        <HomepageRoiCalculator />
         <HowItWorks />
         <HomepageVoicePreview />
-        <HomepageRoiCalculator />
+        <SocialProof />
         <TestimonialsSection />
         <PricingPreview />
         <HomepageFAQ />

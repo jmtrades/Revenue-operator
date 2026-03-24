@@ -45,6 +45,7 @@ export async function telnyxFetch(
   const response = await fetch(url, {
     ...options,
     headers,
+    signal: options.signal ?? AbortSignal.timeout(15_000),
   });
 
   return response;

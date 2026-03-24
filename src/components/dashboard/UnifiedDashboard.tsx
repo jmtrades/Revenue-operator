@@ -15,7 +15,7 @@ import {
   CalendarCheck,
   TrendingUp,
   MailCheck,
-  Activity,
+  Clock,
   AlertCircle,
   ChevronRight,
 } from "lucide-react";
@@ -23,6 +23,8 @@ import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { track } from "@/lib/analytics/posthog";
 import { safeGetItem, safeSetItem } from "@/lib/client/safe-storage";
+import { VoiceABTestCard } from "@/components/dashboard/VoiceABTestCard";
+import { IntelligenceCard } from "@/components/dashboard/IntelligenceCard";
 
 type Summary = {
   revenue_recovered_cents: number;
@@ -231,9 +233,9 @@ export function UnifiedDashboard() {
 
   const kpis = [
     {
-      label: t("kpis.callsHandled", { defaultValue: "Calls handled" }),
+      label: t("kpis.callsHandled", { defaultValue: "Calls answered" }),
       value: data.calls_answered,
-      sub: `${data.inbound_calls ?? 0} in \u00b7 ${data.outbound_calls ?? 0} out`,
+      sub: data.missed_calls_recovered > 0 ? `${data.missed_calls_recovered} recovered` : undefined,
       icon: Phone,
       accent: "var(--accent-primary)",
     },
@@ -245,16 +247,16 @@ export function UnifiedDashboard() {
       accent: "var(--accent-secondary)",
     },
     {
-      label: t("kpis.recovered", { defaultValue: "Calls recovered" }),
-      value: data.missed_calls_recovered ?? 0,
-      sub: data.qualified_leads > 0 ? `${data.qualified_leads} qualified` : undefined,
+      label: t("kpis.recovered", { defaultValue: "Revenue recovered" }),
+      value: fmtMoney(data.revenue_recovered_cents),
+      sub: data.revenue_trend_pct !== 0 ? `${data.revenue_trend_pct > 0 ? "+" : ""}${data.revenue_trend_pct}% vs last month` : undefined,
       icon: TrendingUp,
       accent: "var(--accent-warning)",
     },
     {
       label: t("kpis.followUpsSent", { defaultValue: "Follow-ups sent" }),
       value: data.follow_ups_sent,
-      sub: undefined,
+      sub: data.qualified_leads > 0 ? `${data.qualified_leads} qualified leads` : undefined,
       icon: MailCheck,
       accent: "var(--accent-indigo, #4F46E5)",
     },
@@ -286,7 +288,7 @@ export function UnifiedDashboard() {
           {t("dashboard", { defaultValue: "Dashboard" })}
         </h1>
         <p className="text-sm text-[var(--text-secondary)] mt-1">
-          This month&apos;s performance at a glance
+          Revenue recovery this month
         </p>
       </div>
 
@@ -437,7 +439,7 @@ export function UnifiedDashboard() {
               </div>
             </div>
             <p className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] tabular-nums tracking-tight">
-              {k.value.toLocaleString()}
+              {typeof k.value === "string" ? k.value : k.value.toLocaleString()}
             </p>
             <p className="text-xs font-medium text-[var(--text-secondary)] mt-1">{k.label}</p>
             {k.sub && (
@@ -520,7 +522,7 @@ export function UnifiedDashboard() {
         <section className="dash-section p-5 md:p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-[var(--accent-primary)]" />
+              <Clock className="w-4 h-4 text-[var(--accent-primary)]" />
               <h2 className="text-sm font-semibold text-[var(--text-primary)]">
                 {t("activity.title", { defaultValue: "Today's activity" })}
               </h2>
@@ -597,6 +599,12 @@ export function UnifiedDashboard() {
           </div>
         )}
       </section>
+
+      {/* ── Voice Intelligence + A/B Testing ──────────────────────────── */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        <IntelligenceCard />
+        <VoiceABTestCard />
+      </div>
     </div>
   );
 }
