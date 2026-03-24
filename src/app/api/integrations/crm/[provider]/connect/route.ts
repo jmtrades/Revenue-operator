@@ -33,8 +33,8 @@ const OAUTH_CONFIG: Record<string, { clientIdEnv: string; redirectUriPath: strin
   },
   gohighlevel: {
     clientIdEnv: "GOHIGHLEVEL_CLIENT_ID",
-    redirectUriPath: "/api/integrations/crm/gohighlevel/callback",
-    authUrl: (clientId, redirectUri) => `https://app.gohighlevel.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`,
+    redirectUriPath: "/api/integrations/crm/leadconnector/callback",
+    authUrl: (clientId, redirectUri) => `https://marketplace.gohighlevel.com/oauth/chooselocation?response_type=code&redirect_uri=${redirectUri}&client_id=${clientId}&scope=contacts.readonly contacts.write opportunities.readonly opportunities.write`,
   },
   google_contacts: {
     clientIdEnv: "GOOGLE_CLIENT_ID",
@@ -76,11 +76,11 @@ export async function GET(
   const clientId = process.env[config.clientIdEnv];
   if (!clientId) {
     return NextResponse.redirect(
-      new URL(`/app/settings/integrations?status=not_configured&provider=${provider}`, process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin)
+      new URL(`/app/settings/integrations?crm=config&provider=${provider}`, process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin)
     );
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin;
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin).trim();
   const redirectUri = `${appUrl}${config.redirectUriPath}`;
   const state = createOAuthState(session.workspaceId);
   let baseAuthUrl = config.authUrl(clientId, encodeURIComponent(redirectUri));
