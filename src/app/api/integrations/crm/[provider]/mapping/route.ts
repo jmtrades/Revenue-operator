@@ -23,6 +23,7 @@ const ALLOWED_PROVIDERS: CrmProviderId[] = [
   "gohighlevel",
   "google_contacts",
   "microsoft_365",
+  "airtable",
 ];
 
 const MapEntrySchema = z.object({

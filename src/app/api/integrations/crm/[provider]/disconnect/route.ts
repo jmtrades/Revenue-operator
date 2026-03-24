@@ -8,7 +8,7 @@ import { getDb } from "@/lib/db/queries";
 
 export const dynamic = "force-dynamic";
 
-const ALLOWED_PROVIDERS = ["salesforce", "hubspot", "zoho_crm", "pipedrive", "gohighlevel", "google_contacts", "microsoft_365"];
+const ALLOWED_PROVIDERS = ["salesforce", "hubspot", "zoho_crm", "pipedrive", "gohighlevel", "google_contacts", "microsoft_365", "airtable"];
 
 export async function POST(
   req: NextRequest,

@@ -114,6 +114,7 @@ export async function GET(
       method: "POST",
       headers,
       body: body.toString(),
+      signal: AbortSignal.timeout(15_000),
     });
 
     if (!tokenRes.ok) {
