@@ -103,11 +103,42 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const fromNumber = process.env.TELNYX_PHONE_NUMBER;
+  let fromNumber = process.env.TELNYX_PHONE_NUMBER;
+  if (!fromNumber) {
+    // Fall back to the first active provisioned number in the demo workspace
+    try {
+      const db = (await import("@/lib/db/queries")).getDb();
+      const DEMO_WORKSPACE = process.env.DEMO_WORKSPACE_ID || "027ac617-5ab8-4e26-bcb3-1a2f5ad6bef9";
+
+      // Try phone_configs first (primary workspace number)
+      const { data: cfg } = await db
+        .from("phone_configs")
+        .select("proxy_number")
+        .eq("workspace_id", DEMO_WORKSPACE)
+        .eq("status", "active")
+        .maybeSingle();
+      fromNumber = (cfg as { proxy_number?: string } | null)?.proxy_number ?? undefined;
+
+      // Fall back to phone_numbers table
+      if (!fromNumber) {
+        const { data: pn } = await db
+          .from("phone_numbers")
+          .select("phone_number")
+          .eq("workspace_id", DEMO_WORKSPACE)
+          .eq("status", "active")
+          .order("created_at", { ascending: true })
+          .limit(1)
+          .maybeSingle();
+        fromNumber = (pn as { phone_number?: string } | null)?.phone_number ?? undefined;
+      }
+    } catch {
+      // ignore DB errors for fallback lookup
+    }
+  }
   if (!fromNumber) {
     log("error", "demo_call.missing_phone_number");
     return NextResponse.json(
-      { ok: false, error: "Demo calling is temporarily unavailable." },
+      { ok: false, error: "Demo calling is temporarily unavailable. Please start a free trial to test calls." },
       { status: 503 },
     );
   }

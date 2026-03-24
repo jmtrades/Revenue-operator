@@ -3922,9 +3922,16 @@
       "paused": "Campaign paused.",
       "launchFailed": "Could not launch campaign.",
       "launched": "Campaign launched.",
-      "launchedWithCount": "Campaign launched. {count} contacts queued."
+      "launchedWithCount": "Campaign launched. {count} contacts queued.",
+      "deleted": "Campaign deleted.",
+      "deleteFailed": "Could not delete campaign.",
+      "duplicated": "Campaign duplicated."
     },
-    "body": "Body"
+    "body": "Body",
+    "delete": "Delete",
+    "duplicate": "Duplicate",
+    "deleteConfirmTitle": "Delete this campaign?",
+    "deleteConfirmMessage": "Are you sure you want to delete \"{name}\"? This cannot be undone."
   },
   "settings": {
     "pageTitle": "Settings — Recall Touch",

@@ -3639,7 +3639,10 @@
       "paused": "Campanha pausada.",
       "launchFailed": "Não foi possível iniciar a campanha.",
       "launched": "Campanha lançada.",
-      "launchedWithCount": "Campanha lançada. {count} contatos na fila."
+      "launchedWithCount": "Campanha lançada. {count} contatos na fila.",
+      "deleted": "Campaign deleted.",
+      "deleteFailed": "Could not delete campaign.",
+      "duplicated": "Campaign duplicated."
     },
     "sequenceHint": "Define the steps in your outreach sequence",
     "sequenceLabel": "Sequence",
@@ -3649,7 +3652,11 @@
       "sms": "SMS",
       "wait": "Wait"
     },
-    "body": "Body"
+    "body": "Body",
+    "delete": "Delete",
+    "duplicate": "Duplicate",
+    "deleteConfirmTitle": "Delete this campaign?",
+    "deleteConfirmMessage": "Are you sure you want to delete \"{name}\"? This cannot be undone."
   },
   "settings": {
     "pageTitle": "Configurações — Recall Touch",

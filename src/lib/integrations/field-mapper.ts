@@ -275,3 +275,128 @@ export const SAMPLE_LEAD: LeadRecord = {
   state: "CONTACTED",
   metadata: {},
 };
+
+// ---------------------------------------------------------------------------
+// Inbound (CRM → Recall Touch) reverse mapping
+// ---------------------------------------------------------------------------
+
+/** Reverse status map: CRM status value → RT state. */
+function reverseStatusMap(statusMap: Record<string, string> | undefined): Record<string, string> {
+  if (!statusMap) return {};
+  const out: Record<string, string> = {};
+  for (const [rtKey, crmVal] of Object.entries(statusMap)) {
+    out[String(crmVal).toLowerCase()] = rtKey.toLowerCase();
+  }
+  return out;
+}
+
+/**
+ * Extract a nested value from an object using a dot-path key
+ * (e.g. "names.givenName" from Google Contacts payload).
+ */
+function getNestedValue(obj: Record<string, unknown>, path: string): unknown {
+  const parts = path.split(".");
+  let current: unknown = obj;
+  for (const part of parts) {
+    if (current == null || typeof current !== "object") return undefined;
+    // Handle arrays — take first element
+    if (Array.isArray(current)) {
+      current = current[0];
+      if (current == null || typeof current !== "object") return undefined;
+    }
+    current = (current as Record<string, unknown>)[part];
+  }
+  return current;
+}
+
+/**
+ * Apply reverse mapping: CRM webhook payload → Recall Touch lead fields.
+ * Uses the same mapping config but reads crmField → rtField.
+ */
+export function applyReverseMapping(
+  crmPayload: Record<string, unknown>,
+  config: FieldMappingConfig
+): Partial<LeadRecord> {
+  const out: Record<string, unknown> = {};
+  for (const entry of config.mappings) {
+    const rawValue = getNestedValue(crmPayload, entry.crmField);
+    if (rawValue == null || rawValue === "") continue;
+
+    let value: unknown = rawValue;
+    switch (entry.transformation) {
+      case "format_phone":
+        value = formatPhone(rawValue);
+        break;
+      case "map_status": {
+        const reversed = reverseStatusMap(entry.statusMap);
+        const lookup = String(rawValue).toLowerCase();
+        value = reversed[lookup] ?? String(rawValue).toLowerCase();
+        break;
+      }
+      case "concatenate":
+        // For inbound concatenation is just pass-through
+        value = String(rawValue);
+        break;
+      default:
+        value = rawValue;
+    }
+
+    if (value !== "" && value != null) {
+      out[entry.rtField] = value;
+    }
+  }
+  return out as Partial<LeadRecord>;
+}
+
+/**
+ * Normalize a CRM webhook payload into a flat object suitable for reverse mapping.
+ * Handles provider-specific wrapper structures (HubSpot properties, Salesforce sobject, etc.).
+ */
+export function normalizeCrmPayload(
+  provider: CrmProviderId,
+  rawPayload: Record<string, unknown>
+): Record<string, unknown> {
+  switch (provider) {
+    case "hubspot": {
+      // HubSpot sends { properties: { email: "x", phone: "y", ... } }
+      const props = rawPayload.properties as Record<string, unknown> | undefined;
+      return props ?? rawPayload;
+    }
+    case "salesforce": {
+      // Salesforce sends the sobject directly or wrapped in { new: { ... } }
+      const newObj = rawPayload.new as Record<string, unknown> | undefined;
+      return newObj ?? rawPayload;
+    }
+    case "zoho_crm": {
+      // Zoho sends { data: [{ ... }] } for webhooks
+      const data = rawPayload.data;
+      if (Array.isArray(data) && data.length > 0) return data[0] as Record<string, unknown>;
+      return rawPayload;
+    }
+    case "pipedrive": {
+      // Pipedrive sends { current: { ... }, previous: { ... } }
+      const current = rawPayload.current as Record<string, unknown> | undefined;
+      return current ?? rawPayload;
+    }
+    case "gohighlevel": {
+      // GHL sends contact directly or { contact: { ... } }
+      const contact = rawPayload.contact as Record<string, unknown> | undefined;
+      return contact ?? rawPayload;
+    }
+    case "google_contacts": {
+      // Google sends person resource directly
+      return rawPayload;
+    }
+    case "microsoft_365": {
+      // Microsoft sends the contact object directly
+      return rawPayload;
+    }
+    case "airtable": {
+      // Airtable sends { fields: { ... } }
+      const fields = rawPayload.fields as Record<string, unknown> | undefined;
+      return fields ?? rawPayload;
+    }
+    default:
+      return rawPayload;
+  }
+}
