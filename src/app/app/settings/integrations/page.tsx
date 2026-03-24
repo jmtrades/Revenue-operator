@@ -18,14 +18,14 @@ function getCrmIntegrations(t: ReturnType<typeof useTranslations>): Array<{
   comingSoon?: boolean;
 }> {
   return [
-    { id: "salesforce", name: "Salesforce", description: t("card.salesforce.body"), icon: Cloud },
     { id: "hubspot", name: "HubSpot", description: t("card.hubspot.body"), icon: Building2 },
-    { id: "zoho_crm", name: "Zoho CRM", description: t("card.zoho.body"), icon: Database },
+    { id: "google_contacts", name: "Google Contacts", description: t("card.googleContacts.body"), icon: Users },
+    { id: "airtable", name: "Airtable", description: t("card.airtable.body"), icon: Database },
     { id: "pipedrive", name: "Pipedrive", description: t("card.pipedrive.body"), icon: TrendingUp },
     { id: "gohighlevel", name: "GoHighLevel", description: t("card.gohighlevel.body"), icon: Layers },
-    { id: "google_contacts", name: "Google Contacts", description: t("card.googleContacts.body"), icon: Users },
-    { id: "microsoft_365", name: "Microsoft 365", description: t("card.microsoft365.body"), icon: Building },
-    { id: "airtable", name: "Airtable", description: t("card.airtable.body"), icon: Database },
+    { id: "salesforce", name: "Salesforce", description: t("card.salesforce.body"), icon: Cloud, comingSoon: true },
+    { id: "zoho_crm", name: "Zoho CRM", description: t("card.zoho.body"), icon: Database, comingSoon: true },
+    { id: "microsoft_365", name: "Microsoft 365", description: t("card.microsoft365.body"), icon: Building, comingSoon: true },
   ];
 }
 
