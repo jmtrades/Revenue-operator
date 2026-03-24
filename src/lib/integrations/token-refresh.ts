@@ -47,15 +47,21 @@ export async function getValidTokens(
   const db = getDb();
   const { data: conn } = await db
     .from("workspace_crm_connections")
-    .select("access_token, refresh_token, expires_at, instance_url")
+    .select("access_token, refresh_token, token_expires_at, instance_url")
     .eq("workspace_id", workspaceId)
     .eq("provider", provider)
-    .not("connected_at", "is", null)
+    .eq("status", "active")
     .maybeSingle();
 
   if (!conn || !conn.access_token) return null;
 
-  const tokens = conn as CrmTokens;
+  const row = conn as { access_token: string; refresh_token: string | null; token_expires_at: string | null; instance_url: string | null };
+  const tokens: CrmTokens = {
+    access_token: row.access_token,
+    refresh_token: row.refresh_token,
+    expires_at: row.token_expires_at,
+    instance_url: row.instance_url,
+  };
 
   // Check if token is expired (with 5-minute buffer)
   if (tokens.expires_at) {
@@ -142,7 +148,7 @@ async function refreshTokens(
       .update({
         access_token: data.access_token,
         refresh_token: data.refresh_token ?? refreshToken, // Some providers rotate refresh tokens
-        expires_at: expiresAt,
+        token_expires_at: expiresAt,
         instance_url: data.instance_url ?? undefined,
         updated_at: new Date().toISOString(),
       })

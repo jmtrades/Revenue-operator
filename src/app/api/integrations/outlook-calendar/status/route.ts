@@ -22,17 +22,17 @@ export async function GET(req: NextRequest) {
     const db = getDb();
     const { data: connection } = await db
       .from("workspace_crm_connections")
-      .select("connected_at, expires_at")
+      .select("status, token_expires_at")
       .eq("workspace_id", session.workspaceId)
       .eq("provider", "microsoft_365")
       .maybeSingle();
 
-    if (!connection || !connection.connected_at) {
+    if (!connection || (connection as { status?: string }).status !== "active") {
       return NextResponse.json({ connected: false });
     }
 
     // Check if token is expired
-    const expiresAt = connection.expires_at as string | null;
+    const expiresAt = (connection as { token_expires_at?: string | null }).token_expires_at;
     const isExpired = expiresAt && new Date(expiresAt) < new Date();
     const connected = !isExpired;
 

@@ -158,10 +158,10 @@ export async function GET(
         {
           workspace_id: workspaceId,
           provider,
-          connected_at: new Date().toISOString(),
+          status: "active",
           access_token: tokens.access_token,
           refresh_token: tokens.refresh_token ?? null,
-          expires_at: expiresAt,
+          token_expires_at: expiresAt,
           instance_url: tokens.instance_url ?? null,
           updated_at: new Date().toISOString(),
         },
