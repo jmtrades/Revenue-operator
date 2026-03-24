@@ -72,11 +72,11 @@ export async function PATCH(
       : meta;
   const stateInput = body.state != null ? String(body.state).toLowerCase().replace(/\s+/g, "_") : undefined;
   const dbState = stateInput != null ? STATUS_TO_STATE[stateInput] ?? stateInput : undefined;
-  const updatePayload: { metadata: Record<string, unknown>; updated_at: string; state?: string } = {
+  const updatePayload: { metadata: Record<string, unknown>; updated_at: string; status?: string } = {
     metadata: nextMeta,
     updated_at: new Date().toISOString(),
   };
-  if (dbState != null) updatePayload.state = dbState;
+  if (dbState != null) updatePayload.status = dbState;
   const { data: updated, error } = await db
     .from("leads")
     .update(updatePayload)
