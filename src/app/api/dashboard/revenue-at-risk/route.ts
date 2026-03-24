@@ -126,7 +126,7 @@ export async function GET(req: NextRequest) {
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
       .eq("status", "no_show")
-      .gte("scheduled_at", fourteenDaysAgo.toISOString());
+      .gte("start_time", fourteenDaysAgo.toISOString());
 
     const noshowCount = count ?? 0;
     if (noshowCount > 0) {

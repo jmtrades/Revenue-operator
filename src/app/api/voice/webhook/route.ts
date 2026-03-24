@@ -277,10 +277,10 @@ export async function POST(req: NextRequest) {
                     await db.from("appointments").insert({
                       workspace_id: payload.workspace_id,
                       lead_id: leadId,
-                      scheduled_at: `${appointmentDate}T${appointmentTime}`,
-                      source: "voice_call",
+                      title: "Voice Call Booking",
+                      start_time: `${appointmentDate}T${appointmentTime}`,
                       call_session_id: callSessionId,
-                      status: "scheduled",
+                      status: "confirmed",
                     });
                   } else {
                     log("warn", "voice_webhook.duplicate_booking_prevented", { callSessionId, leadId });
