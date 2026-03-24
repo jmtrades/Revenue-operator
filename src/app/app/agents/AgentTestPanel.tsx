@@ -233,7 +233,7 @@ export function AgentTestPanel({
         method: "PATCH",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tested_at: new Date().toISOString() }),
+        body: JSON.stringify({ tested_at: new Date().toISOString(), test_call_completed: true }),
       }).catch(() => {});
       onTested?.();
     }

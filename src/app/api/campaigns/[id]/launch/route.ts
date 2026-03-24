@@ -126,9 +126,21 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   const filter = (campaign.target_filter ?? {}) as TargetFilter;
 
   // Safeguard: require at least one step template on the campaign sequence.
-  const sequenceSteps = Array.isArray(campaign.sequence_steps) ? campaign.sequence_steps : [];
+  // Also check target_filter.sequence as fallback (campaign wizard stores there too)
+  let sequenceSteps = Array.isArray(campaign.sequence_steps) ? campaign.sequence_steps : [];
+  if (sequenceSteps.length === 0 && campaign.target_filter) {
+    const tf = campaign.target_filter as Record<string, unknown>;
+    if (Array.isArray(tf.sequence)) {
+      sequenceSteps = (tf.sequence as Array<Record<string, unknown>>).map((s) => ({
+        channel: String(s.channel ?? "sms"),
+        message: String(s.template ?? s.message ?? ""),
+        subject: s.subject ? String(s.subject) : null,
+      }));
+    }
+  }
   const hasNonEmptyTemplate = sequenceSteps.some((s) => {
-    const messageOk = typeof s.message === "string" ? s.message.trim().length > 0 : false;
+    const msg = (s as Record<string, unknown>).message ?? (s as Record<string, unknown>).template ?? "";
+    const messageOk = typeof msg === "string" ? msg.trim().length > 0 : false;
     const subjectOk = typeof s.subject === "string" ? s.subject.trim().length > 0 : false;
     return s.channel === "sms" ? messageOk : messageOk || subjectOk;
   });
@@ -153,11 +165,11 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       q = q.eq("source", filter.audience_source);
     }
     if (typeof filter.audience_min_score === "number" && filter.audience_min_score >= 0) {
-      q = q.gte("score", filter.audience_min_score);
+      q = q.gte("qualification_score", filter.audience_min_score);
     }
     if (typeof filter.audience_not_contacted_days === "number" && filter.audience_not_contacted_days > 0) {
       const cutoff = new Date(Date.now() - filter.audience_not_contacted_days * 24 * 60 * 60 * 1000).toISOString();
-      q = q.or(`last_contact_at.is.null,last_contact_at.lt.${cutoff}`);
+      q = q.or(`last_activity_at.is.null,last_activity_at.lt.${cutoff}`);
     }
 
     if (excludeOptedOut) {
@@ -187,7 +199,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   // Build lead query for enqueuing.
   let leadQuery = db
     .from("leads")
-    .select("id, state, source, score, last_contact_at")
+    .select("id, state, source, qualification_score, last_activity_at")
     .eq("workspace_id", workspaceId)
     .limit(200);
 
@@ -198,11 +210,11 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     leadQuery = leadQuery.eq("source", filter.audience_source);
   }
   if (typeof filter.audience_min_score === "number" && filter.audience_min_score >= 0) {
-    leadQuery = leadQuery.gte("score", filter.audience_min_score);
+    leadQuery = leadQuery.gte("qualification_score", filter.audience_min_score);
   }
   if (typeof filter.audience_not_contacted_days === "number" && filter.audience_not_contacted_days > 0) {
     const cutoff = new Date(Date.now() - filter.audience_not_contacted_days * 24 * 60 * 60 * 1000).toISOString();
-    leadQuery = leadQuery.or(`last_contact_at.is.null,last_contact_at.lt.${cutoff}`);
+    leadQuery = leadQuery.or(`last_activity_at.is.null,last_activity_at.lt.${cutoff}`);
   }
 
   leadQuery = leadQuery.neq("opt_out", true);
