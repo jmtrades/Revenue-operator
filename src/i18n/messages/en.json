@@ -673,6 +673,16 @@
           "Priority support"
         ]
       },
+      "scale": {
+        "name": "Business",
+        "features": [
+          "Unlimited AI agents",
+          "10 phone numbers",
+          "6,000 min/mo",
+          "Detailed reports",
+          "API access"
+        ]
+      },
       "business": {
         "name": "Business",
         "features": [
@@ -8304,17 +8314,17 @@
   },
   "marketing": {
     "hero": {
-      "badge": "AI phone infrastructure for revenue teams",
-      "heading1": "AI That Runs Your Phones",
-      "heading2": "Inbound, Outbound,",
-      "heading3": "and Everything Between",
-      "description": "Answer every call. Follow up with every lead. Book appointments, qualify prospects, recover no-shows, and route to the right person — all on autopilot.",
+      "badge": "AI Revenue Recovery",
+      "heading1": "Stop Losing Revenue",
+      "heading2": "to Missed Calls.",
+      "heading3": "",
+      "description": "Recall Touch catches every missed call, rebooks every no-show, and follows up with every lead — automatically recovering the revenue your business is already losing.",
       "socialProof": "businesses",
       "socialProofRecovered": "recovered",
-      "startFreeTrial": "Start free trial",
+      "startFreeTrial": "Start recovering revenue",
       "watchDemo": "Watch demo",
-      "creditCard": "No credit card required. Live in under 3 minutes.",
-      "dashboardTitle": "Revenue Dashboard",
+      "creditCard": "No credit card required. See recovered revenue in 24 hours.",
+      "dashboardTitle": "Revenue Recovery",
       "dashboardPreview": "Preview",
       "coverage24_7": "24/7",
       "coverageLabel": "Coverage",
