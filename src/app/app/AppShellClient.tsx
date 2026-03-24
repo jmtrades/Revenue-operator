@@ -15,7 +15,6 @@ import {
   Users,
   Megaphone,
   MessageSquare,
-  Calendar,
   BarChart3,
   Settings,
   Menu,
@@ -23,25 +22,15 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Command as CommandIcon,
-  HelpCircle,
   Check,
-  Bot,
-  UserPlus,
   BookOpen,
   Clock,
   CreditCard,
-  Code,
   LogOut,
-  Snowflake,
-  Brain,
-  MessageCircle,
-  Building2,
-  DollarSign,
-  Zap,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { PageTransition } from "@/components/ui/PageTransition";
-import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
+import { LanguageSwitcher as _LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { NotificationCenter } from "@/components/ui/NotificationCenter";
 import { TranslatedErrorBoundary } from "@/components/ErrorBoundary";
 import { initErrorReporting } from "@/lib/error-reporting";
@@ -85,30 +74,17 @@ export default function AppShellClient({
         label: t("nav.sectionMain"),
         items: [
           { href: "/app/dashboard", label: t("nav.dashboard"), icon: LayoutList },
-          { href: "/app/agents", label: t("nav.agents"), icon: Bot },
           { href: "/app/calls", label: t("nav.calls"), icon: PhoneCall },
           { href: "/app/contacts", label: t("nav.contacts"), icon: Users },
-          { href: "/app/leads", label: t("nav.leads"), icon: UserPlus },
-          { href: "/app/cold-leads", label: t("nav.coldLeads"), icon: Snowflake },
+          { href: "/app/inbox", label: t("nav.inbox"), icon: MessageSquare },
         ],
       },
       {
-        label: t("nav.sectionCommunication"),
+        label: "Recovery & Growth",
         items: [
-          { href: "/app/inbox", label: t("nav.inbox"), icon: MessageSquare },
-          { href: "/app/inbox/live-chat", label: "Live Chat", icon: MessageCircle },
           { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
           { href: "/app/follow-ups", label: t("nav.followUps"), icon: Clock },
-          { href: "/app/calendar", label: t("nav.calendar"), icon: Calendar },
-        ],
-      },
-      {
-        label: t("nav.intelligence"),
-        items: [
           { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
-          { href: "/app/analytics/conversations", label: "Conversations", icon: Brain },
-          { href: "/app/analytics/roi", label: "ROI & Revenue", icon: DollarSign },
-          { href: "/app/call-intelligence", label: t("nav.callIntelligence"), icon: Zap },
           { href: "/app/knowledge", label: t("nav.knowledge"), icon: BookOpen },
         ],
       },
@@ -116,10 +92,7 @@ export default function AppShellClient({
         label: t("nav.sectionWorkspace"),
         items: [
           { href: "/app/settings", label: t("nav.settings"), icon: Settings },
-          { href: "/app/agency", label: "Agency / Reseller", icon: Building2 },
           { href: "/app/billing", label: t("nav.billing"), icon: CreditCard },
-          { href: "/app/developer", label: t("nav.developer"), icon: Code },
-          { href: "/app/help", label: t("contactSupport"), icon: HelpCircle },
         ],
       },
     ],
@@ -135,19 +108,13 @@ export default function AppShellClient({
   );
   const mobileMoreLinks = useMemo(
     () => [
-      { href: "/app/agents", label: t("nav.agents"), icon: Bot },
       { href: "/app/contacts", label: t("nav.contacts"), icon: Users },
-      { href: "/app/leads", label: t("nav.leads"), icon: UserPlus },
-      { href: "/app/cold-leads", label: t("nav.coldLeads"), icon: Snowflake },
-      { href: "/app/calendar", label: t("nav.calendar"), icon: Calendar },
       { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
       { href: "/app/follow-ups", label: t("nav.followUps"), icon: Clock },
-      { href: "/app/knowledge", label: t("nav.knowledge"), icon: BookOpen },
       { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
+      { href: "/app/knowledge", label: t("nav.knowledge"), icon: BookOpen },
       { href: "/app/settings", label: t("nav.settings"), icon: Settings },
       { href: "/app/billing", label: t("nav.billing"), icon: CreditCard },
-      { href: "/app/developer", label: t("nav.developer"), icon: Code },
-      { href: "/app/help", label: t("contactSupport"), icon: HelpCircle },
     ],
     [t]
   );
@@ -161,16 +128,11 @@ export default function AppShellClient({
   const [activeCalls, setActiveCalls] = useState(0);
   const [minutesUsage, setMinutesUsage] = useState<{ used: number; limit: number } | null>(null);
   const [billingInfo, setBillingInfo] = useState<{ billing_status?: string; billing_tier?: string; renewal_at?: string | null } | null>(null);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try { return safeGetItem("rt_sidebar") === "collapsed"; } catch { return false; }
+  });
   const [showShortcuts, setShowShortcuts] = useState(false);
-
-  /* Restore sidebar state from localStorage AFTER hydration to avoid mismatch */
-  useEffect(() => {
-    try {
-      const stored = safeGetItem("rt_sidebar");
-      if (stored === "collapsed") setSidebarCollapsed(true);
-    } catch { /* ignore */ }
-  }, []);
+  const [nowMs] = useState(() => Date.now());
   const [showNotifications, setShowNotifications] = useState(false);
   const [inboxUnread, setInboxUnread] = useState(0);
 
@@ -570,7 +532,7 @@ export default function AppShellClient({
                         </div>
                         <span className="block text-[11px] text-[var(--text-tertiary)] mt-1">
                           {billingInfo?.billing_status === "trial" && billingInfo?.renewal_at
-                            ? `${Math.max(0, Math.ceil((new Date(billingInfo.renewal_at).getTime() - Date.now()) / 86400000))} days left`
+                            ? `${Math.max(0, Math.ceil((new Date(billingInfo.renewal_at).getTime() - nowMs) / 86400000))} days left`
                             : billingInfo?.billing_status === "active"
                             ? t("sidebar.activeSubscription", { defaultValue: "Active subscription" })
                             : ""}

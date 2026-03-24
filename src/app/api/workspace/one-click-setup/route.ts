@@ -224,6 +224,29 @@ export async function POST(req: NextRequest) {
       { onConflict: "workspace_id,setting_key" }
     );
 
+    // Step 8: Populate workspace_business_context for voice agent
+    try {
+      await db.from("workspace_business_context").upsert(
+        {
+          workspace_id,
+          business_name: intelligence.businessName || null,
+          industry: intelligence.industry || null,
+          services: (intelligence.servicesOffered ?? []).join(", ") || null,
+          address: intelligence.contactAddress || null,
+          offer_summary: (intelligence.valuePropositions ?? []).join(". ") || null,
+          ideal_customer: (intelligence.commonPainPoints ?? []).join(", ") || null,
+          faq: (intelligence.faqPairs ?? []).slice(0, 20),
+          tone_guidelines: intelligence.recommendedTone
+            ? { style: intelligence.recommendedTone, formality: "professional" }
+            : { style: "calm", formality: "professional" },
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "workspace_id" }
+      );
+    } catch (ctxErr) {
+      console.warn("[one-click-setup] workspace_business_context upsert failed:", ctxErr instanceof Error ? ctxErr.message : ctxErr);
+    }
+
     // Build result
     const result: SetupResult = {
       success: true,

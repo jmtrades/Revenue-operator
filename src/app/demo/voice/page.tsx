@@ -51,6 +51,7 @@ export default function VoiceDemoPage() {
   const [transcript, setTranscript] = useState<TranscriptMessage[]>([]);
   const [conversationStep, setConversationStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [businessName, setBusinessName] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
   const [signupLoading, setSignupLoading] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
@@ -71,9 +72,13 @@ export default function VoiceDemoPage() {
 
     try {
       const greeting = SCENARIO_GREETINGS[selectedScenario];
+      const biz = businessName.trim();
+      const personalizedGreeting = biz
+        ? greeting.greeting.replace(/calling!/i, `calling ${biz}!`).replace(/Thanks for calling!/i, `Thanks for calling ${biz}!`)
+        : greeting.greeting;
 
       const response = await fetch(
-        `/api/demo/voice-preview?voice_id=${greeting.voiceId}&text=${encodeURIComponent(greeting.greeting)}&scenario=${selectedScenario}`
+        `/api/demo/voice-preview?voice_id=${greeting.voiceId}&text=${encodeURIComponent(personalizedGreeting)}&scenario=${selectedScenario}`
       );
 
       if (response.ok) {
@@ -86,7 +91,7 @@ export default function VoiceDemoPage() {
 
           await new Promise(resolve => {
             setTimeout(() => {
-              setTranscript(prev => [...prev, { speaker: "ai", text: greeting.greeting }]);
+              setTranscript(prev => [...prev, { speaker: "ai", text: personalizedGreeting }]);
               setConversationStep(1);
               resolve(null);
             }, 300);
@@ -249,7 +254,26 @@ export default function VoiceDemoPage() {
         style={{ background: "var(--bg-surface)", borderTop: "1px solid var(--border-default)" }}
       >
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-semibold mb-8 text-center" style={{ letterSpacing: "-0.025em" }}>Choose a Scenario</h2>
+          <h2 className="text-3xl font-semibold mb-3 text-center" style={{ letterSpacing: "-0.025em" }}>Hear Your AI in Action</h2>
+          <p className="text-center mb-8 text-sm" style={{ color: "var(--text-secondary)" }}>
+            Type your business name to personalize the demo
+          </p>
+
+          {/* Business name personalization */}
+          <div className="max-w-sm mx-auto mb-8">
+            <input
+              type="text"
+              value={businessName}
+              onChange={(e) => setBusinessName(e.target.value)}
+              placeholder="Your business name (e.g., Acme Dental)"
+              className="w-full px-4 py-3 rounded-xl text-sm text-center transition-colors focus:outline-none focus:ring-2"
+              style={{
+                background: "var(--bg-primary)",
+                border: "1px solid var(--border-default)",
+                color: "var(--text-primary)",
+              }}
+            />
+          </div>
 
           {/* Scenario Selector */}
           <div className="flex flex-wrap gap-3 justify-center mb-12">

@@ -65,7 +65,7 @@ export function ActivateWizard() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [prefillEmail]);
 
   const currentIndex = useMemo(
     () => STEPS.findIndex((s) => s.id === step),
@@ -79,25 +79,19 @@ export function ActivateWizard() {
     if (step === 2) {
       return state.businessPhone.replace(/\D/g, "").length >= 10;
     }
-    if (step === 3) {
-      return true;
-    }
-    if (step === 4) {
-      return state.agentName.trim().length > 0 && state.greeting.trim().length > 0;
-    }
     return true;
   }, [step, state]);
 
   const goNext = useCallback(() => {
     if (!canGoNext) return;
     const current = step;
-    if (current >= 1 && current <= 4) {
+    if (current >= 1 && current <= 3) {
       const name =
-        current === 1 ? "goals" : current === 2 ? "phone_number" : current === 3 ? "integrations" : "voice";
+        current === 1 ? "business" : current === 2 ? "phone" : "activate";
       track("onboarding_step_completed", { step: current, name });
     }
     setStep((prev) => {
-      const next = prev < 5 ? ((prev + 1) as StepId) : prev;
+      const next = prev < 3 ? ((prev + 1) as StepId) : prev;
       if (prev === 1) {
         try {
           const bn = state.businessName.trim();
@@ -146,7 +140,7 @@ export function ActivateWizard() {
   const handleFinalize = useCallback(async (e?: React.MouseEvent) => {
     e?.preventDefault();
     try {
-      track("onboarding_step_completed", { step: 5, name: "test_call" });
+      track("onboarding_step_completed", { step: 3, name: "go_live" });
       if (state.businessName.trim()) {
         localStorage.setItem("rt_business_name", state.businessName.trim());
       }
@@ -192,7 +186,7 @@ export function ActivateWizard() {
     }
     if (typeof localStorage !== "undefined") localStorage.setItem("rt_onboarded", "true");
     window.location.href = "/app/dashboard";
-  }, [state]);
+  }, [state, selectedPlan, t]);
 
   return (
     <Container>
@@ -285,7 +279,7 @@ export function ActivateWizard() {
 
         <section
           className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-inset)] px-5 py-6 md:px-7 md:py-7 shadow-[0_18px_50px_rgba(15,23,42,0.7)] transition-[opacity,transform] duration-200"
-          onKeyDown={step <= 3 ? handleKeyDownAdvance : undefined}
+          onKeyDown={step <= 2 ? handleKeyDownAdvance : undefined}
         >
           {step === 1 && (
             <GoalStep state={state} onUpdate={(patch) => setState((p) => ({ ...p, ...patch }))} onNext={goNext} />
@@ -300,23 +294,21 @@ export function ActivateWizard() {
             />
           )}
           {step === 3 && (
-            <PackBusinessStep state={state} setState={setState} goNext={goNext} canGoNext={canGoNext} />
-          )}
-          {step === 4 && (
-            <CustomizeStep
-              state={state}
-              setState={setState}
-              voices={voices}
-              industryServices={industryServices}
-              effectiveServices={effectiveServices}
-              onPlayGreeting={handlePlayTestGreeting}
-              goBack={goBack}
-              goNext={goNext}
-              canGoNext={canGoNext}
-            />
-          )}
-          {step === 5 && (
-            <ActivateStep onFinalize={handleFinalize} goBack={goBack} />
+            <>
+              <PackBusinessStep state={state} setState={setState} goNext={goNext} canGoNext={canGoNext} />
+              <CustomizeStep
+                state={state}
+                setState={setState}
+                voices={voices}
+                industryServices={industryServices}
+                effectiveServices={effectiveServices}
+                onPlayGreeting={handlePlayTestGreeting}
+                goBack={goBack}
+                goNext={goNext}
+                canGoNext={canGoNext}
+              />
+              <ActivateStep onFinalize={handleFinalize} goBack={goBack} />
+            </>
           )}
         </section>
       </div>

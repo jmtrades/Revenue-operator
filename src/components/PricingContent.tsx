@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Check, X, ArrowRight, Flame, Calculator, Search, ChevronDown, ChevronUp, Star, Shield, Clock, Users, Zap, Award, Headphones, TrendingUp } from "lucide-react";
+import { Check, X, ArrowRight, Flame, Calculator, Search, ChevronDown, ChevronUp, Star, Shield, Clock, Users, Zap, Headphones, TrendingUp } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 import dynamic from "next/dynamic";
@@ -22,8 +22,6 @@ export function pricingCopyForTests(): string {
     "Starter",
     "Growth",
     "Business",
-    "Agency",
-    "Enterprise",
     "Start free",
     "Talk to sales",
   ].join(" ");
@@ -34,24 +32,25 @@ const TIERS = [
   {
     id: "starter",
     name: "Starter",
-    monthlyPrice: 97,
-    annualMonthly: 77,
-    annualTotal: 924,
-    roi: "$2K–5K/mo",
-    minutes: 500,
-    overage: "$0.10/min",
-    description: "One AI agent that answers and follows up",
+    monthlyPrice: 147,
+    annualMonthly: 117,
+    annualTotal: 1404,
+    roi: "$2K–8K/mo",
+    minutes: 1000,
+    overage: "$0.08/min",
+    description: "Missed call recovery for solo businesses",
     features: [
       "1 phone number",
-      "500 voice minutes/month",
+      "1,000 voice minutes/month",
       "1 AI agent",
-      "1 follow-up sequence",
+      "Missed call recovery",
       "Appointment booking",
+      "1 follow-up sequence",
       "Call transcripts",
-      "Basic templates",
+      "Industry template",
       "Email support",
     ],
-    cta: "Try it free for 14 days",
+    cta: "Start recovering revenue",
     href: "/activate?plan=starter",
     popular: false,
   },
@@ -61,25 +60,25 @@ const TIERS = [
     monthlyPrice: 297,
     annualMonthly: 237,
     annualTotal: 2844,
-    roi: "$5K–15K/mo",
-    minutes: 2500,
-    overage: "$0.10/min",
-    description: "Multi-agent revenue operations",
+    roi: "$5K–20K/mo",
+    minutes: 3000,
+    overage: "$0.08/min",
+    description: "Full revenue recovery for growing teams",
     features: [
       "5 phone numbers",
-      "2,500 voice minutes/month",
+      "3,000 voice minutes/month",
       "5 AI agents",
-      "5 follow-up sequences",
-      "Appointment reminders",
       "No-show recovery",
-      "Reactivation campaigns",
-      "SMS + email",
+      "Lead reactivation",
+      "5 follow-up sequences",
+      "SMS + email campaigns",
+      "Voice A/B testing",
       "Revenue analytics",
       "CRM webhook",
       "Industry templates",
       "Priority support",
     ],
-    cta: "Try it free for 14 days",
+    cta: "Start recovering revenue",
     href: "/activate?plan=growth",
     popular: true,
   },
@@ -89,110 +88,79 @@ const TIERS = [
     monthlyPrice: 597,
     annualMonthly: 477,
     annualTotal: 5724,
-    roi: "$10K–30K/mo",
-    minutes: 6000,
+    roi: "$10K–50K/mo",
+    minutes: 8000,
     overage: "$0.08/min",
-    description: "Full-scale AI call center",
+    description: "Revenue operations for multi-location businesses",
     features: [
       "15 phone numbers",
-      "6,000 voice minutes/month",
+      "8,000 voice minutes/month",
       "15 AI agents",
-      "15 follow-up sequences",
-      "All Growth features",
-      "Advanced analytics + benchmarks",
-      "Custom templates",
-      "Multi-location dashboard",
-      "Speed-to-lead (60s callback)",
-      "Outbound campaigns",
+      "Everything in Growth",
+      "Advanced analytics",
+      "Intelligence dashboard",
+      "Team management",
+      "Voice cloning (2 clones)",
       "API access",
-      "Phone support",
-    ],
-    cta: "Try it free for 14 days",
-    href: "/activate?plan=business",
-    popular: false,
-  },
-  {
-    id: "agency",
-    name: "Agency",
-    monthlyPrice: 997,
-    annualMonthly: 797,
-    annualTotal: 9564,
-    roi: "$20K–50K/mo",
-    minutes: 15000,
-    overage: "$0.07/min",
-    description: "White-label AI for your clients",
-    features: [
-      "Unlimited phone numbers",
-      "15,000 voice minutes/month",
-      "Unlimited AI agents",
-      "Unlimited sequences",
-      "All Business features",
-      "White-label branding",
-      "Multi-client dashboard",
-      "Client invitation flow",
-      "Custom voice training",
-      "Advanced APIs",
+      "Compliance dashboard",
       "Dedicated account manager",
-      "SLA guarantee",
     ],
-    cta: "Try it free for 14 days",
-    href: "/activate?plan=agency",
+    cta: "Start recovering revenue",
+    href: "/activate?plan=business",
     popular: false,
   },
 ] as const;
 
-const ENTERPRISE = {
-  name: "Enterprise",
-  description: "Custom AI calling infrastructure at any scale",
-  features: ["Custom volume", "SSO / SAML", "Multi-location", "Custom compliance", "Dedicated manager", "White label", "Custom integrations", "On-premise option"],
-};
+
 
 /* ─── Comparison Table ─── */
 const COMPARISON = [
   { category: "Core", feature: "Phone Numbers", starter: "1", growth: "5", business: "15", agency: "Unlimited", enterprise: "Custom" },
-  { category: "Core", feature: "Voice Minutes / Month", starter: "500", growth: "2,500", business: "6,000", agency: "15,000", enterprise: "Unlimited" },
+  { category: "Core", feature: "Voice Minutes / Month", starter: "1,000", growth: "3,000", business: "8,000", agency: "15,000", enterprise: "Unlimited" },
   { category: "Core", feature: "AI Agents", starter: "1", growth: "5", business: "15", agency: "Unlimited", enterprise: "Custom" },
   { category: "Core", feature: "Follow-Up Sequences", starter: "1", growth: "5", business: "15", agency: "Unlimited", enterprise: "Unlimited" },
-  { category: "Core", feature: "Overage Rate", starter: "$0.10/min", growth: "$0.10/min", business: "$0.08/min", agency: "$0.07/min", enterprise: "Custom" },
+  { category: "Core", feature: "Overage Rate", starter: "$0.08/min", growth: "$0.08/min", business: "$0.08/min", agency: "$0.07/min", enterprise: "Custom" },
+  { category: "Features", feature: "Missed Call Recovery", starter: true, growth: true, business: true, agency: true, enterprise: true },
   { category: "Features", feature: "Appointment Booking", starter: true, growth: true, business: true, agency: true, enterprise: true },
   { category: "Features", feature: "Appointment Reminders", starter: false, growth: true, business: true, agency: true, enterprise: true },
   { category: "Features", feature: "No-Show Recovery", starter: false, growth: true, business: true, agency: true, enterprise: true },
-  { category: "Features", feature: "Outbound Campaigns", starter: false, growth: false, business: true, agency: true, enterprise: true },
-  { category: "Features", feature: "Speed-to-Lead (60s)", starter: false, growth: false, business: true, agency: true, enterprise: true },
+  { category: "Features", feature: "Lead Reactivation", starter: false, growth: true, business: true, agency: true, enterprise: true },
+  { category: "Features", feature: "SMS + Email Campaigns", starter: false, growth: true, business: true, agency: true, enterprise: true },
+  { category: "Features", feature: "Voice A/B Testing", starter: false, growth: true, business: true, agency: true, enterprise: true },
   { category: "Features", feature: "Revenue Analytics", starter: false, growth: true, business: true, agency: true, enterprise: true },
   { category: "Features", feature: "Advanced Analytics", starter: false, growth: false, business: true, agency: true, enterprise: true },
+  { category: "Features", feature: "Intelligence Dashboard", starter: false, growth: false, business: true, agency: true, enterprise: true },
+  { category: "Features", feature: "Team Management", starter: false, growth: false, business: true, agency: true, enterprise: true },
+  { category: "Features", feature: "Voice Cloning", starter: false, growth: false, business: "2 clones", agency: "Unlimited", enterprise: "Unlimited" },
   { category: "Features", feature: "API Access", starter: false, growth: false, business: true, agency: "Full", enterprise: "Full" },
+  { category: "Features", feature: "Compliance Dashboard", starter: false, growth: false, business: true, agency: true, enterprise: true },
   { category: "Features", feature: "White-Label", starter: false, growth: false, business: false, agency: true, enterprise: true },
-  { category: "Features", feature: "Multi-Client Dashboard", starter: false, growth: false, business: false, agency: true, enterprise: true },
-  { category: "Features", feature: "Custom Voice Training", starter: false, growth: false, business: false, agency: true, enterprise: true },
   { category: "Support", feature: "Email Support", starter: true, growth: true, business: true, agency: true, enterprise: true },
   { category: "Support", feature: "Priority Support", starter: false, growth: true, business: true, agency: true, enterprise: true },
   { category: "Support", feature: "Phone Support", starter: false, growth: false, business: true, agency: true, enterprise: true },
-  { category: "Support", feature: "Dedicated Account Mgr", starter: false, growth: false, business: false, agency: true, enterprise: true },
+  { category: "Support", feature: "Dedicated Account Mgr", starter: false, growth: false, business: true, agency: true, enterprise: true },
   { category: "Security", feature: "SSO / SAML", starter: false, growth: false, business: false, agency: false, enterprise: true },
-  { category: "Security", feature: "SLA Guarantee", starter: "—", growth: "—", business: "—", agency: true, enterprise: true },
 ] as const;
 
 /* ─── FAQ ─── */
 const FAQS = [
   { q: "Can I upgrade or downgrade anytime?", a: "Yes. Changes take effect on your next billing cycle. No penalties." },
-  { q: "What if I exceed my minutes?", a: "Overage is billed per minute at your plan rate: $0.10/min on Starter and Growth, $0.08 on Business, $0.07 on Agency. No surprise charges — you can set a hard cap in settings." },
+  { q: "What if I exceed my minutes?", a: "Overage is billed per minute at $0.08/min across all plans. No surprise charges — you can set a hard cap in settings." },
   { q: "Do you offer discounts for annual billing?", a: "Yes. Annual plans save you ~20% vs. monthly. Plus, paying annually gives you priority support on all tiers." },
   { q: "Is there a setup fee?", a: "No setup fee. Your 14-day free trial gives you full access to all features on your selected plan." },
   { q: "Can I cancel anytime?", a: "Yes. No long-term contracts. Cancel in your dashboard or pause for 30 days. We'll ask why — your feedback matters." },
-  { q: "Does Recall Touch integrate with my calendar/CRM?", a: "Yes. Growth+ tiers get integrations with Google Calendar, Cal.com, Zapier, and Make.com. Business+ adds API access. Enterprise gets custom integrations." },
-  { q: "What's included in your support?", a: "Starter: Email (24h response). Growth: Priority email + live chat. Business: Phone support. Agency+: Dedicated account manager." },
+  { q: "Does Recall Touch integrate with my calendar/CRM?", a: "Yes. Growth and Business tiers get CRM webhook and integrations with Google Calendar, Cal.com, Zapier, and Make.com. Business adds API access for custom integrations." },
+  { q: "What's included in your support?", a: "Starter: Email support. Growth: Priority email support. Business: Priority email + phone support + dedicated account manager." },
   { q: "Can I test Recall Touch free first?", a: "Absolutely. 14-day free trial. Full access to all features. No credit card required. Your AI agent will be answering calls in under 3 minutes." },
   { q: "How does Recall Touch work?", a: "Recall Touch answers all your incoming calls with an AI phone agent, qualifies leads in real-time, books appointments directly into your calendar, and automatically follows up with contacts to move them through your pipeline." },
-  { q: "Can I white-label this for my clients?", a: "Yes. Agency plan includes full white-label branding, multi-client dashboard, and client invitation flow. Enterprise adds custom domain support." },
+  { q: "Can I white-label this for my clients?", a: "Yes, white-label and agency features are available. Contact our sales team to discuss custom white-label, multi-client, and reseller options." },
 ];
 
 /* ─── Cost of Doing Nothing Calculator ─── */
 const PLAN_COSTS: { label: string; monthly: number }[] = [
-  { label: "Starter ($97/mo)", monthly: 97 },
+  { label: "Starter ($147/mo)", monthly: 147 },
   { label: "Growth ($297/mo)", monthly: 297 },
   { label: "Business ($597/mo)", monthly: 597 },
-  { label: "Agency ($997/mo)", monthly: 997 },
 ];
 
 function CostCalculator() {
@@ -495,28 +463,15 @@ export function PricingContent() {
           ))}
         </div>
 
-        {/* Enterprise Card */}
-        <div className="card-marketing p-8 mb-16 text-center">
-          <h3 className="font-semibold text-xl mb-2" style={{ color: "var(--text-primary)" }}>
-            Enterprise
-          </h3>
-          <p className="text-sm mb-4 max-w-lg mx-auto" style={{ color: "var(--text-secondary)" }}>
-            {ENTERPRISE.description}
+        {/* Agency & Enterprise Link */}
+        <div className="text-center mb-16">
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+            Need agency white-label or enterprise features?{" "}
+            <Link href={ROUTES.CONTACT} className="text-emerald-400 font-medium underline-offset-2 hover:underline">
+              Talk to us
+            </Link>
+            .
           </p>
-          <div className="flex flex-wrap justify-center gap-2 mb-6">
-            {ENTERPRISE.features.map((f) => (
-              <span key={f} className="px-3 py-1 rounded-full text-xs bg-white/5 text-[var(--text-secondary)] border border-[var(--border-default)]">
-                {f}
-              </span>
-            ))}
-          </div>
-          <Link
-            href={ROUTES.CONTACT}
-            className="inline-flex items-center gap-2 border border-[var(--border-default)] text-white font-semibold rounded-xl px-8 py-3 no-underline hover:bg-[var(--bg-hover)] transition-all"
-          >
-            Talk to Sales
-            <ArrowRight className="w-4 h-4" />
-          </Link>
         </div>
 
         {/* Voice Preview + Live Activity */}

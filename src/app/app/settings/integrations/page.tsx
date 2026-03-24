@@ -135,8 +135,8 @@ export default function AppSettingsIntegrationsPage() {
     if (crmParam === "config") {
       const provider = searchParams.get("provider") ?? "";
       const providerName = provider.charAt(0).toUpperCase() + provider.slice(1).replace(/_/g, " ");
-      setToast(`${providerName} is not yet configured. Contact support to set up the integration.`);
-      const id = setTimeout(() => setToast(null), 5000);
+      setToast(`${providerName} direct integration is coming soon. Use the webhook destination below to sync data in the meantime.`);
+      const id = setTimeout(() => setToast(null), 6000);
       return () => clearTimeout(id);
     }
   }, [crmParam, searchParams, t]);
