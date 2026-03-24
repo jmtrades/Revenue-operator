@@ -18,6 +18,7 @@ const ALLOWED: CrmProviderId[] = [
   "gohighlevel",
   "google_contacts",
   "microsoft_365",
+  "airtable",
 ];
 
 export const dynamic = "force-dynamic";

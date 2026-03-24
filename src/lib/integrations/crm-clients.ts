@@ -51,6 +51,7 @@ async function pushToHubSpot(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ properties: payload }),
+    signal: AbortSignal.timeout(15_000),
   });
 
   if (res.status === 409) {
@@ -89,6 +90,7 @@ async function updateHubSpotContact(
         filters: [{ propertyName: "email", operator: "EQ", value: email }],
       }],
     }),
+    signal: AbortSignal.timeout(15_000),
   });
 
   if (!searchRes.ok) {
@@ -109,6 +111,7 @@ async function updateHubSpotContact(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ properties: payload }),
+    signal: AbortSignal.timeout(15_000),
   });
 
   if (!updateRes.ok) {
@@ -137,6 +140,7 @@ async function pushToSalesforce(
       "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(15_000),
   });
 
   if (!res.ok) {
@@ -174,6 +178,7 @@ async function upsertSalesforceLead(
       "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(15_000),
   });
 
   if (!res.ok) {
@@ -203,6 +208,7 @@ async function pushToZoho(
       data: [payload],
       duplicate_check_fields: ["Email"],
     }),
+    signal: AbortSignal.timeout(15_000),
   });
 
   if (!res.ok) {
@@ -245,6 +251,7 @@ async function pushToPipedrive(
       "Content-Type": "application/json",
     },
     body: JSON.stringify(pipedrivePayload),
+    signal: AbortSignal.timeout(15_000),
   });
 
   if (!res.ok) {
@@ -276,6 +283,7 @@ async function pushToGoHighLevel(
       Version: "2021-07-28",
     },
     body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(15_000),
   });
 
   if (!res.ok) {
@@ -332,6 +340,7 @@ async function pushToGoogleContacts(
         "Content-Type": "application/json",
       },
       body: JSON.stringify(personPayload),
+      signal: AbortSignal.timeout(15_000),
     }
   );
 
@@ -371,6 +380,7 @@ async function pushToMicrosoft365(
       "Content-Type": "application/json",
     },
     body: JSON.stringify(graphPayload),
+    signal: AbortSignal.timeout(15_000),
   });
 
   if (!res.ok) {
@@ -427,6 +437,7 @@ async function pushToAirtable(
         records: [{ fields }],
         typecast: true, // Automatically convert field values to the correct type
       }),
+      signal: AbortSignal.timeout(15_000),
     }
   );
 
