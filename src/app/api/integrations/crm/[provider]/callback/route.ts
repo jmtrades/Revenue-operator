@@ -15,10 +15,14 @@ const OAUTH_TOKEN_URLS: Record<string, string> = {
   zoho_crm: "https://accounts.zoho.com/oauth/v2/token",
   pipedrive: "https://oauth.pipedrive.com/oauth/token",
   gohighlevel: "https://services.leadconnectorhq.com/oauth/token",
+  leadconnector: "https://services.leadconnectorhq.com/oauth/token",
   google_contacts: "https://oauth2.googleapis.com/token",
   microsoft_365: "https://login.microsoftonline.com/common/oauth2/v2.0/token",
   airtable: "https://airtable.com/oauth2/v1/token",
 };
+
+// "leadconnector" is an alias for "gohighlevel" — GHL marketplace rejects redirect URLs containing "highlevel"
+const PROVIDER_ALIAS: Record<string, string> = { leadconnector: "gohighlevel" };
 
 const ALLOWED_PROVIDERS = Object.keys(OAUTH_TOKEN_URLS);
 
@@ -30,15 +34,18 @@ export async function GET(
   const rawState = req.nextUrl.searchParams.get("state");
   const error = req.nextUrl.searchParams.get("error");
 
-  const origin = process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin;
+  const origin = (process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin).trim();
   const returnUrl = `${origin}/app/settings/integrations`;
 
-  const { provider } = await ctx.params;
+  const { provider: rawProvider } = await ctx.params;
 
   // Validate provider
-  if (!provider || !ALLOWED_PROVIDERS.includes(provider)) {
+  if (!rawProvider || !ALLOWED_PROVIDERS.includes(rawProvider)) {
     return NextResponse.redirect(`${returnUrl}?crm=invalid`);
   }
+
+  // Resolve alias (e.g. "leadconnector" → "gohighlevel")
+  const provider = PROVIDER_ALIAS[rawProvider] ?? rawProvider;
 
   // Handle OAuth errors
   if (error || !code) {
@@ -64,6 +71,7 @@ export async function GET(
     zoho_crm: "ZOHO",
     pipedrive: "PIPEDRIVE",
     gohighlevel: "GOHIGHLEVEL",
+    leadconnector: "GOHIGHLEVEL",
     google_contacts: "GOOGLE",
     microsoft_365: "MICROSOFT",
     airtable: "AIRTABLE",
@@ -81,8 +89,8 @@ export async function GET(
     );
   }
 
-  // Determine redirect URI
-  const callbackPath = `/api/integrations/crm/${provider}/callback`;
+  // Determine redirect URI — use rawProvider (URL path) so it matches what GHL was configured with
+  const callbackPath = `/api/integrations/crm/${rawProvider}/callback`;
   const redirectUri = `${origin}${callbackPath}`;
 
   const tokenUrl = OAUTH_TOKEN_URLS[provider];
