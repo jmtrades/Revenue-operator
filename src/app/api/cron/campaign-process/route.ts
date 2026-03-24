@@ -60,15 +60,16 @@ export async function GET(req: NextRequest) {
     const counterDate = new Date().toISOString().slice(0, 10);
     const { data: existingCounters } = await db
       .from("campaign_daily_counters")
-      .select("workspace_id, calls_made")
+      .select("workspace_id, campaign_id, calls_made")
       .eq("date_key", counterDate)
       .in("workspace_id", workspaceIds);
-    const processedByWorkspace = new Map<string, number>(
-      ((existingCounters ?? []) as Array<{ workspace_id: string; calls_made: number }>).map((r) => [
-        r.workspace_id,
-        Number(r.calls_made) || 0,
-      ]),
-    );
+    // Sum calls per workspace across all campaigns for daily limit check
+    const processedByWorkspace = new Map<string, number>();
+    for (const r of ((existingCounters ?? []) as Array<{ workspace_id: string; campaign_id: string | null; calls_made: number }>)) {
+      processedByWorkspace.set(r.workspace_id, (processedByWorkspace.get(r.workspace_id) ?? 0) + (Number(r.calls_made) || 0));
+    }
+    // Track calls per campaign for upsert
+    const callsByCampaign = new Map<string, number>();
 
     // Lazy-import to avoid circular dependencies at module level
     const { executeLeadOutboundCall } = await import("@/lib/outbound/execute-lead-call");
@@ -171,17 +172,26 @@ export async function GET(req: NextRequest) {
         .eq("id", row.id);
 
       processedByWorkspace.set(row.workspace_id, used + callsMade);
+      callsByCampaign.set(row.id, (callsByCampaign.get(row.id) ?? 0) + callsMade);
     }
 
-    const counterRows = [...processedByWorkspace.entries()].map(([workspace_id, count]) => ({
-      workspace_id,
-      date_key: counterDate,
-      calls_made: count,
-    }));
+    // Upsert per-campaign daily counters (matches unique constraint: workspace_id, campaign_id, date_key)
+    const counterRows: Array<{ workspace_id: string; campaign_id: string; date_key: string; calls_made: number }> = [];
+    for (const campaignRow of activeRows) {
+      const calls = callsByCampaign.get(campaignRow.id);
+      if (calls && calls > 0) {
+        counterRows.push({
+          workspace_id: campaignRow.workspace_id,
+          campaign_id: campaignRow.id,
+          date_key: counterDate,
+          calls_made: calls,
+        });
+      }
+    }
     if (counterRows.length > 0) {
       await db
         .from("campaign_daily_counters")
-        .upsert(counterRows, { onConflict: "workspace_id,date_key" });
+        .upsert(counterRows, { onConflict: "workspace_id,campaign_id,date_key" });
     }
   } catch (err) {
     log("error", "campaign_process_cron_error", { error: err instanceof Error ? err.message : String(err) });
