@@ -6,7 +6,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import Link from "next/link";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
-import { Download } from "lucide-react";
+import { Download, Upload, Building2, Cloud, Database, TrendingUp, Layers, Users as UsersIcon, Building } from "lucide-react";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Users } from "lucide-react";
 
@@ -31,6 +31,8 @@ type Contact = {
   tags?: string[];
   lastContact: string;
   history?: HistoryEntry[];
+  source?: string;
+  channel?: string;
 };
 
 type TabId = "all" | "leads" | "customers" | "vip";
@@ -69,6 +71,8 @@ function mapLeadToContact(lead: {
   created_at?: string | null;
   tags?: string[] | null;
   metadata?: Record<string, unknown> | null;
+  source?: string | null;
+  channel?: string | null;
 }): Contact | null {
   const name = (lead.name ?? "").trim();
   const parts = name.split(/\s+/, 2);
@@ -89,6 +93,9 @@ function mapLeadToContact(lead: {
   const type = stateMap[(lead.state ?? "").toLowerCase()] ?? "lead";
   const lastContact = lead.last_activity_at ?? lead.created_at ?? new Date().toISOString();
 
+  // Extract source — check lead.source, lead.channel, and metadata.source
+  const source = lead.source ?? lead.channel ?? (lead.metadata?.source as string | undefined) ?? undefined;
+
   return {
     id: lead.id,
     firstName,
@@ -98,7 +105,53 @@ function mapLeadToContact(lead: {
     type,
     tags: Array.isArray(lead.tags) ? lead.tags : [],
     lastContact,
+    source,
+    channel: lead.channel ?? undefined,
   };
+}
+
+const CRM_SOURCE_META: Record<string, { label: string; icon: React.ComponentType<{ className?: string }>; color: string }> = {
+  hubspot: { label: "HubSpot", icon: Building2, color: "text-orange-400" },
+  salesforce: { label: "Salesforce", icon: Cloud, color: "text-blue-400" },
+  zoho_crm: { label: "Zoho", icon: Database, color: "text-red-400" },
+  pipedrive: { label: "Pipedrive", icon: TrendingUp, color: "text-green-400" },
+  gohighlevel: { label: "GHL", icon: Layers, color: "text-purple-400" },
+  google_contacts: { label: "Google", icon: UsersIcon, color: "text-sky-400" },
+  microsoft_365: { label: "Microsoft", icon: Building, color: "text-cyan-400" },
+  airtable: { label: "Airtable", icon: Database, color: "text-yellow-400" },
+};
+
+function getSourceBadge(source?: string) {
+  if (!source) return null;
+  // Check if source starts with "crm_" (e.g., "crm_hubspot")
+  const crmKey = source.startsWith("crm_") ? source.slice(4) : source;
+  const meta = CRM_SOURCE_META[crmKey];
+  if (meta) {
+    const Icon = meta.icon;
+    return (
+      <span className={`inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-[var(--bg-inset)]/60 ${meta.color}`}>
+        <Icon className="w-2.5 h-2.5" />
+        {meta.label}
+      </span>
+    );
+  }
+  // Generic sources
+  if (source === "demo_call" || source === "website_hero") {
+    return (
+      <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-[var(--bg-inset)]/60 text-emerald-400">
+        Demo
+      </span>
+    );
+  }
+  if (source === "csv_import" || source === "import") {
+    return (
+      <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-[var(--bg-inset)]/60 text-violet-400">
+        <Upload className="w-2.5 h-2.5" />
+        Import
+      </span>
+    );
+  }
+  return null;
 }
 
 function getInitials(first: string, last: string) {
@@ -525,6 +578,7 @@ export default function AppContactsPage() {
                           >
                             {t(`form.type.${c.type}`)}
                           </span>
+                          {getSourceBadge(c.source)}
                         </div>
                         <p className="text-xs text-[var(--text-tertiary)] truncate">
                           {c.phone}

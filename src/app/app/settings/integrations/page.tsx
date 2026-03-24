@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useSearchParams } from "next/navigation";
-import { Phone, MessageCircle, Cloud, Building2, Database, TrendingUp, Layers, Users, Building, RefreshCw, AlertCircle, Loader } from "lucide-react";
+import { Phone, MessageCircle, Cloud, Building2, Database, TrendingUp, Layers, Users, Building, RefreshCw, AlertCircle, Loader, Download, Unplug } from "lucide-react";
 import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
 import { IntegrationsHealthWidget } from "@/components/settings/IntegrationsHealthWidget";
 import type { CrmProviderId, CrmStatusResponse } from "@/app/api/integrations/crm/status/route";
@@ -66,6 +66,9 @@ export default function AppSettingsIntegrationsPage() {
   const [_whatsappSubmitting, setWhatsappSubmitting] = useState(false);
   const [crmStatus, setCrmStatus] = useState<CrmStatusResponse | null>(null);
   const [syncingProvider, setSyncingProvider] = useState<CrmProviderId | null>(null);
+  const [importingProvider, setImportingProvider] = useState<CrmProviderId | null>(null);
+  const [disconnectingProvider, setDisconnectingProvider] = useState<CrmProviderId | null>(null);
+  const [confirmDisconnect, setConfirmDisconnect] = useState<CrmProviderId | null>(null);
   const searchParams = useSearchParams();
   const calendarParam = searchParams.get("calendar");
   const crmParam = searchParams.get("crm");
@@ -281,6 +284,61 @@ export default function AppSettingsIntegrationsPage() {
     }
   };
 
+  const handleImportContacts = async (provider: CrmProviderId) => {
+    setImportingProvider(provider);
+    try {
+      const res = await fetch(`/api/integrations/crm/${provider}/import`, {
+        method: "POST",
+        credentials: "include",
+      });
+      const data = (await res.json().catch(() => null)) as { imported?: number; total_found?: number; message?: string; error?: string } | null;
+      if (!res.ok) {
+        setToast(data?.error ?? "Import failed. Please try again.");
+        return;
+      }
+      setToast(data?.message ?? `${data?.imported ?? 0} contacts imported`);
+      // Refresh CRM status
+      setTimeout(() => {
+        fetch("/api/integrations/crm/status", { credentials: "include" })
+          .then((r) => (r.ok ? r.json() : null))
+          .then((d: CrmStatusResponse | null) => d && setCrmStatus(d))
+          .catch(() => {});
+      }, 1000);
+    } catch {
+      setToast("Import failed. Please try again.");
+    } finally {
+      setImportingProvider(null);
+      setTimeout(() => setToast(null), 5000);
+    }
+  };
+
+  const handleDisconnect = async (provider: CrmProviderId) => {
+    setDisconnectingProvider(provider);
+    setConfirmDisconnect(null);
+    try {
+      const res = await fetch(`/api/integrations/crm/${provider}/disconnect`, {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const data = (await res.json().catch(() => null)) as { error?: string } | null;
+        setToast(data?.error ?? "Disconnect failed.");
+        return;
+      }
+      setToast(`${provider.charAt(0).toUpperCase() + provider.slice(1).replace(/_/g, " ")} disconnected.`);
+      // Refresh CRM status
+      fetch("/api/integrations/crm/status", { credentials: "include" })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d: CrmStatusResponse | null) => d && setCrmStatus(d))
+        .catch(() => {});
+    } catch {
+      setToast("Disconnect failed.");
+    } finally {
+      setDisconnectingProvider(null);
+      setTimeout(() => setToast(null), 4000);
+    }
+  };
+
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       <Breadcrumbs items={[{ label: t("hub.breadcrumbSettings"), href: "/app/settings" }, { label: t("hub.title") }]} />
@@ -405,7 +463,7 @@ export default function AppSettingsIntegrationsPage() {
                       </div>
                     </div>
                   )}
-                  <div className="mt-4 flex gap-2">
+                  <div className="mt-4 flex flex-wrap gap-2">
                     {crm.comingSoon ? (
                       <button
                         type="button"
@@ -434,12 +492,43 @@ export default function AppSettingsIntegrationsPage() {
                             </>
                           )}
                         </button>
+                        <button
+                          type="button"
+                          onClick={() => handleImportContacts(crm.id)}
+                          disabled={importingProvider === crm.id}
+                          className="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)] transition-colors disabled:opacity-60"
+                        >
+                          {importingProvider === crm.id ? (
+                            <>
+                              <Loader className="w-3 h-3 animate-spin" />
+                              Importing...
+                            </>
+                          ) : (
+                            <>
+                              <Download className="w-3 h-3" />
+                              Import
+                            </>
+                          )}
+                        </button>
                         <Link
                           href={`/app/settings/integrations/mapping?provider=${crm.id}`}
                           className="inline-block px-3 py-2 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)] transition-colors"
                         >
                           {t("button.configure")}
                         </Link>
+                        <button
+                          type="button"
+                          onClick={() => setConfirmDisconnect(crm.id)}
+                          disabled={disconnectingProvider === crm.id}
+                          className="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-medium border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-60"
+                        >
+                          {disconnectingProvider === crm.id ? (
+                            <Loader className="w-3 h-3 animate-spin" />
+                          ) : (
+                            <Unplug className="w-3 h-3" />
+                          )}
+                          {t("button.disconnect")}
+                        </button>
                       </>
                     ) : (
                       <a
@@ -631,6 +720,33 @@ export default function AppSettingsIntegrationsPage() {
           </div>
         </section>
       </div>
+
+      {confirmDisconnect && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={() => setConfirmDisconnect(null)}>
+          <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-6 max-w-sm w-full shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-2">Disconnect {confirmDisconnect.charAt(0).toUpperCase() + confirmDisconnect.slice(1).replace(/_/g, " ")}?</h3>
+            <p className="text-xs text-[var(--text-secondary)] mb-4">
+              This will remove the connection and stop syncing. Your existing contacts will not be deleted.
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setConfirmDisconnect(null)}
+                className="px-4 py-2 rounded-xl text-xs font-medium border border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDisconnect(confirmDisconnect)}
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white hover:bg-red-700"
+              >
+                Disconnect
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {toast && (
         <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-[var(--text-primary)]">{toast}</div>
