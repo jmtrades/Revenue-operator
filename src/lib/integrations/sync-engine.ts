@@ -23,13 +23,11 @@ export interface SyncJobRow {
   entity_id: string | null;
   payload: Record<string, unknown>;
   status: SyncStatus;
-  retry_count: number;
-  max_retries: number;
+  attempts: number;
   next_retry_at: string | null;
   last_error: string | null;
   created_at: string;
   updated_at: string;
-  completed_at: string | null;
 }
 
 export interface SyncLogRow {
@@ -75,8 +73,7 @@ export async function enqueueSync(params: {
       entity_id: params.entityId ?? null,
       payload: params.payload ?? {},
       status: "pending",
-      retry_count: 0,
-      max_retries: MAX_RETRIES,
+      attempts: 0,
       updated_at: new Date().toISOString(),
     })
     .select("id")
@@ -105,9 +102,9 @@ export async function appendSyncLog(params: {
     direction: params.direction,
     entity_type: params.entityType ?? "lead",
     entity_id: params.entityId ?? null,
-    action: params.action,
-    summary: params.summary ?? null,
-    payload_snapshot: params.payloadSnapshot ?? {},
+    status: params.action,
+    error: params.summary ?? null,
+    metadata: params.payloadSnapshot ?? {},
   });
 }
 
@@ -127,14 +124,13 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
     return { ok: false, error: "Job not found or not pending" };
   }
   const row = job as SyncJobRow;
-  if (row.retry_count >= row.max_retries) {
+  if (row.attempts >= MAX_RETRIES) {
     await db
       .from("sync_queue")
       .update({
         status: "failed",
         last_error: "Max retries exceeded",
         updated_at: new Date().toISOString(),
-        completed_at: new Date().toISOString(),
       })
       .eq("id", jobId);
     await appendSyncLog({
@@ -185,12 +181,11 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
       }
       const { data: configRow } = await db
         .from("integration_configs")
-        .select("config")
+        .select("field_mapping")
         .eq("workspace_id", row.workspace_id)
         .eq("provider", row.provider)
-        .eq("config_type", "field_mapping")
         .maybeSingle();
-      const mappingConfig = (configRow as { config?: FieldMappingConfig } | null)?.config;
+      const mappingConfig = (configRow as { field_mapping?: FieldMappingConfig } | null)?.field_mapping;
       const leadRecord = lead as LeadRecord;
 
       // Use custom mapping config if available, otherwise use defaults
@@ -204,7 +199,7 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
       if (Object.keys(payload).length === 0) {
         await db
           .from("sync_queue")
-          .update({ status: "completed", updated_at: new Date().toISOString(), completed_at: new Date().toISOString() })
+          .update({ status: "completed", updated_at: new Date().toISOString() })
           .eq("id", jobId);
         await appendSyncLog({
           workspaceId: row.workspace_id,
@@ -240,26 +235,17 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
         })
         .eq("id", jobId);
 
-      // Update connection sync stats (increment records_synced, update last_sync_at)
+      // Update connection sync timestamp
       try {
-        const { data: connRow } = await db
-          .from("workspace_crm_connections")
-          .select("records_synced")
-          .eq("workspace_id", row.workspace_id)
-          .eq("provider", row.provider)
-          .maybeSingle();
-        const currentCount = (connRow as { records_synced?: number } | null)?.records_synced ?? 0;
         await db
           .from("workspace_crm_connections")
           .update({
-            records_synced: currentCount + 1,
-            last_sync_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           })
           .eq("workspace_id", row.workspace_id)
           .eq("provider", row.provider);
       } catch {
-        // Non-blocking — sync succeeded even if stats update fails
+        // Non-blocking — sync succeeded even if timestamp update fails
       }
 
       log("info", "crm_sync.pushed", {
@@ -314,7 +300,7 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
         // Cannot match without at least an email or phone
         await db
           .from("sync_queue")
-          .update({ status: "completed", updated_at: new Date().toISOString(), completed_at: new Date().toISOString() })
+          .update({ status: "completed", updated_at: new Date().toISOString() })
           .eq("id", jobId);
         await appendSyncLog({
           workspaceId: row.workspace_id,
@@ -384,7 +370,7 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
 
         await db
           .from("sync_queue")
-          .update({ status: "completed", updated_at: new Date().toISOString(), completed_at: new Date().toISOString() })
+          .update({ status: "completed", updated_at: new Date().toISOString() })
           .eq("id", jobId);
         await appendSyncLog({
           workspaceId: row.workspace_id,
@@ -433,7 +419,7 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
 
         await db
           .from("sync_queue")
-          .update({ status: "completed", updated_at: new Date().toISOString(), completed_at: new Date().toISOString() })
+          .update({ status: "completed", updated_at: new Date().toISOString() })
           .eq("id", jobId);
         await appendSyncLog({
           workspaceId: row.workspace_id,
@@ -460,24 +446,22 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
         status: "failed",
         last_error: "Unknown direction",
         updated_at: new Date().toISOString(),
-        completed_at: new Date().toISOString(),
       })
       .eq("id", jobId);
     return { ok: false, error: "Unknown direction" };
   } catch (e) {
     const errMsg = e instanceof Error ? e.message : String(e);
-    const nextRetry = row.retry_count + 1 < row.max_retries;
-    const delayMs = getRetryDelayMs(row.retry_count);
+    const nextRetry = row.attempts + 1 < MAX_RETRIES;
+    const delayMs = getRetryDelayMs(row.attempts);
     const nextRetryAt = nextRetry ? new Date(Date.now() + delayMs).toISOString() : null;
     await db
       .from("sync_queue")
       .update({
         status: nextRetry ? "pending" : "failed",
-        retry_count: row.retry_count + 1,
+        attempts: row.attempts + 1,
         last_error: errMsg,
         next_retry_at: nextRetryAt,
         updated_at: new Date().toISOString(),
-        completed_at: nextRetry ? null : new Date().toISOString(),
       })
       .eq("id", jobId);
     await appendSyncLog({

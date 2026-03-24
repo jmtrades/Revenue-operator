@@ -58,9 +58,10 @@ export async function GET(req: NextRequest) {
   if (authErr) return authErr;
 
   const db = getDb();
+  // workspace_crm_connections has: provider, status, updated_at, metadata (NO connected_at, last_sync_at, records_synced, sync_errors)
   const { data: rows, error } = await db
     .from("workspace_crm_connections")
-    .select("provider, connected_at, last_sync_at, records_synced, sync_errors")
+    .select("provider, status, updated_at")
     .eq("workspace_id", session.workspaceId)
     .in("provider", [...CRM_PROVIDERS]);
 
@@ -74,16 +75,37 @@ export async function GET(req: NextRequest) {
     } satisfies CrmStatusResponse);
   }
 
+  // Derive sync stats from sync_log table
+  const { data: syncStats } = await db
+    .from("sync_log")
+    .select("provider, status, created_at")
+    .eq("workspace_id", session.workspaceId)
+    .in("provider", [...CRM_PROVIDERS])
+    .order("created_at", { ascending: false })
+    .limit(500);
+
+  const syncStatsByProvider = new Map<string, { recordsSynced: number; errorCount: number; lastSyncAt: string | null }>();
+  for (const s of (syncStats ?? []) as Array<{ provider: string; status: string; created_at: string }>) {
+    const existing = syncStatsByProvider.get(s.provider) ?? { recordsSynced: 0, errorCount: 0, lastSyncAt: null };
+    if (s.status === "created" || s.status === "updated") existing.recordsSynced += 1;
+    if (s.status === "failed") existing.errorCount += 1;
+    if (!existing.lastSyncAt || s.created_at > existing.lastSyncAt) existing.lastSyncAt = s.created_at;
+    syncStatsByProvider.set(s.provider, existing);
+  }
+
   const byProvider = new Map(
-    (rows ?? []).map((r: { provider: string; connected_at?: string | null; last_sync_at?: string | null; records_synced?: number; sync_errors?: number }) => [
-      r.provider,
-      {
-        connected: Boolean(r.connected_at),
-        lastSyncAt: r.last_sync_at ?? null,
-        recordsSynced: r.records_synced ?? 0,
-        errorCount: r.sync_errors ?? 0,
-      },
-    ])
+    (rows ?? []).map((r: { provider: string; status?: string | null; updated_at?: string | null }) => {
+      const stats = syncStatsByProvider.get(r.provider);
+      return [
+        r.provider,
+        {
+          connected: r.status === "active",
+          lastSyncAt: stats?.lastSyncAt ?? r.updated_at ?? null,
+          recordsSynced: stats?.recordsSynced ?? 0,
+          errorCount: stats?.errorCount ?? 0,
+        },
+      ];
+    })
   );
 
   const integrations = Object.fromEntries(
