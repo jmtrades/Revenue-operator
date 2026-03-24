@@ -16,7 +16,7 @@ async function getContacts(req: NextRequest) {
   const db = getDb();
   const { data, error } = await db
     .from("leads")
-    .select("id, workspace_id, name, phone, email, company, state, last_activity_at, created_at")
+    .select("id, workspace_id, name, phone, email, company, state, last_activity_at, created_at, source, channel, metadata")
     .eq("workspace_id", workspaceId)
     .order("last_activity_at", { ascending: false, nullsFirst: false });
   if (error) {
