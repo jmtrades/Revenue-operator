@@ -27,6 +27,8 @@ import {
   Clock,
   CreditCard,
   LogOut,
+  Bot,
+  CalendarCheck,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { PageTransition } from "@/components/ui/PageTransition";
@@ -74,6 +76,7 @@ export default function AppShellClient({
         label: t("nav.sectionMain"),
         items: [
           { href: "/app/dashboard", label: t("nav.dashboard"), icon: LayoutList },
+          { href: "/app/agents", label: t("nav.agents"), icon: Bot },
           { href: "/app/calls", label: t("nav.calls"), icon: PhoneCall },
           { href: "/app/contacts", label: t("nav.contacts"), icon: Users },
           { href: "/app/inbox", label: t("nav.inbox"), icon: MessageSquare },
@@ -84,6 +87,7 @@ export default function AppShellClient({
         items: [
           { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
           { href: "/app/follow-ups", label: t("nav.followUps"), icon: Clock },
+          { href: "/app/appointments", label: t("nav.appointments"), icon: CalendarCheck },
           { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
           { href: "/app/knowledge", label: t("nav.knowledge"), icon: BookOpen },
         ],
@@ -108,9 +112,11 @@ export default function AppShellClient({
   );
   const mobileMoreLinks = useMemo(
     () => [
+      { href: "/app/agents", label: t("nav.agents"), icon: Bot },
       { href: "/app/contacts", label: t("nav.contacts"), icon: Users },
       { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
       { href: "/app/follow-ups", label: t("nav.followUps"), icon: Clock },
+      { href: "/app/appointments", label: t("nav.appointments"), icon: CalendarCheck },
       { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
       { href: "/app/knowledge", label: t("nav.knowledge"), icon: BookOpen },
       { href: "/app/settings", label: t("nav.settings"), icon: Settings },

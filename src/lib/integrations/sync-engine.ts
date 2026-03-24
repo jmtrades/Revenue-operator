@@ -4,7 +4,7 @@
  */
 
 import { getDb } from "@/lib/db/queries";
-import { applyMapping, getDefaultMappings, type FieldMappingConfig, type LeadRecord } from "./field-mapper";
+import { applyMapping, applyReverseMapping, normalizeCrmPayload, getDefaultMappings, formatPhone, type FieldMappingConfig, type LeadRecord } from "./field-mapper";
 import type { CrmProviderId } from "./field-mapper";
 import { getValidTokens } from "./token-refresh";
 import { pushContactToCrm } from "./crm-clients";
@@ -282,25 +282,176 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
     }
 
     if (row.direction === "inbound") {
-      // Inbound: apply payload to lead (last-write-wins). Payload should have external_id or phone to match.
-      await db
-        .from("sync_queue")
-        .update({
-          status: "completed",
-          updated_at: new Date().toISOString(),
-          completed_at: new Date().toISOString(),
-        })
-        .eq("id", jobId);
-      await appendSyncLog({
-        workspaceId: row.workspace_id,
-        provider: row.provider,
-        direction: "inbound",
-        entityId: row.entity_id,
-        action: "updated",
-        summary: "Inbound sync received. Apply to lead not yet implemented.",
-        payloadSnapshot: row.payload,
-      });
-      return { ok: true };
+      // ── Inbound CRM → Recall Touch (last-write-wins) ──────────────────
+      const provider = row.provider as CrmProviderId;
+
+      // 1. Normalize the provider-specific payload into a flat object
+      const normalizedPayload = normalizeCrmPayload(provider, row.payload);
+
+      // 2. Get field mapping config (custom or defaults) and reverse-map to RT fields
+      const { data: configRow } = await db
+        .from("integration_configs")
+        .select("config")
+        .eq("workspace_id", row.workspace_id)
+        .eq("provider", provider)
+        .eq("config_type", "field_mapping")
+        .maybeSingle();
+      const mappingConfig = (configRow as { config?: FieldMappingConfig } | null)?.config;
+      let effectiveConfig = mappingConfig as FieldMappingConfig;
+      if (!effectiveConfig || !Array.isArray(effectiveConfig.mappings) || effectiveConfig.mappings.length === 0) {
+        effectiveConfig = { mappings: getDefaultMappings(provider) };
+      }
+
+      const rtFields = applyReverseMapping(normalizedPayload, effectiveConfig);
+
+      // Also extract email/phone directly from the raw payload for matching
+      const rawEmail = (normalizedPayload.email ?? normalizedPayload.Email ?? normalizedPayload.mail ?? "").toString().trim().toLowerCase();
+      const rawPhone = formatPhone(normalizedPayload.phone ?? normalizedPayload.Phone ?? normalizedPayload.mobilePhone ?? "");
+      const matchEmail = (rtFields.email ?? rawEmail).toString().trim().toLowerCase();
+      const matchPhone = formatPhone((rtFields.phone ?? rawPhone).toString());
+
+      if (!matchEmail && !matchPhone) {
+        // Cannot match without at least an email or phone
+        await db
+          .from("sync_queue")
+          .update({ status: "completed", updated_at: new Date().toISOString(), completed_at: new Date().toISOString() })
+          .eq("id", jobId);
+        await appendSyncLog({
+          workspaceId: row.workspace_id,
+          provider,
+          direction: "inbound",
+          entityId: row.entity_id,
+          action: "skipped",
+          summary: "No email or phone in payload — cannot match to lead",
+          payloadSnapshot: row.payload,
+        });
+        return { ok: true };
+      }
+
+      // 3. Try to find an existing lead by email first, then phone
+      let existingLead: { id: string; metadata?: Record<string, unknown> } | null = null;
+
+      if (matchEmail) {
+        const { data } = await db
+          .from("leads")
+          .select("id, metadata")
+          .eq("workspace_id", row.workspace_id)
+          .ilike("email", matchEmail)
+          .limit(1)
+          .maybeSingle();
+        existingLead = data as { id: string; metadata?: Record<string, unknown> } | null;
+      }
+      if (!existingLead && matchPhone) {
+        const phoneDigits = matchPhone.replace(/\D/g, "");
+        if (phoneDigits.length >= 10) {
+          const { data } = await db
+            .from("leads")
+            .select("id, metadata")
+            .eq("workspace_id", row.workspace_id)
+            .or(`phone.eq.${matchPhone},phone.like.%${phoneDigits.slice(-10)}`)
+            .limit(1)
+            .maybeSingle();
+          existingLead = data as { id: string; metadata?: Record<string, unknown> } | null;
+        }
+      }
+
+      // 4. Build update payload from reverse-mapped fields
+      const updateFields: Record<string, unknown> = {};
+      if (rtFields.name) updateFields.name = String(rtFields.name).trim();
+      if (rtFields.email) updateFields.email = String(rtFields.email).trim().toLowerCase();
+      if (rtFields.phone) updateFields.phone = formatPhone(rtFields.phone);
+      if (rtFields.company) updateFields.company = String(rtFields.company).trim();
+      if (rtFields.state) updateFields.status = String(rtFields.state).toLowerCase();
+      updateFields.updated_at = new Date().toISOString();
+      updateFields.last_activity_at = new Date().toISOString();
+
+      if (existingLead) {
+        // ── UPDATE existing lead ──
+        const mergedMeta = {
+          ...(existingLead.metadata ?? {}),
+          last_crm_sync: new Date().toISOString(),
+          crm_provider: provider,
+        };
+        const { error: updateErr } = await db
+          .from("leads")
+          .update({ ...updateFields, metadata: mergedMeta })
+          .eq("id", existingLead.id)
+          .eq("workspace_id", row.workspace_id);
+
+        if (updateErr) {
+          throw new Error(`Failed to update lead ${existingLead.id}: ${updateErr.message}`);
+        }
+
+        await db
+          .from("sync_queue")
+          .update({ status: "completed", updated_at: new Date().toISOString(), completed_at: new Date().toISOString() })
+          .eq("id", jobId);
+        await appendSyncLog({
+          workspaceId: row.workspace_id,
+          provider,
+          direction: "inbound",
+          entityId: existingLead.id,
+          action: "updated",
+          summary: `Updated lead ${existingLead.id} from ${provider} — ${Object.keys(updateFields).length} fields`,
+          payloadSnapshot: row.payload,
+        });
+
+        log("info", "crm_sync.inbound_updated", {
+          provider,
+          leadId: existingLead.id,
+          fields: Object.keys(updateFields).length,
+        });
+        return { ok: true };
+      } else {
+        // ── CREATE new lead from CRM data ──
+        const newLeadData: Record<string, unknown> = {
+          workspace_id: row.workspace_id,
+          name: updateFields.name ?? "Unknown (CRM Import)",
+          email: updateFields.email ?? null,
+          phone: updateFields.phone ?? null,
+          company: updateFields.company ?? null,
+          status: updateFields.status ?? "new",
+          metadata: {
+            source: `crm_${provider}`,
+            imported_at: new Date().toISOString(),
+            crm_provider: provider,
+          },
+          last_activity_at: new Date().toISOString(),
+        };
+
+        const { data: created, error: insertErr } = await db
+          .from("leads")
+          .insert(newLeadData)
+          .select("id")
+          .maybeSingle();
+
+        if (insertErr || !created) {
+          throw new Error(`Failed to create lead from ${provider}: ${insertErr?.message ?? "Unknown error"}`);
+        }
+
+        const createdId = (created as { id: string }).id;
+
+        await db
+          .from("sync_queue")
+          .update({ status: "completed", updated_at: new Date().toISOString(), completed_at: new Date().toISOString() })
+          .eq("id", jobId);
+        await appendSyncLog({
+          workspaceId: row.workspace_id,
+          provider,
+          direction: "inbound",
+          entityId: createdId,
+          action: "created",
+          summary: `Created new lead ${createdId} from ${provider}`,
+          payloadSnapshot: row.payload,
+        });
+
+        log("info", "crm_sync.inbound_created", {
+          provider,
+          leadId: createdId,
+          fields: Object.keys(updateFields).length,
+        });
+        return { ok: true };
+      }
     }
 
     await db

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Megaphone } from "lucide-react";
+import { Megaphone, Plus, Copy, Trash2, Play, Pause, Pencil, ArrowRight } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
@@ -317,6 +317,54 @@ export default function CampaignsPage() {
     });
   };
 
+  const [deleteConfirm, setDeleteConfirm] = useState<CampaignRow | null>(null);
+
+  const deleteCampaign = async (campaign: CampaignRow) => {
+    try {
+      const res = await fetch(`/api/campaigns/${campaign.id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        setToast((data as { error?: string } | null)?.error ?? t("toast.deleteFailed"));
+        return;
+      }
+      setCampaigns((prev) => prev.filter((c) => c.id !== campaign.id));
+      setToast(t("toast.deleted"));
+    } catch {
+      setToast(t("toast.deleteFailed"));
+    }
+  };
+
+  const duplicateCampaign = async (campaign: CampaignRow) => {
+    setSaving(true);
+    try {
+      const payload = {
+        name: `${campaign.name} (Copy)`,
+        type: campaign.type,
+        target_filter: campaign.target_filter,
+      };
+      const res = await fetch("/api/campaigns", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const created = (await res.json().catch(() => null)) as CampaignRow | { error?: string } | null;
+      if (!res.ok || !created || !("id" in created)) {
+        setToast(t("toast.createFailed"));
+        return;
+      }
+      setCampaigns((prev) => [created, ...prev]);
+      setToast(t("toast.duplicated"));
+    } catch {
+      setToast(t("toast.createFailed"));
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto">
@@ -327,17 +375,26 @@ export default function CampaignsPage() {
               {t("description")}
             </p>
           </div>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
-            className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-secondary)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/30"
-          >
-            <option value="all">{t("statusFilter.all")}</option>
-            <option value="draft">{t("statusFilter.draft")}</option>
-            <option value="active">{t("statusFilter.active")}</option>
-            <option value="paused">{t("statusFilter.paused")}</option>
-            <option value="completed">{t("statusFilter.completed")}</option>
-          </select>
+          <div className="flex items-center gap-3">
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
+              className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-secondary)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/30"
+            >
+              <option value="all">{t("statusFilter.all")}</option>
+              <option value="draft">{t("statusFilter.draft")}</option>
+              <option value="active">{t("statusFilter.active")}</option>
+              <option value="paused">{t("statusFilter.paused")}</option>
+              <option value="completed">{t("statusFilter.completed")}</option>
+            </select>
+            <a
+              href="/app/campaigns/create"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold hover:opacity-90 transition-opacity"
+            >
+              <Plus className="w-4 h-4" />
+              {t("createCampaign")}
+            </a>
+          </div>
         </div>
 
         <div className="mb-6 grid grid-cols-2 md:grid-cols-5 gap-4 drop-shadow-sm">
@@ -405,14 +462,33 @@ export default function CampaignsPage() {
                         </span>
                       </div>
                     </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     <button
                       type="button"
                       onClick={() => loadCampaignIntoForm(campaign)}
-                      className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-medium text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
+                      className="p-2 rounded-lg border border-[var(--border-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-colors"
+                      title={t("edit")}
                     >
-                      {t("edit")}
+                      <Pencil className="w-3.5 h-3.5" />
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => void duplicateCampaign(campaign)}
+                      className="p-2 rounded-lg border border-[var(--border-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-colors"
+                      title={t("duplicate")}
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                    </button>
+                    {campaign.status !== "active" && (
+                      <button
+                        type="button"
+                        onClick={() => setDeleteConfirm(campaign)}
+                        className="p-2 rounded-lg border border-red-500/20 text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+                        title={t("delete")}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                     <button
                       type="button"
                       onClick={() =>
@@ -420,9 +496,13 @@ export default function CampaignsPage() {
                           ? setPauseConfirm(campaign)
                           : void toggleCampaign(campaign)
                       }
-                      className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-semibold text-[var(--text-primary)] hover:border-[var(--border-medium)]"
+                      className="ml-1 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-colors"
                     >
-                      {campaign.status === "active" ? t("pause") : t("launchCampaign")}
+                      {campaign.status === "active" ? (
+                        <><Pause className="w-3.5 h-3.5" /> {t("pause")}</>
+                      ) : (
+                        <><Play className="w-3.5 h-3.5" /> {t("launchCampaign")}</>
+                      )}
                     </button>
                   </div>
                   </div>
@@ -817,6 +897,19 @@ export default function CampaignsPage() {
               setPauseConfirm(null);
             }}
             onClose={() => setPauseConfirm(null)}
+          />
+        )}
+        {deleteConfirm && (
+          <ConfirmDialog
+            open
+            title={t("deleteConfirmTitle")}
+            message={t("deleteConfirmMessage", { name: deleteConfirm.name })}
+            confirmLabel={t("delete")}
+            onConfirm={() => {
+              void deleteCampaign(deleteConfirm);
+              setDeleteConfirm(null);
+            }}
+            onClose={() => setDeleteConfirm(null)}
           />
         )}
         {toast && (

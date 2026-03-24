@@ -1,11 +1,14 @@
 /**
+ * GET /api/campaigns/[id] — Fetch a single campaign with leads summary.
  * PATCH /api/campaigns/[id] — Update campaign details and status.
+ * DELETE /api/campaigns/[id] — Delete a draft/paused campaign.
  */
 
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 const CAMPAIGN_TYPES = [
@@ -22,6 +25,40 @@ const CAMPAIGN_TYPES = [
   // Back-compat
   "lead_followup",
 ] as const;
+
+export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
+  const { id } = await ctx.params;
+  const db = getDb();
+  const { data: campaign, error } = await db
+    .from("campaigns")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  if (error || !campaign) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  const workspaceId = (campaign as { workspace_id: string }).workspace_id;
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
+  if (authErr) return authErr;
+
+  // Fetch campaign leads summary
+  const { data: leadsData, count: leadsCount } = await db
+    .from("campaign_leads")
+    .select("status", { count: "exact" })
+    .eq("campaign_id", id);
+  const leadStatusCounts: Record<string, number> = {};
+  if (leadsData) {
+    for (const row of leadsData as { status: string }[]) {
+      leadStatusCounts[row.status] = (leadStatusCounts[row.status] ?? 0) + 1;
+    }
+  }
+
+  return NextResponse.json({
+    ...campaign,
+    leads_summary: {
+      total: leadsCount ?? 0,
+      ...leadStatusCounts,
+    },
+  });
+}
 
 export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
@@ -52,4 +89,44 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
   const { data: campaign, error } = await db.from("campaigns").update(updates).eq("id", id).select().maybeSingle();
   if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   return NextResponse.json(campaign);
+}
+
+export async function DELETE(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
+  const { id } = await ctx.params;
+  const session = await getSession(req);
+  if (!session?.userId || !session?.workspaceId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const authErr = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErr) return authErr;
+
+  const db = getDb();
+  const { data: existing } = await db
+    .from("campaigns")
+    .select("id, status, workspace_id")
+    .eq("id", id)
+    .eq("workspace_id", session.workspaceId)
+    .maybeSingle();
+  if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  const status = (existing as { status: string }).status;
+  if (status === "active") {
+    return NextResponse.json(
+      { error: "Pause the campaign before deleting it." },
+      { status: 400 },
+    );
+  }
+
+  // Remove campaign_leads junction records first
+  await db.from("campaign_leads").delete().eq("campaign_id", id);
+
+  const { error } = await db
+    .from("campaigns")
+    .delete()
+    .eq("id", id)
+    .eq("workspace_id", session.workspaceId);
+  if (error) {
+    return NextResponse.json({ error: "Failed to delete campaign" }, { status: 500 });
+  }
+  return NextResponse.json({ ok: true });
 }
