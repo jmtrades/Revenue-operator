@@ -7849,6 +7849,16 @@
       "phoneVerified": "Phone verified ✓",
       "waitlistJoined": "We'll notify you when numbers are available."
     },
+    "getNewAiNumber": "Get a new AI number",
+    "recommended": "Recommended",
+    "getNewAiNumberDesc": "We'll give you a dedicated number. Give it out as your business line, or forward calls to it.",
+    "areaCodeOptional": "Area code (optional)",
+    "gettingYourNumber": "Getting your number…",
+    "getMyNumber": "Get my number →",
+    "takesAbout10Seconds": "Takes about 10 seconds",
+    "notifyMe": "Notify me",
+    "tryDifferentAreaCodeHint": "Try a different area code or leave blank for any available number:",
+    "needHelpPhoneSetup": "Need help with phone setup?",
     "marketplace": {
       "title": "Phone number marketplace",
       "subtitle": "Search, compare, and provision numbers in the countries where you do business.",
@@ -7887,7 +7897,24 @@
         "provisioning": "Provisioning phone number…",
         "provisioned": "Phone number provisioned successfully.",
         "error": "We couldn’t provision that number. Please try another one."
-      }
+      },
+      "noNumbersAvailable": "No numbers available. Try adjusting your search filters.",
+      "mobile": "Mobile",
+      "tryAgainButton": "Try Again",
+      "retrySearch": "Retry Search",
+      "dismiss": "Dismiss",
+      "provisionedSuccess": "Phone number successfully provisioned!",
+      "nowActive": "{number} is now active",
+      "goToPhoneSettings": "Go to Phone Settings",
+      "showingCount": "Showing {count} available {count, plural, one {number} other {numbers}}",
+      "tryAdjustingFilters": "Try adjusting your filters or search criteria",
+      "confirmPurchase": "Confirm Purchase",
+      "phoneNumberLabel": "Phone Number",
+      "monthlyCost": "Monthly Cost",
+      "setupFee": "Setup Fee",
+      "chargedImmediately": "This will be charged to your account immediately.",
+      "cancel": "Cancel",
+      "processing": "Processing"
     },
     "porting": {
       "title": "Port an existing number",

@@ -690,11 +690,11 @@ export default function AppSettingsPhonePage() {
               <div className="w-10 h-10 rounded-xl bg-[var(--bg-inset)]/70 flex items-center justify-center mb-4">
                 <Phone className="w-5 h-5 text-[var(--text-tertiary)]" />
               </div>
-              <h2 className="text-base font-semibold text-[var(--text-primary)] mb-1">Get a new AI number</h2>
-              <p className="text-sm text-[var(--text-tertiary)] mb-1">Recommended</p>
-              <p className="text-sm text-[var(--text-secondary)] mb-4">We&apos;ll give you a dedicated number. Give it out as your business line, or forward calls to it.</p>
+              <h2 className="text-base font-semibold text-[var(--text-primary)] mb-1">{tPhone("getNewAiNumber")}</h2>
+              <p className="text-sm text-[var(--text-tertiary)] mb-1">{tPhone("recommended")}</p>
+              <p className="text-sm text-[var(--text-secondary)] mb-4">{tPhone("getNewAiNumberDesc")}</p>
               <div className="mb-4">
-                <label htmlFor="phone-area-code" className="text-xs text-[var(--text-tertiary)] mb-1 block">Area code (optional)</label>
+                <label htmlFor="phone-area-code" className="text-xs text-[var(--text-tertiary)] mb-1 block">{tPhone("areaCodeOptional")}</label>
                 <input
                   id="phone-area-code"
                   type="tel"
@@ -712,9 +712,9 @@ export default function AppSettingsPhonePage() {
                 disabled={connecting}
                 className="w-full py-2.5 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-lg text-sm hover:opacity-90 disabled:opacity-60 transition-colors"
               >
-                {connecting ? "Getting your number…" : "Get my number →"}
+                {connecting ? tPhone("gettingYourNumber") : tPhone("getMyNumber")}
               </button>
-              <p className="text-xs text-[var(--text-tertiary)] mt-2 text-center">Takes about 10 seconds</p>
+              <p className="text-xs text-[var(--text-tertiary)] mt-2 text-center">{tPhone("takesAbout10Seconds")}</p>
               {connectError ? (
                 <div className="mt-4 rounded-xl border border-red-500/20 bg-red-500/[0.06] p-4" role="alert">
                   <p className="text-sm text-red-400 mb-2">{connectError}</p>
@@ -727,12 +727,12 @@ export default function AppSettingsPhonePage() {
                         placeholder={tPhone("emailPlaceholder")}
                         className="flex-1 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)]"
                       />
-                      <button type="button" onClick={() => { setToast(tPhone("toast.waitlistJoined")); setTimeout(() => setToast(null), 4000); }} className="px-4 py-2 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-lg text-sm shrink-0">Notify me</button>
+                      <button type="button" onClick={() => { setToast(tPhone("toast.waitlistJoined")); setTimeout(() => setToast(null), 4000); }} className="px-4 py-2 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-lg text-sm shrink-0">{tPhone("notifyMe")}</button>
                     </div>
                   )}
                   {connectErrorCode === "NO_INVENTORY" && (
                     <div className="mt-2">
-                      <p className="text-xs text-[var(--text-tertiary)] mb-2">Try a different area code or leave blank for any available number:</p>
+                      <p className="text-xs text-[var(--text-tertiary)] mb-2">{tPhone("tryDifferentAreaCodeHint")}</p>
                       <div className="flex gap-2">
                         <input
                           type="tel"
@@ -914,7 +914,7 @@ export default function AppSettingsPhonePage() {
       )}
 
       <p className="text-xs text-[var(--text-secondary)] mt-6">
-        Need help with phone setup? <a href="mailto:support@recall-touch.com" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline underline-offset-2">support@recall-touch.com</a>
+        {tPhone("needHelpPhoneSetup")} <a href="mailto:support@recall-touch.com" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline underline-offset-2">support@recall-touch.com</a>
       </p>
       <p className="mt-4"><Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{tPhone("backToSettings")}</Link></p>
     </div>
