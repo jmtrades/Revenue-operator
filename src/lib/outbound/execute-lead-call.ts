@@ -357,6 +357,44 @@ YOUR GOAL:
     return { ok: false, error: "Failed to create voice assistant for outbound call" };
   }
 
+  const customerNumber = String(phone).trim();
+  const e164 = /^\+?\d{10,15}$/.test(customerNumber) ? customerNumber : customerNumber.replace(/\D/g, "").length === 10 ? `+1${customerNumber.replace(/\D/g, "")}` : customerNumber.replace(/\D/g, "");
+
+  // Retry logic with exponential backoff: try up to 3 times (1s, 2s, 4s delays)
+  let callResult;
+  const retryDelays = [1000, 2000, 4000]; // milliseconds
+  let lastErr: Error | null = null;
+
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      console.log(`[outbound] Attempt ${attempt + 1}/3 to create outbound call for lead ${leadId}`);
+      const result = await voice.createOutboundCall({
+        assistantId,
+        phoneNumber: e164 || customerNumber,
+        metadata: {
+          workspace_id: workspaceId,
+          lead_id: leadId,
+          // Will add call_session_id after DB insert below
+        },
+      });
+      callResult = result;
+      break; // Success
+    } catch (err) {
+      lastErr = err instanceof Error ? err : new Error(String(err));
+      console.warn(`[outbound] Attempt ${attempt + 1}/3 failed:`, lastErr.message);
+      if (attempt < 2) {
+        // Sleep before retry
+        await new Promise(resolve => setTimeout(resolve, retryDelays[attempt]));
+      }
+    }
+  }
+
+  if (!callResult) {
+    console.error("[outbound] All 3 retry attempts exhausted for creating outbound call:", lastErr?.message);
+    return { ok: false, error: "Outbound call failed after retries" };
+  }
+
+  // Now insert call_sessions AFTER the voice call is successfully initiated
   const { data: sessionRow, error: insertErr } = await db
     .from("call_sessions")
     .insert({
@@ -364,40 +402,17 @@ YOUR GOAL:
       lead_id: leadId,
       provider: orchestrationProvider,
       call_started_at: new Date().toISOString(),
+      external_meeting_id: callResult.callId || null, // Include external_meeting_id from voice response
     })
     .select("id")
     .maybeSingle();
+
   if (insertErr || !sessionRow) {
+    console.error("[outbound] Failed to create call session after voice call initiated:", insertErr?.message);
     return { ok: false, error: "Failed to create call session" };
   }
+
   const callSessionId = (sessionRow as { id: string }).id;
-
-  const customerNumber = String(phone).trim();
-  const e164 = /^\+?\d{10,15}$/.test(customerNumber) ? customerNumber : customerNumber.replace(/\D/g, "").length === 10 ? `+1${customerNumber.replace(/\D/g, "")}` : customerNumber.replace(/\D/g, "");
-
-  try {
-    const result = await voice.createOutboundCall({
-      assistantId,
-      phoneNumber: e164 || customerNumber,
-      metadata: {
-        workspace_id: workspaceId,
-        call_session_id: callSessionId,
-        lead_id: leadId,
-      },
-    });
-
-    // Ensure webhook matching: backend voice webhook uses `call_sessions.external_meeting_id = payload.call_sid`.
-    if (result.callId) {
-      await db
-        .from("call_sessions")
-        .update({ external_meeting_id: result.callId })
-        .eq("id", callSessionId);
-    }
-  } catch (callErr) {
-    console.error("[outbound] Outbound call failed:", callErr instanceof Error ? callErr.message : callErr);
-    await db.from("call_sessions").update({ call_ended_at: new Date().toISOString() }).eq("id", callSessionId);
-    return { ok: false, error: "Outbound call failed" };
-  }
 
   return { ok: true, call_session_id: callSessionId };
 }

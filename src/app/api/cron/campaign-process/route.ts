@@ -28,6 +28,27 @@ export async function GET(req: NextRequest) {
   let failed = 0;
   let throttledWorkspaces = 0;
   try {
+    // Check for backpressure: count active calls in last 5 minutes
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    const { count: activeCalls } = await db
+      .from("call_sessions")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "in_progress")
+      .gte("call_started_at", fiveMinutesAgo);
+
+    const activeCallCount = activeCalls ?? 0;
+    if (activeCallCount > 50) {
+      console.log(`[campaign-cron] Backpressure: ${activeCallCount} active calls (threshold: 50), skipping tick`);
+      return NextResponse.json({
+        ok: true,
+        processed,
+        failed,
+        throttled_workspaces: throttledWorkspaces,
+        backpressure: true,
+        active_calls: activeCallCount
+      });
+    }
+
     const { data: active } = await db
       .from("campaigns")
       .select("id, workspace_id, total_contacts, called, type, metadata")
