@@ -83,6 +83,7 @@ export function HomepageTestCallCTA() {
                 <Phone className="h-4 w-4 text-[var(--text-tertiary)]" />
                 <input
                   id="test-call-phone"
+                  type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="Your phone number"

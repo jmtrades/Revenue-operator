@@ -58,7 +58,7 @@ export function DemoVoiceButton() {
             onChange={(e) => setPhone(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleCall()}
             placeholder={t("placeholder")}
-            className="w-full pl-9 pr-3 py-2.5 rounded-[10px] text-sm transition-colors focus:outline-none"
+            className="w-full pl-9 pr-3 py-2.5 rounded-[10px] text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
             style={{
               background: "var(--bg-inset)",
               border: "1px solid var(--border-default)",

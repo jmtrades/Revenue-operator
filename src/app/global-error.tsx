@@ -1,9 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
-import Link from "next/link";
-import { useTranslations } from "next-intl";
 
+/**
+ * Global error boundary — catches errors in the root layout itself.
+ * IMPORTANT: Cannot use useTranslations or any provider-dependent hooks
+ * because this renders when the root layout (which provides those
+ * providers) has failed. All strings must be hardcoded.
+ */
 export default function GlobalError({
   error,
   reset,
@@ -11,42 +15,93 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  const t = useTranslations("errors");
   useEffect(() => {
     console.error("[Global Error Boundary]", error);
-    if (typeof window !== "undefined" && (window as unknown as { Sentry?: { captureException: (e: Error) => void } }).Sentry) {
-      (window as unknown as { Sentry: { captureException: (e: Error) => void } }).Sentry.captureException(error);
-    }
   }, [error]);
 
   return (
     <html lang="en">
-      <body>
-        <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--bg-base)", color: "var(--text-primary)" }}>
-          <main className="max-w-md w-full text-center" id="main">
-            <h1 className="text-xl font-semibold mb-3" style={{ color: "var(--text-primary)" }}>
-              {t("heading")}
-            </h1>
-            <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
-              {t("loadPageError")}
-            </p>
-            <div className="flex gap-3 justify-center flex-wrap">
-              <button
-                type="button"
-                onClick={() => reset()}
-                className="px-6 py-3 rounded-xl text-sm font-semibold bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:outline-none"
-              >
-                {t("tryAgain")}
-              </button>
-              <Link
-                href="/"
-                className="px-6 py-3 rounded-xl text-sm font-medium border border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:outline-none"
-              >
-                {t("goHome")}
-              </Link>
-            </div>
-          </main>
-        </div>
+      <body
+        style={{
+          margin: 0,
+          fontFamily:
+            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          background: "#FFFFFF",
+          color: "#0A0A0B",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "100vh",
+          padding: "1.5rem",
+        }}
+      >
+        <main style={{ textAlign: "center", maxWidth: "28rem" }}>
+          <p
+            style={{
+              fontSize: "0.875rem",
+              fontWeight: 500,
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+              color: "#DC2626",
+              marginBottom: "1rem",
+            }}
+          >
+            Something went wrong
+          </p>
+          <h1
+            style={{
+              fontSize: "clamp(1.5rem, 4vw, 2.25rem)",
+              fontWeight: 700,
+              letterSpacing: "-0.03em",
+              lineHeight: 1.15,
+              margin: "0 0 0.75rem",
+            }}
+          >
+            An unexpected error occurred
+          </h1>
+          <p
+            style={{
+              color: "#5E6270",
+              lineHeight: 1.6,
+              marginBottom: "2rem",
+            }}
+          >
+            Try refreshing the page. If the problem persists, contact support.
+          </p>
+          <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center", flexWrap: "wrap" }}>
+            <button
+              onClick={reset}
+              style={{
+                background: "#2563EB",
+                color: "#FFFFFF",
+                border: "none",
+                padding: "0.75rem 1.5rem",
+                borderRadius: "0.75rem",
+                fontSize: "0.875rem",
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              Try again
+            </button>
+            <a
+              href="/"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                padding: "0.75rem 1.5rem",
+                borderRadius: "0.75rem",
+                fontSize: "0.875rem",
+                fontWeight: 500,
+                color: "#5E6270",
+                border: "1px solid rgba(0,0,0,0.08)",
+                textDecoration: "none",
+              }}
+            >
+              Go home
+            </a>
+          </div>
+        </main>
       </body>
     </html>
   );

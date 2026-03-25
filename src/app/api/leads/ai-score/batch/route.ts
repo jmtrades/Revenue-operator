@@ -6,6 +6,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { scoreLeadWithAI, saveLeadScore } from "@/lib/lead-scoring/ai-scorer";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const CONCURRENCY_LIMIT = 5;
 const MAX_BATCH_SIZE = 50;
@@ -25,6 +26,9 @@ async function processBatch<T, R>(
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   try {
     const authSession = await getSession(req);
     const workspaceId =
@@ -117,12 +121,10 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error("[API] leads/ai-score/batch error:", error);
-    const message =
-      error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
       {
         error: "Failed to process batch scoring",
-        details: message,
+        details: "Scoring failed",
       },
       { status: 500 }
     );

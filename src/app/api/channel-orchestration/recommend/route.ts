@@ -12,8 +12,12 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { determineOptimalChannel } from "@/lib/channel-orchestration/engine";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   try {
     // Auth and workspace validation
     const session = await getSession(req);
@@ -75,10 +79,11 @@ export async function POST(req: NextRequest) {
             error: null,
           };
         } catch (error) {
+          console.error(`[channel-orchestration/recommend] Error for lead ${leadId}:`, error);
           return {
             lead_id: leadId,
             recommendation: null,
-            error: error instanceof Error ? error.message : "Unknown error",
+            error: "Recommendation failed",
           };
         }
       })
