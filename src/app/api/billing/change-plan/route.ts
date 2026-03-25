@@ -230,6 +230,17 @@ export async function POST(req: NextRequest) {
         effective_at: effectiveAt,
       });
     }
+
+    // For upgrades, immediately update billing_tier
+    await db
+      .from("workspaces")
+      .update({
+        billing_tier: tier,
+        pending_billing_tier: null,
+        pending_billing_effective_at: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", workspace_id);
   } catch (err) {
     console.error("[change-plan] Stripe subscription update failed:", err instanceof Error ? err.message : err);
     return NextResponse.json(
@@ -238,19 +249,8 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const oldTier = (row.billing_tier ?? "solo") as BillingTier;
-
-  await db
-    .from("workspaces")
-    .update({
-      billing_tier: tier,
-      pending_billing_tier: null,
-      pending_billing_effective_at: null,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", workspace_id);
-
   // Log billing change to audit log
+  const oldTier = (row.billing_tier ?? "solo") as string;
   try {
     let userId: string | null = null;
     try {

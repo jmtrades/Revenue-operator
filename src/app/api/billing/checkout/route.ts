@@ -184,7 +184,7 @@ export async function POST(req: NextRequest) {
     }
 
     const wsData = ws as { billing_status?: string; stripe_subscription_id?: string | null };
-    const hasActiveSubscription = wsData.billing_status === "trial" || wsData.billing_status === "active" || wsData.stripe_subscription_id;
+    const hasActiveSubscription = wsData.stripe_subscription_id !== null && wsData.stripe_subscription_id !== undefined;
     if (hasActiveSubscription) {
       log("checkout_started", { workspace_id: finalWorkspaceId, reason: "already_active" });
       return NextResponse.json({ ok: true, reason: "already_active", workspace_id: finalWorkspaceId }, { status: 200 });
