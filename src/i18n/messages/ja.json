@@ -549,7 +549,8 @@
       "pauseFailed": "カバレッジを一時停止できませんでした。",
       "paused": "カバレッジを一時停止しました。",
       "paymentFailed": "支払い設定を開けませんでした。",
-      "portalFailed": "請求ポータルを開けませんでした。"
+      "portalFailed": "請求ポータルを開けませんでした。",
+      "minutesAdded": "{minutes} 分があなたのアカウントに追加されました!"
     },
     "errors": {
       "loadingFailed": "課金情報を読み込めませんでした",
@@ -6944,7 +6945,10 @@
       "added": "連絡先を追加しました",
       "saveError": "連絡先を保存できませんでした。もう一度お試しください。",
       "deleteError": "連絡先を削除できませんでした。もう一度お試しください。",
-      "updateError": "連絡先を更新できませんでした。もう一度お試しください。"
+      "updateError": "連絡先を更新できませんでした。もう一度お試しください。",
+      "workspaceNotLoaded": "ワークスペースが読み込まれていません。更新してください。",
+      "contactSaveDisplayFailed": "連絡先は保存されましたが表示できません。更新してください。",
+      "networkError": "ネットワークエラーが発生しました。もう一度お試しください。"
     },
     "lastContactUnknown": "最終連絡: 不明",
     "lastContactToday": "最終連絡: 今日",
@@ -7809,7 +7813,9 @@
     "releaseConfirmMessage": "This number will be released and will no longer receive or make calls through Recall Touch. You can connect a new number anytime.",
     "provisionFailed": "Failed to provision phone number",
     "provisioned": "Phone number provisioned",
-    "searchFailed": "Failed to search phone numbers"
+    "searchFailed": "Failed to search phone numbers",
+    "unknownError": "不明なエラー",
+    "submitFailed": "ポート要求の送信に失敗しました"
   },
   "integrations": {
     "pageTitle": "連携 — Recall Touch",
@@ -7827,7 +7833,9 @@
       "whatsappEmailRequired": "WhatsAppのウェイトリストに登録するにはメールを入力してください。",
       "whatsappWaitlisted": "リストに登録されました。WhatsAppが利用可能になり次第お知らせします。",
       "error": "問題が発生しました。もう一度お試しください。",
-      "syncFailed": "Sync failed"
+      "syncFailed": "Sync failed",
+      "importFailed": "インポートに失敗しました。もう一度お試しください。",
+      "disconnectFailed": "切断に失敗しました。"
     },
     "hub": {
       "title": "インテグレーション",

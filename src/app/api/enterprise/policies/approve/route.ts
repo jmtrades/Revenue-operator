@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
 
   const db = getDb();
   const { data: p } = await db.from("speech_policies").select("version, status").eq("id", objectId).maybeSingle();
-  if (!p) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 200 });
+  if (!p) return NextResponse.json({ ok: false, reason: "not_found" }, { status: 404 });
   const version = (p as { version: number }).version;
 
   await db.from("speech_policies").update({ status: "approved" }).eq("id", objectId);

@@ -127,7 +127,7 @@ export default function AppSettingsBillingPage() {
   useEffect(() => {
     if (searchParams.get("plan_changed") === "1") setToast(tBilling("toast.planUpdated"));
     const minutesPurchased = searchParams.get("minutes_purchased");
-    if (minutesPurchased) setToast(`${minutesPurchased} minutes added to your account!`);
+    if (minutesPurchased) setToast(tBilling("toast.minutesAdded", { minutes: minutesPurchased }));
   }, [searchParams, tBilling]);
 
   useEffect(() => {

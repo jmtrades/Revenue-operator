@@ -129,7 +129,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, idempotent: true }, { status: 200 });
     }
     if (decidedRole !== "owner" && decidedRole !== "admin") {
-      return NextResponse.json({ ok: false, reason: "dual_approval_role_mismatch" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "dual_approval_role_mismatch" }, { status: 403 });
     }
 
     const updated = await decideApproval(approvalId, workspaceId, "approved", decidedBy);
@@ -155,7 +155,7 @@ export async function POST(req: NextRequest) {
 
   // Single-approval path (non-enterprise or dual_approval disabled).
   const updated = await decideApproval(approvalId, workspaceId, "approved", decidedBy);
-  if (!updated) return NextResponse.json({ ok: false, reason: "not_found_or_already_decided" }, { status: 200 });
+  if (!updated) return NextResponse.json({ ok: false, reason: "not_found_or_already_decided" }, { status: 409 });
 
   await createActionIntent(workspaceId, {
     threadId: r.thread_id ?? null,

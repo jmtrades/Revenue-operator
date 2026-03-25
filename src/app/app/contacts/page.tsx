@@ -355,7 +355,7 @@ export default function AppContactsPage() {
     if (Object.keys(errors).length > 0) return;
 
     if (!workspaceId) {
-      setToast("Workspace not loaded. Please refresh.");
+      setToast(t("toast.workspaceNotLoaded"));
       return;
     }
 
@@ -398,7 +398,7 @@ export default function AppContactsPage() {
 
       const mapped = mapLeadToContact(newLead);
       if (!mapped) {
-        setToast("Contact saved but could not display. Please refresh.");
+        setToast(t("toast.contactSaveDisplayFailed"));
         resetForm();
         setShowAdd(false);
         return;
@@ -412,7 +412,7 @@ export default function AppContactsPage() {
       resetForm();
     } catch (err) {
       console.error("[contacts] save error:", err);
-      setToast("Network error. Please try again.");
+      setToast(t("toast.networkError"));
     } finally {
       setCreating(false);
     }

@@ -549,7 +549,8 @@
       "pauseFailed": "Não foi possível pausar a cobertura.",
       "paused": "Cobertura pausada.",
       "paymentFailed": "Não foi possível abrir as configurações de pagamento.",
-      "portalFailed": "Não foi possível abrir o portal de faturamento."
+      "portalFailed": "Não foi possível abrir o portal de faturamento.",
+      "minutesAdded": "{minutes} minutos adicionados à sua conta!"
     },
     "errors": {
       "loadingFailed": "Falha ao carregar informações de faturamento",
@@ -6944,7 +6945,10 @@
       "added": "Contato adicionado",
       "saveError": "Não foi possível salvar o contato. Tente novamente.",
       "deleteError": "Não foi possível excluir o contato. Tente novamente.",
-      "updateError": "Não foi possível atualizar o contato. Tente novamente."
+      "updateError": "Não foi possível atualizar o contato. Tente novamente.",
+      "workspaceNotLoaded": "Espaço de trabalho não carregado. Por favor, atualize.",
+      "contactSaveDisplayFailed": "Contato salvo mas não pôde ser exibido. Por favor, atualize.",
+      "networkError": "Erro de rede. Por favor, tente novamente."
     },
     "lastContactUnknown": "Último contato: desconhecido",
     "lastContactToday": "Último contato: hoje",
@@ -7809,7 +7813,9 @@
     "releaseConfirmMessage": "This number will be released and will no longer receive or make calls through Recall Touch. You can connect a new number anytime.",
     "provisionFailed": "Failed to provision phone number",
     "provisioned": "Phone number provisioned",
-    "searchFailed": "Failed to search phone numbers"
+    "searchFailed": "Failed to search phone numbers",
+    "unknownError": "Erro desconhecido",
+    "submitFailed": "Falha ao enviar solicitação de portabilidade"
   },
   "integrations": {
     "pageTitle": "Integrações — Recall Touch",
@@ -7827,7 +7833,9 @@
       "whatsappEmailRequired": "Digite seu e-mail para entrar na lista de espera do WhatsApp.",
       "whatsappWaitlisted": "Você está na lista. Avisaremos quando o WhatsApp estiver disponível.",
       "error": "Algo deu errado. Tente novamente.",
-      "syncFailed": "Sync failed"
+      "syncFailed": "Sync failed",
+      "importFailed": "Falha na importação. Tente novamente.",
+      "disconnectFailed": "Falha na desconexão."
     },
     "hub": {
       "title": "Integrações",
