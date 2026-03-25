@@ -15,6 +15,7 @@ import { executeLeadOutboundCall } from "@/lib/outbound/execute-lead-call";
 import { parseBody } from "@/lib/api/validate";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { getDb } from "@/lib/db/queries";
 
 const VALID_CAMPAIGN_TYPES: CampaignType[] = [
   "lead_followup", "lead_qualification", "appointment_reminder", "appointment_setting",
@@ -47,6 +48,54 @@ export async function POST(req: NextRequest) {
   const body = parsed.data;
   const { lead_id, campaign_type, campaign_prompt_options } = body;
   if (!lead_id) return NextResponse.json({ error: "lead_id required" }, { status: 400 });
+
+  // Pre-flight: verify workspace has an active phone number configured
+  const db = getDb();
+  const { data: phoneConfig } = await db
+    .from("phone_configs")
+    .select("proxy_number, status")
+    .eq("workspace_id", workspaceId)
+    .maybeSingle();
+  const cfg = phoneConfig as { proxy_number?: string | null; status?: string } | null;
+  if (!cfg?.proxy_number) {
+    return NextResponse.json(
+      {
+        error: "No phone number configured. Go to Settings → Phone to set up a number before making calls.",
+        code: "NO_PHONE_CONFIGURED",
+      },
+      { status: 400 },
+    );
+  }
+  if (cfg.status !== "active") {
+    return NextResponse.json(
+      {
+        error: "Your phone number is not active. Check Settings → Phone for details.",
+        code: "PHONE_INACTIVE",
+      },
+      { status: 400 },
+    );
+  }
+
+  // Pre-flight: verify the lead has a valid phone number
+  const { data: leadData } = await db
+    .from("leads")
+    .select("phone")
+    .eq("id", lead_id)
+    .eq("workspace_id", workspaceId)
+    .maybeSingle();
+  const lead = leadData as { phone?: string | null } | null;
+  if (!lead) {
+    return NextResponse.json({ error: "Lead not found" }, { status: 404 });
+  }
+  if (!lead.phone || lead.phone.trim().length < 10) {
+    return NextResponse.json(
+      {
+        error: "This lead has no valid phone number. Add a phone number to the lead before calling.",
+        code: "LEAD_NO_PHONE",
+      },
+      { status: 400 },
+    );
+  }
 
   const campaignType: CampaignType | undefined =
     typeof campaign_type === "string" && VALID_CAMPAIGN_TYPES.includes(campaign_type as CampaignType)
