@@ -1,0 +1,2578 @@
+{
+  "Agents": {
+    "es": "Agentes",
+    "fr": "Agents",
+    "de": "Agenten",
+    "pt": "Agentes",
+    "ja": "エージェント"
+  },
+  "Solutions": {
+    "es": "Soluciones",
+    "fr": "Solutions",
+    "de": "Lösungen",
+    "pt": "Soluções",
+    "ja": "ソリューション"
+  },
+  "Notifications": {
+    "es": "Notificaciones",
+    "fr": "Notifications",
+    "de": "Benachrichtigungen",
+    "pt": "Notificações",
+    "ja": "通知"
+  },
+  "Communication": {
+    "es": "Comunicación",
+    "fr": "Communication",
+    "de": "Kommunikation",
+    "pt": "Comunicação",
+    "ja": "コミュニケーション"
+  },
+  "Intelligence": {
+    "es": "Inteligencia",
+    "fr": "Intelligence",
+    "de": "Intelligenz",
+    "pt": "Inteligência",
+    "ja": "インテリジェンス"
+  },
+  "Active": {
+    "es": "Activo",
+    "fr": "Actif",
+    "de": "Aktiv",
+    "pt": "Ativo",
+    "ja": "有効"
+  },
+  "Inactive": {
+    "es": "Inactivo",
+    "fr": "Inactif",
+    "de": "Inaktiv",
+    "pt": "Inativo",
+    "ja": "無効"
+  },
+  "Billing — Recall Touch": {
+    "es": "Facturación — Recall Touch",
+    "fr": "Facturation — Recall Touch",
+    "de": "Abrechnung — Recall Touch",
+    "pt": "Faturamento — Recall Touch",
+    "ja": "請求 — Recall Touch"
+  },
+  "Pause": {
+    "es": "Pausar",
+    "fr": "Pause",
+    "de": "Pause",
+    "pt": "Pausar",
+    "ja": "一時停止"
+  },
+  "Could not pause coverage.": {
+    "es": "No se pudo pausar la cobertura.",
+    "fr": "Impossible de mettre la couverture en pause.",
+    "de": "Abdeckung konnte nicht pausiert werden.",
+    "pt": "Não foi possível pausar a cobertura.",
+    "ja": "カバレッジを一時停止できませんでした。"
+  },
+  "Coverage paused.": {
+    "es": "Cobertura pausada.",
+    "fr": "Couverture en pause.",
+    "de": "Abdeckung pausiert.",
+    "pt": "Cobertura pausada.",
+    "ja": "カバレッジを一時停止しました。"
+  },
+  "Could not open payment settings.": {
+    "es": "No se pudieron abrir los ajustes de pago.",
+    "fr": "Impossible d'ouvrir les paramètres de paiement.",
+    "de": "Zahlungseinstellungen konnten nicht geöffnet werden.",
+    "pt": "Não foi possível abrir as configurações de pagamento.",
+    "ja": "支払い設定を開けませんでした。"
+  },
+  "Could not open billing portal.": {
+    "es": "No se pudo abrir el portal de facturación.",
+    "fr": "Impossible d'ouvrir le portail de facturation.",
+    "de": "Abrechnungsportal konnte nicht geöffnet werden.",
+    "pt": "Não foi possível abrir o portal de faturamento.",
+    "ja": "請求ポータルを開けませんでした。"
+  },
+  "Leads": {
+    "es": "Prospectos",
+    "fr": "Prospects",
+    "de": "Interessenten",
+    "pt": "Leads",
+    "ja": "リード"
+  },
+  "Urgent": {
+    "es": "Urgente",
+    "fr": "Urgent",
+    "de": "Dringend",
+    "pt": "Urgente",
+    "ja": "緊急"
+  },
+  "Spam": {
+    "es": "Spam",
+    "fr": "Spam",
+    "de": "Spam",
+    "pt": "Spam",
+    "ja": "スパム"
+  },
+  "URGENT": {
+    "es": "URGENTE",
+    "fr": "URGENT",
+    "de": "DRINGEND",
+    "pt": "URGENTE",
+    "ja": "緊急"
+  },
+  "SPAM": {
+    "es": "SPAM",
+    "fr": "SPAM",
+    "de": "SPAM",
+    "pt": "SPAM",
+    "ja": "スパム"
+  },
+  "Message": {
+    "es": "Mensaje",
+    "fr": "Message",
+    "de": "Nachricht",
+    "pt": "Mensagem",
+    "ja": "メッセージ"
+  },
+  "Agent": {
+    "es": "Agente",
+    "fr": "Agent",
+    "de": "Agent",
+    "pt": "Agente",
+    "ja": "エージェント"
+  },
+  "Contacts": {
+    "es": "Contactos",
+    "fr": "Contacts",
+    "de": "Kontakte",
+    "pt": "Contatos",
+    "ja": "連絡先"
+  },
+  "Messages": {
+    "es": "Mensajes",
+    "fr": "Messages",
+    "de": "Nachrichten",
+    "pt": "Mensagens",
+    "ja": "メッセージ"
+  },
+  "Assurance": {
+    "es": "Garantía",
+    "fr": "Assurance",
+    "de": "Versicherung",
+    "pt": "Garantia",
+    "ja": "保証"
+  },
+  "Contact": {
+    "es": "Contacto",
+    "fr": "Contact",
+    "de": "Kontakt",
+    "pt": "Contato",
+    "ja": "連絡先"
+  },
+  "Type": {
+    "es": "Tipo",
+    "fr": "Type",
+    "de": "Typ",
+    "pt": "Tipo",
+    "ja": "タイプ"
+  },
+  "Audience": {
+    "es": "Audiencia",
+    "fr": "Audience",
+    "de": "Zielgruppe",
+    "pt": "Público",
+    "ja": "オーディエンス"
+  },
+  "Plan": {
+    "es": "Plan",
+    "fr": "Plan",
+    "de": "Plan",
+    "pt": "Plano",
+    "ja": "プラン"
+  },
+  "Silence": {
+    "es": "Silencio",
+    "fr": "Silence",
+    "de": "Stille",
+    "pt": "Silêncio",
+    "ja": "サイレンス"
+  },
+  "Sources": {
+    "es": "Fuentes",
+    "fr": "Sources",
+    "de": "Quellen",
+    "pt": "Fontes",
+    "ja": "ソース"
+  },
+  "Dashboard": {
+    "es": "Panel",
+    "fr": "Tableau de bord",
+    "de": "Übersicht",
+    "pt": "Painel",
+    "ja": "ダッシュボード"
+  },
+  "Docs": {
+    "es": "Documentación",
+    "fr": "Documentation",
+    "de": "Dokumentation",
+    "pt": "Documentação",
+    "ja": "ドキュメント"
+  },
+  "Documentation": {
+    "es": "Documentación",
+    "fr": "Documentation",
+    "de": "Dokumentation",
+    "pt": "Documentação",
+    "ja": "ドキュメント"
+  },
+  "Document": {
+    "es": "Documento",
+    "fr": "Document",
+    "de": "Dokument",
+    "pt": "Documento",
+    "ja": "ドキュメント"
+  },
+  "Edit": {
+    "es": "Editar",
+    "fr": "Modifier",
+    "de": "Bearbeiten",
+    "pt": "Editar",
+    "ja": "編集"
+  },
+  "Edit agent": {
+    "es": "Editar agente",
+    "fr": "Modifier l'agent",
+    "de": "Agent bearbeiten",
+    "pt": "Editar agente",
+    "ja": "エージェントを編集"
+  },
+  "Email": {
+    "es": "Correo electrónico",
+    "fr": "E-mail",
+    "de": "E-Mail",
+    "pt": "E-mail",
+    "ja": "メール"
+  },
+  "Emergency": {
+    "es": "Emergencia",
+    "fr": "Urgence",
+    "de": "Notfall",
+    "pt": "Emergência",
+    "ja": "緊急"
+  },
+  "Emergency or high-priority calls": {
+    "es": "Llamadas de emergencia o alta prioridad",
+    "fr": "Appels d'urgence ou prioritaires",
+    "de": "Notfall- oder prioritäre Anrufe",
+    "pt": "Chamadas de emergência ou prioritárias",
+    "ja": "緊急または高優先度の通話"
+  },
+  "Endpoint / URL": {
+    "es": "Punto de conexión / URL",
+    "fr": "Point de terminaison / URL",
+    "de": "Endpunkt / URL",
+    "pt": "Endpoint / URL",
+    "ja": "エンドポイント / URL"
+  },
+  "Enterprise": {
+    "es": "Empresa",
+    "fr": "Entreprise",
+    "de": "Unternehmen",
+    "pt": "Empresa",
+    "ja": "エンタープライズ"
+  },
+  "Every time your AI answers a call": {
+    "es": "Cada vez que tu IA contesta una llamada",
+    "fr": "Chaque fois que votre IA répond à un appel",
+    "de": "Jedes Mal, wenn Ihre KI einen Anruf beantwortet",
+    "pt": "Sempre que sua IA atende uma chamada",
+    "ja": "AIが電話に応答するたびに"
+  },
+  "Export CSV": {
+    "es": "Exportar CSV",
+    "fr": "Exporter CSV",
+    "de": "CSV exportieren",
+    "pt": "Exportar CSV",
+    "ja": "CSVをエクスポート"
+  },
+  "FAQ": {
+    "es": "Preguntas frecuentes",
+    "fr": "FAQ",
+    "de": "FAQ",
+    "pt": "Perguntas frequentes",
+    "ja": "よくある質問"
+  },
+  "Flow builder": {
+    "es": "Constructor de flujos",
+    "fr": "Créateur de flux",
+    "de": "Flow-Builder",
+    "pt": "Construtor de fluxo",
+    "ja": "フロービルダー"
+  },
+  "Follow-up": {
+    "es": "Seguimiento",
+    "fr": "Suivi",
+    "de": "Nachfass",
+    "pt": "Acompanhamento",
+    "ja": "フォローアップ"
+  },
+  "For {name}": {
+    "es": "Para {name}",
+    "fr": "Pour {name}",
+    "de": "Für {name}",
+    "pt": "Para {name}",
+    "ja": "{name} 用"
+  },
+  "Get started — Recall Touch": {
+    "es": "Comenzar — Recall Touch",
+    "fr": "Commencer — Recall Touch",
+    "de": "Starten — Recall Touch",
+    "pt": "Começar — Recall Touch",
+    "ja": "開始 — Recall Touch"
+  },
+  "Go live": {
+    "es": "Poner en vivo",
+    "fr": "Mettre en ligne",
+    "de": "Live schalten",
+    "pt": "Publicar",
+    "ja": "公開"
+  },
+  "Growth": {
+    "es": "Crecimiento",
+    "fr": "Croissance",
+    "de": "Wachstum",
+    "pt": "Crescimento",
+    "ja": "成長"
+  },
+  "Inbound": {
+    "es": "Entrante",
+    "fr": "Entrant",
+    "de": "Eingehend",
+    "pt": "Entrada",
+    "ja": "着信"
+  },
+  "Inbox": {
+    "es": "Bandeja de entrada",
+    "fr": "Boîte de réception",
+    "de": "Posteingang",
+    "pt": "Caixa de entrada",
+    "ja": "受信トレイ"
+  },
+  "Info": {
+    "es": "Información",
+    "fr": "Info",
+    "de": "Info",
+    "pt": "Info",
+    "ja": "情報"
+  },
+  "Integrations — Recall Touch": {
+    "es": "Integraciones — Recall Touch",
+    "fr": "Intégrations — Recall Touch",
+    "de": "Integrationen — Recall Touch",
+    "pt": "Integrações — Recall Touch",
+    "ja": "連携 — Recall Touch"
+  },
+  "Invalid integration.": {
+    "es": "Integración no válida.",
+    "fr": "Intégration invalide.",
+    "de": "Ungültige Integration.",
+    "pt": "Integração inválida.",
+    "ja": "無効な連携です。"
+  },
+  "Jump to step": {
+    "es": "Ir al paso",
+    "fr": "Aller à l'étape",
+    "de": "Zu Schritt springen",
+    "pt": "Ir para etapa",
+    "ja": "ステップへ移動"
+  },
+  "Knowledge": {
+    "es": "Conocimiento",
+    "fr": "Connaissances",
+    "de": "Wissen",
+    "pt": "Conhecimento",
+    "ja": "ナレッジ"
+  },
+  "Knowledge base": {
+    "es": "Base de conocimiento",
+    "fr": "Base de connaissances",
+    "de": "Wissensdatenbank",
+    "pt": "Base de conhecimento",
+    "ja": "ナレッジベース"
+  },
+  "Last 30 days": {
+    "es": "Últimos 30 días",
+    "fr": "30 derniers jours",
+    "de": "Letzte 30 Tage",
+    "pt": "Últimos 30 dias",
+    "ja": "過去30日間"
+  },
+  "Last 7 days": {
+    "es": "Últimos 7 días",
+    "fr": "7 derniers jours",
+    "de": "Letzte 7 Tage",
+    "pt": "Últimos 7 dias",
+    "ja": "過去7日間"
+  },
+  "Last 90 days": {
+    "es": "Últimos 90 días",
+    "fr": "90 derniers jours",
+    "de": "Letzte 90 Tage",
+    "pt": "Últimos 90 dias",
+    "ja": "過去90日間"
+  },
+  "Lead": {
+    "es": "Prospecto",
+    "fr": "Prospect",
+    "de": "Interessent",
+    "pt": "Lead",
+    "ja": "リード"
+  },
+  "Lead captured": {
+    "es": "Lead capturado",
+    "fr": "Prospect capturé",
+    "de": "Interessent erfasst",
+    "pt": "Lead capturado",
+    "ja": "リードを獲得"
+  },
+  "Leads — Recall Touch": {
+    "es": "Prospectos — Recall Touch",
+    "fr": "Prospects — Recall Touch",
+    "de": "Interessenten — Recall Touch",
+    "pt": "Leads — Recall Touch",
+    "ja": "リード — Recall Touch"
+  },
+  "Live": {
+    "es": "En vivo",
+    "fr": "En direct",
+    "de": "Aktiv",
+    "pt": "Ao vivo",
+    "ja": "ライブ"
+  },
+  "Loading…": {
+    "es": "Cargando…",
+    "fr": "Chargement…",
+    "de": "Laden…",
+    "pt": "Carregando…",
+    "ja": "読み込み中…"
+  },
+  "Local": {
+    "es": "Local",
+    "fr": "Local",
+    "de": "Lokal",
+    "pt": "Local",
+    "ja": "ローカル"
+  },
+  "Manager": {
+    "es": "Gestor",
+    "fr": "Manager",
+    "de": "Manager",
+    "pt": "Gerente",
+    "ja": "マネージャー"
+  },
+  "Message sent.": {
+    "es": "Mensaje enviado.",
+    "fr": "Message envoyé.",
+    "de": "Nachricht gesendet.",
+    "pt": "Mensagem enviada.",
+    "ja": "メッセージを送信しました。"
+  },
+  "Messages — Recall Touch": {
+    "es": "Mensajes — Recall Touch",
+    "fr": "Messages — Recall Touch",
+    "de": "Nachrichten — Recall Touch",
+    "pt": "Mensagens — Recall Touch",
+    "ja": "メッセージ — Recall Touch"
+  },
+  "Mission": {
+    "es": "Misión",
+    "fr": "Mission",
+    "de": "Mission",
+    "pt": "Missão",
+    "ja": "ミッション"
+  },
+  "Missed": {
+    "es": "Perdida",
+    "fr": "Manqué",
+    "de": "Verpasst",
+    "pt": "Perdida",
+    "ja": "不在"
+  },
+  "Mobile": {
+    "es": "Móvil",
+    "fr": "Mobile",
+    "de": "Mobil",
+    "pt": "Celular",
+    "ja": "モバイル"
+  },
+  "Mon": {
+    "es": "Lun",
+    "fr": "Lun",
+    "de": "Mo",
+    "pt": "Seg",
+    "ja": "月"
+  },
+  "Negative {pct}%": {
+    "es": "Negativo {pct}%",
+    "fr": "Négatif {pct}%",
+    "de": "Negativ {pct}%",
+    "pt": "Negativo {pct}%",
+    "ja": "ネガティブ {pct}%"
+  },
+  "Neutral {pct}%": {
+    "es": "Neutral {pct}%",
+    "fr": "Neutre {pct}%",
+    "de": "Neutral {pct}%",
+    "pt": "Neutro {pct}%",
+    "ja": "中立 {pct}%"
+  },
+  "New lead": {
+    "es": "Nuevo lead",
+    "fr": "Nouveau prospect",
+    "de": "Neuer Interessent",
+    "pt": "Novo lead",
+    "ja": "新規リード"
+  },
+  "Next": {
+    "es": "Siguiente",
+    "fr": "Suivant",
+    "de": "Weiter",
+    "pt": "Próximo",
+    "ja": "次へ"
+  },
+  "No matches.": {
+    "es": "Sin coincidencias.",
+    "fr": "Aucune correspondance.",
+    "de": "Keine Treffer.",
+    "pt": "Nenhuma correspondência.",
+    "ja": "一致するものはありません。"
+  },
+  "Notes": {
+    "es": "Notas",
+    "fr": "Notes",
+    "de": "Notizen",
+    "pt": "Notas",
+    "ja": "メモ"
+  },
+  "Onboarding": {
+    "es": "Incorporación",
+    "fr": "Intégration",
+    "de": "Onboarding",
+    "pt": "Integração",
+    "ja": "オンボーディング"
+  },
+  "Outbound": {
+    "es": "Saliente",
+    "fr": "Sortant",
+    "de": "Ausgehend",
+    "pt": "Saída",
+    "ja": "発信"
+  },
+  "Payload": {
+    "es": "Carga útil",
+    "fr": "Payload",
+    "de": "Payload",
+    "pt": "Payload",
+    "ja": "ペイロード"
+  },
+  "Peak hours": {
+    "es": "Horas pico",
+    "fr": "Heures de pointe",
+    "de": "Spitzenzeiten",
+    "pt": "Horário de pico",
+    "ja": "ピーク時間"
+  },
+  "Permissions": {
+    "es": "Permisos",
+    "fr": "Autorisations",
+    "de": "Berechtigungen",
+    "pt": "Permissões",
+    "ja": "権限"
+  },
+  "Phone Settings — Recall Touch": {
+    "es": "Ajustes de teléfono — Recall Touch",
+    "fr": "Paramètres téléphone — Recall Touch",
+    "de": "Telefoneinstellungen — Recall Touch",
+    "pt": "Configurações de telefone — Recall Touch",
+    "ja": "電話設定 — Recall Touch"
+  },
+  "Phone verified ✓": {
+    "es": "Teléfono verificado ✓",
+    "fr": "Téléphone vérifié ✓",
+    "de": "Telefon verifiziert ✓",
+    "pt": "Telefone verificado ✓",
+    "ja": "電話を確認しました ✓"
+  },
+  "Playbooks": {
+    "es": "Guías",
+    "fr": "Playbooks",
+    "de": "Playbooks",
+    "pt": "Playbooks",
+    "ja": "プレイブック"
+  },
+  "Positive {pct}%": {
+    "es": "Positivo {pct}%",
+    "fr": "Positif {pct}%",
+    "de": "Positiv {pct}%",
+    "pt": "Positivo {pct}%",
+    "ja": "ポジティブ {pct}%"
+  },
+  "Positive sentiment {pct}%": {
+    "es": "Sentimiento positivo {pct}%",
+    "fr": "Sentiment positif {pct}%",
+    "de": "Positives Sentiment {pct}%",
+    "pt": "Sentimento positivo {pct}%",
+    "ja": "ポジティブ {pct}%"
+  },
+  "Progress": {
+    "es": "Progreso",
+    "fr": "Progression",
+    "de": "Fortschritt",
+    "pt": "Progresso",
+    "ja": "進捗"
+  },
+  "Push": {
+    "es": "Push",
+    "fr": "Push",
+    "de": "Push",
+    "pt": "Push",
+    "ja": "プッシュ"
+  },
+  "Q&A pairs your agent uses to answer callers.": {
+    "es": "Pares P&R que usa tu agente.",
+    "fr": "Paires Q&R utilisées par votre agent.",
+    "de": "Frage-Antwort-Paare Ihres Agenten.",
+    "pt": "Pares de pergunta e resposta do agente.",
+    "ja": "エージェントが発信者に答えるためのQ&Aペア。"
+  },
+  "Qualification": {
+    "es": "Calificación",
+    "fr": "Qualification",
+    "de": "Qualifizierung",
+    "pt": "Qualificação",
+    "ja": "認定"
+  },
+  "Qualified": {
+    "es": "Calificado",
+    "fr": "Qualifié",
+    "de": "Qualifiziert",
+    "pt": "Qualificado",
+    "ja": "認定済み"
+  },
+  "Quick actions": {
+    "es": "Acciones rápidas",
+    "fr": "Actions rapides",
+    "de": "Schnellaktionen",
+    "pt": "Ações rápidas",
+    "ja": "クイックアクション"
+  },
+  "Remove": {
+    "es": "Quitar",
+    "fr": "Supprimer",
+    "de": "Entfernen",
+    "pt": "Remover",
+    "ja": "削除"
+  },
+  "Setup": {
+    "es": "Configuración",
+    "fr": "Configuration",
+    "de": "Einrichtung",
+    "pt": "Configuração",
+    "ja": "設定"
+  },
+  "Setup progress": {
+    "es": "Progreso de configuración",
+    "fr": "Progression de la configuration",
+    "de": "Einrichtungsfortschritt",
+    "pt": "Progresso da configuração",
+    "ja": "設定の進捗"
+  },
+  "Step {current} of {total}": {
+    "es": "Paso {current} de {total}",
+    "fr": "Étape {current} sur {total}",
+    "de": "Schritt {current} von {total}",
+    "pt": "Etapa {current} de {total}",
+    "ja": "ステップ {current} / {total}"
+  },
+  "Completed": {
+    "es": "Completado",
+    "fr": "Complété",
+    "de": "Abgeschlossen",
+    "pt": "Concluído",
+    "ja": "完了"
+  },
+  "Current step": {
+    "es": "Paso actual",
+    "fr": "Étape actuelle",
+    "de": "Aktueller Schritt",
+    "pt": "Etapa atual",
+    "ja": "現在のステップ"
+  },
+  "Currently: {label}": {
+    "es": "Actualmente: {label}",
+    "fr": "Actuellement : {label}",
+    "de": "Aktuell: {label}",
+    "pt": "Atualmente: {label}",
+    "ja": "現在: {label}"
+  },
+  "When to transfer": {
+    "es": "Cuándo transferir",
+    "fr": "Quand transférer",
+    "de": "Wann weiterleiten",
+    "pt": "Quando transferir",
+    "ja": "いつ転送するか"
+  },
+  "Reasons that trigger a handoff to a human.": {
+    "es": "Motivos que activan la transferencia a un humano.",
+    "fr": "Raisons qui déclenchent un transfert vers un humain.",
+    "de": "Gründe für die Übergabe an einen Menschen.",
+    "pt": "Motivos que disparam a transferência para um humano.",
+    "ja": "人間への引き継ぎをトリガーする理由。"
+  },
+  "Anything the agent should always remember on calls.": {
+    "es": "Todo lo que el agente debe recordar en las llamadas.",
+    "fr": "Ce que l'agent doit toujours garder en tête.",
+    "de": "Was der Agent bei Anrufen immer beachten soll.",
+    "pt": "O que o agente deve sempre lembrar em chamadas.",
+    "ja": "エージェントが通話で常に覚えておくべきこと。"
+  },
+  "When caller asks about…": {
+    "es": "Cuando el llamante pregunta sobre…",
+    "fr": "Quand l'appelant demande…",
+    "de": "Wenn der Anrufer fragt nach…",
+    "pt": "Quando o chamador pergunta sobre…",
+    "ja": "発信者が…について尋ねたとき"
+  },
+  "Agent responds with…": {
+    "es": "El agente responde con…",
+    "fr": "L'agent répond par…",
+    "de": "Der Agent antwortet mit…",
+    "pt": "O agente responde com…",
+    "ja": "エージェントの回答…"
+  },
+  "Add Q&A": {
+    "es": "Añadir P&R",
+    "fr": "Ajouter Q&R",
+    "de": "Q&A hinzufügen",
+    "pt": "Adicionar P&R",
+    "ja": "Q&Aを追加"
+  },
+  "Analytics": {
+    "es": "Analítica",
+    "fr": "Analyses",
+    "de": "Analytik",
+    "pt": "Análises",
+    "ja": "分析"
+  },
+  "Agent Settings — Recall Touch": {
+    "es": "Ajustes del agente — Recall Touch",
+    "fr": "Paramètres de l'agent — Recall Touch",
+    "de": "Agent-Einstellungen — Recall Touch",
+    "pt": "Configurações do agente — Recall Touch",
+    "ja": "エージェント設定 — Recall Touch"
+  },
+  "Call Intelligence — Recall Touch": {
+    "es": "Inteligencia de llamadas — Recall Touch",
+    "fr": "Intelligence d'appels — Recall Touch",
+    "de": "Anruf-Intelligenz — Recall Touch",
+    "pt": "Inteligência de chamadas — Recall Touch",
+    "ja": "通話インテリジェンス — Recall Touch"
+  },
+  "Call Rules — Recall Touch": {
+    "es": "Reglas de llamadas — Recall Touch",
+    "fr": "Règles d'appels — Recall Touch",
+    "de": "Anrufregeln — Recall Touch",
+    "pt": "Regras de chamadas — Recall Touch",
+    "ja": "通話ルール — Recall Touch"
+  },
+  "Developer — Recall Touch": {
+    "es": "Desarrollador — Recall Touch",
+    "fr": "Développeur — Recall Touch",
+    "de": "Entwickler — Recall Touch",
+    "pt": "Desenvolvedor — Recall Touch",
+    "ja": "開発者 — Recall Touch"
+  },
+  "Plan updated. Your new features are available now.": {
+    "es": "Plan actualizado. Tus nuevas funciones ya están disponibles.",
+    "fr": "Plan mis à jour. Vos nouvelles fonctionnalités sont disponibles.",
+    "de": "Plan aktualisiert. Neue Funktionen sind verfügbar.",
+    "pt": "Plano atualizado. Seus novos recursos estão disponíveis.",
+    "ja": "プランを更新しました。新機能が利用可能です。"
+  },
+  "Create an agent first in the Agents section, then try again.": {
+    "es": "Crea primero un agente en la sección Agentes y vuelve a intentarlo.",
+    "fr": "Créez d'abord un agent dans la section Agents, puis réessayez.",
+    "de": "Erstellen Sie zuerst einen Agenten im Bereich Agenten.",
+    "pt": "Crie um agente na seção Agentes primeiro e tente novamente.",
+    "ja": "まずエージェントセクションでエージェントを作成してください。"
+  },
+  "Calling you now — answer your phone to hear your agent.": {
+    "es": "Llamando ahora — responde para oír a tu agente.",
+    "fr": "Appel en cours — répondez pour entendre votre agent.",
+    "de": "Wir rufen Sie an — nehmen Sie ab, um Ihren Agenten zu hören.",
+    "pt": "Ligando agora — atenda para ouvir seu agente.",
+    "ja": "発信しています。電話に出てエージェントをお聞きください。"
+  },
+  "We'll notify you when numbers are available.": {
+    "es": "Te avisaremos cuando haya números disponibles.",
+    "fr": "Nous vous préviendrons quand des numéros seront disponibles.",
+    "de": "Wir benachrichtigen Sie, wenn Nummern verfügbar sind.",
+    "pt": "Avisaremos quando houver números disponíveis.",
+    "ja": "番号が利用可能になったらお知らせします。"
+  },
+  "Settings saved.": {
+    "es": "Ajustes guardados.",
+    "fr": "Paramètres enregistrés.",
+    "de": "Einstellungen gespeichert.",
+    "pt": "Configurações salvas.",
+    "ja": "設定を保存しました。"
+  },
+  "Something went wrong.": {
+    "es": "Algo ha fallado.",
+    "fr": "Une erreur s'est produite.",
+    "de": "Etwas ist schiefgelaufen.",
+    "pt": "Algo deu errado.",
+    "ja": "問題が発生しました。"
+  },
+  "Something went wrong. Try again.": {
+    "es": "Algo ha fallado. Inténtalo de nuevo.",
+    "fr": "Une erreur s'est produite. Réessayez.",
+    "de": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
+    "pt": "Algo deu errado. Tente novamente.",
+    "ja": "問題が発生しました。もう一度お試しください。"
+  },
+  "Webhook destination saved.": {
+    "es": "Destino del webhook guardado.",
+    "fr": "Destination webhook enregistrée.",
+    "de": "Webhook-Ziel gespeichert.",
+    "pt": "Destino do webhook salvo.",
+    "ja": "Webhookの送信先を保存しました。"
+  },
+  "Could not save webhook settings.": {
+    "es": "No se pudieron guardar los ajustes del webhook.",
+    "fr": "Impossible d'enregistrer les paramètres du webhook.",
+    "de": "Webhook-Einstellungen konnten nicht gespeichert werden.",
+    "pt": "Não foi possível salvar as configurações do webhook.",
+    "ja": "Webhook設定を保存できませんでした。"
+  },
+  "Could not send webhook test.": {
+    "es": "No se pudo enviar la prueba del webhook.",
+    "fr": "Impossible d'envoyer le test du webhook.",
+    "de": "Webhook-Test konnte nicht gesendet werden.",
+    "pt": "Não foi possível enviar o teste do webhook.",
+    "ja": "Webhookテストを送信できませんでした。"
+  },
+  "Enter your email to join the WhatsApp waitlist.": {
+    "es": "Introduce tu correo para la lista de espera de WhatsApp.",
+    "fr": "Entrez votre e-mail pour rejoindre la liste d'attente WhatsApp.",
+    "de": "E-Mail eingeben, um zur WhatsApp-Warteliste zu kommen.",
+    "pt": "Digite seu e-mail para entrar na lista de espera do WhatsApp.",
+    "ja": "WhatsAppのウェイトリストに登録するにはメールを入力してください。"
+  },
+  "You're on the list. We'll notify you when WhatsApp is available.": {
+    "es": "Estás en la lista. Te avisaremos cuando WhatsApp esté disponible.",
+    "fr": "Vous êtes sur la liste. Nous vous préviendrons quand WhatsApp sera disponible.",
+    "de": "Sie sind auf der Liste. Wir benachrichtigen Sie, wenn WhatsApp verfügbar ist.",
+    "pt": "Você está na lista. Avisaremos quando o WhatsApp estiver disponível.",
+    "ja": "リストに登録されました。WhatsAppが利用可能になり次第お知らせします。"
+  },
+  "Add this contact in Leads first to send messages.": {
+    "es": "Añade este contacto en Prospectos primero para enviar mensajes.",
+    "fr": "Ajoutez ce contact dans Prospects d'abord pour envoyer des messages.",
+    "de": "Fügen Sie diesen Kontakt zuerst in Interessenten hinzu.",
+    "pt": "Adicione este contato em Leads primeiro para enviar mensagens.",
+    "ja": "メッセージを送るには、まずリードにこの連絡先を追加してください。"
+  },
+  "OAuth for this CRM will be available soon. Use the webhook below to send events in the meantime.": {
+    "es": "OAuth para este CRM estará disponible pronto. Usa el webhook de abajo mientras tanto.",
+    "fr": "OAuth pour ce CRM sera bientôt disponible. Utilisez le webhook ci-dessous en attendant.",
+    "de": "OAuth für dieses CRM wird bald verfügbar sein. Nutzen Sie vorübergehend den Webhook.",
+    "pt": "OAuth para este CRM estará disponível em breve. Use o webhook abaixo enquanto isso.",
+    "ja": "このCRMのOAuthは近日公開です。それまでは以下のWebhookをご利用ください。"
+  },
+  "Call received": {
+    "es": "Llamada recibida",
+    "fr": "Appel reçu",
+    "de": "Anruf erhalten",
+    "pt": "Chamada recebida",
+    "ja": "着信"
+  },
+  "Appointment booked": {
+    "es": "Cita reservada",
+    "fr": "Rendez-vous réservé",
+    "de": "Termin gebucht",
+    "pt": "Compromisso agendado",
+    "ja": "予約完了"
+  },
+  "When a caller is identified as a new lead": {
+    "es": "Cuando el llamante se identifica como nuevo lead",
+    "fr": "Quand un appelant est identifié comme nouveau prospect",
+    "de": "Wenn ein Anrufer als neuer Interessent erkannt wird",
+    "pt": "Quando um chamador é identificado como novo lead",
+    "ja": "発信者が新規リードとして識別されたとき"
+  },
+  "When your AI books an appointment": {
+    "es": "Cuando tu IA reserva una cita",
+    "fr": "Quand votre IA réserve un rendez-vous",
+    "de": "Wenn Ihre KI einen Termin bucht",
+    "pt": "Quando sua IA agenda um compromisso",
+    "ja": "AIが予約を入れたとき"
+  },
+  "Voicemail left": {
+    "es": "Buzón de voz dejado",
+    "fr": "Message vocal laissé",
+    "de": "Sprachnachricht hinterlassen",
+    "pt": "Recado de voz deixado",
+    "ja": "ボイスメールが残されたとき"
+  },
+  "When a caller leaves a voicemail": {
+    "es": "Cuando el llamante deja un mensaje de voz",
+    "fr": "Quand un appelant laisse un message vocal",
+    "de": "Wenn ein Anrufer eine Sprachnachricht hinterlässt",
+    "pt": "Quando um chamador deixa um recado de voz",
+    "ja": "発信者がボイスメールを残したとき"
+  },
+  "Settings updated": {
+    "es": "Ajustes actualizados",
+    "fr": "Paramètres mis à jour",
+    "de": "Einstellungen aktualisiert",
+    "pt": "Configurações atualizadas",
+    "ja": "設定を更新しました"
+  },
+  "Business settings updated": {
+    "es": "Ajustes del negocio actualizados",
+    "fr": "Paramètres entreprise mis à jour",
+    "de": "Geschäftseinstellungen aktualisiert",
+    "pt": "Configurações da empresa atualizadas",
+    "ja": "ビジネス設定を更新しました"
+  },
+  "Admin": {
+    "es": "Administrador",
+    "fr": "Administrateur",
+    "de": "Administrator",
+    "pt": "Administrador",
+    "ja": "管理者"
+  },
+  "Viewer": {
+    "es": "Visor",
+    "fr": "Lecteur",
+    "de": "Betrachter",
+    "pt": "Visualizador",
+    "ja": "閲覧者"
+  },
+  "API Keys": {
+    "es": "Claves API",
+    "fr": "Clés API",
+    "de": "API-Schlüssel",
+    "pt": "Chaves de API",
+    "ja": "APIキー"
+  },
+  "Webhooks": {
+    "es": "Webhooks",
+    "fr": "Webhooks",
+    "de": "Webhooks",
+    "pt": "Webhooks",
+    "ja": "Webhooks"
+  },
+  "URL": {
+    "es": "URL",
+    "fr": "URL",
+    "de": "URL",
+    "pt": "URL",
+    "ja": "URL"
+  },
+  "Manual": {
+    "es": "Manual",
+    "fr": "Manuel",
+    "de": "Manuell",
+    "pt": "Manual",
+    "ja": "手動"
+  },
+  "Starter": {
+    "es": "Inicio",
+    "fr": "Starter",
+    "de": "Einstieg",
+    "pt": "Início",
+    "ja": "スターター"
+  },
+  "Scale": {
+    "es": "Escala",
+    "fr": "Scale",
+    "de": "Skalierung",
+    "pt": "Escala",
+    "ja": "スケール"
+  },
+  "Popular": {
+    "es": "Popular",
+    "fr": "Populaire",
+    "de": "Beliebt",
+    "pt": "Popular",
+    "ja": "人気"
+  },
+  "Blog": {
+    "es": "Blog",
+    "fr": "Blog",
+    "de": "Blog",
+    "pt": "Blog",
+    "ja": "ブログ"
+  },
+  "Director": {
+    "es": "Director",
+    "fr": "Directeur",
+    "de": "Direktor",
+    "pt": "Diretor",
+    "ja": "ディレクター"
+  },
+  "Total:": {
+    "es": "Total:",
+    "fr": "Total :",
+    "de": "Gesamt:",
+    "pt": "Total:",
+    "ja": "合計："
+  },
+  "{name} · Lead": {
+    "es": "{name} · Prospecto",
+    "fr": "{name} · Prospect",
+    "de": "{name} · Interessent",
+    "pt": "{name} · Lead",
+    "ja": "{name} · リード"
+  },
+  "calls": {
+    "es": "llamadas",
+    "fr": "appels",
+    "de": "Anrufe",
+    "pt": "chamadas",
+    "ja": "通話"
+  },
+  "Ready": {
+    "es": "Listo",
+    "fr": "Prêt",
+    "de": "Bereit",
+    "pt": "Pronto",
+    "ja": "準備完了"
+  },
+  "Test": {
+    "es": "Probar",
+    "fr": "Tester",
+    "de": "Testen",
+    "pt": "Testar",
+    "ja": "テスト"
+  },
+  "Test agent": {
+    "es": "Probar agente",
+    "fr": "Tester l'agent",
+    "de": "Agent testen",
+    "pt": "Testar agente",
+    "ja": "エージェントをテスト"
+  },
+  "Dismiss": {
+    "es": "Descartar",
+    "fr": "Fermer",
+    "de": "Schließen",
+    "pt": "Dispensar",
+    "ja": "閉じる"
+  },
+  "Close": {
+    "es": "Cerrar",
+    "fr": "Fermer",
+    "de": "Schließen",
+    "pt": "Fechar",
+    "ja": "閉じる"
+  },
+  "Both": {
+    "es": "Ambos",
+    "fr": "Les deux",
+    "de": "Beide",
+    "pt": "Ambos",
+    "ja": "両方"
+  },
+  "Appointment": {
+    "es": "Cita",
+    "fr": "Rendez-vous",
+    "de": "Termin",
+    "pt": "Compromisso",
+    "ja": "予約"
+  },
+  "Appointments": {
+    "es": "Citas",
+    "fr": "Rendez-vous",
+    "de": "Termine",
+    "pt": "Compromissos",
+    "ja": "予約"
+  },
+  "Custom": {
+    "es": "Personalizado",
+    "fr": "Personnalisé",
+    "de": "Benutzerdefiniert",
+    "pt": "Personalizado",
+    "ja": "カスタム"
+  },
+  "Date": {
+    "es": "Fecha",
+    "fr": "Date",
+    "de": "Datum",
+    "pt": "Data",
+    "ja": "日付"
+  },
+  "Page": {
+    "es": "Página",
+    "fr": "Page",
+    "de": "Seite",
+    "pt": "Página",
+    "ja": "ページ"
+  },
+  "Pages": {
+    "es": "Páginas",
+    "fr": "Pages",
+    "de": "Seiten",
+    "pt": "Páginas",
+    "ja": "ページ"
+  },
+  "Demo": {
+    "es": "Demostración",
+    "fr": "Démo",
+    "de": "Demo",
+    "pt": "Demonstração",
+    "ja": "デモ"
+  },
+  "Action": {
+    "es": "Acción",
+    "fr": "Action",
+    "de": "Aktion",
+    "pt": "Ação",
+    "ja": "アクション"
+  },
+  "Actions": {
+    "es": "Acciones",
+    "fr": "Actions",
+    "de": "Aktionen",
+    "pt": "Ações",
+    "ja": "アクション"
+  },
+  "Activation": {
+    "es": "Activación",
+    "fr": "Activation",
+    "de": "Aktivierung",
+    "pt": "Ativação",
+    "ja": "有効化"
+  },
+  "Add to knowledge base": {
+    "es": "Añadir a la base de conocimiento",
+    "fr": "Ajouter à la base de connaissances",
+    "de": "Zur Wissensdatenbank hinzufügen",
+    "pt": "Adicionar à base de conhecimento",
+    "ja": "ナレッジベースに追加"
+  },
+  "Added manually from dashboard.": {
+    "es": "Añadido manualmente desde el panel.",
+    "fr": "Ajouté manuellement depuis le tableau de bord.",
+    "de": "Manuell vom Dashboard hinzugefügt.",
+    "pt": "Adicionado manualmente pelo painel.",
+    "ja": "ダッシュボードから手動で追加しました。"
+  },
+  "After-Hours": {
+    "es": "Fuera de horario",
+    "fr": "Hors heures",
+    "de": "Außerhalb der Geschäftszeiten",
+    "pt": "Fora do horário",
+    "ja": "時間外"
+  },
+  "Agents — Recall Touch": {
+    "es": "Agentes — Recall Touch",
+    "fr": "Agents — Recall Touch",
+    "de": "Agenten — Recall Touch",
+    "pt": "Agentes — Recall Touch",
+    "ja": "エージェント — Recall Touch"
+  },
+  "AI insights": {
+    "es": "Información de IA",
+    "fr": "Analyses IA",
+    "de": "KI-Einblicke",
+    "pt": "Insights de IA",
+    "ja": "AIインサイト"
+  },
+  "Analytics populate as calls come in": {
+    "es": "La analítica se actualiza con las llamadas",
+    "fr": "Les analyses se remplissent au fil des appels",
+    "de": "Analytik wird mit eingehenden Anrufen gefüllt",
+    "pt": "As análises são preenchidas conforme as chamadas chegam",
+    "ja": "通話に応じて分析が更新されます"
+  },
+  "Analytics request timed out. Try again.": {
+    "es": "La solicitud de analítica expiró. Inténtalo de nuevo.",
+    "fr": "Délai d'analyse dépassé. Réessayez.",
+    "de": "Analytik-Anfrage abgelaufen. Erneut versuchen.",
+    "pt": "A solicitação de análise expirou. Tente novamente.",
+    "ja": "分析リクエストがタイムアウトしました。もう一度お試しください。"
+  },
+  "Auto": {
+    "es": "Automático",
+    "fr": "Auto",
+    "de": "Auto",
+    "pt": "Automático",
+    "ja": "自動"
+  },
+  "Average call duration: {duration}.": {
+    "es": "Duración media de llamada: {duration}.",
+    "fr": "Durée moyenne des appels : {duration}.",
+    "de": "Durchschnittliche Anrufdauer: {duration}.",
+    "pt": "Duração média da chamada: {duration}.",
+    "ja": "平均通話時間: {duration}。"
+  },
+  "Billing": {
+    "es": "Facturación",
+    "fr": "Facturation",
+    "de": "Abrechnung",
+    "pt": "Faturamento",
+    "ja": "請求"
+  },
+  "Booked": {
+    "es": "Reservado",
+    "fr": "Réservé",
+    "de": "Gebucht",
+    "pt": "Reservado",
+    "ja": "予約済み"
+  },
+  "Busiest hour this week stays stable around mid-morning.": {
+    "es": "La hora más ocupada esta semana se mantiene estable a media mañana.",
+    "fr": "L'heure la plus chargée reste stable en milieu de matinée.",
+    "de": "Die stärkste Stunde bleibt diese Woche stabil am Vormittag.",
+    "pt": "O horário de pico esta semana permanece estável no meio da manhã.",
+    "ja": "今週のピーク時間は午前中頃で安定しています。"
+  },
+  "Business line": {
+    "es": "Línea de negocio",
+    "fr": "Ligne professionnelle",
+    "de": "Geschäftsleitung",
+    "pt": "Linha de negócios",
+    "ja": "業務用回線"
+  },
+  "Business line: Call your carrier; ask to forward to {number}": {
+    "es": "Línea de negocio: Llama a tu operador y pide desviar a {number}",
+    "fr": "Ligne pro : appelez votre opérateur pour transférer vers {number}",
+    "de": "Geschäftsleitung: Rufen Sie Ihren Anbieter an; bitten Sie um Weiterleitung an {number}",
+    "pt": "Linha de negócios: Ligue para sua operadora e peça para encaminhar para {number}",
+    "ja": "業務用: キャリアに転送先 {number} を依頼してください"
+  },
+  "Call Intelligence": {
+    "es": "Inteligencia de llamadas",
+    "fr": "Intelligence d'appels",
+    "de": "Anruf-Intelligenz",
+    "pt": "Inteligência de chamadas",
+    "ja": "通話インテリジェンス"
+  },
+  "Call completed": {
+    "es": "Llamada completada",
+    "fr": "Appel terminé",
+    "de": "Anruf abgeschlossen",
+    "pt": "Chamada concluída",
+    "ja": "通話完了"
+  },
+  "Call my phone to test": {
+    "es": "Llamar a mi teléfono para probar",
+    "fr": "Appeler mon téléphone pour tester",
+    "de": "Mein Telefon zum Testen anrufen",
+    "pt": "Ligar para meu telefone para testar",
+    "ja": "テスト用に電話をかける"
+  },
+  "Call your provider: \"Forward unanswered calls to [your AI number]\"": {
+    "es": "Llama a tu operador: \"Desvía las llamadas sin respuesta a [tu número de IA]\"",
+    "fr": "Appelez votre opérateur : « Transférer les appels sans réponse vers [votre numéro IA] »",
+    "de": "Rufen Sie Ihren Anbieter an: „Nicht beantwortete Anrufe an [Ihre KI-Nummer] weiterleiten“",
+    "pt": "Ligue para sua operadora: \"Encaminhar chamadas não atendidas para [seu número de IA]\"",
+    "ja": "プロバイダーに「応答のない通話を[AI番号]に転送」と依頼"
+  },
+  "Calling you…": {
+    "es": "Llamando…",
+    "fr": "Appel en cours…",
+    "de": "Rufe Sie an…",
+    "pt": "Ligando…",
+    "ja": "発信中…"
+  },
+  "Calls": {
+    "es": "Llamadas",
+    "fr": "Appels",
+    "de": "Anrufe",
+    "pt": "Chamadas",
+    "ja": "通話"
+  },
+  "Calls that reach a live answer are much more likely to become appointments.": {
+    "es": "Las llamadas que reciben respuesta en vivo tienen más probabilidad de convertirse en citas.",
+    "fr": "Les appels avec réponse en direct ont plus de chances de devenir des rendez-vous.",
+    "de": "Anrufe mit Live-Antwort werden deutlich häufiger zu Terminen.",
+    "pt": "Chamadas que recebem resposta ao vivo têm mais chance de virar compromissos.",
+    "ja": "ライブで応答があった通話は予約になりやすいです。"
+  },
+  "Campaign": {
+    "es": "Campaña",
+    "fr": "Campagne",
+    "de": "Kampagne",
+    "pt": "Campanha",
+    "ja": "キャンペーン"
+  },
+  "Campaigns": {
+    "es": "Campañas",
+    "fr": "Campagnes",
+    "de": "Kampagnen",
+    "pt": "Campanhas",
+    "ja": "キャンペーン"
+  },
+  "Code didn't match.": {
+    "es": "El código no coincidió.",
+    "fr": "Le code ne correspond pas.",
+    "de": "Code stimmte nicht überein.",
+    "pt": "O código não conferiu.",
+    "ja": "コードが一致しませんでした。"
+  },
+  "Confirmation": {
+    "es": "Confirmación",
+    "fr": "Confirmation",
+    "de": "Bestätigung",
+    "pt": "Confirmação",
+    "ja": "確認"
+  },
+  "Connect your phone number": {
+    "es": "Conecta tu número de teléfono",
+    "fr": "Connectez votre numéro",
+    "de": "Verbinden Sie Ihre Telefonnummer",
+    "pt": "Conecte seu número de telefone",
+    "ja": "電話番号を接続"
+  },
+  "Contact filters": {
+    "es": "Filtros de contacto",
+    "fr": "Filtres de contact",
+    "de": "Kontaktfilter",
+    "pt": "Filtros de contato",
+    "ja": "連絡先フィルター"
+  },
+  "Conversation": {
+    "es": "Conversación",
+    "fr": "Conversation",
+    "de": "Gespräch",
+    "pt": "Conversa",
+    "ja": "会話"
+  },
+  "Conversation in progress. You are the decision owner when a handoff occurs.": {
+    "es": "Conversación en curso. Eres el responsable cuando hay un traspaso.",
+    "fr": "Conversation en cours. Vous êtes décideur en cas de transfert.",
+    "de": "Gespräch läuft. Sie sind bei Übergabe der Verantwortliche.",
+    "pt": "Conversa em andamento. Você é o responsável quando há transferência.",
+    "ja": "会話中。引き継ぎ時はあなたが決定者です。"
+  },
+  "Could not load analytics for this workspace.": {
+    "es": "No se pudieron cargar las analíticas del espacio.",
+    "fr": "Impossible de charger les analyses pour cet espace.",
+    "de": "Analytik für diesen Arbeitsbereich konnte nicht geladen werden.",
+    "pt": "Não foi possível carregar as análises deste espaço.",
+    "ja": "このワークスペースの分析を読み込めませんでした。"
+  },
+  "Create an agent first so we know who should answer.": {
+    "es": "Crea primero un agente para definir quién debe atender.",
+    "fr": "Créez d'abord un agent pour définir qui doit répondre.",
+    "de": "Erstellen Sie zuerst einen Agenten.",
+    "pt": "Crie um agente primeiro para definirmos quem deve atender.",
+    "ja": "まずエージェントを作成して応答者を決めてください。"
+  },
+  "Custom range": {
+    "es": "Rango personalizado",
+    "fr": "Plage personnalisée",
+    "de": "Benutzerdefinierter Bereich",
+    "pt": "Intervalo personalizado",
+    "ja": "カスタム範囲"
+  },
+  "Customer returned": {
+    "es": "Cliente devuelto",
+    "fr": "Client revenu",
+    "de": "Kunde ist zurück",
+    "pt": "Cliente retornou",
+    "ja": "顧客が戻りました"
+  },
+  "Decision progressed": {
+    "es": "Decisión avanzada",
+    "fr": "Décision progressée",
+    "de": "Entscheidung fortgeschritten",
+    "pt": "Decisão progrediu",
+    "ja": "決定が進行しました"
+  },
+  "Documentation →": {
+    "es": "Documentación →",
+    "fr": "Documentation →",
+    "de": "Dokumentation →",
+    "pt": "Documentação →",
+    "ja": "ドキュメント →"
+  },
+  "Email support →": {
+    "es": "Soporte por correo →",
+    "fr": "Support par e-mail →",
+    "de": "E-Mail-Support →",
+    "pt": "Suporte por e-mail →",
+    "ja": "メールサポート →"
+  },
+  "Enable WhatsApp on this number": {
+    "es": "Habilitar WhatsApp en este número",
+    "fr": "Activer WhatsApp sur ce numéro",
+    "de": "WhatsApp für diese Nummer aktivieren",
+    "pt": "Habilitar WhatsApp neste número",
+    "ja": "この番号でWhatsAppを有効にする"
+  },
+  "Enter a valid 10-digit US number.": {
+    "es": "Introduce un número estadounidense de 10 dígitos válido.",
+    "fr": "Entrez un numéro américain valide à 10 chiffres.",
+    "de": "Gültige 10-stellige US-Nummer eingeben.",
+    "pt": "Digite um número dos EUA válido de 10 dígitos.",
+    "ja": "有効な10桁の米国番号を入力してください。"
+  },
+  "Enter a valid 10-digit number to enable": {
+    "es": "Introduce un número de 10 dígitos válido para habilitar",
+    "fr": "Entrez un numéro à 10 chiffres valide pour activer",
+    "de": "Gültige 10-stellige Nummer zum Aktivieren eingeben",
+    "pt": "Digite um número de 10 dígitos válido para habilitar",
+    "ja": "有効な10桁の番号を入力して有効化"
+  },
+  "Enter a valid phone number with country code (e.g., +1 555 000 0000).": {
+    "es": "Introduce un número con código de país (ej. +1 555 000 0000).",
+    "fr": "Entrez un numéro avec indicatif (ex. +1 555 000 0000).",
+    "de": "Gültige Telefonnummer mit Ländervorwahl eingeben (z. B. +1 555 000 0000).",
+    "pt": "Digite um número válido com código do país (ex.: +1 555 000 0000).",
+    "ja": "国コード付きの有効な電話番号を入力（例: +1 555 000 0000）。"
+  },
+  "Enter the number below in your carrier or device settings.": {
+    "es": "Introduce el número siguiente en la configuración de tu operador o dispositivo.",
+    "fr": "Entrez le numéro ci-dessous dans les paramètres de votre opérateur ou appareil.",
+    "de": "Geben Sie die Nummer unten in den Einstellungen Ihres Anbieters oder Geräts ein.",
+    "pt": "Digite o número abaixo nas configurações da sua operadora ou dispositivo.",
+    "ja": "キャリアまたはデバイス設定で下の番号を入力してください。"
+  },
+  "Estimated revenue impact: ${amount}.": {
+    "es": "Impacto estimado en ingresos: ${amount}.",
+    "fr": "Impact estimé sur les revenus : ${amount}.",
+    "de": "Geschätzter Umsatzeinfluss: ${amount}.",
+    "pt": "Impacto estimado na receita: ${amount}.",
+    "ja": "推定収益への影響: ${amount}。"
+  },
+  "Excellent": {
+    "es": "Excelente",
+    "fr": "Excellent",
+    "de": "Ausgezeichnet",
+    "pt": "Excelente",
+    "ja": "優秀"
+  },
+  "Excellent (80+)": {
+    "es": "Excelente (80+)",
+    "fr": "Excellent (80+)",
+    "de": "Ausgezeichnet (80+)",
+    "pt": "Excelente (80+)",
+    "ja": "優秀 (80+)"
+  },
+  "Failed to send code. Check your connection and try again.": {
+    "es": "No se pudo enviar el código. Comprueba la conexión e inténtalo de nuevo.",
+    "fr": "Échec de l'envoi du code. Vérifiez votre connexion et réessayez.",
+    "de": "Code konnte nicht gesendet werden. Verbindung prüfen und erneut versuchen.",
+    "pt": "Falha ao enviar o código. Verifique sua conexão e tente novamente.",
+    "ja": "コードを送信できませんでした。接続を確認してもう一度お試しください。"
+  },
+  "Find \"Call forwarding\" or \"Forward when busy.\"": {
+    "es": "Busca \"Desvío de llamadas\" o \"Desviar cuando esté ocupado\".",
+    "fr": "Recherchez « Transfert d'appels » ou « Transfert si occupé ».",
+    "de": "Suchen Sie „Anrufweiterleitung“ oder „Weiterleitung bei Besetzt“.",
+    "pt": "Procure \"Desvio de chamadas\" ou \"Desviar quando ocupado\".",
+    "ja": "「着信転送」または「話し中転送」を探してください。"
+  },
+  "Follow-through continued": {
+    "es": "Seguimiento continuado",
+    "fr": "Suivi poursuivi",
+    "de": "Nachverfolgung fortgesetzt",
+    "pt": "Acompanhamento continuado",
+    "ja": "フォロー継続"
+  },
+  "Forward calls to your AI": {
+    "es": "Desvía las llamadas a tu IA",
+    "fr": "Transférer les appels vers votre IA",
+    "de": "Anrufe an Ihre KI weiterleiten",
+    "pt": "Encaminhar chamadas para sua IA",
+    "ja": "通話をAIに転送"
+  },
+  "Forward to:": {
+    "es": "Desviar a:",
+    "fr": "Transférer vers :",
+    "de": "Weiterleiten an:",
+    "pt": "Encaminhar para:",
+    "ja": "転送先："
+  },
+  "Forward unanswered calls to your AI number (get one from the left card first).": {
+    "es": "Desvía las llamadas sin respuesta a tu número de IA (obtén uno en la tarjeta izquierda).",
+    "fr": "Transférez les appels sans réponse vers votre numéro IA (obtenez-en un dans la carte à gauche).",
+    "de": "Nicht beantwortete Anrufe an Ihre KI-Nummer weiterleiten (zuerst links eine Nummer erhalten).",
+    "pt": "Encaminhe chamadas não atendidas para seu número de IA (obtenha um no card à esquerda).",
+    "ja": "応答のない通話をAI番号に転送（左のカードで番号を取得）。"
+  },
+  "Fri": {
+    "es": "Vie",
+    "fr": "Ven",
+    "de": "Fr",
+    "pt": "Sex",
+    "ja": "金"
+  },
+  "Go to Agents →": {
+    "es": "Ir a Agentes →",
+    "fr": "Aller aux agents →",
+    "de": "Zu Agenten →",
+    "pt": "Ir para Agentes →",
+    "ja": "エージェントへ →"
+  },
+  "How it progressed": {
+    "es": "Cómo progresó",
+    "fr": "Comment ça a progressé",
+    "de": "Wie es fortgeschritten ist",
+    "pt": "Como progrediu",
+    "ja": "進行状況"
+  },
+  "I'll add a number later": {
+    "es": "Añadiré un número más tarde",
+    "fr": "J'ajouterai un numéro plus tard",
+    "de": "Ich füge später eine Nummer hinzu",
+    "pt": "Adiciono um número depois",
+    "ja": "後で番号を追加します"
+  },
+  "In progress.": {
+    "es": "En curso.",
+    "fr": "En cours.",
+    "de": "In Bearbeitung.",
+    "pt": "Em andamento.",
+    "ja": "進行中。"
+  },
+  "Just now": {
+    "es": "Justo ahora",
+    "fr": "À l'instant",
+    "de": "Gerade eben",
+    "pt": "Agora mesmo",
+    "ja": "たった今"
+  },
+  "Last contact: today": {
+    "es": "Último contacto: hoy",
+    "fr": "Dernier contact : aujourd'hui",
+    "de": "Letzter Kontakt: heute",
+    "pt": "Último contato: hoje",
+    "ja": "最終連絡: 今日"
+  },
+  "Last contact: unknown": {
+    "es": "Último contacto: desconocido",
+    "fr": "Dernier contact : inconnu",
+    "de": "Letzter Kontakt: unbekannt",
+    "pt": "Último contato: desconhecido",
+    "ja": "最終連絡: 不明"
+  },
+  "Last contact: yesterday": {
+    "es": "Último contacto: ayer",
+    "fr": "Dernier contact : hier",
+    "de": "Letzter Kontakt: gestern",
+    "pt": "Último contato: ontem",
+    "ja": "最終連絡: 昨日"
+  },
+  "Last contact: {count} days ago": {
+    "es": "Último contacto: hace {count} días",
+    "fr": "Dernier contact : il y a {count} jours",
+    "de": "Letzter Kontakt: vor {count} Tagen",
+    "pt": "Último contato: há {count} dias",
+    "ja": "最終連絡: {count}日前"
+  },
+  "Lead conversion {pct}%": {
+    "es": "Conversión de leads {pct}%",
+    "fr": "Conversion de prospects {pct}%",
+    "de": "Interessenten-Umsetzung {pct}%",
+    "pt": "Conversão de leads {pct}%",
+    "ja": "リード転換 {pct}%"
+  },
+  "Legacy connection and forwarding. Your AI receives calls on the number above or via phone_config.": {
+    "es": "Conexión y reenvío heredados. Tu IA recibe llamadas en el número anterior o por phone_config.",
+    "fr": "Connexion et transfert hérités. Votre IA reçoit les appels sur le numéro ci-dessus ou via phone_config.",
+    "de": "Legacy-Verbindung und -Weiterleitung. Ihre KI erhält Anrufe auf der obigen Nummer oder per phone_config.",
+    "pt": "Conexão e encaminhamento legados. Sua IA recebe chamadas no número acima ou via phone_config.",
+    "ja": "従来の接続と転送。AIは上記番号またはphone_configで通話を受信します。"
+  },
+  "Make a test call": {
+    "es": "Hacer una llamada de prueba",
+    "fr": "Passer un appel test",
+    "de": "Testanruf durchführen",
+    "pt": "Fazer uma chamada de teste",
+    "ja": "テスト通話をする"
+  },
+  "Make sure pricing and availability are easy to confirm in the first 30 seconds.": {
+    "es": "Asegúrate de que precio y disponibilidad sean fáciles de confirmar en los primeros 30 segundos.",
+    "fr": "Vérifiez que tarifs et disponibilité soient faciles à confirmer dans les 30 premières secondes.",
+    "de": "Stellen Sie sicher, dass Preis und Verfügbarkeit in den ersten 30 Sekunden leicht zu bestätigen sind.",
+    "pt": "Garanta que preço e disponibilidade sejam fáceis de confirmar nos primeiros 30 segundos.",
+    "ja": "最初の30秒で価格と空き状況を確認しやすくしてください。"
+  },
+  "Next planned touch": {
+    "es": "Próximo contacto planificado",
+    "fr": "Prochain contact prévu",
+    "de": "Geplante nächste Kontaktaufnahme",
+    "pt": "Próximo contato planejado",
+    "ja": "次の予定接触"
+  },
+  "Next touch at": {
+    "es": "Próximo contacto a las",
+    "fr": "Prochain contact à",
+    "de": "Nächster Kontakt um",
+    "pt": "Próximo contato às",
+    "ja": "次の接触は"
+  },
+  "No calls recorded in the selected {period} period. Make a test call to start seeing insights here.": {
+    "es": "No hay llamadas en el período {period}. Haz una llamada de prueba para ver información aquí.",
+    "fr": "Aucun appel enregistré pour la période {period}. Passez un appel test pour voir les analyses.",
+    "de": "Keine Anrufe in der gewählten Periode {period}. Führen Sie einen Testanruf durch.",
+    "pt": "Nenhuma chamada no período {period}. Faça uma chamada de teste para ver insights.",
+    "ja": "選択した期間 {period} に通話がありません。テスト通話で分析を表示しましょう。"
+  },
+  "No proof available yet.": {
+    "es": "Aún no hay prueba disponible.",
+    "fr": "Aucune preuve disponible pour l'instant.",
+    "de": "Noch kein Nachweis verfügbar.",
+    "pt": "Nenhuma prova disponível ainda.",
+    "ja": "まだ証明はありません。"
+  },
+  "Once calls start coming in, you'll see a summary of how many became leads, appointments, and revenue.": {
+    "es": "Cuando empiecen a llegar llamadas, verás un resumen de cuántas se convirtieron en leads, citas e ingresos.",
+    "fr": "Une fois les appels reçus, vous verrez un résumé des leads, rendez-vous et revenus.",
+    "de": "Sobald Anrufe reinkommen, sehen Sie eine Zusammenfassung zu Leads, Terminen und Umsatz.",
+    "pt": "Quando as chamadas chegarem, você verá um resumo de leads, compromissos e receita.",
+    "ja": "通話が入り始めると、リード・予約・収益のサマリーが表示されます。"
+  },
+  "Support": {
+    "es": "Soporte",
+    "fr": "Support",
+    "de": "Support",
+    "pt": "Suporte",
+    "ja": "サポート"
+  },
+  "Source": {
+    "es": "Origen",
+    "fr": "Source",
+    "de": "Quelle",
+    "pt": "Fonte",
+    "ja": "ソース"
+  },
+  "Question": {
+    "es": "Pregunta",
+    "fr": "Question",
+    "de": "Frage",
+    "pt": "Pergunta",
+    "ja": "質問"
+  },
+  "Today": {
+    "es": "Hoy",
+    "fr": "Aujourd'hui",
+    "de": "Heute",
+    "pt": "Hoje",
+    "ja": "今日"
+  },
+  "Score": {
+    "es": "Puntuación",
+    "fr": "Score",
+    "de": "Punktzahl",
+    "pt": "Pontuação",
+    "ja": "スコア"
+  },
+  "Sentiment": {
+    "es": "Sentimiento",
+    "fr": "Sentiment",
+    "de": "Stimmung",
+    "pt": "Sentimento",
+    "ja": "センチメント"
+  },
+  "See how conversations turn into kept appointments and real revenue.": {
+    "es": "Mira cómo las conversaciones se convierten en citas y ingresos reales.",
+    "fr": "Voyez comment les conversations deviennent des rendez-vous et du chiffre d'affaires.",
+    "de": "Sehen Sie, wie Gespräche zu Terminen und Umsatz werden.",
+    "pt": "Veja como conversas viram compromissos e receita real.",
+    "ja": "会話が予約と収益に変わる様子を確認できます。"
+  },
+  "Your first chart will appear after your first call.": {
+    "es": "Tu primer gráfico aparecerá tras tu primera llamada.",
+    "fr": "Votre premier graphique apparaîtra après votre premier appel.",
+    "de": "Ihre erste Grafik erscheint nach dem ersten Anruf.",
+    "pt": "Seu primeiro gráfico aparecerá após sua primeira chamada.",
+    "ja": "最初の通話後に最初のグラフが表示されます。"
+  },
+  "{label} at a glance": {
+    "es": "{label} en resumen",
+    "fr": "{label} en un coup d'œil",
+    "de": "{label} auf einen Blick",
+    "pt": "{label} em resumo",
+    "ja": "{label} 概要"
+  },
+  "Questions about availability often appear outside standard hours.": {
+    "es": "Las preguntas de disponibilidad suelen llegar fuera del horario estándar.",
+    "fr": "Les questions de disponibilité arrivent souvent hors des heures standard.",
+    "de": "Fragen zur Verfügbarkeit kommen oft außerhalb der Geschäftszeiten.",
+    "pt": "Perguntas sobre disponibilidade costumam aparecer fora do horário padrão.",
+    "ja": "空き状況の質問は標準時間外に多く寄せられます。"
+  },
+  "Sentiment overview": {
+    "es": "Resumen de sentimiento",
+    "fr": "Aperçu du sentiment",
+    "de": "Stimmungsübersicht",
+    "pt": "Visão geral do sentimento",
+    "ja": "センチメント概要"
+  },
+  "Transferred": {
+    "es": "Transferido",
+    "fr": "Transféré",
+    "de": "Weitergeleitet",
+    "pt": "Transferido",
+    "ja": "転送済み"
+  },
+  "Voicemail": {
+    "es": "Buzón de voz",
+    "fr": "Messagerie vocale",
+    "de": "Mailbox",
+    "pt": "Correio de voz",
+    "ja": "ボイスメール"
+  },
+  "Sales": {
+    "es": "Ventas",
+    "fr": "Ventes",
+    "de": "Vertrieb",
+    "pt": "Vendas",
+    "ja": "営業"
+  },
+  "Review": {
+    "es": "Revisión",
+    "fr": "Avis",
+    "de": "Bewertung",
+    "pt": "Revisão",
+    "ja": "レビュー"
+  },
+  "Receptionist": {
+    "es": "Recepcionista",
+    "fr": "Réceptionniste",
+    "de": "Empfang",
+    "pt": "Recepcionista",
+    "ja": "受付"
+  },
+  "Salon": {
+    "es": "Salón",
+    "fr": "Salon",
+    "de": "Salon",
+    "pt": "Salão",
+    "ja": "サロン"
+  },
+  "Restaurant": {
+    "es": "Restaurante",
+    "fr": "Restaurant",
+    "de": "Restaurant",
+    "pt": "Restaurante",
+    "ja": "レストラン"
+  },
+  "Services": {
+    "es": "Servicios",
+    "fr": "Services",
+    "de": "Dienstleistungen",
+    "pt": "Serviços",
+    "ja": "サービス"
+  },
+  "Standard": {
+    "es": "Estándar",
+    "fr": "Standard",
+    "de": "Standard",
+    "pt": "Padrão",
+    "ja": "標準"
+  },
+  "White label": {
+    "es": "Marca blanca",
+    "fr": "Marque blanche",
+    "de": "White Label",
+    "pt": "Marca branca",
+    "ja": "ホワイトラベル"
+  },
+  "Trusted by leading teams in service, healthcare, and local business.": {
+    "es": "Con la confianza de equipos líderes en servicio, salud y negocio local.",
+    "fr": "Approuvé par des équipes leaders dans les services, la santé et le commerce local.",
+    "de": "Vertraut von führenden Teams in Service, Gesundheitswesen und lokalem Geschäft.",
+    "pt": "Confiado por equipes líderes em serviço, saúde e negócios locais.",
+    "ja": "サービス・医療・地域ビジネスのリーダーに信頼されています。"
+  },
+  "Questions? Talk to us →": {
+    "es": "¿Preguntas? Habla con nosotros →",
+    "fr": "Des questions ? Parlez-nous →",
+    "de": "Fragen? Sprechen Sie mit uns →",
+    "pt": "Dúvidas? Fale conosco →",
+    "ja": "質問はこちら →"
+  },
+  "Calculate your potential revenue recovery with our ROI calculator.": {
+    "es": "Calcula tu recuperación de ingresos con nuestra calculadora de ROI.",
+    "fr": "Calculez votre potentiel de recouvrement avec notre calculateur ROI.",
+    "de": "Berechnen Sie Ihr Umsatzpotenzial mit unserem ROI-Rechner.",
+    "pt": "Calcule sua recuperação de receita com nossa calculadora de ROI.",
+    "ja": "ROI計算機で収益回復の可能性を計算できます。"
+  },
+  "Team": {
+    "es": "Equipo",
+    "fr": "Équipe",
+    "de": "Team",
+    "pt": "Equipe",
+    "ja": "チーム"
+  },
+  "Settings": {
+    "es": "Ajustes",
+    "fr": "Paramètres",
+    "de": "Einstellungen",
+    "pt": "Configurações",
+    "ja": "設定"
+  },
+  "Show shortcuts": {
+    "es": "Mostrar atajos",
+    "fr": "Afficher les raccourcis",
+    "de": "Shortcuts anzeigen",
+    "pt": "Mostrar atalhos",
+    "ja": "ショートカットを表示"
+  },
+  "They're planning to attend": {
+    "es": "Tienen previsto asistir",
+    "fr": "Ils prévoient d'assister",
+    "de": "Sie planen teilzunehmen",
+    "pt": "Eles planejam comparecer",
+    "ja": "参加予定です"
+  },
+  "They're set": {
+    "es": "Están listos",
+    "fr": "C'est réglé",
+    "de": "Sie sind eingestellt",
+    "pt": "Estão definidos",
+    "ja": "設定済み"
+  },
+  "You'll see call alerts and system updates here": {
+    "es": "Verás aquí alertas de llamadas y actualizaciones del sistema",
+    "fr": "Vous verrez ici les alertes d'appels et mises à jour système",
+    "de": "Hier sehen Sie Anrufbenachrichtigungen und System-Updates",
+    "pt": "Você verá alertas de chamadas e atualizações do sistema aqui",
+    "ja": "通話アラートとシステム更新がここに表示されます"
+  },
+  "Quality alert": {
+    "es": "Alerta de calidad",
+    "fr": "Alerte qualité",
+    "de": "Qualitätswarnung",
+    "pt": "Alerta de qualidade",
+    "ja": "品質アラート"
+  },
+  "System": {
+    "es": "Sistema",
+    "fr": "Système",
+    "de": "System",
+    "pt": "Sistema",
+    "ja": "システム"
+  },
+  "Yesterday": {
+    "es": "Ayer",
+    "fr": "Hier",
+    "de": "Gestern",
+    "pt": "Ontem",
+    "ja": "昨日"
+  },
+  "Option A — Your AI number": {
+    "es": "Opción A — Tu número de IA",
+    "fr": "Option A — Votre numéro IA",
+    "de": "Option A — Ihre KI-Nummer",
+    "pt": "Opção A — Seu número de IA",
+    "ja": "オプションA — AI番号"
+  },
+  "Option B — Forward your existing number": {
+    "es": "Opción B — Reenvía tu número actual",
+    "fr": "Option B — Transférer votre numéro actuel",
+    "de": "Option B — Bestehende Nummer weiterleiten",
+    "pt": "Opção B — Encaminhar seu número atual",
+    "ja": "オプションB — 既存番号を転送"
+  },
+  "Quick dial codes": {
+    "es": "Códigos de marcado rápido",
+    "fr": "Codes de numérotation rapide",
+    "de": "Kurzwahlcodes",
+    "pt": "Códigos de discagem rápida",
+    "ja": "短縮ダイヤル"
+  },
+  "Test forwarding": {
+    "es": "Probar reenvío",
+    "fr": "Tester le transfert",
+    "de": "Weiterleitung testen",
+    "pt": "Testar encaminhamento",
+    "ja": "転送をテスト"
+  },
+  "We'll call you so you can talk to your agent right now.": {
+    "es": "Te llamaremos para que hables con tu agente ahora.",
+    "fr": "Nous vous appellerons pour que vous parliez à votre agent.",
+    "de": "Wir rufen Sie an, damit Sie jetzt mit Ihrem Agenten sprechen können.",
+    "pt": "Ligaremos para você falar com seu agente agora.",
+    "ja": "今すぐエージェントと話せるようおかけします。"
+  },
+  "Outbound caller ID (optional)": {
+    "es": "Identificador de llamadas salientes (opcional)",
+    "fr": "Numéro d'appel sortant (optionnel)",
+    "de": "Anruferkennung ausgehend (optional)",
+    "pt": "ID de chamada de saída (opcional)",
+    "ja": "発信者ID（任意）"
+  },
+  "Verify a number by SMS": {
+    "es": "Verificar un número por SMS",
+    "fr": "Vérifier un numéro par SMS",
+    "de": "Nummer per SMS verifizieren",
+    "pt": "Verificar um número por SMS",
+    "ja": "SMSで番号を確認"
+  },
+  "We'll send a 6-digit code to confirm you own this number. Useful for forwarding.": {
+    "es": "Enviaremos un código de 6 dígitos para confirmar que eres el titular.",
+    "fr": "Nous enverrons un code à 6 chiffres pour confirmer que vous possédez ce numéro.",
+    "de": "Wir senden einen 6-stelligen Code zur Bestätigung Ihrer Nummer.",
+    "pt": "Enviaremos um código de 6 dígitos para confirmar que você possui este número.",
+    "ja": "この番号の所有者確認のため6桁のコードを送信します。"
+  },
+  "Verify my number →": {
+    "es": "Verificar mi número →",
+    "fr": "Vérifier mon numéro →",
+    "de": "Meine Nummer verifizieren →",
+    "pt": "Verificar meu número →",
+    "ja": "番号を確認 →"
+  },
+  "Sending code…": {
+    "es": "Enviando código…",
+    "fr": "Envoi du code…",
+    "de": "Code wird gesendet…",
+    "pt": "Enviando código…",
+    "ja": "コード送信中…"
+  },
+  "Test forwarding →": {
+    "es": "Probar reenvío →",
+    "fr": "Tester le transfert →",
+    "de": "Weiterleitung testen →",
+    "pt": "Testar encaminhamento →",
+    "ja": "転送をテスト →"
+  },
+  "Use your existing number": {
+    "es": "Usa tu número actual",
+    "fr": "Utilisez votre numéro actuel",
+    "de": "Ihre bestehende Nummer verwenden",
+    "pt": "Use seu número atual",
+    "ja": "既存の番号を使う"
+  },
+  "✓ Verified": {
+    "es": "✓ Verificado",
+    "fr": "✓ Vérifié",
+    "de": "✓ Verifiziert",
+    "pt": "✓ Verificado",
+    "ja": "✓ 確認済み"
+  },
+  "Verification failed.": {
+    "es": "Verificación fallida.",
+    "fr": "Échec de la vérification.",
+    "de": "Verifizierung fehlgeschlagen.",
+    "pt": "Verificação falhou.",
+    "ja": "確認に失敗しました。"
+  },
+  "← Settings": {
+    "es": "← Ajustes",
+    "fr": "← Paramètres",
+    "de": "← Einstellungen",
+    "pt": "← Configurações",
+    "ja": "← 設定"
+  },
+  "Service": {
+    "es": "Servicio",
+    "fr": "Service",
+    "de": "Service",
+    "pt": "Serviço",
+    "ja": "サービス"
+  },
+  "1 day ago": {
+    "es": "Hace 1 día",
+    "fr": "Il y a 1 jour",
+    "de": "Vor 1 Tag",
+    "pt": "Há 1 dia",
+    "ja": "1日前"
+  },
+  "1 week ago": {
+    "es": "Hace 1 semana",
+    "fr": "Il y a 1 semaine",
+    "de": "Vor 1 Woche",
+    "pt": "Há 1 semana",
+    "ja": "1週間前"
+  },
+  "Urgent call": {
+    "es": "Llamada urgente",
+    "fr": "Appel urgent",
+    "de": "Dringender Anruf",
+    "pt": "Chamada urgente",
+    "ja": "緊急通話"
+  },
+  "100 SMS": {
+    "es": "100 SMS",
+    "fr": "100 SMS",
+    "de": "100 SMS",
+    "pt": "100 SMS",
+    "ja": "100 SMS"
+  },
+  "500 SMS": {
+    "es": "500 SMS",
+    "fr": "500 SMS",
+    "de": "500 SMS",
+    "pt": "500 SMS",
+    "ja": "500 SMS"
+  },
+  "30D": {
+    "es": "30 días",
+    "fr": "30 j",
+    "de": "30 T",
+    "pt": "30 d",
+    "ja": "30日"
+  },
+  "90D": {
+    "es": "90 días",
+    "fr": "90 j",
+    "de": "90 T",
+    "pt": "90 d",
+    "ja": "90日"
+  },
+  "CRM": {
+    "es": "CRM",
+    "fr": "CRM",
+    "de": "CRM",
+    "pt": "CRM",
+    "ja": "CRM"
+  },
+  "API": {
+    "es": "API",
+    "fr": "API",
+    "de": "API",
+    "pt": "API",
+    "ja": "API"
+  },
+  "Tue": {
+    "es": "Mar",
+    "fr": "Mar",
+    "de": "Di",
+    "pt": "Ter",
+    "ja": "火"
+  },
+  "Wed": {
+    "es": "Mié",
+    "fr": "Mer",
+    "de": "Mi",
+    "pt": "Qua",
+    "ja": "水"
+  },
+  "AI:": {
+    "es": "IA:",
+    "fr": "IA :",
+    "de": "KI:",
+    "pt": "IA:",
+    "ja": "AI："
+  },
+  "Won": {
+    "es": "Ganado",
+    "fr": "Gagné",
+    "de": "Gewonnen",
+    "pt": "Ganho",
+    "ja": "獲得"
+  },
+  "Sun": {
+    "es": "Dom",
+    "fr": "Dim",
+    "de": "So",
+    "pt": "Dom",
+    "ja": "日"
+  },
+  "SSO": {
+    "es": "SSO",
+    "fr": "SSO",
+    "de": "SSO",
+    "pt": "SSO",
+    "ja": "SSO"
+  },
+  "Thu": {
+    "es": "Jue",
+    "fr": "Jeu",
+    "de": "Do",
+    "pt": "Qui",
+    "ja": "木"
+  },
+  "SMS": {
+    "es": "SMS",
+    "fr": "SMS",
+    "de": "SMS",
+    "pt": "SMS",
+    "ja": "SMS"
+  },
+  "VIP": {
+    "es": "VIP",
+    "fr": "VIP",
+    "de": "VIP",
+    "pt": "VIP",
+    "ja": "VIP"
+  },
+  "Sat": {
+    "es": "Sáb",
+    "fr": "Sam",
+    "de": "Sa",
+    "pt": "Sáb",
+    "ja": "土"
+  },
+  "SLA": {
+    "es": "SLA",
+    "fr": "SLA",
+    "de": "SLA",
+    "pt": "SLA",
+    "ja": "SLA"
+  },
+  "Warm": {
+    "es": "Tibio",
+    "fr": "Chaud",
+    "de": "Warm",
+    "pt": "Morno",
+    "ja": "温い"
+  },
+  "Tags": {
+    "es": "Etiquetas",
+    "fr": "Tags",
+    "de": "Tags",
+    "pt": "Tags",
+    "ja": "タグ"
+  },
+  "Name": {
+    "es": "Nombre",
+    "fr": "Nom",
+    "de": "Name",
+    "pt": "Nome",
+    "ja": "名前"
+  },
+  "Terms": {
+    "es": "Términos",
+    "fr": "Conditions",
+    "de": "AGB",
+    "pt": "Termos",
+    "ja": "利用規約"
+  },
+  "Board": {
+    "es": "Tablero",
+    "fr": "Tableau",
+    "de": "Board",
+    "pt": "Quadro",
+    "ja": "ボード"
+  },
+  "Legal": {
+    "es": "Legal",
+    "fr": "Juridique",
+    "de": "Rechtlich",
+    "pt": "Legal",
+    "ja": "法的"
+  },
+  "Name:": {
+    "es": "Nombre:",
+    "fr": "Nom :",
+    "de": "Name:",
+    "pt": "Nome:",
+    "ja": "名前："
+  },
+  "Import": {
+    "es": "Importar",
+    "fr": "Importer",
+    "de": "Importieren",
+    "pt": "Importar",
+    "ja": "インポート"
+  },
+  "Name *": {
+    "es": "Nombre *",
+    "fr": "Nom *",
+    "de": "Name *",
+    "pt": "Nome *",
+    "ja": "名前 *"
+  },
+  "Agent:": {
+    "es": "Agente:",
+    "fr": "Agent :",
+    "de": "Agent:",
+    "pt": "Agente:",
+    "ja": "エージェント："
+  },
+  "Formal": {
+    "es": "Formal",
+    "fr": "Formel",
+    "de": "Formell",
+    "pt": "Formal",
+    "ja": "フォーマル"
+  },
+  "Casual": {
+    "es": "Informal",
+    "fr": "Décontracté",
+    "de": "Locker",
+    "pt": "Casual",
+    "ja": "カジュアル"
+  },
+  "Detail": {
+    "es": "Detalle",
+    "fr": "Détail",
+    "de": "Detail",
+    "pt": "Detalhe",
+    "ja": "詳細"
+  },
+  "Status": {
+    "es": "Estado",
+    "fr": "Statut",
+    "de": "Status",
+    "pt": "Status",
+    "ja": "ステータス"
+  },
+  "Company": {
+    "es": "Empresa",
+    "fr": "Entreprise",
+    "de": "Unternehmen",
+    "pt": "Empresa",
+    "ja": "会社"
+  },
+  "Website": {
+    "es": "Sitio web",
+    "fr": "Site web",
+    "de": "Webseite",
+    "pt": "Site",
+    "ja": "ウェブサイト"
+  },
+  "Neutral": {
+    "es": "Neutral",
+    "fr": "Neutre",
+    "de": "Neutral",
+    "pt": "Neutro",
+    "ja": "中立"
+  },
+  "General": {
+    "es": "General",
+    "fr": "Général",
+    "de": "Allgemein",
+    "pt": "Geral",
+    "ja": "一般"
+  },
+  "Optional": {
+    "es": "Opcional",
+    "fr": "Optionnel",
+    "de": "Optional",
+    "pt": "Opcional",
+    "ja": "任意"
+  },
+  "Status:": {
+    "es": "Estado:",
+    "fr": "Statut :",
+    "de": "Status:",
+    "pt": "Status:",
+    "ja": "ステータス："
+  },
+  "Sending…": {
+    "es": "Enviando…",
+    "fr": "Envoi…",
+    "de": "Wird gesendet…",
+    "pt": "Enviando…",
+    "ja": "送信中…"
+  },
+  "Sign in →": {
+    "es": "Iniciar sesión →",
+    "fr": "Connexion →",
+    "de": "Anmelden →",
+    "pt": "Entrar →",
+    "ja": "サインイン →"
+  },
+  "Insurance": {
+    "es": "Seguros",
+    "fr": "Assurance",
+    "de": "Versicherung",
+    "pt": "Seguro",
+    "ja": "保険"
+  },
+  "B2B Sales": {
+    "es": "Ventas B2B",
+    "fr": "Ventes B2B",
+    "de": "B2B-Vertrieb",
+    "pt": "Vendas B2B",
+    "ja": "B2B営業"
+  },
+  "Try again": {
+    "es": "Intentar de nuevo",
+    "fr": "Réessayez",
+    "de": "Erneut versuchen",
+    "pt": "Tente novamente",
+    "ja": "再試行"
+  },
+  "Thank you!": {
+    "es": "¡Gracias!",
+    "fr": "Merci !",
+    "de": "Danke!",
+    "pt": "Obrigado!",
+    "ja": "ありがとうございます！"
+  },
+  "Healthcare": {
+    "es": "Salud",
+    "fr": "Santé",
+    "de": "Gesundheitswesen",
+    "pt": "Saúde",
+    "ja": "ヘルスケア"
+  },
+  "Compliance": {
+    "es": "Cumplimiento",
+    "fr": "Conformité",
+    "de": "Compliance",
+    "pt": "Conformidade",
+    "ja": "コンプライアンス"
+  },
+  "Follow-ups": {
+    "es": "Seguimientos",
+    "fr": "Suivis",
+    "de": "Nachfass",
+    "pt": "Acompanhamentos",
+    "ja": "フォローアップ"
+  },
+  "Partnership": {
+    "es": "Asociación",
+    "fr": "Partenariat",
+    "de": "Partnerschaft",
+    "pt": "Parceria",
+    "ja": "パートナーシップ"
+  },
+  "Dashboard →": {
+    "es": "Panel →",
+    "fr": "Tableau de bord →",
+    "de": "Dashboard →",
+    "pt": "Painel →",
+    "ja": "ダッシュボード →"
+  },
+  "Webhook URL": {
+    "es": "URL del webhook",
+    "fr": "URL du webhook",
+    "de": "Webhook-URL",
+    "pt": "URL do webhook",
+    "ja": "Webhook URL"
+  },
+  "← Dashboard": {
+    "es": "← Panel",
+    "fr": "← Tableau de bord",
+    "de": "← Übersicht",
+    "pt": "← Painel",
+    "ja": "← ダッシュボード"
+  },
+  "Contractors": {
+    "es": "Contratistas",
+    "fr": "Entrepreneurs",
+    "de": "Auftragnehmer",
+    "pt": "Contratados",
+    "ja": "請負業者"
+  },
+  "Real Estate": {
+    "es": "Inmobiliaria",
+    "fr": "Immobilier",
+    "de": "Immobilien",
+    "pt": "Imobiliário",
+    "ja": "不動産"
+  },
+  "Agent tested": {
+    "es": "Agente probado",
+    "fr": "Agent testé",
+    "de": "Agent getestet",
+    "pt": "Agente testado",
+    "ja": "エージェントをテスト済み"
+  },
+  "Phone number": {
+    "es": "Número de teléfono",
+    "fr": "Numéro de téléphone",
+    "de": "Telefonnummer",
+    "pt": "Número de telefone",
+    "ja": "電話番号"
+  },
+  "No, not yet.": {
+    "es": "No, aún no.",
+    "fr": "Non, pas encore.",
+    "de": "Nein, noch nicht.",
+    "pt": "Ainda não.",
+    "ja": "いいえ、まだです。"
+  },
+  "Or by device:": {
+    "es": "O por dispositivo:",
+    "fr": "Ou par appareil :",
+    "de": "Oder nach Gerät:",
+    "pt": "Ou por dispositivo:",
+    "ja": "またはデバイス別："
+  },
+  "Almost there…": {
+    "es": "Casi listo…",
+    "fr": "Presque terminé…",
+    "de": "Fast geschafft…",
+    "pt": "Quase lá…",
+    "ja": "もう少し…"
+  },
+  "Home Services": {
+    "es": "Servicios en el hogar",
+    "fr": "Services à domicile",
+    "de": "Haushaltsservice",
+    "pt": "Serviços domésticos",
+    "ja": "ホームサービス"
+  },
+  "Agent created": {
+    "es": "Agente creado",
+    "fr": "Agent créé",
+    "de": "Agent erstellt",
+    "pt": "Agente criado",
+    "ja": "エージェントを作成しました"
+  },
+  "Saving agent": {
+    "es": "Guardando agente",
+    "fr": "Enregistrement de l'agent…",
+    "de": "Agent wird gespeichert…",
+    "pt": "Salvando agente",
+    "ja": "エージェントを保存中"
+  },
+  "{count}m ago": {
+    "es": "Hace {count} min",
+    "fr": "Il y a {count} min",
+    "de": "Vor {count} Min.",
+    "pt": "Há {count} min",
+    "ja": "{count}分前"
+  },
+  "{count}h ago": {
+    "es": "Hace {count} h",
+    "fr": "Il y a {count} h",
+    "de": "Vor {count} Std.",
+    "pt": "Há {count} h",
+    "ja": "{count}時間前"
+  },
+  "{count}d ago": {
+    "es": "Hace {count} días",
+    "fr": "Il y a {count} j",
+    "de": "Vor {count} T.",
+    "pt": "Há {count} d",
+    "ja": "{count}日前"
+  },
+  "Handled {totalCalls} calls, created {leads} leads, booked {appointments} appointments, and protected an estimated ${revenue} in revenue.": {
+    "es": "Se atendieron {totalCalls} llamadas, se crearon {leads} leads, se reservaron {appointments} citas y se protegió un estimado de ${revenue} en ingresos.",
+    "fr": "{totalCalls} appels traités, {leads} prospects créés, {appointments} rendez-vous réservés et environ ${revenue} de chiffre d'affaires protégé.",
+    "de": "{totalCalls} Anrufe bearbeitet, {leads} Interessenten erstellt, {appointments} Termine gebucht und geschätzt ${revenue} Umsatz gesichert.",
+    "pt": "Atendemos {totalCalls} chamadas, criamos {leads} leads, agendamos {appointments} compromissos e protegemos cerca de ${revenue} em receita.",
+    "ja": "{totalCalls}件の通話を処理、{leads}件のリード獲得、{appointments}件の予約、推定${revenue}の収益を保護しました。"
+  },
+  "{count} calls with a {rate}% answer rate": {
+    "es": "{count} llamadas con {rate}% de respuesta",
+    "fr": "{count} appels avec {rate}% de réponse",
+    "de": "{count} Anrufe mit {rate}% Antwortrate",
+    "pt": "{count} chamadas com {rate}% de atendimento",
+    "ja": "{count}件の通話、応答率{rate}%"
+  },
+  "{count} appointments, converting {pct}% of qualified leads.": {
+    "es": "{count} citas, convirtiendo el {pct}% de leads cualificados.",
+    "fr": "{count} rendez-vous, conversion de {pct}% des prospects qualifiés.",
+    "de": "{count} Termine, {pct}% der qualifizierten Interessenten umgesetzt.",
+    "pt": "{count} compromissos, convertendo {pct}% dos leads qualificados.",
+    "ja": "{count}件の予約、認定リードの{pct}%を転換。"
+  },
+  "Thanks for calling. I can help with questions, take messages, and get you to the right place. How can I help today?": {
+    "es": "Gracias por llamar. Puedo ayudar con consultas, tomar mensajes y derivarte al lugar correcto. ¿En qué puedo ayudarte hoy?",
+    "fr": "Merci d'avoir appelé. Je peux répondre aux questions, prendre des messages et vous orienter. Comment vous aider aujourd'hui ?",
+    "de": "Danke für Ihren Anruf. Ich helfe bei Fragen, nehme Nachrichten entgegen und leite Sie weiter. Wobei kann ich heute helfen?",
+    "pt": "Obrigado por ligar. Posso ajudar com dúvidas, anotar recados e encaminhar. Como posso ajudar hoje?",
+    "ja": "お電話ありがとうございます。質問への対応、伝言の受付、ご案内ができます。本日はどのようなご用件でしょうか？"
+  },
+  "Hi, I can help you schedule an appointment right now. What day works best for you?": {
+    "es": "Hola, puedo ayudarte a reservar una cita ahora. ¿Qué día te viene bien?",
+    "fr": "Bonjour, je peux vous prendre rendez-vous tout de suite. Quel jour vous convient ?",
+    "de": "Hallo, ich kann jetzt einen Termin für Sie vereinbaren. Welcher Tag passt Ihnen?",
+    "pt": "Olá, posso agendar um compromisso agora. Qual dia funciona melhor para você?",
+    "ja": "こんにちは。今すぐご予約を承ります。ご希望の日はいつですか？"
+  },
+  "Thanks for reaching out. I'll ask a few quick questions so we can get you to the right next step.": {
+    "es": "Gracias por contactar. Haré unas preguntas rápidas para orientarte al siguiente paso.",
+    "fr": "Merci de nous avoir contactés. Je vais poser quelques questions pour vous orienter.",
+    "de": "Danke für Ihre Nachricht. Ich stelle ein paar kurze Fragen, um Sie weiterzuleiten.",
+    "pt": "Obrigado por entrar em contato. Farei algumas perguntas rápidas para o próximo passo.",
+    "ja": "お問い合わせありがとうございます。次のステップに進むため、いくつか質問させてください。"
+  },
+  "Hi, this is your AI assistant following up so nothing falls through the cracks. Is now a good time?": {
+    "es": "Hola, soy tu asistente de IA haciendo seguimiento para que nada quede pendiente. ¿Te va bien ahora?",
+    "fr": "Bonjour, votre assistant IA vous rappelle pour ne rien laisser en suspens. C'est le bon moment ?",
+    "de": "Hallo, Ihr KI-Assistent meldet sich zur Nachverfolgung. Passt es gerade?",
+    "pt": "Olá, sou seu assistente de IA fazendo acompanhamento. Agora é um bom momento?",
+    "ja": "こちらはAIアシスタントです。取りこぼしのないようフォローアップしています。今お時間よろしいですか？"
+  },
+  "Thanks for calling support! What can I help you with?": {
+    "es": "¡Gracias por llamar al soporte! ¿En qué puedo ayudarte?",
+    "fr": "Merci d'avoir appelé le support ! Comment vous aider ?",
+    "de": "Danke für Ihren Anruf beim Support! Wobei kann ich helfen?",
+    "pt": "Obrigado por ligar ao suporte! Com que posso ajudar?",
+    "ja": "サポートへお電話ありがとうございます。どのようなご用件でしょうか？"
+  },
+  "{count} days ago": {
+    "es": "Hace {count} días",
+    "fr": "Il y a {count} jours",
+    "de": "Vor {count} Tagen",
+    "pt": "Há {count} dias",
+    "ja": "{count}日前"
+  },
+  "{count} weeks ago": {
+    "es": "Hace {count} semanas",
+    "fr": "Il y a {count} semaines",
+    "de": "Vor {count} Wochen",
+    "pt": "Há {count} semanas",
+    "ja": "{count}週間前"
+  },
+  "Open your phone carrier's app or website (AT&T, Verizon, T-Mobile, etc.).": {
+    "es": "Abre la app o web de tu operador (AT&T, Verizon, T-Mobile, etc.).",
+    "fr": "Ouvrez l'app ou le site de votre opérateur (AT&T, Verizon, T-Mobile, etc.).",
+    "de": "Öffnen Sie die App oder Website Ihres Anbieters (AT&T, Verizon, T-Mobile usw.).",
+    "pt": "Abra o app ou site da sua operadora (AT&T, Verizon, T-Mobile, etc.).",
+    "ja": "携帯キャリアのアプリまたはサイトを開いてください（AT&T、Verizon、T-Mobileなど）。"
+  },
+  "Keep your current number. Forward unanswered calls to your AI number below.": {
+    "es": "Mantén tu número. Desvía las llamadas sin respuesta al número de IA de abajo.",
+    "fr": "Gardez votre numéro. Transférez les appels sans réponse vers votre numéro IA ci-dessous.",
+    "de": "Behalten Sie Ihre Nummer. Leiten Sie nicht beantwortete Anrufe an Ihre KI-Nummer weiter.",
+    "pt": "Mantenha seu número. Encaminhe chamadas não atendidas para seu número de IA abaixo.",
+    "ja": "現在の番号のまま。応答のない通話を下のAI番号に転送してください。"
+  },
+  "Show a different number when your AI places outbound calls. Leave blank to use the same.": {
+    "es": "Mostrar otro número en llamadas salientes de tu IA. Déjalo en blanco para usar el mismo.",
+    "fr": "Afficher un autre numéro pour les appels sortants de votre IA. Laisser vide pour garder le même.",
+    "de": "Andere Nummer bei ausgehenden Anrufen Ihrer KI anzeigen. Leer lassen für dieselbe Nummer.",
+    "pt": "Mostrar outro número quando sua IA faz chamadas de saída. Deixe em branco para usar o mesmo.",
+    "ja": "AIの発信時に別の番号を表示。空白の場合は同じ番号を使用。"
+  },
+  "iPhone: Settings → Phone → Call Forwarding": {
+    "es": "iPhone: Ajustes → Teléfono → Desvío de llamadas",
+    "fr": "iPhone : Réglages → Téléphone → Transfert d'appels",
+    "de": "iPhone: Einstellungen → Telefon → Anrufweiterleitung",
+    "pt": "iPhone: Ajustes → Telefone → Desvio de chamadas",
+    "ja": "iPhone: 設定 → 電話 → 着信転送"
+  },
+  "Android: Phone → ⋮ → Settings → Call Forwarding": {
+    "es": "Android: Teléfono → ⋮ → Ajustes → Desvío de llamadas",
+    "fr": "Android : Téléphone → ⋮ → Réglages → Transfert d'appels",
+    "de": "Android: Telefon → ⋮ → Einstellungen → Anrufweiterleitung",
+    "pt": "Android: Telefone → ⋮ → Ajustes → Desvio de chamadas",
+    "ja": "Android: 電話 → ⋮ → 設定 → 着信転送"
+  },
+  "Settings → Phone → Call Forwarding → [your AI number]": {
+    "es": "Ajustes → Teléfono → Desvío → [tu número de IA]",
+    "fr": "Réglages → Téléphone → Transfert → [votre numéro IA]",
+    "de": "Einstellungen → Telefon → Anrufweiterleitung → [Ihre KI-Nummer]",
+    "pt": "Ajustes → Telefone → Desvio → [seu número de IA]",
+    "ja": "設定 → 電話 → 着信転送 → [AI番号]"
+  },
+  "Phone → ⋮ → Settings → Call Forwarding → [your AI number]": {
+    "es": "Teléfono → ⋮ → Ajustes → Desvío → [tu número de IA]",
+    "fr": "Téléphone → ⋮ → Réglages → Transfert → [votre numéro IA]",
+    "de": "Telefon → ⋮ → Einstellungen → Anrufweiterleitung → [Ihre KI-Nummer]",
+    "pt": "Telefone → ⋮ → Ajustes → Desvio → [seu número de IA]",
+    "ja": "電話 → ⋮ → 設定 → 着信転送 → [AI番号]"
+  },
+  "colleague@company.com": {
+    "es": "colega@empresa.com",
+    "fr": "collègue@entreprise.com",
+    "de": "kollege@firma.com",
+    "pt": "colega@empresa.com",
+    "ja": "colleague@company.com"
+  },
+  "Dashboard — Recall Touch": {
+    "es": "Panel — Recall Touch",
+    "fr": "Tableau de bord — Recall Touch",
+    "de": "Übersicht — Recall Touch",
+    "pt": "Painel — Recall Touch",
+    "ja": "ダッシュボード — Recall Touch"
+  }
+}

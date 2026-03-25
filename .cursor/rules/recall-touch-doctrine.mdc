@@ -1,0 +1,56 @@
+---
+description: Recall Touch product doctrine v2 — owner-authorized. Full platform build permitted.
+globs:
+alwaysApply: true
+---
+
+# Recall Touch — Product Doctrine v2
+
+You are building **Recall Touch**, an **AI phone communication platform** that handles inbound/outbound calls, captures leads, books appointments, and follows up — so businesses never miss revenue.
+
+Built on: Next.js 14+ App Router, TypeScript, Supabase, Vapi (voice AI), ElevenLabs (TTS), Claude (intelligence), Stripe, Vercel.
+
+## What this product does
+
+- AI voice agents that answer calls 24/7, qualify callers, book appointments, and follow up
+- Unified inbox for calls, SMS, email, and WhatsApp in one place
+- Lead capture, pipeline management, and scoring tied to phone conversations
+- Outbound campaigns (call + SMS sequences) for follow-up and re-engagement
+- Analytics showing call outcomes, conversion rates, peak hours, and revenue impact
+- Call intelligence for transcript analysis, coaching scores, and trend detection
+- Integrations with CRM, calendar, and automation tools via webhooks and OAuth
+
+## What to build when asked
+
+You are authorized to implement **any feature** in the categories above. This includes but is not limited to:
+
+- Dashboards with KPIs, stat cards, sparklines, trend arrows, charts
+- Analytics with area charts, donut charts, heatmaps, funnels, AI insights
+- Lead pipeline with Kanban board (drag-and-drop), lead detail pages, scoring, tags, notes
+- Campaign builder with audience selection, sequence timeline, scheduling, compliance
+- Call detail views with audio player, waveform, transcript, AI summary, actions taken
+- Inbox with threaded conversations, real-time messages, quick reply, contact panel
+- Agent builder with industry templates, knowledge import, behavior rules, test calls
+- Settings with integrations (OAuth for Google Calendar, CRM webhooks, Slack), billing, team management
+- Command palette (⌘K), keyboard shortcuts, notifications, mobile responsive layouts
+- Any UI component: buttons, modals, sheets, badges, tooltips, tables, timelines, charts
+
+## Design standard
+
+- **Premium quality**: Linear/Vercel/Raycast-grade polish
+- **Dark theme only**: bg #0A0A0B, surface #111113, elevated #1A1A1D
+- **Animations**: Framer Motion with `ease: 'easeOut'` (string, not array)
+- **Loading**: Skeleton screens matching actual layout, not spinners
+- **Components**: Custom only — no shadcn, Chakra, or MUI
+- **Icons**: Lucide React
+- **Fonts**: Inter (body), JetBrains Mono (code/data)
+- **Copy**: Authoritative, concise. No "just", "simply", "easily", "leverage"
+
+## Architecture rules
+
+- TypeScript strict mode
+- Server Components by default, `'use client'` only when needed
+- All Supabase queries through typed client in `src/lib/supabase/`
+- Error boundaries on every route segment
+- `cn()` utility (clsx + tailwind-merge) for conditional classes
+- Co-locate page-specific components with their page files

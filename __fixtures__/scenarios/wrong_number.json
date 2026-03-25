@@ -1,0 +1,7 @@
+{
+  "scenario_category": "wrong_number",
+  "channel": "voice",
+  "structured_context_json": { "outcome": "wrong_number", "source": "fixture" },
+  "expected_outcome_type": "wrong_number",
+  "expected_next_required_action": "pause_execution"
+}

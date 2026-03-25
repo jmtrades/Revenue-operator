@@ -1,0 +1,53 @@
+# RECALL TOUCH — THE FINAL CURSOR PROMPT
+# Paste as .cursorrules. Read every word. Execute everything.
+# This is the last prompt. After this, the product ships to paying customers.
+
+You are the best product designer and full-stack builder. Recall Touch has a foundation — transform every pixel and flow until it feels like a product serving 100,000 businesses. Fix what's broken. Polish what's rough. Add what's missing. Ship.
+
+FIRST: Repo recon. npm run build && npm run lint. Fix all errors. Remove TODOs/placeholders. Grep bg-blue|bg-indigo|bg-purple — replace with white primary or zinc secondary.
+
+# DESIGN SYSTEM (enforce on EVERY component)
+Backgrounds: bg-black (pages) · bg-zinc-950 (sidebar) · bg-zinc-900/50 border border-zinc-800 (cards)
+Text: text-white (headings) · text-zinc-400 (body) · text-zinc-500 (muted)
+Primary button: bg-white text-black font-semibold rounded-xl px-6 py-3 hover:bg-zinc-100
+Secondary: border border-zinc-700 text-zinc-300 rounded-xl. Ghost: text-zinc-400 hover:text-white
+Input: bg-zinc-900 border border-zinc-800 rounded-xl focus:border-zinc-600 focus:ring-1
+Card: bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6
+Accent colors ONLY for status: blue-500 lead · green-500 appointment · red-500 urgent · purple-500 outbound · amber-500 follow-up — NEVER on buttons.
+CRITICAL: "Start free →" in navbar = bg-white text-black. No blue/indigo buttons anywhere.
+
+# SECTION 1 — SIGN-IN
+Single heading "Sign in", subtitle "Welcome back to Recall Touch". Email address + Password (with Show/Hide). Sign in → bg-white text-black. Logic: localStorage rt_signup email match → rt_authenticated → /app. Else "No account found. Start free →". Google → toast "Coming soon". Forgot password → toast "Check your email". "Don't have an account? Start free →" below.
+
+# SECTION 2 — DEMO SIMULATOR
+Auto-play on load. 3 bouncing gray dots 800ms before each AI message. 1200ms between messages. Timer counts up. Result card after final message. "Skip to result →". Tab switch resets and plays. All 3 tabs: full conversations (15 / 11 / 13 messages). Below result: "That call took [X] seconds. Your AI handles this 24/7." + CTA.
+
+# SECTION 3 — HOMEPAGE CALL PREVIEW
+Below hero: dark dashboard mockup with 3–5 call cards, staggered slide-up + fade (0.6s apart). Card 1 blue left border (Mike Johnson, Lead), Card 2 green (Sarah Chen, Appt), Card 3 purple (James Wilson, Follow-up). 3px colored left border, compact layout.
+
+# SECTION 4 — ONBOARDING
+Minimal sidebar during onboarding: logo + step list (1. Business · 2. AI Agent · 3. Knowledge · 4. Phone · 5. Test). Current step = white + dot. Checklist starts 0/8 complete (no default 4). Step 1: "Welcome to Recall Touch! Let's get your AI phone system running in 2 minutes." Helper text under Website and Address. Step 2: voice cards, greeting editor, personality slider. Step 5: confetti, "Go to my dashboard →" sets onboarded → /app/activity.
+
+# SECTION 5–6 — PRICING & WAITLIST
+Pricing toggle: Monthly $97/$247/$497 ↔ Annual $81/$206/$414 + "Save 17%". Waitlist: validate → localStorage → API → "You're on the list! 🎉". Join waitlist button = bg-white text-black.
+
+# SECTION 7 — HOMEPAGE SPACING
+Between pricing and waitlist: highlight card "Enterprise voice AI costs $150,000/year and takes 6 weeks to deploy. Recall Touch costs $97/month and takes 5 minutes."
+
+# SECTION 8 — APP /app/activity
+Stats: 📞 7 calls | 100% answered | 🎯 3 leads | 💰 ~$2,400. Filters: All | Needs action | Leads | Appointments | Urgent. 5 demo cards (Mike, Sarah, James, Emergency, Lisa). Milestone card: "🎉 Welcome! Complete your setup… [Finish setup →]."
+
+# SECTION 9 — ALL PAGES
+Public: /product, /pricing, /docs, /contact, /privacy, /terms, /blog, /industries/[slug]. App: /app/contacts, agents, campaigns, messages, calendar, analytics, settings + 8 sub-pages. error.tsx dark [Try again] [Go home]. not-found.tsx [Go home]. sitemap.ts 30+ routes. metadata on every page. Footer: "Book a demo" → /demo. "About" → /contact.
+
+# SECTION 10 — ANTI-CHURN
+Onboarding checklist 0/8. Demo mode banner. Milestone cards. Inactivity banner (3+ days no calls). ROI card in analytics. Cancel flow: value → pause → downgrade → confirm. Toasts for new events.
+
+# SECTION 11 — DESIGN SWEEP
+No bg-blue|indigo|purple on buttons. rounded-xl buttons, rounded-2xl cards. No "coming soon" or placeholder on shipped pages. Replace "In development" where appropriate.
+
+# SECTION 12 — POLISH
+Mobile 375px, no overflow. Forms: validation, loading, success, error, offline graceful. Loading skeletons. Confetti on onboarding step 5. Focus rings, aria-labels, 8px grid.
+
+# FINAL VERIFICATION
+npm run build + npm run lint MUST pass. Core flow: Homepage → Start free → /activate → success → /app/onboarding → 5 steps → /app/activity. /demo auto-plays all messages. /sign-in real form. Pricing toggle works. Waitlist confirms. Primary button = bg-white text-black everywhere. Zero blue buttons. No "coming soon". No duplicate "Welcome back". Checklist 0/8 on first visit.

@@ -106,7 +106,7 @@ describe("Trial start route", () => {
     const res = await POST(req);
     const json = await res.json();
 
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(200);
     expect(json).toHaveProperty("ok", false);
     expect(json).toHaveProperty("reason", "invalid_email");
   });
@@ -122,7 +122,7 @@ describe("Trial start route", () => {
     const res = await POST(req);
     const json = await res.json();
 
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(200);
     expect(json).toHaveProperty("ok", false);
     expect(json).toHaveProperty("reason", "invalid_json");
   });

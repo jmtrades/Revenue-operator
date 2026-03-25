@@ -1,0 +1,40 @@
+---
+description: Operational guidelines for Recall Touch development.
+globs: ["**/*"]
+---
+
+# Recall Touch — Operational Guidelines
+
+When building features for Recall Touch:
+
+## Show outcomes
+- Calls answered, leads captured, appointments booked, revenue impact
+- Stat cards with animated numbers, trend arrows, sparklines
+- Charts and visualizations for analytics (area, donut, heatmap, funnel)
+
+## Show what needs attention
+- Missed calls, hot leads not yet contacted, stalled follow-ups
+- Upcoming appointments, failed integrations, usage limits approaching
+
+## Show activity
+- Real-time feed of calls, leads, appointments, SMS, and system events
+- Timeline components with timestamps, outcomes, and quick actions
+
+## Enable action
+- Quick paths to: make a call, send SMS, add lead, create agent, run campaign
+- Command palette (⌘K) for global search and actions
+- Inline actions on list items (play audio, view transcript, add to leads)
+
+## UI feel
+- Premium dark theme — Linear/Vercel quality
+- Smooth Framer Motion animations on all transitions
+- Skeleton loading states matching actual layout
+- Cards with subtle borders and hover effects
+- Proper focus-visible rings for accessibility
+
+## Engineering
+- Server Components by default
+- Supabase Realtime for live updates where applicable
+- Optimistic UI for CRUD operations
+- Proper error boundaries on every route
+- All user-visible data from stored events in Supabase

@@ -1,0 +1,6 @@
+{
+  "scenario_category": "inbound_triage",
+  "channel": "voice",
+  "structured_context_json": { "outcome": "connected", "source": "fixture" },
+  "expected_outcome_type": "connected"
+}
