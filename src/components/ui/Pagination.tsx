@@ -8,6 +8,10 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
   /** Label for "Page X of Y" — provide translated string with {page} and {total} placeholders */
   label?: string;
+  /** Aria-label for the previous page button */
+  prevLabel?: string;
+  /** Aria-label for the next page button */
+  nextLabel?: string;
   className?: string;
 }
 
@@ -20,6 +24,8 @@ export function Pagination({
   totalPages,
   onPageChange,
   label,
+  prevLabel,
+  nextLabel,
   className = "",
 }: PaginationProps) {
   if (totalPages <= 1) return null;
@@ -27,7 +33,7 @@ export function Pagination({
   const safePage = Math.max(1, Math.min(currentPage, totalPages));
   const displayLabel = label
     ? label.replace("{page}", String(safePage)).replace("{total}", String(totalPages))
-    : `Page ${safePage} / ${totalPages}`;
+    : `${safePage} / ${totalPages}`;
 
   return (
     <div
@@ -42,7 +48,7 @@ export function Pagination({
           background: "var(--bg-surface)",
           color: "var(--text-secondary)",
         }}
-        aria-label="Previous page"
+        aria-label={prevLabel ?? "Previous page"}
       >
         <ChevronLeft className="w-4 h-4" />
       </button>
@@ -61,7 +67,7 @@ export function Pagination({
           background: "var(--bg-surface)",
           color: "var(--text-secondary)",
         }}
-        aria-label="Next page"
+        aria-label={nextLabel ?? "Next page"}
       >
         <ChevronRight className="w-4 h-4" />
       </button>

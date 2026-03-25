@@ -1054,14 +1054,14 @@ export default function AppAnalyticsPage() {
         <div className="mb-6">
           <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
             <BarChart3 className="w-5 h-5 text-[var(--text-tertiary)]" />
-            Pipeline &amp; Operations
+            {t("analytics.pipelineTitle")}
           </h2>
 
           <div className="grid gap-6 lg:grid-cols-2 mb-6">
             <PipelineFunnel workspaceId={workspaceId} />
 
             <div>
-              <h3 className="text-sm font-medium text-[var(--text-primary)] mb-4">Operational Metrics</h3>
+              <h3 className="text-sm font-medium text-[var(--text-primary)] mb-4">{t("analytics.operationalMetrics")}</h3>
               <OperationsSummary
                 workspaceId={workspaceId}
                 startDate={rangeStart.toISOString().split("T")[0]}
