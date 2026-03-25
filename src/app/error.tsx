@@ -13,10 +13,7 @@ export default function Error({
 }) {
   const t = useTranslations("errors");
   useEffect(() => {
-    // Log error to console in development
-    if (process.env.NODE_ENV === "development") {
-      console.error("[Error Boundary]", error);
-    }
+    console.error("[Error Boundary]", error);
   }, [error]);
 
   return (

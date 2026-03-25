@@ -9,10 +9,14 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getDb } from "@/lib/db/queries";
 import { getStripe } from "@/lib/billing/stripe-client";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const DEV_SIM_SECRET = process.env.DEV_SIM_SECRET;
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   try {
     const authHeader = req.headers.get("authorization");
     if (authHeader !== `Bearer ${DEV_SIM_SECRET}`) {
@@ -114,9 +118,10 @@ export async function POST(req: NextRequest) {
         renews_at: renewsAt?.toISOString(),
       });
     } catch (error) {
+      console.error("[dev/verify-stripe] Stripe verification error:", error);
       // Error response below
       return NextResponse.json(
-        { error: error instanceof Error ? error.message : "Unknown error" },
+        { error: "Stripe verification failed" },
         { status: 500 }
       );
     }

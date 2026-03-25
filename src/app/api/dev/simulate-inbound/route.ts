@@ -15,8 +15,12 @@ import { ingestInboundAsSignal } from "@/lib/signals/ingest-inbound";
 import { processWebhookJob } from "@/lib/pipeline/process-webhook";
 import { enqueue } from "@/lib/queue";
 import { burstDrain } from "@/lib/queue/burst-drain";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   // Security: Block in production unless DEV_SIM_SECRET is provided
   const isProduction = process.env.NODE_ENV === "production";
   const devSecret = req.headers.get("authorization")?.replace("Bearer ", "");
@@ -142,9 +146,10 @@ export async function POST(req: NextRequest) {
       phone_number: phoneNumber,
     });
   } catch (error) {
+    console.error("[dev/simulate-inbound] Simulation error:", error);
     // Simulate failed; error response below
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to simulate inbound" },
+      { error: "Simulation failed" },
       { status: 500 }
     );
   }

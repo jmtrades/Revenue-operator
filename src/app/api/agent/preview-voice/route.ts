@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 type PreviewVoiceBody = {
   voice_id?: string;
@@ -30,6 +31,9 @@ function getVoiceServerUrl(): string {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const session = await getSession(req);
   if (!session?.workspaceId || !session?.userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -91,9 +95,9 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
-    const msg = error instanceof Error ? error.message : "Voice server request failed";
+    console.error("[preview-voice] Voice preview error:", error);
     return NextResponse.json(
-      { error: msg },
+      { error: "Voice preview failed" },
       { status: 503 },
     );
   }
