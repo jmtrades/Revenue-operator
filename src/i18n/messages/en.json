@@ -4564,7 +4564,14 @@
     "whenWeAskBeforeActing": "When we ask before acting",
     "profileTitle": "Profile",
     "requestDeleteData": "Request data deletion",
-    "requestDeleteAccount": "Request account deletion"
+    "requestDeleteAccount": "Request account deletion",
+    "appearance": {
+      "title": "Appearance",
+      "description": "Choose how Recall Touch looks for you.",
+      "system": "System",
+      "light": "Light",
+      "dark": "Dark"
+    }
   },
   "hero": {
     "title": "Your Revenue Operations Run on Autopilot.",
@@ -6589,6 +6596,7 @@
     "capabilitiesLabel": "Key capabilities",
     "roiLabel": "ROI",
     "ctaStartFree": "Start free →",
+    "ctaWatchDemo": "Watch the demo →",
     "ctaPricing": "See pricing →",
     "problemHeading": "Missed calls cost {industry} businesses every day.",
     "capabilitiesHeading": "Built for {industry} workflows.",

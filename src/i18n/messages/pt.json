@@ -4207,7 +4207,14 @@
     "whenWeAskBeforeActing": "When we ask before acting",
     "profileTitle": "Perfil",
     "requestDeleteData": "Solicitar exclusão de dados",
-    "requestDeleteAccount": "Solicitar exclusão de conta"
+    "requestDeleteAccount": "Solicitar exclusão de conta",
+    "appearance": {
+      "title": "Aparência",
+      "description": "Escolha como o Recall Touch aparece para você.",
+      "system": "Sistema",
+      "light": "Claro",
+      "dark": "Escuro"
+    }
   },
   "hero": {
     "title": "Nesta semana atendemos 12.847 ligações que iriam para a caixa postal.",
@@ -6257,6 +6264,7 @@
     "capabilitiesLabel": "Capacidades principais",
     "roiLabel": "ROI",
     "ctaStartFree": "Começar grátis →",
+    "ctaWatchDemo": "Assistir a demonstração →",
     "ctaPricing": "Ver preços →",
     "problemHeading": "Chamadas perdidas custam caro aos negócios de {industry} todos os dias.",
     "capabilitiesHeading": "Feito para fluxos de trabalho de {industry}.",
