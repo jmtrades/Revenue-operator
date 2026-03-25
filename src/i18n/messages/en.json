@@ -4215,7 +4215,29 @@
       "customAnswerPlaceholder": "Expected answer",
       "transferNumberPlaceholder": "+1 (555) 000-0000",
       "objectionsPlaceholder": "Objection",
-      "responsePlaceholder": "Response"
+      "responsePlaceholder": "Response",
+      "behaviorSectionTitle": "Behavior & Qualification",
+      "behaviorSectionDescription": "Configure qualification methods and tone",
+      "qualificationMethodLabel": "Qualification Method",
+      "bantQuestionsLabel": "BANT Questions (Read-only Examples)",
+      "customQuestionsLabel": "Custom Questions",
+      "tonePresetLabel": "Tone Preset",
+      "escalationSectionTitle": "Escalation & Transfer Rules",
+      "escalationSectionDescription": "Configure when to transfer to humans",
+      "transferPolicyLabel": "Transfer Policy",
+      "transferPhoneNumberLabel": "Transfer Phone Number",
+      "confidenceThresholdLabel": "Confidence Threshold",
+      "escalationTriggersLabel": "Escalation Triggers",
+      "escalationTriggersDescription": "Describe situations when the agent should transfer to a human",
+      "escalationTriggersPlaceholder": "E.g., Angry customer, technical issue, competitor comparison...",
+      "actionsSectionTitle": "Allowed & Forbidden Actions",
+      "actionsSectionDescription": "Control what the agent can and cannot do",
+      "allowedActionsLabel": "Allowed Actions",
+      "forbiddenActionsLabel": "Forbidden Actions",
+      "objectionsSectionTitle": "Objection Handling",
+      "objectionsSectionDescription": "Pre-built responses to common objections",
+      "objectionsLabel": "Objection/Response Pairs",
+      "addButton": "+ Add"
     },
     "outbound": {
       "back": "Back to settings",
@@ -8445,6 +8467,7 @@
   "followUps": {
     "title": "Follow-ups",
     "create": "Create Sequence",
+    "retry": "Retry",
     "tabs": {
       "templates": "Templates",
       "active": "Active enrollments"
