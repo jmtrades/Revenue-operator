@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Blog — Recall Touch",
     description:
-      "Practical guides on missed calls, speed-to-lead, and AI phone agents for your business.",
+      "Practical guides on AI phone agents, speed-to-lead, and AI phone agents for your business.",
     url: "https://www.recall-touch.com/blog",
     siteName: "Recall Touch",
     type: "website",
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Blog — Recall Touch",
-    description: "Practical guides on missed calls, speed-to-lead, and AI phone agents for your business.",
+    description: "Practical guides on AI phone agents, speed-to-lead, and AI phone agents for your business.",
     creator: "@recalltouch",
   },
 };

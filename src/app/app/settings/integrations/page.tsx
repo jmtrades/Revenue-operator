@@ -737,9 +737,9 @@ export default function AppSettingsIntegrationsPage() {
       {confirmDisconnect && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={() => setConfirmDisconnect(null)}>
           <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-6 max-w-sm w-full shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-2">Disconnect {confirmDisconnect.charAt(0).toUpperCase() + confirmDisconnect.slice(1).replace(/_/g, " ")}?</h3>
+            <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-2">{t("dialog.disconnectTitle", { provider: confirmDisconnect.charAt(0).toUpperCase() + confirmDisconnect.slice(1).replace(/_/g, " ") })}</h3>
             <p className="text-xs text-[var(--text-secondary)] mb-4">
-              This will remove the connection and stop syncing. Your existing contacts will not be deleted.
+              {t("dialog.disconnectDesc")}
             </p>
             <div className="flex justify-end gap-2">
               <button
@@ -747,14 +747,14 @@ export default function AppSettingsIntegrationsPage() {
                 onClick={() => setConfirmDisconnect(null)}
                 className="px-4 py-2 rounded-xl text-xs font-medium border border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
               >
-                Cancel
+                {t("dialog.cancel")}
               </button>
               <button
                 type="button"
                 onClick={() => handleDisconnect(confirmDisconnect)}
                 className="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white hover:bg-red-700"
               >
-                Disconnect
+                {t("button.disconnect")}
               </button>
             </div>
           </div>
@@ -766,7 +766,7 @@ export default function AppSettingsIntegrationsPage() {
       )}
 
       <p className="text-xs text-[var(--text-secondary)] mt-6">
-        Need help with integrations? <a href="mailto:support@recall-touch.com" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline underline-offset-2">support@recall-touch.com</a>
+        {t("hub.needHelp")} <a href="mailto:support@recall-touch.com" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline underline-offset-2">support@recall-touch.com</a>
       </p>
       <p className="mt-4"><Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{t("hub.backToSettings")}</Link></p>
     </div>

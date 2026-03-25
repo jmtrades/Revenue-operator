@@ -62,7 +62,7 @@ export const USE_CASE_OPTIONS: { id: UseCaseId; label: string }[] = [
 ];
 
 export const GOAL_OPTIONS = [
-  { id: "recover_missed", label: "Recover missed calls", desc: "AI answers when you can't — no call goes unanswered", icon: "PhoneIncoming" },
+  { id: "recover_missed", label: "Handle inbound calls", desc: "AI answers when you can't — no call goes unanswered", icon: "PhoneIncoming" },
   { id: "outbound_followup", label: "Outbound follow-up", desc: "Automatically follow up with leads via call, SMS, or email", icon: "PhoneOutgoing" },
   { id: "book_appointments", label: "Book appointments", desc: "Qualify callers and book directly into your calendar", icon: "CalendarCheck" },
   { id: "reactivation", label: "Reactivate past clients", desc: "Win back dormant leads and past customers", icon: "UserPlus" },
