@@ -11,9 +11,9 @@ import { getDb } from "@/lib/db/queries";
 import { getPriceId } from "@/lib/stripe-prices";
 import { RECEIPT_FOOTER } from "@/lib/billing-copy";
 import type { BillingTier } from "@/lib/feature-gate/types";
-import { assertSameOrigin } from "@/lib/http/csrf";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getStripe } from "@/lib/billing/stripe-client";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const PLAN_TO_TIER: Record<string, BillingTier> = {
   solo: "solo",
@@ -161,6 +161,7 @@ export async function POST(req: NextRequest) {
       const hasSubscriptionHistory =
         row.billing_status === "trial" ||
         row.billing_status === "trial_ended" ||
+        row.billing_status === "cancelled" ||
         row.stripe_subscription_id;
 
       if (!hasSubscriptionHistory) {

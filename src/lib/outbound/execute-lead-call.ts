@@ -29,7 +29,8 @@ export async function executeLeadOutboundCall(
     .maybeSingle();
 
   const workspace = ws as { id?: string; status?: string | null; billing_status?: string | null } | null;
-  if (workspace?.status === "expired" || workspace?.billing_status === "trial_ended") {
+  const blockedStatuses = new Set(["trial_ended", "cancelled", "payment_failed"]);
+  if (workspace?.status === "expired" || blockedStatuses.has(workspace?.billing_status ?? "")) {
     return { ok: false, error: "Workspace trial expired" };
   }
 
