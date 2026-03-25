@@ -331,21 +331,18 @@ export default function AppCalendarPage() {
         </div>
         <div className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
           <div>
-            <p className="text-sm font-medium text-[var(--text-primary)]">{t("calendar.outlookCalendar")}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-medium text-[var(--text-primary)]">{t("calendar.outlookCalendar")}</p>
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[var(--bg-inset)] text-[var(--text-secondary)]">
+                Coming soon
+              </span>
+            </div>
             <p className="text-xs text-[var(--text-secondary)]">
               {t("calendar.outlookComingSoon")}
             </p>
           </div>
-          {outlookConnected ? (
+          {outlookConnected && (
             <span className="text-xs text-[var(--text-tertiary)]">{t("calendar.connected")}</span>
-          ) : (
-            <button
-              type="button"
-              disabled
-              className="self-start sm:self-auto px-4 py-2 rounded-xl border border-[var(--border-medium)] text-[var(--text-secondary)] text-xs font-medium cursor-not-allowed"
-            >
-              {t("calendar.connect")}
-            </button>
           )}
         </div>
       </div>

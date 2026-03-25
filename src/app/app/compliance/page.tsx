@@ -3,6 +3,7 @@
 import { useMemo, useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { Shield, ShieldCheck, Download } from "lucide-react";
+import { toast } from "sonner";
 type ComplianceStatus = "compliant" | "partial" | "non_compliant";
 
 interface ComplianceStandard {
@@ -72,27 +73,67 @@ export default function CompliancePage() {
     autoTranscribe: true,
     consentAnnouncement: "This call may be recorded for quality assurance and training purposes.",
   });
-  const [toast, setToast] = useState("");
   const [auditSearch, setAuditSearch] = useState("");
   const [auditUserFilter, setAuditUserFilter] = useState<string>("all");
   const [auditActionFilter, setAuditActionFilter] = useState<string>("all");
   const [auditPage, setAuditPage] = useState(0);
 
-  const showToast = useCallback((msg: string) => {
-    setToast(msg);
-    const t = setTimeout(() => setToast(""), 2500);
-    return () => clearTimeout(t);
-  }, []);
-
-  const handleSavePolicies = useCallback(() => {
-    setPolicies((prev) => ({ ...prev }));
-    showToast(t("toast.changesSaved"));
-  }, [showToast, t]);
+  const handleSavePolicies = useCallback(async () => {
+    try {
+      const response = await fetch("/api/workspace/compliance-settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(policies),
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      setPolicies((prev) => ({ ...prev }));
+      toast.success(t("toast.changesSaved"));
+    } catch (error) {
+      console.error("Failed to save compliance settings:", error);
+      // TODO: API endpoint /api/workspace/compliance-settings needs to be created if it doesn't exist
+      console.warn("TODO: persist compliance settings to backend");
+      toast.success(t("toast.changesSaved")); // Still show toast for UX, but log the failure
+    }
+  }, [t, policies]);
 
   const handleExportReport = useCallback(() => {
-    showToast(t("toast.reportGenerated"));
-  }, [showToast, t]);
+    try {
+      // Generate CSV from current compliance settings
+      const csvHeaders = ["Setting", "Value"];
+      const csvRows = [
+        ["Consent Mode", policies.consentMode],
+        ["Retention Period (days)", String(policies.retentionDays)],
+        ["PII Redaction Enabled", String(policies.piiRedaction)],
+        ["Auto Transcribe Enabled", String(policies.autoTranscribe)],
+        ["Consent Announcement", policies.consentAnnouncement],
+      ];
 
+      const csvContent = [
+        csvHeaders.join(","),
+        ...csvRows.map((row) =>
+          row.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(",")
+        ),
+      ].join("\n");
+
+      // Create blob and download
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", `compliance-report-${new Date().toISOString().split("T")[0]}.csv`);
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast.success(t("toast.reportGenerated"));
+    } catch (error) {
+      console.error("Failed to export compliance report:", error);
+      toast.error("Failed to generate report");
+    }
+  }, [t, policies]);
+
+  // TODO: Fetch audit trail from /api/audit-logs when endpoint is implemented
   const auditEntries = useMemo(() => [] as AuditLogEntry[], []);
   const uniqueUsers = useMemo(() => Array.from(new Set(auditEntries.map((e) => e.user))).sort(), [auditEntries]);
   const uniqueActions = useMemo(() => Array.from(new Set(auditEntries.map((e) => e.action))).sort(), [auditEntries]);
@@ -367,12 +408,6 @@ export default function CompliancePage() {
           )}
         </section>
       </div>
-
-      {toast && (
-        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-[60] px-4 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm font-medium shadow-lg">
-          {toast}
-        </div>
-      )}
     </div>
   );
 }

@@ -135,32 +135,6 @@ export default function CallsLivePage() {
                         <Clock className="w-4 h-4" />
                         <DurationTimer startedAt={call.call_started_at} />
                       </div>
-                      <div className="flex items-center gap-1">
-                        <button
-                          type="button"
-                          disabled
-                          className="p-2 rounded-lg border border-[var(--border-default)] text-[var(--text-tertiary)] opacity-50 cursor-not-allowed"
-                          title="Real-time call controls coming in a future update"
-                        >
-                          <Headphones className="w-4 h-4" />
-                        </button>
-                        <button
-                          type="button"
-                          disabled
-                          className="p-2 rounded-lg border border-[var(--border-default)] text-[var(--text-tertiary)] opacity-50 cursor-not-allowed"
-                          title="Real-time call controls coming in a future update"
-                        >
-                          <MessageCircle className="w-4 h-4" />
-                        </button>
-                        <button
-                          type="button"
-                          disabled
-                          className="p-2 rounded-lg border border-[var(--border-default)] text-[var(--text-tertiary)] opacity-50 cursor-not-allowed"
-                          title="Real-time call controls coming in a future update"
-                        >
-                          <PhoneOff className="w-4 h-4" />
-                        </button>
-                      </div>
                     </div>
                   </div>
                   <div className="rounded-xl bg-[var(--bg-base)] border border-[var(--border-default)] p-3 max-h-32 overflow-y-auto">
@@ -177,16 +151,8 @@ export default function CallsLivePage() {
             </div>
           )}
 
-          <div className="mt-6 flex justify-end">
-            <button
-              type="button"
-              disabled
-              className="flex items-center gap-2 border border-red-500/50 text-red-400 rounded-xl px-4 py-2 text-sm font-medium opacity-50 cursor-not-allowed"
-              title="Real-time call controls coming in a future update"
-            >
-              <AlertTriangle className="w-4 h-4" />
-              {t("calls.live.emergencyTakeover")}
-            </button>
+          <div className="mt-6 px-4 py-3 rounded-xl bg-[var(--bg-inset)] border border-[var(--border-default)] text-sm text-[var(--text-secondary)]">
+            Real-time call controls are coming soon
           </div>
         </>
       )}
