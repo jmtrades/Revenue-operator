@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -10,15 +10,34 @@ import { toast } from "sonner";
 export default function SignInForm() {
   const t = useTranslations("auth");
   const sp = useSearchParams();
+  const router = useRouter();
   const oauthError = sp?.get("error") ?? "";
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
   const [err, setErr] = useState("");
-  const [noAccount, setNoAccount] = useState(false);
   const [busy, setBusy] = useState(false);
   const [googleBusy, setGoogleBusy] = useState(false);
   const [showPw, setShowPw] = useState(false);
+  const [checking, setChecking] = useState(true);
   const _tToast = useTranslations("toast");
+
+  // Check if user already has a valid session
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const res = await fetch("/api/auth/me", { credentials: "include" });
+        if (res.ok) {
+          // User has an active session, redirect to dashboard
+          router.push("/app/dashboard");
+          return;
+        }
+      } catch {
+        // Continue with sign-in page
+      }
+      setChecking(false);
+    };
+    checkSession();
+  }, [router]);
 
   const oauthErrorMessage =
     oauthError === "google_config"
@@ -36,7 +55,6 @@ export default function SignInForm() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setErr("");
-    setNoAccount(false);
     setBusy(true);
     try {
       const url = "/api/auth/signin";
@@ -52,24 +70,12 @@ export default function SignInForm() {
       });
       const d = await r.json().catch(() => ({}));
       if (!r.ok) {
-        // If we don't have a matching local signup snapshot, show the guided CTA
-        let shouldShowNoAccount = false;
-        try {
-          const raw = window.localStorage.getItem("rt_signup");
-          const parsed = raw ? (JSON.parse(raw) as { email?: string | null }) : null;
-          const storedEmail = parsed?.email?.toLowerCase() ?? "";
-          const currentEmail = email.trim().toLowerCase();
-          if (!storedEmail || storedEmail !== currentEmail) {
-            shouldShowNoAccount = true;
-          }
-        } catch {
-          shouldShowNoAccount = true;
-        }
-
-        if (shouldShowNoAccount) {
-          setNoAccount(true);
+        // Show API error message or improved generic message
+        const apiError = (d as { error?: string }).error;
+        if (apiError?.toLowerCase().includes("invalid") || apiError?.toLowerCase().includes("incorrect")) {
+          setErr("The email or password you entered is incorrect. Please try again or reset your password.");
         } else {
-          setErr((d as { error?: string }).error || t("genericError"));
+          setErr(apiError || "The email or password you entered is incorrect. Please try again or reset your password.");
         }
         setBusy(false);
         return;
@@ -119,6 +125,21 @@ export default function SignInForm() {
     }
   }
 
+  if (checking) {
+    return (
+      <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center px-4">
+        <div className="w-full max-w-[420px]">
+          <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl p-8 shadow-[var(--shadow-xl)] flex items-center justify-center min-h-[400px]">
+            <div className="flex flex-col items-center gap-3">
+              <Loader2 className="w-6 h-6 animate-spin text-[var(--accent-primary)]" />
+              <p className="text-sm text-[var(--text-secondary)]">Checking session...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center px-4">
       <div className="w-full max-w-[420px] space-y-5">
@@ -146,7 +167,6 @@ export default function SignInForm() {
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
-                  setNoAccount(false);
                   setErr("");
                 }}
                 placeholder={t("signIn.emailPlaceholder")}
@@ -181,23 +201,11 @@ export default function SignInForm() {
                 </button>
               </div>
             </div>
-            {(noAccount || err || oauthErrorMessage) && (
+            {(err || oauthErrorMessage) && (
               <div className="space-y-2">
-                {noAccount ? (
-                  <div className="px-3.5 py-2.5 bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl text-[13px] text-[var(--text-secondary)]">
-                    {t("signIn.noAccountPrefix")}
-                    <Link
-                      href="/activate"
-                      className="text-[var(--text-primary)] font-medium hover:underline"
-                    >
-                      {t("signIn.startFreeCta")}
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="px-3.5 py-2.5 bg-[var(--accent-danger-subtle)] border border-[var(--accent-danger-subtle)]/60 rounded-xl text-[var(--accent-danger)] text-[13px]">
-                    {err || oauthErrorMessage}
-                  </div>
-                )}
+                <div className="px-3.5 py-2.5 bg-[var(--accent-danger-subtle)] border border-[var(--accent-danger-subtle)]/60 rounded-xl text-[var(--accent-danger)] text-[13px]">
+                  {err || oauthErrorMessage}
+                </div>
               </div>
             )}
             <button
