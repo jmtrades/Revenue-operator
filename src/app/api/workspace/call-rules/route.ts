@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getSession } from "@/lib/auth/request-session";
 import { getDb } from "@/lib/db/queries";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function GET(req: NextRequest) {
   const session = await getSession(req);
@@ -34,6 +35,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   let body: { workspace_id?: string; after_hours_behavior?: string; emergency_keywords?: string; transfer_phone?: string };
   try {
     body = await req.json();

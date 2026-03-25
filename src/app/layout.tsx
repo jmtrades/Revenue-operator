@@ -53,26 +53,26 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.recall-touch.com"),
   title: {
     template: "%s — Recall Touch",
-    default: "Recall Touch — AI That Makes and Takes Your Phone Calls",
+    default: "Recall Touch — AI Revenue Operations Platform",
   },
   description:
-    "AI-powered phone system that makes and takes calls, books appointments, follows up with leads, and connects to your CRM. Built for businesses that never want to miss a call.",
+    "AI revenue operations platform that handles inbound calls, outbound campaigns, follow-ups, appointment booking, no-show recovery, and lead qualification. Built for every business, every industry.",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://www.recall-touch.com",
     siteName: "Recall Touch",
-    title: "Recall Touch — AI That Makes and Takes Your Phone Calls",
+    title: "Recall Touch — AI Revenue Operations Platform",
     description:
-      "AI phone agents that answer calls, make calls, follow up with leads, book appointments, recover revenue, and get smarter with every conversation. Any business. Any industry. Try free.",
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Recall Touch — AI phone agents for every business" }],
+      "AI revenue agents that handle inbound calls, outbound campaigns, follow-ups, bookings, no-show recovery, lead qualification, and reactivation. Any business. Any industry. Try free.",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Recall Touch — AI revenue operations for every business" }],
   },
   icons: { icon: "/icon" },
   twitter: {
     card: "summary_large_image",
-    title: "Recall Touch — AI That Makes and Takes Your Phone Calls",
+    title: "Recall Touch — AI Revenue Operations Platform",
     description:
-      "AI phone agents that answer calls, make calls, follow up with leads, book appointments, recover revenue, and get smarter with every conversation. Any business. Any industry. Try free.",
+      "AI revenue agents that handle inbound calls, outbound campaigns, follow-ups, bookings, no-show recovery, lead qualification, and reactivation. Any business. Any industry. Try free.",
     creator: "@recalltouch",
   },
   alternates: { canonical: "https://www.recall-touch.com" },

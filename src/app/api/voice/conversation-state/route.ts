@@ -26,6 +26,7 @@ import {
 } from "@/lib/voice/conversation-state";
 import { FILLER_ROTATION } from "@/lib/voice/human-voice-defaults";
 import { log } from "@/lib/logger";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 // In-memory state store per call session (voice server holds one call at a time)
 // In production, this would be Redis — but for single-server it's fine.
@@ -57,6 +58,9 @@ interface ConversationStateBody {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   let payload: ConversationStateBody;
   try {
     payload = (await req.json()) as ConversationStateBody;

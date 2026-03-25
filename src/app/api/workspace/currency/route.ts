@@ -8,6 +8,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { z } from "zod";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const PATCH_BODY = z.object({
   currency: z.enum(["USD", "EUR", "GBP", "CAD", "AUD", "JPY", "BRL", "MXN"]),
@@ -41,6 +42,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const session = await getSession(req);
   if (!session?.userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

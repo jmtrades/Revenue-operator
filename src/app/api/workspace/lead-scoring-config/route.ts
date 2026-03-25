@@ -12,6 +12,7 @@ import {
   getDefaultScoringConfig,
   type LeadScoringConfig,
 } from "@/lib/lead-scoring";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +32,10 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
+
   const session = await getSession(req);
   if (!session?.workspaceId)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

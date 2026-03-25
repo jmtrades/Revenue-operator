@@ -7,9 +7,9 @@ import { ROUTES } from "@/lib/constants";
 const BASE = "https://www.recall-touch.com";
 
 export const metadata = {
-  title: "AI Revenue Operations for Construction — Recall Touch",
+  title: "Construction AI Revenue Operations Platform — Recall Touch",
   description:
-    "Capture bid requests instantly, coordinate subcontractors, manage job sites, and never miss a project opportunity—even when you're on-site.",
+    "Drive project pipeline and operational efficiency with complete AI-powered workflows: bid capture and qualification, subcontractor coordination, job-site management, bid appointment scheduling, and project tracking.",
   alternates: { canonical: `${BASE}/industries/construction` },
 };
 
@@ -27,9 +27,9 @@ export default function ConstructionIndustryPage() {
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    name: "Construction AI Revenue Operations",
+    name: "Construction AI Revenue Operations Platform",
     url: `${BASE}/industries/construction`,
-    description: "AI phone system for construction: captures bid requests, coordinates subcontractors, routes job site calls, and never misses an opportunity.",
+    description: "Complete AI revenue operations for construction: bid request intake and qualification, subcontractor notification and coordination, bid scheduling, job-site communication, and opportunity tracking.",
     address: { "@type": "PostalAddress", addressCountry: "US" },
   };
 

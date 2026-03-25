@@ -35,7 +35,8 @@ const SCORE_COLORS: Record<string, string> = {
   all: "bg-[var(--bg-card)] text-[var(--text-secondary)] border-[var(--border-medium)]",
 };
 
-function scoreBucket(score: number): string {
+function scoreBucket(score: number | null): string {
+  if (score === null) return "low";
   if (score >= 70) return "high";
   if (score >= 40) return "medium";
   return "low";
@@ -73,7 +74,7 @@ function BoardCard({ lead, onOpen, t }: { lead: LeadView; onOpen: () => void; t:
       <p className="text-[11px] text-[var(--text-secondary)] truncate">{lead.service}</p>
       <div className="mt-1 flex items-center justify-between gap-2">
         <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] ${scoreClass}`}>
-          <span>{lead.score}</span>
+          <span>{lead.score ?? "—"}</span>
         </span>
         <span className="text-[11px] text-[var(--text-secondary)]">{timeSince(lead.createdAt, t)}</span>
       </div>

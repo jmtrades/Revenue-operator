@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { getTelephonyProvider } from "@/lib/telephony/get-telephony-provider";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 function toE164(value: string): string | null {
   const digits = value.replace(/\D/g, "");
@@ -96,6 +97,9 @@ async function startTwilioVerification(phone: string): Promise<{ sent: boolean; 
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const session = await getSession(req);
   if (!session?.workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

@@ -9,8 +9,12 @@ import {
   getAccumulatedLearnings,
   type CallOutcome,
 } from "@/lib/ai/auto-learn";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   try {
     const body = await req.json();
     const { call_id, transcript, outcome, workspace_id } = body as {

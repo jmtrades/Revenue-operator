@@ -7,9 +7,9 @@ import { ROUTES } from "@/lib/constants";
 const BASE = "https://www.recall-touch.com";
 
 export const metadata = {
-  title: "Roofing AI Phone Agent — Recall Touch",
+  title: "Roofing AI Revenue Operations Platform — Recall Touch",
   description:
-    "Answer storm-damage calls, book inspections, follow up on estimates, and recover no-shows with an AI phone agent built for roofing teams.",
+    "Maximize storm response and inspection-to-job conversion with complete AI-powered workflows: instant call answering, damage assessment and qualification, inspection scheduling, estimate follow-up, and no-show prevention.",
   alternates: { canonical: "https://www.recall-touch.com/industries/roofing" },
 };
 
@@ -27,10 +27,10 @@ export default function RoofingIndustryPage() {
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    name: "Roofing AI Phone Agent",
+    name: "Roofing AI Revenue Operations Platform",
     url: `${BASE}/industries/roofing`,
     description:
-      "AI phone agent for roofing and home restoration: answers calls, books inspections, runs estimate follow-up, and recovers missed revenue.",
+      "Complete AI revenue operations for roofing: storm damage call answering, damage intake and qualification, inspection scheduling and confirmations, estimate follow-up automation, no-show prevention, and lead reactivation.",
     address: { "@type": "PostalAddress", addressCountry: "US" },
   };
 

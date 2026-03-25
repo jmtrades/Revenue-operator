@@ -7,9 +7,9 @@ import { ROUTES } from "@/lib/constants";
 const BASE = "https://www.recall-touch.com";
 
 export const metadata = {
-  title: "AI Revenue Operations for Auto Repair — Recall Touch",
+  title: "Auto Repair AI Revenue Operations Platform — Recall Touch",
   description:
-    "Capture estimate calls during rush hours, automate callback scheduling, and dominate seasonal spikes with 24/7 appointment booking.",
+    "Drive shop revenue and efficiency with complete AI-powered workflows: instant call answering, service booking, estimate follow-up, seasonal campaign automation, no-show prevention, and upsell optimization.",
   alternates: { canonical: `${BASE}/industries/auto-repair` },
 };
 
@@ -27,9 +27,9 @@ export default function AutoRepairIndustryPage() {
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    name: "Auto Repair AI Revenue Operations",
+    name: "Auto Repair AI Revenue Operations Platform",
     url: `${BASE}/industries/auto-repair`,
-    description: "AI phone system for auto repair shops: answers calls, schedules estimates and repairs, and captures seasonal demand spikes.",
+    description: "Complete AI revenue operations for auto repair: call answering, service intake and scheduling, estimate follow-up automation, seasonal campaign execution, no-show prevention, and revenue tracking.",
     address: { "@type": "PostalAddress", addressCountry: "US" },
   };
 

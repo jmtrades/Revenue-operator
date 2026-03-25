@@ -27,8 +27,8 @@ export async function generateMetadata({
     const t = await getTranslations("industriesPage.fallback");
     return { title: t("title") };
   }
-  const title = `${industry.name} AI Phone Agent — Recall Touch`;
-  const description = `Never miss ${industry.customerType} again. ${industry.name} AI phone agent answers calls, books appointments, and runs recovery follow-ups.`;
+  const title = `${industry.name} AI Revenue Operations Platform — Recall Touch`;
+  const description = `Drive ${industry.customerType} revenue with complete AI-powered workflows: call answering, appointment scheduling, no-show prevention, follow-up automation, and campaign execution for ${industry.name}.`;
   const url = `${BASE}/industries/${slug}`;
   return {
     title,
@@ -188,7 +188,7 @@ export default async function IndustryPage({
             "@type": "LocalBusiness",
             name: `${industry.name} AI Phone Agent`,
             url: `${BASE}/industries/${slug}`,
-            description: `AI phone agent for ${industry.customerType}: answers calls, books appointments, and recovers missed revenue.`,
+            description: `Complete AI revenue operations for ${industry.customerType}: call answering, appointment scheduling, no-show prevention, automated follow-up, campaign execution, and revenue recovery.`,
             address: {
               "@type": "PostalAddress",
               addressCountry: "US",

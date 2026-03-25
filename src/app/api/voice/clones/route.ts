@@ -16,6 +16,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { resolveBillingTier } from "@/lib/feature-gate/resolver";
 import { VOICE_TIER_LIMITS } from "@/lib/voice/billing";
 import { voiceRateLimiter } from "@/lib/voice/rate-limiter";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 /**
  * GET /api/voice/clones?workspace_id=...
@@ -63,6 +64,9 @@ export async function GET(req: NextRequest) {
  * Body: { workspace_id, name, description?, audio_url }
  */
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   let body: Record<string, unknown>;
   try {
     body = await req.json();
@@ -157,6 +161,9 @@ export async function POST(req: NextRequest) {
  * Remove a voice clone.
  */
 export async function DELETE(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const workspaceId = req.nextUrl.searchParams.get("workspace_id")?.trim();
   const cloneId = req.nextUrl.searchParams.get("clone_id")?.trim();
 

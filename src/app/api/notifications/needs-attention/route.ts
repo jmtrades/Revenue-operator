@@ -12,6 +12,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { createUserNotification } from "@/lib/notifications";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const BODY = z.object({
   needs_attention_id: z.string().min(1),
@@ -21,6 +22,9 @@ const BODY = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const session = await getSession(req);
   if (!session?.userId || !session.workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

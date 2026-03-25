@@ -7,11 +7,15 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { acknowledgeSharedTransaction } from "@/lib/shared-transaction-assurance";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const csrfBlock = assertSameOrigin(request);
+  if (csrfBlock) return csrfBlock;
+
   const { id } = await params;
   let body: { action?: string; new_deadline?: string; dispute_reason?: string } = {};
   try {

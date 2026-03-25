@@ -396,7 +396,7 @@ export default function AppCallDetailPage() {
                 href="/app/inbox"
                 className="inline-flex items-center gap-1.5 mt-3 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               >
-                Follow up in inbox →
+                {t("followUpInInbox")} →
               </Link>
             )}
           </section>
@@ -478,7 +478,7 @@ export default function AppCallDetailPage() {
             </pre>
           ) : (
             <p className="text-sm text-[var(--text-secondary)]">
-              No transcript available for this call.
+              {t("noTranscriptAvailable")}
             </p>
           )}
         </section>

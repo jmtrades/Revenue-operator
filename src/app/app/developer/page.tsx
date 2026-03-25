@@ -136,7 +136,9 @@ function ApiKeysTab({
 
   const handleCreateSubmit = () => {
     if (!createLabel.trim()) return;
-    const fullKey = `sk_live_${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`;
+    const buf = new Uint8Array(24);
+    crypto.getRandomValues(buf);
+    const fullKey = `sk_live_${Array.from(buf, (b) => b.toString(16).padStart(2, "0")).join("")}`;
     onCreate(createLabel.trim(), createPermission);
     setNewKeyModal({ label: createLabel.trim(), fullKey });
     setCreateModal(false);
@@ -678,7 +680,7 @@ export default function DeveloperPage() {
         label,
         keyPrefix: "sk_live_",
         keySuffix: suffix,
-        fullKey: `sk_live_${Math.random().toString(36).slice(2)}${Date.now().toString(36)}${suffix}`,
+        fullKey: (() => { const b = new Uint8Array(24); crypto.getRandomValues(b); return `sk_live_${Array.from(b, (x) => x.toString(16).padStart(2, "0")).join("")}`; })(),
         permission,
         createdAt: new Date().toISOString(),
         lastUsedAt: new Date().toISOString(),
@@ -693,7 +695,7 @@ export default function DeveloperPage() {
       {
         id: `wh-${Date.now()}`,
         url,
-        secret: `whsec_${Math.random().toString(36).slice(2)}`,
+        secret: (() => { const b = new Uint8Array(20); crypto.getRandomValues(b); return `whsec_${Array.from(b, (x) => x.toString(16).padStart(2, "0")).join("")}`; })(),
         events,
         status: "active",
         lastDeliveryAt: new Date().toISOString(),

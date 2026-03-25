@@ -14,6 +14,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { getDb } from "@/lib/db/queries";
 import { handleInboundCall } from "@/lib/voice/call-flow";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const FALLBACK_TWIML = `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">Thanks for calling. Please hold while we connect you.</Say><Pause length="2"/><Say voice="alice">If you need to speak to someone, please leave your name and number after the beep.</Say><Record maxLength="90" transcribe="true"/></Response>`;
 
@@ -30,6 +31,9 @@ function verifyTwilioSignature(url: string, params: Record<string, string>, sign
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   let form: Record<string, string>;
   try {
     const text = await req.text();

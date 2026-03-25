@@ -22,6 +22,7 @@ function verifyTwilioSignature(url: string, params: Record<string, string>, sign
 }
 
 export async function POST(request: NextRequest) {
+
   try {
   // Read body as text first for signature verification
   const bodyText = await request.text();

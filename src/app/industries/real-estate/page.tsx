@@ -7,9 +7,9 @@ import { ROUTES } from "@/lib/constants";
 const BASE = "https://www.recall-touch.com";
 
 export const metadata = {
-  title: "AI Revenue Operations for Real Estate — Recall Touch",
+  title: "Real Estate AI Revenue Operations Platform — Recall Touch",
   description:
-    "Never lose a lead to voicemail. Qualify buyer calls, schedule showings, and automate listing inquiry follow-up to close more deals.",
+    "Capture every lead, qualify faster, and close more deals with complete AI-powered workflows: instant call answering, lead qualification, showing scheduling, follow-up automation, and conversion tracking.",
   alternates: { canonical: `${BASE}/industries/real-estate` },
 };
 
@@ -27,9 +27,9 @@ export default function RealEstateIndustryPage() {
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    name: "Real Estate AI Revenue Operations",
+    name: "Real Estate AI Revenue Operations Platform",
     url: `${BASE}/industries/real-estate`,
-    description: "AI phone system for real estate: answers calls from buyers and sellers, qualifies leads, schedules showings, and automates listing follow-up.",
+    description: "Complete AI revenue operations for real estate: lead capture and qualification, instant showing scheduling, post-showing follow-up, lead scoring, transaction tracking, and CRM integration.",
     address: { "@type": "PostalAddress", addressCountry: "US" },
   };
 

@@ -10,8 +10,8 @@ import { getDb } from "@/lib/db/queries";
 import { sendOutbound } from "@/lib/delivery/provider";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
-import { assertSameOrigin } from "@/lib/http/csrf";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(req: NextRequest) {
   const csrfErr = assertSameOrigin(req);

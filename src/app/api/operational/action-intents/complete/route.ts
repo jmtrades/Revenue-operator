@@ -18,12 +18,16 @@ import { enforceOutcomeClosure } from "@/lib/intelligence/outcome-closure";
 import { recordStrategyEffectiveness } from "@/lib/intelligence/strategy-effectiveness";
 import { appendLedgerEvent } from "@/lib/ops/ledger";
 import type { OperationalAction } from "@/lib/reciprocal-events";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const EMIT_INTENT_ACTIONS = ["schedule_followup", "request_disclosure_confirmation", "escalate_to_human", "pause_execution"] as const;
 
 type ResultStatus = "succeeded" | "failed" | "skipped";
 
 export async function POST(request: NextRequest) {
+  const csrfBlock = assertSameOrigin(request);
+  if (csrfBlock) return csrfBlock;
+
   let body: {
     id?: string;
     result_status?: string;

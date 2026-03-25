@@ -7,9 +7,9 @@ import { ROUTES } from "@/lib/constants";
 const BASE = "https://www.recall-touch.com";
 
 export const metadata = {
-  title: "AI Revenue Operations for Insurance Agencies — Recall Touch",
+  title: "Insurance Agency AI Revenue Operations Platform — Recall Touch",
   description:
-    "Capture quote requests instantly, automate renewal follow-up, route claims faster, and drive cross-sell with AI-powered customer service.",
+    "Maximize quote conversion and policy retention with complete AI-powered workflows: instant quote intake, renewal automation, claims routing, cross-sell identification, and lifetime customer value optimization.",
   alternates: { canonical: `${BASE}/industries/insurance` },
 };
 
@@ -27,9 +27,9 @@ export default function InsuranceIndustryPage() {
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    name: "Insurance AI Revenue Operations",
+    name: "Insurance Agency AI Revenue Operations Platform",
     url: `${BASE}/industries/insurance`,
-    description: "AI phone system for insurance agencies: captures quotes, automates renewals, routes claims, and drives cross-sell opportunities.",
+    description: "Complete AI revenue operations for insurance: quote intake and routing, renewal automation and follow-up, claims triage and routing, cross-sell automation, and CRM integration with compliance controls.",
     address: { "@type": "PostalAddress", addressCountry: "US" },
   };
 

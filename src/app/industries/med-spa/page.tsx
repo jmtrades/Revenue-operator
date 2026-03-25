@@ -7,9 +7,9 @@ import { ROUTES } from "@/lib/constants";
 const BASE = "https://www.recall-touch.com";
 
 export const metadata = {
-  title: "Med Spa AI Phone Agent — Recall Touch",
+  title: "Med Spa AI Revenue Operations Platform — Recall Touch",
   description:
-    "Answer consultation calls, book treatments, run reminder sequences, upsell packages with follow-up, and recover cancellations using an AI phone agent for med spas.",
+    "Drive med spa revenue and patient lifetime value with complete AI-powered workflows: consultation booking, appointment reminders, no-show prevention, cancellation recovery, package upsells, and patient reactivation.",
   alternates: { canonical: "https://www.recall-touch.com/industries/med-spa" },
 };
 
@@ -27,10 +27,10 @@ export default function MedSpaIndustryPage() {
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    name: "Med Spa AI Phone Agent",
+    name: "Med Spa AI Revenue Operations Platform",
     url: `${BASE}/industries/med-spa`,
     description:
-      "AI phone agent for med spas: answers consultation calls, books treatments, runs reminders, and recovers cancellations.",
+      "Complete AI revenue operations for med spas: consultation booking and intake, treatment reminders and confirmations, no-show prevention, cancellation recovery, package upsell automation, and patient reactivation.",
     address: { "@type": "PostalAddress", addressCountry: "US" },
   };
 

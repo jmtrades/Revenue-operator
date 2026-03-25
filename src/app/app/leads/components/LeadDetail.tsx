@@ -29,7 +29,7 @@ export type LeadDetailProps = {
   lead: LeadView;
   calls: Array<{ id: string; call_started_at?: string; outcome?: string }>;
   callsLoading: boolean;
-  scoreBadgeClass: (score: number) => string;
+  scoreBadgeClass: (score: number | null) => string;
   onStatusChange: (leadId: string, status: LeadStatus) => void;
   onNotesBlur: (leadId: string, notes: string) => void;
   onArchive: (leadId: string) => void;
@@ -61,7 +61,7 @@ export function LeadDetail({
           className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border text-sm font-semibold ${scoreBadgeClass(lead.score)}`}
           title={t("scoreLabel")}
         >
-          {lead.score}
+          {lead.score ?? "—"}
         </span>
         <div>
           <p className="text-xs text-[var(--text-secondary)]">{lead.service} · {getSourceDisplay(lead.source, tRoot)}</p>

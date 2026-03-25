@@ -8,10 +8,14 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { enqueue } from "@/lib/queue";
 import { ingestInboundAsSignal } from "@/lib/signals/ingest-inbound";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const WEBHOOK_SECRET = process.env.INBOUND_WEBHOOK_SECRET;
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   if (WEBHOOK_SECRET) {
     const authHeader = req.headers.get("authorization");
     if (authHeader !== `Bearer ${WEBHOOK_SECRET}`) {

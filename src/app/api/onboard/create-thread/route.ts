@@ -11,8 +11,12 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { createSharedTransaction } from "@/lib/shared-transaction-assurance";
 import { recordOrientationStatement } from "@/lib/orientation/records";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(request: NextRequest) {
+  const csrfBlock = assertSameOrigin(request);
+  if (csrfBlock) return csrfBlock;
+
   let body: { workspace_id?: string };
   try {
     body = await request.json();

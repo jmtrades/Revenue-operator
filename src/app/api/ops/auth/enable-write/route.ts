@@ -9,8 +9,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getSessionFromCookie, logStaffAction } from "@/lib/ops/auth";
 import { createHash } from "crypto";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const session = await getSessionFromCookie();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

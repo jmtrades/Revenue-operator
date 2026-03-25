@@ -18,6 +18,7 @@ import {
   type PronunciationEntry,
 } from "@/lib/voice/pronunciation";
 import { log } from "@/lib/logger";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 interface PreprocessTTSBody {
   workspace_id: string;
@@ -118,6 +119,9 @@ function addNaturalPauses(text: string, context?: string): string {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   let payload: PreprocessTTSBody;
   try {
     payload = (await req.json()) as PreprocessTTSBody;

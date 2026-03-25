@@ -12,6 +12,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { logLeadCreated } from "@/lib/log/revenue-events";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { normalizePhoneE164 } from "@/lib/phone/normalize";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 function leadScoreFromInput(input: { name?: string; phone?: string; email?: string; service_requested?: string; source?: string }): number {
   let score = 0;
@@ -64,6 +65,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const session = await getSession(req);
   const workspaceId = session?.workspaceId;
   if (!workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
