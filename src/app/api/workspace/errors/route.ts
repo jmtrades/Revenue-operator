@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
   try {
     const { data, error } = await db
       .from("error_reports")
-      .select("id, error_message, error_type, page_url, created_at")
+      .select("id, message, error_type, metadata, created_at")
       .eq("workspace_id", session.workspaceId)
       .order("created_at", { ascending: false })
       .limit(limit);

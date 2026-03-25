@@ -8,9 +8,9 @@ import { AlertTriangle } from "lucide-react";
 
 type ErrorEntry = {
   id: string;
-  error_message: string;
+  message: string;
   error_type: string | null;
-  page_url: string | null;
+  metadata: { page_url?: string | null } | null;
   created_at: string;
 };
 
@@ -63,16 +63,16 @@ export default function AppSettingsErrorsPage() {
                   key={e.id}
                   className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4"
                 >
-                  <p className="text-sm font-medium text-[var(--text-primary)] truncate" title={e.error_message}>
-                    {e.error_message}
+                  <p className="text-sm font-medium text-[var(--text-primary)] truncate" title={e.message}>
+                    {e.message}
                   </p>
                   <div className="mt-1 flex items-center gap-2 text-[11px] text-[var(--text-secondary)]">
                     {e.error_type && (
                       <span className="rounded border border-[var(--border-default)] px-1.5 py-0.5">{e.error_type}</span>
                     )}
-                    {e.page_url && (
-                      <span className="truncate max-w-[200px]" title={e.page_url}>
-                        {e.page_url}
+                    {e.metadata?.page_url && (
+                      <span className="truncate max-w-[200px]" title={e.metadata.page_url}>
+                        {e.metadata.page_url}
                       </span>
                     )}
                     <span>{new Date(e.created_at).toLocaleString()}</span>

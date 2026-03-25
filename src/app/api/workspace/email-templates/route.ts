@@ -1,6 +1,6 @@
 /**
  * GET /api/workspace/email-templates — List email templates for workspace.
- * POST /api/workspace/email-templates — Create template (slug, name, subject, body_html).
+ * POST /api/workspace/email-templates — Create template (slug, name, subject, html_body).
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -19,11 +19,11 @@ export async function GET(req: NextRequest) {
   const db = getDb();
   const { data } = await db
     .from("email_templates")
-    .select("id, slug, name, subject, body_html, created_at, updated_at")
+    .select("id, slug, name, subject, html_body, created_at, updated_at")
     .eq("workspace_id", session.workspaceId)
     .order("slug");
 
-  const list = (data ?? []) as { id: string; slug: string; name: string; subject: string; body_html: string; created_at: string; updated_at: string }[];
+  const list = (data ?? []) as { id: string; slug: string; name: string; subject: string; html_body: string; created_at: string; updated_at: string }[];
   return NextResponse.json({ templates: list });
 }
 
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
   const authErrPost = await requireWorkspaceAccess(req, session.workspaceId);
   if (authErrPost) return authErrPost;
 
-  let body: { slug: string; name: string; subject: string; body_html: string };
+  let body: { slug: string; name: string; subject: string; html_body: string };
   try {
     body = (await req.json()) as typeof body;
   } catch {
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
   const slug = typeof body.slug === "string" ? body.slug.trim().toLowerCase().replace(/\s+/g, "_") : "";
   const name = typeof body.name === "string" ? body.name.trim() : "";
   const subject = typeof body.subject === "string" ? body.subject.trim() : "";
-  const body_html = typeof body.body_html === "string" ? body.body_html : "";
+  const html_body = typeof body.html_body === "string" ? body.html_body : "";
   if (!slug || !name) return NextResponse.json({ error: "slug and name required" }, { status: 400 });
 
   const db = getDb();
@@ -55,11 +55,11 @@ export async function POST(req: NextRequest) {
       slug,
       name,
       subject: subject || name,
-      body_html: body_html || "",
+      html_body: html_body || "",
       created_at: now,
       updated_at: now,
     })
-    .select("id, slug, name, subject, body_html, created_at, updated_at")
+    .select("id, slug, name, subject, html_body, created_at, updated_at")
     .maybeSingle();
 
   if (error) {

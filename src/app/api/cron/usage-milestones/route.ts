@@ -112,8 +112,8 @@ export async function GET(req: NextRequest) {
           workspace_id: ws.id,
           to_email: email,
           subject,
-          body_html: html,
-          template_slug: milestoneSlug,
+          html_body: html,
+          metadata: { template_slug: milestoneSlug },
           status: "sent",
           sent_at: new Date().toISOString(),
         });
