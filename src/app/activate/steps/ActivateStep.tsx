@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Sparkles, Check } from "lucide-react";
+import { Sparkles, Check, Loader } from "lucide-react";
 
 function CheckIcon() {
   return <Check className="w-4 h-4 text-emerald-400 shrink-0" />;
@@ -12,9 +12,11 @@ import { Confetti } from "@/components/Confetti";
 export function ActivateStep({
   onFinalize,
   goBack,
+  finalizing = false,
 }: {
   onFinalize: (e?: React.MouseEvent) => void;
   goBack: () => void;
+  finalizing?: boolean;
 }) {
   const t = useTranslations("activate.final");
   const [carrier, setCarrier] = useState<"att" | "verizon" | "tmobile" | "other">("att");
@@ -101,23 +103,34 @@ export function ActivateStep({
           <button
             type="button"
             onClick={() => onFinalize()}
-            className="inline-flex items-center justify-center rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-2 text-xs font-medium text-slate-200 hover:border-slate-500"
+            disabled={finalizing}
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-900/60 px-4 py-2 text-xs font-medium text-slate-200 hover:border-slate-500 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:border-slate-700 transition-opacity"
           >
-            {t("generateNumber")}
+            {finalizing && <Loader className="w-3 h-3 animate-spin" />}
+            {finalizing ? t("generatingNumber", { defaultValue: "Generating..." }) : t("generateNumber")}
           </button>
         </div>
       </div>
 
+      {finalizing && (
+        <div className="rounded-xl border border-sky-500/40 bg-sky-500/10 px-4 py-3 flex items-center gap-3">
+          <Loader className="w-4 h-4 text-sky-400 animate-spin shrink-0" />
+          <p className="text-xs md:text-sm text-sky-200">{t("settingUp", { defaultValue: "Setting up your workspace..." })}</p>
+        </div>
+      )}
+
       <div className="flex items-center justify-between gap-3 pt-3">
-        <button type="button" onClick={goBack} className="text-xs md:text-sm text-slate-400 hover:text-slate-100">
+        <button type="button" onClick={goBack} disabled={finalizing} className="text-xs md:text-sm text-slate-400 hover:text-slate-100 disabled:text-slate-600 disabled:cursor-not-allowed transition-colors">
           {t("back")}
         </button>
         <button
           type="button"
           onClick={(e) => void onFinalize(e)}
-          className="inline-flex items-center justify-center rounded-xl bg-emerald-500 px-5 py-2.5 text-xs md:text-sm font-semibold text-[var(--text-on-accent)] hover:bg-emerald-400"
+          disabled={finalizing}
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-xs md:text-sm font-semibold text-[var(--text-on-accent)] hover:bg-emerald-400 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:bg-emerald-500 transition-opacity"
         >
-          {t("activateCta")}
+          {finalizing && <Loader className="w-4 h-4 animate-spin" />}
+          {finalizing ? t("activating", { defaultValue: "Activating..." }) : t("activateCta")}
         </button>
       </div>
     </div>
