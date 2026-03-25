@@ -124,5 +124,29 @@ export async function POST(req: NextRequest) {
     .update({ verified_phone: phone })
     .eq("id", session.workspaceId);
 
-  return NextResponse.json({ verified: true });
+  // Also set as primary workspace number in phone_configs so it appears in Settings > Phone
+  // and can be used for call forwarding, outbound caller ID, etc.
+  const { data: existingConfig } = await db
+    .from("phone_configs")
+    .select("id, proxy_number")
+    .eq("workspace_id", session.workspaceId)
+    .maybeSingle();
+
+  const cfg = existingConfig as { proxy_number?: string | null } | null;
+  if (!cfg?.proxy_number) {
+    // No existing primary number — set the verified personal number as primary
+    await db.from("phone_configs").upsert(
+      {
+        workspace_id: session.workspaceId,
+        mode: "proxy",
+        proxy_number: phone,
+        forwarding_number: phone,
+        status: "active",
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "workspace_id" }
+    );
+  }
+
+  return NextResponse.json({ verified: true, phone_number: phone });
 }

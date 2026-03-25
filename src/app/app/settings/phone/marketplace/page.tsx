@@ -77,7 +77,7 @@ export default function PhoneMarketplacePage() {
       }
       setNumbers(data.numbers ?? []);
       if ((data.numbers?.length ?? 0) === 0) {
-        setError("No numbers available. Try adjusting your search filters.");
+        setError(tPhone("marketplace.noNumbersAvailable"));
         setErrorType("empty");
       }
     } catch {
@@ -209,7 +209,7 @@ export default function PhoneMarketplacePage() {
             >
               <option value="local">{tPhone("marketplace.results.type.local")}</option>
               <option value="toll_free">{tPhone("marketplace.results.type.tollFree")}</option>
-              <option value="mobile">Mobile</option>
+              <option value="mobile">{tPhone("marketplace.mobile")}</option>
             </select>
           </div>
         </div>
@@ -238,7 +238,7 @@ export default function PhoneMarketplacePage() {
                 disabled={provisioning !== null}
                 className="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-xs font-medium transition-colors disabled:opacity-50"
               >
-                Try Again
+                {tPhone("marketplace.tryAgainButton")}
               </button>
             )}
             {errorType === "api" && (
@@ -248,7 +248,7 @@ export default function PhoneMarketplacePage() {
                 disabled={loading}
                 className="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-xs font-medium transition-colors disabled:opacity-50"
               >
-                Retry Search
+                {tPhone("marketplace.retrySearch")}
               </button>
             )}
             {errorType === "empty" && (
@@ -257,7 +257,7 @@ export default function PhoneMarketplacePage() {
                 onClick={() => { setError(null); }}
                 className="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-xs font-medium transition-colors"
               >
-                Dismiss
+                {tPhone("marketplace.dismiss")}
               </button>
             )}
           </div>
@@ -269,22 +269,22 @@ export default function PhoneMarketplacePage() {
           <div className="flex items-start gap-3">
             <CheckCircle2 className="w-6 h-6 text-green-400 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="font-semibold text-green-100 mb-1">Phone number successfully provisioned!</p>
-              <p className="text-sm text-green-200">{formatPhoneDisplay(successNumber.phone_number)} is now active</p>
+              <p className="font-semibold text-green-100 mb-1">{tPhone("marketplace.provisionedSuccess")}</p>
+              <p className="text-sm text-green-200">{tPhone("marketplace.nowActive", { number: formatPhoneDisplay(successNumber.phone_number) })}</p>
             </div>
           </div>
           <Link
             href="/app/settings/phone"
             className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-green-500 text-white font-medium text-sm hover:opacity-90 transition-colors w-fit"
           >
-            Go to Phone Settings
+            {tPhone("marketplace.goToPhoneSettings")}
           </Link>
         </div>
       ) : (
         <div className="grid gap-3">
           {numbers.length > 0 && !loading && (
             <p className="text-sm text-[var(--text-secondary)] mb-2">
-              Showing {numbers.length} available number{numbers.length !== 1 ? 's' : ''}
+              {tPhone("marketplace.showingCount", { count: numbers.length })}
             </p>
           )}
           {loading && numbers.length === 0 ? (
@@ -311,7 +311,7 @@ export default function PhoneMarketplacePage() {
             <div className="p-8 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] text-center">
               <Phone className="w-12 h-12 mx-auto mb-3 text-[var(--text-tertiary)] opacity-50" />
               <p className="text-[var(--text-secondary)] text-sm mb-2">{tPhone("marketplaceNoNumbersFound")}</p>
-              <p className="text-xs text-[var(--text-tertiary)]">Try adjusting your filters or search criteria</p>
+              <p className="text-xs text-[var(--text-tertiary)]">{tPhone("marketplace.tryAdjustingFilters")}</p>
             </div>
           ) : (
             numbers.map((n) => (
@@ -326,7 +326,7 @@ export default function PhoneMarketplacePage() {
                   <div>
                     <p className="font-semibold text-[var(--text-primary)] font-mono">{formatPhoneDisplay(n.phone_number)}</p>
                     <p className="text-xs text-[var(--text-secondary)] capitalize">
-                      {n.type === "toll_free" ? tPhone("marketplace.results.type.tollFree") : n.type === "mobile" ? "Mobile" : tPhone("marketplace.results.type.local")}
+                      {n.type === "toll_free" ? tPhone("marketplace.results.type.tollFree") : n.type === "mobile" ? tPhone("marketplace.mobile") : tPhone("marketplace.results.type.local")}
                     </p>
                   </div>
                 </div>
@@ -359,31 +359,31 @@ export default function PhoneMarketplacePage() {
       {showConfirmDialog && pendingNumber && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-default)] p-6 max-w-sm shadow-lg">
-            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Confirm Purchase</h2>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">{tPhone("marketplace.confirmPurchase")}</h2>
             <div className="space-y-3 mb-6">
               <div className="p-3 rounded-xl bg-[var(--bg-input)]">
-                <p className="text-xs text-[var(--text-secondary)] mb-1">Phone Number</p>
+                <p className="text-xs text-[var(--text-secondary)] mb-1">{tPhone("marketplace.phoneNumberLabel")}</p>
                 <p className="font-semibold text-[var(--text-primary)] font-mono">{formatPhoneDisplay(pendingNumber.phone_number)}</p>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3 rounded-xl bg-[var(--bg-input)]">
-                  <p className="text-xs text-[var(--text-secondary)] mb-1">Monthly Cost</p>
+                  <p className="text-xs text-[var(--text-secondary)] mb-1">{tPhone("marketplace.monthlyCost")}</p>
                   <p className="font-semibold text-[var(--text-primary)]">{formatCurrencyCents(pendingNumber.monthly_cost_cents, "USD", locale)}</p>
                 </div>
                 <div className="p-3 rounded-xl bg-[var(--bg-input)]">
-                  <p className="text-xs text-[var(--text-secondary)] mb-1">Setup Fee</p>
+                  <p className="text-xs text-[var(--text-secondary)] mb-1">{tPhone("marketplace.setupFee")}</p>
                   <p className="font-semibold text-[var(--text-primary)]">{formatCurrencyCents(pendingNumber.setup_fee_cents, "USD", locale)}</p>
                 </div>
               </div>
             </div>
-            <p className="text-xs text-[var(--text-secondary)] mb-6">This will be charged to your account immediately.</p>
+            <p className="text-xs text-[var(--text-secondary)] mb-6">{tPhone("marketplace.chargedImmediately")}</p>
             <div className="flex gap-3">
               <button
                 type="button"
                 onClick={() => setShowConfirmDialog(false)}
                 className="flex-1 px-4 py-2.5 rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] font-medium text-sm hover:opacity-80 transition-colors"
               >
-                Cancel
+                {tPhone("marketplace.cancel")}
               </button>
               <button
                 type="button"
@@ -394,10 +394,10 @@ export default function PhoneMarketplacePage() {
                 {provisioning === pendingNumber.phone_number ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Processing
+                    {tPhone("marketplace.processing")}
                   </>
                 ) : (
-                  "Confirm Purchase"
+                  tPhone("marketplace.confirmPurchase")
                 )}
               </button>
             </div>

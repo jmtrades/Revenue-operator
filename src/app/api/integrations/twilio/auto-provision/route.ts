@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
     provider: telephonyProvider,
     provider_sid: phoneSid,
     status: "active",
-    monthly_cost_cents: 300,  // $3/mo local — consistent with /api/phone/provision
+    monthly_cost_cents: 500,  // $5/mo local — consistent with /api/phone/provision
     setup_fee_cents: 100,     // $1.00 setup — consistent with /api/phone/provision
     capabilities: { voice: true, sms: true, mms: false },
     updated_at: new Date().toISOString(),

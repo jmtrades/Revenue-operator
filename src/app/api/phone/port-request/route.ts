@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+import { getDb } from "@/lib/db/queries";
 
 export async function POST(req: NextRequest) {
   try {
@@ -43,7 +41,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Phone number and carrier required" }, { status: 400 });
     }
 
-    const { data, error } = await supabase
+    const db = getDb();
+    const { data, error } = await db
       .from("port_requests")
       .insert({
         workspace_id: session.workspaceId,
