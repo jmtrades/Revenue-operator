@@ -2960,7 +2960,9 @@
       "errorTitle": "Could not load calls"
     },
     "toast": {
-      "exportSuccess": "Llamadas exportadas. Revisa tus descargas."
+      "exportSuccess": "Llamadas exportadas. Revisa tus descargas.",
+      "openingSms": "Abriendo SMS...",
+      "noPhoneForSms": "No hay número de teléfono disponible para esta llamada"
     },
     "live": {
       "selectWorkspace": "Selecciona un espacio de trabajo para ver llamadas en vivo.",
@@ -3786,7 +3788,9 @@
       "nameNoMatch": "El nombre del espacio no coincide. Escríbelo exactamente para confirmar.",
       "deleted": "Espacio eliminado. Redirigiendo…",
       "deleteWorkspaceError": "No se pudo eliminar el espacio de trabajo.",
-      "label": "Business"
+      "label": "Business",
+      "nameRequired": "El nombre del negocio es obligatorio",
+      "invalidWebsite": "Ingrese una URL de sitio web válida (comenzando con http:// o https://)"
     },
     "phone": {
       "title": "Teléfono y números",
@@ -3859,7 +3863,8 @@
       "roleUpdateFailed": "Failed to update role.",
       "removeFailed": "Failed to remove member.",
       "inviteFailed": "Failed to send invite. Please try again.",
-      "networkError": "Network error. Please try again."
+      "networkError": "Network error. Please try again.",
+      "invalidEmail": "Ingrese una dirección de correo electrónico válida"
     },
     "compliance": {
       "title": "Cumplimiento",
@@ -7662,7 +7667,8 @@
       "codeSent": "Código enviado. Revisa tu teléfono.",
       "getAiNumber": "Usa «Obtener un número de IA» para tener una línea dedicada.",
       "phoneVerified": "Teléfono verificado ✓",
-      "waitlistJoined": "Te avisaremos cuando haya números disponibles."
+      "waitlistJoined": "Te avisaremos cuando haya números disponibles.",
+      "invalidAreaCode": "Ingrese un código de área válido de 3 dígitos"
     },
     "marketplace": {
       "title": "Marketplace de números de teléfono",
@@ -8304,7 +8310,13 @@
     "breadcrumb": "Industry Templates",
     "title": "Industry Templates",
     "description": "Production-ready templates for AI agents across",
-    "emptyState": "No industry templates available yet."
+    "emptyState": "No industry templates available yet.",
+    "toast": {
+      "loadFailed": "Error al cargar plantillas de industria",
+      "loadError": "Error al cargar plantillas",
+      "copied": "Copiado al portapapeles",
+      "copyFailed": "Error al copiar"
+    }
   },
   "sidebar": {
     "tier": "Starter",
@@ -10099,6 +10111,44 @@
     "createTest": "Create Test",
     "trafficSplit": "Traffic Split",
     "voiceA": "Voice A",
-    "voiceB": "Voice B"
+    "voiceB": "Voice B",
+    "toast": {
+      "previewUnavailable": "Vista previa de voz no disponible",
+      "browserSpeech": "Usando síntesis de voz del navegador",
+      "demoApi": "Vista previa usando API de demostración",
+      "voiceServer": "Vista previa usando servidor de voz"
+    }
+  },
+  "autoSetup": {
+    "toast": {
+      "enterUrlOrIndustry": "Ingrese una URL de sitio web o seleccione una industria",
+      "analyzeFailed": "Error al analizar el sitio web. Inténtelo de nuevo.",
+      "knowledgeBaseUpdated": "¡Base de conocimientos actualizada con éxito!",
+      "updateFailed": "Error al actualizar la base de conocimientos. Inténtelo de nuevo."
+    }
+  },
+  "chatWidget": {
+    "loading": "Cargando configuración del widget...",
+    "toast": {
+      "loadFailed": "Error al cargar la configuración del widget",
+      "unknownError": "Error desconocido",
+      "saveFailed": "Error al guardar la configuración",
+      "saved": "Configuración del widget guardada",
+      "embedCopied": "Código de inserción copiado al portapapeles",
+      "copyFailed": "Error al copiar el código de inserción"
+    }
+  },
+  "whiteLabel": {
+    "toast": {
+      "loadFailed": "Error al cargar la configuración de marca blanca",
+      "saved": "Configuración de marca blanca guardada",
+      "saveFailed": "Error al guardar la configuración de marca blanca"
+    }
+  },
+  "communication": {
+    "toast": {
+      "error": "Ocurrió un error",
+      "saved": "Configuración guardada correctamente"
+    }
   }
 }

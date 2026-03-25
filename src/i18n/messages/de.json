@@ -2960,7 +2960,9 @@
       "errorTitle": "Could not load calls"
     },
     "toast": {
-      "exportSuccess": "Anrufe exportiert. Prüfe deine Downloads."
+      "exportSuccess": "Anrufe exportiert. Prüfe deine Downloads.",
+      "openingSms": "SMS wird geöffnet...",
+      "noPhoneForSms": "Keine Telefonnummer für diesen Anruf verfügbar"
     },
     "live": {
       "selectWorkspace": "Wähle einen Arbeitsbereich, um Live-Anrufe zu sehen.",
@@ -3786,7 +3788,9 @@
       "nameNoMatch": "Der Arbeitsbereichsname stimmt nicht überein. Gib ihn zur Bestätigung exakt ein.",
       "deleted": "Arbeitsbereich gelöscht. Weiterleitung…",
       "deleteWorkspaceError": "Arbeitsbereich konnte nicht gelöscht werden.",
-      "label": "Business"
+      "label": "Business",
+      "nameRequired": "Firmenname ist erforderlich",
+      "invalidWebsite": "Bitte geben Sie eine gültige Website-URL ein (beginnend mit http:// oder https://)"
     },
     "phone": {
       "title": "Telefon & Nummern",
@@ -3859,7 +3863,8 @@
       "roleUpdateFailed": "Failed to update role.",
       "removeFailed": "Failed to remove member.",
       "inviteFailed": "Failed to send invite. Please try again.",
-      "networkError": "Network error. Please try again."
+      "networkError": "Network error. Please try again.",
+      "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein"
     },
     "compliance": {
       "title": "Compliance",
@@ -7665,7 +7670,8 @@
       "codeSent": "Code gesendet. Bitte Handy prüfen.",
       "getAiNumber": "Nutzen Sie „Neue KI-Nummer“, um eine eigene Leitung zu erhalten.",
       "phoneVerified": "Telefon verifiziert ✓",
-      "waitlistJoined": "Wir benachrichtigen Sie, wenn Nummern verfügbar sind."
+      "waitlistJoined": "Wir benachrichtigen Sie, wenn Nummern verfügbar sind.",
+      "invalidAreaCode": "Bitte geben Sie eine gültige 3-stellige Vorwahl ein"
     },
     "marketplace": {
       "title": "Telefonnummern-Marktplatz",
@@ -8304,7 +8310,13 @@
     "breadcrumb": "Industry Templates",
     "title": "Industry Templates",
     "description": "Production-ready templates for AI agents across",
-    "emptyState": "No industry templates available yet."
+    "emptyState": "No industry templates available yet.",
+    "toast": {
+      "loadFailed": "Fehler beim Laden der Branchenvorlagen",
+      "loadError": "Fehler beim Laden der Vorlagen",
+      "copied": "In die Zwischenablage kopiert",
+      "copyFailed": "Kopieren fehlgeschlagen"
+    }
   },
   "sidebar": {
     "tier": "Starter",
@@ -10099,6 +10111,44 @@
     "createTest": "Create Test",
     "trafficSplit": "Traffic Split",
     "voiceA": "Voice A",
-    "voiceB": "Voice B"
+    "voiceB": "Voice B",
+    "toast": {
+      "previewUnavailable": "Sprachvorschau nicht verfügbar",
+      "browserSpeech": "Browser-Sprachsynthese wird verwendet",
+      "demoApi": "Vorschau über Demo-API",
+      "voiceServer": "Vorschau über Voice-Server"
+    }
+  },
+  "autoSetup": {
+    "toast": {
+      "enterUrlOrIndustry": "Bitte geben Sie eine Website-URL ein oder wählen Sie eine Branche",
+      "analyzeFailed": "Fehler bei der Website-Analyse. Bitte versuchen Sie es erneut.",
+      "knowledgeBaseUpdated": "Wissensdatenbank erfolgreich aktualisiert!",
+      "updateFailed": "Fehler beim Aktualisieren der Wissensdatenbank. Bitte versuchen Sie es erneut."
+    }
+  },
+  "chatWidget": {
+    "loading": "Widget-Einstellungen werden geladen...",
+    "toast": {
+      "loadFailed": "Fehler beim Laden der Widget-Konfiguration",
+      "unknownError": "Unbekannter Fehler",
+      "saveFailed": "Fehler beim Speichern der Konfiguration",
+      "saved": "Widget-Konfiguration gespeichert",
+      "embedCopied": "Einbettungscode in die Zwischenablage kopiert",
+      "copyFailed": "Fehler beim Kopieren des Einbettungscodes"
+    }
+  },
+  "whiteLabel": {
+    "toast": {
+      "loadFailed": "Fehler beim Laden der White-Label-Einstellungen",
+      "saved": "White-Label-Einstellungen gespeichert",
+      "saveFailed": "Fehler beim Speichern der White-Label-Einstellungen"
+    }
+  },
+  "communication": {
+    "toast": {
+      "error": "Ein Fehler ist aufgetreten",
+      "saved": "Einstellungen erfolgreich gespeichert"
+    }
   }
 }

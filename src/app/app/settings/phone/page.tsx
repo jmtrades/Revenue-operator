@@ -207,6 +207,12 @@ export default function AppSettingsPhonePage() {
   }, []);
 
   const handleConnectNumber = async () => {
+    if (areaCode && (areaCode.length < 3 || !/^\d{3}$/.test(areaCode))) {
+      setConnectError(tPhone("toast.invalidAreaCode"));
+      setToast(tPhone("toast.invalidAreaCode"));
+      setTimeout(() => setToast(null), 4000);
+      return;
+    }
     setConnecting(true);
     setToast(null);
     setConnectError(null);

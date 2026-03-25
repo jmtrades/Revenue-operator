@@ -88,6 +88,14 @@ export default function AppSettingsBusinessPage() {
 
   const handleSave = async () => {
     if (saving) return;
+    if (!name.trim()) {
+      toast.error(tSettings("business.nameRequired"));
+      return;
+    }
+    if (website.trim() && !/^https?:\/\/.+/.test(website.trim())) {
+      toast.error(tSettings("business.invalidWebsite"));
+      return;
+    }
     setSaving(true);
     try {
       const [resMe, _resTz] = await Promise.all([
@@ -95,7 +103,7 @@ export default function AppSettingsBusinessPage() {
           method: "PATCH",
           credentials: "include",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, address, website, industry }),
+          body: JSON.stringify({ name: name.trim(), address: address.trim(), website: website.trim(), industry }),
         }),
         fetch("/api/workspace/timezone", {
           method: "PATCH",

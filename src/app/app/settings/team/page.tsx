@@ -104,6 +104,11 @@ export default function AppSettingsTeamPage() {
 
   const handleInvite = async () => {
     if (!inviteEmail.trim() || !workspaceId) return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inviteEmail.trim())) {
+      setToast(t("team.invalidEmail"));
+      setTimeout(() => setToast(null), 3000);
+      return;
+    }
     try {
       const res = await fetch("/api/workspace/invite", {
         method: "POST",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useWorkspace } from "@/components/WorkspaceContext";
@@ -27,6 +28,7 @@ const DEFAULT_CONFIG: WidgetConfig = {
 };
 
 export default function ChatWidgetSettingsPage() {
+  const t = useTranslations("chatWidget");
   const { workspaceId } = useWorkspace();
   const [config, setConfig] = useState<WidgetConfig>(DEFAULT_CONFIG);
   const [loading, setLoading] = useState(true);
@@ -50,7 +52,7 @@ export default function ChatWidgetSettingsPage() {
         }
       } catch (error) {
         console.error("Failed to load widget config:", error);
-        toast.error("Failed to load widget configuration");
+        toast.error(t("toast.loadFailed"));
       } finally {
         setLoading(false);
       }
@@ -74,16 +76,16 @@ export default function ChatWidgetSettingsPage() {
 
       if (!res.ok) {
         const errorData = (await res.json().catch(() => ({
-          error: "Unknown error",
+          error: t("toast.unknownError"),
         }))) as { error?: string };
-        toast.error(errorData.error || "Failed to save configuration");
+        toast.error(errorData.error || t("toast.saveFailed"));
         return;
       }
 
-      toast.success("Widget configuration saved");
+      toast.success(t("toast.saved"));
     } catch (error) {
       console.error("Failed to save config:", error);
-      toast.error("Failed to save widget configuration");
+      toast.error(t("toast.saveFailed"));
     } finally {
       setSaving(false);
     }
@@ -103,18 +105,18 @@ export default function ChatWidgetSettingsPage() {
     try {
       await navigator.clipboard.writeText(getEmbedCode());
       setCopied(true);
-      toast.success("Embed code copied to clipboard");
+      toast.success(t("toast.embedCopied"));
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
       console.error("Failed to copy:", error);
-      toast.error("Failed to copy embed code");
+      toast.error(t("toast.copyFailed"));
     }
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-gray-500">Loading widget settings...</div>
+        <div className="text-gray-500">{t("loading")}</div>
       </div>
     );
   }

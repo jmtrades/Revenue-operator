@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useWorkspace } from "@/components/WorkspaceContext";
@@ -29,6 +30,7 @@ const DEFAULT_CONFIG: CommunicationConfig = {
 };
 
 export default function CommunicationSettingsPage() {
+  const t = useTranslations("communication");
   const { workspaceId } = useWorkspace();
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
   const effectiveWorkspaceId = workspaceId || workspaceSnapshot?.id?.trim() || null;
@@ -73,12 +75,12 @@ export default function CommunicationSettingsPage() {
       });
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
-        toast.error(body.error ?? "An error occurred");
+        toast.error(body.error ?? t("toast.error"));
         return;
       }
-      toast.success("Settings saved successfully");
+      toast.success(t("toast.saved"));
     } catch {
-      toast.error("An error occurred");
+      toast.error(t("toast.error"));
     } finally {
       setSaving(false);
     }

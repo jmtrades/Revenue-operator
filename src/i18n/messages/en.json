@@ -3139,7 +3139,9 @@
       "exportFailed": "Export failed. Try again."
     },
     "toast": {
-      "exportSuccess": "Calls exported. Check your downloads."
+      "exportSuccess": "Calls exported. Check your downloads.",
+      "openingSms": "Opening SMS...",
+      "noPhoneForSms": "No phone number available for this call"
     },
     "live": {
       "selectWorkspace": "Select a workspace to view live calls.",
@@ -4162,7 +4164,9 @@
       "deleteWorkspaceError": "Could not delete workspace.",
       "deleted": "Workspace deleted. Redirecting…",
       "nameNoMatch": "Workspace name does not match. Type it exactly to confirm.",
-      "saveFailed": "Failed to save business settings. Please try again."
+      "saveFailed": "Failed to save business settings. Please try again.",
+      "nameRequired": "Business name is required",
+      "invalidWebsite": "Please enter a valid website URL (starting with http:// or https://)"
     },
     "phone": {
       "title": "Phone & numbers",
@@ -4261,7 +4265,8 @@
       "roleUpdateFailed": "Failed to update role.",
       "removeFailed": "Failed to remove member.",
       "inviteFailed": "Failed to send invite. Please try again.",
-      "networkError": "Network error. Please try again."
+      "networkError": "Network error. Please try again.",
+      "invalidEmail": "Please enter a valid email address"
     },
     "compliance": {
       "title": "Compliance",
@@ -6650,7 +6655,13 @@
     "breadcrumb": "Industry Templates",
     "title": "Industry Templates",
     "description": "Production-ready templates for AI agents across",
-    "emptyState": "No industry templates available yet."
+    "emptyState": "No industry templates available yet.",
+    "toast": {
+      "loadFailed": "Failed to load industry templates",
+      "loadError": "Error loading templates",
+      "copied": "Copied to clipboard",
+      "copyFailed": "Failed to copy"
+    }
   },
   "messages": {
     "pageTitle": "Messages — Recall Touch",
@@ -7851,7 +7862,8 @@
       "codeSent": "Code sent. Check your phone.",
       "getAiNumber": "Use 'Get a new AI number' to get a dedicated line.",
       "phoneVerified": "Phone verified ✓",
-      "waitlistJoined": "We'll notify you when numbers are available."
+      "waitlistJoined": "We'll notify you when numbers are available.",
+      "invalidAreaCode": "Please enter a valid 3-digit area code"
     },
     "getNewAiNumber": "Get a new AI number",
     "recommended": "Recommended",
@@ -10190,6 +10202,44 @@
     "createTest": "Create Test",
     "trafficSplit": "Traffic Split",
     "voiceA": "Voice A",
-    "voiceB": "Voice B"
+    "voiceB": "Voice B",
+    "toast": {
+      "previewUnavailable": "Voice preview unavailable",
+      "browserSpeech": "Using browser speech synthesis",
+      "demoApi": "Preview using demo API",
+      "voiceServer": "Preview using voice server"
+    }
+  },
+  "autoSetup": {
+    "toast": {
+      "enterUrlOrIndustry": "Please enter a website URL or select an industry",
+      "analyzeFailed": "Failed to analyze website. Please try again.",
+      "knowledgeBaseUpdated": "Knowledge base updated successfully!",
+      "updateFailed": "Failed to update knowledge base. Please try again."
+    }
+  },
+  "chatWidget": {
+    "loading": "Loading widget settings...",
+    "toast": {
+      "loadFailed": "Failed to load widget configuration",
+      "unknownError": "Unknown error",
+      "saveFailed": "Failed to save configuration",
+      "saved": "Widget configuration saved",
+      "embedCopied": "Embed code copied to clipboard",
+      "copyFailed": "Failed to copy embed code"
+    }
+  },
+  "whiteLabel": {
+    "toast": {
+      "loadFailed": "Failed to load white-label settings",
+      "saved": "White-label settings saved",
+      "saveFailed": "Failed to save white-label settings"
+    }
+  },
+  "communication": {
+    "toast": {
+      "error": "An error occurred",
+      "saved": "Settings saved successfully"
+    }
   }
 }

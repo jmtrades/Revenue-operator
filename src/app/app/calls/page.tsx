@@ -870,10 +870,10 @@ export default function CallsPage() {
                 onClick={() => {
                   const phone = (selectedCall.matched_lead as { phone?: string } | undefined)?.phone;
                   if (phone) {
-                    toast.success("Opening SMS...");
+                    toast.success(t("calls.toast.openingSms"));
                     router.push(`/app/inbox?phone=${encodeURIComponent(phone)}&channel=sms`);
                   } else {
-                    toast.error("No phone number available for this call");
+                    toast.error(t("calls.toast.noPhoneForSms"));
                   }
                 }}
               >

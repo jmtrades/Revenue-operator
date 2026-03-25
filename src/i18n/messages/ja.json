@@ -2960,7 +2960,9 @@
       "errorTitle": "Could not load calls"
     },
     "toast": {
-      "exportSuccess": "通話をエクスポートしました。ダウンロードを確認してください。"
+      "exportSuccess": "通話をエクスポートしました。ダウンロードを確認してください。",
+      "openingSms": "SMSを開いています...",
+      "noPhoneForSms": "この通話に利用可能な電話番号がありません"
     },
     "live": {
       "selectWorkspace": "ライブ通話を見るにはワークスペースを選択してください。",
@@ -3786,7 +3788,9 @@
       "nameNoMatch": "ワークスペース名が一致しません。確認のため正確に入力してください。",
       "deleted": "ワークスペースを削除しました。リダイレクト中です…",
       "deleteWorkspaceError": "ワークスペースを削除できませんでした。",
-      "label": "Business"
+      "label": "Business",
+      "nameRequired": "事業名は必須です",
+      "invalidWebsite": "有効なウェブサイトURL（http://またはhttps://で始まる）を入力してください"
     },
     "phone": {
       "title": "電話と番号",
@@ -3859,7 +3863,8 @@
       "roleUpdateFailed": "Failed to update role.",
       "removeFailed": "Failed to remove member.",
       "inviteFailed": "Failed to send invite. Please try again.",
-      "networkError": "Network error. Please try again."
+      "networkError": "Network error. Please try again.",
+      "invalidEmail": "有効なメールアドレスを入力してください"
     },
     "compliance": {
       "title": "コンプライアンス",
@@ -7665,7 +7670,8 @@
       "codeSent": "コードを送信しました。お使いの電話をご確認ください。",
       "getAiNumber": "「新しいAI番号を取得」で専用回線を取得できます。",
       "phoneVerified": "電話を確認しました ✓",
-      "waitlistJoined": "番号が利用可能になったらお知らせします。"
+      "waitlistJoined": "番号が利用可能になったらお知らせします。",
+      "invalidAreaCode": "有効な3桁の市外局番を入力してください"
     },
     "marketplace": {
       "title": "電話番号マーケットプレイス",
@@ -8304,7 +8310,13 @@
     "breadcrumb": "Industry Templates",
     "title": "Industry Templates",
     "description": "Production-ready templates for AI agents across",
-    "emptyState": "No industry templates available yet."
+    "emptyState": "No industry templates available yet.",
+    "toast": {
+      "loadFailed": "業種テンプレートの読み込みに失敗しました",
+      "loadError": "テンプレートの読み込みエラー",
+      "copied": "クリップボードにコピーしました",
+      "copyFailed": "コピーに失敗しました"
+    }
   },
   "sidebar": {
     "tier": "Starter",
@@ -10099,6 +10111,44 @@
     "createTest": "Create Test",
     "trafficSplit": "Traffic Split",
     "voiceA": "Voice A",
-    "voiceB": "Voice B"
+    "voiceB": "Voice B",
+    "toast": {
+      "previewUnavailable": "音声プレビューは利用できません",
+      "browserSpeech": "ブラウザの音声合成を使用中",
+      "demoApi": "デモAPIでプレビュー中",
+      "voiceServer": "音声サーバーでプレビュー中"
+    }
+  },
+  "autoSetup": {
+    "toast": {
+      "enterUrlOrIndustry": "ウェブサイトURLを入力するか、業種を選択してください",
+      "analyzeFailed": "ウェブサイトの分析に失敗しました。もう一度お試しください。",
+      "knowledgeBaseUpdated": "ナレッジベースが正常に更新されました！",
+      "updateFailed": "ナレッジベースの更新に失敗しました。もう一度お試しください。"
+    }
+  },
+  "chatWidget": {
+    "loading": "ウィジェット設定を読み込み中...",
+    "toast": {
+      "loadFailed": "ウィジェット設定の読み込みに失敗しました",
+      "unknownError": "不明なエラー",
+      "saveFailed": "設定の保存に失敗しました",
+      "saved": "ウィジェット設定を保存しました",
+      "embedCopied": "埋め込みコードをクリップボードにコピーしました",
+      "copyFailed": "埋め込みコードのコピーに失敗しました"
+    }
+  },
+  "whiteLabel": {
+    "toast": {
+      "loadFailed": "ホワイトラベル設定の読み込みに失敗しました",
+      "saved": "ホワイトラベル設定を保存しました",
+      "saveFailed": "ホワイトラベル設定の保存に失敗しました"
+    }
+  },
+  "communication": {
+    "toast": {
+      "error": "エラーが発生しました",
+      "saved": "設定が正常に保存されました"
+    }
   }
 }
