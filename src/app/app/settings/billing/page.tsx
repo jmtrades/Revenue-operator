@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { Loader2 } from "lucide-react";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useSearchParams } from "next/navigation";
 import { fetchWorkspaceMeCached, getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
@@ -82,6 +83,7 @@ export default function AppSettingsBillingPage() {
   const [buyingPack, setBuyingPack] = useState<string | null>(null);
   const [usageAlert, setUsageAlert] = useState<UsageAlertData | null>(null);
   const [bonusMinutes, setBonusMinutes] = useState(0);
+  const [planChanging, setPlanChanging] = useState(false);
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -473,12 +475,20 @@ export default function AppSettingsBillingPage() {
       <button
         type="button"
         onClick={() => setPlanChangeOpen(true)}
-        className="px-4 py-2 rounded-xl text-sm font-medium border border-[var(--border-default)] text-[var(--text-secondary)] mb-4 block hover:bg-[var(--bg-inset)]/50"
+        disabled={planChanging}
+        className="px-4 py-2 rounded-xl text-sm font-medium border border-[var(--border-default)] text-[var(--text-secondary)] mb-4 block hover:bg-[var(--bg-inset)]/50 disabled:opacity-50 disabled:cursor-not-allowed"
         data-testid="billing-change-plan"
         aria-haspopup="dialog"
         aria-expanded={planChangeOpen}
       >
-        {tBilling("changePlan")}
+        {planChanging ? (
+          <span className="flex items-center gap-2">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            Changing plan...
+          </span>
+        ) : (
+          tBilling("changePlan")
+        )}
       </button>
       <PlanChangeModal
         currentPlanId={currentPlanId}
@@ -488,6 +498,7 @@ export default function AppSettingsBillingPage() {
           const successMessage = message ?? tBilling("toast.planUpdated");
           setToast(successMessage);
           setPlanChangeOpen(false);
+          setPlanChanging(false);
         }}
         workspaceId={workspaceId}
       />
@@ -541,11 +552,12 @@ export default function AppSettingsBillingPage() {
         </button>
       </div>
       <div className="flex gap-2">
-        <button type="button" onClick={() => setPauseStep(1)} disabled={pausing || !workspaceId} className="px-4 py-2 rounded-xl text-sm border border-[var(--border-default)] text-[var(--text-tertiary)] disabled:opacity-60 hover:bg-[var(--bg-inset)]/50">{pausing ? tBilling("pausing") : tBilling("pauseAccount")}</button>
+        <button type="button" onClick={() => setPauseStep(1)} disabled={pausing || !workspaceId} className="px-4 py-2 rounded-xl text-sm border border-[var(--border-default)] text-[var(--text-tertiary)] disabled:opacity-60 hover:bg-[var(--bg-inset)]/50" title="Pause your subscription temporarily while keeping your data safe">{pausing ? tBilling("pausing") : tBilling("pauseAccount")}</button>
         <button
           type="button"
           onClick={() => setCancelStep(1)}
-          className="px-4 py-2 rounded-xl text-sm border border-[var(--accent-red)]/30 text-[var(--accent-red)]"
+          className="px-4 py-2 rounded-xl text-sm border border-[var(--accent-red)]/30 text-[var(--accent-red)] hover:bg-red-500/10"
+          title="Cancel your subscription permanently"
         >
           {tBilling("cancel")}
         </button>
@@ -558,8 +570,16 @@ export default function AppSettingsBillingPage() {
             <p className="text-sm text-[var(--text-tertiary)] mb-4">
               {tBilling("pauseDesc")}
             </p>
+            <div className="bg-[var(--bg-inset)] rounded-lg p-3 mb-4 text-xs text-[var(--text-secondary)] space-y-1">
+              <p>When you pause:</p>
+              <ul className="list-disc list-inside space-y-1">
+                <li>Your data and settings will be preserved</li>
+                <li>You can resume your subscription anytime</li>
+                <li>You'll receive reminder emails</li>
+              </ul>
+            </div>
             <div className="flex gap-2 justify-end">
-              <button type="button" onClick={() => setPauseStep(0)} className="px-4 py-2 rounded-xl text-sm border border-[var(--border-default)] text-[var(--text-secondary)]">{tBilling("cancel")}</button>
+              <button type="button" onClick={() => setPauseStep(0)} className="px-4 py-2 rounded-xl text-sm border border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]">{tBilling("cancel")}</button>
               <button type="button" onClick={() => { void handlePauseCoverage(); }} disabled={pausing} className="px-4 py-2 rounded-xl text-sm bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-medium disabled:opacity-60">{pausing ? tBilling("pausing") : tBilling("pause")}</button>
             </div>
           </div>

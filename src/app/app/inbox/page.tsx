@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useDebounce } from "@/hooks/useDebounce";
 import Link from "next/link";
-import { Search, PhoneCall, MessageSquare, Mail, ChevronLeft, PanelRightClose, PanelRightOpen, User } from "lucide-react";
+import { Search, PhoneCall, MessageSquare, Mail, ChevronLeft, PanelRightClose, PanelRightOpen, User, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
@@ -278,6 +278,8 @@ function ConversationDetail({
   setInput,
   onSend,
   sending,
+  sendError,
+  setSendError,
   onToggleStatus,
   isMobile,
   onBack,
@@ -289,6 +291,8 @@ function ConversationDetail({
   setInput: (v: string) => void;
   onSend: () => void;
   sending: boolean;
+  sendError: string | null;
+  setSendError: (e: string | null) => void;
   onToggleStatus: () => void;
   isMobile?: boolean;
   onBack?: () => void;
@@ -302,6 +306,8 @@ function ConversationDetail({
       </div>
     );
   }
+
+  const hasMessages = thread.messages && thread.messages.length > 0;
 
   const isOpen = thread.status === "Open" || thread.status === "Pending";
   const channel = thread.channel;
@@ -351,7 +357,20 @@ function ConversationDetail({
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3">
+      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3 flex flex-col">
+        {!hasMessages && (
+          <div className="flex-1 flex items-center justify-center text-center">
+            <div className="px-4 py-8 max-w-xs">
+              <MessageSquare className="w-12 h-12 text-[var(--text-tertiary)] mx-auto mb-3 opacity-50" />
+              <p className="text-sm font-medium text-[var(--text-secondary)] mb-1">
+                {t("inbox.detail.startConversation")}
+              </p>
+              <p className="text-xs text-[var(--text-tertiary)]">
+                Send your first message below to begin the conversation with {thread.contactName}
+              </p>
+            </div>
+          </div>
+        )}
         <AnimatePresence initial={false}>
           {thread.messages.map((m) => {
             if (m.isCall) {
@@ -434,10 +453,26 @@ function ConversationDetail({
             </button>
           ))}
         </div>
+        {sendError && (
+          <div className="mb-2 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-red-200 text-xs flex items-center justify-between">
+            <span>{sendError}</span>
+            <button
+              type="button"
+              onClick={() => setSendError(null)}
+              className="text-red-200 hover:text-red-100 ml-2"
+              aria-label="Dismiss error"
+            >
+              ×
+            </button>
+          </div>
+        )}
         <div className="flex items-center gap-2">
           <Input
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => {
+              setInput(e.target.value);
+              setSendError(null);
+            }}
             placeholder={t("inbox.detail.inputPlaceholder")}
             className="flex-1 rounded-xl"
             onKeyDown={(e) => {
@@ -446,9 +481,23 @@ function ConversationDetail({
                 onSend();
               }
             }}
+            disabled={sending}
           />
-          <Button variant="primary" size="md" onClick={onSend} disabled={!input.trim() || sending}>
-            {sending ? t("inbox.detail.sending") : t("inbox.detail.send")}
+          <Button
+            variant="primary"
+            size="md"
+            onClick={onSend}
+            disabled={!input.trim() || sending}
+            title={sending ? "Sending message..." : "Send message"}
+          >
+            {sending ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                {t("inbox.detail.sending")}
+              </>
+            ) : (
+              t("inbox.detail.send")
+            )}
           </Button>
         </div>
       </div>
@@ -478,6 +527,8 @@ export default function InboxPage() {
   const [mobileMode, setMobileMode] = useState<"list" | "detail">("list");
   const [sending, setSending] = useState(false);
   const [rightPanelOpen, setRightPanelOpen] = useState(true);
+  const [sendError, setSendError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -519,6 +570,9 @@ export default function InboxPage() {
           if (list.length > 0) {
             setThreads(list);
             persistInboxSnapshot(workspaceId, list);
+            setLastUpdated(new Date());
+            // Auto-hide the "Updated" indicator after 2 seconds
+            setTimeout(() => setLastUpdated(null), 2000);
           }
         })
         .catch((err) => {
@@ -548,6 +602,7 @@ export default function InboxPage() {
     const nowIso = new Date().toISOString();
     const channel: InboxChannel = replyChannel === "sms" ? "sms" : replyChannel === "whatsapp" ? "whatsapp" : "email";
     setSending(true);
+    setSendError(null);
     try {
       // POST /api/messages/send accepts {lead_id, content, channel} and persists to messages table
       const res = await fetch("/api/messages/send", {
@@ -585,8 +640,11 @@ export default function InboxPage() {
         ),
       );
       setInput("");
+      setSendError(null);
       toast.success(t("inbox.messageSent"));
-    } catch {
+    } catch (error) {
+      // Keep the input in compose field on error
+      setSendError("Failed to send message. Please try again.");
       toast.error(t("inbox.messageFailed"));
     } finally {
       setSending(false);
@@ -611,7 +669,19 @@ export default function InboxPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="p-4 md:p-6 lg:p-8 h-full">
-        <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] mb-4">{t("inbox.title")}</h1>
+        <div className="flex items-center justify-between mb-2">
+          <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)]">{t("inbox.title")}</h1>
+          {lastUpdated && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="text-xs text-emerald-400 font-medium"
+            >
+              Updated just now
+            </motion.div>
+          )}
+        </div>
         <p className="text-sm text-[var(--text-tertiary)] mb-4">{t("inbox.subtitle")}</p>
         {/* Mobile layout */}
         <div className="md:hidden h-[calc(100vh-7rem)] border border-[var(--border-default)] rounded-2xl overflow-hidden">
@@ -634,6 +704,8 @@ export default function InboxPage() {
               setInput={setInput}
               onSend={() => { void handleSend(); }}
               sending={sending}
+              sendError={sendError}
+              setSendError={setSendError}
               onToggleStatus={handleToggleStatus}
               isMobile
               onBack={() => setMobileMode("list")}
@@ -663,6 +735,8 @@ export default function InboxPage() {
               setInput={setInput}
               onSend={() => { void handleSend(); }}
               sending={sending}
+              sendError={sendError}
+              setSendError={setSendError}
               onToggleStatus={handleToggleStatus}
             />
           </div>
