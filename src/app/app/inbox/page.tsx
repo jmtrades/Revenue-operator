@@ -460,7 +460,7 @@ function ConversationDetail({
               type="button"
               onClick={() => setSendError(null)}
               className="text-red-200 hover:text-red-100 ml-2"
-              aria-label="Dismiss error"
+              aria-label={t("inbox.dismissError")}
             >
               ×
             </button>

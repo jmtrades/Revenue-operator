@@ -1994,7 +1994,12 @@
     "title": "Analytics",
     "periodSummary": {
       "title": "Period summary",
-      "empty": "Not enough data yet to generate a summary."
+      "empty": "Not enough data yet to generate a summary.",
+      "emptyState": "Analytics appear after your first calls.",
+      "handled": "You handled **{calls} call{calls != 1 ? 's' : ''}** with a **{answerRate}% answer rate**.",
+      "booked": "Your agents booked **{appointments} appointment{appointments != 1 ? 's' : ''}**, converting **{conversionRate}%** of qualified leads.",
+      "revenue": "Estimated revenue impact: **${revenue}**.",
+      "duration": "Average call duration: **{duration}**."
     },
     "filters": {
       "range": {
@@ -2064,6 +2069,12 @@
     "emptyHeading": "Not enough data yet.",
     "emptyDescription": "Analytics populate after your first week of calls.",
     "emptyAction": "Make a test call",
+    "emptyState": {
+      "title": "Analytics appear after your first calls",
+      "description": "Make a test call to unlock conversion and revenue insights.",
+      "ariaLabel": "No analytics available yet",
+      "action": "Make a test call"
+    },
     "leadFunnel": "Lead funnel",
     "funnelStages": {
       "calls": "Calls",
@@ -3439,6 +3450,7 @@
     },
     "contact": "Contact",
     "openContactPanel": "Open contact panel",
+    "dismissError": "Dismiss error",
     "startConversation": "Send your first message below to begin the conversation with {name}",
     "updatedJustNow": "Updated just now",
     "messageSent": "Message sent",
@@ -3851,6 +3863,10 @@
     "edit": "Edit",
     "pause": "Pause",
     "launchCampaign": "Launch campaign",
+    "copy": "Copy campaign",
+    "delete": "Delete campaign",
+    "launch": "Launch campaign",
+    "pauseAction": "Pause campaign",
     "pauseConfirmTitle": "Pause this campaign?",
     "pauseConfirmMessage": "Pause \"{name}\"? You can resume it later from this page.",
     "remaining": "Remaining",
