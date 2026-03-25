@@ -3430,6 +3430,9 @@
     "transferNumberHelp": "When callers ask for a real person, your AI transfers to this number.",
     "transferNumberPlaceholder": "(503) 555-0101",
     "saveChanges": "Save changes",
+    "savingChanges": "Saving…",
+    "businessHoursNote": "Business hours are set to your workspace timezone. Contact support to customize your schedule.",
+    "emergencyKeywordsPlaceholder": "e.g. emergency, urgent, flooding, leak",
     "backToSettings": "← Settings",
     "toast": {
       "saved": "Call rules saved",
@@ -6897,11 +6900,19 @@
       }
     },
     "toast": {
-      "changesSaved": "Changes saved",
-      "reportGenerated": "Report generated"
+      "changesSaved": "Compliance settings saved",
+      "reportGenerated": "Report downloaded",
+      "saveFailed": "Failed to save settings",
+      "exportFailed": "Failed to export report"
     },
     "consentOneParty": "One-party consent",
-    "consentTwoParty": "Two-party consent"
+    "consentTwoParty": "Two-party consent",
+    "subtitle": "Manage your compliance standards, recording policies, and data retention.",
+    "saving": "Saving…",
+    "exportReport": "Export report",
+    "retentionDaysOption": "{days} days",
+    "auditTrailNotice": "Audit trail is being set up",
+    "auditTrailNoticeDesc": "Detailed activity logging will be available here once your workspace has active call and communication history. All actions are already logged in the background."
   },
   "webhooks": {
     "deleteTitle": "Delete webhook endpoint?",
@@ -10619,7 +10630,9 @@
       "browserSpeech": "Using browser speech synthesis",
       "demoApi": "Preview using demo API",
       "voiceServer": "Preview using voice server"
-    }
+    },
+    "cloneComingSoon": "Voice Cloning — Coming soon. Custom voice cloning will let you create a unique AI voice for your business.",
+    "declareWinner": "Declare Winner"
   },
   "autoSetup": {
     "toast": {

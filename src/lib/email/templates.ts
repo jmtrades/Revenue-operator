@@ -144,7 +144,7 @@ export function buildTrialExpiringEmail(params: {
 }): { subject: string; html: string } {
   const { name, daysLeft, callsHandled, minutesSaved, leadsCapture, tier } = params;
   const safeName = name?.trim() || "there";
-  const tierDisplay = tier === "solo" ? "Starter ($97/mo)" : tier === "business" ? "Growth ($297/mo)" : tier === "scale" ? "Business ($597/mo)" : "Agency ($997/mo)";
+  const tierDisplay = tier === "solo" ? "Starter ($147/mo)" : tier === "business" ? "Growth ($297/mo)" : tier === "scale" ? "Business ($597/mo)" : "Agency ($997/mo)";
   const subject = daysLeft <= 1
     ? `Your trial ends tomorrow — don't lose your AI agent`
     : `${daysLeft} days left on your trial — here's what you'd lose`;
@@ -175,7 +175,7 @@ export function buildTrialExpiringEmail(params: {
   ${ctaButton("Activate My Plan — Keep My AI Running", `${APP_URL}/app/settings/billing`)}
 
   <p style="margin:0;font-size:13px;color:#737373;line-height:1.6;">
-    Not ready? <a href="${APP_URL}/app/settings/billing" style="color:#10b981;text-decoration:underline;">Downgrade to Starter ($97/mo)</a> or reply to this email for help.
+    Not ready? <a href="${APP_URL}/app/settings/billing" style="color:#10b981;text-decoration:underline;">Downgrade to Starter ($147/mo)</a> or reply to this email for help.
   </p>
   <p style="margin:12px 0 0;font-size:14px;color:#e5e5e5;">— Junior</p>`;
 
