@@ -1,6 +1,0 @@
-{
-  "scenario_category": "list_execution",
-  "channel": "message",
-  "structured_context_json": { "list_purpose": "qualify", "source": "fixture" },
-  "expected_outcome_type": "information_provided"
-}

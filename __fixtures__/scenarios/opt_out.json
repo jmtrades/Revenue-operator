@@ -1,8 +1,0 @@
-{
-  "scenario_category": "opt_out",
-  "channel": "message",
-  "structured_context_json": { "signal": "opt_out", "source": "fixture" },
-  "expected_outcome_type": "opted_out",
-  "expected_next_required_action": "pause_execution",
-  "expected_stop_reason": "outcome_requires_pause"
-}

@@ -53,7 +53,7 @@ export default function ResetPasswordPage() {
       setError(t("resetPassword.authNotConfigured"));
       return;
     }
-    if (password.length < 6) {
+    if (password.length < 8) {
       setError(t("resetPassword.passwordMinLength"));
       return;
     }
@@ -95,7 +95,7 @@ export default function ResetPasswordPage() {
               id="password"
               type="password"
               required
-              minLength={6}
+              minLength={8}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]/50"
@@ -110,7 +110,7 @@ export default function ResetPasswordPage() {
               id="confirmPassword"
               type="password"
               required
-              minLength={6}
+              minLength={8}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-focus)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]/50"

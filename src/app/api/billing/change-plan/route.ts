@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
   const db = getDb();
   const { data: ws } = await db
     .from("workspaces")
-    .select("id, stripe_subscription_id, stripe_customer_id, owner_id, billing_tier")
+    .select("id, stripe_subscription_id, stripe_customer_id, owner_id, billing_tier, billing_status")
     .eq("id", workspace_id)
     .maybeSingle();
   if (!ws) return NextResponse.json({ ok: false, error: "Workspace not found" }, { status: 404 });
@@ -94,6 +94,7 @@ export async function POST(req: NextRequest) {
     stripe_customer_id?: string | null;
     owner_id?: string;
     billing_tier?: BillingTier | null;
+    billing_status?: string;
   };
   const Stripe = (await import("stripe")).default;
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -147,6 +148,18 @@ export async function POST(req: NextRequest) {
           customerId = (refreshed as { stripe_customer_id?: string | null } | null)?.stripe_customer_id ?? createdId;
         }
       }
+
+      // Only set trial_period_days for truly new customers with no subscription history
+      let trialPeriodDays: number | undefined;
+      const hasSubscriptionHistory =
+        row.billing_status === "trial" ||
+        row.billing_status === "trial_ended" ||
+        row.stripe_subscription_id;
+
+      if (!hasSubscriptionHistory) {
+        trialPeriodDays = 14;
+      }
+
       const session = await stripe.checkout.sessions.create({
         customer: customerId,
         mode: "subscription",
@@ -155,7 +168,7 @@ export async function POST(req: NextRequest) {
         payment_method_types: ["card"],
         line_items: [{ price: priceResult.price_id, quantity: 1 }],
         subscription_data: {
-          trial_period_days: 14,
+          ...(trialPeriodDays !== undefined && { trial_period_days: trialPeriodDays }),
           metadata: { workspace_id },
         },
         success_url: `${origin}/app/settings/billing?plan_changed=1`,

@@ -183,7 +183,7 @@ export default function SignInForm() {
                 <input
                   type={showPw ? "text" : "password"}
                   required
-                  minLength={6}
+                  minLength={8}
                   value={pw}
                   onChange={(e) => setPw(e.target.value)}
                   placeholder={t("signIn.passwordPlaceholder")}

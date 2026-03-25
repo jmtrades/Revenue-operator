@@ -4337,6 +4337,14 @@
       "complianceAndSecurity": "Compliance & Security"
     }
   },
+  "coldLeads": {
+    "searchPlaceholder": "Nach Name, E-Mail, Telefon suchen...",
+    "namePlaceholder": "Name des Leads",
+    "email": "email@beispiel.de",
+    "phone": "+49 (555) 000-0000",
+    "processing": "Wird verarbeitet...",
+    "confirm": "Bestätigen"
+  },
   "demoPage": {
     "title": "Recall Touch erleben",
     "subtitle": "Sprechen Sie mit einem KI-Agenten, der echte Anrufe bearbeitet. Jetzt.",
@@ -6331,6 +6339,17 @@
       "changesSaved": "Änderungen gespeichert",
       "reportGenerated": "Bericht erstellt"
     },
+    "csvExport": {
+      "setting": "Einstellung",
+      "value": "Wert",
+      "enabled": "Aktiviert",
+      "disabled": "Deaktiviert",
+      "yes": "Ja",
+      "no": "Nein",
+      "callRecording": "Anrufaufzeichnung",
+      "hipaaMode": "HIPAA-Modus",
+      "pauseOnSensitive": "Pause bei Sensiblen Daten"
+    },
     "consentOneParty": "Einverständnis einer Partei",
     "consentTwoParty": "Einverständnis beider Parteien"
   },
@@ -7105,6 +7124,19 @@
     }
   },
   "industriesPage": {
+    "heading": {
+      "label": "Branchen erkunden",
+      "title": "Branchen, die wir bedienen",
+      "subtitle": "Recall Touch funktioniert für jedes Unternehmen, das Telefonanrufe entgegennimmt. Egal ob Sie ein Dienstleistungsanbieter, eine Anwaltskanzlei, eine Arztpraxis oder ein E-Commerce-Unternehmen sind, unsere KI-Telefon-Agenten beantworten Anrufe, buchen Termine und kümmern sich um Follow-ups — 24/7."
+    },
+    "cta": {
+      "title": "Sehen Sie Ihre Branche nicht?",
+      "description": "Recall Touch funktioniert für jedes Unternehmen, das Telefonanrufe entgegennimmt. Jetzt starten."
+    },
+    "bottomCta": {
+      "title": "Bereit, Ihre Telefon-Operationen zu transformieren?",
+      "description": "Richten Sie Ihren KI-Agent in 5 Minuten ein. Keine Kreditkarte erforderlich."
+    },
     "fallback": {
       "title": "Branche",
       "solutions": "Lösungen",
@@ -10150,5 +10182,14 @@
       "error": "Ein Fehler ist aufgetreten",
       "saved": "Einstellungen erfolgreich gespeichert"
     }
+  },
+  "exitIntent": {
+    "title": "Warte — Lasse keine Einnahmen liegen",
+    "subtitle": "Erhalten Sie ein kostenloses Telefon-Audit + 14-Tage-Test. Keine Kreditkarte erforderlich.",
+    "sendingButton": "Wird gesendet...",
+    "submitButton": "Mein kostenloses Audit erhalten",
+    "disclaimer": "Dauert 30 Sekunden. Jederzeit abmelden.",
+    "successTitle": "Überprüfen Sie Ihre E-Mail",
+    "successSubtitle": "Wir haben Ihnen die Details für Ihr kostenloses Telefon-Audit und Testzugriff gesendet."
   }
 }

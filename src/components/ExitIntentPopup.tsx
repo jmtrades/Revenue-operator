@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { X, Phone } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 const SESSION_KEY = "recall-touch-exit-intent-shown";
 
 export function ExitIntentPopup() {
+  const t = useTranslations("exitIntent");
   const [visible, setVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [email, setEmail] = useState("");
@@ -140,7 +142,7 @@ export function ExitIntentPopup() {
                 className="text-2xl font-semibold mb-2"
                 style={{ color: "var(--text-primary)" }}
               >
-                Wait — Don't Leave Revenue on the Table
+                {t("title")}
               </h2>
 
               {/* Subtext */}
@@ -148,7 +150,7 @@ export function ExitIntentPopup() {
                 className="text-base mb-6"
                 style={{ color: "var(--text-secondary)" }}
               >
-                Get a free phone audit + 14-day trial. No credit card required.
+                {t("subtitle")}
               </p>
 
               {/* Form */}
@@ -176,7 +178,7 @@ export function ExitIntentPopup() {
                     color: "var(--text-on-accent)",
                   }}
                 >
-                  {loading ? "Sending..." : "Get My Free Audit"}
+                  {loading ? t("sendingButton") : t("submitButton")}
                 </button>
               </form>
 
@@ -185,7 +187,7 @@ export function ExitIntentPopup() {
                 className="text-xs text-center mt-4"
                 style={{ color: "var(--text-tertiary)" }}
               >
-                Takes 30 seconds. Unsubscribe anytime.
+                {t("disclaimer")}
               </p>
             </>
           ) : (
@@ -205,13 +207,13 @@ export function ExitIntentPopup() {
                   className="text-xl font-semibold mb-2"
                   style={{ color: "var(--text-primary)" }}
                 >
-                  Check Your Email
+                  {t("successTitle")}
                 </h3>
                 <p
                   className="text-sm"
                   style={{ color: "var(--text-secondary)" }}
                 >
-                  We've sent you the details for your free phone audit and trial access.
+                  {t("successSubtitle")}
                 </p>
               </div>
             </>

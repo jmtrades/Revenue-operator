@@ -1,7 +1,0 @@
-{
-  "scenario_category": "refund_request",
-  "channel": "message",
-  "structured_context_json": { "request": "refund", "source": "fixture" },
-  "expected_outcome_type": "refund_request",
-  "expected_next_required_action": "escalate_to_human"
-}

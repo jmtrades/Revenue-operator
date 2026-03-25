@@ -92,13 +92,13 @@ export default function AppSettingsCompliancePage() {
       const res = await fetch("/api/workspace/recording-consent", { credentials: "include" });
       const data = res.ok ? await res.json() : {};
       const rows = [
-        ["Setting", "Value"],
-        ["Call Recording", recording ? "Enabled" : "Disabled"],
-        ["HIPAA Mode", hipaa ? "Enabled" : "Disabled"],
+        [tSettings("compliance.csvExport.setting"), tSettings("compliance.csvExport.value")],
+        [tSettings("compliance.csvExport.callRecording"), recording ? tSettings("compliance.csvExport.enabled") : tSettings("compliance.csvExport.disabled")],
+        [tSettings("compliance.csvExport.hipaaMode"), hipaa ? tSettings("compliance.csvExport.enabled") : tSettings("compliance.csvExport.disabled")],
         ["Data Retention (days)", retention],
         ["Recording Consent Mode", recordingConsentMode],
         ["Announcement Text", announcementText || "(default)"],
-        ["Pause on Sensitive", pauseOnSensitive ? "Yes" : "No"],
+        [tSettings("compliance.csvExport.pauseOnSensitive"), pauseOnSensitive ? tSettings("compliance.csvExport.yes") : tSettings("compliance.csvExport.no")],
         ["Exported At", new Date().toISOString()],
       ];
       const csvContent = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");

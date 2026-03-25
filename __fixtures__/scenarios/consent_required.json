@@ -1,8 +1,0 @@
-{
-  "scenario_category": "consent_required",
-  "channel": "voice",
-  "structured_context_json": { "consent_pending": true, "source": "fixture" },
-  "expected_outcome_type": "information_missing",
-  "expected_next_required_action": "request_disclosure_confirmation",
-  "expected_stop_reason": "consent_missing"
-}

@@ -1,7 +1,0 @@
-{
-  "scenario_category": "compliance_disclosure_required",
-  "channel": "inbound",
-  "structured_context_json": { "jurisdiction_pending": true, "source": "fixture" },
-  "expected_outcome_type": "information_missing",
-  "expected_next_required_action": "request_disclosure_confirmation"
-}

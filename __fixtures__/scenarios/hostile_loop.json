@@ -1,8 +1,0 @@
-{
-  "scenario_category": "hostile_loop",
-  "channel": "voice",
-  "structured_context_json": { "emotional": "hostile", "attempt": 2, "source": "fixture" },
-  "expected_outcome_type": "hostile",
-  "expected_next_required_action": "escalate_to_human",
-  "expected_stop_reason": "excessive_hostility_loop"
-}

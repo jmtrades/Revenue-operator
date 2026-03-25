@@ -1,6 +1,0 @@
-{
-  "scenario_category": "appointment_confirm",
-  "channel": "system",
-  "structured_context_json": { "no_show": true, "source": "fixture" },
-  "expected_outcome_type": "no_show"
-}

@@ -1,7 +1,0 @@
-{
-  "scenario_category": "silence_decay",
-  "channel": "message",
-  "structured_context_json": { "days_silence": 7, "source": "fixture" },
-  "expected_outcome_type": "no_answer",
-  "expected_next_required_action": "schedule_followup"
-}

@@ -1,8 +1,0 @@
-{
-  "scenario_category": "legal_risk",
-  "channel": "message",
-  "structured_context_json": { "signal": "legal_keyword", "source": "fixture" },
-  "expected_outcome_type": "legal_risk",
-  "expected_next_required_action": "escalate_to_human",
-  "expected_stop_reason": "outcome_requires_pause"
-}

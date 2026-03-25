@@ -49,6 +49,9 @@ export const INDUSTRY_SLUGS = [
   "auto-repair",
   "insurance",
   "construction",
+  "med-spa",
+  "recruiting",
+  "roofing",
 ] as const;
 
 export type IndustrySlug = (typeof INDUSTRY_SLUGS)[number];
@@ -589,6 +592,207 @@ const INDUSTRIES_DATA: Record<IndustrySlug, IndustryData> = {
       paybackDays: 2,
     },
     ctaHeadline: "Start your free Construction AI agent in 5 minutes",
+  },
+  "med-spa": {
+    slug: "med-spa",
+    name: "Medical Spa",
+    customerType: "clients",
+    heroIcon: "Heart",
+    problemStats: [
+      {
+        value: "71%",
+        description: "of med spa callers hang up if not answered immediately",
+        icon: "PhoneMissed",
+      },
+      {
+        value: "$800",
+        description: "average service value",
+        icon: "DollarSign",
+      },
+      {
+        value: "$9,600/mo",
+        description: "Lost from missed calls (avg 4/day)",
+        icon: "TrendingDown",
+      },
+    ],
+    howItWorks: [
+      {
+        title: "Connect",
+        description: "Forward your business line or get a dedicated number. Every consultation and booking call reaches your AI agent instantly.",
+      },
+      {
+        title: "Teach",
+        description: "Set your services, pricing, and availability. Your agent books consultations and follow-ups seamlessly.",
+      },
+      {
+        title: "Relax",
+        description: "Calls answered 24/7. Appointments scheduled automatically. Clients get confirmations without staff intervention.",
+      },
+    ],
+    capabilities: [
+      {
+        title: "Service consultation booking",
+        description: "Schedule consultations and procedures with automated reminders for better show rates.",
+        icon: "Calendar",
+      },
+      {
+        title: "Treatment package sales",
+        description: "Capture treatment interests and guide clients to the right package based on needs.",
+        icon: "Package",
+      },
+      {
+        title: "Recall and follow-ups",
+        description: "Automated recall for refills, touch-ups, and seasonal treatments to grow revenue.",
+        icon: "Phone",
+      },
+      {
+        title: "Client intake",
+        description: "Gather health information and preferences so providers start prepared.",
+        icon: "ClipboardList",
+      },
+    ],
+    roi: {
+      missedCallsPerWeek: 8,
+      avgValueLabel: "service",
+      avgValueNumber: 800,
+      recoveredPerMonth: 9600,
+      paybackDays: 3,
+    },
+    ctaHeadline: "Start your free Medical Spa AI agent in 5 minutes",
+  },
+  recruiting: {
+    slug: "recruiting",
+    name: "Recruiting",
+    customerType: "candidates",
+    heroIcon: "Users",
+    problemStats: [
+      {
+        value: "58%",
+        description: "of candidates go to competing agencies on first miss",
+        icon: "PhoneMissed",
+      },
+      {
+        value: "$2,500",
+        description: "average placement fee",
+        icon: "DollarSign",
+      },
+      {
+        value: "31%",
+        description: "of recruiter calls go to voicemail",
+        icon: "TrendingDown",
+      },
+    ],
+    howItWorks: [
+      {
+        title: "Connect",
+        description: "Answer every inbound call from candidates and clients. No more missed opportunities.",
+      },
+      {
+        title: "Teach",
+        description: "Configure your open positions, qualifications, and scheduling. Your agent screens calls intelligently.",
+      },
+      {
+        title: "Relax",
+        description: "Qualified candidates get routed directly. Initial screening is done. You focus on closing placements.",
+      },
+    ],
+    capabilities: [
+      {
+        title: "Candidate screening",
+        description: "Quickly assess fit based on skills, experience, and availability before a recruiter touches the call.",
+        icon: "Target",
+      },
+      {
+        title: "Position matching",
+        description: "Route calls to the right recruiter by specialty or role type for faster placements.",
+        icon: "Zap",
+      },
+      {
+        title: "Interview scheduling",
+        description: "Book client and candidate interviews with automated calendar syncing.",
+        icon: "Calendar",
+      },
+      {
+        title: "Lead qualification",
+        description: "Capture salary expectations, location, and timeline to eliminate time-wasters.",
+        icon: "Shield",
+      },
+    ],
+    roi: {
+      missedCallsPerWeek: 6,
+      avgValueLabel: "placement",
+      avgValueNumber: 2500,
+      recoveredPerMonth: 15000,
+      paybackDays: 2,
+    },
+    ctaHeadline: "Start your free Recruiting AI agent in 5 minutes",
+  },
+  roofing: {
+    slug: "roofing",
+    name: "Roofing",
+    customerType: "homeowners",
+    heroIcon: "Home",
+    problemStats: [
+      {
+        value: "64%",
+        description: "of homeowners call the first roofer who answers fast",
+        icon: "Phone",
+      },
+      {
+        value: "$4,500",
+        description: "average roof estimate value",
+        icon: "DollarSign",
+      },
+      {
+        value: "$5,400/mo",
+        description: "Lost from missed calls (avg 3/day)",
+        icon: "TrendingDown",
+      },
+    ],
+    howItWorks: [
+      {
+        title: "Connect",
+        description: "Forward your business line or get a dedicated number. Every inspection request and lead reaches you instantly.",
+      },
+      {
+        title: "Teach",
+        description: "Set your service area, peak seasons, and availability. Your agent qualifies leads automatically.",
+      },
+      {
+        title: "Relax",
+        description: "Inspections scheduled 24/7. Quotes collected. Weather-related leads never fall through.",
+      },
+    ],
+    capabilities: [
+      {
+        title: "Inspection scheduling",
+        description: "Book roof inspections and emergency repairs with location and urgency captured.",
+        icon: "Calendar",
+      },
+      {
+        title: "Service area verification",
+        description: "Confirm callers are in your coverage area before scheduling to save wasted trips.",
+        icon: "MapPin",
+      },
+      {
+        title: "Damage assessment intake",
+        description: "Ask targeted questions about damage type, age, and insurance status to prepare crews.",
+        icon: "AlertCircle",
+      },
+      {
+        title: "Insurance claim routing",
+        description: "Route insurance-related inquiries and capture claim details for quick processing.",
+        icon: "Shield",
+      },
+    ],
+    roi: {
+      missedCallsPerWeek: 10,
+      avgValueLabel: "estimate",
+      avgValueNumber: 4500,
+      recoveredPerMonth: 27000,
+      paybackDays: 2,
+    },
+    ctaHeadline: "Start your free Roofing AI agent in 5 minutes",
   },
 };
 

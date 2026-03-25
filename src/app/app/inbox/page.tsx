@@ -366,7 +366,7 @@ function ConversationDetail({
                 {t("inbox.detail.startConversation")}
               </p>
               <p className="text-xs text-[var(--text-tertiary)]">
-                Send your first message below to begin the conversation with {thread.contactName}
+                {t("inbox.startConversation", { name: thread.contactName })}
               </p>
             </div>
           </div>
@@ -488,7 +488,7 @@ function ConversationDetail({
             size="md"
             onClick={onSend}
             disabled={!input.trim() || sending}
-            title={sending ? "Sending message..." : "Send message"}
+            title={sending ? t("inbox.detail.sending") : t("inbox.detail.send")}
           >
             {sending ? (
               <>
@@ -678,7 +678,7 @@ export default function InboxPage() {
               exit={{ opacity: 0 }}
               className="text-xs text-emerald-400 font-medium"
             >
-              Updated just now
+              {t("inbox.updatedJustNow")}
             </motion.div>
           )}
         </div>
