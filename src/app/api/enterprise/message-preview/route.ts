@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id")?.trim();
   const intentType = req.nextUrl.searchParams.get("intent_type")?.trim() || "first_record_send";
   if (!workspaceId) {
-    return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 400 });
   }
   const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;

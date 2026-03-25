@@ -17,7 +17,7 @@ const MAX_DISCLAIMER_LINE = 90;
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   if (!body || typeof body !== "object")
-    return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });
 
   const workspaceId = body.workspace_id?.trim();
   const domain_type = body.domain_type?.trim() || "general";
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
   const sample_vars = body.sample_vars && typeof body.sample_vars === "object" ? body.sample_vars as Record<string, string | number | boolean> : {};
 
   if (!workspaceId)
-    return NextResponse.json({ ok: false, reason: "workspace_id_required" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "workspace_id_required" }, { status: 400 });
 
   const authErr = await requireWorkspaceRole(req, workspaceId, ["owner", "admin", "operator", "compliance", "auditor"]);
   if (authErr) return authErr;
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
       approval_mode: null,
       policy_id: null,
       template_id: null,
-    }, { status: 200 });
+    }, { status: 404 });
   }
 
   let text = renderTemplate(template.body, sample_vars);
@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
       approval_mode: messagePolicy?.approval_mode ?? null,
       policy_id: messagePolicy?.id ?? null,
       template_id: template.key,
-    }, { status: 200 });
+    }, { status: 400 });
   }
 
   const maxChars = channelNorm === "sms" ? MAX_SMS_CHARS : 2000;

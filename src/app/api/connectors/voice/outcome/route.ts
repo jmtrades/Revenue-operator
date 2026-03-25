@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });
   }
 
   const workspaceId = body.workspace_id?.trim();
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
   const outcome = body.outcome && OUTCOMES.includes(body.outcome as (typeof OUTCOMES)[number]) ? body.outcome : null;
 
   if (!workspaceId || !externalCallId) {
-    return NextResponse.json({ ok: false, reason: "workspace_id_and_external_call_id_required" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "workspace_id_and_external_call_id_required" }, { status: 400 });
   }
 
   const authErr = await requireWorkspaceRole(request, workspaceId, ["owner", "admin", "operator", "closer"]);
@@ -144,10 +144,10 @@ export async function POST(request: NextRequest) {
     const consentRequired = compliance?.consent_required === true;
     const disclosuresRequired = Array.isArray(plan?.disclaimer_lines) && plan.disclaimer_lines.length > 0;
     if (consentRequired && body.consent_recorded !== true) {
-      return NextResponse.json({ ok: false, reason: "compliance_violation" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "compliance_violation" }, { status: 422 });
     }
     if (disclosuresRequired && body.disclosures_read !== true) {
-      return NextResponse.json({ ok: false, reason: "compliance_violation" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "compliance_violation" }, { status: 422 });
     }
   }
 

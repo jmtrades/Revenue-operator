@@ -10,10 +10,10 @@ import { getDb } from "@/lib/db/queries";
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
-  if (!body || typeof body !== "object") return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 200 });
+  if (!body || typeof body !== "object") return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });
   const workspaceId = body.workspace_id?.trim();
   const objectId = body.object_id ?? body.policy_id;
-  if (!workspaceId || !objectId) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 200 });
+  if (!workspaceId || !objectId) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 400 });
 
   const authErr = await requireWorkspaceRole(req, workspaceId, ["owner", "admin", "compliance"]);
   if (authErr) return authErr;

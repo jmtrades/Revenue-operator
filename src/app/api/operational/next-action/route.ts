@@ -13,7 +13,7 @@ import { getDb } from "@/lib/db/queries";
 export async function GET(request: NextRequest) {
   const workspaceId = request.nextUrl.searchParams.get("workspace_id");
   if (!workspaceId) {
-    return NextResponse.json({ ok: false, reason: "workspace_id required" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "workspace_id required" }, { status: 400 });
   }
   const authErr = await requireWorkspaceAccess(request, workspaceId);
   if (authErr) return authErr;

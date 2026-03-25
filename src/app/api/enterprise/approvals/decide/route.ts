@@ -12,12 +12,12 @@ import { decideApproval } from "@/lib/governance/approval-queue";
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
-  if (!body || typeof body !== "object") return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 200 });
+  if (!body || typeof body !== "object") return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });
   const workspaceId = body.workspace_id?.trim();
   const approvalId = body.approval_id?.trim();
   const decision = body.decision === "approved" || body.decision === "rejected" ? body.decision : null;
   if (!workspaceId || !approvalId || !decision)
-    return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 400 });
 
   const authErr = await requireWorkspaceRole(req, workspaceId, ["owner", "admin", "operator"]);
   if (authErr) return authErr;
@@ -26,6 +26,6 @@ export async function POST(req: NextRequest) {
   const decidedBy = session?.userId ?? null;
 
   const updated = await decideApproval(approvalId, workspaceId, decision, decidedBy);
-  if (!updated) return NextResponse.json({ ok: false, reason: "not_found_or_already_decided" }, { status: 200 });
+  if (!updated) return NextResponse.json({ ok: false, reason: "not_found_or_already_decided" }, { status: 409 });
   return NextResponse.json({ ok: true, decision });
 }

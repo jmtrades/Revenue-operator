@@ -80,12 +80,12 @@ export async function POST(
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ ok: false });
+    return NextResponse.json({ ok: false }, { status: 400 });
   }
   const type = typeof body.type === "string" ? body.type.trim().toLowerCase() : "";
   const allTypes = ["confirm", "dispute", "info", ...POST_CONFIRM_ACTIONS];
   if (!allTypes.includes(type)) {
-    return NextResponse.json({ ok: false });
+    return NextResponse.json({ ok: false }, { status: 400 });
   }
   const rawRole = typeof body.actor_role === "string" ? body.actor_role.trim().toLowerCase() : "";
   const actorRole =

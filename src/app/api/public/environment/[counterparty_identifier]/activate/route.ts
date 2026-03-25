@@ -56,7 +56,7 @@ export async function POST(
 
   const result = await validateTokenAndGetTransactionId(token);
   if (!result || "alreadyUsed" in result) {
-    return NextResponse.json({ ok: false }, { status: 200 });
+    return NextResponse.json({ ok: false }, { status: 400 });
   }
   const transactionId = result.transactionId;
   const db = getDb();
@@ -66,16 +66,16 @@ export async function POST(
     .eq("id", transactionId)
     .maybeSingle();
   if (!tx) {
-    return NextResponse.json({ ok: false }, { status: 200 });
+    return NextResponse.json({ ok: false }, { status: 404 });
   }
   const txCounterparty = (tx as { counterparty_identifier: string }).counterparty_identifier;
   if (txCounterparty.trim().toLowerCase() !== raw.trim().toLowerCase()) {
-    return NextResponse.json({ ok: false }, { status: 200 });
+    return NextResponse.json({ ok: false }, { status: 409 });
   }
 
   const workspaceId = await resolveCounterpartyToWorkspace(raw);
   if (!workspaceId) {
-    return NextResponse.json({ ok: false }, { status: 200 });
+    return NextResponse.json({ ok: false }, { status: 404 });
   }
 
   const idn = raw.trim().toLowerCase();
@@ -109,7 +109,7 @@ export async function GET(
   }
   const result = await validateTokenAndGetTransactionId(token);
   if (!result || "alreadyUsed" in result) {
-    return NextResponse.json({ ok: false }, { status: 200 });
+    return NextResponse.json({ ok: false }, { status: 400 });
   }
   const transactionId = result.transactionId;
   const db = getDb();
@@ -118,13 +118,13 @@ export async function GET(
     .select("counterparty_identifier")
     .eq("id", transactionId)
     .maybeSingle();
-  if (!tx) return NextResponse.json({ ok: false }, { status: 200 });
+  if (!tx) return NextResponse.json({ ok: false }, { status: 404 });
   const txCounterparty = (tx as { counterparty_identifier: string }).counterparty_identifier;
   if (txCounterparty.trim().toLowerCase() !== raw.trim().toLowerCase()) {
-    return NextResponse.json({ ok: false }, { status: 200 });
+    return NextResponse.json({ ok: false }, { status: 409 });
   }
   const workspaceId = await resolveCounterpartyToWorkspace(raw);
-  if (!workspaceId) return NextResponse.json({ ok: false }, { status: 200 });
+  if (!workspaceId) return NextResponse.json({ ok: false }, { status: 404 });
   const idn = raw.trim().toLowerCase();
   const identifierType = idn.includes("@") ? "email" : idn.replace(/\D/g, "").length >= 10 ? "phone" : "other";
   await db.from("counterparty_identities").upsert(

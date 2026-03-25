@@ -15,10 +15,10 @@ import { allowFeature } from "@/lib/feature-gate/resolver";
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
-  if (!body || typeof body !== "object") return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 200 });
+  if (!body || typeof body !== "object") return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });
   const workspaceId = body.workspace_id?.trim();
   const approvalId = body.approval_id?.trim();
-  if (!workspaceId || !approvalId) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 200 });
+  if (!workspaceId || !approvalId) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 400 });
 
   const authErr = await requireWorkspaceRole(req, workspaceId, ["owner", "admin", "compliance"]);
   if (authErr) return authErr;
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     .eq("id", approvalId)
     .eq("workspace_id", workspaceId)
     .maybeSingle();
-  if (!row) return NextResponse.json({ ok: false, reason: "not_found" }, { status: 200 });
+  if (!row) return NextResponse.json({ ok: false, reason: "not_found" }, { status: 404 });
 
   const r = row as {
     status: string;
@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
       .gt("locked_until", nowIso)
       .limit(1);
     if (locks && locks.length > 0) {
-      return NextResponse.json({ ok: false, reason: "compliance_lock" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "compliance_lock" }, { status: 423 });
     }
   }
 
@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code;
       if (code !== "23505") {
-        return NextResponse.json({ ok: false, reason: "decision_record_failed" }, { status: 200 });
+        return NextResponse.json({ ok: false, reason: "decision_record_failed" }, { status: 500 });
       }
     }
 
@@ -112,13 +112,13 @@ export async function POST(req: NextRequest) {
     const approved = (decisions ?? []).filter((d) => d.decision === "approved");
 
     if (approved.length === 0) {
-      return NextResponse.json({ ok: false, reason: "dual_approval_internal_error" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "dual_approval_internal_error" }, { status: 500 });
     }
 
     if (approved.length === 1) {
       // First approval: must be admin or compliance; no send yet.
       if (decidedRole !== "admin" && decidedRole !== "compliance") {
-        return NextResponse.json({ ok: false, reason: "dual_approval_role_mismatch" }, { status: 200 });
+        return NextResponse.json({ ok: false, reason: "dual_approval_role_mismatch" }, { status: 403 });
       }
       return NextResponse.json({ ok: true, pending_second_approval: true }, { status: 200 });
     }
@@ -133,7 +133,7 @@ export async function POST(req: NextRequest) {
     }
 
     const updated = await decideApproval(approvalId, workspaceId, "approved", decidedBy);
-    if (!updated) return NextResponse.json({ ok: false, reason: "not_found_or_already_decided" }, { status: 200 });
+    if (!updated) return NextResponse.json({ ok: false, reason: "not_found_or_already_decided" }, { status: 409 });
 
     await createActionIntent(workspaceId, {
       threadId: r.thread_id ?? null,

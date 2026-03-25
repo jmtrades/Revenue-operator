@@ -20,23 +20,23 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ ok: false });
+    return NextResponse.json({ ok: false }, { status: 400 });
   }
   const token = typeof body.token === "string" ? body.token.trim() : "";
   const action = body.action;
-  if (!token) return NextResponse.json({ ok: false });
+  if (!token) return NextResponse.json({ ok: false }, { status: 400 });
   if (!action || !["confirm", "reschedule", "dispute"].includes(action)) {
-    return NextResponse.json({ ok: false });
+    return NextResponse.json({ ok: false }, { status: 400 });
   }
 
   const validation = await validateTokenAndGetTransactionId(token);
-  if (!validation) return NextResponse.json({ ok: false });
+  if (!validation) return NextResponse.json({ ok: false }, { status: 400 });
   if ("alreadyUsed" in validation && validation.alreadyUsed) {
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true }, { status: 200 });
   }
 
   const transactionId = "transactionId" in validation ? validation.transactionId : "";
-  if (!transactionId) return NextResponse.json({ ok: false });
+  if (!transactionId) return NextResponse.json({ ok: false }, { status: 400 });
 
   const newDeadline = body.new_deadline ? new Date(body.new_deadline) : undefined;
   const payload =
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     action as "confirm" | "reschedule" | "dispute",
     payload
   );
-  if (!result.ok) return NextResponse.json({ ok: false });
+  if (!result.ok) return NextResponse.json({ ok: false }, { status: 400 });
 
   await markTokenUsed(token);
 

@@ -443,6 +443,12 @@
     "google": {
       "button": "Google で続行"
     },
+    "oauth": {
+      "googleNotConfigured": "Google認証はまだ設定されていません。",
+      "googleExpired": "Google認証の有効期限が切れました。もう一度お試しください。",
+      "googleFailed": "Google認証を完了できませんでした。もう一度お試しください。",
+      "googleAccountFailed": "Google認証後、アカウント設定を完了できませんでした。"
+    },
     "forgotPassword": "パスワードをお忘れですか？",
     "resetPassword": {
       "title": "パスワードをリセット",

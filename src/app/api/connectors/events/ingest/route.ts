@@ -21,7 +21,7 @@ import { RateLimitExceededError } from "@/lib/execution-plan/rate-limits";
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   if (!body || typeof body !== "object") {
-    return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });
   }
 
   const workspaceId = body.workspace_id?.trim();
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
   const payload = body.payload && typeof body.payload === "object" ? body.payload : {};
 
   if (!workspaceId || !channel || !external_id) {
-    return NextResponse.json({ ok: false, reason: "workspace_id_channel_external_id_required" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "workspace_id_channel_external_id_required" }, { status: 400 });
   }
 
   const authErr = await requireWorkspaceRole(req, workspaceId, ["owner", "admin", "operator"]);
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, id: null, duplicate: true }, { status: 200 });
   }
   if (error) {
-    return NextResponse.json({ ok: false, reason: "insert_failed" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "insert_failed" }, { status: 500 });
   }
 
   let executionOk = false;

@@ -427,6 +427,14 @@ YOUR GOAL:
     return { ok: false, error: "Outbound call failed after retries" };
   }
 
+  // Guard: do not create a call session if the voice provider returned no usable call ID.
+  // This prevents orphaned call_sessions that can never be matched to status webhooks.
+  const externalMeetingId = callResult.callId && callResult.callId.trim().length > 0 ? callResult.callId.trim() : null;
+  if (!externalMeetingId) {
+    console.error("[outbound] Voice provider returned no callId — skipping call_session insert to prevent orphan");
+    return { ok: false, error: "Voice provider returned no call identifier" };
+  }
+
   // Now insert call_sessions AFTER the voice call is successfully initiated
   const { data: sessionRow, error: insertErr } = await db
     .from("call_sessions")
@@ -435,7 +443,7 @@ YOUR GOAL:
       lead_id: leadId,
       provider: orchestrationProvider,
       call_started_at: new Date().toISOString(),
-      external_meeting_id: callResult.callId || null, // Include external_meeting_id from voice response
+      external_meeting_id: externalMeetingId,
     })
     .select("id")
     .maybeSingle();

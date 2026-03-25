@@ -11,7 +11,7 @@ import { getDb } from "@/lib/db/queries";
 
 export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id")?.trim();
-  if (!workspaceId) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 200 });
+  if (!workspaceId) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 400 });
   const authErr = await requireWorkspaceRole(req, workspaceId, ["owner", "admin", "operator", "auditor", "compliance"]);
   if (authErr) return authErr;
 
@@ -28,9 +28,9 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
-  if (!body || typeof body !== "object") return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 200 });
+  if (!body || typeof body !== "object") return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });
   const workspaceId = body.workspace_id?.trim();
-  if (!workspaceId) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 200 });
+  if (!workspaceId) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 400 });
 
   const authErr = await requireWorkspaceRole(req, workspaceId, ["owner", "admin", "operator"]);
   if (authErr) return authErr;
@@ -38,10 +38,10 @@ export async function POST(req: NextRequest) {
   const domainType = body.domain_type ?? "general";
   const jurisdiction = body.jurisdiction ?? "UK";
   const channel = body.channel ?? "sms";
-  if (!["sms", "email", "whatsapp"].includes(channel)) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 200 });
+  if (!["sms", "email", "whatsapp"].includes(channel)) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 400 });
   const templateKey = body.template_key?.trim() || body.template_body?.slice(0, 30) || "unnamed";
   const templateBody = body.template_body ?? "";
-  if (templateBody.length > 500) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 200 });
+  if (templateBody.length > 500) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 400 });
 
   const db = getDb();
   const { data: inserted } = await db
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
     .select("id, template_key, version, status")
     .maybeSingle();
 
-  if (!inserted) return NextResponse.json({ ok: false, reason: "workspace_creation_failed" }, { status: 200 });
+  if (!inserted) return NextResponse.json({ ok: false, reason: "workspace_creation_failed" }, { status: 500 });
   const id = (inserted as { id: string }).id;
   await db.from("audit_log").insert({
     workspace_id: workspaceId,

@@ -10,7 +10,7 @@ import { getPendingApprovals } from "@/lib/governance/approval-queue";
 
 export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id")?.trim();
-  if (!workspaceId) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 200 });
+  if (!workspaceId) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 400 });
   const authErr = await requireWorkspaceRole(req, workspaceId, ["owner", "admin", "operator", "auditor", "compliance"]);
   if (authErr) return authErr;
 

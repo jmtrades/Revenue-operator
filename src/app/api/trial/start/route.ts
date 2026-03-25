@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     try {
       body = await req.json();
     } catch {
-      return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });
     }
 
     const email = body.email?.trim();
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
       : null;
     
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return NextResponse.json({ ok: false, reason: "invalid_email" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "invalid_email" }, { status: 400 });
     }
 
     const db = getDb();

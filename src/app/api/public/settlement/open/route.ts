@@ -30,19 +30,19 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ ok: false });
+    return NextResponse.json({ ok: false }, { status: 400 });
   }
   const token = typeof body.token === "string" ? body.token.trim() : "";
-  if (!token) return NextResponse.json({ ok: false });
+  if (!token) return NextResponse.json({ ok: false }, { status: 400 });
 
   const validation = await validateSettlementToken(token);
-  if (!validation) return NextResponse.json({ ok: false });
+  if (!validation) return NextResponse.json({ ok: false }, { status: 400 });
   if ("alreadyUsed" in validation && validation.alreadyUsed) {
-    return NextResponse.json({ ok: false });
+    return NextResponse.json({ ok: false }, { status: 400 });
   }
   const workspaceId = "workspaceId" in validation ? validation.workspaceId : "";
   const externalRef = "externalRef" in validation ? validation.externalRef : "";
-  if (!workspaceId || !externalRef) return NextResponse.json({ ok: false });
+  if (!workspaceId || !externalRef) return NextResponse.json({ ok: false }, { status: 400 });
   await ensureSettlementAccount(workspaceId);
   await markSettlementTokenUsed(token);
   await appendSettlementOpened(externalRef, workspaceId);
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true, url });
   } catch (err) {
     if (err instanceof SettlementNotConfiguredError) {
-      return NextResponse.json({ ok: false });
+      return NextResponse.json({ ok: false }, { status: 400 });
     }
     throw err;
   }

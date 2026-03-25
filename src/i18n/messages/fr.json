@@ -443,6 +443,12 @@
     "google": {
       "button": "Continuer avec Google"
     },
+    "oauth": {
+      "googleNotConfigured": "L'authentification Google n'est pas encore configurée.",
+      "googleExpired": "L'authentification Google a expiré. Veuillez réessayer.",
+      "googleFailed": "L'authentification Google n'a pas pu être complétée. Veuillez réessayer.",
+      "googleAccountFailed": "La configuration du compte n'a pas pu être complétée après l'authentification Google."
+    },
     "forgotPassword": "Mot de passe oublié ?",
     "resetPassword": {
       "title": "Réinitialiser le mot de passe",

@@ -14,7 +14,7 @@ export async function GET(
 ) {
   const { id } = await params;
   const workspaceId = req.nextUrl.searchParams.get("workspace_id")?.trim();
-  if (!workspaceId || !id) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 200 });
+  if (!workspaceId || !id) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 400 });
 
   const authErr = await requireWorkspaceRole(req, workspaceId, ["owner", "admin", "operator", "auditor", "compliance"]);
   if (authErr) return authErr;
@@ -37,10 +37,10 @@ export async function PATCH(
 ) {
   const { id } = await params;
   const body = await req.json().catch(() => null);
-  if (!body || typeof body !== "object") return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 200 });
+  if (!body || typeof body !== "object") return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });
 
   const workspaceId = body.workspace_id?.trim();
-  if (!workspaceId || !id) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 200 });
+  if (!workspaceId || !id) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 400 });
 
   const authErr = await requireWorkspaceRole(req, workspaceId, ["owner", "admin", "compliance"]);
   if (authErr) return authErr;
@@ -61,6 +61,6 @@ export async function PATCH(
     .select("id")
     .maybeSingle();
 
-  if (error || !data) return NextResponse.json({ ok: false, reason: "not_found_or_update_failed" }, { status: 200 });
+  if (error || !data) return NextResponse.json({ ok: false, reason: "not_found_or_update_failed" }, { status: 404 });
   return NextResponse.json({ ok: true });
 }

@@ -41,13 +41,13 @@ export default function SignInForm() {
 
   const oauthErrorMessage =
     oauthError === "google_config"
-      ? "Google sign-in is not configured yet."
+      ? t("oauth.googleNotConfigured")
       : oauthError === "google_state"
-        ? "Google sign-in expired. Please try again."
+        ? t("oauth.googleExpired")
         : oauthError === "google_exchange" || oauthError === "google_profile"
-          ? "Google sign-in could not be completed. Please try again."
+          ? t("oauth.googleFailed")
           : oauthError === "google_account" || oauthError === "google_workspace" || oauthError === "google_session"
-            ? "Account setup could not be completed after Google sign-in."
+            ? t("oauth.googleAccountFailed")
             : oauthError === "auth"
               ? t("toasts.signInFailed")
               : "";
@@ -73,9 +73,9 @@ export default function SignInForm() {
         // Show API error message or improved generic message
         const apiError = (d as { error?: string }).error;
         if (apiError?.toLowerCase().includes("invalid") || apiError?.toLowerCase().includes("incorrect")) {
-          setErr("The email or password you entered is incorrect. Please try again or reset your password.");
+          setErr(t("signIn.errorInvalid"));
         } else {
-          setErr(apiError || "The email or password you entered is incorrect. Please try again or reset your password.");
+          setErr(apiError || t("signIn.errorInvalid"));
         }
         setBusy(false);
         return;
@@ -97,7 +97,7 @@ export default function SignInForm() {
       }
       window.location.href = redirect;
     } catch {
-      setErr("Network error — please try again");
+      setErr(t("signIn.errorGeneric"));
       setBusy(false);
     }
   }
@@ -116,11 +116,11 @@ export default function SignInForm() {
       if (url) {
         window.location.href = url;
       } else {
-        toast.error("Google sign-in is not configured yet.");
+        toast.error(t("oauth.googleNotConfigured"));
         setGoogleBusy(false);
       }
     } catch {
-      toast.error("Could not connect to Google. Please try again.");
+      toast.error(t("oauth.googleFailed"));
       setGoogleBusy(false);
     }
   }
