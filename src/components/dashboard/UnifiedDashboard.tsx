@@ -474,11 +474,16 @@ export function UnifiedDashboard() {
 
       {/* ── KPI cards ──────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {kpis.map((k) => (
+        {kpis.map((k, index) => (
           <div
             key={k.label}
             className="kpi-card"
-            style={{ "--kpi-accent": k.accent } as React.CSSProperties}
+            style={{
+              "--kpi-accent": k.accent,
+              animation: "fadeInUp 300ms var(--ease-out-expo, cubic-bezier(0.23, 1, 0.32, 1)) forwards",
+              opacity: 0,
+              animationDelay: `${index * 50}ms`,
+            } as React.CSSProperties}
           >
             <div className="flex items-center gap-2 mb-3">
               <div

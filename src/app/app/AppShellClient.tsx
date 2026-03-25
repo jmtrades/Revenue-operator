@@ -471,7 +471,7 @@ export default function AppShellClient({
                         <div className="mx-3 mb-2 border-t border-[var(--border-default)]" />
                       )}
                       <div className="space-y-px">
-                        {group.items.map(({ href, label, icon: Icon }) => {
+                        {group.items.map(({ href, label, icon: Icon }, itemIdx) => {
                           const effectiveLabel =
                             href === "/app/inbox" && inboxUnread > 0 ? `Inbox (${inboxUnread})` : label;
                           const active = isActive(href);
@@ -495,6 +495,11 @@ export default function AppShellClient({
                                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
                               )}
                               aria-current={active ? "page" : undefined}
+                              style={{
+                                animation: "fadeInUp 300ms var(--ease-out-expo, cubic-bezier(0.23, 1, 0.32, 1)) forwards",
+                                opacity: 0,
+                                animationDelay: `${itemIdx * 30}ms`,
+                              } as React.CSSProperties}
                             >
                               {active && (
                                 <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-4 rounded-r-full bg-[var(--accent-primary)]" />
