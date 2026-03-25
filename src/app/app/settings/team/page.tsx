@@ -202,7 +202,7 @@ export default function AppSettingsTeamPage() {
         <p className="text-xs text-[var(--text-secondary)]">{t("team.escalationOrderHint")}</p>
         <div className="mt-3 space-y-1.5">
           <div className="flex items-center gap-2 p-2 rounded-xl bg-[var(--bg-inset)]/50 text-xs text-[var(--text-secondary)]">
-            <span className="text-[var(--text-secondary)]">1.</span> {displayMembers[0]?.name || t("team.memberYouOwner")} — SMS + Push
+            <span className="text-[var(--text-secondary)]">1.</span> {displayMembers[0]?.name || t("team.memberYouOwner")} — {t("team.smsPush")}
           </div>
         </div>
       </div>

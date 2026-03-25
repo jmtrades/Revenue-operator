@@ -3256,7 +3256,8 @@
       "errorTitle": "Could not load calls",
       "timeout": "Request timed out. Try again.",
       "loadFailed": "Could not load calls for this workspace.",
-      "exportFailed": "Export failed. Try again."
+      "exportFailed": "Export failed. Try again.",
+      "noteSaveFailed": "Failed to save notes"
     },
     "toast": {
       "exportSuccess": "Calls exported. Check your downloads.",
@@ -3729,7 +3730,11 @@
       "noteSaveFailed": "Could not save note.",
       "uploadFailed": "Failed to upload file",
       "uploadSuccess": "File uploaded successfully",
-      "uploadError": "Upload failed. Please try again."
+      "uploadError": "Upload failed. Please try again.",
+      "enterUrl": "Please enter a website URL",
+      "fetchFailed": "Failed to fetch website",
+      "websiteIndexed": "Website content indexed successfully",
+      "fetchError": "Failed to fetch website. Please check the URL and try again."
     },
     "errors": {
       "testFailed": "Failed to test knowledge. Please try again.",
@@ -4457,7 +4462,8 @@
       "removeFailed": "Failed to remove member.",
       "inviteFailed": "Failed to send invite. Please try again.",
       "networkError": "Network error. Please try again.",
-      "invalidEmail": "Please enter a valid email address"
+      "invalidEmail": "Please enter a valid email address",
+      "smsPush": "SMS + Push"
     },
     "compliance": {
       "title": "Compliance",
@@ -7528,7 +7534,12 @@
     "exportError": "Could not export contacts. Try again.",
     "addedManually": "Added manually from dashboard.",
     "inbound": "Inbound",
-    "outbound": "Outbound"
+    "outbound": "Outbound",
+    "connectionError": "Connection error. Using cached data.",
+    "source": {
+      "demo": "Demo",
+      "import": "Import"
+    }
   },
   "appointments": {
     "pageTitle": "Appointments — Recall Touch",
@@ -7577,7 +7588,10 @@
       "title": "No appointments yet",
       "body": "As your AI books on your calendar, every appointment will show up here.",
       "action": "Open agent settings"
-    }
+    },
+    "loadError": "Failed to load appointments",
+    "retry": "Retry",
+    "viewCalls": "View Calls"
   },
   "continuity": {
     "calmLine": "Decisions remain on track."
@@ -8653,7 +8667,9 @@
         "saved": "Sequence saved."
       }
     },
-    "loadError": "Failed to load follow-up sequences"
+    "loadError": "Failed to load follow-up sequences",
+    "pauseSequence": "Pause sequence",
+    "resumeSequence": "Resume sequence"
   },
   "api": {
     "errors": {

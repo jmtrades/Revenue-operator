@@ -154,7 +154,7 @@ function KnowledgeModal({
 
   const handleWebsiteFetch = async () => {
     if (!url.trim()) {
-      toast.error("Please enter a website URL");
+      toast.error(t("toast.enterUrl"));
       return;
     }
     setWebsiteFetchState("fetching");
@@ -166,16 +166,16 @@ function KnowledgeModal({
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        toast.error((data as { error?: string }).error ?? "Failed to fetch website");
+        toast.error((data as { error?: string }).error ?? t("toast.fetchFailed"));
         setWebsiteFetchState("idle");
         return;
       }
       const data = await res.json().catch(() => ({}));
       setWebsiteFetchState("done");
       setWebsitePages((data as { pages?: number }).pages ?? 0);
-      toast.success("Website content indexed successfully");
+      toast.success(t("toast.websiteIndexed"));
     } catch {
-      toast.error("Failed to fetch website. Please check the URL and try again.");
+      toast.error(t("toast.fetchError"));
       setWebsiteFetchState("idle");
     }
   };
