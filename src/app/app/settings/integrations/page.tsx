@@ -113,7 +113,7 @@ export default function AppSettingsIntegrationsPage() {
     }
     if (crmParam === "connected") {
       const provider = searchParams.get("provider") ?? "";
-      setToast(`${provider.charAt(0).toUpperCase() + provider.slice(1).replace(/_/g, " ")} connected successfully!`);
+      setToast(t("toast.crmConnected", { provider: provider.charAt(0).toUpperCase() + provider.slice(1).replace(/_/g, " ") }));
       // Refresh CRM status
       fetch("/api/integrations/crm/status", { credentials: "include" })
         .then((r) => (r.ok ? r.json() : null))
@@ -140,10 +140,10 @@ export default function AppSettingsIntegrationsPage() {
       const provider = searchParams.get("provider") ?? "";
       const providerName = provider.charAt(0).toUpperCase() + provider.slice(1).replace(/_/g, " ");
       const msg = reason === "token_exchange_failed"
-        ? `${providerName} connection failed. Please check your credentials and try again.`
+        ? t("toast.tokenExchangeFailed", { provider: providerName })
         : reason === "invalid_state"
-        ? "Connection expired. Please try again."
-        : `Could not connect to ${providerName}. Please try again.`;
+        ? t("toast.invalidState")
+        : t("toast.connectFailed", { provider: providerName });
       setToast(msg);
       const id = setTimeout(() => setToast(null), 5000);
       return () => clearTimeout(id);
@@ -151,7 +151,7 @@ export default function AppSettingsIntegrationsPage() {
     if (crmParam === "config") {
       const provider = searchParams.get("provider") ?? "";
       const providerName = provider.charAt(0).toUpperCase() + provider.slice(1).replace(/_/g, " ");
-      setToast(`${providerName} direct integration is coming soon. Use the webhook destination below to sync data in the meantime.`);
+      setToast(t("toast.directComingSoon", { provider: providerName }));
       const id = setTimeout(() => setToast(null), 6000);
       return () => clearTimeout(id);
     }
@@ -279,8 +279,8 @@ export default function AppSettingsIntegrationsPage() {
       const enqueued = data?.enqueued ?? 0;
       setToast(
         enqueued > 0
-          ? `Sync started for ${enqueued} lead${enqueued !== 1 ? "s" : ""}`
-          : "Sync started"
+          ? t("toast.syncStarted", { count: enqueued })
+          : t("toast.syncStartedNoCount")
       );
       // Refresh CRM status after a short delay
       setTimeout(() => {
@@ -309,7 +309,7 @@ export default function AppSettingsIntegrationsPage() {
         setToast(data?.error ?? t("toast.importFailed"));
         return;
       }
-      setToast(data?.message ?? `${data?.imported ?? 0} contacts imported`);
+      setToast(data?.message ?? t("toast.contactsImported", { count: data?.imported ?? 0 }));
       // Refresh CRM status
       setTimeout(() => {
         fetch("/api/integrations/crm/status", { credentials: "include" })
@@ -338,7 +338,7 @@ export default function AppSettingsIntegrationsPage() {
         setToast(data?.error ?? t("toast.disconnectFailed"));
         return;
       }
-      setToast(`${provider.charAt(0).toUpperCase() + provider.slice(1).replace(/_/g, " ")} disconnected.`);
+      setToast(t("toast.crmDisconnected", { provider: provider.charAt(0).toUpperCase() + provider.slice(1).replace(/_/g, " ") }));
       // Refresh CRM status
       fetch("/api/integrations/crm/status", { credentials: "include" })
         .then((r) => (r.ok ? r.json() : null))
@@ -440,7 +440,7 @@ export default function AppSettingsIntegrationsPage() {
                     </div>
                     <div className="flex flex-col gap-1 items-end">
                       <span className="px-1.5 py-0.5 rounded-full text-xs bg-blue-500/20 text-blue-400 shrink-0">
-                        Beta
+                        {t("status.beta")}
                       </span>
                       {crm.comingSoon ? (
                         <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-amber-500/40 text-amber-400 shrink-0">
@@ -463,14 +463,14 @@ export default function AppSettingsIntegrationsPage() {
                     <div className="mt-3 space-y-1.5">
                       {status?.lastSyncAt && (
                         <p className="text-[11px] text-[var(--text-secondary)]">
-                          <span className="font-medium">Last synced:</span> {new Date(status.lastSyncAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })}
+                          <span className="font-medium">{t("label.lastSynced")}:</span> {new Date(status.lastSyncAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })}
                         </p>
                       )}
                       <div className="flex items-center gap-2">
-                        <span className="text-[11px] text-[var(--text-secondary)]"><span className="font-medium">Synced:</span> {status?.recordsSynced ?? 0} records</span>
+                        <span className="text-[11px] text-[var(--text-secondary)]"><span className="font-medium">{t("label.synced")}:</span> {status?.recordsSynced ?? 0} {t("label.records")}</span>
                         {(status?.errorCount ?? 0) > 0 && (
                           <span className="text-[10px] font-medium text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded">
-                            {status?.errorCount} error{(status?.errorCount ?? 0) !== 1 ? "s" : ""}
+                            {t("label.errors", { count: status?.errorCount ?? 0 })}
                           </span>
                         )}
                       </div>
@@ -496,12 +496,12 @@ export default function AppSettingsIntegrationsPage() {
                           {syncingProvider === crm.id ? (
                             <>
                               <Loader className="w-3 h-3 animate-spin" />
-                              Syncing...
+                              {t("button.syncing")}
                             </>
                           ) : (
                             <>
                               <RefreshCw className="w-3 h-3" />
-                              Sync Now
+                              {t("button.syncNow")}
                             </>
                           )}
                         </button>
@@ -514,12 +514,12 @@ export default function AppSettingsIntegrationsPage() {
                           {importingProvider === crm.id ? (
                             <>
                               <Loader className="w-3 h-3 animate-spin" />
-                              Importing...
+                              {t("button.importing")}
                             </>
                           ) : (
                             <>
                               <Download className="w-3 h-3" />
-                              Import
+                              {t("button.import")}
                             </>
                           )}
                         </button>
@@ -599,7 +599,7 @@ export default function AppSettingsIntegrationsPage() {
             <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-sm font-medium text-[var(--text-primary)]">Outlook Calendar</p>
+                  <p className="text-sm font-medium text-[var(--text-primary)]">{t("hub.outlookCalendarLabel")}</p>
                   <p className="text-xs text-[var(--text-secondary)] mt-1">{t("hub.calendarDesc")}</p>
                 </div>
                 <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-amber-500/40 text-amber-400 shrink-0">

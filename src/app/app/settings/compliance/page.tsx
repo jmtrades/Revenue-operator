@@ -95,11 +95,11 @@ export default function AppSettingsCompliancePage() {
         [tSettings("compliance.csvExport.setting"), tSettings("compliance.csvExport.value")],
         [tSettings("compliance.csvExport.callRecording"), recording ? tSettings("compliance.csvExport.enabled") : tSettings("compliance.csvExport.disabled")],
         [tSettings("compliance.csvExport.hipaaMode"), hipaa ? tSettings("compliance.csvExport.enabled") : tSettings("compliance.csvExport.disabled")],
-        ["Data Retention (days)", retention],
-        ["Recording Consent Mode", recordingConsentMode],
-        ["Announcement Text", announcementText || "(default)"],
+        [tSettings("compliance.csvExport.dataRetention"), retention],
+        [tSettings("compliance.csvExport.recordingConsentMode"), recordingConsentMode],
+        [tSettings("compliance.csvExport.announcementText"), announcementText || tSettings("compliance.csvExport.default")],
         [tSettings("compliance.csvExport.pauseOnSensitive"), pauseOnSensitive ? tSettings("compliance.csvExport.yes") : tSettings("compliance.csvExport.no")],
-        ["Exported At", new Date().toISOString()],
+        [tSettings("compliance.csvExport.exportedAt"), new Date().toISOString()],
       ];
       const csvContent = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
       const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
