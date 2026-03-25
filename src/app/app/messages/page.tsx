@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { Bot } from "lucide-react";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 
 type ApiThread = {
   lead_id: string;
@@ -60,7 +61,6 @@ export default function AppMessagesPage() {
   const [loadingThreads, setLoadingThreads] = useState(true);
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [sending, setSending] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
   const [threadError, setThreadError] = useState<string | null>(null);
 
   const active = threads.find((t) => t.id === selected) ?? threads[0] ?? null;
@@ -184,7 +184,7 @@ export default function AppMessagesPage() {
     const text = input.trim();
     if (!text || !active) return;
     if (!active.lead_id) {
-      setToast(t("toast.addContactFirst"));
+      toast.error(t("toast.addContactFirst"));
       return;
     }
     setSending(true);
@@ -198,10 +198,10 @@ export default function AppMessagesPage() {
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        setToast((err as { error?: string }).error || t("failedToSend"));
+        toast.error((err as { error?: string }).error || t("failedToSend"));
         return;
       }
-      setToast(t("toast.sent"));
+      toast.success(t("toast.sent"));
       await fetchMessages(active.id, active.lead_id);
       setThreads((prev) =>
         prev.map((th) => (th.id === active.id ? { ...th, preview: text.slice(0, 60), time: t("now") } : th))
@@ -210,12 +210,6 @@ export default function AppMessagesPage() {
       setSending(false);
     }
   }, [active, input, fetchMessages, t]);
-
-  useEffect(() => {
-    if (!toast) return;
-    const id = window.setTimeout(() => setToast(null), 3000);
-    return () => window.clearTimeout(id);
-  }, [toast]);
 
   const canSend = active?.lead_id && input.trim() && !sending;
 
@@ -345,11 +339,6 @@ export default function AppMessagesPage() {
           )}
         </div>
       </div>
-      {toast && (
-        <div role="status" aria-live="polite" className="fixed bottom-4 right-4 z-40 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-sm text-[var(--text-primary)] shadow-lg">
-          {toast}
-        </div>
-      )}
       <p className="mt-6">
         <Link href="/app/activity" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">
           {t("backToActivity")}
