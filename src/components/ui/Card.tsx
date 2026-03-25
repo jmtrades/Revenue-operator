@@ -13,13 +13,13 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 
 export function Card({ children, className, variant = "default", onClick, ...rest }: CardProps) {
   const baseClasses =
-    "rounded-[var(--radius-card)] border border-[var(--border-default)] bg-[var(--bg-card)] p-6 transition-[border-color,box-shadow,transform] duration-200";
+    "rounded-[var(--radius-card)] border border-[var(--border-default)] bg-[var(--bg-card)] p-6";
 
   const variantClasses: Record<CardVariant, string> = {
     default: "shadow-[var(--shadow-xs)]",
     elevated: "shadow-[var(--shadow-md)]",
     interactive:
-      "cursor-pointer shadow-[var(--shadow-xs)] hover:border-[var(--border-hover)] hover:shadow-[var(--shadow-md)] hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:ring-offset-2",
+      "cursor-pointer shadow-[var(--shadow-xs)] transition-[border-color,box-shadow,transform] duration-[var(--duration-normal)] ease-[var(--ease-out-expo)] hover:border-[var(--border-hover)] hover:shadow-[var(--shadow-md)] hover:-translate-y-0.5 active:scale-[0.99] active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:ring-offset-2",
   };
 
   return (
@@ -37,7 +37,7 @@ export function Card({ children, className, variant = "default", onClick, ...res
 
 export function CardHeader({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div className={cn("mb-4 text-[13px] font-semibold text-[var(--text-secondary)] tracking-wide", className)}>
+    <div className={cn("mb-4 text-[13px] font-semibold text-[var(--text-secondary)] tracking-wide uppercase", className)}>
       {children}
     </div>
   );

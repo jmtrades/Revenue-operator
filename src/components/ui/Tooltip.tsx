@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/cn";
 
@@ -13,24 +13,35 @@ interface TooltipProps {
   children: ReactNode;
 }
 
+/* Module-level: track when last tooltip closed for group delay skip */
+let lastTooltipCloseTime = 0;
+const GROUP_WINDOW = 400; // ms — skip delay if another tooltip was open recently
+
+const easeOutExpo = [0.23, 1, 0.32, 1] as const;
+
 export function Tooltip({ content, side = "top", children }: TooltipProps) {
   const [open, setOpen] = useState(false);
-  const [delayTimeout, setDelayTimeout] = useState<number | null>(null);
-  const ref = useRef<HTMLDivElement | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    return () => {
-      if (delayTimeout) window.clearTimeout(delayTimeout);
-    };
-  }, [delayTimeout]);
+  const cleanup = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => cleanup, [cleanup]);
 
   const show = () => {
-    const id = window.setTimeout(() => setOpen(true), 200);
-    setDelayTimeout(id);
+    cleanup();
+    const elapsed = Date.now() - lastTooltipCloseTime;
+    const delay = elapsed < GROUP_WINDOW ? 0 : 200;
+    timeoutRef.current = setTimeout(() => setOpen(true), delay);
   };
 
   const hide = () => {
-    if (delayTimeout) window.clearTimeout(delayTimeout);
+    cleanup();
+    lastTooltipCloseTime = Date.now();
     setOpen(false);
   };
 
@@ -41,22 +52,31 @@ export function Tooltip({ content, side = "top", children }: TooltipProps) {
     right: "left-full top-1/2 -translate-y-1/2 ml-2",
   };
 
+  /* Determine if we're in the group window (skip animation too) */
+  const isInstant = Date.now() - lastTooltipCloseTime < GROUP_WINDOW;
+
   return (
     <div
-      ref={ref}
       className="relative inline-flex"
       onMouseEnter={show}
       onMouseLeave={hide}
+      onFocus={show}
+      onBlur={hide}
     >
       {children}
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0, transition: { duration: 0.15, ease: "easeOut" as const } }}
-            exit={{ opacity: 0, y: 4, transition: { duration: 0.1, ease: "easeOut" as const } }}
+            initial={{ opacity: 0, scale: 0.97, y: side === "top" ? 4 : side === "bottom" ? -4 : 0, x: side === "left" ? 4 : side === "right" ? -4 : 0 }}
+            animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+            exit={{ opacity: 0, scale: 0.97 }}
+            transition={
+              isInstant
+                ? { duration: 0 }
+                : { duration: 0.125, ease: easeOutExpo }
+            }
             className={cn(
-              "pointer-events-none absolute z-50 whitespace-nowrap rounded-[var(--radius-btn)] border border-[var(--border-default)] bg-[var(--bg-elevated)] px-2.5 py-1 text-[11px] font-medium text-[var(--text-primary)] shadow-[var(--shadow-md)]",
+              "pointer-events-none absolute z-50 whitespace-nowrap rounded-[var(--radius-sm)] border border-[var(--border-default)] bg-[var(--bg-elevated)] px-2.5 py-1 text-[11px] font-medium text-[var(--text-primary)] shadow-[var(--shadow-md)]",
               positionClasses[side],
             )}
             role="tooltip"

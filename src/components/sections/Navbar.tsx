@@ -91,13 +91,14 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 h-[60px] flex items-center transition-all duration-300"
+      className="fixed top-0 left-0 right-0 z-50 h-[60px] flex items-center"
       style={{
         background: scrolled ? "var(--bg-surface-glass, rgba(255, 255, 255, 0.82))" : "transparent",
         backdropFilter: scrolled ? "saturate(180%) blur(20px)" : "none",
         WebkitBackdropFilter: scrolled ? "saturate(180%) blur(20px)" : "none",
         borderBottom: scrolled ? "1px solid var(--border-default)" : "1px solid transparent",
         boxShadow: scrolled ? "0 1px 3px rgba(0,0,0,0.04)" : "none",
+        transition: "background-color 200ms cubic-bezier(0.23, 1, 0.32, 1), border-color 200ms cubic-bezier(0.23, 1, 0.32, 1), backdrop-filter 200ms cubic-bezier(0.23, 1, 0.32, 1)",
       }}
     >
       <Container className="flex items-center justify-between w-full">
@@ -219,7 +220,7 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
           ) : null}
           <Link
             href={desktopPrimaryHref}
-            className="btn-marketing-blue text-[13px] px-4 py-2.5 no-underline"
+            className="btn-marketing-blue text-[13px] px-4 py-2.5 no-underline active:scale-[0.97] transition-transform"
           >
             {desktopPrimaryLabel}
           </Link>
@@ -230,7 +231,7 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
           type="button"
           aria-label="Toggle menu"
           aria-expanded={mobileOpen}
-          className="lg:hidden p-2.5 min-w-[44px] min-h-[44px] rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 flex items-center justify-center"
+          className="lg:hidden p-2.5 min-w-[44px] min-h-[44px] rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 flex items-center justify-center active:scale-[0.95] transition-transform"
           style={{ color: "var(--text-primary)" }}
           onClick={() => setMobileOpen((o) => !o)}
         >
@@ -246,7 +247,7 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
           style={{
             background: "var(--bg-primary)",
             borderTop: "1px solid var(--border-default)",
-            animation: "slideDown 300ms ease-out"
+            animation: "slideDown 300ms cubic-bezier(0.32, 0.72, 0, 1)"
           }}
         >
           <nav className="flex flex-col gap-1">
