@@ -78,6 +78,16 @@
   --transition-slow: 280ms cubic-bezier(0.25, 0.1, 0.25, 1);
   --transition-fade: 180ms ease;
 
+  /* Emil Kowalski design tokens — motion system */
+  --ease-out-expo: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out-expo: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --duration-instant: 100ms;
+  --duration-fast: 160ms;
+  --duration-normal: 200ms;
+  --duration-moderate: 250ms;
+  --duration-slow: 400ms;
+
   /* Radius: restrained, modern */
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -454,12 +464,15 @@ textarea:focus-visible,
   transition: background var(--transition-fast), box-shadow var(--transition-fast), transform 80ms ease;
   cursor: pointer;
 }
-.btn-primary:hover {
-  background: var(--btn-primary-hover-bg);
-  box-shadow: var(--shadow-sm);
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover {
+    background: var(--btn-primary-hover-bg);
+    box-shadow: var(--shadow-sm);
+  }
 }
 .btn-primary:active {
-  transform: scale(0.985);
+  transform: scale(0.97);
+  transition: transform var(--duration-instant) var(--ease-out-expo);
 }
 
 .btn-secondary {
@@ -479,12 +492,15 @@ textarea:focus-visible,
   transition: border-color var(--transition-fast), background var(--transition-fast), transform 80ms ease;
   cursor: pointer;
 }
-.btn-secondary:hover {
-  border-color: var(--btn-secondary-hover-border);
-  background: var(--btn-secondary-hover-bg);
+@media (hover: hover) and (pointer: fine) {
+  .btn-secondary:hover {
+    border-color: var(--btn-secondary-hover-border);
+    background: var(--btn-secondary-hover-bg);
+  }
 }
 .btn-secondary:active {
-  transform: scale(0.985);
+  transform: scale(0.97);
+  transition: transform var(--duration-instant) var(--ease-out-expo);
 }
 
 /* Marketing buttons: confident, Stripe-inspired */
@@ -504,12 +520,15 @@ textarea:focus-visible,
   transition: background var(--transition-fast), box-shadow var(--transition-fast), transform 80ms ease;
   box-shadow: var(--shadow-xs);
 }
-.btn-marketing-primary:hover {
-  background: #1A1A1D;
-  box-shadow: var(--shadow-sm);
+@media (hover: hover) and (pointer: fine) {
+  .btn-marketing-primary:hover {
+    background: #1A1A1D;
+    box-shadow: var(--shadow-sm);
+  }
 }
 .btn-marketing-primary:active {
-  transform: scale(0.985);
+  transform: scale(0.97);
+  transition: transform var(--duration-instant) var(--ease-out-expo);
 }
 .btn-marketing-primary:focus-visible {
   outline: 2px solid var(--accent-primary);
@@ -537,12 +556,15 @@ textarea:focus-visible,
   transition: background var(--transition-fast), box-shadow var(--transition-fast), transform 80ms ease;
   box-shadow: var(--shadow-xs);
 }
-.btn-marketing-blue:hover {
-  background: var(--accent-primary-hover);
-  box-shadow: var(--shadow-glow-primary);
+@media (hover: hover) and (pointer: fine) {
+  .btn-marketing-blue:hover {
+    background: var(--accent-primary-hover);
+    box-shadow: var(--shadow-glow-primary);
+  }
 }
 .btn-marketing-blue:active {
-  transform: scale(0.985);
+  transform: scale(0.97);
+  transition: transform var(--duration-instant) var(--ease-out-expo);
 }
 
 .btn-marketing-ghost {
@@ -558,12 +580,14 @@ textarea:focus-visible,
   border-radius: var(--radius-btn);
   border: 1px solid var(--border-default);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
 }
-.btn-marketing-ghost:hover {
-  color: var(--text-primary);
-  border-color: var(--border-hover);
-  background: var(--bg-hover);
+@media (hover: hover) and (pointer: fine) {
+  .btn-marketing-ghost:hover {
+    color: var(--text-primary);
+    border-color: var(--border-hover);
+    background: var(--bg-hover);
+  }
 }
 .btn-marketing-ghost:focus-visible {
   outline: 2px solid var(--accent-primary);
@@ -575,17 +599,21 @@ textarea:focus-visible,
   background: #F4F4F5;
   color: #09090B;
 }
-.dark .btn-marketing-primary:hover {
-  background: #E4E4E7;
+@media (hover: hover) and (pointer: fine) {
+  .dark .btn-marketing-primary:hover {
+    background: #E4E4E7;
+  }
 }
 .dark .btn-marketing-ghost {
   color: #A1A1AA;
   border-color: rgba(255, 255, 255, 0.12);
 }
-.dark .btn-marketing-ghost:hover {
-  color: #F4F4F5;
-  border-color: rgba(255, 255, 255, 0.24);
-  background: rgba(255, 255, 255, 0.04);
+@media (hover: hover) and (pointer: fine) {
+  .dark .btn-marketing-ghost:hover {
+    color: #F4F4F5;
+    border-color: rgba(255, 255, 255, 0.24);
+    background: rgba(255, 255, 255, 0.04);
+  }
 }
 .dark .hero-atmosphere::before {
   background: radial-gradient(ellipse 50% 50% at 50% 0%, rgba(59, 130, 246, 0.08), transparent 70%);
@@ -894,9 +922,11 @@ textarea:focus {
 .card-lift {
   transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
 }
-.card-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+@media (hover: hover) and (pointer: fine) {
+  .card-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -912,9 +942,11 @@ textarea:focus {
   padding: 20px;
   transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
-.kpi-card:hover {
-  border-color: var(--border-hover);
-  box-shadow: var(--shadow-sm);
+@media (hover: hover) and (pointer: fine) {
+  .kpi-card:hover {
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-sm);
+  }
 }
 .kpi-card::before {
   content: "";
@@ -928,8 +960,10 @@ textarea:focus {
   opacity: 0;
   transition: opacity var(--transition-base);
 }
-.kpi-card:hover::before {
-  opacity: 1;
+@media (hover: hover) and (pointer: fine) {
+  .kpi-card:hover::before {
+    opacity: 1;
+  }
 }
 
 /* Dashboard section cards */
@@ -969,8 +1003,10 @@ textarea:focus {
   border-left: 2px solid var(--border-default);
   transition: border-color var(--transition-fast);
 }
-.activity-item:hover {
-  border-left-color: var(--accent-primary);
+@media (hover: hover) and (pointer: fine) {
+  .activity-item:hover {
+    border-left-color: var(--accent-primary);
+  }
 }
 .activity-item::before {
   content: "";
@@ -984,9 +1020,11 @@ textarea:focus {
   border: 2px solid var(--border-default);
   transition: border-color var(--transition-fast), background var(--transition-fast);
 }
-.activity-item:hover::before {
-  border-color: var(--accent-primary);
-  background: var(--accent-primary-subtle);
+@media (hover: hover) and (pointer: fine) {
+  .activity-item:hover::before {
+    border-color: var(--accent-primary);
+    background: var(--accent-primary-subtle);
+  }
 }
 
 /* Attention item with left accent */
@@ -996,9 +1034,11 @@ textarea:focus {
   background: var(--bg-surface);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
-.attention-item:hover {
-  border-color: var(--border-hover);
-  box-shadow: var(--shadow-xs);
+@media (hover: hover) and (pointer: fine) {
+  .attention-item:hover {
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-xs);
+  }
 }
 
 /* Progress bar with animated fill */
@@ -1022,10 +1062,12 @@ textarea:focus {
   padding: 24px;
   transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base);
 }
-.onboard-card:hover {
-  border-color: var(--border-hover);
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .onboard-card:hover {
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1085,12 +1127,14 @@ img[loading="lazy"][complete] {
   background: transparent;
   color: var(--text-secondary);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
 }
-.theme-toggle:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
-  border-color: var(--border-hover);
+@media (hover: hover) and (pointer: fine) {
+  .theme-toggle:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    border-color: var(--border-hover);
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
