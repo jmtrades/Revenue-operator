@@ -38,7 +38,7 @@ export default function AppFollowUpsPage() {
       .catch((err) => {
         if (active) {
           setSequences([]);
-          setFetchError(err instanceof Error ? err.message : "Failed to load follow-up sequences");
+          setFetchError(err instanceof Error ? err.message : t("loadError"));
         }
       })
       .finally(() => {

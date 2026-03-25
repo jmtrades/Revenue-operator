@@ -548,7 +548,7 @@ export default function InboxPage() {
       })
       .catch((err) => {
         console.error("Inbox fetch error:", err);
-        toast.error("Failed to load messages");
+        toast.error(t("inbox.loadFailed"));
       });
   }, [workspaceId]);
 
@@ -577,7 +577,7 @@ export default function InboxPage() {
         })
         .catch((err) => {
           console.error("Inbox fetch error:", err);
-          toast.error("Failed to load messages");
+          toast.error(t("inbox.loadFailed"));
         });
     }, 30000); // Poll every 30 seconds
 
@@ -644,7 +644,7 @@ export default function InboxPage() {
       toast.success(t("inbox.messageSent"));
     } catch (error) {
       // Keep the input in compose field on error
-      setSendError("Failed to send message. Please try again.");
+      setSendError(t("inbox.sendFailed"));
       toast.error(t("inbox.messageFailed"));
     } finally {
       setSending(false);
