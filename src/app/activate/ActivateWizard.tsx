@@ -46,6 +46,7 @@ export function ActivateWizard() {
     goals: [],
   }));
   const [error, setError] = useState<string | null>(null);
+  const [finalizing, setFinalizing] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -108,6 +109,7 @@ export function ActivateWizard() {
 
   const handleKeyDownAdvance = (e: React.KeyboardEvent) => {
     if (e.key !== "Enter") return;
+    if (finalizing) return;
     const target = e.target as HTMLElement;
     if (target.tagName === "TEXTAREA") return;
     e.preventDefault();
@@ -139,6 +141,10 @@ export function ActivateWizard() {
 
   const handleFinalize = useCallback(async (e?: React.MouseEvent) => {
     e?.preventDefault();
+    if (finalizing) return;
+    setFinalizing(true);
+    setError(null);
+
     try {
       track("onboarding_step_completed", { step: 3, name: "go_live" });
       if (state.businessName.trim()) {
@@ -155,38 +161,59 @@ export function ActivateWizard() {
       const hoursObj = state.hours?.length
         ? { days: state.hours.map((h) => h.day), start: state.hours[0]?.start ?? "09:00", end: state.hours[0]?.end ?? "17:00", timezone: "UTC" }
         : undefined;
-      const res = await fetch("/api/workspace/create", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          businessName: state.businessName.trim() || "My Workspace",
-          businessPhone: state.businessPhone.trim() || undefined,
-          industry: state.industry ?? undefined,
-          orgType: state.orgType ?? undefined,
-          agentTemplate: state.agentTemplate ?? undefined,
-          agentName: state.agentName || undefined,
-          greeting: state.greeting || undefined,
-          businessHours: hoursObj,
-          knowledgeItems: state.services?.length ? state.services.map((s) => ({ type: "service", value: s })) : undefined,
-          preferredLanguage: state.preferredLanguage || "en",
-          voiceId: state.voiceId || undefined,
-          billingTier: selectedPlan || undefined,
-        }),
-      });
-      if (!res.ok) {
-        console.error("[activate] Onboard API returned", res.status);
-        setError(t("errors.setupFailed", { defaultValue: "Something went wrong setting up your workspace. Please try again." }));
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+      try {
+        const res = await fetch("/api/workspace/create", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            businessName: state.businessName.trim() || "My Workspace",
+            businessPhone: state.businessPhone.trim() || undefined,
+            industry: state.industry ?? undefined,
+            orgType: state.orgType ?? undefined,
+            agentTemplate: state.agentTemplate ?? undefined,
+            agentName: state.agentName || undefined,
+            greeting: state.greeting || undefined,
+            businessHours: hoursObj,
+            knowledgeItems: state.services?.length ? state.services.map((s) => ({ type: "service", value: s })) : undefined,
+            preferredLanguage: state.preferredLanguage || "en",
+            voiceId: state.voiceId || undefined,
+            billingTier: selectedPlan || undefined,
+          }),
+          signal: controller.signal,
+        });
+        clearTimeout(timeoutId);
+
+        if (!res.ok) {
+          console.error("[activate] Onboard API returned", res.status);
+          setError(t("errors.setupFailed", { defaultValue: "Something went wrong setting up your workspace. Please try again." }));
+          setFinalizing(false);
+          return;
+        }
+      } catch (fetchErr) {
+        clearTimeout(timeoutId);
+        if (fetchErr instanceof Error && fetchErr.name === "AbortError") {
+          console.error("[activate] Onboard API timeout");
+          setError(t("errors.timeout", { defaultValue: "This is taking longer than expected. Please try again." }));
+        } else {
+          throw fetchErr;
+        }
+        setFinalizing(false);
         return;
       }
     } catch (err) {
       console.error("[activate] Onboard failed:", err instanceof Error ? err.message : err);
       setError(t("errors.connectionError", { defaultValue: "Connection error. Please check your internet and try again." }));
+      setFinalizing(false);
       return;
     }
     if (typeof localStorage !== "undefined") localStorage.setItem("rt_onboarded", "true");
     window.location.href = "/app/dashboard";
-  }, [state, selectedPlan, t]);
+  }, [state, selectedPlan, t, finalizing]);
 
   return (
     <Container>
@@ -307,7 +334,7 @@ export function ActivateWizard() {
                 goNext={goNext}
                 canGoNext={canGoNext}
               />
-              <ActivateStep onFinalize={handleFinalize} goBack={goBack} />
+              <ActivateStep onFinalize={handleFinalize} goBack={goBack} finalizing={finalizing} />
             </>
           )}
         </section>

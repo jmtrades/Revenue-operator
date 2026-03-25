@@ -18,6 +18,7 @@ import {
   Clock,
   AlertCircle,
   ChevronRight,
+  RefreshCw,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -80,6 +81,20 @@ function fmtTime(iso: string): string {
   }
 }
 
+function fmtLastUpdated(date: Date | null): string {
+  if (!date) return "Never";
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffSecs = Math.floor(diffMs / 1000);
+  const diffMins = Math.floor(diffSecs / 60);
+  if (diffMins === 0) return "Just now";
+  if (diffMins === 1) return "1 minute ago";
+  if (diffMins < 60) return `${diffMins} minutes ago`;
+  const diffHours = Math.floor(diffMins / 60);
+  if (diffHours === 1) return "1 hour ago";
+  return `${diffHours} hours ago`;
+}
+
 /* ──────────────────────────────────────────────────────────────────────── */
 
 export function UnifiedDashboard() {
@@ -88,23 +103,41 @@ export function UnifiedDashboard() {
   const workspaceId = ws?.workspaceId ?? "";
   const [data, setData] = useState<Summary | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [callingId, setCallingId] = useState<string | null>(null);
 
-  const load = useCallback(() => {
+  const load = useCallback((isRefresh = false) => {
     if (!workspaceId) {
       setLoading(false);
       return;
     }
-    setLoading(true);
+    if (isRefresh) {
+      setRefreshing(true);
+    } else {
+      setLoading(true);
+    }
     fetch(`/api/dashboard/summary?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : null))
-      .then((j: Summary | null) => setData(j ?? { ...EMPTY }))
-      .catch(() => setData({ ...EMPTY }))
-      .finally(() => setLoading(false));
+      .then((j: Summary | null) => {
+        setData(j ?? { ...EMPTY });
+        setLastUpdated(new Date());
+      })
+      .catch(() => {
+        setData({ ...EMPTY });
+        setLastUpdated(new Date());
+      })
+      .finally(() => {
+        if (isRefresh) {
+          setRefreshing(false);
+        } else {
+          setLoading(false);
+        }
+      });
   }, [workspaceId]);
 
   useEffect(() => {
-    load();
+    load(false);
   }, [load]);
 
   /* ── Analytics tracking effects ──────────────────────────────────────── */
@@ -283,13 +316,30 @@ export function UnifiedDashboard() {
       )}
 
       {/* ── Page header ────────────────────────────────────────────────── */}
-      <div>
-        <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] tracking-tight">
-          {t("dashboard", { defaultValue: "Dashboard" })}
-        </h1>
-        <p className="text-sm text-[var(--text-secondary)] mt-1">
-          Revenue recovery this month
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] tracking-tight">
+            {t("dashboard", { defaultValue: "Dashboard" })}
+          </h1>
+          <p className="text-sm text-[var(--text-secondary)] mt-1">
+            Revenue recovery this month
+          </p>
+        </div>
+        <div className="flex flex-col items-end gap-2">
+          <button
+            onClick={() => load(true)}
+            disabled={refreshing}
+            className="inline-flex items-center gap-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] transition-colors"
+          >
+            <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
+            {t("refresh", { defaultValue: "Refresh" })}
+          </button>
+          {lastUpdated && (
+            <p className="text-xs text-[var(--text-tertiary)]">
+              {t("updatedAt", { defaultValue: "Updated" })} {fmtLastUpdated(lastUpdated)}
+            </p>
+          )}
+        </div>
       </div>
 
       {/* ── Revenue hero card ──────────────────────────────────────────── */}

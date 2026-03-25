@@ -135,6 +135,8 @@ export default function CampaignCreatePage() {
   const [optOutConfirmed, setOptOutConfirmed] = useState(false);
 
   const [saving, setSaving] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [confirmLaunch, setConfirmLaunch] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
   const campaignTypes = useMemo(() => getCampaignTypes(t), [t]);
@@ -185,11 +187,17 @@ export default function CampaignCreatePage() {
   }, [type, campaignTypes]);
 
   const createCampaign = async (launch: boolean) => {
+    // Validate templates aren't empty
+    if (sequence.some((s) => !s.template.trim())) {
+      setToast(t("errors.emptyTemplate", { defaultValue: "At least one message template is required." }));
+      return;
+    }
     if (!effectiveWorkspaceId) {
       setToast(t("errors.noWorkspace"));
       return;
     }
     setSaving(true);
+    setSubmitting(true);
     try {
       const res = await fetch(`/api/campaigns`, {
         method: "POST",
@@ -225,6 +233,8 @@ export default function CampaignCreatePage() {
       router.push("/app/campaigns");
     } finally {
       setSaving(false);
+      setSubmitting(false);
+      setConfirmLaunch(false);
     }
   };
 
@@ -514,6 +524,7 @@ export default function CampaignCreatePage() {
                   type="datetime-local"
                   value={startAt}
                   onChange={(e) => setStartAt(e.target.value)}
+                  min={new Date().toISOString().slice(0, 16)}
                   className="w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--border-medium)]"
                 />
               </div>
@@ -617,28 +628,58 @@ export default function CampaignCreatePage() {
                   onClick={() => void createCampaign(false)}
                   className={cn(
                     "rounded-xl px-5 py-2 text-sm font-semibold border border-[var(--border-default)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)]",
-                    saving ? "opacity-60 cursor-not-allowed" : "",
+                    submitting ? "opacity-60 cursor-not-allowed" : "",
                   )}
-                  disabled={saving}
+                  disabled={submitting}
                 >
-                  {saving ? t("review.saving") : t("review.saveDraft")}
+                  {submitting ? t("review.saving") : t("review.saveDraft")}
                 </button>
                 <button
                   type="button"
-                  onClick={() => void createCampaign(true)}
+                  onClick={() => setConfirmLaunch(true)}
                   className={cn(
                     "rounded-xl px-5 py-2 text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90",
-                    saving ? "opacity-60 cursor-not-allowed" : "",
+                    submitting ? "opacity-60 cursor-not-allowed" : "",
                   )}
-                  disabled={saving}
+                  disabled={submitting}
                 >
-                  {saving ? t("review.launching") : t("review.launch")}
+                  {submitting ? t("review.launching") : t("review.launch")}
                 </button>
               </>
             )}
           </div>
         </div>
       </div>
+
+      {confirmLaunch && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm">
+          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 max-w-sm shadow-lg">
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+              {t("review.confirmLaunch", { defaultValue: "Launch campaign?" })}
+            </h2>
+            <p className="text-sm text-[var(--text-secondary)] mb-6">
+              {t("review.confirmLaunchDesc", { defaultValue: "This will start sending immediately to all matched contacts." })}
+            </p>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setConfirmLaunch(false)}
+                className="flex-1 rounded-xl px-4 py-2 text-sm font-semibold border border-[var(--border-default)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
+              >
+                {tCommon("cancel")}
+              </button>
+              <button
+                type="button"
+                onClick={() => void createCampaign(true)}
+                className="flex-1 rounded-xl px-4 py-2 text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90"
+                disabled={submitting}
+              >
+                {submitting ? t("review.launching") : t("review.confirm", { defaultValue: "Confirm" })}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {toast && (
         <div className="fixed bottom-4 right-4 z-50 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-4 py-2 text-sm text-[var(--text-primary)] shadow-lg">

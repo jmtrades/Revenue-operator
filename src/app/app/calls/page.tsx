@@ -117,6 +117,17 @@ export default function CallsPage() {
   const [selectedCall, setSelectedCall] = useState<CallRecord | null>(null);
   const [drawerLoading, setDrawerLoading] = useState(false);
   const [callNotes, setCallNotes] = useState<Record<string, string>>({});
+  const [flaggedCalls, setFlaggedCalls] = useState<Set<string>>(() => {
+    if (typeof window === "undefined") return new Set();
+    const stored = safeGetItem("flagged_calls");
+    try {
+      const parsed = stored ? JSON.parse(stored) : [];
+      return new Set(Array.isArray(parsed) ? parsed : []);
+    } catch {
+      return new Set();
+    }
+  });
+  const [notesStatus, setNotesStatus] = useState<Record<string, "saving" | "saved" | null>>({});
   const outcomeLabels = useMemo(() => getOutcomeLabels(t), [t]);
   const sentimentLabels = useMemo(() => getSentimentLabels(t), [t]);
   const typeLabels = useMemo(() => getTypeLabels(t), [t]);
@@ -254,6 +265,41 @@ export default function CallsPage() {
     return "bg-amber-400";
   };
 
+  const toggleFlagCall = (callId: string) => {
+    setFlaggedCalls((prev) => {
+      const next = new Set(prev);
+      const isFlagged = next.has(callId);
+      if (isFlagged) {
+        next.delete(callId);
+        toast.success(t("calls.toast.flagRemoved"));
+      } else {
+        next.add(callId);
+        toast.success(t("calls.toast.flagged"));
+      }
+      safeSetItem("flagged_calls", JSON.stringify(Array.from(next)));
+      return next;
+    });
+  };
+
+  const saveCallNotes = async (callId: string, notes: string) => {
+    setNotesStatus((prev) => ({ ...prev, [callId]: "saving" }));
+    try {
+      const res = await fetch(`/api/calls/${encodeURIComponent(callId)}/notes`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notes }),
+      });
+      if (!res.ok) throw new Error("Failed to save notes");
+      setNotesStatus((prev) => ({ ...prev, [callId]: "saved" }));
+      setTimeout(() => setNotesStatus((prev) => ({ ...prev, [callId]: null })), 2000);
+    } catch (err) {
+      console.error("Failed to save notes:", err);
+      safeSetItem(`rt_call_notes_${callId}`, notes);
+      setNotesStatus((prev) => ({ ...prev, [callId]: null }));
+    }
+  };
+
   return (
     <div className="p-6 md:p-8 max-w-6xl mx-auto">
       <div className="flex items-center justify-between gap-3 mb-6 flex-wrap">
@@ -320,6 +366,11 @@ export default function CallsPage() {
             placeholder={t("calls.searchPlaceholder")}
             className="bg-[var(--bg-input)] border-[var(--border-default)]"
           />
+          {(debouncedQuery || outcomeFilter !== "all" || sentimentFilter !== "all") && (
+            <p className="text-xs text-[var(--text-tertiary)] mt-1.5">
+              Showing {pageItems.length} of {filtered.length} {filtered.length === 1 ? "call" : "calls"}
+            </p>
+          )}
         </div>
         <div className="flex flex-wrap gap-2">
           <select
@@ -776,7 +827,15 @@ export default function CallsPage() {
             </div>
 
             <div>
-              <label htmlFor="call-notes" className="block text-xs font-medium text-[var(--text-secondary)] mb-1.5">{t("calls.detail.notes")}</label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label htmlFor="call-notes" className="block text-xs font-medium text-[var(--text-secondary)]">{t("calls.detail.notes")}</label>
+                {notesStatus[selectedCall.id] === "saving" && (
+                  <span className="text-xs text-[var(--text-tertiary)]">Saving...</span>
+                )}
+                {notesStatus[selectedCall.id] === "saved" && (
+                  <span className="text-xs text-emerald-500">Saved</span>
+                )}
+              </div>
               <textarea
                 id="call-notes"
                 value={callNotes[selectedCall.id] ?? ""}
@@ -784,8 +843,12 @@ export default function CallsPage() {
                 onBlur={() => {
                   const key = `rt_call_notes_${selectedCall.id}`;
                   const v = callNotes[selectedCall.id] ?? "";
-                  if (v) safeSetItem(key, v);
-                  else safeRemoveItem(key);
+                  if (v) {
+                    safeSetItem(key, v);
+                    saveCallNotes(selectedCall.id, v);
+                  } else {
+                    safeRemoveItem(key);
+                  }
                 }}
                 placeholder={t("calls.addNotesPlaceholder")}
                 rows={3}
@@ -801,7 +864,19 @@ export default function CallsPage() {
                 <PhoneCall className="h-3.5 w-3.5" />
                 {t("calls.detail.callBack")}
               </a>
-              <Button variant="secondary" size="sm">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => {
+                  const phone = (selectedCall.matched_lead as { phone?: string } | undefined)?.phone;
+                  if (phone) {
+                    toast.success("Opening SMS...");
+                    router.push(`/app/inbox?phone=${encodeURIComponent(phone)}&channel=sms`);
+                  } else {
+                    toast.error("No phone number available for this call");
+                  }
+                }}
+              >
                 <MessageSquare className="h-3.5 w-3.5" />
                 Send SMS
               </Button>
@@ -812,8 +887,13 @@ export default function CallsPage() {
                 <UserPlus className="h-3.5 w-3.5" />
                 {t("calls.detail.addToLeads")}
               </Link>
-              <Button variant="ghost" size="sm">
-                <Flag className="h-3.5 w-3.5" />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => toggleFlagCall(selectedCall.id)}
+                className={flaggedCalls.has(selectedCall.id) ? "text-red-500 hover:text-red-600" : ""}
+              >
+                <Flag className={`h-3.5 w-3.5 ${flaggedCalls.has(selectedCall.id) ? "fill-current" : ""}`} />
                 {t("calls.detail.flag")}
               </Button>
             </div>
