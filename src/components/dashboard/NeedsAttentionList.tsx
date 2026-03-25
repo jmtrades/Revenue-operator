@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { AlertCircle, ChevronRight } from 'lucide-react';
 
 interface AttentionItem {
@@ -13,6 +14,7 @@ interface AttentionItem {
 }
 
 const NeedsAttentionList = () => {
+  const t = useTranslations("dashboard");
   // Placeholder: currently no backend wiring for this widget.
   const items: AttentionItem[] = [];
 
@@ -28,11 +30,11 @@ const NeedsAttentionList = () => {
     <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-default)] p-6">
       <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
         <AlertCircle className="w-4 h-4 text-[var(--accent-primary)]" />
-        Needs Attention
+        {t("needsAttention.title", { defaultValue: "Needs Attention" })}
       </h2>
 
       {!hasItems ? (
-        <p className="text-sm text-[var(--text-secondary)] py-8 text-center">Nothing needs your attention right now.</p>
+        <p className="text-sm text-[var(--text-secondary)] py-8 text-center">{t("needsAttention.empty", { defaultValue: "Nothing needs your attention right now." })}</p>
       ) : (
         <>
           <div className="space-y-3">

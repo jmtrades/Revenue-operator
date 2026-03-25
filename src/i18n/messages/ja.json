@@ -4337,6 +4337,14 @@
       "complianceAndSecurity": "Compliance & Security"
     }
   },
+  "coldLeads": {
+    "searchPlaceholder": "名前、メール、電話番号で検索...",
+    "namePlaceholder": "リード名",
+    "email": "email@example.com",
+    "phone": "+81 (90) 0000-0000",
+    "processing": "処理中...",
+    "confirm": "確認"
+  },
   "demoPage": {
     "title": "Recall Touchを体験",
     "subtitle": "実際の通話を処理するAIエージェントと話せます。今すぐ。",
@@ -6331,6 +6339,17 @@
       "changesSaved": "変更を保存しました",
       "reportGenerated": "レポートを生成しました"
     },
+    "csvExport": {
+      "setting": "設定",
+      "value": "値",
+      "enabled": "有効",
+      "disabled": "無効",
+      "yes": "はい",
+      "no": "いいえ",
+      "callRecording": "通話録音",
+      "hipaaMode": "HIPAAモード",
+      "pauseOnSensitive": "機密情報での一時停止"
+    },
     "consentOneParty": "片方の同意",
     "consentTwoParty": "双方の同意"
   },
@@ -7105,6 +7124,19 @@
     }
   },
   "industriesPage": {
+    "heading": {
+      "label": "業界を探索",
+      "title": "私たちが対応する業界",
+      "subtitle": "Recall Touchは、電話を受ける任意の企業に対応しています。サービスプロバイダー、専門コンサルティング、医療施設、またはeコマース企業など、当社のAI電話エージェントは通話に応答し、予約を確保し、フォローアップを実施します — 24/7。"
+    },
+    "cta": {
+      "title": "あなたの業界が見当たりませんか？",
+      "description": "Recall Touchは、電話を受ける任意の企業に対応しています。今すぐ始めましょう。"
+    },
+    "bottomCta": {
+      "title": "電話業務を変革する準備はできていますか？",
+      "description": "5分でAIエージェントをセットアップできます。クレジットカードは不要です。"
+    },
     "fallback": {
       "title": "業界",
       "solutions": "ソリューション",
@@ -10150,5 +10182,14 @@
       "error": "エラーが発生しました",
       "saved": "設定が正常に保存されました"
     }
+  },
+  "exitIntent": {
+    "title": "お待ちください — 売上機会を逃さないでください",
+    "subtitle": "無料の電話監査 + 14日間トライアルを取得してください。クレジットカードは不要です。",
+    "sendingButton": "送信中...",
+    "submitButton": "無料監査を受ける",
+    "disclaimer": "30秒で完了します。いつでも配信停止できます。",
+    "successTitle": "メールをご確認ください",
+    "successSubtitle": "無料の電話監査とトライアルアクセスの詳細をお送りしました。"
   }
 }

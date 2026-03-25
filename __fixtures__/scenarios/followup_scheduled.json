@@ -1,7 +1,0 @@
-{
-  "scenario_category": "scheduling",
-  "channel": "message",
-  "structured_context_json": { "followup": true, "source": "fixture" },
-  "expected_outcome_type": "followup_scheduled",
-  "expected_next_required_action": "none"
-}

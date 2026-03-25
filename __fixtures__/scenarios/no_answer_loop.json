@@ -1,8 +1,0 @@
-{
-  "scenario_category": "no_answer_loop",
-  "channel": "voice",
-  "structured_context_json": { "outcome": "no_answer", "attempt": 3, "source": "fixture" },
-  "expected_outcome_type": "no_answer",
-  "expected_next_required_action": "schedule_followup",
-  "expected_stop_reason": "repeated_unknown_outcome"
-}

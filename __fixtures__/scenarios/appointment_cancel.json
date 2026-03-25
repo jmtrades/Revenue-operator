@@ -1,6 +1,0 @@
-{
-  "scenario_category": "appointment_cancel",
-  "channel": "message",
-  "structured_context_json": { "cancelled": true, "source": "fixture" },
-  "expected_outcome_type": "appointment_cancelled"
-}

@@ -470,9 +470,9 @@ export default function AppSettingsAgentPage() {
                 onChange={(e) => setConfig((c) => ({ ...c, qualificationMethod: e.target.value as "None" | "BANT" | "Custom Questions" }))}
                 className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
               >
-                <option value="None">None</option>
-                <option value="BANT">BANT</option>
-                <option value="Custom Questions">Custom Questions</option>
+                <option value="None">{tSettings("agent.qualificationMethods.none")}</option>
+                <option value="BANT">{tSettings("agent.qualificationMethods.bant")}</option>
+                <option value="Custom Questions">{tSettings("agent.qualificationMethods.customQuestions")}</option>
               </select>
             </div>
 
@@ -502,14 +502,14 @@ export default function AppSettingsAgentPage() {
                         type="text"
                         value={item.q ?? ""}
                         onChange={(e) => updateCustomQuestion(idx, "q", e.target.value)}
-                        placeholder="Question"
+                        placeholder={tSettings("agent.customQuestionsPlaceholder")}
                         className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                       />
                       <input
                         type="text"
                         value={item.a ?? ""}
                         onChange={(e) => updateCustomQuestion(idx, "a", e.target.value)}
-                        placeholder="Expected answer"
+                        placeholder={tSettings("agent.customAnswerPlaceholder")}
                         className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                       />
                       <button type="button" onClick={() => removeCustomQuestion(idx)} className="shrink-0 text-[var(--text-secondary)] hover:text-red-400 text-sm px-1">×</button>
@@ -527,10 +527,10 @@ export default function AppSettingsAgentPage() {
                 onChange={(e) => setConfig((c) => ({ ...c, tonePreset: e.target.value as typeof config.tonePreset }))}
                 className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
               >
-                <option value="Professional">Professional</option>
-                <option value="Casual & Friendly">Casual & Friendly</option>
-                <option value="Concise & Direct">Concise & Direct</option>
-                <option value="Empathetic & Warm">Empathetic & Warm</option>
+                <option value="Professional">{tSettings("agent.tonePresets.professional")}</option>
+                <option value="Casual & Friendly">{tSettings("agent.tonePresets.casual")}</option>
+                <option value="Concise & Direct">{tSettings("agent.tonePresets.concise")}</option>
+                <option value="Empathetic & Warm">{tSettings("agent.tonePresets.empathetic")}</option>
               </select>
             </div>
           </div>
@@ -560,10 +560,10 @@ export default function AppSettingsAgentPage() {
                 onChange={(e) => setConfig((c) => ({ ...c, transferPolicy: e.target.value as typeof config.transferPolicy }))}
                 className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
               >
-                <option value="Never">Never</option>
-                <option value="If caller requests">If caller requests</option>
-                <option value="On escalation trigger">On escalation trigger</option>
-                <option value="Always">Always</option>
+                <option value="Never">{tSettings("agent.transferPolicies.never")}</option>
+                <option value="If caller requests">{tSettings("agent.transferPolicies.ifRequests")}</option>
+                <option value="On escalation trigger">{tSettings("agent.transferPolicies.onEscalation")}</option>
+                <option value="Always">{tSettings("agent.transferPolicies.always")}</option>
               </select>
             </div>
 
@@ -575,7 +575,7 @@ export default function AppSettingsAgentPage() {
                   type="tel"
                   value={config.transferNumber}
                   onChange={(e) => setConfig((c) => ({ ...c, transferNumber: e.target.value }))}
-                  placeholder="+1 (555) 000-0000"
+                  placeholder={tSettings("agent.transferNumberPlaceholder")}
                   className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
                 />
               </div>
@@ -589,9 +589,9 @@ export default function AppSettingsAgentPage() {
                 onChange={(e) => setConfig((c) => ({ ...c, escalationThreshold: e.target.value as typeof config.escalationThreshold }))}
                 className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
               >
-                <option value="Conservative — transfer often">Conservative — transfer often</option>
-                <option value="Balanced">Balanced</option>
-                <option value="Aggressive — AI handles most">Aggressive — AI handles most</option>
+                <option value="Conservative — transfer often">{tSettings("agent.escalationThresholds.conservative")}</option>
+                <option value="Balanced">{tSettings("agent.escalationThresholds.balanced")}</option>
+                <option value="Aggressive — AI handles most">{tSettings("agent.escalationThresholds.aggressive")}</option>
               </select>
             </div>
 
@@ -691,14 +691,14 @@ export default function AppSettingsAgentPage() {
                       type="text"
                       value={item.objection ?? ""}
                       onChange={(e) => updateObjection(idx, "objection", e.target.value)}
-                      placeholder="Objection"
+                      placeholder={tSettings("agent.objectionsPlaceholder")}
                       className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                     />
                     <input
                       type="text"
                       value={item.response ?? ""}
                       onChange={(e) => updateObjection(idx, "response", e.target.value)}
-                      placeholder="Response"
+                      placeholder={tSettings("agent.responsePlaceholder")}
                       className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                     />
                     <button type="button" onClick={() => removeObjection(idx)} className="shrink-0 text-[var(--text-secondary)] hover:text-red-400 text-sm px-1">×</button>

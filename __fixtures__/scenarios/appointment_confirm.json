@@ -1,7 +1,0 @@
-{
-  "scenario_category": "appointment_confirm",
-  "channel": "message",
-  "structured_context_json": { "confirmed": true, "source": "fixture" },
-  "expected_outcome_type": "appointment_confirmed",
-  "expected_next_required_action": "none"
-}

@@ -2,6 +2,7 @@
 
 import { Phone } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useWorkspace } from '@/components/WorkspaceContext';
 
 type CallOutcome = 'appointment' | 'lead' | 'message' | 'transferred' | 'spam';
@@ -15,6 +16,7 @@ interface Call {
 }
 
 const RecentCallsList = () => {
+  const t = useTranslations("dashboard");
   const { workspaceId } = useWorkspace();
   const [calls, setCalls] = useState<Call[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,11 +49,11 @@ const RecentCallsList = () => {
 
   const getOutcomeBadge = (outcome: CallOutcome) => {
     const badgeConfig = {
-      appointment: { bg: 'bg-green-500/10', text: 'text-green-400', label: 'Appointment booked' },
-      lead: { bg: 'bg-[var(--bg-inset)]/10', text: 'text-[var(--text-secondary)]', label: 'Lead captured' },
-      message: { bg: 'bg-[var(--bg-inset)]/10', text: 'text-[var(--text-secondary)]', label: 'Message taken' },
-      transferred: { bg: 'bg-amber-500/10', text: 'text-amber-300', label: 'Transferred' },
-      spam: { bg: 'bg-red-500/10', text: 'text-red-300', label: 'Spam' },
+      appointment: { bg: 'bg-green-500/10', text: 'text-green-400', label: t("recentCalls.outcomes.appointment", { defaultValue: 'Appointment booked' }) },
+      lead: { bg: 'bg-[var(--bg-inset)]/10', text: 'text-[var(--text-secondary)]', label: t("recentCalls.outcomes.lead", { defaultValue: 'Lead captured' }) },
+      message: { bg: 'bg-[var(--bg-inset)]/10', text: 'text-[var(--text-secondary)]', label: t("recentCalls.outcomes.message", { defaultValue: 'Message taken' }) },
+      transferred: { bg: 'bg-amber-500/10', text: 'text-amber-300', label: t("recentCalls.outcomes.transferred", { defaultValue: 'Transferred' }) },
+      spam: { bg: 'bg-red-500/10', text: 'text-red-300', label: t("recentCalls.outcomes.spam", { defaultValue: 'Spam' }) },
     };
 
     const config = badgeConfig[outcome];
@@ -68,16 +70,16 @@ const RecentCallsList = () => {
     <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-default)] p-6">
       <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
         <Phone className="w-4 h-4 text-[var(--accent-primary)]" />
-        Recent Calls
+        {t("recentCalls.title", { defaultValue: "Recent Calls" })}
       </h2>
 
       {loading ? (
         <p className="text-[var(--text-secondary)] text-sm py-8 text-center">
-          Loading...
+          {t("recentCalls.loading", { defaultValue: "Loading..." })}
         </p>
       ) : !hasCalls ? (
         <p className="text-[var(--text-secondary)] text-sm py-8 text-center">
-          No calls yet. Once your AI starts handling calls, they will appear here.
+          {t("recentCalls.empty", { defaultValue: "No calls yet. Once your AI starts handling calls, they will appear here." })}
         </p>
       ) : (
         <div className="overflow-x-auto">

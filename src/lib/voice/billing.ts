@@ -10,7 +10,7 @@ import type { BillingTier } from "@/lib/feature-gate/types";
 /** Voice tier limits — included in base plan (aligned with billing-plans.ts) */
 export const VOICE_TIER_LIMITS = {
   solo: {
-    voice_minutes: 500, // 500 min included (Starter plan)
+    voice_minutes: 1000, // 1000 min included (Starter plan)
     voice_clones: 0, // No cloning on Starter
     ab_tests: 0, // No A/B testing
     concurrent_calls: 2, // 2 simultaneous
@@ -19,7 +19,7 @@ export const VOICE_TIER_LIMITS = {
     custom_emotions: false,
   },
   business: {
-    voice_minutes: 2500, // 2,500 min included (Growth plan)
+    voice_minutes: 3000, // 3000 min included (Growth plan)
     voice_clones: 3, // 3 cloned voices
     ab_tests: 2, // 2 concurrent A/B tests
     concurrent_calls: 10, // 10 simultaneous
@@ -28,7 +28,7 @@ export const VOICE_TIER_LIMITS = {
     custom_emotions: true,
   },
   scale: {
-    voice_minutes: 6000, // 6,000 min included (Business plan)
+    voice_minutes: 8000, // 8000 min included (Business plan)
     voice_clones: 10, // 10 cloned voices
     ab_tests: 5, // 5 concurrent A/B tests
     concurrent_calls: 25, // 25 simultaneous

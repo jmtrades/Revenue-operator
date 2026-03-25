@@ -1,6 +1,0 @@
-{
-  "scenario_category": "inbound_triage",
-  "channel": "inbound",
-  "structured_context_json": { "routed": true, "source": "fixture" },
-  "expected_outcome_type": "routed"
-}

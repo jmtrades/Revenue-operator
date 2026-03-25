@@ -1,6 +1,0 @@
-{
-  "scenario_category": "data_request",
-  "channel": "inbound",
-  "structured_context_json": { "request": "data", "source": "fixture" },
-  "expected_outcome_type": "information_provided"
-}

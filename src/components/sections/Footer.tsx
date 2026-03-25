@@ -61,7 +61,11 @@ export function Footer() {
                 [tMarketing("realEstate"), "/industries/real-estate"],
                 [tMarketing("plumbingHvac"), "/industries/plumbing-hvac"],
                 [tMarketing("insurance"), "/industries/insurance"],
+                [tMarketing("autoRepair"), "/industries/auto-repair"],
+                [tMarketing("construction"), "/industries/construction"],
                 [tMarketing("medSpa"), "/industries/med-spa"],
+                [tMarketing("recruiting"), "/industries/recruiting"],
+                [tMarketing("roofing"), "/industries/roofing"],
               ].map(([label, href]) => (
                 <Link key={href} href={href} className={linkClass} style={linkStyle}>{label}</Link>
               ))}

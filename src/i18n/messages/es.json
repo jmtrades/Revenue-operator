@@ -4337,6 +4337,14 @@
       "emailAriaLabel": "Email para novedades del producto"
     }
   },
+  "coldLeads": {
+    "searchPlaceholder": "Buscar por nombre, correo electrónico, teléfono...",
+    "namePlaceholder": "Nombre del lead",
+    "email": "correo@ejemplo.com",
+    "phone": "+34 (555) 000-0000",
+    "processing": "Procesando...",
+    "confirm": "Confirmar"
+  },
   "demoPage": {
     "title": "Experiencia Recall Touch",
     "subtitle": "Habla con un agente de IA que atiende llamadas reales. Ahora mismo.",
@@ -6331,6 +6339,17 @@
       "changesSaved": "Cambios guardados",
       "reportGenerated": "Informe generado"
     },
+    "csvExport": {
+      "setting": "Configuración",
+      "value": "Valor",
+      "enabled": "Habilitado",
+      "disabled": "Deshabilitado",
+      "yes": "Sí",
+      "no": "No",
+      "callRecording": "Grabación de llamadas",
+      "hipaaMode": "Modo HIPAA",
+      "pauseOnSensitive": "Pausar en Sensibles"
+    },
     "consentOneParty": "Consentimiento de una parte",
     "consentTwoParty": "Consentimiento de dos partes"
   },
@@ -7133,6 +7152,19 @@
     }
   },
   "industriesPage": {
+    "heading": {
+      "label": "Explora industrias",
+      "title": "Sectores a los que servimos",
+      "subtitle": "Recall Touch funciona para cualquier negocio que reciba llamadas telefónicas. Ya seas proveedor de servicios, consultor profesional, clínica de salud o negocio de comercio electrónico, nuestros agentes de IA responden llamadas, reservan citas y realizan seguimientos — 24/7."
+    },
+    "cta": {
+      "title": "¿No ves tu industria?",
+      "description": "Recall Touch funciona para cualquier negocio que reciba llamadas. Comienza ahora."
+    },
+    "bottomCta": {
+      "title": "¿Listo para transformar tus operaciones telefónicas?",
+      "description": "Configura tu agente de IA en 5 minutos. Sin tarjeta de crédito requerida."
+    },
     "fallback": {
       "title": "Industria",
       "solutions": "Soluciones",
@@ -10150,5 +10182,14 @@
       "error": "Ocurrió un error",
       "saved": "Configuración guardada correctamente"
     }
+  },
+  "exitIntent": {
+    "title": "Espera — No Dejes Ingresos en la Mesa",
+    "subtitle": "Obtén una auditoría telefónica gratuita + prueba de 14 días. Sin tarjeta de crédito requerida.",
+    "sendingButton": "Enviando...",
+    "submitButton": "Obtén Mi Auditoría Gratis",
+    "disclaimer": "Toma 30 segundos. Cancela la suscripción en cualquier momento.",
+    "successTitle": "Revisa Tu Correo",
+    "successSubtitle": "Te hemos enviado los detalles para tu auditoría telefónica gratuita y acceso a la prueba."
   }
 }

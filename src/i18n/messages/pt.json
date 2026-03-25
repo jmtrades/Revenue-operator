@@ -4337,6 +4337,14 @@
       "emailAriaLabel": "E-mail para atualizações do produto"
     }
   },
+  "coldLeads": {
+    "searchPlaceholder": "Pesquisar por nome, email, telefone...",
+    "namePlaceholder": "Nome do lead",
+    "email": "email@exemplo.com",
+    "phone": "+55 (11) 99999-9999",
+    "processing": "Processando...",
+    "confirm": "Confirmar"
+  },
   "demoPage": {
     "title": "Experimente o Recall Touch",
     "subtitle": "Fale com um agente de IA que atende chamadas reais. Agora.",
@@ -6331,6 +6339,17 @@
       "changesSaved": "Alterações salvas",
       "reportGenerated": "Relatório gerado"
     },
+    "csvExport": {
+      "setting": "Configuração",
+      "value": "Valor",
+      "enabled": "Habilitado",
+      "disabled": "Desabilitado",
+      "yes": "Sim",
+      "no": "Não",
+      "callRecording": "Gravação de Chamadas",
+      "hipaaMode": "Modo HIPAA",
+      "pauseOnSensitive": "Pausar em Sensíveis"
+    },
     "consentOneParty": "Consentimento de uma parte",
     "consentTwoParty": "Consentimento de duas partes"
   },
@@ -7105,6 +7124,19 @@
     }
   },
   "industriesPage": {
+    "heading": {
+      "label": "Explore setores",
+      "title": "Setores que servimos",
+      "subtitle": "Recall Touch funciona para qualquer negócio que recebe chamadas telefônicas. Se você é um prestador de serviços, consultório profissional, clínica de saúde ou negócio de e-commerce, nossos agentes de IA por telefone atendem chamadas, marcam consultas e fazem acompanhamentos — 24/7."
+    },
+    "cta": {
+      "title": "Não vê seu setor?",
+      "description": "Recall Touch funciona para qualquer negócio que recebe chamadas. Comece agora."
+    },
+    "bottomCta": {
+      "title": "Pronto para transformar suas operações telefônicas?",
+      "description": "Configure seu agente de IA em 5 minutos. Sem cartão de crédito necessário."
+    },
     "fallback": {
       "title": "Setor",
       "solutions": "Soluções",
@@ -10150,5 +10182,14 @@
       "error": "Ocorreu um erro",
       "saved": "Configurações salvas com sucesso"
     }
+  },
+  "exitIntent": {
+    "title": "Espere — Não Deixe Receita na Mesa",
+    "subtitle": "Obtenha uma auditoria telefônica gratuita + avaliação de 14 dias. Sem cartão de crédito necessário.",
+    "sendingButton": "Enviando...",
+    "submitButton": "Obter Minha Auditoria Gratuita",
+    "disclaimer": "Leva 30 segundos. Cancele a inscrição a qualquer momento.",
+    "successTitle": "Verifique Seu Email",
+    "successSubtitle": "Enviamos para você os detalhes da sua auditoria telefônica gratuita e acesso à avaliação."
   }
 }

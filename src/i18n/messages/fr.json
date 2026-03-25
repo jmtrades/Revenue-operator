@@ -4337,6 +4337,14 @@
       "emailAriaLabel": "E-mail pour les actualités produit"
     }
   },
+  "coldLeads": {
+    "searchPlaceholder": "Rechercher par nom, email, téléphone...",
+    "namePlaceholder": "Nom du prospect",
+    "email": "email@exemple.com",
+    "phone": "+33 (1) 55 000-0000",
+    "processing": "Traitement en cours...",
+    "confirm": "Confirmer"
+  },
   "demoPage": {
     "title": "Découvrez Recall Touch",
     "subtitle": "Parlez à un agent IA qui gère de vrais appels. Tout de suite.",
@@ -6331,6 +6339,17 @@
       "changesSaved": "Modifications enregistrées",
       "reportGenerated": "Rapport généré"
     },
+    "csvExport": {
+      "setting": "Paramètre",
+      "value": "Valeur",
+      "enabled": "Activé",
+      "disabled": "Désactivé",
+      "yes": "Oui",
+      "no": "Non",
+      "callRecording": "Enregistrement des appels",
+      "hipaaMode": "Mode HIPAA",
+      "pauseOnSensitive": "Pause sur Sensibles"
+    },
     "consentOneParty": "Consentement unilatéral",
     "consentTwoParty": "Consentement bilatéral"
   },
@@ -7105,6 +7124,19 @@
     }
   },
   "industriesPage": {
+    "heading": {
+      "label": "Explorez les secteurs",
+      "title": "Secteurs que nous servons",
+      "subtitle": "Recall Touch fonctionne pour toute entreprise qui reçoit des appels téléphoniques. Que vous soyez un prestataire de services, un cabinet professionnel, une clinique de santé ou une entreprise de commerce électronique, nos agents IA répondent aux appels, prennent des rendez-vous et assurent le suivi — 24/7."
+    },
+    "cta": {
+      "title": "Vous ne voyez pas votre secteur ?",
+      "description": "Recall Touch fonctionne pour toute entreprise qui reçoit des appels. Commencez maintenant."
+    },
+    "bottomCta": {
+      "title": "Prêt à transformer vos opérations téléphoniques ?",
+      "description": "Configurez votre agent IA en 5 minutes. Aucune carte de crédit requise."
+    },
     "fallback": {
       "title": "Secteur",
       "solutions": "Solutions",
@@ -10150,5 +10182,14 @@
       "error": "Une erreur est survenue",
       "saved": "Paramètres sauvegardés avec succès"
     }
+  },
+  "exitIntent": {
+    "title": "Attends — Ne Laisse Pas des Revenus sur la Table",
+    "subtitle": "Obtenez un audit téléphonique gratuit + un essai de 14 jours. Aucune carte de crédit requise.",
+    "sendingButton": "Envoi en cours...",
+    "submitButton": "Obtenez Mon Audit Gratuit",
+    "disclaimer": "Cela prend 30 secondes. Désinscrivez-vous à tout moment.",
+    "successTitle": "Vérifiez Votre Email",
+    "successSubtitle": "Nous vous avons envoyé les détails pour votre audit téléphonique gratuit et l'accès à l'essai."
   }
 }

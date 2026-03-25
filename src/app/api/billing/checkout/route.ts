@@ -244,6 +244,17 @@ export async function POST(req: NextRequest) {
     }
 
     try {
+      // Only set trial_period_days for truly new customers with no subscription history
+      let trialPeriodDays: number | undefined;
+      const hasSubscriptionHistory =
+        wsData.billing_status === "trial" ||
+        wsData.billing_status === "trial_ended" ||
+        wsData.stripe_subscription_id;
+
+      if (!hasSubscriptionHistory) {
+        trialPeriodDays = 14;
+      }
+
       const session = await stripe.checkout.sessions.create({
         customer: customerId,
         mode: "subscription",
@@ -252,7 +263,7 @@ export async function POST(req: NextRequest) {
         payment_method_types: ["card"],
         line_items: [{ price: stripePriceId, quantity: 1 }],
         subscription_data: {
-          trial_period_days: 14,
+          ...(trialPeriodDays !== undefined && { trial_period_days: trialPeriodDays }),
           metadata: { workspace_id: finalWorkspaceId },
         },
         /* customer_email is omitted because we always pass `customer` above */

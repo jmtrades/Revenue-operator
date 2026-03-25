@@ -40,7 +40,10 @@ export const SOLUTIONS_LINKS = [
   { labelKey: "industryLegal", href: "/industries/legal" },
   { labelKey: "industryRealEstate", href: "/industries/real-estate" },
   { labelKey: "industryHealthcare", href: "/industries/healthcare" },
-  { labelKey: "allUseCases", href: "/activate" },
+  { labelKey: "industryAutoRepair", href: "/industries/auto-repair" },
+  { labelKey: "industryConstruction", href: "/industries/construction" },
+  { labelKey: "industryInsurance", href: "/industries/insurance" },
+  { labelKey: "viewAllIndustries", href: "/industries" },
 ] as const;
 
 export const FOOTER_SOLUTIONS = [

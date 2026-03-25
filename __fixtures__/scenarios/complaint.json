@@ -1,7 +1,0 @@
-{
-  "scenario_category": "complaint",
-  "channel": "message",
-  "structured_context_json": { "type": "complaint", "source": "fixture" },
-  "expected_outcome_type": "complaint",
-  "expected_next_required_action": "escalate_to_human"
-}

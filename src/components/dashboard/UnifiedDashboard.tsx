@@ -322,7 +322,7 @@ export function UnifiedDashboard() {
             {t("dashboard", { defaultValue: "Dashboard" })}
           </h1>
           <p className="text-sm text-[var(--text-secondary)] mt-1">
-            Revenue recovery this month
+            {t("subtitle", { defaultValue: "Revenue recovery this month" })}
           </p>
         </div>
         <div className="flex flex-col items-end gap-2">
@@ -332,11 +332,11 @@ export function UnifiedDashboard() {
             className="inline-flex items-center gap-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] transition-colors"
           >
             <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
-            {t("refresh", { defaultValue: "Refresh" })}
+            {t("actions.refresh", { defaultValue: "Refresh" })}
           </button>
           {lastUpdated && (
             <p className="text-xs text-[var(--text-tertiary)]">
-              {t("updatedAt", { defaultValue: "Updated" })} {fmtLastUpdated(lastUpdated)}
+              {t("actions.updatedAt", { defaultValue: "Updated" })} {fmtLastUpdated(lastUpdated)}
             </p>
           )}
         </div>
@@ -362,12 +362,12 @@ export function UnifiedDashboard() {
                 </span>{" "}
                 {t("minutesThisMonth", { defaultValue: "minutes this month." })}{" "}
                 <Link href="/app/settings/billing" className="text-[var(--accent-primary)] font-semibold hover:underline">
-                  {t("upgrade", { defaultValue: "Upgrade" })}
+                  {t("actions.upgrade", { defaultValue: "Upgrade" })}
                 </Link>
               </p>
               {usageRatio >= 1 && (
                 <p className="mt-1 text-xs text-[var(--text-tertiary)]">
-                  Additional usage is billed at your plan&apos;s overage rate.
+                  {t("overage", { defaultValue: "Additional usage is billed at your plan's overage rate." })}
                 </p>
               )}
             </div>
@@ -377,7 +377,7 @@ export function UnifiedDashboard() {
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--text-tertiary)]">
-              Revenue recovered
+              {t("revenueLabel", { defaultValue: "Revenue recovered" })}
             </p>
             <div className="mt-2 flex items-baseline gap-3">
               <h2 className="text-3xl md:text-4xl font-bold text-emerald-500 dark:text-emerald-400 tabular-nums tracking-tight">
@@ -406,7 +406,7 @@ export function UnifiedDashboard() {
           <div className="flex items-center gap-3 min-w-[200px]">
             <div className="flex-1">
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-xs text-[var(--text-tertiary)]">Minutes</span>
+                <span className="text-xs text-[var(--text-tertiary)]">{t("minutesLabel", { defaultValue: "Minutes" })}</span>
                 <span className="text-xs font-medium tabular-nums text-[var(--text-secondary)]">
                   {data.minutes_used}/{data.minutes_limit}
                 </span>
@@ -430,26 +430,26 @@ export function UnifiedDashboard() {
         {/* Onboarding cards */}
         {!hasSignal && (
           <div className="mt-8 pt-6 border-t border-[var(--border-default)]">
-            <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-4">Get started</h3>
+            <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-4">{t("getStarted", { defaultValue: "Get started" })}</h3>
             <div className="grid sm:grid-cols-3 gap-4">
               {[
                 {
                   href: "/app/settings/phone",
                   icon: Phone,
-                  title: "Connect a number",
-                  desc: "Set up your phone number to start receiving calls",
+                  title: t("onboarding.connectNumber.title", { defaultValue: "Connect a number" }),
+                  desc: t("onboarding.connectNumber.description", { defaultValue: "Set up your phone number to start receiving calls" }),
                 },
                 {
                   href: "/app/settings/agent",
                   icon: Bot,
-                  title: "Configure your agent",
-                  desc: "Customize how your AI handles calls",
+                  title: t("onboarding.configureAgent.title", { defaultValue: "Configure your agent" }),
+                  desc: t("onboarding.configureAgent.description", { defaultValue: "Customize how your AI handles calls" }),
                 },
                 {
                   href: "/app/settings/phone",
                   icon: PhoneCall,
-                  title: "Make a test call",
-                  desc: "Call your number from any phone to test it",
+                  title: t("onboarding.makeTestCall.title", { defaultValue: "Make a test call" }),
+                  desc: t("onboarding.makeTestCall.description", { defaultValue: "Call your number from any phone to test it" }),
                 },
               ].map((step) => (
                 <Link
@@ -519,7 +519,7 @@ export function UnifiedDashboard() {
               href="/app/leads"
               className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
             >
-              View all
+              {t("viewAll", { defaultValue: "View all" })}
             </Link>
           </div>
           {data.needs_attention.length === 0 ? (
@@ -605,20 +605,20 @@ export function UnifiedDashboard() {
           <div className="flex items-center gap-2">
             <Megaphone className="w-4 h-4 text-[var(--accent-primary)]" />
             <h2 className="text-sm font-semibold text-[var(--text-primary)]">
-              {t("activeCampaigns", { defaultValue: "Active outbound campaigns" })}
+              {t("activeCampaigns.title", { defaultValue: "Active outbound campaigns" })}
             </h2>
           </div>
           <Link
             href="/app/campaigns"
             className="text-xs text-[var(--accent-primary)] font-medium hover:underline"
           >
-            {t("createCampaign", { defaultValue: "Create campaign" })}
+            {t("activeCampaigns.create", { defaultValue: "Create campaign" })}
           </Link>
         </div>
         {data.campaigns.length === 0 ? (
           <div className="py-8 text-center">
             <p className="text-sm text-[var(--text-secondary)]">
-              No active campaigns. Launch one from Campaigns.
+              {t("noCampaigns", { defaultValue: "No active campaigns. Launch one from Campaigns." })}
             </p>
           </div>
         ) : (
@@ -637,11 +637,11 @@ export function UnifiedDashboard() {
                 </div>
                 <div className="flex items-center gap-3 mt-2">
                   <span className="text-xs text-[var(--text-secondary)]">
-                    <span className="font-semibold tabular-nums text-[var(--text-primary)]">{c.enrolled}</span> contacts
+                    <span className="font-semibold tabular-nums text-[var(--text-primary)]">{c.enrolled}</span> {t("campaigns.contacts", { defaultValue: "contacts" })}
                   </span>
                   <span className="text-[var(--border-default)]">&middot;</span>
                   <span className="text-xs text-[var(--text-secondary)]">
-                    <span className="font-semibold tabular-nums text-emerald-500">{c.booked}</span> booked
+                    <span className="font-semibold tabular-nums text-emerald-500">{c.booked}</span> {t("campaigns.booked", { defaultValue: "booked" })}
                   </span>
                 </div>
               </Link>

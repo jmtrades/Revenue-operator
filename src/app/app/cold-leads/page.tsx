@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Plus, RotateCcw, MoreHorizontal, Zap, Clock, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
@@ -161,6 +162,7 @@ interface ReengageDialogState {
 }
 
 export default function ColdLeadsPage() {
+  const t = useTranslations("coldLeads");
   const { workspaceId } = useWorkspace();
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
   const snapshotWorkspaceId = workspaceId || workspaceSnapshot?.id?.trim() || "default";
@@ -488,7 +490,7 @@ export default function ColdLeadsPage() {
         <div className="flex-1 min-w-[200px]">
           <input
             type="text"
-            placeholder="Search by name, email, phone..."
+            placeholder={t("searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full px-3 py-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm"
@@ -707,7 +709,7 @@ export default function ColdLeadsPage() {
                 </label>
                 <input
                   type="text"
-                  placeholder="Lead name"
+                  placeholder={t("namePlaceholder")}
                   value={addLeadForm.name}
                   onChange={(e) =>
                     setAddLeadForm({ ...addLeadForm, name: e.target.value })
@@ -721,7 +723,7 @@ export default function ColdLeadsPage() {
                 </label>
                 <input
                   type="email"
-                  placeholder="email@example.com"
+                  placeholder={t("email")}
                   value={addLeadForm.email}
                   onChange={(e) =>
                     setAddLeadForm({ ...addLeadForm, email: e.target.value })
@@ -735,7 +737,7 @@ export default function ColdLeadsPage() {
                 </label>
                 <input
                   type="tel"
-                  placeholder="+1 (555) 000-0000"
+                  placeholder={t("phone")}
                   value={addLeadForm.phone}
                   onChange={(e) =>
                     setAddLeadForm({ ...addLeadForm, phone: e.target.value })
@@ -882,7 +884,7 @@ export default function ColdLeadsPage() {
                   disabled={reengageSaving}
                   className="flex-1 px-4 py-2 rounded-lg bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-50 text-sm font-medium"
                 >
-                  {reengageSaving ? "Processing..." : "Confirm"}
+                  {reengageSaving ? t("processing") : t("confirm")}
                 </button>
               </div>
             </div>

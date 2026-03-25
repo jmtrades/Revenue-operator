@@ -824,6 +824,60 @@
       "callFailed": "Call failed",
       "empty": "Activity will show as calls and messages come in."
     },
+    "subtitle": "Revenue recovery this month",
+    "minutesUsed": "You've used",
+    "minutesThisMonth": "minutes this month.",
+    "revenueLabel": "Revenue recovered",
+    "minutesLabel": "Minutes",
+    "getStarted": "Get started",
+    "onboarding": {
+      "connectNumber": {
+        "title": "Connect a number",
+        "description": "Set up your phone number to start receiving calls"
+      },
+      "configureAgent": {
+        "title": "Configure your agent",
+        "description": "Customize how your AI handles calls"
+      },
+      "makeTestCall": {
+        "title": "Make a test call",
+        "description": "Call your number from any phone to test it"
+      }
+    },
+    "viewAll": "View all",
+    "activeCampaigns": {
+      "title": "Active outbound campaigns",
+      "create": "Create campaign"
+    },
+    "noCampaigns": "No active campaigns. Launch one from Campaigns.",
+    "campaigns": {
+      "contacts": "contacts",
+      "booked": "booked"
+    },
+    "recentCalls": {
+      "title": "Recent Calls",
+      "loading": "Loading...",
+      "empty": "No calls yet. Once your AI starts handling calls, they will appear here.",
+      "outcomes": {
+        "appointment": "Appointment booked",
+        "lead": "Lead captured",
+        "message": "Message taken",
+        "transferred": "Transferred",
+        "spam": "Spam"
+      },
+      "tableHeaders": {
+        "time": "Time",
+        "contact": "Contact",
+        "outcome": "Outcome",
+        "duration": "Duration"
+      }
+    },
+    "overage": "Additional usage is billed at your plan's overage rate.",
+    "actions": {
+      "refresh": "Refresh",
+      "updatedAt": "Updated",
+      "upgrade": "Upgrade"
+    },
     "pageTitle": "Dashboard — Recall Touch",
     "importContacts": "Import your contacts",
     "addLead": "Add a lead",
@@ -3372,7 +3426,11 @@
       "send": "Send"
     },
     "contact": "Contact",
-    "openContactPanel": "Open contact panel"
+    "openContactPanel": "Open contact panel",
+    "startConversation": "Send your first message below to begin the conversation with {name}",
+    "updatedJustNow": "Updated just now",
+    "messageSent": "Message sent",
+    "messageFailed": "Failed to send message"
   },
   "leads": {
     "title": "Leads",
@@ -4102,7 +4160,34 @@
       "voiceLabel": "Voice",
       "voicePreviewText": "Thanks for calling. How can I help you today?",
       "voiceSyncFailed": "Saved, but the voice agent could not be updated. Try again.",
-      "languageLabel": "Language"
+      "languageLabel": "Language",
+      "qualificationMethods": {
+        "none": "None",
+        "bant": "BANT",
+        "customQuestions": "Custom Questions"
+      },
+      "tonePresets": {
+        "professional": "Professional",
+        "casual": "Casual & Friendly",
+        "concise": "Concise & Direct",
+        "empathetic": "Empathetic & Warm"
+      },
+      "transferPolicies": {
+        "never": "Never",
+        "ifRequests": "If caller requests",
+        "onEscalation": "On escalation trigger",
+        "always": "Always"
+      },
+      "escalationThresholds": {
+        "conservative": "Conservative — transfer often",
+        "balanced": "Balanced",
+        "aggressive": "Aggressive — AI handles most"
+      },
+      "customQuestionsPlaceholder": "Question",
+      "customAnswerPlaceholder": "Expected answer",
+      "transferNumberPlaceholder": "+1 (555) 000-0000",
+      "objectionsPlaceholder": "Objection",
+      "responsePlaceholder": "Response"
     },
     "outbound": {
       "back": "Back to settings",
@@ -4300,7 +4385,18 @@
       "loadFailed": "Failed to load recording consent settings.",
       "recordingSaved": "Recording consent settings saved.",
       "saveFailed": "Failed to save compliance settings. Please try again.",
-      "saved": "Compliance settings saved."
+      "saved": "Compliance settings saved.",
+      "csvExport": {
+        "setting": "Setting",
+        "value": "Value",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "yes": "Yes",
+        "no": "No",
+        "callRecording": "Call Recording",
+        "hipaaMode": "HIPAA Mode",
+        "pauseOnSensitive": "Pause on Sensitive"
+      }
     },
     "errorReports": "Error reports",
     "errorsPage": {
@@ -4597,6 +4693,14 @@
       "emailPlaceholder": "you@company.com",
       "emailAriaLabel": "Email for product updates"
     }
+  },
+  "coldLeads": {
+    "searchPlaceholder": "Search by name, email, phone...",
+    "namePlaceholder": "Lead name",
+    "email": "email@example.com",
+    "phone": "+1 (555) 000-0000",
+    "processing": "Processing...",
+    "confirm": "Confirm"
   },
   "demoPage": {
     "title": "Experience Recall Touch",
@@ -7276,6 +7380,19 @@
     }
   },
   "industriesPage": {
+    "heading": {
+      "label": "Explore industries",
+      "title": "Industries We Serve",
+      "subtitle": "Recall Touch works for any business that takes phone calls. Whether you're a service provider, professional firm, healthcare practice, or e-commerce business, our AI phone agents answer calls, book appointments, and follow up—24/7."
+    },
+    "cta": {
+      "title": "Don't see your industry?",
+      "description": "Recall Touch works for any business that takes phone calls. Get started now."
+    },
+    "bottomCta": {
+      "title": "Ready to transform your phone operations?",
+      "description": "Get your AI phone agent set up in 5 minutes. No credit card required."
+    },
     "fallback": {
       "title": "Industry",
       "solutions": "Solutions",
@@ -10241,5 +10358,14 @@
       "error": "An error occurred",
       "saved": "Settings saved successfully"
     }
+  },
+  "exitIntent": {
+    "title": "Wait — Don't Leave Revenue on the Table",
+    "subtitle": "Get a free phone audit + 14-day trial. No credit card required.",
+    "sendingButton": "Sending...",
+    "submitButton": "Get My Free Audit",
+    "disclaimer": "Takes 30 seconds. Unsubscribe anytime.",
+    "successTitle": "Check Your Email",
+    "successSubtitle": "We've sent you the details for your free phone audit and trial access."
   }
 }
