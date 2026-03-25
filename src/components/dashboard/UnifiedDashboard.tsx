@@ -106,6 +106,7 @@ export function UnifiedDashboard() {
   const [data, setData] = useState<Summary | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [callingId, setCallingId] = useState<string | null>(null);
 
@@ -119,13 +120,20 @@ export function UnifiedDashboard() {
     } else {
       setLoading(true);
     }
+    setFetchError(null);
     fetch(`/api/dashboard/summary?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : null))
+      .then((r) => {
+        if (!r.ok) throw new Error(`Dashboard returned ${r.status}`);
+        return r.json();
+      })
       .then((j: Summary | null) => {
         setData(j ?? { ...EMPTY });
+        setFetchError(null);
         setLastUpdated(new Date());
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error("[dashboard] Failed to load summary:", err);
+        setFetchError(err instanceof Error ? err.message : "Failed to load dashboard data");
         setData({ ...EMPTY });
         setLastUpdated(new Date());
       })
@@ -299,6 +307,27 @@ export function UnifiedDashboard() {
 
   return (
     <div className="p-4 md:p-8 max-w-[1200px] mx-auto space-y-8">
+      {/* ── Fetch error banner ──────────────────────────────────────────── */}
+      {fetchError && (
+        <div className="flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/[0.06] px-5 py-4">
+          <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-semibold text-[var(--text-primary)]">
+              {t("errors.loadFailed", { defaultValue: "Dashboard data could not be loaded" })}
+            </p>
+            <p className="text-sm text-[var(--text-secondary)] mt-0.5">
+              {t("errors.loadFailedDesc", { defaultValue: "Showing empty values. " })}
+              <button
+                onClick={() => load(true)}
+                className="text-[var(--accent-primary)] font-medium hover:underline"
+              >
+                {t("actions.tryAgain", { defaultValue: "Try again" })}
+              </button>
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* ── Phone warning ──────────────────────────────────────────────── */}
       {data?.phone_number_configured === false && (
         <div className="flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-500/[0.06] px-5 py-4">

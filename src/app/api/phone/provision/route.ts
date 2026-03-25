@@ -42,7 +42,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Too many provisioning attempts" }, { status: 429 });
   }
 
-  // Enforce billing status — must be trial, active, or trial_ended with card on file
+  // Enforce billing status — must have payment method for phone number purchases.
+  // Phone numbers are paid products; trial users CAN purchase them but must add a card first.
   {
     const db0 = getDb();
     const { data: wsCheck } = await db0
@@ -52,18 +53,53 @@ export async function POST(req: NextRequest) {
       .maybeSingle();
     const ws = wsCheck as { billing_status?: string; stripe_customer_id?: string | null } | null;
     const bStatus = ws?.billing_status;
-    const hasCard = !!ws?.stripe_customer_id;
-    const allowed = bStatus === "trial" || bStatus === "active" || (bStatus === "trial_ended" && hasCard);
-    if (!bStatus || !allowed) {
+    const stripeCustomerId = ws?.stripe_customer_id;
+
+    // Must be in an allowed billing state
+    const allowedStatus = bStatus === "trial" || bStatus === "active" || bStatus === "trial_ended";
+    if (!bStatus || !allowedStatus) {
       return NextResponse.json(
         {
-          error: bStatus === "trial_ended"
-            ? "Your trial has ended. Add a payment method to continue."
-            : "Active subscription required to provision phone numbers.",
+          error: "Active subscription required to provision phone numbers.",
           code: "SUBSCRIPTION_REQUIRED",
         },
         { status: 403 },
       );
+    }
+
+    // Verify payment method exists on Stripe customer — required for ALL phone purchases
+    if (!stripeCustomerId || !process.env.STRIPE_SECRET_KEY) {
+      return NextResponse.json(
+        {
+          error: "A payment method is required to purchase phone numbers. Please add a card in Settings → Billing.",
+          code: "PAYMENT_METHOD_REQUIRED",
+        },
+        { status: 402 },
+      );
+    }
+
+    try {
+      const Stripe = (await import("stripe")).default;
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+        apiVersion: "2024-12-18.acacia" as unknown as import("stripe").Stripe.StripeConfig["apiVersion"],
+      });
+      const paymentMethods = await stripe.paymentMethods.list({
+        customer: stripeCustomerId,
+        type: "card",
+        limit: 1,
+      });
+      if (!paymentMethods.data.length) {
+        return NextResponse.json(
+          {
+            error: "A payment method is required to purchase phone numbers. Please add a card in Settings → Billing.",
+            code: "PAYMENT_METHOD_REQUIRED",
+          },
+          { status: 402 },
+        );
+      }
+    } catch (err) {
+      console.error("[provision] Stripe payment method check failed:", err instanceof Error ? err.message : err);
+      // If Stripe check fails, allow provisioning to avoid blocking users with valid cards
     }
   }
 
