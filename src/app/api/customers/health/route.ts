@@ -112,6 +112,8 @@ export async function GET(req: NextRequest) {
       wsRow?.pause_reason ||
       wsRow?.status === "paused" ||
       wsRow?.billing_status === "trial_ended" ||
+      wsRow?.billing_status === "cancelled" ||
+      wsRow?.billing_status === "payment_failed" ||
       wsRow?.billing_status === "expired";
 
     // Heuristic risk model (0..100).

@@ -538,9 +538,11 @@ export default function AppShellClient({
                             "text-[10px] font-medium px-1.5 py-0.5 rounded-full",
                             billingInfo?.billing_status === "active"
                               ? "bg-emerald-500/15 text-emerald-400"
+                              : billingInfo?.billing_status === "cancelled" || billingInfo?.billing_status === "payment_failed"
+                              ? "bg-red-500/15 text-red-400"
                               : "bg-[var(--accent-amber)]/15 text-[var(--accent-amber)]"
                           )}>
-                            {billingInfo?.billing_status === "trial" ? "Trial" : billingInfo?.billing_status === "active" ? "Active" : billingInfo?.billing_status ? billingInfo.billing_status.charAt(0).toUpperCase() + billingInfo.billing_status.slice(1) : "Trial"}
+                            {billingInfo?.billing_status === "trial" ? "Trial" : billingInfo?.billing_status === "active" ? "Active" : billingInfo?.billing_status === "cancelled" ? "Cancelled" : billingInfo?.billing_status === "payment_failed" ? "Payment Failed" : billingInfo?.billing_status === "trial_ended" ? "Trial Ended" : billingInfo?.billing_status ? billingInfo.billing_status.charAt(0).toUpperCase() + billingInfo.billing_status.slice(1) : "Trial"}
                           </span>
                         </div>
                         <span className="block text-[11px] text-[var(--text-tertiary)] mt-1">
@@ -548,6 +550,12 @@ export default function AppShellClient({
                             ? `${Math.max(0, Math.ceil((new Date(billingInfo.renewal_at).getTime() - nowMs) / 86400000))} days left`
                             : billingInfo?.billing_status === "active"
                             ? t("sidebar.activeSubscription", { defaultValue: "Active subscription" })
+                            : billingInfo?.billing_status === "cancelled"
+                            ? "Subscription cancelled"
+                            : billingInfo?.billing_status === "payment_failed"
+                            ? "Payment issue — update card"
+                            : billingInfo?.billing_status === "trial_ended"
+                            ? "Trial ended — upgrade now"
                             : ""}
                           {(workspaceMeta?.stats?.calls ?? 0) > 0
                             ? ` · ${workspaceMeta?.stats?.calls ?? 0} ${t("sidebar.callsAnswered", { defaultValue: "calls" })}`
