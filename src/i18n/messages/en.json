@@ -767,6 +767,58 @@
     }
   },
   "dashboard": {
+    "loading": "Loading your dashboard...",
+    "welcomeBack": "Welcome back",
+    "onboarding": {
+      "readyTitle": "Ready to get started?",
+      "readyDescription": "Set up your AI phone agent and start handling calls, capturing leads, and booking appointments automatically.",
+      "startTrial": "Start Your Free Trial"
+    },
+    "stats": {
+      "activeCalls": "Active Calls",
+      "startsAfterFirstCall": "Starts after first call",
+      "estRevenueRecovered": "Est. Revenue Recovered"
+    },
+    "gettingStarted": {
+      "title": "Getting Started",
+      "completeProfile": "Complete Your Profile",
+      "completeProfileDesc": "Add business info and preferences",
+      "setupNumber": "Set Up Your Number",
+      "setupNumberDesc": "Configure your AI agent's phone number",
+      "chooseVoice": "Choose Agent Voice",
+      "chooseVoiceDesc": "Pick the perfect voice personality",
+      "viewActivity": "View Recent Activity",
+      "viewActivityDesc": "Check call logs and recordings"
+    },
+    "revenueAtRisk": {
+      "title": "Revenue At Risk",
+      "subtitle": "Estimated revenue leaking this week"
+    },
+    "knowledgeGaps": {
+      "title": "AI Knowledge Gaps",
+      "description": "Your AI couldn't answer these questions. Add answers to make it smarter.",
+      "addAnswer": "Add answer"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "viewAll": "View all",
+      "emptyTitle": "Your activity feed is ready",
+      "emptyDescription": "Once your AI agent handles its first call, you'll see real-time updates here"
+    },
+    "analytics": {
+      "title": "Revenue Dashboard",
+      "subtitle": "See exactly how much money Recall Touch has recovered.",
+      "description": "Real-time view of revenue recovered by your AI agent.",
+      "export": "Export",
+      "emptyDescription": "Once your AI starts answering calls, revenue metrics will appear here.",
+      "setupCallForwarding": "Set up call forwarding →",
+      "totalRevenueRecovered": "Total Revenue Recovered"
+    },
+    "usage": {
+      "limitReached": "Limit reached.",
+      "approachingLimit": "Approaching limit.",
+      "upgradeLink": "Upgrade →"
+    },
     "greeting": {
       "morning": "Good morning",
       "afternoon": "Good afternoon",

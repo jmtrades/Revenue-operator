@@ -334,7 +334,7 @@ export default function AppSettingsBillingPage() {
           </div>
         ) : (
           <>
-            <p className="text-sm font-medium text-[var(--text-primary)]">{tBilling("planDisplay", { plan: String(currentPlanId) === "starter" || String(currentPlanId) === "solo" ? "Starter" : String(currentPlanId) === "growth" || String(currentPlanId) === "business" ? "Growth" : String(currentPlanId) === "scale" ? "Business" : String(currentPlanId) === "enterprise" ? "Agency" : "Starter", price: String(currentPlanId) === "starter" || String(currentPlanId) === "solo" ? "97" : String(currentPlanId) === "growth" || String(currentPlanId) === "business" ? "297" : String(currentPlanId) === "scale" ? "597" : String(currentPlanId) === "enterprise" ? "997" : "97" })}</p>
+            <p className="text-sm font-medium text-[var(--text-primary)]">{tBilling("planDisplay", { plan: String(currentPlanId) === "starter" || String(currentPlanId) === "solo" ? "Starter" : String(currentPlanId) === "growth" || String(currentPlanId) === "business" ? "Growth" : String(currentPlanId) === "scale" ? "Business" : String(currentPlanId) === "enterprise" ? "Agency" : "Starter", price: String(currentPlanId) === "starter" || String(currentPlanId) === "solo" ? "147" : String(currentPlanId) === "growth" || String(currentPlanId) === "business" ? "297" : String(currentPlanId) === "scale" ? "597" : String(currentPlanId) === "enterprise" ? "997" : "147" })}</p>
             <p className="text-xs text-[var(--text-secondary)] mt-1">
               {tBilling("minutesUsed", { used: usage.minutes_used, limit: usage.minutes_limit })}
             </p>

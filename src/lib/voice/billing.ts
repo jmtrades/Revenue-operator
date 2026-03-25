@@ -356,7 +356,7 @@ export interface UpsellRecommendation {
 }
 
 const TIER_PRICES_MONTHLY: Record<string, number> = {
-  solo: 9700,      // $97
+  solo: 14700,     // $147
   business: 29700, // $297
   scale: 59700,    // $597
   enterprise: 99700, // $997

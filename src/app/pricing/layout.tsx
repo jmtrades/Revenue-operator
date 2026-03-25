@@ -11,7 +11,7 @@ const productJsonLd = {
   name: "Recall Touch",
   description: "AI that makes and takes your phone calls",
   offers: [
-    { "@type": "Offer", name: "Starter", price: "97", priceCurrency: "USD", priceValidUntil: "2026-12-31" },
+    { "@type": "Offer", name: "Starter", price: "147", priceCurrency: "USD", priceValidUntil: "2026-12-31" },
     { "@type": "Offer", name: "Growth", price: "297", priceCurrency: "USD", priceValidUntil: "2026-12-31" },
     { "@type": "Offer", name: "Business", price: "597", priceCurrency: "USD", priceValidUntil: "2026-12-31" },
     { "@type": "Offer", name: "Agency", price: "997", priceCurrency: "USD", priceValidUntil: "2026-12-31" },

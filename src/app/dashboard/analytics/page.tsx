@@ -75,12 +75,12 @@ function UsageBar({ label, used, limit, pct }: { label: string; used: number; li
       </div>
       {isDanger && (
         <p className="text-xs mt-1 text-red-400">
-          Limit reached. <Link href="/dashboard/billing" className="underline">Upgrade for more →</Link>
+          {t("usage.limitReached")} <Link href="/dashboard/billing" className="underline">{t("usage.upgradeLink")}</Link>
         </p>
       )}
       {isWarning && !isDanger && (
         <p className="text-xs mt-1 text-amber-400">
-          Approaching limit. <Link href="/dashboard/billing" className="underline">Consider upgrading →</Link>
+          {t("usage.approachingLimit")} <Link href="/dashboard/billing" className="underline">{t("usage.upgradeLink")}</Link>
         </p>
       )}
     </div>
@@ -136,7 +136,7 @@ export default function AnalyticsPage() {
   if (!workspaceId) {
     return (
       <div className="p-8 max-w-5xl">
-        <PageHeader title="Revenue Dashboard" subtitle="See exactly how much money Recall Touch has recovered." />
+        <PageHeader title={t("analytics.title")} subtitle={t("analytics.subtitle")} />
         <EmptyState icon="watch" title={t("empty.selectContext")} subtitle={t("empty.analyticsAppearHere")} />
       </div>
     );
@@ -145,7 +145,7 @@ export default function AnalyticsPage() {
   if (loading) {
     return (
       <div className="p-8 max-w-5xl">
-        <PageHeader title="Revenue Dashboard" subtitle="See exactly how much money Recall Touch has recovered." />
+        <PageHeader title={t("analytics.title")} subtitle={t("analytics.subtitle")} />
         <MetricsSkeleton cards={6} />
       </div>
     );
@@ -157,9 +157,9 @@ export default function AnalyticsPage() {
     <div className="p-8 max-w-5xl">
       <div className="flex items-start justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Revenue Dashboard</h1>
+          <h1 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>{t("analytics.title")}</h1>
           <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>
-            Real-time view of revenue recovered by your AI agent.
+            {t("analytics.description")}
           </p>
         </div>
         <button
@@ -168,7 +168,7 @@ export default function AnalyticsPage() {
           style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)" }}
         >
           <Download className="w-4 h-4" />
-          Export
+          {t("analytics.export")}
         </button>
       </div>
 
@@ -177,10 +177,10 @@ export default function AnalyticsPage() {
           <BarChart3 className="w-12 h-12 text-white/20 mx-auto mb-4" />
           <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>{t("empty.noDataYet")}</p>
           <p className="text-xs mb-4" style={{ color: "var(--text-tertiary)" }}>
-            Once your AI starts answering calls, revenue metrics will appear here.
+            {t("analytics.emptyDescription")}
           </p>
           <Link href="/docs#call-forwarding" className="text-sm font-medium text-emerald-400">
-            Set up call forwarding →
+            {t("analytics.setupCallForwarding")}
           </Link>
         </div>
       ) : (
@@ -191,7 +191,7 @@ export default function AnalyticsPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-xs font-medium uppercase tracking-wide text-emerald-400 mb-2">
-                  Total Revenue Recovered
+                  {t("analytics.totalRevenueRecovered")}
                 </p>
                 <p className="text-4xl md:text-5xl font-bold tabular-nums text-white">
                   ${metrics?.estimatedRevenue.toLocaleString() || "0"}
