@@ -187,9 +187,9 @@ export const OPTIMIZED_MARGINS = {
     enterprise: { revenue_cents: 7,  cost_cents: 1.2, margin_pct: 83 },
   },
   subscription_margins: {
-    solo:       { price_cents: 9700,  minutes: 500,   rev_per_min: 19.4, cost_per_min: 1.2, margin_pct: 94 },
-    business:   { price_cents: 29700, minutes: 2500,  rev_per_min: 11.88, cost_per_min: 1.2, margin_pct: 90 },
-    scale:      { price_cents: 59700, minutes: 6000,  rev_per_min: 9.95, cost_per_min: 1.2, margin_pct: 88 },
+    solo:       { price_cents: 14700, minutes: 1000,  rev_per_min: 14.7,  cost_per_min: 1.2, margin_pct: 92 },
+    business:   { price_cents: 29700, minutes: 3000,  rev_per_min: 9.9,   cost_per_min: 1.2, margin_pct: 88 },
+    scale:      { price_cents: 59700, minutes: 8000,  rev_per_min: 7.46,  cost_per_min: 1.2, margin_pct: 84 },
     enterprise: { price_cents: 99700, minutes: 15000, rev_per_min: 6.65, cost_per_min: 1.2, margin_pct: 82 },
   },
   // Add-ons are pure profit (near-zero marginal cost)

@@ -86,18 +86,18 @@ const COMPARISONS: Record<string, ComparisonData> = {
       "Jack of all trades, master of none",
       "Voice AI is basic and an afterthought",
       "Chaotic UX that's hard to learn",
-      "No real AI phone answering",
+      "No real AI revenue operations",
       "No follow-up intelligence",
       "No revenue attribution",
     ],
     pricing: {
-      range: "$97-$497/month",
+      range: "$147-$997/month",
       details: "Base pricing for core features",
     },
     callCapacity: "Minimal voice capabilities",
     recallTouchAdvantage: [
       "Purpose-built for revenue execution",
-      "AI phone answering that actually works",
+      "AI revenue operations that actually work",
       "Intelligent follow-up engine",
       "Revenue recovery proof and tracking",
       "10x better call handling than GoHighLevel add-ons",
@@ -335,7 +335,7 @@ function getFeatureRows(
     Array<{ feature: string; recall: boolean; competitor: boolean }>
   > = {
     "smith-ai": [
-      { feature: "AI phone answering", recall: true, competitor: false },
+      { feature: "AI revenue operations", recall: true, competitor: false },
       { feature: "24/7 coverage", recall: true, competitor: false },
       { feature: "Call handling capacity", recall: true, competitor: false },
       { feature: "Follow-up automation", recall: true, competitor: false },
@@ -430,7 +430,7 @@ function getFAQs(
       },
       {
         q: "Is Recall Touch better for agencies?",
-        a: "If you're a marketing agency, GoHighLevel is great for campaigns. If you want reliable AI phone answering for your clients, Recall Touch is the better choice.",
+        a: "If you're a marketing agency, GoHighLevel is great for campaigns. If you want reliable AI revenue operations — calls, follow-ups, bookings, and recovery — for your clients, Recall Touch is the better choice.",
       },
       {
         q: "How do I migrate my setup?",

@@ -29,7 +29,7 @@ const rows: Row[] = [
   { feature: "Advanced voice AI with natural voice", recall: true, ghl: false, note: "Recall Touch uses state-of-the-art AI voice that sounds human. GHL has basic or no native voice AI." },
   { feature: "24/7 AI call answering (inbound + outbound)", recall: true, ghl: false, note: "Recall Touch answers every call and runs outbound campaigns. GHL requires manual workflow setup and doesn't focus on inbound recovery." },
   { feature: "Automatic follow-up sequences (calls, SMS, email)", recall: true, ghl: false, note: "Recall Touch runs follow-up sequences automatically until next outcome. GHL requires manual workflow builders." },
-  { feature: "Flat monthly pricing ($97–$997)", recall: true, ghl: false, note: "Recall Touch pricing is transparent and all-inclusive. GHL base + agencies often add 50–100% markup on top." },
+  { feature: "Flat monthly pricing ($147–$997)", recall: true, ghl: false, note: "Recall Touch pricing is transparent and all-inclusive. GHL base + agencies often add 50–100% markup on top." },
   { feature: "Per-seat licensing with markup", recall: false, ghl: true, note: "GHL uses per-seat or agency bundle pricing, commonly $97–$497/mo, often with reseller markups." },
   { feature: "Plug-and-play setup (no CRM builder)", recall: true, ghl: false, note: "Recall Touch connects instantly with zero configuration. GHL requires building workflows in the CRM builder." },
   { feature: "Marketing platform with CRM", recall: false, ghl: true, note: "GHL is a full-stack marketing platform with extensive customization. That power comes with learning curve." },
@@ -86,7 +86,7 @@ export default function GoHighLevelComparisonPage() {
                 <li>Live in under 3 minutes: no setup, no builder, no configuration</li>
                 <li>Advanced AI voice answering: sounds human, handles objections naturally</li>
                 <li>Automatic call handling + follow-up: sequences run until next outcome</li>
-                <li>Flat monthly pricing: $97–$997/mo, all-inclusive, no markups</li>
+                <li>Flat monthly pricing: $147–$997/mo, all-inclusive, no markups</li>
                 <li>Outbound AI campaigns: calls + SMS sequences targeting warm leads</li>
               </ul>
             </div>
@@ -187,7 +187,7 @@ export default function GoHighLevelComparisonPage() {
                   GoHighLevel starts at $97/mo and goes up to $497/mo. Then many teams buy through agencies, which add 50–100% markup. That's $200–$1,000/mo for one user.
                 </p>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
-                  Recall Touch is $97–$997/mo, flat monthly, no markups, no per-seat licensing. Everyone on your team uses the same system for the same price.
+                  Recall Touch is $147–$997/mo, flat monthly, no markups, no per-seat licensing. Everyone on your team uses the same system for the same price.
                 </p>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
                   For a team of 3–5, that&apos;s a $500–$2,500/mo difference. On an annual basis, that difference is transformative.
