@@ -6,6 +6,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { getWorkspaceSetting } from "@/lib/db/workspace-settings";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { logLeadCreated } from "@/lib/log/revenue-events";
@@ -220,13 +221,8 @@ export async function POST(req: NextRequest) {
       const eligiblePlans = ["business", "agency", "enterprise", "scale"];
       if (wsRow?.plan_id && eligiblePlans.includes(wsRow.plan_id)) {
         // Check if workspace has speed-to-lead enabled
-        const { data: setting } = await db
-          .from("workspace_settings")
-          .select("value")
-          .eq("workspace_id", workspaceId)
-          .eq("key", "speed_to_lead_enabled")
-          .maybeSingle();
-        const enabled = (setting as { value?: string | null } | null)?.value === "true";
+        const stlValue = await getWorkspaceSetting(workspaceId, "speed_to_lead_enabled");
+        const enabled = stlValue === "true";
         if (enabled) {
           // Enqueue outbound call with 60-second delay
           await db.from("action_queue").insert({

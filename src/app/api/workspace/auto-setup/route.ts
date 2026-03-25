@@ -10,6 +10,7 @@ import {
   generateBusinessIntelligence,
   type SetupInput,
 } from "@/lib/ai/website-intelligence";
+import { setWorkspaceSettings } from "@/lib/db/workspace-settings";
 
 export async function POST(req: NextRequest) {
   try {
@@ -74,24 +75,11 @@ export async function POST(req: NextRequest) {
     // Save to workspace knowledge base
     const db = getDb();
 
-    // Store business info
-    await db.from("workspace_settings").upsert(
-      {
-        workspace_id,
-        setting_key: "business_name",
-        setting_value: intelligence.businessName,
-      },
-      { onConflict: "workspace_id,setting_key" }
-    );
-
-    await db.from("workspace_settings").upsert(
-      {
-        workspace_id,
-        setting_key: "industry",
-        setting_value: intelligence.industry,
-      },
-      { onConflict: "workspace_id,setting_key" }
-    );
+    // Store business info in workspace_settings jsonb
+    await setWorkspaceSettings(workspace_id, {
+      business_name: intelligence.businessName,
+      industry: intelligence.industry,
+    });
 
     // Store all the generated scripts and FAQs as knowledge base
     const knowledgeBase = {
@@ -130,23 +118,10 @@ export async function POST(req: NextRequest) {
     );
 
     // Store scripts separately for easy access
-    await db.from("workspace_settings").upsert(
-      {
-        workspace_id,
-        setting_key: "greeting_script",
-        setting_value: intelligence.agentGreetingScript,
-      },
-      { onConflict: "workspace_id,setting_key" }
-    );
-
-    await db.from("workspace_settings").upsert(
-      {
-        workspace_id,
-        setting_key: "recommended_tone",
-        setting_value: intelligence.recommendedTone,
-      },
-      { onConflict: "workspace_id,setting_key" }
-    );
+    await setWorkspaceSettings(workspace_id, {
+      greeting_script: intelligence.agentGreetingScript,
+      recommended_tone: intelligence.recommendedTone,
+    });
 
     // Also populate workspace_business_context so the voice agent has context
     try {

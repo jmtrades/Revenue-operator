@@ -3,7 +3,7 @@
  * Extracts insights from call outcomes and builds a persistent knowledge base
  */
 
-import { getDb } from "@/lib/db/queries";
+import { setWorkspaceSetting, getWorkspaceSettingsByPrefix } from "@/lib/db/workspace-settings";
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
@@ -155,16 +155,8 @@ Be specific and extract EXACT phrases from the transcript when possible.`;
       extractedAt: new Date(),
     };
 
-    // Store the learning in the database
-    const db = getDb();
-    await db.from("workspace_settings").upsert(
-      {
-        workspace_id: workspaceId,
-        setting_key: `call_learning_${callId}`,
-        setting_value: JSON.stringify(learning),
-      },
-      { onConflict: "workspace_id,setting_key" }
-    );
+    // Store the learning in the workspace settings jsonb
+    await setWorkspaceSetting(workspaceId, `call_learning_${callId}`, JSON.stringify(learning));
 
     return learning;
   } catch (err) {
@@ -176,30 +168,17 @@ Be specific and extract EXACT phrases from the transcript when possible.`;
 export async function getAccumulatedLearnings(
   workspaceId: string
 ): Promise<AccumulatedLearnings> {
-  const db = getDb();
-
-  // Fetch all learning records for this workspace
-  const { data: learnings, error } = await db
-    .from("workspace_settings")
-    .select("setting_value")
-    .eq("workspace_id", workspaceId)
-    .like("setting_key", "call_learning_%");
-
-  if (error) {
-    throw new Error(`Database error: ${error.message}`);
-  }
+  // Fetch all learning records for this workspace from settings jsonb
+  const learningEntries = await getWorkspaceSettingsByPrefix(workspaceId, "call_learning_");
 
   const callLearnings: CallLearning[] = [];
 
-  if (learnings && Array.isArray(learnings)) {
-    for (const record of learnings) {
-      const row = record as { setting_value: string };
-      try {
-        const learning = JSON.parse(row.setting_value) as CallLearning;
-        callLearnings.push(learning);
-      } catch {
-        // Skip invalid records
-      }
+  for (const value of Object.values(learningEntries)) {
+    try {
+      const learning = JSON.parse(value) as CallLearning;
+      callLearnings.push(learning);
+    } catch {
+      // Skip invalid records
     }
   }
 

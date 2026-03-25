@@ -10,6 +10,7 @@ import {
   generateBusinessIntelligence,
   type SetupInput,
 } from "@/lib/ai/website-intelligence";
+import { setWorkspaceSettings } from "@/lib/db/workspace-settings";
 
 interface SetupResult {
   success: boolean;
@@ -125,104 +126,40 @@ export async function POST(req: NextRequest) {
       { onConflict: "workspace_id,knowledge_key" }
     );
 
-    // Step 3: Auto-configure agent personality
-    await db.from("workspace_settings").upsert(
-      {
-        workspace_id,
-        setting_key: "agent_personality",
-        setting_value: JSON.stringify({
-          tone: intelligence.recommendedTone,
-          personality: intelligence.recommendedPersonality,
-          keyPhrases: intelligence.keyPhrases,
-          thingToNeverSay: intelligence.thingToNeverSay,
-          configuredAt: new Date().toISOString(),
-        }),
-      },
-      { onConflict: "workspace_id,setting_key" }
-    );
-
-    // Step 4: Configure campaign templates based on industry
-    const campaignTemplates = generateCampaignTemplates(
-      intelligence.industry
-    );
-    await db.from("workspace_settings").upsert(
-      {
-        workspace_id,
-        setting_key: "campaign_templates",
-        setting_value: JSON.stringify(campaignTemplates),
-      },
-      { onConflict: "workspace_id,setting_key" }
-    );
-
-    // Step 5: Configure default follow-up sequences
+    // Step 3: Auto-configure agent personality, campaign templates, follow-up sequences, communication modes, business info
+    const campaignTemplates = generateCampaignTemplates(intelligence.industry);
     const followUpSequences = generateFollowUpSequences(
       intelligence.followUpTexts,
       intelligence.industry
     );
-    await db.from("workspace_settings").upsert(
-      {
-        workspace_id,
-        setting_key: "followup_sequences",
-        setting_value: JSON.stringify(followUpSequences),
-      },
-      { onConflict: "workspace_id,setting_key" }
-    );
 
-    // Step 6: Auto-detect and enable communication modes
-    const enabledModes: string[] = [];
+    const enabledModes: string[] = ["sms"];
+    const settingsUpdate: Record<string, unknown> = {
+      agent_personality: JSON.stringify({
+        tone: intelligence.recommendedTone,
+        personality: intelligence.recommendedPersonality,
+        keyPhrases: intelligence.keyPhrases,
+        thingToNeverSay: intelligence.thingToNeverSay,
+        configuredAt: new Date().toISOString(),
+      }),
+      campaign_templates: JSON.stringify(campaignTemplates),
+      followup_sequences: JSON.stringify(followUpSequences),
+      enable_sms: "true",
+      business_name: intelligence.businessName,
+      industry: intelligence.industry,
+    };
 
     if (intelligence.contactPhone) {
       enabledModes.push("voice_calls");
-      await db.from("workspace_settings").upsert(
-        {
-          workspace_id,
-          setting_key: "enable_voice_calls",
-          setting_value: "true",
-        },
-        { onConflict: "workspace_id,setting_key" }
-      );
+      settingsUpdate.enable_voice_calls = "true";
     }
-
-    enabledModes.push("sms");
-    await db.from("workspace_settings").upsert(
-      {
-        workspace_id,
-        setting_key: "enable_sms",
-        setting_value: "true",
-      },
-      { onConflict: "workspace_id,setting_key" }
-    );
 
     if (intelligence.contactEmail) {
       enabledModes.push("email");
-      await db.from("workspace_settings").upsert(
-        {
-          workspace_id,
-          setting_key: "enable_email",
-          setting_value: "true",
-        },
-        { onConflict: "workspace_id,setting_key" }
-      );
+      settingsUpdate.enable_email = "true";
     }
 
-    // Step 7: Store basic business info
-    await db.from("workspace_settings").upsert(
-      {
-        workspace_id,
-        setting_key: "business_name",
-        setting_value: intelligence.businessName,
-      },
-      { onConflict: "workspace_id,setting_key" }
-    );
-
-    await db.from("workspace_settings").upsert(
-      {
-        workspace_id,
-        setting_key: "industry",
-        setting_value: intelligence.industry,
-      },
-      { onConflict: "workspace_id,setting_key" }
-    );
+    await setWorkspaceSettings(workspace_id, settingsUpdate);
 
     // Step 8: Populate workspace_business_context for voice agent
     try {

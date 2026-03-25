@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
-import { getDb } from "@/lib/db/queries";
+import { getWorkspaceSettings, setWorkspaceSettings } from "@/lib/db/workspace-settings";
 
 export interface AutoScoringRules {
   score_on_call_complete: boolean;
@@ -33,34 +33,20 @@ export async function GET(req: NextRequest) {
   const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;
 
-  const db = getDb();
-  const { data: settings, error: settingsError } = await db
-    .from("workspace_settings")
-    .select("key, value")
-    .eq("workspace_id", workspaceId)
-    .in("key", [
+  let settingMap: Record<string, string>;
+  try {
+    settingMap = await getWorkspaceSettings(workspaceId, [
       "ai_score_on_call_complete",
       "ai_score_on_message_received",
       "ai_score_on_appointment_booked",
       "ai_rescore_interval_hours",
     ]);
-
-  if (settingsError) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to fetch settings" },
       { status: 500 }
     );
   }
-
-  const settingMap = (settings ?? []).reduce(
-    (acc: Record<string, string>, s: { key: string; value: string | null }) => {
-      if (s.value !== null) {
-        acc[s.key] = s.value;
-      }
-      return acc;
-    },
-    {}
-  );
 
   const rules: AutoScoringRules = {
     score_on_call_complete:
@@ -104,42 +90,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const db = getDb();
-
-  const settingUpserts = [
-    {
-      workspace_id: workspaceId,
-      key: "ai_score_on_call_complete",
-      value: String(body.score_on_call_complete ?? DEFAULT_RULES.score_on_call_complete),
-    },
-    {
-      workspace_id: workspaceId,
-      key: "ai_score_on_message_received",
-      value: String(
-        body.score_on_message_received ?? DEFAULT_RULES.score_on_message_received
-      ),
-    },
-    {
-      workspace_id: workspaceId,
-      key: "ai_score_on_appointment_booked",
-      value: String(
-        body.score_on_appointment_booked ?? DEFAULT_RULES.score_on_appointment_booked
-      ),
-    },
-    {
-      workspace_id: workspaceId,
-      key: "ai_rescore_interval_hours",
-      value: String(
-        body.rescore_interval_hours ?? DEFAULT_RULES.rescore_interval_hours
-      ),
-    },
-  ];
-
-  const { error: upsertError } = await db
-    .from("workspace_settings")
-    .upsert(settingUpserts, { onConflict: "workspace_id,key" });
-
-  if (upsertError) {
+  try {
+    await setWorkspaceSettings(workspaceId, {
+      ai_score_on_call_complete: String(body.score_on_call_complete ?? DEFAULT_RULES.score_on_call_complete),
+      ai_score_on_message_received: String(body.score_on_message_received ?? DEFAULT_RULES.score_on_message_received),
+      ai_score_on_appointment_booked: String(body.score_on_appointment_booked ?? DEFAULT_RULES.score_on_appointment_booked),
+      ai_rescore_interval_hours: String(body.rescore_interval_hours ?? DEFAULT_RULES.rescore_interval_hours),
+    });
+  } catch (upsertError) {
     console.error("[AI Score Rules] Upsert error:", upsertError);
     return NextResponse.json(
       { error: "Failed to save settings" },
