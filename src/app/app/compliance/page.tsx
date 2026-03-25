@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Shield, ShieldCheck, Download } from "lucide-react";
 import { toast } from "sonner";
@@ -55,6 +55,37 @@ function formatDateTime(iso: string): string {
 }
 
 const PAGE_SIZE = 10;
+const POLICIES_STORAGE_KEY = "compliance_policies";
+
+function loadPoliciesFromStorage(): RecordingPolicies {
+  if (typeof window === "undefined") return getDefaultPolicies();
+  try {
+    const stored = localStorage.getItem(POLICIES_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : getDefaultPolicies();
+  } catch (e) {
+    console.error("Failed to load compliance policies from localStorage:", e);
+    return getDefaultPolicies();
+  }
+}
+
+function savePolicesToStorage(policies: RecordingPolicies) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(POLICIES_STORAGE_KEY, JSON.stringify(policies));
+  } catch (e) {
+    console.error("Failed to save compliance policies to localStorage:", e);
+  }
+}
+
+function getDefaultPolicies(): RecordingPolicies {
+  return {
+    consentMode: "two-party",
+    retentionDays: 90,
+    piiRedaction: true,
+    autoTranscribe: true,
+    consentAnnouncement: "This call may be recorded for quality assurance and training purposes.",
+  };
+}
 
 export default function CompliancePage() {
   const t = useTranslations("compliance");
@@ -66,33 +97,26 @@ export default function CompliancePage() {
     [t],
   );
   const [standards] = useState<ComplianceStandard[]>([]);
-  const [policies, setPolicies] = useState<RecordingPolicies>({
-    consentMode: "two-party",
-    retentionDays: 90,
-    piiRedaction: true,
-    autoTranscribe: true,
-    consentAnnouncement: "This call may be recorded for quality assurance and training purposes.",
-  });
+  const [policies, setPolicies] = useState<RecordingPolicies>(getDefaultPolicies());
   const [auditSearch, setAuditSearch] = useState("");
   const [auditUserFilter, setAuditUserFilter] = useState<string>("all");
   const [auditActionFilter, setAuditActionFilter] = useState<string>("all");
   const [auditPage, setAuditPage] = useState(0);
 
+  // Load policies from localStorage on mount
+  useEffect(() => {
+    const stored = loadPoliciesFromStorage();
+    setPolicies(stored);
+  }, []);
+
   const handleSavePolicies = useCallback(async () => {
     try {
-      const response = await fetch("/api/workspace/compliance-settings", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(policies),
-      });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      setPolicies((prev) => ({ ...prev }));
+      // Persists to localStorage until compliance-settings API is implemented
+      savePolicesToStorage(policies);
       toast.success(t("toast.changesSaved"));
     } catch (error) {
       console.error("Failed to save compliance settings:", error);
-      // TODO: API endpoint /api/workspace/compliance-settings needs to be created if it doesn't exist
-      console.warn("TODO: persist compliance settings to backend");
-      toast.success(t("toast.changesSaved")); // Still show toast for UX, but log the failure
+      toast.error("Failed to save settings");
     }
   }, [t, policies]);
 
@@ -133,7 +157,7 @@ export default function CompliancePage() {
     }
   }, [t, policies]);
 
-  // TODO: Fetch audit trail from /api/audit-logs when endpoint is implemented
+  // Audit trail data - stub showing placeholder message until endpoint is implemented
   const auditEntries = useMemo(() => [] as AuditLogEntry[], []);
   const uniqueUsers = useMemo(() => Array.from(new Set(auditEntries.map((e) => e.user))).sort(), [auditEntries]);
   const uniqueActions = useMemo(() => Array.from(new Set(auditEntries.map((e) => e.action))).sort(), [auditEntries]);
@@ -341,40 +365,48 @@ export default function CompliancePage() {
           </div>
 
           <div className="rounded-xl border border-[var(--border-default)] overflow-hidden">
-            <div className="hidden md:block overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-[var(--bg-input)]/80 border-b border-[var(--border-default)]">
-                  <tr>
-                    <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("audit.columns.timestamp", { defaultValue: "Timestamp" })}</th>
-                    <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("audit.columns.user", { defaultValue: "User" })}</th>
-                    <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("audit.columns.action", { defaultValue: "Action" })}</th>
-                    <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("audit.columns.resource", { defaultValue: "Resource" })}</th>
-                    <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("audit.columns.ipAddress", { defaultValue: "IP Address" })}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {paginatedAudit.map((row) => (
-                    <tr key={row.id} className="border-b border-[var(--border-default)]/80 hover:bg-[var(--bg-card)]">
-                      <td className="py-3 px-4 text-[var(--text-secondary)] text-xs">{formatDateTime(row.timestamp)}</td>
-                      <td className="py-3 px-4 text-[var(--text-secondary)]">{row.user}</td>
-                      <td className="py-3 px-4 text-[var(--text-primary)]">{row.action}</td>
-                      <td className="py-3 px-4 text-[var(--text-tertiary)] text-xs">{row.resource}</td>
-                      <td className="py-3 px-4 font-mono text-[var(--text-secondary)] text-xs">{row.ipAddress}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="md:hidden divide-y divide-[var(--border-default)]">
-              {paginatedAudit.map((row) => (
-                <div key={row.id} className="p-4">
-                  <p className="text-xs text-[var(--text-secondary)]">{formatDateTime(row.timestamp)}</p>
-                  <p className="text-sm font-medium text-[var(--text-primary)] mt-0.5">{row.action}</p>
-                  <p className="text-xs text-[var(--text-tertiary)]">{row.user} · {row.resource}</p>
-                  <p className="font-mono text-[10px] text-[var(--text-secondary)] mt-1">{row.ipAddress}</p>
+            {paginatedAudit.length === 0 ? (
+              <div className="p-8 text-center">
+                <p className="text-[var(--text-secondary)]">Audit trail coming soon</p>
+              </div>
+            ) : (
+              <>
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead className="bg-[var(--bg-input)]/80 border-b border-[var(--border-default)]">
+                      <tr>
+                        <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("audit.columns.timestamp", { defaultValue: "Timestamp" })}</th>
+                        <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("audit.columns.user", { defaultValue: "User" })}</th>
+                        <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("audit.columns.action", { defaultValue: "Action" })}</th>
+                        <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("audit.columns.resource", { defaultValue: "Resource" })}</th>
+                        <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("audit.columns.ipAddress", { defaultValue: "IP Address" })}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {paginatedAudit.map((row) => (
+                        <tr key={row.id} className="border-b border-[var(--border-default)]/80 hover:bg-[var(--bg-card)]">
+                          <td className="py-3 px-4 text-[var(--text-secondary)] text-xs">{formatDateTime(row.timestamp)}</td>
+                          <td className="py-3 px-4 text-[var(--text-secondary)]">{row.user}</td>
+                          <td className="py-3 px-4 text-[var(--text-primary)]">{row.action}</td>
+                          <td className="py-3 px-4 text-[var(--text-tertiary)] text-xs">{row.resource}</td>
+                          <td className="py-3 px-4 font-mono text-[var(--text-secondary)] text-xs">{row.ipAddress}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-              ))}
-            </div>
+                <div className="md:hidden divide-y divide-[var(--border-default)]">
+                  {paginatedAudit.map((row) => (
+                    <div key={row.id} className="p-4">
+                      <p className="text-xs text-[var(--text-secondary)]">{formatDateTime(row.timestamp)}</p>
+                      <p className="text-sm font-medium text-[var(--text-primary)] mt-0.5">{row.action}</p>
+                      <p className="text-xs text-[var(--text-tertiary)]">{row.user} · {row.resource}</p>
+                      <p className="font-mono text-[10px] text-[var(--text-secondary)] mt-1">{row.ipAddress}</p>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
 
           {totalPages > 1 && (

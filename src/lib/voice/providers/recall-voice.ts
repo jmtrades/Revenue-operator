@@ -21,10 +21,7 @@ import { getDb } from "@/lib/db/queries";
 function getVoiceServerUrl(): string {
   const url = process.env.VOICE_SERVER_URL || process.env.NEXT_PUBLIC_VOICE_SERVER_URL;
   if (!url) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error("VOICE_SERVER_URL or NEXT_PUBLIC_VOICE_SERVER_URL is required in production");
-    }
-    return "http://localhost:8100";
+    throw new Error("VOICE_SERVER_URL or NEXT_PUBLIC_VOICE_SERVER_URL is required");
   }
   return url;
 }

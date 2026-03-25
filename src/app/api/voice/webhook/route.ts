@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { createHmac } from "crypto";
 import { log } from "@/lib/logger";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 interface Transcript {
   timestamp: number;
@@ -75,6 +76,9 @@ function verifyWebhookSignature(body: string, signature: string): boolean {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   // Verify webhook signature
   const signature = req.headers.get("x-voice-webhook-signature");
   const body = await req.text();
@@ -101,7 +105,7 @@ export async function POST(req: NextRequest) {
   let callSessionId: string | null = null;
 
   // Validate workspace_id is a plausible UUID to prevent injection
-  if (!payload.workspace_id || !/^[0-9a-f-]{36}$/i.test(payload.workspace_id)) {
+  if (!payload.workspace_id || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(payload.workspace_id)) {
     log("error", "voice_webhook.invalid_workspace_id", { workspace_id: payload.workspace_id });
     return new NextResponse(JSON.stringify({ error: "Invalid workspace_id" }), { status: 400, headers: { "Content-Type": "application/json" } });
   }

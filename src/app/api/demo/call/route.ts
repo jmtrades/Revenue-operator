@@ -51,6 +51,11 @@ function normalizeToE164(input: string): string | null {
 }
 
 export async function POST(req: NextRequest) {
+  /* ── CSRF protection ──────────────────────────────────── */
+  const { assertSameOrigin } = await import("@/lib/http/csrf");
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   /* ── Rate limit by IP ────────────────────────────────── */
   const ip = getClientIp(req);
   const rl = await checkRateLimit(`demo-call:${ip}`, 2, 600_000);
@@ -166,7 +171,14 @@ export async function POST(req: NextRequest) {
   // Use WEBHOOK_BASE_URL if set, otherwise fall back to APP_URL.
   // Important: must be the canonical domain (www.recall-touch.com) because
   // non-www redirects via 307 and Telnyx won't follow POST redirects.
-  const appUrl = process.env.WEBHOOK_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+  const appUrl = process.env.WEBHOOK_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null);
+  if (!appUrl) {
+    log("error", "demo_call.app_url_not_configured");
+    return NextResponse.json(
+      { ok: false, error: "Demo calling is not available. Configuration missing." },
+      { status: 503 },
+    );
+  }
 
   try {
     const result = await createOutboundCall({

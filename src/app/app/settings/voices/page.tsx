@@ -21,7 +21,7 @@ import { RECALL_VOICES } from "@/lib/constants/recall-voices";
 import { HUMAN_VOICE_DEFAULTS } from "@/lib/voice/human-voice-defaults";
 
 const VOICE_SERVER_URL =
-  process.env.NEXT_PUBLIC_VOICE_SERVER_URL || "http://localhost:8100";
+  process.env.NEXT_PUBLIC_VOICE_SERVER_URL || "";
 
 interface Voice {
   id: string;

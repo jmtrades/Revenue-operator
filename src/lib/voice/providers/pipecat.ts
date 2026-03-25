@@ -127,10 +127,14 @@ export class PipecatVoiceProvider implements VoiceProvider {
     try {
       const { getTelephonyService } = await import("@/lib/telephony");
       const telephony = getTelephonyService();
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null);
+      if (!appUrl) {
+        throw new Error("NEXT_PUBLIC_APP_URL or VERCEL_URL is required for webhooks");
+      }
       const result = await telephony.createOutboundCall({
         from: twilioPhone,
         to: params.phoneNumber,
-        webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000"}/api/inbound/post-call`,
+        webhookUrl: `${appUrl}/api/inbound/post-call`,
         metadata: params.metadata,
       });
 

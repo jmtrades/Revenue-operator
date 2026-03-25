@@ -42,7 +42,6 @@ type SortId = "newest" | "score" | "name";
 
 const STORAGE_KEY = "rt_contacts";
 
-// TODO: Hydrate contacts from /api/contacts on mount; localStorage serves as offline cache only
 function loadContacts(): Contact[] {
   if (typeof window === "undefined") return [];
   try {
