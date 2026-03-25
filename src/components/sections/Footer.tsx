@@ -11,7 +11,8 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   const linkStyle = { color: "var(--text-tertiary)" };
-  const linkClass = "block text-[13px] py-1 px-2 no-underline transition-colors duration-200 hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] rounded-md";
+  const linkClass = "block text-[13px] py-1 px-2 no-underline rounded-md hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]";
+  const linkTransition = { transition: "color 200ms cubic-bezier(0.23, 1, 0.32, 1), background-color 200ms cubic-bezier(0.23, 1, 0.32, 1)" };
 
   return (
     <footer
@@ -39,12 +40,12 @@ export function Footer() {
               {t("product")}
             </p>
             <nav className="space-y-1.5">
-              <Link href={ROUTES.PRODUCT} className={linkClass} style={linkStyle}>{t("features")}</Link>
-              <Link href={ROUTES.PRICING} className={linkClass} style={linkStyle}>{t("pricing")}</Link>
-              <Link href="/demo" className={linkClass} style={linkStyle}>{t("demo")}</Link>
-              <Link href="/outbound" className={linkClass} style={linkStyle}>{tMarketing("outbound")}</Link>
-              <Link href="/enterprise" className={linkClass} style={linkStyle}>{tMarketing("enterprise")}</Link>
-              <Link href={ROUTES.DOCS} className={linkClass} style={linkStyle}>{t("docs")}</Link>
+              <Link href={ROUTES.PRODUCT} className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{t("features")}</Link>
+              <Link href={ROUTES.PRICING} className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{t("pricing")}</Link>
+              <Link href="/demo" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{t("demo")}</Link>
+              <Link href="/outbound" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{tMarketing("outbound")}</Link>
+              <Link href="/enterprise" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{tMarketing("enterprise")}</Link>
+              <Link href={ROUTES.DOCS} className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{t("docs")}</Link>
             </nav>
           </div>
 
@@ -67,7 +68,7 @@ export function Footer() {
                 [tMarketing("recruiting"), "/industries/recruiting"],
                 [tMarketing("roofing"), "/industries/roofing"],
               ].map(([label, href]) => (
-                <Link key={href} href={href} className={linkClass} style={linkStyle}>{label}</Link>
+                <Link key={href} href={href} className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{label}</Link>
               ))}
             </nav>
           </div>
@@ -78,11 +79,11 @@ export function Footer() {
               {t("company")}
             </p>
             <nav className="space-y-1.5">
-              <a href="mailto:team@recall-touch.com" className={linkClass} style={linkStyle}>{t("emailUs")}</a>
-              <Link href="/blog" className={linkClass} style={linkStyle}>{t("blog")}</Link>
-              <Link href="/contact" className={linkClass} style={linkStyle}>{t("contact")}</Link>
-              <Link href="/results" className={linkClass} style={linkStyle}>{tMarketing("results")}</Link>
-              <Link href="/security" className={linkClass} style={linkStyle}>{tMarketing("security")}</Link>
+              <a href="mailto:team@recall-touch.com" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{t("emailUs")}</a>
+              <Link href="/blog" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{t("blog")}</Link>
+              <Link href="/contact" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{t("contact")}</Link>
+              <Link href="/results" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{tMarketing("results")}</Link>
+              <Link href="/security" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{tMarketing("security")}</Link>
             </nav>
           </div>
 
@@ -92,19 +93,20 @@ export function Footer() {
               {t("legalSecurity")}
             </p>
             <nav className="space-y-1.5">
-              <Link href="/privacy" className={linkClass} style={linkStyle}>{t("privacyPolicy")}</Link>
-              <Link href="/terms" className={linkClass} style={linkStyle}>{t("termsOfService")}</Link>
-              <a href="https://status.recall-touch.com" target="_blank" rel="noopener noreferrer" className={linkClass} style={linkStyle}>{tMarketing("systemStatus")}</a>
+              <Link href="/privacy" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{t("privacyPolicy")}</Link>
+              <Link href="/terms" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{t("termsOfService")}</Link>
+              <a href="https://status.recall-touch.com" target="_blank" rel="noopener noreferrer" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{tMarketing("systemStatus")}</a>
             </nav>
             <div className="flex flex-wrap gap-1.5 mt-4">
               {["SOC 2", "HIPAA", "GDPR", "SSL"].map((badge) => (
                 <span
                   key={badge}
-                  className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium transition-colors duration-200"
+                  className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium"
                   style={{
                     border: "1px solid var(--border-default)",
                     color: "var(--text-tertiary)",
-                    background: "var(--accent-primary-subtle)"
+                    background: "var(--accent-primary-subtle)",
+                    transition: "color 200ms cubic-bezier(0.23, 1, 0.32, 1), background-color 200ms cubic-bezier(0.23, 1, 0.32, 1), border-color 200ms cubic-bezier(0.23, 1, 0.32, 1)"
                   }}
                 >
                   {badge}

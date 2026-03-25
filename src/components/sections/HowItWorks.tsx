@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { PhoneForwarded, Zap, MessageSquareText } from "lucide-react";
 import { Container } from "@/components/ui/Container";
-import { AnimateOnScroll, StaggerChildren, fadeUpVariants } from "@/components/shared/AnimateOnScroll";
+import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
 import { motion } from "framer-motion";
 
 export function HowItWorks() {
@@ -70,11 +70,30 @@ export function HowItWorks() {
         </AnimateOnScroll>
 
         <div className="max-w-[900px] mx-auto">
-          <StaggerChildren className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={{
+              visible: { transition: { staggerChildren: 0.08 } },
+              hidden: {},
+            }}
+          >
             {steps.map((step) => (
               <motion.div
                 key={step.num}
-                variants={fadeUpVariants}
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: {
+                      duration: 0.6,
+                      ease: [0.23, 1, 0.32, 1]
+                    }
+                  }
+                }}
                 className="rounded-xl p-8 text-center"
                 style={{
                   background: "var(--bg-primary)",
@@ -87,15 +106,19 @@ export function HowItWorks() {
                 >
                   {t("stepLabel", { num: step.num })}
                 </p>
-                <div
+                <motion.div
                   className="w-10 h-10 rounded-lg flex items-center justify-center mb-4 mx-auto"
                   style={{
                     background: "var(--bg-hover)",
                     color: "var(--text-secondary)",
                   }}
+                  initial={{ scale: 0.95, opacity: 0 }}
+                  whileInView={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+                  viewport={{ once: true, margin: "-100px" }}
                 >
                   <step.icon className="w-5 h-5" />
-                </div>
+                </motion.div>
                 <h3
                   className="font-semibold text-base mb-3"
                   style={{ color: "var(--text-primary)" }}
@@ -110,7 +133,7 @@ export function HowItWorks() {
                 </p>
               </motion.div>
             ))}
-          </StaggerChildren>
+          </motion.div>
         </div>
 
         {/* Setup timeline */}

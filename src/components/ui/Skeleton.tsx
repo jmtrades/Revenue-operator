@@ -8,6 +8,7 @@ interface SkeletonProps {
   width?: string | number;
   height?: string | number;
   lines?: number;
+  delay?: number;
 }
 
 export function Skeleton({
@@ -16,23 +17,24 @@ export function Skeleton({
   width,
   height,
   lines = 1,
+  delay = 0,
 }: SkeletonProps) {
+  const delayStyle = delay > 0 ? { animationDelay: `${delay}ms` } : undefined;
   const baseClasses =
-    "relative overflow-hidden bg-[var(--bg-inset)]/60 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/[0.04] before:to-transparent";
+    "relative overflow-hidden bg-[var(--bg-inset)]/60 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_1.5s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/[0.06] before:to-transparent";
 
   if (variant === "text" && lines > 1) {
     return (
       <div className={cn("space-y-2", className)}>
         {Array.from({ length: lines }).map((_, i) => (
           <div
-             
             key={i}
             className={cn(
               baseClasses,
               "h-4 rounded-md",
               i === lines - 1 ? "w-3/4" : "w-full",
             )}
-            style={{ width: i < lines - 1 ? width : undefined, height }}
+            style={{ width: i < lines - 1 ? width : undefined, height, ...delayStyle }}
           />
         ))}
       </div>
@@ -49,7 +51,7 @@ export function Skeleton({
         variant === "text" && "rounded-md h-4",
         className,
       )}
-      style={{ width, height }}
+      style={{ width, height, ...delayStyle }}
       aria-hidden
     />
   );

@@ -585,6 +585,21 @@ export default function KnowledgePage() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+      <style>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(16px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .knowledge-entry {
+          animation: fadeInUp 300ms cubic-bezier(0.23, 1, 0.32, 1) both;
+        }
+      `}</style>
       <div className="p-4 md:p-6 lg:p-8">
         {/* Top bar */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
@@ -629,7 +644,7 @@ export default function KnowledgePage() {
               <button
                 type="button"
                 onClick={() => openAddModal()}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:opacity-90"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:opacity-90 transition-[opacity,transform] duration-160 active:scale-[0.97]"
               >
                 <Plus className="w-4 h-4" />
                 {t("addEntry")}
@@ -835,14 +850,15 @@ export default function KnowledgePage() {
                   {t("addFirst")}
                 </button>
               </div>
-            ) : filtered.map((entry) => {
+            ) : filtered.map((entry, idx) => {
               const TypeIcon = typeIcon(entry.type);
               return (
                 <button
                   key={entry.id}
                   type="button"
                   onClick={() => openEditModal(entry)}
-                  className="text-left p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] hover:border-[var(--border-medium)] transition-colors"
+                  className="knowledge-entry text-left p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] hover:border-[var(--border-medium)] transition-[border-color,transform] duration-160 active:scale-[0.98]"
+                  style={{ animationDelay: `${idx * 30}ms` }}
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <h3 className="font-medium text-[var(--text-primary)] truncate flex-1">{entry.title}</h3>
@@ -961,7 +977,7 @@ export default function KnowledgePage() {
               type="button"
               onClick={() => void handleTestKnowledge()}
               disabled={!testQuestion.trim() || testingKnowledge}
-              className="bg-[var(--accent-primary)] text-[var(--text-primary)] px-5 py-2.5 rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-40 transition-all duration-200"
+              className="bg-[var(--accent-primary)] text-[var(--text-primary)] px-5 py-2.5 rounded-xl text-sm font-medium hover:opacity-90 disabled:opacity-40 transition-[opacity,transform] duration-160 active:scale-[0.97]"
             >
               {testingKnowledge ? tForms("loading") : t("testButton")}
             </button>

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { motion } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 import { HeroRevenueWidget } from "@/components/sections/HeroRevenueWidget";
 import { ROUTES, SOCIAL_PROOF } from "@/lib/constants";
@@ -114,11 +115,12 @@ function HeroVoiceDemo() {
           type="button"
           onClick={togglePlay}
           disabled={loading}
-          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-[10px] text-sm font-medium transition-all"
+          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-[10px] text-sm font-medium transition-colors active:scale-[0.97]"
           style={{
             background: playing ? "var(--accent-danger-subtle)" : "var(--bg-hover)",
             color: playing ? "var(--accent-danger)" : "var(--text-primary)",
             border: `1px solid ${playing ? "rgba(220,38,38,0.2)" : "var(--border-default)"}`,
+            transitionDuration: "120ms",
           }}
         >
           {loading ? (
@@ -156,12 +158,13 @@ function HeroVoiceDemo() {
             onChange={(e) => setPhone(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleDemoCall()}
             placeholder={t("placeholder")}
-            className="w-full pl-9 pr-3 py-2.5 text-sm transition-colors focus:outline-none"
+            className="w-full pl-9 pr-3 py-2.5 text-sm focus:outline-none"
             style={{
               background: "var(--bg-inset)",
               border: "1px solid var(--border-default)",
               color: "var(--text-primary)",
-              borderRadius: "var(--radius-btn)"
+              borderRadius: "var(--radius-btn)",
+              transition: "border-color 120ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 120ms cubic-bezier(0.23, 1, 0.32, 1)"
             }}
           />
         </div>
@@ -169,7 +172,7 @@ function HeroVoiceDemo() {
           type="button"
           onClick={handleDemoCall}
           disabled={callLoading}
-          className="btn-marketing-blue px-5 py-2.5 text-sm whitespace-nowrap"
+          className="btn-marketing-blue px-5 py-2.5 text-sm whitespace-nowrap active:scale-[0.97]"
         >
           {callLoading ? t("calling") : t("demoCall")}
         </button>
@@ -201,16 +204,26 @@ export function Hero() {
       <Container className="relative z-10">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Left: Copy */}
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-6" style={{
-              background: "var(--accent-primary-subtle)",
-              color: "var(--accent-primary)",
-              border: "1px solid rgba(37, 99, 235, 0.1)",
-            }}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+          >
+            <motion.div
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-6"
+              style={{
+                background: "var(--accent-primary-subtle)",
+                color: "var(--accent-primary)",
+                border: "1px solid rgba(37, 99, 235, 0.1)",
+              }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0, ease: [0.23, 1, 0.32, 1] }}
+            >
               {t("badge")}
-            </div>
+            </motion.div>
 
-            <h1
+            <motion.h1
               className="font-semibold max-w-xl mb-5"
               style={{
                 fontSize: "clamp(2.25rem, 4.5vw, 3.5rem)",
@@ -218,23 +231,34 @@ export function Hero() {
                 lineHeight: 1.08,
                 color: "var(--text-primary)",
               }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.08, ease: [0.23, 1, 0.32, 1] }}
             >
               {t("heading1")}{" "}
               <br className="hidden sm:block" />
               {t("heading2")}{" "}
               <br className="hidden sm:block" />
               {t("heading3")}
-            </h1>
+            </motion.h1>
 
-            <p
+            <motion.p
               className="text-base md:text-[1.125rem] max-w-lg mb-5 leading-relaxed"
               style={{ color: "var(--text-secondary)" }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.16, ease: [0.23, 1, 0.32, 1] }}
             >
               {t("description")}
-            </p>
+            </motion.p>
 
             {/* Social proof ABOVE CTAs — builds trust before the ask */}
-            <div className="flex flex-wrap items-center gap-3 mb-6">
+            <motion.div
+              className="flex flex-wrap items-center gap-3 mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.24, ease: [0.23, 1, 0.32, 1] }}
+            >
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => (
                   <svg key={i} className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="var(--accent-warning, #F59E0B)">
@@ -249,40 +273,64 @@ export function Hero() {
               <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
                 <strong style={{ color: "var(--text-secondary)" }}>{SOCIAL_PROOF.revenueRecovered}</strong> {t("socialProofRecovered")}
               </span>
-            </div>
+            </motion.div>
 
             {/* CTAs — primary is blue (highest contrast, highest conversion) */}
-            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center mb-2">
+            <motion.div
+              className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center mb-2"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.32, ease: [0.23, 1, 0.32, 1] }}
+            >
               <Link
                 href={ROUTES.START}
-                className="btn-marketing-blue btn-lg group no-underline flex items-center justify-center gap-2 w-full sm:w-auto"
+                className="btn-marketing-blue btn-lg group no-underline flex items-center justify-center gap-2 w-full sm:w-auto active:scale-[0.97]"
               >
                 {t("startFreeTrial")}
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+                <ArrowRight className="w-4 h-4" style={{ transition: "transform 200ms cubic-bezier(0.23, 1, 0.32, 1)" }} />
               </Link>
               <Link
                 href="/demo"
-                className="btn-marketing-ghost btn-lg no-underline flex items-center justify-center w-full sm:w-auto"
+                className="btn-marketing-ghost btn-lg no-underline flex items-center justify-center w-full sm:w-auto active:scale-[0.97]"
               >
                 {t("watchDemo")}
               </Link>
-            </div>
-            <p className="text-xs mb-5" style={{ color: "var(--text-tertiary)" }}>
+            </motion.div>
+            <motion.p
+              className="text-xs mb-5"
+              style={{ color: "var(--text-tertiary)" }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
               {t("creditCard")}
-            </p>
+            </motion.p>
 
-            <HeroVoiceDemo />
-          </div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.48, ease: [0.23, 1, 0.32, 1] }}
+            >
+              <HeroVoiceDemo />
+            </motion.div>
+          </motion.div>
 
           {/* Right: Dashboard preview card */}
-          <div className="max-w-md lg:ml-auto w-full">
-            <div
-              className="rounded-2xl p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+          <motion.div
+            className="max-w-md lg:ml-auto w-full"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2, ease: [0.23, 1, 0.32, 1] }}
+          >
+            <motion.div
+              className="rounded-2xl p-6"
               style={{
                 background: "var(--bg-surface)",
                 border: "1px solid var(--border-default)",
                 boxShadow: "var(--shadow-lg)",
+                transition: "box-shadow 300ms cubic-bezier(0.23, 1, 0.32, 1), transform 300ms cubic-bezier(0.23, 1, 0.32, 1)"
               }}
+              whileHover={{ y: -4 }}
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
@@ -310,13 +358,18 @@ export function Hero() {
                   <p className="text-[10px] font-medium" style={{ color: "var(--text-tertiary)" }}>{t("voiceLabel")}</p>
                 </div>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
 
         {/* Compliance bar */}
-        <div className="max-w-4xl mx-auto mt-16 text-center">
-          <Link href="/security" className="inline-flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium no-underline hover:opacity-80 transition-opacity" style={{ color: "var(--text-tertiary)" }}>
+        <motion.div
+          className="max-w-4xl mx-auto mt-16 text-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+        >
+          <Link href="/security" className="inline-flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium no-underline hover:opacity-80" style={{ color: "var(--text-tertiary)", transition: "opacity 200ms ease" }}>
             {t.raw("compliance").map((label: string) => (
               <span key={label} className="flex items-center gap-1.5">
                 <svg className="w-3.5 h-3.5" style={{ color: "var(--accent-secondary)" }} viewBox="0 0 20 20" fill="currentColor">
@@ -326,7 +379,7 @@ export function Hero() {
               </span>
             ))}
           </Link>
-        </div>
+        </motion.div>
       </Container>
     </section>
   );

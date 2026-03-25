@@ -434,6 +434,21 @@ export default function AppContactsPage() {
 
   return (
     <div className="relative max-w-5xl mx-auto p-4 md:p-6">
+      <style>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(16px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .contact-item {
+          animation: fadeInUp 300ms cubic-bezier(0.23, 1, 0.32, 1) both;
+        }
+      `}</style>
       <div className="flex items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="text-lg md:text-xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
@@ -450,7 +465,7 @@ export default function AppContactsPage() {
             resetForm();
             setShowAdd(true);
           }}
-          className="hidden sm:inline-flex items-center gap-1.5 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl px-4 py-2 text-sm hover:opacity-90 disabled:opacity-50"
+          className="hidden sm:inline-flex items-center gap-1.5 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl px-4 py-2 text-sm hover:opacity-90 disabled:opacity-50 transition-[opacity,transform] duration-160 active:scale-[0.97]"
           disabled={wsLoading || !workspaceId}
         >
           {t("addContactCta")}
@@ -546,7 +561,7 @@ export default function AppContactsPage() {
             resetForm();
             setShowAdd(true);
           }}
-          className="sm:hidden mb-3 w-full bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl px-4 py-2 text-sm hover:opacity-90 disabled:opacity-50"
+          className="sm:hidden mb-3 w-full bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl px-4 py-2 text-sm hover:opacity-90 disabled:opacity-50 transition-[opacity,transform] duration-160 active:scale-[0.97]"
           disabled={!workspaceId}
         >
           {t("addContactCta")}
@@ -564,16 +579,16 @@ export default function AppContactsPage() {
         !loading && (
           <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1.2fr)] gap-4 lg:gap-6 items-start">
             <ul className="space-y-3">
-              {pagedContacts.map((c) => {
+              {pagedContacts.map((c, idx) => {
                 const fullName = `${c.firstName} ${c.lastName}`;
                 return (
-                  <li key={c.id}>
+                  <li key={c.id} className="contact-item" style={{ animationDelay: `${idx * 30}ms` }}>
                     <button
                       type="button"
                       onClick={() => setSelectedId(c.id)}
                       className={`w-full text-left flex items-center gap-4 p-4 rounded-2xl border bg-[var(--bg-card)] ${
                         typeStyles(c.type)
-                      } border-[var(--border-default)] hover:bg-[var(--bg-input)] transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/30 ${selectedId === c.id ? "ring-1 ring-[var(--border-medium)]" : ""}`}
+                      } border-[var(--border-default)] hover:bg-[var(--bg-input)] transition-[background-color,transform] duration-160 active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/30 ${selectedId === c.id ? "ring-1 ring-[var(--border-medium)]" : ""}`}
                     >
                       <div
                         className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold text-[var(--text-primary)] shrink-0 ring-1 ring-[var(--border-default)] ${avatarColorFromName(

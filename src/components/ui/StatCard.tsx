@@ -48,7 +48,7 @@ export function StatCard({
   return (
     <div
       className={cn(
-        "rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 flex flex-col justify-between gap-3",
+        "rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 flex flex-col justify-between gap-3 transition-[border-color,box-shadow] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]",
         className,
       )}
     >
@@ -56,18 +56,23 @@ export function StatCard({
         <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--text-tertiary)]">
           {label}
         </p>
-        <motion.p className="mt-2 text-2xl font-semibold text-[var(--text-primary)] leading-tight">
+        <motion.p className="mt-2 text-2xl font-semibold text-[var(--text-primary)] leading-tight tabular-nums">
           {prefix}
           <motion.span>{rounded}</motion.span>
           {suffix}
         </motion.p>
       </div>
       <div className="mt-1 flex items-center justify-between gap-2">
-        <div className={cn("flex items-center gap-1 text-xs", trendColor)}>
+        <div
+          className={cn(
+            "flex items-center gap-1 text-xs transition-colors duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]",
+            trendColor
+          )}
+        >
           {trend != null && (
             <>
               <TrendIcon className="h-3 w-3" />
-              <span>{Math.abs(trend).toFixed(1)}%</span>
+              <span className="tabular-nums">{Math.abs(trend).toFixed(1)}%</span>
             </>
           )}
         </div>
