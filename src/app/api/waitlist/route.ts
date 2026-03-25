@@ -75,11 +75,11 @@ export async function POST(req: NextRequest) {
       .select();
 
     if (error) {
-      // If it's a unique constraint violation, that's okay - they're already on the list
+      // If it's a unique constraint violation, return 409 Conflict
       if (error.code === "23505") {
         return NextResponse.json(
-          { message: "Email already registered" },
-          { status: 200 }
+          { error: "Email already registered" },
+          { status: 409 }
         );
       }
       throw error;

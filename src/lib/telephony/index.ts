@@ -133,32 +133,258 @@ function createTelnyxService(): TelephonyService {
 
 /**
  * Create a Twilio telephony service instance.
- * Currently a placeholder; actual implementation uses existing sendViaTwilio pattern.
+ * Uses Twilio REST API with basic auth (no SDK dependency).
  */
 function createTwilioService(): TelephonyService {
+  const accountSid = process.env.TWILIO_ACCOUNT_SID;
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
+
+  // Helper: basic auth header for Twilio REST API
+  const getTwilioAuth = (): string | null => {
+    if (!accountSid || !authToken) return null;
+    const credentials = Buffer.from(`${accountSid}:${authToken}`).toString("base64");
+    return `Basic ${credentials}`;
+  };
+
+  // Helper: fetch wrapper for Twilio API
+  const twilioFetch = async (
+    path: string,
+    options: RequestInit = {}
+  ): Promise<Response> => {
+    const auth = getTwilioAuth();
+    if (!auth) {
+      throw new Error("TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN not configured");
+    }
+    const url = `https://api.twilio.com/2010-04-01${path}`;
+    const headers = {
+      "Authorization": auth,
+      "Content-Type": "application/x-www-form-urlencoded",
+      ...options.headers,
+    };
+    const response = await fetch(url, {
+      ...options,
+      headers,
+      signal: options.signal ?? AbortSignal.timeout(15_000),
+    });
+    return response;
+  };
+
+  // Helper: parse Twilio error response
+  const parseTwilioError = (data: unknown): string => {
+    const errorData = data as {
+      message?: string;
+      code?: string;
+      detail?: string;
+      details?: string;
+    };
+    return errorData.message || errorData.detail || errorData.details || "Twilio API error";
+  };
+
   return {
     async sendSms(params: SmsParams) {
-      // This is a placeholder. Actual implementation should use the existing
-      // sendViaTwilio pattern from src/lib/delivery/provider.ts
-      return {
-        error: "Twilio SMS service not yet integrated into unified interface",
-      };
+      try {
+        if (!accountSid || !authToken) {
+          return { error: "Twilio not configured: missing TWILIO_ACCOUNT_SID or TWILIO_AUTH_TOKEN" };
+        }
+
+        const formData = new URLSearchParams();
+        formData.append("From", params.from);
+        formData.append("To", params.to);
+        formData.append("Body", params.text);
+
+        const response = await twilioFetch(`/Accounts/${accountSid}/Messages.json`, {
+          method: "POST",
+          body: formData.toString(),
+        });
+
+        if (!response.ok) {
+          const errorData = (await response.json()) as unknown;
+          const errorMsg = parseTwilioError(errorData);
+          return { error: errorMsg };
+        }
+
+        const data = (await response.json()) as {
+          sid?: string;
+          status?: string;
+          [key: string]: unknown;
+        };
+
+        return {
+          messageId: data.sid || "unknown",
+          status: (data.status as SmsResult["status"]) || "queued",
+        };
+      } catch (err) {
+        return { error: err instanceof Error ? err.message : "Failed to send SMS via Twilio" };
+      }
     },
 
     async searchAvailableNumbers(params) {
-      return { error: "Twilio number search not yet integrated into unified interface" };
+      try {
+        if (!accountSid || !authToken) {
+          return { error: "Twilio not configured" };
+        }
+
+        // Build query parameters for available numbers search
+        const searchParams = new URLSearchParams();
+        if (params.areaCode) {
+          searchParams.append("AreaCode", params.areaCode);
+        }
+        if (params.state) {
+          searchParams.append("Region", params.state);
+        }
+        if (params.limit) {
+          searchParams.append("Limit", String(params.limit));
+        }
+
+        // Map phoneType to Twilio SMS/Voice capabilities
+        const type = params.phoneType || "local";
+        searchParams.append("SmsEnabled", "true");
+        searchParams.append("VoiceEnabled", "true");
+
+        const endpoint =
+          type === "toll_free"
+            ? `/AvailablePhoneNumbers/${params.countryCode || "US"}/TollFree.json`
+            : `/AvailablePhoneNumbers/${params.countryCode || "US"}/Local.json`;
+
+        const response = await twilioFetch(endpoint + "?" + searchParams.toString());
+
+        if (!response.ok) {
+          const errorData = (await response.json()) as unknown;
+          return { error: parseTwilioError(errorData) };
+        }
+
+        const data = (await response.json()) as {
+          available_phone_numbers?: Array<{
+            phone_number?: string;
+            friendly_name?: string;
+            capabilities?: { voice?: boolean; sms?: boolean; mms?: boolean };
+          }>;
+          [key: string]: unknown;
+        };
+
+        const numbers = data.available_phone_numbers || [];
+        return numbers.map((n) => ({
+          phone_number: n.phone_number || "",
+          friendly_name: n.friendly_name || n.phone_number || "",
+          type: (params.phoneType || "local") as "local" | "toll_free" | "mobile",
+          monthly_cost_cents: type === "toll_free" ? 800 : 500,
+          setup_fee_cents: 100,
+          capabilities: {
+            voice: n.capabilities?.voice ?? true,
+            sms: n.capabilities?.sms ?? true,
+            mms: n.capabilities?.mms ?? false,
+          },
+        }));
+      } catch (err) {
+        return { error: err instanceof Error ? err.message : "Failed to search available numbers" };
+      }
     },
 
-    async purchaseNumber() {
-      return { error: "Twilio number purchase not yet integrated into unified interface" };
+    async purchaseNumber(phoneNumberE164, options) {
+      try {
+        if (!accountSid || !authToken) {
+          return { error: "Twilio not configured" };
+        }
+
+        const formData = new URLSearchParams();
+        formData.append("PhoneNumber", phoneNumberE164);
+        if (options?.messagingProfileId) {
+          formData.append("SmsMethod", "POST");
+          formData.append("SmsUrl", "");
+        }
+
+        const response = await twilioFetch(
+          `/Accounts/${accountSid}/IncomingPhoneNumbers.json`,
+          {
+            method: "POST",
+            body: formData.toString(),
+          }
+        );
+
+        if (!response.ok) {
+          const errorData = (await response.json()) as unknown;
+          return { error: parseTwilioError(errorData) };
+        }
+
+        const data = (await response.json()) as {
+          sid?: string;
+          phone_number?: string;
+          status?: string;
+          [key: string]: unknown;
+        };
+
+        return {
+          numberId: data.sid || "unknown",
+          phoneNumber: data.phone_number || phoneNumberE164,
+          status: data.status || "active",
+        };
+      } catch (err) {
+        return { error: err instanceof Error ? err.message : "Failed to purchase number" };
+      }
     },
 
-    async releaseNumber() {
-      return { error: "Twilio number release not yet integrated into unified interface" };
+    async releaseNumber(numberId: string) {
+      try {
+        if (!accountSid || !authToken) {
+          return { error: "Twilio not configured" };
+        }
+
+        const response = await twilioFetch(
+          `/Accounts/${accountSid}/IncomingPhoneNumbers/${numberId}.json`,
+          { method: "DELETE" }
+        );
+
+        if (!response.ok) {
+          const errorData = (await response.json()) as unknown;
+          return { error: parseTwilioError(errorData) };
+        }
+
+        return { success: true };
+      } catch (err) {
+        return { error: err instanceof Error ? err.message : "Failed to release number" };
+      }
     },
 
-    async createOutboundCall() {
-      return { error: "Twilio outbound calls not yet integrated into unified interface" };
+    async createOutboundCall(params: CallParams) {
+      try {
+        if (!accountSid || !authToken) {
+          return { error: "Twilio not configured" };
+        }
+
+        const formData = new URLSearchParams();
+        formData.append("From", params.from);
+        formData.append("To", params.to);
+        formData.append("Url", params.webhookUrl);
+        if (params.metadata) {
+          formData.append("Record", "true");
+        }
+
+        const response = await twilioFetch(
+          `/Accounts/${accountSid}/Calls.json`,
+          {
+            method: "POST",
+            body: formData.toString(),
+          }
+        );
+
+        if (!response.ok) {
+          const errorData = (await response.json()) as unknown;
+          return { error: parseTwilioError(errorData) };
+        }
+
+        const data = (await response.json()) as {
+          sid?: string;
+          status?: string;
+          [key: string]: unknown;
+        };
+
+        return {
+          callId: data.sid || "unknown",
+          status: (data.status as CallResult["status"]) || "queued",
+        };
+      } catch (err) {
+        return { error: err instanceof Error ? err.message : "Failed to create outbound call" };
+      }
     },
   };
 }

@@ -25,10 +25,15 @@ export async function GET(req: NextRequest) {
       .lt("created_at", cutoff)
       .select("id");
 
+    if (error) {
+      console.error("[approval-expiry] Database error:", error);
+      return NextResponse.json({ ok: false, error: "Database error", expired: 0 }, { status: 200 });
+    }
+
     const count = data?.length ?? 0;
-    return NextResponse.json({ ok: !error, expired: count }, { status: 200 });
+    return NextResponse.json({ ok: true, expired: count }, { status: 200 });
   } catch (err) {
     console.error("[approval-expiry] Cron failed:", err instanceof Error ? err.message : String(err));
-    return NextResponse.json({ error: "Cron failed" }, { status: 500 });
+    return NextResponse.json({ ok: false, error: "Cron failed", expired: 0 }, { status: 200 });
   }
 }
