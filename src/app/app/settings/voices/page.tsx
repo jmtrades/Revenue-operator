@@ -198,11 +198,11 @@ export default function VoicesSettingsPage() {
             const utterance = new SpeechSynthesisUtterance(previewText);
             utterance.onend = () => setPlayingVoiceId(null);
             utterance.onerror = () => {
-              toast.error("Voice preview unavailable");
+              toast.error(t("toast.previewUnavailable"));
               setPlayingVoiceId(null);
             };
             window.speechSynthesis.speak(utterance);
-            toast.info("Using browser speech synthesis");
+            toast.info(t("toast.browserSpeech"));
             return;
           }
         }
@@ -217,16 +217,16 @@ export default function VoicesSettingsPage() {
 
           // Show which method was used
           if (previewMethod === "demo-api") {
-            toast.info("Preview using demo API");
+            toast.info(t("toast.demoApi"));
           } else if (previewMethod === "voice-server") {
-            toast.info("Preview using voice server");
+            toast.info(t("toast.voiceServer"));
           }
         } else {
-          toast.error("Voice preview unavailable");
+          toast.error(t("toast.previewUnavailable"));
           setPlayingVoiceId(null);
         }
       } catch (error) {
-        const message = error instanceof Error ? error.message : "Voice preview unavailable";
+        const message = error instanceof Error ? error.message : t("toast.previewUnavailable");
         toast.error(message);
         setPlayingVoiceId(null);
       }

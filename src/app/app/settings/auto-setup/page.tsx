@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { ChevronDown, RefreshCw, Check, AlertCircle } from "lucide-react";
 import Link from "next/link";
@@ -50,6 +51,7 @@ const INDUSTRIES = [
 ];
 
 export default function AutoSetupPage() {
+  const t = useTranslations("autoSetup");
   const [url, setUrl] = useState("");
   const [industry, setIndustry] = useState("");
   const [analyzing, setAnalyzing] = useState(false);
@@ -96,7 +98,7 @@ export default function AutoSetupPage() {
 
   const handleReanalyze = async () => {
     if (!url.trim() && !industry.trim()) {
-      toast.error("Please enter a website URL or select an industry");
+      toast.error(t("toast.enterUrlOrIndustry"));
       return;
     }
 
@@ -148,7 +150,7 @@ export default function AutoSetupPage() {
       }
     } catch (error) {
       clearInterval(messageInterval);
-      toast.error("Failed to analyze website. Please try again.");
+      toast.error(t("toast.analyzeFailed"));
       console.error(error);
       setShowPreview(false);
     } finally {
@@ -182,7 +184,7 @@ export default function AutoSetupPage() {
       }
 
       setConfirmed(true);
-      toast.success("Knowledge base updated successfully!");
+      toast.success(t("toast.knowledgeBaseUpdated"));
 
       // Reload current stats
       setTimeout(async () => {
@@ -197,7 +199,7 @@ export default function AutoSetupPage() {
         }
       }, 1000);
     } catch (error) {
-      toast.error("Failed to update knowledge base. Please try again.");
+      toast.error(t("toast.updateFailed"));
       console.error(error);
     } finally {
       setConfirming(false);

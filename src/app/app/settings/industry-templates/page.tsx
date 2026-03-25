@@ -59,10 +59,10 @@ export default function IndustryTemplatesPage() {
           const data = await res.json();
           setTemplates(data.templates || []);
         } else {
-          toast.error("Failed to load industry templates");
+          toast.error(tTemplates("toast.loadFailed"));
         }
       } catch (err) {
-        toast.error("Error loading templates: " + (err instanceof Error ? err.message : "Unknown error"));
+        toast.error(tTemplates("toast.loadError"));
       } finally {
         setLoading(false);
       }
@@ -74,9 +74,9 @@ export default function IndustryTemplatesPage() {
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast.success("Copied to clipboard");
+      toast.success(tTemplates("toast.copied"));
     } catch {
-      toast.error("Failed to copy");
+      toast.error(tTemplates("toast.copyFailed"));
     }
   };
 

@@ -2960,7 +2960,9 @@
       "errorTitle": "Could not load calls"
     },
     "toast": {
-      "exportSuccess": "Appels exportés. Vérifiez vos téléchargements."
+      "exportSuccess": "Appels exportés. Vérifiez vos téléchargements.",
+      "openingSms": "Ouverture SMS...",
+      "noPhoneForSms": "Aucun numéro de téléphone disponible pour cet appel"
     },
     "live": {
       "selectWorkspace": "Sélectionnez un espace pour voir les appels en direct.",
@@ -3786,7 +3788,9 @@
       "nameNoMatch": "Le nom de l’espace ne correspond pas. Saisissez-le exactement pour confirmer.",
       "deleted": "Espace supprimé. Redirection en cours…",
       "deleteWorkspaceError": "Impossible de supprimer l'espace de travail.",
-      "label": "Business"
+      "label": "Business",
+      "nameRequired": "Le nom de l'entreprise est requis",
+      "invalidWebsite": "Veuillez entrer une URL de site web valide (commençant par http:// ou https://)"
     },
     "phone": {
       "title": "Téléphone et numéros",
@@ -3859,7 +3863,8 @@
       "roleUpdateFailed": "Failed to update role.",
       "removeFailed": "Failed to remove member.",
       "inviteFailed": "Failed to send invite. Please try again.",
-      "networkError": "Network error. Please try again."
+      "networkError": "Network error. Please try again.",
+      "invalidEmail": "Veuillez entrer une adresse e-mail valide"
     },
     "compliance": {
       "title": "Conformité",
@@ -7665,7 +7670,8 @@
       "codeSent": "Code envoyé. Vérifiez votre téléphone.",
       "getAiNumber": "Utilisez « Obtenir un numéro IA » pour une ligne dédiée.",
       "phoneVerified": "Téléphone vérifié ✓",
-      "waitlistJoined": "Nous vous préviendrons quand des numéros seront disponibles."
+      "waitlistJoined": "Nous vous préviendrons quand des numéros seront disponibles.",
+      "invalidAreaCode": "Veuillez entrer un indicatif régional valide à 3 chiffres"
     },
     "marketplace": {
       "title": "Place de marché des numéros",
@@ -8304,7 +8310,13 @@
     "breadcrumb": "Industry Templates",
     "title": "Industry Templates",
     "description": "Production-ready templates for AI agents across",
-    "emptyState": "No industry templates available yet."
+    "emptyState": "No industry templates available yet.",
+    "toast": {
+      "loadFailed": "Échec du chargement des modèles",
+      "loadError": "Erreur lors du chargement des modèles",
+      "copied": "Copié dans le presse-papiers",
+      "copyFailed": "Échec de la copie"
+    }
   },
   "sidebar": {
     "tier": "Starter",
@@ -10099,6 +10111,44 @@
     "createTest": "Create Test",
     "trafficSplit": "Traffic Split",
     "voiceA": "Voice A",
-    "voiceB": "Voice B"
+    "voiceB": "Voice B",
+    "toast": {
+      "previewUnavailable": "Aperçu vocal indisponible",
+      "browserSpeech": "Utilisation de la synthèse vocale du navigateur",
+      "demoApi": "Aperçu via l'API de démonstration",
+      "voiceServer": "Aperçu via le serveur vocal"
+    }
+  },
+  "autoSetup": {
+    "toast": {
+      "enterUrlOrIndustry": "Veuillez entrer une URL de site web ou sélectionner un secteur",
+      "analyzeFailed": "Échec de l'analyse du site web. Veuillez réessayer.",
+      "knowledgeBaseUpdated": "Base de connaissances mise à jour avec succès !",
+      "updateFailed": "Échec de la mise à jour de la base de connaissances. Veuillez réessayer."
+    }
+  },
+  "chatWidget": {
+    "loading": "Chargement des paramètres du widget...",
+    "toast": {
+      "loadFailed": "Échec du chargement de la configuration du widget",
+      "unknownError": "Erreur inconnue",
+      "saveFailed": "Échec de la sauvegarde de la configuration",
+      "saved": "Configuration du widget sauvegardée",
+      "embedCopied": "Code d'intégration copié dans le presse-papiers",
+      "copyFailed": "Échec de la copie du code d'intégration"
+    }
+  },
+  "whiteLabel": {
+    "toast": {
+      "loadFailed": "Échec du chargement des paramètres de marque blanche",
+      "saved": "Paramètres de marque blanche sauvegardés",
+      "saveFailed": "Échec de la sauvegarde des paramètres de marque blanche"
+    }
+  },
+  "communication": {
+    "toast": {
+      "error": "Une erreur est survenue",
+      "saved": "Paramètres sauvegardés avec succès"
+    }
   }
 }

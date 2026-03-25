@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
@@ -23,6 +24,7 @@ interface WhiteLabelConfig {
 }
 
 export default function WhiteLabelSettingsPage() {
+  const t = useTranslations("whiteLabel");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [config, setConfig] = useState<WhiteLabelConfig>({
@@ -56,7 +58,7 @@ export default function WhiteLabelSettingsPage() {
         }
       } catch (err) {
         console.error("[white-label settings] Failed to load config:", err);
-        toast.error("Failed to load white-label settings");
+        toast.error(t("toast.loadFailed"));
       } finally {
         setLoading(false);
       }
@@ -78,10 +80,10 @@ export default function WhiteLabelSettingsPage() {
       const data = await res.json();
       lastSavedRef.current = data.config;
       setConfig(data.config);
-      toast.success("White-label settings saved");
+      toast.success(t("toast.saved"));
     } catch (err) {
       console.error("[white-label settings] Failed to save:", err);
-      toast.error("Failed to save white-label settings");
+      toast.error(t("toast.saveFailed"));
     } finally {
       setSaving(false);
     }
