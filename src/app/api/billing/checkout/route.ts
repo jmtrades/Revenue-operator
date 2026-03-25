@@ -260,6 +260,7 @@ export async function POST(req: NextRequest) {
       const hasSubscriptionHistory =
         wsData.billing_status === "trial" ||
         wsData.billing_status === "trial_ended" ||
+        wsData.billing_status === "cancelled" ||
         wsData.stripe_subscription_id;
 
       if (!hasSubscriptionHistory) {

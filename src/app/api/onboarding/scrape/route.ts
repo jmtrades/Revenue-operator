@@ -129,17 +129,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Only HTTP/HTTPS URLs are supported" }, { status: 400 });
   }
 
-  // Block private/internal IPs to prevent SSRF
-  const hostname = parsed.hostname.toLowerCase();
+  // Block private/internal IPs to prevent SSRF (IPv4 + IPv6)
+  const hostname = parsed.hostname.toLowerCase().replace(/^\[|\]$/g, "");
   if (
     hostname === "localhost" ||
     hostname === "127.0.0.1" ||
+    hostname === "::1" ||
+    hostname === "::" ||
+    hostname === "0.0.0.0" ||
     hostname.startsWith("10.") ||
     hostname.startsWith("172.") ||
     hostname.startsWith("192.168.") ||
-    hostname === "0.0.0.0" ||
+    hostname.startsWith("fc") ||
+    hostname.startsWith("fd") ||
+    hostname.startsWith("fe80") ||
     hostname.endsWith(".internal") ||
-    hostname.endsWith(".local")
+    hostname.endsWith(".local") ||
+    /^0+:0+:0+:0+:0+:(?:0+|ffff):/.test(hostname)
   ) {
     return NextResponse.json({ error: "Internal URLs are not allowed" }, { status: 400 });
   }
