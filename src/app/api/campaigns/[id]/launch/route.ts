@@ -66,8 +66,10 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     communication_mode?: string | null;
     agent_mode?: string | null;
   };
+  const blockedBillingStatuses = new Set(["trial_ended", "cancelled", "payment_failed"]);
   const isActive =
     (billing.billing_status === "active" || billing.billing_status === "trial") &&
+    !blockedBillingStatuses.has(billing.billing_status ?? "") &&
     !billing.pause_reason &&
     Boolean(billing.stripe_subscription_id);
   if (!isActive) {

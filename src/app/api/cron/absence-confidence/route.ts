@@ -63,6 +63,8 @@ export async function GET(req: NextRequest) {
     if (openCutoff.getTime() > seventyTwoHoursAgo.getTime()) continue;
 
     if (row.billing_status === "trial_ended") continue;
+    if (row.billing_status === "cancelled") continue;
+    if (row.billing_status === "payment_failed") continue;
     if (row.billing_status === "trial" && row.protection_renewal_at && new Date(row.protection_renewal_at) < now) continue;
 
     if (row.absence_confidence_sent_at && new Date(row.absence_confidence_sent_at).getTime() > sevenDaysAgo.getTime()) continue;

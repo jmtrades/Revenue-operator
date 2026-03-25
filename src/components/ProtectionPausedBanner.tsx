@@ -42,8 +42,12 @@ export function ProtectionPausedBanner() {
   const isTrial = billingStatus.billing_status === "trial";
   const trialEndingSoon = isTrial && daysLeft !== null && daysLeft > 0 && daysLeft <= 7;
 
-  // Show banner if trial ended and no active subscription
+  // Show banner if trial ended, cancelled, or payment failed
+  const isCancelled = billingStatus.billing_status === "cancelled";
+  const isPaymentFailed = billingStatus.billing_status === "payment_failed";
   const trialEnded = billingStatus.billing_status === "trial_ended" ||
+    isCancelled ||
+    isPaymentFailed ||
     (isTrial && trialEndDate && trialEndDate < now);
 
   // Show "trial ending soon" banner (7 days or less)
