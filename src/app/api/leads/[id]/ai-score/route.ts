@@ -6,11 +6,15 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { scoreLeadWithAI, saveLeadScore } from "@/lib/lead-scoring/ai-scorer";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const csrfErr = assertSameOrigin(req);
+  if (csrfErr) return csrfErr;
+
   try {
     const { id: leadId } = await params;
     if (!leadId) {

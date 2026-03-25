@@ -573,8 +573,40 @@ export async function advanceEnrollment(
     });
   }
 
-  // IMPORTANT: Only update enrollment state AFTER action successfully executes
-  // Calculate when the next step should execute
+  // CRITICAL: Only advance enrollment if the action actually succeeded.
+  // If the action failed, reschedule for retry (up to 3 retries, then skip).
+  if (!actionSucceeded) {
+    const retryCount = (e as unknown as { retry_count?: number }).retry_count ?? 0;
+    if (retryCount < 3) {
+      // Reschedule for 15 minutes later and increment retry count
+      const retryDue = new Date();
+      retryDue.setMinutes(retryDue.getMinutes() + 15);
+      await db
+        .from("sequence_enrollments")
+        .update({
+          next_step_due_at: retryDue.toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", enrollmentId);
+      console.warn(`[sequence] Step ${nextStep.step_order} (${stepToExecute.type}) failed for enrollment ${enrollmentId} — retry ${retryCount + 1}/3 scheduled`);
+    } else {
+      // Max retries exceeded: skip this step and advance
+      console.error(`[sequence] Step ${nextStep.step_order} (${stepToExecute.type}) failed 3 times for enrollment ${enrollmentId} — skipping step`);
+      const nextDueDate = new Date();
+      nextDueDate.setMinutes(nextDueDate.getMinutes() + nextStep.delay_minutes);
+      await db
+        .from("sequence_enrollments")
+        .update({
+          current_step: nextStep.step_order,
+          next_step_due_at: nextDueDate.toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", enrollmentId);
+    }
+    return null;
+  }
+
+  // Action succeeded — advance to next step
   const nextDueDate = new Date();
   nextDueDate.setMinutes(nextDueDate.getMinutes() + nextStep.delay_minutes);
 
@@ -796,9 +828,27 @@ export async function processWorkspaceDueEnrollments(
 ): Promise<number> {
   const due = await getNextDueEnrollments(workspaceId, batchSize);
   let processedCount = 0;
+  const db = getDb();
 
   for (const enrollment of due) {
     try {
+      // Atomic claim: set next_step_due_at to 10 minutes from now to prevent
+      // concurrent cron instances from picking up the same enrollment.
+      // Only claims if next_step_due_at hasn't changed since we read it (optimistic lock).
+      const claimUntil = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+      const { data: claimed } = await db
+        .from("sequence_enrollments")
+        .update({ next_step_due_at: claimUntil, updated_at: new Date().toISOString() })
+        .eq("id", enrollment.id)
+        .eq("next_step_due_at", enrollment.next_step_due_at) // Optimistic lock
+        .select("id")
+        .maybeSingle();
+
+      if (!claimed) {
+        // Another cron instance already claimed this enrollment — skip
+        continue;
+      }
+
       const result = await advanceEnrollment(enrollment.id);
       if (result) {
         processedCount++;
