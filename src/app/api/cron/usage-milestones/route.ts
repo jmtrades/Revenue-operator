@@ -73,7 +73,7 @@ export async function GET(req: NextRequest) {
         .from("email_send_queue")
         .select("id")
         .eq("workspace_id", ws.id)
-        .eq("template_slug", milestoneSlug)
+        .eq("metadata->>template_slug", milestoneSlug)
         .limit(1)
         .maybeSingle();
 
