@@ -14,6 +14,7 @@ import { getTelephonyProvider } from "@/lib/telephony/get-telephony-provider";
 import { getTelephonyService } from "@/lib/telephony";
 import { purchaseTelnyxPhoneNumber } from "@/lib/telephony/telnyx/numbers";
 import { canProvisionNumber } from "@/lib/billing/plan-enforcement";
+import { USAGE_RATES } from "@/lib/billing-plans";
 import { assertSameOrigin } from "@/lib/http/csrf";
 
 export const dynamic = "force-dynamic";
@@ -257,9 +258,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "This number is already provisioned to another workspace." }, { status: 409 });
   }
 
-  // Pricing: $5/mo local, $8/mo toll-free (canonical from telephony/index.ts)
-  const monthlyCost = number_type === "toll_free" ? 800 : 500;
-  const setupFeeCents = 100; // $1.00 one-time setup fee
+  // Pricing: $5/mo local, $8/mo toll-free (canonical from billing-plans.ts USAGE_RATES)
+  const monthlyCost = number_type === "toll_free" ? 800 : USAGE_RATES.phoneNumberMonthlyCents;
+  const setupFeeCents = USAGE_RATES.phoneNumberSetupCents; // $2.00 one-time setup fee
   const { data: inserted, error } = await db
     .from("phone_numbers")
     .insert({
