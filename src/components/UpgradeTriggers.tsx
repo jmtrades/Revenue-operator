@@ -414,15 +414,15 @@ interface UpgradeModalProps {
 
 const PLAN_DETAILS: Record<string, PlanComparison> = {
   Starter: {
-    calls: 500,
+    calls: 1000,
     messages: 2000,
     customIntegrations: false,
     analytics: false,
     support: 'Email',
-    price: 97,
+    price: 147,
   },
   Growth: {
-    calls: 2500,
+    calls: 3000,
     messages: 10000,
     customIntegrations: true,
     analytics: true,
@@ -430,7 +430,7 @@ const PLAN_DETAILS: Record<string, PlanComparison> = {
     price: 297,
   },
   Business: {
-    calls: 6000,
+    calls: 8000,
     messages: 25000,
     customIntegrations: true,
     analytics: true,

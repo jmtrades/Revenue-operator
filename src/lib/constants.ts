@@ -185,7 +185,7 @@ export const PRICING_FAQ = [
 ] as const;
 
 export const COMPARISON_FEATURES = [
-  { category: "Core", name: "Voice minutes / month", solo: "500", business: "2,500", scale: "6,000", enterprise: "15,000" },
+  { category: "Core", name: "Voice minutes / month", solo: "1,000", business: "3,000", scale: "8,000", enterprise: "15,000" },
   { category: "Core", name: "AI agents", solo: "1", business: "5", scale: "15", enterprise: "Unlimited" },
   { category: "Core", name: "Follow-ups", solo: "SMS + email", business: "SMS + email + voice", scale: "SMS + email + voice", enterprise: "Unlimited" },
   { category: "Core", name: "Team seats", solo: "1", business: "5", scale: "Unlimited", enterprise: "Unlimited" },

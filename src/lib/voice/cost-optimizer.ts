@@ -172,10 +172,10 @@ export const DEFAULT_CACHE_CONFIG: CacheConfig = {
  *   With caching: ~0.9¢/min effective → Margin: 91%
  *
  * Subscription margins (included minutes):
- *   Starter ($97/500min):    19.4¢/min revenue, 1.2¢ cost → 94% margin
- *   Growth ($297/2500min):   11.9¢/min revenue, 1.2¢ cost → 90% margin
- *   Business ($597/6000min): 10.0¢/min revenue, 1.2¢ cost → 88% margin
- *   Agency ($997/15000min):  6.6¢/min revenue, 1.2¢ cost  → 82% margin
+ *   Starter ($147/1000min):  14.7¢/min revenue, 1.2¢ cost → 92% margin
+ *   Growth ($297/3000min):    9.9¢/min revenue, 1.2¢ cost → 88% margin
+ *   Business ($597/8000min):  7.5¢/min revenue, 1.2¢ cost → 84% margin
+ *   Agency ($997/15000min):   6.6¢/min revenue, 1.2¢ cost → 82% margin
  */
 export const OPTIMIZED_MARGINS = {
   blended_cost_per_minute_cents: calculateBlendedCostPerMinute(),

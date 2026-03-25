@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
 import { Shell } from "@/components/Shell";
@@ -65,6 +66,7 @@ interface KnowledgeGap {
 
 export default function SituationPage() {
   const searchParams = useSearchParams();
+  const t = useTranslations("dashboard");
   const { workspaceId, workspaces } = useWorkspace();
   const [capsule, setCapsule] = useState<Capsule | null>(null);
   const [retention, setRetention] = useState<RetentionPayload | null>(null);
@@ -114,17 +116,17 @@ export default function SituationPage() {
             </div>
           </div>
           <h1 className="text-3xl font-bold mb-2" style={{ color: "var(--text-primary)" }}>
-            Ready to get started?
+            {t("onboarding.readyTitle")}
           </h1>
           <p className="text-base mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
-            Set up your AI phone agent and start handling calls, capturing leads, and booking appointments automatically.
+            {t("onboarding.readyDescription")}
           </p>
           <Link
             href="/activate"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm transition-colors hover:opacity-90"
             style={{ background: "var(--accent-primary)", color: "white" }}
           >
-            Start Your Free Trial
+            {t("onboarding.startTrial")}
             <ChevronRight size={18} />
           </Link>
         </div>
@@ -137,7 +139,7 @@ export default function SituationPage() {
       <Shell>
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
-            <p className="text-lg" style={{ color: "var(--text-muted)" }}>Loading your dashboard...</p>
+            <p className="text-lg" style={{ color: "var(--text-muted)" }}>{t("loading")}</p>
           </div>
         </div>
       </Shell>
@@ -155,7 +157,7 @@ export default function SituationPage() {
   if (loading) {
     return (
       <Shell>
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>One moment…</p>
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>{t("loading")}</p>
       </Shell>
     );
   }
@@ -186,7 +188,7 @@ export default function SituationPage() {
       {/* Welcome Section */}
       <div className="mb-12">
         <h1 className="text-4xl font-bold mb-2" style={{ color: "var(--text-primary)" }}>
-          Welcome back
+          {t("welcomeBack")}
         </h1>
         <p className="text-lg" style={{ color: "var(--text-secondary)" }}>
           {businessName}
@@ -204,7 +206,7 @@ export default function SituationPage() {
           <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
             {stats?.recent_calls ?? "0"}
           </p>
-          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Active Calls</p>
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("stats.activeCalls")}</p>
         </Link>
 
         <div className="rounded-lg border p-6" style={{ borderColor: "var(--border-default)", background: "var(--card)", borderWidth: "1px" }}>
@@ -219,10 +221,10 @@ export default function SituationPage() {
             </p>
           ) : (
             <p className="text-xl font-semibold mb-1" style={{ color: "var(--text-tertiary)" }}>
-              Starts after first call
+              {t("stats.startsAfterFirstCall")}
             </p>
           )}
-          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Est. Revenue Recovered</p>
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("stats.estRevenueRecovered")}</p>
         </div>
 
         <div className="rounded-lg border p-6" style={{ borderColor: "var(--border-default)", background: "var(--card)", borderWidth: "1px" }}>
@@ -234,7 +236,7 @@ export default function SituationPage() {
           <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
             {stats?.recent_calls ?? "0"}
           </p>
-          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Calls Handled</p>
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("kpis.callsHandled")}</p>
         </div>
 
         <Link href={`/dashboard/leads?filter=followup${searchParams.get("workspace_id") ? `&workspace_id=${searchParams.get("workspace_id")}` : ""}`} className="rounded-lg border p-6 transition-[box-shadow,border-opacity] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] hover:shadow-md hover:border-opacity-50 active:scale-[0.97]" style={{ borderColor: "var(--border-default)", background: "var(--card)", borderWidth: "1px" }}>
@@ -246,14 +248,14 @@ export default function SituationPage() {
           <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
             {stats?.pending_followups ?? "0"}
           </p>
-          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Appointments Booked</p>
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("kpis.appointmentsBooked")}</p>
         </Link>
       </div>
       {/* Getting Started Section */}
       <div className="mb-12">
         <div className="flex items-center gap-2 mb-6">
           <Zap size={24} style={{ color: "var(--accent-primary)" }} />
-          <h2 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Getting Started</h2>
+          <h2 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>{t("gettingStarted.title")}</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Link
@@ -267,8 +269,8 @@ export default function SituationPage() {
               </div>
               <ChevronRight size={18} style={{ color: "var(--text-tertiary)" }} className="group-hover:translate-x-1 transition-[transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]" />
             </div>
-            <h3 className="font-semibold mb-1" style={{ color: "var(--text-primary)" }}>Complete Your Profile</h3>
-            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Add business info and preferences</p>
+            <h3 className="font-semibold mb-1" style={{ color: "var(--text-primary)" }}>{t("gettingStarted.completeProfile")}</h3>
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("gettingStarted.completeProfileDesc")}</p>
           </Link>
 
           <Link
@@ -282,8 +284,8 @@ export default function SituationPage() {
               </div>
               <ChevronRight size={18} style={{ color: "var(--text-tertiary)" }} className="group-hover:translate-x-1 transition-[transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]" />
             </div>
-            <h3 className="font-semibold mb-1" style={{ color: "var(--text-primary)" }}>Set Up Your Number</h3>
-            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Configure your AI agent's phone number</p>
+            <h3 className="font-semibold mb-1" style={{ color: "var(--text-primary)" }}>{t("gettingStarted.setupNumber")}</h3>
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("gettingStarted.setupNumberDesc")}</p>
           </Link>
 
           <Link
@@ -297,8 +299,8 @@ export default function SituationPage() {
               </div>
               <ChevronRight size={18} style={{ color: "var(--text-tertiary)" }} className="group-hover:translate-x-1 transition-[transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]" />
             </div>
-            <h3 className="font-semibold mb-1" style={{ color: "var(--text-primary)" }}>Choose Agent Voice</h3>
-            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Pick the perfect voice personality</p>
+            <h3 className="font-semibold mb-1" style={{ color: "var(--text-primary)" }}>{t("gettingStarted.chooseVoice")}</h3>
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("gettingStarted.chooseVoiceDesc")}</p>
           </Link>
 
           <Link
@@ -312,8 +314,8 @@ export default function SituationPage() {
               </div>
               <ChevronRight size={18} style={{ color: "var(--text-tertiary)" }} className="group-hover:translate-x-1 transition-[transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]" />
             </div>
-            <h3 className="font-semibold mb-1" style={{ color: "var(--text-primary)" }}>View Recent Activity</h3>
-            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Check call logs and recordings</p>
+            <h3 className="font-semibold mb-1" style={{ color: "var(--text-primary)" }}>{t("gettingStarted.viewActivity")}</h3>
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("gettingStarted.viewActivityDesc")}</p>
           </Link>
         </div>
       </div>
@@ -323,8 +325,8 @@ export default function SituationPage() {
         <div className="mb-10 rounded-lg border p-6" style={{ borderColor: "var(--border-default)", background: "var(--card)" }}>
           <div className="flex items-center justify-between mb-5">
             <div>
-              <h3 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>Revenue At Risk</h3>
-              <p className="text-sm mt-0.5" style={{ color: "var(--text-secondary)" }}>Estimated revenue leaking this week</p>
+              <h3 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>{t("revenueAtRisk.title")}</h3>
+              <p className="text-sm mt-0.5" style={{ color: "var(--text-secondary)" }}>{t("revenueAtRisk.subtitle")}</p>
             </div>
             <p className="text-2xl font-bold" style={{ color: "var(--meaning-red)" }}>${revenueRisk.total_at_risk.toLocaleString()}</p>
           </div>
@@ -356,8 +358,8 @@ export default function SituationPage() {
       {/* Knowledge Gaps */}
       {gaps.length > 0 && (
         <div className="mb-10 rounded-lg border p-6" style={{ borderColor: "var(--border-default)", background: "var(--card)" }}>
-          <h3 className="text-lg font-semibold mb-1" style={{ color: "var(--text-primary)" }}>AI Knowledge Gaps</h3>
-          <p className="text-sm mb-5" style={{ color: "var(--text-secondary)" }}>Your AI couldn&apos;t answer these questions. Add answers to make it smarter.</p>
+          <h3 className="text-lg font-semibold mb-1" style={{ color: "var(--text-primary)" }}>{t("knowledgeGaps.title")}</h3>
+          <p className="text-sm mb-5" style={{ color: "var(--text-secondary)" }}>{t("knowledgeGaps.description")}</p>
           <div className="space-y-3">
             {gaps.slice(0, 5).map((gap) => (
               <div key={gap.id} className="flex items-center justify-between gap-4 py-3 border-t" style={{ borderColor: "var(--border-default)" }}>
@@ -370,7 +372,7 @@ export default function SituationPage() {
                   className="text-xs font-medium px-3 py-2 rounded-lg whitespace-nowrap transition-[background-color,color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                   style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}
                 >
-                  Add answer
+                  {t("knowledgeGaps.addAnswer")}
                 </Link>
               </div>
             ))}
@@ -381,9 +383,9 @@ export default function SituationPage() {
       {/* Recent Activity Section */}
       <div className="mb-10">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Recent Activity</h2>
+          <h2 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>{t("recentActivity.title")}</h2>
           <Link href={callsHref} className="text-sm font-medium flex items-center gap-1 transition-[color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]" style={{ color: "var(--accent-primary)" }}>
-            View all
+            {t("recentActivity.viewAll")}
             <ChevronRight size={16} />
           </Link>
         </div>
@@ -395,16 +397,16 @@ export default function SituationPage() {
                 <Phone size={24} style={{ color: "var(--accent-primary)" }} />
               </div>
             </div>
-            <h3 className="font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Your activity feed is ready</h3>
+            <h3 className="font-semibold mb-2" style={{ color: "var(--text-primary)" }}>{t("recentActivity.emptyTitle")}</h3>
             <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>
-              Once your AI agent handles its first call, you&apos;ll see real-time updates here
+              {t("recentActivity.emptyDescription")}
             </p>
             <Link
               href={`/dashboard/settings/phone${searchParams.get("workspace_id") ? `?workspace_id=${searchParams.get("workspace_id")}` : ""}`}
               className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg transition-[background-color,opacity] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] hover:opacity-90 active:scale-[0.97]"
               style={{ background: "var(--accent-primary)", color: "#fff" }}
             >
-              Set Up Your Phone Number
+              {t("gettingStarted.setupNumber")}
               <ChevronRight size={14} />
             </Link>
           </div>
