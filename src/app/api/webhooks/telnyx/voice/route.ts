@@ -172,7 +172,13 @@ export async function POST(req: NextRequest) {
           }
 
           // 5. Start streaming audio after answering
-          const voiceServerUrl = process.env.VOICE_SERVER_URL || "http://localhost:8080";
+          const voiceServerUrl = process.env.VOICE_SERVER_URL;
+          if (!voiceServerUrl) {
+            log("error", "telnyx_voice.voice_server_not_configured");
+            await speakText(callInfo.callControlId, "I'm experiencing a technical issue. Please try again later.");
+            await hangupCall(callInfo.callControlId);
+            break;
+          }
           // Pass workspace_id as query param so voice server can forward it to LLM endpoint
           const wsBase = voiceServerUrl.replace(/^http:/, "ws:").replace(/^https:/, "wss:") + "/ws/conversation";
           const wsUrl = workspaceId ? `${wsBase}?workspace_id=${encodeURIComponent(workspaceId)}` : wsBase;
@@ -195,7 +201,13 @@ export async function POST(req: NextRequest) {
         // For outbound demo calls (no workspace), answer and stream to voice server directly
         if (isOutbound && !resolvedWorkspaceId && callInfo.callControlId) {
           log("info", "telnyx_voice.demo_outbound_answered", { callControlId: callInfo.callControlId });
-          const voiceServerUrl = process.env.VOICE_SERVER_URL || process.env.NEXT_PUBLIC_VOICE_SERVER_URL || "http://localhost:8080";
+          const voiceServerUrl = process.env.VOICE_SERVER_URL || process.env.NEXT_PUBLIC_VOICE_SERVER_URL;
+          if (!voiceServerUrl) {
+            log("error", "telnyx_voice.voice_server_not_configured_demo");
+            await speakText(callInfo.callControlId, "I'm experiencing a technical issue. Please try again later.");
+            await hangupCall(callInfo.callControlId);
+            break;
+          }
           const wsUrl = voiceServerUrl.replace(/^http:/, "ws:").replace(/^https:/, "wss:") + "/ws/conversation";
 
           const streamResult = await startStreamingAudio(callInfo.callControlId, wsUrl);
@@ -250,21 +262,25 @@ export async function POST(req: NextRequest) {
             .eq("workspace_id", resolvedWorkspaceId);
 
           // Trigger post-call processing asynchronously
-          const appUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
-          fetch(`${appUrl}/api/inbound/post-call`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              call_session_id: callInfo.callSessionId,
-              workspace_id: resolvedWorkspaceId,
-              source: "telnyx_hangup",
-            }),
-          }).catch((err) => {
-            log("error", "telnyx_voice.post_call_trigger_failed", {
-              error: err instanceof Error ? err.message : String(err),
-              sessionId: callInfo.callSessionId,
+          const appUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null);
+          if (!appUrl) {
+            log("error", "telnyx_voice.app_url_not_configured");
+          } else {
+            fetch(`${appUrl}/api/inbound/post-call`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                call_session_id: callInfo.callSessionId,
+                workspace_id: resolvedWorkspaceId,
+                source: "telnyx_hangup",
+              }),
+            }).catch((err) => {
+              log("error", "telnyx_voice.post_call_trigger_failed", {
+                error: err instanceof Error ? err.message : String(err),
+                sessionId: callInfo.callSessionId,
+              });
             });
-          });
+          }
         }
         break;
       }

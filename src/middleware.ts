@@ -7,7 +7,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getSessionFromCookieAsync } from "@/lib/auth/session-edge";
 
 /** Paths that require authentication */
-const PROTECTED_PREFIX = "/app";
+const PROTECTED_PREFIXES = ["/app", "/admin"];
 
 /** Paths that authenticated users should skip (redirect to dashboard) */
 const AUTH_PAGES = ["/sign-in", "/sign-up", "/forgot-password"];
@@ -38,7 +38,7 @@ export async function middleware(request: NextRequest) {
   const session = await getSessionFromCookieAsync(cookieHeader);
 
   // Protected routes: redirect unauthenticated users to sign-in
-  if (pathname.startsWith(PROTECTED_PREFIX)) {
+  if (PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix))) {
     if (!session?.userId) {
       const signInUrl = new URL("/sign-in", request.url);
       signInUrl.searchParams.set("from", pathname);

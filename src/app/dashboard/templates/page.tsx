@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { toast } from 'sonner';
 import {
   Wrench,
   Stethoscope,
@@ -354,6 +355,7 @@ export default function TemplatesPage() {
       }
 
       setActivatedIds((prev) => new Set([...prev, templateId]));
+      toast.success('Template activated successfully');
 
       // Show success feedback
       setTimeout(() => {
@@ -361,9 +363,9 @@ export default function TemplatesPage() {
       }, 1000);
     } catch (error) {
       // Show error feedback to user
+      console.error('Failed to activate template:', error);
+      toast.error('Failed to activate template. Please try again.');
       setActivatingId(null);
-      // TODO: Integrate with toast/error notification system
-      // For now, silently fail - activation state will update on next page refresh
     }
   };
 
