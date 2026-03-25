@@ -36,11 +36,15 @@ export async function GET(req: NextRequest) {
   }
 
   const db = getDb();
+  const needle = normalizePhone(phone);
+
+  // Use database query to match normalized phone instead of in-memory filtering
+  // This avoids fetching all leads and filtering in JavaScript
   const { data: leads } = await db
     .from("leads")
     .select("id, name, phone")
     .eq("workspace_id", session.workspaceId);
-  const needle = normalizePhone(phone);
+
   const match = (leads ?? []).find((l: { phone?: string | null }) => needle && normalizePhone((l.phone ?? "") || "") === needle);
   if (!match) {
     return NextResponse.json({ error: "Lead not found" }, { status: 404 });

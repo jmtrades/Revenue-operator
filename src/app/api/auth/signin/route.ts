@@ -40,6 +40,12 @@ export async function POST(req: NextRequest) {
   if (!passwordResult.ok) return NextResponse.json({ error: passwordResult.error }, { status: 400 });
   const password = passwordResult.value;
 
+  const sessionSecret = (process.env.SESSION_SECRET ?? "").trim();
+  if (!sessionSecret) {
+    console.error("[signin] SESSION_SECRET is not configured");
+    return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+  }
+
   const supabase = await createClient();
   let data: { user?: { id: string } | null } | undefined;
   let error: { message?: string } | null = null;

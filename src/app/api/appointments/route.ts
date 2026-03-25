@@ -91,7 +91,37 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
   const { title, start_time, end_time, location, notes, contactName, contactPhone, callSummary, agentName, recordingLink } = body;
-  if (!title?.trim() || !start_time) return NextResponse.json({ error: "title and start_time required" }, { status: 400 });
+
+  // Validate title
+  if (!title?.trim()) return NextResponse.json({ error: "title is required" }, { status: 400 });
+  if (title.trim().length > 255) return NextResponse.json({ error: "title must not exceed 255 characters" }, { status: 400 });
+
+  // Validate start_time is provided
+  if (!start_time) return NextResponse.json({ error: "start_time is required" }, { status: 400 });
+
+  // Validate start_time is valid ISO 8601
+  const startDate = new Date(start_time);
+  if (isNaN(startDate.getTime())) {
+    return NextResponse.json({ error: "start_time must be a valid ISO 8601 date" }, { status: 400 });
+  }
+
+  // Validate start_time is not in the past (allow 5 minute grace)
+  const now = new Date();
+  const graceTime = new Date(now.getTime() + 5 * 60 * 1000);
+  if (startDate < graceTime) {
+    return NextResponse.json({ error: "start_time cannot be in the past" }, { status: 400 });
+  }
+
+  // Validate end_time if provided
+  if (end_time) {
+    const endDate = new Date(end_time);
+    if (isNaN(endDate.getTime())) {
+      return NextResponse.json({ error: "end_time must be a valid ISO 8601 date" }, { status: 400 });
+    }
+    if (endDate <= startDate) {
+      return NextResponse.json({ error: "end_time must be after start_time" }, { status: 400 });
+    }
+  }
 
   const db = getDb();
   let leadId = body.lead_id?.trim() || null;

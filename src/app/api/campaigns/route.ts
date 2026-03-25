@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const CAMPAIGN_TYPES = [
   "speed_to_lead",
@@ -49,6 +50,11 @@ export async function POST(req: NextRequest) {
   if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const err = await requireWorkspaceAccess(req, session.workspaceId);
   if (err) return err;
+
+  const rl = await checkRateLimit(`campaigns_create:${session.workspaceId}`, 10, 60000);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Rate limit exceeded. Please try again later." }, { status: 429 });
+  }
 
   let body: { name: string; type?: string; agent_id?: string; target_filter?: Record<string, unknown> };
   try {

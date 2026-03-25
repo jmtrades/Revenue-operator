@@ -16,13 +16,30 @@ export async function GET(req: NextRequest) {
     const authErr = await requireWorkspaceAccess(req, workspaceId);
     if (authErr) return authErr;
 
+    // Parse pagination params
+    let page = parseInt(req.nextUrl.searchParams.get("page") || "1", 10);
+    let limit = parseInt(req.nextUrl.searchParams.get("limit") || "50", 10);
+
+    // Validate and constrain
+    if (page < 1) page = 1;
+    if (limit < 1) limit = 50;
+    if (limit > 200) limit = 200;
+
+    const offset = (page - 1) * limit;
+
     const db = getDb();
+    // Get total count
+    const { count: total } = await db
+      .from("messages")
+      .select("id", { count: "exact" })
+      .eq("workspace_id", workspaceId);
+
     const { data: messages } = await db
       .from("messages")
       .select("id, lead_id, direction, channel, content, sent_at")
       .eq("workspace_id", workspaceId)
       .order("sent_at", { ascending: false })
-      .limit(200);
+      .range(offset, offset + limit - 1);
 
     if (!messages?.length) return NextResponse.json({ threads: [] });
 
@@ -81,7 +98,7 @@ export async function GET(req: NextRequest) {
     });
 
     threads.sort((a, b) => new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime());
-    return NextResponse.json({ threads });
+    return NextResponse.json({ conversations: threads, page, limit, total: total ?? 0 });
   } catch (error) {
     console.error("[inbox]", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

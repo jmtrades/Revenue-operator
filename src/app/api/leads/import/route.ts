@@ -10,27 +10,64 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 /**
- * Simple CSV parser that handles quoted fields and commas
+ * CSV parser that properly handles quoted fields with commas
+ * Supports both single and double quoted fields
  */
 function parseCSV(text: string): Record<string, string>[] {
   const lines = text.split(/\r?\n/).filter((l) => l.trim());
   if (lines.length < 2) return [];
 
   // Parse header row
-  const headers = lines[0]
-    .split(",")
-    .map((h) => h.trim().toLowerCase().replace(/[^a-z0-9_]/g, "_"));
+  const headers = parseCSVLine(lines[0]).map((h) =>
+    h.trim().toLowerCase().replace(/[^a-z0-9_]/g, "_")
+  );
 
   // Parse data rows
   return lines.slice(1).map((line) => {
-    const values = line.split(",").map((v) => v.trim().replace(/^"|"$/g, ""));
+    const values = parseCSVLine(line);
     const row: Record<string, string> = {};
     headers.forEach((h, i) => {
-      row[h] = values[i] ?? "";
+      row[h] = (values[i] ?? "").trim();
     });
     return row;
   });
 }
+
+/**
+ * Parse a single CSV line respecting quoted fields
+ */
+function parseCSVLine(line: string): string[] {
+  const result: string[] = [];
+  let current = "";
+  let inQuotes = false;
+  let quoteChar = "";
+
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    const nextChar = line[i + 1];
+
+    if (!inQuotes && (char === '"' || char === "'")) {
+      inQuotes = true;
+      quoteChar = char;
+    } else if (inQuotes && char === quoteChar && nextChar !== quoteChar) {
+      inQuotes = false;
+    } else if (inQuotes && char === quoteChar && nextChar === quoteChar) {
+      // Escaped quote
+      current += char;
+      i++;
+    } else if (!inQuotes && char === ",") {
+      result.push(current);
+      current = "";
+    } else {
+      current += char;
+    }
+  }
+  result.push(current);
+  return result;
+}
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_BATCH_SIZE = 10000;
 
 export async function POST(req: NextRequest) {
   const session = await getSession(req);
@@ -39,6 +76,15 @@ export async function POST(req: NextRequest) {
   const err = await requireWorkspaceAccess(req, workspaceId);
   if (err) return err;
 
+  // Check content length
+  const contentLength = req.headers.get("content-length");
+  if (contentLength && parseInt(contentLength, 10) > MAX_FILE_SIZE) {
+    return NextResponse.json(
+      { error: `File size exceeds maximum of ${MAX_FILE_SIZE / 1024 / 1024}MB` },
+      { status: 413 }
+    );
+  }
+
   const contentType = req.headers.get("content-type") || "";
   let rows: Array<{ name?: string; phone?: string; email?: string; service_requested?: string; notes?: string }> = [];
 
@@ -46,7 +92,26 @@ export async function POST(req: NextRequest) {
   if (contentType.includes("multipart/form-data") || contentType.includes("text/csv")) {
     try {
       const text = await req.text();
+
+      // Validate file size in case content-length was missing
+      const textSize = new Blob([text]).size;
+      if (textSize > MAX_FILE_SIZE) {
+        return NextResponse.json(
+          { error: `File size exceeds maximum of ${MAX_FILE_SIZE / 1024 / 1024}MB` },
+          { status: 413 }
+        );
+      }
+
       const csvRows = parseCSV(text);
+
+      // Enforce max batch size
+      if (csvRows.length > MAX_BATCH_SIZE) {
+        return NextResponse.json(
+          { error: `CSV exceeds maximum of ${MAX_BATCH_SIZE} rows. Please split into smaller batches.` },
+          { status: 400 }
+        );
+      }
+
       rows = csvRows.map((r) => ({
         name: r.name || r.full_name || r.contact_name || "",
         phone: r.phone || r.phone_number || r.contact_phone || "",
@@ -54,7 +119,10 @@ export async function POST(req: NextRequest) {
         service_requested: r.company || r.service || r.service_requested || "",
         notes: r.notes || r.comments || r.description || "",
       }));
-    } catch {
+    } catch (e) {
+      if (e instanceof Error && e.message.includes("exceeds maximum")) {
+        return NextResponse.json({ error: e.message }, { status: 400 });
+      }
       return NextResponse.json({ error: "Invalid CSV format" }, { status: 400 });
     }
   } else {
@@ -66,10 +134,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
     }
     rows = Array.isArray(body.leads) ? body.leads : [];
+
+    if (rows.length > MAX_BATCH_SIZE) {
+      return NextResponse.json(
+        { error: `Batch exceeds maximum of ${MAX_BATCH_SIZE} leads. Please split into smaller batches.` },
+        { status: 400 }
+      );
+    }
   }
 
+  const errors: Array<{ row: number; reason: string }> = [];
   const valid = rows
-    .map((r) => ({
+    .map((r, idx) => ({
+      index: idx,
       name: (r.name ?? "").toString().trim(),
       phone: (r.phone ?? "").toString().trim().replace(/\s/g, ""),
       email: (r.email ?? "").toString().trim() || null,
@@ -78,13 +155,23 @@ export async function POST(req: NextRequest) {
     }))
     .filter((r) => {
       // Validate: name required, phone must contain only digits and be 10-15 chars
-      if (r.name.length === 0) return false;
+      if (r.name.length === 0) {
+        errors.push({ row: r.index + 1, reason: "Missing name" });
+        return false;
+      }
       const digits = r.phone.replace(/\D/g, "");
-      return /^\d+$/.test(digits) && digits.length >= 10 && digits.length <= 15;
+      if (!/^\d+$/.test(digits) || digits.length < 10 || digits.length > 15) {
+        errors.push({ row: r.index + 1, reason: "Invalid phone number" });
+        return false;
+      }
+      return true;
     });
 
   if (valid.length === 0) {
-    return NextResponse.json({ error: "No valid leads (need name and phone with at least 10 digits)" }, { status: 400 });
+    return NextResponse.json(
+      { imported: 0, skipped: rows.length, errors: errors.slice(0, 10) },
+      { status: 400 }
+    );
   }
 
   const db = getDb();
@@ -101,5 +188,11 @@ export async function POST(req: NextRequest) {
   const { data, error } = await db.from("leads").insert(toInsert).select("id");
   if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   const imported = Array.isArray(data) ? data.length : 0;
-  return NextResponse.json({ imported, skipped: valid.length - imported });
+
+  return NextResponse.json({
+    imported,
+    skipped: valid.length - imported,
+    errors: errors.slice(0, 10), // Return first 10 errors for feedback
+    total_processed: rows.length,
+  });
 }

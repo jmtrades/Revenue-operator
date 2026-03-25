@@ -10,6 +10,7 @@ import { getWorkspaceSetting } from "@/lib/db/workspace-settings";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { logLeadCreated } from "@/lib/log/revenue-events";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 function leadScoreFromInput(input: { name?: string; phone?: string; email?: string; service_requested?: string; source?: string }): number {
   let score = 0;
@@ -67,6 +68,11 @@ export async function POST(req: NextRequest) {
   if (!workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const err = await requireWorkspaceAccess(req, workspaceId);
   if (err) return err;
+
+  const rl = await checkRateLimit(`leads_create:${workspaceId}`, 50, 60000);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Rate limit exceeded. Please try again later." }, { status: 429 });
+  }
 
   let body: { name: string; phone?: string; email?: string; company?: string; service_requested?: string; source?: string; status?: string; notes?: string };
   try {
