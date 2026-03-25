@@ -50,13 +50,13 @@ The key is constraint. A good AI agent isn't trying to chat; it's trying to answ
 Recall Touch is built around this model: natural voice in, structured outcome out. You set the script, the hours, and the rules. The agent handles the rest. No robots, no awkward pauses — just a consistent first touch so you never miss a lead.`,
   },
   "5-signs-losing-revenue-missed-calls": {
-    title: "5 signs you're losing revenue to unanswered calls",
+    title: "5 signs you're losing revenue to failed call handling",
     date: "February 2026",
-    body: `If you're missing calls, you're missing revenue. Learn the warning signs and what to do about them.
+    body: `If you're not capturing every inbound opportunity, you're missing revenue. Learn the warning signs and what to do about them.
 
 First: your voicemail is full of "I called but nobody answered" messages. That means people tried, gave up, or left a message you might not return in time. Second: you see spikes in web form submissions right after business hours. People are looking for you when the phone doesn't get picked up. Third: your team says they're too busy to answer. When everyone is on a job or with a client, the phone rings out. Fourth: you've lost a deal or two because "we called someone else who answered." Speed and availability matter. Fifth: you don't know how many calls you're missing. If you aren't measuring answer rate, you're flying blind.
 
-The fix isn't always hiring. A 24/7 AI phone agent can answer every call, take messages, book appointments, and follow up — so your team can focus on the work that needs a human. Recall Touch gives you a single number that never goes to voicemail and never leaves a caller waiting. Once you see the difference in answer rate and lead conversion, unanswered calls stop being the norm.`,
+The fix isn't always hiring. A 24/7 AI revenue operations platform can answer every call, take messages, book appointments, run follow-up campaigns, and recover missed opportunities — so your team can focus on closing and delivery. Recall Touch gives you a single number that never goes to voicemail and never leaves a caller waiting. Once you see the difference in answer rate, booking conversion, and revenue recovered, you'll understand why call handling is a revenue engine, not just a service cost.`,
   },
   "recall-touch-vs-hiring": {
     title: "Recall Touch vs hiring: the real cost comparison",
@@ -77,11 +77,11 @@ Step one: sign up and add your business name and phone number. Step two: pick a 
 You can change the script, hours, and settings anytime. No code, no long implementation. Recall Touch is designed so that the person who answers the phone can set it up. If you've ever missed a call because you were with a client or after hours, five minutes is all it takes to make sure the next one gets answered.`,
   },
   "why-missed-calls-cost-more": {
-    title: "Why unanswered calls cost more than you think",
+    title: "Why poor call handling costs more than you think",
     date: "March 2026",
-    body: `Every unanswered call is a potential customer walking to a competitor. Studies show that the majority of callers who don't reach someone on the first try will try another business. The cost isn't just the one sale — it's the lifetime value of that customer and everyone they might have referred. Fixing your answer rate is one of the highest-leverage moves a small business can make.
+    body: `Every unanswered or poorly handled call is a potential customer walking to a competitor. Studies show that the majority of callers who don't reach someone on the first try will try another business. The cost isn't just the one sale — it's the lifetime value of that customer and everyone they might have referred. Fixing your call handling and follow-up execution is one of the highest-leverage moves a small business can make.
 
-Research from multiple industries backs this up. In home services, a single missed call can represent hundreds or thousands of dollars in lost work. The same pattern appears in healthcare, legal, and real estate. Delay or silence means the lead goes elsewhere. Industry benchmarks suggest that many small businesses miss between 20% and 40% of incoming calls. Voicemail isn't a solution; a large share of callers hang up. AI phone systems can answer every call in your business's name. Recall Touch is built for exactly that: making sure the next time a customer is ready to buy or book, you're the one who answers.`,
+Research from multiple industries backs this up. In home services, a single missed or unanswered call can represent hundreds or thousands of dollars in lost work. The same pattern appears in healthcare, legal, and real estate. Delay or silence means the lead goes elsewhere. Industry benchmarks suggest that many small businesses miss between 20% and 40% of incoming calls. Voicemail isn't a solution; a large share of callers hang up and book with a competitor. An AI revenue operations platform can answer every call in your business's name, qualify intent, book appointments, and execute follow-up until outcomes are reached. Recall Touch is built for that: making sure the next time a customer is ready to buy or book, you're the one who captures and executes the opportunity.`,
   },
   "speed-to-lead-60-second-rule": {
     title: "Speed-to-lead: the 60-second rule",
@@ -112,7 +112,7 @@ When a caller leaves a message, the opportunity is already there: they raised th
 
 With Recall Touch, voicemail becomes an intake pipeline. The system transcribes the message, extracts intent, and asks follow-up questions only when necessary. Then it routes the caller toward the right outcome: callback scheduling, booking an appointment, or capturing the information needed to engage later. Instead of letting a voicemail disappear into a backlog, you turn it into a next action.
 
-The result is simple: fewer “we'll get back to you” promises and more booked times. You stop hiring for every new spike in call volume, while your appointment pipeline stays full.`,
+The result is simple: fewer "we'll get back to you" promises and more booked times. You stop hiring for every new spike in call volume, while your appointment pipeline stays full.`,
   },
   "missed-call-metrics-revenue": {
     title: "Call metrics that actually predict revenue",
@@ -123,7 +123,7 @@ Those numbers don't directly predict revenue. What does predict bookings is how 
 
 Start with three measurements:
 
-1) Pickup rate (answer rate). It tells you how many opportunities you convert from “calling” into “talking.”
+1) Pickup rate (answer rate). It tells you how many opportunities you convert from "calling" into "talking."
 2) Time-to-first-response. Speed-to-lead is real. If you wait hours, you lose the highest-intent callers first.
 3) Callback-to-booking conversion. Not every callback should become an appointment, but a high-quality follow-up flow will convert a measurable portion.
 
@@ -134,7 +134,7 @@ Recall Touch gives you the dashboard signals to measure what matters, so you can
   "follow-up-speed-automation": {
     title: "Follow-up automation: how to book in minutes, not days",
     date: "April 2026",
-    body: `Fast follow-up isn't about being “pushy.” It's about being the first business that actually moves.
+    body: `Fast follow-up isn't about being "pushy." It's about being the first business that actually moves.
 
 When someone reaches out, there is usually a window of intent. After that window closes, your lead doesn't disappear — but the likelihood of booking drops. Small businesses often lose this window because follow-up is manual, scattered across inboxes and message apps, and vulnerable to human scheduling.
 
@@ -182,15 +182,15 @@ When the model detects rising risk, it powers needs-attention routing so the tea
 
 Recall Touch's status page focuses on the systems that determine whether calls get answered and executed correctly: database readiness, billing webhook configuration, and cron heartbeats that keep rollups and recovery jobs running.
 
-If something degrades, the page explains what it impacts and where to look next. That turns “something is wrong” into actionable signals for support and customers.`,
+If something degrades, the page explains what it impacts and where to look next. That turns "something is wrong" into actionable signals for support and customers.`,
   },
   "missed-calls-dental-revenue-loss": {
     title: "How Unanswered Calls Cost Dental Revenue",
     date: "March 2026",
     metaDescription:
       "Dental unanswered calls create a revenue leak. Learn the leak math, how no-show recovery works, and see why speed-to-lead wins. Start free.",
-    body: `Dental unanswered calls are not “lost leads.” They are lost production time.
-If your front desk misses a new patient call, the caller is often ready to book a cleaning right now, not “sometime next month.” In practice, missed-call impact comes from three layers: the initial opportunity, the follow-up delay, and the lost no-show prevention window.
+    body: `Dental unanswered calls are not "lost leads." They are lost production time.
+If your front desk misses a new patient call, the caller is often ready to book a cleaning right now, not "sometime next month." In practice, missed-call impact comes from three layers: the initial opportunity, the follow-up delay, and the lost no-show prevention window.
 That is why this article focuses on revenue, not vanity call volume.
 
 First, define the leak the same way your finance team would.
@@ -206,10 +206,10 @@ Recall Touch runs a consistent cadence: confirm, remind, and reschedule with a r
 
 How Recall Touch solves the leak for [[/industries/dental|dental practices]].
 The system answers inbound calls 24/7, captures the right intake details, and books appointments through your scheduling rules when possible.
-After the call, it continues with follow-up sequences: confirmations that prevent “I forgot,” reminders that reduce no-shows, and easy reschedule options that keep your chair filled.
+After the call, it continues with follow-up sequences: confirmations that prevent "I forgot," reminders that reduce no-shows, and easy reschedule options that keep your chair filled.
 If a caller goes silent, Recall Touch can also run reactivation touches so you do not wait for the next office-hour wave.
 
-What makes this different from “AI receptionist” coverage is the follow-through engine.
+What makes this different from "AI receptionist" coverage is the follow-through engine.
 An answering layer can greet a caller. A revenue execution layer must recover what happens after the call ends: unanswered-call callbacks, cancellations, and the next best touch until an outcome is reached.
 In Recall Touch, those outcomes are visible in your dashboard so you can iterate what converts.
 
@@ -218,7 +218,7 @@ If you want to understand how plan capacity maps to calls and follow-ups, review
 
 Start with a simple checklist.
 One: connect a number so you have inbound coverage during busy hours and after-hours.
-Two: configure what “booked” means in your context (cleaning, consult, emergency triage).
+Two: configure what "booked" means in your context (cleaning, consult, emergency triage).
 Three: confirm your reminders and reschedule paths.
 Four: track outcomes, not just calls.
 
@@ -232,7 +232,7 @@ That is how you turn lost calls into recovered chair time.`,
       "Compare AI vs human receptionist costs by outcomes: speed-to-lead, appointment booking, follow-up automation, and revenue attribution. Start free.",
     body: `People compare receptionist services by cost per hour, cost per month, or cost per minute.
 Those comparisons are incomplete because they ignore the only metric that matters: outcomes.
-A receptionist is not paid to “answer.” They are paid to ensure the business gets the next step from every inbound intent — booked appointments, captured messages, and reliable follow-up.
+A receptionist is not paid to "answer." They are paid to ensure the business gets the next step from every inbound intent — booked appointments, captured messages, and reliable follow-up.
 
 Start with what humans can do well.
 Humans can handle edge cases, empathy, complex negotiations, and judgment calls that are hard to script.
@@ -240,12 +240,12 @@ But humans also have limits that show up immediately in revenue execution: staff
 
 Now look at how AI changes the execution layer.
 AI can answer every call 24/7, maintain consistent scripts, capture structured intake, and then drive an outcome-based follow-up workflow.
-That means AI is not just “a voice.” It is the system that transforms conversations into measurable next steps: booking, confirmations, and the follow-up that keeps leads moving.
+That means AI is not just "a voice." It is the system that transforms conversations into measurable next steps: booking, confirmations, and the follow-up that keeps leads moving.
 
 The real cost comparison includes revenue leakage.
 If callers reach voicemail, they often book elsewhere. If follow-up is delayed, appointment conversion declines.
 If reminders are inconsistent, no-shows increase and calendar churn hurts margin.
-When you include unanswered-call recovery and no-show reduction, the “cheapest” solution is the one that prevents lost production time.
+When you include unanswered-call recovery and no-show reduction, the "cheapest" solution is the one that prevents lost production time.
 
 Recall Touch is designed to make that measurable.
 The platform runs automated recovery sequences: follow-ups, no-show recovery, reactivation campaigns, and revenue attribution in your dashboard.
@@ -262,7 +262,7 @@ Also review [[/pricing|pricing]] for your tier and capacity assumptions.
 
 For teams that care about compliance and responsible automation, recall that AI does not mean uncontrolled outreach.
 Recall Touch includes guardrails such as quiet hours, suppression logic, DNC checks, and per-contact limits.
-That matters because “cheap outreach” that violates policy or burns goodwill destroys conversion.
+That matters because "cheap outreach" that violates policy or burns goodwill destroys conversion.
 
 The easiest way to understand the real cost is to watch the flow.
 A test flow is easiest to understand in practice; you can watch a full walkthrough at [[/demo|the demo]].
@@ -277,13 +277,13 @@ If your business needs fast follow-through, 24/7 coverage, and revenue proof tie
     date: "March 2026",
     metaDescription:
       "AI revenue operations is the execution layer for call answering, booking, follow-up, and recovery. Learn the complete guide and start free.",
-    body: `AI revenue operations (AI RevOps) is not “a chatbot.”
+    body: `AI revenue operations (AI RevOps) is not "a chatbot."
 It is a system that connects customer intent to measurable revenue outcomes.
 In practice, AI RevOps must do four things in a loop: answer incoming demand, capture structured intent, execute next steps, and recover what happens when humans are busy or leads go quiet.
 
 Most businesses already have pieces of the loop.
 They may have call forwarding, a CRM, a calendar, and an inbox where messages land.
-But the link between “someone called” and “an appointment got booked” is usually manual, delayed, or inconsistent.
+But the link between "someone called" and "an appointment got booked" is usually manual, delayed, or inconsistent.
 That is where revenue execution fails.
 
 AI RevOps treats calls and follow-ups as a pipeline, not an event.
@@ -301,7 +301,7 @@ That makes it possible to tune scripts and sequences with confidence.
 
 How do you set up AI RevOps without chaos?
 Start with business context and scheduling rules.
-Define what “booked” means for your business (inspection, consult, cleanup, interview, treatment).
+Define what "booked" means for your business (inspection, consult, cleanup, interview, treatment).
 Configure when the system should run, when it should escalate, and what to do when a caller does not respond.
 
 Next, configure recovery sequences.
@@ -316,7 +316,7 @@ If bookings rise but reminders do not reduce no-shows, you need tighter reminder
 If you want a practical starting point, review [[/pricing|pricing]] and then watch the product flow at [[/demo|the demo]].
 For industries where no-show recovery is a major lever, you can start with [[/industries/dental|dental]] or [[/industries/hvac|HVAC]] and adapt the sequence rules to your workflow.
 
-AI RevOps is the difference between “we answered the call” and “we recovered the revenue.”
+AI RevOps is the difference between "we answered the call" and "we recovered the revenue."
 That is the complete guide: execution, follow-through, and proof.`,
   },
   "automated-no-show-recovery-playbook": {
@@ -337,7 +337,7 @@ That delay is why no-shows keep happening.
 An automated recovery playbook needs a sequence structure.
 First, confirm the appointment with clarity (what time, where, and what to expect).
 Second, remind at strategic intervals so candidates have time to plan (often 24 hours and 1 hour before, depending on your industry).
-Third, include a reschedule mechanism that is easy for the customer to use, not a “call us back and wait” loop.
+Third, include a reschedule mechanism that is easy for the customer to use, not a "call us back and wait" loop.
 
 When an appointment is missed, the system needs a recovery path.
 It should detect the missed event, then run a no-show recovery sequence that asks a minimal set of questions:
@@ -365,7 +365,7 @@ Measure no-shows recovered, reschedules booked, and downstream conversions.
 Then tune the cadence based on what the customers actually respond to.
 
 If you want to implement quickly, start with a demo flow, then review your reminder cadence and reschedule path.
-The goal is to turn “we hope they show up” into a consistent, respectful recovery process.`,
+The goal is to turn "we hope they show up" into a consistent, respectful recovery process.`,
   },
   "speed-to-lead-response-time-revenue": {
     title: "Speed to Lead: Response Time Revenue",
@@ -375,10 +375,10 @@ The goal is to turn “we hope they show up” into a consistent, respectful rec
     body: `The speed to lead rule is simple: when a customer is ready, the first business that responds often wins.
 In real operations, speed is hard because your team is busy.
 Leads come in through calls, forms, and after-hours timing when staff availability is lower.
-Without a system, response becomes “when someone gets to the inbox,” which is too late for many high-intent callers.
+Without a system, response becomes "when someone gets to the inbox," which is too late for many high-intent callers.
 
 Response time affects three stages of the pipeline.
-First, it affects conversion from “calling” to “speaking.” Fast answering increases pickup rate.
+First, it affects conversion from "calling" to "speaking." Fast answering increases pickup rate.
 Second, it affects qualification quality. When you respond quickly, you can gather structured details while the customer still remembers the full context.
 Third, it affects booking conversion. If your booking path is consistent, leads who get a next-step quickly convert at higher rates.
 
@@ -419,7 +419,7 @@ In those moments, your customers call the first company that answers and gives a
 If your phones roll to voicemail or your callbacks are late, you lose jobs even if your team is excellent.
 
 The biggest HVAC unanswered-call problem is time-to-first-response.
-When the caller&apos;s emergency is active, they want a fast commitment: “Can you come today?” or “Can you book a window this week?”
+When the caller&apos;s emergency is active, they want a fast commitment: "Can you come today?" or "Can you book a window this week?"
 If you answer hours later, the customer&apos;s situation changes, and the lead becomes harder to convert.
 That is why speed-to-lead needs to be engineered, not hoped for.
 
@@ -429,14 +429,14 @@ Then it moves the caller toward a scheduling outcome: it can book service window
 The difference is that the agent keeps working after the call ends instead of leaving a task for your team to remember.
 
 HVAC follow-up is where the ROI compounds.
-If someone asks for pricing, needs to “think about it,” or requests a quote, a manual quote chase often becomes inconsistent.
+If someone asks for pricing, needs to "think about it," or requests a quote, a manual quote chase often becomes inconsistent.
 Recall Touch can run a quote chase cadence and keep the lead moving until there is a clear next action.
 If the caller goes quiet, it can also use reactivation sequences to bring the lead back when they&apos;re ready.
 
 After-hours is another major lever for HVAC.
 Most HVAC shops are staffed during business hours, but breakdowns do not stop after the shift.
 Recall Touch answers after-hours calls with a structured capture flow: it gathers the essentials and either provides a next-step for emergencies or guides a clear message capture for non-urgent needs.
-That means after-hours is not “lost demand.” It is pipeline that your dashboard can measure.
+That means after-hours is not "lost demand." It is pipeline that your dashboard can measure.
 
 For teams evaluating ROI and plan capacity, start with [[/pricing|pricing]].
 Then connect your call volume to how many concurrent follow-up tasks you want the system to handle.
@@ -460,7 +460,7 @@ As those sequences run automatically, your team spends less time chasing and mor
     body: `Legal inquiries often come with a time pressure that feels immediate to the caller.
 They may need urgent guidance, an appointment, or a quick understanding of whether you can help.
 If the caller reaches voicemail or waits for a callback, the opportunity can disappear quickly.
-That is why “answering more” is not enough. You need structured intake and reliable follow-through.
+That is why "answering more" is not enough. You need structured intake and reliable follow-through.
 
 AI intake automation is about turning an inbound call into a clean next step.
 Instead of letting the conversation drift, the system captures structured data: what they need, the basics of the case, and the preferred availability to talk.
@@ -468,7 +468,7 @@ When possible, it schedules the next action and confirms details so the caller k
 
 For legal teams, the highest-value improvement is consistent responsiveness across the day.
 Your front desk can be busy, your attorneys can be in consultations, and your workflow can still be handling multiple matters at once.
-Recall Touch adds a 24/7 answering layer that keeps intake consistent and reduces the “we will call you back” lag that drives abandonment.
+Recall Touch adds a 24/7 answering layer that keeps intake consistent and reduces the "we will call you back" lag that drives abandonment.
 
 Follow-up is where legal revenue gets protected.
 Some callers need time to gather documents, confirm next steps, or decide on representation.
@@ -491,26 +491,26 @@ The best AI automation does not ask long questions. It gathers just enough infor
 That is how you capture more potential clients without increasing complexity for your team.`,
   },
   "how-to-calculate-your-missed-call-revenue-leak": {
-    title: "How to Calculate Your Unanswered Call Revenue Leak",
+    title: "How to Calculate Your Call Handling Revenue Leak",
     date: "May 2026",
     metaDescription:
-      "Unanswered calls create a revenue leak you can model. Learn the calculation, booking conversion links, and recovery workflows that fix it. Start free.",
-    body: `An unanswered call is not a single event. It is a revenue leak with multiple downstream effects.
+      "Poor call handling creates a revenue leak you can model. Learn the calculation, booking conversion links, and recovery workflows that fix it. Start free.",
+    body: `Dropped calls, slow follow-up, and lost leads are not separate events. They are a revenue leak with multiple downstream effects.
 You can&apos;t fix what you can&apos;t model, and many teams get stuck measuring only call volume or voicemail count.
 Those numbers can be useful, but they don&apos;t tell you what money is being left on the table.
 
-To calculate missed call revenue leak, start with a simple pipeline model.
+To calculate call handling revenue leak, start with a simple pipeline model.
 The variables usually look like:
-missed calls per month × answerable intent share × booking conversion × average appointment value.
+inbound calls per month × answerable intent share × booking conversion × average appointment value.
 If you don&apos;t know one of these inputs, you can estimate using your callback results and appointment outcomes.
 
 Next, adjust for follow-up reality.
-In most businesses, booking conversion from callbacks depends on speed and consistency.
-If callbacks happen later, the conversion rate declines.
-So your model should reflect not just “could we answer,” but “would we recover.”
+In most businesses, booking conversion depends on speed, consistency, and post-call execution.
+If follow-up happens later or not at all, the conversion rate declines.
+So your model should reflect not just "could we answer," but "would we recover and close."
 
-That is why Recall Touch focuses on the full execution layer.
-It answers calls with structured intake, then executes recovery sequences: missed-call callback workflows, no-show prevention and recovery, reactivation campaigns, and revenue attribution in your dashboard.
+That is why Recall Touch focuses on the full revenue operations layer.
+It answers calls with structured intake, then executes recovery sequences: appointment booking, no-show prevention and recovery, reactivation campaigns, lead list processing, and revenue attribution in your dashboard.
 Your dashboard turns the model into a measurable system.
 
 If you want to see where the math is most sensitive, pick an industry and run scenario planning.
@@ -518,30 +518,30 @@ For example, compare HVAC emergency windows with appointment-driven industries l
 The time sensitivity changes the leak size, and the recovery sequences change how quickly it is repaired.
 
 Once you have a baseline, connect it to plan capacity.
-If your plan includes follow-up workload, reminders, and concurrent call handling, you can estimate how many additional outcomes your system will generate.
+If your plan includes inbound call handling, lead qualification, appointment booking, follow-up sequences, reminders, and concurrent capacity, you can estimate how many additional outcomes your system will generate.
 Then compare that incremental value to plan cost using [[/pricing|pricing]].
 
 To make the model operational, run a test flow using the demo workflow.
-Watching execution reveals what the system captures, how it decides next steps, and how recovery touches are triggered.
+Watching execution reveals what the system captures, how it decides next steps, how leads are qualified, and how recovery touches are triggered.
 You can see that process at [[/demo|the demo]].
 
 The final step is accountability.
-Your KPI should be revenue recovered and appointment outcomes, not “calls answered.”
-When you track outcomes, you can tune scripts and sequences until the leak stops.`,
+Your KPI should be revenue recovered, appointments booked, and outcomes executed, not just "calls answered."
+When you track revenue impact, you can tune scripts and sequences until the leak stops.`,
   },
   "recall-touch-vs-smith-ai-which-is-right": {
     title: "Recall Touch vs Smith.ai: Which Is Right?",
     date: "May 2026",
     metaDescription:
       "Recall Touch vs Smith.ai: compare per-call pricing, follow-up engine gaps, outbound limits, and revenue attribution. See which recovers more. Start free.",
-    body: `It&apos;s tempting to compare AI receptionist tools by how they answer a call.
+    body: `It&apos;s tempting to compare AI phone platforms by how they answer a call.
 But for revenue execution, the real question is what happens after the call ends.
-Do you recover missed opportunities? Do you run follow-up until an outcome is reached? Can you measure recovered revenue?
-That is what separates a coverage tool from a revenue recovery system.
+Do you recover missed opportunities? Do you run appointment booking, qualification, and follow-up until an outcome is reached? Can you measure revenue impact?
+That is what separates a call-answering tool from a complete AI revenue operations platform.
 
 Smith.ai is typically positioned around call answering, with a strong focus on interactions during the call.
-Recall Touch is built around follow-through and proof.
-In practice, that means Recall Touch includes automated follow-up sequences (callbacks, no-show recovery, reactivation campaigns, quote chasing) and dashboard attribution for revenue recovered.
+Recall Touch is built around complete revenue execution and proof.
+In practice, that means Recall Touch includes inbound answering, lead qualification, appointment booking, and automated follow-up sequences (callbacks, no-show recovery, reactivation campaigns, quote chasing, lead list processing) with dashboard attribution for revenue recovered.
 
 Why this matters: most revenue leakage happens in the follow-up gap.
 Missed calls turn into stalled leads when callbacks are delayed. Appointments become fragile when reminders are inconsistent.
@@ -559,7 +559,7 @@ To understand the execution flow and recovery behavior, watch [[/demo|the demo]]
 If you want a concrete example of how revenue execution plays out in a vertical, review [[/industries/dental|dental practices]] (missed-call recovery + no-show reduction).
 
 The right decision is the one that matches your operational goal.
-If your priority is “answer the call,” a reception layer might feel sufficient.
+If your priority is "answer the call," a reception layer might feel sufficient.
 If your priority is revenue recovery with proof, Recall Touch is the system that turns calls into recovered appointments and measurable outcomes.`,
   },
   "follow-up-playbook-why-80-percent-of-revenue-second-touch": {
@@ -567,14 +567,14 @@ If your priority is revenue recovery with proof, Recall Touch is the system that
     date: "June 2026",
     metaDescription:
       "Most revenue is in the second touch. Learn the follow-up playbook: speed, reminders, no-show recovery, and reactivation. Start free.",
-    body: `The phrase “second touch” is not a marketing slogan.
+    body: `The phrase "second touch" is not a marketing slogan.
 In most service businesses, the first touch captures intent.
 The second touch is what turns intent into a booked outcome, because it happens at the moment the customer is ready to schedule, reschedule, or ask a final question.
 
 The problem is that second-touch follow-up is hard to do consistently.
 Manual follow-up depends on inboxes, sticky notes, and human schedules.
 In busy seasons, the follow-up window closes and the lead goes silent.
-That is how “good calls” still produce disappointing booked outcomes.
+That is how "good calls" still produce disappointing booked outcomes.
 
 A follow-up playbook needs three principles.
 First, speed.
@@ -600,7 +600,7 @@ For many industries, a first reminder and a last reminder reduce no-shows.
 The exact timing depends on the service decision cycle, but the sequence structure is what makes the difference.
 
 Finally, measure what converts.
-Your KPI should connect follow-up actions to bookings and revenue recovered, not just “messages sent.”
+Your KPI should connect follow-up actions to bookings and revenue recovered, not just "messages sent."
 Recall Touch shows those signals in your dashboard with revenue attribution, so you can iterate the script and cadence with confidence.
 
 If you want a practical starting point, pick a vertical and tune based on outcomes.

@@ -10,6 +10,7 @@ import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
 import { isSessionEnabled } from "@/lib/auth/session";
 import { log } from "@/lib/logger";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function GET(req: NextRequest) {
   const db = getDb();
@@ -40,6 +41,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const csrfBlock = assertSameOrigin(request);
+  if (csrfBlock) return csrfBlock;
+
   // Without session auth, POST would allow creating workspaces for any owner_id — block in production.
   if (process.env.NODE_ENV === "production" && !isSessionEnabled()) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

@@ -37,6 +37,7 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ counterparty_identifier: string }> }
 ) {
+  // Public token-gated endpoint — no CSRF needed (not browser-initiated)
   const { counterparty_identifier } = await params;
   const raw = counterparty_identifier ? decodeURIComponent(counterparty_identifier) : "";
   if (!raw) {

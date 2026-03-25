@@ -11,6 +11,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getPlaybook } from "@/lib/ai/playbooks";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
@@ -107,6 +108,9 @@ Return ONLY valid JSON matching the playbook structure. Do not include markdown 
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   let body: ApplyPlaybookRequest;
 
   try {

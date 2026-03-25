@@ -8,12 +8,16 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const JURISDICTIONS = ["UK", "US-CA", "US-NY", "US-TX", "US-FL", "EU-GDPR"] as const;
 const APPROVAL_MODES = ["autopilot", "preview_required", "approval_required", "locked_script", "jurisdiction_locked"] as const;
 const ALLOWED_DOMAIN_TYPES = ["general", "real_estate", "clinic", "finance", "recruiting", "home_services"] as const;
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   let body: { workspace_id?: string; jurisdiction?: string; approval_mode?: string; domain_type?: string };
   try {
     body = await req.json();

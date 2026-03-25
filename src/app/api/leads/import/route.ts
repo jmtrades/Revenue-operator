@@ -10,6 +10,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { normalizePhoneE164 } from "@/lib/phone/normalize";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 /**
  * CSV parser that properly handles quoted fields with commas
@@ -72,6 +73,9 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const MAX_BATCH_SIZE = 10000;
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const session = await getSession(req);
   const workspaceId = session?.workspaceId;
   if (!workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

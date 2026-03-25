@@ -2,8 +2,12 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { randomUUID } from "crypto";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   let body: { your_name?: string; business_name?: string; industry?: string };
   try {
     body = await req.json();

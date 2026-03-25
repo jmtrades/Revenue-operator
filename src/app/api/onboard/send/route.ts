@@ -10,8 +10,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { createAcknowledgementToken } from "@/lib/shared-transaction-assurance";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(request: NextRequest) {
+  const csrfBlock = assertSameOrigin(request);
+  if (csrfBlock) return csrfBlock;
+
   let body: { workspace_id?: string; external_ref?: string; counterparty_contact?: string; approval_mode?: string };
   try {
     body = await request.json();

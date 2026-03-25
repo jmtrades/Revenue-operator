@@ -9,8 +9,12 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function PATCH(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   let body: { workspace_id?: string; member_id?: string; role?: string };
   try {
     body = await req.json();
@@ -47,6 +51,9 @@ export async function PATCH(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
   const memberId = req.nextUrl.searchParams.get("member_id");
 

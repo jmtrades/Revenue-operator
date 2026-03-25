@@ -10,6 +10,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { getTelephonyProvider } from "@/lib/telephony/get-telephony-provider";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 function toE164(value: string): string | null {
   const digits = value.replace(/\D/g, "");
@@ -86,6 +87,9 @@ async function checkTwilioVerification(phone: string, code: string): Promise<{ v
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const session = await getSession(req);
   if (!session?.workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

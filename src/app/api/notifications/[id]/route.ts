@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { getDb } from "@/lib/db/queries";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +13,9 @@ export async function PATCH(
   req: NextRequest,
   ctx: { params: Promise<{ id: string }> }
 ) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const session = await getSession(req);
   if (!session?.userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

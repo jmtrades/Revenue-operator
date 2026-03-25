@@ -11,6 +11,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { randomUUID } from "crypto";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 /** Basic email format validation */
 function isValidEmail(email: string): boolean {
@@ -18,6 +19,9 @@ function isValidEmail(email: string): boolean {
 }
 
 export async function POST(request: NextRequest) {
+  const csrfBlock = assertSameOrigin(request);
+  if (csrfBlock) return csrfBlock;
+
   // Rate limit: 5 signups per IP per 10 minutes
   const ip = getClientIp(request);
   const rl = await checkRateLimit(`onboard:${ip}`, 5, 600_000);

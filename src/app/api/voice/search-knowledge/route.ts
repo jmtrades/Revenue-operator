@@ -14,6 +14,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 interface SearchKnowledgeBody {
   workspace_id: string;
@@ -78,6 +79,9 @@ function scoreRelevance(query: string, content: string): number {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   let payload: SearchKnowledgeBody;
   try {
     payload = (await req.json()) as SearchKnowledgeBody;

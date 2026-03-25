@@ -14,6 +14,7 @@ import type { CampaignType } from "@/lib/campaigns/prompt";
 import { executeLeadOutboundCall } from "@/lib/outbound/execute-lead-call";
 import { parseBody } from "@/lib/api/validate";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const VALID_CAMPAIGN_TYPES: CampaignType[] = [
   "lead_followup", "lead_qualification", "appointment_reminder", "appointment_setting",
@@ -27,6 +28,9 @@ const outboundCallSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const session = await getSession(req);
   const workspaceId = session?.workspaceId;
   if (!workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

@@ -14,6 +14,7 @@ import {
   type NotificationType,
 } from "@/lib/integrations/slack";
 import { encrypt } from "@/lib/encryption";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export const dynamic = "force-dynamic";
 
@@ -55,6 +56,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const session = await getSession(req);
   if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const authErrPatch = await requireWorkspaceAccess(req, session.workspaceId);

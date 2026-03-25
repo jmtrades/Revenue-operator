@@ -7,9 +7,9 @@ import { ROUTES } from "@/lib/constants";
 const BASE = "https://www.recall-touch.com";
 
 export const metadata = {
-  title: "AI Revenue Operations for Plumbing & HVAC — Recall Touch",
+  title: "Plumbing & HVAC AI Revenue Operations Platform — Recall Touch",
   description:
-    "Capture emergency calls 24/7, dispatch faster, and boost seasonal revenue with AI-powered emergency dispatch and after-hours booking.",
+    "Maximize emergency revenue and operational efficiency with complete AI-powered workflows: 24/7 call answering, emergency dispatch, seasonal campaign automation, appointment scheduling, no-show prevention, and job tracking.",
   alternates: { canonical: `${BASE}/industries/plumbing-hvac` },
 };
 
@@ -27,9 +27,9 @@ export default function PlumbingHvacIndustryPage() {
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    name: "Plumbing & HVAC AI Revenue Operations",
+    name: "Plumbing & HVAC AI Revenue Operations Platform",
     url: `${BASE}/industries/plumbing-hvac`,
-    description: "AI phone system for plumbing and HVAC: answers emergency calls 24/7, books jobs, and optimizes dispatch for seasonal demand.",
+    description: "Complete AI revenue operations for plumbing and HVAC: 24/7 emergency call answering, urgency assessment and dispatch, booking and scheduling, seasonal campaign automation, no-show prevention, and performance tracking.",
     address: { "@type": "PostalAddress", addressCountry: "US" },
   };
 

@@ -11,6 +11,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 interface CheckHoursBody {
   workspace_id: string;
@@ -87,6 +88,9 @@ function isCurrentlyOpen(
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   let payload: CheckHoursBody;
   try {
     payload = (await req.json()) as CheckHoursBody;

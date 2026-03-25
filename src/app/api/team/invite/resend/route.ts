@@ -11,11 +11,15 @@ import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceRole } from "@/lib/auth/workspace-access";
 import { getSession } from "@/lib/auth/request-session";
 import { sendInviteEmail } from "@/lib/email/invite";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
 const EXPIRES_DAYS = 7;
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   let body: { workspace_id?: string; invite_id?: string };
   try {
     body = await req.json();

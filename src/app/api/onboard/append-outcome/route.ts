@@ -13,8 +13,12 @@ import { createSharedTransaction } from "@/lib/shared-transaction-assurance";
 import { recordOrientationStatement } from "@/lib/orientation/records";
 import { detectAndAttachReference } from "@/lib/thread-reference-memory";
 import { recordOutcomeDependency } from "@/lib/outcome-dependencies";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(request: NextRequest) {
+  const csrfBlock = assertSameOrigin(request);
+  if (csrfBlock) return csrfBlock;
+
   let body: { workspace_id?: string; external_ref?: string; outcome_text?: string };
   try {
     body = await request.json();

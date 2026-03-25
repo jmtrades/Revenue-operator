@@ -3,15 +3,15 @@
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { Wrench, Heart, Scale, Home, Smile, Sparkles, Stethoscope, Building2, Users } from "lucide-react";
+import { Wrench, Heart, Scale, Home, Smile, Sparkles, Stethoscope, Building2, Users, Car, Shield } from "lucide-react";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll, StaggerChildren, fadeUpVariants } from "@/components/shared/AnimateOnScroll";
 import { motion } from "framer-motion";
 
-const INDUSTRY_IDS = ["plumbing", "healthcare", "legal", "realEstate", "dental", "roofing", "medspa", "recruiting"] as const;
-const ICONS = [Wrench, Stethoscope, Scale, Home, Smile, Building2, Heart, Users];
-const SLUGS = ["plumbing-hvac", "healthcare", "legal", "real-estate", "dental", "roofing", "med-spa", "recruiting"] as const;
+const INDUSTRY_IDS = ["plumbing", "healthcare", "legal", "realEstate", "dental", "roofing", "medspa", "recruiting", "autoRepair", "insurance", "construction"] as const;
+const ICONS = [Wrench, Stethoscope, Scale, Home, Smile, Building2, Heart, Users, Car, Shield, Home];
+const SLUGS = ["plumbing-hvac", "healthcare", "legal", "real-estate", "dental", "roofing", "med-spa", "recruiting", "auto-repair", "insurance", "construction"] as const;
 
 export function Industries() {
   const t = useTranslations("homepage.industries");

@@ -8,8 +8,12 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { compileGovernedMessage } from "@/lib/speech-governance";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   try {
     const body = await req.json().catch(() => null);
     if (!body || typeof body !== "object") {

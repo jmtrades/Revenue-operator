@@ -17,7 +17,8 @@ const SCORE_COLORS: Record<ScoreBucket, string> = {
   all: "bg-[var(--bg-card)] text-[var(--text-secondary)] border-[var(--border-medium)]",
 };
 
-function scoreBucket(score: number): ScoreBucket {
+function scoreBucket(score: number | null): ScoreBucket {
+  if (score === null) return "low";
   if (score >= 70) return "high";
   if (score >= 40) return "medium";
   return "low";
@@ -214,9 +215,9 @@ export function LeadsList({
                   <td className="py-3 px-4 text-xs">
                     <span
                       className={`inline-flex h-7 w-7 items-center justify-center rounded-full border text-[11px] font-medium ${scoreClass}`}
-                      title={`Score: ${lead.score}`}
+                      title={`Score: ${lead.score ?? "—"}`}
                     >
-                      {lead.score}
+                      {lead.score ?? "—"}
                     </span>
                   </td>
                   <td className="py-3 px-4 text-xs">
@@ -265,7 +266,7 @@ export function LeadsList({
                   <span
                     className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] ${scoreClass}`}
                   >
-                    <span>{lead.score}</span>
+                    <span>{lead.score ?? "—"}</span>
                   </span>
                 </div>
                 <p className="text-xs text-[var(--text-tertiary)]">{lead.phone}</p>

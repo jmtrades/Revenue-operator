@@ -11,6 +11,7 @@ import {
   type SetupInput,
 } from "@/lib/ai/website-intelligence";
 import { setWorkspaceSettings } from "@/lib/db/workspace-settings";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 interface SetupResult {
   success: boolean;
@@ -28,6 +29,9 @@ interface SetupResult {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   try {
     const body = await req.json();
     const input = body as SetupInput & { workspace_id?: string };

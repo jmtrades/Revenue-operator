@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createHmac } from "crypto";
 import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 type VoiceEventBody = {
   event: string;
@@ -46,6 +47,9 @@ function verifyWebhookSignature(rawBody: string, signature: string | null): bool
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const signature = req.headers.get("x-voice-webhook-signature");
   const rawBody = await req.text();
 

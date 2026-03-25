@@ -7,8 +7,12 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const body = await req.json().catch(() => ({})) as { workspace_id?: string; industry?: string };
   const workspaceId = body.workspace_id;
   if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });

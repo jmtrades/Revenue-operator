@@ -14,6 +14,7 @@ import {
   updateSequence,
   deleteSequence,
 } from "@/lib/sequences/follow-up-engine";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function GET(
   req: NextRequest,
@@ -47,6 +48,9 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const { id } = await params;
   const session = await getSession(req);
   if (!session?.workspaceId) {
@@ -83,6 +87,9 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const { id } = await params;
   const session = await getSession(req);
   if (!session?.workspaceId) {

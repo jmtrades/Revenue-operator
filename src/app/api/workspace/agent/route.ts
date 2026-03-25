@@ -8,6 +8,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { syncPrimaryAgent } from "@/lib/agents/sync-primary-agent";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export const dynamic = "force-dynamic";
 
@@ -87,6 +88,9 @@ export async function GET(req: NextRequest) {
 const MAX_PAYLOAD_BYTES = 500_000; // 500KB
 
 export async function PATCH(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const session = await getSession(req);
   if (!session?.userId || !session?.workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

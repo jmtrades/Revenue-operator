@@ -106,6 +106,53 @@ export default function EnterprisePage() {
             </div>
           </Container>
         </section>
+
+        {/* Trust & Compliance */}
+        <section className="py-14 md:py-20" style={{ background: "var(--bg-surface)" }}>
+          <Container>
+            <div className="max-w-3xl mx-auto text-center mb-10">
+              <h2 className="text-2xl md:text-3xl font-bold">Enterprise-Grade Trust & Compliance</h2>
+              <p className="mt-3 text-sm md:text-base" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
+                Built to meet the security, privacy, and reliability standards your organization requires.
+              </p>
+            </div>
+            <div className="max-w-5xl mx-auto grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {[
+                { label: "SOC 2 Type II", desc: "Annual security audit with continuous monitoring. Enterprise-grade access controls, encryption, and incident response." },
+                { label: "HIPAA Ready", desc: "Business Associate Agreements available for healthcare customers. PHI handling with encryption at rest and in transit." },
+                { label: "99.97% Uptime SLA", desc: "Guaranteed availability backed by redundant infrastructure, automated failover, and 24/7 operational monitoring." },
+                { label: "256-bit Encryption", desc: "All data encrypted in transit (TLS 1.3) and at rest (AES-256). HMAC-SHA256 authentication on every API request." },
+                { label: "TCPA & GDPR Compliant", desc: "Consent tracking, per-contact suppression, DNC registry support, and data subject rights built into every workflow." },
+                { label: "Workspace Isolation", desc: "Row-level security ensures your data is never accessible to other accounts. Full audit trail on every action." },
+              ].map((item) => (
+                <div key={item.label} className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card,var(--bg-primary))] p-5">
+                  <h3 className="text-sm font-bold uppercase tracking-wide mb-2" style={{ color: "var(--accent-primary)" }}>{item.label}</h3>
+                  <p className="text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </Container>
+        </section>
+
+        {/* Bottom CTA */}
+        <section className="py-14 md:py-20">
+          <Container>
+            <div className="max-w-2xl mx-auto text-center">
+              <h2 className="text-2xl md:text-3xl font-bold mb-4">Ready to deploy AI revenue operations at scale?</h2>
+              <p className="text-base mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
+                Get a personalized deployment plan, custom SLA, and dedicated account manager.
+              </p>
+              <div className="flex flex-wrap justify-center gap-3">
+                <Link href="/contact" className="inline-flex px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-[var(--bg-hover)] transition-colors active:scale-[0.97]" style={{ transition: "transform 0.15s cubic-bezier(0.23,1,0.32,1)" }}>
+                  Talk to Sales
+                </Link>
+                <Link href="/demo" className="inline-flex px-6 py-3 rounded-xl font-semibold border border-[var(--border-default)] hover:bg-[var(--bg-hover)] transition-colors active:scale-[0.97]" style={{ color: "var(--text-primary)", transition: "transform 0.15s cubic-bezier(0.23,1,0.32,1)" }}>
+                  Watch the Demo
+                </Link>
+              </div>
+            </div>
+          </Container>
+        </section>
       </main>
       <Footer />
     </div>

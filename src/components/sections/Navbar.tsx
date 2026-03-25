@@ -145,7 +145,7 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
                 color: pathname.startsWith("/industries/") ? "var(--text-primary)" : "var(--text-secondary)",
               }}
               aria-haspopup="true"
-              aria-expanded="false"
+              aria-expanded={pathname.startsWith("/industries/") ? "true" : undefined}
             >
               {t("solutions")}
               <ChevronDown className="w-3.5 h-3.5 opacity-50" />

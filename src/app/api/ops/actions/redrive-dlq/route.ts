@@ -10,8 +10,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { enqueue } from "@/lib/queue";
 import { requireStaffWriteAccess, logStaffAction } from "@/lib/ops/auth";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const session = await requireStaffWriteAccess().catch((r) => r as Response);
   if (session instanceof Response) return session;
 

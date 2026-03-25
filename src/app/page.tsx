@@ -70,7 +70,7 @@ export default async function HomePage() {
                 name: "What exactly does Recall Touch do?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Recall Touch is the AI employee that handles your phone calls — all of them. Inbound, outbound, follow-up, reminders, appointments, sales, support, and more. It works 24/7, gets smarter with every conversation, and costs less than a single hire.",
+                  text: "Recall Touch is the AI revenue operations platform that runs your entire phone-based business. Inbound calls, outbound campaigns, follow-ups, appointment booking, no-show recovery, lead qualification, reactivation, and more. It works 24/7, gets smarter with every conversation, and costs less than a single hire.",
                 },
               },
               {

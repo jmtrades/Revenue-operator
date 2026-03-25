@@ -14,6 +14,7 @@ import { getTelephonyProvider } from "@/lib/telephony/get-telephony-provider";
 import { getTelephonyService } from "@/lib/telephony";
 import { purchaseTelnyxPhoneNumber } from "@/lib/telephony/telnyx/numbers";
 import { canProvisionNumber } from "@/lib/billing/plan-enforcement";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +26,9 @@ const BODY = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const session = await getSession(req);
   if (!session?.userId || !session?.workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

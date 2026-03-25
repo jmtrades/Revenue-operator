@@ -9,8 +9,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { recordOrientationStatement } from "@/lib/orientation/records";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(request: NextRequest) {
+  const csrfBlock = assertSameOrigin(request);
+  if (csrfBlock) return csrfBlock;
+
   let body: { workspace_id?: string; external_ref?: string };
   try {
     body = await request.json();

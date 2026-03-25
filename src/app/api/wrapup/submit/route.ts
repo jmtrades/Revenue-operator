@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { consumeWrapupToken } from "@/lib/calls/wrapup-token";
 import { enqueue } from "@/lib/queue";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const OUTCOME_TO_ANALYSIS: Record<string, string> = {
   interested: "hot_delay",
@@ -12,6 +13,9 @@ const OUTCOME_TO_ANALYSIS: Record<string, string> = {
 };
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   let body: { token?: string; outcome?: string; objection_text?: string } = {};
   try {
     body = await req.json();

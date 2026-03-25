@@ -7,9 +7,9 @@ import { ROUTES } from "@/lib/constants";
 const BASE = "https://www.recall-touch.com";
 
 export const metadata = {
-  title: "AI Revenue Operations for Healthcare — Recall Touch",
+  title: "Healthcare AI Revenue Operations Platform — Recall Touch",
   description:
-    "Answer patient calls 24/7, reduce no-shows, automate scheduling and prescription refills, and improve patient engagement—all HIPAA-compliant.",
+    "Drive patient revenue and operational efficiency with complete AI-powered workflows: call answering, appointment management, no-show recovery, prescription handling, and follow-up automation—HIPAA-compliant.",
   alternates: { canonical: `${BASE}/industries/healthcare` },
 };
 
@@ -27,9 +27,9 @@ export default function HealthcareIndustryPage() {
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    name: "Healthcare AI Revenue Operations",
+    name: "Healthcare AI Revenue Operations Platform",
     url: `${BASE}/industries/healthcare`,
-    description: "HIPAA-compliant AI phone system for healthcare: answers patient calls, manages scheduling, reduces no-shows, and automates refill requests.",
+    description: "Complete HIPAA-compliant AI revenue operations for healthcare: call answering, patient scheduling, no-show prevention, prescription automation, lab result routing, appointment reminders, and patient engagement.",
     address: { "@type": "PostalAddress", addressCountry: "US" },
   };
 

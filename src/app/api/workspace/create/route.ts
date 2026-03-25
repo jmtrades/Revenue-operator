@@ -11,8 +11,8 @@ import { sendAgentLiveEmail } from "@/lib/email/agent-live";
 import { buildStarterKnowledge, mergeKnowledgeItems } from "@/lib/workspace/starter-knowledge";
 import { syncPrimaryAgent } from "@/lib/agents/sync-primary-agent";
 import { parseBody, phoneSchema } from "@/lib/api/validate";
-import { assertSameOrigin } from "@/lib/http/csrf";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export const dynamic = "force-dynamic";
 

@@ -9,6 +9,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { z } from "zod";
 import type { RecordingConsentMode } from "@/lib/compliance/recording-consent";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const PATCH_BODY = z.object({
   mode: z.enum(["one_party", "two_party", "none"]),
@@ -55,6 +56,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const session = await getSession(req);
   if (!session?.userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

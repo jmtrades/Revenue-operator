@@ -9,8 +9,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceRole } from "@/lib/auth/workspace-access";
 import { getSession } from "@/lib/auth/request-session";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   let body: { workspace_id?: string; invite_id?: string };
   try {
     body = await req.json();

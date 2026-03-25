@@ -13,6 +13,7 @@ import {
   enrollContact,
   getSequenceWithSteps,
 } from "@/lib/sequences/follow-up-engine";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function GET(
   req: NextRequest,
@@ -65,6 +66,9 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   try {
     const { id } = await params;
     const session = await getSession(req);

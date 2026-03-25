@@ -7,9 +7,9 @@ import { ROUTES } from "@/lib/constants";
 const BASE = "https://www.recall-touch.com";
 
 export const metadata = {
-  title: "Recruiting AI Phone Agent — Recall Touch",
+  title: "Recruiting AI Revenue Operations Platform — Recall Touch",
   description:
-    "Answer inbound candidate calls, screen and schedule interviews, recover no-shows, and run pipeline follow-up with an AI phone agent built for recruiting teams.",
+    "Maximize candidate pipeline velocity and placement conversion with complete AI-powered workflows: call answering, candidate screening, interview scheduling, no-show recovery, and pipeline follow-up automation.",
   alternates: { canonical: "https://www.recall-touch.com/industries/recruiting" },
 };
 
@@ -27,10 +27,10 @@ export default function RecruitingIndustryPage() {
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    name: "Recruiting AI Phone Agent",
+    name: "Recruiting AI Revenue Operations Platform",
     url: `${BASE}/industries/recruiting`,
     description:
-      "AI phone agent for recruiting: answers candidate calls, schedules interviews, recovers no-shows, and keeps pipeline moving.",
+      "Complete AI revenue operations for recruiting: candidate call answering, structured screening and qualification, interview scheduling and confirmation, no-show recovery, post-interview follow-up, and pipeline reactivation.",
     address: { "@type": "PostalAddress", addressCountry: "US" },
   };
 

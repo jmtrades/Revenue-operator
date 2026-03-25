@@ -9,6 +9,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 function normalizeE164Candidate(input: string): string | null {
   const raw = input.trim();
@@ -20,6 +21,9 @@ function normalizeE164Candidate(input: string): string | null {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const body = (await req.json().catch(() => ({}))) as { phone_number?: string | null };
   const normalized = normalizeE164Candidate((body.phone_number ?? "").toString());
 

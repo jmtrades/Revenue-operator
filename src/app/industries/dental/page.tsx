@@ -7,9 +7,9 @@ import { ROUTES } from "@/lib/constants";
 const BASE = "https://www.recall-touch.com";
 
 export const metadata = {
-  title: "Dental AI Phone Agent — Recall Touch",
+  title: "Dental Practice AI Revenue Operations — Recall Touch",
   description:
-    "Answer every call, book more cleanings, and reduce no-shows with automated follow-up built for dental practices.",
+    "Recover missed appointments, prevent no-shows, and boost practice revenue with AI-powered patient engagement and appointment recovery for dental.",
   alternates: { canonical: `${BASE}/industries/dental` },
 };
 
@@ -27,9 +27,9 @@ export default function DentalIndustryPage() {
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    name: "Dental AI Phone Agent",
+    name: "Dental Practice AI Revenue Operations",
     url: `${BASE}/industries/dental`,
-    description: "AI phone agent for dental practices: answers calls, books appointments, and recovers missed revenue.",
+    description: "Complete AI revenue operations for dental: inbound call answering, appointment booking, no-show prevention, treatment plan follow-up, and recall reactivation.",
     address: { "@type": "PostalAddress", addressCountry: "US" },
   };
 
