@@ -340,7 +340,8 @@ export async function enrollContact(
     nextStepDueAt = dueDate.toISOString();
   }
 
-  // Insert enrollment
+  // Insert enrollment — DB-level partial unique index (uq_sequence_enrollments_active)
+  // on (sequence_id, lead_id) WHERE status='active' prevents concurrent race conditions.
   const { data: enrollment, error } = await db
     .from("sequence_enrollments")
     .insert({
@@ -348,13 +349,23 @@ export async function enrollContact(
       lead_id: contactId,
       workspace_id: workspaceId,
       status: "active",
-      current_step: 0, // Will increment to 1 on first execution
+      current_step: 0,
       next_step_due_at: nextStepDueAt,
     })
     .select("*")
     .maybeSingle();
 
-  if (error || !enrollment) return null;
+  if (error) {
+    // Handle unique constraint violation gracefully (23505 = unique_violation)
+    const pgCode = (error as { code?: string }).code;
+    if (pgCode === "23505") {
+      console.warn(`[sequence-safety] Concurrent enrollment race caught for lead ${contactId} in sequence ${sequenceId}`);
+      return null;
+    }
+    console.error(`[sequence-safety] Enrollment insert failed:`, error.message);
+    return null;
+  }
+  if (!enrollment) return null;
   return enrollment as SequenceEnrollment;
 }
 

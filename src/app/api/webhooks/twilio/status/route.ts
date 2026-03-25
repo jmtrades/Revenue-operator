@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { recordDeliveryReceipt } from "@/lib/delivery/provider";
 import { markAttemptDelivered } from "@/lib/delivery-assurance/action-attempts";
+import crypto from "crypto";
 
 export const dynamic = "force-dynamic";
 
@@ -10,11 +11,40 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+function verifyTwilioSignature(url: string, params: Record<string, string>, signature: string): boolean {
+  const token = process.env.TWILIO_AUTH_TOKEN;
+  if (!token) return false;
+  const sorted = Object.keys(params)
+    .sort()
+    .reduce((acc, key) => acc + key + params[key], "");
+  const data = url + sorted;
+  const expected = crypto.createHmac("sha1", token).update(Buffer.from(data, "utf-8")).digest("base64");
+  try {
+    return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature));
+  } catch {
+    return false;
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
-  const form = await request.formData();
-  const messageSid = form.get("MessageSid") as string | null;
-  const messageStatus = form.get("MessageStatus") as string | null;
+  // Read body as text first for signature verification
+  const bodyText = await request.text();
+  const formParams = Object.fromEntries(new URLSearchParams(bodyText)) as Record<string, string>;
+
+  // Verify Twilio signature in production
+  const sig = request.headers.get("x-twilio-signature");
+  const hasToken = Boolean(process.env.TWILIO_AUTH_TOKEN);
+  if (hasToken && process.env.NODE_ENV === "production") {
+    const url = `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/twilio/status`;
+    if (!sig || !verifyTwilioSignature(url, formParams, sig)) {
+      console.warn("[twilio-status] Invalid signature — rejecting request");
+      return new NextResponse("Unauthorized", { status: 401, headers: { "Content-Type": "text/plain" } });
+    }
+  }
+
+  const messageSid = formParams.MessageSid ?? null;
+  const messageStatus = formParams.MessageStatus ?? null;
 
   if (!messageSid) return new NextResponse("Missing MessageSid", { status: 400 });
 
@@ -71,9 +101,9 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const callSid = form.get("CallSid") as string | null;
-  const callStatus = (form.get("CallStatus") as string | null) ?? undefined;
-  const callDuration = form.get("CallDuration") as string | null;
+  const callSid = formParams.CallSid ?? null;
+  const callStatus = formParams.CallStatus ?? undefined;
+  const callDuration = formParams.CallDuration ?? null;
 
   if (callSid) {
     await supabase

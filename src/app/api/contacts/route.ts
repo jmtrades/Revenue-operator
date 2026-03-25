@@ -6,6 +6,7 @@ import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { parseBody, emailSchema, phoneSchema, workspaceIdSchema } from "@/lib/api/validate";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { normalizePhoneE164 } from "@/lib/phone/normalize";
 
 const GENERIC_ERROR = "An unexpected error occurred";
 
@@ -50,7 +51,7 @@ async function postContact(req: NextRequest) {
   const db = getDb();
   const { data: contact, error } = await db
     .from("leads")
-    .insert({ workspace_id, name, phone: phone ?? null, email: email ?? null, company: company ?? null, status: "NEW" })
+    .insert({ workspace_id, name, phone: phone ? normalizePhoneE164(phone) : null, email: email ?? null, company: company ?? null, status: "NEW" })
     .select()
     .maybeSingle();
   if (error) {

@@ -373,21 +373,23 @@ async function handleStripeWebhookEvent(
         const badStatuses = ["canceled", "unpaid", "incomplete_expired"];
         if (badStatuses.includes(sub.status ?? "")) {
           const now = new Date().toISOString();
-          const { data: ac } = await db
-            .from("settlement_accounts")
-            .select("suspension_entry_created_at")
-            .eq("workspace_id", settlementWorkspaceId)
-            .maybeSingle();
-          const alreadyCreated = (ac as { suspension_entry_created_at: string | null } | null)?.suspension_entry_created_at != null;
+          // Atomic: always set suspension fields, only set suspension_entry_created_at if null
+          // First, unconditionally update the state and timestamp
           await db
             .from("settlement_accounts")
             .update({
               settlement_state: "suspended",
               suspended_at: now,
               updated_at: now,
-              ...(!alreadyCreated && { suspension_entry_created_at: now }),
             })
             .eq("workspace_id", settlementWorkspaceId);
+          // Then, atomically set suspension_entry_created_at only if it's currently null
+          // This prevents the race where two webhooks both see null and both write
+          await db
+            .from("settlement_accounts")
+            .update({ suspension_entry_created_at: now })
+            .eq("workspace_id", settlementWorkspaceId)
+            .is("suspension_entry_created_at", null);
           await appendSettlementWebhookEvent(settlementWorkspaceId, "settlement_export_failed", { reason: "subscription_not_active" });
         }
       }
