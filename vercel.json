@@ -1,0 +1,73 @@
+{
+  "buildCommand": "next build --webpack",
+  "crons": [
+    {
+      "path": "/api/cron/core",
+      "schedule": "*/2 * * * *"
+    },
+    {
+      "path": "/api/cron/speed-to-lead",
+      "schedule": "*/2 * * * *"
+    },
+    {
+      "path": "/api/cron/heartbeat",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/weekly-trust",
+      "schedule": "0 9 * * 1"
+    },
+    {
+      "path": "/api/cron/trial-reminders",
+      "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/trial-expiry",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/voice-quality",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/first-day-check",
+      "schedule": "0 10 * * *"
+    },
+    {
+      "path": "/api/cron/day-3-nudge",
+      "schedule": "0 11 * * *"
+    },
+    {
+      "path": "/api/cron/phone-billing",
+      "schedule": "0 3 1 * *"
+    },
+    {
+      "path": "/api/cron/usage-overage",
+      "schedule": "0 4 1 * *"
+    },
+    {
+      "path": "/api/cron/daily-metrics",
+      "schedule": "15 0 * * *"
+    },
+    {
+      "path": "/api/cron/weekly-digest",
+      "schedule": "0 8 * * 1"
+    },
+    {
+      "path": "/api/cron/process-sequences",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/usage-alerts",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/usage-milestones",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/benchmark-aggregation",
+      "schedule": "0 2 * * *"
+    }
+  ]
+}
