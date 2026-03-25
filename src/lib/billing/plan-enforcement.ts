@@ -41,8 +41,21 @@ function suggestUpgrade(current: PlanSlug): PlanSlug | undefined {
 
 /** Block all billable actions if workspace billing is suspended */
 const ACTIVE_STATUSES = new Set(["active", "trial"]);
-function checkBillingActive(billingStatus: string | null | undefined): EnforcementResult | null {
+/**
+ * Statuses that are allowed when the workspace has a payment method on file
+ * (stripe_customer_id). Users whose trial ended but who added a card should
+ * still be able to buy numbers / use paid features — the purchase itself is
+ * a conversion event.
+ */
+const PAYABLE_STATUSES = new Set(["active", "trial", "trial_ended"]);
+
+function checkBillingActive(
+  billingStatus: string | null | undefined,
+  hasPaymentMethod = false,
+): EnforcementResult | null {
   if (!billingStatus || ACTIVE_STATUSES.has(billingStatus)) return null;
+  // Allow trial_ended users through if they have a payment method on file
+  if (hasPaymentMethod && PAYABLE_STATUSES.has(billingStatus)) return null;
   return {
     allowed: false,
     reason: "no_subscription",
@@ -50,7 +63,9 @@ function checkBillingActive(billingStatus: string | null | undefined): Enforceme
       ? "Your payment failed. Please update your billing info to continue."
       : billingStatus === "paused"
         ? "Your account is paused. Resume your subscription to continue."
-        : "An active subscription is required for this action.",
+        : billingStatus === "trial_ended"
+          ? "Your trial has ended. Subscribe to a plan to continue."
+          : "An active subscription is required for this action.",
   };
 }
 
@@ -59,14 +74,14 @@ export async function canCreateAgent(workspaceId: string): Promise<EnforcementRe
   const db = getDb();
 
   const [wsRes, agentRes] = await Promise.all([
-    db.from("workspaces").select("billing_tier, billing_status").eq("id", workspaceId).maybeSingle(),
+    db.from("workspaces").select("billing_tier, billing_status, stripe_customer_id").eq("id", workspaceId).maybeSingle(),
     db.from("agents").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId),
   ]);
 
-  const ws = wsRes.data as { billing_tier?: string; billing_status?: string } | null;
+  const ws = wsRes.data as { billing_tier?: string; billing_status?: string; stripe_customer_id?: string | null } | null;
   if (!ws) return { allowed: false, reason: "no_subscription", message: "Workspace not found" };
 
-  const billingBlock = checkBillingActive(ws.billing_status);
+  const billingBlock = checkBillingActive(ws.billing_status, !!ws.stripe_customer_id);
   if (billingBlock) return billingBlock;
 
   const tier = getPlan(ws.billing_tier);
@@ -92,14 +107,14 @@ export async function canProvisionNumber(workspaceId: string): Promise<Enforceme
   const db = getDb();
 
   const [wsRes, numRes] = await Promise.all([
-    db.from("workspaces").select("billing_tier, billing_status").eq("id", workspaceId).maybeSingle(),
+    db.from("workspaces").select("billing_tier, billing_status, stripe_customer_id").eq("id", workspaceId).maybeSingle(),
     db.from("phone_numbers").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId).eq("status", "active"),
   ]);
 
-  const ws = wsRes.data as { billing_tier?: string; billing_status?: string } | null;
+  const ws = wsRes.data as { billing_tier?: string; billing_status?: string; stripe_customer_id?: string | null } | null;
   if (!ws) return { allowed: false, reason: "no_subscription", message: "Workspace not found" };
 
-  const billingBlock = checkBillingActive(ws.billing_status);
+  const billingBlock = checkBillingActive(ws.billing_status, !!ws.stripe_customer_id);
   if (billingBlock) return billingBlock;
 
   const tier = getPlan(ws.billing_tier);
@@ -124,11 +139,11 @@ export async function canProvisionNumber(workspaceId: string): Promise<Enforceme
 export async function canMakeOutboundCall(workspaceId: string): Promise<EnforcementResult> {
   const db = getDb();
 
-  const wsRes = await db.from("workspaces").select("billing_tier, billing_status").eq("id", workspaceId).maybeSingle();
-  const ws = wsRes.data as { billing_tier?: string; billing_status?: string } | null;
+  const wsRes = await db.from("workspaces").select("billing_tier, billing_status, stripe_customer_id").eq("id", workspaceId).maybeSingle();
+  const ws = wsRes.data as { billing_tier?: string; billing_status?: string; stripe_customer_id?: string | null } | null;
   if (!ws) return { allowed: false, reason: "no_subscription", message: "Workspace not found" };
 
-  const billingBlock = checkBillingActive(ws.billing_status);
+  const billingBlock = checkBillingActive(ws.billing_status, !!ws.stripe_customer_id);
   if (billingBlock) return billingBlock;
 
   const tier = getPlan(ws.billing_tier);
@@ -169,11 +184,11 @@ export async function canUseFeature(
 ): Promise<EnforcementResult> {
   const db = getDb();
 
-  const wsRes = await db.from("workspaces").select("billing_tier, billing_status").eq("id", workspaceId).maybeSingle();
-  const ws = wsRes.data as { billing_tier?: string; billing_status?: string } | null;
+  const wsRes = await db.from("workspaces").select("billing_tier, billing_status, stripe_customer_id").eq("id", workspaceId).maybeSingle();
+  const ws = wsRes.data as { billing_tier?: string; billing_status?: string; stripe_customer_id?: string | null } | null;
   if (!ws) return { allowed: false, reason: "no_subscription", message: "Workspace not found" };
 
-  const billingBlock = checkBillingActive(ws.billing_status);
+  const billingBlock = checkBillingActive(ws.billing_status, !!ws.stripe_customer_id);
   if (billingBlock) return billingBlock;
 
   const tier = getPlan(ws.billing_tier);
@@ -198,14 +213,14 @@ export async function canInviteSeat(workspaceId: string): Promise<EnforcementRes
   const db = getDb();
 
   const [wsRes, memberRes] = await Promise.all([
-    db.from("workspaces").select("billing_tier, billing_status").eq("id", workspaceId).maybeSingle(),
+    db.from("workspaces").select("billing_tier, billing_status, stripe_customer_id").eq("id", workspaceId).maybeSingle(),
     db.from("workspace_members").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId),
   ]);
 
-  const ws = wsRes.data as { billing_tier?: string; billing_status?: string } | null;
+  const ws = wsRes.data as { billing_tier?: string; billing_status?: string; stripe_customer_id?: string | null } | null;
   if (!ws) return { allowed: false, reason: "no_subscription", message: "Workspace not found" };
 
-  const billingBlock = checkBillingActive(ws.billing_status);
+  const billingBlock = checkBillingActive(ws.billing_status, !!ws.stripe_customer_id);
   if (billingBlock) return billingBlock;
 
   const tier = getPlan(ws.billing_tier);

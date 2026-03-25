@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
   const db = getDb();
   const { data: ws } = await db
     .from("workspaces")
-    .select("id, billing_status")
+    .select("id, billing_status, stripe_customer_id")
     .eq("id", workspaceId)
     .maybeSingle();
 
@@ -46,10 +46,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
   }
 
-  const billingStatus = (ws as { billing_status?: string }).billing_status;
-  if (!billingStatus || !["trial", "active"].includes(billingStatus)) {
+  const wsRow = ws as { billing_status?: string; stripe_customer_id?: string | null };
+  const billingStatus = wsRow.billing_status;
+  const hasCard = !!wsRow.stripe_customer_id;
+  const billingAllowed = billingStatus === "trial" || billingStatus === "active" || (billingStatus === "trial_ended" && hasCard);
+  if (!billingStatus || !billingAllowed) {
     return NextResponse.json(
-      { error: "Active subscription required to provision phone numbers.", code: "SUBSCRIPTION_REQUIRED" },
+      {
+        error: billingStatus === "trial_ended"
+          ? "Your trial has ended. Add a payment method to continue."
+          : "Active subscription required to provision phone numbers.",
+        code: "SUBSCRIPTION_REQUIRED",
+      },
       { status: 403 },
     );
   }
