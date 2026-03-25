@@ -49,6 +49,8 @@ export function Modal({ open, onClose, title, size = "md", children }: ModalProp
             transition={{ duration: 0.2, ease: "easeOut" }}
             className="absolute inset-0 bg-[var(--overlay)] backdrop-blur-[6px]"
             onClick={onClose}
+            role="presentation"
+            aria-hidden="true"
           />
 
           {/* Dialog — scale from center (correct for modals per Emil) */}

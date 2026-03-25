@@ -4,22 +4,28 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  const session = await getSession(req);
+  if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // Verify workspace access before fetching lead
+  const authErr = await requireWorkspaceAccess(req, session.workspaceId);
+  if (authErr) return authErr;
+
   const db = getDb();
-  const { data: lead, error } = await db.from("leads").select("*").eq("id", id).maybeSingle();
+  const { data: lead, error } = await db
+    .from("leads")
+    .select("*")
+    .eq("id", id)
+    .eq("workspace_id", session.workspaceId)
+    .maybeSingle();
   if (error || !lead) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  const workspaceId = (lead as { workspace_id?: string }).workspace_id;
-  if (workspaceId) {
-    const session = await getSession(req);
-    if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    const authErr = await requireWorkspaceAccess(req, workspaceId);
-    if (authErr) return authErr;
-  }
   const { data: deals } = await db.from("deals").select("id, value_cents, status").eq("lead_id", id);
   let responsibility_state: string | undefined;
   try {
@@ -48,6 +54,9 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const { id } = await params;
   let body: { paused_for_followup?: boolean; state?: string } = {};
   try {
@@ -112,6 +121,9 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const { id } = await params;
   const session = await getSession(req);
   if (!session?.userId || !session?.workspaceId) {
