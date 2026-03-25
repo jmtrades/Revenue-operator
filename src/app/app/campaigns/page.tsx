@@ -494,6 +494,7 @@ export default function CampaignsPage() {
                       disabled={duplicating}
                       className="p-2 rounded-lg border border-[var(--border-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-colors disabled:opacity-50"
                       title={t("duplicate")}
+                      aria-label={t("campaigns.copy")}
                     >
                       <Copy className="w-3.5 h-3.5" />
                     </button>
@@ -504,6 +505,7 @@ export default function CampaignsPage() {
                         disabled={deleting}
                         className="p-2 rounded-lg border border-red-500/20 text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors disabled:opacity-50"
                         title={t("delete")}
+                        aria-label={t("campaigns.delete")}
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -516,6 +518,7 @@ export default function CampaignsPage() {
                           : void toggleCampaign(campaign)
                       }
                       className="ml-1 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-colors"
+                      aria-label={campaign.status === "active" ? t("campaigns.pause") : t("campaigns.launch")}
                     >
                       {campaign.status === "active" ? (
                         <><Pause className="w-3.5 h-3.5" /> {t("pause")}</>

@@ -12,6 +12,8 @@ import { getPriceId } from "@/lib/stripe-prices";
 import { RECEIPT_FOOTER } from "@/lib/billing-copy";
 import type { BillingTier } from "@/lib/feature-gate/types";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { getStripe } from "@/lib/billing/stripe-client";
 
 const PLAN_TO_TIER: Record<string, BillingTier> = {
   solo: "solo",
@@ -60,6 +62,12 @@ export async function POST(req: NextRequest) {
   const authErr = await requireWorkspaceAccess(req, workspace_id);
   if (authErr) return authErr;
 
+  // Rate limiting: 5 requests per minute per workspace
+  const rl = await checkRateLimit(`billing:change-plan:${workspace_id}`, 5, 60_000);
+  if (!rl.allowed) {
+    return NextResponse.json({ ok: false, error: "Too many requests" }, { status: 429 });
+  }
+
   if (!planId || typeof planId !== "string") return NextResponse.json({ ok: false, error: "plan_id required" }, { status: 400 });
 
   const tier = PLAN_TO_TIER[planId.toLowerCase()];
@@ -96,8 +104,7 @@ export async function POST(req: NextRequest) {
     billing_tier?: BillingTier | null;
     billing_status?: string;
   };
-  const Stripe = (await import("stripe")).default;
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+  const stripe = getStripe();
 
   // No subscription yet (trial): create checkout session and return URL
   if (!row.stripe_subscription_id) {
