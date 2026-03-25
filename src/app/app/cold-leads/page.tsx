@@ -56,8 +56,8 @@ function persistColdLeadsSnapshot(workspaceId: string, leads: ColdLead[]) {
   safeSetItem(`${COLD_LEADS_SNAPSHOT_PREFIX}${workspaceId}`, JSON.stringify(leads));
 }
 
-function formatRelativeTime(dateStr?: string): string {
-  if (!dateStr) return "Never";
+function formatRelativeTime(dateStr?: string, t?: any): string {
+  if (!dateStr) return t ? t("formatTime.never") : "Never";
   const now = new Date();
   const past = new Date(dateStr);
   const diffMs = now.getTime() - past.getTime();
@@ -65,19 +65,27 @@ function formatRelativeTime(dateStr?: string): string {
   const diffHours = Math.floor(diffMs / 3600000);
   const diffDays = Math.floor(diffMs / 86400000);
 
-  if (diffMins < 1) return "Just now";
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
+  if (!t) {
+    if (diffMins < 1) return "Just now";
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return past.toLocaleDateString();
+  }
+
+  if (diffMins < 1) return t("formatTime.justNow");
+  if (diffMins < 60) return t("formatTime.minutesAgo", { count: diffMins });
+  if (diffHours < 24) return t("formatTime.hoursAgo", { count: diffHours });
+  if (diffDays < 7) return t("formatTime.daysAgo", { count: diffDays });
   return past.toLocaleDateString();
 }
 
-function getReasonLabel(reason: ColdLeadReason): string {
+function getReasonLabel(reason: ColdLeadReason, t: any): string {
   const map: Record<ColdLeadReason, string> = {
-    no_activity_30d: "No Activity 30d",
-    no_reply_14d: "No Reply 14d",
-    lost_deal: "Lost Deal",
-    manual: "Manual",
+    no_activity_30d: t("reason.noActivity30d"),
+    no_reply_14d: t("reason.noReply14d"),
+    lost_deal: t("reason.lostDeal"),
+    manual: t("reason.manual"),
   };
   return map[reason] ?? reason;
 }
@@ -118,27 +126,31 @@ interface StatsProps {
   exhausted: number;
 }
 
-function StatsBar({ total, pending, inProgress, reengaged, exhausted }: StatsProps) {
+interface StatsBarProps extends StatsProps {
+  t: any;
+}
+
+function StatsBar({ total, pending, inProgress, reengaged, exhausted, t }: StatsBarProps) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
       <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-3">
-        <p className="text-xs text-[var(--text-secondary)] font-medium">Total Cold Leads</p>
+        <p className="text-xs text-[var(--text-secondary)] font-medium">{t("stats.totalColdLeads")}</p>
         <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">{total}</p>
       </div>
       <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-3">
-        <p className="text-xs text-[var(--text-secondary)] font-medium">Pending</p>
+        <p className="text-xs text-[var(--text-secondary)] font-medium">{t("stats.pending")}</p>
         <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">{pending}</p>
       </div>
       <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-3">
-        <p className="text-xs text-[var(--text-secondary)] font-medium">In Progress</p>
+        <p className="text-xs text-[var(--text-secondary)] font-medium">{t("stats.inProgress")}</p>
         <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">{inProgress}</p>
       </div>
       <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-3">
-        <p className="text-xs text-[var(--text-secondary)] font-medium">Re-engaged</p>
+        <p className="text-xs text-[var(--text-secondary)] font-medium">{t("stats.reengaged")}</p>
         <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">{reengaged}</p>
       </div>
       <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-3">
-        <p className="text-xs text-[var(--text-secondary)] font-medium">Exhausted</p>
+        <p className="text-xs text-[var(--text-secondary)] font-medium">{t("stats.exhausted")}</p>
         <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">{exhausted}</p>
       </div>
     </div>
@@ -292,7 +304,7 @@ export default function ColdLeadsPage() {
 
   const handleAddLead = async () => {
     if (!addLeadForm.name.trim() || !workspaceId) {
-      toast.error("Please fill in required fields");
+      toast.error(t("toast.error.fillRequired"));
       return;
     }
 
@@ -313,7 +325,7 @@ export default function ColdLeadsPage() {
       });
 
       if (!response.ok) {
-        toast.error("Failed to add cold lead");
+        toast.error(t("toast.error.addFailed"));
         return;
       }
 
@@ -328,9 +340,9 @@ export default function ColdLeadsPage() {
         priority: "medium",
       });
       setAddLeadOpen(false);
-      toast.success("Cold lead added");
+      toast.success(t("toast.success.addedLead"));
     } catch (err) {
-      toast.error("Failed to add cold lead");
+      toast.error(t("toast.error.addFailed"));
     } finally {
       setAddLeadSaving(false);
     }
@@ -342,7 +354,7 @@ export default function ColdLeadsPage() {
         .filter((l) => l.status === "pending")
         .map((l) => l.id);
       if (pendingIds.length === 0) {
-        toast.error("No pending leads to re-engage");
+        toast.error(t("toast.error.noPendingLeads"));
         return;
       }
     } else if (!reengageDialog.selectedLeadId) {
@@ -368,7 +380,7 @@ export default function ColdLeadsPage() {
       });
 
       if (!response.ok) {
-        toast.error("Failed to re-engage leads");
+        toast.error(t("toast.error.reengageFailed"));
         return;
       }
 
@@ -379,9 +391,9 @@ export default function ColdLeadsPage() {
       setLeads(updatedLeads);
       persistColdLeadsSnapshot(workspaceId, updatedLeads);
       setReengageDialog({ open: false, isBulk: false, strategy: "auto", channel: "default" });
-      toast.success(`Started re-engagement for ${leadIds.length} lead(s)`);
+      toast.success(t("toast.success.reengagedLeads", { count: leadIds.length }));
     } catch (err) {
-      toast.error("Failed to re-engage leads");
+      toast.error(t("toast.error.reengageFailed"));
     } finally {
       setReengageSaving(false);
     }
@@ -398,7 +410,7 @@ export default function ColdLeadsPage() {
       });
 
       if (!response.ok) {
-        toast.error("Failed to skip lead");
+        toast.error(t("toast.error.skipFailed"));
         return;
       }
 
@@ -407,9 +419,9 @@ export default function ColdLeadsPage() {
       );
       setLeads(updated);
       persistColdLeadsSnapshot(workspaceId, updated);
-      toast.success("Lead marked as exhausted");
+      toast.success(t("toast.success.markedExhausted"));
     } catch (err) {
-      toast.error("Failed to skip lead");
+      toast.error(t("toast.error.skipFailed"));
     }
   };
 
@@ -424,16 +436,16 @@ export default function ColdLeadsPage() {
       });
 
       if (!response.ok) {
-        toast.error("Failed to remove lead");
+        toast.error(t("toast.error.removeFailed"));
         return;
       }
 
       const updated = leads.filter((l) => l.id !== leadId);
       setLeads(updated);
       persistColdLeadsSnapshot(workspaceId, updated);
-      toast.success("Lead removed");
+      toast.success(t("toast.success.removed"));
     } catch (err) {
-      toast.error("Failed to remove lead");
+      toast.error(t("toast.error.removeFailed"));
     }
   };
 
@@ -442,10 +454,10 @@ export default function ColdLeadsPage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-semibold text-[var(--text-primary)]">
-          Cold Leads
+          {t("title")}
         </h1>
         <p className="text-sm text-[var(--text-secondary)] mt-1">
-          Re-engage dormant leads and recover lost opportunities
+          {t("description")}
         </p>
       </div>
 
@@ -456,6 +468,7 @@ export default function ColdLeadsPage() {
         inProgress={stats.inProgress}
         reengaged={stats.reengaged}
         exhausted={stats.exhausted}
+        t={t}
       />
 
       {/* Action Buttons */}
@@ -465,7 +478,7 @@ export default function ColdLeadsPage() {
           className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 text-sm font-medium"
         >
           <Plus className="w-4 h-4" />
-          Add Cold Leads
+          {t("addButton")}
         </button>
         <button
           onClick={() =>
@@ -480,7 +493,7 @@ export default function ColdLeadsPage() {
           className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--bg-input)] text-[var(--text-primary)] hover:bg-[var(--border-default)] text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Zap className="w-4 h-4" />
-          Re-engage All Pending
+          {t("reengageAll")}
         </button>
       </div>
 
@@ -503,11 +516,11 @@ export default function ColdLeadsPage() {
           onChange={(e) => setStatusFilter(e.target.value as ColdLeadStatus | "all")}
           className="px-3 py-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm hover:border-[var(--border-medium)]"
         >
-          <option value="all">All Status</option>
-          <option value="pending">Pending</option>
-          <option value="in_progress">In Progress</option>
-          <option value="completed">Completed</option>
-          <option value="exhausted">Exhausted</option>
+          <option value="all">{t("status.all")}</option>
+          <option value="pending">{t("status.pending")}</option>
+          <option value="in_progress">{t("status.inProgress")}</option>
+          <option value="completed">{t("status.completed")}</option>
+          <option value="exhausted">{t("status.exhausted")}</option>
         </select>
 
         {/* Reason Filter */}
@@ -516,11 +529,11 @@ export default function ColdLeadsPage() {
           onChange={(e) => setReasonFilter(e.target.value as ColdLeadReason | "all")}
           className="px-3 py-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm hover:border-[var(--border-medium)]"
         >
-          <option value="all">All Reasons</option>
-          <option value="no_activity_30d">No Activity 30d</option>
-          <option value="no_reply_14d">No Reply 14d</option>
-          <option value="lost_deal">Lost Deal</option>
-          <option value="manual">Manual</option>
+          <option value="all">{t("reason.all")}</option>
+          <option value="no_activity_30d">{t("reason.noActivity30d")}</option>
+          <option value="no_reply_14d">{t("reason.noReply14d")}</option>
+          <option value="lost_deal">{t("reason.lostDeal")}</option>
+          <option value="manual">{t("reason.manual")}</option>
         </select>
 
         {/* Sort */}
@@ -531,10 +544,10 @@ export default function ColdLeadsPage() {
           }
           className="px-3 py-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm hover:border-[var(--border-medium)]"
         >
-          <option value="priority">Priority</option>
-          <option value="next_attempt">Next Attempt</option>
-          <option value="recent">Most Recent</option>
-          <option value="attempts">Attempt Count</option>
+          <option value="priority">{t("sort.priority")}</option>
+          <option value="next_attempt">{t("sort.nextAttempt")}</option>
+          <option value="recent">{t("sort.recent")}</option>
+          <option value="attempts">{t("sort.attempts")}</option>
         </select>
       </div>
 
@@ -550,29 +563,29 @@ export default function ColdLeadsPage() {
         </div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-12">
-          <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">No cold leads in the queue</h3>
+          <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("empty.title")}</h3>
           <p className="text-sm text-[var(--text-secondary)] mb-4">
-            Leads are automatically added when they go dormant for 30+ days, or you can manually add leads that need re-engagement.
+            {t("empty.description")}
           </p>
           <button
             onClick={() => setAddLeadOpen(true)}
             className="px-4 py-2 rounded-lg bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-medium hover:opacity-90"
           >
-            Add Cold Leads
+            {t("addButton")}
           </button>
         </div>
       ) : (
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] overflow-hidden">
           {/* Table Header */}
           <div className="hidden md:grid grid-cols-[2fr,1fr,1fr,1fr,1fr,1fr,1fr,0.5fr] gap-4 px-4 py-3 border-b border-[var(--border-default)] bg-[var(--bg-inset)] text-xs font-medium text-[var(--text-secondary)]">
-            <div>Lead</div>
-            <div>Reason</div>
-            <div>Priority</div>
-            <div>Attempts</div>
-            <div>Last Attempt</div>
-            <div>Next Attempt</div>
-            <div>Status</div>
-            <div className="text-right">Actions</div>
+            <div>{t("table.lead")}</div>
+            <div>{t("table.reason")}</div>
+            <div>{t("table.priority")}</div>
+            <div>{t("table.attempts")}</div>
+            <div>{t("table.lastAttempt")}</div>
+            <div>{t("table.nextAttempt")}</div>
+            <div>{t("table.status")}</div>
+            <div className="text-right">{t("table.actions")}</div>
           </div>
 
           {/* Table Body */}
@@ -594,7 +607,7 @@ export default function ColdLeadsPage() {
                 {/* Reason */}
                 <div className="md:col-span-1">
                   <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border bg-[var(--bg-inset)] text-[var(--text-secondary)] border-[var(--border-default)]">
-                    {getReasonLabel(lead.reason)}
+                    {getReasonLabel(lead.reason, t)}
                   </span>
                 </div>
 
@@ -612,21 +625,21 @@ export default function ColdLeadsPage() {
                 {/* Attempts */}
                 <div className="md:col-span-1">
                   <span className="text-sm text-[var(--text-primary)]">
-                    {lead.attempts} of {lead.max_attempts}
+                    {t("attempts", { current: lead.attempts, max: lead.max_attempts })}
                   </span>
                 </div>
 
                 {/* Last Attempt */}
                 <div className="md:col-span-1">
                   <span className="text-sm text-[var(--text-secondary)]">
-                    {formatRelativeTime(lead.last_attempt_at)}
+                    {formatRelativeTime(lead.last_attempt_at, t)}
                   </span>
                 </div>
 
                 {/* Next Attempt */}
                 <div className="md:col-span-1">
                   <span className="text-sm text-[var(--text-secondary)]">
-                    {lead.next_attempt_at ? formatRelativeTime(lead.next_attempt_at) : "Not scheduled"}
+                    {lead.next_attempt_at ? formatRelativeTime(lead.next_attempt_at, t) : t("formatTime.never")}
                   </span>
                 </div>
 
@@ -642,12 +655,12 @@ export default function ColdLeadsPage() {
                           : "bg-red-500/15 text-red-400 border-red-500/30"
                   }`}>
                     {lead.status === "in_progress"
-                      ? "In Progress"
+                      ? t("status.inProgress")
                       : lead.status === "pending"
-                        ? "Pending"
+                        ? t("status.pending")
                         : lead.status === "completed"
-                          ? "Completed"
-                          : "Exhausted"}
+                          ? t("status.completed")
+                          : t("status.exhausted")}
                   </span>
                 </div>
 
@@ -664,7 +677,7 @@ export default function ColdLeadsPage() {
                           channel: "default",
                         })
                       }
-                      title="Re-engage"
+                      title={t("ttip.reengage")}
                       className="p-2 rounded hover:bg-[var(--bg-inset)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                     >
                       <Zap className="w-3.5 h-3.5" />
@@ -672,14 +685,14 @@ export default function ColdLeadsPage() {
                   )}
                   <button
                     onClick={() => handleSkip(lead.id)}
-                    title="Skip"
+                    title={t("ttip.skip")}
                     className="p-2 rounded hover:bg-[var(--bg-inset)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                   >
                     <Clock className="w-3.5 h-3.5" />
                   </button>
                   <button
                     onClick={() => handleRemove(lead.id)}
-                    title="Remove"
+                    title={t("ttip.remove")}
                     className="p-2 rounded hover:bg-[var(--bg-inset)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                   >
                     <AlertCircle className="w-3.5 h-3.5" />
@@ -701,11 +714,11 @@ export default function ColdLeadsPage() {
             >
               ✕
             </button>
-            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Add Cold Lead</h2>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">{t("modal.addLeadTitle")}</h2>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                  Name *
+                  {t("modal.nameLabel")}
                 </label>
                 <input
                   type="text"
@@ -719,7 +732,7 @@ export default function ColdLeadsPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                  Email
+                  {t("modal.emailLabel")}
                 </label>
                 <input
                   type="email"
@@ -733,7 +746,7 @@ export default function ColdLeadsPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                  Phone
+                  {t("modal.phoneLabel")}
                 </label>
                 <input
                   type="tel"
@@ -747,7 +760,7 @@ export default function ColdLeadsPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                  Reason *
+                  {t("modal.reasonLabel")}
                 </label>
                 <select
                   value={addLeadForm.reason}
@@ -759,15 +772,15 @@ export default function ColdLeadsPage() {
                   }
                   className="w-full px-3 py-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm"
                 >
-                  <option value="no_activity_30d">No Activity 30d</option>
-                  <option value="no_reply_14d">No Reply 14d</option>
-                  <option value="lost_deal">Lost Deal</option>
-                  <option value="manual">Manual</option>
+                  <option value="no_activity_30d">{t("reason.noActivity30d")}</option>
+                  <option value="no_reply_14d">{t("reason.noReply14d")}</option>
+                  <option value="lost_deal">{t("reason.lostDeal")}</option>
+                  <option value="manual">{t("reason.manual")}</option>
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                  Priority *
+                  {t("modal.priorityLabel")}
                 </label>
                 <select
                   value={addLeadForm.priority}
@@ -779,9 +792,9 @@ export default function ColdLeadsPage() {
                   }
                   className="w-full px-3 py-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm"
                 >
-                  <option value="high">High</option>
-                  <option value="medium">Medium</option>
-                  <option value="low">Low</option>
+                  <option value="high">{t("priority.high")}</option>
+                  <option value="medium">{t("priority.medium")}</option>
+                  <option value="low">{t("priority.low")}</option>
                 </select>
               </div>
               <div className="flex gap-3 pt-4">
@@ -789,14 +802,14 @@ export default function ColdLeadsPage() {
                   onClick={() => setAddLeadOpen(false)}
                   className="flex-1 px-4 py-2 rounded-lg border border-[var(--border-default)] text-[var(--text-primary)] hover:bg-[var(--bg-inset)] text-sm font-medium"
                 >
-                  Cancel
+                  {t("modal.cancelButton")}
                 </button>
                 <button
                   onClick={handleAddLead}
                   disabled={addLeadSaving}
                   className="flex-1 px-4 py-2 rounded-lg bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-50 text-sm font-medium"
                 >
-                  {addLeadSaving ? "Adding..." : "Add Lead"}
+                  {addLeadSaving ? t("buttons.adding") : t("modal.addButton")}
                 </button>
               </div>
             </div>
@@ -821,11 +834,11 @@ export default function ColdLeadsPage() {
             >
               ✕
             </button>
-            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Re-engage Lead</h2>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">{t("modal.reengageTitle")}</h2>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                  Strategy
+                  {t("modal.strategyLabel")}
                 </label>
                 <select
                   value={reengageDialog.strategy}
@@ -837,17 +850,17 @@ export default function ColdLeadsPage() {
                   }
                   className="w-full px-3 py-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm"
                 >
-                  <option value="auto">Auto (Recommended)</option>
-                  <option value="value_first">Value-First</option>
-                  <option value="clarification">Clarification</option>
-                  <option value="social_proof">Social Proof</option>
-                  <option value="urgency">Urgency</option>
-                  <option value="direct_close">Direct Close</option>
+                  <option value="auto">{t("strategy.auto")}</option>
+                  <option value="value_first">{t("strategy.valueFirst")}</option>
+                  <option value="clarification">{t("strategy.clarification")}</option>
+                  <option value="social_proof">{t("strategy.socialProof")}</option>
+                  <option value="urgency">{t("strategy.urgency")}</option>
+                  <option value="direct_close">{t("strategy.directClose")}</option>
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                  Channel
+                  {t("modal.channelLabel")}
                 </label>
                 <select
                   value={reengageDialog.channel}
@@ -859,10 +872,10 @@ export default function ColdLeadsPage() {
                   }
                   className="w-full px-3 py-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm"
                 >
-                  <option value="default">Use Workspace Default</option>
-                  <option value="call_first">Call First</option>
-                  <option value="text_first">Text First</option>
-                  <option value="email_first">Email First</option>
+                  <option value="default">{t("channel.default")}</option>
+                  <option value="call_first">{t("channel.callFirst")}</option>
+                  <option value="text_first">{t("channel.textFirst")}</option>
+                  <option value="email_first">{t("channel.emailFirst")}</option>
                 </select>
               </div>
               <div className="flex gap-3 pt-4">
@@ -877,7 +890,7 @@ export default function ColdLeadsPage() {
                   }
                   className="flex-1 px-4 py-2 rounded-lg border border-[var(--border-default)] text-[var(--text-primary)] hover:bg-[var(--bg-inset)] text-sm font-medium"
                 >
-                  Cancel
+                  {t("modal.cancelButton")}
                 </button>
                 <button
                   onClick={handleReengage}

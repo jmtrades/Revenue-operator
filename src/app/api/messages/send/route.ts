@@ -11,6 +11,7 @@ import { sendOutbound } from "@/lib/delivery/provider";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   const csrfErr = assertSameOrigin(req);
@@ -23,6 +24,12 @@ export async function POST(req: NextRequest) {
   const workspaceId = session.workspaceId;
   const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;
+
+  // Rate limit: max 60 messages per minute per workspace
+  const rl = await checkRateLimit(`msg-send:${workspaceId}`, 60, 60_000);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Message rate limit reached. Please try again shortly." }, { status: 429 });
+  }
 
   let body: { lead_id: string; content: string; channel?: string };
   try {

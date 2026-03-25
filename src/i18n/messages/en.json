@@ -4714,12 +4714,129 @@
     }
   },
   "coldLeads": {
+    "title": "Cold Leads",
+    "description": "Re-engage dormant leads and recover lost opportunities",
     "searchPlaceholder": "Search by name, email, phone...",
+    "addButton": "Add Cold Leads",
+    "reengageAll": "Re-engage All Pending",
     "namePlaceholder": "Lead name",
     "email": "email@example.com",
     "phone": "+1 (555) 000-0000",
     "processing": "Processing...",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "stats": {
+      "totalColdLeads": "Total Cold Leads",
+      "pending": "Pending",
+      "inProgress": "In Progress",
+      "reengaged": "Re-engaged",
+      "exhausted": "Exhausted"
+    },
+    "table": {
+      "lead": "Lead",
+      "reason": "Reason",
+      "priority": "Priority",
+      "attempts": "Attempts",
+      "lastAttempt": "Last Attempt",
+      "nextAttempt": "Next Attempt",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "all": "All Status",
+      "pending": "Pending",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "exhausted": "Exhausted"
+    },
+    "reason": {
+      "all": "All Reasons",
+      "noActivity30d": "No Activity 30d",
+      "noReply14d": "No Reply 14d",
+      "lostDeal": "Lost Deal",
+      "manual": "Manual"
+    },
+    "priority": {
+      "all": "All Priorities",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "sort": {
+      "priority": "Priority",
+      "nextAttempt": "Next Attempt",
+      "recent": "Most Recent",
+      "attempts": "Attempt Count"
+    },
+    "empty": {
+      "title": "No cold leads in the queue",
+      "description": "Leads are automatically added when they go dormant for 30+ days, or you can manually add leads that need re-engagement."
+    },
+    "modal": {
+      "addLeadTitle": "Add Cold Lead",
+      "reengageTitle": "Re-engage Lead",
+      "nameLabel": "Name *",
+      "emailLabel": "Email",
+      "phoneLabel": "Phone",
+      "reasonLabel": "Reason *",
+      "priorityLabel": "Priority *",
+      "strategyLabel": "Strategy",
+      "channelLabel": "Channel",
+      "cancelButton": "Cancel",
+      "addButton": "Add Lead",
+      "confirmButton": "Confirm"
+    },
+    "buttons": {
+      "addLead": "Add Lead",
+      "adding": "Adding...",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "skip": "Skip",
+      "remove": "Remove",
+      "reengage": "Re-engage"
+    },
+    "strategy": {
+      "auto": "Auto (Recommended)",
+      "valueFirst": "Value-First",
+      "clarification": "Clarification",
+      "socialProof": "Social Proof",
+      "urgency": "Urgency",
+      "directClose": "Direct Close"
+    },
+    "channel": {
+      "default": "Use Workspace Default",
+      "callFirst": "Call First",
+      "textFirst": "Text First",
+      "emailFirst": "Email First"
+    },
+    "formatTime": {
+      "never": "Never",
+      "justNow": "Just now",
+      "minutesAgo": "{count}m ago",
+      "hoursAgo": "{count}h ago",
+      "daysAgo": "{count}d ago"
+    },
+    "toast": {
+      "success": {
+        "addedLead": "Cold lead added",
+        "reengagedLeads": "Started re-engagement for {count} lead(s)",
+        "markedExhausted": "Lead marked as exhausted",
+        "removed": "Lead removed"
+      },
+      "error": {
+        "fillRequired": "Please fill in required fields",
+        "addFailed": "Failed to add cold lead",
+        "reengageFailed": "Failed to re-engage leads",
+        "noPendingLeads": "No pending leads to re-engage",
+        "skipFailed": "Failed to skip lead",
+        "removeFailed": "Failed to remove lead"
+      }
+    },
+    "ttip": {
+      "reengage": "Re-engage",
+      "skip": "Skip",
+      "remove": "Remove"
+    },
+    "attempts": "{current} of {max}"
   },
   "demoPage": {
     "title": "Experience Recall Touch",
@@ -10367,6 +10484,74 @@
     }
   },
   "whiteLabel": {
+    "title": "White-Label Settings",
+    "description": "Customize the appearance and branding for your platform",
+    "fields": {
+      "brandName": {
+        "label": "Brand Name",
+        "placeholder": "e.g., Acme Inc.",
+        "help": "Used in emails, headers, and branding elements"
+      },
+      "logoUrl": {
+        "label": "Logo URL",
+        "placeholder": "https://example.com/logo.png",
+        "help": "PNG or SVG recommended. Max 200x200px"
+      },
+      "faviconUrl": {
+        "label": "Favicon URL",
+        "placeholder": "https://example.com/favicon.ico",
+        "help": "ICO or PNG format. Displayed in browser tab"
+      },
+      "brandColors": {
+        "label": "Brand Colors",
+        "primary": "Primary",
+        "secondary": "Secondary",
+        "accent": "Accent"
+      },
+      "customDomain": {
+        "label": "Custom Domain",
+        "placeholder": "app.yourcompany.com",
+        "help": "DNS Configuration: Create CNAME record pointing to your platform URL"
+      },
+      "supportEmail": {
+        "label": "Support Email",
+        "placeholder": "support@example.com"
+      },
+      "supportUrl": {
+        "label": "Support URL",
+        "placeholder": "https://support.example.com"
+      },
+      "loginBackgroundUrl": {
+        "label": "Login Background URL",
+        "placeholder": "https://example.com/bg.jpg",
+        "help": "JPG or PNG. Used as background on login page"
+      },
+      "customCss": {
+        "label": "Custom CSS",
+        "placeholder": ".header { background-color: #fff; }",
+        "help": "Advanced styling. Scoped to your white-label instance"
+      },
+      "hidePoweredBy": {
+        "label": "Hide Powered By",
+        "description": "Remove \"Powered by Recall Touch\" branding"
+      }
+    },
+    "preview": {
+      "title": "Brand Preview",
+      "logoPreview": "Logo preview",
+      "invalidImageUrl": "Invalid image URL",
+      "brandName": "Brand Name",
+      "yourBrandName": "Your Brand Name",
+      "colors": "Colors",
+      "sampleButton": "Sample Button",
+      "buttonText": "Get Started",
+      "customDomain": "Custom Domain",
+      "support": "Support"
+    },
+    "buttons": {
+      "save": "Save Changes",
+      "saving": "Saving..."
+    },
     "toast": {
       "loadFailed": "Failed to load white-label settings",
       "saved": "White-label settings saved",

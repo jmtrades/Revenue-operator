@@ -9,6 +9,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { enqueueBatchOutbound } from "@/lib/integrations/sync-engine";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { checkRateLimit } from "@/lib/rate-limit";
 import type { CrmProviderId } from "@/lib/integrations/field-mapper";
 
 const ALLOWED: CrmProviderId[] = [
@@ -41,6 +42,12 @@ export async function POST(
   }
   const authErr = await requireWorkspaceAccess(req, session.workspaceId);
   if (authErr) return authErr;
+
+  // Rate limit: max 5 batch sync requests per 5 minutes per workspace
+  const rl = await checkRateLimit(`crm-batch-sync:${session.workspaceId}`, 5, 300_000);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many sync requests. Please wait a few minutes." }, { status: 429 });
+  }
 
   const { provider } = await ctx.params;
   if (!isAllowed(provider)) {
