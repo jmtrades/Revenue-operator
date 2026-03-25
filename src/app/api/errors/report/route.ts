@@ -43,12 +43,15 @@ export async function POST(req: NextRequest) {
 
     const { error: insertErr } = await db.from("error_reports").insert({
       workspace_id: workspaceId,
-      user_id: session?.userId ?? null,
-      error_message: message,
-      ["st" + "ack" + "_trace"]: trace,
+      source: "client",
+      message,
+      stack: trace,
       error_type: (body.error_type ?? "unknown").toString().slice(0, 64) ?? null,
-      page_url: (body.page_url ?? null)?.toString().trim().slice(0, 2048) ?? null,
-      user_agent: (body.user_agent ?? null)?.toString().trim().slice(0, 512) ?? null,
+      metadata: {
+        user_id: session?.userId ?? null,
+        page_url: (body.page_url ?? null)?.toString().trim().slice(0, 2048) ?? null,
+        user_agent: (body.user_agent ?? null)?.toString().trim().slice(0, 512) ?? null,
+      },
     });
 
     if (insertErr) {

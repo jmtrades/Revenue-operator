@@ -37,7 +37,7 @@ export async function PATCH(
   if (authErrPatch) return authErrPatch;
 
   const { slug } = await params;
-  let body: { name?: string; subject?: string; body_html?: string };
+  let body: { name?: string; subject?: string; html_body?: string };
   try {
     body = (await req.json()) as typeof body;
   } catch {
@@ -45,17 +45,17 @@ export async function PATCH(
   }
 
   const db = getDb();
-  const updates: { name?: string; subject?: string; body_html?: string; updated_at: string } = { updated_at: new Date().toISOString() };
+  const updates: { name?: string; subject?: string; html_body?: string; updated_at: string } = { updated_at: new Date().toISOString() };
   if (typeof body.name === "string") updates.name = body.name.trim();
   if (typeof body.subject === "string") updates.subject = body.subject.trim();
-  if (typeof body.body_html === "string") updates.body_html = body.body_html;
+  if (typeof body.html_body === "string") updates.html_body = body.html_body;
 
   const { data, error } = await db
     .from("email_templates")
     .update(updates)
     .eq("workspace_id", session.workspaceId)
     .eq("slug", slug)
-    .select("id, slug, name, subject, body_html, created_at, updated_at")
+    .select("id, slug, name, subject, html_body, created_at, updated_at")
     .maybeSingle();
 
   if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });

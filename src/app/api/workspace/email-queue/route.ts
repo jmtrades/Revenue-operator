@@ -25,26 +25,37 @@ export async function GET(req: NextRequest) {
   const db = getDb();
   let q = db
     .from("email_send_queue")
-    .select("id, to_email, subject, status, external_id, error_message, sent_at, created_at, template_slug")
+    .select("id, to_email, subject, status, metadata, error, sent_at, created_at")
     .eq("workspace_id", session.workspaceId)
     .order("created_at", { ascending: false })
     .limit(limit);
   if (status === "pending" || status === "sent" || status === "failed") {
     q = q.eq("status", status);
   }
-  const { data, error } = await q;
+  const { data, error: dbErr } = await q;
 
-  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  if (dbErr) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   const list = (data ?? []) as {
     id: string;
     to_email: string;
     subject: string;
     status: string;
-    external_id: string | null;
-    error_message: string | null;
+    metadata: { external_id?: string; template_slug?: string } | null;
+    error: string | null;
     sent_at: string | null;
     created_at: string;
-    template_slug: string | null;
   }[];
-  return NextResponse.json({ deliveries: list });
+  // Map to the shape the frontend expects
+  const deliveries = list.map((d) => ({
+    id: d.id,
+    to_email: d.to_email,
+    subject: d.subject,
+    status: d.status,
+    external_id: d.metadata?.external_id ?? null,
+    error_message: d.error,
+    sent_at: d.sent_at,
+    created_at: d.created_at,
+    template_slug: d.metadata?.template_slug ?? null,
+  }));
+  return NextResponse.json({ deliveries });
 }

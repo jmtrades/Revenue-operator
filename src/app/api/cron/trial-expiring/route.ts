@@ -127,8 +127,8 @@ export async function GET(req: NextRequest) {
           workspace_id: ws.id,
           to_email: email,
           subject,
-          body_html: html,
-          template_slug: "trial_expiring",
+          html_body: html,
+          metadata: { template_slug: "trial_expiring" },
           status: "sent",
           sent_at: new Date().toISOString(),
         });

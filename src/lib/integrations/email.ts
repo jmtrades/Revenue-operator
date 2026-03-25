@@ -56,17 +56,17 @@ export async function getWorkspaceEmailConfig(workspaceId: string): Promise<Work
   const db = getDb();
   const { data } = await db
     .from("workspace_email_config")
-    .select("workspace_id, provider, from_email, from_name, api_key_encrypted")
+    .select("workspace_id, provider, from_email, from_name, provider_config")
     .eq("workspace_id", workspaceId)
     .maybeSingle();
   if (!data) return null;
-  const r = data as { workspace_id: string; provider: string; from_email: string; from_name?: string | null; api_key_encrypted?: string | null };
+  const r = data as { workspace_id: string; provider: string; from_email: string; from_name?: string | null; provider_config?: { api_key?: string } | null };
   return {
     workspace_id: r.workspace_id,
     provider: r.provider as EmailProvider,
     from_email: r.from_email,
     from_name: r.from_name ?? null,
-    has_api_key: Boolean(r.api_key_encrypted),
+    has_api_key: Boolean(r.provider_config?.api_key),
   };
 }
 
@@ -75,18 +75,20 @@ async function getSendApiKey(workspaceId: string): Promise<{ key: string; from: 
   const db = getDb();
   const { data } = await db
     .from("workspace_email_config")
-    .select("provider, api_key_encrypted, from_email, from_name")
+    .select("provider, provider_config, from_email, from_name")
     .eq("workspace_id", workspaceId)
     .maybeSingle();
   if (data) {
-    const r = data as { provider: string; api_key_encrypted?: string | null; from_email: string; from_name?: string | null };
+    const r = data as { provider: string; provider_config?: { api_key?: string } | null; from_email: string; from_name?: string | null };
     let key: string | null = null;
-    if (r.api_key_encrypted?.trim()) {
+    const storedKey = r.provider_config?.api_key?.trim();
+    if (storedKey) {
       try {
         const { decrypt } = await import("@/lib/encryption");
-        key = await decrypt(r.api_key_encrypted.trim());
+        key = await decrypt(storedKey);
       } catch {
-        key = null;
+        // If decryption fails, try using the key as-is (might be plaintext)
+        key = storedKey;
       }
     }
     key = key || process.env.RESEND_API_KEY?.trim() || null;
@@ -102,13 +104,13 @@ export async function getTemplate(workspaceId: string, slug: string): Promise<Em
   const db = getDb();
   const { data } = await db
     .from("email_templates")
-    .select("id, slug, name, subject, body_html")
+    .select("id, slug, name, subject, html_body")
     .eq("workspace_id", workspaceId)
     .eq("slug", slug)
     .maybeSingle();
   if (!data) return null;
-  const r = data as { id: string; slug: string; name: string; subject: string; body_html: string };
-  return { id: r.id, slug: r.slug, name: r.name, subject: r.subject, body_html: r.body_html };
+  const r = data as { id: string; slug: string; name: string; subject: string; html_body: string };
+  return { id: r.id, slug: r.slug, name: r.name, subject: r.subject, body_html: r.html_body };
 }
 
 export async function sendEmail(
@@ -133,9 +135,9 @@ export async function sendEmail(
       workspace_id: workspaceId,
       to_email: to,
       subject,
-      body_html: bodyHtml,
-      template_slug: options?.template_slug ?? null,
+      html_body: bodyHtml,
       status: "pending",
+      metadata: options?.template_slug ? { template_slug: options.template_slug } : {},
     })
     .select("id")
     .maybeSingle();
@@ -161,21 +163,21 @@ export async function sendEmail(
     if (res.ok && json.id) {
       await db
         .from("email_send_queue")
-        .update({ status: "sent", external_id: json.id, sent_at: new Date().toISOString() })
+        .update({ status: "sent", metadata: { external_id: json.id }, sent_at: new Date().toISOString() })
         .eq("id", queueId);
       return { ok: true, id: queueId, externalId: json.id };
     }
     const errMsg = (json as { message?: string }).message ?? res.statusText ?? "Send failed";
     await db
       .from("email_send_queue")
-      .update({ status: "failed", error_message: errMsg })
+      .update({ status: "failed", error: errMsg })
       .eq("id", queueId);
     return { ok: false, id: queueId, error: errMsg };
   } catch (e) {
     const errMsg = e instanceof Error ? e.message : String(e);
     await db
       .from("email_send_queue")
-      .update({ status: "failed", error_message: errMsg })
+      .update({ status: "failed", error: errMsg })
       .eq("id", queueId);
     return { ok: false, id: queueId, error: errMsg };
   }
