@@ -10,11 +10,15 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { ensureCallSessionFromCalendarEvent } from "@/lib/calls/calendar-fallback";
 import { enqueue } from "@/lib/queue";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const csrfErr = assertSameOrigin(req);
+  if (csrfErr) return csrfErr;
+
   const { id: workspaceId } = await params;
   let body: {
     external_event_id: string;

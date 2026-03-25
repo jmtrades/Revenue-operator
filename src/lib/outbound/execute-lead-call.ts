@@ -341,7 +341,21 @@ YOUR GOAL:
         usedMinutes = Math.ceil(usedSeconds / 60);
       }
 
-      if (usedMinutes >= includedMinutes) {
+      // Also check bonus minutes from minute pack purchases
+      let bonusMinutes = 0;
+      try {
+        const { data: balanceRow } = await db
+          .from("workspace_minute_balance")
+          .select("bonus_minutes")
+          .eq("workspace_id", workspaceId)
+          .maybeSingle();
+        bonusMinutes = (balanceRow as { bonus_minutes?: number } | null)?.bonus_minutes ?? 0;
+      } catch {
+        // Non-critical: if balance table doesn't exist, ignore
+      }
+
+      const totalAvailableMinutes = includedMinutes + bonusMinutes;
+      if (usedMinutes >= totalAvailableMinutes) {
         return { ok: false, error: "Monthly minute limit reached. Upgrade your plan or purchase additional minutes." };
       }
     }

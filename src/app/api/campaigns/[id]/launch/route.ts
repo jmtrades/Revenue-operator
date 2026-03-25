@@ -217,7 +217,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     .from("leads")
     .select("id, state, source, qualification_score, last_activity_at")
     .eq("workspace_id", workspaceId)
-    .limit(200);
+    .limit(1000);
 
   if (Array.isArray(filter.audience_statuses) && filter.audience_statuses.length > 0) {
     leadQuery = leadQuery.in("state", filter.audience_statuses);
@@ -265,6 +265,24 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   }
 
   const launchAt = new Date().toISOString();
+
+  // Atomic lock: transition status from draft/paused → launching to prevent double-launch.
+  // If another request already changed the status, this update affects 0 rows.
+  const { data: lockResult, error: lockErr } = await db
+    .from("campaigns")
+    .update({ status: "launching", updated_at: launchAt })
+    .eq("id", id)
+    .in("status", ["draft", "paused"])
+    .select("id")
+    .maybeSingle();
+
+  if (lockErr || !lockResult) {
+    return NextResponse.json(
+      { error: "Campaign is already being launched or is no longer in a launchable state." },
+      { status: 409 },
+    );
+  }
+
   let enqueued = 0;
   let campaignStatus = "active";
   let errorMessage: string | null = null;

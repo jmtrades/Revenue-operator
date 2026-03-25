@@ -8,8 +8,12 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { claimNextActionIntent } from "@/lib/action-intents";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(request: NextRequest) {
+  const csrfErr = assertSameOrigin(request);
+  if (csrfErr) return csrfErr;
+
   let body: { workspace_id?: string; worker_id?: string };
   try {
     body = await request.json();

@@ -9,11 +9,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const csrfErr = assertSameOrigin(req);
+  if (csrfErr) return csrfErr;
+
   const { id } = await params;
   const session = await getSession(req);
   if (!session?.userId || !session?.workspaceId) {
@@ -95,6 +99,9 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const csrfErr = assertSameOrigin(req);
+  if (csrfErr) return csrfErr;
+
   const { id } = await params;
   const session = await getSession(req);
   if (!session?.userId || !session?.workspaceId) {

@@ -622,26 +622,33 @@ export async function creditMinutePack(
     credited_at: new Date().toISOString(),
   });
 
-  // Add bonus minutes to workspace balance
-  // Uses upsert on workspace_minute_balance (workspace_id is primary key)
+  // Add bonus minutes atomically to prevent race conditions.
+  // First try upsert with the row; if it exists, use RPC for atomic increment.
   const { data: currentBalance } = await db
     .from("workspace_minute_balance")
     .select("bonus_minutes")
     .eq("workspace_id", workspaceId)
     .maybeSingle();
 
-  const currentBonus = (currentBalance as { bonus_minutes?: number } | null)?.bonus_minutes ?? 0;
-  const newBonus = currentBonus + pack.minutes;
-
   if (currentBalance) {
-    await db
-      .from("workspace_minute_balance")
-      .update({ bonus_minutes: newBonus, updated_at: new Date().toISOString() })
-      .eq("workspace_id", workspaceId);
+    // Atomic increment: SET bonus_minutes = bonus_minutes + pack.minutes
+    // Using raw RPC to avoid read-then-write race
+    const { error: rpcErr } = await db.rpc("increment_bonus_minutes", {
+      p_workspace_id: workspaceId,
+      p_minutes: pack.minutes,
+    });
+    if (rpcErr) {
+      // Fallback to non-atomic if RPC not available (still better than nothing)
+      const currentBonus = (currentBalance as { bonus_minutes?: number } | null)?.bonus_minutes ?? 0;
+      await db
+        .from("workspace_minute_balance")
+        .update({ bonus_minutes: currentBonus + pack.minutes, updated_at: new Date().toISOString() })
+        .eq("workspace_id", workspaceId);
+    }
   } else {
     await db
       .from("workspace_minute_balance")
-      .insert({ workspace_id: workspaceId, bonus_minutes: newBonus });
+      .insert({ workspace_id: workspaceId, bonus_minutes: pack.minutes });
   }
 
   return { credited: true, minutes: pack.minutes };

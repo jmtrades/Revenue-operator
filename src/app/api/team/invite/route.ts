@@ -12,6 +12,7 @@ import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceRole } from "@/lib/auth/workspace-access";
 import { getSession } from "@/lib/auth/request-session";
 import { sendInviteEmail } from "@/lib/email/invite";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
 const INVITABLE_ROLES = ["admin", "manager", "agent"] as const;
@@ -22,6 +23,9 @@ function isValidEmail(s: string): boolean {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfErr = assertSameOrigin(req);
+  if (csrfErr) return csrfErr;
+
   let body: { workspace_id?: string; email?: string; role?: string };
   try {
     body = await req.json();
