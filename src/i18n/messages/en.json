@@ -669,7 +669,16 @@
     "bonusMinutes": "Bonus minutes from purchased packs: {count} min",
     "minutePacksDesc": "One-time minute packs — use them anytime, no expiration. Bonus minutes are used before overage billing.",
     "popular": "Popular",
-    "bestValue": "Best Value"
+    "bestValue": "Best Value",
+    "amountDue": "Amount due:",
+    "retryAttempts": "Retry attempts:",
+    "nextRetry": "Next retry:",
+    "changingPlan": "Changing plan...",
+    "percentOff": "% off",
+    "whenYouPause": "When you pause:",
+    "pauseBullet1": "Your data and settings will be preserved",
+    "pauseBullet2": "You can resume your subscription anytime",
+    "pauseBullet3": "You'll receive reminder emails"
   },
   "planChange": {
     "title": "Change your plan",
@@ -752,7 +761,7 @@
       "afternoon": "Good afternoon",
       "evening": "Good evening"
     },
-    "subtitle": "Your AI-powered revenue operator at a glance.",
+    "subtitle": "Revenue recovery this month",
     "kpis": {
       "callsHandled": "Calls handled",
       "answerRate": "Answer rate",
@@ -857,7 +866,6 @@
       "callFailed": "Call failed",
       "empty": "Activity will show as calls and messages come in."
     },
-    "subtitle": "Revenue recovery this month",
     "minutesUsed": "You've used",
     "minutesThisMonth": "minutes this month.",
     "revenueLabel": "Revenue recovered",
@@ -878,13 +886,11 @@
       }
     },
     "viewAll": "View all",
-    "activeCampaigns": {
-      "title": "Active outbound campaigns",
-      "create": "Create campaign"
-    },
+    "activeCampaigns": "Active outbound campaigns",
     "actions": {
       "refresh": "Refresh",
-      "updatedAt": "Updated"
+      "updatedAt": "Updated",
+      "upgrade": "Upgrade"
     },
     "lastUpdated": {
       "never": "Never",
@@ -918,11 +924,6 @@
       }
     },
     "overage": "Additional usage is billed at your plan's overage rate.",
-    "actions": {
-      "refresh": "Refresh",
-      "updatedAt": "Updated",
-      "upgrade": "Upgrade"
-    },
     "pageTitle": "Dashboard — Recall Touch",
     "importContacts": "Import your contacts",
     "addLead": "Add a lead",
@@ -2008,15 +2009,11 @@
     "outcomesAppointments": "Appointments",
     "outcomesTransfers": "Transfers",
     "outcomesOther": "Other",
-    "minutesUsed": "You've used",
-    "minutesThisMonth": "minutes this month.",
     "upgrade": "Upgrade →",
     "revenueRecovered": "Revenue recovered:",
     "call": "Call",
     "text": "Text",
-    "activeCampaigns": "Active outbound campaigns",
     "createCampaign": "Create campaign →",
-    "viewAll": "View all",
     "noWorkspace": "No workspace selected",
     "selectWorkspace": "Select a workspace to view your dashboard.",
     "dashboard": "Dashboard"
@@ -3899,7 +3896,7 @@
     "pause": "Pause",
     "launchCampaign": "Launch campaign",
     "copy": "Copy campaign",
-    "delete": "Delete campaign",
+    "delete": "Delete",
     "launch": "Launch campaign",
     "pauseAction": "Pause campaign",
     "copySuffix": "Copy",
@@ -4062,7 +4059,6 @@
       "duplicated": "Campaign duplicated."
     },
     "body": "Body",
-    "delete": "Delete",
     "duplicate": "Duplicate",
     "deleteConfirmTitle": "Delete this campaign?",
     "deleteConfirmMessage": "Are you sure you want to delete \"{name}\"? This cannot be undone."
@@ -4484,7 +4480,12 @@
         "no": "No",
         "callRecording": "Call Recording",
         "hipaaMode": "HIPAA Mode",
-        "pauseOnSensitive": "Pause on Sensitive"
+        "pauseOnSensitive": "Pause on Sensitive",
+        "dataRetention": "Data Retention (days)",
+        "recordingConsentMode": "Recording Consent Mode",
+        "announcementText": "Announcement Text",
+        "default": "(default)",
+        "exportedAt": "Exported At"
       }
     },
     "errorReports": "Error reports",
@@ -8358,7 +8359,16 @@
       "error": "Something went wrong. Try again.",
       "syncFailed": "Sync failed",
       "importFailed": "Import failed. Please try again.",
-      "disconnectFailed": "Disconnect failed."
+      "disconnectFailed": "Disconnect failed.",
+      "crmConnected": "{provider} connected successfully!",
+      "tokenExchangeFailed": "{provider} connection failed. Please check your credentials and try again.",
+      "invalidState": "Connection expired. Please try again.",
+      "connectFailed": "Could not connect to {provider}. Please try again.",
+      "directComingSoon": "{provider} direct integration is coming soon. Use the webhook destination below to sync data in the meantime.",
+      "syncStarted": "Sync started for {count} leads",
+      "syncStartedNoCount": "Sync started",
+      "contactsImported": "{count} contacts imported",
+      "crmDisconnected": "{provider} disconnected."
     },
     "hub": {
       "title": "Integrations",
@@ -8408,7 +8418,8 @@
       "otherCrmsDesc": "Use the webhook configuration above to push lead and call data in real-time. Configure your webhook endpoint URL, select events, and Recall Touch will send JSON payloads when they occur.",
       "otherCrmsZapier": "You can also use Zapier as a bridge — connect Recall Touch webhooks to 5,000+ apps without writing any code.",
       "needHelp": "Need help?",
-      "contactSupport": "Contact support"
+      "contactSupport": "Contact support",
+      "outlookCalendarLabel": "Outlook Calendar"
     },
     "card": {
       "salesforce": {
@@ -8446,13 +8457,18 @@
     },
     "status": {
       "connected": "Connected",
-      "disconnected": "Not connected"
+      "disconnected": "Not connected",
+      "beta": "Beta"
     },
     "lastSync": "Last sync",
     "button": {
       "connect": "Connect",
       "configure": "Configure",
-      "disconnect": "Disconnect"
+      "disconnect": "Disconnect",
+      "syncing": "Syncing...",
+      "syncNow": "Sync Now",
+      "importing": "Importing...",
+      "import": "Import"
     },
     "syncStatus": {
       "title": "Sync status",
@@ -8467,7 +8483,13 @@
       "map_status": "Map status",
       "none": "None"
     },
-    "whatsappComingSoon": "WhatsApp integration coming soon"
+    "whatsappComingSoon": "WhatsApp integration coming soon",
+    "label": {
+      "lastSynced": "Last synced:",
+      "synced": "Synced:",
+      "records": "records",
+      "errors": "{count} error(s)"
+    }
   },
   "integrationsHealth": {
     "title": "Integration Health",
