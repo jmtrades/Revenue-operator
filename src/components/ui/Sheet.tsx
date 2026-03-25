@@ -43,6 +43,7 @@ export function Sheet({ open, onClose, title, children }: SheetProps) {
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-40 bg-[var(--overlay)] backdrop-blur-[3px]"
             onClick={onClose}
+            role="presentation"
             aria-hidden="true"
           />
 

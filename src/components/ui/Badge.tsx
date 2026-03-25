@@ -20,7 +20,7 @@ interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   pulse?: boolean;
 }
 
-const pulseAnimation = `@keyframes badge-pulse {
+const PULSE_ANIMATION = `@keyframes badge-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.85; }
 }`;
@@ -57,7 +57,7 @@ export function Badge({
 
   return (
     <>
-      {pulse && <style>{pulseAnimation}</style>}
+      {pulse && <style>{PULSE_ANIMATION}</style>}
       <span
         className={cn(
           base,

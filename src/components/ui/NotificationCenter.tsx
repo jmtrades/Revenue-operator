@@ -156,7 +156,7 @@ export function NotificationCenter({
             onClick={onClose}
             aria-hidden
           />
-          <div className="fixed right-4 top-16 z-50 w-[380px] max-w-[calc(100vw-2rem)] bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[min(80vh,420px)]">
+          <div className="fixed right-4 top-16 z-50 w-[380px] max-w-[calc(100vw-2rem)] bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[min(80vh,420px)]" role="dialog" aria-label="Notifications">
             <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border-default)] shrink-0">
               <h3 className="text-sm font-medium text-[var(--text-primary)]">
                 {t("center.title")}

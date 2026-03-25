@@ -145,7 +145,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         >
           <motion.div
             {...scaleIn}
-            className="w-full max-w-lg rounded-2xl border border-[var(--border-default)] bg-[var(--bg-elevated)] shadow-2xl"
+            className="w-full max-w-lg max-w-[calc(100vw-2rem)] rounded-2xl border border-[var(--border-default)] bg-[var(--bg-elevated)] shadow-2xl"
             onClick={(e) => e.stopPropagation()}
             onKeyDown={handleKeyDown}
             role="dialog"

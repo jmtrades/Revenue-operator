@@ -256,6 +256,20 @@
   --border-focus: #3B82F6;
   --border-accent: rgba(59, 130, 246, 0.4);
 
+  /* Semantic colors — dark mode */
+  --accent-blue: #3B82F6;
+  --accent-green: #22C55E;
+  --accent-amber: #F59E0B;
+  --accent-red: #EF4444;
+  --accent-indigo: #6366F1;
+  --accent-cyan: #06B6D4;
+
+  /* Meaning tokens — dark mode */
+  --meaning-green: #22C55E;
+  --meaning-amber: #F59E0B;
+  --meaning-red: #EF4444;
+  --meaning-blue: #3B82F6;
+
   color-scheme: dark;
 }
 
@@ -357,6 +371,19 @@
 .section-animate:nth-child(3) { animation-delay: 120ms; }
 .section-animate:nth-child(4) { animation-delay: 180ms; }
 .section-animate:nth-child(5) { animation-delay: 240ms; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ACCESSIBILITY — Respect motion preferences
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════
    GLOBAL STYLES
