@@ -404,11 +404,11 @@ async function handleStripeWebhookEvent(
         await db
           .from("workspaces")
           .update({
-            billing_status: "trial",
+            billing_status: "cancelled",
             stripe_subscription_id: null,
             status: "paused",
             paused_at: new Date().toISOString(),
-            pause_reason: "Coverage ended",
+            pause_reason: "Subscription cancelled",
             updated_at: new Date().toISOString(),
           })
           .eq("id", workspaceId);

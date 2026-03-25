@@ -16,6 +16,7 @@ import { parseBody } from "@/lib/api/validate";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { getDb } from "@/lib/db/queries";
+import { canMakeOutboundCall } from "@/lib/billing/plan-enforcement";
 
 const VALID_CAMPAIGN_TYPES: CampaignType[] = [
   "lead_followup", "lead_qualification", "appointment_reminder", "appointment_setting",
@@ -48,6 +49,21 @@ export async function POST(req: NextRequest) {
   const body = parsed.data;
   const { lead_id, campaign_type, campaign_prompt_options } = body;
   if (!lead_id) return NextResponse.json({ error: "lead_id required" }, { status: 400 });
+
+  // Enforce daily outbound call limit per billing plan
+  const outboundEnforcement = await canMakeOutboundCall(workspaceId);
+  if (!outboundEnforcement.allowed) {
+    return NextResponse.json(
+      {
+        error: outboundEnforcement.message,
+        reason: outboundEnforcement.reason,
+        upgrade_to: outboundEnforcement.upgradeTo,
+        current: outboundEnforcement.current,
+        limit: outboundEnforcement.limit,
+      },
+      { status: 403 },
+    );
+  }
 
   // Pre-flight: verify workspace has an active phone number configured
   const db = getDb();

@@ -114,12 +114,12 @@ export async function checkUsageThresholds(workspaceId: string): Promise<UsageMe
   // SMS usage (count from sms_logs if table exists)
   let smsUsed = 0;
   try {
-    const { data: smsLogs } = await db
+    const { count: smsCount } = await db
       .from("sms_logs")
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
       .gte("created_at", startOfMonth.toISOString());
-    smsUsed = smsLogs?.length ?? 0;
+    smsUsed = smsCount ?? 0;
   } catch {
     // SMS table may not exist yet
     smsUsed = 0;
@@ -282,13 +282,13 @@ export async function calculateOverageCharges(
   // SMS usage in billing period
   let smsUsed = 0;
   try {
-    const { data: smsLogs } = await db
+    const { count: smsCount } = await db
       .from("sms_logs")
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
       .gte("created_at", billingPeriodStart.toISOString())
       .lte("created_at", billingPeriodEnd.toISOString());
-    smsUsed = smsLogs?.length ?? 0;
+    smsUsed = smsCount ?? 0;
   } catch {
     smsUsed = 0;
   }
