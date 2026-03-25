@@ -266,7 +266,7 @@ function CostCalculator() {
       <div className="mt-6 text-center">
         <Link
           href={ROUTES.START}
-          className="inline-flex items-center gap-2 bg-emerald-500 text-black font-semibold rounded-xl px-6 py-3 hover:bg-emerald-400 transition-all no-underline"
+          className="inline-flex items-center gap-2 bg-emerald-500 text-black font-semibold rounded-xl px-6 py-3 hover:bg-emerald-400 transition-[background-color,border-color,color,transform] no-underline"
         >
           Stop Losing ${result.monthlyLost.toLocaleString()}/mo — Try Free
           <ArrowRight className="w-4 h-4" />
@@ -615,7 +615,7 @@ export function PricingContent() {
 
             <Link
               href={ROUTES.START}
-              className="inline-flex items-center gap-2 bg-emerald-500 text-black font-bold rounded-xl px-10 py-4 no-underline hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/25 text-lg hover:scale-[1.02] active:scale-[0.98]"
+              className="inline-flex items-center gap-2 bg-emerald-500 text-black font-bold rounded-xl px-10 py-4 no-underline hover:bg-emerald-400 transition-[background-color,border-color,color,transform] shadow-lg shadow-emerald-500/25 text-lg hover:scale-[1.02] active:scale-[0.98]"
             >
               Start Your Free 14-Day Trial
               <ArrowRight className="w-5 h-5" />

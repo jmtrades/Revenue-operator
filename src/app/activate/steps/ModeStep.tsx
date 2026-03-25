@@ -38,7 +38,7 @@ export function ModeStep({
               key={id}
               type="button"
               onClick={() => setState((p) => ({ ...p, orgType: id }))}
-              className={`rounded-2xl border p-4 text-left transition-all ${
+              className={`rounded-2xl border p-4 text-left transition-[border-color,box-shadow,transform] ${
                 selected ? "border-white bg-white/10 ring-1 ring-white" : "border-slate-700 bg-slate-900/40 hover:border-slate-500"
               }`}
             >

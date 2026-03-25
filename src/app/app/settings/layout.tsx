@@ -80,7 +80,7 @@ function NavLink({
     <Link
       href={href}
       className={cn(
-        "block px-3 py-[7px] rounded-[var(--radius-btn)] text-[13px] font-medium transition-all duration-150",
+        "block px-3 py-[7px] rounded-[var(--radius-btn)] text-[13px] font-medium transition-[background-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]",
         active
           ? "bg-[var(--accent-primary)]/[0.08] text-[var(--accent-primary)]"
           : "text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]"

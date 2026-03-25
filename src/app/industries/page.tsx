@@ -1,3 +1,24 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Industries — AI Phone Agents for Service Businesses",
+  description:
+    "Industry-specific AI phone agents for HVAC, dental, legal, real estate, plumbing, and more. Answer calls, book appointments, recover revenue.",
+  openGraph: {
+    title: "Industries — Recall Touch",
+    description:
+      "AI phone agents built for HVAC, dental, legal, real estate, and other service businesses.",
+    url: "https://www.recall-touch.com/industries",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Industries — Recall Touch",
+    description:
+      "AI phone agents for HVAC, dental, legal, real estate, and service businesses.",
+  },
+};
+
 "use client";
 
 import Link from "next/link";
@@ -57,9 +78,11 @@ export default function IndustriesPage() {
               {industries.map((industry) => (
                 <Link key={industry.slug} href={`/industries/${industry.slug}`} className="group">
                   <div
-                    className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 h-full flex flex-col transition-all hover:border-[var(--accent-primary)] hover:shadow-lg"
+                    className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 h-full flex flex-col hover:border-[var(--accent-primary)] hover:shadow-lg"
                     style={{
-                      "--transition-all": "all 0.3s ease",
+                      borderColor: "var(--border-default)",
+                      boxShadow: "none",
+                      transition: "border-color 0.3s ease-[cubic-bezier(0.23,1,0.32,1)], box-shadow 0.3s ease-[cubic-bezier(0.23,1,0.32,1)]",
                     } as React.CSSProperties}
                   >
                     <div className="flex items-center justify-between mb-4">
@@ -96,7 +119,10 @@ export default function IndustriesPage() {
                 </p>
                 <Link
                   href={ROUTES.START}
-                  className="btn-marketing-primary inline-flex items-center justify-center px-4 py-2 rounded-lg font-semibold no-underline text-sm"
+                  className="btn-marketing-primary inline-flex items-center justify-center px-4 py-2 rounded-lg font-semibold no-underline text-sm active:scale-[0.97]"
+                  style={{
+                    transition: "transform 0.15s ease-[cubic-bezier(0.23,1,0.32,1)]",
+                  }}
                 >
                   Start free →
                 </Link>
@@ -113,10 +139,10 @@ export default function IndustriesPage() {
                   {t("bottomCta.description")}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  <Link href={ROUTES.START} className="btn-marketing-primary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline">
+                  <Link href={ROUTES.START} className="btn-marketing-primary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline active:scale-[0.97]" style={{ transition: "transform 0.15s ease-[cubic-bezier(0.23,1,0.32,1)]" }}>
                     Start free →
                   </Link>
-                  <Link href="/demo" className="btn-marketing-secondary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline">
+                  <Link href="/demo" className="btn-marketing-secondary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline active:scale-[0.97]" style={{ transition: "transform 0.15s ease-[cubic-bezier(0.23,1,0.32,1)]" }}>
                     Watch the demo →
                   </Link>
                 </div>

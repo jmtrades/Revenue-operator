@@ -142,7 +142,7 @@ export function AnimatedStats() {
         return (
           <div
             key={stat.label}
-            className="text-center py-5 px-3 rounded-2xl border transition-all hover:scale-[1.02]"
+            className="text-center py-5 px-3 rounded-2xl border transition-[border-color,box-shadow,transform] hover:scale-[1.02]"
             style={{ background: c.bg, borderColor: c.border }}
           >
             <div

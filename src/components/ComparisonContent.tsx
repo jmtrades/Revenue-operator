@@ -274,13 +274,15 @@ export function ComparisonContent({ competitor }: ComparisonContentProps) {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/activate"
-            className="inline-flex items-center justify-center rounded-xl bg-white px-8 py-4 text-black font-semibold hover:bg-[var(--bg-hover)] transition-colors"
+            className="inline-flex items-center justify-center rounded-xl bg-white px-8 py-4 text-black font-semibold hover:bg-[var(--bg-hover)] active:scale-[0.97]"
+            style={{ transition: "background-color 0.3s ease-[cubic-bezier(0.23,1,0.32,1)], transform 0.15s ease-[cubic-bezier(0.23,1,0.32,1)]" }}
           >
             Start free trial
           </Link>
           <Link
             href="/demo"
-            className="inline-flex items-center justify-center rounded-xl border border-[var(--border-default)] px-8 py-4 text-white font-semibold hover:bg-[var(--bg-card)] transition-colors"
+            className="inline-flex items-center justify-center rounded-xl border border-[var(--border-default)] px-8 py-4 text-white font-semibold hover:bg-[var(--bg-card)] active:scale-[0.97]"
+            style={{ transition: "background-color 0.3s ease-[cubic-bezier(0.23,1,0.32,1)], transform 0.15s ease-[cubic-bezier(0.23,1,0.32,1)]" }}
           >
             See it in action
           </Link>

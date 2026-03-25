@@ -289,12 +289,12 @@ export default function WhiteLabelSettingsPage() {
               </div>
               <button
                 onClick={() => setConfig({ ...config, powered_by_hidden: !config.powered_by_hidden })}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-[background-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] ${
                   config.powered_by_hidden ? "bg-[var(--accent-primary)]" : "bg-[var(--bg-inset)]"
                 }`}
               >
                 <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-[transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] ${
                     config.powered_by_hidden ? "translate-x-6" : "translate-x-1"
                   }`}
                 />
@@ -307,7 +307,7 @@ export default function WhiteLabelSettingsPage() {
             <button
               onClick={handleSave}
               disabled={!isDirty || saving}
-              className="flex-1 bg-[var(--accent-primary)] text-white font-semibold py-3 rounded-lg hover:opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 bg-[var(--accent-primary)] text-white font-semibold py-3 rounded-lg hover:opacity-90 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {saving ? t("buttons.saving") : t("buttons.save")}
             </button>
@@ -368,7 +368,7 @@ export default function WhiteLabelSettingsPage() {
                 <p className="text-xs text-[var(--text-tertiary)] mb-2">{t("preview.sampleButton")}</p>
                 <button
                   style={{ backgroundColor: config.accent_color }}
-                  className="w-full text-white font-medium py-2 rounded-lg"
+                  className="w-full text-white font-medium py-2 rounded-lg transition-[transform,opacity] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] hover:opacity-90"
                 >
                   {t("preview.buttonText")}
                 </button>

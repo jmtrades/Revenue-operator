@@ -362,14 +362,14 @@ export default function AppSettingsPhonePage() {
           <div className="flex items-center gap-2">
             <Link
               href="/app/settings/phone/marketplace"
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-medium text-sm hover:opacity-90 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-medium text-sm hover:opacity-90 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
             >
               <Plus className="w-4 h-4" />
               {tPhone("getNumber")}
             </Link>
             <Link
               href="/app/settings/phone/port"
-              className="flex items-center gap-2 px-4 py-2 rounded-xl border border-[var(--border-default)] text-[var(--text-secondary)] font-medium text-sm hover:bg-[var(--bg-hover)] transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl border border-[var(--border-default)] text-[var(--text-secondary)] font-medium text-sm hover:bg-[var(--bg-hover)] transition-[background-color,border-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
             >
               <FileInput className="w-4 h-4" />
               {tPhone("portNumber")}
@@ -385,7 +385,7 @@ export default function AppSettingsPhonePage() {
             <p className="text-xs text-[var(--text-secondary)] mb-4">{tPhone("noNumbersYetDesc")}</p>
             <Link
               href="/app/settings/phone/marketplace"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-medium text-sm hover:opacity-90 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-medium text-sm hover:opacity-90 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
             >
               <Plus className="w-4 h-4" />
               {tPhone("getNumber")}
@@ -448,7 +448,7 @@ export default function AppSettingsPhonePage() {
                 type="button"
                 onClick={handleCopyNumber}
                 aria-label={copySuccess ? tPhone("copiedAria") : tPhone("copyNumber")}
-                className="px-4 py-2 rounded-xl text-sm font-medium bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 transition-colors"
+                className="px-4 py-2 rounded-xl text-sm font-medium bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
               >
                 {copySuccess ? tPhone("copied") : tPhone("copyNumber")}
               </button>
@@ -511,7 +511,7 @@ export default function AppSettingsPhonePage() {
                   onClick={handleTestCall}
                   disabled={testingCall || !testCallValid}
                   aria-label={testCallValid ? tPhone("ariaCallTest") : tPhone("ariaEnterValid")}
-                  className="w-full py-3 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-full py-3 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                 >
                   {testingCall ? tPhone("callingYou") : tPhone("callMyPhoneToTest")}
                 </button>
@@ -523,7 +523,7 @@ export default function AppSettingsPhonePage() {
           <details className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4 group">
             <summary className="text-sm font-medium text-[var(--text-tertiary)] cursor-pointer hover:text-[var(--text-secondary)] list-none flex items-center justify-between gap-2">
               {tPhone("outboundCallerId")}
-              <span className="text-[var(--text-secondary)] group-open:rotate-180 transition-transform">▼</span>
+              <span className="text-[var(--text-secondary)] group-open:rotate-180 transition-[transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]">▼</span>
             </summary>
             <p className="text-xs text-[var(--text-secondary)] mt-3 mb-3">{tPhone("outboundCallerIdHint")}</p>
             <input
@@ -716,7 +716,7 @@ export default function AppSettingsPhonePage() {
                 type="button"
                 onClick={handleConnectNumber}
                 disabled={connecting}
-                className="w-full py-2.5 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-lg text-sm hover:opacity-90 disabled:opacity-60 transition-colors"
+                className="w-full py-2.5 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-lg text-sm hover:opacity-90 disabled:opacity-60 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
               >
                 {connecting ? tPhone("gettingYourNumber") : tPhone("getMyNumber")}
               </button>
@@ -809,7 +809,7 @@ export default function AppSettingsPhonePage() {
                       }
                     }}
                     disabled={verifySending || digitsOnly(verifyPhone).length < 10 || digitsOnly(verifyPhone).length > 15}
-                    className="w-full py-2.5 bg-[var(--bg-inset)] border border-[var(--border-default)] text-[var(--text-primary)] font-semibold rounded-lg text-sm hover:bg-[var(--bg-hover)] disabled:opacity-50 transition-colors"
+                    className="w-full py-2.5 bg-[var(--bg-inset)] border border-[var(--border-default)] text-[var(--text-primary)] font-semibold rounded-lg text-sm hover:bg-[var(--bg-hover)] disabled:opacity-50 transition-[background-color,border-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
               >
                 {verifySending ? tPhone("sendingCode") : tPhone("verifyMyNumber")}
               </button>
@@ -877,7 +877,7 @@ export default function AppSettingsPhonePage() {
             </div>
           </div>
           <p className="mt-6 text-sm text-[var(--text-secondary)] text-center">
-            <Link href="/app/activity" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{tPhone("addNumberLater")}</Link>
+            <Link href="/app/activity" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">{tPhone("addNumberLater")}</Link>
           </p>
 
         </>
@@ -922,7 +922,7 @@ export default function AppSettingsPhonePage() {
       <p className="text-xs text-[var(--text-secondary)] mt-6">
         {tPhone("needHelpPhoneSetup")} <a href="mailto:support@recall-touch.com" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline underline-offset-2">support@recall-touch.com</a>
       </p>
-      <p className="mt-4"><Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{tPhone("backToSettings")}</Link></p>
+      <p className="mt-4"><Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">{tPhone("backToSettings")}</Link></p>
     </div>
   );
 }

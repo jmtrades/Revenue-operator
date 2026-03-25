@@ -27,7 +27,7 @@ function FunnelStep({ label, count, pct, index }: { label: string; count: number
       </div>
       <div className="flex-1 h-10 rounded-lg" style={{ background: "var(--bg-primary)" }}>
         <div
-          className="h-full rounded-lg transition-all"
+          className="h-full rounded-lg transition-[width]"
           style={{
             width: `${pct}%`,
             background: "var(--accent-primary)",

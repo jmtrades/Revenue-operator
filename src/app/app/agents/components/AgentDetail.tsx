@@ -156,7 +156,7 @@ export function AgentDetail(props: AgentDetailProps) {
           <div className="mt-2 flex items-center gap-3">
             <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
               <div
-                className="h-full bg-[var(--accent-secondary)] rounded-full transition-all duration-500"
+                className="h-full bg-[var(--accent-secondary)] rounded-full transition-[width] duration-500"
                 style={{ width: `${readiness.percent}%` }}
               />
             </div>
@@ -217,7 +217,7 @@ export function AgentDetail(props: AgentDetailProps) {
                       ? "Complete your test call to enable Go Live."
                       : undefined
                   }
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-[background-color,border-color,color,transform] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
                     active
                       ? "bg-[var(--bg-hover)] border border-[var(--border-medium)]"
                       : "hover:bg-[var(--bg-card)] border border-transparent"

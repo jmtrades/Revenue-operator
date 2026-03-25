@@ -245,7 +245,7 @@ export default function VoiceSelector({ value, onChange, planTier = 'enterprise'
               key={voice.id}
               onClick={() => !isLocked && handleSelect(voice.id)}
               disabled={isLocked}
-              className={`relative p-4 rounded-xl border-2 transition-all duration-200 text-left ${
+              className={`relative p-4 rounded-xl border-2 transition-[border-color,box-shadow,transform] duration-200 text-left ${
                 isLocked
                   ? 'border-[var(--border-default)] opacity-50 cursor-not-allowed'
                   : isSelected

@@ -67,7 +67,7 @@ export default function ModeSelector({ onSelect, selected, disabled }: ModeSelec
               onMouseLeave={() => setHovering(null)}
               disabled={disabled}
               className={`
-                rounded-2xl border p-5 text-left transition-all duration-150
+                rounded-2xl border p-5 text-left transition-[border-color,box-shadow,transform] duration-150
                 ${isSelected
                   ? "border-white bg-[var(--bg-inset)]/80 ring-1 ring-white/20"
                   : isHovering

@@ -336,7 +336,7 @@ export default function AppSettingsAgentPage() {
         </div>
         <div className="h-10 w-32 bg-[var(--bg-inset)] rounded-xl" />
         <p className="mt-4">
-          <Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{tSettings("agent.backToSettings")}</Link>
+          <Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">{tSettings("agent.backToSettings")}</Link>
         </p>
       </div>
     );
@@ -381,7 +381,7 @@ export default function AppSettingsAgentPage() {
             placeholder={tSettings("agent.greetingPlaceholderDefault", { business: config.businessName || tSettings("agent.defaultBusiness") })}
             className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none resize-none"
           />
-          <button type="button" onClick={playGreeting} className="mt-1 text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{tSettings("agent.previewVoice")}</button>
+          <button type="button" onClick={playGreeting} className="mt-1 text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">{tSettings("agent.previewVoice")}</button>
         </div>
         <div>
           <label htmlFor="agent-voice" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{tSettings("agent.voiceLabel")}</label>
@@ -421,7 +421,7 @@ export default function AppSettingsAgentPage() {
         <div>
           <div className="flex items-center justify-between mb-1">
             <label className="block text-xs font-medium text-[var(--text-tertiary)]">{tSettings("agent.knowledgeLabel")}</label>
-            <button type="button" onClick={addKnowledge} className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{tSettings("agent.knowledgeAdd")}</button>
+            <button type="button" onClick={addKnowledge} className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">{tSettings("agent.knowledgeAdd")}</button>
           </div>
           <div className="space-y-2">
             {config.knowledgeItems.map((item, idx) => (
@@ -440,7 +440,7 @@ export default function AppSettingsAgentPage() {
                   placeholder={tSettings("agent.answerPlaceholder")}
                   className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
-                <button type="button" onClick={() => setPendingKnowledgeDelete(idx)} className="shrink-0 text-[var(--text-secondary)] hover:text-red-400 text-sm px-1" aria-label={tSettings("agent.removeAria")}>×</button>
+                <button type="button" onClick={() => setPendingKnowledgeDelete(idx)} className="shrink-0 text-[var(--text-secondary)] hover:text-red-400 text-sm px-1 transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]" aria-label={tSettings("agent.removeAria")}>×</button>
               </div>
             ))}
           </div>
@@ -452,13 +452,13 @@ export default function AppSettingsAgentPage() {
         <button
           type="button"
           onClick={() => toggleSection("behavior")}
-          className="w-full px-4 py-3 flex items-center justify-between bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] transition-colors"
+          className="w-full px-4 py-3 flex items-center justify-between bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] transition-[background-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
         >
           <div className="text-left">
             <h3 className="text-sm font-semibold text-[var(--text-primary)]">{tSettings("agent.behaviorSectionTitle")}</h3>
             <p className="text-xs text-[var(--text-secondary)] mt-0.5">{tSettings("agent.behaviorSectionDescription")}</p>
           </div>
-          <ChevronDown className={`w-4 h-4 text-[var(--text-tertiary)] transition-transform ${expandedSections.behavior ? "rotate-180" : ""}`} />
+          <ChevronDown className={`w-4 h-4 text-[var(--text-tertiary)] transition-[transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] ${expandedSections.behavior ? "rotate-180" : ""}`} />
         </button>
         {expandedSections.behavior && (
           <div className="px-4 py-4 space-y-4 border-t border-[var(--border-default)]">
@@ -493,7 +493,7 @@ export default function AppSettingsAgentPage() {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="block text-xs font-medium text-[var(--text-tertiary)]">{tSettings("agent.customQuestionsLabel")}</label>
-                  <button type="button" onClick={addCustomQuestion} className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{tSettings("agent.addButton")}</button>
+                  <button type="button" onClick={addCustomQuestion} className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">{tSettings("agent.addButton")}</button>
                 </div>
                 <div className="space-y-2">
                   {config.customQualificationQuestions.map((item, idx) => (
@@ -512,7 +512,7 @@ export default function AppSettingsAgentPage() {
                         placeholder={tSettings("agent.customAnswerPlaceholder")}
                         className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                       />
-                      <button type="button" onClick={() => removeCustomQuestion(idx)} className="shrink-0 text-[var(--text-secondary)] hover:text-red-400 text-sm px-1">×</button>
+                      <button type="button" onClick={() => removeCustomQuestion(idx)} className="shrink-0 text-[var(--text-secondary)] hover:text-red-400 text-sm px-1 transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">×</button>
                     </div>
                   ))}
                 </div>
@@ -542,13 +542,13 @@ export default function AppSettingsAgentPage() {
         <button
           type="button"
           onClick={() => toggleSection("escalation")}
-          className="w-full px-4 py-3 flex items-center justify-between bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] transition-colors"
+          className="w-full px-4 py-3 flex items-center justify-between bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] transition-[background-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
         >
           <div className="text-left">
             <h3 className="text-sm font-semibold text-[var(--text-primary)]">{tSettings("agent.escalationSectionTitle")}</h3>
             <p className="text-xs text-[var(--text-secondary)] mt-0.5">{tSettings("agent.escalationSectionDescription")}</p>
           </div>
-          <ChevronDown className={`w-4 h-4 text-[var(--text-tertiary)] transition-transform ${expandedSections.escalation ? "rotate-180" : ""}`} />
+          <ChevronDown className={`w-4 h-4 text-[var(--text-tertiary)] transition-[transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] ${expandedSections.escalation ? "rotate-180" : ""}`} />
         </button>
         {expandedSections.escalation && (
           <div className="px-4 py-4 space-y-4 border-t border-[var(--border-default)]">
@@ -616,13 +616,13 @@ export default function AppSettingsAgentPage() {
         <button
           type="button"
           onClick={() => toggleSection("actions")}
-          className="w-full px-4 py-3 flex items-center justify-between bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] transition-colors"
+          className="w-full px-4 py-3 flex items-center justify-between bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] transition-[background-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
         >
           <div className="text-left">
             <h3 className="text-sm font-semibold text-[var(--text-primary)]">{tSettings("agent.actionsSectionTitle")}</h3>
             <p className="text-xs text-[var(--text-secondary)] mt-0.5">{tSettings("agent.actionsSectionDescription")}</p>
           </div>
-          <ChevronDown className={`w-4 h-4 text-[var(--text-tertiary)] transition-transform ${expandedSections.actions ? "rotate-180" : ""}`} />
+          <ChevronDown className={`w-4 h-4 text-[var(--text-tertiary)] transition-[transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] ${expandedSections.actions ? "rotate-180" : ""}`} />
         </button>
         {expandedSections.actions && (
           <div className="px-4 py-4 space-y-4 border-t border-[var(--border-default)]">
@@ -669,20 +669,20 @@ export default function AppSettingsAgentPage() {
         <button
           type="button"
           onClick={() => toggleSection("objections")}
-          className="w-full px-4 py-3 flex items-center justify-between bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] transition-colors"
+          className="w-full px-4 py-3 flex items-center justify-between bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] transition-[background-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
         >
           <div className="text-left">
             <h3 className="text-sm font-semibold text-[var(--text-primary)]">{tSettings("agent.objectionsSectionTitle")}</h3>
             <p className="text-xs text-[var(--text-secondary)] mt-0.5">{tSettings("agent.objectionsSectionDescription")}</p>
           </div>
-          <ChevronDown className={`w-4 h-4 text-[var(--text-tertiary)] transition-transform ${expandedSections.objections ? "rotate-180" : ""}`} />
+          <ChevronDown className={`w-4 h-4 text-[var(--text-tertiary)] transition-[transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] ${expandedSections.objections ? "rotate-180" : ""}`} />
         </button>
         {expandedSections.objections && (
           <div className="px-4 py-4 space-y-4 border-t border-[var(--border-default)]">
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="block text-xs font-medium text-[var(--text-tertiary)]">{tSettings("agent.objectionsLabel")}</label>
-                <button type="button" onClick={addObjection} className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{tSettings("agent.addButton")}</button>
+                <button type="button" onClick={addObjection} className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">{tSettings("agent.addButton")}</button>
               </div>
               <div className="space-y-2">
                 {config.objections.map((item, idx) => (
@@ -718,7 +718,7 @@ export default function AppSettingsAgentPage() {
         type="button"
         onClick={handleSave}
         disabled={saving}
-        className="px-6 py-3 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-60 transition-colors"
+        className="px-6 py-3 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-60 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
       >
         {saving ? tSettings("agent.saving") : tSettings("agent.saveAndUpdateAgent")}
       </button>
@@ -758,7 +758,7 @@ export default function AppSettingsAgentPage() {
       />
 
       <p className="mt-6">
-        <Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{tSettings("agent.backToSettings")}</Link>
+        <Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">{tSettings("agent.backToSettings")}</Link>
       </p>
     </div>
   );

@@ -243,7 +243,7 @@ export default function FollowUpsPage() {
                   key={f.key}
                   type="button"
                   onClick={() => setFilter(f.key)}
-                  className={`px-3 py-1.5 rounded-full transition-colors ${
+                  className={`px-3 py-1.5 rounded-full transition-[background-color,color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] ${
                     filter === f.key
                       ? "bg-emerald-500 text-black"
                       : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
@@ -289,7 +289,7 @@ export default function FollowUpsPage() {
                     return (
                       <tr
                         key={item.id}
-                        className="border-t border-[var(--border-default)]/60 hover:bg-[var(--bg-card)]/60 transition-colors"
+                        className="border-t border-[var(--border-default)]/60 hover:bg-[var(--bg-card)]/60 transition-[background-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]"
                       >
                         <td className="py-3 px-4">
                           <div className="flex flex-col">
@@ -341,7 +341,7 @@ export default function FollowUpsPage() {
                             {item.status === "paused" ? (
                               <button
                                 type="button"
-                                className="inline-flex items-center gap-1 rounded-full border border-emerald-500/40 px-2 py-1 text-emerald-300 hover:bg-emerald-500/10 transition-colors"
+                                className="inline-flex items-center gap-1 rounded-full border border-emerald-500/40 px-2 py-1 text-emerald-300 hover:bg-emerald-500/10 transition-[background-color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                               >
                                 <Play className="w-3 h-3" />
                                 Resume
@@ -349,7 +349,7 @@ export default function FollowUpsPage() {
                             ) : (
                               <button
                                 type="button"
-                                className="inline-flex items-center gap-1 rounded-full border border-[var(--border-default)] px-2 py-1 text-[var(--text-primary)] hover:bg-[var(--bg-inset)]/80 transition-colors"
+                                className="inline-flex items-center gap-1 rounded-full border border-[var(--border-default)] px-2 py-1 text-[var(--text-primary)] hover:bg-[var(--bg-inset)]/80 transition-[background-color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                               >
                                 <Pause className="w-3 h-3" />
                                 Pause
@@ -357,14 +357,14 @@ export default function FollowUpsPage() {
                             )}
                             <button
                               type="button"
-                              className="inline-flex items-center gap-1 rounded-full border border-[var(--border-default)] px-2 py-1 text-[var(--text-primary)] hover:bg-[var(--bg-inset)]/80 transition-colors"
+                              className="inline-flex items-center gap-1 rounded-full border border-[var(--border-default)] px-2 py-1 text-[var(--text-primary)] hover:bg-[var(--bg-inset)]/80 transition-[background-color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                             >
                               <SkipForward className="w-3 h-3" />
                               Skip
                             </button>
                             <button
                               type="button"
-                              className="inline-flex items-center gap-1 rounded-full border border-red-500/40 px-2 py-1 text-red-400 hover:bg-red-500/10 transition-colors"
+                              className="inline-flex items-center gap-1 rounded-full border border-red-500/40 px-2 py-1 text-red-400 hover:bg-red-500/10 transition-[background-color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                             >
                               <XCircle className="w-3 h-3" />
                               Cancel

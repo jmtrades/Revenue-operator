@@ -167,7 +167,7 @@ export function PlanChangeModal({ currentPlanId, isOpen, onClose, onSuccess, wor
                       key={plan.id}
                       type="button"
                       onClick={() => setSelected(plan.id)}
-                      className={`text-left p-4 rounded-xl border transition-all ${
+                      className={`text-left p-4 rounded-xl border transition-[border-color,box-shadow,transform] ${
                         isSelected
                           ? "border-[var(--border-default)] bg-[var(--bg-inset)]/80 ring-1 ring-zinc-500/30"
                           : isCurrent

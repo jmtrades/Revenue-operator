@@ -136,13 +136,13 @@ export default function DashboardBillingPage() {
           <div>
             <p className="text-sm mb-1" style={{ color: "var(--text-secondary)" }}>{tb("callsLabel", { used: usage.calls, limit: usage.calls_limit })}</p>
             <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--border-default)" }}>
-              <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(100, usage.calls_pct)}%`, background: "var(--accent-primary)" }} />
+              <div className="h-full rounded-full transition-[width]" style={{ width: `${Math.min(100, usage.calls_pct)}%`, background: "var(--accent-primary)" }} />
             </div>
           </div>
           <div>
             <p className="text-sm mb-1" style={{ color: "var(--text-secondary)" }}>{tb("messagesLabel", { used: usage.messages, limit: usage.messages_limit })}</p>
             <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--border-default)" }}>
-              <div className="h-full rounded-full transition-all" style={{ width: `${Math.min(100, usage.messages_pct)}%`, background: "var(--accent-primary)" }} />
+              <div className="h-full rounded-full transition-[width]" style={{ width: `${Math.min(100, usage.messages_pct)}%`, background: "var(--accent-primary)" }} />
             </div>
           </div>
         </div>

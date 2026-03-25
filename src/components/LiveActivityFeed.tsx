@@ -109,7 +109,7 @@ export function LiveActivityFeed() {
           return (
             <div
               key={item.id}
-              className="flex items-start gap-3 py-2 px-3 rounded-xl transition-all"
+              className="flex items-start gap-3 py-2 px-3 rounded-xl transition-[background-color,border-color]"
               style={{
                 background: index === 0 ? "rgba(255,255,255,0.03)" : "transparent",
                 opacity: 1 - index * 0.15,

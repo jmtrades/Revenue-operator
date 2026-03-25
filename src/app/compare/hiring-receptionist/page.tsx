@@ -205,10 +205,10 @@ export default function HiringReceptionistComparisonPage() {
                 You get 24/7 coverage without doubling your headcount. You get consistency without complexity. You get revenue recovery without manual chasing.
               </p>
               <div className="mt-6 flex flex-col sm:flex-row gap-3">
-                <Link href="/activate" className="btn-marketing-primary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline">
+                <Link href="/activate" className="btn-marketing-primary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline active:scale-[0.97]" style={{ transition: "transform 0.15s ease-[cubic-bezier(0.23,1,0.32,1)]" }}>
                   Replace your hold music — not your team →
                 </Link>
-                <Link href="/pricing" className="btn-marketing-secondary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline">
+                <Link href="/pricing" className="btn-marketing-secondary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline active:scale-[0.97]" style={{ transition: "transform 0.15s ease-[cubic-bezier(0.23,1,0.32,1)]" }}>
                   View pricing →
                 </Link>
               </div>

@@ -1699,7 +1699,7 @@ function ProfileTab({
             }`}
           >
             <span
-              className="absolute top-0.5 w-4 h-4 rounded-full bg-black transition-all"
+              className="absolute top-0.5 w-4 h-4 rounded-full bg-black transition-[left,opacity]"
               style={{ left: agent.active ? "22px" : "2px" }}
             />
           </button>

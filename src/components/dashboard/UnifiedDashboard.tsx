@@ -657,7 +657,7 @@ export function UnifiedDashboard() {
               <Link
                 key={c.id}
                 href="/app/campaigns"
-                className="group rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] hover:border-[var(--border-hover)] hover:shadow-[var(--shadow-xs)] p-4 transition-all"
+                className="group rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] hover:border-[var(--border-hover)] hover:shadow-[var(--shadow-xs)] p-4 transition-[border-color,box-shadow,transform]"
               >
                 <div className="flex items-center justify-between">
                   <p className="font-medium text-sm text-[var(--text-primary)] group-hover:text-[var(--accent-primary)] transition-colors">

@@ -93,7 +93,7 @@ function VoiceCard({
       aria-label={`${voice.name}, ${voice.description}. ${
         selected ? selectedLabel : selectThisVoiceLabel
       }`}
-      className={`relative cursor-pointer rounded-xl p-3 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
+      className={`relative cursor-pointer rounded-xl p-3 transition-[border-color,box-shadow,transform] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
         selected
           ? "border-2 border-[var(--accent-primary)] bg-[var(--bg-hover)] ring-1 ring-[var(--accent-primary)]/20"
           : "border border-[var(--border-default)] bg-[var(--bg-card)] hover:border-[var(--border-medium)]"

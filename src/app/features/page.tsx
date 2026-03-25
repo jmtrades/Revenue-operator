@@ -10,6 +10,19 @@ export const metadata: Metadata = {
   title: "Features — AI Phone Agents That Handle Everything",
   description:
     "Inbound call handling, outbound campaigns, automated follow-ups, appointment booking, revenue recovery, self-learning AI, and full analytics. See every feature Recall Touch offers.",
+  openGraph: {
+    title: "Features — Recall Touch",
+    description:
+      "Inbound call handling, outbound campaigns, follow-ups, appointment booking, revenue recovery, and AI that learns from every conversation.",
+    url: "https://www.recall-touch.com/features",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Features — Recall Touch",
+    description:
+      "AI phone agents that handle calls, book appointments, and recover revenue.",
+  },
 };
 
 const FEATURES = [
@@ -125,10 +138,11 @@ export default function FeaturesPage() {
               return (
                 <div
                   key={feature.title}
-                  className="rounded-2xl border p-8 transition-all hover:border-emerald-500/30"
+                  className="rounded-2xl border p-8 hover:border-emerald-500/30"
                   style={{
                     borderColor: "var(--border-default)",
                     background: "var(--bg-surface)",
+                    transition: "border-color 0.3s ease-[cubic-bezier(0.23,1,0.32,1)], box-shadow 0.3s ease-[cubic-bezier(0.23,1,0.32,1)]",
                   }}
                 >
                   <div

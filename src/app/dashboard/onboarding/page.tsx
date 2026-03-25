@@ -257,7 +257,7 @@ function OnboardingWizard() {
           </div>
 
           <div className="w-full h-1 rounded-full overflow-hidden" style={{ background: "var(--bg-elevated)" }}>
-            <div className="h-full transition-all duration-500" style={{
+            <div className="h-full transition-[width] duration-500" style={{
               background: "var(--accent-primary)",
               width: `${(step / STEPS) * 100}%`,
             }} />
@@ -321,7 +321,7 @@ function OnboardingWizard() {
                     key={value}
                     type="button"
                     onClick={() => setIndustry(value)}
-                    className="px-4 py-3 rounded-lg text-sm font-medium border transition-all"
+                    className="px-4 py-3 rounded-lg text-sm font-medium border transition-[border-color,box-shadow]"
                     style={{
                       background: industry === value ? "var(--accent-primary-subtle)" : "var(--surface)",
                       borderColor: industry === value ? "var(--accent-primary)" : "var(--card-border)",
@@ -334,7 +334,7 @@ function OnboardingWizard() {
               </div>
             </div>
 
-            <button onClick={saveStep1} disabled={saving} className="w-full py-3 rounded-lg font-semibold text-sm disabled:opacity-50 flex items-center justify-center gap-2 transition-all" style={{ background: "var(--meaning-green)", color: "#0c0f13" }}>
+            <button onClick={saveStep1} disabled={saving} className="w-full py-3 rounded-lg font-semibold text-sm disabled:opacity-50 flex items-center justify-center gap-2 transition-[background-color,border-color,color,transform]" style={{ background: "var(--meaning-green)", color: "#0c0f13" }}>
               {saving ? t("saving") : <>
                 {t("continue")}
                 <ChevronRight size={18} />
@@ -362,7 +362,7 @@ function OnboardingWizard() {
                     key={n}
                     type="button"
                     onClick={() => setAgentName(n)}
-                    className="py-3 px-4 rounded-lg border transition-all font-medium text-sm"
+                    className="py-3 px-4 rounded-lg border transition-[border-color,box-shadow] font-medium text-sm"
                     style={{
                       background: agentName === n ? "var(--accent-primary-subtle)" : "var(--surface)",
                       borderColor: agentName === n ? "var(--accent-primary)" : "var(--card-border)",
@@ -385,7 +385,7 @@ function OnboardingWizard() {
                   <div
                     key={v.id}
                     onClick={() => setVoiceId(v.id)}
-                    className="p-4 rounded-lg border cursor-pointer transition-all group"
+                    className="p-4 rounded-lg border cursor-pointer transition-[border-color,box-shadow,transform] group"
                     style={{
                       background: voiceId === v.id ? "var(--accent-primary-subtle)" : "var(--surface)",
                       borderColor: voiceId === v.id ? "var(--accent-primary)" : "var(--card-border)",
@@ -403,7 +403,7 @@ function OnboardingWizard() {
                         type="button"
                         onClick={(e) => { e.stopPropagation(); playVoicePreview(v.id); }}
                         disabled={playingVoice === v.id}
-                        className="p-2 rounded-lg transition-all md:opacity-0 md:group-hover:opacity-100"
+                        className="p-2 rounded-lg transition-[opacity] md:opacity-0 md:group-hover:opacity-100"
                         style={{ background: "var(--accent-primary-subtle)" }}
                       >
                         <Volume2 size={16} style={{ color: playingVoice === v.id ? "var(--text-muted)" : "var(--accent-primary)" }} />
@@ -565,7 +565,7 @@ function OnboardingWizard() {
                   <p className="text-sm mb-2" style={{ color: "var(--text-primary)" }}>{t("youllGetNumber")}</p>
                   <p className="text-xs" style={{ color: "var(--text-secondary)" }}>This usually takes less than a minute</p>
                 </div>
-                <button onClick={provisionNumber} disabled={provisioning} className="w-full py-3 rounded-lg font-semibold text-sm disabled:opacity-50 flex items-center justify-center gap-2 transition-all" style={{ background: "var(--meaning-green)", color: "#0c0f13" }}>
+                <button onClick={provisionNumber} disabled={provisioning} className="w-full py-3 rounded-lg font-semibold text-sm disabled:opacity-50 flex items-center justify-center gap-2 transition-[background-color,border-color,color,transform]" style={{ background: "var(--meaning-green)", color: "#0c0f13" }}>
                   {provisioning ? <>
                     <Clock size={18} />
                     {t("gettingNumber")}
@@ -594,7 +594,7 @@ function OnboardingWizard() {
                         key={value}
                         type="button"
                         onClick={() => setNumberOption(value)}
-                        className="w-full text-left p-4 rounded-lg border transition-all"
+                        className="w-full text-left p-4 rounded-lg border transition-[border-color,box-shadow]"
                         style={{
                           background: numberOption === value ? "var(--accent-primary-subtle)" : "var(--surface)",
                           borderColor: numberOption === value ? "var(--accent-primary)" : "var(--card-border)",
@@ -648,7 +648,7 @@ function OnboardingWizard() {
             )}
 
             <div className="flex flex-col gap-2">
-              <button onClick={finishOnboarding} className="w-full py-3 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 transition-all" style={{ background: "var(--meaning-green)", color: "#0c0f13" }}>
+              <button onClick={finishOnboarding} className="w-full py-3 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 transition-[background-color,border-color,color,transform]" style={{ background: "var(--meaning-green)", color: "#0c0f13" }}>
                 <CheckCircle2 size={18} />
                 {t("takeMeToDashboard")}
               </button>

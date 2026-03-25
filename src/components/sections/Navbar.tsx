@@ -123,13 +123,13 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
             {t("product")}
             {pathname === ROUTES.PRODUCT && (
               <span
-                className="absolute bottom-0 left-0 h-0.5 bg-current transition-all duration-200"
+                className="absolute bottom-0 left-0 h-0.5 bg-current transition-[width] duration-200"
                 style={{ width: "100%" }}
               />
             )}
             {pathname !== ROUTES.PRODUCT && (
               <span
-                className="absolute bottom-0 left-0 h-0.5 bg-current transition-all duration-200"
+                className="absolute bottom-0 left-0 h-0.5 bg-current transition-[width] duration-200"
                 style={{ width: "0%", background: "var(--text-primary)" }}
                 aria-hidden="true"
               />
@@ -150,7 +150,7 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
               {t("solutions")}
               <ChevronDown className="w-3.5 h-3.5 opacity-50" />
             </button>
-            <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2.5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 translate-y-1 group-hover:translate-y-0" style={{ minWidth: "210px" }}>
+            <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2.5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-[opacity,transform] duration-200 translate-y-1 group-hover:translate-y-0" style={{ minWidth: "210px" }}>
               <div
                 className="rounded-xl py-1.5"
                 style={{
@@ -195,7 +195,7 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
                 {t(l.labelKey)}
                 {isActive && (
                   <span
-                    className="absolute bottom-0 left-2 h-0.5 bg-current transition-all duration-200"
+                    className="absolute bottom-0 left-2 h-0.5 bg-current transition-[width] duration-200"
                     style={{ width: "calc(100% - 1rem)" }}
                   />
                 )}

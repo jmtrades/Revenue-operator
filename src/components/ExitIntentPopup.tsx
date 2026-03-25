@@ -98,7 +98,7 @@ export function ExitIntentPopup() {
 
       {/* Modal */}
       <div
-        className="fixed top-1/2 left-1/2 z-50 w-full max-w-md mx-4 rounded-2xl border shadow-2xl transform transition-all"
+        className="fixed top-1/2 left-1/2 z-50 w-full max-w-md mx-4 rounded-2xl border shadow-2xl transform transition-[opacity,transform]"
         style={{
           background: "var(--bg-surface)",
           borderColor: "var(--border-default)",

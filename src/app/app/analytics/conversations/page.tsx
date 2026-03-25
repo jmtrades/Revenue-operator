@@ -260,7 +260,7 @@ export default function ConversationalAnalyticsPage() {
               <button
                 key={range}
                 onClick={() => setDateRange(range)}
-                className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                className={`px-4 py-2 rounded-lg font-medium transition-[background-color,border-color,color,transform] ${
                   dateRange === range
                     ? "bg-blue-600 text-white shadow-lg"
                     : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
@@ -373,7 +373,7 @@ export default function ConversationalAnalyticsPage() {
                     </div>
                     <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
                       <div
-                        className="bg-gradient-to-r from-green-500 to-blue-500 h-full rounded-full transition-all"
+                        className="bg-gradient-to-r from-green-500 to-blue-500 h-full rounded-full transition-[width]"
                         style={{
                           width: `${objection.resolution_rate * 100}%`,
                         }}
@@ -399,7 +399,7 @@ export default function ConversationalAnalyticsPage() {
               {wordCloud.slice(0, 50).map((item, idx) => (
                 <div
                   key={idx}
-                  className="transition-all hover:opacity-80 cursor-default"
+                  className="transition-[opacity] hover:opacity-80 cursor-default"
                   style={{
                     fontSize: `${getFontSize(item.frequency)}px`,
                     color: getWordColor(item.frequency),
@@ -509,7 +509,7 @@ export default function ConversationalAnalyticsPage() {
                       </span>
                       <div className="flex-1 bg-slate-200 dark:bg-slate-700 rounded-full h-8 overflow-hidden">
                         <div
-                          className="bg-gradient-to-r from-blue-500 to-blue-600 h-full flex items-center justify-end pr-3 transition-all rounded-full"
+                          className="bg-gradient-to-r from-blue-500 to-blue-600 h-full flex items-center justify-end pr-3 transition-[width] rounded-full"
                           style={{ width: `${width}%` }}
                         >
                           <span className="text-xs font-semibold text-white">

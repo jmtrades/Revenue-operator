@@ -169,7 +169,7 @@ export default function AppointmentsPage() {
             <button
               type="button"
               onClick={() => setView("list")}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-[background-color,color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] ${
                 view === "list" ? "bg-[var(--bg-card)] text-[var(--text-primary)]" : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
               }`}
             >
@@ -178,7 +178,7 @@ export default function AppointmentsPage() {
             <button
               type="button"
               onClick={() => setView("calendar")}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-[background-color,color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] ${
                 view === "calendar" ? "bg-[var(--bg-card)] text-[var(--text-primary)]" : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
               }`}
             >
@@ -200,7 +200,7 @@ export default function AppointmentsPage() {
             <button
               type="button"
               onClick={() => { setLoading(true); setFetchError(null); window.location.reload(); }}
-              className="mt-3 px-4 py-2 rounded-xl border border-[var(--border-medium)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
+              className="mt-3 px-4 py-2 rounded-xl border border-[var(--border-medium)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] transition-[background-color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
             >
               {t("appointments.retry") ?? "Retry"}
             </button>
@@ -235,7 +235,7 @@ export default function AppointmentsPage() {
                   {appointments.map((apt) => (
                     <tr
                       key={apt.id}
-                      className="border-b border-[var(--border-default)] hover:bg-[var(--bg-hover)] transition-colors"
+                      className="border-b border-[var(--border-default)] hover:bg-[var(--bg-hover)] transition-[background-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]"
                     >
                       <td className="py-3 px-4 text-[var(--text-primary)]">
                         {formatDate(apt.date, t)} · {apt.time}
@@ -254,7 +254,7 @@ export default function AppointmentsPage() {
                         <button
                           type="button"
                           onClick={() => setSelected(apt)}
-                          className="p-1 rounded text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                          className="p-1 rounded text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-[color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                           aria-label={t("appointments.viewDetails")}
                         >
                           <ChevronRight className="w-4 h-4" />
@@ -280,7 +280,7 @@ export default function AppointmentsPage() {
                       ),
                     )
                   }
-                  className="p-2 rounded-lg hover:bg-[var(--bg-inset)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
+                  className="p-2 rounded-lg hover:bg-[var(--bg-inset)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-[background-color,color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
@@ -300,7 +300,7 @@ export default function AppointmentsPage() {
                       ),
                     )
                   }
-                  className="p-2 rounded-lg hover:bg-[var(--bg-inset)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
+                  className="p-2 rounded-lg hover:bg-[var(--bg-inset)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-[background-color,color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                 >
                   <ChevronRight className="w-5 h-5" />
                 </button>
@@ -329,7 +329,7 @@ export default function AppointmentsPage() {
                       type="button"
                       onClick={() => setSelectedDay(day)}
                       className={[
-                        "aspect-square rounded-xl flex flex-col items-center justify-center gap-1 text-sm transition-all",
+                        "aspect-square rounded-xl flex flex-col items-center justify-center gap-1 text-sm transition-[background-color,border-color,color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]",
                         isSelected
                           ? "bg-white/10 border border-[var(--border-default)]"
                           : "hover:bg-[var(--bg-inset)]",
@@ -397,11 +397,11 @@ export default function AppointmentsPage() {
 
         {!isEmpty && (
           <div className="mt-6 flex items-center gap-2 text-sm text-[var(--text-secondary)]">
-            <Link href="/app/settings" className="hover:text-[var(--text-primary)] transition-colors">
+            <Link href="/app/settings" className="hover:text-[var(--text-primary)] transition-[color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]">
               {t("appointments.settings")}
             </Link>
             <span aria-hidden>·</span>
-            <Link href="/app/calendar" className="hover:text-[var(--text-primary)] transition-colors">
+            <Link href="/app/calendar" className="hover:text-[var(--text-primary)] transition-[color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]">
               {t("appointments.calendarView")}
             </Link>
           </div>
@@ -449,7 +449,7 @@ export default function AppointmentsPage() {
               <button
                 type="button"
                 onClick={() => setSelected(null)}
-                className="px-4 py-2 rounded-xl border border-[var(--border-medium)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
+                className="px-4 py-2 rounded-xl border border-[var(--border-medium)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] transition-[background-color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
               >
                 {t("appointments.close")}
               </button>

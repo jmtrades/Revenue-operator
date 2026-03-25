@@ -144,7 +144,7 @@ export default function IndustrySelector({ onSelect, selected, disabled }: Indus
                   onMouseLeave={() => setHovering(null)}
                   disabled={disabled}
                   className={`
-                    rounded-xl border p-3 text-left transition-all duration-150
+                    rounded-xl border p-3 text-left transition-[border-color,box-shadow,transform] duration-150
                     ${isSelected
                       ? "border-white bg-[var(--bg-inset)]/80 ring-1 ring-white/20"
                       : isHovering
