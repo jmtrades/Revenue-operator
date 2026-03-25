@@ -58,13 +58,13 @@ export const PRICING_TIERS = [
   {
     name: "Starter",
     slug: "solo",
-    priceMonthly: "$97",
-    priceAnnual: "$77",
+    priceMonthly: "$147",
+    priceAnnual: "$117",
     period: "/mo",
     description: "One AI agent that answers and follows up.",
     features: [
       "1 AI agent",
-      "500 voice minutes/month",
+      "1,000 voice minutes/month",
       "1 phone number",
       "Appointment booking",
       "Call transcripts",
@@ -84,7 +84,7 @@ export const PRICING_TIERS = [
     description: "Multi-agent revenue operations.",
     features: [
       "5 AI agents",
-      "2,500 voice minutes/month",
+      "3,000 voice minutes/month",
       "5 phone numbers",
       "No-show recovery",
       "Reactivation campaigns",
@@ -107,7 +107,7 @@ export const PRICING_TIERS = [
     description: "Full-scale AI call center.",
     features: [
       "15 AI agents",
-      "6,000 voice minutes/month",
+      "8,000 voice minutes/month",
       "15 phone numbers",
       "Outbound campaigns",
       "Speed-to-lead (60s callback)",

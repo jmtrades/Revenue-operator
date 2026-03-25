@@ -66,16 +66,16 @@ export default function AboutPage() {
                   lineHeight: 1.12,
                 }}
               >
-                No service business should lose revenue to an unanswered phone.
+                Every business deserves revenue operations that run on autopilot.
               </h1>
               <p
                 className="text-base md:text-lg max-w-2xl mx-auto leading-relaxed"
                 style={{ color: "var(--text-secondary)" }}
               >
-                Recall Touch was built to solve a simple problem: service businesses lose
-                thousands of dollars every month from calls they can&apos;t answer, appointments
-                that don&apos;t show, and leads that never get followed up. We built the AI
-                to fix that.
+                Recall Touch was built to solve a clear problem: service businesses lose
+                thousands of dollars every month from missed opportunities — calls that go
+                unanswered, appointments that no-show, and leads that never get followed up.
+                We built the AI to handle all of it automatically.
               </p>
             </div>
           </Container>

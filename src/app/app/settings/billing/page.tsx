@@ -40,7 +40,7 @@ interface UsageAlertData {
 type CancelStep = 0 | 1 | 2 | 3 | 4;
 type PauseStep = 0 | 1;
 
-const defaultUsage = { minutes_used: 0, minutes_limit: 500, calls: 0, leads: 0, estRevenue: 0 };
+const defaultUsage = { minutes_used: 0, minutes_limit: 0, calls: 0, leads: 0, estRevenue: 0 };
 
 export default function AppSettingsBillingPage() {
   const tNav = useTranslations("nav");

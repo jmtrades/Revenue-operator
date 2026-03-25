@@ -127,7 +127,7 @@ export default function VoicesSettingsPage() {
           }
         }
       } catch {
-        // Use demo data on error
+        // Built-in voices used as fallback
       }
     };
     fetchVoices();
@@ -602,7 +602,7 @@ export default function VoicesSettingsPage() {
       {/* Voice Cloning Coming Soon Banner */}
       <div className="mb-6 p-4 rounded-xl bg-blue-500/10 border border-blue-500/30">
         <p className="text-sm font-medium text-blue-300">
-          Voice Cloning — Coming Soon. Custom voice cloning is not yet available.
+          {t("cloneComingSoon")}
         </p>
       </div>
 
@@ -956,7 +956,7 @@ export default function VoicesSettingsPage() {
                       className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-semibold text-xs px-3 py-1.5 hover:bg-emerald-500/20 transition-[background-color,border-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                     >
                       <Zap className="w-3 h-3" />
-                      Declare Winner
+                      {t("declareWinner")}
                     </button>
                   )}
                 </div>
