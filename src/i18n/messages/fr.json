@@ -4207,7 +4207,14 @@
     "whenWeAskBeforeActing": "When we ask before acting",
     "profileTitle": "Profil",
     "requestDeleteData": "Demander la suppression des données",
-    "requestDeleteAccount": "Demander la suppression du compte"
+    "requestDeleteAccount": "Demander la suppression du compte",
+    "appearance": {
+      "title": "Apparence",
+      "description": "Choisissez l'apparence de Recall Touch.",
+      "system": "Système",
+      "light": "Clair",
+      "dark": "Sombre"
+    }
   },
   "hero": {
     "title": "Cette semaine, nous avons répondu à 12 847 appels qui seraient allés sur la messagerie.",
@@ -6257,6 +6264,7 @@
     "capabilitiesLabel": "Capacités clés",
     "roiLabel": "ROI",
     "ctaStartFree": "Démarrer gratuitement →",
+    "ctaWatchDemo": "Voir la démo →",
     "ctaPricing": "Voir les tarifs →",
     "problemHeading": "Les appels manqués coûtent cher aux entreprises {industry} chaque jour.",
     "capabilitiesHeading": "Conçu pour les flux de travail {industry}.",

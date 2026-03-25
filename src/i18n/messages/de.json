@@ -4207,7 +4207,14 @@
     "whenWeAskBeforeActing": "When we ask before acting",
     "profileTitle": "Profil",
     "requestDeleteData": "Datenlöschung anfordern",
-    "requestDeleteAccount": "Kontolöschung anfordern"
+    "requestDeleteAccount": "Kontolöschung anfordern",
+    "appearance": {
+      "title": "Darstellung",
+      "description": "Wählen Sie das Erscheinungsbild von Recall Touch.",
+      "system": "System",
+      "light": "Hell",
+      "dark": "Dunkel"
+    }
   },
   "hero": {
     "title": "Wir haben diese Woche 12.847 Anrufe beantwortet, die sonst auf der Mailbox gelandet wären.",
@@ -6257,6 +6264,7 @@
     "capabilitiesLabel": "Kernfunktionen",
     "roiLabel": "ROI",
     "ctaStartFree": "Kostenlos starten →",
+    "ctaWatchDemo": "Demo ansehen →",
     "ctaPricing": "Preise ansehen →",
     "problemHeading": "Verpasste Anrufe kosten {industry}-Unternehmen jeden Tag.",
     "capabilitiesHeading": "Konzipiert für {industry}-Workflows.",

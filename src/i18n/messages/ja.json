@@ -4207,7 +4207,14 @@
     "whenWeAskBeforeActing": "When we ask before acting",
     "profileTitle": "プロフィール",
     "requestDeleteData": "データ削除をリクエスト",
-    "requestDeleteAccount": "アカウント削除をリクエスト"
+    "requestDeleteAccount": "アカウント削除をリクエスト",
+    "appearance": {
+      "title": "外観",
+      "description": "Recall Touchの表示モードを選択してください。",
+      "system": "システム",
+      "light": "ライト",
+      "dark": "ダーク"
+    }
   },
   "hero": {
     "title": "今週だけで、本来は留守番電話行きだった12,847件の電話に応答しました。",
@@ -6257,6 +6264,7 @@
     "capabilitiesLabel": "主な機能",
     "roiLabel": "ROI",
     "ctaStartFree": "無料で始める →",
+    "ctaWatchDemo": "デモを見る →",
     "ctaPricing": "料金を見る →",
     "problemHeading": "取りこぼした電話は{industry}のビジネスに毎日コストをかけています。",
     "capabilitiesHeading": "{industry}のワークフロー向けに構築。",
