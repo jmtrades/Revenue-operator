@@ -53,7 +53,7 @@ function RevenueKPI({ label, value, prefix = "", suffix = "", trend, icon: Icon 
   );
 }
 
-function UsageBar({ label, used, limit, pct }: { label: string; used: number; limit: number; pct: number }) {
+function UsageBar({ label, used, limit, pct, t }: { label: string; used: number; limit: number; pct: number; t: (key: string) => string }) {
   const isWarning = pct >= 80;
   const isDanger = pct >= 100;
   return (
@@ -292,8 +292,8 @@ export default function AnalyticsPage() {
                 Plan Usage This Period
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <UsageBar label="Calls" used={usage.calls} limit={usage.calls_limit} pct={usage.calls_pct} />
-                <UsageBar label="Messages" used={usage.messages} limit={usage.messages_limit} pct={usage.messages_pct} />
+                <UsageBar label="Calls" used={usage.calls} limit={usage.calls_limit} pct={usage.calls_pct} t={t} />
+                <UsageBar label="Messages" used={usage.messages} limit={usage.messages_limit} pct={usage.messages_pct} t={t} />
               </div>
               <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
                 <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
