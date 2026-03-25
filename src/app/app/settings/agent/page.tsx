@@ -455,15 +455,15 @@ export default function AppSettingsAgentPage() {
           className="w-full px-4 py-3 flex items-center justify-between bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] transition-colors"
         >
           <div className="text-left">
-            <h3 className="text-sm font-semibold text-[var(--text-primary)]">Behavior & Qualification</h3>
-            <p className="text-xs text-[var(--text-secondary)] mt-0.5">Configure qualification methods and tone</p>
+            <h3 className="text-sm font-semibold text-[var(--text-primary)]">{tSettings("agent.behaviorSectionTitle")}</h3>
+            <p className="text-xs text-[var(--text-secondary)] mt-0.5">{tSettings("agent.behaviorSectionDescription")}</p>
           </div>
           <ChevronDown className={`w-4 h-4 text-[var(--text-tertiary)] transition-transform ${expandedSections.behavior ? "rotate-180" : ""}`} />
         </button>
         {expandedSections.behavior && (
           <div className="px-4 py-4 space-y-4 border-t border-[var(--border-default)]">
             <div>
-              <label htmlFor="qual-method" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">Qualification Method</label>
+              <label htmlFor="qual-method" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{tSettings("agent.qualificationMethodLabel")}</label>
               <select
                 id="qual-method"
                 value={config.qualificationMethod}
@@ -478,7 +478,7 @@ export default function AppSettingsAgentPage() {
 
             {config.qualificationMethod === "BANT" && (
               <div>
-                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-2">BANT Questions (Read-only Examples)</label>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-2">{tSettings("agent.bantQuestionsLabel")}</label>
                 <div className="space-y-2">
                   {BANT_QUESTIONS.map((q, idx) => (
                     <div key={idx} className="p-2 rounded-lg bg-[var(--bg-inset)] border border-[var(--border-default)]">
@@ -492,8 +492,8 @@ export default function AppSettingsAgentPage() {
             {config.qualificationMethod === "Custom Questions" && (
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-medium text-[var(--text-tertiary)]">Custom Questions</label>
-                  <button type="button" onClick={addCustomQuestion} className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">+ Add</button>
+                  <label className="block text-xs font-medium text-[var(--text-tertiary)]">{tSettings("agent.customQuestionsLabel")}</label>
+                  <button type="button" onClick={addCustomQuestion} className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{tSettings("agent.addButton")}</button>
                 </div>
                 <div className="space-y-2">
                   {config.customQualificationQuestions.map((item, idx) => (
@@ -520,7 +520,7 @@ export default function AppSettingsAgentPage() {
             )}
 
             <div>
-              <label htmlFor="tone-preset" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">Tone Preset</label>
+              <label htmlFor="tone-preset" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{tSettings("agent.tonePresetLabel")}</label>
               <select
                 id="tone-preset"
                 value={config.tonePreset}
@@ -545,15 +545,15 @@ export default function AppSettingsAgentPage() {
           className="w-full px-4 py-3 flex items-center justify-between bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] transition-colors"
         >
           <div className="text-left">
-            <h3 className="text-sm font-semibold text-[var(--text-primary)]">Escalation & Transfer Rules</h3>
-            <p className="text-xs text-[var(--text-secondary)] mt-0.5">Configure when to transfer to humans</p>
+            <h3 className="text-sm font-semibold text-[var(--text-primary)]">{tSettings("agent.escalationSectionTitle")}</h3>
+            <p className="text-xs text-[var(--text-secondary)] mt-0.5">{tSettings("agent.escalationSectionDescription")}</p>
           </div>
           <ChevronDown className={`w-4 h-4 text-[var(--text-tertiary)] transition-transform ${expandedSections.escalation ? "rotate-180" : ""}`} />
         </button>
         {expandedSections.escalation && (
           <div className="px-4 py-4 space-y-4 border-t border-[var(--border-default)]">
             <div>
-              <label htmlFor="transfer-policy" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">Transfer Policy</label>
+              <label htmlFor="transfer-policy" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{tSettings("agent.transferPolicyLabel")}</label>
               <select
                 id="transfer-policy"
                 value={config.transferPolicy}
@@ -569,7 +569,7 @@ export default function AppSettingsAgentPage() {
 
             {config.transferPolicy !== "Never" && (
               <div>
-                <label htmlFor="transfer-number" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">Transfer Phone Number</label>
+                <label htmlFor="transfer-number" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{tSettings("agent.transferPhoneNumberLabel")}</label>
                 <input
                   id="transfer-number"
                   type="tel"
@@ -582,7 +582,7 @@ export default function AppSettingsAgentPage() {
             )}
 
             <div>
-              <label htmlFor="escalation-threshold" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">Confidence Threshold</label>
+              <label htmlFor="escalation-threshold" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{tSettings("agent.confidenceThresholdLabel")}</label>
               <select
                 id="escalation-threshold"
                 value={config.escalationThreshold}
@@ -596,14 +596,14 @@ export default function AppSettingsAgentPage() {
             </div>
 
             <div>
-              <label htmlFor="escalation-triggers" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">Escalation Triggers</label>
-              <p className="text-[11px] text-[var(--text-secondary)] mb-1">Describe situations when the agent should transfer to a human</p>
+              <label htmlFor="escalation-triggers" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{tSettings("agent.escalationTriggersLabel")}</label>
+              <p className="text-[11px] text-[var(--text-secondary)] mb-1">{tSettings("agent.escalationTriggersDescription")}</p>
               <textarea
                 id="escalation-triggers"
                 rows={3}
                 value={config.escalationTriggers}
                 onChange={(e) => setConfig((c) => ({ ...c, escalationTriggers: e.target.value }))}
-                placeholder="E.g., Angry customer, technical issue, competitor comparison..."
+                placeholder={tSettings("agent.escalationTriggersPlaceholder")}
                 className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none resize-none"
               />
             </div>
@@ -619,8 +619,8 @@ export default function AppSettingsAgentPage() {
           className="w-full px-4 py-3 flex items-center justify-between bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] transition-colors"
         >
           <div className="text-left">
-            <h3 className="text-sm font-semibold text-[var(--text-primary)]">Allowed & Forbidden Actions</h3>
-            <p className="text-xs text-[var(--text-secondary)] mt-0.5">Control what the agent can and cannot do</p>
+            <h3 className="text-sm font-semibold text-[var(--text-primary)]">{tSettings("agent.actionsSectionTitle")}</h3>
+            <p className="text-xs text-[var(--text-secondary)] mt-0.5">{tSettings("agent.actionsSectionDescription")}</p>
           </div>
           <ChevronDown className={`w-4 h-4 text-[var(--text-tertiary)] transition-transform ${expandedSections.actions ? "rotate-180" : ""}`} />
         </button>
@@ -628,7 +628,7 @@ export default function AppSettingsAgentPage() {
           <div className="px-4 py-4 space-y-4 border-t border-[var(--border-default)]">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-2">Allowed Actions</label>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-2">{tSettings("agent.allowedActionsLabel")}</label>
                 <div className="space-y-2">
                   {ALLOWED_ACTIONS_LIST.map((action) => (
                     <label key={action} className="flex items-center gap-2 cursor-pointer">
@@ -644,7 +644,7 @@ export default function AppSettingsAgentPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-2">Forbidden Actions</label>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-2">{tSettings("agent.forbiddenActionsLabel")}</label>
                 <div className="space-y-2">
                   {FORBIDDEN_ACTIONS_LIST.map((action) => (
                     <label key={action} className="flex items-center gap-2 cursor-pointer">
@@ -672,8 +672,8 @@ export default function AppSettingsAgentPage() {
           className="w-full px-4 py-3 flex items-center justify-between bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] transition-colors"
         >
           <div className="text-left">
-            <h3 className="text-sm font-semibold text-[var(--text-primary)]">Objection Handling</h3>
-            <p className="text-xs text-[var(--text-secondary)] mt-0.5">Pre-built responses to common objections</p>
+            <h3 className="text-sm font-semibold text-[var(--text-primary)]">{tSettings("agent.objectionsSectionTitle")}</h3>
+            <p className="text-xs text-[var(--text-secondary)] mt-0.5">{tSettings("agent.objectionsSectionDescription")}</p>
           </div>
           <ChevronDown className={`w-4 h-4 text-[var(--text-tertiary)] transition-transform ${expandedSections.objections ? "rotate-180" : ""}`} />
         </button>
@@ -681,8 +681,8 @@ export default function AppSettingsAgentPage() {
           <div className="px-4 py-4 space-y-4 border-t border-[var(--border-default)]">
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="block text-xs font-medium text-[var(--text-tertiary)]">Objection/Response Pairs</label>
-                <button type="button" onClick={addObjection} className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">+ Add</button>
+                <label className="block text-xs font-medium text-[var(--text-tertiary)]">{tSettings("agent.objectionsLabel")}</label>
+                <button type="button" onClick={addObjection} className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{tSettings("agent.addButton")}</button>
               </div>
               <div className="space-y-2">
                 {config.objections.map((item, idx) => (
