@@ -11,6 +11,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { logLeadCreated } from "@/lib/log/revenue-events";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { normalizePhoneE164 } from "@/lib/phone/normalize";
 
 function leadScoreFromInput(input: { name?: string; phone?: string; email?: string; service_requested?: string; source?: string }): number {
   let score = 0;
@@ -82,12 +83,13 @@ export async function POST(req: NextRequest) {
   }
   const { name, phone, email, company, service_requested, source, status, notes } = body;
   if (!name?.trim()) return NextResponse.json({ error: "Name is required" }, { status: 400 });
-  const phoneStr = (phone ?? "").toString().trim();
-  if (!phoneStr) return NextResponse.json({ error: "Phone is required" }, { status: 400 });
-  const phoneDigits = phoneStr.replace(/\D/g, "");
+  const phoneRaw = (phone ?? "").toString().trim();
+  if (!phoneRaw) return NextResponse.json({ error: "Phone is required" }, { status: 400 });
+  const phoneDigits = phoneRaw.replace(/\D/g, "");
   if (phoneDigits.length < 10 || phoneDigits.length > 15) {
     return NextResponse.json({ error: "Phone number must be between 10 and 15 digits" }, { status: 400 });
   }
+  const phoneStr = normalizePhoneE164(phoneRaw);
 
   const state = (status ?? "new").toLowerCase().replace(/\s+/g, "_");
   const stateMap: Record<string, string> = {

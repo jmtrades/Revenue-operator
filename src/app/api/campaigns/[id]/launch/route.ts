@@ -122,6 +122,22 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   if (campaign.status === "completed") {
     return NextResponse.json({ error: "Campaign already completed" }, { status: 400 });
   }
+  if (campaign.status === "active") {
+    return NextResponse.json({ error: "Campaign is already active" }, { status: 400 });
+  }
+
+  // Validate: workspace can't have more than 3 active campaigns at once
+  const { count: activeCampaignCount } = await db
+    .from("campaigns")
+    .select("id", { count: "exact", head: true })
+    .eq("workspace_id", workspaceId)
+    .eq("status", "active");
+  if ((activeCampaignCount ?? 0) >= 3) {
+    return NextResponse.json(
+      { error: "Maximum of 3 active campaigns allowed. Complete or pause an existing campaign first." },
+      { status: 400 },
+    );
+  }
 
   const filter = (campaign.target_filter ?? {}) as TargetFilter;
 
@@ -219,6 +235,15 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
 
   leadQuery = leadQuery.neq("opt_out", true);
 
+  // Exclude leads already in an active campaign to prevent double-enrollment
+  const { data: activeLeadIds } = await db
+    .from("campaign_leads")
+    .select("lead_id")
+    .in("status", ["pending", "sent", "calling"]);
+  const excludeLeadIds = new Set(
+    (activeLeadIds ?? []).map((r: { lead_id: string }) => r.lead_id)
+  );
+
   const { data: leads, error: leadsError } = await leadQuery;
   if (leadsError) {
     return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
@@ -228,6 +253,17 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     return NextResponse.json({ error: "Audience is empty for the selected campaign filters." }, { status: 400 });
   }
 
+  // Filter out leads already in an active campaign
+  const eligibleLeads = (leads ?? []).filter(
+    (lead) => !excludeLeadIds.has((lead as { id: string }).id)
+  );
+  if (eligibleLeads.length < 1) {
+    return NextResponse.json(
+      { error: "All matching leads are already enrolled in an active campaign." },
+      { status: 400 },
+    );
+  }
+
   const launchAt = new Date().toISOString();
   let enqueued = 0;
   let campaignStatus = "active";
@@ -235,7 +271,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
 
   try {
     // Insert campaign_leads junction records for cron processor to track
-    const campaignLeadRows = (leads ?? []).map((lead) => ({
+    const campaignLeadRows = eligibleLeads.map((lead) => ({
       campaign_id: id,
       lead_id: (lead as { id: string }).id,
       status: "pending",
@@ -253,7 +289,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     }
 
     // Enqueue leads for outbound execution
-    for (const lead of leads ?? []) {
+    for (const lead of eligibleLeads) {
       const leadId = (lead as { id: string }).id;
       const result = await executeLeadOutboundCall(
         workspaceId,
@@ -295,7 +331,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     .update({
       status: campaignStatus,
       last_launched_at: launchAt,
-      total_contacts: leads?.length ?? 0,
+      total_contacts: eligibleLeads.length,
       metadata: errorMessage ? { launch_error: errorMessage } : undefined,
     })
     .eq("id", id);

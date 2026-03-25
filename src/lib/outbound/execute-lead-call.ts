@@ -10,6 +10,7 @@ import { buildFirstMessageWithConsent } from "@/lib/compliance/recording-consent
 import { buildCampaignPrompt, type CampaignType, type LeadForPrompt } from "@/lib/campaigns/prompt";
 import { getVoiceProvider } from "@/lib/voice";
 import { DEFAULT_RECALL_VOICE_ID as DEFAULT_VOICE_ID } from "@/lib/constants/recall-voices";
+import { normalizePhoneE164 } from "@/lib/phone/normalize";
 
 export async function executeLeadOutboundCall(
   workspaceId: string,
@@ -309,18 +310,36 @@ YOUR GOAL:
       const plan = BILLING_PLANS[billingTier];
       const includedMinutes = plan.includedMinutes;
 
-      // Get current month's usage in seconds
+      // Get current month's usage using DB-side aggregate (avoids fetching all rows)
       const now = new Date();
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-      const { data: callSessions } = await db
-        .from("call_sessions")
-        .select("duration_seconds")
-        .eq("workspace_id", workspaceId)
-        .gte("call_started_at", monthStart)
-        .not("duration_seconds", "is", null);
+      const { data: usageRow } = await db
+        .rpc("sum_call_duration_seconds", {
+          p_workspace_id: workspaceId,
+          p_since: monthStart,
+        })
+        .maybeSingle();
 
-      const usedSeconds = (callSessions ?? []).reduce((sum: number, s: { duration_seconds?: number | null }) => sum + (s.duration_seconds ?? 0), 0);
-      const usedMinutes = Math.ceil(usedSeconds / 60);
+      // Fallback: if the RPC doesn't exist, use a bounded query
+      let usedMinutes = 0;
+      if (usageRow && typeof (usageRow as { total_seconds?: number }).total_seconds === "number") {
+        usedMinutes = Math.ceil((usageRow as { total_seconds: number }).total_seconds / 60);
+      } else {
+        // Fallback: fetch with limit to prevent unbounded reads
+        const { data: callSessions } = await db
+          .from("call_sessions")
+          .select("duration_seconds")
+          .eq("workspace_id", workspaceId)
+          .gte("call_started_at", monthStart)
+          .not("duration_seconds", "is", null)
+          .limit(5000);
+
+        const usedSeconds = (callSessions ?? []).reduce(
+          (sum: number, s: { duration_seconds?: number | null }) => sum + (s.duration_seconds ?? 0),
+          0
+        );
+        usedMinutes = Math.ceil(usedSeconds / 60);
+      }
 
       if (usedMinutes >= includedMinutes) {
         return { ok: false, error: "Monthly minute limit reached. Upgrade your plan or purchase additional minutes." };
@@ -358,7 +377,7 @@ YOUR GOAL:
   }
 
   const customerNumber = String(phone).trim();
-  const e164 = /^\+?\d{10,15}$/.test(customerNumber) ? customerNumber : customerNumber.replace(/\D/g, "").length === 10 ? `+1${customerNumber.replace(/\D/g, "")}` : customerNumber.replace(/\D/g, "");
+  const e164 = normalizePhoneE164(customerNumber);
 
   // Retry logic with exponential backoff: try up to 3 times (1s, 2s, 4s delays)
   let callResult;

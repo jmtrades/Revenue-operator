@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { normalizePhoneE164 } from "@/lib/phone/normalize";
 
 /**
  * CSV parser that properly handles quoted fields with commas
@@ -180,7 +181,7 @@ export async function POST(req: NextRequest) {
   const toInsert = valid.map((r) => ({
     workspace_id: workspaceId,
     name: r.name,
-    phone: r.phone,
+    phone: normalizePhoneE164(r.phone),
     email: r.email,
     company: r.company,
     status: "NEW",
