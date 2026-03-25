@@ -158,6 +158,39 @@
         "body": "Need a co-branded rollout plan, training, or a custom agreement? We’ll package the deployment so you can deliver outcomes, not setup.",
         "link": "Talk to support"
       }
+    },
+    "dashboard": {
+      "title": "Reseller Dashboard",
+      "subtitle": "Manage your sub-accounts and track performance"
+    },
+    "createButton": "Create Sub-Account",
+    "stats": {
+      "subAccounts": "Total Sub-Accounts",
+      "active": "active",
+      "calls": "Total Calls",
+      "thisMonth": "This month",
+      "leads": "Total Leads",
+      "revenue": "Monthly Revenue",
+      "mrr": "MRR"
+    },
+    "empty": {
+      "message": "No sub-accounts yet",
+      "cta": "Create your first sub-account"
+    },
+    "modal": {
+      "title": "Create Sub-Account",
+      "nameLabel": "Sub-Account Name",
+      "emailLabel": "Owner Email",
+      "planLabel": "Plan",
+      "plans": {
+        "starter": "Starter",
+        "standard": "Standard",
+        "professional": "Professional",
+        "enterprise": "Enterprise"
+      },
+      "cancel": "Cancel",
+      "create": "Create",
+      "creating": "Creating..."
     }
   },
   "common": {
@@ -2075,6 +2108,8 @@
       "ariaLabel": "No analytics available yet",
       "action": "Make a test call"
     },
+    "pipelineTitle": "Pipeline & Operations",
+    "operationalMetrics": "Operational Metrics",
     "leadFunnel": "Lead funnel",
     "funnelStages": {
       "calls": "Calls",
@@ -3867,6 +3902,10 @@
     "delete": "Delete campaign",
     "launch": "Launch campaign",
     "pauseAction": "Pause campaign",
+    "copySuffix": "Copy",
+    "pageOf": "{page} of {total}",
+    "prevPage": "Previous page",
+    "nextPage": "Next page",
     "pauseConfirmTitle": "Pause this campaign?",
     "pauseConfirmMessage": "Pause \"{name}\"? You can resume it later from this page.",
     "remaining": "Remaining",
@@ -7165,7 +7204,10 @@
       "defaultInviter": "A team member"
     },
     "errors": {
-      "inviteFailed": "Failed to send invite. Try again."
+      "inviteFailed": "Failed to send invite. Try again.",
+      "changeRoleFailed": "Failed to update role. Try again.",
+      "removeMemberFailed": "Failed to remove member. Try again.",
+      "fetchTeamFailed": "Failed to load team. Try again."
     },
     "sending": "Sending…",
     "resend": "Resend",
@@ -7178,8 +7220,21 @@
       "inviteResent": "Invite resent.",
       "inviteResendFailed": "Failed to resend.",
       "inviteRevoked": "Invite revoked.",
-      "inviteRevokeFailed": "Failed to revoke."
+      "inviteRevokeFailed": "Failed to revoke.",
+      "roleUpdated": "Role updated",
+      "memberRemoved": "Member removed"
     },
+    "changeRole": "Change role",
+    "removeMemberBtn": "Remove member",
+    "lastActive": "Last active",
+    "joined": "Joined",
+    "pendingInvitations": "Pending invitations",
+    "rolesAndPermissions": "Roles & Permissions",
+    "permissionLabel": "Permission",
+    "roleLabel": "Role",
+    "cancel": "Cancel",
+    "changeRoleTitle": "Change role",
+    "inviteTeamMemberTitle": "Invite team member",
     "backToSettings": "Back to settings",
     "confirmRemoveLabel": "Confirm remove",
     "confirmRemoveMessage": "Confirm remove message",
@@ -7315,6 +7370,9 @@
     "addContactCta": "Add contact",
     "searchPlaceholder": "Search by name, phone, or email…",
     "sortLabel": "Sort",
+    "pageOf": "{page} of {total}",
+    "prevPage": "Previous page",
+    "nextPage": "Next page",
     "sort": {
       "newest": "Newest",
       "score": "Score",

@@ -626,6 +626,9 @@ export default function AppContactsPage() {
         currentPage={pageSafe}
         totalPages={totalContactPages}
         onPageChange={setPage}
+        label={t("contacts.pageOf")}
+        prevLabel={t("contacts.prevPage")}
+        nextLabel={t("contacts.nextPage")}
       />
 
       <p className="mt-6">

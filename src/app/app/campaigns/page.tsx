@@ -358,7 +358,7 @@ export default function CampaignsPage() {
     setDuplicating(true);
     try {
       const payload = {
-        name: `${campaign.name} (Copy)`,
+        name: `${campaign.name} (${t("campaigns.copySuffix")})`,
         type: campaign.type,
         target_filter: campaign.target_filter,
       };
@@ -597,6 +597,9 @@ export default function CampaignsPage() {
               currentPage={campaignPageSafe}
               totalPages={totalCampaignPages}
               onPageChange={setCampaignPage}
+              label={t("campaigns.pageOf")}
+              prevLabel={t("campaigns.prevPage")}
+              nextLabel={t("campaigns.nextPage")}
             />
           </div>
 
