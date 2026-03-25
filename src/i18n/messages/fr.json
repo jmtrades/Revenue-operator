@@ -549,7 +549,8 @@
       "pauseFailed": "Impossible de mettre la couverture en pause.",
       "paused": "Couverture en pause.",
       "paymentFailed": "Impossible d'ouvrir les paramètres de paiement.",
-      "portalFailed": "Impossible d'ouvrir le portail de facturation."
+      "portalFailed": "Impossible d'ouvrir le portail de facturation.",
+      "minutesAdded": "{minutes} minutes ajoutées à votre compte!"
     },
     "errors": {
       "loadingFailed": "Impossible de charger les informations de facturation",
@@ -6944,7 +6945,10 @@
       "added": "Contact ajouté",
       "saveError": "Impossible d'enregistrer le contact. Réessayez.",
       "deleteError": "Impossible de supprimer le contact. Réessayez.",
-      "updateError": "Impossible de mettre à jour le contact. Réessayez."
+      "updateError": "Impossible de mettre à jour le contact. Réessayez.",
+      "workspaceNotLoaded": "Espace de travail non chargé. Veuillez actualiser.",
+      "contactSaveDisplayFailed": "Contact enregistré mais ne peut pas être affiché. Veuillez actualiser.",
+      "networkError": "Erreur réseau. Veuillez réessayer."
     },
     "lastContactUnknown": "Dernier contact : inconnu",
     "lastContactToday": "Dernier contact : aujourd'hui",
@@ -7809,7 +7813,9 @@
     "releaseConfirmMessage": "This number will be released and will no longer receive or make calls through Recall Touch. You can connect a new number anytime.",
     "provisionFailed": "Failed to provision phone number",
     "provisioned": "Phone number provisioned",
-    "searchFailed": "Failed to search phone numbers"
+    "searchFailed": "Failed to search phone numbers",
+    "unknownError": "Erreur inconnue",
+    "submitFailed": "Erreur lors de la soumission de la demande de portage"
   },
   "integrations": {
     "pageTitle": "Intégrations — Recall Touch",
@@ -7827,7 +7833,9 @@
       "whatsappEmailRequired": "Entrez votre e-mail pour rejoindre la liste d'attente WhatsApp.",
       "whatsappWaitlisted": "Vous êtes sur la liste. Nous vous préviendrons quand WhatsApp sera disponible.",
       "error": "Une erreur s'est produite. Réessayez.",
-      "syncFailed": "Sync failed"
+      "syncFailed": "Sync failed",
+      "importFailed": "Échec de l'import. Veuillez réessayer.",
+      "disconnectFailed": "Échec de la déconnexion."
     },
     "hub": {
       "title": "Intégrations",

@@ -549,7 +549,8 @@
       "pauseFailed": "Abdeckung konnte nicht pausiert werden.",
       "paused": "Abdeckung pausiert.",
       "paymentFailed": "Zahlungseinstellungen konnten nicht geöffnet werden.",
-      "portalFailed": "Abrechnungsportal konnte nicht geöffnet werden."
+      "portalFailed": "Abrechnungsportal konnte nicht geöffnet werden.",
+      "minutesAdded": "{minutes} Minuten zu Ihrem Konto hinzugefügt!"
     },
     "errors": {
       "loadingFailed": "Abrechnungsinformationen konnten nicht geladen werden",
@@ -6944,7 +6945,10 @@
       "added": "Kontakt hinzugefügt",
       "saveError": "Kontakt konnte nicht gespeichert werden. Bitte erneut versuchen.",
       "deleteError": "Kontakt konnte nicht gelöscht werden. Bitte erneut versuchen.",
-      "updateError": "Kontakt konnte nicht aktualisiert werden. Bitte erneut versuchen."
+      "updateError": "Kontakt konnte nicht aktualisiert werden. Bitte erneut versuchen.",
+      "workspaceNotLoaded": "Arbeitsbereich nicht geladen. Bitte aktualisieren Sie.",
+      "contactSaveDisplayFailed": "Kontakt gespeichert, konnte aber nicht angezeigt werden. Bitte aktualisieren Sie.",
+      "networkError": "Netzwerkfehler. Bitte versuchen Sie es erneut."
     },
     "lastContactUnknown": "Letzter Kontakt: unbekannt",
     "lastContactToday": "Letzter Kontakt: heute",
@@ -7809,7 +7813,9 @@
     "releaseConfirmMessage": "This number will be released and will no longer receive or make calls through Recall Touch. You can connect a new number anytime.",
     "provisionFailed": "Failed to provision phone number",
     "provisioned": "Phone number provisioned",
-    "searchFailed": "Failed to search phone numbers"
+    "searchFailed": "Failed to search phone numbers",
+    "unknownError": "Unbekannter Fehler",
+    "submitFailed": "Fehler beim Absenden der Portierungsanfrage"
   },
   "integrations": {
     "pageTitle": "Integrationen — Recall Touch",
@@ -7827,7 +7833,9 @@
       "whatsappEmailRequired": "E-Mail eingeben, um zur WhatsApp-Warteliste zu kommen.",
       "whatsappWaitlisted": "Sie sind auf der Liste. Wir benachrichtigen Sie, wenn WhatsApp verfügbar ist.",
       "error": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
-      "syncFailed": "Sync failed"
+      "syncFailed": "Sync failed",
+      "importFailed": "Import fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "disconnectFailed": "Trennung fehlgeschlagen."
     },
     "hub": {
       "title": "Integrationen",

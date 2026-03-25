@@ -1,15 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { getDb } from "@/lib/db/queries";
 import { recordDeliveryReceipt } from "@/lib/delivery/provider";
 import { markAttemptDelivered } from "@/lib/delivery-assurance/action-attempts";
 import crypto from "crypto";
 
 export const dynamic = "force-dynamic";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 function verifyTwilioSignature(url: string, params: Record<string, string>, signature: string): boolean {
   const token = process.env.TWILIO_AUTH_TOKEN;
@@ -58,15 +53,16 @@ export async function POST(request: NextRequest) {
     "undelivered",
     "delivery_failed",
   ]);
+  const db = getDb();
   if (messageSid && messageStatus && failedMessageStatuses.has(messageStatus.toLowerCase())) {
-    const { data: attempt } = await supabase
+    const { data: attempt } = await db
       .from("action_attempts")
       .select("action_command_id")
       .eq("provider_message_id", messageSid)
       .maybeSingle();
     const actionCommandId = (attempt as { action_command_id?: string | null } | null)?.action_command_id ?? null;
     if (actionCommandId) {
-      const { data: cmd } = await supabase
+      const { data: cmd } = await db
         .from("action_commands")
         .select("workspace_id, lead_id")
         .eq("id", actionCommandId)
@@ -74,7 +70,7 @@ export async function POST(request: NextRequest) {
       const workspaceId = (cmd as { workspace_id?: string | null } | null)?.workspace_id ?? null;
       const leadId = (cmd as { lead_id?: string | null } | null)?.lead_id ?? null;
       if (workspaceId && leadId) {
-        const { data: lead } = await supabase
+        const { data: lead } = await db
           .from("leads")
           .select("metadata")
           .eq("workspace_id", workspaceId)
@@ -84,7 +80,7 @@ export async function POST(request: NextRequest) {
           string,
           unknown
         >;
-        await supabase
+        await db
           .from("leads")
           .update({
             metadata: {
@@ -106,7 +102,7 @@ export async function POST(request: NextRequest) {
   const callDuration = formParams.CallDuration ?? null;
 
   if (callSid) {
-    await supabase
+    await db
       .from("call_sessions")
       .update({
         status: callStatus === "completed" ? "completed" : callStatus,

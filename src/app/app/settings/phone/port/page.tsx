@@ -34,14 +34,14 @@ export default function PhonePortPage() {
       });
 
       if (!response.ok) {
-        const error = await response.json().catch(() => ({ error: "Unknown error" }));
-        toast.error(error.error || "Failed to submit port request");
+        const error = await response.json().catch(() => ({ error: t("unknownError") }));
+        toast.error(error.error || t("submitFailed"));
         return;
       }
 
       setSubmitted(true);
     } catch (error) {
-      toast.error("Failed to submit port request");
+      toast.error(t("submitFailed"));
       console.error("Port request error:", error);
     } finally {
       setLoading(false);

@@ -293,7 +293,7 @@ export default function AppSettingsIntegrationsPage() {
       });
       const data = (await res.json().catch(() => null)) as { imported?: number; total_found?: number; message?: string; error?: string } | null;
       if (!res.ok) {
-        setToast(data?.error ?? "Import failed. Please try again.");
+        setToast(data?.error ?? t("toast.importFailed"));
         return;
       }
       setToast(data?.message ?? `${data?.imported ?? 0} contacts imported`);
@@ -305,7 +305,7 @@ export default function AppSettingsIntegrationsPage() {
           .catch(() => {});
       }, 1000);
     } catch {
-      setToast("Import failed. Please try again.");
+      setToast(t("toast.importFailed"));
     } finally {
       setImportingProvider(null);
       setTimeout(() => setToast(null), 5000);
@@ -322,7 +322,7 @@ export default function AppSettingsIntegrationsPage() {
       });
       if (!res.ok) {
         const data = (await res.json().catch(() => null)) as { error?: string } | null;
-        setToast(data?.error ?? "Disconnect failed.");
+        setToast(data?.error ?? t("toast.disconnectFailed"));
         return;
       }
       setToast(`${provider.charAt(0).toUpperCase() + provider.slice(1).replace(/_/g, " ")} disconnected.`);
@@ -332,7 +332,7 @@ export default function AppSettingsIntegrationsPage() {
         .then((d: CrmStatusResponse | null) => d && setCrmStatus(d))
         .catch(() => {});
     } catch {
-      setToast("Disconnect failed.");
+      setToast(t("toast.disconnectFailed"));
     } finally {
       setDisconnectingProvider(null);
       setTimeout(() => setToast(null), 4000);

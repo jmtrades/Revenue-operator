@@ -604,7 +604,8 @@
       "pauseFailed": "Could not pause coverage.",
       "paused": "Coverage paused.",
       "paymentFailed": "Could not open payment settings.",
-      "portalFailed": "Could not open billing portal."
+      "portalFailed": "Could not open billing portal.",
+      "minutesAdded": "{minutes} minutes added to your account!"
     },
     "errors": {
       "loadingFailed": "Failed to load billing information",
@@ -7081,7 +7082,10 @@
       "added": "Contact added",
       "saveError": "Could not save contact. Try again.",
       "deleteError": "Could not delete contact. Try again.",
-      "updateError": "Could not update contact. Try again."
+      "updateError": "Could not update contact. Try again.",
+      "workspaceNotLoaded": "Workspace not loaded. Please refresh.",
+      "contactSaveDisplayFailed": "Contact saved but could not display. Please refresh.",
+      "networkError": "Network error. Please try again."
     },
     "detail": {
       "back": "Back to contacts",
@@ -7970,7 +7974,9 @@
       "next": "Next",
       "submitting": "Submitting…",
       "submitLabel": "Submit port request"
-    }
+    },
+    "unknownError": "Unknown error",
+    "submitFailed": "Failed to submit port request"
   },
   "integrations": {
     "pageTitle": "Integrations — Recall Touch",
@@ -7988,7 +7994,9 @@
       "whatsappEmailRequired": "Enter your email to join the WhatsApp waitlist.",
       "whatsappWaitlisted": "You're on the list. We'll notify you when WhatsApp is available.",
       "error": "Something went wrong. Try again.",
-      "syncFailed": "Sync failed"
+      "syncFailed": "Sync failed",
+      "importFailed": "Import failed. Please try again.",
+      "disconnectFailed": "Disconnect failed."
     },
     "hub": {
       "title": "Integrations",
