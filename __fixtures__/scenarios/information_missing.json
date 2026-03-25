@@ -1,0 +1,7 @@
+{
+  "scenario_category": "inbound_triage",
+  "channel": "inbound",
+  "structured_context_json": { "info_missing": true, "source": "fixture" },
+  "expected_outcome_type": "information_missing",
+  "expected_next_required_action": "request_disclosure_confirmation"
+}

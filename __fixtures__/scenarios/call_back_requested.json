@@ -1,0 +1,7 @@
+{
+  "scenario_category": "scheduling",
+  "channel": "voice",
+  "structured_context_json": { "commitment": "call_back", "source": "fixture" },
+  "expected_outcome_type": "call_back_requested",
+  "expected_next_required_action": "record_commitment"
+}
