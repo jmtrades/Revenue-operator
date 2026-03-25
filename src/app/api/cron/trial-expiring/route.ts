@@ -105,7 +105,7 @@ export async function GET(req: NextRequest) {
         .from("email_send_queue")
         .select("id")
         .eq("workspace_id", ws.id)
-        .eq("template_slug", "trial_expiring")
+        .eq("metadata->>template_slug", "trial_expiring")
         .limit(1)
         .maybeSingle();
 
