@@ -535,7 +535,7 @@ export default function ROIPage() {
                 <button
                   key={range}
                   onClick={() => setDateRange(range)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                  className={`px-4 py-2 rounded-lg font-medium transition-[background-color,border-color,color,transform] ${
                     dateRange === range
                       ? "bg-blue-500 text-white"
                       : "bg-[var(--bg-card)] text-[var(--text-secondary)] border border-[var(--border-default)] hover:border-blue-500"

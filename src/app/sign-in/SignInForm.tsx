@@ -173,7 +173,7 @@ export default function SignInForm() {
                 placeholder={t("signIn.emailPlaceholder")}
                 autoComplete="email"
                 aria-label="Email address"
-                className="w-full px-3.5 py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:ring-offset-2 transition-all"
+                className="w-full px-3.5 py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:ring-offset-2 transition-[border-color,box-shadow]"
               />
             </div>
             <div>
@@ -190,7 +190,7 @@ export default function SignInForm() {
                   placeholder={t("signIn.passwordPlaceholder")}
                   autoComplete="current-password"
                   aria-label={t("password.label")}
-                  className="w-full px-3.5 py-2.5 pr-16 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:ring-offset-2 transition-all"
+                  className="w-full px-3.5 py-2.5 pr-16 bg-[var(--bg-input)] border border-[var(--border-default)] rounded-xl text-[15px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:ring-offset-2 transition-[border-color,box-shadow]"
                 />
                 <button
                   type="button"
@@ -213,7 +213,7 @@ export default function SignInForm() {
               type="submit"
               disabled={busy}
               aria-label={t("signIn.button")}
-              className="w-full py-2.5 bg-[var(--bg-surface)] text-[var(--text-primary)] font-semibold text-[15px] rounded-xl hover:bg-[var(--bg-hover)] active:scale-[0.97] disabled:opacity-50 transition-all duration-150 shadow-lg shadow-white/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)]"
+              className="w-full py-2.5 bg-[var(--bg-surface)] text-[var(--text-primary)] font-semibold text-[15px] rounded-xl hover:bg-[var(--bg-hover)] active:scale-[0.97] disabled:opacity-50 transition-[background-color,border-color,color,transform] duration-150 shadow-lg shadow-white/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)]"
             >
               {busy ? t("signingIn") : `${t("signIn.button")} →`}
             </button>
@@ -229,7 +229,7 @@ export default function SignInForm() {
             type="button"
             onClick={google}
             disabled={googleBusy}
-            className="w-full py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] font-medium text-[14px] rounded-xl flex items-center justify-center gap-2.5 hover:bg-[var(--bg-input-hover)] active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed transition-all"
+            className="w-full py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] font-medium text-[14px] rounded-xl flex items-center justify-center gap-2.5 hover:bg-[var(--bg-input-hover)] active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed transition-[background-color,border-color,color,transform]"
           >
             {googleBusy ? (
               <>

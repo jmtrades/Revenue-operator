@@ -576,7 +576,7 @@ export default function VoicesSettingsPage() {
             <button
               type="button"
               onClick={handleTestVoice}
-              className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 text-[var(--text-on-accent)] font-semibold px-4 py-2.5 text-sm hover:bg-emerald-400 transition-colors"
+              className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 text-[var(--text-on-accent)] font-semibold px-4 py-2.5 text-sm hover:bg-emerald-400 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
             >
               <Play className="w-4 h-4" />
               {t("testVoice")}
@@ -717,7 +717,7 @@ export default function VoicesSettingsPage() {
                 {filteredVoices.map((voice) => (
                   <div
                     key={voice.id}
-                    className="rounded-xl border p-5 transition-all"
+                    className="rounded-xl border p-5 transition-[border-color,box-shadow,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]"
                     style={{
                       borderColor:
                         voice.id === selectedVoiceId
@@ -814,7 +814,7 @@ export default function VoicesSettingsPage() {
                       <button
                         type="button"
                         onClick={() => handlePreviewVoice(voice.id)}
-                        className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg border px-2.5 py-1.5 text-xs text-[var(--text-primary)] hover:bg-[var(--bg-inset)] transition-colors"
+                        className="flex-1 inline-flex items-center justify-center gap-1 rounded-lg border px-2.5 py-1.5 text-xs text-[var(--text-primary)] hover:bg-[var(--bg-inset)] transition-[background-color,border-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                         style={{ borderColor: "var(--border-default)" }}
                       >
                         {playingVoiceId === voice.id ? (
@@ -832,7 +832,7 @@ export default function VoicesSettingsPage() {
                       <button
                         type="button"
                         onClick={() => handleSelectVoice(voice.id)}
-                        className="flex-1 rounded-lg bg-emerald-500 text-[var(--text-on-accent)] font-semibold text-xs px-2.5 py-1.5 hover:bg-emerald-400 transition-colors"
+                        className="flex-1 rounded-lg bg-emerald-500 text-[var(--text-on-accent)] font-semibold text-xs px-2.5 py-1.5 hover:bg-emerald-400 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                       >
                         {t("select")}
                       </button>
@@ -840,7 +840,7 @@ export default function VoicesSettingsPage() {
                         <button
                           type="button"
                           onClick={() => handleDeleteClone(voice.id)}
-                          className="inline-flex items-center justify-center rounded-lg border border-red-500/30 px-2.5 py-1.5 text-xs text-red-400 hover:bg-red-500/10 transition-colors"
+                          className="inline-flex items-center justify-center rounded-lg border border-red-500/30 px-2.5 py-1.5 text-xs text-red-400 hover:bg-red-500/10 transition-[background-color,border-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                         >
                           <Trash2 className="w-3 h-3" />
                         </button>
@@ -850,7 +850,7 @@ export default function VoicesSettingsPage() {
                     {voice.cloneProgress !== undefined && voice.cloneProgress < 100 && (
                       <div className="mt-3 bg-[var(--bg-inset)] rounded-full h-1.5">
                         <div
-                          className="bg-emerald-500 h-full rounded-full transition-all"
+                          className="bg-emerald-500 h-full rounded-full transition-[width]"
                           style={{ width: `${voice.cloneProgress}%` }}
                         />
                       </div>
@@ -881,7 +881,7 @@ export default function VoicesSettingsPage() {
           <button
             type="button"
             onClick={() => setShowTestModal(true)}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold px-4 py-2 text-sm hover:opacity-90 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold px-4 py-2 text-sm hover:opacity-90 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
           >
             <TrendingUp className="w-4 h-4" />
             {t("newTest")}
@@ -953,7 +953,7 @@ export default function VoicesSettingsPage() {
                   {test.calls > 500 && test.status === "running" && (
                     <button
                       type="button"
-                      className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-semibold text-xs px-3 py-1.5 hover:bg-emerald-500/20 transition-colors"
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-semibold text-xs px-3 py-1.5 hover:bg-emerald-500/20 transition-[background-color,border-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                     >
                       <Zap className="w-3 h-3" />
                       Declare Winner
@@ -995,7 +995,7 @@ export default function VoicesSettingsPage() {
                   Audio File (WAV/MP3, 10+ seconds)
                 </label>
                 <div
-                  className="rounded-lg border-2 border-dashed p-6 text-center cursor-pointer transition-colors hover:border-emerald-500/50"
+                  className="rounded-lg border-2 border-dashed p-6 text-center cursor-pointer transition-[border-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] hover:border-emerald-500/50"
                   style={{
                     borderColor: "var(--border-default)",
                     background: "var(--bg-primary)",
@@ -1084,14 +1084,14 @@ export default function VoicesSettingsPage() {
                 type="button"
                 onClick={handleCloneVoice}
                 disabled={isCloning || !cloneFile || !cloneName.trim()}
-                className="flex-1 rounded-xl bg-emerald-500 text-[var(--text-on-accent)] font-semibold py-2.5 text-sm hover:bg-emerald-400 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                className="flex-1 rounded-xl bg-emerald-500 text-[var(--text-on-accent)] font-semibold py-2.5 text-sm hover:bg-emerald-400 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {isCloning ? t("cloning") : t("cloneVoice")}
               </button>
               <button
                 type="button"
                 onClick={() => setShowCloneModal(false)}
-                className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors"
+                className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-[background-color,border-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
               >
                 {t("cancel")}
               </button>
@@ -1193,14 +1193,14 @@ export default function VoicesSettingsPage() {
               <button
                 type="button"
                 onClick={handleCreateABTest}
-                className="flex-1 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold py-2.5 text-sm hover:opacity-90 transition-colors"
+                className="flex-1 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold py-2.5 text-sm hover:opacity-90 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
               >
                 {t("createTest")}
               </button>
               <button
                 type="button"
                 onClick={() => setShowTestModal(false)}
-                className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors"
+                className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-[background-color,border-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
               >
                 {t("cancel")}
               </button>

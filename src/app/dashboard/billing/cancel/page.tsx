@@ -235,7 +235,7 @@ export default function CancelSubscriptionPage() {
               {/* Option 1: Pause */}
               <button
                 onClick={() => handleContinueWithoutCanceling("pause")}
-                className="w-full rounded-xl border p-5 text-left transition-all hover:shadow-lg"
+                className="w-full rounded-xl border p-5 text-left transition-[border-color,box-shadow,transform] hover:shadow-lg"
                 style={{
                   borderColor: "var(--border-default)",
                   background: "var(--bg-primary)",
@@ -260,7 +260,7 @@ export default function CancelSubscriptionPage() {
               {/* Option 2: Downgrade */}
               <button
                 onClick={() => handleContinueWithoutCanceling("downgrade")}
-                className="w-full rounded-xl border p-5 text-left transition-all hover:shadow-lg"
+                className="w-full rounded-xl border p-5 text-left transition-[border-color,box-shadow,transform] hover:shadow-lg"
                 style={{
                   borderColor: "var(--border-default)",
                   background: "var(--bg-primary)",
@@ -285,7 +285,7 @@ export default function CancelSubscriptionPage() {
               {/* Option 3: Support */}
               <button
                 onClick={() => handleContinueWithoutCanceling("support")}
-                className="w-full rounded-xl border p-5 text-left transition-all hover:shadow-lg"
+                className="w-full rounded-xl border p-5 text-left transition-[border-color,box-shadow,transform] hover:shadow-lg"
                 style={{
                   borderColor: "var(--border-default)",
                   background: "var(--bg-primary)",
@@ -411,7 +411,7 @@ export default function CancelSubscriptionPage() {
                     setSelectedReason(reason.id as CancellationReason);
                     setError(null);
                   }}
-                  className={`w-full p-4 rounded-xl border text-left transition-all ${
+                  className={`w-full p-4 rounded-xl border text-left transition-[border-color,box-shadow,transform] ${
                     selectedReason === reason.id ? "border-2" : "border"
                   }`}
                   style={{
@@ -424,7 +424,7 @@ export default function CancelSubscriptionPage() {
                       {reason.label}
                     </span>
                     <div
-                      className="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
+                      className="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-[border-color,box-shadow]"
                       style={{
                         borderColor: selectedReason === reason.id ? "var(--accent-primary)" : "var(--border-default)",
                         background: selectedReason === reason.id ? "var(--accent-primary)" : "transparent",
@@ -544,7 +544,7 @@ export default function CancelSubscriptionPage() {
 
             <button
               onClick={() => (window.location.href = "/dashboard/billing")}
-              className="w-full py-3 px-4 text-sm font-semibold rounded-lg transition-all"
+              className="w-full py-3 px-4 text-sm font-semibold rounded-lg transition-[background-color,border-color,color,transform]"
               style={{
                 background: "var(--bg-primary)",
                 color: "var(--accent-primary)",

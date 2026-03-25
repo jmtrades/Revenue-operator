@@ -435,7 +435,7 @@ export default function AppShellClient({
               >
                 {/* Brand header */}
                 <div className={cn(
-                  "border-b border-[var(--border-default)] flex items-center gap-2.5 shrink-0 transition-all duration-250",
+                  "border-b border-[var(--border-default)] flex items-center gap-2.5 shrink-0 transition-[border-color,box-shadow] duration-250",
                   sidebarCollapsed ? "md:justify-center md:px-0 px-5 py-4 md:py-4" : "px-5 py-4 justify-between"
                 )}>
                   <div className={cn("flex items-center min-w-0", sidebarCollapsed && "md:justify-center")}>
@@ -561,7 +561,7 @@ export default function AppShellClient({
                             </div>
                             <div className="h-1 rounded-full bg-[var(--border-default)] overflow-hidden">
                               <div
-                                className="h-full rounded-full bg-[var(--accent-primary)] transition-all duration-500"
+                                className="h-full rounded-full bg-[var(--accent-primary)] transition-[width] duration-500"
                                 style={{ width: `${Math.min(100, (minutesUsage.used / minutesUsage.limit) * 100)}%` }}
                               />
                             </div>
@@ -571,7 +571,7 @@ export default function AppShellClient({
                       <button
                         type="button"
                         onClick={handleSignOut}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-[var(--radius-btn)] text-[13px] font-medium text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-[var(--radius-btn)] text-[13px] font-medium text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-[background-color,border-color,color,transform] duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
                         aria-label={t("nav.signOut")}
                       >
                         <LogOut className="w-4 h-4 shrink-0" strokeWidth={1.75} />
@@ -583,7 +583,7 @@ export default function AppShellClient({
                     type="button"
                     onClick={toggleSidebarCollapse}
                     className={cn(
-                      "hidden md:flex w-full items-center justify-center gap-2 py-1.5 rounded-[var(--radius-btn)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none",
+                      "hidden md:flex w-full items-center justify-center gap-2 py-1.5 rounded-[var(--radius-btn)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-[background-color,border-color,color,transform] duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none",
                       sidebarCollapsed && "md:justify-center"
                     )}
                     aria-label={sidebarCollapsed ? t("accessibility.expandSidebar") : t("accessibility.collapseSidebar")}

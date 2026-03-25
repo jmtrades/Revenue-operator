@@ -63,7 +63,7 @@ export default function AgentsPage() {
           <button
             type="button"
             onClick={() => setShowCreate(true)}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm font-semibold px-4 py-2 hover:bg-[var(--bg-inset)] transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm font-semibold px-4 py-2 hover:bg-[var(--bg-inset)] transition-[background-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
           >
             <Plus className="w-4 h-4" /> New Agent
           </button>
@@ -74,7 +74,7 @@ export default function AgentsPage() {
       ) : error ? (
         <div className="rounded-lg border py-12 px-6 text-center" style={{ borderColor: "var(--border)" }}>
           <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>{error}</p>
-          <button type="button" onClick={load} className="text-sm font-medium px-4 py-2 rounded-lg" style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}>{t("loadError.retry")}</button>
+          <button type="button" onClick={load} className="text-sm font-medium px-4 py-2 rounded-lg transition-[background-color,color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]" style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}>{t("loadError.retry")}</button>
         </div>
       ) : agents.length === 0 ? (
         <div className="rounded-xl border py-12 px-6 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
@@ -86,7 +86,7 @@ export default function AgentsPage() {
         <ul className="rounded-lg border overflow-hidden" style={{ borderColor: "var(--border)", background: "var(--surface-card)" }}>
           {agents.map((a) => (
             <li key={a.id} className="border-b last:border-b-0" style={{ borderColor: "var(--border)" }}>
-              <Link href={`/dashboard/agents/${a.id}`} className="block px-4 py-3 hover:opacity-90" style={{ color: "var(--text-primary)" }}>
+              <Link href={`/dashboard/agents/${a.id}`} className="block px-4 py-3 hover:opacity-90 transition-[opacity] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]" style={{ color: "var(--text-primary)" }}>
                 <p className="text-sm font-medium">{a.name}</p>
                 <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>{a.purpose} · {a.is_active ? t("agentDetail.activeLabel") : t("agentDetail.paused")}</p>
               </Link>
@@ -101,7 +101,7 @@ export default function AgentsPage() {
           <div className="w-full max-w-md rounded-2xl border p-6" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>Create New Agent</h3>
-              <button type="button" onClick={() => setShowCreate(false)} className="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:outline-none transition rounded p-1" aria-label="Close dialog"><X className="w-5 h-5" /></button>
+              <button type="button" onClick={() => setShowCreate(false)} className="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:outline-none transition-[color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] rounded p-1 active:scale-[0.97]" aria-label="Close dialog"><X className="w-5 h-5" /></button>
             </div>
             <div className="space-y-4">
               <label className="block">
@@ -143,11 +143,11 @@ export default function AgentsPage() {
                     setCreating(false);
                   }
                 }}
-                className="flex-1 rounded-xl bg-emerald-500 text-black font-semibold py-2.5 text-sm hover:bg-emerald-400 transition-colors disabled:opacity-60"
+                className="flex-1 rounded-xl bg-emerald-500 text-black font-semibold py-2.5 text-sm hover:bg-emerald-400 transition-[background-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] disabled:opacity-60 active:scale-[0.97]"
               >
                 {creating ? "Creating…" : "Create Agent"}
               </button>
-              <button type="button" onClick={() => setShowCreate(false)} className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors">
+              <button type="button" onClick={() => setShowCreate(false)} className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-[background-color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">
                 Cancel
               </button>
             </div>

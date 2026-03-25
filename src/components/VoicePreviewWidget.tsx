@@ -130,7 +130,7 @@ function VoiceWaveform({ active }: { active: boolean }) {
       {Array.from({ length: 24 }).map((_, i) => (
         <div
           key={i}
-          className="w-[2px] rounded-full transition-all"
+          className="w-[2px] rounded-full transition-[height]"
           style={{
             height: active ? `${12 + Math.sin(i * 0.8 + Date.now() * 0.005) * 14}px` : "4px",
             background: active
@@ -290,7 +290,7 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
         <VoiceWaveform active={playing} />
         <button
           onClick={playConversation}
-          className="w-full mt-4 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all"
+          className="w-full mt-4 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-[background-color,border-color,color,transform]"
           style={{
             background: playing ? "rgba(239,68,68,0.2)" : "rgba(52,211,153,0.15)",
             color: playing ? "rgb(248,113,113)" : "rgb(52,211,153)",
@@ -331,7 +331,7 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
             <button
               key={s.id}
               onClick={() => setSelectedScenario(i)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all whitespace-nowrap ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-[background-color,border-color,color] whitespace-nowrap ${
                 selectedScenario === i
                   ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-400"
                   : "border-[var(--border-default)] text-[var(--text-tertiary)] hover:bg-[var(--bg-hover)] hover:text-white/70"
@@ -403,7 +403,7 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
           <button
             onClick={playConversation}
             disabled={audioLoading}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-[background-color,border-color,color,transform]"
             style={{
               background: playing ? "rgba(239,68,68,0.15)" : "rgb(16, 185, 129)",
               color: playing ? "rgb(248,113,113)" : "black",

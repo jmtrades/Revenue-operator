@@ -346,7 +346,7 @@ export default function AutoSetupPage() {
                 }
               }}
               disabled={analyzing}
-              className="flex-1 px-4 py-3 rounded-lg border transition-all focus:outline-none focus:ring-2"
+              className="flex-1 px-4 py-3 rounded-lg border transition-[border-color,box-shadow] focus:outline-none focus:ring-2"
               style={{
                 backgroundColor: "var(--bg-surface)",
                 borderColor: "var(--border-default)",
@@ -357,7 +357,7 @@ export default function AutoSetupPage() {
             <button
               onClick={handleReanalyze}
               disabled={analyzing || !url.trim()}
-              className="px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 whitespace-nowrap"
+              className="px-6 py-3 rounded-lg font-medium transition-[background-color,border-color,color,transform] flex items-center gap-2 whitespace-nowrap"
               style={{
                 backgroundColor: analyzing || !url.trim() ? "var(--border-default)" : "var(--accent-primary)",
                 color: analyzing || !url.trim() ? "var(--text-secondary)" : "white",
@@ -615,7 +615,7 @@ export default function AutoSetupPage() {
             <div className="flex gap-3">
               <button
                 onClick={handleReset}
-                className="px-6 py-3 rounded-lg font-medium border transition-all"
+                className="px-6 py-3 rounded-lg font-medium border transition-[background-color,border-color,color,transform]"
                 style={{ borderColor: "var(--border-default)", color: "var(--text-primary)", backgroundColor: "var(--bg-surface)" }}
               >
                 {confirmed ? "Start Over" : "Cancel"}
@@ -624,7 +624,7 @@ export default function AutoSetupPage() {
                 <button
                   onClick={handleConfirmAndUpdate}
                   disabled={confirming || !analysis}
-                  className="flex-1 px-6 py-3 rounded-lg font-medium transition-all"
+                  className="flex-1 px-6 py-3 rounded-lg font-medium transition-[background-color,border-color,color,transform]"
                   style={{
                     backgroundColor: confirming || !analysis ? "var(--border-default)" : "var(--accent-primary)",
                     color: "white",

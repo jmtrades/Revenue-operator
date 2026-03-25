@@ -58,7 +58,7 @@ export function PlanStep({ selectedPlan, onSelectPlan, onNext, canGoNext }: Plan
               key={planSlug}
               type="button"
               onClick={() => onSelectPlan(planSlug)}
-              className={`relative p-5 rounded-xl border-2 transition-all duration-200 text-left
+              className={`relative p-5 rounded-xl border-2 transition-[border-color,box-shadow,transform] duration-200 text-left
                 ${
                   isSelected
                     ? "border-[var(--accent-primary)] bg-[var(--accent-primary)]/5 shadow-md shadow-[var(--accent-primary)]/20"

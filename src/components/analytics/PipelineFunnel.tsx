@@ -173,7 +173,7 @@ export function PipelineFunnel({ workspaceId }: PipelineFunnelProps) {
 
               <div className="relative h-10 rounded-lg bg-[var(--bg-input)]/50 overflow-hidden border border-[var(--border-default)]">
                 <div
-                  className={`h-full transition-all rounded-lg flex items-center px-3 ${
+                  className={`h-full transition-[width] rounded-lg flex items-center px-3 ${
                     isLeakagePoint
                       ? "bg-[#EF4444]/20 border-r-2 border-[#EF4444]"
                       : "bg-[var(--accent-primary)]/20"

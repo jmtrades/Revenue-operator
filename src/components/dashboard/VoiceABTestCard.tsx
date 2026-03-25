@@ -144,7 +144,7 @@ export function VoiceABTestCard() {
                   </div>
                   <div className="h-1.5 rounded-full bg-[var(--bg-hover)]">
                     <div
-                      className="h-full rounded-full bg-indigo-500 transition-all"
+                      className="h-full rounded-full bg-indigo-500 transition-[width]"
                       style={{ width: `${Math.min(100, test.conversion_a * 2)}%` }}
                     />
                   </div>
@@ -158,7 +158,7 @@ export function VoiceABTestCard() {
                   </div>
                   <div className="h-1.5 rounded-full bg-[var(--bg-hover)]">
                     <div
-                      className="h-full rounded-full bg-violet-500 transition-all"
+                      className="h-full rounded-full bg-violet-500 transition-[width]"
                       style={{ width: `${Math.min(100, test.conversion_b * 2)}%` }}
                     />
                   </div>

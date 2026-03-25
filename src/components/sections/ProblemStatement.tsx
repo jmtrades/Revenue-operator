@@ -103,7 +103,7 @@ export function ProblemStatement() {
                   key={ind.id}
                   type="button"
                   onClick={() => setSelectedIndustry(i)}
-                  className="px-4 py-2 rounded-lg text-sm font-medium transition-all"
+                  className="px-4 py-2 rounded-lg text-sm font-medium transition-[background-color,border-color,color,transform]"
                   style={{
                     background: i === selectedIndustry ? "var(--accent-primary)" : "rgba(255,255,255,0.05)",
                     color: i === selectedIndustry ? "#000" : "var(--text-secondary)",

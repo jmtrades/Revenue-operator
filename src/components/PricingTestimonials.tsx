@@ -82,7 +82,7 @@ export function PricingTestimonials() {
         {TESTIMONIALS.map((t) => (
           <div
             key={t.name}
-            className="rounded-2xl border border-[var(--border-default)] bg-white/[0.02] p-6 flex flex-col hover:bg-white/[0.04] transition-all"
+            className="rounded-2xl border border-[var(--border-default)] bg-white/[0.02] p-6 flex flex-col hover:bg-white/[0.04] transition-[background-color,border-color]"
           >
             {/* Stars */}
             <div className="flex gap-0.5 mb-3">

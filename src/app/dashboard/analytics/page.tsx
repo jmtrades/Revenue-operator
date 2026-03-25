@@ -66,7 +66,7 @@ function UsageBar({ label, used, limit, pct }: { label: string; used: number; li
       </div>
       <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
         <div
-          className="h-full rounded-full transition-all"
+          className="h-full rounded-full transition-[width]"
           style={{
             width: `${Math.min(100, pct)}%`,
             background: isDanger ? "#ef4444" : isWarning ? "#f59e0b" : "var(--accent-primary)",

@@ -75,7 +75,7 @@ export function OnboardingChecklist({
       </p>
       <div className="h-1 rounded-full bg-[var(--border-default)] overflow-hidden mb-2">
         <div
-          className="h-full rounded-full bg-green-500/80 transition-all duration-300"
+          className="h-full rounded-full bg-green-500/80 transition-[width] duration-300"
           style={{ width: `${pct}%` }}
         />
       </div>

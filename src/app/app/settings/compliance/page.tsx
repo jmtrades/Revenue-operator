@@ -169,16 +169,16 @@ export default function AppSettingsCompliancePage() {
                   role="switch"
                   aria-checked={pauseOnSensitive}
                   onClick={() => setPauseOnSensitive((v) => !v)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${pauseOnSensitive ? "bg-[var(--accent-primary)]" : "bg-[var(--bg-inset)]"}`}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-[background-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] ${pauseOnSensitive ? "bg-[var(--accent-primary)]" : "bg-[var(--bg-inset)]"}`}
                 >
-                  <span className={`inline-block h-4 w-4 transform rounded-full transition-transform ${pauseOnSensitive ? "translate-x-6 bg-[var(--text-primary)]" : "translate-x-1 bg-[var(--text-tertiary)]"}`} />
+                  <span className={`inline-block h-4 w-4 transform rounded-full transition-[transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] ${pauseOnSensitive ? "translate-x-6 bg-[var(--text-primary)]" : "translate-x-1 bg-[var(--text-tertiary)]"}`} />
                 </button>
               </div>
               <button
                 type="button"
                 onClick={handleSaveConsent}
                 disabled={consentSaving}
-                className="mt-3 px-4 py-2 rounded-xl text-sm font-medium bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-50"
+                className="mt-3 px-4 py-2 rounded-xl text-sm font-medium bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-50 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
               >
                 {consentSaving ? tSettings("compliance.savingConsent") : tSettings("compliance.saveConsent")}
               </button>
@@ -192,8 +192,8 @@ export default function AppSettingsCompliancePage() {
               <p className="text-sm font-medium text-[var(--text-primary)]">{tSettings("compliance.callRecording")}</p>
               <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">{tSettings("compliance.callRecordingHelp")}</p>
             </div>
-            <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${recording ? "bg-[var(--accent-primary)]" : "bg-[var(--bg-inset)]"}`} onClick={() => setRecording(!recording)}>
-              <span className={`inline-block h-4 w-4 transform rounded-full transition-transform ${recording ? "translate-x-6 bg-[var(--text-primary)]" : "translate-x-1 bg-[var(--text-tertiary)]"}`} />
+            <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-[background-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] cursor-pointer ${recording ? "bg-[var(--accent-primary)]" : "bg-[var(--bg-inset)]"}`} onClick={() => setRecording(!recording)}>
+              <span className={`inline-block h-4 w-4 transform rounded-full transition-[transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] ${recording ? "translate-x-6 bg-[var(--text-primary)]" : "translate-x-1 bg-[var(--text-tertiary)]"}`} />
             </div>
           </label>
         </div>
@@ -204,8 +204,8 @@ export default function AppSettingsCompliancePage() {
               <p className="text-sm font-medium text-[var(--text-primary)]">{tSettings("compliance.hipaaMode")}</p>
               <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">{tSettings("compliance.hipaaModeHelp")}</p>
             </div>
-            <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${hipaa ? "bg-[var(--accent-primary)]" : "bg-[var(--bg-inset)]"}`} onClick={() => setHipaa(!hipaa)}>
-              <span className={`inline-block h-4 w-4 transform rounded-full transition-transform ${hipaa ? "translate-x-6 bg-[var(--text-primary)]" : "translate-x-1 bg-[var(--text-tertiary)]"}`} />
+            <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-[background-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] cursor-pointer ${hipaa ? "bg-[var(--accent-primary)]" : "bg-[var(--bg-inset)]"}`} onClick={() => setHipaa(!hipaa)}>
+              <span className={`inline-block h-4 w-4 transform rounded-full transition-[transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] ${hipaa ? "translate-x-6 bg-[var(--text-primary)]" : "translate-x-1 bg-[var(--text-tertiary)]"}`} />
             </div>
           </label>
         </div>
@@ -223,11 +223,11 @@ export default function AppSettingsCompliancePage() {
       </div>
 
       <div className="flex gap-3">
-        <button type="button" onClick={handleSave} className="px-6 py-3 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 transition-colors">{tSettings("compliance.saveChanges")}</button>
-        <button type="button" onClick={handleExport} className="px-4 py-3 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-medium)] transition-colors">{tSettings("compliance.exportData")}</button>
+        <button type="button" onClick={handleSave} className="px-6 py-3 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">{tSettings("compliance.saveChanges")}</button>
+        <button type="button" onClick={handleExport} className="px-4 py-3 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-medium)] transition-[border-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">{tSettings("compliance.exportData")}</button>
       </div>
 
-      <p className="mt-6"><Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{tSettings("compliance.backToSettings")}</Link></p>
+      <p className="mt-6"><Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-[color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">{tSettings("compliance.backToSettings")}</Link></p>
     </div>
   );
 }

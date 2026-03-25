@@ -58,7 +58,7 @@ export function UsageBar({
         </div>
         <div className="w-full h-1.5 bg-[var(--bg-hover)] rounded-full overflow-hidden">
           <div
-            className={`h-full rounded-full transition-all ${barColor}`}
+            className={`h-full rounded-full transition-[width] ${barColor}`}
             style={{ width: `${barWidth}%` }}
           />
         </div>
@@ -96,7 +96,7 @@ export function UsageBar({
 
       <div className="w-full h-2 bg-[var(--bg-hover)] rounded-full overflow-hidden">
         <div
-          className={`h-full rounded-full transition-all ${barColor}`}
+          className={`h-full rounded-full transition-[width] ${barColor}`}
           style={{ width: `${barWidth}%` }}
         />
       </div>

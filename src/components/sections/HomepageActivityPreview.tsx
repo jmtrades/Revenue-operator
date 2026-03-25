@@ -85,7 +85,7 @@ export function HomepageActivityPreview() {
             return (
               <li
                 key={card.id}
-                className={`rounded-xl border-l-[3px] overflow-hidden transition-all duration-300 bg-[var(--bg-card)]/80 border border-[var(--border-default)]/50 ${style.border} ${
+                className={`rounded-xl border-l-[3px] overflow-hidden transition-[border-color,box-shadow] duration-300 bg-[var(--bg-card)]/80 border border-[var(--border-default)]/50 ${style.border} ${
                   visible.includes(i) ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
                 }`}
                 style={{

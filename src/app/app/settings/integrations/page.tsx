@@ -491,7 +491,7 @@ export default function AppSettingsIntegrationsPage() {
                           type="button"
                           onClick={() => handleSyncNow(crm.id)}
                           disabled={syncingProvider === crm.id}
-                          className="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                          className="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)] transition-[border-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed"
                         >
                           {syncingProvider === crm.id ? (
                             <>
@@ -509,7 +509,7 @@ export default function AppSettingsIntegrationsPage() {
                           type="button"
                           onClick={() => handleImportContacts(crm.id)}
                           disabled={importingProvider === crm.id}
-                          className="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                          className="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)] transition-[border-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed"
                         >
                           {importingProvider === crm.id ? (
                             <>
@@ -525,7 +525,7 @@ export default function AppSettingsIntegrationsPage() {
                         </button>
                         <Link
                           href={`/app/settings/integrations/mapping?provider=${crm.id}`}
-                          className="inline-block px-3 py-2 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)] transition-colors"
+                          className="inline-block px-3 py-2 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)] transition-[border-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                         >
                           {t("button.configure")}
                         </Link>
@@ -533,7 +533,7 @@ export default function AppSettingsIntegrationsPage() {
                           type="button"
                           onClick={() => setConfirmDisconnect(crm.id)}
                           disabled={disconnectingProvider === crm.id}
-                          className="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-medium border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                          className="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-medium border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-[background-color,border-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed"
                         >
                           {disconnectingProvider === crm.id ? (
                             <Loader className="w-3 h-3 animate-spin" />
@@ -546,7 +546,7 @@ export default function AppSettingsIntegrationsPage() {
                     ) : (
                       <a
                         href={`/api/integrations/crm/${crm.id}/connect`}
-                        className="inline-block px-3 py-2 rounded-xl text-xs font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 transition-colors"
+                        className="inline-block px-3 py-2 rounded-xl text-xs font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                       >
                         {t("button.connect")}
                       </a>
@@ -578,7 +578,7 @@ export default function AppSettingsIntegrationsPage() {
                     {t("status.connected")}
                   </span>
                 ) : (
-                  <Link href="/api/integrations/google-calendar/auth" className="px-3 py-1.5 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)] shrink-0 transition-colors">
+                  <Link href="/api/integrations/google-calendar/auth" className="px-3 py-1.5 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)] shrink-0 transition-[border-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">
                     {t("button.connect")}
                   </Link>
                 )}
@@ -768,7 +768,7 @@ export default function AppSettingsIntegrationsPage() {
       <p className="text-xs text-[var(--text-secondary)] mt-6">
         {t("hub.needHelp")} <a href="mailto:support@recall-touch.com" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline underline-offset-2">support@recall-touch.com</a>
       </p>
-      <p className="mt-4"><Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">{t("hub.backToSettings")}</Link></p>
+      <p className="mt-4"><Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">{t("hub.backToSettings")}</Link></p>
     </div>
   );
 }

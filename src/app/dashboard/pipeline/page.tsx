@@ -209,7 +209,7 @@ export default function PipelinePage() {
                       draggable
                       onDragStart={() => handleDragStart(card.id)}
                       onDragEnd={handleDragEnd}
-                      className={`rounded-xl border p-3 cursor-grab active:cursor-grabbing transition-all hover:border-[var(--border-default)] ${
+                      className={`rounded-xl border p-3 cursor-grab active:cursor-grabbing transition-[border-color,box-shadow,transform] hover:border-[var(--border-default)] ${
                         dragging === card.id ? "opacity-40 scale-95" : ""
                       }`}
                       style={{

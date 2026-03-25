@@ -56,7 +56,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="min-h-screen flex flex-col md:flex-row" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
       <aside
-        className={`${sidebarOpen ? "w-full md:w-60" : "w-0 md:w-16"} border-b md:border-b-0 md:border-r transition-all duration-200 shrink-0 overflow-hidden`}
+        className={`${sidebarOpen ? "w-full md:w-60" : "w-0 md:w-16"} border-b md:border-b-0 md:border-r transition-[width] duration-200 shrink-0 overflow-hidden`}
         style={{ borderColor: "var(--border-default)" }}
       >
         <div className="p-4">

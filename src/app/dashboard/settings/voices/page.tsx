@@ -550,7 +550,7 @@ export default function VoicesSettingsPage() {
             {filteredVoices.map((voice) => (
               <div
                 key={voice.id}
-                className="rounded-xl border p-5 transition-all"
+                className="rounded-xl border p-5 transition-[border-color,box-shadow,transform]"
                 style={{
                   borderColor:
                     voice.id === selectedVoiceId
@@ -643,7 +643,7 @@ export default function VoicesSettingsPage() {
                 {voice.cloneProgress !== undefined && voice.cloneProgress < 100 && (
                   <div className="mt-3 bg-[var(--bg-inset)] rounded-full h-1.5">
                     <div
-                      className="bg-emerald-500 h-full rounded-full transition-all"
+                      className="bg-emerald-500 h-full rounded-full transition-[width]"
                       style={{ width: `${voice.cloneProgress}%` }}
                     />
                   </div>

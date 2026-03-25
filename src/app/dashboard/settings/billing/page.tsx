@@ -181,7 +181,7 @@ export default function SettingsBillingPage() {
                 </div>
                 <div className="w-full h-2 rounded-full bg-[var(--bg-inset)] overflow-hidden">
                   <div
-                    className={`h-full rounded-full transition-all ${barColor}`}
+                    className={`h-full rounded-full transition-[width] ${barColor}`}
                     style={{ width: `${pct}%` }}
                   />
                 </div>

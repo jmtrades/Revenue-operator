@@ -82,13 +82,15 @@ export default async function ResultsPage() {
             <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
               <Link
                 href="/activate"
-                className="inline-flex px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-[var(--bg-hover)] transition-colors"
+                className="inline-flex px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-[var(--bg-hover)] active:scale-[0.97]"
+                style={{ transition: "background-color 0.3s ease-[cubic-bezier(0.23,1,0.32,1)], transform 0.15s ease-[cubic-bezier(0.23,1,0.32,1)]" }}
               >
                 Start Your Free Trial
               </Link>
               <Link
                 href="/demo"
-                className="inline-flex px-6 py-3 rounded-xl border border-[var(--border-default)] text-[var(--text-primary)] font-semibold hover:bg-[var(--bg-hover)] transition-colors"
+                className="inline-flex px-6 py-3 rounded-xl border border-[var(--border-default)] text-[var(--text-primary)] font-semibold hover:bg-[var(--bg-hover)] active:scale-[0.97]"
+                style={{ transition: "background-color 0.3s ease-[cubic-bezier(0.23,1,0.32,1)], transform 0.15s ease-[cubic-bezier(0.23,1,0.32,1)]" }}
               >
                 Watch the demo
               </Link>
@@ -110,7 +112,8 @@ export default async function ResultsPage() {
                       <Link
                         key={p.name}
                         href={p.href}
-                        className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-hover)] p-4 hover:bg-[var(--bg-inset)] transition-colors"
+                        className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-hover)] p-4 hover:bg-[var(--bg-inset)]"
+                        style={{ transition: "background-color 0.3s ease-[cubic-bezier(0.23,1,0.32,1)]" }}
                       >
                         <div className="flex items-center justify-between gap-3">
                           <p className="font-semibold" style={{ color: "var(--text-primary)" }}>

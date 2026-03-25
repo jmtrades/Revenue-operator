@@ -362,7 +362,7 @@ export default function CallIntelligencePage() {
           type="button"
           onClick={() => setActiveTab("analyzed")}
           className={cn(
-            "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+            "px-4 py-2 rounded-lg text-sm font-medium transition-[background-color,border-color,color,transform]",
             activeTab === "analyzed"
               ? "bg-[var(--bg-card)] text-[var(--text-primary)]"
               : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]",
@@ -374,7 +374,7 @@ export default function CallIntelligencePage() {
           type="button"
           onClick={() => setActiveTab("manual")}
           className={cn(
-            "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+            "px-4 py-2 rounded-lg text-sm font-medium transition-[background-color,border-color,color,transform]",
             activeTab === "manual"
               ? "bg-[var(--bg-card)] text-[var(--text-primary)]"
               : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]",
@@ -910,7 +910,7 @@ export default function CallIntelligencePage() {
             onClick={handleAnalyze}
             disabled={analyzing || pasteText.trim().length < 100}
             className={cn(
-              "mt-1 inline-flex items-center justify-center px-6 py-2.5 rounded-xl text-sm font-semibold transition-all",
+              "mt-1 inline-flex items-center justify-center px-6 py-2.5 rounded-xl text-sm font-semibold transition-[background-color,border-color,color,transform]",
               "bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-40 disabled:pointer-events-none",
             )}
           >

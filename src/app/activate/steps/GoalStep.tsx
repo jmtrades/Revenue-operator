@@ -33,7 +33,7 @@ export function GoalStep({
       {/* Quick AI Setup — prominent shortcut */}
       <Link
         href="/app/onboarding/smart-setup"
-        className="block w-full p-5 rounded-2xl border-2 border-[var(--accent-primary)] bg-gradient-to-r from-[var(--accent-primary)]/10 to-[var(--accent-primary)]/5 hover:from-[var(--accent-primary)]/15 hover:to-[var(--accent-primary)]/10 transition-all group"
+        className="block w-full p-5 rounded-2xl border-2 border-[var(--accent-primary)] bg-gradient-to-r from-[var(--accent-primary)]/10 to-[var(--accent-primary)]/5 hover:from-[var(--accent-primary)]/15 hover:to-[var(--accent-primary)]/10 transition-[border-color,box-shadow,transform] group"
       >
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-[var(--accent-primary)] flex items-center justify-center shrink-0">
@@ -70,7 +70,7 @@ export function GoalStep({
               key={goal.id}
               type="button"
               onClick={() => toggle(goal.id)}
-              className={`text-left p-4 rounded-xl border-2 transition-all ${
+              className={`text-left p-4 rounded-xl border-2 transition-[border-color,box-shadow,transform] ${
                 selected
                   ? "border-[var(--accent-primary)] bg-[var(--accent-primary)]/5"
                   : "border-[var(--border-default)] bg-[var(--bg-surface)] hover:border-[var(--border-medium)]"

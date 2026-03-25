@@ -285,7 +285,7 @@ export default function VoiceDemoPage() {
                   setTranscript([]);
                   setConversationStep(0);
                 }}
-                className="px-5 py-3 rounded-lg font-medium transition-all text-sm"
+                className="px-5 py-3 rounded-lg font-medium transition-[background-color,border-color,color,transform] text-sm"
                 style={{
                   background: selectedScenario === scenario ? "var(--accent-primary)" : "var(--bg-primary)",
                   color: selectedScenario === scenario ? "#fff" : "var(--text-primary)",
@@ -372,7 +372,7 @@ export default function VoiceDemoPage() {
                     key={idx}
                     onClick={() => handleFollowUp(prompt)}
                     disabled={isLoading}
-                    className="w-full px-4 py-3 rounded-lg transition-all disabled:opacity-50 text-sm text-left"
+                    className="w-full px-4 py-3 rounded-lg transition-[background-color,border-color,color,transform] disabled:opacity-50 text-sm text-left"
                     style={{
                       background: "var(--bg-primary)",
                       border: "1px solid var(--border-default)",

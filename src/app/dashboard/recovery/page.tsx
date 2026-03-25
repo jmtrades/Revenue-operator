@@ -179,7 +179,7 @@ export default function MissedCallRecoveryPage() {
             key={f}
             type="button"
             onClick={() => setFilter(f)}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+            className="px-3 py-1.5 rounded-lg text-xs font-medium transition-[background-color,color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
             style={{
               background: filter === f ? "var(--accent-primary)" : "rgba(255,255,255,0.05)",
               color: filter === f ? "#000" : "var(--text-secondary)",
@@ -199,7 +199,7 @@ export default function MissedCallRecoveryPage() {
           return (
             <div
               key={call.id}
-              className="rounded-xl border p-4 flex items-center gap-4 hover:border-[var(--border-default)] transition-colors"
+              className="rounded-xl border p-4 flex items-center gap-4 hover:border-[var(--border-default)] transition-[border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]"
               style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}
             >
               <div className={`w-10 h-10 rounded-lg ${config.bg} border ${config.border} flex items-center justify-center shrink-0`}>
@@ -244,7 +244,7 @@ export default function MissedCallRecoveryPage() {
               {call.status === "pending" && (
                 <button
                   type="button"
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors shrink-0"
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition-[background-color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] shrink-0"
                 >
                   Recover Now
                 </button>

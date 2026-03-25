@@ -196,7 +196,7 @@ export default function AppSettingsPage() {
             type="button"
             onClick={handleSaveProfile}
             disabled={savingProfile}
-            className="px-4 py-2 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-lg text-sm hover:opacity-90 transition-colors disabled:opacity-60"
+            className="px-4 py-2 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-lg text-sm hover:opacity-90 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] disabled:opacity-60"
           >
             {savingProfile ? tSettings("savingProfile") : tSettings("saveProfile")}
           </button>
@@ -216,7 +216,7 @@ export default function AppSettingsPage() {
               key={id}
               type="button"
               onClick={() => applyTheme(id)}
-              className={`flex flex-col items-center gap-2 p-4 rounded-xl border text-sm font-medium transition-colors ${
+              className={`flex flex-col items-center gap-2 p-4 rounded-xl border text-sm font-medium transition-[background-color,border-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] ${
                 theme === id
                   ? "border-[var(--accent-primary)] bg-[var(--accent-primary-subtle)] text-[var(--accent-primary)]"
                   : "border-[var(--border-default)] bg-[var(--bg-card)] text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
@@ -241,7 +241,7 @@ export default function AppSettingsPage() {
             <Link
               key={s.href}
               href={s.href}
-              className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] hover:border-[var(--border-medium)] transition-colors group focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
+              className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] hover:border-[var(--border-medium)] transition-[background-color,border-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] group focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--bg-card)] text-[var(--text-secondary)]">
                 <s.icon className="h-5 w-5" />
@@ -274,7 +274,7 @@ export default function AppSettingsPage() {
         </div>
         <Link
           href="/activate"
-          className="px-4 py-2 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl text-xs hover:opacity-90 transition-colors whitespace-nowrap"
+          className="px-4 py-2 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl text-xs hover:opacity-90 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] whitespace-nowrap"
         >
           {tSettings("openSetup")}
         </Link>
@@ -284,21 +284,21 @@ export default function AppSettingsPage() {
         <div className="rounded-xl border border-red-900/40 bg-red-950/20 p-4 space-y-3">
           <Link
             href="/app/settings/billing"
-            className="block text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded"
+            className="block text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded"
           >
             {tSettings("cancelSubscription")}
           </Link>
           <button
             type="button"
             onClick={() => setConfirm("data")}
-            className="block text-sm text-red-300 hover:text-red-200 transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded text-left"
+            className="block text-sm text-red-300 hover:text-red-200 transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded text-left"
           >
             {tSettings("requestDeleteData")}
           </button>
           <button
             type="button"
             onClick={() => setConfirm("account")}
-            className="block text-sm text-red-300 hover:text-red-200 transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded text-left"
+            className="block text-sm text-red-300 hover:text-red-200 transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded text-left"
           >
             {tSettings("requestDeleteAccount")}
           </button>
@@ -307,13 +307,13 @@ export default function AppSettingsPage() {
           type="button"
           onClick={handleSignOut}
           disabled={signingOut}
-          className="mt-4 px-4 py-2 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition disabled:opacity-60 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
+          className="mt-4 px-4 py-2 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition-[background-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] disabled:opacity-60 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
         >
           {signingOut ? tSettings("signingOut") : tSettings("signOut")}
         </button>
       </div>
       <p className="mt-6">
-        <Link href="/app/activity" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded">{tSettings("backToDashboard")}</Link>
+        <Link href="/app/activity" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded">{tSettings("backToDashboard")}</Link>
       </p>
       {confirm === "data" && (
         <ConfirmDialog

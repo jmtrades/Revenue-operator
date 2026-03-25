@@ -199,7 +199,7 @@ export default function AppCalendarPage() {
               const today = new Date().toISOString().slice(0, 10);
               setFormDate(today);
             }}
-            className="px-2 py-1 rounded-xl border border-[var(--border-medium)] text-[11px] text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
+            className="px-2 py-1 rounded-xl border border-[var(--border-medium)] text-[11px] text-[var(--text-secondary)] hover:border-[var(--border-medium)] transition-[border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
           >
             {t("calendar.today")}
           </button>
@@ -209,7 +209,7 @@ export default function AppCalendarPage() {
             <button
               type="button"
               onClick={() => setView("week")}
-              className={`px-3 py-1.5 rounded-xl text-[11px] font-medium ${
+              className={`px-3 py-1.5 rounded-xl text-[11px] font-medium transition-[background-color,border-color,color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] ${
                 view === "week" ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]" : "bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-tertiary)]"
               }`}
             >
@@ -218,7 +218,7 @@ export default function AppCalendarPage() {
             <button
               type="button"
               onClick={() => setView("month")}
-              className={`px-3 py-1.5 rounded-xl text-[11px] font-medium ${
+              className={`px-3 py-1.5 rounded-xl text-[11px] font-medium transition-[background-color,border-color,color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] ${
                 view === "month" ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]" : "bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-tertiary)]"
               }`}
             >
@@ -228,7 +228,7 @@ export default function AppCalendarPage() {
           <button
             type="button"
             onClick={() => setShowNew(true)}
-            className="hidden sm:inline-flex items-center gap-1.5 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl px-4 py-2 text-sm hover:opacity-90"
+            className="hidden sm:inline-flex items-center gap-1.5 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl px-4 py-2 text-sm hover:opacity-90 transition-[opacity] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
           >
             {t("calendar.newAppointment")}
           </button>
@@ -238,7 +238,7 @@ export default function AppCalendarPage() {
       <button
         type="button"
         onClick={() => setShowNew(true)}
-        className="sm:hidden mb-3 w-full bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl px-4 py-2 text-sm hover:opacity-90"
+        className="sm:hidden mb-3 w-full bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl px-4 py-2 text-sm hover:opacity-90 transition-[opacity] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
       >
         {t("calendar.newAppointment")}
       </button>
@@ -323,7 +323,7 @@ export default function AppCalendarPage() {
           ) : (
             <a
               href="/api/integrations/google-calendar/auth"
-              className="self-start sm:self-auto px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-xs font-semibold hover:opacity-90"
+              className="self-start sm:self-auto px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-xs font-semibold hover:opacity-90 transition-[opacity] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
             >
               {t("calendar.connect")}
             </a>
@@ -348,7 +348,7 @@ export default function AppCalendarPage() {
       </div>
 
       <p>
-        <Link href="/app/activity" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">
+        <Link href="/app/activity" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-[color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]">
           ← {t("calendar.backToActivity")}
         </Link>
       </p>
@@ -377,7 +377,7 @@ export default function AppCalendarPage() {
               <button
                 type="button"
                 onClick={() => setDeleteConfirm(selected)}
-                className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-[11px] text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
+                className="px-3 py-1.5 rounded-xl border border-[var(--border-medium)] text-[11px] text-[var(--text-secondary)] hover:border-[var(--border-medium)] transition-[border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
               >
                 {t("calendar.removeAppointment").replace("?", "").trim()}
               </button>
@@ -482,7 +482,7 @@ export default function AppCalendarPage() {
               <button
                 type="button"
                 onClick={() => setShowNew(false)}
-                className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
+                className="px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs text-[var(--text-secondary)] hover:border-[var(--border-medium)] transition-[border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
               >
                 {tCommon("cancel")}
               </button>
@@ -490,7 +490,7 @@ export default function AppCalendarPage() {
                 type="button"
                 onClick={handleSaveNew}
                 disabled={saving}
-                className="px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-xs font-semibold hover:opacity-90 disabled:opacity-50"
+                className="px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-xs font-semibold hover:opacity-90 disabled:opacity-50 transition-[opacity] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
               >
                 {saving ? tForms("saving") : tCommon("save")}
               </button>

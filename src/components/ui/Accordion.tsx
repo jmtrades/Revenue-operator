@@ -27,7 +27,7 @@ export function AccordionItem({
         />
       </button>
       <div
-        className={`overflow-hidden transition-all duration-250 ease-[cubic-bezier(0.25,0.1,0.25,1)] ${open ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}
+        className={`overflow-hidden transition-[max-height,opacity] duration-250 ease-[cubic-bezier(0.25,0.1,0.25,1)] ${open ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}
       >
         <div className="pb-4 text-[14px] leading-relaxed text-[var(--text-secondary)]">
           {children}

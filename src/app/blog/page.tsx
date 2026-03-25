@@ -1,8 +1,28 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
+
+export const metadata: Metadata = {
+  title: "Blog — Recall Touch",
+  description:
+    "Insights on AI phone agents, revenue operations, call handling, and growth strategies for service businesses.",
+  openGraph: {
+    title: "Blog — Recall Touch",
+    description:
+      "Guides, playbooks, and insights on AI phone agents, revenue recovery, and growth for service businesses.",
+    url: "https://www.recall-touch.com/blog",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Blog — Recall Touch",
+    description:
+      "Guides and insights on AI phone agents and revenue recovery.",
+  },
+};
 
 const RESOURCE_TOPICS = [
   { title: "Call Answering & AI Phone Agents", description: "How AI handles inbound calls, qualifies intent, and books appointments without a human receptionist." },

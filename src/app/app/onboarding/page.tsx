@@ -238,7 +238,7 @@ export default function AppOnboardingPage() {
           key={v.id}
           type="button"
           onClick={() => { setVoiceId(v.id); setAgentName(v.name); }}
-          className={`rounded-xl border p-4 text-left transition-all ${
+          className={`rounded-xl border p-4 text-left transition-[border-color,box-shadow,transform] ${
             selected ? "border-[var(--border-medium)] bg-[var(--bg-hover)] ring-2 ring-zinc-500/40" : "border-[var(--border-default)] bg-transparent hover:border-[var(--border-medium)]"
           }`}
         >
@@ -457,7 +457,7 @@ export default function AppOnboardingPage() {
                       key={template.id}
                       type="button"
                       onClick={() => setSelectedTemplate(template.id)}
-                      className={`rounded-xl border p-5 text-left transition-all relative group ${
+                      className={`rounded-xl border p-5 text-left transition-[border-color,box-shadow,transform] relative group ${
                         isSelected
                           ? "border-emerald-500/50 bg-emerald-950/20 ring-2 ring-emerald-500/30"
                           : "border-[var(--border-default)] bg-transparent hover:border-[var(--border-medium)] hover:bg-[var(--bg-card)]/40"
@@ -539,7 +539,7 @@ export default function AppOnboardingPage() {
               type="button"
               onClick={() => setStep(2)}
               disabled={!mode || !industrySlug || !selectedTemplate}
-              className="w-full py-3.5 px-8 bg-[var(--accent-primary)] text-[var(--text-on-accent)] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full py-3.5 px-8 bg-[var(--accent-primary)] text-[var(--text-on-accent)] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-[background-color,border-color,color,transform] disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {t("cta.next")} →
             </button>
@@ -637,7 +637,7 @@ export default function AppOnboardingPage() {
               <button
                 type="button"
                 onClick={() => setStep(3)}
-                className="flex-1 py-3.5 px-8 bg-[var(--accent-primary)] text-[var(--text-on-accent)] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
+                className="flex-1 py-3.5 px-8 bg-[var(--accent-primary)] text-[var(--text-on-accent)] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-[background-color,border-color,color,transform]"
               >
                 {t("cta.next")} →
               </button>
@@ -690,7 +690,7 @@ export default function AppOnboardingPage() {
               <button
                 type="button"
                 onClick={() => setStep(4)}
-                className="flex-1 py-3.5 px-8 bg-[var(--accent-primary)] text-[var(--text-on-accent)] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
+                className="flex-1 py-3.5 px-8 bg-[var(--accent-primary)] text-[var(--text-on-accent)] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-[background-color,border-color,color,transform]"
               >
                 {t("cta.next")} →
               </button>
@@ -857,7 +857,7 @@ export default function AppOnboardingPage() {
             <p className="text-xs text-[var(--text-secondary)]">{t("addMoreLater")}</p>
             <div className="flex gap-2">
               <button type="button" onClick={() => setStep(2)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-default)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]">← {t("cta.back")}</button>
-              <button type="button" onClick={() => setStep(4)} className="flex-1 py-3.5 px-8 bg-[var(--accent-primary)] text-[var(--text-on-accent)] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all">{t("cta.next")} →</button>
+              <button type="button" onClick={() => setStep(4)} className="flex-1 py-3.5 px-8 bg-[var(--accent-primary)] text-[var(--text-on-accent)] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-[background-color,border-color,color,transform]">{t("cta.next")} →</button>
             </div>
           </div>
         )}
@@ -895,7 +895,7 @@ export default function AppOnboardingPage() {
             </div>
             <div className="flex gap-2">
               <button type="button" onClick={() => setStep(3)} className="py-2.5 px-4 rounded-xl text-sm font-medium border border-[var(--border-default)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]">← {t("cta.back")}</button>
-              <button type="button" onClick={() => setStep(5)} className="flex-1 py-3.5 px-8 bg-[var(--accent-primary)] text-[var(--text-on-accent)] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all">{t("cta.next")} →</button>
+              <button type="button" onClick={() => setStep(5)} className="flex-1 py-3.5 px-8 bg-[var(--accent-primary)] text-[var(--text-on-accent)] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-[background-color,border-color,color,transform]">{t("cta.next")} →</button>
             </div>
           </div>
         )}
@@ -941,7 +941,7 @@ export default function AppOnboardingPage() {
             <button
               type="button"
               onClick={handleGoToDashboard}
-              className="w-full py-3.5 px-8 bg-[var(--accent-primary)] text-[var(--text-on-accent)] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-all"
+              className="w-full py-3.5 px-8 bg-[var(--accent-primary)] text-[var(--text-on-accent)] rounded-xl font-semibold text-base hover:bg-white/90 active:scale-[0.98] transition-[background-color,border-color,color,transform]"
             >
               {t("cta.finish")} →
             </button>

@@ -48,7 +48,7 @@ function HorizontalBar({ label, value, total }: { label: string; value: number; 
       </div>
       <div className="h-2 rounded-full" style={{ background: "var(--bg-primary)" }}>
         <div
-          className="h-full rounded-full transition-all"
+          className="h-full rounded-full transition-[width]"
           style={{
             width: `${pct}%`,
             background: "var(--accent-primary)",

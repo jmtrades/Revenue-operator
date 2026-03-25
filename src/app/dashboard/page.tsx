@@ -195,7 +195,7 @@ export default function SituationPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-        <Link href={callsHref} className="rounded-lg border p-6 transition-all hover:shadow-md hover:border-opacity-50" style={{ borderColor: "var(--border-default)", background: "var(--card)", borderWidth: "1px" }}>
+        <Link href={callsHref} className="rounded-lg border p-6 transition-[box-shadow,border-opacity] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] hover:shadow-md hover:border-opacity-50 active:scale-[0.97]" style={{ borderColor: "var(--border-default)", background: "var(--card)", borderWidth: "1px" }}>
           <div className="flex items-start justify-between mb-3">
             <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: "var(--accent-primary-subtle)" }}>
               <Phone size={20} style={{ color: "var(--accent-primary)" }} />
@@ -237,7 +237,7 @@ export default function SituationPage() {
           <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Calls Handled</p>
         </div>
 
-        <Link href={`/dashboard/leads?filter=followup${searchParams.get("workspace_id") ? `&workspace_id=${searchParams.get("workspace_id")}` : ""}`} className="rounded-lg border p-6 transition-all hover:shadow-md hover:border-opacity-50" style={{ borderColor: "var(--border-default)", background: "var(--card)", borderWidth: "1px" }}>
+        <Link href={`/dashboard/leads?filter=followup${searchParams.get("workspace_id") ? `&workspace_id=${searchParams.get("workspace_id")}` : ""}`} className="rounded-lg border p-6 transition-[box-shadow,border-opacity] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] hover:shadow-md hover:border-opacity-50 active:scale-[0.97]" style={{ borderColor: "var(--border-default)", background: "var(--card)", borderWidth: "1px" }}>
           <div className="flex items-start justify-between mb-3">
             <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: "var(--meaning-purple)" }}>
               <Calendar size={20} color="white" />
@@ -258,14 +258,14 @@ export default function SituationPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Link
             href="/dashboard/settings/business"
-            className="rounded-lg border p-6 transition-all hover:shadow-md hover:border-opacity-50 group"
+            className="rounded-lg border p-6 transition-[border-color,box-shadow,transform] hover:shadow-md hover:border-opacity-50 group"
             style={{ borderColor: "var(--border-default)", background: "var(--card)" }}
           >
             <div className="flex items-start justify-between mb-3">
               <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: "var(--accent-primary-subtle)" }}>
                 <CheckCircle2 size={20} style={{ color: "var(--accent-primary)" }} />
               </div>
-              <ChevronRight size={18} style={{ color: "var(--text-tertiary)" }} className="group-hover:translate-x-1 transition-transform" />
+              <ChevronRight size={18} style={{ color: "var(--text-tertiary)" }} className="group-hover:translate-x-1 transition-[transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]" />
             </div>
             <h3 className="font-semibold mb-1" style={{ color: "var(--text-primary)" }}>Complete Your Profile</h3>
             <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Add business info and preferences</p>
@@ -273,14 +273,14 @@ export default function SituationPage() {
 
           <Link
             href="/dashboard/settings/phone"
-            className="rounded-lg border p-6 transition-all hover:shadow-md hover:border-opacity-50 group"
+            className="rounded-lg border p-6 transition-[border-color,box-shadow,transform] hover:shadow-md hover:border-opacity-50 group"
             style={{ borderColor: "var(--border-default)", background: "var(--card)" }}
           >
             <div className="flex items-start justify-between mb-3">
               <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: "var(--accent-primary-subtle)" }}>
                 <Phone size={20} style={{ color: "var(--accent-primary)" }} />
               </div>
-              <ChevronRight size={18} style={{ color: "var(--text-tertiary)" }} className="group-hover:translate-x-1 transition-transform" />
+              <ChevronRight size={18} style={{ color: "var(--text-tertiary)" }} className="group-hover:translate-x-1 transition-[transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]" />
             </div>
             <h3 className="font-semibold mb-1" style={{ color: "var(--text-primary)" }}>Set Up Your Number</h3>
             <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Configure your AI agent's phone number</p>
@@ -288,14 +288,14 @@ export default function SituationPage() {
 
           <Link
             href="/dashboard/settings/voices"
-            className="rounded-lg border p-6 transition-all hover:shadow-md hover:border-opacity-50 group"
+            className="rounded-lg border p-6 transition-[border-color,box-shadow,transform] hover:shadow-md hover:border-opacity-50 group"
             style={{ borderColor: "var(--border-default)", background: "var(--card)" }}
           >
             <div className="flex items-start justify-between mb-3">
               <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: "var(--accent-primary-subtle)" }}>
                 <Clock size={20} style={{ color: "var(--accent-primary)" }} />
               </div>
-              <ChevronRight size={18} style={{ color: "var(--text-tertiary)" }} className="group-hover:translate-x-1 transition-transform" />
+              <ChevronRight size={18} style={{ color: "var(--text-tertiary)" }} className="group-hover:translate-x-1 transition-[transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]" />
             </div>
             <h3 className="font-semibold mb-1" style={{ color: "var(--text-primary)" }}>Choose Agent Voice</h3>
             <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Pick the perfect voice personality</p>
@@ -303,14 +303,14 @@ export default function SituationPage() {
 
           <Link
             href="/dashboard/calls"
-            className="rounded-lg border p-6 transition-all hover:shadow-md hover:border-opacity-50 group"
+            className="rounded-lg border p-6 transition-[border-color,box-shadow,transform] hover:shadow-md hover:border-opacity-50 group"
             style={{ borderColor: "var(--border-default)", background: "var(--card)" }}
           >
             <div className="flex items-start justify-between mb-3">
               <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: "var(--accent-primary-subtle)" }}>
                 <AlertCircle size={20} style={{ color: "var(--accent-primary)" }} />
               </div>
-              <ChevronRight size={18} style={{ color: "var(--text-tertiary)" }} className="group-hover:translate-x-1 transition-transform" />
+              <ChevronRight size={18} style={{ color: "var(--text-tertiary)" }} className="group-hover:translate-x-1 transition-[transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]" />
             </div>
             <h3 className="font-semibold mb-1" style={{ color: "var(--text-primary)" }}>View Recent Activity</h3>
             <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Check call logs and recordings</p>
@@ -342,7 +342,7 @@ export default function SituationPage() {
                 </div>
                 <Link
                   href={cat.action}
-                  className="text-xs font-medium px-3 py-2 rounded-lg whitespace-nowrap transition-colors"
+                  className="text-xs font-medium px-3 py-2 rounded-lg whitespace-nowrap transition-[background-color,color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                   style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}
                 >
                   {cat.actionLabel}
@@ -367,7 +367,7 @@ export default function SituationPage() {
                 </div>
                 <Link
                   href={`/dashboard/agents?gap=${gap.id}`}
-                  className="text-xs font-medium px-3 py-2 rounded-lg whitespace-nowrap transition-colors"
+                  className="text-xs font-medium px-3 py-2 rounded-lg whitespace-nowrap transition-[background-color,color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                   style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}
                 >
                   Add answer
@@ -382,7 +382,7 @@ export default function SituationPage() {
       <div className="mb-10">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Recent Activity</h2>
-          <Link href={callsHref} className="text-sm font-medium flex items-center gap-1 transition-colors" style={{ color: "var(--accent-primary)" }}>
+          <Link href={callsHref} className="text-sm font-medium flex items-center gap-1 transition-[color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]" style={{ color: "var(--accent-primary)" }}>
             View all
             <ChevronRight size={16} />
           </Link>
@@ -401,7 +401,7 @@ export default function SituationPage() {
             </p>
             <Link
               href={`/dashboard/settings/phone${searchParams.get("workspace_id") ? `?workspace_id=${searchParams.get("workspace_id")}` : ""}`}
-              className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg transition-[background-color,opacity] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] hover:opacity-90 active:scale-[0.97]"
               style={{ background: "var(--accent-primary)", color: "#fff" }}
             >
               Set Up Your Phone Number
@@ -423,7 +423,7 @@ export default function SituationPage() {
                     </div>
                   ))}
                   {hasMoreCurrent && (
-                    <Link href={recordHref} className="text-sm font-medium mt-2 transition-colors" style={{ color: "var(--accent-primary)" }}>
+                    <Link href={recordHref} className="text-sm font-medium mt-2 transition-[color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]" style={{ color: "var(--accent-primary)" }}>
                       View more records
                     </Link>
                   )}
@@ -444,7 +444,7 @@ export default function SituationPage() {
                     </div>
                   ))}
                   {hasMoreRecent && (
-                    <Link href={recordHref} className="text-sm font-medium mt-2 transition-colors" style={{ color: "var(--accent-primary)" }}>
+                    <Link href={recordHref} className="text-sm font-medium mt-2 transition-[color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]" style={{ color: "var(--accent-primary)" }}>
                       View more updates
                     </Link>
                   )}

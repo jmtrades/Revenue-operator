@@ -489,7 +489,7 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
                     style={{ background: coverageFlags[key] ? "var(--meaning-green)" : "var(--border)" }}
                   >
                     <span
-                      className="absolute top-0.5 w-5 h-5 rounded-full bg-[var(--bg-surface)] transition-all"
+                      className="absolute top-0.5 w-5 h-5 rounded-full bg-[var(--bg-surface)] transition-[left]"
                       style={{ left: coverageFlags[key] ? "22px" : "2px" }}
                     />
                   </button>

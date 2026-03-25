@@ -328,7 +328,7 @@ function DemoTranscript({
               <p className="text-green-400 font-bold text-lg">{script.score}</p>
               <div className="h-2 rounded-full bg-[var(--bg-inset)] overflow-hidden mt-1">
                 <div
-                  className="h-full rounded-full bg-green-500 transition-all"
+                  className="h-full rounded-full bg-green-500 transition-[width]"
                   style={{ width: `${script.score}%` }}
                 />
               </div>

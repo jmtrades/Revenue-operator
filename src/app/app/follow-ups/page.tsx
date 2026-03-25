@@ -64,14 +64,14 @@ export default function AppFollowUpsPage() {
         <button
           type="button"
           onClick={() => setTab("templates")}
-          className={`text-sm font-medium px-3 py-1.5 rounded-lg ${tab === "templates" ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]" : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"}`}
+          className={`text-sm font-medium px-3 py-1.5 rounded-lg transition-[background-color,color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] ${tab === "templates" ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]" : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"}`}
         >
           {t("tabs.templates")}
         </button>
         <button
           type="button"
           onClick={() => setTab("active")}
-          className={`text-sm font-medium px-3 py-1.5 rounded-lg ${tab === "active" ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]" : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"}`}
+          className={`text-sm font-medium px-3 py-1.5 rounded-lg transition-[background-color,color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] ${tab === "active" ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]" : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"}`}
         >
           {t("tabs.active")}
         </button>
@@ -84,7 +84,7 @@ export default function AppFollowUpsPage() {
           <button
             type="button"
             onClick={() => { setLoading(true); setFetchError(null); window.location.reload(); }}
-            className="mt-3 px-4 py-2 rounded-xl border border-[var(--border-medium)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
+            className="mt-3 px-4 py-2 rounded-xl border border-[var(--border-medium)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] transition-[background-color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
           >
             {t("retry")}
           </button>

@@ -158,10 +158,10 @@ export function TestimonialsSection() {
                 type="button"
                 onClick={() => setCurrent(i)}
                 aria-label={t("goToTestimonial", { number: i + 1 })}
-                className="p-2.5 rounded-full transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
+                className="p-2.5 rounded-full transition-[background-color,border-color,color,transform] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
               >
                 <span
-                  className="block w-2 h-2 rounded-full transition-all"
+                  className="block w-2 h-2 rounded-full transition-[background-color,opacity]"
                   style={{
                     background:
                       i === current
