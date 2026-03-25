@@ -38,18 +38,26 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Too many provisioning attempts" }, { status: 429 });
   }
 
-  // Enforce billing status — must be trial or active
+  // Enforce billing status — must be trial, active, or trial_ended with card on file
   {
     const db0 = getDb();
     const { data: wsCheck } = await db0
       .from("workspaces")
-      .select("billing_status")
+      .select("billing_status, stripe_customer_id")
       .eq("id", session.workspaceId)
       .maybeSingle();
-    const bStatus = (wsCheck as { billing_status?: string } | null)?.billing_status;
-    if (!bStatus || !["trial", "active"].includes(bStatus)) {
+    const ws = wsCheck as { billing_status?: string; stripe_customer_id?: string | null } | null;
+    const bStatus = ws?.billing_status;
+    const hasCard = !!ws?.stripe_customer_id;
+    const allowed = bStatus === "trial" || bStatus === "active" || (bStatus === "trial_ended" && hasCard);
+    if (!bStatus || !allowed) {
       return NextResponse.json(
-        { error: "Active subscription required to provision phone numbers.", code: "SUBSCRIPTION_REQUIRED" },
+        {
+          error: bStatus === "trial_ended"
+            ? "Your trial has ended. Add a payment method to continue."
+            : "Active subscription required to provision phone numbers.",
+          code: "SUBSCRIPTION_REQUIRED",
+        },
         { status: 403 },
       );
     }
