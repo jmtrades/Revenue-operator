@@ -74,20 +74,22 @@ export function PricingPreview() {
               aria-checked={annual}
               onClick={() => setAnnual((a) => !a)}
               aria-label="Toggle between monthly and annual billing"
-              className="relative w-11 h-6 rounded-full transition-colors p-0"
+              className="relative w-11 h-6 rounded-full p-0"
               style={{
                 touchAction: "manipulation",
                 background: annual
                   ? "var(--accent-primary)"
                   : "var(--border-default)",
+                transition: "background-color 200ms cubic-bezier(0.23, 1, 0.32, 1)"
               }}
             >
               <span
-                className="absolute top-0.5 w-5 h-5 rounded-full transition-all duration-200"
+                className="absolute top-0.5 w-5 h-5 rounded-full"
                 style={{
                   left: annual ? "calc(100% - 22px)" : "2px",
                   background: "var(--bg-primary)",
                   boxShadow: "var(--shadow-sm)",
+                  transition: "left 200ms cubic-bezier(0.23, 1, 0.32, 1)"
                 }}
               />
             </button>
@@ -149,15 +151,17 @@ export function PricingPreview() {
                 }}
               >
                 {tier.popular && (
-                  <span
+                  <motion.span
                     className="absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] font-semibold px-3 py-1 rounded-full"
                     style={{
                       background: "var(--accent-primary)",
                       color: "var(--text-on-accent)",
                     }}
+                    animate={{ y: [0, -3, 0] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                   >
                     {t("badge")}
-                  </span>
+                  </motion.span>
                 )}
                 <h3
                   className="font-semibold text-base mb-1"
@@ -167,7 +171,7 @@ export function PricingPreview() {
                 </h3>
                 <p
                   className="text-2xl font-semibold mb-4"
-                  style={{ color: "var(--text-primary)" }}
+                  style={{ color: "var(--text-primary)", fontFeatureSettings: "'tnum'" }}
                 >
                   {annual ? tier.priceAnnual : tier.priceMonthly}
                   <span
@@ -216,7 +220,7 @@ export function PricingPreview() {
                     tier.popular
                       ? "btn-marketing-blue"
                       : "btn-marketing-ghost"
-                  } w-full block text-center py-2.5 rounded-lg no-underline text-sm`}
+                  } w-full block text-center py-2.5 rounded-lg no-underline text-sm active:scale-[0.97]`}
                 >
                   {ctaText}
                 </Link>

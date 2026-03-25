@@ -384,6 +384,21 @@ export default function CampaignsPage() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+      <style>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(16px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .campaign-card {
+          animation: fadeInUp 300ms cubic-bezier(0.23, 1, 0.32, 1) both;
+        }
+      `}</style>
       <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto">
         <div className="flex items-center justify-between gap-4 mb-6">
           <div>
@@ -406,7 +421,7 @@ export default function CampaignsPage() {
             </select>
             <a
               href="/app/campaigns/create"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold hover:opacity-90 transition-opacity"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold hover:opacity-90 transition-[opacity,transform] duration-160 active:scale-[0.97]"
             >
               <Plus className="w-4 h-4" />
               {t("createCampaign")}
@@ -444,8 +459,8 @@ export default function CampaignsPage() {
                 primaryAction={{ label: t("createCampaign"), href: "/app/campaigns/create" }}
               />
             ) : (
-              pagedCampaigns.map((campaign) => (
-                <div key={campaign.id} className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+              pagedCampaigns.map((campaign, idx) => (
+                <div key={campaign.id} className="campaign-card rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4" style={{ animationDelay: `${idx * 30}ms` }}>
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-semibold text-[var(--text-primary)]">{campaign.name}</p>
@@ -483,7 +498,7 @@ export default function CampaignsPage() {
                     <button
                       type="button"
                       onClick={() => loadCampaignIntoForm(campaign)}
-                      className="p-2 rounded-lg border border-[var(--border-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-colors"
+                      className="p-2 rounded-lg border border-[var(--border-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-[color,background-color,transform] duration-160 active:scale-[0.95]"
                       title={t("edit")}
                     >
                       <Pencil className="w-3.5 h-3.5" />
@@ -492,7 +507,7 @@ export default function CampaignsPage() {
                       type="button"
                       onClick={() => void duplicateCampaign(campaign)}
                       disabled={duplicating}
-                      className="p-2 rounded-lg border border-[var(--border-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-colors disabled:opacity-50"
+                      className="p-2 rounded-lg border border-[var(--border-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-[color,background-color,transform] duration-160 active:scale-[0.95] disabled:opacity-50"
                       title={t("duplicate")}
                       aria-label={t("campaigns.copy")}
                     >
@@ -503,7 +518,7 @@ export default function CampaignsPage() {
                         type="button"
                         onClick={() => setDeleteConfirm(campaign)}
                         disabled={deleting}
-                        className="p-2 rounded-lg border border-red-500/20 text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors disabled:opacity-50"
+                        className="p-2 rounded-lg border border-red-500/20 text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-[color,background-color,transform] duration-160 active:scale-[0.95] disabled:opacity-50"
                         title={t("delete")}
                         aria-label={t("campaigns.delete")}
                       >
@@ -517,7 +532,7 @@ export default function CampaignsPage() {
                           ? setPauseConfirm(campaign)
                           : void toggleCampaign(campaign)
                       }
-                      className="ml-1 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-colors"
+                      className="ml-1 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-[background-color,transform] duration-160 active:scale-[0.95]"
                       aria-label={campaign.status === "active" ? t("campaigns.pause") : t("campaigns.launch")}
                     >
                       {campaign.status === "active" ? (

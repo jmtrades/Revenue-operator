@@ -16,11 +16,31 @@ type BadgeVariant =
 interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   variant?: BadgeVariant;
   dot?: boolean;
+  size?: "sm" | "md";
+  pulse?: boolean;
 }
 
-export function Badge({ variant = "neutral", dot = false, className, children, ...rest }: BadgeProps) {
+const pulseAnimation = `@keyframes badge-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}`;
+
+export function Badge({
+  variant = "neutral",
+  dot = false,
+  size = "sm",
+  pulse = false,
+  className,
+  children,
+  ...rest
+}: BadgeProps) {
   const base =
-    "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold leading-tight tracking-wide select-none";
+    "inline-flex items-center gap-1.5 rounded-full font-semibold leading-tight tracking-wide select-none";
+
+  const sizes: Record<"sm" | "md", string> = {
+    sm: "px-2.5 py-0.5 text-[11px]",
+    md: "px-3 py-1 text-xs",
+  };
 
   const variants: Record<BadgeVariant, string> = {
     success: "bg-emerald-500/12 text-emerald-400 border border-emerald-500/20",
@@ -36,12 +56,24 @@ export function Badge({ variant = "neutral", dot = false, className, children, .
   };
 
   return (
-    <span className={cn(base, variants[variant], className)} {...rest}>
-      {dot && (
-        <span className="h-1.5 w-1.5 rounded-full bg-current shrink-0" aria-hidden="true" />
-      )}
-      {children}
-    </span>
+    <>
+      {pulse && <style>{pulseAnimation}</style>}
+      <span
+        className={cn(
+          base,
+          sizes[size],
+          variants[variant],
+          pulse && "animate-[badge-pulse_2s_ease-in-out_infinite]",
+          className
+        )}
+        {...rest}
+      >
+        {dot && (
+          <span className="h-1.5 w-1.5 rounded-full bg-current shrink-0" aria-hidden="true" />
+        )}
+        {children}
+      </span>
+    </>
   );
 }
 

@@ -183,15 +183,16 @@ function ConversationList({
               {t("inbox.empty.body")}
             </p>
           </div>
-        ) : filtered.map((thread) => {
+        ) : filtered.map((thread, idx) => {
           const Icon = channelIcon(thread.channel);
           const isActive = thread.id === selectedId;
           return (
             <button
               key={thread.id}
+              style={{ animationDelay: `${idx * 30}ms` }}
               type="button"
               onClick={() => onSelect(thread.id)}
-              className={`w-full flex items-start gap-3 px-3 py-3.5 border-b border-[var(--border-default)] text-left hover:bg-[var(--bg-hover)] transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/30 ${
+              className={`w-full flex items-start gap-3 px-3 py-3.5 border-b border-[var(--border-default)] text-left hover:bg-[var(--bg-hover)] transition-[background-color,transform] duration-160 active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/30 ${
                 isActive ? "bg-[var(--bg-card)] border-l-2 border-l-[var(--accent-primary)]" : ""
               }`}
             >
@@ -668,6 +669,21 @@ export default function InboxPage() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
+      <style>{`
+        @keyframes fadeInThread {
+          from {
+            opacity: 0;
+            transform: translateX(-16px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        [role="button"][style*="animationDelay"] {
+          animation: fadeInThread 300ms cubic-bezier(0.23, 1, 0.32, 1) both;
+        }
+      `}</style>
       <div className="p-4 md:p-6 lg:p-8 h-full">
         <div className="flex items-center justify-between mb-2">
           <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)]">{t("inbox.title")}</h1>

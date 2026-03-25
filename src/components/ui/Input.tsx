@@ -41,7 +41,7 @@ export function Input({
         <input
           id={inputId}
           className={cn(
-            "w-full rounded-[var(--radius-btn)] border bg-[var(--bg-surface)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)]/70 transition-[border-color,box-shadow] duration-150 focus:border-[var(--accent-primary)] focus:shadow-[0_0_0_3px_var(--accent-primary-subtle)] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed",
+            "w-full rounded-[var(--radius-btn)] border bg-[var(--bg-surface)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)]/70 transition-[border-color,box-shadow] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] focus:border-[var(--accent-primary)] focus:shadow-[0_0_0_3px_var(--accent-primary-subtle)] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed",
             Icon ? "pl-9 pr-3 py-2.5 h-10" : "px-3 py-2.5 h-10",
             error
               ? "border-[var(--accent-danger)] bg-[var(--accent-danger-subtle)] focus:shadow-[0_0_0_3px_var(--accent-danger-subtle)]"

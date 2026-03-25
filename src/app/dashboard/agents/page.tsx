@@ -101,7 +101,7 @@ export default function AgentsPage() {
           <div className="w-full max-w-md rounded-2xl border p-6" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>Create New Agent</h3>
-              <button type="button" onClick={() => setShowCreate(false)} className="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"><X className="w-5 h-5" /></button>
+              <button type="button" onClick={() => setShowCreate(false)} className="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:outline-none transition rounded p-1" aria-label="Close dialog"><X className="w-5 h-5" /></button>
             </div>
             <div className="space-y-4">
               <label className="block">

@@ -413,7 +413,7 @@ export function PricingContent() {
                 {tier.name}
               </h3>
               <div className="mb-4">
-                <span className="text-3xl font-bold" style={{ color: "var(--text-primary)" }}>
+                <span className="text-3xl font-bold" style={{ color: "var(--text-primary)", fontFeatureSettings: "'tnum'" }}>
                   ${annual ? tier.annualMonthly : tier.monthlyPrice}
                 </span>
                 <span className="text-sm" style={{ color: "var(--text-tertiary)" }}>/mo</span>
@@ -452,9 +452,14 @@ export function PricingContent() {
                 href={tier.href}
                 className={
                   tier.popular
-                    ? "group bg-emerald-500 text-black font-semibold rounded-xl py-3 text-center no-underline flex items-center justify-center gap-2 hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20"
-                    : "group border border-[var(--border-default)] text-white font-semibold rounded-xl py-3 text-center no-underline flex items-center justify-center gap-2 hover:bg-[var(--bg-hover)] transition-all"
+                    ? "group bg-emerald-500 text-black font-semibold rounded-xl py-3 text-center no-underline flex items-center justify-center gap-2 hover:bg-emerald-400 active:scale-[0.97] shadow-lg shadow-emerald-500/20"
+                    : "group border border-[var(--border-default)] text-white font-semibold rounded-xl py-3 text-center no-underline flex items-center justify-center gap-2 hover:bg-[var(--bg-hover)] active:scale-[0.97]"
                 }
+                style={{
+                  transition: tier.popular
+                    ? "background-color 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 200ms cubic-bezier(0.23, 1, 0.32, 1)"
+                    : "background-color 200ms cubic-bezier(0.23, 1, 0.32, 1), transform 200ms cubic-bezier(0.23, 1, 0.32, 1)"
+                }}
               >
                 {tier.cta}
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />

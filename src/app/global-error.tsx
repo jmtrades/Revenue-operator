@@ -20,10 +20,10 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <html>
+    <html lang="en">
       <body>
         <div className="min-h-screen flex flex-col items-center justify-center p-8" style={{ background: "var(--bg-base)", color: "var(--text-primary)" }}>
-          <div className="max-w-md w-full text-center">
+          <main className="max-w-md w-full text-center" id="main">
             <h1 className="text-xl font-semibold mb-3" style={{ color: "var(--text-primary)" }}>
               {t("heading")}
             </h1>
@@ -34,18 +34,18 @@ export default function GlobalError({
               <button
                 type="button"
                 onClick={() => reset()}
-                className="px-6 py-3 rounded-xl text-sm font-semibold bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition"
+                className="px-6 py-3 rounded-xl text-sm font-semibold bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:outline-none"
               >
                 {t("tryAgain")}
               </button>
               <Link
                 href="/"
-                className="px-6 py-3 rounded-xl text-sm font-medium border border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition"
+                className="px-6 py-3 rounded-xl text-sm font-medium border border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:outline-none"
               >
                 {t("goHome")}
               </Link>
             </div>
-          </div>
+          </main>
         </div>
       </body>
     </html>

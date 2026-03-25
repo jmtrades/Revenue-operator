@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 
@@ -46,15 +47,17 @@ export function HomepageFAQ() {
           {faqs.map((item, idx) => {
             const expanded = open === idx;
             return (
-              <div
+              <motion.div
                 key={item.q}
-                className="rounded-xl overflow-hidden transition-colors"
+                className="rounded-xl overflow-hidden"
                 style={{
                   border: "1px solid var(--border-default)",
                   background: expanded
                     ? "var(--bg-primary)"
                     : "var(--bg-surface)",
+                  transition: "background-color 200ms cubic-bezier(0.23, 1, 0.32, 1)"
                 }}
+                layout
               >
                 <button
                   type="button"
@@ -68,27 +71,32 @@ export function HomepageFAQ() {
                   >
                     {item.q}
                   </span>
-                  <ChevronDown
-                    className={`h-4 w-4 shrink-0 transition-transform ${expanded ? "rotate-180" : ""}`}
-                    style={{ color: "var(--text-tertiary)" }}
-                  />
+                  <motion.div
+                    animate={{ rotate: expanded ? 180 : 0 }}
+                    transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+                  >
+                    <ChevronDown
+                      className="h-4 w-4 shrink-0"
+                      style={{ color: "var(--text-tertiary)" }}
+                    />
+                  </motion.div>
                 </button>
-                <div
-                  className="accordion-content"
-                  data-open={expanded ? "true" : "false"}
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={expanded ? { opacity: 1, height: "auto" } : { opacity: 0, height: 0 }}
+                  transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+                  className="overflow-hidden"
                 >
-                  <div>
-                    <div className="px-5 pb-5">
-                      <p
-                        className="text-sm leading-relaxed"
-                        style={{ color: "var(--text-secondary)" }}
-                      >
-                        {item.a}
-                      </p>
-                    </div>
+                  <div className="px-5 pb-5">
+                    <p
+                      className="text-sm leading-relaxed"
+                      style={{ color: "var(--text-secondary)" }}
+                    >
+                      {item.a}
+                    </p>
                   </div>
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             );
           })}
         </div>

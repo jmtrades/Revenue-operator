@@ -39,7 +39,7 @@ export function StickyMobileCTA() {
       className="fixed bottom-0 left-0 right-0 z-40 lg:hidden safe-area-pb"
       style={{
         transform: visible ? "translateY(0)" : "translateY(100%)",
-        transition: "transform 300ms cubic-bezier(0.25, 0.1, 0.25, 1)",
+        transition: "transform 300ms cubic-bezier(0.32, 0.72, 0, 1)",
         background: "var(--bg-primary)",
         borderTop: "1px solid var(--border-default)",
         boxShadow: "0 -4px 20px rgba(0, 0, 0, 0.08)",
@@ -56,10 +56,10 @@ export function StickyMobileCTA() {
         </div>
         <Link
           href={ROUTES.START}
-          className="btn-marketing-blue px-5 py-2.5 text-sm whitespace-nowrap no-underline flex items-center gap-1.5 shrink-0"
+          className="btn-marketing-blue px-5 py-2.5 text-sm whitespace-nowrap no-underline flex items-center gap-1.5 shrink-0 active:scale-[0.97]"
         >
           Start free
-          <ArrowRight className="w-3.5 h-3.5" />
+          <ArrowRight className="w-3.5 h-3.5" style={{ transition: "transform 200ms cubic-bezier(0.23, 1, 0.32, 1)" }} />
         </Link>
       </div>
     </div>

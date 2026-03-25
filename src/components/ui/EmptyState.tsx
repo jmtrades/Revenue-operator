@@ -2,6 +2,7 @@
 
 import type { LucideIcon } from "lucide-react";
 import { Watch, Clock } from "lucide-react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/cn";
 import { Button } from "@/components/ui/Button";
 
@@ -40,29 +41,62 @@ export function EmptyState({
   const desc = description ?? subtitle;
   const finalAriaLabel = ariaLabel || title;
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.4,
+        ease: [0.34, 1.56, 0.64, 1] as const,
+      },
+    },
+  };
+
   return (
-    <div
+    <motion.div
       role="region"
       aria-label={finalAriaLabel}
       className={cn(
         "flex flex-col items-center justify-center text-center px-8 py-20 rounded-[var(--radius-card)] border border-[var(--border-default)] bg-[var(--bg-card)]",
         className,
       )}
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
     >
       {Icon && (
-        <div
+        <motion.div
           className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--accent-primary)]/[0.08] ring-1 ring-[var(--accent-primary)]/15"
           aria-hidden="true"
+          variants={itemVariants}
         >
           <Icon className="h-7 w-7 text-[var(--accent-primary)]" strokeWidth={1.5} />
-        </div>
+        </motion.div>
       )}
-      <h3 className="text-base font-semibold text-[var(--text-primary)] tracking-tight">{title}</h3>
+      <motion.h3
+        className="text-base font-semibold text-[var(--text-primary)] tracking-tight"
+        variants={itemVariants}
+      >
+        {title}
+      </motion.h3>
       {desc && (
-        <p className="mt-2 max-w-sm text-sm text-[var(--text-secondary)] leading-relaxed">{desc}</p>
+        <motion.p className="mt-2 max-w-sm text-sm text-[var(--text-secondary)] leading-relaxed" variants={itemVariants}>
+          {desc}
+        </motion.p>
       )}
       {(primaryAction || secondaryAction) && (
-        <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+        <motion.div className="mt-7 flex flex-wrap items-center justify-center gap-3" variants={itemVariants}>
           {primaryAction && (
             <Button
               variant="primary"
@@ -83,12 +117,14 @@ export function EmptyState({
               {secondaryAction.href ? <a href={secondaryAction.href}>{secondaryAction.label}</a> : secondaryAction.label}
             </Button>
           )}
-        </div>
+        </motion.div>
       )}
       {footnote && (
-        <p className="mt-5 text-xs text-[var(--text-tertiary)] max-w-sm">{footnote}</p>
+        <motion.p className="mt-5 text-xs text-[var(--text-tertiary)] max-w-sm" variants={itemVariants}>
+          {footnote}
+        </motion.p>
       )}
-    </div>
+    </motion.div>
   );
 }
 

@@ -186,7 +186,7 @@ export default function QuickSetupPage() {
             }
           }
           .animate-fade-in-up {
-            animation: fadeInUp 0.5s ease-out;
+            animation: fadeInUp 500ms cubic-bezier(0.23, 1, 0.32, 1);
           }
         `}</style>
         <div className="w-full max-w-2xl animate-fade-in-up">
@@ -225,7 +225,7 @@ export default function QuickSetupPage() {
                     }
                   }}
                   disabled={analyzing}
-                  className="flex-1 px-4 py-4 rounded-lg border transition-all focus:outline-none focus:ring-2"
+                  className="flex-1 px-4 py-4 rounded-lg border transition-[border-color,box-shadow] duration-200 focus:outline-none focus:ring-2"
                   style={{
                     backgroundColor: "var(--bg-surface)",
                     borderColor: "var(--border-default)",
@@ -236,7 +236,7 @@ export default function QuickSetupPage() {
                 <button
                   onClick={handleAnalyze}
                   disabled={analyzing || !url.trim()}
-                  className="px-8 py-4 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 whitespace-nowrap"
+                  className="px-8 py-4 rounded-lg font-medium transition-[background-color,color,opacity] duration-160 flex items-center gap-2 whitespace-nowrap active:scale-[0.97]"
                   style={{
                     backgroundColor: analyzing || !url.trim() ? "var(--border-default)" : "var(--accent-primary)",
                     color: analyzing || !url.trim() ? "var(--text-secondary)" : "white",
@@ -317,15 +317,15 @@ export default function QuickSetupPage() {
             }
           }
           .animate-fade-in-up {
-            animation: fadeInUp 0.5s ease-out;
+            animation: fadeInUp 500ms cubic-bezier(0.23, 1, 0.32, 1);
           }
           .animate-slide-down {
-            animation: slideDown 0.3s ease-out;
+            animation: slideDown 300ms cubic-bezier(0.23, 1, 0.32, 1);
           }
           .expandable-content {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease-out;
+            transition: max-height 200ms cubic-bezier(0.23, 1, 0.32, 1);
           }
           .expandable-content.expanded {
             max-height: 1000px;
@@ -453,7 +453,7 @@ export default function QuickSetupPage() {
             <div className="border rounded-lg" style={{ backgroundColor: "var(--bg-elevated)", borderColor: "var(--border-default)" }}>
               <button
                 onClick={() => toggleSection("greeting")}
-                className="w-full p-4 flex items-center justify-between text-left hover:opacity-80 transition-opacity"
+                className="w-full p-4 flex items-center justify-between text-left transition-[opacity,background-color] duration-160 active:scale-[0.98] hover:opacity-80"
               >
                 <span className="font-medium" style={{ color: "var(--text-primary)" }}>
                   Generated Greeting Script
@@ -461,7 +461,7 @@ export default function QuickSetupPage() {
                 <ChevronDown
                   size={20}
                   style={{ color: "var(--text-secondary)", transform: expandedSections.greeting ? "rotate(180deg)" : "rotate(0)" }}
-                  className="transition-transform"
+                  className="transition-transform duration-200"
                 />
               </button>
               <div className={`expandable-content ${expandedSections.greeting ? "expanded" : ""}`}>
@@ -587,7 +587,7 @@ export default function QuickSetupPage() {
           <div className="flex gap-3 sticky bottom-4 lg:bottom-0">
             <button
               onClick={() => setStep(1)}
-              className="px-6 py-3 rounded-lg font-medium border transition-all"
+              className="px-6 py-3 rounded-lg font-medium border transition-[background-color,border-color] duration-160 active:scale-[0.97]"
               style={{ borderColor: "var(--border-default)", color: "var(--text-primary)", backgroundColor: "var(--bg-surface)" }}
             >
               Back
@@ -595,7 +595,7 @@ export default function QuickSetupPage() {
             <button
               onClick={handleActivate}
               disabled={activating}
-              className="flex-1 px-6 py-3 rounded-lg font-medium transition-all flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-3 rounded-lg font-medium transition-[background-color,opacity] duration-160 flex items-center justify-center gap-2 active:scale-[0.97]"
               style={{
                 backgroundColor: activating ? "var(--border-default)" : "var(--accent-primary)",
                 color: "white",
@@ -733,35 +733,23 @@ export default function QuickSetupPage() {
           <div className="flex flex-col sm:flex-row gap-3">
             <button
               onClick={handleGoToDashboard}
-              className="flex-1 px-6 py-4 rounded-lg font-semibold transition-all"
+              className="flex-1 px-6 py-4 rounded-lg font-semibold transition-[background-color,transform] duration-160 active:scale-[0.97]"
               style={{
                 backgroundColor: "var(--accent-primary)",
                 color: "white",
                 cursor: "pointer",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.opacity = "0.9";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.opacity = "1";
               }}
             >
               Go to Dashboard
             </button>
             <button
               onClick={handleTestCall}
-              className="flex-1 px-6 py-4 rounded-lg font-semibold border transition-all"
+              className="flex-1 px-6 py-4 rounded-lg font-semibold border transition-[background-color,border-color,transform] duration-160 active:scale-[0.97]"
               style={{
                 borderColor: "var(--border-default)",
                 backgroundColor: "var(--bg-surface)",
                 color: "var(--text-primary)",
                 cursor: "pointer",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "var(--bg-hover)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "var(--bg-surface)";
               }}
             >
               Make a Test Call
