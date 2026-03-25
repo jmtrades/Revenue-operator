@@ -504,7 +504,7 @@ export const PREMIUM_ADDONS = {
  * 100% prepaid = zero churn risk = higher LTV than monthly.
  */
 export const ANNUAL_PRICING = {
-  solo:       { monthly: 9700,  annual: 97000,  effective_monthly: 8083,  discount_pct: 17, ltv_boost_pct: 120 },
+  solo:       { monthly: 14700, annual: 147000, effective_monthly: 12250, discount_pct: 17, ltv_boost_pct: 120 },
   business:   { monthly: 29700, annual: 297000, effective_monthly: 24750, discount_pct: 17, ltv_boost_pct: 125 },
   scale:      { monthly: 59700, annual: 597000, effective_monthly: 49750, discount_pct: 17, ltv_boost_pct: 130 },
   enterprise: { monthly: 99700, annual: 997000, effective_monthly: 83083, discount_pct: 17, ltv_boost_pct: 135 },

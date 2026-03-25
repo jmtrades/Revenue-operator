@@ -1263,7 +1263,7 @@ export default function AppAgentsPageClient({
                         href={`/app/agents/${selected.id}/voice-test`}
                         className="text-[var(--accent-primary)] hover:underline"
                       >
-                        Preview all voices & A/B test →
+                        {tAgents("voicePreviewLink")} →
                       </Link>
                     </p>
                   </>
@@ -1338,10 +1338,10 @@ export default function AppAgentsPageClient({
             ) : agents.length === 0 ? (
               <div className="py-12 text-center">
                 <p className="text-sm font-medium text-[var(--text-primary)] mb-1">
-                  Create your first AI agent
+                  {tAgents("empty.createFirst")}
                 </p>
                 <p className="text-xs text-[var(--text-secondary)] mb-6 max-w-sm mx-auto">
-                  Set up your voice, knowledge, and behavior so your AI can answer calls and book appointments 24/7.
+                  {tAgents("empty.createFirstBody")}
                 </p>
                 <button
                   type="button"

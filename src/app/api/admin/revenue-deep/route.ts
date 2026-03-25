@@ -10,7 +10,7 @@ import { getDb } from "@/lib/db/queries";
 
 // Billing tier pricing map
 const TIER_PRICING: Record<string, number> = {
-  solo: 97,
+  solo: 147,
   business: 297,
   scale: 597,
   enterprise: 997,

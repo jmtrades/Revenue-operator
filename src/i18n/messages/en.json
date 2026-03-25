@@ -717,7 +717,7 @@
         "features": [
           "1 AI agent",
           "1 phone number",
-          "500 min/mo",
+          "1,000 min/mo",
           "Appointment booking",
           "SMS follow-up"
         ]
@@ -727,7 +727,7 @@
         "features": [
           "5 AI agents",
           "5 phone numbers",
-          "2,500 min/mo",
+          "3,000 min/mo",
           "No-show recovery",
           "Revenue analytics",
           "Priority support"
@@ -738,7 +738,7 @@
         "features": [
           "Unlimited AI agents",
           "10 phone numbers",
-          "6,000 min/mo",
+          "8,000 min/mo",
           "Detailed reports",
           "API access"
         ]
@@ -748,7 +748,7 @@
         "features": [
           "15 AI agents",
           "15 phone numbers",
-          "6,000 min/mo",
+          "8,000 min/mo",
           "Outbound campaigns",
           "Advanced analytics",
           "API access"
@@ -2248,8 +2248,11 @@
     "new": "New agent",
     "empty": {
       "title": "No agents yet",
-      "body": "Create your first agent to start handling calls, booking appointments, and qualifying leads."
+      "body": "Create your first agent to start handling calls, booking appointments, and qualifying leads.",
+      "createFirst": "Create your first AI agent",
+      "createFirstBody": "Set up your voice, knowledge, and behavior so your AI can answer calls and book appointments 24/7."
     },
+    "voicePreviewLink": "Preview all voices & A/B test",
     "readiness": {
       "label": "Agent readiness"
     },
@@ -3241,6 +3244,9 @@
       "ai": "AI:",
       "callSummary": "Call summary",
       "recommendedFollowUp": "Recommended follow-up",
+      "followUpInInbox": "Follow up in inbox",
+      "viewLead": "View lead",
+      "noTranscriptAvailable": "No transcript available for this call.",
       "contact": "Contact",
       "calls": {
         "detail": {
@@ -5093,7 +5099,7 @@
     "complianceHeading": "Compliance & governance",
     "complianceBody": "Every call is recorded and transcribed. Governed records, audit trail, and chain of custody. HIPAA mode available. Retention 30–365 days. Data export and industry-ready documentation. When your industry requires it, Recall Touch is built for it.",
     "complianceBullets": "Recording & transcription · HIPAA option · Retention 30–365 days · Audit trail",
-    "ctaSubtext": "Recall Touch starts at $97/month and takes 5 minutes to set up.",
+    "ctaSubtext": "Recall Touch starts at $147/month and takes 5 minutes to set up.",
     "ctaHeading": "Ready to handle every call, text, and follow-up automatically?",
     "ctaBody": "Start in under 60 seconds. No credit card required.",
     "ctaButton": "Start free → takes 5 minutes",
@@ -5245,7 +5251,7 @@
         "business": {
           "name": "Business",
           "tagline": "Full-scale AI revenue operations center.",
-          "f1": "6,000 inbound min included",
+          "f1": "8,000 inbound min included",
           "f2": "15 phone numbers",
           "f3": "Outbound campaigns & speed-to-lead",
           "f4": "Phone support"
@@ -5495,7 +5501,7 @@
           "description": "One AI agent that answers and follows up.",
           "features": [
             "1 AI agent",
-            "500 voice minutes/month",
+            "1,000 voice minutes/month",
             "1 phone number",
             "Appointment booking",
             "SMS follow-up",
@@ -5509,7 +5515,7 @@
           "description": "Multi-agent revenue operations.",
           "features": [
             "5 AI agents",
-            "2,500 voice minutes/month",
+            "3,000 voice minutes/month",
             "5 phone numbers",
             "No-show recovery",
             "Reactivation campaigns",
@@ -5526,7 +5532,7 @@
           "description": "Full-scale AI call center.",
           "features": [
             "15 AI agents",
-            "6,000 voice minutes/month",
+            "8,000 voice minutes/month",
             "15 phone numbers",
             "Outbound campaigns",
             "Speed-to-lead (60s callback)",
@@ -5582,7 +5588,7 @@
       }
     },
     "enterpriseComparison": {
-      "text": "Enterprise voice AI costs $150,000/year and takes 6 weeks to deploy. Recall Touch starts at $97/month and takes 5 minutes."
+      "text": "Enterprise voice AI costs $150,000/year and takes 6 weeks to deploy. Recall Touch starts at $147/month and takes 5 minutes."
     },
     "finalCta": {
       "heading": "Your AI phone team starts in 5 minutes",
@@ -5900,7 +5906,7 @@
         },
         "9": {
           "name": "Transparent Pricing",
-          "recallTouch": "$97–$997/mo flat",
+          "recallTouch": "$147–$997/mo flat",
           "humanServices": "$4–10/call or /min",
           "basicAI": "$0.50/caller + fees",
           "diyPlatforms": "$0.05–0.15/min + infra"
@@ -6037,9 +6043,9 @@
       "pricingTiers": {
         "starter": {
           "name": "Starter",
-          "price": "$97",
+          "price": "$147",
           "tagline": "Perfect for getting started",
-          "f1": "Up to 100 minutes/month",
+          "f1": "Up to 1,000 minutes/month",
           "f2": "Basic analytics",
           "f3": "Email support",
           "f4": "1 user account"
@@ -6048,7 +6054,7 @@
           "name": "Growth",
           "price": "$297",
           "tagline": "For scaling businesses",
-          "f1": "Up to 500 minutes/month",
+          "f1": "Up to 3,000 minutes/month",
           "f2": "Advanced analytics",
           "f3": "Priority support",
           "f4": "Up to 5 user accounts"
@@ -6151,7 +6157,7 @@
         "name": "Starter",
         "description": "One AI agent that answers and follows up.",
         "f1": "1 AI agent",
-        "f2": "500 voice minutes/month",
+        "f2": "1,000 voice minutes/month",
         "f3": "1 phone number",
         "f4": "Appointment booking",
         "f5": "SMS follow-up",
@@ -6161,7 +6167,7 @@
         "name": "Growth",
         "description": "Multi-agent revenue operations.",
         "f1": "5 AI agents",
-        "f2": "2,500 voice minutes/month",
+        "f2": "3,000 voice minutes/month",
         "f3": "5 phone numbers",
         "f4": "No-show recovery",
         "f5": "Reactivation campaigns",
@@ -6173,7 +6179,7 @@
         "name": "Business",
         "description": "Full-scale AI call center.",
         "f1": "15 AI agents",
-        "f2": "6,000 voice minutes/month",
+        "f2": "8,000 voice minutes/month",
         "f3": "Unlimited seats",
         "f4": "Outbound campaigns",
         "f5": "Speed-to-lead",

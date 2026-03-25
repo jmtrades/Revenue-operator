@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Recall Touch vs Hiring a Receptionist — Recall Touch",
     description:
-      "A full-time receptionist costs $35K–50K/year and works 8 hours. Recall Touch costs $97–997/month and answers every call, every time.",
+      "A full-time receptionist costs $35K–50K/year and works 8 hours. Recall Touch costs $147–997/month and answers every call, every time.",
     url: `${BASE}/compare/hiring-receptionist`,
     siteName: "Recall Touch",
     type: "website",
@@ -64,7 +64,7 @@ export default function HiringReceptionistComparisonPage() {
             </h1>
             <p className="mt-4 text-base md:text-lg" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
               A full-time receptionist costs $35,000–$50,000/year, works 8 hours a day, takes vacations, and still misses calls.
-              Recall Touch costs $97–$997/month and answers every call 24/7/365. You get the reliability of AI without replacing your team.
+              Recall Touch costs $147–$997/month and answers every call 24/7/365. You get the reliability of AI without replacing your team.
             </p>
             <p className="mt-3 text-xs" style={{ color: "var(--text-tertiary)" }}>
               Pricing as of March 2026. Receptionist salary based on U.S. Bureau of Labor Statistics and industry averages.
@@ -143,7 +143,7 @@ export default function HiringReceptionistComparisonPage() {
                   and your annual cost doubles.
                 </p>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
-                  Recall Touch costs $97–$997/month. That&apos;s $1,164–$11,964/year. For 24/7 coverage. With zero ongoing payroll.
+                  Recall Touch costs $147–$997/month. That&apos;s $1,164–$11,964/year. For 24/7 coverage. With zero ongoing payroll.
                 </p>
               </div>
               <div>

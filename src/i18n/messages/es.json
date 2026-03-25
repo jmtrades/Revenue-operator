@@ -609,7 +609,7 @@
         "features": [
           "1 agente IA",
           "1 número de teléfono",
-          "500 min/mes",
+          "1,000 min/mo",
           "Informes de uso"
         ]
       },
@@ -618,7 +618,7 @@
         "features": [
           "3 agentes IA",
           "3 números",
-          "2.500 min/mes",
+          "3,000 min/mo",
           "Call Intelligence",
           "Soporte prioritario"
         ]
@@ -628,7 +628,7 @@
         "features": [
           "Agentes IA ilimitados",
           "10 números",
-          "6.000 min/mes",
+          "8.000 min/mes",
           "Informes detallados",
           "Acceso API"
         ]
@@ -648,7 +648,7 @@
         "features": [
           "15 AI agents",
           "15 phone numbers",
-          "6,000 min/mo",
+          "8,000 min/mo",
           "Outbound campaigns",
           "Advanced analytics",
           "API access"
@@ -4592,7 +4592,7 @@
         "starter": {
           "name": "Inicio",
           "tagline": "Para autónomos y equipos pequeños que empiezan.",
-          "f1": "500 min entrantes incluidos",
+          "f1": "1.000 min entrantes incluidos",
           "f2": "1 número de teléfono IA",
           "f3": "Resúmenes de llamadas y captura de leads básicos",
           "f4": "Soporte estándar"
@@ -4600,7 +4600,7 @@
         "growth": {
           "name": "Crecimiento",
           "tagline": "Para equipos en crecimiento que necesitan cobertura total.",
-          "f1": "2.500 min entrantes incluidos",
+          "f1": "3.000 min entrantes incluidos",
           "f2": "3 números IA",
           "f3": "Inteligencia de llamadas y enrutado avanzados",
           "f4": "Soporte prioritario"
@@ -4617,7 +4617,7 @@
         "business": {
           "name": "Business",
           "tagline": "Full-scale AI call center.",
-          "f1": "6,000 inbound min included",
+          "f1": "8,000 inbound min included",
           "f2": "15 phone numbers",
           "f3": "Outbound campaigns & speed-to-lead",
           "f4": "Phone support"
@@ -4803,7 +4803,7 @@
           "name": "Starter",
           "description": "Responde cada llamada. Un número, un agente.",
           "features": [
-            "500 min entrantes incluidos",
+            "1.000 min entrantes incluidos",
             "50 llamadas salientes",
             "100 SMS",
             "1 agente IA",
@@ -4816,7 +4816,7 @@
           "name": "Growth",
           "description": "Un lead recuperado paga el mes.",
           "features": [
-            "2.500 min entrantes",
+            "3.000 min entrantes",
             "500 llamadas salientes",
             "500 SMS",
             "3 agentes IA",
@@ -4832,7 +4832,7 @@
           "name": "Business",
           "description": "Equipo de comunicación IA por una fracción de un contrato.",
           "features": [
-            "6.000 min entrantes",
+            "8.000 min entrantes",
             "2.000 llamadas salientes",
             "SMS ilimitados",
             "Agentes IA ilimitados",
@@ -5194,7 +5194,7 @@
         },
         "9": {
           "name": "Transparent Pricing",
-          "recallTouch": "$97–$997/mo flat",
+          "recallTouch": "$147–$997/mo flat",
           "humanServices": "$4–10/call or /min",
           "basicAI": "$0.50/caller + fees",
           "diyPlatforms": "$0.05–0.15/min + infra"
@@ -5331,7 +5331,7 @@
       "pricingTiers": {
         "starter": {
           "name": "Starter",
-          "price": "$97",
+          "price": "$147",
           "tagline": "Perfect for getting started",
           "f1": "Up to 100 minutes/month",
           "f2": "Basic analytics",
@@ -5342,7 +5342,7 @@
           "name": "Growth",
           "price": "$297",
           "tagline": "For scaling businesses",
-          "f1": "Up to 500 minutes/month",
+          "f1": "Up to 1,000 minutes/month",
           "f2": "Advanced analytics",
           "f3": "Priority support",
           "f4": "Up to 5 user accounts"
@@ -5444,7 +5444,7 @@
       "starter": {
         "name": "Inicio",
         "description": "Para operadores en solitario que quieren que la IA atienda cada llamada.",
-        "f1": "500 min entrantes incluidos",
+        "f1": "1.000 min entrantes incluidos",
         "f2": "50 llamadas salientes",
         "f3": "100 SMS",
         "f4": "1 agente IA",
@@ -5454,7 +5454,7 @@
       "growth": {
         "name": "Crecimiento",
         "description": "Para equipos en crecimiento que necesitan cobertura fiable y seguimiento.",
-        "f1": "2.500 min entrantes incluidos",
+        "f1": "3.000 min entrantes incluidos",
         "f2": "500 llamadas salientes",
         "f3": "500 SMS",
         "f4": "3 agentes IA",
@@ -5491,7 +5491,7 @@
         "name": "Starter",
         "description": "One AI agent that answers and follows up.",
         "f1": "1 AI agent",
-        "f2": "500 voice minutes/month",
+        "f2": "1,000 voice minutes/month",
         "f3": "1 phone number",
         "f4": "Appointment booking",
         "f5": "SMS follow-up",
@@ -5501,7 +5501,7 @@
         "name": "Growth",
         "description": "Multi-agent revenue operations.",
         "f1": "5 AI agents",
-        "f2": "2,500 voice minutes/month",
+        "f2": "3,000 voice minutes/month",
         "f3": "5 phone numbers",
         "f4": "No-show recovery",
         "f5": "Reactivation campaigns",

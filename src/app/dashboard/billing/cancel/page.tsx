@@ -275,7 +275,7 @@ export default function CancelSubscriptionPage() {
                       Downgrade to Starter
                     </h3>
                     <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>
-                      Start at just $97/month instead of canceling completely.
+                      Start at just $147/month instead of canceling completely.
                     </p>
                   </div>
                   <ChevronUp size={20} style={{ color: "var(--text-tertiary)", flexShrink: 0 }} />
