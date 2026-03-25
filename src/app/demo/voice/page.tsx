@@ -579,7 +579,7 @@ export default function VoiceDemoPage() {
             className="text-3xl md:text-4xl font-semibold mb-6"
             style={{ letterSpacing: "-0.025em", color: "var(--text-primary)" }}
           >
-            Stop Losing Calls. Start Converting Them.
+            Your AI Revenue Operator Is Ready.
           </h2>
           <p className="text-lg mb-8" style={{ color: "var(--text-secondary)" }}>
             Start your 14-day free trial. No credit card required.

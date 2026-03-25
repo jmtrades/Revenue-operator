@@ -10,20 +10,20 @@ const Footer = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: "About Recall Touch — AI Phone Agents for Service Businesses",
+  title: "About Recall Touch — AI Revenue Operations Platform",
   description:
-    "Recall Touch builds AI phone agents that answer calls, book appointments, and recover revenue for service businesses. Learn about our mission.",
+    "Recall Touch is the AI revenue operations platform that handles inbound calls, outbound campaigns, follow-ups, bookings, no-show recovery, and lead qualification for every industry.",
   openGraph: {
     title: "About Recall Touch",
     description:
-      "AI phone agents that answer calls, book appointments, and recover revenue for service businesses.",
+      "AI revenue operations platform — inbound calls, outbound campaigns, follow-ups, bookings, and revenue recovery for every business.",
     url: "https://www.recall-touch.com/about",
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "About Recall Touch",
-    description: "AI phone agents for service businesses.",
+    description: "AI revenue operations platform — calls, campaigns, follow-ups, bookings, and recovery for every industry.",
   },
 };
 
@@ -239,13 +239,13 @@ export default function AboutPage() {
                 className="text-xl md:text-2xl font-semibold mb-4"
                 style={{ letterSpacing: "-0.02em" }}
               >
-                Ready to stop losing revenue?
+                Ready to automate your revenue operations?
               </h2>
               <p
                 className="text-sm mb-6"
                 style={{ color: "var(--text-secondary)" }}
               >
-                14-day free trial. No credit card required. See recovered revenue in 24 hours.
+                14-day free trial. No credit card required. See results in 24 hours.
               </p>
               <Link
                 href="/activate"

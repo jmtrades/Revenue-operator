@@ -7,9 +7,9 @@ import { ROUTES } from "@/lib/constants";
 const BASE = "https://www.recall-touch.com";
 
 export const metadata = {
-  title: "HVAC AI Revenue Operations — Recall Touch",
+  title: "HVAC AI Revenue Operations Platform — Recall Touch",
   description:
-    "Capture urgent calls, book service windows, and follow up automatically with an AI phone system built for HVAC.",
+    "Maximize emergency response and seasonal revenue with complete AI-powered workflows: 24/7 call answering, urgent call qualification, service booking and scheduling, appointment reminders, estimate follow-up, and predictive maintenance campaigns.",
   alternates: { canonical: `${BASE}/industries/hvac` },
 };
 
@@ -27,9 +27,9 @@ export default function HvacIndustryPage() {
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    name: "HVAC AI Phone Agent",
+    name: "HVAC AI Revenue Operations Platform",
     url: `${BASE}/industries/hvac`,
-    description: "AI phone agent for HVAC teams: answers calls, books service windows, and recovers missed revenue.",
+    description: "Complete AI revenue operations for HVAC: 24/7 emergency call answering, urgency assessment, service booking and scheduling, appointment confirmations and reminders, estimate follow-up, and seasonal maintenance campaigns.",
     address: { "@type": "PostalAddress", addressCountry: "US" },
   };
 
@@ -64,8 +64,8 @@ export default function HvacIndustryPage() {
               <h2 className="text-lg font-semibold mb-3">Where HVAC revenue gets lost</h2>
               <div className="space-y-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
                 <p>
-                  HVAC is a speed-to-lead business. The lead is "hot" for minutes, not days. Unanswered calls are the obvious leak,
-                  but there are quieter leaks too: weak qualification, slow callbacks, and inconsistent follow-up on estimates.
+                  HVAC is a speed-to-lead business. The lead is "hot" for minutes, not days. Missed calls are the obvious leak,
+                  but there are quieter ones too: weak qualification, slow callbacks, and inconsistent follow-up on estimates.
                 </p>
                 <p>
                   After-hours is the biggest opportunity. Many HVAC shops are excellent during office hours and invisible at night.

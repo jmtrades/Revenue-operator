@@ -38,7 +38,7 @@ const TIERS = [
     roi: "$2K–8K/mo",
     minutes: 1000,
     overage: "$0.08/min",
-    description: "AI phone agent for solo businesses",
+    description: "AI revenue agent for solo businesses",
     features: [
       "1 phone number",
       "1,000 voice minutes/month",
@@ -268,7 +268,7 @@ function CostCalculator() {
           href={ROUTES.START}
           className="inline-flex items-center gap-2 bg-emerald-500 text-black font-semibold rounded-xl px-6 py-3 hover:bg-emerald-400 transition-[background-color,border-color,color,transform] no-underline"
         >
-          Stop Losing ${result.monthlyLost.toLocaleString()}/mo — Try Free
+          Start Recovering ${result.monthlyLost.toLocaleString()}/mo — Try Free
           <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
