@@ -122,7 +122,7 @@ export default function AppointmentsPage() {
         }
       })
       .catch((err) => {
-        if (!cancelled) setFetchError(err instanceof Error ? err.message : "Failed to load appointments");
+        if (!cancelled) setFetchError(err instanceof Error ? err.message : t("appointments.loadError"));
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -202,7 +202,7 @@ export default function AppointmentsPage() {
               onClick={() => { setLoading(true); setFetchError(null); window.location.reload(); }}
               className="mt-3 px-4 py-2 rounded-xl border border-[var(--border-medium)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] transition-[background-color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
             >
-              {t("appointments.retry") ?? "Retry"}
+              {t("appointments.retry")}
             </button>
           </div>
         ) : isEmpty ? (
@@ -211,7 +211,7 @@ export default function AppointmentsPage() {
             title={t("appointments.empty.title")}
             description={t("appointments.empty.body")}
             primaryAction={{
-              label: "View Calls",
+              label: t("appointments.viewCalls"),
               href: "/app/calls",
             }}
           />

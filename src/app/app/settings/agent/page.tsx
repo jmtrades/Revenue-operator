@@ -82,12 +82,9 @@ export default function AppSettingsAgentPage() {
       transferNumber: "",
       escalationThreshold: "Balanced",
       escalationTriggers: "",
-      allowedActions: ["Book appointments", "Collect contact info", "Send SMS follow-up", "Transfer to human", "Leave voicemail"],
+      allowedActions: [],
       forbiddenActions: [],
-      objections: [
-        { objection: "Too expensive", response: "I understand budget is important. Let me share what's included and we can find the right option for you." },
-        { objection: "I need to think about it", response: "Of course! Can I send you a summary and follow up tomorrow?" },
-      ],
+      objections: [],
     },
   );
   const lastSavedRef = useRef<string>(JSON.stringify(config));
@@ -113,7 +110,7 @@ export default function AppSettingsAgentPage() {
           transferNumber: data.transferNumber ?? "",
           escalationThreshold: data.escalationThreshold ?? "Balanced",
           escalationTriggers: data.escalationTriggers ?? "",
-          allowedActions: Array.isArray(data.allowedActions) ? data.allowedActions : ["Book appointments", "Collect contact info", "Send SMS follow-up", "Transfer to human", "Leave voicemail"],
+          allowedActions: Array.isArray(data.allowedActions) ? data.allowedActions : [],
           forbiddenActions: Array.isArray(data.forbiddenActions) ? data.forbiddenActions : [],
           objections: Array.isArray(data.objections) ? data.objections : [],
         };

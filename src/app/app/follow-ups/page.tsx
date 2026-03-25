@@ -29,7 +29,7 @@ export default function AppFollowUpsPage() {
     });
     fetch(`/api/sequences?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
       .then((r) => {
-        if (!r.ok) throw new Error(`Failed to load sequences (${r.status})`);
+        if (!r.ok) throw new Error(t("loadError"));
         return r.json();
       })
       .then((d: { sequences?: Sequence[] }) => {
@@ -108,10 +108,34 @@ export default function AppFollowUpsPage() {
                   <p className="text-xs text-[var(--text-secondary)]">{s.trigger_type ?? "manual"}</p>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="ghost" size="sm" aria-label="Pause">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    aria-label={t("pauseSequence")}
+                    onClick={() => {
+                      fetch(`/api/sequences/${s.id}`, {
+                        method: "PATCH",
+                        credentials: "include",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ status: "paused" }),
+                      }).then(() => window.location.reload()).catch(() => {});
+                    }}
+                  >
                     <Pause className="w-4 h-4" />
                   </Button>
-                  <Button variant="ghost" size="sm" aria-label="Resume">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    aria-label={t("resumeSequence")}
+                    onClick={() => {
+                      fetch(`/api/sequences/${s.id}`, {
+                        method: "PATCH",
+                        credentials: "include",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ status: "active" }),
+                      }).then(() => window.location.reload()).catch(() => {});
+                    }}
+                  >
                     <Play className="w-4 h-4" />
                   </Button>
                 </div>

@@ -125,7 +125,7 @@ const CRM_SOURCE_META: Record<string, { label: string; icon: React.ComponentType
   airtable: { label: "Airtable", icon: Database, color: "text-yellow-400" },
 };
 
-function getSourceBadge(source?: string) {
+function getSourceBadge(source: string | undefined, t: (key: string) => string) {
   if (!source) return null;
   // Check if source starts with "crm_" (e.g., "crm_hubspot")
   const crmKey = source.startsWith("crm_") ? source.slice(4) : source;
@@ -143,7 +143,7 @@ function getSourceBadge(source?: string) {
   if (source === "demo_call" || source === "website_hero") {
     return (
       <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-[var(--bg-inset)]/60 text-emerald-400">
-        Demo
+        {t("source.demo")}
       </span>
     );
   }
@@ -151,7 +151,7 @@ function getSourceBadge(source?: string) {
     return (
       <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-[var(--bg-inset)]/60 text-violet-400">
         <Upload className="w-2.5 h-2.5" />
-        Import
+        {t("source.import")}
       </span>
     );
   }
@@ -286,7 +286,7 @@ export default function AppContactsPage() {
         saveContacts(mapped);
       } catch (err) {
         console.error("[contacts] API error:", err);
-        setApiError("Connection error. Using cached data.");
+        setApiError(t("connectionError"));
       } finally {
         setLoading(false);
       }
@@ -606,7 +606,7 @@ export default function AppContactsPage() {
                           >
                             {t(`form.type.${c.type}`)}
                           </span>
-                          {getSourceBadge(c.source)}
+                          {getSourceBadge(c.source, t)}
                         </div>
                         <p className="text-xs text-[var(--text-tertiary)] truncate">
                           {c.phone}

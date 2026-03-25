@@ -162,7 +162,7 @@ export default function CallsPage() {
             ? t("calls.errors.timeout")
             : t("calls.errors.loadFailed");
         setError(message);
-        toast.error("Failed to load calls");
+        toast.error(t("calls.errors.loadFailed"));
       })
       .finally(() => setLoading(false));
   }, [workspaceId, t, retryTrigger]);
@@ -291,7 +291,7 @@ export default function CallsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ notes }),
       });
-      if (!res.ok) throw new Error("Failed to save notes");
+      if (!res.ok) throw new Error(t("calls.errors.noteSaveFailed"));
       setNotesStatus((prev) => ({ ...prev, [callId]: "saved" }));
       setTimeout(() => setNotesStatus((prev) => ({ ...prev, [callId]: null })), 2000);
     } catch (err) {
