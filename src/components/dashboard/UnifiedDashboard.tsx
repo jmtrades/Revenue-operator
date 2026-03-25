@@ -81,18 +81,18 @@ function fmtTime(iso: string): string {
   }
 }
 
-function fmtLastUpdated(date: Date | null): string {
-  if (!date) return "Never";
+function fmtLastUpdated(date: Date | null, t: (key: string, params?: Record<string, string | number>) => string): string {
+  if (!date) return t("lastUpdated.never");
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffSecs = Math.floor(diffMs / 1000);
   const diffMins = Math.floor(diffSecs / 60);
-  if (diffMins === 0) return "Just now";
-  if (diffMins === 1) return "1 minute ago";
-  if (diffMins < 60) return `${diffMins} minutes ago`;
+  if (diffMins === 0) return t("lastUpdated.justNow");
+  if (diffMins === 1) return t("lastUpdated.oneMinute");
+  if (diffMins < 60) return t("lastUpdated.minutes", { count: diffMins });
   const diffHours = Math.floor(diffMins / 60);
-  if (diffHours === 1) return "1 hour ago";
-  return `${diffHours} hours ago`;
+  if (diffHours === 1) return t("lastUpdated.oneHour");
+  return t("lastUpdated.hours", { count: diffHours });
 }
 
 /* ──────────────────────────────────────────────────────────────────────── */
@@ -336,7 +336,7 @@ export function UnifiedDashboard() {
           </button>
           {lastUpdated && (
             <p className="text-xs text-[var(--text-tertiary)]">
-              {t("actions.updatedAt", { defaultValue: "Updated" })} {fmtLastUpdated(lastUpdated)}
+              {t("actions.updatedAt", { defaultValue: "Updated" })} {fmtLastUpdated(lastUpdated, t)}
             </p>
           )}
         </div>

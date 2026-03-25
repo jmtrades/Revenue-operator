@@ -849,6 +849,18 @@
       "title": "Active outbound campaigns",
       "create": "Create campaign"
     },
+    "actions": {
+      "refresh": "Refresh",
+      "updatedAt": "Updated"
+    },
+    "lastUpdated": {
+      "never": "Never",
+      "justNow": "Just now",
+      "oneMinute": "1 minute ago",
+      "minutes": "{count} minutes ago",
+      "oneHour": "1 hour ago",
+      "hours": "{count} hours ago"
+    },
     "noCampaigns": "No active campaigns. Launch one from Campaigns.",
     "campaigns": {
       "contacts": "contacts",
