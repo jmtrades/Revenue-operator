@@ -7,9 +7,9 @@ import { ROUTES } from "@/lib/constants";
 const BASE = "https://www.recall-touch.com";
 
 export const metadata = {
-  title: "Legal Intake AI — Recall Touch",
+  title: "Legal Practice AI Revenue Operations — Recall Touch",
   description:
-    "Never miss a high-intent legal call. Capture intake, screen urgency, and follow up until consultation is booked.",
+    "Maximize intake conversion and consultation booking with complete AI-powered workflows: instant call answering, case intake, urgency screening, consultation scheduling, follow-up automation, and lead qualification.",
   alternates: { canonical: `${BASE}/industries/legal` },
 };
 
@@ -27,10 +27,10 @@ export default function LegalIndustryPage() {
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    name: "Legal AI Phone Agent",
+    name: "Legal Practice AI Revenue Operations",
     url: `${BASE}/industries/legal`,
     description:
-      "AI phone agent for legal teams: answers intake calls, captures structured summaries, and helps book consultations with follow-up.",
+      "Complete AI revenue operations for legal: intake answering, case qualification and urgency screening, consultation scheduling, follow-up automation, intake prioritization, and pipeline acceleration.",
     address: { "@type": "PostalAddress", addressCountry: "US" },
   };
 
@@ -52,7 +52,7 @@ export default function LegalIndustryPage() {
               Legal & professional services
             </p>
             <h1 className="font-bold mb-4" style={{ fontSize: "clamp(2rem, 4vw, 3rem)", letterSpacing: "-0.03em", lineHeight: 1.1 }}>
-              Capture every intake. Book consultations faster. Stop losing cases to voicemail.
+              Capture every intake. Book consultations faster. Convert more leads automatically.
             </h1>
             <p className="text-base md:text-lg mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
               In legal, the cost of an unanswered call can be enormous. Potential clients often call multiple firms in a row, and

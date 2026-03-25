@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Features — Recall Touch",
     description:
-      "AI phone agents that handle calls, book appointments, and recover revenue.",
+      "AI revenue operations platform: inbound/outbound calling, lead qualification, appointment booking, follow-ups, SMS, and revenue recovery — all in one.",
   },
 };
 
@@ -127,7 +127,7 @@ export default function FeaturesPage() {
               className="text-base md:text-lg max-w-2xl mx-auto"
               style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}
             >
-              Recall Touch replaces your front desk, your SDR, your follow-up process, and your missed-call anxiety — with one AI employee that works 24/7 and gets smarter with every conversation.
+              Recall Touch is your complete AI revenue operations platform — handling inbound and outbound calls, lead qualification, appointment booking, follow-ups, SMS campaigns, and revenue recovery. One AI employee that works 24/7 and gets smarter with every conversation.
             </p>
           </div>
 
@@ -174,13 +174,13 @@ export default function FeaturesPage() {
               className="font-bold text-2xl md:text-3xl mb-4"
               style={{ letterSpacing: "-0.02em" }}
             >
-              Ready to stop losing revenue?
+              Ready to put revenue ops on autopilot?
             </h2>
             <p
               className="text-base mb-6 max-w-lg mx-auto"
               style={{ color: "var(--text-secondary)" }}
             >
-              Start your free trial. No credit card. Your AI agent will be answering calls in under 3 minutes.
+              Start your free trial. No credit card. Your AI revenue operations platform will be live in under 3 minutes.
             </p>
             <Link
               href="/activate"

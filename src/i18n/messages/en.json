@@ -5043,7 +5043,7 @@
   "homepage": {
     "problem": {
       "sectionLabel": "The problem",
-      "heading": "Phone communication is broken. For everyone.",
+      "heading": "Revenue operations is broken. For everyone.",
       "card1Title": "Calls fall through the cracks",
       "card1Stat1Desc": "Lost per year to unanswered calls",
       "card1Stat2Desc": "Hang up on voicemail",
@@ -5161,13 +5161,13 @@
       },
       "pricing": {
         "heading": "Simple pricing that matches your revenue",
-        "subheading": "No per-seat licenses. You pay for reliability of answered calls, not how many people log in.",
+        "subheading": "No per-seat licenses. You pay for results — captured leads, booked appointments, and recovered revenue — not how many people log in.",
         "trialNote": "All plans start with a 14-day free trial. No credit card required."
       },
       "pricingTiers": {
         "starter": {
           "name": "Starter",
-          "tagline": "One AI agent that answers and follows up.",
+          "tagline": "One AI agent. Calls, bookings, follow-ups, and recovery.",
           "f1": "500 inbound min included",
           "f2": "1 AI phone number",
           "f3": "Appointment booking & SMS follow-up",
@@ -5183,7 +5183,7 @@
         },
         "business": {
           "name": "Business",
-          "tagline": "Full-scale AI call center.",
+          "tagline": "Full-scale AI revenue operations center.",
           "f1": "6,000 inbound min included",
           "f2": "15 phone numbers",
           "f3": "Outbound campaigns & speed-to-lead",
@@ -5213,7 +5213,7 @@
     },
     "features": {
       "label": "What it does",
-      "heading": "Everything your phone communication needs. Nothing it used to cost.",
+      "heading": "Everything your revenue operations needs. Nothing it used to cost.",
       "capabilities": {
         "answersCalls": {
           "title": "Answers every call",
@@ -5262,7 +5262,7 @@
       }
     },
     "useCaseSection": {
-      "heading": "One platform. Every call type.",
+      "heading": "One platform. Every revenue opportunity.",
       "cases": {
         "inbound": {
           "title": "Inbound",
@@ -5310,7 +5310,7 @@
           "desc": "I want my calls handled intelligently. Answer, book, follow up, screen — without hiring a front desk."
         }
       },
-      "additionalNote": "Don't see your use case? Recall Touch works for any phone-based workflow.",
+      "additionalNote": "Don't see your use case? Recall Touch works for any revenue-generating workflow — calls, texts, follow-ups, and beyond.",
       "cta": {
         "link": "Get started →"
       }
@@ -5319,7 +5319,7 @@
       "label": "What if?",
       "heading": "The numbers that matter",
       "items": {
-        "revenueLost": "Average revenue lost per year to unanswered calls",
+        "revenueLost": "Average revenue lost per year to missed opportunities",
         "answerRate": "Answer rate with Recall Touch (up from ~60% national average)",
         "speedToLead": "Average time for Recall Touch to follow up on a new lead via call or text",
         "inbox": "All calls, texts, and follow-ups in one place (vs 4+ tools for most teams)",
@@ -5327,7 +5327,7 @@
       }
     },
     "testimonials": {
-      "preamble": "Built for businesses that depend on every call",
+      "preamble": "Built for businesses that depend on every revenue opportunity",
       "label": "Customer Stories",
       "testimonials": {
         "amanda": {
@@ -5546,7 +5546,7 @@
     "industries": {
       "label": "Industry Examples",
       "heading": "Works Across Industries",
-      "subheading": "From healthcare to home services, legal to real estate — any business that runs on phone calls can use Recall Touch. Here are a few examples.",
+      "subheading": "From healthcare to home services, legal to real estate — any business that generates revenue through conversations can use Recall Touch. Here are a few examples.",
       "footer": "Don't see your industry? Recall Touch works for any service business.",
       "footerCta": "Start free trial →",
       "industries": {
@@ -5581,6 +5581,18 @@
         "recruiting": {
           "name": "Recruiting",
           "desc": "Top candidates expect instant responses. Delayed follow-up costs interviews, not just applicants."
+        },
+        "autoRepair": {
+          "name": "Auto Repair",
+          "desc": "Capture every service request, quote, and emergency call. Book appointments and follow up on estimates automatically."
+        },
+        "insurance": {
+          "name": "Insurance",
+          "desc": "Qualify leads, route claims, schedule consultations, and automate renewal campaigns — all from one AI agent."
+        },
+        "construction": {
+          "name": "Construction",
+          "desc": "Qualify project leads, schedule estimates, and follow up on bids. Never lose a job to a slow response."
         },
         "custom": {
           "name": "Every other business",
@@ -7642,15 +7654,15 @@
     "heading": {
       "label": "Explore industries",
       "title": "Industries We Serve",
-      "subtitle": "Recall Touch works for any business that takes phone calls. Whether you're a service provider, professional firm, healthcare practice, or e-commerce business, our AI phone agents answer calls, book appointments, and follow up—24/7."
+      "subtitle": "Recall Touch works for any business that generates revenue through conversations. Whether you're a service provider, professional firm, healthcare practice, or e-commerce business, our AI agents handle inbound calls, run outbound campaigns, book appointments, recover no-shows, and follow up on every lead—24/7."
     },
     "cta": {
       "title": "Don't see your industry?",
-      "description": "Recall Touch works for any business that takes phone calls. Get started now."
+      "description": "Recall Touch works for any business that generates revenue through conversations. Get started now."
     },
     "bottomCta": {
-      "title": "Ready to transform your phone operations?",
-      "description": "Get your AI phone agent set up in 5 minutes. No credit card required."
+      "title": "Ready to transform your revenue operations?",
+      "description": "Get your AI revenue agent set up in 5 minutes. No credit card required."
     },
     "fallback": {
       "title": "Industry",
@@ -8774,16 +8786,16 @@
   "marketing": {
     "hero": {
       "badge": "AI Revenue Operations",
-      "heading1": "Stop Losing Revenue",
-      "heading2": "to Unanswered Calls.",
+      "heading1": "Your Revenue Operations",
+      "heading2": "Run on Autopilot.",
       "heading3": "",
-      "description": "Recall Touch catches every unanswered call, rebooks every no-show, and follows up with every lead — automatically recovering the revenue your business is already losing.",
+      "description": "Recall Touch answers every call, books every appointment, follows up with every lead, and recovers every no-show — so your team focuses on closing, not chasing.",
       "socialProof": "businesses",
       "socialProofRecovered": "recovered",
-      "startFreeTrial": "Start recovering revenue",
+      "startFreeTrial": "Start your free trial",
       "watchDemo": "Watch demo",
-      "creditCard": "No credit card required. See recovered revenue in 24 hours.",
-      "dashboardTitle": "Revenue Recovery",
+      "creditCard": "No credit card required. See results in 24 hours.",
+      "dashboardTitle": "Revenue Operations",
       "dashboardPreview": "Preview",
       "coverage24_7": "24/7",
       "coverageLabel": "Coverage",
@@ -8868,12 +8880,12 @@
         "annualLoss": "Annual Loss",
         "paybackPeriod": "Payback Period",
         "annualRoi": "Annual ROI",
-        "cta": "Stop Losing {amount}/mo — Try Free"
+        "cta": "Start Recovering {amount}/mo — Try Free"
       }
     },
     "finalCta": {
       "label": "Get started",
-      "heading": "Every unanswered call is revenue walking out the door.",
+      "heading": "Your revenue pipeline, fully automated.",
       "description": "Start your 14-day free trial in under 3 minutes. No credit card. No contracts. No risk.",
       "noCreditCard": "No credit card required",
       "moneyBackGuarantee": "30-day money-back guarantee",
@@ -8884,7 +8896,7 @@
       "liveInMinutes": "Live in under 3 minutes. Cancel anytime.",
       "bookDemo": "Book a live demo",
       "stillNotSure": "Still not sure? Hear it for yourself — we'll call you right now.",
-      "joinBusinesses": "Join {count} businesses that stopped losing revenue to voicemail.",
+      "joinBusinesses": "Join {count} businesses running revenue operations on autopilot.",
       "emailLabel": "Email address"
     },
     "footer": {
