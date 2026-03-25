@@ -475,6 +475,7 @@ export async function advanceEnrollment(
   }
 
   // Execute the action: send SMS, email, or trigger outbound call
+  let actionSucceeded = false;
   try {
     const templateContent = stepToExecute.config?.template_content as string | undefined;
 
@@ -503,11 +504,13 @@ export async function advanceEnrollment(
                 .replace(/\{\{phone\}\}/gi, lead.phone)
             : `Hi ${lead.name ?? "there"}, just following up. Let us know if you have any questions or would like to schedule a time to chat.`;
           await svc.sendSms({ from: fromNumber, to: lead.phone, text: messageText });
+          actionSucceeded = true;
         }
       }
     } else if (stepToExecute.type === "call") {
       const { executeLeadOutboundCall } = await import("@/lib/outbound/execute-lead-call");
-      await executeLeadOutboundCall(e.workspace_id, e.lead_id, { campaignType: "lead_followup" });
+      const result = await executeLeadOutboundCall(e.workspace_id, e.lead_id, { campaignType: "lead_followup" });
+      actionSucceeded = result.ok;
     } else if (stepToExecute.type === "email") {
       // Email delivery through workspace email config (if configured)
       const { data: leadRow } = await db
@@ -534,11 +537,17 @@ export async function advanceEnrollment(
         const resendKey = process.env.RESEND_API_KEY;
         const fromEmail = process.env.RESEND_FROM_EMAIL ?? `noreply@recall-touch.com`;
         if (resendKey) {
-          await fetch("https://api.resend.com/emails", {
-            method: "POST",
-            headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
-            body: JSON.stringify({ from: fromEmail, to: lead.email, subject, text: body }),
-          });
+          try {
+            await fetch("https://api.resend.com/emails", {
+              method: "POST",
+              headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
+              body: JSON.stringify({ from: fromEmail, to: lead.email, subject, text: body }),
+            });
+            actionSucceeded = true;
+          } catch (fetchErr) {
+            console.error("[sequence-email] Email fetch failed:", fetchErr instanceof Error ? fetchErr.message : String(fetchErr));
+            // Log but don't block — continue processing
+          }
         }
       }
     }
@@ -553,6 +562,7 @@ export async function advanceEnrollment(
     });
   }
 
+  // IMPORTANT: Only update enrollment state AFTER action successfully executes
   // Calculate when the next step should execute
   const nextDueDate = new Date();
   nextDueDate.setMinutes(nextDueDate.getMinutes() + nextStep.delay_minutes);
