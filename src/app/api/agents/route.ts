@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
   const { workspace_id } = body;
   const name = typeof body.name === "string" ? body.name.trim() : "";
   if (!workspace_id || !name) return NextResponse.json({ error: "workspace_id and name required" }, { status: 400 });
-  if (name.length > 100) return NextResponse.json({ error: "Agent name must be 100 characters or less" }, { status: 400 });
+  if (name.length > 255) return NextResponse.json({ error: "Agent name must be 255 characters or less" }, { status: 400 });
 
   // Validate voice_id against known voices and tier limits if provided
   if (body.voice_id) {

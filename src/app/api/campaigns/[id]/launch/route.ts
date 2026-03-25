@@ -230,57 +230,79 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
 
   const launchAt = new Date().toISOString();
   let enqueued = 0;
+  let campaignStatus = "active";
+  let errorMessage: string | null = null;
 
-  // Insert campaign_leads junction records for cron processor to track
-  const campaignLeadRows = (leads ?? []).map((lead) => ({
-    campaign_id: id,
-    lead_id: (lead as { id: string }).id,
-    status: "pending",
-    created_at: launchAt,
-  }));
+  try {
+    // Insert campaign_leads junction records for cron processor to track
+    const campaignLeadRows = (leads ?? []).map((lead) => ({
+      campaign_id: id,
+      lead_id: (lead as { id: string }).id,
+      status: "pending",
+      created_at: launchAt,
+    }));
 
-  if (campaignLeadRows.length > 0) {
-    const { error: junctionErr } = await db
-      .from("campaign_leads")
-      .upsert(campaignLeadRows, { onConflict: "campaign_id,lead_id", ignoreDuplicates: true });
-    if (junctionErr) {
-      console.error("[campaign/launch] Failed to insert campaign_leads:", junctionErr.message);
-    }
-  }
-
-  for (const lead of leads ?? []) {
-    const leadId = (lead as { id: string }).id;
-    const result = await executeLeadOutboundCall(
-      workspaceId,
-      leadId,
-      {
-        campaignType: (campaign.type as CampaignType) ?? "lead_followup",
-        campaignPromptOptions: {
-          followUpContext: "their recent inquiry",
-        },
-      },
-    );
-    if (result.ok) {
-      enqueued += 1;
-      // Mark as sent in campaign_leads
-      await db
+    if (campaignLeadRows.length > 0) {
+      const { error: junctionErr } = await db
         .from("campaign_leads")
-        .update({ status: "sent", sent_at: new Date().toISOString() })
-        .eq("campaign_id", id)
-        .eq("lead_id", leadId);
+        .upsert(campaignLeadRows, { onConflict: "campaign_id,lead_id", ignoreDuplicates: true });
+      if (junctionErr) {
+        console.error("[campaign/launch] Failed to insert campaign_leads:", junctionErr.message);
+        throw new Error(`Failed to create campaign_leads: ${junctionErr.message}`);
+      }
     }
 
-    // Multi-step sequences (SMS/email) are executed by the outbound pipeline, not directly in this route.
+    // Enqueue leads for outbound execution
+    for (const lead of leads ?? []) {
+      const leadId = (lead as { id: string }).id;
+      const result = await executeLeadOutboundCall(
+        workspaceId,
+        leadId,
+        {
+          campaignType: (campaign.type as CampaignType) ?? "lead_followup",
+          campaignPromptOptions: {
+            followUpContext: "their recent inquiry",
+          },
+        },
+      );
+      if (result.ok) {
+        enqueued += 1;
+        // Mark as sent in campaign_leads
+        await db
+          .from("campaign_leads")
+          .update({ status: "sent", sent_at: new Date().toISOString() })
+          .eq("campaign_id", id)
+          .eq("lead_id", leadId);
+      }
+
+      // Multi-step sequences (SMS/email) are executed by the outbound pipeline, not directly in this route.
+    }
+
+    // Only update to active if enqueuing succeeded
+    if (enqueued === 0) {
+      campaignStatus = "draft";
+      errorMessage = "No leads were successfully enqueued";
+    }
+  } catch (err) {
+    campaignStatus = "failed";
+    errorMessage = err instanceof Error ? err.message : "Unknown error during campaign launch";
+    console.error("[campaign/launch] Campaign launch failed:", errorMessage);
   }
 
+  // Update campaign status based on enqueuing outcome
   await db
     .from("campaigns")
     .update({
-      status: "active",
+      status: campaignStatus,
       last_launched_at: launchAt,
       total_contacts: leads?.length ?? 0,
+      metadata: errorMessage ? { launch_error: errorMessage } : undefined,
     })
     .eq("id", id);
+
+  if (campaignStatus === "failed") {
+    return NextResponse.json({ ok: false, error: errorMessage, enqueued }, { status: 500 });
+  }
 
   return NextResponse.json({ ok: true, enqueued, launched_at: launchAt });
 }

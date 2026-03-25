@@ -27,10 +27,32 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
   const { lead_id, content, channel: channelParam } = body;
-  if (!lead_id || typeof content !== "string" || !content.trim()) {
-    return NextResponse.json({ error: "lead_id and content required" }, { status: 400 });
+
+  // Validate lead_id
+  if (!lead_id || typeof lead_id !== "string") {
+    return NextResponse.json({ error: "lead_id is required" }, { status: 400 });
   }
-  const channel = (channelParam === "whatsapp" || channelParam === "email" ? channelParam : "sms") as "sms" | "email" | "whatsapp";
+
+  // Validate content
+  if (typeof content !== "string") {
+    return NextResponse.json({ error: "content is required" }, { status: 400 });
+  }
+  if (!content.trim()) {
+    return NextResponse.json({ error: "content cannot be empty" }, { status: 400 });
+  }
+  if (content.length > 5000) {
+    return NextResponse.json({ error: "content must not exceed 5000 characters" }, { status: 400 });
+  }
+
+  // Validate channel - strict validation, no silent defaults
+  const supportedChannels = ["sms", "whatsapp", "email"] as const;
+  if (!supportedChannels.includes(channelParam as any)) {
+    return NextResponse.json(
+      { error: `Invalid channel. Supported channels: ${supportedChannels.join(", ")}` },
+      { status: 400 }
+    );
+  }
+  const channel = channelParam as "sms" | "email" | "whatsapp";
 
   const db = getDb();
   const { data: lead } = await db
@@ -45,6 +67,12 @@ export async function POST(req: NextRequest) {
   const phone = (lead as { phone?: string | null }).phone;
   if (!phone || !phone.trim()) {
     return NextResponse.json({ error: "Lead has no phone number" }, { status: 400 });
+  }
+
+  // Validate phone number has at least 10 digits
+  const phoneDigits = phone.replace(/\D/g, "");
+  if (phoneDigits.length < 10) {
+    return NextResponse.json({ error: "Phone number must contain at least 10 digits" }, { status: 400 });
   }
 
   let conversationId: string;

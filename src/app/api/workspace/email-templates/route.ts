@@ -46,6 +46,17 @@ export async function POST(req: NextRequest) {
   const html_body = typeof body.html_body === "string" ? body.html_body : "";
   if (!slug || !name) return NextResponse.json({ error: "slug and name required" }, { status: 400 });
 
+  // Validate size limits
+  if (name.length > 255) {
+    return NextResponse.json({ error: "Template name must be 255 characters or less" }, { status: 400 });
+  }
+  if (subject.length > 500) {
+    return NextResponse.json({ error: "Subject must be 500 characters or less" }, { status: 400 });
+  }
+  if (html_body.length > 1048576) {
+    return NextResponse.json({ error: "HTML body must be 1MB (1,048,576 characters) or less" }, { status: 400 });
+  }
+
   const db = getDb();
   const now = new Date().toISOString();
   const { data, error } = await db

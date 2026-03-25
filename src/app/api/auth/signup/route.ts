@@ -50,6 +50,20 @@ export async function POST(req: NextRequest) {
   if (!passwordResult.ok) return NextResponse.json({ error: passwordResult.error }, { status: 400 });
   const password = passwordResult.value;
 
+  const sessionSecret = (process.env.SESSION_SECRET ?? "").trim();
+  if (!sessionSecret) {
+    console.error("[signup] SESSION_SECRET is not configured");
+    return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+  }
+
+  // Additional password strength validation: minimum 8 chars, at least 1 number
+  if (password.length < 8) {
+    return NextResponse.json({ error: "Password must be at least 8 characters" }, { status: 400 });
+  }
+  if (!/\d/.test(password)) {
+    return NextResponse.json({ error: "Password must contain at least one number" }, { status: 400 });
+  }
+
   const businessName = normalizeBusinessName(body?.businessName);
   const sendWelcome = () => {
     void sendWelcomeEmail(email, businessName).catch((err) => { console.error("[auth/signup] error:", err instanceof Error ? err.message : err); });
