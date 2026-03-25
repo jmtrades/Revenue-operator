@@ -82,6 +82,7 @@ export default function AppointmentsPage() {
   const [view, setView] = useState<"list" | "calendar">("list");
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     document.title = t("appointments.pageTitle");
@@ -91,7 +92,10 @@ export default function AppointmentsPage() {
   }, [t]);
 
   useEffect(() => {
-    if (!workspaceId) return;
+    if (!workspaceId) {
+      setLoading(false);
+      return;
+    }
     let cancelled = false;
     fetch(`/api/appointments?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : { appointments: [] }))
@@ -112,7 +116,10 @@ export default function AppointmentsPage() {
           );
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
     return () => { cancelled = true; };
   }, [workspaceId]);
 
@@ -173,7 +180,14 @@ export default function AppointmentsPage() {
           </div>
         </div>
 
-        {isEmpty ? (
+        {loading ? (
+          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 text-center">
+            <div className="inline-block animate-spin">
+              <div className="w-8 h-8 border-2 border-[var(--text-tertiary)] border-t-[var(--accent-primary)] rounded-full" />
+            </div>
+            <p className="mt-4 text-sm text-[var(--text-secondary)]">{t("appointments.loading")}</p>
+          </div>
+        ) : isEmpty ? (
           <EmptyState
             icon={Calendar}
             title={t("appointments.empty.title")}

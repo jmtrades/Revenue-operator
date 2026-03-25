@@ -642,7 +642,12 @@ export default function CallsPage() {
         title={selectedCall ? t("calls.details") : undefined}
       >
         {selectedCall && (
-          <div className="space-y-5">
+          <div className="space-y-5 relative">
+            {drawerLoading && (
+              <div className="absolute inset-0 z-40 bg-[var(--bg-primary)]/40 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                <div className="animate-spin w-5 h-5 border-2 border-[var(--accent-primary)]/30 border-t-[var(--accent-primary)] rounded-full" />
+              </div>
+            )}
             <div>
               <h3 className="text-sm font-semibold text-[var(--text-primary)]">
                 {selectedCall.matched_lead?.name ??
