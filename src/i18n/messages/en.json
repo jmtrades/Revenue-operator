@@ -3486,7 +3486,9 @@
     "startConversation": "Send your first message below to begin the conversation with {name}",
     "updatedJustNow": "Updated just now",
     "messageSent": "Message sent",
-    "messageFailed": "Failed to send message"
+    "messageFailed": "Failed to send message",
+    "loadFailed": "Failed to load messages",
+    "sendFailed": "Failed to send message. Please try again."
   },
   "leads": {
     "title": "Leads",
@@ -3710,7 +3712,10 @@
       "applied": "Applied to agent.",
       "applyFailed": "Apply failed.",
       "noteSaved": "Note saved.",
-      "noteSaveFailed": "Could not save note."
+      "noteSaveFailed": "Could not save note.",
+      "uploadFailed": "Failed to upload file",
+      "uploadSuccess": "File uploaded successfully",
+      "uploadError": "Upload failed. Please try again."
     },
     "errors": {
       "testFailed": "Failed to test knowledge. Please try again.",
@@ -4093,11 +4098,13 @@
       },
       "phone": {
         "label": "Phone & numbers",
-        "desc": "Buy numbers, forwarding status, caller ID, routing"
+        "desc": "Buy numbers, forwarding status, caller ID, routing",
+        "required": "(Required for calls)"
       },
       "agent": {
         "label": "AI agent configuration",
-        "desc": "Voice, greeting, behavior, knowledge, languages"
+        "desc": "Voice, greeting, behavior, knowledge, languages",
+        "required": "(Required)"
       },
       "callRules": {
         "label": "Call rules",
@@ -4661,6 +4668,10 @@
       "system": "System",
       "light": "Light",
       "dark": "Dark"
+    },
+    "support": {
+      "requestSubmitted": "Your request has been submitted. Our team will contact you within 24 hours.",
+      "requestFailed": "Could not submit request. Please email support@recall-touch.com directly."
     }
   },
   "hero": {
@@ -6968,7 +6979,10 @@
   },
   "partners": {
     "title": "Agency Partner Dashboard",
-    "subtitle": "Revenue share model (15%)"
+    "subtitle": "Revenue share model (15%)",
+    "revenue_recovered_label": "Revenue recovered (this month)",
+    "partner_share_label": "Partner share (15%)",
+    "reporting_consistency_description": "This dashboard uses the same revenue recovered rollups shown in the customer dashboard, so reporting stays consistent across teams."
   },
   "industryTemplates": {
     "breadcrumb": "Industry Templates",
@@ -8604,7 +8618,8 @@
       "toast": {
         "saved": "Sequence saved."
       }
-    }
+    },
+    "loadError": "Failed to load follow-up sequences"
   },
   "api": {
     "errors": {

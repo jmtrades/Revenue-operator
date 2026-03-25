@@ -251,8 +251,8 @@ export default function AppSettingsPage() {
                   {tSettings(`links.${s.linkKey}.label`)}
                   {showIndicator && (
                     <span className="ml-2 text-xs text-[var(--text-secondary)]">
-                      {isPhoneSettings && "(Required for calls)"}
-                      {isAgentSettings && "(Required)"}
+                      {isPhoneSettings && tSettings("links.phone.required")}
+                      {isAgentSettings && tSettings("links.agent.required")}
                     </span>
                   )}
                 </p>
@@ -334,13 +334,13 @@ export default function AppSettingsPage() {
                 }),
               });
               if (res.ok) {
-                toast.success("Your request has been submitted. Our team will contact you within 24 hours.");
+                toast.success(tSettings("support.requestSubmitted"));
                 setConfirm(null);
               } else {
-                toast.error("Could not submit request. Please email support@recall-touch.com directly.");
+                toast.error(tSettings("support.requestFailed"));
               }
             } catch {
-              toast.error("Could not submit request. Please email support@recall-touch.com directly.");
+              toast.error(tSettings("support.requestFailed"));
             }
           }}
           onClose={() => setConfirm(null)}
@@ -365,13 +365,13 @@ export default function AppSettingsPage() {
                 }),
               });
               if (res.ok) {
-                toast.success("Your request has been submitted. Our team will contact you within 24 hours.");
+                toast.success(tSettings("support.requestSubmitted"));
                 setConfirm(null);
               } else {
-                toast.error("Could not submit request. Please email support@recall-touch.com directly.");
+                toast.error(tSettings("support.requestFailed"));
               }
             } catch {
-              toast.error("Could not submit request. Please email support@recall-touch.com directly.");
+              toast.error(tSettings("support.requestFailed"));
             }
           }}
           onClose={() => setConfirm(null)}
