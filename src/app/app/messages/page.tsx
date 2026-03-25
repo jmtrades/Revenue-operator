@@ -229,8 +229,8 @@ export default function AppMessagesPage() {
                 title={t("empty.title")}
                 description={t("empty.body")}
                 primaryAction={{
-                  label: t("empty.action"),
-                  href: "/app/activity",
+                  label: "View Contacts",
+                  href: "/app/contacts",
                 }}
                 className="px-4 py-6"
               />

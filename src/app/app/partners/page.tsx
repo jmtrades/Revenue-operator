@@ -67,6 +67,12 @@ export default function PartnersPage() {
             {error}
           </p>
         </div>
+      ) : revenueCents === 0 ? (
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-12 text-center">
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+            No revenue recovered yet. As your AI agent books calls and generates revenue, your partner share will appear here.
+          </p>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">

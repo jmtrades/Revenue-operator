@@ -162,6 +162,7 @@ export default function CallsPage() {
             ? t("calls.errors.timeout")
             : t("calls.errors.loadFailed");
         setError(message);
+        toast.error("Failed to load calls");
       })
       .finally(() => setLoading(false));
   }, [workspaceId, t, retryTrigger]);

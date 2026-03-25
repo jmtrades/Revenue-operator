@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import Link from "next/link";
@@ -41,6 +42,7 @@ type SortId = "newest" | "score" | "name";
 
 const STORAGE_KEY = "rt_contacts";
 
+// TODO: Hydrate contacts from /api/contacts on mount; localStorage serves as offline cache only
 function loadContacts(): Contact[] {
   if (typeof window === "undefined") return [];
   try {
@@ -48,7 +50,9 @@ function loadContacts(): Contact[] {
     if (!raw) return [];
     const parsed = JSON.parse(raw) as Contact[];
     return Array.isArray(parsed) ? parsed : [];
-  } catch {
+  } catch (e) {
+    console.error("Failed to parse contacts from localStorage:", e);
+    toast.error("Failed to load saved contacts");
     safeRemoveItem(STORAGE_KEY);
     return [];
   }
