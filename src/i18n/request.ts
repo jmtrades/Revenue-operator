@@ -1,0 +1,55 @@
+import { cookies, headers } from "next/headers";
+import { getRequestConfig } from "next-intl/server";
+import type { AppLocale } from "./shared";
+import { locales } from "./shared";
+const LOCALE_COOKIE = "rt_locale";
+
+export default getRequestConfig(async () => {
+  const locale = await detectLocaleFromRequest();
+  let messages: Record<string, unknown>;
+  try {
+    messages = (await import(`./messages/${locale}.json`)).default as Record<string, unknown>;
+  } catch {
+    messages = (await import("./messages/en.json")).default as Record<string, unknown>;
+  }
+  if (!messages || Object.keys(messages).length === 0) {
+    messages = (await import("./messages/en.json")).default as Record<string, unknown>;
+  }
+  return {
+    locale,
+    messages,
+    timeZone: "UTC",
+  };
+});
+
+export async function detectLocaleFromRequest(): Promise<AppLocale> {
+  // Check URL query parameter first (highest priority, used for explicit switching)
+  let h: Headers;
+  try { h = await headers(); } catch { h = new Headers(); }
+  const url = h.get("x-url") || h.get("x-invoke-path") || "";
+  const urlLocale = new URLSearchParams(url.split("?")[1] || "").get("locale");
+  if (urlLocale && (locales as readonly string[]).includes(urlLocale)) {
+    return urlLocale as AppLocale;
+  }
+
+  // Check cookie (set explicitly by the LanguageSwitcher)
+  const cookieStore = await cookies();
+  const cookieLocale = cookieStore.get(LOCALE_COOKIE)?.value;
+  if (cookieLocale && (locales as readonly string[]).includes(cookieLocale)) {
+    return cookieLocale as AppLocale;
+  }
+
+  // Always default to English. Do not auto-detect browser locale from Accept-Language header.
+  return "en";
+}
+
+export async function setLocaleCookie(locale: AppLocale): Promise<void> {
+  "use server";
+  const cookieStore = await cookies();
+  cookieStore.set(LOCALE_COOKIE, locale, {
+    path: "/",
+    httpOnly: false,
+    sameSite: "lax",
+    maxAge: 60 * 60 * 24 * 365,
+  });
+}

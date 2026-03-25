@@ -466,7 +466,18 @@
       "toast": {
         "syncFailed": "Sync failed"
       },
-      "whatsappComingSoon": "WhatsApp integration coming soon"
+      "whatsappComingSoon": "WhatsApp integration coming soon",
+      "dialog": {
+        "disconnectTitle": "Disconnect {provider}?",
+        "disconnectDesc": "This will remove the connection and stop syncing. Your existing contacts will not be deleted.",
+        "cancel": "Cancel"
+      },
+      "button": {
+        "disconnect": "Disconnect"
+      },
+      "hub": {
+        "needHelp": "Need help with integrations?"
+      }
     },
     "settings": {
       "integrations": {
@@ -936,7 +947,7 @@
       "title": "Your AI agent is ready",
       "description": "Connect your phone number to start receiving real calls.",
       "connectPhone": "Connect phone",
-      "footnote": "Businesses like yours recover $2,400+/month in missed calls."
+      "footnote": "Businesses like yours recover $2,400+/month with an AI phone agent."
     },
     "nextActions": {
       "title": "What to do next",
@@ -961,7 +972,7 @@
     },
     "roi": {
       "title": "Estimated ROI",
-      "body": "Businesses at your stage typically recover $2,400+ a month once every missed call turns into a captured lead."
+      "body": "Businesses at your stage typically recover $2,400+ a month once every call turns into a captured lead."
     },
     "systemEvents": {
       "title": "Recent system events",
@@ -3961,7 +3972,7 @@
     },
     "empty": {
       "title": "No campaigns yet.",
-      "body": "Use campaigns to follow up on missed calls, re-activate old leads, and fill your calendar.",
+      "body": "Use campaigns to follow up on unanswered calls, re-activate old leads, and fill your calendar.",
       "description": ""
     },
     "heading": "Campaigns",
@@ -4120,7 +4131,7 @@
       },
       "notifications": {
         "label": "Notifications",
-        "desc": "Alerts for new calls, leads, appointments, missed calls"
+        "desc": "Alerts for new calls, leads, appointments, unanswered calls"
       },
       "leadScoring": {
         "label": "Lead scoring",
@@ -4390,7 +4401,7 @@
       "events": {
         "call_received": "Call received",
         "call_receivedDesc": "Every time your AI answers a call",
-        "missed_call": "Missed calls",
+        "missed_call": "Unanswered calls",
         "missed_callDesc": "When a lead reaches you but your AI cannot connect them to booking",
         "lead_captured": "Lead captured",
         "lead_capturedDesc": "When a caller is identified as a new lead",
@@ -4676,10 +4687,10 @@
   },
   "hero": {
     "title": "Your Revenue Operations Run on Autopilot.",
-    "subtitle": "Recall Touch answers calls, follows up automatically, books appointments, and recovers no-shows so every revenue opportunity is captured and tracked.",
+    "subtitle": "Your AI phone agent answers every call, books appointments, qualifies leads, runs outbound campaigns, and follows up until the deal is closed — so your team focuses on the work, not the phone.",
     "primaryCta": "Try Free for 14 Days →",
     "secondaryCta": "See How It Works",
-    "trustLine": "AI Revenue Recovery · Works with your number · 14-day free trial",
+    "trustLine": "AI Revenue Operations · Works with your number · 14-day free trial",
     "exampleDashboardLabel": "Example dashboard",
     "checkmark": {
       "existingNumber": "Works with your existing number",
@@ -5034,7 +5045,7 @@
       "sectionLabel": "The problem",
       "heading": "Phone communication is broken. For everyone.",
       "card1Title": "Calls fall through the cracks",
-      "card1Stat1Desc": "Lost per year to missed calls",
+      "card1Stat1Desc": "Lost per year to unanswered calls",
       "card1Stat2Desc": "Hang up on voicemail",
       "card1Stat3Desc": "Never call back after busy signal",
       "card2Title": "Follow-up is broken",
@@ -5086,7 +5097,7 @@
     },
     "liveDemo": {
       "heading": "Hear the difference in 30 seconds",
-      "subheading": "See how your AI handles real situations — missed calls, booking, follow-up, after-hours, and screening.",
+      "subheading": "See how your AI handles real situations — inbound calls, outbound campaigns, booking, follow-up, after-hours, and lead qualification.",
       "cardLabels": {
         "caller": "Caller",
         "agent": "Your AI",
@@ -5100,7 +5111,7 @@
       },
       "useCases": {
         "missedCall": {
-          "label": "Missed call recovery",
+          "label": "Inbound call handling",
           "caller": "Hi, I called earlier and nobody answered. I need to schedule a visit.",
           "agent": "Thanks for calling back. I'll get you on the calendar — what day works best?",
           "result": "Callback captured · Appointment offered"
@@ -5136,7 +5147,7 @@
       "subheading": "Outcomes, not infrastructure. Your AI handles the rest.",
       "cards": {
         "missedCalls": {
-          "title": "Missed calls recovered",
+          "title": "Calls handled",
           "desc": "Your AI answers 24/7 so every caller gets a real conversation, not voicemail."
         },
         "leads": {
@@ -5308,7 +5319,7 @@
       "label": "What if?",
       "heading": "The numbers that matter",
       "items": {
-        "revenueLost": "Average revenue lost per year to missed calls",
+        "revenueLost": "Average revenue lost per year to unanswered calls",
         "answerRate": "Answer rate with Recall Touch (up from ~60% national average)",
         "speedToLead": "Average time for Recall Touch to follow up on a new lead via call or text",
         "inbox": "All calls, texts, and follow-ups in one place (vs 4+ tools for most teams)",
@@ -5414,7 +5425,7 @@
       "tierRoi": {
         "scale": "Full AI call center for a fraction of one hire",
         "enterprise": "White-label AI revenue for your agency",
-        "solo": "Less than one missed call pays for the month",
+        "solo": "Less than one new appointment pays for the month",
         "business": "One recovered lead pays for the month"
       },
       "tiers": {
@@ -5491,7 +5502,7 @@
       "rows": {
         "manual": {
           "label": "Manual answering / voicemail",
-          "i1": "Missed calls = lost leads",
+          "i1": "Unanswered calls = lost leads",
           "i2": "Voicemail rarely returned",
           "i3": "After hours = no answer"
         },
@@ -5565,7 +5576,7 @@
         },
         "medspa": {
           "name": "Med Spa",
-          "desc": "When clients want results, speed wins. Missed calls lead to lost bookings and reactivation delays."
+          "desc": "When clients want results, speed wins. Unanswered calls lead to lost bookings and reactivation delays."
         },
         "recruiting": {
           "name": "Recruiting",
@@ -5933,8 +5944,8 @@
       "subheading": "See how our solution delivers measurable results",
       "cards": {
         "missedCalls": {
-          "title": "Never Miss a Call",
-          "desc": "Automatically capture all incoming calls"
+          "title": "Every Call Answered",
+          "desc": "Your AI answers every call 24/7 — inbound, outbound, and after-hours."
         },
         "leads": {
           "title": "Qualified Leads",
@@ -6052,7 +6063,7 @@
   "pricing": {
     "title": "Pricing",
     "subtitle": "Simple, transparent plans that scale with your revenue.",
-    "tagline": "Less than one missed call a month.",
+    "tagline": "Less than one new appointment a month.",
     "plansDescription": "Plans for solo operators through to established businesses. Start free, no credit card.",
     "monthly": "Monthly",
     "annual": "Annual",
@@ -6217,7 +6228,7 @@
     "roi": {
       "intro": "Model what happens when you stop letting calls slip through to voicemail.",
       "description": "Calculate your potential revenue recovery with our ROI calculator.",
-      "missedCallsPerWeek": "Missed calls per week",
+      "missedCallsPerWeek": "Calls per week",
       "avgValuePerCall": "Average value per call ($)",
       "monthlyRecovered": "Monthly revenue recovered",
       "annualBaseline": "Annual cost baseline",
@@ -6807,7 +6818,7 @@
       }
     },
     "heroTitle": "{industry} AI Phone Agent",
-    "heroTagline": "Never miss a {customerType} again.",
+    "heroTagline": "Your AI phone agent for {customerType} — 24/7.",
     "problemLabel": "The problem",
     "howItWorks": "How it works",
     "stepsHeading": "Three steps to revenue operations on autopilot.",
@@ -6816,7 +6827,7 @@
     "ctaStartFree": "Start free →",
     "ctaWatchDemo": "Watch the demo →",
     "ctaPricing": "See pricing →",
-    "problemHeading": "Missed calls cost {industry} businesses every day.",
+    "problemHeading": "Every unanswered call costs {industry} businesses revenue.",
     "capabilitiesHeading": "Built for {industry} workflows.",
     "roiText": "The average {industry} business misses",
     "roiCallsPerWeek": "{count} calls per week",
@@ -8524,7 +8535,7 @@
       "appointmentConfirmation": "Appointment confirmation",
       "appointmentReminder": "Appointment reminder",
       "followUp": "Follow-up after call",
-      "missedCall": "Missed call notification",
+      "missedCall": "Unanswered call notification",
       "campaignSummary": "Campaign summary",
       "variablesHint": "You can use variables like {{contact.name}} and {{appointment.date}}.",
       "button": {
@@ -8581,7 +8592,7 @@
       "basics": {
         "heading": "Basics",
         "name": "Name",
-        "namePlaceholder": "e.g. Missed call recovery",
+        "namePlaceholder": "e.g. Inbound call handling",
         "trigger": "Trigger",
         "active": "Active"
       },
@@ -8762,11 +8773,11 @@
   },
   "marketing": {
     "hero": {
-      "badge": "AI Revenue Recovery",
+      "badge": "AI Revenue Operations",
       "heading1": "Stop Losing Revenue",
-      "heading2": "to Missed Calls.",
+      "heading2": "to Unanswered Calls.",
       "heading3": "",
-      "description": "Recall Touch catches every missed call, rebooks every no-show, and follows up with every lead — automatically recovering the revenue your business is already losing.",
+      "description": "Recall Touch catches every unanswered call, rebooks every no-show, and follows up with every lead — automatically recovering the revenue your business is already losing.",
       "socialProof": "businesses",
       "socialProofRecovered": "recovered",
       "startFreeTrial": "Start recovering revenue",
@@ -8811,7 +8822,7 @@
       "recallTouchDesc": "Answers calls and follows up until the lead books, converts, or opts out.",
       "automatedFollowUp": {
         "title": "Automated follow-up",
-        "desc": "Missed calls, quotes, no-shows, reactivation — without manual chasing."
+        "desc": "Unanswered calls, quotes, no-shows, reactivation — without manual chasing."
       },
       "noShowRecovery": {
         "title": "No-show recovery",
@@ -8833,7 +8844,7 @@
     "pricing": {
       "heading": "Simple, Transparent Pricing",
       "subheading": "Pick the plan that fits your business. Upgrade anytime.",
-      "highlight": "Less than the cost of one missed call.",
+      "highlight": "Less than the cost of one lost lead.",
       "moneyBackGuarantee": "30-day money-back guarantee",
       "trustedBy": "Trusted by 12,400+ businesses",
       "support24_7": "24/7 US-based support",
@@ -8849,7 +8860,7 @@
       "calculator": {
         "title": "Calculate Your ROI",
         "description": "See what Recall Touch can do for your business",
-        "missedCalls": "Missed calls per week:",
+        "missedCalls": "Calls per week:",
         "jobValue": "Average job value:",
         "conversionRate": "Call-to-appointment rate:",
         "selectPlan": "Your plan:",
@@ -9153,7 +9164,7 @@
     },
     "missedCalls": {
       "desc": "Desc",
-      "title": "Missed calls"
+      "title": "Unanswered calls"
     },
     "provisioning": {
       "body": "Body",

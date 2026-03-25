@@ -75,7 +75,7 @@ const INDUSTRIES_DATA: Record<IndustrySlug, IndustryData> = {
       },
       {
         value: "$4,200/mo",
-        description: "Lost from missed calls (avg 3/day)",
+        description: "Lost from unanswered calls (avg 3/day)",
         icon: "TrendingDown",
       },
     ],
@@ -611,7 +611,7 @@ const INDUSTRIES_DATA: Record<IndustrySlug, IndustryData> = {
       },
       {
         value: "$9,600/mo",
-        description: "Lost from missed calls (avg 4/day)",
+        description: "Lost from unanswered calls (avg 4/day)",
         icon: "TrendingDown",
       },
     ],
@@ -745,7 +745,7 @@ const INDUSTRIES_DATA: Record<IndustrySlug, IndustryData> = {
       },
       {
         value: "$5,400/mo",
-        description: "Lost from missed calls (avg 3/day)",
+        description: "Lost from unanswered calls (avg 3/day)",
         icon: "TrendingDown",
       },
     ],

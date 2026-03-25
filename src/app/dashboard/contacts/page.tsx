@@ -1,0 +1,170 @@
+"use client";
+
+import { useCallback, useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
+import Link from "next/link";
+import { Upload, Download } from "lucide-react";
+import { useWorkspace } from "@/components/WorkspaceContext";
+import { PageHeader, EmptyState } from "@/components/ui";
+import { ContactsListSkeleton } from "@/components/ui/ContactsListSkeleton";
+import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
+
+interface Contact {
+  id: string;
+  name: string | null;
+  phone: string | null;
+  email: string | null;
+  company: string | null;
+  state: string;
+  last_activity_at: string | null;
+  created_at?: string;
+}
+
+export default function ContactsPage() {
+  const t = useTranslations("dashboard");
+  const { workspaceId } = useWorkspace();
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+
+  const load = useCallback(() => {
+    if (!workspaceId) return;
+    setLoading(true);
+    setError(null);
+    fetchWithFallback<{ contacts: Contact[] }>(
+      `/api/contacts?workspace_id=${encodeURIComponent(workspaceId)}`,
+      { credentials: "include" }
+    )
+      .then((res) => {
+        if (res.data?.contacts) setContacts(res.data.contacts);
+        else setContacts([]);
+        if (res.error) setError(res.error);
+      })
+      .catch(() => setError("LOAD_ERROR"))
+      .finally(() => setLoading(false));
+  }, [workspaceId]);
+
+  useEffect(() => {
+    if (!workspaceId) {
+      setContacts([]);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+    load();
+  }, [workspaceId, load]);
+
+  const filtered = search.trim()
+    ? contacts.filter(
+        (c) =>
+          (c.name ?? "").toLowerCase().includes(search.toLowerCase()) ||
+          (c.email ?? "").toLowerCase().includes(search.toLowerCase()) ||
+          (c.company ?? "").toLowerCase().includes(search.toLowerCase()) ||
+          (c.phone ?? "").includes(search)
+      )
+    : contacts;
+
+  if (!workspaceId) {
+    return (
+      <div className="p-8 max-w-4xl">
+        <PageHeader title={t("pages.contacts.title")} subtitle={t("pages.contacts.subtitleShort")} />
+        <EmptyState icon="watch" title={t("empty.selectContext")} subtitle={t("empty.contactsAppearHere")} />
+      </div>
+    );
+  }
+
+  async function handleExport() {
+    if (!workspaceId) return;
+    try {
+      const res = await fetch(`/api/contacts/export?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" });
+      if (!res.ok) return;
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `contacts-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      // Silent fail
+    }
+  }
+
+  return (
+    <div className="p-8 max-w-4xl">
+      <div className="flex items-center justify-between mb-2">
+        <PageHeader title={t("pages.contacts.title")} subtitle={t("pages.contacts.subtitle")} />
+        <div className="flex gap-2">
+          <Link
+            href="/dashboard/import"
+            className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors hover:opacity-80"
+            style={{ borderColor: "var(--border)", color: "var(--text-secondary)" }}
+          >
+            <Upload className="w-3.5 h-3.5" />
+            Import CSV
+          </Link>
+          <button
+            type="button"
+            onClick={handleExport}
+            disabled={contacts.length === 0}
+            className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors hover:opacity-80 disabled:opacity-40"
+            style={{ borderColor: "var(--border)", color: "var(--text-secondary)" }}
+          >
+            <Download className="w-3.5 h-3.5" />
+            Export CSV
+          </button>
+        </div>
+      </div>
+      <div className="mb-4">
+        <input
+          type="search"
+          placeholder={t("empty.searchByNameEmailCompany")}
+          className="w-full max-w-md px-3 py-2 rounded-lg border text-sm"
+          style={{ borderColor: "var(--border)", background: "var(--surface-card)", color: "var(--text-primary)" }}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+      {loading ? (
+        <ContactsListSkeleton />
+      ) : error ? (
+        <div className="rounded-lg border py-12 px-6 text-center" style={{ borderColor: "var(--border)" }}>
+          <p className="text-sm mb-3" style={{ color: "var(--text-secondary)" }}>{error === "LOAD_ERROR" ? t("contactsPage.loadError") : error}</p>
+          <button type="button" onClick={load} className="text-sm font-medium px-4 py-2 rounded-lg" style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}>{t("contactsPage.retry")}</button>
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="rounded-xl border py-12 px-6 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+          <p className="text-sm font-medium mb-1" style={{ color: "var(--text-primary)" }}>{t("contactsPage.noContactsYet")}</p>
+          <p className="text-xs mb-4" style={{ color: "var(--text-tertiary)" }}>{t("contactsPage.noContactsHint")}</p>
+          <Link href="/dashboard/activity" className="inline-block text-sm font-medium mr-2" style={{ color: "var(--accent-primary)" }}>{t("contactsPage.activityLink")}</Link>
+          <Link href="/dashboard/import" className="inline-block text-sm" style={{ color: "var(--text-secondary)" }}>{t("contactsPage.importLink")}</Link>
+        </div>
+      ) : (
+        <ul className="rounded-lg border overflow-hidden" style={{ borderColor: "var(--border)", background: "var(--surface-card)" }}>
+          {filtered.map((c) => (
+            <li key={c.id} className="border-b last:border-b-0 flex items-center justify-between gap-2" style={{ borderColor: "var(--border)" }}>
+              <Link
+                href={`/dashboard/record/lead/${c.id}`}
+                className="flex-1 min-w-0 px-4 py-3 hover:opacity-90"
+                style={{ color: "var(--text-primary)" }}
+              >
+                <p className="text-sm font-medium">{c.name || c.email || c.company || "—"}</p>
+                <p className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>{c.state} · {c.company || "—"}</p>
+              </Link>
+              {c.phone && (
+                <Link
+                  href={`/dashboard/messages?lead=${c.id}`}
+                  className="px-3 py-2 text-xs font-medium rounded-lg border shrink-0"
+                  style={{ borderColor: "var(--border)", color: "var(--accent-primary)" }}
+                >
+                  Message
+                </Link>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}

@@ -191,7 +191,7 @@ export const COMPARISON_FEATURES = [
   { category: "Core", name: "Team seats", solo: "1", business: "5", scale: "Unlimited", enterprise: "Unlimited" },
   { category: "Core", name: "Phone numbers", solo: "1", business: "5", scale: "15", enterprise: "Unlimited" },
   { category: "Features", name: "Appointment booking", solo: "✓", business: "✓", scale: "✓", enterprise: "✓" },
-  { category: "Features", name: "Missed call recovery", solo: "✓", business: "✓", scale: "✓", enterprise: "✓" },
+  { category: "Features", name: "Inbound call handling", solo: "✓", business: "✓", scale: "✓", enterprise: "✓" },
   { category: "Features", name: "No-show recovery", solo: "—", business: "✓", scale: "✓", enterprise: "✓" },
   { category: "Features", name: "Reactivation campaigns", solo: "—", business: "✓", scale: "✓", enterprise: "✓" },
   { category: "Features", name: "Outbound campaigns", solo: "—", business: "—", scale: "✓", enterprise: "✓" },
