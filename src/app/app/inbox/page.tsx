@@ -585,6 +585,9 @@ export default function InboxPage() {
         ),
       );
       setInput("");
+      toast.success(t("inbox.messageSent"));
+    } catch {
+      toast.error(t("inbox.messageFailed"));
     } finally {
       setSending(false);
     }

@@ -318,8 +318,10 @@ export default function CampaignsPage() {
   };
 
   const [deleteConfirm, setDeleteConfirm] = useState<CampaignRow | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const deleteCampaign = async (campaign: CampaignRow) => {
+    setDeleting(true);
     try {
       const res = await fetch(`/api/campaigns/${campaign.id}`, {
         method: "DELETE",
@@ -334,11 +336,15 @@ export default function CampaignsPage() {
       setToast(t("toast.deleted"));
     } catch {
       setToast(t("toast.deleteFailed"));
+    } finally {
+      setDeleting(false);
     }
   };
 
+  const [duplicating, setDuplicating] = useState(false);
+
   const duplicateCampaign = async (campaign: CampaignRow) => {
-    setSaving(true);
+    setDuplicating(true);
     try {
       const payload = {
         name: `${campaign.name} (Copy)`,
@@ -361,7 +367,7 @@ export default function CampaignsPage() {
     } catch {
       setToast(t("toast.createFailed"));
     } finally {
-      setSaving(false);
+      setDuplicating(false);
     }
   };
 
@@ -474,7 +480,8 @@ export default function CampaignsPage() {
                     <button
                       type="button"
                       onClick={() => void duplicateCampaign(campaign)}
-                      className="p-2 rounded-lg border border-[var(--border-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-colors"
+                      disabled={duplicating}
+                      className="p-2 rounded-lg border border-[var(--border-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-colors disabled:opacity-50"
                       title={t("duplicate")}
                     >
                       <Copy className="w-3.5 h-3.5" />
@@ -483,7 +490,8 @@ export default function CampaignsPage() {
                       <button
                         type="button"
                         onClick={() => setDeleteConfirm(campaign)}
-                        className="p-2 rounded-lg border border-red-500/20 text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+                        disabled={deleting}
+                        className="p-2 rounded-lg border border-red-500/20 text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors disabled:opacity-50"
                         title={t("delete")}
                       >
                         <Trash2 className="w-3.5 h-3.5" />

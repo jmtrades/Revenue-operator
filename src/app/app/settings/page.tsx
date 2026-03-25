@@ -99,12 +99,13 @@ export default function AppSettingsPage() {
       });
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
-        toast.error(body.error ?? tSettings("profile.saveFailed"));
+        const errorMsg = body.error ?? tSettings("profile.saveFailed");
+        toast.error(errorMsg, { icon: "❌" });
         return;
       }
-      toast.success(tSettings("profile.saved"));
+      toast.success(tSettings("profile.saved"), { icon: "✓" });
     } catch {
-      toast.error(tToast("error.generic"));
+      toast.error(tToast("error.generic"), { icon: "❌" });
     } finally {
       setSavingProfile(false);
     }

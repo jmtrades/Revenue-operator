@@ -734,7 +734,12 @@ export default function AppSettingsAgentPage() {
       </div>
 
       {inlineToast && (
-        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-[var(--text-primary)]">
+        <div className="fixed top-4 right-4 z-50 px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-[var(--text-primary)] flex items-center gap-2 animate-in fade-in slide-in-from-right-2 duration-300">
+          {inlineToast.includes("updated") || inlineToast.includes("success") ? (
+            <span className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">✓</span>
+          ) : (
+            <span className="w-5 h-5 rounded-full bg-red-500/20 flex items-center justify-center text-red-400">!</span>
+          )}
           {inlineToast}
         </div>
       )}

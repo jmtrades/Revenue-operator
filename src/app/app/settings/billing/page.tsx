@@ -484,7 +484,11 @@ export default function AppSettingsBillingPage() {
         currentPlanId={currentPlanId}
         isOpen={planChangeOpen}
         onClose={() => setPlanChangeOpen(false)}
-        onSuccess={(_, message) => setToast(message ?? tBilling("toast.planUpdated"))}
+        onSuccess={(_, message) => {
+          const successMessage = message ?? tBilling("toast.planUpdated");
+          setToast(successMessage);
+          setPlanChangeOpen(false);
+        }}
         workspaceId={workspaceId}
       />
         <p className="text-xs text-[var(--text-secondary)] mb-4">
@@ -618,7 +622,14 @@ export default function AppSettingsBillingPage() {
       )}
 
       {toast && (
-        <div className="fixed top-4 right-4 z-50 px-4 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border-medium)] shadow-lg text-sm text-[var(--text-primary)]">
+        <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-xl shadow-lg text-sm flex items-center gap-2 animate-in fade-in slide-in-from-right-2 duration-300 ${
+          toast.includes("updated") || toast.includes("success") || toast.includes("paused") || toast.includes("added")
+            ? "bg-emerald-500/10 border border-emerald-500/30 text-emerald-300"
+            : "bg-[var(--bg-card)] border border-[var(--border-medium)] text-[var(--text-primary)]"
+        }`}>
+          {(toast.includes("updated") || toast.includes("success") || toast.includes("paused") || toast.includes("added")) ? (
+            <span className="w-4 h-4 rounded-full bg-emerald-500 flex-shrink-0">✓</span>
+          ) : null}
           {toast}
         </div>
       )}
