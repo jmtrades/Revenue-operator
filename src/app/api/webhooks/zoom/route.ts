@@ -7,8 +7,13 @@ import crypto from "node:crypto";
 import { getDb } from "@/lib/db/queries";
 import { enqueue } from "@/lib/queue";
 import { log } from "@/lib/logger";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
+
   const raw = await req.text();
   const signature = req.headers.get("x-zm-signature") ?? req.headers.get("authorization") ?? "";
 
@@ -54,10 +59,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ received: true, dedupe: true });
   }
 
+  const accountId = payload.account_id ?? "";
+  if (!accountId) {
+    return NextResponse.json({ error: "Missing account_id in payload" }, { status: 400 });
+  }
+
   const { data: zoomAccount } = await db
     .from("zoom_accounts")
     .select("workspace_id")
-    .limit(1)
+    .eq("account_id", accountId)
     .maybeSingle();
 
   const workspaceId = (zoomAccount as { workspace_id?: string })?.workspace_id ?? null;

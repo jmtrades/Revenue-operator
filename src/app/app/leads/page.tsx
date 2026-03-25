@@ -39,7 +39,7 @@ export type LeadView = {
   email: string;
   source: LeadSource;
   status: LeadStatus;
-  score: number;
+  score: number | null;
   service: string;
   createdAt: string;
   lastContactAt: string;
@@ -71,7 +71,8 @@ const SCORE_COLORS: Record<ScoreBucket, string> = {
   all: "bg-[var(--bg-card)] text-[var(--text-secondary)] border-[var(--border-medium)]",
 };
 
-function scoreBucket(score: number): ScoreBucket {
+function scoreBucket(score: number | null): ScoreBucket {
+  if (score === null) return "low";
   if (score >= 70) return "high";
   if (score >= 40) return "medium";
   return "low";
@@ -132,7 +133,7 @@ function mapApiLeadToView(
     "New";
   const meta = l.metadata;
   const source: LeadSource = meta?.source ? (SOURCE_TO_LABEL[meta.source] ?? "Inbound Call") : "Inbound Call";
-  const score = typeof meta?.score === "number" ? meta.score : 60 + (index * 7) % 40;
+  const score = typeof meta?.score === "number" ? meta.score : null;
   const service = meta?.service_requested?.trim() || l.company || t("leads.defaultService");
   const createdAt = l.last_activity_at;
   const lastContactAt = l.last_activity_at;
@@ -401,7 +402,7 @@ export default function LeadsPage() {
 
     list.sort((a, b) => {
       if (sort === "score") {
-        return b.score - a.score;
+        return (b.score ?? -1) - (a.score ?? -1);
       }
       if (sort === "recent-contact") {
         return new Date(b.lastContactAt).getTime() - new Date(a.lastContactAt).getTime();
@@ -497,7 +498,7 @@ export default function LeadsPage() {
     setDrawerCalls([]);
   };
 
-  const scoreBadgeClass = (score: number): string => {
+  const scoreBadgeClass = (score: number | null): string => {
     const bucket = scoreBucket(score);
     return SCORE_COLORS[bucket];
   };

@@ -9,8 +9,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getTelephonyService } from "@/lib/telephony";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   let body: { workspace_id?: string };
   try {
     body = await req.json();
@@ -66,9 +70,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ phone_number: num });
   } catch (e) {
     console.error("[Onboarding] Phone provisioning failed:", e);
-    // Provision error; response below
+    return NextResponse.json(
+      { error: "Phone provisioning is temporarily unavailable. You can add a number later from Settings > Phone." },
+      { status: 503 }
+    );
   }
-
-  const stubNumber = "+1 (555) 000-" + workspace_id.slice(0, 4);
-  return NextResponse.json({ phone_number: stubNumber, stub: true });
 }

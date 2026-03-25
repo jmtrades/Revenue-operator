@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ entries: [] }, { status: 200 });
     }
     const authErr = await requireWorkspaceAccess(request, workspaceId);
-    if (authErr) return NextResponse.json({ entries: [] }, { status: 200 });
+    if (authErr) return authErr;
 
     const db = getDb();
     let entries: Array<{ at: string; subject: string; event: string }> = [];
