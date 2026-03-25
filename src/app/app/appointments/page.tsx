@@ -83,6 +83,7 @@ export default function AppointmentsPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
     document.title = t("appointments.pageTitle");
@@ -97,8 +98,12 @@ export default function AppointmentsPage() {
       return;
     }
     let cancelled = false;
+    setFetchError(null);
     fetch(`/api/appointments?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : { appointments: [] }))
+      .then((r) => {
+        if (!r.ok) throw new Error(`Failed to load appointments (${r.status})`);
+        return r.json();
+      })
       .then((data: { appointments?: { id: string; date: string; time: string; contactName: string; type: string; status: string; source: string }[] }) => {
         if (cancelled) return;
         const list = data.appointments ?? [];
@@ -116,7 +121,9 @@ export default function AppointmentsPage() {
           );
         }
       })
-      .catch(() => {})
+      .catch((err) => {
+        if (!cancelled) setFetchError(err instanceof Error ? err.message : "Failed to load appointments");
+      })
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
@@ -186,6 +193,17 @@ export default function AppointmentsPage() {
               <div className="w-8 h-8 border-2 border-[var(--text-tertiary)] border-t-[var(--accent-primary)] rounded-full" />
             </div>
             <p className="mt-4 text-sm text-[var(--text-secondary)]">{t("appointments.loading")}</p>
+          </div>
+        ) : fetchError ? (
+          <div className="rounded-2xl border border-red-500/30 bg-red-500/5 p-8 text-center">
+            <p className="text-sm text-red-300">{fetchError}</p>
+            <button
+              type="button"
+              onClick={() => { setLoading(true); setFetchError(null); window.location.reload(); }}
+              className="mt-3 px-4 py-2 rounded-xl border border-[var(--border-medium)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
+            >
+              {t("appointments.retry") ?? "Retry"}
+            </button>
           </div>
         ) : isEmpty ? (
           <EmptyState

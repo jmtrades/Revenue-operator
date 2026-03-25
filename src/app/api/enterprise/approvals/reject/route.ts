@@ -13,10 +13,10 @@ import { allowFeature } from "@/lib/feature-gate/resolver";
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
-  if (!body || typeof body !== "object") return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 200 });
+  if (!body || typeof body !== "object") return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });
   const workspaceId = body.workspace_id?.trim();
   const approvalId = body.approval_id?.trim();
-  if (!workspaceId || !approvalId) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 200 });
+  if (!workspaceId || !approvalId) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 400 });
 
   const authErr = await requireWorkspaceRole(req, workspaceId, ["owner", "admin", "compliance"]);
   if (authErr) return authErr;
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   const session = await getSession(req);
   const decidedBy = session?.userId ?? null;
   const updated = await decideApproval(approvalId, workspaceId, "rejected", decidedBy);
-  if (!updated) return NextResponse.json({ ok: false, reason: "not_found_or_already_decided" }, { status: 200 });
+  if (!updated) return NextResponse.json({ ok: false, reason: "not_found_or_already_decided" }, { status: 409 });
 
   // Compliance override: when compliance rejects under dual_approval, lock further attempts for a cooldown window.
   const dualApprovalEnabled = await allowFeature(workspaceId, "dual_approval");

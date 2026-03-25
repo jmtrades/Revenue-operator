@@ -544,20 +544,38 @@ export async function advanceEnrollment(
               .replace(/\{\{name\}\}/gi, lead.name ?? "there")
           : `Hi ${lead.name ?? "there"},\n\nJust wanted to follow up and see if you had any questions. We'd love to help.\n\nBest,\n${businessName}`;
 
-        // Use Resend if configured
+        // Use Resend if configured — with retry (up to 2 retries with backoff)
         const resendKey = process.env.RESEND_API_KEY;
         const fromEmail = process.env.RESEND_FROM_EMAIL ?? `noreply@recall-touch.com`;
         if (resendKey) {
-          try {
-            await fetch("https://api.resend.com/emails", {
-              method: "POST",
-              headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
-              body: JSON.stringify({ from: fromEmail, to: lead.email, subject, text: body }),
-            });
-            actionSucceeded = true;
-          } catch (fetchErr) {
-            console.error("[sequence-email] Email fetch failed:", fetchErr instanceof Error ? fetchErr.message : String(fetchErr));
-            // Log but don't block — continue processing
+          const maxEmailRetries = 3;
+          for (let emailAttempt = 0; emailAttempt < maxEmailRetries; emailAttempt++) {
+            try {
+              const emailRes = await fetch("https://api.resend.com/emails", {
+                method: "POST",
+                headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
+                body: JSON.stringify({ from: fromEmail, to: lead.email, subject, text: body }),
+              });
+              if (emailRes.ok) {
+                actionSucceeded = true;
+                break;
+              }
+              // Non-retryable client errors (4xx except 429)
+              if (emailRes.status >= 400 && emailRes.status < 500 && emailRes.status !== 429) {
+                const errText = await emailRes.text().catch(() => "unknown");
+                console.error(`[sequence-email] Resend API ${emailRes.status}: ${errText}`);
+                break;
+              }
+              // Retryable: 429 or 5xx
+              if (emailAttempt < maxEmailRetries - 1) {
+                await new Promise(r => setTimeout(r, (emailAttempt + 1) * 2000));
+              }
+            } catch (fetchErr) {
+              console.error("[sequence-email] Email fetch failed:", fetchErr instanceof Error ? fetchErr.message : String(fetchErr));
+              if (emailAttempt < maxEmailRetries - 1) {
+                await new Promise(r => setTimeout(r, (emailAttempt + 1) * 2000));
+              }
+            }
           }
         }
       }

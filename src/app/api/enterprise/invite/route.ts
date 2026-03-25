@@ -16,11 +16,11 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 400 });
   }
   const workspaceId = body.workspace_id?.trim();
   if (!workspaceId) {
-    return NextResponse.json({ ok: false, reason: "workspace_id required" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "workspace_id required" }, { status: 400 });
   }
 
   const authErr = await requireWorkspaceRole(request, workspaceId, ["owner", "admin"]);

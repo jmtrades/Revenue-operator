@@ -482,6 +482,12 @@
     "google": {
       "button": "Continue with Google"
     },
+    "oauth": {
+      "googleNotConfigured": "Google sign-in is not configured yet.",
+      "googleExpired": "Google sign-in expired. Please try again.",
+      "googleFailed": "Google sign-in could not be completed. Please try again.",
+      "googleAccountFailed": "Account setup could not be completed after Google sign-in."
+    },
     "forgotPassword": "Forgot password?",
     "resetPassword": {
       "title": "Reset password",

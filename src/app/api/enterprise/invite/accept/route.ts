@@ -14,7 +14,7 @@ import { getSession } from "@/lib/auth/request-session";
 export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get("token")?.trim();
   if (!token) {
-    return NextResponse.json({ ok: false, reason: "token required" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "token required" }, { status: 400 });
   }
 
   const db = getDb();
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     .maybeSingle();
 
   if (!invite || (invite as { accepted_at: string | null }).accepted_at) {
-    return NextResponse.json({ ok: false, reason: "invalid_or_used" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "invalid_or_used" }, { status: 404 });
   }
 
   const workspaceId = (invite as { workspace_id: string }).workspace_id;

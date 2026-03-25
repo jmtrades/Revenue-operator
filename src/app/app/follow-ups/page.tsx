@@ -16,6 +16,7 @@ export default function AppFollowUpsPage() {
   const [tab, setTab] = useState<"templates" | "active">("templates");
   const [sequences, setSequences] = useState<Sequence[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!workspaceId) {
@@ -24,15 +25,21 @@ export default function AppFollowUpsPage() {
     }
     let active = true;
     queueMicrotask(() => {
-      if (active) setLoading(true);
+      if (active) { setLoading(true); setFetchError(null); }
     });
     fetch(`/api/sequences?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : { sequences: [] }))
+      .then((r) => {
+        if (!r.ok) throw new Error(`Failed to load sequences (${r.status})`);
+        return r.json();
+      })
       .then((d: { sequences?: Sequence[] }) => {
         if (active) setSequences(d.sequences ?? []);
       })
-      .catch(() => {
-        if (active) setSequences([]);
+      .catch((err) => {
+        if (active) {
+          setSequences([]);
+          setFetchError(err instanceof Error ? err.message : "Failed to load follow-up sequences");
+        }
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -71,6 +78,17 @@ export default function AppFollowUpsPage() {
       </div>
       {loading ? (
         <div className="animate-pulse h-40 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-default)]" />
+      ) : fetchError ? (
+        <div className="rounded-2xl border border-red-500/30 bg-red-500/5 p-8 text-center">
+          <p className="text-sm text-red-300">{fetchError}</p>
+          <button
+            type="button"
+            onClick={() => { setLoading(true); setFetchError(null); window.location.reload(); }}
+            className="mt-3 px-4 py-2 rounded-xl border border-[var(--border-medium)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
+          >
+            Retry
+          </button>
+        </div>
       ) : tab === "templates" ? (
         sequences.length === 0 ? (
           <EmptyState

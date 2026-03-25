@@ -443,6 +443,12 @@
     "google": {
       "button": "Mit Google fortfahren"
     },
+    "oauth": {
+      "googleNotConfigured": "Google-Authentifizierung ist noch nicht konfiguriert.",
+      "googleExpired": "Google-Authentifizierung ist abgelaufen. Bitte versuchen Sie es erneut.",
+      "googleFailed": "Google-Authentifizierung konnte nicht abgeschlossen werden. Bitte versuchen Sie es erneut.",
+      "googleAccountFailed": "Die Kontoeinrichtung nach Google-Authentifizierung konnte nicht abgeschlossen werden."
+    },
     "forgotPassword": "Passwort vergessen?",
     "resetPassword": {
       "title": "Passwort zurücksetzen",

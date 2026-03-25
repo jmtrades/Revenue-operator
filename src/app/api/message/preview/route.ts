@@ -13,12 +13,12 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json().catch(() => null);
     if (!body || typeof body !== "object") {
-      return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });
     }
 
     const workspaceId = body.workspace_id?.trim();
     if (!workspaceId) {
-      return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 400 });
     }
 
     const authErr = await requireWorkspaceAccess(req, workspaceId);
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     const jurisdiction = body.jurisdiction ?? "UK";
     const channel = body.channel ?? "sms";
     if (!["sms", "email", "whatsapp"].includes(channel)) {
-      return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 400 });
     }
     const intentType = body.intent_type ?? "follow_up";
     const slots = body.slots && typeof body.slots === "object" ? body.slots : {};
@@ -66,8 +66,8 @@ export async function POST(req: NextRequest) {
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     if (msg.includes("no_approved_template") || msg.includes("policy_blocked") || msg.includes("length_exceeded")) {
-      return NextResponse.json({ ok: false, reason: msg.includes("template") ? "no_approved_template" : msg.includes("length") ? "length_exceeded" : "policy_blocked" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: msg.includes("template") ? "no_approved_template" : msg.includes("length") ? "length_exceeded" : "policy_blocked" }, { status: 400 });
     }
-    return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 400 });
   }
 }

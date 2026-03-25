@@ -14,7 +14,7 @@ const CHANNEL_MAX: Record<string, number> = { sms: 320, email: 2000, whatsapp: 1
 
 export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id")?.trim();
-  if (!workspaceId) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 200 });
+  if (!workspaceId) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 400 });
 
   const authErr = await requireWorkspaceRole(req, workspaceId, ["owner", "admin", "operator", "auditor", "compliance"]);
   if (authErr) return authErr;
@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
-  if (!body || typeof body !== "object") return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 200 });
+  if (!body || typeof body !== "object") return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });
 
   const workspaceId = body.workspace_id?.trim();
   const template_id = body.template_id?.trim();
@@ -39,12 +39,12 @@ export async function POST(req: NextRequest) {
   const intent_type = body.intent_type?.trim() || "follow_up";
   let bodyText = body.body ?? "";
 
-  if (!workspaceId || !template_id) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 200 });
-  if (!["sms", "email", "whatsapp", "voice"].includes(channel)) return NextResponse.json({ ok: false, reason: "invalid_channel" }, { status: 200 });
+  if (!workspaceId || !template_id) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 400 });
+  if (!["sms", "email", "whatsapp", "voice"].includes(channel)) return NextResponse.json({ ok: false, reason: "invalid_channel" }, { status: 400 });
 
   const maxChars = CHANNEL_MAX[channel] ?? 320;
   if (bodyText.length > maxChars) bodyText = bodyText.slice(0, maxChars).trim();
-  if (containsForbiddenLanguage(bodyText)) return NextResponse.json({ ok: false, reason: "forbidden_language" }, { status: 200 });
+  if (containsForbiddenLanguage(bodyText)) return NextResponse.json({ ok: false, reason: "forbidden_language" }, { status: 400 });
 
   const authErr = await requireWorkspaceRole(req, workspaceId, ["owner", "admin", "compliance"]);
   if (authErr) return authErr;
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
     .select("id, template_id, channel, intent_type, created_at")
     .maybeSingle();
 
-  if (error && (error as { code?: string }).code === "23505") return NextResponse.json({ ok: false, reason: "duplicate_template_id" }, { status: 200 });
-  if (error || !inserted) return NextResponse.json({ ok: false, reason: "insert_failed" }, { status: 200 });
+  if (error && (error as { code?: string }).code === "23505") return NextResponse.json({ ok: false, reason: "duplicate_template_id" }, { status: 400 });
+  if (error || !inserted) return NextResponse.json({ ok: false, reason: "insert_failed" }, { status: 500 });
   return NextResponse.json({ ok: true, id: (inserted as { id: string }).id, template_id, channel, intent_type });
 }

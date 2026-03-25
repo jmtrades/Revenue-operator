@@ -30,7 +30,7 @@ function assertScenarioAuth(request: NextRequest): NextResponse | null {
   const key = token ?? headerKey ?? "";
   const valid = (SCENARIO_INGEST_KEY && key === SCENARIO_INGEST_KEY) || (FOUNDER_KEY && key === FOUNDER_KEY);
   if (!valid || !key) {
-    return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 403 });
   }
   return null;
 }
@@ -53,18 +53,18 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });
   }
 
   const workspaceId = body.workspace_id?.trim();
   if (!workspaceId) {
-    return NextResponse.json({ ok: false, reason: "workspace_id_required" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "workspace_id_required" }, { status: 400 });
   }
 
   const channel = body.channel && CHANNELS.includes(body.channel as (typeof CHANNELS)[number]) ? body.channel : "inbound";
   const category = body.scenario_category?.trim();
   if (!category || !SCENARIO_CATEGORIES.includes(category as ScenarioCategory)) {
-    return NextResponse.json({ ok: false, reason: "invalid_scenario_category" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "invalid_scenario_category" }, { status: 400 });
   }
 
   const context = body.structured_context_json && typeof body.structured_context_json === "object"
@@ -72,22 +72,22 @@ export async function POST(request: NextRequest) {
     : {};
   const contextStr = JSON.stringify(context);
   if (contextStr.length > MAX_CONTEXT_BYTES) {
-    return NextResponse.json({ ok: false, reason: "structured_context_too_large" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "structured_context_too_large" }, { status: 400 });
   }
 
   const expectedOutcome = body.expected_outcome_type?.trim();
   if (!expectedOutcome || !OUTCOME_TYPES.includes(expectedOutcome as (typeof OUTCOME_TYPES)[number])) {
-    return NextResponse.json({ ok: false, reason: "invalid_expected_outcome_type" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "invalid_expected_outcome_type" }, { status: 400 });
   }
 
   const expectedNext = body.expected_next_required_action?.trim();
   if (expectedNext != null && expectedNext !== "" && !NEXT_REQUIRED_ACTIONS.includes(expectedNext as (typeof NEXT_REQUIRED_ACTIONS)[number])) {
-    return NextResponse.json({ ok: false, reason: "invalid_expected_next_required_action" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "invalid_expected_next_required_action" }, { status: 400 });
   }
 
   const expectedStop = body.expected_stop_reason?.trim();
   if (expectedStop != null && expectedStop !== "" && !STOP_REASONS.includes(expectedStop as (typeof STOP_REASONS)[number])) {
-    return NextResponse.json({ ok: false, reason: "invalid_expected_stop_reason" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "invalid_expected_stop_reason" }, { status: 400 });
   }
 
   const db = getDb();
@@ -108,11 +108,11 @@ export async function POST(request: NextRequest) {
       .select("id")
       .maybeSingle();
     if (error) {
-      return NextResponse.json({ ok: false, reason: "insert_failed" }, { status: 200 });
+      return NextResponse.json({ ok: false, reason: "insert_failed" }, { status: 500 });
     }
     const id = (data as { id?: string } | null)?.id;
     return NextResponse.json({ ok: true, id: id ?? null }, { status: 200 });
   } catch {
-    return NextResponse.json({ ok: false, reason: "insert_failed" }, { status: 200 });
+    return NextResponse.json({ ok: false, reason: "insert_failed" }, { status: 500 });
   }
 }

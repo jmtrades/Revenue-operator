@@ -61,15 +61,18 @@ export default function AppMessagesPage() {
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [sending, setSending] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [threadError, setThreadError] = useState<string | null>(null);
 
   const active = threads.find((t) => t.id === selected) ?? threads[0] ?? null;
 
   const fetchThreads = useCallback(async () => {
     setLoadingThreads(true);
+    setThreadError(null);
     try {
       const res = await fetch("/api/messages/threads", { credentials: "include", cache: "no-store" });
       if (!res.ok) {
         setThreads([]);
+        setThreadError(`Failed to load conversations (${res.status})`);
         return;
       }
       const data = await res.json();
