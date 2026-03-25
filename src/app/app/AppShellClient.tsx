@@ -423,11 +423,12 @@ export default function AppShellClient({
               <>
               <aside
                 className={cn(
-                  "fixed inset-y-0 left-0 z-40 flex flex-col shrink-0 bg-[var(--bg-surface)] border-r border-[var(--border-default)] transform transition-[transform,width] duration-250 ease-[cubic-bezier(0.25,0.1,0.25,1)]",
+                  "fixed inset-y-0 left-0 z-40 flex flex-col shrink-0 bg-[var(--bg-surface)] border-r border-[var(--border-default)]",
                   mobileSidebarOpen ? "translate-x-0" : "-translate-x-full",
                   "md:relative md:translate-x-0",
                   sidebarCollapsed ? "md:w-[60px]" : "md:w-[232px]",
-                  "w-[260px]"
+                  "w-[260px]",
+                  "transition-[transform,width] duration-250 ease-[cubic-bezier(0.23,1,0.32,1)]"
                 )}
                 data-product-tour="sidebarNav"
                 aria-label={t("accessibility.appNav")}
@@ -488,7 +489,8 @@ export default function AppShellClient({
                                     : undefined
                               }
                               className={cn(
-                                "group relative flex items-center rounded-[var(--radius-btn)] text-[13px] font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none",
+                                "group relative flex items-center rounded-[var(--radius-btn)] text-[13px] font-medium focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none active:scale-[0.98]",
+                                "transition-[background-color,color,transform] duration-160 ease-[cubic-bezier(0.23,1,0.32,1)]",
                                 sidebarCollapsed ? "md:justify-center md:px-0 px-3 py-2" : "gap-2.5 px-3 py-[7px]",
                                 active
                                   ? "bg-[var(--accent-primary)]/[0.08] text-[var(--accent-primary)]"
@@ -610,7 +612,10 @@ export default function AppShellClient({
             )}
             <main
               id="main"
-              className="flex-1 overflow-auto overflow-x-hidden min-w-0 bg-[var(--bg-base)] flex flex-col"
+              className="flex-1 overflow-auto overflow-x-hidden min-w-0 bg-[var(--bg-base)] flex flex-col transition-[margin-left] duration-250 ease-[cubic-bezier(0.23,1,0.32,1)]"
+              style={{
+                marginLeft: sidebarCollapsed && window.innerWidth >= 768 ? "0" : undefined,
+              } as React.CSSProperties}
               tabIndex={-1}
               role="main"
             >
@@ -619,7 +624,7 @@ export default function AppShellClient({
                   <button
                     type="button"
                     onClick={() => setCommandPaletteOpen(true)}
-                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[var(--radius-btn)] text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] border border-[var(--border-default)] transition-all duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-[var(--radius-btn)] text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] border border-[var(--border-default)] transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
                     aria-label={t("nav.shortcutCommandPalette")}
                   >
                     <CommandIcon className="w-3.5 h-3.5" />
@@ -697,11 +702,13 @@ export default function AppShellClient({
               {mobileMoreOpen && (
                 <div className="md:hidden fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label={t("accessibility.moreMenu")}>
                   <div
-                    className="absolute inset-0 bg-[var(--bg-hover)]"
+                    className="absolute inset-0 bg-[var(--bg-hover)] transition-opacity duration-200"
                     onClick={() => setMobileMoreOpen(false)}
                     onKeyDown={(e) => e.key === "Escape" && setMobileMoreOpen(false)}
                   />
-                  <div className="absolute bottom-0 left-0 right-0 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-[var(--border-default)] bg-[var(--bg-surface)] shadow-2xl">
+                  <div className="absolute bottom-0 left-0 right-0 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-[var(--border-default)] bg-[var(--bg-surface)] shadow-2xl transition-[transform] duration-350 ease-[cubic-bezier(0.32,0.72,0,1)]" style={{
+                    transform: mobileMoreOpen ? "translateY(0)" : "translateY(100%)",
+                  } as React.CSSProperties}>
                     <div className="sticky top-0 flex items-center justify-between px-4 py-3 border-b border-[var(--border-default)] bg-[var(--bg-surface)]">
                       <span className="text-sm font-medium text-[var(--text-primary)]">More</span>
                       <button

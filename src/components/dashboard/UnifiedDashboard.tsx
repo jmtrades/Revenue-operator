@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { useWorkspaceSafe } from "@/components/WorkspaceContext";
 import {
@@ -24,6 +25,7 @@ import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { track } from "@/lib/analytics/posthog";
 import { safeGetItem, safeSetItem } from "@/lib/client/safe-storage";
+import { staggerContainer, staggerItem, staggerFast } from "@/lib/animations";
 import { VoiceABTestCard } from "@/components/dashboard/VoiceABTestCard";
 import { IntelligenceCard } from "@/components/dashboard/IntelligenceCard";
 
@@ -329,7 +331,7 @@ export function UnifiedDashboard() {
           <button
             onClick={() => load(true)}
             disabled={refreshing}
-            className="inline-flex items-center gap-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] transition-colors active:scale-[0.97]"
           >
             <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
             {t("actions.refresh", { defaultValue: "Refresh" })}
@@ -473,16 +475,19 @@ export function UnifiedDashboard() {
       </section>
 
       {/* ── KPI cards ──────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {kpis.map((k, index) => (
-          <div
+      <motion.div
+        className="grid grid-cols-2 md:grid-cols-4 gap-4"
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+      >
+        {kpis.map((k) => (
+          <motion.div
             key={k.label}
             className="kpi-card"
+            variants={staggerItem}
             style={{
               "--kpi-accent": k.accent,
-              animation: "fadeInUp 300ms var(--ease-out-expo, cubic-bezier(0.23, 1, 0.32, 1)) forwards",
-              opacity: 0,
-              animationDelay: `${index * 50}ms`,
             } as React.CSSProperties}
           >
             <div className="flex items-center gap-2 mb-3">
@@ -500,14 +505,19 @@ export function UnifiedDashboard() {
             {k.sub && (
               <p className="text-[11px] text-[var(--text-tertiary)] mt-0.5">{k.sub}</p>
             )}
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       {/* ── Two-column: Needs attention + Activity ─────────────────────── */}
-      <div className="grid lg:grid-cols-2 gap-6">
+      <motion.div
+        className="grid lg:grid-cols-2 gap-6"
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+      >
         {/* Needs attention */}
-        <section className="dash-section p-5 md:p-6" data-product-tour="needsAttentionQueue">
+        <motion.section className="dash-section p-5 md:p-6" data-product-tour="needsAttentionQueue" variants={staggerItem}>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-[var(--accent-warning)]" />
@@ -534,9 +544,14 @@ export function UnifiedDashboard() {
               </p>
             </div>
           ) : (
-            <ul className="space-y-2">
+            <motion.ul
+              className="space-y-2"
+              variants={staggerFast}
+              initial="initial"
+              animate="animate"
+            >
               {data.needs_attention.slice(0, 7).map((item) => (
-                <li key={item.id} className="attention-item px-4 py-3">
+                <motion.li key={item.id} className="attention-item px-4 py-3" variants={staggerItem}>
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="min-w-0">
                       <Link
@@ -567,14 +582,14 @@ export function UnifiedDashboard() {
                       </Link>
                     </div>
                   </div>
-                </li>
+                </motion.li>
               ))}
-            </ul>
+            </motion.ul>
           )}
-        </section>
+        </motion.section>
 
         {/* Activity feed */}
-        <section className="dash-section p-5 md:p-6">
+        <motion.section className="dash-section p-5 md:p-6" variants={staggerItem}>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-[var(--accent-primary)]" />
@@ -590,22 +605,32 @@ export function UnifiedDashboard() {
               </p>
             </div>
           ) : (
-            <div className="space-y-0 max-h-72 overflow-y-auto pr-1">
+            <motion.div
+              className="space-y-0 max-h-72 overflow-y-auto pr-1"
+              variants={staggerFast}
+              initial="initial"
+              animate="animate"
+            >
               {data.activity.map((a) => (
-                <div key={a.id} className="activity-item py-3">
+                <motion.div key={a.id} className="activity-item py-3" variants={staggerItem}>
                   <span className="text-[11px] font-medium text-[var(--text-tertiary)] tabular-nums">
                     {fmtTime(a.at)}
                   </span>
                   <p className="text-sm text-[var(--text-secondary)] mt-0.5 leading-relaxed">{a.line}</p>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           )}
-        </section>
-      </div>
+        </motion.section>
+      </motion.div>
 
       {/* ── Active campaigns ───────────────────────────────────────────── */}
-      <section className="dash-section p-5 md:p-6">
+      <motion.section
+        className="dash-section p-5 md:p-6"
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, delay: 0.3 }}
+      >
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Megaphone className="w-4 h-4 text-[var(--accent-primary)]" />
@@ -653,13 +678,22 @@ export function UnifiedDashboard() {
             ))}
           </div>
         )}
-      </section>
+      </motion.section>
 
       {/* ── Voice Intelligence + A/B Testing ──────────────────────────── */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        <IntelligenceCard />
-        <VoiceABTestCard />
-      </div>
+      <motion.div
+        className="grid lg:grid-cols-2 gap-6"
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+      >
+        <motion.div variants={staggerItem}>
+          <IntelligenceCard />
+        </motion.div>
+        <motion.div variants={staggerItem}>
+          <VoiceABTestCard />
+        </motion.div>
+      </motion.div>
     </div>
   );
 }

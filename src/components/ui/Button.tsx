@@ -29,17 +29,17 @@ export function Button({
   ...rest
 }: ButtonProps) {
   const base =
-    "inline-flex items-center justify-center gap-2 font-medium transition-[background-color,box-shadow,border-color,color,transform] duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none select-none";
+    "inline-flex items-center justify-center gap-2 font-medium select-none transition-[transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none";
 
   const variants: Record<ButtonVariant, string> = {
     primary:
-      "bg-[var(--accent-primary)] text-white hover:bg-[var(--accent-primary-hover)] shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] rounded-[var(--radius-btn)]",
+      "bg-[var(--accent-primary)] text-white shadow-[var(--shadow-sm)] rounded-[var(--radius-btn)] transition-[transform,background-color,box-shadow] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] hover:bg-[var(--accent-primary-hover)] hover:shadow-[var(--shadow-md)]",
     secondary:
-      "border border-[var(--border-default)] text-[var(--text-primary)] bg-[var(--bg-surface)] hover:bg-[var(--bg-hover)] hover:border-[var(--border-hover)] shadow-[var(--shadow-xs)] hover:shadow-[var(--shadow-sm)] rounded-[var(--radius-btn)]",
+      "border border-[var(--border-default)] text-[var(--text-primary)] bg-[var(--bg-surface)] shadow-[var(--shadow-xs)] rounded-[var(--radius-btn)] transition-[transform,background-color,border-color,box-shadow] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] hover:bg-[var(--bg-hover)] hover:border-[var(--border-hover)] hover:shadow-[var(--shadow-sm)]",
     ghost:
-      "text-[var(--text-secondary)] bg-transparent hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] rounded-[var(--radius-btn)]",
+      "text-[var(--text-secondary)] bg-transparent rounded-[var(--radius-btn)] transition-[transform,background-color,color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)]",
     danger:
-      "bg-[var(--accent-danger)] text-white hover:bg-red-500 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] rounded-[var(--radius-btn)]",
+      "bg-[var(--accent-danger)] text-white shadow-[var(--shadow-sm)] rounded-[var(--radius-btn)] transition-[transform,background-color,box-shadow] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] hover:bg-red-500 hover:shadow-[var(--shadow-md)]",
   };
 
   const sizes: Record<ButtonSize, string> = {

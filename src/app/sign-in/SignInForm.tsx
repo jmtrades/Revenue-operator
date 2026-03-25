@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
 
 export default function SignInForm() {
   const t = useTranslations("auth");
@@ -143,11 +144,11 @@ export default function SignInForm() {
   return (
     <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center px-4">
       <div className="w-full max-w-[420px] space-y-5">
-        <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl p-8 shadow-[var(--shadow-xl)]">
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }} className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl p-8 shadow-[var(--shadow-xl)]">
           <div className="flex justify-center mb-5">
-            <div className="w-11 h-11 rounded-full bg-[var(--bg-surface)] text-[var(--text-primary)] flex items-center justify-center font-bold text-sm tracking-tight">
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.1, duration: 0.3, ease: [0.23, 1, 0.32, 1] }} className="w-11 h-11 rounded-full bg-[var(--bg-surface)] text-[var(--text-primary)] flex items-center justify-center font-bold text-sm tracking-tight">
               RT
-            </div>
+            </motion.div>
           </div>
           <h1 className="text-[22px] font-semibold text-[var(--text-primary)] text-center tracking-tight">
             {t("signIn.title")}
@@ -212,7 +213,7 @@ export default function SignInForm() {
               type="submit"
               disabled={busy}
               aria-label={t("signIn.button")}
-              className="w-full py-2.5 bg-[var(--bg-surface)] text-[var(--text-primary)] font-semibold text-[15px] rounded-xl hover:bg-[var(--bg-hover)] active:opacity-90 disabled:opacity-50 transition-all duration-150 shadow-lg shadow-white/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)]"
+              className="w-full py-2.5 bg-[var(--bg-surface)] text-[var(--text-primary)] font-semibold text-[15px] rounded-xl hover:bg-[var(--bg-hover)] active:scale-[0.97] disabled:opacity-50 transition-all duration-150 shadow-lg shadow-white/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)]"
             >
               {busy ? t("signingIn") : `${t("signIn.button")} →`}
             </button>
@@ -228,7 +229,7 @@ export default function SignInForm() {
             type="button"
             onClick={google}
             disabled={googleBusy}
-            className="w-full py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] font-medium text-[14px] rounded-xl flex items-center justify-center gap-2.5 hover:bg-[var(--bg-input-hover)] disabled:opacity-60 disabled:cursor-not-allowed transition-all"
+            className="w-full py-2.5 bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] font-medium text-[14px] rounded-xl flex items-center justify-center gap-2.5 hover:bg-[var(--bg-input-hover)] active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed transition-all"
           >
             {googleBusy ? (
               <>
@@ -268,7 +269,7 @@ export default function SignInForm() {
               {t("forgotPassword")}
             </Link>
           </p>
-        </div>
+        </motion.div>
 
         <p className="text-center text-[var(--text-secondary)] text-[13px]">
           {t("noAccount")}{" "}
