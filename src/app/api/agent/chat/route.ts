@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const DEMO_SYSTEM =
   `You answer phone calls for Recall Touch. Adapt to the caller's business context, stay calm and natural, and guide the conversation toward the next clear step. Keep replies short, human, and focused on the caller's name, need, and next step.`;
@@ -27,6 +28,9 @@ const AGENTS: Record<string, { name: string; style: string; greeting: string }> 
 type Message = { role: "user" | "assistant"; content: string };
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   // Rate limit: 20 requests per minute per IP (demo endpoint)
   const ip = getClientIp(req);
   const rl = await checkRateLimit(`agent-chat:${ip}`, 20, 60_000);

@@ -206,18 +206,16 @@ export async function POST(req: NextRequest) {
     }
 
     const workspaceId = randomUUID();
-    const trialEnd = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
-    const trialEndIso = trialEnd.toISOString();
     const { error: wsErr } = await db.from("workspaces").insert({
       id: workspaceId,
       name: "My workspace",
       owner_id: userId,
       autonomy_level: "assisted",
       kill_switch: false,
-      billing_status: "trial",
-      protection_renewal_at: trialEndIso,
-      trial_ends_at: trialEndIso,
-      trial_end_at: trialEndIso,
+      billing_status: "pending",
+      protection_renewal_at: null,
+      trial_ends_at: null,
+      trial_end_at: null,
     });
 
     if (wsErr) {
@@ -298,7 +296,7 @@ export async function POST(req: NextRequest) {
         payment_method_collection: "always",
         payment_method_types: ["card"],
         line_items: [{ price: stripePriceId, quantity: 1 }],
-        subscription_data: { trial_period_days: 14, metadata: { workspace_id: workspaceId } },
+        subscription_data: { metadata: { workspace_id: workspaceId } },
         success_url: `${origin}/connect?workspace_id=${encodeURIComponent(workspaceId)}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/activate?canceled=1`,
       });

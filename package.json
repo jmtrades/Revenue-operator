@@ -44,7 +44,7 @@
     "lucide-react": "^0.575.0",
     "mammoth": "^1.12.0",
     "motion": "^12.38.0",
-    "next": "16.1.6",
+    "next": "16.2.1",
     "next-intl": "^4.8.3",
     "openai": "^6.18.0",
     "pdf-parse": "^2.4.5",

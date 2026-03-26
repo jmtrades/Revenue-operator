@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 // Simple in-memory rate limiter: IP -> timestamp of last request
 const ipLastRequestMap: Map<string, number> = new Map();
@@ -36,6 +37,9 @@ function getRateLimit(ip: string): { allowed: boolean; remaining: number } {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   // Get client IP from headers
   const clientIp = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
 

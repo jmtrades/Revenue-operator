@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const DEFAULT_FAQ = [
   { q: "What are your hours?", a: "We are open Monday through Friday, 9 AM to 5 PM." },
@@ -14,6 +15,9 @@ const DEFAULT_FAQ = [
 ];
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const session = await getSession(req);
   if (!session?.workspaceId || !session?.userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

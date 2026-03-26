@@ -97,8 +97,8 @@ describe("Auth signin/signup API contract", () => {
       body: JSON.stringify({ email: "test@example.com", password: "password123", businessName: "Test Co" }),
     });
     const res = await POST(req);
-    // Without real Supabase: 400 (signUp error) or 503 (session not configured). With real Supabase: 200 or confirmEmail.
-    expect([200, 400, 503]).toContain(res.status);
+    // Without real Supabase: 400 (signUp error), 500 (SESSION_SECRET not configured), or 503 (session not configured). With real Supabase: 200 or confirmEmail.
+    expect([200, 400, 500, 503]).toContain(res.status);
     const data = await res.json();
     if (res.status === 200) {
       expect(data.ok).toBe(true);

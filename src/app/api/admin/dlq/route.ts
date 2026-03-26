@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { enqueue } from "@/lib/queue";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const ADMIN_SECRET = process.env.CRON_SECRET ?? process.env.ADMIN_SECRET;
 
@@ -28,6 +29,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   if (!auth(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   let body: { job_id: string };
   try {

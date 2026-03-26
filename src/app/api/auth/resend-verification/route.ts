@@ -9,12 +9,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import * as Sentry from "@sentry/nextjs";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const resendSchema = z.object({
   email: z.string().email("Invalid email address"),
 });
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   try {
     const body = (await req.json().catch(() => null)) as unknown;
     const parsed = resendSchema.safeParse(body);

@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const DEFAULT_VOICE_ID = "us-female-warm-receptionist"; // Default Recall voice
 
@@ -43,6 +44,9 @@ function getVoiceServerUrl(): string | null {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   // Rate limit: 10 TTS requests per minute per IP
   const ip = getClientIp(req);
   const rl = await checkRateLimit(`agent-speak:${ip}`, 10, 60_000);

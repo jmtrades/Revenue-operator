@@ -7,6 +7,7 @@ import { syncPrimaryAgent } from "@/lib/agents/sync-primary-agent";
 import { DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
 import { canCreateAgent } from "@/lib/billing/plan-enforcement";
 import { VOICE_TIER_LIMITS } from "@/lib/voice/billing";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
@@ -82,6 +83,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   let body: { workspace_id: string; name: string; template?: string; purpose?: string; personality?: string; voice_id?: string; greeting?: string };
   try {
     body = await req.json();

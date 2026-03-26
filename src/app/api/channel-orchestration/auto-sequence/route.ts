@@ -14,6 +14,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { buildOptimalSequence } from "@/lib/channel-orchestration/engine";
 import { getDb } from "@/lib/db/queries";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 type SequenceGoal = "book_appointment" | "reactivate" | "qualify" | "close_deal" | "review_request";
 
@@ -26,6 +27,9 @@ const VALID_GOALS = new Set<SequenceGoal>([
 ]);
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   try {
     // Auth and workspace validation
     const session = await getSession(req);

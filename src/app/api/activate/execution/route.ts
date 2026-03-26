@@ -13,6 +13,7 @@ import { validateDomainPackForActivation } from "@/lib/domain-packs/validate-act
 import { resolveDomainPackConfig } from "@/lib/domain-packs/resolve";
 import { resolveCompliancePack } from "@/lib/governance/compliance-pack";
 import { getEnterpriseImmutabilityConfig } from "@/lib/enterprise/immutability";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const INDUSTRY_TO_DOMAIN: Record<string, string> = {
   general: "general",
@@ -37,6 +38,9 @@ type Body = {
 };
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   let body: Body;
   try {
     body = (await req.json()) as Body;
