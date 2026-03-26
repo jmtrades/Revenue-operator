@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
       this_month: usersMonth ?? 0,
       recent: (recentUsers ?? []).map((u: any) => ({
         id: u.id,
-        email: u.email,
+        email_masked: u.email ? u.email.replace(/(.{2}).*(@.*)/, "$1***$2") : null,
         name: u.full_name,
         created_at: u.created_at,
       })),

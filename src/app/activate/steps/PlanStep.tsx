@@ -43,7 +43,7 @@ export function PlanStep({ selectedPlan, onSelectPlan, onNext, canGoNext }: Plan
           {t("planSelection.title", { defaultValue: "Choose Your Plan" })}
         </h2>
         <p className="text-sm text-[var(--text-secondary)]">
-          {t("planSelection.subtitle", { defaultValue: "All plans include a 14-day free trial. Upgrade or downgrade anytime." })}
+          {t("planSelection.subtitle", { defaultValue: "Get started today and upgrade or downgrade anytime." })}
         </p>
       </div>
 
@@ -90,7 +90,7 @@ export function PlanStep({ selectedPlan, onSelectPlan, onNext, canGoNext }: Plan
 
               <div className="mb-4 pb-4 border-b border-[var(--border-default)]">
                 <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
-                  {t("planSelection.freeTrialLabel", { defaultValue: "14-day free trial" })}
+                  {t("planSelection.getStartedLabel", { defaultValue: "Get started today" })}
                 </p>
               </div>
 

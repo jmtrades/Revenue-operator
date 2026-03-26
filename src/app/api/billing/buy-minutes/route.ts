@@ -12,6 +12,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { getMinutePack, MINUTE_PACKS } from "@/lib/voice/billing";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 function log(event: string, data: Record<string, unknown>): void {
   if (data.reason || data.error) {
@@ -29,6 +30,9 @@ function effectiveOrigin(req: NextRequest): string | null {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   try {
     let body: {
       workspace_id?: string;

@@ -232,7 +232,7 @@ describe("Billing Integration Tests", () => {
       const res = await callTrialStart({ email: "invalid-email" });
       const data = await res.json();
 
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(400);
       expect(data).toHaveProperty("ok", false);
       expect(data).toHaveProperty("reason", "invalid_email");
     });

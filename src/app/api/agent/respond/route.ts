@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 /**
  * POST /api/agent/respond
@@ -36,6 +37,9 @@ CRITICAL RULES:
 - Always try to book an appointment or capture their contact info.`;
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const start = Date.now();
 
   // Rate limit: 60 requests per minute per IP (voice server makes rapid calls during conversations)

@@ -245,7 +245,7 @@ export default function AboutPage() {
                 className="text-sm mb-6"
                 style={{ color: "var(--text-secondary)" }}
               >
-                14-day free trial. No credit card required. See results in 24 hours.
+                Get started today. Cancel anytime.
               </p>
               <Link
                 href="/activate"

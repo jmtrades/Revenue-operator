@@ -12,8 +12,12 @@ import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { compileSystemPrompt } from "@/lib/business-brain";
 import { getVoiceProvider } from "@/lib/voice";
 import { DEFAULT_RECALL_VOICE_ID } from "@/lib/constants/recall-voices";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const { id } = await ctx.params;
   const db = getDb();
   const { data: agent } = await db.from("agents").select("id, workspace_id, name, greeting, knowledge_base").eq("id", id).maybeSingle();

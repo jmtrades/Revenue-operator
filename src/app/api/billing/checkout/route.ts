@@ -122,7 +122,6 @@ export async function POST(req: NextRequest) {
         const { randomUUID } = await import("crypto");
         const userId = randomUUID();
         const wsId = randomUUID();
-        const trialEnd = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
 
         try {
           await db.from("users").insert({
@@ -137,10 +136,10 @@ export async function POST(req: NextRequest) {
             owner_id: userId,
             autonomy_level: "assisted",
             kill_switch: false,
-            billing_status: "trial",
-            protection_renewal_at: trialEnd.toISOString(),
-            trial_ends_at: trialEnd.toISOString(),
-            trial_end_at: trialEnd.toISOString(),
+            billing_status: "pending",
+            protection_renewal_at: null,
+            trial_ends_at: null,
+            trial_end_at: null,
           });
 
           await db.from("settings").insert({
@@ -255,17 +254,8 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-      // Only set trial_period_days for truly new customers with no subscription history
-      let trialPeriodDays: number | undefined;
-      const hasSubscriptionHistory =
-        wsData.billing_status === "trial" ||
-        wsData.billing_status === "trial_ended" ||
-        wsData.billing_status === "cancelled" ||
-        wsData.stripe_subscription_id;
-
-      if (!hasSubscriptionHistory) {
-        trialPeriodDays = 14;
-      }
+      // No free trial — users pay from day one after experiencing the demo call
+      const trialPeriodDays: number | undefined = undefined;
 
       const session = await stripe.checkout.sessions.create({
         customer: customerId,

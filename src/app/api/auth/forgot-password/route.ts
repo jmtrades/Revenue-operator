@@ -3,10 +3,15 @@ import { createClient } from "@supabase/supabase-js";
 import { validateEmail } from "@/lib/auth/validate";
 import { getBaseUrl } from "@/lib/runtime/base-url";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
+
   const url = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").trim();
   const anonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "").trim();
   if (!url || !anonKey) {

@@ -156,17 +156,8 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      // Only set trial_period_days for truly new customers with no subscription history
-      let trialPeriodDays: number | undefined;
-      const hasSubscriptionHistory =
-        row.billing_status === "trial" ||
-        row.billing_status === "trial_ended" ||
-        row.billing_status === "cancelled" ||
-        row.stripe_subscription_id;
-
-      if (!hasSubscriptionHistory) {
-        trialPeriodDays = 14;
-      }
+      // No free trial — users pay from day one after experiencing the demo call
+      const trialPeriodDays: number | undefined = undefined;
 
       const session = await stripe.checkout.sessions.create({
         customer: customerId,

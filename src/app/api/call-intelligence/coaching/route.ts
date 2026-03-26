@@ -11,6 +11,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const COACHING_PROMPT = `You are an expert sales coaching system. Analyze this call transcript and provide actionable coaching feedback across these key dimensions:
 
@@ -132,6 +133,9 @@ function validateCoachingResponse(data: unknown): data is CoachingResponse {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const session = await getSession(req);
   if (!session?.userId || !session?.workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

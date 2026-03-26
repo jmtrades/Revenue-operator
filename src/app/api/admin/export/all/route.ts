@@ -19,10 +19,13 @@ export async function GET(req: NextRequest) {
     data: {},
   };
 
-  // Export all users
+  // Export all users (mask sensitive fields)
   try {
-    const { data: users } = await db.from("users").select("*");
-    result.data.users = users ?? [];
+    const { data: users } = await db.from("users").select("id, full_name, created_at, email_verified, last_sign_in_at");
+    result.data.users = (users ?? []).map((u: any) => ({
+      ...u,
+      email_masked: u.email ? u.email.replace(/(.{2}).*(@.*)/, "$1***$2") : null,
+    }));
   } catch (err) {
     result.data.users = [];
   }

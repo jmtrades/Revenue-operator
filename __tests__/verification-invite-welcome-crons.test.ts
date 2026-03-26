@@ -67,7 +67,7 @@ describe("Verification: invite, welcome, crons", () => {
       const { GET } = await import("@/app/api/invite/validate/route");
       const req = new NextRequest("http://localhost/api/invite/validate?token=invalid-token-12345");
       const res = await GET(req);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(404);
       const data = await res.json();
       expect(data).toHaveProperty("error");
       expect(["invalid", "expired"]).toContain(data.error);

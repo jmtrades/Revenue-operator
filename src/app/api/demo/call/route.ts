@@ -202,9 +202,22 @@ export async function POST(req: NextRequest) {
     });
 
     if ("error" in result) {
-      log("error", "demo_call.telnyx_error", { error: result.error });
+      log("error", "demo_call.telnyx_error", {
+        error: result.error,
+        from: fromNumber,
+        to: e164Phone,
+        connectionId,
+        webhookUrl: `${appUrl}/api/webhooks/telnyx/voice`,
+      });
+      // Surface the Telnyx error detail to help diagnose configuration issues
+      const userError = result.error.includes("credential")
+        || result.error.includes("connection")
+        || result.error.includes("not found")
+        || result.error.includes("not authorized")
+        ? "Demo calling is temporarily unavailable — configuration issue detected."
+        : "Could not start the demo call. Please check your phone number and try again.";
       return NextResponse.json(
-        { ok: false, error: "Could not start the demo call. Please check your phone number and try again." },
+        { ok: false, error: userError },
         { status: 500 },
       );
     }

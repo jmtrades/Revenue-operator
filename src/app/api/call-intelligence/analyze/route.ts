@@ -10,6 +10,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const ANALYSIS_PROMPT = `Analyze this call transcript and extract behavioral patterns. Focus on what the agent/caller does WELL — tone, opening, discovery, objection handling, qualification, closing, empathy, persistence, pacing, recovery.
 
@@ -34,6 +35,9 @@ function redactPII(text: string): string {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const session = await getSession(req);
   if (!session?.userId || !session?.workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

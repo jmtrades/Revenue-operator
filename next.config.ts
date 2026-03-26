@@ -135,7 +135,7 @@ const nextConfig: NextConfig = {
             value: csp,
           },
           // Preconnect to external services for faster first-byte
-          { key: "Link", value: "<https://db.ucjbsftixnnbmuodholg.supabase.co>; rel=preconnect" },
+          { key: "Link", value: `<${process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://db.ucjbsftixnnbmuodholg.supabase.co"}>; rel=preconnect` },
           { key: "Link", value: "<https://js.stripe.com>; rel=preconnect" },
         ],
       },
