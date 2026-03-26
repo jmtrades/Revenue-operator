@@ -216,7 +216,7 @@ export async function POST(req: NextRequest) {
             // Fallback: speak a greeting using Telnyx built-in TTS
             await speakText(
               callInfo.callControlId,
-              "Hey there! This is Sarah from Recall Touch. I'm an AI phone agent, and I wanted to show you what your callers would experience. Unfortunately I'm having a small technical issue connecting to my full brain right now, but normally I'd be chatting with you just like a real person. Try us again in a moment, or start a free trial at recall dash touch dot com. Thanks for checking us out!",
+              "Hey there! This is Sarah from Recall Touch. I'm your AI phone agent demo. I'm having a brief technical hiccup connecting right now, but normally I'd be having a natural conversation with you — answering questions, booking appointments, and recovering revenue around the clock. Head to recall-touch.com to get started, or try this demo again in a moment. Thanks for checking us out!",
               "female"
             );
           } else {

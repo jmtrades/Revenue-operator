@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireWorkspaceRole } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { containsForbiddenLanguage } from "@/lib/speech-governance/doctrine";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const CHANNEL_MAX: Record<string, number> = { sms: 320, email: 2000, whatsapp: 1000, voice: 120 };
 
@@ -30,6 +31,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const body = await req.json().catch(() => null);
   if (!body || typeof body !== "object") return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });
 

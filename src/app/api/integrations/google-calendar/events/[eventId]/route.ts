@@ -11,6 +11,7 @@ import {
   getGoogleCalendarClientId,
   getGoogleCalendarClientSecret,
 } from "@/lib/integrations/google-calendar-env";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export const dynamic = "force-dynamic";
 
@@ -61,6 +62,9 @@ export async function PATCH(
   req: NextRequest,
   ctx: { params: Promise<{ eventId: string }> }
 ) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const session = await getSession(req);
   if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const authErr = await requireWorkspaceAccess(req, session.workspaceId);
@@ -105,9 +109,13 @@ export async function PATCH(
 }
 
 export async function DELETE(
+
   req: NextRequest,
   ctx: { params: Promise<{ eventId: string }> }
 ) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const session = await getSession(req);
   if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const authErrDel = await requireWorkspaceAccess(req, session.workspaceId);

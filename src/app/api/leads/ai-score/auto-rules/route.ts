@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getWorkspaceSettings, setWorkspaceSettings } from "@/lib/db/workspace-settings";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export interface AutoScoringRules {
   score_on_call_complete: boolean;
@@ -70,6 +71,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const authSession = await getSession(req);
   const workspaceId =
     req.nextUrl.searchParams.get("workspace_id") || authSession?.workspaceId;

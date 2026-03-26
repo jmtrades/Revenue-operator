@@ -7,10 +7,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { randomBytes } from "crypto";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
+
   let body: { code?: string; client_id?: string; client_secret?: string; redirect_uri?: string; grant_type?: string };
   try {
     body = await req.json();

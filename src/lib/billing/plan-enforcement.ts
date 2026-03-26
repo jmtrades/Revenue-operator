@@ -47,7 +47,7 @@ const ACTIVE_STATUSES = new Set(["active", "trial"]);
  * still be able to buy numbers / use paid features — the purchase itself is
  * a conversion event.
  */
-const PAYABLE_STATUSES = new Set(["active", "trial", "trial_ended"]);
+const PAYABLE_STATUSES = new Set(["active", "trial", "trial_ended", "pending"]);
 
 function checkBillingActive(
   billingStatus: string | null | undefined,

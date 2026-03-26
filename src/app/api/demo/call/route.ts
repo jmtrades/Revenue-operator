@@ -22,6 +22,7 @@ import { log } from "@/lib/logger";
  *  - Numbers with 00 prefix: 0044 7911 123456 → +447911123456
  *  - Bare US/CA numbers (10 digits): 5551234567 → +15551234567
  *  - Numbers with leading country code but no +: 447911123456 → +447911123456
+ *  - UK numbers with leading 0: 07911123456 → +447911123456
  * Returns null if the number doesn't look valid.
  */
 function normalizeToE164(input: string): string | null {
@@ -29,10 +30,9 @@ function normalizeToE164(input: string): string | null {
   const hasPlus = input.startsWith("+");
   const digits = input.replace(/\D/g, "");
 
-  // E.164 allows 7–15 digits (after the +)
   if (digits.length < 7 || digits.length > 15) return null;
 
-  // Already has + prefix — trust it
+  // Already has + prefix — trust it (user entered full international format)
   if (hasPlus) return `+${digits}`;
 
   // International dialing with 00 prefix (common in Europe/Asia)
@@ -43,8 +43,17 @@ function normalizeToE164(input: string): string | null {
   // 10-digit bare number — assume US/Canada (+1)
   if (digits.length === 10) return `+1${digits}`;
 
-  // 11 digits starting with 1 — already includes US country code
+  // 11 digits starting with 1 — US/Canada with country code
   if (digits.length === 11 && digits.startsWith("1")) return `+${digits}`;
+
+  // UK numbers: 07xxx, 01xxx, 02xxx, 03xxx (10-11 digits starting with 0)
+  // Strip the leading 0 and prepend +44
+  if (digits.startsWith("0") && (digits.length === 10 || digits.length === 11)) {
+    return `+44${digits.slice(1)}`;
+  }
+
+  // Australian numbers: 04xxx (10 digits starting with 04)
+  // Already handled by UK pattern above (both use leading 0)
 
   // Anything else with 7–15 digits — prepend + and let Telnyx validate
   return `+${digits}`;
@@ -86,7 +95,7 @@ export async function POST(req: NextRequest) {
   let e164Phone = normalizeToE164(phone);
   if (!e164Phone) {
     return NextResponse.json(
-      { ok: false, error: "Please enter a valid phone number including your country code (e.g. +44 for UK, +61 for Australia)." },
+      { ok: false, error: "Please enter a valid phone number with your country code (e.g. +44 7911 123456 for UK, +1 555 123 4567 for US)." },
       { status: 400 },
     );
   }
@@ -94,7 +103,7 @@ export async function POST(req: NextRequest) {
   /* ── Verify Telnyx credentials are available ─────────── */
   if (!process.env.TELNYX_API_KEY) {
     return NextResponse.json(
-      { ok: false, error: "Demo calling is temporarily unavailable. Start a free trial to test with your own phone." },
+      { ok: false, error: "Demo calling is temporarily unavailable. Please try again shortly." },
       { status: 503 },
     );
   }
@@ -143,7 +152,7 @@ export async function POST(req: NextRequest) {
   if (!fromNumber) {
     log("error", "demo_call.missing_phone_number");
     return NextResponse.json(
-      { ok: false, error: "Demo calling is temporarily unavailable. Please start a free trial to test calls." },
+      { ok: false, error: "Demo calling is temporarily unavailable. Please try again shortly." },
       { status: 503 },
     );
   }

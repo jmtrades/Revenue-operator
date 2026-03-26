@@ -11,11 +11,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { createCommitment } from "@/lib/commitment-recovery";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const DEMO_LEAD_EXTERNAL_ID = "demo-seed-lead";
 const DEMO_THREAD_ID = "demo-seed-thread";
 
 export async function POST(request: NextRequest) {
+  const csrfBlock = assertSameOrigin(request);
+  if (csrfBlock) return csrfBlock;
+
   // Block in production to prevent demo data contamination
   if (process.env.NODE_ENV === "production" && !process.env.ALLOW_DEMO_SEED) {
     return NextResponse.json({ error: "Demo seed disabled in production" }, { status: 403 });

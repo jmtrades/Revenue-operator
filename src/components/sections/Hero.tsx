@@ -78,7 +78,7 @@ function HeroVoiceDemo() {
     const value = phone.trim();
     const digits = value.replace(/\D/g, "");
     if (!value || digits.length < 7 || digits.length > 15) {
-      setCallError(t("invalidPhone"));
+      setCallError("Please enter your full phone number with country code (e.g. +44 7911 123456)");
       return;
     }
     setCallLoading(true);
@@ -157,7 +157,7 @@ function HeroVoiceDemo() {
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleDemoCall()}
-            placeholder={t("placeholder")}
+            placeholder="+44 7911 123456"
             className="w-full pl-9 pr-3 py-2.5 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
             style={{
               background: "var(--bg-inset)",
@@ -185,6 +185,9 @@ function HeroVoiceDemo() {
       {callError && (
         <p className="text-xs" style={{ color: "var(--accent-danger)" }}>{callError}</p>
       )}
+      <p className="text-[11px]" style={{ color: "var(--text-quaternary)" }}>
+        Include your country code: +44 (UK), +1 (US), +61 (AU), +49 (DE)
+      </p>
       <p className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>
         {t("disclaimer")}
       </p>
@@ -286,7 +289,7 @@ export function Hero() {
                 href={ROUTES.START}
                 className="btn-marketing-blue btn-lg group no-underline flex items-center justify-center gap-2 w-full sm:w-auto active:scale-[0.97]"
               >
-                {t("startFreeTrial")}
+                {t("getStarted")}
                 <ArrowRight className="w-4 h-4" style={{ transition: "transform 200ms cubic-bezier(0.23, 1, 0.32, 1)" }} />
               </Link>
               <Link

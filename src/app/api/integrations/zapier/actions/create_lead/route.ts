@@ -6,10 +6,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getWorkspaceIdFromZapierToken } from "@/lib/integrations/zapier-auth";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
+
   const workspaceId = await getWorkspaceIdFromZapierToken(req.headers.get("authorization"));
   if (!workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

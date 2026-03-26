@@ -17,8 +17,12 @@ import {
   type EmitRecipient,
 } from "@/lib/execution-plan";
 import { RateLimitExceededError } from "@/lib/execution-plan/rate-limits";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const body = await req.json().catch(() => null);
   if (!body || typeof body !== "object") {
     return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });

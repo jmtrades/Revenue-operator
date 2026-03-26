@@ -8,10 +8,14 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { burstDrain } from "@/lib/queue/burst-drain";
 import { getDb } from "@/lib/db/queries";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const DEV_SIM_SECRET = process.env.DEV_SIM_SECRET;
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const authHeader = req.headers.get("authorization");
   if (authHeader !== `Bearer ${DEV_SIM_SECRET}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

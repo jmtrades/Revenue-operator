@@ -11,10 +11,14 @@ import { resolveMessagePolicy } from "@/lib/governance/message-policy";
 import { resolveCompliancePack } from "@/lib/governance/compliance-pack";
 import { getApprovedTemplate, renderTemplate } from "@/lib/speech-governance/templates";
 import { containsForbiddenLanguage, trimToMaxChars, MAX_SMS_CHARS } from "@/lib/speech-governance/doctrine";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const MAX_DISCLAIMER_LINE = 90;
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const body = await req.json().catch(() => null);
   if (!body || typeof body !== "object")
     return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });
