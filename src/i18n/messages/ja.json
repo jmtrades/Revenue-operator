@@ -1310,7 +1310,7 @@
       "renewal": "更新",
       "manageBilling": "請求を管理",
       "opening": "開いています…",
-      "statusTrial": "トライアル",
+      "statusTrial": "アクティブ",
       "statusActive": "アクティブ",
       "statusPastDue": "支払い遅延",
       "statusPaused": "一時停止",
@@ -4586,7 +4586,7 @@
       "pricing": {
         "heading": "売上に合ったシンプルな料金",
         "subheading": "席数ライセンスなし。応答の信頼性に対して支払い、ログイン人数ではない。",
-        "trialNote": "全プラン14日間無料トライアル。クレジットカード不要。"
+        "trialNote": "全プラン24時間対応サポート。クレジットカード不要。"
       },
       "pricingTiers": {
         "starter": {
@@ -4632,7 +4632,7 @@
         }
       },
       "cta": {
-        "button": "無料トライアルを開始 →"
+        "button": "今すぐ始める →"
       }
     },
     "features": {
@@ -4858,7 +4858,7 @@
           "cta": "営業に相談"
         }
       },
-      "footerNote": "全プランに含まれる：暗号化記録・コンプライアンス・監査証跡・14日間無料トライアル",
+      "footerNote": "全プランに含まれる：クレジットカード不要・30日間返金保証・SOC 2・HIPAA・256ビット暗号化。12,400以上の企業が信頼。",
       "cta": {
         "link": "プラン比較を見る →"
       }
@@ -4952,8 +4952,8 @@
           "desc": "該当がない？電話を受ける企業ならRecall Touchで対応可能。"
         }
       },
-      "footer": "Don't see your industry? Recall Touch works for any service business.",
-      "footerCta": "Start free trial →"
+      "footer": "お探しの業種が見つからない？Recall Touchはあらゆるサービス企業に対応しています。",
+      "footerCta": "今すぐ始める →"
     },
     "bentoVisuals": {
       "timelineLabels": {
@@ -5265,8 +5265,8 @@
           "answer": "Most teams are live within minutes. Connect your number, configure your workflows, run a test, and go live. You can refine sequences and agent behavior after you see it working."
         },
         "1": {
-          "question": "Is there a free trial?",
-          "answer": "Yes. 14 days. No credit card required. Full access to all features on your plan."
+          "question": "どのようにして始められますか？",
+          "answer": "サインアップして3分以内に開始。すべてのプランに全機能への完全なアクセスが含まれます。"
         },
         "2": {
           "question": "Can I use my existing business number?",
@@ -5324,9 +5324,9 @@
         }
       },
       "pricing": {
-        "heading": "Simple, Transparent Pricing",
-        "subheading": "Choose the plan that fits your business",
-        "trialNote": "14-day free trial, no credit card required"
+        "heading": "シンプルで透明性のある料金",
+        "subheading": "ビジネスに合ったプランを選択してください",
+        "trialNote": "24時間対応サポート、クレジットカード不要"
       },
       "pricingTiers": {
         "starter": {
@@ -5360,7 +5360,7 @@
         "billingPeriod": "/month"
       },
       "cta": {
-        "button": "Start Free Trial"
+        "button": "今すぐ始める"
       }
     }
   },
@@ -5512,7 +5512,7 @@
     },
     "cta": "無料で始める",
     "contactSales": "営業担当に相談する",
-    "allPlansInclude": "全プランに含まれる：暗号化記録・コンプライアンス枠組み・監査証跡・14日間無料トライアル。",
+    "allPlansInclude": "全プランに含まれる：暗号化記録・コンプライアンス枠組み・監査証跡・24時間対応サポート。",
     "roiCalculator": "ROI計算",
     "featureComparison": "機能比較",
     "feature": "機能",
@@ -5565,7 +5565,7 @@
     "annualNote": "年額契約で2か月分が途切れず適用されます。",
     "faqItems": [
       {
-        "q": "無料トライアルはどうなりますか？",
+        "q": "どのようにして始められますか？",
         "a": "14日間、全機能、クレジットカード不要。"
       },
       {
@@ -5602,7 +5602,7 @@
       },
       {
         "q": "購入前に試せますか？",
-        "a": "14日間トライアルまたは今すぐインタラクティブデモ。"
+        "a": "サインアップするか、今すぐインタラクティブデモを見てください。"
       },
       {
         "q": "解約方法は？",
@@ -5626,8 +5626,8 @@
     },
     "faq": {
       "title": "料金に関するよくある質問",
-      "trial": "無料トライアルはありますか？",
-      "trialAnswer": "はい。Enterprise を除くすべてのプランで 14 日間の無料トライアルをご利用いただけます。",
+      "trial": "どのようにして始められますか？",
+      "trialAnswer": "サインアップして3分以内に開始。すべてのプランに全機能への完全なアクセスが含まれます。",
       "overage": "利用分が上限を超えた場合はどうなりますか？",
       "overageAnswer": "超過分はプランに応じた1分あたりの料金で、ペナルティなしで請求されます。",
       "cancel": "いつでも解約できますか？",
@@ -7301,7 +7301,7 @@
     "creatingAccount": "アカウントを作成中…",
     "almostThere": "もう少し…",
     "getStartedFree": "無料で始める →",
-    "noCardRequired": "クレジットカード不要 · 14日間無料トライアル · いつでもキャンセル可能",
+    "noCardRequired": "クレジットカード不要 · 30日間返金保証 · いつでもキャンセル可能",
     "alreadyHaveAccount": "すでにアカウントをお持ちですか？",
     "signInLink": "サインイン →",
     "tryAgain": "再試行",
@@ -8288,7 +8288,7 @@
       "monthly": "月額",
       "annual": "年額",
       "save": "20%割引",
-      "tryFree14Days": "14日間無料お試し",
+      "tryFree14Days": "リスクなしで始める",
       "annualNote": "年間契約で2か月分が中断なく適用。",
       "faq": {
         "title": "よくある質問",
@@ -8305,13 +8305,13 @@
         "annualLoss": "年間損失",
         "paybackPeriod": "回収期間",
         "annualRoi": "年間ROI",
-        "cta": "毎月{amount}の損失をストップ — 無料で試す"
+        "cta": "毎月{amount}の損失をストップ — 今すぐ始める"
       }
     },
     "finalCta": {
       "label": "始める",
       "heading": "応答のない通話は、逃げていく収益です。",
-      "description": "3分以内に14日間の無料トライアルを開始。クレジットカード不要。契約不要。リスクなし。",
+      "description": "5分以内にRecall Touchをライブ化。クレジットカード不要。契約不要。リスクなし。",
       "noCreditCard": "クレジットカード不要",
       "moneyBackGuarantee": "30日間返金保証",
       "compliance": "SOC 2 + HIPAA準拠",
@@ -8342,8 +8342,8 @@
     }
   },
   "signUp": {
-    "title": "Create your account",
-    "subtitle": "Start your free trial of Recall Touch",
+    "title": "アカウントを作成",
+    "subtitle": "Recall Touchを使い始める",
     "businessName": "Business name",
     "businessNamePlaceholder": "Your company name",
     "email": "Email address",
@@ -10208,11 +10208,11 @@
   },
   "exitIntent": {
     "title": "お待ちください — 売上機会を逃さないでください",
-    "subtitle": "無料の電話監査 + 14日間トライアルを取得してください。クレジットカードは不要です。",
+    "subtitle": "無料の電話監査を受けてください。クレジットカードは不要です。",
     "sendingButton": "送信中...",
     "submitButton": "無料監査を受ける",
     "disclaimer": "30秒で完了します。いつでも配信停止できます。",
     "successTitle": "メールをご確認ください",
-    "successSubtitle": "無料の電話監査とトライアルアクセスの詳細をお送りしました。"
+    "successSubtitle": "無料の電話監査の詳細をお送りしました。"
   }
 }

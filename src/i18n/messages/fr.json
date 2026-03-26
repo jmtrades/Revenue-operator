@@ -4632,7 +4632,7 @@
         }
       },
       "cta": {
-        "button": "Essai gratuit →"
+        "button": "Commencer →"
       }
     },
     "features": {
@@ -4858,7 +4858,7 @@
           "cta": "Parler aux ventes"
         }
       },
-      "footerNote": "Tous les plans incluent : enregistrements chiffrés · cadre de conformité · traçabilité · 14 jours d'essai gratuit",
+      "footerNote": "Tous les plans incluent : pas de carte bancaire · garantie de remboursement 30 jours · SOC 2 · HIPAA · chiffrement 256-bit. De confiance pour plus de 12 400 entreprises.",
       "cta": {
         "link": "Voir la comparaison des plans →"
       }
@@ -4952,8 +4952,8 @@
           "desc": "Vous ne voyez pas votre activité ? Recall Touch convient à toute entreprise qui décroche le téléphone."
         }
       },
-      "footer": "Don't see your industry? Recall Touch works for any service business.",
-      "footerCta": "Start free trial →"
+      "footer": "Vous ne voyez pas votre secteur ? Recall Touch fonctionne pour toute entreprise de services.",
+      "footerCta": "Commencer →"
     },
     "bentoVisuals": {
       "timelineLabels": {
@@ -5265,8 +5265,8 @@
           "answer": "Most teams are live within minutes. Connect your number, configure your workflows, run a test, and go live. You can refine sequences and agent behavior after you see it working."
         },
         "1": {
-          "question": "Is there a free trial?",
-          "answer": "Yes. 14 days. No credit card required. Full access to all features on your plan."
+          "question": "Comment démarrer ?",
+          "answer": "Inscrivez-vous et démarrez en moins de 3 minutes. Tous les plans incluent accès complet à toutes les fonctionnalités."
         },
         "2": {
           "question": "Can I use my existing business number?",
@@ -5324,9 +5324,9 @@
         }
       },
       "pricing": {
-        "heading": "Simple, Transparent Pricing",
-        "subheading": "Choose the plan that fits your business",
-        "trialNote": "14-day free trial, no credit card required"
+        "heading": "Tarification Simple et Transparente",
+        "subheading": "Choisissez le plan qui convient à votre entreprise",
+        "trialNote": "Support 24/7, pas de carte bancaire requise"
       },
       "pricingTiers": {
         "starter": {
@@ -5360,7 +5360,7 @@
         "billingPeriod": "/month"
       },
       "cta": {
-        "button": "Start Free Trial"
+        "button": "Commencer"
       }
     }
   },
@@ -5565,8 +5565,8 @@
     "annualNote": "Deux mois appliqués sans interruption en engagement annuel.",
     "faqItems": [
       {
-        "q": "Comment fonctionne l'essai gratuit ?",
-        "a": "14 jours, toutes les fonctionnalités, pas de carte bancaire."
+        "q": "Comment démarrer ?",
+        "a": "Inscrivez-vous et commencez en moins de 3 minutes. Tous les plans incluent accès complet à toutes les fonctionnalités."
       },
       {
         "q": "Que se passe-t-il si je dépasse mes minutes ?",
@@ -5626,8 +5626,8 @@
     },
     "faq": {
       "title": "Questions sur les tarifs",
-      "trial": "Proposez-vous un essai gratuit ?",
-      "trialAnswer": "Oui — tous les plans hors Enterprise incluent un essai gratuit de 14 jours.",
+      "trial": "Comment démarrer ?",
+      "trialAnswer": "Inscrivez-vous et commencez en moins de 3 minutes. Tous les plans incluent accès complet à toutes les fonctionnalités.",
       "overage": "Que se passe-t-il si je dépasse mes minutes incluses ?",
       "overageAnswer": "Nous facturons simplement le dépassement au tarif par minute de votre plan, sans pénalités.",
       "cancel": "Puis-je annuler à tout moment ?",
@@ -8288,7 +8288,7 @@
       "monthly": "Mensuel",
       "annual": "Annuel",
       "save": "Économisez 20%",
-      "tryFree14Days": "Essai gratuit de 14 jours",
+      "tryFree14Days": "Commencer sans risque",
       "annualNote": "Deux mois offerts sur l'engagement annuel.",
       "faq": {
         "title": "Questions Fréquentes",
@@ -8305,13 +8305,13 @@
         "annualLoss": "Perte Annuelle",
         "paybackPeriod": "Délai de Rentabilité",
         "annualRoi": "ROI Annuel",
-        "cta": "Arrêtez de perdre {amount}/mois — Essai Gratuit"
+        "cta": "Arrêtez de perdre {amount}/mois — Commencer"
       }
     },
     "finalCta": {
       "label": "Commencer",
       "heading": "Chaque appel sans réponse, c'est du revenu qui s'échappe.",
-      "description": "Commencez votre essai gratuit de 14 jours en moins de 3 minutes. Sans carte bancaire. Sans engagement. Sans risque.",
+      "description": "Mettez Recall Touch en direct en moins de 5 minutes. Sans carte bancaire. Sans engagement. Sans risque.",
       "noCreditCard": "Sans carte bancaire",
       "moneyBackGuarantee": "Garantie satisfait ou remboursé 30 jours",
       "compliance": "Conforme SOC 2 + HIPAA",
@@ -8342,8 +8342,8 @@
     }
   },
   "signUp": {
-    "title": "Create your account",
-    "subtitle": "Start your free trial of Recall Touch",
+    "title": "Créez votre compte",
+    "subtitle": "Commencez à utiliser Recall Touch",
     "businessName": "Business name",
     "businessNamePlaceholder": "Your company name",
     "email": "Email address",
