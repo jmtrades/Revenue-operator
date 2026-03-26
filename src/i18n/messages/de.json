@@ -76,15 +76,19 @@
     "dashboard": "Übersicht",
     "dashboardCta": "Dashboard →",
     "signIn": "Anmelden",
-    "startFree": "Kostenlos starten",
-    "startFreeCta": "Kostenlos starten →",
+    "startFree": "Jetzt starten",
+    "startFreeCta": "Jetzt starten →",
     "toggleMenu": "Menü umschalten",
     "industryPlumbing": "Sanitär & HVAC",
     "industryDental": "Zahnarzt",
     "industryLegal": "Recht",
     "industryRealEstate": "Immobilien",
     "industryHealthcare": "Gesundheitswesen",
-    "allUseCases": "Alle Anwendungsfälle →"
+    "allUseCases": "Alle Anwendungsfälle →",
+    "industryAutoRepair": "Autowerkstatt",
+    "industryConstruction": "Bau",
+    "industryInsurance": "Versicherung",
+    "viewAllIndustries": "Alle Branchen →"
   },
   "nav": {
     "dashboard": "Übersicht",
@@ -426,7 +430,7 @@
       "pageTitle": "Anmelden — Recall Touch",
       "googleComingSoon": "Demnächst verfügbar…",
       "noAccountPrefix": "Kein Konto gefunden. ",
-      "startFreeCta": "Kostenlos starten →",
+      "startFreeCta": "Jetzt starten →",
       "emailPlaceholder": "sie@unternehmen.com",
       "passwordPlaceholder": "Passwort eingeben",
       "showPassword": "Anzeigen",
@@ -476,7 +480,7 @@
       "savePassword": "Passwort speichern"
     },
     "noAccount": "Noch kein Konto?",
-    "startFree": "Kostenlos starten",
+    "startFree": "Jetzt starten",
     "toasts": {
       "noAccount": "Kein Konto gefunden. Erstelle eines, indem du kostenlos startest.",
       "googleComingSoon": "Google-Anmeldung kommt bald.",
@@ -1471,7 +1475,7 @@
     "onboardingWizard": {
       "getStartedHeading": "Loslegen",
       "getStartedSubtitle": "Erstellen Sie zuerst ein Konto. Ihr Telefonsystem ist in wenigen Minuten bereit.",
-      "startFree": "Kostenlos starten",
+      "startFree": "Jetzt starten",
       "stepOf": "Schritt {step} von {total}",
       "tellUsAboutBusiness": "Erzählen Sie uns von Ihrem Unternehmen",
       "businessName": "Firmenname",
@@ -4239,7 +4243,7 @@
     "checkmark": {
       "existingNumber": "Funktioniert mit deiner bestehenden Nummer",
       "setup": "5-Minuten-Einrichtung",
-      "noCard": "Keine Kreditkarte erforderlich"
+      "noCard": "Jederzeit kündbar"
     },
     "simulator": {
       "heading": "Sehen Sie, wie Ihre KI einen Anruf bearbeitet",
@@ -4253,7 +4257,7 @@
       "line5": "“Sarah, 555-0142.”",
       "line6": "“Alles klar, Sarah! Sie erhalten in Kürze eine Bestätigungs-SMS.”",
       "cta": "Jetzt kostenlos erstellen →",
-      "trialNote": "Keine Kreditkarte · Vollständiger Zugriff",
+      "trialNote": "Jederzeit kündbar · Vollständiger Zugriff",
       "loading": "Laden…",
       "conversationPreview": "Gesprächsvorschau",
       "subtitle": "So geht deine KI mit einem echten Anruf um",
@@ -4273,8 +4277,8 @@
       "followUp": "Nachfassen",
       "thatCallTook": "Der Anruf dauerte {seconds} Sekunden. Deine KI erledigt das 24/7.",
       "readyHeading": "Bereit?",
-      "readySubtext": "Kostenlos starten — 5 Min. Einrichtung. Keine Karte · Vollständiger Zugriff",
-      "ctaStartFree": "Kostenlos starten — 5 Min. →",
+      "readySubtext": "Jetzt starten — 5 Min. Einrichtung. Keine Karte · Vollständiger Zugriff",
+      "ctaStartFree": "Jetzt starten — 5 Min. →",
       "script0Title": "Eingehender Lead (Klempner)",
       "script0Result": "Lead erfasst und Termin gebucht.",
       "script0Line0": "Danke für Ihren Anruf! Wie kann ich Ihnen heute helfen?",
@@ -4342,12 +4346,12 @@
     },
     "trust": {
       "sectionLabel": "Vertrauen & Compliance",
-      "description": "Sicherheit und Zuverlässigkeit auf Unternehmensniveau. Kostenlos starten — keine Kreditkarte nötig.",
+      "description": "Sicherheit und Zuverlässigkeit auf Unternehmensniveau. Jetzt starten — jederzeit kündbar nötig.",
       "badgeSoc2": "SOC 2",
       "badgeGdpr": "DSGVO",
       "badgeEncryption": "256-Bit-Verschlüsselung",
       "badgeUptime": "",
-      "ctaStartFree": "Kostenlos starten →",
+      "ctaStartFree": "Jetzt starten →",
       "optionalUpdates": "Optional: Produkt-Updates erhalten.",
       "notifyMe": "Benachrichtigen",
       "onList": "Du bist auf der Liste!",
@@ -4389,7 +4393,7 @@
     "getThisForYourNumber": "Für Ihre Nummer erhalten →",
     "watchSampleCall": "Beispielanruf ansehen",
     "watchSampleCallDesc": "Startet automatisch beim Laden dieses Abschnitts und zeigt das Ergebnis.",
-    "startFreeSetup": "Kostenlos starten → 5 Min. Einrichtung",
+    "startFreeSetup": "Jetzt starten → 5 Min. Einrichtung",
     "metaTitle": "KI ausprobieren",
     "metaDescription": "Sprechen Sie mit Ihrer KI. Jetzt. Dieselbe KI, die echte Anrufe bearbeitet."
   },
@@ -4408,7 +4412,7 @@
     "sendMessage": "Nachricht senden",
     "sendError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
     "scheduleCall": "Anruf planen →",
-    "startFree": "Kostenlos starten →",
+    "startFree": "Jetzt starten →",
     "backToHome": "Zurück zur Startseite",
     "formSubject": "Betreff",
     "formName": "Name",
@@ -4461,8 +4465,8 @@
     "complianceBullets": "Aufzeichnung & Transkription · HIPAA-Option · Aufbewahrung 30-365 Tage · Audit",
     "ctaSubtext": "Recall Touch ab $297/mo, Einrichtung in 5 Minuten.",
     "ctaHeading": "Bereit, jeden Anruf, jede Nachricht und jedes Follow-up automatisch zu verwalten?",
-    "ctaBody": "Starten Sie in unter 60 Sekunden. Keine Kreditkarte nötig.",
-    "ctaButton": "Kostenlos starten → 5 Minuten",
+    "ctaBody": "Starten Sie in unter 60 Sekunden. Jederzeit kündbar nötig.",
+    "ctaButton": "Jetzt starten → 5 Minuten",
     "or": "Oder:",
     "orBookDemo": "Demo buchen",
     "viewDocs": "Dokumentation ansehen"
@@ -4531,7 +4535,7 @@
       "cta": {
         "text": "Bereit, das zu Ihrer Leitung zu machen?",
         "ariaLabel": "Interaktive Anruf-Demo öffnen",
-        "button": "Kostenlos starten →"
+        "button": "Jetzt starten →"
       },
       "useCases": {
         "missedCall": {
@@ -4702,7 +4706,7 @@
         }
       },
       "cta": {
-        "button": "Kostenlos starten →"
+        "button": "Jetzt starten →"
       }
     },
     "whoUses": {
@@ -4810,7 +4814,7 @@
             "1 Rufnummer",
             "Mehrverbrauch: $0.25/min"
           ],
-          "cta": "Kostenlos starten"
+          "cta": "Jetzt starten"
         },
         "business": {
           "name": "Growth",
@@ -4826,7 +4830,7 @@
             "Analysen",
             "Mehrverbrauch: $0.10/min"
           ],
-          "cta": "Kostenlos starten"
+          "cta": "Jetzt starten"
         },
         "scale": {
           "name": "Business",
@@ -4843,7 +4847,7 @@
             "Prioritäts-Support",
             "Mehrverbrauch: $0.08/min"
           ],
-          "cta": "Kostenlos starten"
+          "cta": "Jetzt starten"
         },
         "enterprise": {
           "name": "Agency",
@@ -4894,7 +4898,7 @@
       "heading": "Ihr KI-Telefonteam in 5 Minuten",
       "subheading": "Keine Karte. In 5 Minuten eingerichtet. Jeden Anruf beantworten.",
       "buttons": {
-        "start": "Kostenlos starten →",
+        "start": "Jetzt starten →",
         "demo": "Demo buchen →"
       },
       "note": "Für Anrufe, Texte, Termine, Nachfassen und Kampagnen. Eine Plattform.",
@@ -4904,7 +4908,7 @@
     },
     "scrollCta": {
       "message": "Ihr nächster Kunde könnte anrufen. Bereit?",
-      "button": "Kostenlos starten →",
+      "button": "Jetzt starten →",
       "dismiss": "Schließen"
     },
     "trust": {
@@ -5326,7 +5330,7 @@
       "pricing": {
         "heading": "Einfache, transparente Preisgestaltung",
         "subheading": "Wählen Sie den Plan, der zu Ihrem Unternehmen passt",
-        "trialNote": "24/7-Support, keine Kreditkarte erforderlich"
+        "trialNote": "24/7-Support, jederzeit kündbar erforderlich"
       },
       "pricingTiers": {
         "starter": {
@@ -5431,7 +5435,7 @@
     "title": "Preise",
     "subtitle": "Einfache, transparente Pläne, die mit deinem Umsatz wachsen.",
     "tagline": "Weniger als ein verpasster Anruf pro Monat.",
-    "plansDescription": "Pläne für Solo-Selbständige bis etablierte Unternehmen. Kostenlos starten, ohne Karte.",
+    "plansDescription": "Pläne für Solo-Selbständige bis etablierte Unternehmen. Jetzt starten, ohne Karte.",
     "monthly": "Monatlich",
     "annual": "Jährlich",
     "save17": "17 % sparen",
@@ -5510,7 +5514,7 @@
         "f8": "CRM webhook"
       }
     },
-    "cta": "Kostenlos starten",
+    "cta": "Jetzt starten",
     "contactSales": "Mit Vertrieb sprechen",
     "allPlansInclude": "Alle Tarife beinhalten: verschlüsselte Aufzeichnungen · Compliance-Rahmen · Prüfprotokoll · 14 Tage Test.",
     "roiCalculator": "ROI-Rechner",
@@ -5566,7 +5570,7 @@
     "faqItems": [
       {
         "q": "Wie funktioniert die kostenlose Testphase?",
-        "a": "14 Tage, alle Funktionen, keine Kreditkarte nötig."
+        "a": "14 Tage, alle Funktionen, jederzeit kündbar nötig."
       },
       {
         "q": "Was passiert bei Überschreitung der Minuten?",
@@ -6276,7 +6280,7 @@
     "stepsHeading": "Drei Schritte zu einem KI-Agenten, der jeden Anruf beantwortet.",
     "capabilitiesLabel": "Kernfunktionen",
     "roiLabel": "ROI",
-    "ctaStartFree": "Kostenlos starten →",
+    "ctaStartFree": "Jetzt starten →",
     "ctaWatchDemo": "Demo ansehen →",
     "ctaPricing": "Preise ansehen →",
     "problemHeading": "Verpasste Anrufe kosten {industry}-Unternehmen jeden Tag.",
@@ -7156,14 +7160,14 @@
     },
     "bottomCta": {
       "title": "Bereit, Ihre Telefon-Operationen zu transformieren?",
-      "description": "Richten Sie Ihren KI-Agent in 5 Minuten ein. Keine Kreditkarte erforderlich."
+      "description": "Richten Sie Ihren KI-Agent in 5 Minuten ein. Jederzeit kündbar erforderlich."
     },
     "fallback": {
       "title": "Branche",
       "solutions": "Lösungen",
       "dedicatedGuide": "Dedizierter Leitfaden in Arbeit",
       "description": "Wir erstellen eine eigene Seite für diese Branche. Starten Sie jetzt und richten Sie Ihren KI-Agent in 5 Minuten ein.",
-      "startFreeCta": "Kostenlos starten →",
+      "startFreeCta": "Jetzt starten →",
       "linkPlumbing": "Sanitär & HVAC",
       "linkDental": "Zahnarzt",
       "linkLegal": "Recht",
@@ -7300,8 +7304,8 @@
     "emailRequired": "E-Mail ist erforderlich.",
     "creatingAccount": "Ihr Konto wird erstellt…",
     "almostThere": "Fast geschafft…",
-    "getStartedFree": "Kostenlos starten →",
-    "noCardRequired": "Keine Kreditkarte erforderlich · 30-Tage-Geld-zurück-Garantie · Jederzeit kündbar",
+    "getStartedFree": "Jetzt starten →",
+    "noCardRequired": "30-Tage-Geld-zurück-Garantie · Jederzeit kündbar",
     "alreadyHaveAccount": "Sie haben bereits ein Konto?",
     "signInLink": "Anmelden →",
     "tryAgain": "Erneut versuchen",
@@ -7447,7 +7451,7 @@
         "title": "Schnellstart",
         "description": "Recall Touch in ca. 5 Minuten einrichten: Registrierung, Unternehmensdaten, KI-Agent, Telefonnummer und Testanruf.",
         "step1Label": "Registrierung",
-        "step1": "Gehen Sie zu Kostenlos starten und erstellen Sie Ihr Konto.",
+        "step1": "Gehen Sie zu Jetzt starten und erstellen Sie Ihr Konto.",
         "step2Label": "Unternehmensdaten",
         "step2": "Name, Adresse und Telefon des Unternehmens eingeben.",
         "step3Label": "KI-Agent",
@@ -7456,7 +7460,7 @@
         "step4": "Recall-Touch-Nummer hinzufügen oder verifizieren; ggf. bestehende Nummer weiterleiten.",
         "step5Label": "Testanruf",
         "step5": "Tab Test auf der Agenten-Seite nutzen, um einen echten Anruf zu tätigen und alles zu prüfen.",
-        "cta": "Kostenlos starten →"
+        "cta": "Jetzt starten →"
       },
       "callForwarding": {
         "title": "Anrufweiterleitung",
@@ -8219,7 +8223,7 @@
       "startFreeTrial": "Jetzt starten",
       "getStarted": "Jetzt starten",
       "watchDemo": "Demo ansehen",
-      "creditCard": "Keine Kreditkarte erforderlich. In unter 3 Minuten aktiv.",
+      "creditCard": "Jederzeit kündbar erforderlich. In unter 3 Minuten aktiv.",
       "dashboardTitle": "Umsatz-Dashboard",
       "dashboardPreview": "Vorschau",
       "coverage24_7": "24/7",
@@ -8311,8 +8315,8 @@
     "finalCta": {
       "label": "Loslegen",
       "heading": "Jeder unbeantwortete Anruf ist Umsatz, der verloren geht.",
-      "description": "Recall Touch in unter 5 Minuten live schalten. Keine Kreditkarte. Keine Verträge. Kein Risiko.",
-      "noCreditCard": "Keine Kreditkarte erforderlich",
+      "description": "Recall Touch in unter 5 Minuten live schalten. Jederzeit kündbar. Keine Verträge. Kein Risiko.",
+      "noCreditCard": "Jederzeit kündbar erforderlich",
       "moneyBackGuarantee": "30-Tage-Geld-zurück-Garantie",
       "compliance": "SOC 2 + HIPAA konform",
       "emailPlaceholder": "sie@firma.de",
@@ -8335,6 +8339,10 @@
       "realEstate": "Immobilien",
       "plumbingHvac": "Sanitär & HVAC",
       "insurance": "Versicherung",
+      "autoRepair": "Autowerkstatt",
+      "construction": "Bau",
+      "recruiting": "Recruiting",
+      "roofing": "Dachdecker",
       "medSpa": "Med Spa",
       "results": "Ergebnisse",
       "security": "Sicherheit",
@@ -10208,7 +10216,7 @@
   },
   "exitIntent": {
     "title": "Warte — Lasse keine Einnahmen liegen",
-    "subtitle": "Erhalten Sie ein kostenloses Telefon-Audit + 14-Tage-Test. Keine Kreditkarte erforderlich.",
+    "subtitle": "Erhalten Sie ein kostenloses Telefon-Audit + 14-Tage-Test. Jederzeit kündbar erforderlich.",
     "sendingButton": "Wird gesendet...",
     "submitButton": "Mein kostenloses Audit erhalten",
     "disclaimer": "Dauert 30 Sekunden. Jederzeit abmelden.",

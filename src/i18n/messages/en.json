@@ -3,7 +3,7 @@
   "compare": {
     "title": "Recall Touch vs {name}",
     "subtitle": "See how the AI Revenue Execution System compares.",
-    "cta": "Start free"
+    "cta": "Get started"
   },
   "notFoundPage": {
     "title": "Page not found",
@@ -81,7 +81,7 @@
     "dashboard": "Dashboard",
     "dashboardCta": "Dashboard →",
     "signIn": "Sign in",
-    "startFree": "Start free",
+    "startFree": "Get started",
     "startFreeCta": "Start free →",
     "toggleMenu": "Toggle menu",
     "industryPlumbing": "Plumbing & HVAC",
@@ -89,7 +89,11 @@
     "industryLegal": "Legal",
     "industryRealEstate": "Real Estate",
     "industryHealthcare": "Healthcare",
-    "allUseCases": "All use cases →"
+    "allUseCases": "All use cases →",
+    "industryAutoRepair": "Auto Repair",
+    "industryConstruction": "Construction",
+    "industryInsurance": "Insurance",
+    "viewAllIndustries": "All use cases →"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -559,7 +563,7 @@
       "savePassword": "Save password"
     },
     "noAccount": "Don't have an account?",
-    "startFree": "Start free",
+    "startFree": "Get started",
     "genericError": "Something went wrong",
     "toasts": {
       "noAccount": "No account found. Start free to create one.",
@@ -1734,7 +1738,7 @@
     "onboardingWizard": {
       "getStartedHeading": "Get started",
       "getStartedSubtitle": "Create an account first. Your AI agent will be ready in minutes.",
-      "startFree": "Start free",
+      "startFree": "Get started",
       "stepOf": "Step {step} of {total}",
       "tellUsAboutBusiness": "Tell us about your business",
       "businessName": "Business name",
@@ -4755,14 +4759,14 @@
   "hero": {
     "title": "Your Revenue Operations Run on Autopilot.",
     "subtitle": "Your AI phone agent answers every call, books appointments, qualifies leads, runs outbound campaigns, and follows up until the deal is closed — so your team focuses on the work, not the phone.",
-    "primaryCta": "Try Free for 14 Days →",
+    "primaryCta": "Get Started →",
     "secondaryCta": "See How It Works",
     "trustLine": "AI Revenue Operations · Works with your number · ROI-first pricing",
     "exampleDashboardLabel": "Example dashboard",
     "checkmark": {
       "existingNumber": "Works with your existing number",
       "setup": "5-minute setup",
-      "noCard": "No credit card required"
+      "noCard": "Cancel anytime"
     },
     "simulator": {
       "heading": "See how your AI handles a call",
@@ -4775,8 +4779,8 @@
       "line4": "“Great — Thursday at 2 PM is booked. Can I get your name and number?”",
       "line5": "“Sarah, 555-0142.”",
       "line6": "“All set, Sarah! You’ll get a confirmation text shortly.”",
-      "cta": "Build yours free →",
-      "trialNote": "No credit card required",
+      "cta": "Build yours →",
+      "trialNote": "Set up in under 3 minutes",
       "loading": "Loading…",
       "conversationPreview": "Conversation preview",
       "subtitle": "See how your AI handles a real call",
@@ -4796,8 +4800,8 @@
       "followUp": "Follow up",
       "thatCallTook": "That call took {seconds} seconds. Your AI handles this 24/7.",
       "readyHeading": "Ready?",
-      "readySubtext": "Get started — 5 minute setup. No credit card required",
-      "ctaStartFree": "Start free — 5 minute setup →",
+      "readySubtext": "Get started — 5 minute setup. Cancel anytime.",
+      "ctaStartFree": "Get started — 5 minute setup →",
       "script0Title": "Inbound Lead (Plumber)",
       "script0Result": "Lead captured and appointment booked.",
       "script0Line0": "Thanks for calling! How can I help you today?",
@@ -4865,7 +4869,7 @@
     },
     "trust": {
       "sectionLabel": "Trust & compliance",
-      "description": "Enterprise-grade security and reliability. Start free — no credit card required.",
+      "description": "Enterprise-grade security and reliability. Set up in under 5 minutes.",
       "badgeSoc2": "TCPA compliant",
       "badgeGdpr": "GDPR ready",
       "badgeEncryption": "256-bit encryption",
@@ -5101,8 +5105,8 @@
     "complianceBullets": "Recording & transcription · HIPAA option · Retention 30–365 days · Audit trail",
     "ctaSubtext": "Recall Touch starts at $147/month and takes 5 minutes to set up.",
     "ctaHeading": "Ready to handle every call, text, and follow-up automatically?",
-    "ctaBody": "Start in under 60 seconds. No credit card required.",
-    "ctaButton": "Start free → takes 5 minutes",
+    "ctaBody": "Start in under 60 seconds. Cancel anytime.",
+    "ctaButton": "Get started → takes 5 minutes",
     "or": "Or:",
     "orBookDemo": "Book a demo",
     "viewDocs": "View documentation"
@@ -5229,7 +5233,7 @@
       "pricing": {
         "heading": "Simple pricing that matches your revenue",
         "subheading": "No per-seat licenses. You pay for results — captured leads, booked appointments, and recovered revenue — not how many people log in.",
-        "trialNote": "Get started with no credit card required."
+        "trialNote": "Get started in under 3 minutes. Cancel anytime."
       },
       "pricingTiers": {
         "starter": {
@@ -5508,7 +5512,7 @@
             "Call transcripts",
             "Email support"
           ],
-          "cta": "Start free"
+          "cta": "Get started"
         },
         "business": {
           "name": "Growth",
@@ -5525,7 +5529,7 @@
             "CRM webhook",
             "Priority support"
           ],
-          "cta": "Start free"
+          "cta": "Get started"
         },
         "scale": {
           "name": "Business",
@@ -5540,7 +5544,7 @@
             "API access",
             "Phone support"
           ],
-          "cta": "Start free"
+          "cta": "Get started"
         },
         "enterprise": {
           "name": "Agency",
@@ -5555,10 +5559,10 @@
             "Dedicated account manager",
             "SLA guarantee"
           ],
-          "cta": "Start free"
+          "cta": "Get started"
         }
       },
-      "footerNote": "All plans include: no credit card · 30-day money-back guarantee · SOC 2 · HIPAA · 256-bit encryption. Trusted by 12,400+ businesses.",
+      "footerNote": "All plans include: 30-day money-back guarantee · SOC 2 · HIPAA · 256-bit encryption · Cancel anytime. Trusted by 12,400+ businesses.",
       "cta": {
         "link": "View full plan comparison →"
       }
@@ -5592,7 +5596,7 @@
     },
     "finalCta": {
       "heading": "Your AI phone team starts in 5 minutes",
-      "subheading": "No credit card. Set up in 5 minutes. Answer every call.",
+      "subheading": "Set up in 5 minutes. Answer every call. Cancel anytime.",
       "buttons": {
         "start": "Start free →",
         "demo": "Book a demo →"
@@ -6038,7 +6042,7 @@
       "pricing": {
         "heading": "Simple, Transparent Pricing",
         "subheading": "Choose the plan that fits your business",
-        "trialNote": "No credit card required"
+        "trialNote": "30-day money-back guarantee"
       },
       "pricingTiers": {
         "starter": {
@@ -6143,7 +6147,7 @@
     "title": "Pricing",
     "subtitle": "Simple, transparent plans that scale with your revenue.",
     "tagline": "Less than one new appointment a month.",
-    "plansDescription": "Plans for solo operators through to established businesses. Start free, no credit card.",
+    "plansDescription": "Plans for solo operators through to established businesses. Cancel anytime.",
     "monthly": "Monthly",
     "annual": "Annual",
     "save17": "Save 20%",
@@ -6199,7 +6203,7 @@
         "f6": "SLA guarantee"
       }
     },
-    "cta": "Start free",
+    "cta": "Get started",
     "contactSales": "Talk to sales",
     "allPlansInclude": "All plans include: encrypted records · compliance framework · audit trail · no commitment",
     "roiCalculator": "ROI calculator",
@@ -7745,7 +7749,7 @@
     },
     "bottomCta": {
       "title": "Ready to transform your revenue operations?",
-      "description": "Get your AI revenue agent set up in 5 minutes. No credit card required."
+      "description": "Get your AI revenue agent set up in 5 minutes. Cancel anytime."
     },
     "fallback": {
       "title": "Industry",
@@ -7794,8 +7798,8 @@
     "emailRequired": "Email is required.",
     "creatingAccount": "Creating your account…",
     "almostThere": "Almost there…",
-    "getStartedFree": "Get started free →",
-    "noCardRequired": "No credit card required · Cancel anytime",
+    "getStartedFree": "Get started →",
+    "noCardRequired": "30-day money-back guarantee · Cancel anytime",
     "alreadyHaveAccount": "Already have an account?",
     "signInLink": "Sign in →",
     "tryAgain": "Try again",
@@ -8787,7 +8791,7 @@
   },
   "sidebar": {
     "tier": "Starter",
-    "trial": " · Trial",
+    "trial": " · Pending",
     "activeSubscription": "Active subscription",
     "callsAnswered": "calls answered",
     "minUsed": "min used",
@@ -8880,7 +8884,7 @@
       "startFreeTrial": "Get started",
       "getStarted": "Get started",
       "watchDemo": "Watch demo",
-      "creditCard": "No credit card required. See results in 24 hours.",
+      "creditCard": "See results in 24 hours. Cancel anytime.",
       "dashboardTitle": "Revenue Operations",
       "dashboardPreview": "Preview",
       "coverage24_7": "24/7",
@@ -8972,8 +8976,8 @@
     "finalCta": {
       "label": "Get started",
       "heading": "Your revenue pipeline, fully automated.",
-      "description": "Get started in under 3 minutes. No credit card. No contracts. No risk.",
-      "noCreditCard": "No credit card required",
+      "description": "Get started in under 3 minutes. No contracts. No risk. Cancel anytime.",
+      "noCreditCard": "30-day money-back guarantee",
       "moneyBackGuarantee": "30-day money-back guarantee",
       "compliance": "SOC 2 + HIPAA compliant",
       "emailPlaceholder": "you@company.com",
@@ -8996,6 +9000,10 @@
       "realEstate": "Real Estate",
       "plumbingHvac": "Plumbing & HVAC",
       "insurance": "Insurance",
+      "autoRepair": "Auto Repair",
+      "construction": "Construction",
+      "recruiting": "Recruiting",
+      "roofing": "Roofing",
       "medSpa": "Med Spa",
       "results": "Results",
       "security": "Security",
@@ -10383,7 +10391,7 @@
     "passwordPlaceholder": "Enter your password",
     "showPassword": "Show password",
     "showPasswordAria": "Show password",
-    "startFreeCta": "Start free",
+    "startFreeCta": "Get started",
     "subtitle": "Manage your sign in settings",
     "title": "Sign in"
   },
@@ -10812,11 +10820,11 @@
   },
   "exitIntent": {
     "title": "Wait — Don't Leave Revenue on the Table",
-    "subtitle": "Get started with a free phone audit. No credit card required.",
+    "subtitle": "Get started with a free phone audit. Takes 30 seconds.",
     "sendingButton": "Sending...",
     "submitButton": "Get My Free Audit",
     "disclaimer": "Takes 30 seconds. Unsubscribe anytime.",
     "successTitle": "Check Your Email",
-    "successSubtitle": "We've sent you the details for your free phone audit and trial access."
+    "successSubtitle": "We've sent you the details for your free phone audit and full access."
   }
 }

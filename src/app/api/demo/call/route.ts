@@ -156,6 +156,15 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Ensure from number is valid E.164 (starts with + and has digits)
+  if (!fromNumber.startsWith("+") || fromNumber.replace(/\D/g, "").length < 10) {
+    log("error", "demo_call.invalid_from_number", { fromNumber });
+    return NextResponse.json(
+      { ok: false, error: "Demo calling is temporarily unavailable — configuration issue detected." },
+      { status: 503 },
+    );
+  }
+
   /* ── Capture lead (non-blocking) ─────────────────────── */
   try {
     const db = (await import("@/lib/db/queries")).getDb();
@@ -210,10 +219,14 @@ export async function POST(req: NextRequest) {
         webhookUrl: `${appUrl}/api/webhooks/telnyx/voice`,
       });
       // Surface the Telnyx error detail to help diagnose configuration issues
-      const userError = result.error.includes("credential")
+      const isConfigError = result.error.includes("credential")
         || result.error.includes("connection")
         || result.error.includes("not found")
         || result.error.includes("not authorized")
+        || result.error.includes("number")
+        || result.error.includes("forbidden")
+        || result.error.includes("not active");
+      const userError = isConfigError
         ? "Demo calling is temporarily unavailable — configuration issue detected."
         : "Could not start the demo call. Please check your phone number and try again.";
       return NextResponse.json(

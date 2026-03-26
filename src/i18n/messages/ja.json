@@ -84,7 +84,11 @@
     "industryLegal": "法務",
     "industryRealEstate": "不動産",
     "industryHealthcare": "ヘルスケア",
-    "allUseCases": "すべてのユースケース →"
+    "allUseCases": "すべてのユースケース →",
+    "industryAutoRepair": "自動車修理",
+    "industryConstruction": "建設",
+    "industryInsurance": "保険",
+    "viewAllIndustries": "すべての業種 →"
   },
   "nav": {
     "dashboard": "ダッシュボード",
@@ -478,7 +482,7 @@
     "noAccount": "アカウントをお持ちではありませんか？",
     "startFree": "無料で始める",
     "toasts": {
-      "noAccount": "アカウントが見つかりませんでした。無料で開始して作成してください。",
+      "noAccount": "アカウントが見つかりませんでした。今すぐ始めるして作成してください。",
       "googleComingSoon": "Google ログインは近日公開予定です。",
       "signInFailed": "サインインを完了できませんでした。もう一度お試しください。"
     },
@@ -4239,7 +4243,7 @@
     "checkmark": {
       "existingNumber": "既存の番号で利用可能",
       "setup": "5分でセットアップ",
-      "noCard": "クレジットカード不要"
+      "noCard": "いつでもキャンセル可能"
     },
     "simulator": {
       "heading": "AIがどのように電話対応するかご覧ください",
@@ -4253,7 +4257,7 @@
       "line5": "“Sarah、555-0142です。”",
       "line6": "“完了です、Sarahさん！まもなく確認のSMSをお送りします。”",
       "cta": "無料で作成する →",
-      "trialNote": "クレジットカード不要 · フルアクセス",
+      "trialNote": "いつでもキャンセル可能 · フルアクセス",
       "loading": "読み込み中…",
       "conversationPreview": "会話プレビュー",
       "subtitle": "AIが実際の通話をどう処理するか",
@@ -4273,8 +4277,8 @@
       "followUp": "フォローアップ",
       "thatCallTook": "その通話は{seconds}秒でした。AIが24時間365日対応します。",
       "readyHeading": "準備はいいですか？",
-      "readySubtext": "無料で開始 — 5分セットアップ。カード不要 · フルアクセス",
-      "ctaStartFree": "無料で開始 — 5分 →",
+      "readySubtext": "今すぐ始める — 5分セットアップ。いつでもキャンセル可能 · フルアクセス",
+      "ctaStartFree": "今すぐ始める — 5分 →",
       "script0Title": "インバウンドリード（配管工）",
       "script0Result": "リードを獲得し、予約を入れました。",
       "script0Line0": "お電話ありがとうございます。本日はどのようなご用件でしょうか？",
@@ -4342,12 +4346,12 @@
     },
     "trust": {
       "sectionLabel": "信頼とコンプライアンス",
-      "description": "エンタープライズグレードのセキュリティと信頼性。無料で開始 — クレジットカード不要。",
+      "description": "エンタープライズグレードのセキュリティと信頼性。今すぐ始める — いつでもキャンセル可能。",
       "badgeSoc2": "SOC 2",
       "badgeGdpr": "GDPR",
       "badgeEncryption": "256ビット暗号化",
       "badgeUptime": "",
-      "ctaStartFree": "無料で開始 →",
+      "ctaStartFree": "今すぐ始める →",
       "optionalUpdates": "オプション：製品アップデートを受け取る",
       "notifyMe": "通知する",
       "onList": "リストに追加されました！",
@@ -4389,7 +4393,7 @@
     "getThisForYourNumber": "自分の番号で使う →",
     "watchSampleCall": "サンプル通話を見る",
     "watchSampleCallDesc": "このセクションの読み込み時に自動再生され、結果を表示します。",
-    "startFreeSetup": "無料で開始 → 5分でセットアップ",
+    "startFreeSetup": "今すぐ始める → 5分でセットアップ",
     "metaTitle": "AIを試す",
     "metaDescription": "AIと話す。今すぐ。実際の通話を処理する同じAIです。"
   },
@@ -4408,7 +4412,7 @@
     "sendMessage": "メッセージを送る",
     "sendError": "エラーが発生しました。もう一度お試しください。",
     "scheduleCall": "通話を予約 →",
-    "startFree": "無料で開始 →",
+    "startFree": "今すぐ始める →",
     "backToHome": "ホームに戻る",
     "formSubject": "件名",
     "formName": "名前",
@@ -4461,8 +4465,8 @@
     "complianceBullets": "記録・文字起こし · HIPAAオプション · 保持30-365日 · 監査",
     "ctaSubtext": "Recall Touchは月$297から、5分でセットアップ。",
     "ctaHeading": "すべての通話・メッセージ・フォローアップを自動で処理する準備はできましたか？",
-    "ctaBody": "60秒以内に開始。クレジットカード不要。",
-    "ctaButton": "無料で開始 → 5分",
+    "ctaBody": "60秒以内に開始。いつでもキャンセル可能。",
+    "ctaButton": "今すぐ始める → 5分",
     "or": "または：",
     "orBookDemo": "デモを予約",
     "viewDocs": "ドキュメントを見る"
@@ -4586,7 +4590,7 @@
       "pricing": {
         "heading": "売上に合ったシンプルな料金",
         "subheading": "席数ライセンスなし。応答の信頼性に対して支払い、ログイン人数ではない。",
-        "trialNote": "全プラン24時間対応サポート。クレジットカード不要。"
+        "trialNote": "全プラン24時間対応サポート。いつでもキャンセル可能。"
       },
       "pricingTiers": {
         "starter": {
@@ -4858,7 +4862,7 @@
           "cta": "営業に相談"
         }
       },
-      "footerNote": "全プランに含まれる：クレジットカード不要・30日間返金保証・SOC 2・HIPAA・256ビット暗号化。12,400以上の企業が信頼。",
+      "footerNote": "全プランに含まれる：いつでもキャンセル可能・30日間返金保証・SOC 2・HIPAA・256ビット暗号化。12,400以上の企業が信頼。",
       "cta": {
         "link": "プラン比較を見る →"
       }
@@ -4892,7 +4896,7 @@
     },
     "finalCta": {
       "heading": "5分でAI電話チームを開始",
-      "subheading": "クレジットカード不要。5分でセットアップ。すべての通話に応答。",
+      "subheading": "いつでもキャンセル可能。5分でセットアップ。すべての通話に応答。",
       "buttons": {
         "start": "無料で始める →",
         "demo": "デモを予約 →"
@@ -5326,7 +5330,7 @@
       "pricing": {
         "heading": "シンプルで透明性のある料金",
         "subheading": "ビジネスに合ったプランを選択してください",
-        "trialNote": "24時間対応サポート、クレジットカード不要"
+        "trialNote": "24時間対応サポート、いつでもキャンセル可能"
       },
       "pricingTiers": {
         "starter": {
@@ -5431,7 +5435,7 @@
     "title": "料金",
     "subtitle": "売上規模に合わせて成長する、シンプルで透明なプラン。",
     "tagline": "月に1通話も取り逃がさない。",
-    "plansDescription": "個人事業主から法人まで。無料で開始、クレジットカード不要。",
+    "plansDescription": "個人事業主から法人まで。今すぐ始める、いつでもキャンセル可能。",
     "monthly": "月額",
     "annual": "年額",
     "save17": "17%お得",
@@ -5566,7 +5570,7 @@
     "faqItems": [
       {
         "q": "どのようにして始められますか？",
-        "a": "14日間、全機能、クレジットカード不要。"
+        "a": "14日間、全機能、いつでもキャンセル可能。"
       },
       {
         "q": "利用分を超えた場合は？",
@@ -7156,7 +7160,7 @@
     },
     "bottomCta": {
       "title": "電話業務を変革する準備はできていますか？",
-      "description": "5分でAIエージェントをセットアップできます。クレジットカードは不要です。"
+      "description": "5分でAIエージェントをセットアップできます。いつでもキャンセル可能は不要です。"
     },
     "fallback": {
       "title": "業界",
@@ -7301,7 +7305,7 @@
     "creatingAccount": "アカウントを作成中…",
     "almostThere": "もう少し…",
     "getStartedFree": "無料で始める →",
-    "noCardRequired": "クレジットカード不要 · 30日間返金保証 · いつでもキャンセル可能",
+    "noCardRequired": "いつでもキャンセル可能 · 30日間返金保証 · いつでもキャンセル可能",
     "alreadyHaveAccount": "すでにアカウントをお持ちですか？",
     "signInLink": "サインイン →",
     "tryAgain": "再試行",
@@ -8219,7 +8223,7 @@
       "startFreeTrial": "今すぐ始める",
       "getStarted": "今すぐ始める",
       "watchDemo": "デモを見る",
-      "creditCard": "クレジットカード不要。3分以内に稼働。",
+      "creditCard": "いつでもキャンセル可能。3分以内に稼働。",
       "dashboardTitle": "収益ダッシュボード",
       "dashboardPreview": "プレビュー",
       "coverage24_7": "24/7",
@@ -8311,8 +8315,8 @@
     "finalCta": {
       "label": "始める",
       "heading": "応答のない通話は、逃げていく収益です。",
-      "description": "5分以内にRecall Touchをライブ化。クレジットカード不要。契約不要。リスクなし。",
-      "noCreditCard": "クレジットカード不要",
+      "description": "5分以内にRecall Touchをライブ化。いつでもキャンセル可能。契約不要。リスクなし。",
+      "noCreditCard": "いつでもキャンセル可能",
       "moneyBackGuarantee": "30日間返金保証",
       "compliance": "SOC 2 + HIPAA準拠",
       "emailPlaceholder": "you@company.com",
@@ -8335,6 +8339,10 @@
       "realEstate": "不動産",
       "plumbingHvac": "配管・HVAC",
       "insurance": "保険",
+      "autoRepair": "自動車修理",
+      "construction": "建設",
+      "recruiting": "人材採用",
+      "roofing": "屋根工事",
       "medSpa": "メディカルスパ",
       "results": "実績",
       "security": "セキュリティ",
@@ -10208,7 +10216,7 @@
   },
   "exitIntent": {
     "title": "お待ちください — 売上機会を逃さないでください",
-    "subtitle": "無料の電話監査を受けてください。クレジットカードは不要です。",
+    "subtitle": "無料の電話監査を受けてください。いつでもキャンセル可能は不要です。",
     "sendingButton": "送信中...",
     "submitButton": "無料監査を受ける",
     "disclaimer": "30秒で完了します。いつでも配信停止できます。",

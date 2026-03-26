@@ -76,15 +76,19 @@
     "dashboard": "Painel",
     "dashboardCta": "Painel →",
     "signIn": "Entrar",
-    "startFree": "Começar grátis",
-    "startFreeCta": "Começar grátis →",
+    "startFree": "Começar agora",
+    "startFreeCta": "Começar agora →",
     "toggleMenu": "Abrir/fechar menu",
     "industryPlumbing": "Encanamento e HVAC",
     "industryDental": "Odontologia",
     "industryLegal": "Jurídico",
     "industryRealEstate": "Imobiliário",
     "industryHealthcare": "Saúde",
-    "allUseCases": "Todos os casos de uso →"
+    "allUseCases": "Todos os casos de uso →",
+    "industryAutoRepair": "Oficina mecânica",
+    "industryConstruction": "Construção",
+    "industryInsurance": "Seguros",
+    "viewAllIndustries": "Todos os setores →"
   },
   "nav": {
     "dashboard": "Painel",
@@ -426,7 +430,7 @@
       "pageTitle": "Entrar — Recall Touch",
       "googleComingSoon": "Em breve…",
       "noAccountPrefix": "Nenhuma conta encontrada. ",
-      "startFreeCta": "Começar grátis →",
+      "startFreeCta": "Começar agora →",
       "emailPlaceholder": "voce@empresa.com",
       "passwordPlaceholder": "Digite a senha",
       "showPassword": "Mostrar",
@@ -476,7 +480,7 @@
       "savePassword": "Guardar senha"
     },
     "noAccount": "Não tem uma conta?",
-    "startFree": "Começar grátis",
+    "startFree": "Começar agora",
     "toasts": {
       "noAccount": "Nenhuma conta encontrada. Crie uma começando grátis.",
       "googleComingSoon": "Login com Google em breve.",
@@ -1471,7 +1475,7 @@
     "onboardingWizard": {
       "getStartedHeading": "Começar",
       "getStartedSubtitle": "Crie uma conta primeiro. Seu sistema de telefonia estará pronto em minutos.",
-      "startFree": "Começar grátis",
+      "startFree": "Começar agora",
       "stepOf": "Passo {step} de {total}",
       "tellUsAboutBusiness": "Conte-nos sobre seu negócio",
       "businessName": "Nome do negócio",
@@ -4239,7 +4243,7 @@
     "checkmark": {
       "existingNumber": "Funciona com seu número atual",
       "setup": "Configuração em 5 minutos",
-      "noCard": "Nenhum cartão de crédito necessário"
+      "noCard": "Cancele quando quiser"
     },
     "simulator": {
       "heading": "Veja como sua IA atende uma ligação",
@@ -4253,7 +4257,7 @@
       "line5": "“Sarah, 555-0142.”",
       "line6": "“Tudo certo, Sarah! Você receberá um SMS de confirmação em breve.”",
       "cta": "Crie o seu grátis →",
-      "trialNote": "Sem cartão de crédito · Acesso completo",
+      "trialNote": "Cancele quando quiser · Acesso completo",
       "loading": "Carregando…",
       "conversationPreview": "Prévia da conversa",
       "subtitle": "Veja como sua IA lida com uma chamada real",
@@ -4273,8 +4277,8 @@
       "followUp": "Acompanhamento",
       "thatCallTook": "Essa chamada levou {seconds} segundos. Sua IA faz isso 24/7.",
       "readyHeading": "Pronto?",
-      "readySubtext": "Comece grátis — 5 min de configuração. Sem cartão · Acesso completo",
-      "ctaStartFree": "Começar grátis — 5 min →",
+      "readySubtext": "Comece agora — 5 min de configuração. Sem cartão · Acesso completo",
+      "ctaStartFree": "Começar agora — 5 min →",
       "script0Title": "Lead recebido (Encanador)",
       "script0Result": "Lead capturado e agendamento feito.",
       "script0Line0": "Obrigado por ligar! Como posso ajudar hoje?",
@@ -4342,12 +4346,12 @@
     },
     "trust": {
       "sectionLabel": "Confiança e conformidade",
-      "description": "Segurança e confiabilidade de nível empresarial. Comece grátis — sem cartão de crédito.",
+      "description": "Segurança e confiabilidade de nível empresarial. Comece agora — cancele quando quiser de crédito.",
       "badgeSoc2": "SOC 2",
       "badgeGdpr": "GDPR",
       "badgeEncryption": "Criptografia 256 bits",
       "badgeUptime": "",
-      "ctaStartFree": "Começar grátis →",
+      "ctaStartFree": "Começar agora →",
       "complianceAndSecurity": "Conformidade e Segurança",
       "optionalUpdates": "Opcional: receber atualizações do produto.",
       "notifyMe": "Avise-me",
@@ -4389,7 +4393,7 @@
     "getThisForYourNumber": "Obtenha isso para seu número →",
     "watchSampleCall": "Ver uma chamada de exemplo",
     "watchSampleCallDesc": "Inicia automaticamente ao carregar esta seção e mostra o resultado.",
-    "startFreeSetup": "Começar grátis → 5 min de configuração",
+    "startFreeSetup": "Começar agora → 5 min de configuração",
     "metaTitle": "Experimente a IA",
     "metaDescription": "Fale com sua IA. Agora. A mesma IA que atende chamadas reais."
   },
@@ -4461,7 +4465,7 @@
     "complianceBullets": "Gravação e transcrição · Opção HIPAA · Retenção 30-365 dias · Auditoria",
     "ctaSubtext": "Recall Touch a partir de $297/mês, configuração em 5 minutos.",
     "ctaHeading": "Pronto para gerenciar cada chamada, mensagem e acompanhamento automaticamente?",
-    "ctaBody": "Comece em menos de 60 segundos. Sem cartão de crédito.",
+    "ctaBody": "Comece em menos de 60 segundos. Cancele quando quiser.",
     "ctaButton": "Começar grátis → 5 minutos",
     "or": "Ou:",
     "orBookDemo": "Agendar demo",
@@ -4531,7 +4535,7 @@
       "cta": {
         "text": "Pronto para ser sua linha?",
         "ariaLabel": "Abrir demo de ligação interativa",
-        "button": "Começar grátis →"
+        "button": "Começar agora →"
       },
       "useCases": {
         "missedCall": {
@@ -4702,7 +4706,7 @@
         }
       },
       "cta": {
-        "button": "Começar grátis →"
+        "button": "Começar agora →"
       }
     },
     "whoUses": {
@@ -4810,7 +4814,7 @@
             "1 número",
             "Excedente: $0,25/min"
           ],
-          "cta": "Começar grátis"
+          "cta": "Começar agora"
         },
         "business": {
           "name": "Growth",
@@ -4826,7 +4830,7 @@
             "Análises",
             "Excedente: $0,10/min"
           ],
-          "cta": "Começar grátis"
+          "cta": "Começar agora"
         },
         "scale": {
           "name": "Business",
@@ -4843,7 +4847,7 @@
             "Suporte prioritário",
             "Excedente: $0,08/min"
           ],
-          "cta": "Começar grátis"
+          "cta": "Começar agora"
         },
         "enterprise": {
           "name": "Agency",
@@ -4894,7 +4898,7 @@
       "heading": "Sua equipe de telefone IA em 5 minutos",
       "subheading": "Sem cartão. Configure em 5 minutos. Atenda cada ligação.",
       "buttons": {
-        "start": "Começar grátis →",
+        "start": "Começar agora →",
         "demo": "Agendar demo →"
       },
       "note": "Para ligações, mensagens, agendamento, follow-ups e campanhas. Uma plataforma.",
@@ -4904,7 +4908,7 @@
     },
     "scrollCta": {
       "message": "Seu próximo cliente pode estar ligando. Pronto?",
-      "button": "Começar grátis →",
+      "button": "Começar agora →",
       "dismiss": "Dispensar"
     },
     "trust": {
@@ -5326,7 +5330,7 @@
       "pricing": {
         "heading": "Preços Simples e Transparentes",
         "subheading": "Escolha o plano que se ajusta ao seu negócio",
-        "trialNote": "Suporte 24/7, sem cartão de crédito necessário"
+        "trialNote": "Suporte 24/7, cancele quando quiser de crédito necessário"
       },
       "pricingTiers": {
         "starter": {
@@ -5431,7 +5435,7 @@
     "title": "Preços",
     "subtitle": "Planos simples e transparentes que crescem com sua receita.",
     "tagline": "Menos de uma chamada perdida por mês.",
-    "plansDescription": "Planos para autônomos até empresas estabelecidas. Comece grátis, sem cartão.",
+    "plansDescription": "Planos para autônomos até empresas estabelecidas. Comece agora, cancele quando quiser.",
     "monthly": "Mensal",
     "annual": "Anual",
     "save17": "Economize 17%",
@@ -5510,7 +5514,7 @@
         "f8": "CRM webhook"
       }
     },
-    "cta": "Começar grátis",
+    "cta": "Começar agora",
     "contactSales": "Falar com vendas",
     "allPlansInclude": "Todos os planos incluem: gravações encriptadas · quadro de conformidade · registo de auditoria · 14 dias de trial.",
     "roiCalculator": "Calculadora de ROI",
@@ -6276,7 +6280,7 @@
     "stepsHeading": "Três passos para um agente IA que atende cada chamada.",
     "capabilitiesLabel": "Capacidades principais",
     "roiLabel": "ROI",
-    "ctaStartFree": "Começar grátis →",
+    "ctaStartFree": "Começar agora →",
     "ctaWatchDemo": "Assistir a demonstração →",
     "ctaPricing": "Ver preços →",
     "problemHeading": "Chamadas perdidas custam caro aos negócios de {industry} todos os dias.",
@@ -7156,14 +7160,14 @@
     },
     "bottomCta": {
       "title": "Pronto para transformar suas operações telefônicas?",
-      "description": "Configure seu agente de IA em 5 minutos. Sem cartão de crédito necessário."
+      "description": "Configure seu agente de IA em 5 minutos. Cancele quando quiser necessário."
     },
     "fallback": {
       "title": "Setor",
       "solutions": "Soluções",
       "dedicatedGuide": "Guia dedicado em preparação",
       "description": "Estamos criando uma página para este setor. Comece agora e configure seu agente em 5 minutos.",
-      "startFreeCta": "Começar grátis →",
+      "startFreeCta": "Começar agora →",
       "linkPlumbing": "Encanamento e HVAC",
       "linkDental": "Odontologia",
       "linkLegal": "Jurídico",
@@ -7300,8 +7304,8 @@
     "emailRequired": "E-mail é obrigatório.",
     "creatingAccount": "Criando sua conta…",
     "almostThere": "Quase lá…",
-    "getStartedFree": "Comece grátis →",
-    "noCardRequired": "Sem cartão de crédito · 14 dias grátis · Cancele quando quiser",
+    "getStartedFree": "Comece agora →",
+    "noCardRequired": "Cancele quando quiser · 14 dias grátis · Cancele quando quiser",
     "alreadyHaveAccount": "Já tem uma conta?",
     "signInLink": "Entrar →",
     "tryAgain": "Tente novamente",
@@ -8219,7 +8223,7 @@
       "startFreeTrial": "Começar agora",
       "getStarted": "Começar agora",
       "watchDemo": "Ver demo",
-      "creditCard": "Sem cartão de crédito. Ativo em menos de 3 minutos.",
+      "creditCard": "Cancele quando quiser. Ativo em menos de 3 minutos.",
       "dashboardTitle": "Painel de Receitas",
       "dashboardPreview": "Prévia",
       "coverage24_7": "24/7",
@@ -8311,8 +8315,8 @@
     "finalCta": {
       "label": "Começar",
       "heading": "Toda chamada sem resposta é receita que vai embora.",
-      "description": "Coloque o Recall Touch ao vivo em menos de 5 minutos. Sem cartão de crédito. Sem contratos. Sem risco.",
-      "noCreditCard": "Sem cartão de crédito",
+      "description": "Coloque o Recall Touch ao vivo em menos de 5 minutos. Cancele quando quiser. Sem contratos. Sem risco.",
+      "noCreditCard": "Cancele quando quiser",
       "moneyBackGuarantee": "Garantia de reembolso de 30 dias",
       "compliance": "Conforme SOC 2 + HIPAA",
       "emailPlaceholder": "voce@empresa.com.br",
@@ -8335,6 +8339,10 @@
       "realEstate": "Imobiliário",
       "plumbingHvac": "Encanamento e HVAC",
       "insurance": "Seguros",
+      "autoRepair": "Oficina mecânica",
+      "construction": "Construção",
+      "recruiting": "Recrutamento",
+      "roofing": "Telhados",
       "medSpa": "Med Spa",
       "results": "Resultados",
       "security": "Segurança",
@@ -10208,7 +10216,7 @@
   },
   "exitIntent": {
     "title": "Espere — Não Deixe Receita na Mesa",
-    "subtitle": "Obtenha uma auditoria telefônica gratuita + avaliação de 14 dias. Sem cartão de crédito necessário.",
+    "subtitle": "Obtenha uma auditoria telefônica gratuita + avaliação de 14 dias. Cancele quando quiser necessário.",
     "sendingButton": "Enviando...",
     "submitButton": "Obter Minha Auditoria Gratuita",
     "disclaimer": "Leva 30 segundos. Cancele a inscrição a qualquer momento.",
