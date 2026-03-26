@@ -884,8 +884,8 @@ function OnboardingSidebar({ initialWorkspaceName }: { initialWorkspaceName?: st
       </nav>
       <div className="mt-4 pt-4 border-t border-[var(--border-default)] space-y-2">
         <div className="px-3 py-2 rounded-lg bg-[var(--accent-amber)]/10 border border-[var(--accent-amber)]/20">
-          <span className="block text-xs font-medium text-[var(--text-primary)]">Starter · Free Trial</span>
-          <span className="block text-[10px] text-[var(--text-secondary)]">14-day trial</span>
+          <span className="block text-xs font-medium text-[var(--text-primary)]">Starter</span>
+          <span className="block text-[10px] text-[var(--text-secondary)]">Active plan</span>
         </div>
       </div>
     </aside>

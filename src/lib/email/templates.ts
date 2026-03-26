@@ -81,13 +81,13 @@ export function buildWelcomeEmail(name: string): { subject: string; html: string
 
   const content = `
   <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">Welcome to Recall Touch</h1>
-  <p style="margin:0 0 24px;font-size:15px;color:#a3a3a3;line-height:1.6;">Your 14-day free trial is now active. Let's get your AI answering calls in under 3 minutes.</p>
+  <p style="margin:0 0 24px;font-size:15px;color:#a3a3a3;line-height:1.6;">Your account is ready. Let's get your AI answering calls in under 3 minutes.</p>
 
   <table role="presentation" width="100%" cellpadding="0" cellspacing="8" style="margin-bottom:24px;">
   <tr>
-    ${metricBox("Trial", "14 days")}
+    ${metricBox("Access", "Full")}
     ${metricBox("Setup", "3 min")}
-    ${metricBox("Cost", "$0")}
+    ${metricBox("Support", "24/7")}
   </tr>
   </table>
 
@@ -129,7 +129,7 @@ export function buildWelcomeEmail(name: string): { subject: string; html: string
     — Junior, Founder of Recall Touch
   </p>`;
 
-  return { subject, html: emailWrapper(content, `Your 14-day free trial is active. Set up your AI agent in 3 minutes.`) };
+  return { subject, html: emailWrapper(content, `Your account is active. Set up your AI agent in 3 minutes.`) };
 }
 
 // ─── TRIAL EXPIRING EMAIL ───────────────────────────────────────────────
