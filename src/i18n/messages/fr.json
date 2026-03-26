@@ -76,15 +76,19 @@
     "dashboard": "Tableau de bord",
     "dashboardCta": "Tableau de bord →",
     "signIn": "Connexion",
-    "startFree": "Commencer gratuitement",
-    "startFreeCta": "Commencer gratuitement →",
+    "startFree": "Commencer",
+    "startFreeCta": "Commencer →",
     "toggleMenu": "Ouvrir/fermer le menu",
     "industryPlumbing": "Plomberie et CTA",
     "industryDental": "Dentaire",
     "industryLegal": "Juridique",
     "industryRealEstate": "Immobilier",
     "industryHealthcare": "Santé",
-    "allUseCases": "Tous les cas d'usage →"
+    "allUseCases": "Tous les cas d'usage →",
+    "industryAutoRepair": "Réparation auto",
+    "industryConstruction": "Construction",
+    "industryInsurance": "Assurance",
+    "viewAllIndustries": "Tous les secteurs →"
   },
   "nav": {
     "dashboard": "Tableau de bord",
@@ -426,7 +430,7 @@
       "pageTitle": "Connexion — Recall Touch",
       "googleComingSoon": "Bientôt disponible…",
       "noAccountPrefix": "Aucun compte trouvé. ",
-      "startFreeCta": "Commencer gratuitement →",
+      "startFreeCta": "Commencer →",
       "emailPlaceholder": "vous@entreprise.com",
       "passwordPlaceholder": "Entrez le mot de passe",
       "showPassword": "Afficher",
@@ -476,7 +480,7 @@
       "savePassword": "Enregistrer le mot de passe"
     },
     "noAccount": "Vous n'avez pas de compte ?",
-    "startFree": "Commencer gratuitement",
+    "startFree": "Commencer",
     "toasts": {
       "noAccount": "Aucun compte trouvé. Créez-en un en démarrant gratuitement.",
       "googleComingSoon": "La connexion Google arrive bientôt.",
@@ -1471,7 +1475,7 @@
     "onboardingWizard": {
       "getStartedHeading": "Commencer",
       "getStartedSubtitle": "Créez un compte d'abord. Votre système téléphonique sera prêt en quelques minutes.",
-      "startFree": "Commencer gratuitement",
+      "startFree": "Commencer",
       "stepOf": "Étape {step} sur {total}",
       "tellUsAboutBusiness": "Parlez-nous de votre entreprise",
       "businessName": "Nom de l'entreprise",
@@ -4239,7 +4243,7 @@
     "checkmark": {
       "existingNumber": "Fonctionne avec votre numéro existant",
       "setup": "Configuration en 5 minutes",
-      "noCard": "Aucune carte bancaire requise"
+      "noCard": "Annulez à tout moment"
     },
     "simulator": {
       "heading": "Voyez comment votre IA gère un appel",
@@ -4253,7 +4257,7 @@
       "line5": "“Sarah, 555-0142.”",
       "line6": "“C'est noté, Sarah ! Vous recevrez un SMS de confirmation sous peu.”",
       "cta": "Créez le vôtre gratuitement →",
-      "trialNote": "Sans carte bancaire · Accès complet",
+      "trialNote": "Annulez à tout moment · Accès complet",
       "loading": "Chargement…",
       "conversationPreview": "Aperçu de la conversation",
       "subtitle": "Voyez comment votre IA gère un vrai appel",
@@ -4274,7 +4278,7 @@
       "thatCallTook": "Cet appel a duré {seconds} secondes. Votre IA gère cela 24h/24.",
       "readyHeading": "Prêt ?",
       "readySubtext": "Gratuit — 5 min de configuration. Sans carte · Accès complet",
-      "ctaStartFree": "Commencer gratuitement — 5 min →",
+      "ctaStartFree": "Commencer — 5 min →",
       "script0Title": "Lead entrant (Plombier)",
       "script0Result": "Lead capturé et rendez-vous réservé.",
       "script0Line0": "Merci d'avoir appelé ! Comment puis-je vous aider ?",
@@ -4347,7 +4351,7 @@
       "badgeGdpr": "RGPD",
       "badgeEncryption": "Chiffrement 256 bits",
       "badgeUptime": "",
-      "ctaStartFree": "Commencer gratuitement →",
+      "ctaStartFree": "Commencer →",
       "complianceAndSecurity": "Conformité et Sécurité",
       "optionalUpdates": "Optionnel : recevoir les actualités produit.",
       "notifyMe": "M'alerter",
@@ -4461,7 +4465,7 @@
     "complianceBullets": "Enregistrement et transcription · Option HIPAA · Rétention 30-365 jours · Audit",
     "ctaSubtext": "Recall Touch à partir de $297/mo, configuration en 5 minutes.",
     "ctaHeading": "Prêt à gérer chaque appel, SMS et suivi automatiquement ?",
-    "ctaBody": "Démarrez en moins de 60 secondes. Sans carte bancaire.",
+    "ctaBody": "Démarrez en moins de 60 secondes. Annulez à tout moment.",
     "ctaButton": "Commencer gratuit → 5 minutes",
     "or": "Ou :",
     "orBookDemo": "Réserver une démo",
@@ -4858,7 +4862,7 @@
           "cta": "Parler aux ventes"
         }
       },
-      "footerNote": "Tous les plans incluent : pas de carte bancaire · garantie de remboursement 30 jours · SOC 2 · HIPAA · chiffrement 256-bit. De confiance pour plus de 12 400 entreprises.",
+      "footerNote": "Tous les plans incluent : garantie de remboursement 30 jours · annulez à tout moment · SOC 2 · HIPAA · chiffrement 256-bit. De confiance pour plus de 12 400 entreprises.",
       "cta": {
         "link": "Voir la comparaison des plans →"
       }
@@ -5326,7 +5330,7 @@
       "pricing": {
         "heading": "Tarification Simple et Transparente",
         "subheading": "Choisissez le plan qui convient à votre entreprise",
-        "trialNote": "Support 24/7, pas de carte bancaire requise"
+        "trialNote": "Support 24/7, garantie 30 jours"
       },
       "pricingTiers": {
         "starter": {
@@ -5431,7 +5435,7 @@
     "title": "Tarifs",
     "subtitle": "Des plans simples et transparents qui évoluent avec vos revenus.",
     "tagline": "Moins d'un appel manqué par mois.",
-    "plansDescription": "Plans pour les indépendants comme pour les entreprises. Commencez gratuitement, sans carte.",
+    "plansDescription": "Plans pour les indépendants comme pour les entreprises. Commencez gratuitement, annulez à tout moment.",
     "monthly": "Mensuel",
     "annual": "Annuel",
     "save17": "Économisez 17 %",
@@ -5510,7 +5514,7 @@
         "f8": "CRM webhook"
       }
     },
-    "cta": "Commencer gratuitement",
+    "cta": "Commencer",
     "contactSales": "Parler aux ventes",
     "allPlansInclude": "Tous les forfaits incluent : enregistrements chiffrés · cadre de conformité · journal d'audit · 14 jours d'essai.",
     "roiCalculator": "Calculateur de ROI",
@@ -7156,14 +7160,14 @@
     },
     "bottomCta": {
       "title": "Prêt à transformer vos opérations téléphoniques ?",
-      "description": "Configurez votre agent IA en 5 minutes. Aucune carte de crédit requise."
+      "description": "Configurez votre agent IA en 5 minutes. Annulez à tout moment."
     },
     "fallback": {
       "title": "Secteur",
       "solutions": "Solutions",
       "dedicatedGuide": "Guide dédié en cours",
       "description": "Nous préparons une page pour ce secteur. Démarrez maintenant et configurez votre agent en 5 minutes.",
-      "startFreeCta": "Commencer gratuitement →",
+      "startFreeCta": "Commencer →",
       "linkPlumbing": "Plomberie et CVC",
       "linkDental": "Dentaire",
       "linkLegal": "Juridique",
@@ -7204,7 +7208,7 @@
     "emailRequired": "L'e-mail est requis.",
     "creatingAccount": "Création de votre compte…",
     "almostThere": "Presque terminé…",
-    "getStartedFree": "Commencer gratuitement →",
+    "getStartedFree": "Commencer →",
     "noCardRequired": "Sans carte · 14 jours gratuits · Annulez à tout moment",
     "alreadyHaveAccount": "Déjà un compte ?",
     "signInLink": "Se connecter →",
@@ -8219,7 +8223,7 @@
       "startFreeTrial": "Commencer",
       "getStarted": "Commencer",
       "watchDemo": "Voir la démo",
-      "creditCard": "Sans carte bancaire. Actif en moins de 3 minutes.",
+      "creditCard": "Annulez à tout moment. Actif en moins de 3 minutes.",
       "dashboardTitle": "Tableau de bord Revenus",
       "dashboardPreview": "Aperçu",
       "coverage24_7": "24/7",
@@ -8311,8 +8315,8 @@
     "finalCta": {
       "label": "Commencer",
       "heading": "Chaque appel sans réponse, c'est du revenu qui s'échappe.",
-      "description": "Mettez Recall Touch en direct en moins de 5 minutes. Sans carte bancaire. Sans engagement. Sans risque.",
-      "noCreditCard": "Sans carte bancaire",
+      "description": "Mettez Recall Touch en direct en moins de 5 minutes. Annulez à tout moment. Sans engagement. Sans risque.",
+      "noCreditCard": "Annulez à tout moment",
       "moneyBackGuarantee": "Garantie satisfait ou remboursé 30 jours",
       "compliance": "Conforme SOC 2 + HIPAA",
       "emailPlaceholder": "vous@entreprise.fr",
@@ -8335,6 +8339,10 @@
       "realEstate": "Immobilier",
       "plumbingHvac": "Plomberie & CVC",
       "insurance": "Assurance",
+      "autoRepair": "Réparation auto",
+      "construction": "Construction",
+      "recruiting": "Recrutement",
+      "roofing": "Toiture",
       "medSpa": "Med Spa",
       "results": "Résultats",
       "security": "Sécurité",
@@ -10208,7 +10216,7 @@
   },
   "exitIntent": {
     "title": "Attends — Ne Laisse Pas des Revenus sur la Table",
-    "subtitle": "Obtenez un audit téléphonique gratuit + un essai de 14 jours. Aucune carte de crédit requise.",
+    "subtitle": "Obtenez un audit téléphonique gratuit. Prend 30 secondes.",
     "sendingButton": "Envoi en cours...",
     "submitButton": "Obtenez Mon Audit Gratuit",
     "disclaimer": "Cela prend 30 secondes. Désinscrivez-vous à tout moment.",
