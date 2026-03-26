@@ -20,9 +20,14 @@ export function HomepageTestCallCTA() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const digits = phone.replace(/\D/g, "");
-    if (!phone.trim() || digits.length < 7 || digits.length > 15) {
+    const trimmed = phone.trim();
+    const digits = trimmed.replace(/\D/g, "");
+    if (!trimmed || digits.length < 7 || digits.length > 15) {
       setError("Please enter a valid phone number with your country code (e.g. +44 7911 123456)");
+      return;
+    }
+    if (digits.startsWith("0") && !trimmed.startsWith("+")) {
+      setError("Please include your country code (e.g. +44 7911 123456 for UK, +61 412 345 678 for Australia)");
       return;
     }
     setBusy(true);

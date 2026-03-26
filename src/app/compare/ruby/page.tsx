@@ -174,7 +174,7 @@ export default function RubyComparisonPage() {
               </p>
               <div className="mt-6 flex flex-col sm:flex-row gap-3">
                 <Link href="/activate" className="btn-marketing-primary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline active:scale-[0.97]" style={{ transition: "transform 0.15s ease-[cubic-bezier(0.23,1,0.32,1)]" }}>
-                  Start Free Trial →
+                  Get Started →
                 </Link>
                 <Link href="/pricing" className="btn-marketing-secondary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline active:scale-[0.97]" style={{ transition: "transform 0.15s ease-[cubic-bezier(0.23,1,0.32,1)]" }}>
                   View pricing →

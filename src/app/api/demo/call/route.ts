@@ -22,7 +22,7 @@ import { log } from "@/lib/logger";
  *  - Numbers with 00 prefix: 0044 7911 123456 → +447911123456
  *  - Bare US/CA numbers (10 digits): 5551234567 → +15551234567
  *  - Numbers with leading country code but no +: 447911123456 → +447911123456
- *  - UK numbers with leading 0: 07911123456 → +447911123456
+ *  - Numbers with leading 0 (UK, AU, etc.) → returns null (ambiguous, requires + country code)
  * Returns null if the number doesn't look valid.
  */
 function normalizeToE164(input: string): string | null {
@@ -46,14 +46,13 @@ function normalizeToE164(input: string): string | null {
   // 11 digits starting with 1 — US/Canada with country code
   if (digits.length === 11 && digits.startsWith("1")) return `+${digits}`;
 
-  // UK numbers: 07xxx, 01xxx, 02xxx, 03xxx (10-11 digits starting with 0)
-  // Strip the leading 0 and prepend +44
+  // Numbers with domestic trunk prefix (leading 0).
+  // We cannot distinguish UK (07xxx) from AU (04xxx) without knowing the
+  // caller's country, so we return null and ask the user to include their
+  // country code.  This avoids silently mis-routing AU numbers to +44.
   if (digits.startsWith("0") && (digits.length === 10 || digits.length === 11)) {
-    return `+44${digits.slice(1)}`;
+    return null; // ambiguous — require country code
   }
-
-  // Australian numbers: 04xxx (10 digits starting with 04)
-  // Already handled by UK pattern above (both use leading 0)
 
   // Anything else with 7–15 digits — prepend + and let Telnyx validate
   return `+${digits}`;

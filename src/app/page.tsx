@@ -91,10 +91,10 @@ export default async function HomePage() {
               },
               {
                 "@type": "Question",
-                name: "Is there a free trial?",
+                name: "How do I get started?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Yes. 14 days. No credit card required. Full access to all features on your plan.",
+                  text: "Sign up, choose your plan, and your AI agent is live in minutes.",
                 },
               },
               {

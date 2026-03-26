@@ -163,7 +163,7 @@ export function ComparisonContent({ competitor }: ComparisonContentProps) {
         <div className="rounded-xl bg-[var(--bg-card)]/50 border border-[var(--border-default)] p-6">
           <div className="text-sm text-[var(--text-tertiary)] mb-2">Recall Touch Cost</div>
           <div className="text-2xl font-bold text-white">$297-$497/mo</div>
-          <div className="text-xs text-[var(--text-tertiary)] mt-2">No setup, 14-day trial</div>
+          <div className="text-xs text-[var(--text-tertiary)] mt-2">No setup, instant activation</div>
         </div>
         <div className="rounded-xl bg-[var(--bg-card)]/50 border border-[var(--border-default)] p-6">
           <div className="text-sm text-[var(--text-tertiary)] mb-2">{data.name} Cost</div>
@@ -269,7 +269,7 @@ export function ComparisonContent({ competitor }: ComparisonContentProps) {
           Ready to see the difference?
         </h2>
         <p className="text-xl text-[var(--text-secondary)]">
-          14-day free trial. No credit card required. Full access to all features.
+          Get started today. Cancel anytime. Full access to all features.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
@@ -277,7 +277,7 @@ export function ComparisonContent({ competitor }: ComparisonContentProps) {
             className="inline-flex items-center justify-center rounded-xl bg-white px-8 py-4 text-black font-semibold hover:bg-[var(--bg-hover)] active:scale-[0.97]"
             style={{ transition: "background-color 0.3s ease-[cubic-bezier(0.23,1,0.32,1)], transform 0.15s ease-[cubic-bezier(0.23,1,0.32,1)]" }}
           >
-            Start free trial
+            Get started
           </Link>
           <Link
             href="/demo"
@@ -386,7 +386,7 @@ function getFAQs(
     "smith-ai": [
       {
         q: "Can I try Recall Touch before committing?",
-        a: "Yes, 14-day free trial with full features. No credit card needed. You'll get unlimited calls during the trial to test it thoroughly.",
+        a: "Yes, all plans include full access to every feature. Cancel anytime with no questions asked. You'll get unlimited calls to test it thoroughly.",
       },
       {
         q: "How is Recall Touch different from Smith.ai?",

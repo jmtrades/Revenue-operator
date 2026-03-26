@@ -81,6 +81,10 @@ function HeroVoiceDemo() {
       setCallError("Please enter your full phone number with country code (e.g. +44 7911 123456)");
       return;
     }
+    if (digits.startsWith("0") && !value.startsWith("+")) {
+      setCallError("Please include your country code (e.g. +44 7911 123456 for UK, +61 412 345 678 for Australia)");
+      return;
+    }
     setCallLoading(true);
     setCallStatus(null);
     setCallError(null);

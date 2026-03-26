@@ -55,7 +55,7 @@ export default function SettingsBillingPage() {
           <div>
             <div className="flex items-center gap-3 mb-2">
               <h3 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>
-                Free Trial
+                Active Plan
               </h3>
               <span className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs bg-emerald-500/10 text-emerald-400 border-emerald-500/30">
                 <Star className="w-3 h-3" />

@@ -65,8 +65,8 @@ export function ProtectionPausedBanner() {
           <div>
             <h2 className="text-sm font-semibold mb-0.5" style={{ color: urgencyColor }}>
               {daysLeft === 1
-                ? "Your free trial ends tomorrow"
-                : `Your free trial ends in ${daysLeft} days`}
+                ? "Your trial ends tomorrow"
+                : `Your trial ends in ${daysLeft} days`}
             </h2>
             <p className="text-xs" style={{ color: "var(--text-secondary)" }}>
               {daysLeft <= 2

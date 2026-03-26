@@ -124,10 +124,14 @@ export default function AppSettingsBillingPage() {
     }
   }, [workspaceId, buyingPack]);
 
+  const [redirectReason, setRedirectReason] = useState<string | null>(null);
+
   useEffect(() => {
     if (searchParams.get("plan_changed") === "1") setToast(tBilling("toast.planUpdated"));
     const minutesPurchased = searchParams.get("minutes_purchased");
     if (minutesPurchased) setToast(tBilling("toast.minutesAdded", { minutes: minutesPurchased }));
+    const reason = searchParams.get("reason");
+    if (reason) setRedirectReason(reason);
   }, [searchParams, tBilling]);
 
   useEffect(() => {
@@ -277,6 +281,18 @@ export default function AppSettingsBillingPage() {
           <p className="font-medium">{tBilling("errors.loadingFailed")}</p>
           <p className="mt-1 text-amber-200/80">{tBilling("errors.loadingFailedDesc")}</p>
           <Link href="/app/settings" className="inline-block mt-2 text-sm font-medium underline underline-offset-2">{tBilling("backToSettingsLink")}</Link>
+        </div>
+      )}
+      {redirectReason === "phone_purchase" && (
+        <div className="p-4 rounded-xl border border-blue-500/30 bg-blue-500/10 text-blue-100 text-sm mb-4">
+          <p className="font-semibold">Payment method required</p>
+          <p className="mt-1">You need a payment method on file to purchase phone numbers. Please add a card below or subscribe to a plan, then return to the phone marketplace.</p>
+        </div>
+      )}
+      {redirectReason === "subscription_required" && (
+        <div className="p-4 rounded-xl border border-blue-500/30 bg-blue-500/10 text-blue-100 text-sm mb-4">
+          <p className="font-semibold">Active subscription required</p>
+          <p className="mt-1">You need an active subscription to purchase phone numbers. Choose a plan below to get started, then return to the phone marketplace.</p>
         </div>
       )}
       {billingStatus === "payment_failed" && dunning && (

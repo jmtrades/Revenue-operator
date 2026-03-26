@@ -483,7 +483,7 @@ export default function VoiceDemoPage() {
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-semibold mb-4 text-center" style={{ letterSpacing: "-0.025em" }}>Simple, Transparent Pricing</h2>
           <p className="text-center mb-12 max-w-2xl mx-auto" style={{ color: "var(--text-secondary)" }}>
-            No hidden fees. Cancel anytime. 14-day free trial on every plan.
+            No hidden fees. Full access on every plan.
           </p>
 
           <div className="grid md:grid-cols-4 gap-5 mb-12">
@@ -534,7 +534,7 @@ export default function VoiceDemoPage() {
                   href="/activate"
                   className={`${tier.popular ? "btn-marketing-primary" : "btn-marketing-ghost"} w-full block text-center py-2.5 rounded-lg no-underline text-sm`}
                 >
-                  Try Free for 14 Days
+                  Get Started Now
                 </Link>
               </div>
             ))}
@@ -582,7 +582,7 @@ export default function VoiceDemoPage() {
             Your AI Revenue Operator Is Ready.
           </h2>
           <p className="text-lg mb-8" style={{ color: "var(--text-secondary)" }}>
-            Start your 14-day free trial. No credit card required.
+            Get started today. Cancel anytime.
           </p>
 
           {signupSuccess && (
@@ -622,7 +622,7 @@ export default function VoiceDemoPage() {
           </form>
 
           <p className="text-sm mb-6" style={{ color: "var(--text-tertiary)" }}>
-            No credit card required. 14-day free trial.
+            Cancel anytime.
           </p>
 
           <div className="flex flex-wrap justify-center gap-4 text-sm" style={{ color: "var(--text-secondary)" }}>
