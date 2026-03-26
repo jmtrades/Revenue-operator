@@ -87,7 +87,7 @@ export default function OutboundPage() {
                   href="/activate"
                   className="inline-flex px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-[var(--bg-hover)] transition-colors"
                 >
-                  Start Free Trial
+                  Get Started
                 </Link>
               </div>
             </div>

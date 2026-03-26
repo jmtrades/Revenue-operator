@@ -85,7 +85,7 @@ export default async function ResultsPage() {
                 className="inline-flex px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-[var(--bg-hover)] active:scale-[0.97]"
                 style={{ transition: "background-color 0.3s ease-[cubic-bezier(0.23,1,0.32,1)], transform 0.15s ease-[cubic-bezier(0.23,1,0.32,1)]" }}
               >
-                Start Your Free Trial
+                Get Started
               </Link>
               <Link
                 href="/demo"
@@ -149,7 +149,7 @@ export default async function ResultsPage() {
                 Ready to see it in action?
               </h2>
               <p className="mt-4" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                Watch a live demo of Recall Touch answering calls, qualifying leads, and automating follow-ups. Then start your free trial and see your own results on day one.
+                Watch a live demo of Recall Touch answering calls, qualifying leads, and automating follow-ups. Then get started and see your own results on day one.
               </p>
 
               <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
@@ -163,7 +163,7 @@ export default async function ResultsPage() {
                   href="/activate"
                   className="inline-flex px-6 py-3 rounded-xl border border-[var(--border-default)] font-semibold" style={{ color: "var(--text-primary)" }}
                 >
-                  Start Free Trial
+                  Get Started
                 </Link>
               </div>
             </div>

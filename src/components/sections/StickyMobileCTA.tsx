@@ -48,17 +48,17 @@ export function StickyMobileCTA() {
       <div className="flex items-center gap-3 px-4 py-3">
         <div className="flex-1 min-w-0">
           <p className="text-[13px] font-semibold truncate" style={{ color: "var(--text-primary)" }}>
-            14-day free trial
+            AI revenue recovery
           </p>
           <p className="text-[11px] truncate" style={{ color: "var(--text-tertiary)" }}>
-            No credit card required
+            Set up in under 3 minutes
           </p>
         </div>
         <Link
           href={ROUTES.START}
           className="btn-marketing-blue px-5 py-2.5 text-sm whitespace-nowrap no-underline flex items-center gap-1.5 shrink-0 active:scale-[0.97]"
         >
-          Start free
+          Get started
           <ArrowRight className="w-3.5 h-3.5" style={{ transition: "transform 200ms cubic-bezier(0.23, 1, 0.32, 1)" }} />
         </Link>
       </div>

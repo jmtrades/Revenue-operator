@@ -16,7 +16,7 @@ export function HomepageTrustBar() {
           <span>·</span>
           <span>Works with your existing number</span>
           <span>·</span>
-          <span>14-day free trial</span>
+          <span>Cancel anytime</span>
           <span>·</span>
           <span>Enterprise-grade security</span>
         </div>

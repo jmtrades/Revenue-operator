@@ -6,6 +6,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import crypto from "crypto";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 interface ChatSession {
   id: string;
@@ -79,6 +80,9 @@ export async function GET(req: NextRequest) {
  * Create a new chat session (public endpoint for visitors)
  */
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   // Rate limit: 10 new sessions per minute per IP (prevents abuse from public endpoint)
   const ip = getClientIp(req);
   const rl = await checkRateLimit(`chat-widget-session:${ip}`, 10, 60_000);

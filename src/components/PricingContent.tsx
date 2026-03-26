@@ -147,11 +147,11 @@ const FAQS = [
   { q: "Can I upgrade or downgrade anytime?", a: "Yes. Changes take effect on your next billing cycle. No penalties." },
   { q: "What if I exceed my minutes?", a: "Overage is billed per minute at $0.08/min across all plans. No surprise charges — you can set a hard cap in settings." },
   { q: "Do you offer discounts for annual billing?", a: "Yes. Annual plans save you ~20% vs. monthly. Plus, paying annually gives you priority support on all tiers." },
-  { q: "Is there a setup fee?", a: "No setup fee. Your 14-day free trial gives you full access to all features on your selected plan." },
+  { q: "Is there a setup fee?", a: "No setup fee. All plans give you full access to every feature from day one." },
   { q: "Can I cancel anytime?", a: "Yes. No long-term contracts. Cancel in your dashboard or pause for 30 days. We'll ask why — your feedback matters." },
   { q: "Does Recall Touch integrate with my calendar/CRM?", a: "Yes. Growth and Business tiers get CRM webhook and integrations with Google Calendar, Cal.com, Zapier, and Make.com. Business adds API access for custom integrations." },
   { q: "What's included in your support?", a: "Starter: Email support. Growth: Priority email support. Business: Priority email + phone support + dedicated account manager." },
-  { q: "Can I test Recall Touch free first?", a: "Absolutely. 14-day free trial. Full access to all features. No credit card required. Your AI agent will be answering calls in under 3 minutes." },
+  { q: "Can I test Recall Touch free first?", a: "Absolutely. Full access to all features. Cancel anytime. Your AI agent will be answering calls in under 3 minutes." },
   { q: "How does Recall Touch work?", a: "Recall Touch answers all your incoming calls with an AI phone agent, qualifies leads in real-time, books appointments directly into your calendar, and automatically follows up with contacts to move them through your pipeline." },
   { q: "Can I white-label this for my clients?", a: "Yes, white-label and agency features are available. Contact our sales team to discuss custom white-label, multi-client, and reseller options." },
 ];
@@ -494,8 +494,8 @@ export function PricingContent() {
           {[
             { icon: Shield, text: "256-bit encryption" },
             { icon: Check, text: "TCPA/GDPR compliant" },
-            { icon: Clock, text: "14-day free trial" },
-            { icon: Star, text: "No credit card required" },
+            { icon: Clock, text: "Full access included" },
+            { icon: Star, text: "Cancel anytime" },
             { icon: TrendingUp, text: "99.97% uptime SLA" },
             { icon: Zap, text: "Sub-second response" },
           ].map(({ icon: Icon, text }) => (
@@ -617,7 +617,7 @@ export function PricingContent() {
               href={ROUTES.START}
               className="inline-flex items-center gap-2 bg-emerald-500 text-black font-bold rounded-xl px-10 py-4 no-underline hover:bg-emerald-400 transition-[background-color,border-color,color,transform] shadow-lg shadow-emerald-500/25 text-lg hover:scale-[1.02] active:scale-[0.98]"
             >
-              Start Your Free 14-Day Trial
+              Get Started Now
               <ArrowRight className="w-5 h-5" />
             </Link>
 

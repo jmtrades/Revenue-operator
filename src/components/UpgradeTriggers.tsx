@@ -735,7 +735,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
                 textAlign: 'center',
               }}
             >
-              All plans include a 14-day free trial. Cancel anytime. Need a custom plan?{' '}
+              All plans include full access to every feature. Cancel anytime. Need a custom plan?{' '}
               <a
                 href="mailto:support@recall-touch.com"
                 style={{ color: themeVars.accentPrimary, textDecoration: 'none' }}

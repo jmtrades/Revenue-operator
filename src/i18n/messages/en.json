@@ -5978,7 +5978,7 @@
         },
         "1": {
           "question": "Do you offer flexible plans?",
-          "answer": "Yes. 14 days. No credit card required. Full access to all features on your plan."
+          "answer": "All plans include full access to every feature. Cancel anytime."
         },
         "2": {
           "question": "Can I use my existing business number?",
@@ -6257,7 +6257,7 @@
     "faqItems": [
       {
         "q": "How do I get started?",
-        "a": "14 days, full features, no credit card needed."
+        "a": "Full access to all features. Cancel anytime."
       },
       {
         "q": "What if I exceed my minutes?",
@@ -6317,8 +6317,8 @@
     },
     "faq": {
       "title": "Pricing questions",
-      "trial": "Do you offer a free trial?",
-      "trialAnswer": "Yes — all plans include flexible options and a 30-day money-back guarantee.",
+      "trial": "How do I get started?",
+      "trialAnswer": "Sign up and start in under 3 minutes. All plans include full access to every feature.",
       "overage": "What happens if I go over my minutes?",
       "overageAnswer": "We simply bill overage at your plan’s per-minute rate with no penalties.",
       "cancel": "Can I cancel anytime?",
@@ -7790,7 +7790,7 @@
     "welcomeAboard": "Welcome aboard!",
     "aiReady": "Your AI agent is ready.",
     "setUpAgent": "Set up my AI agent →",
-    "takes2Min": "Under 3 minutes · Your first 14 days are free",
+    "takes2Min": "Under 3 minutes · Get started today",
     "emailRequired": "Email is required.",
     "creatingAccount": "Creating your account…",
     "almostThere": "Almost there…",

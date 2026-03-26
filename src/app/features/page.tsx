@@ -180,13 +180,13 @@ export default function FeaturesPage() {
               className="text-base mb-6 max-w-lg mx-auto"
               style={{ color: "var(--text-secondary)" }}
             >
-              Start your free trial. No credit card. Your AI revenue operations platform will be live in under 3 minutes.
+              Get started today. Your AI revenue operations platform will be live in under 3 minutes.
             </p>
             <Link
               href="/activate"
               className="inline-flex items-center gap-2 bg-white text-black font-semibold rounded-xl px-8 py-4 hover:bg-[var(--bg-hover)] transition-colors no-underline text-lg"
             >
-              Start Free Trial
+              Get Started
               <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
