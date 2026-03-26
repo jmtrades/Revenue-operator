@@ -16,6 +16,7 @@ import { analyzeClosingCall } from "@/lib/zoom/analysis";
 import { sendCallOutcomeEmail } from "@/lib/email/call-alert";
 import { sendGoLiveEmail } from "@/lib/email/welcome";
 import { analyzeTranscriptForAnalytics } from "@/lib/analytics/post-call-insights";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const EMERGENCY_KEYWORDS = /\b(emergency|urgent|burst|leak|flood|flooding|flooded|fire|break-in|break in|broken in|no heat|no a\/c|no ac|out of power|power out|flooding|flooded)\b/i;
 
@@ -79,6 +80,9 @@ async function ensureLeadForCaller(input: {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   let body: {
     workspace_id?: string;
     call_sid?: string;

@@ -12,8 +12,12 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { ensureWorkspaceInstallationState } from "@/lib/installation";
 import { getWorkspaceReadiness } from "@/lib/runtime/workspace-readiness";
 import { ensureInstallationState } from "@/lib/adoption-acceleration/installation-state";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(request: NextRequest) {
+  const csrfBlock = assertSameOrigin(request);
+  if (csrfBlock) return csrfBlock;
+
   let body: { workspace_id?: string };
   try {
     body = await request.json().catch(() => ({}));

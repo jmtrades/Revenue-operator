@@ -8,11 +8,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { recordHandoffAcknowledgement } from "@/lib/delivery-assurance/handoff-ack";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const csrfBlock = assertSameOrigin(request);
+  if (csrfBlock) return csrfBlock;
+
   const { id: escalationId } = await params;
   if (!escalationId) return NextResponse.json({ error: "Missing escalation id" }, { status: 400 });
 
@@ -33,7 +37,12 @@ export async function POST(
   const body = await request.json().catch(() => ({}));
   const acknowledgedBy = typeof body.acknowledged_by === "string" ? body.acknowledged_by : undefined;
 
-  await recordHandoffAcknowledgement(escalationId, acknowledgedBy);
+  try {
+    await recordHandoffAcknowledgement(escalationId, acknowledgedBy);
+  } catch (err) {
+    console.error("[escalations/[id]/ack] recordHandoffAcknowledgement failed:", err instanceof Error ? err.message : err);
+    return NextResponse.json({ error: "Failed to record acknowledgement" }, { status: 500 });
+  }
 
   const workspaceId = workspaceIdFromRow;
   if (workspaceId) {

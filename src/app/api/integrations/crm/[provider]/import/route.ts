@@ -15,6 +15,7 @@ import { enqueueSync } from "@/lib/integrations/sync-engine";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { log } from "@/lib/logger";
 import type { CrmProviderId } from "@/lib/integrations/field-mapper";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const ALLOWED: CrmProviderId[] = [
   "hubspot",
@@ -148,6 +149,9 @@ export async function POST(
   req: NextRequest,
   ctx: { params: Promise<{ provider: string }> }
 ) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const session = await getSession(req);
   if (!session?.workspaceId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

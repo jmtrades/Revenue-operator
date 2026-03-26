@@ -8,8 +8,12 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const ip = getClientIp(req);
   const rl = await checkRateLimit(`lead-capture:${ip}`, 5, 600_000);
   if (!rl.allowed) {

@@ -7,8 +7,8 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { createHmac } from "crypto";
-import { assertSameOrigin } from "@/lib/http/csrf";
 import { createWorkspaceNotification } from "@/lib/notifications";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export const dynamic = "force-dynamic";
 

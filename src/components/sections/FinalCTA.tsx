@@ -118,7 +118,7 @@ export function FinalCTA() {
               disabled={submitted}
               className="btn-marketing-blue px-6 py-3 text-sm whitespace-nowrap group inline-flex items-center justify-center gap-2"
             >
-              {submitted ? t("redirecting") : t("startFreeTrial")}
+              {submitted ? t("redirecting") : t("getStarted")}
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
             </button>
           </form>

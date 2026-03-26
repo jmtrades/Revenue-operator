@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { recordMilestone } from "@/lib/ops/milestones";
 import { getSession } from "@/lib/auth/request-session";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get("token")?.trim();
@@ -61,5 +62,8 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const csrfBlock = assertSameOrigin(request);
+  if (csrfBlock) return csrfBlock;
+
   return GET(request);
 }

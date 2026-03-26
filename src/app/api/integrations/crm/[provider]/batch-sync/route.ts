@@ -8,9 +8,9 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { enqueueBatchOutbound } from "@/lib/integrations/sync-engine";
-import { assertSameOrigin } from "@/lib/http/csrf";
 import { checkRateLimit } from "@/lib/rate-limit";
 import type { CrmProviderId } from "@/lib/integrations/field-mapper";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const ALLOWED: CrmProviderId[] = [
   "salesforce",

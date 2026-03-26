@@ -1,9 +1,13 @@
 import { NextRequest } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const session = await getSession(req);
   if (!session?.userId || !session?.workspaceId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });

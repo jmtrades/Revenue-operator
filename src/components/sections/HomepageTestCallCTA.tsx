@@ -11,41 +11,39 @@ export function HomepageTestCallCTA() {
   const [phone, setPhone] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const helper = useMemo(
-    () => "We’ll validate your number and route you to a fast setup.",
+    () => "Enter your number and we’ll call you with a live AI demo — works worldwide.",
     []
   );
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const digits = phone.replace(/\D/g, "");
+    if (!phone.trim() || digits.length < 7 || digits.length > 15) {
+      setError("Please enter a valid phone number with your country code (e.g. +44 7911 123456)");
+      return;
+    }
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch("/api/public/test-call", {
+      const res = await fetch("/api/demo/call", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone_number: phone }),
       });
       const json = (await res.json().catch(() => null)) as
-        | { ok: true; next: string; normalized_phone_number: string; message?: string }
+        | { ok: true; message?: string }
         | { ok: false; error?: string };
 
       if (!json || json.ok !== true) {
-        setError((json as { error?: string } | null)?.error ?? "Could not start test call.");
+        setError((json as { error?: string } | null)?.error ?? "Could not start the demo call. Please check your number and try again.");
         return;
       }
 
-      try {
-        localStorage.setItem(
-          "rt_test_call_phone",
-          JSON.stringify({ phone: json.normalized_phone_number, at: Date.now() }),
-        );
-      } catch {
-        // ignore
-      }
-
-      router.push(json.next);
+      setError(null);
+      setSuccess(json.message ?? "Calling you now! Pick up to hear your AI agent.");
     } finally {
       setBusy(false);
     }
@@ -86,7 +84,7 @@ export function HomepageTestCallCTA() {
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder="Your phone number"
+                  placeholder="+44 7911 123456"
                   inputMode="tel"
                   autoComplete="tel"
                   className="w-full bg-transparent outline-none text-sm text-white placeholder:text-[var(--text-tertiary)]"
@@ -97,12 +95,13 @@ export function HomepageTestCallCTA() {
                 disabled={busy}
                 className="bg-white text-black font-semibold rounded-xl px-6 py-3 hover:opacity-90 transition-colors disabled:opacity-60"
               >
-                {busy ? "Starting…" : "Start setup →"}
+                {busy ? "Calling…" : "Call me now"}
               </button>
             </div>
             {error && <p className="mt-3 text-sm text-red-300 text-left">{error}</p>}
+            {success && <p className="mt-3 text-sm text-emerald-400 text-left">{success}</p>}
             <p className="mt-3 text-xs text-white/45 text-left">
-              You’ll trigger the actual test call during onboarding after your agent is configured.
+              Include your country code: +44 (UK), +1 (US), +61 (AU)
             </p>
           </form>
         </div>

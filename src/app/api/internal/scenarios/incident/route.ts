@@ -11,6 +11,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { SCENARIO_CATEGORIES, type ScenarioCategory } from "@/lib/intelligence/scenario-universe";
 import { OUTCOME_TYPES, NEXT_REQUIRED_ACTIONS } from "@/lib/intelligence/outcome-taxonomy";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const SCENARIO_INGEST_KEY = process.env.SCENARIO_INGEST_KEY ?? "";
 const FOUNDER_KEY = process.env.FOUNDER_EXPORT_KEY ?? "";
@@ -36,6 +37,9 @@ function assertScenarioAuth(request: NextRequest): NextResponse | null {
 }
 
 export async function POST(request: NextRequest) {
+  const csrfBlock = assertSameOrigin(request);
+  if (csrfBlock) return csrfBlock;
+
   const authErr = assertScenarioAuth(request);
   if (authErr) return authErr;
 

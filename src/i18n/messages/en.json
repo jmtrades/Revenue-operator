@@ -571,7 +571,7 @@
   },
   "signUp": {
     "title": "Create your account",
-    "subtitle": "Start your free trial of Recall Touch",
+    "subtitle": "Get started with Recall Touch",
     "businessName": "Business name",
     "businessNamePlaceholder": "Your company name",
     "email": "Email address",
@@ -772,7 +772,7 @@
     "onboarding": {
       "readyTitle": "Ready to get started?",
       "readyDescription": "Set up your AI phone agent and start handling calls, capturing leads, and booking appointments automatically.",
-      "startTrial": "Start Your Free Trial"
+      "startTrial": "Get Started"
     },
     "stats": {
       "activeCalls": "Active Calls",
@@ -4757,7 +4757,7 @@
     "subtitle": "Your AI phone agent answers every call, books appointments, qualifies leads, runs outbound campaigns, and follows up until the deal is closed — so your team focuses on the work, not the phone.",
     "primaryCta": "Try Free for 14 Days →",
     "secondaryCta": "See How It Works",
-    "trustLine": "AI Revenue Operations · Works with your number · 14-day free trial",
+    "trustLine": "AI Revenue Operations · Works with your number · ROI-first pricing",
     "exampleDashboardLabel": "Example dashboard",
     "checkmark": {
       "existingNumber": "Works with your existing number",
@@ -4776,7 +4776,7 @@
       "line5": "“Sarah, 555-0142.”",
       "line6": "“All set, Sarah! You’ll get a confirmation text shortly.”",
       "cta": "Build yours free →",
-      "trialNote": "No credit card · 14-day trial",
+      "trialNote": "No credit card required",
       "loading": "Loading…",
       "conversationPreview": "Conversation preview",
       "subtitle": "See how your AI handles a real call",
@@ -4796,7 +4796,7 @@
       "followUp": "Follow up",
       "thatCallTook": "That call took {seconds} seconds. Your AI handles this 24/7.",
       "readyHeading": "Ready?",
-      "readySubtext": "Start free — 5 minute setup. No credit card · 14-day trial",
+      "readySubtext": "Get started — 5 minute setup. No credit card required",
       "ctaStartFree": "Start free — 5 minute setup →",
       "script0Title": "Inbound Lead (Plumber)",
       "script0Result": "Lead captured and appointment booked.",
@@ -5229,7 +5229,7 @@
       "pricing": {
         "heading": "Simple pricing that matches your revenue",
         "subheading": "No per-seat licenses. You pay for results — captured leads, booked appointments, and recovered revenue — not how many people log in.",
-        "trialNote": "All plans start with a 14-day free trial. No credit card required."
+        "trialNote": "Get started with no credit card required."
       },
       "pricingTiers": {
         "starter": {
@@ -5275,7 +5275,7 @@
         }
       },
       "cta": {
-        "button": "Start free trial →"
+        "button": "Get started →"
       }
     },
     "features": {
@@ -5558,7 +5558,7 @@
           "cta": "Start free"
         }
       },
-      "footerNote": "All plans include: 14-day free trial · No credit card · 30-day money-back guarantee · SOC 2 · HIPAA · 256-bit encryption. Trusted by 12,400+ businesses.",
+      "footerNote": "All plans include: no credit card · 30-day money-back guarantee · SOC 2 · HIPAA · 256-bit encryption. Trusted by 12,400+ businesses.",
       "cta": {
         "link": "View full plan comparison →"
       }
@@ -5615,7 +5615,7 @@
       "heading": "Works Across Industries",
       "subheading": "From healthcare to home services, legal to real estate — any business that generates revenue through conversations can use Recall Touch. Here are a few examples.",
       "footer": "Don't see your industry? Recall Touch works for any service business.",
-      "footerCta": "Start free trial →",
+      "footerCta": "Get started →",
       "industries": {
         "plumbing": {
           "name": "HVAC",
@@ -5977,7 +5977,7 @@
           "answer": "Most teams are live within minutes. Connect your number, configure your workflows, run a test, and go live. You can refine sequences and agent behavior after you see it working."
         },
         "1": {
-          "question": "Is there a free trial?",
+          "question": "Do you offer flexible plans?",
           "answer": "Yes. 14 days. No credit card required. Full access to all features on your plan."
         },
         "2": {
@@ -6038,7 +6038,7 @@
       "pricing": {
         "heading": "Simple, Transparent Pricing",
         "subheading": "Choose the plan that fits your business",
-        "trialNote": "14-day free trial, no credit card required"
+        "trialNote": "No credit card required"
       },
       "pricingTiers": {
         "starter": {
@@ -6072,7 +6072,7 @@
         "billingPeriod": "/month"
       },
       "cta": {
-        "button": "Start Free Trial"
+        "button": "Get Started"
       }
     }
   },
@@ -6201,7 +6201,7 @@
     },
     "cta": "Start free",
     "contactSales": "Talk to sales",
-    "allPlansInclude": "All plans include: encrypted records · compliance framework · audit trail · 14-day free trial",
+    "allPlansInclude": "All plans include: encrypted records · compliance framework · audit trail · no commitment",
     "roiCalculator": "ROI calculator",
     "featureComparison": "Feature comparison",
     "feature": "Feature",
@@ -6256,7 +6256,7 @@
     "questionsTalkToUs": "Questions? Talk to us →",
     "faqItems": [
       {
-        "q": "How does the free trial work?",
+        "q": "How do I get started?",
         "a": "14 days, full features, no credit card needed."
       },
       {
@@ -6293,7 +6293,7 @@
       },
       {
         "q": "Can I try before buying?",
-        "a": "14-day trial or use the interactive demo right now."
+        "a": "Use the interactive demo right now or get started instantly."
       },
       {
         "q": "How do I cancel?",
@@ -6318,7 +6318,7 @@
     "faq": {
       "title": "Pricing questions",
       "trial": "Do you offer a free trial?",
-      "trialAnswer": "Yes — all non-Enterprise plans include a 14-day free trial.",
+      "trialAnswer": "Yes — all plans include flexible options and a 30-day money-back guarantee.",
       "overage": "What happens if I go over my minutes?",
       "overageAnswer": "We simply bill overage at your plan’s per-minute rate with no penalties.",
       "cancel": "Can I cancel anytime?",
@@ -7795,7 +7795,7 @@
     "creatingAccount": "Creating your account…",
     "almostThere": "Almost there…",
     "getStartedFree": "Get started free →",
-    "noCardRequired": "No credit card required · 14-day free trial · Cancel anytime",
+    "noCardRequired": "No credit card required · Cancel anytime",
     "alreadyHaveAccount": "Already have an account?",
     "signInLink": "Sign in →",
     "tryAgain": "Try again",
@@ -8877,7 +8877,7 @@
       "description": "Recall Touch answers every call, books every appointment, follows up with every lead, and recovers every no-show — so your team focuses on closing, not chasing.",
       "socialProof": "businesses",
       "socialProofRecovered": "recovered",
-      "startFreeTrial": "Start your free trial",
+      "startFreeTrial": "Get started",
       "watchDemo": "Watch demo",
       "creditCard": "No credit card required. See results in 24 hours.",
       "dashboardTitle": "Revenue Operations",
@@ -8948,7 +8948,7 @@
       "monthly": "Monthly",
       "annual": "Annual",
       "save": "Save 20%",
-      "tryFree14Days": "Try it free for 14 days",
+      "tryFree14Days": "Get started risk-free",
       "annualNote": "Two months applied without interruption on annual commitment.",
       "faq": {
         "title": "Frequently Asked Questions",
@@ -8971,12 +8971,12 @@
     "finalCta": {
       "label": "Get started",
       "heading": "Your revenue pipeline, fully automated.",
-      "description": "Start your 14-day free trial in under 3 minutes. No credit card. No contracts. No risk.",
+      "description": "Get started in under 3 minutes. No credit card. No contracts. No risk.",
       "noCreditCard": "No credit card required",
       "moneyBackGuarantee": "30-day money-back guarantee",
       "compliance": "SOC 2 + HIPAA compliant",
       "emailPlaceholder": "you@company.com",
-      "startFreeTrial": "Start free trial",
+      "startFreeTrial": "Get started",
       "redirecting": "Redirecting...",
       "liveInMinutes": "Live in under 3 minutes. Cancel anytime.",
       "bookDemo": "Book a live demo",
@@ -10810,7 +10810,7 @@
   },
   "exitIntent": {
     "title": "Wait — Don't Leave Revenue on the Table",
-    "subtitle": "Get a free phone audit + 14-day trial. No credit card required.",
+    "subtitle": "Get started with a free phone audit. No credit card required.",
     "sendingButton": "Sending...",
     "submitButton": "Get My Free Audit",
     "disclaimer": "Takes 30 seconds. Unsubscribe anytime.",

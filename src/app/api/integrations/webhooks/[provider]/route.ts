@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { enqueueSync } from "@/lib/integrations/sync-engine";
 import type { CrmProviderId } from "@/lib/integrations/field-mapper";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const ALLOWED: CrmProviderId[] = [
   "salesforce",
@@ -28,6 +29,9 @@ export async function POST(
   req: NextRequest,
   ctx: { params: Promise<{ provider: string }> }
 ) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const { provider } = await ctx.params;
   if (!isAllowed(provider)) {
     return NextResponse.json({ error: "Invalid provider" }, { status: 400 });

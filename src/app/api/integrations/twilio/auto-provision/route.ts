@@ -13,8 +13,12 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getTelephonyProvider } from "@/lib/telephony/get-telephony-provider";
 import { getTelephonyService } from "@/lib/telephony";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const session = await getSession(req);
   let workspaceId = session?.workspaceId;
   let body: { workspace_id?: string; area_code?: string } = {};
