@@ -4632,7 +4632,7 @@
         }
       },
       "cta": {
-        "button": "Começar teste grátis →"
+        "button": "Começar agora →"
       }
     },
     "features": {
@@ -4952,8 +4952,8 @@
           "desc": "Não viu seu negócio? Recall Touch serve para qualquer empresa que atende o telefone."
         }
       },
-      "footer": "Don't see your industry? Recall Touch works for any service business.",
-      "footerCta": "Start free trial →"
+      "footer": "Não viu seu setor? Recall Touch funciona para qualquer empresa de serviços.",
+      "footerCta": "Começar agora →"
     },
     "bentoVisuals": {
       "timelineLabels": {
@@ -5265,8 +5265,8 @@
           "answer": "Most teams are live within minutes. Connect your number, configure your workflows, run a test, and go live. You can refine sequences and agent behavior after you see it working."
         },
         "1": {
-          "question": "Is there a free trial?",
-          "answer": "Yes. 14 days. No credit card required. Full access to all features on your plan."
+          "question": "Como começo?",
+          "answer": "Inscreva-se e comece em menos de 3 minutos. Todos os planos incluem acesso completo a todos os recursos."
         },
         "2": {
           "question": "Can I use my existing business number?",
@@ -5324,9 +5324,9 @@
         }
       },
       "pricing": {
-        "heading": "Simple, Transparent Pricing",
-        "subheading": "Choose the plan that fits your business",
-        "trialNote": "14-day free trial, no credit card required"
+        "heading": "Preços Simples e Transparentes",
+        "subheading": "Escolha o plano que se ajusta ao seu negócio",
+        "trialNote": "Suporte 24/7, sem cartão de crédito necessário"
       },
       "pricingTiers": {
         "starter": {
@@ -5360,7 +5360,7 @@
         "billingPeriod": "/month"
       },
       "cta": {
-        "button": "Start Free Trial"
+        "button": "Começar agora"
       }
     }
   },
@@ -5565,8 +5565,8 @@
     "annualNote": "Dois meses aplicados sem interrupção no compromisso anual.",
     "faqItems": [
       {
-        "q": "Como funciona o teste grátis?",
-        "a": "14 dias, todas as funções, sem cartão de crédito."
+        "q": "Como começo?",
+        "a": "Inscreva-se e comece em menos de 3 minutos. Todos os planos incluem acesso completo a todos os recursos."
       },
       {
         "q": "E se eu ultrapassar meus minutos?",
@@ -5626,8 +5626,8 @@
     },
     "faq": {
       "title": "Dúvidas sobre preços",
-      "trial": "Vocês oferecem teste grátis?",
-      "trialAnswer": "Sim — todos os planos que não são Enterprise incluem 14 dias de teste gratuito.",
+      "trial": "Como começo?",
+      "trialAnswer": "Inscreva-se e comece em menos de 3 minutos. Todos os planos incluem acesso completo a todos os recursos.",
       "overage": "O que acontece se eu ultrapassar meus minutos?",
       "overageAnswer": "Cobramos apenas o excedente na tarifa por minuto do seu plano, sem penalidades.",
       "cancel": "Posso cancelar a qualquer momento?",
@@ -8288,7 +8288,7 @@
       "monthly": "Mensal",
       "annual": "Anual",
       "save": "Economize 20%",
-      "tryFree14Days": "Teste grátis por 14 dias",
+      "tryFree14Days": "Começar sem risco",
       "annualNote": "Dois meses aplicados sem interrupção no plano anual.",
       "faq": {
         "title": "Perguntas Frequentes",
@@ -8305,13 +8305,13 @@
         "annualLoss": "Perda Anual",
         "paybackPeriod": "Período de Retorno",
         "annualRoi": "ROI Anual",
-        "cta": "Pare de perder {amount}/mês — Teste Grátis"
+        "cta": "Pare de perder {amount}/mês — Começar agora"
       }
     },
     "finalCta": {
       "label": "Começar",
       "heading": "Toda chamada sem resposta é receita que vai embora.",
-      "description": "Inicie seu teste grátis de 14 dias em menos de 3 minutos. Sem cartão de crédito. Sem contratos. Sem risco.",
+      "description": "Coloque o Recall Touch ao vivo em menos de 5 minutos. Sem cartão de crédito. Sem contratos. Sem risco.",
       "noCreditCard": "Sem cartão de crédito",
       "moneyBackGuarantee": "Garantia de reembolso de 30 dias",
       "compliance": "Conforme SOC 2 + HIPAA",
@@ -8342,8 +8342,8 @@
     }
   },
   "signUp": {
-    "title": "Create your account",
-    "subtitle": "Start your free trial of Recall Touch",
+    "title": "Crie sua conta",
+    "subtitle": "Comece a usar o Recall Touch",
     "businessName": "Business name",
     "businessNamePlaceholder": "Your company name",
     "email": "Email address",

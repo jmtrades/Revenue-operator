@@ -4632,7 +4632,7 @@
         }
       },
       "cta": {
-        "button": "Empieza prueba gratis →"
+        "button": "Comenzar ahora →"
       }
     },
     "features": {
@@ -4858,7 +4858,7 @@
           "cta": "Hablar con ventas"
         }
       },
-      "footerNote": "Todos los planes incluyen: registros cifrados · marco de cumplimiento · trazabilidad · 14 días de prueba gratis",
+      "footerNote": "Todos los planes incluyen: sin tarjeta de crédito · garantía de devolución de 30 días · SOC 2 · HIPAA · encriptación de 256 bits. Confiado por más de 12,400 empresas.",
       "cta": {
         "link": "Ver comparativa de planes →"
       }
@@ -4952,8 +4952,8 @@
           "desc": "¿No ves tu negocio? Recall Touch sirve para cualquier empresa que atienda el teléfono."
         }
       },
-      "footer": "Don't see your industry? Recall Touch works for any service business.",
-      "footerCta": "Start free trial →"
+      "footer": "¿No ves tu sector? Recall Touch funciona para cualquier negocio de servicios.",
+      "footerCta": "Comenzar ahora →"
     },
     "bentoVisuals": {
       "timelineLabels": {
@@ -5265,8 +5265,8 @@
           "answer": "Most teams are live within minutes. Connect your number, configure your workflows, run a test, and go live. You can refine sequences and agent behavior after you see it working."
         },
         "1": {
-          "question": "Is there a free trial?",
-          "answer": "Yes. 14 days. No credit card required. Full access to all features on your plan."
+          "question": "¿Cómo empiezo?",
+          "answer": "Regístrate y comienza en menos de 3 minutos. Todos los planes incluyen acceso completo a todas las funciones."
         },
         "2": {
           "question": "Can I use my existing business number?",
@@ -5324,9 +5324,9 @@
         }
       },
       "pricing": {
-        "heading": "Simple, Transparent Pricing",
-        "subheading": "Choose the plan that fits your business",
-        "trialNote": "14-day free trial, no credit card required"
+        "heading": "Precios Simples y Transparentes",
+        "subheading": "Elige el plan que se ajusta a tu negocio",
+        "trialNote": "Soporte 24/7, sin tarjeta de crédito requerida"
       },
       "pricingTiers": {
         "starter": {
@@ -5360,7 +5360,7 @@
         "billingPeriod": "/month"
       },
       "cta": {
-        "button": "Start Free Trial"
+        "button": "Comenzar ahora"
       }
     }
   },
@@ -8305,13 +8305,13 @@
         "annualLoss": "Pérdida Anual",
         "paybackPeriod": "Período de Retorno",
         "annualRoi": "ROI Anual",
-        "cta": "Deja de perder {amount}/mes — Prueba Gratis"
+        "cta": "Deja de perder {amount}/mes — Comenzar ahora"
       }
     },
     "finalCta": {
       "label": "Comenzar",
       "heading": "Cada llamada sin contestar es dinero que se va.",
-      "description": "Comienza tu prueba gratis de 14 días en menos de 3 minutos. Sin tarjeta de crédito. Sin contratos. Sin riesgo.",
+      "description": "Activa Recall Touch en menos de 5 minutos. Sin tarjeta de crédito. Sin contratos. Sin riesgo.",
       "noCreditCard": "Sin tarjeta de crédito",
       "moneyBackGuarantee": "Garantía de devolución de 30 días",
       "compliance": "SOC 2 + HIPAA compatible",
@@ -8342,8 +8342,8 @@
     }
   },
   "signUp": {
-    "title": "Create your account",
-    "subtitle": "Start your free trial of Recall Touch",
+    "title": "Crea tu cuenta",
+    "subtitle": "Comienza a usar Recall Touch",
     "businessName": "Business name",
     "businessNamePlaceholder": "Your company name",
     "email": "Email address",
