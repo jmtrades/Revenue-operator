@@ -26,6 +26,7 @@
  */
 
 import { log } from "@/lib/logger";
+import { analyzeConversation, buildStrategyContext } from "./call-intelligence-engine";
 
 /* ────────────────────────────────────────────────────────────────────────────
  * System Prompt — The "brain" of the demo voice agent.
@@ -457,6 +458,7 @@ async function callAnthropic(
   model: string,
   messages: ConversationMessage[],
   timeoutMs = 10_000,
+  strategyContext = "",
 ): Promise<string | null> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return null;
@@ -475,7 +477,7 @@ async function callAnthropic(
       model,
       max_tokens: 180,       // Phone-optimized: 1-3 sentences max (~6-12 seconds of speech)
       temperature: 0.8,       // Slightly higher for natural human variation
-      system: DEMO_SYSTEM_PROMPT,
+      system: DEMO_SYSTEM_PROMPT + strategyContext,
       messages: trimmed.map((m) => ({ role: m.role, content: m.content })),
     }),
     signal: AbortSignal.timeout(timeoutMs),
@@ -527,12 +529,33 @@ export async function generateDemoResponse(
 ): Promise<string> {
   const startMs = Date.now();
 
+  // Analyze conversation for real-time intelligence
+  let strategyContext = "";
+  try {
+    const intel = analyzeConversation(history);
+    strategyContext = buildStrategyContext(intel);
+    log("info", "demo_agent.intelligence", {
+      phase: intel.phase,
+      engagement: intel.engagementScore,
+      sentiment: intel.sentimentTrend,
+      competitor: intel.battlecard?.competitor ?? null,
+      objections: intel.objectionPatterns,
+      shouldClose: intel.shouldAttemptClose,
+    });
+  } catch (intelErr) {
+    // Intelligence engine failure should never break the call
+    log("warn", "demo_agent.intelligence_failed", {
+      error: intelErr instanceof Error ? intelErr.message : String(intelErr),
+    });
+  }
+
   // 1. Primary: Claude Haiku 4.5 — fast (~500ms), ultra-cheap (~$0.02/call)
   try {
     const text = await callAnthropic(
       "claude-haiku-4-5-20251001",
       history,
       8_000, // 8s timeout — generous for Haiku
+      strategyContext,
     );
     if (text) {
       const latencyMs = Date.now() - startMs;
@@ -552,6 +575,7 @@ export async function generateDemoResponse(
       "claude-sonnet-4-6",
       history,
       12_000, // 12s timeout — Sonnet is slower
+      strategyContext,
     );
     if (text) {
       const latencyMs = Date.now() - startMs;
