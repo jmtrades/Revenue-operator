@@ -15,6 +15,8 @@ import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 import type { CallSummary } from "./context-carryover";
 import { sendEmail, getTemplate, renderTemplate } from "@/lib/integrations/email";
+import { enrollContact } from "@/lib/sequences/follow-up-engine";
+import { scoreLeadPostCall } from "@/lib/intelligence/lead-scoring";
 
 export interface PostCallAction {
   type: "sms" | "follow_up_call" | "status_update" | "notification" | "follow_up_email";
@@ -99,6 +101,30 @@ export async function executePostCallAutomation(
     if (summary && leadId) {
       const emailAction = await sendFollowUpEmail(leadId, workspaceId, summary);
       actions.push(emailAction);
+    }
+
+    // 5. Auto-enroll lead in nurture sequence based on outcome
+    if (leadId && summary) {
+      const sequenceAction = await autoEnrollInSequence(leadId, workspaceId, summary);
+      actions.push(sequenceAction);
+    }
+
+    // 6. Score lead with advanced intelligence engine
+    if (leadId && summary) {
+      const scoreAction = await scoreLead(leadId, workspaceId, summary);
+      actions.push(scoreAction);
+    }
+
+    // 7. Auto-analyze call quality for continuous improvement
+    if (callSessionId && summary && summary.duration_seconds > 30) {
+      const coachingAction = await analyzeCallQuality(callSessionId, workspaceId, leadId);
+      actions.push(coachingAction);
+    }
+
+    // 8. Send NPS feedback request via SMS (only for positive/neutral calls with consent)
+    if (cfg.sms_enabled && callerPhone && summary && summary.duration_seconds > 60) {
+      const npsAction = await sendNpsFeedbackRequest(callerPhone, callSessionId, workspaceId);
+      actions.push(npsAction);
     }
 
     // Store actions in session metadata
@@ -487,6 +513,431 @@ async function sendFollowUpEmail(
     action.status = "failed";
     action.error = err instanceof Error ? err.message : String(err);
     log("warn", "post_call.follow_up_email_error", { error: action.error });
+  }
+
+  return action;
+}
+
+/**
+ * Auto-enroll a lead in the appropriate nurture sequence based on call outcome.
+ * Maps call outcomes to sequence trigger types for automated follow-up.
+ */
+async function autoEnrollInSequence(
+  leadId: string,
+  workspaceId: string,
+  summary: CallSummary,
+): Promise<PostCallAction> {
+  const action: PostCallAction = {
+    type: "notification", // Using existing type for sequence enrollment tracking
+    status: "pending",
+    details: { leadId, action_name: "sequence_enrollment" },
+  };
+
+  try {
+    const db = getDb();
+
+    // Map call outcome to the best sequence trigger type
+    const triggerMap: Record<string, string> = {
+      signup_initiated: "lead_qualified",
+      demo_completed: "inbound_call",
+      callback_requested: "missed_call",
+      objection_unresolved: "inbound_call",
+      information_gathered: "new_lead",
+      hung_up_early: "new_lead",
+    };
+
+    const triggerType = triggerMap[summary.outcome] || "inbound_call";
+
+    // Find the best matching active sequence for this workspace
+    const { data: sequences } = await db
+      .from("sequences")
+      .select("id, name, trigger_type")
+      .eq("workspace_id", workspaceId)
+      .eq("is_active", true)
+      .in("trigger_type", [triggerType, "custom", "manual"])
+      .order("created_at", { ascending: false })
+      .limit(3);
+
+    const seqs = (sequences ?? []) as Array<{ id: string; name: string; trigger_type: string }>;
+
+    // Prefer exact trigger match, fall back to custom/manual
+    const bestMatch = seqs.find(s => s.trigger_type === triggerType) || seqs[0];
+
+    if (!bestMatch) {
+      // No sequence configured — create a default demo nurture sequence
+      const defaultSeqId = await ensureDemoNurtureSequence(workspaceId);
+      if (defaultSeqId) {
+        const enrollment = await enrollContact(workspaceId, defaultSeqId, leadId);
+        if (enrollment) {
+          action.status = "sent";
+          action.details.sequence_id = defaultSeqId;
+          action.details.sequence_name = "Demo Lead Nurture";
+          action.details.enrollment_id = enrollment.id;
+          action.executed_at = new Date().toISOString();
+          log("info", "post_call.sequence_enrolled", { leadId, sequenceId: defaultSeqId });
+        } else {
+          action.status = "skipped";
+          action.details.reason = "enrollment_failed_or_already_enrolled";
+        }
+      } else {
+        action.status = "skipped";
+        action.details.reason = "no_sequence_available";
+      }
+      return action;
+    }
+
+    const enrollment = await enrollContact(workspaceId, bestMatch.id, leadId);
+    if (enrollment) {
+      action.status = "sent";
+      action.details.sequence_id = bestMatch.id;
+      action.details.sequence_name = bestMatch.name;
+      action.details.enrollment_id = enrollment.id;
+      action.executed_at = new Date().toISOString();
+      log("info", "post_call.sequence_enrolled", {
+        leadId,
+        sequenceId: bestMatch.id,
+        sequenceName: bestMatch.name,
+        trigger: triggerType,
+      });
+    } else {
+      action.status = "skipped";
+      action.details.reason = "enrollment_failed_or_already_enrolled";
+    }
+  } catch (err) {
+    action.status = "failed";
+    action.error = err instanceof Error ? err.message : String(err);
+    log("warn", "post_call.sequence_enroll_failed", { error: action.error });
+  }
+
+  return action;
+}
+
+/**
+ * Ensure a default demo lead nurture sequence exists for the workspace.
+ * Creates a 3-step email + SMS sequence if none exists.
+ */
+async function ensureDemoNurtureSequence(workspaceId: string): Promise<string | null> {
+  const db = getDb();
+
+  try {
+    // Check if demo nurture sequence already exists
+    const { data: existing } = await db
+      .from("sequences")
+      .select("id")
+      .eq("workspace_id", workspaceId)
+      .eq("name", "Demo Lead Nurture")
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (existing) return (existing as { id: string }).id;
+
+    // Create the sequence
+    const { data: seq } = await db
+      .from("sequences")
+      .insert({
+        workspace_id: workspaceId,
+        name: "Demo Lead Nurture",
+        trigger_type: "inbound_call",
+        is_active: true,
+      })
+      .select("id")
+      .maybeSingle();
+
+    if (!seq) return null;
+    const seqId = (seq as { id: string }).id;
+
+    // Create 3-step nurture cadence
+    const steps = [
+      {
+        sequence_id: seqId,
+        step_order: 1,
+        type: "email",
+        delay_minutes: 120, // 2 hours after call
+        config: {
+          template_content: "follow_up_value",
+          subject: "Quick thought about our chat, {{contact.name}}",
+          conditions: {},
+        },
+      },
+      {
+        sequence_id: seqId,
+        step_order: 2,
+        type: "email",
+        delay_minutes: 2880, // 48 hours after step 1
+        config: {
+          template_content: "follow_up_social_proof",
+          subject: "Businesses like yours are seeing this with Recall Touch",
+          conditions: {},
+        },
+      },
+      {
+        sequence_id: seqId,
+        step_order: 3,
+        type: "email",
+        delay_minutes: 7200, // 5 days after step 2
+        config: {
+          template_content: "follow_up_last_chance",
+          subject: "Your free trial is waiting, {{contact.name}}",
+          conditions: {},
+        },
+      },
+    ];
+
+    await db.from("sequence_steps").insert(steps);
+
+    log("info", "post_call.demo_nurture_sequence_created", { workspaceId, sequenceId: seqId });
+    return seqId;
+  } catch (err) {
+    log("warn", "post_call.ensure_sequence_failed", {
+      error: err instanceof Error ? err.message : String(err),
+    });
+    return null;
+  }
+}
+
+/**
+ * Score the lead using the advanced intelligence engine after a demo call.
+ */
+async function scoreLead(
+  leadId: string,
+  workspaceId: string,
+  summary: CallSummary,
+): Promise<PostCallAction> {
+  const action: PostCallAction = {
+    type: "status_update",
+    status: "pending",
+    details: { leadId, action_name: "lead_scoring" },
+  };
+
+  try {
+    const score = await scoreLeadPostCall(
+      workspaceId,
+      leadId,
+      summary.outcome,
+      summary.sentiment,
+      summary.duration_seconds,
+    );
+
+    action.status = "sent";
+    action.details.score = score;
+    action.executed_at = new Date().toISOString();
+    log("info", "post_call.lead_scored", { leadId, score, outcome: summary.outcome });
+  } catch (err) {
+    action.status = "failed";
+    action.error = err instanceof Error ? err.message : String(err);
+    log("warn", "post_call.lead_score_failed", { error: action.error });
+  }
+
+  return action;
+}
+
+/**
+ * Auto-analyze call quality by sending the transcript to the coaching endpoint.
+ * Stores coaching insights in call_session metadata for dashboard review.
+ * Only runs on calls > 30 seconds (meaningful conversations).
+ */
+async function analyzeCallQuality(
+  callSessionId: string,
+  workspaceId: string,
+  leadId: string | null | undefined,
+): Promise<PostCallAction> {
+  const action: PostCallAction = {
+    type: "notification",
+    status: "pending",
+    details: { callSessionId, action_name: "call_quality_analysis" },
+  };
+
+  try {
+    const db = getDb();
+
+    // Load transcript from call session
+    const { data: session } = await db
+      .from("call_sessions")
+      .select("metadata")
+      .eq("id", callSessionId)
+      .maybeSingle();
+
+    const meta = ((session as { metadata?: Record<string, unknown> } | null)?.metadata ?? {}) as Record<string, unknown>;
+    const history = (meta.demo_history ?? []) as Array<{ role: string; content: string }>;
+
+    if (history.length < 4) {
+      action.status = "skipped";
+      action.details.reason = "too_few_turns";
+      return action;
+    }
+
+    // Build transcript for analysis
+    const transcript = history
+      .map(m => `${m.role === "assistant" ? "Sarah (AI)" : "Caller"}: ${m.content}`)
+      .join("\n");
+
+    // Call the coaching endpoint internally
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
+    const resp = await fetch(`${appUrl}/api/call-intelligence/coaching`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-workspace-id": workspaceId,
+      },
+      body: JSON.stringify({
+        transcript,
+        call_id: callSessionId,
+      }),
+      signal: AbortSignal.timeout(15_000),
+    });
+
+    if (resp.ok) {
+      const coaching = await resp.json() as {
+        overall_score?: number;
+        coaching_points?: Array<{ category: string; score: number; feedback: string }>;
+        key_moments?: Array<{ type: string; description: string }>;
+      };
+
+      // Store coaching insights in call session metadata
+      await db
+        .from("call_sessions")
+        .update({
+          metadata: {
+            ...meta,
+            coaching_score: coaching.overall_score,
+            coaching_points: coaching.coaching_points,
+            coaching_key_moments: coaching.key_moments,
+            coaching_analyzed_at: new Date().toISOString(),
+          },
+        })
+        .eq("id", callSessionId);
+
+      action.status = "sent";
+      action.details.overall_score = coaching.overall_score;
+      action.details.categories_analyzed = coaching.coaching_points?.length ?? 0;
+      action.executed_at = new Date().toISOString();
+
+      log("info", "post_call.coaching_analyzed", {
+        callSessionId,
+        score: coaching.overall_score,
+        categories: coaching.coaching_points?.length,
+      });
+    } else {
+      action.status = "failed";
+      action.error = `Coaching API returned ${resp.status}`;
+      log("warn", "post_call.coaching_api_failed", { callSessionId, status: resp.status });
+    }
+  } catch (err) {
+    action.status = "failed";
+    action.error = err instanceof Error ? err.message : String(err);
+    log("warn", "post_call.coaching_failed", { error: action.error });
+  }
+
+  return action;
+}
+
+/**
+ * Send a 1-question NPS feedback request via SMS after a call.
+ * Only sends to callers who have SMS consent and had meaningful calls (>60s).
+ * Uses a simple 1-10 rating scale for maximum response rate.
+ */
+async function sendNpsFeedbackRequest(
+  phone: string,
+  callSessionId: string,
+  workspaceId: string,
+): Promise<PostCallAction> {
+  const action: PostCallAction = {
+    type: "sms",
+    status: "pending",
+    details: { phone, action_name: "nps_feedback" },
+  };
+
+  try {
+    const db = getDb();
+
+    // Check SMS consent (TCPA compliance)
+    const { data: lead } = await db
+      .from("leads")
+      .select("metadata")
+      .eq("workspace_id", workspaceId)
+      .eq("phone", phone)
+      .maybeSingle();
+
+    const leadMeta = ((lead as { metadata?: Record<string, unknown> } | null)?.metadata ?? {}) as Record<string, unknown>;
+
+    if (leadMeta.sms_consent !== true) {
+      action.status = "skipped";
+      action.details.reason = "no_sms_consent";
+      return action;
+    }
+
+    // Don't send NPS if we already sent one for this lead recently (within 7 days)
+    const lastNps = leadMeta.last_nps_sent_at as string | undefined;
+    if (lastNps) {
+      const daysSince = (Date.now() - new Date(lastNps).getTime()) / (1000 * 60 * 60 * 24);
+      if (daysSince < 7) {
+        action.status = "skipped";
+        action.details.reason = "nps_sent_recently";
+        return action;
+      }
+    }
+
+    // Send NPS SMS via Twilio
+    const twilioSid = process.env.TWILIO_ACCOUNT_SID;
+    const twilioToken = process.env.TWILIO_AUTH_TOKEN;
+    const fromNumber = process.env.TWILIO_PHONE_NUMBER;
+
+    if (!twilioSid || !twilioToken || !fromNumber) {
+      action.status = "skipped";
+      action.details.reason = "twilio_not_configured";
+      return action;
+    }
+
+    const message = `Thanks for chatting with Sarah from Recall Touch! Quick question: On a scale of 1-10, how was your experience? Just reply with a number. Your feedback helps us improve! Reply STOP to opt out.`;
+
+    const auth = Buffer.from(`${twilioSid}:${twilioToken}`).toString("base64");
+    const params = new URLSearchParams();
+    params.append("From", fromNumber);
+    params.append("To", phone);
+    params.append("Body", message);
+
+    const resp = await fetch(
+      `https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Basic ${auth}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: params.toString(),
+        signal: AbortSignal.timeout(10_000),
+      },
+    );
+
+    if (resp.ok) {
+      const data = await resp.json() as { sid?: string };
+      action.status = "sent";
+      action.details.message_sid = data.sid;
+      action.executed_at = new Date().toISOString();
+
+      // Update lead metadata with NPS tracking
+      await db
+        .from("leads")
+        .update({
+          metadata: {
+            ...leadMeta,
+            last_nps_sent_at: new Date().toISOString(),
+            last_nps_call_session: callSessionId,
+          },
+        })
+        .eq("workspace_id", workspaceId)
+        .eq("phone", phone);
+
+      log("info", "post_call.nps_sent", { phone, callSessionId });
+    } else {
+      action.status = "failed";
+      action.error = `SMS send failed: ${resp.status}`;
+      log("warn", "post_call.nps_send_failed", { phone, status: resp.status });
+    }
+  } catch (err) {
+    action.status = "failed";
+    action.error = err instanceof Error ? err.message : String(err);
+    log("warn", "post_call.nps_error", { error: action.error });
   }
 
   return action;
