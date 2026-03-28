@@ -85,6 +85,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to accept invite" }, { status: 500 });
   }
 
-  const redirectUrl = `${APP_URL.replace(/\/$/, "")}/app/activity?welcome=${encodeURIComponent(workspaceName)}`;
+  const redirectUrl = `${APP_URL.replace(/\/$/, "")}/app/dashboard?welcome=${encodeURIComponent(workspaceName)}`;
   return NextResponse.json({ ok: true, redirectUrl });
 }

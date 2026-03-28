@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
-import { BILLING_PLANS, type PlanSlug } from "@/lib/billing-plans";
+import { BILLING_PLANS, normalizeTier, type PlanSlug } from "@/lib/billing-plans";
 import { evaluateUsageAlert, type VoiceUsageMetrics } from "@/lib/voice/billing";
 
 export async function GET(req: NextRequest) {
@@ -62,8 +62,8 @@ export async function GET(req: NextRequest) {
   }
 
   // Calculate minutes used this month
-  const tier = (row.billing_tier ?? "solo").toLowerCase() as PlanSlug;
-  const planMinutes = BILLING_PLANS[tier]?.includedMinutes ?? 400;
+  const tier = normalizeTier(row.billing_tier);
+  const planMinutes = BILLING_PLANS[tier]?.includedMinutes ?? 1000;
 
   const startOfMonth = new Date();
   startOfMonth.setDate(1);
@@ -81,7 +81,7 @@ export async function GET(req: NextRequest) {
     }, 0)
   );
 
-  const pendingTier = (row.pending_billing_tier ?? null) as PlanSlug | null;
+  const pendingTier = row.pending_billing_tier ? normalizeTier(row.pending_billing_tier) : null;
   const pendingEffectiveAt = row.pending_billing_effective_at ?? null;
   let downgradeWarning: string | null = null;
   let activeAgentsCount = 0;

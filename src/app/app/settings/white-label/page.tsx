@@ -57,7 +57,6 @@ export default function WhiteLabelSettingsPage() {
           lastSavedRef.current = data.config;
         }
       } catch (err) {
-        console.error("[white-label settings] Failed to load config:", err);
         toast.error(t("toast.loadFailed"));
       } finally {
         setLoading(false);
@@ -82,7 +81,6 @@ export default function WhiteLabelSettingsPage() {
       setConfig(data.config);
       toast.success(t("toast.saved"));
     } catch (err) {
-      console.error("[white-label settings] Failed to save:", err);
       toast.error(t("toast.saveFailed"));
     } finally {
       setSaving(false);

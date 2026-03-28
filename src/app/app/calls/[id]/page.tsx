@@ -20,6 +20,8 @@ import { useTranslations } from "next-intl";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { cn } from "@/lib/cn";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
+import CallTranscriptViewer from "@/components/calls/CallTranscriptViewer";
+import CallIntelligenceSummary from "@/components/calls/CallIntelligenceSummary";
 
 const PLAYBACK_SPEEDS = [1, 1.25, 1.5, 2] as const;
 
@@ -251,7 +253,7 @@ export default function AppCallDetailPage() {
         }
       })
       .catch(() => {
-        if (!cancelled) setError(t("calls.detail.notFound"));
+        if (!cancelled) setError(t("notFound"));
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -260,7 +262,7 @@ export default function AppCallDetailPage() {
   }, [id, workspaceId, t]);
 
   useEffect(() => {
-    if (call) document.title = t("calls.detail.pageTitle");
+    if (call) document.title = t("pageTitle");
     return () => { document.title = ""; };
   }, [call, t]);
 
@@ -268,15 +270,15 @@ export default function AppCallDetailPage() {
     call?.matched_lead?.name ||
     call?.matched_lead?.email ||
     call?.matched_lead?.company ||
-    t("calls.defaultCaller");
+    t("speakerCaller");
   const summaryText = call?.summary || call?.analysis?.summary || null;
   const followupPlan = call?.analysis?.followup_plan || call?.analysis?.next_best_action || null;
   const sentiment = call?.analysis?.sentiment || null;
   const utterances = call?.utterances ?? null;
 
   const formatSpeaker = (speaker: string): string => {
-    if (speaker === "agent") return t("calls.detail.speakerAgent");
-    if (speaker === "caller") return t("calls.defaultCaller");
+    if (speaker === "agent") return t("speakerAgent");
+    if (speaker === "caller") return t("speakerCaller");
     return speaker;
   };
 
@@ -293,7 +295,7 @@ export default function AppCallDetailPage() {
         <div className="h-40 bg-[var(--bg-inset)] rounded-xl" />
         <div className="flex items-center gap-2">
           <ArrowLeft className="w-4 h-4 text-[var(--text-secondary)]" />
-          <span className="text-sm text-[var(--text-tertiary)]">{t("calls.detail.backToCalls")}</span>
+          <span className="text-sm text-[var(--text-tertiary)]">{t("backToCalls")}</span>
         </div>
       </div>
     );
@@ -308,11 +310,11 @@ export default function AppCallDetailPage() {
           className="inline-flex items-center gap-2 text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
-          {t("common.back")}
+          {t("backToCalls")}
         </button>
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
           <p className="text-sm text-[var(--text-tertiary)]">
-            {error ?? t("calls.detail.notFound")}
+            {error ?? t("notFound")}
           </p>
         </div>
       </div>
@@ -323,8 +325,8 @@ export default function AppCallDetailPage() {
     <div className="p-6 md:p-8 max-w-4xl mx-auto">
       <Breadcrumbs
         items={[
-          { label: t("nav.calls"), href: "/app/calls" },
-          { label: t("calls.detail.breadcrumbDetail") },
+          { label: t("breadcrumbCalls"), href: "/app/calls" },
+          { label: t("breadcrumbDetail") },
         ]}
       />
 
@@ -364,124 +366,117 @@ export default function AppCallDetailPage() {
         </div>
       </header>
 
-      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5 space-y-5">
-        {call.recording_url && (
-          <section>
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">
-              {t("recording", { defaultValue: "Recording" })}
-            </h2>
-            <CallRecordingPlayer src={call.recording_url} />
-          </section>
-        )}
+      <div className="space-y-5">
+        {/* Call Intelligence Summary - Primary section */}
+        <CallIntelligenceSummary
+          callId={id}
+          workspaceId={snapshotWorkspaceId}
+          callData={{
+            caller_name: call.matched_lead?.name || undefined,
+            phone: call.matched_lead?.email || undefined,
+            direction: call.outcome ? "Inbound" : "Outbound",
+            duration_seconds: call.call_started_at && call.call_ended_at
+              ? Math.floor(
+                  (new Date(call.call_ended_at).getTime() -
+                    new Date(call.call_started_at).getTime()) /
+                    1000
+                )
+              : undefined,
+            outcome: call.outcome || call.analysis_outcome || undefined,
+            sentiment: call.analysis?.sentiment as string | undefined,
+            analysis: call.analysis || undefined,
+            transcript: utterances?.map((u) => ({
+              speaker: u.speaker,
+              text: u.text,
+            })) || undefined,
+          }}
+        />
 
-        {summaryText && (
-          <section>
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">
-              {t("callSummary", { defaultValue: "Call summary" })}
-            </h2>
-            <p className="text-sm text-[var(--text-primary)] leading-relaxed">
-              {summaryText}
-            </p>
-          </section>
-        )}
-
-        {followupPlan && (
-          <section>
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">
-              {t("recommendedFollowUp", { defaultValue: "Recommended follow-up" })}
-            </h2>
-            <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{followupPlan}</p>
-            {(call.lead_id ?? call.matched_lead?.id) && (
-              <Link
-                href="/app/inbox"
-                className="inline-flex items-center gap-1.5 mt-3 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-              >
-                {t("followUpInInbox")} →
-              </Link>
-            )}
-          </section>
-        )}
-
-        {call.matched_lead && (
-          <section>
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">
-              {t("contact", { defaultValue: "Contact" })}
-            </h2>
-            <p className="text-sm text-[var(--text-primary)]">
-              {call.matched_lead.name || "—"}
-            </p>
-            {call.matched_lead.email && (
-              <p className="text-xs text-[var(--text-tertiary)]">{call.matched_lead.email}</p>
-            )}
-            {call.matched_lead.company && (
-              <p className="text-xs text-[var(--text-tertiary)]">
-                {call.matched_lead.company}
-              </p>
-            )}
-            {(call.lead_id ?? call.matched_lead?.id) && (
-              <Link
-                href="/app/leads"
-                className="inline-flex items-center gap-1.5 mt-2 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-              >
-                View lead →
-              </Link>
-            )}
-          </section>
-        )}
-
-        <section>
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">
-            {t("transcript", { defaultValue: "Transcript" })}
-          </h2>
-          {utterances && utterances.length > 0 ? (
-            <div className="space-y-2 max-h-[420px] overflow-y-auto pr-1">
-              {utterances.map((u) => (
-                <div
-                  key={u.id}
-                  className={cn(
-                    "flex gap-3 p-3 rounded-xl mb-1",
-                    u.speaker === "agent" ? "bg-[var(--bg-inset)]" : "bg-[var(--bg-inset)]",
-                  )}
-                >
-                  <div className="shrink-0 mt-0.5">
-                    {u.speaker === "agent" ? (
-                      <div className="w-7 h-7 rounded-full bg-[var(--bg-inset)] flex items-center justify-center">
-                        <Bot className="w-3.5 h-3.5 text-[var(--text-secondary)]" />
-                      </div>
-                    ) : (
-                      <div className="w-7 h-7 rounded-full bg-[var(--bg-inset)] flex items-center justify-center">
-                        <User className="w-3.5 h-3.5 text-[var(--text-tertiary)]" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span
-                        className={cn(
-                          "text-xs font-medium",
-                          u.speaker === "agent" ? "text-[var(--text-secondary)]" : "text-[var(--text-tertiary)]",
-                        )}
-                      >
-                        {formatSpeaker(u.speaker)}
-                      </span>
-                    </div>
-                    <p className="text-sm text-[var(--text-primary)] leading-relaxed">
-                      {u.text}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : call.transcript_text ? (
-            <pre className="text-sm whitespace-pre-wrap font-sans p-4 rounded-xl bg-[var(--bg-card)] text-[var(--text-secondary)] leading-relaxed">
-              {call.transcript_text}
-            </pre>
-          ) : (
-            <p className="text-sm text-[var(--text-secondary)]">
-              {t("noTranscriptAvailable")}
-            </p>
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5 space-y-5">
+          {call.recording_url && (
+            <section>
+              <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">
+                {t("recording", { defaultValue: "Recording" })}
+              </h2>
+              <CallRecordingPlayer src={call.recording_url} />
+            </section>
           )}
-        </section>
+
+          {summaryText && (
+            <section>
+              <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">
+                {t("callSummary", { defaultValue: "Call summary" })}
+              </h2>
+              <p className="text-sm text-[var(--text-primary)] leading-relaxed">
+                {summaryText}
+              </p>
+            </section>
+          )}
+
+          {followupPlan && (
+            <section>
+              <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">
+                {t("recommendedFollowUp", { defaultValue: "Recommended follow-up" })}
+              </h2>
+              <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{followupPlan}</p>
+              {(call.lead_id ?? call.matched_lead?.id) && (
+                <Link
+                  href="/app/inbox"
+                  className="inline-flex items-center gap-1.5 mt-3 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                >
+                  {t("followUpInInbox")} →
+                </Link>
+              )}
+            </section>
+          )}
+
+          {call.matched_lead && (
+            <section>
+              <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">
+                {t("contact", { defaultValue: "Contact" })}
+              </h2>
+              <p className="text-sm text-[var(--text-primary)]">
+                {call.matched_lead.name || "—"}
+              </p>
+              {call.matched_lead.email && (
+                <p className="text-xs text-[var(--text-tertiary)]">{call.matched_lead.email}</p>
+              )}
+              {call.matched_lead.company && (
+                <p className="text-xs text-[var(--text-tertiary)]">
+                  {call.matched_lead.company}
+                </p>
+              )}
+              {(call.lead_id ?? call.matched_lead?.id) && (
+                <Link
+                  href="/app/leads"
+                  className="inline-flex items-center gap-1.5 mt-2 text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                >
+                  View lead →
+                </Link>
+              )}
+            </section>
+          )}
+        </div>
+
+        <div className="h-[500px]">
+          <CallTranscriptViewer
+            callId={id}
+            workspaceId={snapshotWorkspaceId}
+            utterances={utterances}
+            metadata={{
+              duration_seconds: call.call_started_at && call.call_ended_at
+                ? Math.floor(
+                    (new Date(call.call_ended_at).getTime() -
+                      new Date(call.call_started_at).getTime()) /
+                      1000
+                  )
+                : undefined,
+              sentiment: call.analysis?.sentiment as "positive" | "neutral" | "negative" | undefined,
+              outcome: call.analysis_outcome ?? undefined,
+              created_at: call.call_started_at ?? undefined,
+            }}
+          />
+        </div>
       </div>
     </div>
   );

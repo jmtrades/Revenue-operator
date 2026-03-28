@@ -5,6 +5,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { AnimatePresence, motion } from "framer-motion";
 import { WorkspaceProvider } from "@/components/WorkspaceContext";
 import { WorkspaceName } from "@/components/WorkspaceName";
 import { fetchWorkspaceMeCached, primeWorkspaceMeCache } from "@/lib/client/workspace-me";
@@ -29,11 +30,15 @@ import {
   LogOut,
   Bot,
   CalendarCheck,
+  UserPlus,
+  Plug,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { LanguageSwitcher as _LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { NotificationCenter } from "@/components/ui/NotificationCenter";
+import { KeyboardShortcuts } from "@/components/ui/KeyboardShortcuts";
 import { TranslatedErrorBoundary } from "@/components/ErrorBoundary";
 import { initErrorReporting } from "@/lib/error-reporting";
 import { initPostHogClient, track } from "@/lib/analytics/posthog";
@@ -54,6 +59,7 @@ export type AppShellWorkspaceMeta = {
   onboardingCompletedAt?: string | null;
   stats?: { calls?: number };
   progress?: { items?: Array<{ key: string; completed: boolean }> };
+  billing?: { billing_status?: string; billing_tier?: string; renewal_at?: string | null };
 } | null;
 
 export default function AppShellClient({
@@ -83,12 +89,14 @@ export default function AppShellClient({
         ],
       },
       {
-        label: "Recovery & Growth",
+        label: t("nav.sectionRecovery", { defaultValue: "Recovery & Growth" }),
         items: [
+          { href: "/app/leads", label: t("nav.leads", { defaultValue: "Leads" }), icon: UserPlus },
           { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
           { href: "/app/follow-ups", label: t("nav.followUps"), icon: Clock },
           { href: "/app/appointments", label: t("nav.appointments"), icon: CalendarCheck },
           { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
+          { href: "/app/reports", label: t("nav.reports", { defaultValue: "Revenue Digest" }), icon: FileText },
           { href: "/app/knowledge", label: t("nav.knowledge"), icon: BookOpen },
         ],
       },
@@ -96,6 +104,7 @@ export default function AppShellClient({
         label: t("nav.sectionWorkspace"),
         items: [
           { href: "/app/settings", label: t("nav.settings"), icon: Settings },
+          { href: "/app/integrations", label: t("nav.integrations", { defaultValue: "Integrations" }), icon: Plug },
           { href: "/app/billing", label: t("nav.billing"), icon: CreditCard },
         ],
       },
@@ -114,12 +123,15 @@ export default function AppShellClient({
     () => [
       { href: "/app/agents", label: t("nav.agents"), icon: Bot },
       { href: "/app/contacts", label: t("nav.contacts"), icon: Users },
+      { href: "/app/leads", label: t("nav.leads", { defaultValue: "Leads" }), icon: UserPlus },
       { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
       { href: "/app/follow-ups", label: t("nav.followUps"), icon: Clock },
       { href: "/app/appointments", label: t("nav.appointments"), icon: CalendarCheck },
       { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
+      { href: "/app/reports", label: t("nav.reports", { defaultValue: "Revenue Digest" }), icon: FileText },
       { href: "/app/knowledge", label: t("nav.knowledge"), icon: BookOpen },
       { href: "/app/settings", label: t("nav.settings"), icon: Settings },
+      { href: "/app/integrations", label: t("nav.integrations", { defaultValue: "Integrations" }), icon: Plug },
       { href: "/app/billing", label: t("nav.billing"), icon: CreditCard },
     ],
     [t]
@@ -133,7 +145,7 @@ export default function AppShellClient({
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [activeCalls, setActiveCalls] = useState(0);
   const [minutesUsage, setMinutesUsage] = useState<{ used: number; limit: number } | null>(null);
-  const [billingInfo, setBillingInfo] = useState<{ billing_status?: string; billing_tier?: string; renewal_at?: string | null } | null>(null);
+  const [billingInfo, setBillingInfo] = useState<{ billing_status?: string; billing_tier?: string; renewal_at?: string | null } | null>(initialWorkspaceMeta?.billing ?? null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     try { return safeGetItem("rt_sidebar") === "collapsed"; } catch { return false; }
   });
@@ -271,7 +283,7 @@ export default function AppShellClient({
           .then((res) => (res.ok ? res.json() : null))
           .then((billing: { minutes_used?: number; minutes_limit?: number; billing_status?: string; billing_tier?: string; renewal_at?: string | null } | null) => {
             if (billing && typeof billing.minutes_used === "number") {
-              setMinutesUsage({ used: billing.minutes_used, limit: billing.minutes_limit ?? 400 });
+              setMinutesUsage({ used: billing.minutes_used, limit: billing.minutes_limit ?? 1000 });
             }
             if (billing) {
               setBillingInfo({ billing_status: billing.billing_status, billing_tier: billing.billing_tier, renewal_at: billing.renewal_at });
@@ -303,7 +315,7 @@ export default function AppShellClient({
 
         if (key === "1") {
           event.preventDefault();
-          router.push("/app/activity");
+          router.push("/app/dashboard");
           return;
         }
         if (key === "2") {
@@ -382,7 +394,7 @@ export default function AppShellClient({
   }, [commandPaletteOpen]);
 
   const isActive = (href: string) =>
-    pathname === href || (href !== "/app/activity" && pathname.startsWith(href));
+    pathname === href || (href !== "/app/dashboard" && pathname.startsWith(href));
 
   const isMoreActive = mobileMoreLinks.some(({ href }) => isActive(href));
   const isOnboarding = pathname === "/activate";
@@ -394,6 +406,13 @@ export default function AppShellClient({
     >
       <OnboardingStepProvider>
         <div className="min-h-screen flex flex-col pb-20 md:pb-0 bg-[var(--bg-base)]">
+          {/* Skip to main content link for keyboard/screen reader users */}
+          <a
+            href="#main"
+            className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-[var(--bg-surface)] focus:text-[var(--text-primary)] focus:rounded-lg focus:shadow-lg focus:border focus:border-[var(--border-default)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
+          >
+            Skip to main content
+          </a>
           {workspaceMeta?.banner?.show && workspaceMeta.banner.text && (
             <div
               className="shrink-0 border-b border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-2 text-center text-[13px] text-[var(--text-secondary)]"
@@ -409,26 +428,33 @@ export default function AppShellClient({
               </Link>
             </div>
           )}
-          {mobileSidebarOpen && (
-              <div
+          <AnimatePresence>
+            {mobileSidebarOpen && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
                 className="fixed inset-0 z-30 bg-[var(--bg-hover)] md:hidden"
                 onClick={() => setMobileSidebarOpen(false)}
                 aria-hidden
               />
             )}
+          </AnimatePresence>
             <div className="flex flex-1 min-h-0">
             {isOnboarding ? (
               <OnboardingSidebar initialWorkspaceName={initialWorkspaceName} />
             ) : (
               <>
-              <aside
+              <motion.aside
+                initial={false}
+                animate={{ x: mobileSidebarOpen ? 0 : -260 }}
+                transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
                 className={cn(
                   "fixed inset-y-0 left-0 z-40 flex flex-col shrink-0 bg-[var(--bg-surface)] border-r border-[var(--border-default)]",
-                  mobileSidebarOpen ? "translate-x-0" : "-translate-x-full",
                   "md:relative md:translate-x-0",
                   sidebarCollapsed ? "md:w-[60px]" : "md:w-[232px]",
-                  "w-[260px]",
-                  "transition-[transform,width] duration-250 ease-[cubic-bezier(0.23,1,0.32,1)]"
+                  "w-[260px]"
                 )}
                 data-product-tour="sidebarNav"
                 aria-label={t("accessibility.appNav")}
@@ -527,7 +553,10 @@ export default function AppShellClient({
                 <div className="px-3 py-3 border-t border-[var(--border-default)] space-y-2">
                   {!sidebarCollapsed && (
                     <>
-                      <div className="rounded-[var(--radius-btn)] bg-[var(--bg-inset)]/60 border border-[var(--border-default)] px-3 py-2.5">
+                      <Link
+                        href="/app/billing"
+                        className="block rounded-[var(--radius-btn)] bg-[var(--bg-inset)]/60 border border-[var(--border-default)] px-3 py-2.5 hover:bg-[var(--bg-hover)] transition-[background-color] duration-150"
+                      >
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-semibold text-[var(--text-primary)] tracking-[-0.01em]">
                             {billingInfo?.billing_tier
@@ -575,7 +604,24 @@ export default function AppShellClient({
                             </div>
                           </div>
                         )}
-                      </div>
+                        {billingInfo?.billing_status === "payment_failed" && (
+                          <span className="block text-[11px] font-medium text-red-400 mt-1.5 underline underline-offset-2">
+                            {t("sidebar.fixPayment", { defaultValue: "Fix payment →" })}
+                          </span>
+                        )}
+                        {billingInfo?.billing_status === "trial_ended" && (
+                          <span className="block text-[11px] font-medium text-[var(--accent-primary)] mt-1.5 underline underline-offset-2">
+                            {t("sidebar.upgradeCta", { defaultValue: "Upgrade now →" })}
+                          </span>
+                        )}
+                      </Link>
+                      <a
+                        href="mailto:support@recall-touch.com"
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-[var(--radius-btn)] text-[13px] font-medium text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-[background-color,border-color,color,transform] duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
+                      >
+                        <MessageSquare className="w-4 h-4 shrink-0" strokeWidth={1.75} />
+                        <span>{t("nav.support", { defaultValue: "Support" })}</span>
+                      </a>
                       <button
                         type="button"
                         onClick={handleSignOut}
@@ -606,7 +652,7 @@ export default function AppShellClient({
                     )}
                   </button>
                 </div>
-              </aside>
+              </motion.aside>
               <button
                 type="button"
                 onClick={() => setMobileSidebarOpen(true)}
@@ -622,7 +668,7 @@ export default function AppShellClient({
               id="main"
               className="flex-1 overflow-auto overflow-x-hidden min-w-0 bg-[var(--bg-base)] flex flex-col transition-[margin-left] duration-250 ease-[cubic-bezier(0.23,1,0.32,1)]"
               style={{
-                marginLeft: sidebarCollapsed && window.innerWidth >= 768 ? "0" : undefined,
+                marginLeft: sidebarCollapsed && typeof window !== "undefined" && window.innerWidth >= 768 ? "0" : undefined,
               } as React.CSSProperties}
               tabIndex={-1}
               role="main"
@@ -707,16 +753,24 @@ export default function AppShellClient({
                 </button>
               </nav>
               {/* ⌘K hint removed — already shown in sidebar footer and top bar */}
-              {mobileMoreOpen && (
-                <div className="md:hidden fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label={t("accessibility.moreMenu")}>
-                  <div
-                    className="absolute inset-0 bg-[var(--bg-hover)] transition-opacity duration-200"
-                    onClick={() => setMobileMoreOpen(false)}
-                    onKeyDown={(e) => e.key === "Escape" && setMobileMoreOpen(false)}
-                  />
-                  <div className="absolute bottom-0 left-0 right-0 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-[var(--border-default)] bg-[var(--bg-surface)] shadow-2xl transition-[transform] duration-350 ease-[cubic-bezier(0.32,0.72,0,1)]" style={{
-                    transform: mobileMoreOpen ? "translateY(0)" : "translateY(100%)",
-                  } as React.CSSProperties}>
+              <AnimatePresence>
+                {mobileMoreOpen && (
+                  <div className="md:hidden fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label={t("accessibility.moreMenu")}>
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute inset-0 bg-[var(--bg-hover)]"
+                      onClick={() => setMobileMoreOpen(false)}
+                      onKeyDown={(e) => e.key === "Escape" && setMobileMoreOpen(false)}
+                    />
+                    <motion.div
+                      initial={{ y: "100%" }}
+                      animate={{ y: 0 }}
+                      exit={{ y: "100%" }}
+                      transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
+                      className="absolute bottom-0 left-0 right-0 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-[var(--border-default)] bg-[var(--bg-surface)] shadow-2xl">
                     <div className="sticky top-0 flex items-center justify-between px-4 py-3 border-b border-[var(--border-default)] bg-[var(--bg-surface)]">
                       <span className="text-sm font-medium text-[var(--text-primary)]">More</span>
                       <button
@@ -743,9 +797,10 @@ className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-pr
                         </Link>
                       ))}
                     </nav>
+                    </motion.div>
                   </div>
-                </div>
-              )}
+                )}
+              </AnimatePresence>
               {showShortcuts && (
                 <div
                   className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg-hover)] backdrop-blur-sm"
@@ -816,6 +871,7 @@ className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-pr
             </>
           )}
         </div>
+        <KeyboardShortcuts />
         <CommandPalette
           open={commandPaletteOpen}
           onClose={() => setCommandPaletteOpen(false)}
@@ -884,8 +940,8 @@ function OnboardingSidebar({ initialWorkspaceName }: { initialWorkspaceName?: st
       </nav>
       <div className="mt-4 pt-4 border-t border-[var(--border-default)] space-y-2">
         <div className="px-3 py-2 rounded-lg bg-[var(--accent-amber)]/10 border border-[var(--accent-amber)]/20">
-          <span className="block text-xs font-medium text-[var(--text-primary)]">Starter</span>
-          <span className="block text-[10px] text-[var(--text-secondary)]">Active plan</span>
+          <span className="block text-xs font-medium text-[var(--text-primary)]">Setup</span>
+          <span className="block text-[10px] text-[var(--text-secondary)]">Onboarding</span>
         </div>
       </div>
     </aside>

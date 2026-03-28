@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { computeReadiness, persistReadiness } from "@/lib/readiness/engine";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
@@ -167,7 +168,7 @@ export async function GET(req: NextRequest) {
   });
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err);
-    console.error("[attention] Failed:", errMsg);
+    log("error", "attention.generation_failed", { error: errMsg });
     return NextResponse.json({ error: "Failed to generate attention list" }, { status: 500 });
   }
 }

@@ -5,6 +5,7 @@ import type {
   CallResult,
   WebhookEvent,
 } from "./types";
+import { log } from "@/lib/logger";
 
 /**
  * Voice provider wrapper that implements automatic fallback.
@@ -39,9 +40,12 @@ export class VoiceProviderWithFallback implements VoiceProvider {
       ]);
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : String(err);
-      console.warn(
-        `[voice-fallback] ${this.primaryName} failed for ${operation}: ${errorMsg}. Falling back to ${this.fallbackName}.`
-      );
+      log("warn", "voice_fallback.primary_failed", {
+        primary: this.primaryName,
+        fallback: this.fallbackName,
+        operation,
+        error: errorMsg,
+      });
       return fallbackFn();
     }
   }
@@ -94,9 +98,11 @@ export class VoiceProviderWithFallback implements VoiceProvider {
       return this.primary.parseWebhookEvent(body);
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : String(err);
-      console.warn(
-        `[voice-fallback] ${this.primaryName} failed for parseWebhookEvent: ${errorMsg}. Falling back to ${this.fallbackName}.`
-      );
+      log("warn", "voice_fallback.webhook_parse_failed", {
+        primary: this.primaryName,
+        fallback: this.fallbackName,
+        error: errorMsg,
+      });
       return this.fallback.parseWebhookEvent(body);
     }
   }

@@ -151,7 +151,7 @@ export async function POST(req: NextRequest) {
         event_id: eventId,
         error: errMsg,
       });
-    } catch { /* Don't let failure tracking crash the response */ }
+    } catch (trackErr) { console.warn("[billing-webhook] Failure tracking insert failed:", trackErr instanceof Error ? trackErr.message : trackErr); }
     // Return 500 so Stripe retries the webhook
     return NextResponse.json({ error: "Processing failed" }, { status: 500 });
   }
@@ -529,7 +529,8 @@ async function handleStripeWebhookEvent(
                   const stripe = getStripe();
                   const sub = await stripe.subscriptions.retrieve(subscriptionId);
                   return sub.status === "active" || sub.status === "trialing";
-                } catch {
+                } catch (subErr) {
+                  console.warn("[billing-webhook] Subscription retrieval failed:", subErr instanceof Error ? subErr.message : subErr);
                   return false;
                 }
               })()
@@ -614,10 +615,13 @@ async function handleStripeWebhookEvent(
           });
         }
 
-        // Day-7 (4th failure): mark billing state to trigger in-app banner.
+        // Day-7 (4th failure): mark billing state with grace period.
+        // Service continues for 7 more days (grace_period_ends_at) before hard cutoff.
         if (failureNumber >= 4) {
+          const gracePeriodEnds = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
           await db.from("workspaces").update({
             billing_status: "payment_failed",
+            grace_period_ends_at: gracePeriodEnds.toISOString(),
             updated_at: new Date().toISOString(),
           }).eq("id", workspaceId);
         }
@@ -754,7 +758,7 @@ async function handleStripeWebhookEvent(
           const stripe = getStripe();
           const ch = await stripe.charges.retrieve(chargeId);
           resolvedWorkspaceId = ch.metadata?.workspace_id ?? null;
-        } catch { /* best-effort lookup */ }
+        } catch (lookupErr) { console.warn("[billing-webhook] Dispute charge lookup failed:", lookupErr instanceof Error ? lookupErr.message : lookupErr); }
       }
       log("error", "billing_webhook.dispute_created", {
         workspace_id: resolvedWorkspaceId,
@@ -786,6 +790,49 @@ async function handleStripeWebhookEvent(
       }
       break;
     }
+    /* ── invoice.finalized: invoice is ready for payment (draft → open) ── */
+    case "invoice.finalized": {
+      const inv = event.data.object as Stripe.Invoice;
+      const wid = (inv as Stripe.Invoice & { metadata?: { workspace_id?: string } }).metadata?.workspace_id;
+      if (wid) {
+        await db.from("workspaces").update({
+          billing_status: "active",
+          updated_at: new Date().toISOString(),
+        }).eq("id", wid);
+      }
+      break;
+    }
+
+    /* ── invoice.payment_action_required: customer must complete 3D Secure / SCA ── */
+    case "invoice.payment_action_required": {
+      const inv = event.data.object as Stripe.Invoice;
+      const wid = (inv as Stripe.Invoice & { metadata?: { workspace_id?: string } }).metadata?.workspace_id;
+      if (wid) {
+        const hostedUrl = (inv as Stripe.Invoice & { hosted_invoice_url?: string }).hosted_invoice_url;
+        await db.from("workspaces").update({
+          billing_status: "payment_action_required",
+          billing_action_url: hostedUrl ?? null,
+          updated_at: new Date().toISOString(),
+        }).eq("id", wid);
+      }
+      break;
+    }
+
+    /* ── customer.subscription.trial_will_end: 3 days before trial expires ── */
+    case "customer.subscription.trial_will_end": {
+      const sub = event.data.object as Stripe.Subscription;
+      const wid = (sub as Stripe.Subscription & { metadata?: { workspace_id?: string } }).metadata?.workspace_id;
+      if (wid) {
+        const trialEnd = (sub as Stripe.Subscription & { trial_end?: number | null }).trial_end;
+        await db.from("workspaces").update({
+          trial_ending_soon: true,
+          trial_ends_at: trialEnd ? new Date(trialEnd * 1000).toISOString() : null,
+          updated_at: new Date().toISOString(),
+        }).eq("id", wid);
+      }
+      break;
+    }
+
     default:
       break;
   }

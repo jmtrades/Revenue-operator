@@ -113,7 +113,7 @@ export default function IndustryTemplatesPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">{tTemplates("title")}</h1>
         <p className="text-[var(--text-tertiary)]">
-          {tTemplates("description")} {templates.length} industry verticals. Use these as starter packs when creating new agents.
+          {tTemplates("description")} {templates.length > 0 ? `${templates.length} industry verticals available.` : ""} Use these as starter packs when creating new agents.
         </p>
       </div>
 

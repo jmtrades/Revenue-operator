@@ -133,7 +133,9 @@
     "agency": "Agency",
     "backToKnowledge": "Back to knowledge",
     "continueToTest": "Continue to test",
-    "coldLeads": "コールドリード"
+    "coldLeads": "コールドリード",
+    "sectionRecovery": "Recovery & Growth",
+    "support": "Support"
   },
   "common": {
     "save": "保存",
@@ -148,7 +150,9 @@
     "submit": "送信",
     "loading": "読み込み中",
     "loadingEllipsis": "読み込み中…",
-    "error": "エラー",
+    "error": {
+      "generic": "Something went wrong. Please try again."
+    },
     "errorGeneric": "エラーが発生しました。もう一度お試しください。",
     "success": "成功",
     "retry": "再試行",
@@ -215,7 +219,8 @@
       "durationLabel": "Duration",
       "availableTimes": "Available Times"
     },
-    "dashboard": "ダッシュボード"
+    "dashboard": "ダッシュボード",
+    "saved": "Saved"
   },
   "toast": {
     "saved": "設定を保存しました",
@@ -388,7 +393,8 @@
         },
         "errors": {
           "previewFailed": "Failed to preview voice",
-          "applyFailed": "Failed to apply voice to agent"
+          "applyFailed": "Failed to apply voice to agent",
+          "generic": "Something went wrong testing the voice. Please try again."
         },
         "noAgent": "Agent not found",
         "backToAgents": "Back to Agents",
@@ -408,7 +414,18 @@
       "toast": {
         "syncFailed": "Sync failed"
       },
-      "whatsappComingSoon": "WhatsApp integration coming soon"
+      "whatsappComingSoon": "WhatsApp integration coming soon",
+      "dialog": {
+        "disconnectTitle": "Disconnect {provider}?",
+        "disconnectDesc": "This will remove the connection and stop syncing. Your existing contacts will not be deleted.",
+        "cancel": "Cancel"
+      },
+      "button": {
+        "disconnect": "Disconnect"
+      },
+      "hub": {
+        "needHelp": "Need help with integrations?"
+      }
     },
     "settings": {
       "integrations": {
@@ -419,7 +436,12 @@
           "concatenate": "Concatenate Fields"
         }
       }
-    }
+    },
+    "bulkStatusUpdated": "Status updated for selected contacts",
+    "exported": "Campaigns exported successfully",
+    "exportedSelected": "Selected contacts exported",
+    "selected": "selected",
+    "oauthPending": "OAuth setup is processing. Please try again in a moment."
   },
   "auth": {
     "signIn": {
@@ -436,7 +458,17 @@
       "showPassword": "表示",
       "hidePassword": "非表示",
       "showPasswordAria": "パスワードを表示",
-      "hidePasswordAria": "パスワードを隠す"
+      "hidePasswordAria": "パスワードを隠す",
+      "emailLabel": "Email address",
+      "passwordLabel": "Password",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "forgotPassword": "Forgot password?",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up",
+      "orContinueWith": "Or continue with",
+      "errorInvalid": "Invalid email or password",
+      "errorGeneric": "Something went wrong. Please try again."
     },
     "email": {
       "label": "メールアドレス"
@@ -585,7 +617,25 @@
     "bonusMinutes": "Bonus minutes from purchased packs: {count} min",
     "minutePacksDesc": "One-time minute packs — use them anytime, no expiration. Bonus minutes are used before overage billing.",
     "popular": "Popular",
-    "bestValue": "Best Value"
+    "bestValue": "Best Value",
+    "phonePurchase": {
+      "title": "Payment method required",
+      "description": "You need a payment method on file to purchase phone numbers. Please add a card below or subscribe to a plan, then return to the phone marketplace."
+    },
+    "subscriptionRequired": {
+      "title": "Active subscription required",
+      "description": "You need an active subscription to purchase phone numbers. Choose a plan below to get started, then return to the phone marketplace."
+    },
+    "amountDue": "Amount due:",
+    "retryAttempts": "Retry attempts:",
+    "nextRetry": "Next retry:",
+    "changingPlan": "Changing plan...",
+    "percentOff": "% off",
+    "whenYouPause": "When you pause:",
+    "pauseBullet1": "Your data and settings will be preserved",
+    "pauseBullet2": "You can resume your subscription anytime",
+    "pauseBullet3": "You'll receive reminder emails",
+    "securityNote": "Payments secured with 256-bit encryption via Stripe. We never store your card details."
   },
   "planChange": {
     "title": "プランを変更",
@@ -725,7 +775,9 @@
     },
     "needsAttention": {
       "title": "対応が必要",
-      "empty": "現在対応が必要な項目はありません。"
+      "empty": "現在対応が必要な項目はありません。",
+      "launchCampaign": "Launch a campaign",
+      "importContacts": "Import contacts"
     },
     "activity": {
       "selectWorkspace": "ワークスペースを選ぶとアクティビティが表示されます。",
@@ -769,7 +821,8 @@
       "markDone": "完了にする",
       "requiresAttention": "要対応",
       "callFailed": "通話に失敗",
-      "empty": "通話やメッセージが届くとアクティビティが表示されます。"
+      "empty": "通話やメッセージが届くとアクティビティが表示されます。",
+      "setupAgent": "View your agents →"
     },
     "pageTitle": "ダッシュボード — Recall Touch",
     "importContacts": "連絡先をインポート",
@@ -1128,7 +1181,10 @@
       "guidanceDay57Period": "5〜7日目",
       "guidanceDay57Line": "コミットと確認を監視。",
       "handlingStale": "最近対応が確認されていません。",
-      "copyRecordFallback": "記録をコピー"
+      "copyRecordFallback": "記録をコピー",
+      "checkout": "Checkout",
+      "declared_posture": "Declared Posture",
+      "first_win_shown": "First Win Shown"
     },
     "recordLead": {
       "authorityNoteLabel": "記録権限メモ",
@@ -1197,7 +1253,11 @@
       "filterAuthority": "権限",
       "emptyWhatHappened": "実際に起きたこと。",
       "emptyNoEntriesInView": "このビューにエントリはありません。",
-      "connectSourceHint": "ソースを接続して通話対応を開始してください。"
+      "connectSourceHint": "ソースを接続して通話対応を開始してください。",
+      "all": "All",
+      "authority": "Authority",
+      "loadingMessage": "Loading…",
+      "outcomes": "Outcomes"
     },
     "policyEdit": {
       "selectWorkspace": "ワークスペースを選択してください。",
@@ -1206,7 +1266,9 @@
       "approvalModeLabel": "承認モード",
       "requiredDisclaimersLabel": "必須免責事項（1行に1つ）",
       "forbiddenPhrasesLabel": "禁止フレーズ（1行に1つ）",
-      "requiredPhrasesLabel": "必須フレーズ（1行に1つ）"
+      "requiredPhrasesLabel": "必須フレーズ（1行に1つ）",
+      "loadingMessage": "Loading…",
+      "save": "Save"
     },
     "callDetail": {
       "loadingTitle": "記録",
@@ -1224,7 +1286,13 @@
       "text": "メッセージ",
       "markDone": "完了にする",
       "transcript": "文字起こし",
-      "noTranscript": "この通話の文字起こしはありません。"
+      "noTranscript": "この通話の文字起こしはありません。",
+      "backToActivity": "Back to Activity",
+      "backToCalls": "Back to Calls",
+      "empty": {
+        "recordNotFound": "Call not found"
+      },
+      "loadingMessage": "Loading call details…"
     },
     "approvalsPage": {
       "selectWorkspace": "運用中に承認が表示されます。",
@@ -1242,7 +1310,8 @@
       "stateInProgress": "進行中。",
       "stateConfirmation": "確認中。",
       "stateRecovery": "回収中。",
-      "stateFollowThrough": "フォロー中。"
+      "stateFollowThrough": "フォロー中。",
+      "loadingMessage": "Loading…"
     },
     "integrationsPage": {
       "googleCalendar": "Google カレンダー",
@@ -1299,7 +1368,11 @@
       "creating": "作成中…",
       "createCampaign": "キャンペーンを作成",
       "cancel": "キャンセル",
-      "createError": "キャンペーンの作成に失敗しました。"
+      "createError": "キャンペーンの作成に失敗しました。",
+      "newCampaignPlaceholder": "e.g. Spring Reactivation",
+      "empty": {
+        "chooseWorkspaceFirst": "Choose a workspace first"
+      }
     },
     "billingPage": {
       "billingUnavailable": "請求情報を取得できません。",
@@ -1407,7 +1480,11 @@
       "followThroughInProgress": "フォロー中",
       "accessContext": "コンテキストを開く",
       "ifProtectionStops": "保護が停止した場合",
-      "ifProtectionStopsBody": "対応中の作業について、レスポンスの継続性、決定の完了、出席の安定性は保護されなくなります。一部の決定が停滞する可能性があります。出席が安定しなくなる可能性があります。"
+      "ifProtectionStopsBody": "対応中の作業について、レスポンスの継続性、決定の完了、出席の安定性は保護されなくなります。一部の決定が停滞する可能性があります。出席が安定しなくなる可能性があります。",
+      "empty": {
+        "protectionScopeSubtitle": "No data available yet"
+      },
+      "loadingMessage": "Loading…"
     },
     "callsCalendarPage": {
       "confirmationRecommended": "確認を推奨",
@@ -1450,7 +1527,23 @@
       "SHOWED": "予定が完了しました。",
       "LOST": "会話を一時停止しました。",
       "REACTIVATE": "会話を一時停止しました。",
-      "fallback": "会話中。"
+      "fallback": "会話中。",
+      "beyondScope": "Beyond scope",
+      "dataRemainsFromLastView": "Data remains from last view",
+      "enterOutcome": "Enter outcome",
+      "entryExistsForRecord": "Entry exists for this record",
+      "entryRestoresReliance": "Entry restores reliance",
+      "entryStored": "Entry stored",
+      "followThrough": "Follow-through",
+      "handled": "Handled",
+      "howItProgressed": "How it progressed",
+      "normalConditionsNotPresentResume": "Normal conditions not present — resume",
+      "outcome": "Outcome",
+      "outsideAuthority": "Outside authority",
+      "record": "Record",
+      "recordIntegrityDemonstrable": "Record integrity demonstrable",
+      "unknown": "Unknown",
+      "unrecordedOutcomesCreateExposure": "Unrecorded outcomes create exposure"
     },
     "leadDetailPage": {
       "loadingMessage": "少々お待ちください…",
@@ -1470,7 +1563,10 @@
       "unrecordedOutcomesCreateExposure": "未記録の結果はエクスポージャーを生みます。",
       "entryRestoresReliance": "エントリが信頼を回復します。",
       "enterOutcome": "結果を入力",
-      "howItProgressed": "経過"
+      "howItProgressed": "経過",
+      "empty": {
+        "recordNotFound": "This lead doesn't exist or has been removed."
+      }
     },
     "onboardingWizard": {
       "getStartedHeading": "始める",
@@ -1602,7 +1698,8 @@
       "addNumberLaterInSettings": "設定で後から番号を追加できます。エージェントは設定済みです。",
       "takeMeToDashboard": "ダッシュボードへ →",
       "skipTestLater": "スキップ — 後でテスト",
-      "oneMoment": "少々お待ちください…"
+      "oneMoment": "少々お待ちください…",
+      "capture": "Capture"
     },
     "followThroughEmptyTitle": "フォローアップの進行状況はここに表示されます。",
     "followThroughEmptySubtitle": "準備中。",
@@ -1818,12 +1915,25 @@
     "revenueRecovered": "回収済み売上:",
     "call": "通話",
     "text": "SMS",
-    "activeCampaigns": "稼働中の発信キャンペーン",
+    "activeCampaigns": {
+      "title": "Active Campaigns",
+      "create": "Create campaign",
+      "noCampaigns": "No active campaigns. Launch one from Campaigns.",
+      "status": {
+        "active": "Active",
+        "paused": "Paused",
+        "draft": "Draft",
+        "completed": "Completed"
+      },
+      "contacted": "contacted",
+      "converted": "converted"
+    },
     "createCampaign": "キャンペーンを作成 →",
     "viewAll": "すべて見る",
     "actions": {
       "refresh": "更新",
-      "updatedAt": "更新日時"
+      "updatedAt": "更新日時",
+      "upgrade": "Upgrade"
     },
     "lastUpdated": {
       "never": "なし",
@@ -1836,7 +1946,120 @@
     "noCampaigns": "稼働中のキャンペーンはありません。キャンペーンから開始してください。",
     "noWorkspace": "ワークスペースが選択されていません",
     "selectWorkspace": "ダッシュボードを表示するにはワークスペースを選択してください。",
-    "dashboard": "ダッシュボード"
+    "dashboard": "ダッシュボード",
+    "loading": "Loading your dashboard...",
+    "welcomeBack": "Welcome back",
+    "phoneWarning": {
+      "title": "Phone number not connected",
+      "description": "Your AI can't receive calls yet.",
+      "cta": "Connect a number"
+    },
+    "getStarted": "Get started",
+    "getStartedSubtitle": "Complete these steps to go live — takes about 5 minutes",
+    "onboarding": {
+      "createAgent": {
+        "title": "Create your AI agent",
+        "description": "Choose a template and customize your agent's personality"
+      },
+      "connectNumber": {
+        "title": "Connect a number",
+        "description": "Set up your phone number to start receiving calls"
+      },
+      "addKnowledge": {
+        "title": "Add your FAQs",
+        "description": "Teach your agent about your business"
+      },
+      "configureAgent": {
+        "title": "Configure your agent",
+        "description": "Customize how your AI handles calls"
+      },
+      "makeTestCall": {
+        "title": "Make a test call",
+        "description": "Call your number from any phone to test it"
+      }
+    },
+    "stats": {
+      "activeCalls": "Active Calls",
+      "startsAfterFirstCall": "Starts after first call",
+      "estRevenueRecovered": "Est. Revenue Recovered"
+    },
+    "gettingStarted": {
+      "title": "Getting Started",
+      "completeProfile": "Complete Your Profile",
+      "completeProfileDesc": "Add business info and preferences",
+      "setupNumber": "Set Up Your Number",
+      "setupNumberDesc": "Configure your AI agent's phone number",
+      "chooseVoice": "Choose Agent Voice",
+      "chooseVoiceDesc": "Pick the perfect voice personality",
+      "viewActivity": "View Recent Activity",
+      "viewActivityDesc": "Check call logs and recordings"
+    },
+    "revenueAtRisk": {
+      "title": "Revenue At Risk",
+      "subtitle": "Estimated revenue leaking this week"
+    },
+    "knowledgeGaps": {
+      "title": "AI Knowledge Gaps",
+      "description": "Your AI couldn't answer these questions. Add answers to make it smarter.",
+      "addAnswer": "Add answer"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "viewAll": "View all",
+      "emptyTitle": "Your activity feed is ready",
+      "emptyDescription": "Once your AI agent handles its first call, you'll see real-time updates here"
+    },
+    "analytics": {
+      "title": "Revenue Dashboard",
+      "subtitle": "See exactly how much money Recall Touch has recovered.",
+      "description": "Real-time view of revenue recovered by your AI agent.",
+      "export": "Export",
+      "emptyDescription": "Once your AI starts answering calls, revenue metrics will appear here.",
+      "setupCallForwarding": "Set up call forwarding →",
+      "totalRevenueRecovered": "Total Revenue Recovered"
+    },
+    "usage": {
+      "limitReached": "Limit reached.",
+      "approachingLimit": "Approaching limit.",
+      "upgradeLink": "Upgrade →"
+    },
+    "revenueLabel": "Revenue recovered",
+    "minutesLabel": "Minutes",
+    "campaigns": {
+      "contacts": "contacts",
+      "booked": "booked"
+    },
+    "recentCalls": {
+      "title": "Recent Calls",
+      "loading": "Loading...",
+      "empty": "No calls yet. Once your AI starts handling calls, they will appear here.",
+      "outcomes": {
+        "appointment": "Appointment booked",
+        "lead": "Lead captured",
+        "message": "Message taken",
+        "transferred": "Transferred",
+        "spam": "Spam"
+      },
+      "tableHeaders": {
+        "time": "Time",
+        "contact": "Contact",
+        "outcome": "Outcome",
+        "duration": "Duration"
+      }
+    },
+    "overage": "Additional usage is billed at your plan's overage rate.",
+    "errors": {
+      "loadFailed": "Dashboard data could not be loaded",
+      "loadFailedDesc": "Showing empty values."
+    },
+    "usageWarning": {
+      "limitReached": "Minute limit reached",
+      "approaching": "Approaching minute limit",
+      "used": "{minutes_used} of {minutes_limit} minutes used this cycle.",
+      "buyMore": "Buy more minutes",
+      "manage": "Manage usage"
+    },
+    "title": "Reseller Dashboard"
   },
   "analytics": {
     "pageTitle": "分析 — Recall Touch",
@@ -1844,7 +2067,12 @@
     "title": "分析",
     "periodSummary": {
       "title": "期間サマリー",
-      "empty": "サマリーを生成するのに十分なデータがまだありません。"
+      "empty": "サマリーを生成するのに十分なデータがまだありません。",
+      "emptyState": "Analytics appear after your first calls.",
+      "handled": "You handled **{calls} call{calls != 1 ? 's' : ''}** with a **{answerRate}% answer rate**.",
+      "booked": "Your agents booked **{appointments} appointment{appointments != 1 ? 's' : ''}**, converting **{conversionRate}%** of qualified leads.",
+      "revenue": "Estimated revenue impact: **${revenue}**.",
+      "duration": "Average call duration: **{duration}**."
     },
     "filters": {
       "range": {
@@ -1980,7 +2208,15 @@
     "noTrendData": "Not enough data to show trends.",
     "otherAgents": "Other Agents",
     "outcomeBreakdown": "Outcome Breakdown",
-    "successRateOverTime": "Success Rate Over Time"
+    "successRateOverTime": "Success Rate Over Time",
+    "emptyState": {
+      "title": "Analytics appear after your first calls",
+      "description": "Make a test call to unlock conversion and revenue insights.",
+      "ariaLabel": "No analytics available yet",
+      "action": "Make a test call"
+    },
+    "pipelineTitle": "Pipeline & Operations",
+    "operationalMetrics": "Operational Metrics"
   },
   "agents": {
     "pageTitle": "エージェント — Recall Touch",
@@ -1992,7 +2228,9 @@
     "new": "新しいエージェント",
     "empty": {
       "title": "まだエージェントがいません",
-      "body": "最初のエージェントを作成して、通話対応、予約、リードのスコアリングを自動化しましょう。"
+      "body": "最初のエージェントを作成して、通話対応、予約、リードのスコアリングを自動化しましょう。",
+      "createFirst": "Create your first AI agent",
+      "createFirstBody": "Set up your voice, knowledge, and behavior so your AI can answer calls and book appointments 24/7."
     },
     "readiness": {
       "label": "エージェントの準備状況"
@@ -2836,7 +3074,8 @@
       "applyToAgent": "Apply to Agent",
       "selected": "Selected",
       "selectVoicePrompt": "Select a voice to preview"
-    }
+    },
+    "voicePreviewLink": "Preview all voices & A/B test"
   },
   "calls": {
     "pageTitle": "通話 — Recall Touch",
@@ -2927,7 +3166,14 @@
       },
       "nav": {
         "calls": "Calls"
-      }
+      },
+      "breadcrumbCalls": "Calls",
+      "followUpInInbox": "Follow up in inbox",
+      "noTranscriptAvailable": "No transcript available for this call.",
+      "speakerCaller": "Caller",
+      "status": "Status",
+      "summary": "Summary",
+      "noRecording": "No recording available"
     },
     "empty": {
       "title": "まだ通話がありません",
@@ -2974,12 +3220,15 @@
       "timeout": "リクエストがタイムアウトしました。もう一度お試しください。",
       "loadFailed": "このワークスペースの通話を読み込めませんでした。",
       "exportFailed": "エクスポートに失敗しました。もう一度お試しください。",
-      "errorTitle": "Could not load calls"
+      "errorTitle": "Could not load calls",
+      "noteSaveFailed": "Failed to save notes"
     },
     "toast": {
       "exportSuccess": "通話をエクスポートしました。ダウンロードを確認してください。",
       "openingSms": "SMSを開いています...",
-      "noPhoneForSms": "この通話に利用可能な電話番号がありません"
+      "noPhoneForSms": "この通話に利用可能な電話番号がありません",
+      "flagRemoved": "Flag removed",
+      "flagged": "Call flagged for review"
     },
     "live": {
       "selectWorkspace": "ライブ通話を見るにはワークスペースを選択してください。",
@@ -3152,7 +3401,10 @@
     "toast": {
       "saved": "通話ルールを保存しました",
       "error": "通話ルールの保存に失敗しました"
-    }
+    },
+    "savingChanges": "Saving…",
+    "businessHoursNote": "Business hours are set to your workspace timezone. Contact support to customize your schedule.",
+    "emergencyKeywordsPlaceholder": "e.g. emergency, urgent, flooding, leak"
   },
   "inbox": {
     "title": "受信箱",
@@ -3210,7 +3462,14 @@
       "send": "送信"
     },
     "contact": "連絡先",
-    "openContactPanel": "連絡先パネルを開く"
+    "openContactPanel": "連絡先パネルを開く",
+    "dismissError": "Dismiss error",
+    "startConversation": "Send your first message below to begin the conversation with {name}",
+    "updatedJustNow": "Updated just now",
+    "messageSent": "Message sent",
+    "messageFailed": "Failed to send message",
+    "loadFailed": "Failed to load messages",
+    "sendFailed": "Failed to send message. Please try again."
   },
   "leads": {
     "title": "リード",
@@ -3381,7 +3640,7 @@
     "timeOneDayAgo": "1日前",
     "timeOneWeekAgo": "1週間前",
     "emptyTitle": "Import contacts or add manually",
-    "emptySubtitle": "Import contacts or add manually",
+    "emptySubtitle": "リードは通話が入ってくるとここに表示されます。またはCSVをインポートして開始できます。",
     "importCsv": "Import CSV",
     "addContact": "Add Contact",
     "unknownAgent": "Unknown Agent"
@@ -3393,12 +3652,27 @@
       "back": "Back to campaigns",
       "title": "Create campaign",
       "subtitle": "Choose a type, audience, sequence, schedule, then launch.",
+      "modes": {
+        "power": {
+          "label": "パワー",
+          "description": "最大コール数、積極的なダイヤル戦略"
+        },
+        "preview": {
+          "label": "プレビュー",
+          "description": "プレビューモード、1件ずつ発信"
+        },
+        "progressive": {
+          "label": "プログレッシブ",
+          "description": "パフォーマンスに基づく段階的な増加"
+        }
+      },
       "steps": {
         "type": "Type",
         "audience": "Audience",
         "sequence": "Sequence",
         "schedule": "Schedule",
-        "review": "Review"
+        "review": "Review",
+        "details": "キャンペーン詳細"
       },
       "type": {
         "heading": "Campaign type",
@@ -3453,11 +3727,15 @@
         "saveDraft": "Save as draft",
         "launch": "Launch campaign",
         "saving": "Saving…",
-        "launching": "Launching…"
+        "launching": "Launching…",
+        "confirmLaunch": "Launch this campaign?",
+        "confirmLaunchDesc": "Once launched, your AI will begin contacting leads in this campaign.",
+        "confirm": "Confirm & Launch"
       },
       "errors": {
         "noWorkspace": "Workspace not available.",
-        "createFailed": "Could not create campaign."
+        "createFailed": "Could not create campaign.",
+        "emptyTemplate": "Please select a campaign template"
       },
       "toast": {
         "saved": "Campaign saved as draft.",
@@ -3582,6 +3860,8 @@
     "heading": "キャンペーン",
     "description": "自動化された発信通話とメッセージでリードにリーチします。",
     "defaults": {
+      "campaignName": "不在着信リカバリー",
+      "smsTemplate": "こんにちは{firstName}様、{businessName}です。最近お問い合わせいただいたことを確認しました。ぜひお手伝いさせてください。お時間はございますか？",
       "audience": "フォローアップ待ちのリード",
       "template": "先日の会話のフォローです。続けたい場合はここから返信してください。",
       "followupAudience": "フォローアップ待ちのリード",
@@ -3668,7 +3948,9 @@
       "launchedWithCount": "キャンペーンを開始しました。{count}件のコンタクトがキューに追加されました。",
       "deleted": "Campaign deleted.",
       "deleteFailed": "Could not delete campaign.",
-      "duplicated": "Campaign duplicated."
+      "duplicated": "Campaign duplicated.",
+      "exported": "Campaigns exported successfully",
+      "exportFailed": "Failed to export campaigns"
     },
     "sequenceHint": "Define the steps in your outreach sequence",
     "sequenceLabel": "Sequence",
@@ -3682,7 +3964,23 @@
     "delete": "Delete",
     "duplicate": "Duplicate",
     "deleteConfirmTitle": "Delete this campaign?",
-    "deleteConfirmMessage": "Are you sure you want to delete \"{name}\"? This cannot be undone."
+    "deleteConfirmMessage": "Are you sure you want to delete \"{name}\"? This cannot be undone.",
+    "answerRate": "応答率",
+    "booked": "予約済み",
+    "conversionRate": "コンバージョン率",
+    "copy": "Copy campaign",
+    "launch": "Launch campaign",
+    "pauseAction": "Pause campaign",
+    "copySuffix": "Copy",
+    "pageOf": "{page} of {total}",
+    "prevPage": "Previous page",
+    "nextPage": "Next page",
+    "export": "Export",
+    "exportTooltip": "Export campaigns to CSV",
+    "overallConversion": "Overall conversion",
+    "appointmentsBooked": "booked",
+    "dailyUsage": "Daily",
+    "dailyLimitReached": "— limit reached, resumes tomorrow"
   },
   "settings": {
     "pageTitle": "設定 — Recall Touch",
@@ -3717,11 +4015,13 @@
       },
       "phone": {
         "label": "電話と番号",
-        "desc": "番号の購入、転送状況、発信者ID、ルーティング"
+        "desc": "番号の購入、転送状況、発信者ID、ルーティング",
+        "required": "(Required for calls)"
       },
       "agent": {
         "label": "AIエージェント設定",
-        "desc": "音声、挨拶、動作、ナレッジ、言語"
+        "desc": "音声、挨拶、動作、ナレッジ、言語",
+        "required": "(Required)"
       },
       "callRules": {
         "label": "通話ルール",
@@ -3813,7 +4113,9 @@
       "title": "電話と番号",
       "searchFailed": "検索に失敗しました。フィルターを調整して再度お試しください。",
       "provisionFailed": "番号をプロビジョニングできませんでした。もう一度お試しください。",
-      "provisioned": "番号をワークスペースに追加しました。"
+      "provisioned": "番号をワークスペースに追加しました。",
+      "paymentRequired": "番号を購入する前に支払い方法を追加してください。",
+      "subscriptionRequired": "電話番号の購入にはアクティブなサブスクリプションが必要です。"
     },
     "notifications": {
       "title": "通知",
@@ -3870,6 +4172,9 @@
       "backToSettings": "← 設定",
       "memberYouOwner": "あなた（オーナー）",
       "statusActive": "アクティブ",
+      "statusPending": "保留中",
+      "statusInvited": "招待済み",
+      "statusInactive": "無効",
       "roleUpdatedToast": "Role updated",
       "confirmRemove": "Are you sure you want to remove this team member?",
       "memberRemovedToast": "Team member removed",
@@ -3881,7 +4186,8 @@
       "removeFailed": "Failed to remove member.",
       "inviteFailed": "Failed to send invite. Please try again.",
       "networkError": "Network error. Please try again.",
-      "invalidEmail": "有効なメールアドレスを入力してください"
+      "invalidEmail": "有効なメールアドレスを入力してください",
+      "smsPush": "SMS + Push"
     },
     "compliance": {
       "title": "コンプライアンス",
@@ -3915,7 +4221,24 @@
       "loadFailed": "録音同意設定を読み込めませんでした。",
       "saveFailed": "コンプライアンス設定を保存できませんでした。もう一度お試しください。",
       "recordingSaved": "録音同意設定を保存しました。",
-      "saved": "コンプライアンス設定を保存しました。"
+      "saved": "コンプライアンス設定を保存しました。",
+      "saving": "Saving…",
+      "csvExport": {
+        "setting": "Setting",
+        "value": "Value",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "yes": "Yes",
+        "no": "No",
+        "callRecording": "Call Recording",
+        "hipaaMode": "HIPAA Mode",
+        "pauseOnSensitive": "Pause on Sensitive",
+        "dataRetention": "Data Retention (days)",
+        "recordingConsentMode": "Recording Consent Mode",
+        "announcementText": "Announcement Text",
+        "default": "(default)",
+        "exportedAt": "Exported At"
+      }
     },
     "errorReports": "エラーレポート",
     "errorsPage": {
@@ -4065,7 +4388,56 @@
       "defaultGreeting": "{business} にお電話ありがとうございます。どのようなご用件でしょうか？",
       "voicePreviewText": "お電話ありがとうございます。本日はどのようなご用件でしょうか？",
       "defaultBusiness": "あなたのビジネス",
-      "defaultWorkspaceName": "マイワークスペース"
+      "defaultWorkspaceName": "マイワークスペース",
+      "qualificationMethods": {
+        "none": "None",
+        "bant": "BANT",
+        "customQuestions": "Custom Questions"
+      },
+      "tonePresets": {
+        "professional": "Professional",
+        "casual": "Casual & Friendly",
+        "concise": "Concise & Direct",
+        "empathetic": "Empathetic & Warm"
+      },
+      "transferPolicies": {
+        "never": "Never",
+        "ifRequests": "If caller requests",
+        "onEscalation": "On escalation trigger",
+        "always": "Always"
+      },
+      "escalationThresholds": {
+        "conservative": "Conservative — transfer often",
+        "balanced": "Balanced",
+        "aggressive": "Aggressive — AI handles most"
+      },
+      "customQuestionsPlaceholder": "Question",
+      "customAnswerPlaceholder": "Expected answer",
+      "transferNumberPlaceholder": "Your phone number",
+      "objectionsPlaceholder": "Objection",
+      "responsePlaceholder": "Response",
+      "behaviorSectionTitle": "Behavior & Qualification",
+      "behaviorSectionDescription": "Configure qualification methods and tone",
+      "qualificationMethodLabel": "Qualification Method",
+      "bantQuestionsLabel": "BANT Questions (Read-only Examples)",
+      "customQuestionsLabel": "Custom Questions",
+      "tonePresetLabel": "Tone Preset",
+      "escalationSectionTitle": "Escalation & Transfer Rules",
+      "escalationSectionDescription": "Configure when to transfer to humans",
+      "transferPolicyLabel": "Transfer Policy",
+      "transferPhoneNumberLabel": "Transfer Phone Number",
+      "confidenceThresholdLabel": "Confidence Threshold",
+      "escalationTriggersLabel": "Escalation Triggers",
+      "escalationTriggersDescription": "Describe situations when the agent should transfer to a human",
+      "escalationTriggersPlaceholder": "E.g., Angry customer, technical issue, competitor comparison...",
+      "actionsSectionTitle": "Allowed & Forbidden Actions",
+      "actionsSectionDescription": "Control what the agent can and cannot do",
+      "allowedActionsLabel": "Allowed Actions",
+      "forbiddenActionsLabel": "Forbidden Actions",
+      "objectionsSectionTitle": "Objection Handling",
+      "objectionsSectionDescription": "Pre-built responses to common objections",
+      "objectionsLabel": "Objection/Response Pairs",
+      "addButton": "+ Add"
     },
     "syncLog": {
       "breadcrumb": "同期ログ",
@@ -4144,6 +4516,9 @@
         "heading": "DNC compliance",
         "toggleLabel": "Enable DNC checks",
         "disclaimer": "You are responsible for TCPA compliance and honoring opt-outs."
+      },
+      "error": {
+        "generic": "Something went wrong saving outbound settings."
       }
     },
     "account": "Account",
@@ -4231,6 +4606,13 @@
       "system": "システム",
       "light": "ライト",
       "dark": "ダーク"
+    },
+    "support": {
+      "requestSubmitted": "Your request has been submitted. Our team will contact you within 24 hours.",
+      "requestFailed": "Could not submit request. Please email support@recall-touch.com directly."
+    },
+    "error": {
+      "generic": "Something went wrong. Please try again."
     }
   },
   "hero": {
@@ -4367,7 +4749,124 @@
     "email": "email@example.com",
     "phone": "+81 (90) 0000-0000",
     "processing": "処理中...",
-    "confirm": "確認"
+    "confirm": "確認",
+    "title": "Cold Leads",
+    "description": "Re-engage dormant leads and recover lost opportunities",
+    "addButton": "Add Cold Leads",
+    "reengageAll": "Re-engage All Pending",
+    "stats": {
+      "totalColdLeads": "Total Cold Leads",
+      "pending": "Pending",
+      "inProgress": "In Progress",
+      "reengaged": "Re-engaged",
+      "exhausted": "Exhausted"
+    },
+    "table": {
+      "lead": "Lead",
+      "reason": "Reason",
+      "priority": "Priority",
+      "attempts": "Attempts",
+      "lastAttempt": "Last Attempt",
+      "nextAttempt": "Next Attempt",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "all": "All Status",
+      "pending": "Pending",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "exhausted": "Exhausted"
+    },
+    "reason": {
+      "all": "All Reasons",
+      "noActivity30d": "No Activity 30d",
+      "noReply14d": "No Reply 14d",
+      "lostDeal": "Lost Deal",
+      "manual": "Manual"
+    },
+    "priority": {
+      "all": "All Priorities",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "sort": {
+      "priority": "Priority",
+      "nextAttempt": "Next Attempt",
+      "recent": "Most Recent",
+      "attempts": "Attempt Count"
+    },
+    "empty": {
+      "title": "No cold leads in the queue",
+      "description": "Leads are automatically added when they go dormant for 30+ days, or you can manually add leads that need re-engagement."
+    },
+    "modal": {
+      "addLeadTitle": "Add Cold Lead",
+      "reengageTitle": "Re-engage Lead",
+      "nameLabel": "Name *",
+      "emailLabel": "Email",
+      "phoneLabel": "Phone",
+      "reasonLabel": "Reason *",
+      "priorityLabel": "Priority *",
+      "strategyLabel": "Strategy",
+      "channelLabel": "Channel",
+      "cancelButton": "Cancel",
+      "addButton": "Add Lead",
+      "confirmButton": "Confirm"
+    },
+    "buttons": {
+      "addLead": "Add Lead",
+      "adding": "Adding...",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "skip": "Skip",
+      "remove": "Remove",
+      "reengage": "Re-engage"
+    },
+    "strategy": {
+      "auto": "Auto (Recommended)",
+      "valueFirst": "Value-First",
+      "clarification": "Clarification",
+      "socialProof": "Social Proof",
+      "urgency": "Urgency",
+      "directClose": "Direct Close"
+    },
+    "channel": {
+      "default": "Use Workspace Default",
+      "callFirst": "Call First",
+      "textFirst": "Text First",
+      "emailFirst": "Email First"
+    },
+    "formatTime": {
+      "never": "Never",
+      "justNow": "Just now",
+      "minutesAgo": "{count}m ago",
+      "hoursAgo": "{count}h ago",
+      "daysAgo": "{count}d ago"
+    },
+    "toast": {
+      "success": {
+        "addedLead": "Cold lead added",
+        "reengagedLeads": "Started re-engagement for {count} lead(s)",
+        "markedExhausted": "Lead marked as exhausted",
+        "removed": "Lead removed"
+      },
+      "error": {
+        "fillRequired": "Please fill in required fields",
+        "addFailed": "Failed to add cold lead",
+        "reengageFailed": "Failed to re-engage leads",
+        "noPendingLeads": "No pending leads to re-engage",
+        "skipFailed": "Failed to skip lead",
+        "removeFailed": "Failed to remove lead"
+      }
+    },
+    "ttip": {
+      "reengage": "Re-engage",
+      "skip": "Skip",
+      "remove": "Remove"
+    },
+    "attempts": "{current} of {max}"
   },
   "demoPage": {
     "title": "Recall Touchを体験",
@@ -4493,6 +4992,21 @@
       "label": "使い方",
       "title": "3ステップで稼働開始。",
       "steps": {
+        "0": {
+          "title": "Connect",
+          "subtitle": "Connect",
+          "description": "Forward your number or get a new one. Any carrier. Any phone."
+        },
+        "1": {
+          "title": "Configure",
+          "subtitle": "Configure",
+          "description": "Tell your AI what to do: answer calls, handle texts, book appointments, follow up, qualify leads, or all of it. Use a template or start from scratch."
+        },
+        "2": {
+          "title": "Done",
+          "subtitle": "Done",
+          "description": "Every call answered. Every lead captured. Every follow-up sent."
+        },
         "connect": {
           "title": "接続",
           "desc": "番号を転送するか、新規取得。キャリア・端末問わず。"
@@ -4784,7 +5298,61 @@
           "role": "屋根工事"
         }
       },
-      "badge": "通話を取りこぼさない企業に選ばれています。"
+      "badge": "通話を取りこぼさない企業に選ばれています。",
+      "title": "What Our Customers Report",
+      "description": "Verified results from active accounts.",
+      "goToTestimonial": "Go to testimonial {number}",
+      "items": {
+        "0": {
+          "quote": "We were losing 40% of after-hours calls — that's $23K in missed revenue every month. Within a week of going live, Recall Touch was booking appointments at 2 AM, recovering storm damage leads at midnight, and following up with quotes before my crew even woke up. First month: $23K in recovered revenue. It paid for the entire year in 12 days.",
+          "name": "Marcus Johnson",
+          "role": "Owner",
+          "company": "Premier Plumbing & HVAC — Houston, TX",
+          "metric": "+$23K/mo recovered"
+        },
+        "1": {
+          "quote": "We have 4 locations and our front desk was drowning — 200+ calls a day, half going to voicemail. Recall Touch handles every single one now. No-shows dropped 52% because the AI actually follows up with reminders and reschedules cancellations automatically. We've added $180K in annual revenue without hiring a single person.",
+          "name": "Dr. Lisa Chen",
+          "role": "Practice Owner",
+          "company": "Bright Smile Dental Group — Miami, FL",
+          "metric": "+$180K/year"
+        },
+        "2": {
+          "quote": "I was dead skeptical about AI handling our legal intake. Then it booked 3 consultations its first night — at 2 AM — from people who'd been in car accidents and were searching for a lawyer. Those turned into $45K in retained cases. The voice quality is so natural that clients thank 'Alex' by name. I'm a full believer now.",
+          "name": "David Roth",
+          "role": "Managing Partner",
+          "company": "Roth & Associates Law — Chicago, IL",
+          "metric": "68% intake conversion"
+        },
+        "3": {
+          "quote": "We manage 14 crews across 3 states. Storm season used to mean 60% of calls went to voicemail — those are $5K-$15K jobs just evaporating. Recall Touch answers every call in under a second, qualifies the lead, books the inspection, and routes it to the right crew. Revenue is up 34% year-over-year and we process 500+ calls a day without breaking a sweat.",
+          "name": "Mike Torres",
+          "role": "CEO",
+          "company": "Apex Roofing Group — Dallas, TX",
+          "metric": "500+ calls/day"
+        },
+        "4": {
+          "quote": "I tested 6 AI phone products before finding Recall Touch. The difference is night and day — this one actually books appointments, follows up on quotes, and routes urgent calls to my cell. Connected my existing number and it was handling the full workflow within an hour. First week ROI was 11x.",
+          "name": "Sarah Kim",
+          "role": "Owner",
+          "company": "AutoCare Express — Atlanta, GA",
+          "metric": "11x ROI in week one"
+        },
+        "5": {
+          "quote": "I white-label Recall Touch for 12 clients and make $4K/mo in pure margin. My clients think the AI is a real person on their team. Zero complaints in 8 months. When I showed my agency partner the demo, he signed up the same day and put 6 of his clients on it. This is the best agency tool nobody's talking about yet.",
+          "name": "Chris Martinez",
+          "role": "Founder",
+          "company": "Scale Digital Agency — Los Angeles, CA",
+          "metric": "$4K/mo agency profit"
+        },
+        "6": {
+          "quote": "As a solo practitioner, I was losing patients to the big clinics because I couldn't answer during appointments. Recall Touch runs my entire patient communication — scheduling, follow-ups, no-show recovery, reactivation campaigns for lapsed patients. My patient volume increased 40% in the first quarter without adding any staff. It's a full operations layer, not just a phone tool.",
+          "name": "Dr. James Park",
+          "role": "Chiropractor",
+          "company": "Park Wellness Center — Denver, CO",
+          "metric": "+40% patient volume"
+        }
+      }
     },
     "pricingPreview": {
       "label": "料金",
@@ -4954,6 +5522,18 @@
         "custom": {
           "name": "ご自身の業種",
           "desc": "該当がない？電話を受ける企業ならRecall Touchで対応可能。"
+        },
+        "autoRepair": {
+          "name": "Auto Repair",
+          "desc": "Capture every service request, quote, and emergency call. Book appointments and follow up on estimates automatically."
+        },
+        "insurance": {
+          "name": "Insurance",
+          "desc": "Qualify leads, route claims, schedule consultations, and automate renewal campaigns — all from one AI agent."
+        },
+        "construction": {
+          "name": "Construction",
+          "desc": "Qualify project leads, schedule estimates, and follow up on bids. Never lose a job to a slow response."
         }
       },
       "footer": "お探しの業種が見つからない？Recall Touchはあらゆるサービス企業に対応しています。",
@@ -5365,6 +5945,64 @@
       },
       "cta": {
         "button": "今すぐ始める"
+      }
+    },
+    "trustedBy": {
+      "heading": "Trusted across industries",
+      "rating": "4.9/5 average rating"
+    },
+    "results": {
+      "label": "Proven Results",
+      "title": "Metrics that matter",
+      "stats": {
+        "0": {
+          "label": "Revenue Recovered"
+        },
+        "1": {
+          "label": "Calls Handled"
+        },
+        "2": {
+          "label": "Average ROI"
+        },
+        "3": {
+          "label": "Response Time"
+        }
+      }
+    },
+    "testimonialsGrid": {
+      "label": "Success Stories",
+      "title": "What customers are saying",
+      "testimonials": {
+        "0": {
+          "quote": "Recall Touch transformed our missed call recovery. We went from losing 40% of inbound leads to capturing 97% with AI-powered follow-ups. Revenue increased 280% in the first quarter.",
+          "author": "Sarah Mitchell",
+          "role": "VP Sales",
+          "company": "TechScale Inc"
+        },
+        "1": {
+          "quote": "The real-time coaching feature alone is worth 10x the price. Our reps' close rates jumped from 12% to 31% within 60 days. The AI knows exactly when to suggest battlecards.",
+          "author": "Marcus Johnson",
+          "role": "Sales Director",
+          "company": "GrowthEngine"
+        },
+        "2": {
+          "quote": "We replaced 3 different tools with Recall Touch — dialer, coaching platform, and analytics suite. Saved $4,200/month while getting better results. The ROI is undeniable.",
+          "author": "Jennifer Park",
+          "role": "CRO",
+          "company": "RevenuePro Solutions"
+        }
+      }
+    },
+    "comparisonTable": {
+      "title": "Why teams switch to Recall Touch",
+      "features": {
+        "0": "AI Voice Agent",
+        "1": "Real-time Coaching",
+        "2": "Sentiment Analysis",
+        "3": "Appointment Booking",
+        "4": "Missed Call Recovery",
+        "5": "Setup Time",
+        "6": "Starting Price"
       }
     }
   },
@@ -6170,7 +6808,8 @@
     "testFailed": "Test failed",
     "title": "Errors",
     "unauthorized": "Unauthorized",
-    "updateFailed": "Update failed"
+    "updateFailed": "Update failed",
+    "emptyTemplate": "At least one message template is required."
   },
   "forms": {
     "validation": {
@@ -6236,7 +6875,8 @@
         "timeLabel": "Time",
         "durationLabel": "Duration",
         "availableTimes": "Available Times"
-      }
+      },
+      "processing": "Processing…"
     }
   },
   "search": {
@@ -6362,7 +7002,9 @@
     },
     "toast": {
       "changesSaved": "変更を保存しました",
-      "reportGenerated": "レポートを生成しました"
+      "reportGenerated": "レポートを生成しました",
+      "saveFailed": "Failed to save settings",
+      "exportFailed": "Failed to export report"
     },
     "csvExport": {
       "setting": "設定",
@@ -6376,7 +7018,13 @@
       "pauseOnSensitive": "機密情報での一時停止"
     },
     "consentOneParty": "片方の同意",
-    "consentTwoParty": "双方の同意"
+    "consentTwoParty": "双方の同意",
+    "subtitle": "Manage your compliance standards, recording policies, and data retention.",
+    "saving": "Saving…",
+    "exportReport": "Export report",
+    "retentionDaysOption": "{days} days",
+    "auditTrailNotice": "Audit trail is being set up",
+    "auditTrailNoticeDesc": "Detailed activity logging will be available here once your workspace has active call and communication history. All actions are already logged in the background."
   },
   "webhooks": {
     "deleteTitle": "Webhookエンドポイントを削除しますか？",
@@ -6538,13 +7186,15 @@
     "empty": {
       "title": "まだ会話はありません",
       "body": "AI が連絡先にメッセージを送信し始めると、すべての会話がここに表示されます。",
-      "action": "最近のアクティビティを確認"
+      "action": "最近のアクティビティを確認",
+      "viewContacts": "連絡先を表示"
     },
     "title": "Messages",
     "backToActivity": "← Activity",
     "errors": {
       "unauthorized": "Unauthorized. Please log in again.",
-      "loadFailed": "Failed to load contacts. Using cached data."
+      "loadFailed": "Failed to load contacts. Using cached data.",
+      "conversationLoadFailed": "会話の読み込みに失敗しました。もう一度お試しください。"
     }
   },
   "team": {
@@ -6597,7 +7247,10 @@
       "defaultInviter": "チームメンバー"
     },
     "errors": {
-      "inviteFailed": "招待の送信に失敗しました。もう一度お試しください。"
+      "inviteFailed": "招待の送信に失敗しました。もう一度お試しください。",
+      "changeRoleFailed": "Failed to update role. Try again.",
+      "removeMemberFailed": "Failed to remove member. Try again.",
+      "fetchTeamFailed": "Failed to load team. Try again."
     },
     "sending": "送信中…",
     "resend": "再送信",
@@ -6610,7 +7263,9 @@
       "inviteResent": "招待を再送信しました。",
       "inviteResendFailed": "再送信に失敗しました。",
       "inviteRevoked": "招待を取り消しました。",
-      "inviteRevokeFailed": "取り消しに失敗しました。"
+      "inviteRevokeFailed": "取り消しに失敗しました。",
+      "roleUpdated": "Role updated",
+      "memberRemoved": "Member removed"
     },
     "backToSettings": "Back to settings",
     "confirmRemoveLabel": "Confirm remove",
@@ -6633,7 +7288,18 @@
     "roleUpdateFailed": "Role update failed",
     "roleUpdatedToast": "Role updated toast",
     "roleViewer": "Role viewer",
-    "subtitle": "Manage team members and their permissions"
+    "subtitle": "Manage team members and their permissions",
+    "changeRole": "Change role",
+    "removeMemberBtn": "Remove member",
+    "lastActive": "Last active",
+    "joined": "Joined",
+    "pendingInvitations": "Pending invitations",
+    "rolesAndPermissions": "Roles & Permissions",
+    "permissionLabel": "Permission",
+    "roleLabel": "Role",
+    "cancel": "Cancel",
+    "changeRoleTitle": "Change role",
+    "inviteTeamMemberTitle": "Invite team member"
   },
   "knowledge": {
     "pageTitle": "ナレッジ — Recall Touch",
@@ -6683,7 +7349,14 @@
       "applied": "エージェントに適用しました。",
       "applyFailed": "適用に失敗しました。",
       "noteSaved": "メモを保存しました。",
-      "noteSaveFailed": "メモを保存できませんでした。"
+      "noteSaveFailed": "メモを保存できませんでした。",
+      "uploadFailed": "Failed to upload file",
+      "uploadSuccess": "File uploaded successfully",
+      "uploadError": "Upload failed. Please try again.",
+      "enterUrl": "Please enter a website URL",
+      "fetchFailed": "Failed to fetch website",
+      "websiteIndexed": "Website content indexed successfully",
+      "fetchError": "Failed to fetch website. Please check the URL and try again."
     },
     "errors": {
       "testFailed": "ナレッジのテストに失敗しました。もう一度お試しください。",
@@ -6729,7 +7402,8 @@
     "minQAHint": "Tip: min q a",
     "quickStartHint": "Tip: quick start",
     "suggestQAs": "Suggest q as",
-    "title": "Knowledge Base"
+    "title": "Knowledge Base",
+    "quickStartButton": "Quick start: Add common Q&As"
   },
   "filter": {
     "byOutcome": "結果でフィルター",
@@ -6997,7 +7671,10 @@
       "updateError": "連絡先を更新できませんでした。もう一度お試しください。",
       "workspaceNotLoaded": "ワークスペースが読み込まれていません。更新してください。",
       "contactSaveDisplayFailed": "連絡先は保存されましたが表示できません。更新してください。",
-      "networkError": "ネットワークエラーが発生しました。もう一度お試しください。"
+      "networkError": "ネットワークエラーが発生しました。もう一度お試しください。",
+      "selected": "selected",
+      "bulkStatusUpdated": "Status updated for selected contacts",
+      "exportedSelected": "Selected contacts exported"
     },
     "lastContactUnknown": "最終連絡: 不明",
     "lastContactToday": "最終連絡: 今日",
@@ -7043,7 +7720,30 @@
     },
     "exportCta": "Export contacts",
     "exporting": "Exporting…",
-    "exportError": "Could not export contacts. Try again."
+    "exportError": "Could not export contacts. Try again.",
+    "pageOf": "{page} of {total}",
+    "prevPage": "Previous page",
+    "nextPage": "Next page",
+    "bulk": {
+      "selectAll": "Select all",
+      "clear": "Clear",
+      "export": "Export",
+      "changeStatus": "Change Status"
+    },
+    "status": {
+      "new": "New",
+      "contacted": "Contacted",
+      "qualified": "Qualified",
+      "appointment_set": "Appointment Set",
+      "won": "Won",
+      "lost": "Lost",
+      "vip": "VIP"
+    },
+    "connectionError": "Connection error. Using cached data.",
+    "source": {
+      "demo": "Demo",
+      "import": "Import"
+    }
   },
   "appointments": {
     "pageTitle": "予約 — Recall Touch",
@@ -7092,6 +7792,38 @@
       "title": "まだ予約はありません",
       "body": "AI がカレンダーに予約を入れ始めると、すべての予約がここに表示されます。",
       "action": "エージェント設定を開く"
+    },
+    "loading": "Loading appointments...",
+    "loadError": "Failed to load appointments",
+    "retry": "Retry",
+    "viewCalls": "View Calls",
+    "getStartedTitle": "Get started with appointments",
+    "getStartedDesc": "Your AI agent will book appointments automatically during calls. Here's how to set up:",
+    "connectCalendar": "Connect your Google Calendar or Outlook",
+    "configureRules": "Configure call rules and business hours",
+    "trainAgent": "Train your agent to handle booking requests",
+    "actions": {
+      "cancel": "Cancel",
+      "cancelAppointment": "Cancel Appointment",
+      "cancelConfirmText": "Are you sure? This cannot be undone.",
+      "cancelFailed": "Failed to cancel appointment",
+      "cancelSuccess": "Appointment cancelled",
+      "cancelling": "Cancelling...",
+      "confirmCancel": "Cancel Appointment",
+      "date": "Date",
+      "keep": "Keep",
+      "pickNewDateTime": "Pick new date & time",
+      "reminderFailed": "Failed to send reminder",
+      "reminderSuccess": "Reminder sent",
+      "reschedule": "Reschedule",
+      "rescheduleConfirm": "Reschedule",
+      "rescheduleError": "Please select date and time",
+      "rescheduleFailed": "Failed to reschedule",
+      "rescheduleSuccess": "Appointment rescheduled",
+      "rescheduling": "Rescheduling...",
+      "sendReminder": "Send Reminder",
+      "sending": "Sending...",
+      "time": "Time"
     }
   },
   "keyboardShortcuts": {
@@ -7345,12 +8077,22 @@
       "setupFailed": "Something went wrong setting up your workspace. Please try again.",
       "connectionError": "Connection error. Please check your internet and try again.",
       "title": "Setup Error",
-      "dismiss": "Dismiss"
+      "dismiss": "Dismiss",
+      "timeout": "The request timed out. Please try again."
     },
     "goalStep": {
       "heading": "What do you want your AI agent to do?",
       "subtitle": "Select one or more goals. You can always change this later.",
       "selected": "✓ Selected"
+    },
+    "plan": "Plan",
+    "planSelection": {
+      "title": "Choose Your Plan",
+      "subtitle": "Get started today and upgrade or downgrade anytime.",
+      "perMonth": "/month",
+      "getStartedLabel": "Get started today",
+      "mostPopular": "Most Popular",
+      "selected": "Selected"
     }
   },
   "onboard": {
@@ -7768,7 +8510,24 @@
         "provisioning": "電話番号をプロビジョニングしています…",
         "provisioned": "電話番号が正常にプロビジョニングされました。",
         "error": "この番号をプロビジョニングできませんでした。別の番号をお試しください。"
-      }
+      },
+      "noNumbersAvailable": "No numbers available. Try adjusting your search filters.",
+      "mobile": "Mobile",
+      "tryAgainButton": "Try Again",
+      "retrySearch": "Retry Search",
+      "dismiss": "Dismiss",
+      "provisionedSuccess": "Phone number successfully provisioned!",
+      "nowActive": "{number} is now active",
+      "goToPhoneSettings": "Go to Phone Settings",
+      "showingCount": "Showing {count} available {count, plural, one {number} other {numbers}}",
+      "tryAdjustingFilters": "Try adjusting your filters or search criteria",
+      "confirmPurchase": "Confirm Purchase",
+      "phoneNumberLabel": "Phone Number",
+      "monthlyCost": "Monthly Cost",
+      "setupFee": "Setup Fee",
+      "chargedImmediately": "This will be charged to your account immediately.",
+      "cancel": "Cancel",
+      "processing": "Processing"
     },
     "porting": {
       "title": "既存番号をポートイン",
@@ -7826,7 +8585,7 @@
       "submitLabel": "ポート申請を送信"
     },
     "connectTitle": "電話番号を接続",
-    "connectDescription": "従来の接続と転送。AIは上記番号またはphone_configで通話を受信します。",
+    "connectDescription": "既存のビジネス番号を接続します。AIは上記の専用番号で通話を受け取るか、現在の回線から通話を転送できます。",
     "optionA": "オプションA — AI番号",
     "optionB": "オプションB — 既存番号を転送",
     "optionBDesc": "現在の番号のまま。応答のない通話を下のAI番号に転送してください。",
@@ -7878,7 +8637,17 @@
     "provisioned": "Phone number provisioned",
     "searchFailed": "Failed to search phone numbers",
     "unknownError": "不明なエラー",
-    "submitFailed": "ポート要求の送信に失敗しました"
+    "submitFailed": "ポート要求の送信に失敗しました",
+    "getNewAiNumber": "Get a new AI number",
+    "recommended": "Recommended",
+    "getNewAiNumberDesc": "We'll give you a dedicated number. Give it out as your business line, or forward calls to it.",
+    "areaCodeOptional": "Area code (optional)",
+    "gettingYourNumber": "Getting your number…",
+    "getMyNumber": "Get my number →",
+    "takesAbout10Seconds": "Takes about 10 seconds",
+    "notifyMe": "Notify me",
+    "tryDifferentAreaCodeHint": "Try a different area code or leave blank for any available number:",
+    "needHelpPhoneSetup": "Need help with phone setup?"
   },
   "integrations": {
     "pageTitle": "連携 — Recall Touch",
@@ -7898,7 +8667,17 @@
       "error": "問題が発生しました。もう一度お試しください。",
       "syncFailed": "Sync failed",
       "importFailed": "インポートに失敗しました。もう一度お試しください。",
-      "disconnectFailed": "切断に失敗しました。"
+      "disconnectFailed": "切断に失敗しました。",
+      "crmConnected": "{provider} connected successfully!",
+      "tokenExchangeFailed": "{provider} connection failed. Please check your credentials and try again.",
+      "invalidState": "Connection expired. Please try again.",
+      "connectFailed": "Could not connect to {provider}. Please try again.",
+      "directComingSoon": "{provider} direct integration is coming soon. Use the webhook destination below to sync data in the meantime.",
+      "syncStarted": "Sync started for {count} leads",
+      "syncStartedNoCount": "Sync started",
+      "contactsImported": "{count} contacts imported",
+      "crmDisconnected": "{provider} disconnected.",
+      "oauthPending": "Authorization in progress — complete it in the popup window."
     },
     "hub": {
       "title": "インテグレーション",
@@ -7948,7 +8727,8 @@
       "otherCrmsDesc": "Use the webhook configuration above to push lead and call data in real-time. Configure your webhook endpoint URL, select events, and Recall Touch will send JSON payloads when they occur.",
       "otherCrmsZapier": "You can also use Zapier as a bridge — connect Recall Touch webhooks to 5,000+ apps without writing any code.",
       "needHelp": "Need help?",
-      "contactSupport": "Contact support"
+      "contactSupport": "Contact support",
+      "outlookCalendarLabel": "Outlook Calendar"
     },
     "card": {
       "salesforce": {
@@ -7986,13 +8766,18 @@
     },
     "status": {
       "connected": "接続済み",
-      "disconnected": "未接続"
+      "disconnected": "未接続",
+      "beta": ""
     },
     "lastSync": "最終同期",
     "button": {
       "connect": "接続",
       "configure": "設定",
-      "disconnect": "切断"
+      "disconnect": "切断",
+      "syncing": "Syncing...",
+      "syncNow": "Sync Now",
+      "importing": "Importing...",
+      "import": "Import"
     },
     "syncStatus": {
       "title": "同期ステータス",
@@ -8007,7 +8792,20 @@
       "map_status": "Map status",
       "none": "None"
     },
-    "whatsappComingSoon": "WhatsApp integration coming soon"
+    "whatsappComingSoon": "WhatsApp integration coming soon",
+    "connectOutlook": "Connect Outlook",
+    "dialog": {
+      "disconnectTitle": "Disconnect integration?",
+      "disconnectDesc": "This will stop syncing data. You can reconnect anytime.",
+      "cancel": "Cancel",
+      "disconnect": "Disconnect"
+    },
+    "label": {
+      "lastSynced": "Last synced:",
+      "synced": "Synced:",
+      "records": "records",
+      "errors": "{count} error(s)"
+    }
   },
   "email": {
     "templates": {
@@ -8146,6 +8944,39 @@
         "body": "Need a co-branded rollout plan, training, or a custom agreement? We’ll package the deployment so you can deliver outcomes, not setup.",
         "link": "Talk to support"
       }
+    },
+    "dashboard": {
+      "title": "Reseller Dashboard",
+      "subtitle": "Manage your sub-accounts and track performance"
+    },
+    "createButton": "Create Sub-Account",
+    "stats": {
+      "subAccounts": "Total Sub-Accounts",
+      "active": "active",
+      "calls": "Total Calls",
+      "thisMonth": "This month",
+      "leads": "Total Leads",
+      "revenue": "Monthly Revenue",
+      "mrr": "MRR"
+    },
+    "empty": {
+      "message": "No sub-accounts yet",
+      "cta": "Create your first sub-account"
+    },
+    "modal": {
+      "title": "Create Sub-Account",
+      "nameLabel": "Sub-Account Name",
+      "emailLabel": "Owner Email",
+      "planLabel": "Plan",
+      "plans": {
+        "starter": "Starter",
+        "standard": "Standard",
+        "professional": "Professional",
+        "enterprise": "Enterprise"
+      },
+      "cancel": "Cancel",
+      "create": "Create",
+      "creating": "Creating..."
     }
   },
   "followUps": {
@@ -8204,12 +9035,28 @@
       },
       "errors": {
         "createFailed": "Could not create sequence.",
-        "stepFailed": "Could not add a step."
+        "stepFailed": "Could not add a step.",
+        "generic": "Something went wrong creating the follow-up. Please try again."
       },
       "toast": {
         "saved": "Sequence saved."
       }
-    }
+    },
+    "retry": "Retry",
+    "loadError": "Failed to load follow-up sequences",
+    "pauseSequence": "Pause sequence",
+    "resumeSequence": "Resume sequence",
+    "error": {
+      "generic": "Something went wrong. Please try again."
+    },
+    "sequencePaused": "Sequence paused",
+    "pauseFailed": "Failed to pause sequence",
+    "sequenceResumed": "Sequence resumed",
+    "resumeFailed": "Failed to resume sequence",
+    "allPaused": "All sequences paused",
+    "pauseAll": "Pause all",
+    "allResumed": "All sequences resumed",
+    "resumeAll": "Resume all"
   },
   "marketing": {
     "hero": {
@@ -8367,7 +9214,10 @@
   },
   "partners": {
     "title": "Agency Partner Dashboard",
-    "subtitle": "Revenue share model (15%)"
+    "subtitle": "Revenue share model (15%)",
+    "revenue_recovered_label": "Revenue recovered (this month)",
+    "partner_share_label": "Partner share (15%)",
+    "reporting_consistency_description": "This dashboard uses the same revenue recovered rollups shown in the customer dashboard, so reporting stays consistent across teams."
   },
   "industryTemplates": {
     "breadcrumb": "Industry Templates",
@@ -8404,7 +9254,9 @@
     "noTags": "No tags",
     "quickStart": "Quick Start",
     "sdkExamples": "SDK Examples",
-    "workspaceNote": "Workspace"
+    "workspaceNote": "Workspace",
+    "fixPayment": "Fix payment →",
+    "upgradeCta": "Upgrade now →"
   },
   "help": {
     "breadcrumbs": {
@@ -9268,7 +10120,19 @@
     "titlePlaceholder": "Enter title",
     "type": "Type",
     "uploadFile": "Upload file",
-    "uploadHint": "Tip: upload"
+    "uploadHint": "Tip: upload",
+    "cancel": "Cancel",
+    "create": "Create",
+    "emailLabel": "Owner Email",
+    "nameLabel": "Sub-Account Name",
+    "planLabel": "Plan",
+    "plans": {
+      "enterprise": "Enterprise",
+      "professional": "Professional",
+      "standard": "Standard",
+      "starter": "Starter"
+    },
+    "title": "Create Sub-Account"
   },
   "modeStep": {
     "agency": "Agency",
@@ -9593,7 +10457,10 @@
     "saving": "Saving",
     "schedule": "Schedule",
     "steps": "Steps",
-    "type": "Type"
+    "type": "Type",
+    "confirm": "Confirm",
+    "confirmLaunch": "Launch campaign?",
+    "confirmLaunchDesc": "This will start sending immediately to all matched contacts."
   },
   "reviewStep": {
     "description": "Configure and manage review step",
@@ -9864,7 +10731,14 @@
     "appliedToAgent": "Applied to agent",
     "avgQuality": "Avg quality",
     "callsAnalyzed": "Calls analyzed",
-    "insightsExtracted": "Insights extracted"
+    "insightsExtracted": "Insights extracted",
+    "active": "active",
+    "calls": "Total Calls",
+    "leads": "Total Leads",
+    "mrr": "MRR",
+    "revenue": "Monthly Revenue",
+    "subAccounts": "Total Sub-Accounts",
+    "thisMonth": "This month"
   },
   "status": {
     "active": "Active",
@@ -9872,7 +10746,13 @@
     "connected": "Connected",
     "disconnected": "Disconnected",
     "inactive": "Inactive",
-    "ready": "Ready"
+    "ready": "Ready",
+    "appointment_set": "Appointment Set",
+    "contacted": "Contacted",
+    "lost": "Lost",
+    "new": "New",
+    "qualified": "Qualified",
+    "won": "Won"
   },
   "statusFilter": {
     "active": "Active",
@@ -10180,7 +11060,9 @@
       "browserSpeech": "ブラウザの音声合成を使用中",
       "demoApi": "デモAPIでプレビュー中",
       "voiceServer": "音声サーバーでプレビュー中"
-    }
+    },
+    "cloneComingSoon": "Voice Cloning — Coming soon. Custom voice cloning will let you create a unique AI voice for your business.",
+    "declareWinner": "Declare Winner"
   },
   "autoSetup": {
     "toast": {
@@ -10206,6 +11088,74 @@
       "loadFailed": "ホワイトラベル設定の読み込みに失敗しました",
       "saved": "ホワイトラベル設定を保存しました",
       "saveFailed": "ホワイトラベル設定の保存に失敗しました"
+    },
+    "title": "White-Label Settings",
+    "description": "Customize the appearance and branding for your platform",
+    "fields": {
+      "brandName": {
+        "label": "Brand Name",
+        "placeholder": "e.g., Acme Inc.",
+        "help": "Used in emails, headers, and branding elements"
+      },
+      "logoUrl": {
+        "label": "Logo URL",
+        "placeholder": "https://example.com/logo.png",
+        "help": "PNG or SVG recommended. Max 200x200px"
+      },
+      "faviconUrl": {
+        "label": "Favicon URL",
+        "placeholder": "https://example.com/favicon.ico",
+        "help": "ICO or PNG format. Displayed in browser tab"
+      },
+      "brandColors": {
+        "label": "Brand Colors",
+        "primary": "Primary",
+        "secondary": "Secondary",
+        "accent": "Accent"
+      },
+      "customDomain": {
+        "label": "Custom Domain",
+        "placeholder": "app.yourcompany.com",
+        "help": "DNS Configuration: Create CNAME record pointing to your platform URL"
+      },
+      "supportEmail": {
+        "label": "Support Email",
+        "placeholder": "support@example.com"
+      },
+      "supportUrl": {
+        "label": "Support URL",
+        "placeholder": "https://support.example.com"
+      },
+      "loginBackgroundUrl": {
+        "label": "Login Background URL",
+        "placeholder": "https://example.com/bg.jpg",
+        "help": "JPG or PNG. Used as background on login page"
+      },
+      "customCss": {
+        "label": "Custom CSS",
+        "placeholder": ".header { background-color: #fff; }",
+        "help": "Advanced styling. Scoped to your white-label instance"
+      },
+      "hidePoweredBy": {
+        "label": "Hide Powered By",
+        "description": "Remove \"Powered by Recall Touch\" branding"
+      }
+    },
+    "preview": {
+      "title": "Brand Preview",
+      "logoPreview": "Logo preview",
+      "invalidImageUrl": "Invalid image URL",
+      "brandName": "Brand Name",
+      "yourBrandName": "Your Brand Name",
+      "colors": "Colors",
+      "sampleButton": "Sample Button",
+      "buttonText": "Get Started",
+      "customDomain": "Custom Domain",
+      "support": "Support"
+    },
+    "buttons": {
+      "save": "Save Changes",
+      "saving": "Saving..."
     }
   },
   "communication": {
@@ -10222,5 +11172,49 @@
     "disclaimer": "30秒で完了します。いつでも配信停止できます。",
     "successTitle": "メールをご確認ください",
     "successSubtitle": "無料の電話監査の詳細をお送りしました。"
-  }
+  },
+  "bulk": {
+    "changeStatus": "Change Status",
+    "clear": "Clear",
+    "export": "Export",
+    "selectAll": "Select All"
+  },
+  "pauseFailed": {},
+  "resumeFailed": {},
+  "ai": "AI:",
+  "allPaused": "All sequences paused",
+  "allResumed": "All sequences resumed",
+  "answerRate": "Answer rate",
+  "appointmentsBooked": "booked",
+  "back": "Back",
+  "booked": "Booked",
+  "bookedSuffix": "booked",
+  "callSummary": "Call summary",
+  "campaignRoi": "Performance",
+  "cloneComingSoon": "Custom voice cloning",
+  "connectOutlook": "Connect Outlook",
+  "contact": "Contact",
+  "continue": "Continue",
+  "conversionRate": "Conversion",
+  "conversionSuffix": "Conv",
+  "createButton": "Create Sub-Account",
+  "createTest": "Create A/B Test",
+  "dailyLimitReached": "— limit reached, resumes tomorrow",
+  "dailyUsage": "Daily",
+  "export": "Export",
+  "exportTooltip": "Export campaigns to CSV",
+  "loading": "Loading policies...",
+  "newTest": "New Test",
+  "outcome": "Outcome:",
+  "overallConversion": "Overall conversion",
+  "pauseAll": "Pause all",
+  "qualitySuffix": "Quality",
+  "recommendedFollowUp": "Recommended follow-up",
+  "recording": "Recording",
+  "resumeAll": "Resume all",
+  "sentiment": "Sentiment:",
+  "sequencePaused": "Sequence paused",
+  "sequenceResumed": "Sequence resumed",
+  "transcript": "Transcript",
+  "whatsappComingSoon": "Send and receive WhatsApp messages through your AI agent. Connect your WhatsApp Business account to get started."
 }

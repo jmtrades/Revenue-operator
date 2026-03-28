@@ -432,10 +432,10 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
 
 {
   "lead": {
-    "name": "John Doe",
-    "email": "john@example.com",
-    "phone": "+1234567890",
-    "company": "Acme Corp"
+    "name": "{lead_name}",
+    "email": "{lead_email}",
+    "phone": "{phone_number}",
+    "company": "{company_name}"
   },
   "message": {
     "content": "Hi, I'm interested",

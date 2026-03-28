@@ -7,8 +7,18 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
+
+const voiceConfigSchema = z.object({
+  active_voice_id: z.string().max(100).nullable().optional(),
+  speed: z.number().min(0.25).max(4.0).optional(),
+  stability: z.number().min(0).max(1).optional(),
+  warmth: z.number().min(0).max(1).optional(),
+  industry_preset: z.string().max(50).nullable().optional(),
+}).strict();
 
 interface VoiceConfig {
   active_voice_id?: string | null;
@@ -16,7 +26,6 @@ interface VoiceConfig {
   stability?: number;
   warmth?: number;
   industry_preset?: string | null;
-  [key: string]: unknown;
 }
 
 export async function GET(req: NextRequest) {
@@ -38,7 +47,7 @@ export async function GET(req: NextRequest) {
       .maybeSingle();
 
     if (error) {
-      console.error("[API] voice config GET error:", error);
+      log("error", "voice.config.GET", { error: String(error) });
       return NextResponse.json({ error: "Failed to fetch config" }, { status: 500 });
     }
 
@@ -60,7 +69,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ config: voiceConfig });
   } catch (error) {
-    console.error("[API] voice config GET error:", error);
+    log("error", "voice.config.GET", { error: String(error) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -75,8 +84,18 @@ export async function PUT(req: NextRequest) {
     const authErr = await requireWorkspaceAccess(req, workspaceId);
     if (authErr) return authErr;
 
-    const body = await req.json();
-    const { active_voice_id, speed, stability, warmth, industry_preset, ...customFields } = body;
+    let raw: unknown;
+    try {
+      raw = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    }
+    const parsed = voiceConfigSchema.safeParse(raw);
+    if (!parsed.success) {
+      const firstError = parsed.error.issues[0];
+      return NextResponse.json({ error: firstError?.message ?? "Invalid input" }, { status: 400 });
+    }
+    const { active_voice_id, speed, stability, warmth, industry_preset } = parsed.data;
 
     const db = getDb();
 
@@ -88,7 +107,7 @@ export async function PUT(req: NextRequest) {
       .maybeSingle();
 
     if (fetchError) {
-      console.error("[API] voice config PUT error:", fetchError);
+      log("error", "voice.config.PUT", { error: String(fetchError) });
       return NextResponse.json({ error: "Failed to fetch current config" }, { status: 500 });
     }
 
@@ -99,7 +118,6 @@ export async function PUT(req: NextRequest) {
       stability: stability !== undefined ? stability : 0.5,
       warmth: warmth !== undefined ? warmth : 0.5,
       industry_preset: industry_preset !== undefined ? industry_preset : null,
-      ...customFields,
     };
 
     // Merge with existing channel_rules
@@ -118,7 +136,7 @@ export async function PUT(req: NextRequest) {
       .maybeSingle();
 
     if (updateError) {
-      console.error("[API] voice config PUT error:", updateError);
+      log("error", "voice.config.PUT", { error: String(updateError) });
       return NextResponse.json({ error: "Failed to update config" }, { status: 500 });
     }
     if (!updatedSettings) {
@@ -136,7 +154,7 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json({ config: responseConfig });
   } catch (error) {
-    console.error("[API] voice config PUT error:", error);
+    log("error", "voice.config.PUT", { error: String(error) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

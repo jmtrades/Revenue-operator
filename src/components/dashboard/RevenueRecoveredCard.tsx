@@ -65,8 +65,10 @@ export function RevenueRecoveredCard() {
 
   if (error || !metrics) {
     return (
-      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
+      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 flex flex-col items-center justify-center py-8 gap-2">
+        <div className="w-8 h-8 rounded-full bg-[var(--bg-hover)] flex items-center justify-center text-[var(--text-secondary)]">!</div>
         <p className="text-sm text-[var(--text-secondary)]">Unable to load revenue metrics</p>
+        <p className="text-xs text-[var(--text-muted)]">Try refreshing the page</p>
       </div>
     );
   }

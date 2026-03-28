@@ -527,7 +527,7 @@ export default function LeadsPage() {
       credentials: "include",
       body: JSON.stringify({ state: status }),
     }).catch((err) => {
-      console.error("[leads] Failed to persist lead status:", err instanceof Error ? err.message : err);
+      // silenced
     });
   };
 
@@ -565,9 +565,9 @@ export default function LeadsPage() {
         error?: string;
       } | null;
       if (!res.ok) {
-        const msg = data?.error ?? t("leads.errors.addFailed");
-        setAddLeadError(msg);
-        toast.error(msg);
+        if (data?.error) console.error("[leads] add error:", data.error);
+        setAddLeadError(t("leads.errors.addFailed"));
+        toast.error(t("leads.errors.addFailed"));
         return;
       }
       refetchLeads();
@@ -608,7 +608,8 @@ export default function LeadsPage() {
         toast.success(t("leads.toast.callStarted"));
         closeDrawer();
       } else {
-        toast.error(data?.error ?? t("leads.toast.callFailed"));
+        if (data?.error) console.error("[leads] call error:", data.error);
+        toast.error(t("leads.toast.callFailed"));
       }
     } catch {
       toast.error(t("leads.toast.callFailed"));
@@ -1098,7 +1099,8 @@ export default function LeadsPage() {
                             t("leads.toast.importSuccess", { count: data.imported }),
                           );
                         } else {
-                          toast.error(data?.error ?? t("leads.toast.importFailed"));
+                          if (data?.error) console.error("[leads] import error:", data.error);
+                          toast.error(t("leads.toast.importFailed"));
                         }
                       } catch {
                         toast.error(t("leads.toast.importFailed"));

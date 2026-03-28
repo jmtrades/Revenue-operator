@@ -2,6 +2,7 @@ import { VoiceProvider, VoiceProviderConfig } from "./types";
 import { RecallVoiceProvider } from "./providers/recall-voice";
 import { PipecatVoiceProvider } from "./providers/pipecat";
 import { VoiceProviderWithFallback } from "./provider-with-fallback";
+import { log } from "@/lib/logger";
 
 function createProviderInstance(provider: string): VoiceProvider {
   switch (provider) {
@@ -10,14 +11,10 @@ function createProviderInstance(provider: string): VoiceProvider {
     case "pipecat":
       return new PipecatVoiceProvider();
     case "vapi":
-      console.warn(
-        "[voice] Vapi provider is deprecated. Using Recall voice server instead. Please update your configuration to use 'recall' as the VOICE_PROVIDER."
-      );
+      log("warn", "voice.deprecated_provider", { provider: "vapi", message: "Vapi deprecated, using Recall instead" });
       return new RecallVoiceProvider();
     case "elevenlabs":
-      console.warn(
-        "[voice] ElevenLabs provider is deprecated. Using Recall voice server instead. Please update your configuration to use 'recall' as the VOICE_PROVIDER."
-      );
+      log("warn", "voice.deprecated_provider", { provider: "elevenlabs", message: "ElevenLabs deprecated, using Recall instead" });
       return new RecallVoiceProvider();
     default:
       // Default to self-hosted Recall voice server
@@ -33,9 +30,7 @@ export function getVoiceProvider(config?: VoiceProviderConfig): VoiceProvider {
   const fallbackProviderName = process.env.VOICE_FALLBACK_PROVIDER as VoiceProviderConfig["provider"] | undefined;
   if (fallbackProviderName) {
     const fallbackProvider = createProviderInstance(fallbackProviderName);
-    console.info(
-      `[voice] Initializing voice provider with fallback: ${provider} (primary) -> ${fallbackProviderName} (fallback)`
-    );
+    log("info", "voice.init_with_fallback", { primary: provider, fallback: fallbackProviderName });
     return new VoiceProviderWithFallback(
       primaryProvider,
       fallbackProvider,

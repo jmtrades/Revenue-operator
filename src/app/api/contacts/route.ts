@@ -7,6 +7,8 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { parseBody, emailSchema, phoneSchema, workspaceIdSchema } from "@/lib/api/validate";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { normalizePhoneE164 } from "@/lib/phone/normalize";
+import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 const GENERIC_ERROR = "An unexpected error occurred";
 
@@ -22,7 +24,7 @@ async function getContacts(req: NextRequest) {
     .eq("workspace_id", workspaceId)
     .order("last_activity_at", { ascending: false, nullsFirst: false });
   if (error) {
-    console.error("[API Error] contacts GET:", error);
+    log("error", "contacts.get_error", { error: error.message || String(error) });
     return NextResponse.json({ error: GENERIC_ERROR }, { status: 500 });
   }
   return NextResponse.json({ contacts: data ?? [] });
@@ -55,7 +57,7 @@ async function postContact(req: NextRequest) {
     .select()
     .maybeSingle();
   if (error) {
-    console.error("[API Error] contacts POST:", error);
+    log("error", "contacts.post_error", { error: error.message || String(error) });
     return NextResponse.json({ error: GENERIC_ERROR }, { status: 500 });
   }
   return NextResponse.json(contact);
@@ -65,7 +67,7 @@ export async function GET(req: NextRequest) {
   try {
     return await getContacts(req);
   } catch (err) {
-    console.error(`[API Error] GET ${req.url}:`, err);
+    log("error", "contacts.get_route_error", { error: err instanceof Error ? err.message : String(err), url: req.url });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -74,10 +76,13 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   try {
     return await postContact(req);
   } catch (err) {
-    console.error(`[API Error] POST ${req.url}:`, err);
+    log("error", "contacts.post_route_error", { error: err instanceof Error ? err.message : String(err), url: req.url });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

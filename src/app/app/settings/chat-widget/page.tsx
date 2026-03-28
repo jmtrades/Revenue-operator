@@ -51,7 +51,6 @@ export default function ChatWidgetSettingsPage() {
           setConfig({ ...DEFAULT_CONFIG, ...data });
         }
       } catch (error) {
-        console.error("Failed to load widget config:", error);
         toast.error(t("toast.loadFailed"));
       } finally {
         setLoading(false);
@@ -78,13 +77,13 @@ export default function ChatWidgetSettingsPage() {
         const errorData = (await res.json().catch(() => ({
           error: t("toast.unknownError"),
         }))) as { error?: string };
-        toast.error(errorData.error || t("toast.saveFailed"));
+        console.error("Save failed:", errorData);
+        toast.error(t("toast.saveFailed"));
         return;
       }
 
       toast.success(t("toast.saved"));
     } catch (error) {
-      console.error("Failed to save config:", error);
       toast.error(t("toast.saveFailed"));
     } finally {
       setSaving(false);
@@ -108,7 +107,6 @@ export default function ChatWidgetSettingsPage() {
       toast.success(t("toast.embedCopied"));
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      console.error("Failed to copy:", error);
       toast.error(t("toast.copyFailed"));
     }
   };
@@ -338,14 +336,14 @@ export default function ChatWidgetSettingsPage() {
                         type="text"
                         placeholder="Type your message..."
                         className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-                        disabled
+                        readOnly
                       />
                     </div>
                   </div>
                 )}
                 {!config.enabled && (
-                  <div className="text-center text-gray-500">
-                    <p className="text-sm">Widget preview disabled</p>
+                  <div className="text-center text-[var(--text-tertiary)]">
+                    <p className="text-sm">Enable the widget above to see a live preview</p>
                   </div>
                 )}
               </div>

@@ -56,7 +56,7 @@ export default function FollowUpCreatePage() {
   const effectiveWorkspaceId = workspaceId || workspaceSnapshot?.id?.trim() || null;
 
   const [name, setName] = useState("");
-  const [trigger, setTrigger] = useState<Trigger>("call_outcome:lead_captured");
+  const [trigger, setTrigger] = useState<Trigger>("manual");
   const [steps, setSteps] = useState<Step[]>([{ ...DEFAULT_STEP }]);
   const [active, setActive] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -91,7 +91,8 @@ export default function FollowUpCreatePage() {
       const created = (await res.json().catch(() => null)) as { sequence?: { id?: string } ; error?: string } | null;
       const sequenceId = created?.sequence?.id;
       if (!res.ok || !sequenceId) {
-        toast.error(created?.error ?? t("errors.createFailed"));
+        if (created?.error) console.error("[follow-ups] create error:", created.error);
+        toast.error(t("errors.createFailed"));
         return;
       }
 

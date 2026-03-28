@@ -7,10 +7,12 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const CAMPAIGN_TYPES = [
   "speed_to_lead",
@@ -71,25 +73,31 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
   if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
   const err = await requireWorkspaceAccess(req, (existing as { workspace_id: string }).workspace_id);
   if (err) return err;
-  let body: Record<string, unknown>;
+  let raw: unknown;
   try {
-    body = await req.json();
+    raw = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
+
+  const updateCampaignSchema = z.object({
+    name: z.string().min(1).max(255).optional(),
+    status: z.enum(["draft", "active", "paused", "completed"]).optional(),
+    type: z.enum(CAMPAIGN_TYPES as unknown as [string, ...string[]]).optional(),
+    target_filter: z.record(z.string(), z.unknown()).optional(),
+  }).strict();
+
+  const parsed = updateCampaignSchema.safeParse(raw);
+  if (!parsed.success) {
+    const firstError = parsed.error.issues[0];
+    return NextResponse.json({ error: firstError?.message ?? "Invalid input" }, { status: 400 });
+  }
+
   const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
-  if (body.status !== undefined && ["draft", "active", "paused", "completed"].includes(String(body.status))) {
-    updates.status = body.status;
-  }
-  if (typeof body.name === "string" && body.name.trim()) {
-    updates.name = body.name.trim();
-  }
-  if (typeof body.type === "string" && (CAMPAIGN_TYPES as readonly string[]).includes(body.type)) {
-    updates.type = body.type;
-  }
-  if (body.target_filter && typeof body.target_filter === "object") {
-    updates.target_filter = body.target_filter;
-  }
+  if (parsed.data.status !== undefined) updates.status = parsed.data.status;
+  if (parsed.data.name !== undefined) updates.name = parsed.data.name.trim();
+  if (parsed.data.type !== undefined) updates.type = parsed.data.type;
+  if (parsed.data.target_filter !== undefined) updates.target_filter = parsed.data.target_filter;
   const { data: campaign, error } = await db.from("campaigns").update(updates).eq("id", id).select().maybeSingle();
   if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   return NextResponse.json(campaign);
@@ -106,6 +114,12 @@ export async function DELETE(req: NextRequest, ctx: { params: Promise<{ id: stri
   }
   const authErr = await requireWorkspaceAccess(req, session.workspaceId);
   if (authErr) return authErr;
+
+  // Rate limit: 10 campaign deletes per minute per workspace
+  const rl = await checkRateLimit(`campaigns_delete:${session.workspaceId}`, 10, 60000);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many delete requests. Please slow down." }, { status: 429 });
+  }
 
   const db = getDb();
   const { data: existing } = await db

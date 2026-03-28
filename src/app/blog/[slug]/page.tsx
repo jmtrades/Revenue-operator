@@ -188,7 +188,7 @@ If something degrades, the page explains what it impacts and where to look next.
     title: "How Unanswered Calls Cost Dental Revenue",
     date: "March 2026",
     metaDescription:
-      "Dental unanswered calls create a revenue leak. Learn the leak math, how no-show recovery works, and see why speed-to-lead wins. Start free.",
+      "Dental unanswered calls create a revenue leak. Learn the leak math, how no-show recovery works, and see why speed-to-lead wins. Get started today.",
     body: `Dental unanswered calls are not "lost leads." They are lost production time.
 If your front desk misses a new patient call, the caller is often ready to book a cleaning right now, not "sometime next month." In practice, missed-call impact comes from three layers: the initial opportunity, the follow-up delay, and the lost no-show prevention window.
 That is why this article focuses on revenue, not vanity call volume.
@@ -229,7 +229,7 @@ That is how you turn lost calls into recovered chair time.`,
     title: "AI vs Human Receptionist: Real Cost Comparison",
     date: "March 2026",
     metaDescription:
-      "Compare AI vs human receptionist costs by outcomes: speed-to-lead, appointment booking, follow-up automation, and revenue attribution. Start free.",
+      "Compare AI vs human receptionist costs by outcomes: speed-to-lead, appointment booking, follow-up automation, and revenue attribution. Get started today.",
     body: `People compare receptionist services by cost per hour, cost per month, or cost per minute.
 Those comparisons are incomplete because they ignore the only metric that matters: outcomes.
 A receptionist is not paid to "answer." They are paid to ensure the business gets the next step from every inbound intent — booked appointments, captured messages, and reliable follow-up.
@@ -323,7 +323,7 @@ That is the complete guide: execution, follow-through, and proof.`,
     title: "Automated No-Show Recovery Playbook",
     date: "April 2026",
     metaDescription:
-      "No-show recovery is a follow-up workflow, not luck. Learn the playbook: confirmations, reminders, and reactivation with Recall Touch. Start free.",
+      "No-show recovery is a follow-up workflow, not luck. Learn the playbook: confirmations, reminders, and reactivation with Recall Touch. Get started today.",
     body: `No-shows are expensive because they waste scheduled capacity and break momentum.
 They are also preventable when the recovery is automated and consistent.
 The key idea is that no-show recovery should start before the appointment and continue after a missed moment with a clear next step.
@@ -371,7 +371,7 @@ The goal is to turn "we hope they show up" into a consistent, respectful recover
     title: "Speed to Lead: Response Time Revenue",
     date: "April 2026",
     metaDescription:
-      "Speed to lead determines revenue. Learn why response time drives bookings and how Recall Touch enables fast callbacks and follow-up automation. Start free.",
+      "Speed to lead determines revenue. Learn why response time drives bookings and how Recall Touch enables fast callbacks and follow-up automation. Get started today.",
     body: `The speed to lead rule is simple: when a customer is ready, the first business that responds often wins.
 In real operations, speed is hard because your team is busy.
 Leads come in through calls, forms, and after-hours timing when staff availability is lower.
@@ -413,7 +413,7 @@ That predictability makes speed sustainable and increases conversion without hir
     title: "HVAC: Answer Every Call Without Hiring",
     date: "April 2026",
     metaDescription:
-      "HVAC companies lose revenue when calls go unanswered. Learn how fast callbacks, booking, and follow-up automation protect busy seasons. Start free.",
+      "HVAC companies lose revenue when calls go unanswered. Learn how fast callbacks, booking, and follow-up automation protect busy seasons. Get started today.",
     body: `HVAC calls follow a pattern: urgent breakdowns cluster around weather, weekends, and after-hours evenings.
 In those moments, your customers call the first company that answers and gives a clear next step.
 If your phones roll to voicemail or your callbacks are late, you lose jobs even if your team is excellent.
@@ -456,7 +456,7 @@ As those sequences run automatically, your team spends less time chasing and mor
     title: "Legal Intake Automation: Capture Every Client",
     date: "April 2026",
     metaDescription:
-      "Legal intake depends on responsiveness. Learn how call answering, structured screening, and follow-up automation capture more clients. Start free.",
+      "Legal intake depends on responsiveness. Learn how call answering, structured screening, and follow-up automation capture more clients. Get started today.",
     body: `Legal inquiries often come with a time pressure that feels immediate to the caller.
 They may need urgent guidance, an appointment, or a quick understanding of whether you can help.
 If the caller reaches voicemail or waits for a callback, the opportunity can disappear quickly.
@@ -494,7 +494,7 @@ That is how you capture more potential clients without increasing complexity for
     title: "How to Calculate Your Call Handling Revenue Leak",
     date: "May 2026",
     metaDescription:
-      "Poor call handling creates a revenue leak you can model. Learn the calculation, booking conversion links, and recovery workflows that fix it. Start free.",
+      "Poor call handling creates a revenue leak you can model. Learn the calculation, booking conversion links, and recovery workflows that fix it. Get started today.",
     body: `Dropped calls, slow follow-up, and lost leads are not separate events. They are a revenue leak with multiple downstream effects.
 You can&apos;t fix what you can&apos;t model, and many teams get stuck measuring only call volume or voicemail count.
 Those numbers can be useful, but they don&apos;t tell you what money is being left on the table.
@@ -533,7 +533,7 @@ When you track revenue impact, you can tune scripts and sequences until the leak
     title: "Recall Touch vs Smith.ai: Which Is Right?",
     date: "May 2026",
     metaDescription:
-      "Recall Touch vs Smith.ai: compare per-call pricing, follow-up engine gaps, outbound limits, and revenue attribution. See which recovers more. Start free.",
+      "Recall Touch vs Smith.ai: compare per-call pricing, follow-up engine gaps, outbound limits, and revenue attribution. See which recovers more. Get started today.",
     body: `It&apos;s tempting to compare AI phone platforms by how they answer a call.
 But for revenue execution, the real question is what happens after the call ends.
 Do you recover missed opportunities? Do you run appointment booking, qualification, and follow-up until an outcome is reached? Can you measure revenue impact?
@@ -566,7 +566,7 @@ If your priority is revenue recovery with proof, Recall Touch is the system that
     title: "Second-Touch Revenue: The Follow-Up Playbook",
     date: "June 2026",
     metaDescription:
-      "Most revenue is in the second touch. Learn the follow-up playbook: speed, reminders, no-show recovery, and reactivation. Start free.",
+      "Most revenue is in the second touch. Learn the follow-up playbook: speed, reminders, no-show recovery, and reactivation. Get started today.",
     body: `The phrase "second touch" is not a marketing slogan.
 In most service businesses, the first touch captures intent.
 The second touch is what turns intent into a booked outcome, because it happens at the moment the customer is ready to schedule, reschedule, or ask a final question.
@@ -681,7 +681,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             </div>
             <div className="mt-12 pt-8 border-t flex gap-4" style={{ borderColor: "var(--border-default)" }}>
               <Link href={ROUTES.START} className="btn-marketing-primary no-underline inline-block">
-                Start free →
+                Get started →
               </Link>
               <Link href="/blog" className="btn-marketing-ghost no-underline inline-block">
                 Back to blog

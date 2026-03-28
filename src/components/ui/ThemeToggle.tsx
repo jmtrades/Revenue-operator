@@ -1,64 +1,88 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { Sun, Moon } from "lucide-react";
+
+type ThemeMode = "light" | "dark" | "system";
 
 export function ThemeToggle() {
-  const [dark, setDark] = useState(false);
+  const [theme, setTheme] = useState<ThemeMode>("system");
+  const [mounted, setMounted] = useState(false);
 
+  // Initialize theme from DOM/cookie
   useEffect(() => {
-    // Check for saved preference or system preference
-    const saved = localStorage.getItem("theme");
-    if (saved === "dark") {
-      setDark(true);
-      document.documentElement.classList.add("dark");
-    } else if (saved === "light") {
-      setDark(false);
-      document.documentElement.classList.remove("dark");
-    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      setDark(true);
-      document.documentElement.classList.add("dark");
+    setMounted(true);
+    const html = document.documentElement;
+    const themeCookie = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("theme="))
+      ?.split("=")[1] as ThemeMode | undefined;
+
+    if (themeCookie) {
+      setTheme(themeCookie);
+    } else if (html.classList.contains("dark")) {
+      setTheme("dark");
+    } else if (html.classList.contains("light")) {
+      setTheme("light");
     }
   }, []);
 
-  const toggle = () => {
-    const next = !dark;
-    setDark(next);
-    if (next) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
+  const applyTheme = (newTheme: ThemeMode) => {
+    setTheme(newTheme);
+    const html = document.documentElement;
+    html.classList.remove("light", "dark");
+
+    if (newTheme === "light") {
+      html.classList.add("light");
+      document.cookie = "theme=light; path=/; max-age=31536000";
+    } else if (newTheme === "dark") {
+      html.classList.add("dark");
+      document.cookie = "theme=dark; path=/; max-age=31536000";
     } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
+      // system
+      document.cookie = "theme=system; path=/; max-age=31536000";
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        html.classList.add("dark");
+      }
     }
   };
 
+  const toggleTheme = () => {
+    if (theme === "light") {
+      applyTheme("dark");
+    } else if (theme === "dark") {
+      applyTheme("system");
+    } else {
+      applyTheme("light");
+    }
+  };
+
+  if (!mounted) return null;
+
+  const isDark = theme === "dark";
+
   return (
-    <button
-      type="button"
-      onClick={toggle}
-      className="theme-toggle"
-      aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
-      title={dark ? "Switch to light mode" : "Switch to dark mode"}
+    <motion.button
+      onClick={toggleTheme}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className="p-2 rounded-lg bg-[var(--bg-hover)] hover:bg-[var(--bg-surface)] border border-[var(--border-default)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-[background-color,color,border-color] duration-[var(--duration-fast)]"
+      title={`Theme: ${theme}`}
+      aria-label="Toggle theme"
     >
-      {dark ? (
-        // Sun icon
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-          />
-        </svg>
-      ) : (
-        // Moon icon
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-          />
-        </svg>
-      )}
-    </button>
+      <motion.div
+        initial={false}
+        animate={{
+          rotate: theme === "light" ? 0 : theme === "dark" ? 180 : 90,
+        }}
+        transition={{
+          duration: 0.3,
+          ease: "easeInOut",
+        }}
+      >
+        {isDark ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+      </motion.div>
+    </motion.button>
   );
 }

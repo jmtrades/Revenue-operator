@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { PLAYBOOKS, getPlaybooksByCategory, type Playbook } from "@/lib/ai/playbooks";
+import { useWorkspace } from "@/components/WorkspaceContext";
 
 type SetupStep = "select-playbook" | "preview-agent" | "loading";
 
@@ -16,6 +17,7 @@ interface ChatMessage {
 
 export default function SmartSetupPage() {
   const router = useRouter();
+  const { workspaceId } = useWorkspace();
   const [step, setStep] = useState<SetupStep>("select-playbook");
   const [selectedPlaybook, setSelectedPlaybook] = useState<Playbook | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
@@ -73,13 +75,8 @@ export default function SmartSetupPage() {
 
     setIsActivating(true);
     try {
-      // Get workspace_id from URL or session
-      const workspaceId = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "").get(
-        "workspace_id"
-      );
-
       if (!workspaceId) {
-        throw new Error("Workspace ID not found");
+        throw new Error("Workspace not found. Please complete setup first.");
       }
 
       const response = await fetch("/api/workspace/apply-playbook", {
@@ -108,8 +105,8 @@ export default function SmartSetupPage() {
         router_internal.push("/app/dashboard");
       }, 2000);
     } catch (error) {
-      const msg = error instanceof Error ? error.message : "Failed to activate agent";
-      toast.error(msg);
+      console.error("[smart-setup] activate error:", error);
+      toast.error("Something went wrong activating your agent. Please try again.");
       setIsActivating(false);
     }
   };
@@ -117,12 +114,8 @@ export default function SmartSetupPage() {
   // Handle custom business description fallback
   const handleCustomDescription = async (description: string) => {
     try {
-      const workspaceId = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "").get(
-        "workspace_id"
-      );
-
       if (!workspaceId) {
-        throw new Error("Workspace ID not found");
+        throw new Error("Workspace not found. Please complete setup first.");
       }
 
       setStep("loading");
@@ -145,8 +138,8 @@ export default function SmartSetupPage() {
         router_internal.push("/app/dashboard");
       }, 2000);
     } catch (error) {
-      const msg = error instanceof Error ? error.message : "Failed to process description";
-      toast.error(msg);
+      console.error("[smart-setup] description error:", error);
+      toast.error("Something went wrong. Please try again.");
       setStep("preview-agent");
     }
   };

@@ -9,6 +9,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { getTelephonyService } from "@/lib/telephony";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -69,6 +70,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const authErr = await requireWorkspaceAccess(req, session.workspaceId);
   if (authErr) return authErr;
+
+  // Rate limit: 3 workspace delete attempts per hour per user
+  const rl = await checkRateLimit(`workspace_delete:${session.userId}`, 3, 3600000);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many delete attempts. Please wait before trying again." }, { status: 429 });
+  }
 
   let body: { confirm?: string };
   try {

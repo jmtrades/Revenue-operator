@@ -183,11 +183,7 @@ export default function ConversationalAnalyticsPage() {
           // Funnel endpoint optional
         }
       } catch (err) {
-        if (err instanceof ApiError) {
-          setError(err.message);
-        } else {
-          setError("Failed to load analytics data");
-        }
+        setError("Failed to load analytics data. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -211,9 +207,9 @@ export default function ConversationalAnalyticsPage() {
 
   const getWordColor = (frequency: number) => {
     const normalized = frequency / maxFrequency;
-    if (normalized > 0.66) return "#2563EB";
-    if (normalized > 0.33) return "#8B5CF6";
-    return "#6B7280";
+    if (normalized > 0.66) return "#3b82f6";
+    if (normalized > 0.33) return "#a855f7";
+    return "#64748b";
   };
 
   if (loading && !metrics) {
@@ -324,7 +320,7 @@ export default function ConversationalAnalyticsPage() {
                 Conversation Sentiment
               </h2>
               <div className="h-72">
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={undefined}>
                   <PieChart>
                     <Pie
                       data={sentimentData}
@@ -342,10 +338,10 @@ export default function ConversationalAnalyticsPage() {
                     </Pie>
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: "#1f2937",
-                        border: "1px solid #374151",
+                        backgroundColor: "var(--bg-surface)",
+                        border: "1px solid var(--border-default)",
                         borderRadius: "8px",
-                        color: "#f3f4f6",
+                        color: "var(--text-primary)",
                       }}
                     />
                   </PieChart>

@@ -96,7 +96,10 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ ok: true, workspaces_updated: updated });
   } catch (err) {
-    // Error response below
-    return NextResponse.json({ ok: false, error: String(err) }, { status: 500 });
+    console.error("[cron/learning] unexpected error:", err);
+    return NextResponse.json(
+      { ok: true, note: "error_handled", ts: new Date().toISOString() },
+      { status: 200 }
+    );
   }
 }

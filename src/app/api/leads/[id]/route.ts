@@ -5,6 +5,8 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { log } from "@/lib/logger";
 
 export async function GET(
   req: NextRequest,
@@ -96,7 +98,7 @@ export async function PATCH(
   const leadWorkspaceId = (updated as { workspace_id?: string })?.workspace_id;
   if (leadWorkspaceId) {
     const { recordProviderInteraction } = await import("@/lib/detachment");
-    recordProviderInteraction(leadWorkspaceId, `lead:${id}`).catch((err) => { console.error("[leads/[id]] error:", err instanceof Error ? err.message : err); });
+    recordProviderInteraction(leadWorkspaceId, `lead:${id}`).catch((err) => { log("error", "leads.record_provider_interaction_error", { error: err instanceof Error ? err.message : String(err) }); });
     // Enqueue outbound CRM sync for connected providers (Task 19)
     try {
       const { getConnectedCrmProviders, enqueueSync } = await import("@/lib/integrations/sync-engine");
@@ -132,6 +134,12 @@ export async function DELETE(
   const authErr = await requireWorkspaceAccess(req, session.workspaceId);
   if (authErr) return authErr;
 
+  // Rate limit: 20 deletes per minute per workspace
+  const rl = await checkRateLimit(`leads_delete:${session.workspaceId}`, 20, 60000);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many delete requests. Please slow down." }, { status: 429 });
+  }
+
   const db = getDb();
 
   // Verify the lead belongs to this workspace
@@ -153,7 +161,7 @@ export async function DELETE(
     .eq("workspace_id", session.workspaceId);
 
   if (error) {
-    console.error("[leads/delete]", error.message);
+    log("error", "leads.delete_error", { error: error.message });
     return NextResponse.json({ error: "Failed to delete lead" }, { status: 500 });
   }
 

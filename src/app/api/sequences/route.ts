@@ -59,6 +59,13 @@ export async function POST(req: NextRequest) {
   if (!name?.trim()) {
     return NextResponse.json({ error: "name required" }, { status: 400 });
   }
+  if (name.length > 255) {
+    return NextResponse.json({ error: "name too long (max 255 characters)" }, { status: 400 });
+  }
+  const ALLOWED_TRIGGERS = ["new_lead", "missed_call", "no_show", "custom", "manual", "appointment_booked", "lead_qualified", "inbound_call"];
+  if (trigger_type && !ALLOWED_TRIGGERS.includes(trigger_type)) {
+    return NextResponse.json({ error: `Invalid trigger_type. Allowed: ${ALLOWED_TRIGGERS.join(", ")}` }, { status: 400 });
+  }
 
   try {
     const sequence = await createSequence(

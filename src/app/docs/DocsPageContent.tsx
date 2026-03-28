@@ -32,7 +32,7 @@ function getDocCards(t: (key: string) => string) {
     { icon: BookOpen, title: t("cards.gettingStarted.title"), desc: t("cards.gettingStarted.desc"), href: "#quick-start" },
     { icon: Code, title: t("cards.apiReference.title"), desc: t("cards.apiReference.desc"), href: "#api" },
     { icon: Shield, title: t("cards.compliance.title"), desc: t("cards.compliance.desc"), href: "/compliance" },
-    { icon: Plug, title: t("cards.integrations.title"), desc: t("cards.integrations.desc"), href: null },
+    { icon: Plug, title: t("cards.integrations.title"), desc: t("cards.integrations.desc"), href: "#integrations" },
     { icon: HelpCircle, title: t("cards.faq.title"), desc: t("cards.faq.desc"), href: `${ROUTES.PRICING}#faq` },
     { icon: MessageCircle, title: t("cards.support.title"), desc: t("cards.support.desc"), href: ROUTES.CONTACT },
   ];

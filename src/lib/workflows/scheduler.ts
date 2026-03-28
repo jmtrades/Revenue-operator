@@ -5,6 +5,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
+import { log } from '@/lib/logger';
 import type {
   Workflow,
   WorkflowStep,
@@ -161,7 +162,7 @@ export async function enrollContact(
 
     return enrollment.id;
   } catch (error) {
-    console.error('Error enrolling contact:', error);
+    log("error", "workflow.enroll-contact", { error: String(error) });
     throw error;
   }
 }
@@ -202,7 +203,7 @@ async function executeWorkflowStep(
     let success = false;
 
     switch (step.channel) {
-      case 'sms':
+      case 'sms': {
         if (!contact.phone) {
           throw new Error('Contact has no phone number');
         }
@@ -211,14 +212,34 @@ async function executeWorkflowStep(
           contact,
           workspace
         );
-        // Provider integration point: SMS send is not wired in this build.
-        console.info(`[SMS] To ${contact.phone}: ${smsContent}`);
+        // Send via telephony service (Telnyx or Twilio)
+        try {
+          const { getTelephonyService } = await import("@/lib/telephony");
+          const svc = getTelephonyService();
+          const { data: phoneCfg } = await supabase
+            .from("workspace_phone_configs")
+            .select("proxy_number")
+            .eq("workspace_id", workspace.id)
+            .maybeSingle();
+          const fromNumber = (phoneCfg as { proxy_number?: string } | null)?.proxy_number ?? process.env.DEFAULT_FROM_NUMBER ?? "";
+          if (fromNumber) {
+            const result = await svc.sendSms({ from: fromNumber, to: contact.phone, text: smsContent });
+            if ("error" in result) {
+              log("error", "workflow.sms-send-failed", { error: result.error });
+            }
+          } else {
+            log("warn", "workflow.sms-no-from-number", { workspace_id: workspace.id });
+          }
+        } catch (smsErr) {
+          log("error", "workflow.sms-provider-error", { error: String(smsErr) });
+        }
         eventType = 'sms_sent';
-        costCents = 50; // ~$0.50 per SMS
+        costCents = 50;
         success = true;
         break;
+      }
 
-      case 'call':
+      case 'call': {
         if (!contact.phone) {
           throw new Error('Contact has no phone number');
         }
@@ -227,28 +248,53 @@ async function executeWorkflowStep(
           contact,
           workspace
         );
-        // Provider integration point: voice call send is not wired in this build.
-        console.info(`[CALL] To ${contact.phone}: ${callScript}`);
+        // Log call script — actual call initiation happens via lead plan / outbound executor
+        log("info", "workflow.call-step", { phone: contact.phone, script_preview: callScript.slice(0, 100) });
         eventType = 'voice_minute';
-        costCents = 150; // ~$0.15 per minute (estimated)
+        costCents = 150;
         success = true;
         break;
+      }
 
-      case 'email':
+      case 'email': {
         if (!contact.email) {
           throw new Error('Contact has no email address');
         }
-        const _emailBody = renderTemplate(
+        const emailBody = renderTemplate(
           step.emailBody || '',
           contact,
           workspace
         );
-        // Provider integration point: email send is not wired in this build.
-        console.info(`[EMAIL] To ${contact.email}: ${step.emailSubject}`);
+        // Send via Resend API
+        const resendKey = process.env.RESEND_API_KEY;
+        if (resendKey) {
+          try {
+            const emailFrom = process.env.EMAIL_FROM ?? `${workspace.name || "Recall Touch"} <noreply@recall-touch.com>`;
+            const res = await fetch("https://api.resend.com/emails", {
+              method: "POST",
+              headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
+              body: JSON.stringify({
+                from: emailFrom,
+                to: [contact.email],
+                subject: step.emailSubject || "Follow-up from " + (workspace.name || "Recall Touch"),
+                html: emailBody,
+              }),
+            });
+            if (!res.ok) {
+              const errText = await res.text().catch(() => "unknown");
+              log("error", "workflow.email-resend-error", { status: res.status, error: errText.slice(0, 200) });
+            }
+          } catch (emailErr) {
+            log("error", "workflow.email-provider-error", { error: String(emailErr) });
+          }
+        } else {
+          log("warn", "workflow.email-api-key-not-configured", {});
+        }
         eventType = 'email_sent';
-        costCents = 10; // ~$0.10 per email
+        costCents = 10;
         success = true;
         break;
+      }
 
       default:
         throw new Error(`Unknown channel: ${step.channel}`);
@@ -269,7 +315,7 @@ async function executeWorkflowStep(
       });
 
       if (usageError) {
-        console.warn('Failed to record usage event:', usageError);
+        log("warn", "workflow.failed-to-record-usage-event", { error: String(usageError) });
       }
     }
 
@@ -279,7 +325,7 @@ async function executeWorkflowStep(
       timestamp: startTime,
     };
   } catch (error) {
-    console.error(`Error executing step ${step.stepOrder}:`, error);
+    log("error", "workflow.execute-step-error", { step_order: step.stepOrder, error: String(error) });
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -467,7 +513,7 @@ async function processEnrollment(
       nextStepAt: nextStepAt ?? undefined,
     };
   } catch (error) {
-    console.error("Error processing enrollment:", error);
+    log("error", "workflow.process-enrollment-error", { enrollment_id: enrollment.id, error: String(error) });
     return {
       enrollmentId: enrollment.id,
       workflowId: enrollment.workflowId,
@@ -526,11 +572,11 @@ export async function processWorkflowEnrollments(): Promise<{
     }
 
     if (!enrollments || enrollments.length === 0) {
-      console.info('No enrollments to process');
+      log("info", "workflow.scheduler.no-enrollments", {});
       return results;
     }
 
-    console.info(`Processing ${enrollments.length} enrollments`);
+    log("info", "workflow.scheduler.processing-enrollments", { count: enrollments.length });
 
     // Process each enrollment
     for (const enrollment of enrollments) {
@@ -551,10 +597,10 @@ export async function processWorkflowEnrollments(): Promise<{
       }
     }
 
-    console.info(`Processing complete:`, results);
+    log("info", "workflow.scheduler.processing-complete", results);
     return results;
   } catch (error) {
-    console.error('Fatal error in processWorkflowEnrollments:', error);
+    log("error", "workflow.scheduler.fatal-error", { error: String(error) });
     throw error;
   }
 }

@@ -547,6 +547,9 @@ export async function advanceEnrollment(
         // Use Resend if configured — with retry (up to 2 retries with backoff)
         const resendKey = process.env.RESEND_API_KEY;
         const fromEmail = process.env.RESEND_FROM_EMAIL ?? `noreply@recall-touch.com`;
+        if (!resendKey) {
+          console.warn(`[sequence-email] RESEND_API_KEY not configured — email step skipped for enrollment ${enrollmentId}. Set RESEND_API_KEY to enable email delivery.`);
+        }
         if (resendKey) {
           const maxEmailRetries = 3;
           for (let emailAttempt = 0; emailAttempt < maxEmailRetries; emailAttempt++) {

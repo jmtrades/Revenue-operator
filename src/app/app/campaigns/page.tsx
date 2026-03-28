@@ -2,13 +2,16 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Megaphone, Plus, Copy, Trash2, Play, Pause, Pencil, ArrowRight } from "lucide-react";
+import { Megaphone, Plus, Copy, Trash2, Play, Pause, Pencil, ArrowRight, Download } from "lucide-react";
 import { Pagination } from "@/components/ui/Pagination";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { CampaignTemplates } from "@/components/campaigns/CampaignTemplates";
+import { CampaignStrategyAdvisor } from "@/components/campaigns/CampaignStrategyAdvisor";
+import { toast as sonnerToast } from "sonner";
 
 type TouchpointType = "call" | "sms" | "email" | "wait";
 
@@ -99,6 +102,8 @@ export default function CampaignsPage() {
   const snapshotWorkspaceId = workspaceId || workspaceSnapshot?.id?.trim() || "default";
   const initialCampaigns = readCampaignsSnapshot(snapshotWorkspaceId);
   const [campaigns, setCampaigns] = useState<CampaignRow[]>(initialCampaigns);
+  const [dailyLimit, setDailyLimit] = useState<number>(100);
+  const [dailyUsed, setDailyUsed] = useState<number>(0);
   const [loading, setLoading] = useState(initialCampaigns.length === 0);
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -119,13 +124,13 @@ export default function CampaignsPage() {
     audienceNotContactedDays: number | "";
     sequence: Array<{ type: TouchpointType; wait_days?: number }>;
   }>({
-    name: "",
+    name: t("defaults.campaignName"),
     type: "lead_followup",
     audience: "",
-    template: "",
+    template: t("defaults.smsTemplate"),
     schedule: "",
-    scheduleType: "manual" as "manual" | "once" | "recurring" | "trigger",
-    audienceStatuses: [] as string[],
+    scheduleType: "trigger" as "manual" | "once" | "recurring" | "trigger",
+    audienceStatuses: ["New", "Contacted"] as string[],
     audienceSource: "",
     audienceMinScore: "" as number | "",
     audienceNotContactedDays: "" as number | "",
@@ -152,15 +157,21 @@ export default function CampaignsPage() {
       credentials: "include",
       signal: controller.signal,
     })
-      .then((res) => (res.ok ? res.json() : { campaigns: [] }))
-      .then((data: { campaigns?: CampaignRow[] }) => {
+      .then((res) => {
+        if (!res.ok) { sonnerToast.error("Could not load campaigns"); return { campaigns: [] }; }
+        return res.json();
+      })
+      .then((data: { campaigns?: CampaignRow[]; daily_limit?: number; daily_used?: number }) => {
         if (cancelled) return;
         const next = data.campaigns ?? [];
         setCampaigns(next);
+        if (typeof data.daily_limit === "number") setDailyLimit(data.daily_limit);
+        if (typeof data.daily_used === "number") setDailyUsed(data.daily_used);
         persistCampaignsSnapshot(workspaceId, next);
       })
       .catch(() => {
         if (cancelled) return;
+        sonnerToast.error("Could not load campaigns");
         setCampaigns([]);
       })
       .finally(() => {
@@ -242,13 +253,13 @@ export default function CampaignsPage() {
       );
       setEditingId(null);
       setForm({
-        name: "",
+        name: t("defaults.campaignName"),
         type: "lead_followup",
         audience: t("defaults.audience"),
-        template: t("defaults.template"),
+        template: t("defaults.smsTemplate"),
         schedule: "",
-        scheduleType: "manual",
-        audienceStatuses: [],
+        scheduleType: "trigger",
+        audienceStatuses: ["New", "Contacted"],
         audienceSource: "",
         audienceMinScore: "",
         audienceNotContactedDays: "",
@@ -319,7 +330,7 @@ export default function CampaignsPage() {
       audience: tf?.audience ?? "",
       template: tf?.message_template ?? "",
       schedule: tf?.schedule ?? "",
-      scheduleType: (tf?.schedule_type as "manual" | "once" | "recurring" | "trigger") ?? "manual",
+      scheduleType: (tf?.schedule_type as "manual" | "once" | "recurring" | "trigger") ?? "trigger",
       audienceStatuses: Array.isArray(tf?.audience_statuses) ? tf.audience_statuses : [],
       audienceSource: tf?.audience_source ?? "",
       audienceMinScore: typeof tf?.audience_min_score === "number" ? tf.audience_min_score : "",
@@ -354,11 +365,65 @@ export default function CampaignsPage() {
 
   const [duplicating, setDuplicating] = useState(false);
 
+  const exportCampaignsToCSV = () => {
+    try {
+      // CSV headers
+      const headers = [
+        "Name",
+        "Status",
+        "Called",
+        "Answered",
+        "Appointments Booked",
+        "Conversion Rate",
+        "Created At",
+      ];
+
+      // CSV rows from campaigns data
+      const rows = campaigns.map((campaign) => {
+        const conversionRate =
+          campaign.answered > 0
+            ? Math.round((campaign.appointments_booked / campaign.answered) * 100)
+            : 0;
+        const createdAt = new Date(campaign.created_at).toLocaleDateString();
+
+        return [
+          `"${campaign.name.replace(/"/g, '""')}"`, // Escape quotes in name
+          campaign.status,
+          campaign.called,
+          campaign.answered,
+          campaign.appointments_booked,
+          `${conversionRate}%`,
+          createdAt,
+        ];
+      });
+
+      // Create CSV string
+      const csvContent = [headers, ...rows].map((row) => row.join(",")).join("\n");
+
+      // Create Blob and download
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      const now = new Date();
+      const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+      link.setAttribute("href", url);
+      link.setAttribute("download", `campaigns-export-${dateStr}.csv`);
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      setToast(t("toast.exported", { defaultValue: "Campaigns exported successfully" }));
+    } catch {
+      setToast(t("toast.exportFailed", { defaultValue: "Failed to export campaigns" }));
+    }
+  };
+
   const duplicateCampaign = async (campaign: CampaignRow) => {
     setDuplicating(true);
     try {
       const payload = {
-        name: `${campaign.name} (${t("campaigns.copySuffix")})`,
+        name: `${campaign.name} (${t("copySuffix")})`,
         type: campaign.type,
         target_filter: campaign.target_filter,
       };
@@ -382,6 +447,17 @@ export default function CampaignsPage() {
     }
   };
 
+  if (!workspaceId) {
+    return (
+      <div className="p-4 md:p-6 max-w-4xl mx-auto">
+        <EmptyState
+          title="No workspace"
+          description="Select or create a workspace to view campaigns."
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <style>{`
@@ -400,7 +476,7 @@ export default function CampaignsPage() {
         }
       `}</style>
       <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto">
-        <div className="flex items-center justify-between gap-4 mb-6">
+        <div className="flex items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)]">{t("heading")}</h1>
             <p className="text-sm text-[var(--text-secondary)] mt-1">
@@ -419,6 +495,15 @@ export default function CampaignsPage() {
               <option value="paused">{t("statusFilter.paused")}</option>
               <option value="completed">{t("statusFilter.completed")}</option>
             </select>
+            <button
+              onClick={exportCampaignsToCSV}
+              disabled={campaigns.length === 0}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-secondary)] text-sm font-semibold hover:bg-[var(--bg-hover)] transition-[background-color,opacity] duration-160 active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed"
+              title={t("exportTooltip", { defaultValue: "Export campaigns to CSV" })}
+            >
+              <Download className="w-4 h-4" />
+              {t("export", { defaultValue: "Export" })}
+            </button>
             <a
               href="/app/campaigns/create"
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold hover:opacity-90 transition-[opacity,transform] duration-160 active:scale-[0.97]"
@@ -429,18 +514,26 @@ export default function CampaignsPage() {
           </div>
         </div>
 
+        {/* Campaign Strategy Advisor */}
+        <CampaignStrategyAdvisor workspaceId={snapshotWorkspaceId} />
+
+        {/* Campaign Templates Section */}
+        <CampaignTemplates />
+
         <div className="mb-6 grid grid-cols-2 md:grid-cols-5 gap-4 drop-shadow-sm">
           <StatCard label={t("statTotal")} value={campaigns.length} color="blue" />
           <StatCard label={t("statActive")} value={campaigns.filter((c) => c.status === "active").length} color="emerald" />
           <StatCard label={t("statContacted")} value={campaigns.reduce((sum, c) => sum + c.called, 0)} color="cyan" />
           <StatCard label={t("statConverted")} value={campaigns.reduce((sum, c) => sum + c.appointments_booked, 0)} color="amber" />
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-4">
-            <p className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide">{t("estRoi")}</p>
+            <p className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide">{t("overallConversion", { defaultValue: "Overall conversion" })}</p>
             <p className="mt-1 text-sm font-semibold text-[var(--text-primary)]">
-              {t("roiSummary", {
-                cost: (campaigns.reduce((s, c) => s + c.called * 0.05 + c.answered * 0.02, 0)).toFixed(0),
-                revenue: (campaigns.reduce((s, c) => s + c.appointments_booked * 250, 0)).toFixed(0),
-              })}
+              {(() => {
+                const totalAnswered = campaigns.reduce((s, c) => s + c.answered, 0);
+                const totalBooked = campaigns.reduce((s, c) => s + c.appointments_booked, 0);
+                const rate = totalAnswered > 0 ? Math.round((totalBooked / totalAnswered) * 100) : 0;
+                return `${rate}% · ${totalBooked} ${t("appointmentsBooked", { defaultValue: "booked" })}`;
+              })()}
             </p>
           </div>
         </div>
@@ -509,7 +602,7 @@ export default function CampaignsPage() {
                       disabled={duplicating}
                       className="p-2 rounded-lg border border-[var(--border-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-[color,background-color,transform] duration-160 active:scale-[0.95] disabled:opacity-50"
                       title={t("duplicate")}
-                      aria-label={t("campaigns.copy")}
+                      aria-label={t("copy")}
                     >
                       <Copy className="w-3.5 h-3.5" />
                     </button>
@@ -520,7 +613,7 @@ export default function CampaignsPage() {
                         disabled={deleting}
                         className="p-2 rounded-lg border border-red-500/20 text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-[color,background-color,transform] duration-160 active:scale-[0.95] disabled:opacity-50"
                         title={t("delete")}
-                        aria-label={t("campaigns.delete")}
+                        aria-label={t("delete")}
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -533,7 +626,7 @@ export default function CampaignsPage() {
                           : void toggleCampaign(campaign)
                       }
                       className="ml-1 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-[background-color,transform] duration-160 active:scale-[0.95]"
-                      aria-label={campaign.status === "active" ? t("campaigns.pause") : t("campaigns.launch")}
+                      aria-label={campaign.status === "active" ? t("pause") : t("launch")}
                     >
                       {campaign.status === "active" ? (
                         <><Pause className="w-3.5 h-3.5" /> {t("pause")}</>
@@ -553,6 +646,11 @@ export default function CampaignsPage() {
                     <span>{t("remaining")}: {Math.max(0, campaign.total_contacts - campaign.called)}</span>
                     <span>·</span>
                     <span>{t("failed")}: {Math.max(0, campaign.called - campaign.answered)}</span>
+                    <span>·</span>
+                    <span className={dailyUsed >= dailyLimit ? "text-amber-400 font-medium" : ""}>{t("dailyUsage", { defaultValue: "Daily" })}: {dailyUsed}/{dailyLimit}</span>
+                    {dailyUsed >= dailyLimit && (
+                      <span className="text-amber-400 font-medium">{t("dailyLimitReached", { defaultValue: "— limit reached, resumes tomorrow" })}</span>
+                    )}
                   </div>
                   {campaign.total_contacts > 0 && (
                     <div className="mt-3">
@@ -577,15 +675,25 @@ export default function CampaignsPage() {
                       </div>
                     </div>
                   )}
-                  {campaign.called > 0 && (
+                  {campaign.called > 0 && campaign.appointments_booked > 0 && (
                     <div className="mt-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-3">
-                      <p className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide">{t("campaignRoi")}</p>
-                      <p className="mt-1 text-xs text-[var(--text-tertiary)]">
-                        {t("roiCampaign", {
-                          cost: `$${(campaign.called * 0.05 + campaign.answered * 0.02).toFixed(2)}`,
-                          revenue: `$${(campaign.appointments_booked * 250).toFixed(0)}`,
-                        })}
-                      </p>
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide">{t("campaignRoi", { defaultValue: "Performance" })}</p>
+                      </div>
+                      <div className="mt-1 grid grid-cols-3 gap-2 text-center">
+                        <div>
+                          <p className="text-sm font-semibold text-[var(--text-primary)]">{campaign.answered > 0 ? Math.round((campaign.appointments_booked / campaign.answered) * 100) : 0}%</p>
+                          <p className="text-[10px] text-[var(--text-tertiary)]">{t("conversionRate", { defaultValue: "Conversion" })}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-[var(--text-primary)]">{campaign.answered}/{campaign.called}</p>
+                          <p className="text-[10px] text-[var(--text-tertiary)]">{t("answerRate", { defaultValue: "Answer rate" })}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-emerald-400">{campaign.appointments_booked}</p>
+                          <p className="text-[10px] text-[var(--text-tertiary)]">{t("booked", { defaultValue: "Booked" })}</p>
+                        </div>
+                      </div>
                     </div>
                   )}
                   <p className="mt-3 text-[11px] text-[var(--text-secondary)]">
@@ -612,9 +720,9 @@ export default function CampaignsPage() {
               currentPage={campaignPageSafe}
               totalPages={totalCampaignPages}
               onPageChange={setCampaignPage}
-              label={t("campaigns.pageOf")}
-              prevLabel={t("campaigns.prevPage")}
-              nextLabel={t("campaigns.nextPage")}
+              label={t("pageOf")}
+              prevLabel={t("prevPage")}
+              nextLabel={t("nextPage")}
             />
           </div>
 
@@ -638,13 +746,13 @@ export default function CampaignsPage() {
                     setEditingId(null);
                     setCampaignType("followup");
                     setForm({
-                      name: "",
+                      name: "Missed-call recovery",
                       type: "lead_followup",
                       audience: t("defaults.audience"),
-                      template: t("defaults.template"),
+                      template: "Hi {firstName}, this is {businessName}. We noticed you recently reached out — I'd love to help you get started. Would you have a few minutes to chat?",
                       schedule: "",
-                      scheduleType: "manual",
-                      audienceStatuses: [],
+                      scheduleType: "trigger",
+                      audienceStatuses: ["New", "Contacted"],
                       audienceSource: "",
                       audienceMinScore: "",
                       audienceNotContactedDays: "",
@@ -702,7 +810,7 @@ export default function CampaignsPage() {
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
-                  placeholder={t("namePlaceholder")}
+                  placeholder="Missed-call recovery"
                   className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
                 />
               </div>

@@ -37,9 +37,9 @@ export interface SyncLogRow {
   direction: SyncDirection;
   entity_type: string;
   entity_id: string | null;
-  action: SyncLogAction;
-  summary: string | null;
-  payload_snapshot: Record<string, unknown>;
+  status: SyncLogAction;
+  error: string | null;
+  metadata: Record<string, unknown>;
   created_at: string;
 }
 
@@ -510,7 +510,7 @@ export async function getSyncHistory(params: {
 
   let query = db
     .from("sync_log")
-    .select("id, workspace_id, provider, direction, entity_type, entity_id, action, summary, payload_snapshot, created_at", { count: "exact" })
+    .select("id, workspace_id, provider, direction, entity_type, entity_id, status, error, metadata, created_at", { count: "exact" })
     .eq("workspace_id", params.workspaceId)
     .order("created_at", { ascending: false })
     .range(offset, offset + limit - 1);

@@ -8,6 +8,29 @@ type AgentKnowledgePanelProps = {
   updateAgent: (patch: Partial<Agent>) => void;
 };
 
+const DEFAULT_QA_SUGGESTIONS = [
+  {
+    question: "What are your business hours?",
+    answer: "We're open Monday through Friday, 9 AM to 5 PM.",
+  },
+  {
+    question: "How do I schedule an appointment?",
+    answer: "I'd be happy to help you schedule an appointment. What day works best for you?",
+  },
+  {
+    question: "What services do you offer?",
+    answer: "We offer a full range of services. Can I help you with something specific?",
+  },
+  {
+    question: "What's your pricing?",
+    answer: "Pricing varies depending on the service. I can take your details and have someone follow up with exact pricing.",
+  },
+  {
+    question: "How do I contact support?",
+    answer: "You can reach our support team through this chat, or I can have someone call you back.",
+  },
+];
+
 export function AgentKnowledgePanel({ agent, updateAgent }: AgentKnowledgePanelProps) {
   const t = useTranslations("agents.knowledgePanel");
 
@@ -32,6 +55,17 @@ export function AgentKnowledgePanel({ agent, updateAgent }: AgentKnowledgePanelP
     updateAgent({ faq: next });
   };
 
+  const acceptSuggestion = (suggestion: { question: string; answer: string }) => {
+    updateAgent({
+      faq: [
+        ...agent.faq,
+        { id: `faq-${Date.now()}`, question: suggestion.question, answer: suggestion.answer },
+      ],
+    });
+  };
+
+  const isEmpty = agent.faq.length === 0;
+
   return (
     <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-4">
       <div>
@@ -42,6 +76,31 @@ export function AgentKnowledgePanel({ agent, updateAgent }: AgentKnowledgePanelP
           {t("subtitle")}
         </p>
       </div>
+
+      {isEmpty && (
+        <div className="rounded-xl border border-[var(--border-medium)] bg-[var(--bg-input)] p-3 space-y-3">
+          <p className="text-xs text-[var(--text-secondary)] font-medium">
+            Quick start suggestions:
+          </p>
+          <div className="space-y-2">
+            {DEFAULT_QA_SUGGESTIONS.map((suggestion, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => acceptSuggestion(suggestion)}
+                className="w-full text-left p-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-card)] hover:border-[var(--border-medium)] hover:bg-[var(--bg-hover)] transition-colors"
+              >
+                <p className="text-xs font-medium text-[var(--text-primary)] mb-0.5">
+                  Q: {suggestion.question}
+                </p>
+                <p className="text-xs text-[var(--text-secondary)]">
+                  A: {suggestion.answer}
+                </p>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="space-y-3">
         {agent.faq.map((item, index) => (

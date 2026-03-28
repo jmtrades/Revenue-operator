@@ -401,12 +401,12 @@ async function pushToAirtable(
 ): Promise<PushResult> {
   // Airtable API — Create a Record
   // https://airtable.com/developers/web/api/create-records
-  // Requires AIRTABLE_BASE_ID and AIRTABLE_TABLE_NAME env vars
-  const baseId = process.env.AIRTABLE_BASE_ID;
-  const tableName = process.env.AIRTABLE_TABLE_NAME ?? "Contacts";
+  // Read base_id/table_name from tokens metadata (per-workspace), fallback to env vars
+  const baseId = tokens.metadata?.base_id ?? process.env.AIRTABLE_BASE_ID;
+  const tableName = tokens.metadata?.table_name ?? process.env.AIRTABLE_TABLE_NAME ?? "Contacts";
 
   if (!baseId) {
-    return { ok: false, error: "AIRTABLE_BASE_ID not configured" };
+    return { ok: false, error: "Airtable base ID not configured. Go to Settings → Integrations → Airtable → Configure to set your Base ID." };
   }
 
   // Airtable expects fields wrapped in a "fields" object

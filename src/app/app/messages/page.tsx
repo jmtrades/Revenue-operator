@@ -72,7 +72,7 @@ export default function AppMessagesPage() {
       const res = await fetch("/api/messages/threads", { credentials: "include", cache: "no-store" });
       if (!res.ok) {
         setThreads([]);
-        setThreadError(`Failed to load conversations (${res.status})`);
+        setThreadError(t("errors.conversationLoadFailed"));
         return;
       }
       const data = await res.json();
@@ -198,7 +198,8 @@ export default function AppMessagesPage() {
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        toast.error((err as { error?: string }).error || t("failedToSend"));
+        console.error("[messages] send error:", err);
+        toast.error(t("failedToSend"));
         return;
       }
       toast.success(t("toast.sent"));
@@ -229,7 +230,7 @@ export default function AppMessagesPage() {
                 title={t("empty.title")}
                 description={t("empty.body")}
                 primaryAction={{
-                  label: "View Contacts",
+                  label: t("empty.viewContacts"),
                   href: "/app/contacts",
                 }}
                 className="px-4 py-6"
@@ -340,7 +341,7 @@ export default function AppMessagesPage() {
         </div>
       </div>
       <p className="mt-6">
-        <Link href="/app/activity" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">
+        <Link href="/app/dashboard" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">
           {t("backToActivity")}
         </Link>
       </p>

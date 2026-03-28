@@ -314,7 +314,7 @@ export default function AppOnboardingPage() {
     }
     safeSetItem("rt_onboarded", "true");
     safeSetItem("rt_onboarding_checklist", JSON.stringify(["business", "agent", "services", "phone", "test_call"]));
-    router.push("/app/activity");
+    router.push("/app/dashboard");
   };
 
   const handleGoToDashboard = () => {
@@ -339,7 +339,7 @@ export default function AppOnboardingPage() {
       // ignore
     }
     safeSetItem("rt_onboarded", "true");
-    router.push("/app/activity");
+    router.push("/app/dashboard");
   };
 
   const greetingToPlay = greeting.trim() || defaultGreeting;

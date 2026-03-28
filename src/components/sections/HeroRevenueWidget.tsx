@@ -58,7 +58,7 @@ export function HeroRevenueWidget() {
             href={ROUTES.START}
             className="text-xs font-semibold text-[var(--accent-primary)] hover:text-[var(--accent-primary-hover)] transition-colors hidden sm:block"
           >
-            Start free →
+            Get started →
           </Link>
         </div>
 

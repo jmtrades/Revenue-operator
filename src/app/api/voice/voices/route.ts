@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   try {
@@ -53,13 +54,13 @@ export async function GET(req: NextRequest) {
     const { data: voices, error } = await query.order("is_system", { ascending: false }).order("created_at", { ascending: false });
 
     if (error) {
-      console.error("[API] voice voices GET error:", error);
+      log("error", "voice.voices.GET", { error: String(error) });
       return NextResponse.json({ error: "Failed to fetch voices" }, { status: 500 });
     }
 
     return NextResponse.json({ voices: voices ?? [] });
   } catch (error) {
-    console.error("[API] voice voices GET error:", error);
+    log("error", "voice.voices.GET", { error: String(error) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -114,7 +115,7 @@ export async function POST(req: NextRequest) {
       .maybeSingle();
 
     if (error) {
-      console.error("[API] voice voices POST error:", error);
+      log("error", "voice.voices.POST", { error: String(error) });
       return NextResponse.json({ error: "Failed to create voice" }, { status: 500 });
     }
     if (!voice) {
@@ -123,7 +124,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ voice }, { status: 201 });
   } catch (error) {
-    console.error("[API] voice voices POST error:", error);
+    log("error", "voice.voices.POST", { error: String(error) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -7,11 +7,10 @@ import crypto from "node:crypto";
 import { getDb } from "@/lib/db/queries";
 import { enqueue } from "@/lib/queue";
 import { log } from "@/lib/logger";
-import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(req: NextRequest) {
-  const csrfBlock = assertSameOrigin(req);
-  if (csrfBlock) return csrfBlock;
+  // No CSRF check — this endpoint receives external webhooks from Zoom.
+  // Security is enforced via x-zm-signature verification below.
 
 
   const raw = await req.text();
@@ -28,8 +27,9 @@ export async function POST(req: NextRequest) {
     if (expectedBuf.length !== providedBuf.length || !crypto.timingSafeEqual(expectedBuf, providedBuf)) {
       return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
     }
-  } else if (process.env.NODE_ENV === "production") {
-    log("warn", "zoom_webhook.secret_not_configured", { message: "signature verification skipped" });
+  } else if (process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production") {
+    log("error", "zoom_webhook.secret_not_configured", { message: "rejecting request — ZOOM_WEBHOOK_SECRET must be set in production" });
+    return NextResponse.json({ error: "Webhook not configured" }, { status: 403 });
   }
 
   let body: { event?: string; payload?: { object?: { id?: string; uuid?: string; participant_user_ids?: string[] }; account_id?: string } };

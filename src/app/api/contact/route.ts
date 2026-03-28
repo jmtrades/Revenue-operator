@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 /**
  * Contact form submission. Accepts POST { name, email, company?, message }.
  * Persists to contact_submissions when DB configured; always returns 200.
  */
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
   // Rate limiting: 10 requests per minute per IP
   const clientIp = getClientIp(req);
   const rl = await checkRateLimit(`contact:${clientIp}`, 10, 60_000);

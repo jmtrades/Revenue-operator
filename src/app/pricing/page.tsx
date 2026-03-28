@@ -11,11 +11,11 @@ const BASE = "https://www.recall-touch.com";
 // metadata in separate layout files or using middleware to set metadata per locale.
 
 export const metadata: Metadata = {
-  title: "Pricing — Recall Touch",
+  title: "Pricing",
   description: "Pricing for the AI Revenue Execution System. Land on Solo, grow into Business, and scale into multi-location and teams with transparent ROI-first plans.",
   alternates: { canonical: `${BASE}/pricing` },
   openGraph: {
-    title: "Pricing — Recall Touch",
+    title: "Pricing",
     description: "Pricing for the AI Revenue Execution System. Transparent, ROI-first plans that scale with your call volume and outcomes.",
     url: `${BASE}/pricing`,
     siteName: "Recall Touch",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Pricing — Recall Touch",
+    title: "Pricing",
     description: "ROI-first pricing for the AI Revenue Execution System.",
     creator: "@recalltouch",
   },

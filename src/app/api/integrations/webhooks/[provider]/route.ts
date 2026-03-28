@@ -7,7 +7,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { enqueueSync } from "@/lib/integrations/sync-engine";
 import type { CrmProviderId } from "@/lib/integrations/field-mapper";
-import { assertSameOrigin } from "@/lib/http/csrf";
 
 const ALLOWED: CrmProviderId[] = [
   "salesforce",
@@ -29,8 +28,8 @@ export async function POST(
   req: NextRequest,
   ctx: { params: Promise<{ provider: string }> }
 ) {
-  const csrfBlock = assertSameOrigin(req);
-  if (csrfBlock) return csrfBlock;
+  // No CSRF check — this endpoint receives external webhooks from CRM providers.
+  // Security is enforced via webhook secret verification below.
 
   const { provider } = await ctx.params;
   if (!isAllowed(provider)) {

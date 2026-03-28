@@ -7,7 +7,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import Link from "next/link";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
-import { Download, Upload, Building2, Cloud, Database, TrendingUp, Layers, Users as UsersIcon, Building } from "lucide-react";
+import { Download, Upload, Building2, Cloud, Database, TrendingUp, Layers, Users as UsersIcon, Building, X } from "lucide-react";
 import { Pagination } from "@/components/ui/Pagination";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Users } from "lucide-react";
@@ -21,6 +21,8 @@ type HistoryEntry = {
   summary: string;
 };
 
+type LeadStatus = "new" | "contacted" | "qualified" | "appointment_set" | "won" | "lost";
+
 type Contact = {
   id: string;
   firstName: string;
@@ -28,6 +30,7 @@ type Contact = {
   phone: string;
   email?: string;
   type: ContactType;
+  status?: LeadStatus;
   score?: number;
   notes?: string;
   tags?: string[];
@@ -50,7 +53,6 @@ function loadContacts(): Contact[] {
     const parsed = JSON.parse(raw) as Contact[];
     return Array.isArray(parsed) ? parsed : [];
   } catch (e) {
-    console.error("Failed to parse contacts from localStorage:", e);
     toast.error("Failed to load saved contacts");
     safeRemoveItem(STORAGE_KEY);
     return [];
@@ -100,6 +102,14 @@ function mapLeadToContact(lead: {
   // Extract source — check lead.source, lead.channel, and metadata.source
   const source = lead.source ?? lead.channel ?? (lead.metadata?.source as string | undefined) ?? undefined;
 
+  const rawStatus = (lead.state ?? "").toLowerCase() as LeadStatus;
+  const validStatuses: LeadStatus[] = ["new", "contacted", "qualified", "appointment_set", "won", "lost"];
+  const status = validStatuses.includes(rawStatus) ? rawStatus : "new";
+
+  const score = typeof (lead.metadata as Record<string, unknown> | null)?.score === "number"
+    ? (lead.metadata as Record<string, unknown>).score as number
+    : undefined;
+
   return {
     id: lead.id,
     firstName,
@@ -107,6 +117,8 @@ function mapLeadToContact(lead: {
     phone,
     email: (lead.email ?? "").trim() || undefined,
     type,
+    status,
+    score,
     tags: [],
     lastContact,
     source,
@@ -208,6 +220,8 @@ export default function AppContactsPage() {
   const [tab, setTab] = useState<TabId>("all");
   const [sort, setSort] = useState<SortId>("newest");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkStatus, setBulkStatus] = useState<LeadStatus | null>(null);
   const [showAdd, setShowAdd] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
@@ -285,7 +299,6 @@ export default function AppContactsPage() {
         setContacts(mapped);
         saveContacts(mapped);
       } catch (err) {
-        console.error("[contacts] API error:", err);
         setApiError(t("connectionError"));
       } finally {
         setLoading(false);
@@ -348,6 +361,63 @@ export default function AppContactsPage() {
     setFormTagInput("");
     setFormTags([]);
     setFormErrors({});
+  };
+
+  const handleSelectAll = () => {
+    if (selectedIds.size === pagedContacts.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(pagedContacts.map((c) => c.id)));
+    }
+  };
+
+  const handleToggleSelect = (id: string) => {
+    const next = new Set(selectedIds);
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      next.add(id);
+    }
+    setSelectedIds(next);
+  };
+
+  const handleBulkChangeStatus = (status: LeadStatus) => {
+    const updated = contacts.map((c) => (selectedIds.has(c.id) ? { ...c, status } : c));
+    setContacts(updated);
+    saveContacts(updated);
+    setSelectedIds(new Set());
+    setBulkStatus(null);
+    setToast(t("toast.bulkStatusUpdated", { defaultValue: "Status updated for selected contacts" }));
+  };
+
+  const handleBulkExport = async () => {
+    const selectedContacts = contacts.filter((c) => selectedIds.has(c.id));
+    if (selectedContacts.length === 0) return;
+
+    const headers = ["First Name", "Last Name", "Phone", "Email", "Type", "Status", "Score", "Last Contact"];
+    const rows = selectedContacts.map((c) => [
+      c.firstName,
+      c.lastName,
+      c.phone,
+      c.email || "",
+      c.type,
+      c.status || "",
+      c.score || "",
+      c.lastContact,
+    ]);
+
+    const csv = [headers, ...rows].map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `selected-contacts-${new Date().getTime()}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    setToast(t("toast.exportedSelected", { defaultValue: "Selected contacts exported" }));
   };
 
   const handleAddTag = () => {
@@ -424,12 +494,22 @@ export default function AppContactsPage() {
       setShowAdd(false);
       resetForm();
     } catch (err) {
-      console.error("[contacts] save error:", err);
       setToast(t("toast.networkError"));
     } finally {
       setCreating(false);
     }
   };
+
+  if (!workspaceId) {
+    return (
+      <div className="p-4 md:p-6 max-w-4xl mx-auto">
+        <EmptyState
+          title="No workspace"
+          description="Select or create a workspace to view contacts."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="relative max-w-5xl mx-auto p-4 md:p-6">
@@ -576,67 +656,153 @@ export default function AppContactsPage() {
         />
       ) : (
         !loading && (
-          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1.2fr)] gap-4 lg:gap-6 items-start">
-            <ul className="space-y-3">
+          <>
+            {selectedIds.size > 0 && (
+              <div className="flex items-center gap-3 p-4 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] mb-4">
+                <span className="text-sm text-[var(--text-secondary)]">
+                  {selectedIds.size} {selectedIds.size === 1 ? t("toast.selected", { defaultValue: "selected" }) : t("toast.selected", { defaultValue: "selected" })}
+                </span>
+                <div className="flex-1" />
+                <div className="flex items-center gap-2">
+                  <select
+                    value={bulkStatus ?? ""}
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        handleBulkChangeStatus(e.target.value as LeadStatus);
+                      }
+                    }}
+                    className="px-3 py-2 rounded-lg bg-[var(--bg-card)] border border-[var(--border-default)] text-xs text-[var(--text-secondary)] focus:outline-none hover:border-[var(--border-medium)] transition-colors"
+                  >
+                    <option value="">{t("bulk.changeStatus", { defaultValue: "Change Status" })}</option>
+                    <option value="new">{t("status.new", { defaultValue: "New" })}</option>
+                    <option value="contacted">{t("status.contacted", { defaultValue: "Contacted" })}</option>
+                    <option value="qualified">{t("status.qualified", { defaultValue: "Qualified" })}</option>
+                    <option value="appointment_set">{t("status.appointment_set", { defaultValue: "Appointment Set" })}</option>
+                    <option value="won">{t("status.won", { defaultValue: "Won" })}</option>
+                    <option value="lost">{t("status.lost", { defaultValue: "Lost" })}</option>
+                  </select>
+                  <button
+                    type="button"
+                    onClick={handleBulkExport}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-default)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-card)] transition-colors"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    {t("bulk.export", { defaultValue: "Export" })}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedIds(new Set())}
+                    className="inline-flex items-center gap-1 rounded-lg border border-[var(--border-default)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-card)] transition-colors"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                    {t("bulk.clear", { defaultValue: "Clear" })}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1.2fr)] gap-4 lg:gap-6 items-start">
+              <ul className="space-y-3">
+              {filtered.length > 0 && (
+                <li className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)]">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.size > 0 && selectedIds.size === pagedContacts.length}
+                    onChange={handleSelectAll}
+                    className="w-5 h-5 rounded border-[var(--border-default)] cursor-pointer accent-[var(--accent-primary)]"
+                    aria-label="Select all contacts on this page"
+                  />
+                  <span className="text-sm text-[var(--text-secondary)]">
+                    {t("bulk.selectAll", { defaultValue: "Select All" })} ({pagedContacts.length})
+                  </span>
+                </li>
+              )}
               {pagedContacts.map((c, idx) => {
                 const fullName = `${c.firstName} ${c.lastName}`;
+                const isSelected = selectedIds.has(c.id);
                 return (
                   <li key={c.id} className="contact-item" style={{ animationDelay: `${idx * 30}ms` }}>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedId(c.id)}
+                    <div
                       className={`w-full text-left flex items-center gap-4 p-4 rounded-2xl border bg-[var(--bg-card)] ${
                         typeStyles(c.type)
-                      } border-[var(--border-default)] hover:bg-[var(--bg-input)] transition-[background-color,transform] duration-160 active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/30 ${selectedId === c.id ? "ring-1 ring-[var(--border-medium)]" : ""}`}
+                      } border-[var(--border-default)] transition-[background-color,transform] duration-160 ${selectedId === c.id ? "ring-1 ring-[var(--border-medium)]" : ""} ${isSelected ? "bg-[var(--bg-input)]" : ""}`}
                     >
-                      <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold text-[var(--text-primary)] shrink-0 ring-1 ring-[var(--border-default)] ${avatarColorFromName(
-                          fullName
-                        )}`}
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => handleToggleSelect(c.id)}
+                        className="w-5 h-5 rounded border-[var(--border-default)] cursor-pointer accent-[var(--accent-primary)] shrink-0"
+                        aria-label={`Select ${fullName}`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setSelectedId(c.id)}
+                        className="flex-1 text-left flex items-center gap-4 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/30 rounded-lg -mx-2 px-2 py-1"
                       >
-                        {getInitials(c.firstName, c.lastName)}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <p className="text-sm font-medium text-[var(--text-primary)] truncate">{fullName}</p>
-                          <span
-                            className={`text-[10px] font-medium px-2 py-0.5 rounded-full capitalize ${typeBadgeStyles(
-                              c.type
-                            )}`}
-                          >
-                            {t(`form.type.${c.type}`)}
-                          </span>
-                          {getSourceBadge(c.source, t)}
+                        <div
+                          className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold text-[var(--text-primary)] shrink-0 ring-1 ring-[var(--border-default)] ${avatarColorFromName(
+                            fullName
+                          )}`}
+                        >
+                          {getInitials(c.firstName, c.lastName)}
                         </div>
-                        <p className="text-xs text-[var(--text-tertiary)] truncate">
-                          {c.phone}
-                          {c.email ? ` · ${c.email}` : ""}
-                        </p>
-                        <p className="text-[11px] text-[var(--text-secondary)] mt-1">
-                          {formatLastContact(c.lastContact, t)}
-                        </p>
-                      </div>
-                      {typeof c.score === "number" && (
-                        <div className="w-12 h-12 rounded-full border border-[var(--border-medium)] flex items-center justify-center text-xs font-semibold text-[var(--text-primary)] shrink-0">
-                          {c.score}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <p className="text-sm font-medium text-[var(--text-primary)] truncate">{fullName}</p>
+                            <span
+                              className={`text-[10px] font-medium px-2 py-0.5 rounded-full capitalize ${typeBadgeStyles(
+                                c.type
+                              )}`}
+                            >
+                              {t(`form.type.${c.type}`)}
+                            </span>
+                            {getSourceBadge(c.source, t)}
+                          </div>
+                          <p className="text-xs text-[var(--text-tertiary)] truncate">
+                            {c.phone}
+                            {c.email ? ` · ${c.email}` : ""}
+                          </p>
+                          <div className="flex items-center gap-2 mt-1">
+                            {c.status && c.status !== "new" && (
+                              <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${
+                                c.status === "won" ? "bg-emerald-500/10 text-emerald-400" :
+                                c.status === "appointment_set" ? "bg-blue-500/10 text-blue-400" :
+                                c.status === "qualified" ? "bg-purple-500/10 text-purple-400" :
+                                c.status === "contacted" ? "bg-amber-500/10 text-amber-400" :
+                                c.status === "lost" ? "bg-red-500/10 text-red-400" :
+                                "bg-[var(--bg-inset)] text-[var(--text-tertiary)]"
+                              }`}>
+                                {t(`status.${c.status}`, { defaultValue: c.status.replace("_", " ") })}
+                              </span>
+                            )}
+                            <p className="text-[11px] text-[var(--text-secondary)]">
+                              {formatLastContact(c.lastContact, t)}
+                            </p>
+                          </div>
                         </div>
-                      )}
-                    </button>
+                        {typeof c.score === "number" && (
+                          <div className="w-12 h-12 rounded-full border border-[var(--border-medium)] flex items-center justify-center text-xs font-semibold text-[var(--text-primary)] shrink-0">
+                            {c.score}
+                          </div>
+                        )}
+                      </button>
+                    </div>
                   </li>
                 );
               })}
-            </ul>
+              </ul>
 
-            <aside className="hidden lg:block">
-              {selected ? (
-                <ContactDetail contact={selected} />
-              ) : (
-                <div className="rounded-2xl border border-dashed border-[var(--border-default)] bg-[var(--bg-input)]/40 p-6 text-sm text-[var(--text-secondary)]">
-                  {t("empty.detail")}
-                </div>
-              )}
-            </aside>
-          </div>
+              <aside className="hidden lg:block">
+                {selected ? (
+                  <ContactDetail contact={selected} />
+                ) : (
+                  <div className="rounded-2xl border border-dashed border-[var(--border-default)] bg-[var(--bg-input)]/40 p-6 text-sm text-[var(--text-secondary)]">
+                    {t("empty.detail")}
+                  </div>
+                )}
+              </aside>
+            </div>
+          </>
         )
       )}
 
@@ -644,13 +810,13 @@ export default function AppContactsPage() {
         currentPage={pageSafe}
         totalPages={totalContactPages}
         onPageChange={setPage}
-        label={t("contacts.pageOf")}
-        prevLabel={t("contacts.prevPage")}
-        nextLabel={t("contacts.nextPage")}
+        label={t("pageOf")}
+        prevLabel={t("prevPage")}
+        nextLabel={t("nextPage")}
       />
 
       <p className="mt-6">
-        <Link href="/app/activity" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">
+        <Link href="/app/dashboard" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors">
           ← {tCommon("activity")}
         </Link>
       </p>

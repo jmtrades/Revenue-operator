@@ -1,65 +1,43 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useTranslations } from "next-intl";
 
-export default function AppError({
+export default function Error({
   error,
   reset,
 }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  const t = useTranslations("errors");
-  const [retryCount, setRetryCount] = useState(0);
-  useEffect(() => {
-    console.error("[App Error Boundary]", error);
-    // Report to Sentry if available
-    if (typeof window !== "undefined" && (window as unknown as { Sentry?: { captureException: (e: Error) => void } }).Sentry) {
-      (window as unknown as { Sentry: { captureException: (e: Error) => void } }).Sentry.captureException(error);
-    }
-  }, [error]);
-
-  const handleRetry = () => {
-    setRetryCount((prev) => prev + 1);
-    reset();
-  };
-
   return (
-    <div className="min-h-[40vh] flex flex-col items-center justify-center p-8 bg-[var(--bg-base)]">
-      <div className="max-w-md w-full text-center">
-        <h1 className="text-xl font-semibold mb-3 text-[var(--text-primary)]">{t("generic.title")}</h1>
-        <p className="text-sm text-[var(--text-secondary)] mb-6">
-          {t("pageLoadBody")}
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
+      <div className="w-full max-w-md text-center">
+        <h1 className="text-6xl font-bold text-white mb-4">Oops</h1>
+        <h2 className="text-2xl font-semibold text-gray-100 mb-4">
+          Something went wrong
+        </h2>
+        <p className="text-gray-400 mb-2">
+          An error occurred in your workspace. Please try again or return to the dashboard.
         </p>
-        <div className="flex flex-col gap-3 items-center">
-          <div className="flex gap-3 justify-center flex-wrap">
-            <button
-              type="button"
-              onClick={handleRetry}
-              aria-label={t("retry")}
-              className="px-6 py-3 rounded-xl text-sm font-semibold bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
-            >
-              {t("tryAgain")}
-              {retryCount > 0 && ` (${retryCount})`}
-            </button>
-            <Link
-              href="/app/activity"
-              aria-label={t("goToDashboard")}
-              className="px-6 py-3 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
-            >
-              {t("goToDashboard")}
-            </Link>
-          </div>
-          {retryCount >= 3 && (
-            <a
-              href="mailto:support@recall-touch.com"
-              className="text-sm text-[var(--accent-primary)] hover:underline"
-            >
-              {t("support")}
-            </a>
-          )}
+        {error.message && (
+          <p className="text-sm text-gray-500 mb-8 font-mono break-words">
+            {error.message}
+          </p>
+        )}
+
+        <div className="flex flex-col gap-3">
+          <button
+            onClick={reset}
+            className="inline-flex items-center justify-center px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+          >
+            Try again
+          </button>
+          <Link
+            href="/app/dashboard"
+            className="inline-flex items-center justify-center px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-gray-100 font-medium rounded-lg transition-colors border border-slate-700"
+          >
+            Back to dashboard
+          </Link>
         </div>
       </div>
     </div>

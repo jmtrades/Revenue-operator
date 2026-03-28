@@ -23,9 +23,9 @@ function getCrmIntegrations(t: ReturnType<typeof useTranslations>): Array<{
     { id: "airtable", name: "Airtable", description: t("card.airtable.body"), icon: Database },
     { id: "pipedrive", name: "Pipedrive", description: t("card.pipedrive.body"), icon: TrendingUp },
     { id: "gohighlevel", name: "GoHighLevel", description: t("card.gohighlevel.body"), icon: Layers },
-    { id: "salesforce", name: "Salesforce", description: t("card.salesforce.body"), icon: Cloud, comingSoon: true },
-    { id: "zoho_crm", name: "Zoho CRM", description: t("card.zoho.body"), icon: Database, comingSoon: true },
-    { id: "microsoft_365", name: "Microsoft 365", description: t("card.microsoft365.body"), icon: Building, comingSoon: true },
+    { id: "salesforce", name: "Salesforce", description: t("card.salesforce.body"), icon: Cloud },
+    { id: "zoho_crm", name: "Zoho CRM", description: t("card.zoho.body"), icon: Database },
+    { id: "microsoft_365", name: "Microsoft 365", description: t("card.microsoft365.body"), icon: Building },
   ];
 }
 
@@ -101,8 +101,8 @@ export default function AppSettingsIntegrationsPage() {
   }, [t]);
 
   useEffect(() => {
-    if (crmParam === "oauth_coming_soon") {
-      setToast(t("toast.oauthComingSoon"));
+    if (crmParam === "oauth_pending") {
+      setToast(t("toast.oauthPending", { defaultValue: "OAuth setup is processing. Please try again in a moment." }));
       const id = setTimeout(() => setToast(null), 5000);
       return () => clearTimeout(id);
     }
@@ -380,13 +380,13 @@ export default function AppSettingsIntegrationsPage() {
                   <MessageCircle className="w-5 h-5 text-[var(--accent-green)]" aria-hidden />
                   <p className="text-sm font-medium text-[var(--text-primary)]">{t("hub.whatsappLabel")}</p>
                 </div>
-                <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-amber-500/40 text-amber-400 shrink-0">
-                  {t("comingSoon")}
-                </span>
               </div>
-              <p className="text-xs text-[var(--text-secondary)]">
-                {t("whatsappComingSoon")}
+              <p className="text-xs text-[var(--text-secondary)] mb-3">
+                {t("whatsappComingSoon", { defaultValue: "Send and receive WhatsApp messages through your AI agent. Connect your WhatsApp Business account to get started." })}
               </p>
+              <a href="https://business.whatsapp.com/" target="_blank" rel="noopener noreferrer" className="text-xs text-[var(--accent-primary)] hover:underline">
+                Learn about WhatsApp Business API →
+              </a>
             </div>
           </div>
         </section>
@@ -403,7 +403,7 @@ export default function AppSettingsIntegrationsPage() {
               <span>
                 {t("hub.lastSyncLabel")} {crmStatus?.global.lastSyncAt
                   ? new Date(crmStatus.global.lastSyncAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })
-                  : "â"}
+                  : "Never"}
               </span>
             </div>
             <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
@@ -475,6 +475,11 @@ export default function AppSettingsIntegrationsPage() {
                         )}
                       </div>
                     </div>
+                  )}
+                  {!connected && !crm.comingSoon && (
+                    <p className="text-[10px] text-[var(--text-tertiary)] mt-2 italic">
+                      Connects in 30 seconds · Data stays encrypted · Disconnect anytime
+                    </p>
                   )}
                   <div className="mt-4 flex flex-wrap gap-2">
                     {crm.comingSoon ? (
@@ -602,10 +607,16 @@ export default function AppSettingsIntegrationsPage() {
                   <p className="text-sm font-medium text-[var(--text-primary)]">{t("hub.outlookCalendarLabel")}</p>
                   <p className="text-xs text-[var(--text-secondary)] mt-1">{t("hub.calendarDesc")}</p>
                 </div>
-                <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-amber-500/40 text-amber-400 shrink-0">
-                  {t("comingSoon")}
+                <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-[var(--border-default)] text-[var(--text-secondary)] shrink-0">
+                  {t("status.disconnected")}
                 </span>
               </div>
+              <a
+                href="/api/integrations/outlook-calendar/auth"
+                className="inline-flex items-center gap-1.5 mt-3 px-3 py-2 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)] transition-colors"
+              >
+                {t("connectOutlook", { defaultValue: "Connect Outlook" })}
+              </a>
             </div>
           </div>
         </section>
@@ -716,7 +727,7 @@ export default function AppSettingsIntegrationsPage() {
           </div>
         </section>
 
-        {/* Other CRMs â webhook-based integration guidance */}
+        {/* Other CRMs — webhook-based integration guidance */}
         <section>
           <h2 className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-3">{t("hub.otherCrmsHeading")}</h2>
           <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5 space-y-3">

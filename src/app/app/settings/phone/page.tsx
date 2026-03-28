@@ -203,7 +203,10 @@ export default function AppSettingsPhonePage() {
       .then((data: { agents?: Array<{ id?: string }> } | null) => {
         setPrimaryAgentId(data?.agents?.[0]?.id ?? null);
       })
-      .catch(() => setPrimaryAgentId(null));
+      .catch((err) => {
+        console.warn("Failed to fetch agents:", err);
+        setPrimaryAgentId(null);
+      });
   }, []);
 
   const handleConnectNumber = async () => {
@@ -336,7 +339,10 @@ export default function AppSettingsPhonePage() {
     navigator.clipboard.writeText(toCopy).then(() => {
       setCopySuccess(true);
       setTimeout(() => setCopySuccess(false), 2000);
-    }).catch(() => {});
+    }).catch((err) => {
+      console.warn("Failed to copy phone number:", err);
+      setToast(tPhone("toast.copyFailed", { defaultValue: "Failed to copy phone number" }));
+    });
   };
 
   const testCallDigits = digitsOnly(testCallNumber);
@@ -877,7 +883,7 @@ export default function AppSettingsPhonePage() {
             </div>
           </div>
           <p className="mt-6 text-sm text-[var(--text-secondary)] text-center">
-            <Link href="/app/activity" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">{tPhone("addNumberLater")}</Link>
+            <Link href="/app/dashboard" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">{tPhone("addNumberLater")}</Link>
           </p>
 
         </>

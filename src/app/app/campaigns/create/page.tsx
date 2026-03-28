@@ -116,10 +116,10 @@ export default function CampaignCreatePage() {
 
   const [step, setStep] = useState<WizardStep>(1);
   const [type, setType] = useState<CampaignType>("speed_to_lead");
-  const [name, setName] = useState("");
+  const [name, setName] = useState("Missed-call recovery");
 
   // Audience filters (stored into target_filter)
-  const [statuses, setStatuses] = useState<string[]>([]);
+  const [statuses, setStatuses] = useState<string[]>(["New", "Contacted"]);
   const [source, setSource] = useState<string>("");
   const [minScore, setMinScore] = useState<number | "">("");
   const [notContactedDays, setNotContactedDays] = useState<number | "">("");

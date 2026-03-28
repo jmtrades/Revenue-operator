@@ -5,6 +5,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { getDb } from "@/lib/db/queries";
 import { getWorkspaceSetting } from "@/lib/db/workspace-settings";
 import { getSession } from "@/lib/auth/request-session";
@@ -13,6 +14,17 @@ import { logLeadCreated } from "@/lib/log/revenue-events";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { normalizePhoneE164 } from "@/lib/phone/normalize";
 import { assertSameOrigin } from "@/lib/http/csrf";
+
+const createLeadSchema = z.object({
+  name: z.string().min(1, "Name is required").max(255),
+  phone: z.string().min(1, "Phone is required").max(20),
+  email: z.string().email().max(320).optional().or(z.literal("")),
+  company: z.string().max(255).optional(),
+  service_requested: z.string().max(500).optional(),
+  source: z.string().max(100).optional(),
+  status: z.string().max(50).optional(),
+  notes: z.string().max(2000).optional(),
+});
 
 function leadScoreFromInput(input: { name?: string; phone?: string; email?: string; service_requested?: string; source?: string }): number {
   let score = 0;
@@ -34,13 +46,16 @@ export async function GET(req: NextRequest) {
   const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;
 
+  const offset = parseInt(req.nextUrl.searchParams.get("offset") ?? "0", 10);
+  const limit = Math.min(parseInt(req.nextUrl.searchParams.get("limit") ?? "100", 10), 500);
+
   const db = getDb();
   const { data: leads, error: leadsErr } = await db
     .from("leads")
     .select("id, name, email, phone, company, state, last_activity_at, opt_out, metadata")
     .eq("workspace_id", workspaceId)
     .order("last_activity_at", { ascending: false })
-    .limit(100);
+    .range(offset, offset + limit - 1);
   if (leadsErr) {
     console.error("[leads] GET query failed:", leadsErr.message);
     return NextResponse.json({ error: "Failed to load leads" }, { status: 500 });
@@ -79,16 +94,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Rate limit exceeded. Please try again later." }, { status: 429 });
   }
 
-  let body: { name: string; phone?: string; email?: string; company?: string; service_requested?: string; source?: string; status?: string; notes?: string };
+  let raw: unknown;
   try {
-    body = await req.json();
+    raw = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const { name, phone, email, company, service_requested, source, status, notes } = body;
-  if (!name?.trim()) return NextResponse.json({ error: "Name is required" }, { status: 400 });
-  const phoneRaw = (phone ?? "").toString().trim();
-  if (!phoneRaw) return NextResponse.json({ error: "Phone is required" }, { status: 400 });
+
+  const parsed = createLeadSchema.safeParse(raw);
+  if (!parsed.success) {
+    const firstError = parsed.error.issues[0];
+    return NextResponse.json({ error: firstError?.message ?? "Invalid input" }, { status: 400 });
+  }
+
+  const { name, phone, email, company, service_requested, source, status, notes } = parsed.data;
+  const phoneRaw = phone.trim();
   const phoneDigits = phoneRaw.replace(/\D/g, "");
   if (phoneDigits.length < 10 || phoneDigits.length > 15) {
     return NextResponse.json({ error: "Phone number must be between 10 and 15 digits" }, { status: 400 });

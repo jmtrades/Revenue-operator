@@ -211,7 +211,7 @@ export default function AgentAnalyticsPage({
         <p className="text-sm font-medium text-[var(--text-primary)] mb-4">{t("callVolumeByDay")}</p>
         <div className="h-52">
           {volumeChartData.length > 0 ? (
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={undefined}>
               <AreaChart data={volumeChartData}>
                 <defs>
                   <linearGradient id="agentVolGrad" x1="0" y1="0" x2="0" y2="1">
@@ -236,7 +236,7 @@ export default function AgentAnalyticsPage({
         <p className="text-sm font-medium text-[var(--text-primary)] mb-4">{t("analytics.successRateOverTime")}</p>
         <div className="h-48">
           {successRateTrend.length > 0 ? (
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={undefined}>
               <BarChart data={successRateTrend.map((w) => ({ ...w, weekLabel: new Date(w.week).toLocaleDateString(undefined, { month: "short", day: "numeric" }) }))}>
                 <XAxis dataKey="weekLabel" tick={{ fontSize: 11, fill: cc.tickFill }} axisLine={false} tickLine={false} />
                 <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: cc.tickFill }} axisLine={false} tickLine={false} width={32} />

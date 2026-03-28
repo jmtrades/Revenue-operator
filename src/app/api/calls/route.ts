@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   try {
@@ -33,7 +34,7 @@ export async function GET(req: NextRequest) {
     .order("started_at", { ascending: false })
     .limit(50);
     if (callsErr) {
-      console.error("[calls] GET query failed:", callsErr.message);
+      log("error", "calls.get_query_failed", { error: callsErr.message });
       return NextResponse.json({ error: "Failed to load calls" }, { status: 500 });
     }
 
@@ -97,7 +98,7 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({ calls });
   } catch (error) {
-    console.error("[API] calls route error:", error);
+    log("error", "calls.route_error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

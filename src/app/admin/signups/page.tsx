@@ -47,7 +47,8 @@ export default function SignupsPage() {
         setError(null);
       })
       .catch((err) => {
-        setError(err.message);
+        console.error("[admin/signups]", err);
+        setError("Failed to load signup statistics. Please try again.");
         setStats(null);
       })
       .finally(() => setLoading(false));

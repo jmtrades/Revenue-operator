@@ -71,7 +71,11 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [hasSpeech, setHasSpeech] = useState(false);
   const listRef = useRef<HTMLDivElement | null>(null);
+
+  // Defer speech recognition check to client to avoid hydration mismatch
+  useEffect(() => { setHasSpeech(canUseSpeechRecognition()); }, []);
 
   const cfg = agents[agent];
   const heightClass = variant === "demo" ? "h-[500px]" : variant === "mini" ? "h-[220px]" : "h-[380px]";
@@ -153,7 +157,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
   useImperativeHandle(ref, () => ({ send }), [send]);
 
   const startMic = () => {
-    if (!canUseSpeechRecognition()) return;
+    if (!hasSpeech) return;
     type RecInstance = {
       continuous: boolean;
       interimResults: boolean;
@@ -254,7 +258,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
           </div>
         )}
         <div className="flex items-center gap-2">
-          {showMic && canUseSpeechRecognition() && (
+          {showMic && hasSpeech && (
             <button
               type="button"
               onClick={startMic}

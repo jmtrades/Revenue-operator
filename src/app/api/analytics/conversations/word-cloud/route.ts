@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 type WordCloudWord = {
   text: string;
@@ -83,7 +84,7 @@ export async function GET(req: NextRequest) {
       .limit(100);
 
     if (callsErr) {
-      console.error("[word-cloud] query failed:", callsErr.message);
+      log("error", "analytics.word_cloud.GET", { error: callsErr.message });
       return NextResponse.json({ error: "Failed to load transcripts" }, { status: 500 });
     }
 
@@ -110,7 +111,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error("[analytics/word-cloud]", error);
+    log("error", "analytics.word_cloud.GET", { error: String(error) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

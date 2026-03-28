@@ -18,6 +18,8 @@ export type TelnyxEventType =
   | "call.bridged"
   | "call.refer.completed"
   | "call.recording.saved"
+  | "call.gather.ended"
+  | "call.transcription"
   | "message.delivered"
   | "message.sent"
   | "message.failed"
@@ -39,6 +41,7 @@ export interface TelnyxWebhookPayload {
       from?: string;
       created_at?: string;
       call_control_id?: string;
+      client_state?: string;
       direction?: "incoming" | "outgoing" | string;
       message_id?: string;
       to_number?: string;
@@ -47,6 +50,23 @@ export interface TelnyxWebhookPayload {
       status?: string;
       parts?: number;
       errors?: Array<{ code?: string; message?: string }>;
+    };
+    /** Payload data for gather, transcription, and other action events */
+    payload?: {
+      /** DTMF digits collected during gather */
+      digits?: string;
+      /** Speech recognition result from gather */
+      speech?: { result?: string; confidence?: number };
+      /** Generic result field */
+      result?: string;
+      /** Client state echoed back from the action */
+      client_state?: string;
+      /** Real-time transcription data */
+      transcription_data?: {
+        transcript?: string;
+        is_final?: boolean;
+        confidence?: number;
+      };
     };
   };
 }

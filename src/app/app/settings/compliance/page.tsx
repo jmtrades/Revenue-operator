@@ -83,8 +83,28 @@ export default function AppSettingsCompliancePage() {
     }
   };
 
-  const handleSave = () => {
-    toast.success(tSettings("compliance.saved"));
+  const [saving, setSaving] = useState(false);
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const res = await fetch("/api/workspace/compliance-settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ recording, hipaa, retention }),
+      });
+      if (!res.ok) {
+        const err = (await res.json()).error ?? tSettings("compliance.saveFailed");
+        console.error("Compliance settings save failed:", err);
+        toast.error(tSettings("compliance.saveFailed"));
+        return;
+      }
+      toast.success(tSettings("compliance.saved"));
+    } catch {
+      toast.error(tSettings("compliance.saveFailed"));
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleExport = async () => {
@@ -223,7 +243,7 @@ export default function AppSettingsCompliancePage() {
       </div>
 
       <div className="flex gap-3">
-        <button type="button" onClick={handleSave} className="px-6 py-3 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">{tSettings("compliance.saveChanges")}</button>
+        <button type="button" onClick={handleSave} disabled={saving} className="px-6 py-3 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-50 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">{saving ? tSettings("compliance.saving") : tSettings("compliance.saveChanges")}</button>
         <button type="button" onClick={handleExport} className="px-4 py-3 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-medium)] transition-[border-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">{tSettings("compliance.exportData")}</button>
       </div>
 

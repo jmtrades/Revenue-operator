@@ -83,11 +83,21 @@ export async function telnyxRequest<T = Record<string, unknown>>(
 ): Promise<T> {
   const response = await telnyxFetch(path, options);
 
-  const data = (await response.json()) as unknown;
+  let data: unknown;
+  try {
+    data = await response.json();
+  } catch {
+    if (!response.ok) {
+      const error = new Error(`Telnyx ${response.status}: ${response.statusText}`);
+      (error as Error & { status?: number }).status = response.status;
+      throw error;
+    }
+    return {} as T;
+  }
 
   if (!response.ok) {
     const errorMessage = parseTelnyxError(data);
-    const error = new Error(errorMessage);
+    const error = new Error(`Telnyx ${response.status}: ${errorMessage}`);
     (error as Error & { status?: number }).status = response.status;
     throw error;
   }

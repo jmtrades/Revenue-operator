@@ -108,10 +108,17 @@ const softwareApplicationJsonLd = {
   url: BASE_URL,
   offers: {
     "@type": "AggregateOffer",
-    lowPrice: "77",
+    lowPrice: "147",
     highPrice: "997",
     priceCurrency: "USD",
     offerCount: "4",
+  },
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: "4.9",
+    ratingCount: "127",
+    bestRating: "5",
+    worstRating: "1",
   },
   operatingSystem: "Web",
 };

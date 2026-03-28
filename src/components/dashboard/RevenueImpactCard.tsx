@@ -13,14 +13,26 @@ interface RevenueStats {
   changePercent: number;
 }
 
-const RevenueImpactCard = () => {
+interface RevenueImpactCardProps {
+  callsAnswered?: number;
+  appointmentsBooked?: number;
+  estimatedValueCents?: number;
+  trendPercent?: number;
+}
+
+export function RevenueImpactCard({
+  callsAnswered = 0,
+  appointmentsBooked = 0,
+  estimatedValueCents = 0,
+  trendPercent = 0,
+}: RevenueImpactCardProps = {}) {
   const [period, setPeriod] = useState<TimePeriod>('today');
   const stats: RevenueStats = {
-    callsAnswered: 0,
-    leadsCaptured: 0,
-    appointmentsBooked: 0,
-    estimatedValue: 0,
-    changePercent: 0,
+    callsAnswered,
+    leadsCaptured: appointmentsBooked,
+    appointmentsBooked,
+    estimatedValue: Math.round(estimatedValueCents / 100),
+    changePercent: trendPercent,
   };
 
   const isPositive = stats.changePercent >= 0;
@@ -89,6 +101,4 @@ const RevenueImpactCard = () => {
       )}
     </div>
   );
-};
-
-export default RevenueImpactCard;
+}

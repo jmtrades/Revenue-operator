@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { RECALL_VOICES, DEFAULT_RECALL_VOICE_ID } from "@/lib/constants/recall-voices";
 import { SUPPORTED_LANGUAGES } from "@/lib/constants/languages";
-import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
+import { getWorkspaceMeSnapshotSync, invalidateWorkspaceMeCache } from "@/lib/client/workspace-me";
 import { previewVoiceViaApi } from "@/lib/voice-preview";
 import { WorkspaceVoiceButton } from "@/components/WorkspaceVoiceButton";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -118,7 +118,8 @@ export default function AppSettingsAgentPage() {
         persistAgentSettingsSnapshot(snapshotWorkspaceId, nextConfig);
         lastSavedRef.current = JSON.stringify(nextConfig);
       }
-    } catch {
+    } catch (error) {
+      console.error("Agent settings load failed:", error);
       const message = tSettings("agent.loadFailed");
       setInlineToast(message);
       toast.error(message);
@@ -162,9 +163,8 @@ export default function AppSettingsAgentPage() {
       });
       if (!patchRes.ok) {
         const err = await patchRes.json().catch(() => ({}));
-        const message =
-          (err as { error?: string }).error ??
-          tSettings("agent.saveFailed");
+        console.error("Agent settings save failed:", err);
+        const message = tSettings("agent.saveFailed");
         setInlineToast(message);
         toast.error(message);
         setSaving(false);
@@ -175,6 +175,7 @@ export default function AppSettingsAgentPage() {
         const message = tSettings("agent.updated");
         setInlineToast(message);
         toast.success(tSettings("agent.updated"));
+        invalidateWorkspaceMeCache();
         lastSavedRef.current = JSON.stringify(config);
       }
       setTimeout(() => setInlineToast(null), 4000);

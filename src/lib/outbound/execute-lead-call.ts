@@ -285,7 +285,7 @@ YOUR GOAL:
           pauseOnSensitive: consentRow.recording_pause_on_sensitive ?? false,
         }
       : null;
-  const _outboundFirstMessage = buildFirstMessageWithConsent(outboundFirstMessageBase, recordingConsentSettings);
+  const outboundFirstMessage = buildFirstMessageWithConsent(outboundFirstMessageBase, recordingConsentSettings);
 
   const voicemailBehavior = (agent.knowledge_base?.voicemailBehavior === "hangup" || agent.knowledge_base?.voicemailBehavior === "sms")
     ? agent.knowledge_base.voicemailBehavior
@@ -368,6 +368,7 @@ YOUR GOAL:
     const { assistantId: createdId } = await voice.createAssistant({
       name: `${agent_name} – outbound ${leadId.slice(0, 8)}`,
       systemPrompt,
+      firstMessage: outboundFirstMessage,
       voiceId: DEFAULT_VOICE_ID,
       voiceProvider: "deepgram-aura",
       language: "en",
@@ -397,7 +398,6 @@ YOUR GOAL:
 
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      console.log(`[outbound] Attempt ${attempt + 1}/3 to create outbound call`);
       const result = await voice.createOutboundCall({
         assistantId,
         phoneNumber: e164 || customerNumber,

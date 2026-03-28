@@ -24,29 +24,45 @@ export function ActivateWizard() {
   const searchParams = useSearchParams();
   const prefillEmail = searchParams.get("email") ?? null;
   const prefillPlan = searchParams.get("plan") ?? null;
-  const [step, setStep] = useState<StepId>(1);
+  // Restore progress from localStorage on mount
+  const STORAGE_KEY = "rt_activate_progress";
+  const savedProgress = typeof window !== "undefined" ? (() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) as { step?: number; plan?: string; state?: Partial<ActivationState> } : null;
+    } catch { return null; }
+  })() : null;
+
+  const [step, setStep] = useState<StepId>((savedProgress?.step as StepId) ?? 1);
   const [emailVerified, setEmailVerified] = useState<boolean | null>(null);
   const [accountEmail, setAccountEmail] = useState<string | null>(prefillEmail);
   const [resending, setResending] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<PlanSlug | null>((prefillPlan as PlanSlug) || null);
+  const [selectedPlan, setSelectedPlan] = useState<PlanSlug | null>((prefillPlan as PlanSlug) || (savedProgress?.plan as PlanSlug) || null);
   const [state, setState] = useState<ActivationState>(() => ({
-    businessName: "",
-    industry: null,
-    industryPackId: null,
-    businessLocation: "",
-    businessPhone: "",
-    orgType: null,
-    useCases: ["answer", "book", "followup"],
-    agentTemplate: null,
-    agentName: "Alex",
-    hours: DEFAULT_HOURS,
-    greeting: t("defaultGreeting"),
-    services: [],
+    businessName: savedProgress?.state?.businessName ?? "",
+    industry: savedProgress?.state?.industry ?? null,
+    industryPackId: savedProgress?.state?.industryPackId ?? null,
+    businessLocation: savedProgress?.state?.businessLocation ?? "",
+    businessPhone: savedProgress?.state?.businessPhone ?? "",
+    orgType: savedProgress?.state?.orgType ?? null,
+    useCases: savedProgress?.state?.useCases ?? ["answer", "book", "followup"],
+    agentTemplate: savedProgress?.state?.agentTemplate ?? null,
+    agentName: savedProgress?.state?.agentName ?? "Alex",
+    hours: savedProgress?.state?.hours ?? DEFAULT_HOURS,
+    greeting: savedProgress?.state?.greeting ?? t("defaultGreeting"),
+    services: savedProgress?.state?.services ?? [],
     lastTestFeedback: null,
-    preferredLanguage: "en",
-    voiceId: DEFAULT_RECALL_VOICE_ID,
-    goals: [],
+    preferredLanguage: savedProgress?.state?.preferredLanguage ?? "en",
+    voiceId: savedProgress?.state?.voiceId ?? DEFAULT_RECALL_VOICE_ID,
+    goals: savedProgress?.state?.goals ?? [],
   }));
+
+  // Auto-save progress to localStorage on step/state changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ step, plan: selectedPlan, state }));
+    } catch { /* storage full or unavailable */ }
+  }, [step, selectedPlan, state]);
   const [error, setError] = useState<string | null>(null);
   const [finalizing, setFinalizing] = useState(false);
 
@@ -83,7 +99,9 @@ export function ActivateWizard() {
       return state.goals.length > 0;
     }
     if (step === 3) {
-      return state.businessPhone.replace(/\D/g, "").length >= 10;
+      const digits = state.businessPhone.replace(/\D/g, "");
+      // Require 10-15 digits and not all zeros
+      return digits.length >= 10 && digits.length <= 15 && !/^0+$/.test(digits);
     }
     return true;
   }, [step, state, selectedPlan]);
@@ -147,6 +165,13 @@ export function ActivateWizard() {
   const handleFinalize = useCallback(async (e?: React.MouseEvent) => {
     e?.preventDefault();
     if (finalizing) return;
+
+    // Block finalization if email not verified — catch early instead of getting a 403
+    if (emailVerified === false) {
+      setError(t("errors.emailNotVerified", { defaultValue: "Please verify your email before going live. Check your inbox for a verification link." }));
+      return;
+    }
+
     setFinalizing(true);
     setError(null);
 
@@ -164,7 +189,7 @@ export function ActivateWizard() {
       localStorage.setItem("rt_signup", JSON.stringify({ ...existing, businessName: state.businessName.trim() }));
 
       const hoursObj = state.hours?.length
-        ? { days: state.hours.map((h) => h.day), start: state.hours[0]?.start ?? "09:00", end: state.hours[0]?.end ?? "17:00", timezone: "UTC" }
+        ? { days: state.hours.map((h) => h.day), start: state.hours[0]?.start ?? "09:00", end: state.hours[0]?.end ?? "17:00", timezone: (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone; } catch { return "UTC"; } })() }
         : undefined;
 
       const controller = new AbortController();
@@ -216,9 +241,12 @@ export function ActivateWizard() {
       setFinalizing(false);
       return;
     }
-    if (typeof localStorage !== "undefined") localStorage.setItem("rt_onboarded", "true");
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem("rt_onboarded", "true");
+      localStorage.removeItem(STORAGE_KEY); // Clear saved progress after successful setup
+    }
     window.location.href = "/app/dashboard";
-  }, [state, selectedPlan, t, finalizing]);
+  }, [state, selectedPlan, t, finalizing, emailVerified]);
 
   return (
     <Container>
@@ -241,22 +269,28 @@ export function ActivateWizard() {
                   if (!accountEmail || resending) return;
                   setResending(true);
                   try {
-                    await fetch("/api/auth/resend-verification", {
+                    const res = await fetch("/api/auth/resend-verification", {
                       method: "POST",
                       credentials: "include",
                       headers: { "Content-Type": "application/json" },
                       body: JSON.stringify({ email: accountEmail }),
                     });
+                    if (res.ok) {
+                      setError(null);
+                      // Show brief success inline
+                      setResending(true);
+                      setTimeout(() => setResending(false), 3000);
+                    }
                   } catch {
                     // best-effort
                   } finally {
-                    setResending(false);
+                    setTimeout(() => setResending(false), 3000);
                   }
                 }}
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--bg-surface)] text-[var(--text-primary)] font-semibold px-6 py-2 hover:bg-[var(--bg-hover)] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                 disabled={!accountEmail || resending}
               >
-                {resending ? tTeam("sending") : t("resendVerificationCta")}
+                {resending ? t("verificationSent", { defaultValue: "Verification email sent! Check your inbox." }) : t("resendVerificationCta")}
               </button>
             </div>
           </div>
@@ -347,7 +381,15 @@ export function ActivateWizard() {
                 goNext={goNext}
                 canGoNext={canGoNext}
               />
-              <ActivateStep onFinalize={handleFinalize} goBack={goBack} finalizing={finalizing} />
+              <ActivateStep
+                onFinalize={handleFinalize}
+                goBack={goBack}
+                finalizing={finalizing}
+                phoneNumber={state.businessPhone}
+                agentName={state.agentName}
+                voiceId={state.voiceId}
+                greeting={state.greeting}
+              />
             </>
           )}
         </section>

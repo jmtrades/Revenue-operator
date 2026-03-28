@@ -1,132 +1,197 @@
-/**
- * GET /api/campaigns — List campaigns for workspace (v7 campaigns table).
- * POST /api/campaigns — Create a draft campaign.
- */
+import { NextRequest, NextResponse } from "next/server";
+import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { assertSameOrigin } from "@/lib/http/csrf";
+import type { DialerMode, CampaignStatus } from "@/lib/voice/outbound-dialer";
 
 export const dynamic = "force-dynamic";
 
-import { NextRequest, NextResponse } from "next/server";
-import { getDb } from "@/lib/db/queries";
-import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
-import { checkRateLimit } from "@/lib/rate-limit";
-import { assertSameOrigin } from "@/lib/http/csrf";
+/** List campaigns for a workspace */
+export async function GET(request: NextRequest) {
+  const workspaceId = request.nextUrl.searchParams.get("workspace_id");
+  if (!workspaceId) return NextResponse.json({ error: "Missing workspace_id" }, { status: 400 });
 
-const CAMPAIGN_TYPES = [
-  "speed_to_lead",
-  "lead_qualification",
-  "appointment_setting",
-  "no_show_recovery",
-  "reactivation",
-  "quote_chase",
-  "review_request",
-  "cold_outreach",
-  "appointment_reminder",
-  "custom",
-  // Back-compat
-  "lead_followup",
-] as const;
+  const authErr = await requireWorkspaceAccess(request, workspaceId);
+  if (authErr) return authErr;
 
-export async function GET(req: NextRequest) {
-  const workspaceId = req.nextUrl.searchParams.get("workspace_id");
-  if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
-  const err = await requireWorkspaceAccess(req, workspaceId);
-  if (err) return err;
-  const db = getDb();
   try {
-    const { data, error } = await db
-      .from("campaigns")
-      .select("id, workspace_id, agent_id, name, type, status, total_contacts, called, answered, appointments_booked, created_at, target_filter")
+    const db = getDb();
+    const { data: rawCampaigns } = await db
+      .from("outbound_campaigns")
+      .select("*")
       .eq("workspace_id", workspaceId)
-      .order("created_at", { ascending: false })
-      .limit(50);
-    if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
-    return NextResponse.json({ campaigns: data ?? [] });
-  } catch {
-    return NextResponse.json({ campaigns: [] });
+      .order("created_at", { ascending: false });
+
+    if (!rawCampaigns) {
+      return NextResponse.json({ campaigns: [] });
+    }
+
+    // Transform each campaign to flatten stats and calculate missing fields
+    const campaigns = await Promise.all(
+      rawCampaigns.map(async (campaign: Record<string, unknown>) => {
+        const stats = (campaign.stats ?? {}) as Record<string, unknown>;
+        const totalLeads = (stats.total_leads as number) ?? 0;
+        const dialed = (stats.dialed as number) ?? 0;
+        const answered = (stats.answered as number) ?? 0;
+
+        // Count appointments for this campaign
+        let appointmentsBooked = (stats.appointments_booked as number) ?? 0;
+        if (appointmentsBooked === 0) {
+          const { count } = await db
+            .from("appointments")
+            .select("*", { count: "exact", head: true })
+            .eq("workspace_id", workspaceId)
+            .ilike("notes", `%campaign:${campaign.id}%`);
+          appointmentsBooked = count ?? 0;
+        }
+
+        return {
+          id: campaign.id as string,
+          name: campaign.name as string,
+          mode: (campaign.mode ?? "preview") as "power" | "preview" | "progressive",
+          status: (campaign.status ?? "draft") as "draft" | "active" | "paused" | "completed",
+          total_leads: totalLeads,
+          leads_called: dialed,
+          leads_remaining: Math.max(0, totalLeads - dialed),
+          connects: answered,
+          appointments_booked: appointmentsBooked,
+          created_at: campaign.created_at as string,
+          started_at: (campaign.started_at as string | null) ?? null,
+          completed_at: (campaign.completed_at as string | null) ?? null,
+        };
+      })
+    );
+
+    return NextResponse.json({ campaigns });
+  } catch (err) {
+    log("error", "api.campaigns.list_failed", { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: "Failed to list campaigns" }, { status: 500 });
   }
 }
 
-export async function POST(req: NextRequest) {
-  const csrfBlock = assertSameOrigin(req);
+/** Create a new campaign */
+export async function POST(request: NextRequest) {
+  const csrfBlock = assertSameOrigin(request);
   if (csrfBlock) return csrfBlock;
 
-  const session = await (await import("@/lib/auth/request-session")).getSession(req);
-  if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const err = await requireWorkspaceAccess(req, session.workspaceId);
-  if (err) return err;
-
-  const rl = await checkRateLimit(`campaigns_create:${session.workspaceId}`, 10, 60000);
-  if (!rl.allowed) {
-    return NextResponse.json({ error: "Rate limit exceeded. Please try again later." }, { status: 429 });
-  }
-
-  let body: { name: string; type?: string; agent_id?: string; target_filter?: Record<string, unknown> };
   try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
-  }
-  const { name, type = "lead_followup", agent_id, target_filter } = body;
-  if (!name?.trim()) return NextResponse.json({ error: "name required" }, { status: 400 });
+    const body = await request.json() as {
+      workspace_id: string;
+      name: string;
+      mode: DialerMode;
+      from_number: string;
+      settings?: Record<string, unknown>;
+    };
 
-  const db = getDb();
-  let agentId = agent_id ?? null;
-  if (agentId) {
-    const { data: ag } = await db.from("agents").select("id").eq("id", agentId).eq("workspace_id", session.workspaceId).maybeSingle();
-    if (!ag) return NextResponse.json({ error: "Agent not found in workspace" }, { status: 400 });
-  } else {
-    const { data: first } = await db.from("agents").select("id").eq("workspace_id", session.workspaceId).limit(1).maybeSingle();
-    agentId = (first as { id: string } | null)?.id ?? null;
-  }
-  if (!agentId) return NextResponse.json({ error: "No agent in workspace; create an agent first" }, { status: 400 });
+    if (!body.workspace_id || !body.name) {
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
 
-  const typeVal = (CAMPAIGN_TYPES as readonly string[]).includes(type) ? type : "lead_followup";
-  const insertPayload: Record<string, unknown> = {
-    workspace_id: session.workspaceId,
-    agent_id: agentId,
-    name: name.trim(),
-    type: typeVal,
-    status: "draft",
-  };
-  if (target_filter && typeof target_filter === "object" && Object.keys(target_filter).length > 0) {
-    // Extract sequence_steps from target_filter and save to dedicated column
-    const tf = target_filter as Record<string, unknown>;
-    if (Array.isArray(tf.sequence) && tf.sequence.length > 0) {
-      // Map wizard format {channel, delay_hours, template} to launch-expected format {channel, message, delay_hours}
-      insertPayload.sequence_steps = (tf.sequence as Array<Record<string, unknown>>).map((s) => ({
-        channel: s.channel ?? "sms",
-        message: s.template ?? s.message ?? "",
-        subject: s.subject ?? null,
-        delay_hours: s.delay_hours ?? 0,
-      }));
+    const authErr = await requireWorkspaceAccess(request, body.workspace_id);
+    if (authErr) return authErr;
+
+    const db = getDb();
+
+    // Resolve from_number: if "workspace_default" or missing, look up workspace phone config
+    let fromNumber = body.from_number;
+    if (!fromNumber || fromNumber === "workspace_default") {
+      try {
+        const { data: phoneConfig } = await db
+          .from("phone_configs")
+          .select("phone_number")
+          .eq("workspace_id", body.workspace_id)
+          .eq("status", "active")
+          .limit(1)
+          .maybeSingle();
+        fromNumber = (phoneConfig as { phone_number?: string } | null)?.phone_number ?? "";
+      } catch { /* ignore */ }
     }
-    // Extract schedule into metadata if present
-    if (tf.schedule && typeof tf.schedule === "object") {
-      insertPayload.schedule = tf.schedule;
+    if (!fromNumber) {
+      return NextResponse.json({ error: "No phone number configured. Please set up a phone number first." }, { status: 400 });
     }
-    insertPayload.target_filter = target_filter;
-  }
-  try {
-    const { data: campaign, error } = await db
-      .from("campaigns")
-      .insert(insertPayload)
-      .select("id, name, type, status, total_contacts, called, answered, appointments_booked, created_at, target_filter")
-      .maybeSingle();
-    if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
-    const row = campaign as Record<string, unknown> | null;
-    return NextResponse.json({
-      id: row?.id,
-      name: row?.name,
-      type: row?.type ?? typeVal,
-      status: row?.status ?? "draft",
-      total_contacts: row?.total_contacts ?? 0,
-      called: row?.called ?? 0,
-      answered: row?.answered ?? 0,
-      appointments_booked: row?.appointments_booked ?? 0,
-      created_at: row?.created_at,
-      target_filter: row?.target_filter ?? insertPayload.target_filter ?? null,
-    });
-  } catch (_e) {
+
+    const { data, error } = await db
+      .from("outbound_campaigns")
+      .insert({
+        workspace_id: body.workspace_id,
+        name: body.name,
+        mode: body.mode ?? "preview",
+        from_number: fromNumber,
+        settings: body.settings ?? {
+          max_concurrent_calls: 1,
+          max_attempts_per_lead: 3,
+          retry_delay_minutes: 60,
+          voicemail_behavior: "drop",
+          recording_enabled: true,
+          calling_hours: { start: "09:00", end: "20:00" },
+          calling_days: [1, 2, 3, 4, 5],
+          preview_delay_seconds: 5,
+          ring_timeout_seconds: 25,
+        },
+        stats: {
+          total_leads: 0, dialed: 0, answered: 0, voicemails: 0,
+          no_answers: 0, transferred: 0, callbacks_scheduled: 0,
+          dnc_hits: 0, failed: 0, avg_call_duration_seconds: 0,
+          conversion_rate: 0, connect_rate: 0, calls_per_hour: 0,
+        },
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    log("info", "api.campaigns.created", { campaignId: (data as Record<string, unknown>)?.id, name: body.name });
+    return NextResponse.json({ campaign: data }, { status: 201 });
+  } catch (err) {
+    log("error", "api.campaigns.create_failed", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Failed to create campaign" }, { status: 500 });
+  }
+}
+
+/** Update campaign status or settings */
+export async function PATCH(request: NextRequest) {
+  const csrfBlock = assertSameOrigin(request);
+  if (csrfBlock) return csrfBlock;
+
+  try {
+    const body = await request.json() as {
+      campaign_id: string;
+      status?: CampaignStatus;
+      name?: string;
+      settings?: Record<string, unknown>;
+      workspace_id?: string;
+    };
+
+    if (!body.campaign_id) return NextResponse.json({ error: "Missing campaign_id" }, { status: 400 });
+
+    const db = getDb();
+    const campaign = await db.from("outbound_campaigns").select("workspace_id").eq("id", body.campaign_id).maybeSingle();
+    const workspaceId = body.workspace_id || (campaign?.data as { workspace_id?: string } | null)?.workspace_id;
+    if (!workspaceId) return NextResponse.json({ error: "Cannot determine workspace" }, { status: 400 });
+
+    const authErr = await requireWorkspaceAccess(request, workspaceId);
+    if (authErr) return authErr;
+    const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
+
+    if (body.status) {
+      updates.status = body.status;
+      if (body.status === "active" && !updates.started_at) updates.started_at = new Date().toISOString();
+      if (body.status === "completed" || body.status === "cancelled") updates.completed_at = new Date().toISOString();
+    }
+    if (body.name) updates.name = body.name;
+    if (body.settings) updates.settings = body.settings;
+
+    const { data } = await db
+      .from("outbound_campaigns")
+      .update(updates)
+      .eq("id", body.campaign_id)
+      .select()
+      .single();
+
+    return NextResponse.json({ campaign: data });
+  } catch (err) {
+    log("error", "api.campaigns.update_failed", { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: "Failed to update campaign" }, { status: 500 });
   }
 }

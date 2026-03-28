@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     description:
       "Guides, playbooks, and insights on AI phone agents, revenue recovery, and growth for service businesses.",
     url: "https://www.recall-touch.com/blog",
-    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
@@ -77,7 +77,7 @@ export default function ResourcesPage() {
 
           <div className="mt-16 pt-12 border-t text-center" style={{ borderColor: "var(--border-default)" }}>
             <p className="mb-6" style={{ color: "var(--text-secondary)" }}>Ready to see how Recall Touch handles your calls?</p>
-            <Link href={ROUTES.START} className="btn-marketing-primary no-underline inline-block">Start free — 5 minutes →</Link>
+            <Link href={ROUTES.START} className="btn-marketing-primary no-underline inline-block">Get started — 5 minutes →</Link>
           </div>
         </Container>
       </main>

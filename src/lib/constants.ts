@@ -6,7 +6,7 @@ export const SUPPORTED_PHONE_COUNTRIES = [
 ] as const;
 
 export const ROUTES = {
-  /** Core flow: Homepage → Start → /activate → success → /app/onboarding → /app/activity */
+  /** Core flow: Homepage → Start → /activate → success → /app/onboarding → /app/dashboard */
   START: "/activate",
   SIGN_IN: "/sign-in",
   PRICING: "/pricing",

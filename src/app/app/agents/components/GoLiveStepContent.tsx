@@ -4,6 +4,9 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { CheckCircle2 } from "lucide-react";
 import { AccordionItem } from "@/components/ui/Accordion";
+import { VoicePreviewPlayer } from "@/components/agents/VoicePreviewPlayer";
+import { CURATED_VOICES } from "@/lib/constants/curated-voices";
+import { RECALL_VOICES } from "@/lib/constants/recall-voices";
 import type { Agent, AgentReadiness, WorkspacePhoneNumber } from "../AgentsPageClient";
 import type { CuratedVoice } from "@/lib/constants/curated-voices";
 
@@ -38,8 +41,9 @@ export function GoLiveStepContent({
     !!(agent.name?.trim() && agent.greeting?.trim()) &&
     !!agent.voice?.trim() &&
     (agent.faq?.length ?? 0) >= 3;
-  const allowActivate = canActivate && r.percent >= 40;
   const assignedNumber = workspaceNumbers.find((n) => n.assigned_agent_id === agent.id);
+  const hasPhoneOrEnvFallback = !!assignedNumber || workspaceNumbers.length > 0;
+  const allowActivate = canActivate && r.percent >= 40 && hasPhoneOrEnvFallback;
   const unassignedNumbers = workspaceNumbers.filter(
     (n) => !n.assigned_agent_id || n.assigned_agent_id === agent.id,
   );
@@ -148,6 +152,24 @@ export function GoLiveStepContent({
       </section>
       <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-5 space-y-4" aria-label={t("goLive.previewAria")}>
         <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-4">{t("goLive.previewHeading")}</h3>
+
+        {/* Voice Preview Player */}
+        {agent.voice && agent.greeting && (() => {
+          const voiceName =
+            CURATED_VOICES.find((v) => v.id === agent.voice)?.name ||
+            RECALL_VOICES.find((v) => v.id === agent.voice)?.name ||
+            agent.voice;
+          return (
+            <VoicePreviewPlayer
+              voiceId={agent.voice}
+              greeting={agent.greeting}
+              agentName={agent.name || "Your Agent"}
+              voiceName={voiceName}
+              className="mb-4"
+            />
+          );
+        })()}
+
         <div className="space-y-4">
           <div>
             <p className="text-xs text-[var(--text-tertiary)] mb-1">
@@ -283,7 +305,7 @@ export function GoLiveStepContent({
           onClick={() => void onActivate()}
           disabled={!allowActivate || activating}
           aria-label={t("goLive.activateAgentAria")}
-          title={!testCallCompleted ? "Complete your test call to enable Go Live." : undefined}
+          title={!testCallCompleted ? "Complete your test call to enable Go Live." : !hasPhoneOrEnvFallback ? "Add a phone number to enable Go Live." : undefined}
           className="rounded-xl bg-[var(--bg-surface)] px-6 py-2.5 text-sm font-semibold text-[var(--text-primary)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           {activating ? t("goLive.activating") : t("goLive.activateAgent")}

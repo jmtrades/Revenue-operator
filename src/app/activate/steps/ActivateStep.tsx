@@ -2,22 +2,33 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Sparkles, Check, Loader } from "lucide-react";
+import { Sparkles, Check, Loader, Phone, PhoneCall } from "lucide-react";
+import { Confetti } from "@/components/Confetti";
+import { VoicePreviewPlayer } from "@/components/agents/VoicePreviewPlayer";
 
 function CheckIcon() {
   return <Check className="w-4 h-4 text-emerald-400 shrink-0" />;
 }
-import { Confetti } from "@/components/Confetti";
+
+interface ActivateStepProps {
+  onFinalize: (e?: React.MouseEvent) => void;
+  goBack: () => void;
+  finalizing?: boolean;
+  phoneNumber?: string;
+  agentName?: string;
+  voiceId?: string;
+  greeting?: string;
+}
 
 export function ActivateStep({
   onFinalize,
   goBack,
   finalizing = false,
-}: {
-  onFinalize: (e?: React.MouseEvent) => void;
-  goBack: () => void;
-  finalizing?: boolean;
-}) {
+  phoneNumber,
+  agentName = "Agent",
+  voiceId = "default",
+  greeting = "Hi, how can I help you today?",
+}: ActivateStepProps) {
   const t = useTranslations("activate.final");
   const [carrier, setCarrier] = useState<"att" | "verizon" | "tmobile" | "other">("att");
 
@@ -118,6 +129,38 @@ export function ActivateStep({
           <p className="text-xs md:text-sm text-sky-200">{t("settingUp", { defaultValue: "Setting up your workspace..." })}</p>
         </div>
       )}
+
+      <div className="rounded-2xl border-2 border-emerald-500/30 bg-emerald-500/5 p-6 text-center space-y-4">
+        <div className="w-16 h-16 mx-auto rounded-2xl bg-emerald-500/10 flex items-center justify-center">
+          <PhoneCall className="w-8 h-8 text-emerald-500" />
+        </div>
+        <h3 className="text-xl font-bold text-[var(--text-primary)]">Your agent is live</h3>
+        <p className="text-sm text-[var(--text-secondary)] max-w-md mx-auto">
+          Call your new number now to hear your AI agent in action. It already knows your business, handles objections, and books appointments.
+        </p>
+        {phoneNumber && (
+          <div className="flex items-center justify-center gap-3">
+            <a
+              href={`tel:${phoneNumber}`}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 text-white font-semibold hover:bg-emerald-600 transition-colors active:scale-95"
+            >
+              <Phone className="w-5 h-5" />
+              Call {phoneNumber}
+            </a>
+          </div>
+        )}
+        <p className="text-xs text-[var(--text-tertiary)]">Free test call — no minutes deducted</p>
+        {voiceId && voiceId !== "default" && greeting && (
+          <div className="mt-4">
+            <VoicePreviewPlayer
+              voiceId={voiceId}
+              greeting={greeting}
+              agentName={agentName}
+              className="mt-3"
+            />
+          </div>
+        )}
+      </div>
 
       <div className="flex items-center justify-between gap-3 pt-3">
         <button type="button" onClick={goBack} disabled={finalizing} className="text-xs md:text-sm text-slate-400 hover:text-slate-100 disabled:text-slate-600 disabled:cursor-not-allowed transition-colors">

@@ -27,7 +27,7 @@ export default function AppSettingsErrorsPage() {
         setEntries(data.entries ?? []);
         setGrouped(data.grouped ?? {});
       })
-      .catch((err) => console.error("[settings/errors] Failed to load error log:", err))
+      .catch((err) => { /* silenced */ })
       .finally(() => setLoading(false));
   }, []);
 

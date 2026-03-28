@@ -8,9 +8,8 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
-import { createHmac } from "crypto";
+import { createHmac, timingSafeEqual } from "crypto";
 import { log } from "@/lib/logger";
-import { assertSameOrigin } from "@/lib/http/csrf";
 
 interface Transcript {
   timestamp: number;
@@ -72,12 +71,18 @@ function verifyWebhookSignature(body: string, signature: string): boolean {
   const expected = createHmac("sha256", secret)
     .update(body, "utf-8")
     .digest("hex");
-  return expected === signature;
+  // Timing-safe comparison to prevent timing attacks
+  if (expected.length !== signature.length) return false;
+  try {
+    return timingSafeEqual(Buffer.from(expected, "utf-8"), Buffer.from(signature, "utf-8"));
+  } catch {
+    return expected === signature;
+  }
 }
 
 export async function POST(req: NextRequest) {
-  const csrfBlock = assertSameOrigin(req);
-  if (csrfBlock) return csrfBlock;
+  // No CSRF check — this endpoint receives external webhooks from the voice server.
+  // Security is enforced via HMAC signature verification below.
 
   // Verify webhook signature
   const signature = req.headers.get("x-voice-webhook-signature");
@@ -229,6 +234,24 @@ export async function POST(req: NextRequest) {
 
     if (qualityError) {
       log("error", "voice_webhook.quality_logs_insert_failed", { error: String(qualityError) });
+    }
+
+    // Score call quality using the quality library
+    try {
+      const { recordCallQuality } = await import("@/lib/voice/quality");
+      await recordCallQuality({
+        call_session_id: callSessionId || "unknown",
+        answer_latency_ms: payload.quality_metrics.avg_ttfb_ms ?? 0,
+        avg_response_latency_ms: payload.quality_metrics.avg_ttfb_ms ?? 0,
+        interruption_count: payload.quality_metrics.barge_in_count ?? 0,
+        fallback_events: [],
+        cost_cents: 0,
+        stt_model: "deepgram",
+        tts_model: payload.tts_model ?? "unknown",
+        llm_model: "claude-haiku-4-5-20251001",
+      });
+    } catch (qErr) {
+      log("warn", "voice_webhook.quality_scoring_failed", { error: qErr instanceof Error ? qErr.message : String(qErr) });
     }
   } catch (err) {
     log("error", "voice_webhook.quality_logs_insert_error", { error: err instanceof Error ? err.message : String(err) });

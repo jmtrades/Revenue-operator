@@ -9,6 +9,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { log } from "@/lib/logger";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { checkRateLimit } from "@/lib/rate-limit";
@@ -104,7 +105,7 @@ export async function POST(req: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error("[channel-orchestration/auto-sequence] Error:", error);
+    log("error", "channel-orchestration.auto-sequence", { error: String(error) });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -141,7 +142,7 @@ async function enrollLeadInSequence(
       });
 
     if (insertError) {
-      console.warn("[enrollLeadInSequence] Could not create sequence record:", insertError.message);
+      log("warn", "channel-orchestration.enroll-lead.create-sequence-failed", { error: insertError.message });
       return {
         status: "success",
         sequence_id: sequenceId,
@@ -154,7 +155,7 @@ async function enrollLeadInSequence(
       sequence_id: sequenceId,
     };
   } catch (error) {
-    console.error("[enrollLeadInSequence] Error:", error);
+    log("error", "channel-orchestration.enroll-lead", { error: String(error) });
     // Don't fail the whole request, just return the generated sequence
     return null;
   }

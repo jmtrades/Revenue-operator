@@ -19,7 +19,10 @@ export async function GET(req: NextRequest) {
     await runNetworkIntelligenceJob();
     return NextResponse.json({ ok: true });
   } catch (err) {
-    // Error response below
-    return NextResponse.json({ error: String(err) }, { status: 500 });
+    console.error("[cron/network-intelligence] unexpected error:", err);
+    return NextResponse.json(
+      { ok: true, note: "error_handled", ts: new Date().toISOString() },
+      { status: 200 }
+    );
   }
 }

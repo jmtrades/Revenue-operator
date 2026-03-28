@@ -30,7 +30,7 @@ function toPlainTextDigest(input: {
     `Time saved: ${input.hoursSaved} hour${input.hoursSaved === "1" ? "" : "s"}`,
     `Top caller question: ${input.topCallerQuestion}`,
     "",
-    `Open dashboard: ${APP_URL}/app/activity`,
+    `Open dashboard: ${APP_URL}/app/dashboard`,
   ].join("\n");
 }
 

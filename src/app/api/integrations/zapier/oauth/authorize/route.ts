@@ -24,6 +24,17 @@ export async function GET(req: NextRequest) {
   const state = req.nextUrl.searchParams.get("state");
   if (!redirectUri) return NextResponse.json({ error: "redirect_uri required" }, { status: 400 });
 
+  // Validate redirect_uri to prevent open redirect attacks
+  const ALLOWED_REDIRECT_HOSTS = ["zapier.com", "hooks.zapier.com", "nla.zapier.com"];
+  try {
+    const parsed = new URL(redirectUri);
+    if (parsed.protocol !== "https:" || !ALLOWED_REDIRECT_HOSTS.some((h) => parsed.hostname === h || parsed.hostname.endsWith(`.${h}`))) {
+      return NextResponse.json({ error: "Invalid redirect_uri: must be a Zapier URL" }, { status: 400 });
+    }
+  } catch {
+    return NextResponse.json({ error: "Invalid redirect_uri format" }, { status: 400 });
+  }
+
   const code = randomBytes(24).toString("hex");
   const db = getDb();
   await db.from("zapier_oauth_codes").insert({

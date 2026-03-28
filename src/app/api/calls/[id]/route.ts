@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 export async function GET(
   req: NextRequest,
@@ -59,7 +60,7 @@ export async function GET(
 
   return NextResponse.json({ call });
   } catch (error) {
-    console.error("[API] calls/[id] error:", error);
+    log("error", "calls.id_route_error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

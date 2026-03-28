@@ -7,29 +7,18 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
-
-// Simple in-memory rate limiting: Map<email, timestamp>
-const rateLimitMap = new Map<string, number>();
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 function isValidEmail(email: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
 
-function checkRateLimit(email: string): boolean {
-  const now = Date.now();
-  const lastSubmission = rateLimitMap.get(email);
-
-  // If no previous submission or more than 1 hour has passed, allow
-  if (!lastSubmission || now - lastSubmission > 60 * 60 * 1000) {
-    rateLimitMap.set(email, now);
-    return true;
-  }
-
-  return false;
-}
-
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   try {
     const body = await req.json();
     const { email } = body;
@@ -51,8 +40,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check rate limit
-    if (!checkRateLimit(normalizedEmail)) {
+    // Distributed rate limit: 5 per hour per IP + 1 per hour per email
+    const ip = getClientIp(req);
+    const ipRl = await checkRateLimit(`waitlist:ip:${ip}`, 5, 3600_000);
+    if (!ipRl.allowed) {
+      return NextResponse.json(
+        { error: "Too many submissions. Try again later." },
+        { status: 429 }
+      );
+    }
+    const emailRl = await checkRateLimit(`waitlist:email:${normalizedEmail}`, 1, 3600_000);
+    if (!emailRl.allowed) {
       return NextResponse.json(
         { error: "Too many submissions from this email. Try again later." },
         { status: 429 }

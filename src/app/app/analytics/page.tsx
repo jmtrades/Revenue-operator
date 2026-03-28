@@ -26,6 +26,7 @@ import { useTranslations } from "next-intl";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 import { PipelineFunnel } from "@/components/analytics/PipelineFunnel";
 import { OperationsSummary } from "@/components/analytics/OperationsSummary";
+import { RevenueForecast } from "@/components/analytics/RevenueForecast";
 
 type RangeKey = "today" | "7d" | "30d" | "90d" | "custom";
 
@@ -267,7 +268,7 @@ export default function AppAnalyticsPage() {
   );
 
   useEffect(() => {
-    document.title = t("analytics.pageTitle");
+    document.title = t("analytics.pageTitle", { defaultValue: "Analytics — Recall Touch" });
     return () => {
       document.title = "";
     };
@@ -410,6 +411,63 @@ export default function AppAnalyticsPage() {
 
   const hasData = totalCalls > 0 || filteredLeads.length > 0;
   const leadConversionPct = totalCalls === 0 ? 0 : Math.round((callsWithLead / totalCalls) * 100);
+
+  // Compute answer rate from actual call data (calls with duration > 0 / total calls)
+  const answerRate = useMemo(() => {
+    if (filteredCalls.length === 0) return 0;
+    const answered = filteredCalls.filter((c) => {
+      if (!c.call_started_at || !c.call_ended_at) return false;
+      const dur = new Date(c.call_ended_at).getTime() - new Date(c.call_started_at).getTime();
+      return dur > 0;
+    }).length;
+    return Math.round((answered / filteredCalls.length) * 100);
+  }, [filteredCalls]);
+
+  // Compute real period-over-period trends by comparing current range to previous equal-length range
+  const trends = useMemo(() => {
+    const rangeDuration = rangeEnd.getTime() - rangeStart.getTime();
+    const prevStart = new Date(rangeStart.getTime() - rangeDuration);
+    const prevEnd = new Date(rangeStart.getTime());
+    const prevCalls = calls.filter((c) => {
+      const t = c.call_started_at ? new Date(c.call_started_at).getTime() : 0;
+      return t >= prevStart.getTime() && t <= prevEnd.getTime();
+    });
+    const prevLeads = leads; // leads don't have date filtering currently
+    const prevTotalCalls = prevCalls.length;
+    const prevCallsWithLead = (() => {
+      const leadIds = new Set(prevLeads.map((l) => l.id));
+      return prevCalls.filter((c) => c.lead_id && leadIds.has(c.lead_id)).length;
+    })();
+    const prevAppointments = prevLeads.filter(
+      (l) => l.state === "appointment_set" || l.state === "won",
+    ).length;
+    const prevConversion = prevTotalCalls === 0 ? 0 : Math.round((prevCallsWithLead / prevTotalCalls) * 100);
+    const prevAvgHandle = (() => {
+      if (prevCalls.length === 0) return 0;
+      const sum = prevCalls.reduce((acc, c) => {
+        if (!c.call_started_at || !c.call_ended_at) return acc;
+        const s = new Date(c.call_started_at).getTime();
+        const e = new Date(c.call_ended_at).getTime();
+        return acc + Math.max(0, (e - s) / 1000);
+      }, 0);
+      return sum / prevCalls.length;
+    })();
+    const prevRevenue = prevAppointments * 250;
+
+    const pctChange = (curr: number, prev: number): number | undefined => {
+      if (curr === 0 && prev === 0) return undefined;
+      if (prev === 0) return curr > 0 ? 100 : undefined;
+      return Math.round(((curr - prev) / prev) * 100);
+    };
+
+    return {
+      totalCalls: pctChange(totalCalls, prevTotalCalls),
+      avgHandleTime: pctChange(Math.round(avgHandleTime), Math.round(prevAvgHandle)),
+      leadConversion: pctChange(leadConversionPct, prevConversion),
+      appointments: pctChange(appointments, prevAppointments),
+      estRevenue: pctChange(estRevenueImpact, prevRevenue),
+    };
+  }, [calls, leads, filteredCalls, rangeStart, rangeEnd, totalCalls, avgHandleTime, leadConversionPct, appointments, estRevenueImpact]);
 
   const volumeData = useMemo(() => {
     if (filteredCalls.length === 0) return [];
@@ -582,26 +640,37 @@ export default function AppAnalyticsPage() {
     URL.revokeObjectURL(url);
   };
 
+  if (!workspaceId) {
+    return (
+      <div className="p-4 md:p-6 max-w-4xl mx-auto">
+        <EmptyState
+          title="No workspace"
+          description="Select or create a workspace to view analytics."
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 md:p-8 max-w-6xl mx-auto">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-6">
         <div>
           <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
             <BarChart3 className="w-5 h-5 text-[var(--text-tertiary)]" />
-            {t("analytics.heading")}
+            {t("analytics.heading", { defaultValue: "Analytics" })}
           </h1>
           <p className="text-sm text-[var(--text-secondary)] mt-1">
-            {t("analytics.description")}
+            Revenue intelligence for your autonomous pipeline
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-0.5 text-xs">
             {([
-              { key: "today" as const, label: t("analytics.ranges.today") },
-              { key: "7d" as const, label: t("analytics.ranges.sevenDay") },
-              { key: "30d" as const, label: t("analytics.ranges.thirtyDay") },
-              { key: "90d" as const, label: t("analytics.ranges.ninetyDay") },
-              { key: "custom" as const, label: t("analytics.ranges.custom") },
+              { key: "today" as const, label: t("analytics.ranges.today", { defaultValue: "Today" }) },
+              { key: "7d" as const, label: t("analytics.ranges.sevenDay", { defaultValue: "7D" }) },
+              { key: "30d" as const, label: t("analytics.ranges.thirtyDay", { defaultValue: "30D" }) },
+              { key: "90d" as const, label: t("analytics.ranges.ninetyDay", { defaultValue: "90D" }) },
+              { key: "custom" as const, label: t("analytics.ranges.custom", { defaultValue: "Custom" }) },
             ]).map((opt) => (
               <button
                 key={opt.key}
@@ -640,17 +709,17 @@ export default function AppAnalyticsPage() {
             disabled={!hasData || scope === "outbound"}
             className="ml-auto inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-1.5 text-xs text-[var(--text-primary)] hover:bg-[var(--bg-hover)] disabled:opacity-50"
           >
-            {t("analytics.exportCsv")}
+            {t("analytics.exportCsv", { defaultValue: "Export CSV" })}
           </button>
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 mb-3" role="tablist" aria-label={t("analytics.heading")}>
+      <div className="flex flex-wrap gap-2 mb-3" role="tablist" aria-label={t("analytics.heading", { defaultValue: "Analytics" })}>
         {(
           [
-            { key: "overview" as const, label: t("analytics.tabs.overview"), Icon: LayoutDashboard },
-            { key: "inbound" as const, label: t("analytics.tabs.inbound"), Icon: PhoneIncoming },
-            { key: "outbound" as const, label: t("analytics.tabs.outbound"), Icon: Send },
+            { key: "overview" as const, label: t("analytics.tabs.overview", { defaultValue: "Overview" }), Icon: LayoutDashboard },
+            { key: "inbound" as const, label: t("analytics.tabs.inbound", { defaultValue: "Inbound" }), Icon: PhoneIncoming },
+            { key: "outbound" as const, label: t("analytics.tabs.outbound", { defaultValue: "Outbound" }), Icon: Send },
           ] as const
         ).map(({ key, label, Icon }) => (
           <button
@@ -711,18 +780,18 @@ export default function AppAnalyticsPage() {
                 return (
                   <>
                     <KPIRow className="lg:grid-cols-4">
-                      <StatCard label={t("analytics.outboundTab.smsSent")} value={om.outbound_messages} />
-                      <StatCard label={t("analytics.outboundTab.replies")} value={om.inbound_replies} />
-                      <StatCard label={t("analytics.outboundTab.activeCampaigns")} value={om.totals.active_campaigns} />
-                      <StatCard label={t("analytics.outboundTab.totalDialed")} value={om.totals.dialed} />
+                      <StatCard label={t("analytics.outboundTab.smsSent", { defaultValue: "Outbound SMS" })} value={om.outbound_messages} />
+                      <StatCard label={t("analytics.outboundTab.replies", { defaultValue: "Inbound replies" })} value={om.inbound_replies} />
+                      <StatCard label={t("analytics.outboundTab.activeCampaigns", { defaultValue: "Active campaigns" })} value={om.totals.active_campaigns} />
+                      <StatCard label={t("analytics.outboundTab.totalDialed", { defaultValue: "Campaign dials" })} value={om.totals.dialed} />
                     </KPIRow>
                     <KPIRow className="lg:grid-cols-3">
-                      <StatCard label={t("analytics.outboundTab.connected")} value={om.totals.answered} />
-                      <StatCard label={t("analytics.outboundTab.apptsBooked")} value={om.totals.appointments_booked} />
+                      <StatCard label={t("analytics.outboundTab.connected", { defaultValue: "Connected" })} value={om.totals.answered} />
+                      <StatCard label={t("analytics.outboundTab.apptsBooked", { defaultValue: "Appts (campaigns)" })} value={om.totals.appointments_booked} />
                     </KPIRow>
                     {om.volume_by_day.length > 0 && (
                       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5">
-                        <p className="text-sm font-medium text-[var(--text-primary)] mb-3">{t("analytics.outboundTab.smsVolume")}</p>
+                        <p className="text-sm font-medium text-[var(--text-primary)] mb-3">{t("analytics.outboundTab.smsVolume", { defaultValue: "Outbound SMS by day" })}</p>
                         <div className="flex items-end gap-1 h-28">
                           {om.volume_by_day.map((row) => (
                             <div key={row.day} className="flex-1 min-w-0 flex flex-col items-center gap-1">
@@ -739,15 +808,15 @@ export default function AppAnalyticsPage() {
                     )}
                     {om.campaigns.length > 0 && (
                       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-5 overflow-x-auto">
-                        <p className="text-sm font-medium text-[var(--text-primary)] mb-3">{t("analytics.outboundTab.campaignsHeading")}</p>
+                        <p className="text-sm font-medium text-[var(--text-primary)] mb-3">{t("analytics.outboundTab.campaignsHeading", { defaultValue: "Campaigns" })}</p>
                         <table className="w-full text-xs text-left">
                           <thead>
                             <tr className="text-[var(--text-secondary)] border-b border-[var(--border-default)]">
-                              <th className="pb-2 pr-3 font-medium">{t("analytics.outboundTab.campaignName")}</th>
-                              <th className="pb-2 pr-3 font-medium">{t("analytics.outboundTab.status")}</th>
-                              <th className="pb-2 pr-3 font-medium text-right">{t("analytics.outboundTab.totalDialed")}</th>
-                              <th className="pb-2 pr-3 font-medium text-right">{t("analytics.outboundTab.connected")}</th>
-                              <th className="pb-2 font-medium text-right">{t("analytics.outboundTab.apptsBooked")}</th>
+                              <th className="pb-2 pr-3 font-medium">{t("analytics.outboundTab.campaignName", { defaultValue: "Campaign" })}</th>
+                              <th className="pb-2 pr-3 font-medium">{t("analytics.outboundTab.status", { defaultValue: "Status" })}</th>
+                              <th className="pb-2 pr-3 font-medium text-right">{t("analytics.outboundTab.totalDialed", { defaultValue: "Campaign dials" })}</th>
+                              <th className="pb-2 pr-3 font-medium text-right">{t("analytics.outboundTab.connected", { defaultValue: "Connected" })}</th>
+                              <th className="pb-2 font-medium text-right">{t("analytics.outboundTab.apptsBooked", { defaultValue: "Appts (campaigns)" })}</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -792,7 +861,7 @@ export default function AppAnalyticsPage() {
               __html: generatePeriodSummary(
                 {
                   totalCalls,
-                  answerRate: hasData ? 100 : 0,
+                  answerRate,
                   avgHandleTime: formatDuration(avgHandleTime),
                   conversionRate: leadConversionPct,
                   appointmentsBooked: appointments,
@@ -833,32 +902,39 @@ export default function AppAnalyticsPage() {
         <StatCard
           label={t("analytics.kpi.totalCalls")}
           value={totalCalls}
-          trend={hasData ? 12 : undefined}
+          trend={hasData ? trends.totalCalls : undefined}
         />
         <StatCard
           label={t("analytics.kpi.avgHandleTime")}
           value={Math.round(avgHandleTime)}
           suffix="s"
-          trend={hasData ? 0 : undefined}
+          trend={hasData ? trends.avgHandleTime : undefined}
         />
         <StatCard
           label={t("analytics.kpi.leadConversion")}
           value={leadConversionPct}
           suffix="%"
-          trend={hasData ? 8 : undefined}
+          trend={hasData ? trends.leadConversion : undefined}
         />
         <StatCard
           label={t("analytics.kpi.appointmentsBooked")}
           value={appointments}
-          trend={hasData ? 5 : undefined}
+          trend={hasData ? trends.appointments : undefined}
         />
         <StatCard
           label={t("analytics.kpi.estRevenue")}
           value={estRevenueImpact}
           prefix="$"
-          trend={hasData ? 19 : undefined}
+          trend={hasData ? trends.estRevenue : undefined}
         />
       </KPIRow>
+
+      {/* Revenue Forecast */}
+      {!loading && hasData && (
+        <div className="mb-6">
+          <RevenueForecast workspaceId={workspaceId} />
+        </div>
+      )}
 
       <AnalyticsCharts volumeData={volumeData} outcomeSlices={outcomeSlices} />
 
@@ -1006,7 +1082,7 @@ export default function AppAnalyticsPage() {
                     <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400 mt-0.5" />
                     <div>
                       <p className="text-sm text-[var(--text-secondary)]">{t("analytics.insightAvailability")}</p>
-                      <Link href="/app/agents" className="text-xs text-[var(--accent-primary)] mt-1 inline-block">{t("analytics.addToKnowledge")} →</Link>
+                      <Link href="/app/knowledge" className="text-xs text-[var(--accent-primary)] mt-1 inline-block">{t("analytics.addToKnowledge")} →</Link>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]">

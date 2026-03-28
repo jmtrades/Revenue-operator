@@ -202,7 +202,9 @@ export async function POST(req: NextRequest) {
     const currentTier = (row.billing_tier ?? "solo") as BillingTier;
     const isDowngrade = TIER_RANK[tier] < TIER_RANK[currentTier];
     const currentPeriodEnd = (sub as { current_period_end?: number }).current_period_end;
-    const effectiveAt = currentPeriodEnd ? new Date(currentPeriodEnd * 1000).toISOString() : null;
+    const trialEnd = (sub as { trial_end?: number | null }).trial_end;
+    const periodTs = currentPeriodEnd ?? trialEnd;
+    const effectiveAt = periodTs ? new Date(periodTs * 1000).toISOString() : new Date().toISOString();
 
     await stripe.subscriptions.update(row.stripe_subscription_id, {
       items: [{ id: itemId, price: priceResult.price_id }],

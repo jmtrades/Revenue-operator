@@ -10,8 +10,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
-import { assertSameOrigin } from "@/lib/http/csrf";
-
 function scoreFromInput(input: { name?: string; phone?: string; email?: string; service_requested?: string; source?: string }): number {
   let score = 0;
   if (input.name?.trim()) score += 10;
@@ -26,8 +24,8 @@ function scoreFromInput(input: { name?: string; phone?: string; email?: string; 
 }
 
 export async function POST(req: NextRequest) {
-  const csrfBlock = assertSameOrigin(req);
-  if (csrfBlock) return csrfBlock;
+  // No CSRF check — this endpoint receives external webhooks from Zapier, Make, and forms.
+  // Auth is enforced via session cookie or x-api-key header below.
 
   const body = await req.json().catch(() => null) as { workspace_id?: string; name?: string; phone?: string; email?: string; service_requested?: string; source?: string; notes?: string } | null;
   if (!body?.workspace_id || !body?.name?.trim() || !body?.phone?.trim()) {

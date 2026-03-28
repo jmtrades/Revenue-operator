@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     description:
       "Inbound call handling, outbound campaigns, follow-ups, appointment booking, revenue recovery, and AI that learns from every conversation.",
     url: "https://www.recall-touch.com/features",
-    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",

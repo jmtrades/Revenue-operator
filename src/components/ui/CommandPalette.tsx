@@ -36,7 +36,7 @@ type CommandItem = {
 };
 
 const STATIC_ITEM_KEYS: Array<{ id: string; labelKey: string; icon: ComponentType<{ className?: string }>; href?: string; section: "Pages" | "Actions" }> = [
-  { id: "page-dashboard", labelKey: "page.dashboard", icon: LayoutList, href: "/app/activity", section: "Pages" },
+  { id: "page-dashboard", labelKey: "page.dashboard", icon: LayoutList, href: "/app/dashboard", section: "Pages" },
   { id: "page-agents", labelKey: "page.agents", icon: Bot, href: "/app/agents", section: "Pages" },
   { id: "page-calls", labelKey: "page.calls", icon: PhoneCall, href: "/app/calls", section: "Pages" },
   { id: "page-leads", labelKey: "page.leads", icon: Users, href: "/app/leads", section: "Pages" },

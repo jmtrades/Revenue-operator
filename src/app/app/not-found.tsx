@@ -1,0 +1,29 @@
+import Link from "next/link";
+
+export const metadata = {
+  title: "Page not found",
+  robots: { index: false },
+};
+
+export default function NotFound() {
+  return (
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
+      <div className="w-full max-w-md text-center">
+        <h1 className="text-6xl font-bold text-white mb-4">404</h1>
+        <h2 className="text-2xl font-semibold text-gray-100 mb-4">
+          This page doesn't exist
+        </h2>
+        <p className="text-gray-400 mb-8">
+          The page you're looking for couldn't be found in your workspace.
+        </p>
+
+        <Link
+          href="/app/dashboard"
+          className="inline-flex items-center justify-center px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+        >
+          Back to dashboard
+        </Link>
+      </div>
+    </div>
+  );
+}

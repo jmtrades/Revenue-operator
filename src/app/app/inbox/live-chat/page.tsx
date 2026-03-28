@@ -56,7 +56,7 @@ export default function LiveChatInboxPage() {
           }
         }
       } catch (error) {
-        console.error("Failed to load sessions:", error);
+        // silenced
       }
     };
 
@@ -86,7 +86,7 @@ export default function LiveChatInboxPage() {
           setMessages(data);
         }
       } catch (error) {
-        console.error("Failed to load messages:", error);
+        // silenced
       }
     };
 
@@ -126,7 +126,8 @@ export default function LiveChatInboxPage() {
         const errorData = (await res.json().catch(() => ({
           error: "Failed to send message",
         }))) as { error?: string };
-        toast.error(errorData.error || "Failed to send message");
+        if (errorData.error) console.error("Send message error:", errorData.error);
+        toast.error("Failed to send message");
         setMessageText(text);
         return;
       }
@@ -141,7 +142,6 @@ export default function LiveChatInboxPage() {
         setMessages(data);
       }
     } catch (error) {
-      console.error("Failed to send message:", error);
       toast.error("Failed to send message");
       setMessageText(text);
     } finally {
@@ -171,7 +171,6 @@ export default function LiveChatInboxPage() {
         setMessages([]);
       }
     } catch (error) {
-      console.error("Failed to resolve session:", error);
       toast.error("Failed to resolve session");
     }
   };

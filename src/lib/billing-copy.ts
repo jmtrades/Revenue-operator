@@ -3,7 +3,7 @@ export const BILLING_EMAIL_SUBJECT = "Your Recall Touch subscription";
 
 /** Invoice line / product description (use in Stripe Product description). */
 export const INVOICE_DESCRIPTION =
-  "Recall Touch subscription plan for AI revenue recovery (voice, SMS, follow-up automation).";
+  "Recall Touch subscription plan for AI revenue operations (voice, SMS, follow-up automation).";
 
 /** Receipt footer. */
 export const RECEIPT_FOOTER = "Thank you for your subscription to Recall Touch.";

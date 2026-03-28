@@ -41,6 +41,7 @@ export default function VoiceSelector({ value, onChange, planTier = 'enterprise'
   const [toneFilter, setToneFilter] = useState<string>('All');
   const [showFilters, setShowFilters] = useState(false);
   const synthRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Voice limits per plan
   const voiceLimit = useMemo(() => {
@@ -78,38 +79,85 @@ export default function VoiceSelector({ value, onChange, planTier = 'enterprise'
   }, [onChange]);
 
   const stopPlayback = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
     if (typeof window !== 'undefined' && window.speechSynthesis) {
       window.speechSynthesis.cancel();
     }
     setPlayingVoice(null);
   }, []);
 
-  const handlePlaySample = useCallback((voice: RecallVoice) => {
+  const handlePlaySample = useCallback(async (voice: RecallVoice) => {
     if (playingVoice === voice.id) {
       stopPlayback();
       return;
     }
 
     stopPlayback();
+    setPlayingVoice(voice.id);
 
-    // Use browser TTS as preview (real voice server would be called in production via /api/agent/preview-voice)
+    // Try API-backed voice preview first
+    try {
+      const res = await fetch(
+        `/api/agent/preview-voice?voice_id=${encodeURIComponent(voice.id)}`,
+        { credentials: "include" }
+      );
+      if (res.ok && res.headers.get("content-type")?.startsWith("audio/")) {
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        audioRef.current = audio;
+        audio.playbackRate = speed;
+        audio.onended = () => {
+          setPlayingVoice(null);
+          URL.revokeObjectURL(url);
+          audioRef.current = null;
+        };
+        audio.onerror = () => {
+          setPlayingVoice(null);
+          URL.revokeObjectURL(url);
+          audioRef.current = null;
+        };
+        await audio.play();
+        return;
+      }
+    } catch {
+      // Fall through to browser TTS
+    }
+
+    // Fallback: browser SpeechSynthesis
     if (typeof window !== 'undefined' && window.speechSynthesis) {
       const utterance = new SpeechSynthesisUtterance(
         `Hi there! Thanks for calling. My name is ${voice.name} and I'm here to help you today. How can I assist you?`
       );
       utterance.rate = speed;
-      utterance.pitch = 0.8 + warmth * 0.4;
+      utterance.pitch = 1.0 + (warmth - 0.5) * 0.3;
       utterance.onend = () => setPlayingVoice(null);
       utterance.onerror = () => setPlayingVoice(null);
       synthRef.current = utterance;
       window.speechSynthesis.speak(utterance);
-      setPlayingVoice(voice.id);
+    } else {
+      setPlayingVoice(null);
     }
-  }, [playingVoice, speed, warmth, stopPlayback]);
+  }, [playingVoice, stopPlayback, speed, warmth]);
 
   useEffect(() => {
     return () => stopPlayback();
   }, [stopPlayback]);
+
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
 
   const getGenderBadgeColor = (gender: string) => {
     switch (gender) {

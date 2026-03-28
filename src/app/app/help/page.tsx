@@ -69,7 +69,7 @@ export default function HelpPage() {
             </div>
             <div>
               <h3 className="text-sm font-medium text-[var(--text-primary)] mb-1">{t("troubleshooting.crmSyncTitle", { defaultValue: "My CRM shows Connected but contacts aren't syncing" })}</h3>
-              <p className="text-sm text-[var(--text-secondary)]">{t("troubleshooting.crmSyncDesc", { defaultValue: "CRM sync is currently in Beta. Inbound token storage works, but full two-way sync is coming soon." })}</p>
+              <p className="text-sm text-[var(--text-secondary)]">{t("troubleshooting.crmSyncDesc", { defaultValue: "CRM sync is currently in beta. Inbound contact syncing works automatically. Two-way sync is rolling out progressively — check Settings > Integrations for your current sync status." })}</p>
             </div>
             <div>
               <h3 className="text-sm font-medium text-[var(--text-primary)] mb-1">{t("troubleshooting.callsCutOffTitle", { defaultValue: "Calls are being cut off" })}</h3>

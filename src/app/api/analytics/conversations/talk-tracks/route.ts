@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 type WinningTrack = {
   phrase: string;
@@ -89,7 +90,7 @@ export async function GET(req: NextRequest) {
       .not("transcript_text", "is", null);
 
     if (callsErr) {
-      console.error("[talk-tracks] calls query failed:", callsErr.message);
+      log("error", "analytics.talk_tracks.GET", { error: callsErr.message });
       return NextResponse.json({ error: "Failed to load calls" }, { status: 500 });
     }
 
@@ -193,7 +194,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error("[analytics/talk-tracks]", error);
+    log("error", "analytics.talk_tracks.GET", { error: String(error) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

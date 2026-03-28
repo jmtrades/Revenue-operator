@@ -15,12 +15,19 @@ import { RECEIPT_FOOTER } from "@/lib/billing-copy";
 import { getPriceId } from "@/lib/stripe-prices";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
-function log(event: string, data: Record<string, unknown>): void {
-  if (data.reason || data.error) {
-    console.error(`[billing/checkout] ${event}:`, JSON.stringify(data));
-  }
-}
+/** Map plan names (including legacy) to tier names, same as change-plan route */
+const PLAN_TO_TIER: Record<string, string> = {
+  solo: "solo",
+  starter: "solo", // legacy alias
+  business: "business",
+  growth: "business", // legacy alias
+  scale: "scale",
+  team: "scale", // legacy alias
+  enterprise: "enterprise",
+  agency: "enterprise", // legacy alias
+};
 
 /** Build production-safe origin: never localhost, never preview. Prefer request origin. */
 function effectiveOrigin(req: NextRequest): string | null {
@@ -50,23 +57,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });
     }
 
-    const tier = (body.tier ?? "solo").toString().trim() || "solo";
-    const interval = (body.interval ?? "month").toString().trim() || "month";
+    const planOrTier = (body.tier ?? "solo").toString().trim().toLowerCase() || "solo";
+    const tier = PLAN_TO_TIER[planOrTier] || planOrTier; // normalize legacy plan names (growth→business, team→scale, etc.)
+    const interval = (body.interval ?? "month").toString().trim().toLowerCase() || "month";
 
     const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
     if (!stripeSecretKey) {
-      log("checkout_failed", { reason: "missing_stripe_key" });
+      log("error", "billing.checkout_failed", { reason: "missing_stripe_key" });
       return NextResponse.json({ ok: false, reason: "missing_env" }, { status: 503 });
     }
     const origin = effectiveOrigin(req);
     if (!origin) {
-      log("checkout_failed", { reason: "missing_app_url" });
+      log("error", "billing.checkout_failed", { reason: "missing_app_url" });
       return NextResponse.json({ ok: false, reason: "missing_env" }, { status: 503 });
     }
 
     const priceResult = await getPriceId(tier, interval);
     if (!priceResult.ok) {
-      log("checkout_failed", { reason: priceResult.reason, tier, interval });
+      log("error", "billing.checkout_failed", { reason: priceResult.reason, tier, interval });
       const status =
         priceResult.reason === "invalid_tier" || priceResult.reason === "invalid_interval"
           ? 400
@@ -153,7 +161,7 @@ export async function POST(req: NextRequest) {
           finalWorkspaceId = wsId;
           finalEmail = email;
         } catch (insertErr) {
-          console.error("[billing/checkout] workspace creation failed:", insertErr instanceof Error ? insertErr.message : insertErr);
+          log("error", "billing.workspace_creation_failed", { error: insertErr instanceof Error ? insertErr.message : String(insertErr) });
           // Fallback: try to get existing workspace one more time
           const { data: fallbackUser } = await db.from("users").select("id").eq("email", email).maybeSingle();
           const fallbackUid = (fallbackUser as { id: string } | null)?.id;
@@ -168,7 +176,7 @@ export async function POST(req: NextRequest) {
     }
     
     if (!finalWorkspaceId) {
-      log("checkout_failed", { reason: "workspace_not_found" });
+      log("error", "billing.checkout_failed", { reason: "workspace_not_found" });
       return NextResponse.json({ ok: false, reason: "workspace_not_found" }, { status: 404 });
     }
 
@@ -187,16 +195,16 @@ export async function POST(req: NextRequest) {
       .select("id, stripe_customer_id, owner_id, billing_status, stripe_subscription_id")
       .eq("id", finalWorkspaceId)
       .maybeSingle();
-    
+
     if (!ws) {
-      log("checkout_failed", { workspace_id: finalWorkspaceId, reason: "workspace_not_found" });
+      log("error", "billing.checkout_failed", { workspace_id: finalWorkspaceId, reason: "workspace_not_found" });
       return NextResponse.json({ ok: false, reason: "workspace_not_found" }, { status: 404 });
     }
 
     const wsData = ws as { billing_status?: string; stripe_subscription_id?: string | null };
     const hasActiveSubscription = wsData.stripe_subscription_id !== null && wsData.stripe_subscription_id !== undefined;
     if (hasActiveSubscription) {
-      log("checkout_started", { workspace_id: finalWorkspaceId, reason: "already_active" });
+      log("info", "billing.checkout_started", { workspace_id: finalWorkspaceId, reason: "already_active" });
       return NextResponse.json({ ok: true, reason: "already_active", workspace_id: finalWorkspaceId }, { status: 200 });
     }
 
@@ -230,19 +238,19 @@ export async function POST(req: NextRequest) {
         });
         const createdId = customer.id;
 
-        // Best-effort persist; avoid query-builder helpers that some test doubles omit.
+        // Persist Stripe customer ID — critical for billing reconciliation.
         try {
           await db
             .from("workspaces")
             .update({ stripe_customer_id: createdId, updated_at: new Date().toISOString() })
             .eq("id", finalWorkspaceId);
-        } catch {
-          // ignore
+        } catch (persistErr) {
+          log("error", "billing.persist_stripe_customer_id_failed", { workspace_id: finalWorkspaceId, stripe_customer_id: createdId, error: persistErr instanceof Error ? persistErr.message : String(persistErr) });
         }
         customerId = createdId;
       } catch (err) {
         const message = err instanceof Error ? err.message : "unknown_error";
-        log("checkout_failed", { workspace_id: finalWorkspaceId, reason: "customer_create_failed", error: message });
+        log("error", "billing.customer_create_failed", { workspace_id: finalWorkspaceId, reason: "customer_create_failed", error: message });
           return NextResponse.json({ ok: false, reason: "customer_create_failed" }, { status: 500 });
       }
     } else {
@@ -250,7 +258,7 @@ export async function POST(req: NextRequest) {
         .update(customerId, {
           invoice_settings: { footer: RECEIPT_FOOTER },
         })
-        .catch((err) => { console.error("[billing/checkout] error:", err instanceof Error ? err.message : err); });
+        .catch((err) => { log("error", "billing.customer_update_failed", { error: err instanceof Error ? err.message : String(err) }); });
     }
 
     try {
@@ -274,7 +282,7 @@ export async function POST(req: NextRequest) {
         allow_promotion_codes: true,
       });
 
-      log("checkout_started", { workspace_id: finalWorkspaceId, session_id: session.id });
+      log("info", "billing.checkout_started", { workspace_id: finalWorkspaceId, session_id: session.id });
 
       return NextResponse.json({
         ok: true,
@@ -284,12 +292,12 @@ export async function POST(req: NextRequest) {
       });
     } catch (stripeError) {
       const errorMessage = stripeError instanceof Error ? stripeError.message : "Stripe checkout failed";
-      log("checkout_failed", { workspace_id: finalWorkspaceId, reason: "subscription_create_failed", error: errorMessage });
+      log("error", "billing.subscription_create_failed", { workspace_id: finalWorkspaceId, reason: "subscription_create_failed", error: errorMessage });
       return NextResponse.json({ ok: false, reason: "subscription_create_failed" }, { status: 500 });
     }
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : String(err);
-    log("checkout_failed", { reason: "unexpected_error", error: errorMessage });
+    log("error", "billing.unexpected_error", { reason: "unexpected_error", error: errorMessage });
     return NextResponse.json({ ok: false, reason: "unexpected_error" }, { status: 500 });
   }
 }

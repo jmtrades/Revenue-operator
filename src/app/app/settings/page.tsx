@@ -6,11 +6,14 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { ReadinessChecklist } from "@/components/settings/ReadinessChecklist";
+import { ActivityLog } from "@/components/settings/ActivityLog";
+import { useWorkspace } from "@/components/WorkspaceContext";
 import {
   AlertTriangle,
   Bell,
   Building2,
   ChevronRight,
+  Circle,
   Code,
   CreditCard,
   History,
@@ -49,6 +52,7 @@ type ConfirmType = "data" | "account" | null;
 export default function AppSettingsPage() {
   const tSettings = useTranslations("settings");
   const tToast = useTranslations("toast");
+  const { workspaceId } = useWorkspace();
   const [signingOut, setSigningOut] = useState(false);
   const [confirm, setConfirm] = useState<ConfirmType>(null);
   const [email, setEmail] = useState<string | null>(null);
@@ -61,6 +65,7 @@ export default function AppSettingsPage() {
   );
   const [savingProfile, setSavingProfile] = useState(false);
   const [theme, setTheme] = useState<"system" | "light" | "dark">("system");
+  const [systemHealthData, setSystemHealthData] = useState<{ passed: number; total: number } | null>(null);
 
   // Initialize theme from DOM/localStorage
   useEffect(() => {
@@ -115,6 +120,20 @@ export default function AppSettingsPage() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!workspaceId) return;
+    fetch(`/api/workspace/readiness?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.checks) {
+          const total = data.checks.length;
+          const passed = data.checks.filter((c: { passed: boolean }) => c.passed).length;
+          setSystemHealthData({ passed, total });
+        }
+      })
+      .catch(() => {});
+  }, [workspaceId]);
+
   const handleSaveProfile = async () => {
     if (savingProfile) return;
     setSavingProfile(true);
@@ -154,16 +173,32 @@ export default function AppSettingsPage() {
   };
 
   return (
-    <div className="max-w-[600px] mx-auto p-4 md:p-6">
-      <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">{tSettings("title")}</h1>
-      <p className="text-sm text-[var(--text-secondary)] mb-6">{tSettings("pageSubtitle")}</p>
-      <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-6 mb-6">
-        <h2 className="text-base font-medium text-[var(--text-primary)] mb-4">{tSettings("profileTitle")}</h2>
-        <div className="space-y-4">
-          <div>
-            <label className="text-xs text-[var(--text-tertiary)] mb-1 block">{tSettings("emailLabel")}</label>
-            <p className="text-sm text-[var(--text-secondary)]">{email ?? "—"}</p>
-          </div>
+    <div className="max-w-[600px] mx-auto">
+      {/* Settings Header */}
+      <div className="relative bg-gradient-to-br from-[var(--bg-surface)] to-[var(--bg-hover)] border-b border-[var(--border-default)] px-4 md:px-6 py-8 md:py-10 overflow-hidden">
+        {/* Accent line */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500/50 via-violet-500/50 to-transparent" />
+
+        {/* Ambient background */}
+        <div className="absolute inset-0 opacity-5 pointer-events-none">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-violet-500 rounded-full blur-3xl" />
+        </div>
+
+        <div className="relative z-10">
+          <h1 className="text-2xl font-semibold text-[var(--text-primary)] mb-1">{tSettings("title")}</h1>
+          <p className="text-sm text-[var(--text-secondary)]">{tSettings("pageSubtitle")}</p>
+        </div>
+      </div>
+
+      {/* Content Area */}
+      <div className="p-4 md:p-6">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-6 mb-6">
+          <h2 className="text-base font-medium text-[var(--text-primary)] mb-4">{tSettings("profileTitle")}</h2>
+          <div className="space-y-4">
+            <div>
+              <label className="text-xs text-[var(--text-tertiary)] mb-1 block">{tSettings("emailLabel")}</label>
+              <p className="text-sm text-[var(--text-secondary)]">{email ?? "—"}</p>
+            </div>
           <div>
             <label className="text-xs text-[var(--text-tertiary)] mb-1 block">
               {tSettings("displayNameLabel")}
@@ -201,9 +236,9 @@ export default function AppSettingsPage() {
             {savingProfile ? tSettings("savingProfile") : tSettings("saveProfile")}
           </button>
         </div>
-      </div>
-      {/* Appearance */}
-      <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-6 mb-6">
+        </div>
+        {/* Appearance */}
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-6 mb-6">
         <h2 className="text-base font-medium text-[var(--text-primary)] mb-4">{tSettings("appearance.title")}</h2>
         <p className="text-xs text-[var(--text-secondary)] mb-4">{tSettings("appearance.description")}</p>
         <div className="grid grid-cols-3 gap-3">
@@ -227,61 +262,138 @@ export default function AppSettingsPage() {
             </button>
           ))}
         </div>
-      </div>
+        </div>
 
-      <div className="mb-6">
-        <ReadinessChecklist />
-      </div>
-      <div className="grid gap-3">
-        {SETTINGS_LINKS.map((s) => {
-          const isPhoneSettings = s.linkKey === "phone";
-          const isAgentSettings = s.linkKey === "agent";
-          const showIndicator = isPhoneSettings || isAgentSettings;
-          return (
-            <Link
-              key={s.href}
-              href={s.href}
-              className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] hover:border-[var(--border-medium)] transition-[background-color,border-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] group focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
-            >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--bg-card)] text-[var(--text-secondary)]">
-                <s.icon className="h-5 w-5" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-medium text-[var(--text-primary)] group-hover:text-[var(--text-primary)]">
-                  {tSettings(`links.${s.linkKey}.label`)}
-                  {showIndicator && (
-                    <span className="ml-2 text-xs text-[var(--text-secondary)]">
-                      {isPhoneSettings && tSettings("links.phone.required")}
-                      {isAgentSettings && tSettings("links.agent.required")}
-                    </span>
-                  )}
-                </p>
-                <p className="text-xs text-[var(--text-secondary)] mt-0.5">{tSettings(`links.${s.linkKey}.desc`)}</p>
-              </div>
-              <ChevronRight className="h-4 w-4 shrink-0 text-[var(--text-tertiary)] transition-colors group-hover:text-[var(--text-tertiary)]" />
-            </Link>
-          );
-        })}
-      </div>
-      <div className="mt-6 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 flex items-center justify-between gap-4">
-        <div>
+        <div className="mb-6">
+          <ReadinessChecklist />
+        </div>
+
+        {/* Recent Activity */}
+        {workspaceId && (
+          <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-6 mb-6">
+            <h2 className="text-base font-medium text-[var(--text-primary)] mb-4">Recent Activity</h2>
+            <ActivityLog workspaceId={workspaceId} />
+          </div>
+        )}
+
+        {/* System Health Indicator */}
+        {systemHealthData && (
+          <div className="mb-6 flex items-center gap-2">
+            <div className={`w-2 h-2 rounded-full ${systemHealthData.passed === systemHealthData.total ? "bg-green-500" : "bg-amber-500"}`} />
+            <span className="text-xs font-medium text-[var(--text-secondary)]">
+              {systemHealthData.passed === systemHealthData.total ? "All systems operational" : "Setup incomplete"}
+            </span>
+          </div>
+        )}
+
+        {/* Core Configuration */}
+        <div className="mb-4">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)] px-1 mb-3">{tSettings("nav.sectionBusiness")}</p>
+          <div className="grid gap-3">
+            {SETTINGS_LINKS.filter((s) => ["business", "phone", "agent", "callRules", "outbound"].includes(s.linkKey)).map((s) => {
+            const isPhoneSettings = s.linkKey === "phone";
+            const isAgentSettings = s.linkKey === "agent";
+            const showIndicator = isPhoneSettings || isAgentSettings;
+            return (
+              <Link
+                key={s.href}
+                href={s.href}
+                className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] hover:border-[var(--border-medium)] transition-[background-color,border-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] group focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--bg-card)] text-[var(--text-secondary)]">
+                  <s.icon className="h-5 w-5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-[var(--text-primary)] group-hover:text-[var(--text-primary)]">
+                    {tSettings(`links.${s.linkKey}.label`)}
+                    {showIndicator && (
+                      <span className="ml-2 text-xs text-[var(--text-secondary)]">
+                        {isPhoneSettings && tSettings("links.phone.required")}
+                        {isAgentSettings && tSettings("links.agent.required")}
+                      </span>
+                    )}
+                  </p>
+                  <p className="text-xs text-[var(--text-secondary)] mt-0.5">{tSettings(`links.${s.linkKey}.desc`)}</p>
+                </div>
+                <ChevronRight className="h-4 w-4 shrink-0 text-[var(--text-tertiary)] transition-colors group-hover:text-[var(--text-tertiary)]" />
+              </Link>
+            );
+            })}
+          </div>
+        </div>
+
+        {/* Intelligence & Automation */}
+        <div className="mb-4">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)] px-1 mb-3">Intelligence & Automation</p>
+          <div className="grid gap-3">
+            {SETTINGS_LINKS.filter((s) => ["leadScoring", "notifications", "integrations"].includes(s.linkKey)).map((s) => {
+            return (
+              <Link
+                key={s.href}
+                href={s.href}
+                className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] hover:border-[var(--border-medium)] transition-[background-color,border-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] group focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--bg-card)] text-[var(--text-secondary)]">
+                  <s.icon className="h-5 w-5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-[var(--text-primary)] group-hover:text-[var(--text-primary)]">
+                    {tSettings(`links.${s.linkKey}.label`)}
+                  </p>
+                  <p className="text-xs text-[var(--text-secondary)] mt-0.5">{tSettings(`links.${s.linkKey}.desc`)}</p>
+                </div>
+                <ChevronRight className="h-4 w-4 shrink-0 text-[var(--text-tertiary)] transition-colors group-hover:text-[var(--text-tertiary)]" />
+              </Link>
+            );
+            })}
+          </div>
+        </div>
+
+        {/* Account & Compliance */}
+        <div className="mb-4">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)] px-1 mb-3">Account & Compliance</p>
+          <div className="grid gap-3">
+            {SETTINGS_LINKS.filter((s) => ["billing", "team", "compliance", "activity", "developer", "errors"].includes(s.linkKey)).map((s) => {
+            return (
+              <Link
+                key={s.href}
+                href={s.href}
+                className="flex items-center gap-4 p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] hover:border-[var(--border-medium)] transition-[background-color,border-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] group focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--bg-card)] text-[var(--text-secondary)]">
+                  <s.icon className="h-5 w-5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-[var(--text-primary)] group-hover:text-[var(--text-primary)]">
+                    {tSettings(`links.${s.linkKey}.label`)}
+                  </p>
+                  <p className="text-xs text-[var(--text-secondary)] mt-0.5">{tSettings(`links.${s.linkKey}.desc`)}</p>
+                </div>
+                <ChevronRight className="h-4 w-4 shrink-0 text-[var(--text-tertiary)] transition-colors group-hover:text-[var(--text-tertiary)]" />
+              </Link>
+            );
+            })}
+          </div>
+        </div>
+        <div className="mt-6 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 flex items-center justify-between gap-4">
+          <div>
           <p className="text-sm font-medium text-[var(--text-primary)]">
             {tSettings("revisitOnboarding")}
           </p>
           <p className="text-xs text-[var(--text-secondary)] mt-0.5">
             {tSettings("revisitOnboardingDesc")}
           </p>
+          </div>
+          <Link
+            href="/activate"
+            className="px-4 py-2 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl text-xs hover:opacity-90 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] whitespace-nowrap"
+          >
+            {tSettings("openSetup")}
+          </Link>
         </div>
-        <Link
-          href="/activate"
-          className="px-4 py-2 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl text-xs hover:opacity-90 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] whitespace-nowrap"
-        >
-          {tSettings("openSetup")}
-        </Link>
-      </div>
-      <div className="mt-8 pt-6 border-t border-[var(--border-default)]">
-        <p className="text-xs font-semibold uppercase tracking-wider text-red-400/90 mb-3">{tSettings("dangerZone")}</p>
-        <div className="rounded-xl border border-red-900/40 bg-red-950/20 p-4 space-y-3">
+        <div className="mt-8 pt-6 border-t border-[var(--border-default)]">
+          <p className="text-xs font-semibold uppercase tracking-wider text-red-400/90 mb-3">{tSettings("dangerZone")}</p>
+          <div className="rounded-xl border border-red-900/40 bg-red-950/20 p-4 space-y-3">
           <Link
             href="/app/settings/billing"
             className="block text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded"
@@ -302,19 +414,20 @@ export default function AppSettingsPage() {
           >
             {tSettings("requestDeleteAccount")}
           </button>
+          </div>
+          <button
+            type="button"
+            onClick={handleSignOut}
+            disabled={signingOut}
+            className="mt-4 px-4 py-2 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition-[background-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] disabled:opacity-60 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
+          >
+            {signingOut ? tSettings("signingOut") : tSettings("signOut")}
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={handleSignOut}
-          disabled={signingOut}
-          className="mt-4 px-4 py-2 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] transition-[background-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] disabled:opacity-60 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none"
-        >
-          {signingOut ? tSettings("signingOut") : tSettings("signOut")}
-        </button>
+        <p className="mt-6">
+          <Link href="/app/dashboard" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded">{tSettings("backToDashboard")}</Link>
+        </p>
       </div>
-      <p className="mt-6">
-        <Link href="/app/activity" className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded">{tSettings("backToDashboard")}</Link>
-      </p>
       {confirm === "data" && (
         <ConfirmDialog
           open

@@ -18,6 +18,12 @@ const ENV_KEYS: Record<BillingTier, Record<BillingInterval, string>> = {
   enterprise: { month: "STRIPE_PRICE_ENTERPRISE_MONTH", year: "STRIPE_PRICE_ENTERPRISE_YEAR" },
 };
 
+/** Legacy env var names (growth→business, team→scale) for backwards compatibility */
+const LEGACY_ENV_KEYS: Partial<Record<BillingTier, Record<BillingInterval, string>>> = {
+  business: { month: "STRIPE_PRICE_GROWTH_MONTH", year: "STRIPE_PRICE_GROWTH_YEAR" },
+  scale: { month: "STRIPE_PRICE_TEAM_MONTH", year: "STRIPE_PRICE_TEAM_YEAR" },
+};
+
 export type PriceResolutionReason =
   | "invalid_tier"
   | "invalid_interval"
@@ -45,7 +51,12 @@ export function resolvePriceId(
   const i = interval?.toLowerCase().trim() as BillingInterval;
   if (!TIERS_WITH_PRICE.includes(t) || !INTERVALS.includes(i)) return null;
   const key = ENV_KEYS[t][i];
-  const priceId = process.env[key]?.trim();
+  let priceId = process.env[key]?.trim();
+  if (!priceId || priceId === "price_placeholder") {
+    // Check legacy env var name
+    const legacyKey = LEGACY_ENV_KEYS[t]?.[i];
+    if (legacyKey) priceId = process.env[legacyKey]?.trim();
+  }
   if (!priceId || priceId === "price_placeholder") return null;
   return { price_id: priceId, tier: t, interval: i };
 }
@@ -64,7 +75,12 @@ export async function getPriceId(
     return { ok: false, reason: "invalid_interval" };
   }
   const key = ENV_KEYS[t][i];
-  const priceId = process.env[key]?.trim();
+  let priceId = process.env[key]?.trim();
+  if (!priceId || priceId === "price_placeholder") {
+    // Check legacy env var name
+    const legacyKey = LEGACY_ENV_KEYS[t]?.[i];
+    if (legacyKey) priceId = process.env[legacyKey]?.trim();
+  }
   if (!priceId || priceId === "price_placeholder") {
     return { ok: false, reason: "missing_price_id" };
   }
@@ -99,6 +115,14 @@ export function priceIdToTierAndInterval(priceId: string | null): {
       const val = env[key]?.trim();
       if (val && val !== "price_placeholder" && val === pid) {
         return { tier, interval };
+      }
+      // Also check legacy env var names
+      const legacyKey = LEGACY_ENV_KEYS[tier]?.[interval];
+      if (legacyKey) {
+        const legacyVal = env[legacyKey]?.trim();
+        if (legacyVal && legacyVal !== "price_placeholder" && legacyVal === pid) {
+          return { tier, interval };
+        }
       }
     }
   }

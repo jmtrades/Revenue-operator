@@ -134,6 +134,10 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: csp,
           },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(self), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()",
+          },
           // Preconnect to external services for faster first-byte
           { key: "Link", value: `<${process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://db.ucjbsftixnnbmuodholg.supabase.co"}>; rel=preconnect` },
           { key: "Link", value: "<https://js.stripe.com>; rel=preconnect" },

@@ -82,7 +82,7 @@
     "dashboardCta": "Dashboard →",
     "signIn": "Sign in",
     "startFree": "Get started",
-    "startFreeCta": "Start free →",
+    "startFreeCta": "Get started →",
     "toggleMenu": "Toggle menu",
     "industryPlumbing": "Plumbing & HVAC",
     "industryDental": "Dental",
@@ -123,6 +123,7 @@
     "sectionCommunication": "Communication",
     "sectionIntelligence": "Intelligence",
     "sectionWorkspace": "Workspace",
+    "sectionRecovery": "Recovery & Growth",
     "appNavigation": "App navigation",
     "shortcutCommandPalette": "Open command palette",
     "shortcutDashboard": "Go to Dashboard",
@@ -138,7 +139,8 @@
     "shortcutsHeading": "Keyboard Shortcuts",
     "backToKnowledge": "Back to knowledge",
     "continueToTest": "Continue to test",
-    "coldLeads": "Cold Leads"
+    "coldLeads": "Cold Leads",
+    "support": "Support"
   },
   "agency": {
     "kicker": "Partner operations",
@@ -199,6 +201,7 @@
   },
   "common": {
     "save": "Save",
+    "saved": "Saved",
     "cancel": "Cancel",
     "delete": "Delete",
     "edit": "Edit",
@@ -210,7 +213,9 @@
     "submit": "Submit",
     "loading": "Loading",
     "loadingEllipsis": "Loading…",
-    "error": "Error",
+    "error": {
+      "generic": "Something went wrong. Please try again."
+    },
     "errorGeneric": "Something went wrong. Please try again.",
     "success": "Success",
     "retry": "Retry",
@@ -450,7 +455,8 @@
         },
         "errors": {
           "previewFailed": "Failed to preview voice",
-          "applyFailed": "Failed to apply voice to agent"
+          "applyFailed": "Failed to apply voice to agent",
+          "generic": "Something went wrong testing the voice. Please try again."
         },
         "noAgent": "Agent not found",
         "backToAgents": "Back to Agents",
@@ -492,7 +498,12 @@
           "concatenate": "Concatenate Fields"
         }
       }
-    }
+    },
+    "bulkStatusUpdated": "Status updated for selected contacts",
+    "exported": "Campaigns exported successfully",
+    "exportedSelected": "Selected contacts exported",
+    "selected": "selected",
+    "oauthPending": "OAuth setup is processing. Please try again in a moment."
   },
   "auth": {
     "signIn": {
@@ -503,7 +514,7 @@
       "pageTitle": "Sign in — Recall Touch",
       "googleComingSoon": "",
       "noAccountPrefix": "No account found. ",
-      "startFreeCta": "Start free →",
+      "startFreeCta": "Get started →",
       "emailPlaceholder": "you@company.com",
       "passwordPlaceholder": "Enter password",
       "showPassword": "Show",
@@ -566,7 +577,7 @@
     "startFree": "Get started",
     "genericError": "Something went wrong",
     "toasts": {
-      "noAccount": "No account found. Start free to create one.",
+      "noAccount": "No account found. Sign up to create one.",
       "googleComingSoon": "Connecting to Google…",
       "signInFailed": "Sign-in could not be completed. Please try again."
     },
@@ -669,6 +680,14 @@
       "upcomingManual": "Upcoming attendance will require manual confirmation.",
       "resumeHandling": "Resume handling"
     },
+    "phonePurchase": {
+      "title": "Payment method required",
+      "description": "You need a payment method on file to purchase phone numbers. Please add a card below or subscribe to a plan, then return to the phone marketplace."
+    },
+    "subscriptionRequired": {
+      "title": "Active subscription required",
+      "description": "You need an active subscription to purchase phone numbers. Choose a plan below to get started, then return to the phone marketplace."
+    },
     "paymentFailedBanner": "Payment failed. Billing needs attention.",
     "updatePaymentMethod": "Update Payment Method",
     "downgradeScheduled": "Plan downgrade scheduled for {date}.",
@@ -693,7 +712,8 @@
     "whenYouPause": "When you pause:",
     "pauseBullet1": "Your data and settings will be preserved",
     "pauseBullet2": "You can resume your subscription anytime",
-    "pauseBullet3": "You'll receive reminder emails"
+    "pauseBullet3": "You'll receive reminder emails",
+    "securityNote": "Payments secured with 256-bit encryption via Stripe. We never store your card details."
   },
   "planChange": {
     "title": "Change your plan",
@@ -772,11 +792,43 @@
   },
   "dashboard": {
     "loading": "Loading your dashboard...",
+    "title": "Revenue Command Center",
+    "subtitle": "Your autonomous revenue operator, always on.",
     "welcomeBack": "Welcome back",
+    "phoneWarning": {
+      "title": "Phone number not connected",
+      "description": "Your AI can't receive calls yet.",
+      "cta": "Connect a number"
+    },
+    "getStarted": "Get started",
+    "getStartedSubtitle": "Complete these steps to go live — takes about 5 minutes",
+    "readyToGo": {
+      "title": "Your AI agent is ready to take calls",
+      "body": "Revenue, calls, and appointments will update in real time as your agent handles calls. Make a test call to see it in action, or forward your business number to go live.",
+      "testCall": "Test your agent",
+      "goLive": "Go live with your number"
+    },
     "onboarding": {
-      "readyTitle": "Ready to get started?",
-      "readyDescription": "Set up your AI phone agent and start handling calls, capturing leads, and booking appointments automatically.",
-      "startTrial": "Get Started"
+      "createAgent": {
+        "title": "Create your AI agent",
+        "description": "Choose a template and customize your agent's personality"
+      },
+      "connectNumber": {
+        "title": "Connect a number",
+        "description": "Set up your phone number to start receiving calls"
+      },
+      "addKnowledge": {
+        "title": "Add your FAQs",
+        "description": "Teach your agent about your business"
+      },
+      "configureAgent": {
+        "title": "Configure your agent",
+        "description": "Customize how your AI handles calls"
+      },
+      "makeTestCall": {
+        "title": "Make a test call",
+        "description": "Call your number from any phone to test it"
+      }
     },
     "stats": {
       "activeCalls": "Active Calls",
@@ -887,16 +939,20 @@
     },
     "needsAttention": {
       "title": "Needs attention",
-      "empty": "Nothing needs your action right now."
+      "empty": "Nothing needs your action right now.",
+      "launchCampaign": "Launch a campaign",
+      "importContacts": "Import contacts"
     },
     "activity": {
       "selectWorkspace": "Select a workspace to see activity.",
-      "title": "Activity",
+      "title": "Today's activity",
+      "empty": "Activity will show as calls and messages come in.",
       "liveBadge": "Live",
       "statCalls7d": "calls (7d)",
       "statAnswered": "answered",
       "statNewLeads": "new leads",
       "statAppts": "appts",
+      "setupAgent": "View your agents →",
       "filters": {
         "all": "All",
         "needs_action": "Needs action",
@@ -930,30 +986,26 @@
       "viewDetails": "View details",
       "markDone": "Mark done",
       "requiresAttention": "Requires attention",
-      "callFailed": "Call failed",
-      "empty": "Activity will show as calls and messages come in."
+      "callFailed": "Call failed"
     },
     "minutesUsed": "You've used",
     "minutesThisMonth": "minutes this month.",
     "revenueLabel": "Revenue recovered",
     "minutesLabel": "Minutes",
-    "getStarted": "Get started",
-    "onboarding": {
-      "connectNumber": {
-        "title": "Connect a number",
-        "description": "Set up your phone number to start receiving calls"
-      },
-      "configureAgent": {
-        "title": "Configure your agent",
-        "description": "Customize how your AI handles calls"
-      },
-      "makeTestCall": {
-        "title": "Make a test call",
-        "description": "Call your number from any phone to test it"
-      }
-    },
     "viewAll": "View all",
-    "activeCampaigns": "Active outbound campaigns",
+    "activeCampaigns": {
+      "title": "Active Campaigns",
+      "create": "Create campaign",
+      "noCampaigns": "No active campaigns. Launch one from Campaigns.",
+      "status": {
+        "active": "Active",
+        "paused": "Paused",
+        "draft": "Draft",
+        "completed": "Completed"
+      },
+      "contacted": "contacted",
+      "converted": "converted"
+    },
     "actions": {
       "refresh": "Refresh",
       "updatedAt": "Updated",
@@ -1742,9 +1794,9 @@
       "stepOf": "Step {step} of {total}",
       "tellUsAboutBusiness": "Tell us about your business",
       "businessName": "Business name",
-      "businessNamePlaceholder": "Acme Plumbing",
+      "businessNamePlaceholder": "Your business name",
       "websiteOptional": "Website (optional)",
-      "websitePlaceholder": "acmeplumbing.com",
+      "websitePlaceholder": "yourbusiness.com",
       "industry": "Industry",
       "industries": {
         "home_services": "Home Services",
@@ -2083,7 +2135,19 @@
     "createCampaign": "Create campaign →",
     "noWorkspace": "No workspace selected",
     "selectWorkspace": "Select a workspace to view your dashboard.",
-    "dashboard": "Dashboard"
+    "errors": {
+      "loadFailed": "Dashboard data could not be loaded",
+      "loadFailedDesc": "Showing empty values."
+    },
+    "usageWarning": {
+      "limitReached": "Minute limit reached",
+      "approaching": "Approaching minute limit",
+      "used": "{minutes_used} of {minutes_limit} minutes used this cycle.",
+      "buyMore": "Buy more minutes",
+      "manage": "Manage usage"
+    },
+    "dashboard": "Dashboard",
+    "title": "Reseller Dashboard"
   },
   "analytics": {
     "pageTitle": "Analytics — Recall Touch",
@@ -2244,8 +2308,8 @@
   },
   "agents": {
     "pageTitle": "Agents — Recall Touch",
-    "pageHeading": "AI Agents",
-    "pageSubtitle": "Different agents for daytime, after-hours, emergencies, and follow-up.",
+    "pageHeading": "Your autonomous revenue agents",
+    "pageSubtitle": "AI agents working around the clock to recover revenue and book appointments",
     "createAgent": "Create Agent",
     "callVolumeByDay": "Call volume by day",
     "title": "Agents",
@@ -2430,7 +2494,7 @@
       "customRuleLabel": "Add custom rule",
       "customRulePlaceholder": "Add custom rule… (press Enter)",
       "transferPhoneLabel": "Transfer to this number when escalating",
-      "transferPhonePlaceholder": "+1 (555) 000-0000",
+      "transferPhonePlaceholder": "Your phone number",
       "objectionPriceLabel": "Price objection",
       "objectionPricePlaceholder": "I understand budget is important. Our clients typically see ROI within the first month...",
       "objectionTimingLabel": "\"Not the right time\"",
@@ -2983,7 +3047,7 @@
     "whenCallerSays": "When caller says…",
     "callThisNumber": "→ Call this number",
     "transferRulePhrasePlaceholder": "e.g., emergency, billing, new patient",
-    "transferRulePhonePlaceholder": "(503) 555-0199",
+    "transferRulePhonePlaceholder": "Your phone number",
     "afterHoursBehaviorLabel": "After-hours behavior",
     "afterHoursBehaviorAria": "After-hours behavior",
     "afterHoursOptionMessages": "Take message and notify",
@@ -3214,6 +3278,7 @@
       "pageTitle": "Call Details",
       "backToCalls": "Back to Calls",
       "breadcrumbDetail": "Call Detail",
+      "breadcrumbCalls": "Calls",
       "notFound": "Call not found",
       "playAria": "Play",
       "pauseAria": "Pause",
@@ -3224,7 +3289,7 @@
       "sentiment": "Sentiment:",
       "outcome": "Outcome:",
       "duration": "Duration",
-      "viewLead": "View lead details →",
+      "viewLead": "View lead",
       "recording": "Recording",
       "transcript": "Transcript",
       "transcriptDesc": "Transcript (AI-processed, caller and agent turns)",
@@ -3249,25 +3314,8 @@
       "callSummary": "Call summary",
       "recommendedFollowUp": "Recommended follow-up",
       "followUpInInbox": "Follow up in inbox",
-      "viewLead": "View lead",
       "noTranscriptAvailable": "No transcript available for this call.",
       "contact": "Contact",
-      "calls": {
-        "detail": {
-          "notFound": "Call not found",
-          "pageTitle": "Call Details",
-          "speakerAgent": "Agent",
-          "backToCalls": "Back to Calls",
-          "breadcrumbDetail": "Call Detail"
-        },
-        "defaultCaller": "Caller"
-      },
-      "common": {
-        "back": "Back"
-      },
-      "nav": {
-        "calls": "Calls"
-      },
       "speakerCaller": "Caller",
       "status": "Status",
       "summary": "Summary",
@@ -3324,7 +3372,9 @@
     "toast": {
       "exportSuccess": "Calls exported. Check your downloads.",
       "openingSms": "Opening SMS...",
-      "noPhoneForSms": "No phone number available for this call"
+      "noPhoneForSms": "No phone number available for this call",
+      "flagRemoved": "Flag removed",
+      "flagged": "Call flagged for review"
     },
     "live": {
       "selectWorkspace": "Select a workspace to view live calls.",
@@ -3348,8 +3398,8 @@
       "whisperComingSoon": "Whisper mode requires an active call.",
       "bargeInComingSoon": "Barge in requires an active call."
     },
-    "emptyDescription": "Empty description",
-    "emptyTitle": "Empty title",
+    "emptyDescription": "Calls will appear here once your AI agent starts handling calls.",
+    "emptyTitle": "No calls yet",
     "testCall": "Test call"
   },
   "callIntelligence": {
@@ -3491,7 +3541,7 @@
     "emergencyKeywordsHelp": "Comma-separated. Calls with these words are flagged as urgent.",
     "transferNumber": "Transfer number",
     "transferNumberHelp": "When callers ask for a real person, your AI transfers to this number.",
-    "transferNumberPlaceholder": "(503) 555-0101",
+    "transferNumberPlaceholder": "Your phone number",
     "saveChanges": "Save changes",
     "savingChanges": "Saving…",
     "businessHoursNote": "Business hours are set to your workspace timezone. Contact support to customize your schedule.",
@@ -3728,7 +3778,7 @@
     },
     "unknownLead": "Unknown Lead",
     "emptyTitle": "Import contacts or add manually",
-    "emptySubtitle": "Import contacts or add manually",
+    "emptySubtitle": "Your leads will appear here as calls come in, or you can import a CSV to get started.",
     "importCsv": "Import CSV",
     "addContact": "Add Contact",
     "errors": {
@@ -3760,6 +3810,7 @@
     "testButton": "Test",
     "noEntries": "No entries found",
     "noEntriesHint": "Try adjusting your filters.",
+    "quickStartButton": "Quick start: Add common Q&As",
     "addFirst": "Add your first entry",
     "importHeading": "Turn your website into call-ready knowledge",
     "importDescription": "Paste a public FAQ, services, or pricing page. We'll suggest Q&A pairs you can add.",
@@ -3851,12 +3902,27 @@
       "back": "Back to campaigns",
       "title": "Create campaign",
       "subtitle": "Choose a type, audience, sequence, schedule, then launch.",
+      "modes": {
+        "power": {
+          "label": "Power",
+          "description": "Maximum calls, aggressive dialing strategy"
+        },
+        "preview": {
+          "label": "Preview",
+          "description": "Preview mode, one call at a time"
+        },
+        "progressive": {
+          "label": "Progressive",
+          "description": "Gradual ramp-up based on performance"
+        }
+      },
       "steps": {
         "type": "Type",
         "audience": "Audience",
         "sequence": "Sequence",
         "schedule": "Schedule",
-        "review": "Review"
+        "review": "Review",
+        "details": "Campaign Details"
       },
       "type": {
         "heading": "Campaign type",
@@ -3911,11 +3977,15 @@
         "saveDraft": "Save as draft",
         "launch": "Launch campaign",
         "saving": "Saving…",
-        "launching": "Launching…"
+        "launching": "Launching…",
+        "confirmLaunch": "Launch this campaign?",
+        "confirmLaunchDesc": "Once launched, your AI will begin contacting leads in this campaign.",
+        "confirm": "Confirm & Launch"
       },
       "errors": {
         "noWorkspace": "Workspace not available.",
-        "createFailed": "Could not create campaign."
+        "createFailed": "Could not create campaign.",
+        "emptyTemplate": "Please select a campaign template"
       },
       "toast": {
         "saved": "Campaign saved as draft.",
@@ -4048,6 +4118,8 @@
     "heading": "Campaigns",
     "description": "Reach your leads with automated outbound calls and messages.",
     "defaults": {
+      "campaignName": "Missed-call recovery",
+      "smsTemplate": "Hi {firstName}, this is {businessName}. We noticed you recently reached out — I'd love to help you get started. Would you have a few minutes to chat?",
       "audience": "Leads waiting on follow-up",
       "template": "Just checking in after your last conversation. Reply here if you want to continue.",
       "followupAudience": "Leads waiting on follow-up",
@@ -4142,12 +4214,23 @@
       "launchedWithCount": "Campaign launched. {count} contacts queued.",
       "deleted": "Campaign deleted.",
       "deleteFailed": "Could not delete campaign.",
-      "duplicated": "Campaign duplicated."
+      "duplicated": "Campaign duplicated.",
+      "exported": "Campaigns exported successfully",
+      "exportFailed": "Failed to export campaigns"
     },
     "body": "Body",
     "duplicate": "Duplicate",
     "deleteConfirmTitle": "Delete this campaign?",
-    "deleteConfirmMessage": "Are you sure you want to delete \"{name}\"? This cannot be undone."
+    "deleteConfirmMessage": "Are you sure you want to delete \"{name}\"? This cannot be undone.",
+    "export": "Export",
+    "exportTooltip": "Export campaigns to CSV",
+    "overallConversion": "Overall conversion",
+    "appointmentsBooked": "booked",
+    "dailyUsage": "Daily",
+    "dailyLimitReached": "— limit reached, resumes tomorrow",
+    "answerRate": "Answer rate",
+    "booked": "Booked",
+    "conversionRate": "Conversion rate"
   },
   "settings": {
     "pageTitle": "Settings — Recall Touch",
@@ -4175,25 +4258,25 @@
     "links": {
       "business": {
         "label": "Business settings",
-        "desc": "Business name, address, website, timezone, industry"
+        "desc": "Company identity, industry, and revenue targets"
       },
       "phone": {
         "label": "Phone & numbers",
-        "desc": "Buy numbers, forwarding status, caller ID, routing",
+        "desc": "Phone number and call routing configuration",
         "required": "(Required for calls)"
       },
       "agent": {
         "label": "AI agent configuration",
-        "desc": "Voice, greeting, behavior, knowledge, languages",
+        "desc": "Voice agent personality, script, and intelligence settings",
         "required": "(Required)"
       },
       "callRules": {
         "label": "Call rules",
-        "desc": "Hours, after-hours behavior, emergency, transfer logic"
+        "desc": "Call hours, retry logic, and escalation rules"
       },
       "outbound": {
         "label": "Outbound settings",
-        "desc": "Calling hours, voicemail behavior, limits, suppression, DNC"
+        "desc": "Outbound calling strategy and dialer settings"
       },
       "team": {
         "label": "Team & permissions",
@@ -4201,23 +4284,23 @@
       },
       "notifications": {
         "label": "Notifications",
-        "desc": "Alerts for new calls, leads, appointments, unanswered calls"
+        "desc": "Real-time alerts for revenue events and agent activity"
       },
       "leadScoring": {
         "label": "Lead scoring",
-        "desc": "Weights for scoring leads from calls and interactions"
+        "desc": "Scoring rules that prioritize high-value opportunities"
       },
       "integrations": {
         "label": "Integrations",
-        "desc": "Calendar, CRM, webhooks, Slack, Zapier"
+        "desc": "Connected tools and data sync configuration"
       },
       "billing": {
         "label": "Billing & plans",
-        "desc": "Current plan, usage, invoices, cancellation"
+        "desc": "Plan, usage, and ROI tracking"
       },
       "compliance": {
         "label": "Compliance",
-        "desc": "Recording consent, do-not-call, regional rules"
+        "desc": "DNC rules, consent tracking, and regulatory compliance"
       },
       "activity": {
         "label": "Activity log",
@@ -4336,7 +4419,7 @@
       },
       "customQuestionsPlaceholder": "Question",
       "customAnswerPlaceholder": "Expected answer",
-      "transferNumberPlaceholder": "+1 (555) 000-0000",
+      "transferNumberPlaceholder": "Your phone number",
       "objectionsPlaceholder": "Objection",
       "responsePlaceholder": "Response",
       "behaviorSectionTitle": "Behavior & Qualification",
@@ -4371,6 +4454,9 @@
       "saving": "Saving…",
       "toast": {
         "saved": "Outbound settings saved."
+      },
+      "error": {
+        "generic": "Something went wrong saving outbound settings."
       },
       "callingHours": {
         "heading": "Calling hours",
@@ -4430,7 +4516,9 @@
       "title": "Phone & numbers",
       "searchFailed": "Failed to search available numbers. Please try again.",
       "provisionFailed": "Failed to provision phone number. Please try again.",
-      "provisioned": "Phone number provisioned successfully!"
+      "provisioned": "Phone number provisioned successfully!",
+      "paymentRequired": "Please add a payment method before purchasing a number.",
+      "subscriptionRequired": "An active subscription is required to buy phone numbers."
     },
     "integrations": {
       "title": "Integrations",
@@ -4439,6 +4527,13 @@
       "breadcrumbIntegrations": "Integrations",
       "breadcrumbSettings": "Settings",
       "crmFallback": "CRM",
+      "providers": {
+        "hubspot": "HubSpot",
+        "salesforce": "Salesforce",
+        "zoho_crm": "Zoho CRM",
+        "google_contacts": "Google Contacts",
+        "microsoft_365": "Microsoft 365"
+      },
       "defaultsLoaded": "Default mappings loaded",
       "loadDefaults": "Load defaults",
       "mappingBreadcrumb": "Field Mapping",
@@ -4513,6 +4608,9 @@
       "backToSettings": "← Settings",
       "memberYouOwner": "You (Owner)",
       "statusActive": "Active",
+      "statusPending": "Pending",
+      "statusInvited": "Invited",
+      "statusInactive": "Inactive",
       "roleUpdatedToast": "Role updated",
       "confirmRemove": "Are you sure you want to remove this team member?",
       "memberRemovedToast": "Team member removed",
@@ -4560,6 +4658,7 @@
       "recordingSaved": "Recording consent settings saved.",
       "saveFailed": "Failed to save compliance settings. Please try again.",
       "saved": "Compliance settings saved.",
+      "saving": "Saving…",
       "csvExport": {
         "setting": "Setting",
         "value": "Value",
@@ -4645,7 +4744,7 @@
       "heading": "Business",
       "description": "Your business details help your AI answer calls accurately.",
       "nameLabel": "Business name",
-      "namePlaceholder": "Acme Plumbing",
+      "namePlaceholder": "Your business",
       "addressLabel": "Address",
       "addressPlaceholder": "123 Main St, Portland, OR",
       "websiteLabel": "Website",
@@ -4754,6 +4853,9 @@
     "support": {
       "requestSubmitted": "Your request has been submitted. Our team will contact you within 24 hours.",
       "requestFailed": "Could not submit request. Please email support@recall-touch.com directly."
+    },
+    "error": {
+      "generic": "Something went wrong. Please try again."
     }
   },
   "hero": {
@@ -4874,7 +4976,7 @@
       "badgeGdpr": "GDPR ready",
       "badgeEncryption": "256-bit encryption",
       "badgeUptime": "24/7 availability",
-      "ctaStartFree": "Start free →",
+      "ctaStartFree": "Get started →",
       "complianceAndSecurity": "Compliance & Security",
       "optionalUpdates": "Optional: get product updates.",
       "notifyMe": "Notify me",
@@ -4892,7 +4994,7 @@
     "reengageAll": "Re-engage All Pending",
     "namePlaceholder": "Lead name",
     "email": "email@example.com",
-    "phone": "+1 (555) 000-0000",
+    "phone": "+1 (000) 000-0000",
     "processing": "Processing...",
     "confirm": "Confirm",
     "stats": {
@@ -5033,7 +5135,7 @@
     "getThisForYourNumber": "Get this for your number →",
     "watchSampleCall": "Watch a sample call",
     "watchSampleCallDesc": "Starts automatically when this section loads, then shows the captured result.",
-    "startFreeSetup": "Start free → 5 minute setup",
+    "startFreeSetup": "Get started → 5 minute setup",
     "metaTitle": "Try the AI",
     "metaDescription": "Talk to your AI. Right now. Same AI that handles real calls."
   },
@@ -5065,7 +5167,7 @@
     "supportDesc": "Need help with your account, technical issues, or billing?",
     "emailSupport": "Email support →",
     "scheduleCall": "Schedule a call →",
-    "startFree": "Start free →",
+    "startFree": "Get started →",
     "backToHome": "Back to home"
   },
   "productPage": {
@@ -5178,7 +5280,7 @@
       "cta": {
         "text": "Ready to make this your phone line?",
         "ariaLabel": "Open interactive call demo",
-        "button": "Start free →"
+        "button": "Get started →"
       },
       "useCases": {
         "missedCall": {
@@ -5349,7 +5451,7 @@
         }
       },
       "cta": {
-        "button": "Start free →"
+        "button": "Get started →"
       }
     },
     "whoUses": {
@@ -5598,7 +5700,7 @@
       "heading": "Your AI phone team starts in 5 minutes",
       "subheading": "Set up in 5 minutes. Answer every call. Cancel anytime.",
       "buttons": {
-        "start": "Start free →",
+        "start": "Get started →",
         "demo": "Book a demo →"
       },
       "note": "Works for calls, texts, scheduling, follow-ups, and campaigns. One platform.",
@@ -5608,7 +5710,7 @@
     },
     "scrollCta": {
       "message": "Your next customer could be calling. Ready?",
-      "button": "Start free →",
+      "button": "Get started →",
       "dismiss": "Dismiss"
     },
     "trust": {
@@ -5824,6 +5926,64 @@
           "label": "Revenue Recovered",
           "desc": "From calls that used to go to voicemail"
         }
+      }
+    },
+    "trustedBy": {
+      "heading": "Trusted across industries",
+      "rating": "4.9/5 average rating"
+    },
+    "results": {
+      "label": "Proven Results",
+      "title": "Metrics that matter",
+      "stats": {
+        "0": {
+          "label": "Revenue Recovered"
+        },
+        "1": {
+          "label": "Calls Handled"
+        },
+        "2": {
+          "label": "Average ROI"
+        },
+        "3": {
+          "label": "Response Time"
+        }
+      }
+    },
+    "testimonialsGrid": {
+      "label": "Success Stories",
+      "title": "What customers are saying",
+      "testimonials": {
+        "0": {
+          "quote": "Recall Touch transformed our missed call recovery. We went from losing 40% of inbound leads to capturing 97% with AI-powered follow-ups. Revenue increased 280% in the first quarter.",
+          "author": "Sarah Mitchell",
+          "role": "VP Sales",
+          "company": "TechScale Inc"
+        },
+        "1": {
+          "quote": "The real-time coaching feature alone is worth 10x the price. Our reps' close rates jumped from 12% to 31% within 60 days. The AI knows exactly when to suggest battlecards.",
+          "author": "Marcus Johnson",
+          "role": "Sales Director",
+          "company": "GrowthEngine"
+        },
+        "2": {
+          "quote": "We replaced 3 different tools with Recall Touch — dialer, coaching platform, and analytics suite. Saved $4,200/month while getting better results. The ROI is undeniable.",
+          "author": "Jennifer Park",
+          "role": "CRO",
+          "company": "RevenuePro Solutions"
+        }
+      }
+    },
+    "comparisonTable": {
+      "title": "Why teams switch to Recall Touch",
+      "features": {
+        "0": "AI Voice Agent",
+        "1": "Real-time Coaching",
+        "2": "Sentiment Analysis",
+        "3": "Appointment Booking",
+        "4": "Missed Call Recovery",
+        "5": "Setup Time",
+        "6": "Starting Price"
       }
     },
     "voicePreview": {
@@ -6544,7 +6704,7 @@
     "addressPlaceholder": "123 Main St, City, State",
     "addressHint": "This helps your AI answer \"Where are you located?\" and give directions.",
     "phoneLabel": "Phone number (we'll send a code to verify)",
-    "phonePlaceholder": "+1 (555) 000-0000",
+    "phonePlaceholder": "+1 (000) 000-0000",
     "chooseSoundsHeading": "Choose how your AI sounds",
     "previewVoiceAria": "Preview {name}",
     "selected": "✓ Selected",
@@ -6574,8 +6734,8 @@
     "step1Subtitle": "This takes about 5 minutes.",
     "yourNameLabel": "Your name",
     "yourNamePlaceholder": "Jane",
-    "businessNamePlaceholderShort": "Acme Plumbing",
-    "phonePlaceholderShort": "(555) 123-4567",
+    "businessNamePlaceholderShort": "Your business",
+    "phonePlaceholderShort": "e.g. (503) 123-4567",
     "businessTypeLabel": "What type of business?",
     "industries": {
       "home_services": "Home Services",
@@ -6776,7 +6936,8 @@
     "testFailed": "Test failed",
     "title": "Errors",
     "unauthorized": "Unauthorized",
-    "updateFailed": "Update failed"
+    "updateFailed": "Update failed",
+    "emptyTemplate": "At least one message template is required."
   },
   "forms": {
     "validation": {
@@ -6907,7 +7068,7 @@
     "stepsHeading": "Three steps to revenue operations on autopilot.",
     "capabilitiesLabel": "Key capabilities",
     "roiLabel": "ROI",
-    "ctaStartFree": "Start free →",
+    "ctaStartFree": "Get started →",
     "ctaWatchDemo": "Watch the demo →",
     "ctaPricing": "See pricing →",
     "problemHeading": "Every unanswered call costs {industry} businesses revenue.",
@@ -7163,11 +7324,13 @@
     "empty": {
       "title": "No conversations yet",
       "body": "When your AI starts texting and messaging contacts, every conversation will appear here.",
-      "action": "Review recent activity"
+      "action": "Review recent activity",
+      "viewContacts": "View Contacts"
     },
     "errors": {
       "unauthorized": "Unauthorized. Please log in again.",
-      "loadFailed": "Failed to load contacts. Using cached data."
+      "loadFailed": "Failed to load contacts. Using cached data.",
+      "conversationLoadFailed": "Unable to load conversations. Please try again."
     }
   },
   "developer": {
@@ -7495,6 +7658,21 @@
       "score": "Score",
       "name": "Name"
     },
+    "bulk": {
+      "selectAll": "Select all",
+      "clear": "Clear",
+      "export": "Export",
+      "changeStatus": "Change Status"
+    },
+    "status": {
+      "new": "New",
+      "contacted": "Contacted",
+      "qualified": "Qualified",
+      "appointment_set": "Appointment Set",
+      "won": "Won",
+      "lost": "Lost",
+      "vip": "VIP"
+    },
     "tabs": {
       "all": "All",
       "leads": "Leads",
@@ -7515,7 +7693,7 @@
       "lastNameLabel": "Last name*",
       "lastNamePlaceholder": "Johnson",
       "phoneLabel": "Phone*",
-      "phonePlaceholder": "(503) 555-0199",
+      "phonePlaceholder": "Your phone number",
       "emailLabel": "Email",
       "emailPlaceholder": "name@email.com",
       "typeLabel": "Type",
@@ -7550,7 +7728,10 @@
       "updateError": "Could not update contact. Try again.",
       "workspaceNotLoaded": "Workspace not loaded. Please refresh.",
       "contactSaveDisplayFailed": "Contact saved but could not display. Please refresh.",
-      "networkError": "Network error. Please try again."
+      "networkError": "Network error. Please try again.",
+      "selected": "selected",
+      "bulkStatusUpdated": "Status updated for selected contacts",
+      "exportedSelected": "Selected contacts exported"
     },
     "detail": {
       "back": "Back to contacts",
@@ -7651,9 +7832,38 @@
       "body": "As your AI books on your calendar, every appointment will show up here.",
       "action": "Open agent settings"
     },
+    "loading": "Loading appointments...",
     "loadError": "Failed to load appointments",
     "retry": "Retry",
-    "viewCalls": "View Calls"
+    "viewCalls": "View Calls",
+    "getStartedTitle": "Get started with appointments",
+    "getStartedDesc": "Your AI agent will book appointments automatically during calls. Here's how to set up:",
+    "connectCalendar": "Connect your Google Calendar or Outlook",
+    "configureRules": "Configure call rules and business hours",
+    "trainAgent": "Train your agent to handle booking requests",
+    "actions": {
+      "cancel": "Cancel",
+      "cancelAppointment": "Cancel Appointment",
+      "cancelConfirmText": "Are you sure? This cannot be undone.",
+      "cancelFailed": "Failed to cancel appointment",
+      "cancelSuccess": "Appointment cancelled",
+      "cancelling": "Cancelling...",
+      "confirmCancel": "Cancel Appointment",
+      "date": "Date",
+      "keep": "Keep",
+      "pickNewDateTime": "Pick new date & time",
+      "reminderFailed": "Failed to send reminder",
+      "reminderSuccess": "Reminder sent",
+      "reschedule": "Reschedule",
+      "rescheduleConfirm": "Reschedule",
+      "rescheduleError": "Please select date and time",
+      "rescheduleFailed": "Failed to reschedule",
+      "rescheduleSuccess": "Appointment rescheduled",
+      "rescheduling": "Rescheduling...",
+      "sendReminder": "Send Reminder",
+      "sending": "Sending...",
+      "time": "Time"
+    }
   },
   "continuity": {
     "calmLine": "Decisions remain on track."
@@ -7756,7 +7966,7 @@
       "solutions": "Solutions",
       "dedicatedGuide": "Dedicated guide in the works",
       "description": "We're building a dedicated page for this industry. Get started now and set up your AI phone agent in 5 minutes.",
-      "startFreeCta": "Start free →",
+      "startFreeCta": "Get started →",
       "linkPlumbing": "Plumbing & HVAC",
       "linkDental": "Dental",
       "linkLegal": "Legal",
@@ -7779,9 +7989,9 @@
     "formBusinessType": "What type of business?",
     "namePlaceholder": "Jane Smith",
     "and": "and",
-    "businessPlaceholder": "Acme Plumbing",
+    "businessPlaceholder": "Your business name",
     "emailPlaceholder": "you@company.com",
-    "phonePlaceholder": "(555) 123-4567",
+    "phonePlaceholder": "e.g. (503) 123-4567",
     "websitePlaceholder": "https://yourbusiness.com",
     "businessTypeHomeServices": "Home Services",
     "businessTypeHealthcare": "Healthcare",
@@ -7845,7 +8055,7 @@
       "businessNameLabel": "Business name",
       "businessNamePlaceholder": "Acme Co",
       "businessPhoneLabel": "Business phone number",
-      "businessPhonePlaceholder": "(555) 123-4567",
+      "businessPhonePlaceholder": "e.g. (503) 123-4567",
       "whatWillAiDoLabel": "What will your AI do?",
       "orgTypeLabel": "Type of organization",
       "industryLabel": "Industry (optional — helps us suggest a template)",
@@ -7939,7 +8149,17 @@
       "setupFailed": "Something went wrong setting up your workspace. Please try again.",
       "connectionError": "Connection error. Please check your internet and try again.",
       "title": "Setup Error",
-      "dismiss": "Dismiss"
+      "dismiss": "Dismiss",
+      "timeout": "The request timed out. Please try again."
+    },
+    "plan": "Plan",
+    "planSelection": {
+      "title": "Choose Your Plan",
+      "subtitle": "Get started today and upgrade or downgrade anytime.",
+      "perMonth": "/month",
+      "getStartedLabel": "Get started today",
+      "mostPopular": "Most Popular",
+      "selected": "Selected"
     }
   },
   "onboard": {
@@ -8049,7 +8269,7 @@
         "step4": "Add or verify your Recall Touch number; forward your existing number to it if needed.",
         "step5Label": "Test call",
         "step5": "Use the Test tab on the Agents page to place a real call and confirm everything works.",
-        "cta": "Start free →"
+        "cta": "Get started →"
       },
       "callForwarding": {
         "title": "Call Forwarding",
@@ -8220,7 +8440,7 @@
     "heading": "Phone numbers",
     "description": "Manage your workspace numbers and connect your AI.",
     "connectTitle": "Connect your phone number",
-    "connectDescription": "Legacy connection and forwarding. Your AI receives calls on the number above or via phone_config.",
+    "connectDescription": "Connect your existing business number. Your AI receives calls on your dedicated number above, or you can forward calls from your current line.",
     "optionA": "Option A — Your AI number",
     "optionB": "Option B — Forward your existing number",
     "optionBDesc": "Keep your current number. Forward unanswered calls to your AI number below.",
@@ -8249,8 +8469,8 @@
     "verifyBySms": "Verify a number by SMS",
     "verifyBySmsDesc": "We'll send a 6-digit code to confirm you own this number. Useful for forwarding numbers.",
     "yourPhoneNumber": "Your phone number",
-    "testCallNumberPlaceholder": "(555) 123-4567",
-    "verifyPhonePlaceholder": "+1 (555) 000-0000",
+    "testCallNumberPlaceholder": "Your phone number",
+    "verifyPhonePlaceholder": "Your phone number",
     "verificationCodePlaceholder": "000000",
     "att": "AT&T",
     "verizon": "Verizon",
@@ -8446,7 +8666,7 @@
       "requestReceivedBody": "Our team will review your port request and email you with next steps and an estimated timeline.",
       "backToPhoneSettings": "Back to Phone settings",
       "step1Title": "Step 1 — Number and carrier",
-      "numberPlaceholder": "+1 (555) 123-4567",
+      "numberPlaceholder": "+1 (000) 000-0000",
       "carrierPlaceholder": "e.g. AT&T, Verizon",
       "step2Title": "Step 2 — Letter of Authorization (LOA)",
       "step2Body": "Upload a signed LOA from your current carrier. Required for porting.",
@@ -8492,7 +8712,15 @@
       "syncStarted": "Sync started for {count} leads",
       "syncStartedNoCount": "Sync started",
       "contactsImported": "{count} contacts imported",
-      "crmDisconnected": "{provider} disconnected."
+      "crmDisconnected": "{provider} disconnected.",
+      "oauthPending": "Authorization in progress — complete it in the popup window."
+    },
+    "connectOutlook": "Connect Outlook",
+    "dialog": {
+      "disconnectTitle": "Disconnect integration?",
+      "disconnectDesc": "This will stop syncing data. You can reconnect anytime.",
+      "cancel": "Cancel",
+      "disconnect": "Disconnect"
     },
     "hub": {
       "title": "Integrations",
@@ -8582,7 +8810,7 @@
     "status": {
       "connected": "Connected",
       "disconnected": "Not connected",
-      "beta": "Beta"
+      "beta": ""
     },
     "lastSync": "Last sync",
     "button": {
@@ -8678,9 +8906,9 @@
     },
     "empty": {
       "templatesTitle": "No sequences yet.",
-      "templatesBody": "",
+      "templatesBody": "Get started with a pre-built template or create your own.",
       "activeTitle": "No sequences yet.",
-      "activeBody": ""
+      "activeBody": "Active sequences will appear here once you enroll contacts."
     },
     "createPage": {
       "back": "Back to follow-ups",
@@ -8723,7 +8951,8 @@
       },
       "errors": {
         "createFailed": "Could not create sequence.",
-        "stepFailed": "Could not add a step."
+        "stepFailed": "Could not add a step.",
+        "generic": "Something went wrong creating the follow-up. Please try again."
       },
       "toast": {
         "saved": "Sequence saved."
@@ -8731,7 +8960,18 @@
     },
     "loadError": "Failed to load follow-up sequences",
     "pauseSequence": "Pause sequence",
-    "resumeSequence": "Resume sequence"
+    "resumeSequence": "Resume sequence",
+    "error": {
+      "generic": "Something went wrong. Please try again."
+    },
+    "sequencePaused": "Sequence paused",
+    "pauseFailed": "Failed to pause sequence",
+    "sequenceResumed": "Sequence resumed",
+    "resumeFailed": "Failed to resume sequence",
+    "allPaused": "All sequences paused",
+    "pauseAll": "Pause all",
+    "allResumed": "All sequences resumed",
+    "resumeAll": "Resume all"
   },
   "api": {
     "errors": {
@@ -8812,7 +9052,9 @@
     "noTags": "No tags",
     "quickStart": "Quick Start",
     "sdkExamples": "SDK Examples",
-    "workspaceNote": "Workspace"
+    "workspaceNote": "Workspace",
+    "fixPayment": "Fix payment →",
+    "upgradeCta": "Upgrade now →"
   },
   "help": {
     "breadcrumbs": {
@@ -9814,7 +10056,19 @@
     "titlePlaceholder": "Enter title",
     "type": "Type",
     "uploadFile": "Upload file",
-    "uploadHint": "Tip: upload"
+    "uploadHint": "Tip: upload",
+    "cancel": "Cancel",
+    "create": "Create",
+    "emailLabel": "Owner Email",
+    "nameLabel": "Sub-Account Name",
+    "planLabel": "Plan",
+    "plans": {
+      "enterprise": "Enterprise",
+      "professional": "Professional",
+      "standard": "Standard",
+      "starter": "Starter"
+    },
+    "title": "Create Sub-Account"
   },
   "modeStep": {
     "agency": "Agency",
@@ -10166,7 +10420,10 @@
     "saving": "Saving",
     "schedule": "Schedule",
     "steps": "Steps",
-    "type": "Type"
+    "type": "Type",
+    "confirm": "Confirm",
+    "confirmLaunch": "Launch campaign?",
+    "confirmLaunchDesc": "This will start sending immediately to all matched contacts."
   },
   "reviewStep": {
     "description": "Configure and manage review step",
@@ -10437,7 +10694,14 @@
     "appliedToAgent": "Applied to agent",
     "avgQuality": "Avg quality",
     "callsAnalyzed": "Calls analyzed",
-    "insightsExtracted": "Insights extracted"
+    "insightsExtracted": "Insights extracted",
+    "active": "active",
+    "calls": "Total Calls",
+    "leads": "Total Leads",
+    "mrr": "MRR",
+    "revenue": "Monthly Revenue",
+    "subAccounts": "Total Sub-Accounts",
+    "thisMonth": "This month"
   },
   "status": {
     "active": "Active",
@@ -10445,7 +10709,13 @@
     "connected": "Connected",
     "disconnected": "Disconnected",
     "inactive": "Inactive",
-    "ready": "Ready"
+    "ready": "Ready",
+    "appointment_set": "Appointment Set",
+    "contacted": "Contacted",
+    "lost": "Lost",
+    "new": "New",
+    "qualified": "Qualified",
+    "won": "Won"
   },
   "statusFilter": {
     "active": "Active",
@@ -10826,5 +11096,49 @@
     "disclaimer": "Takes 30 seconds. Unsubscribe anytime.",
     "successTitle": "Check Your Email",
     "successSubtitle": "We've sent you the details for your free phone audit and full access."
-  }
+  },
+  "bulk": {
+    "changeStatus": "Change Status",
+    "clear": "Clear",
+    "export": "Export",
+    "selectAll": "Select All"
+  },
+  "pauseFailed": {},
+  "resumeFailed": {},
+  "ai": "AI:",
+  "allPaused": "All sequences paused",
+  "allResumed": "All sequences resumed",
+  "answerRate": "Answer rate",
+  "appointmentsBooked": "booked",
+  "back": "Back",
+  "booked": "Booked",
+  "bookedSuffix": "booked",
+  "callSummary": "Call summary",
+  "campaignRoi": "Performance",
+  "cloneComingSoon": "Custom voice cloning",
+  "connectOutlook": "Connect Outlook",
+  "contact": "Contact",
+  "continue": "Continue",
+  "conversionRate": "Conversion",
+  "conversionSuffix": "Conv",
+  "createButton": "Create Sub-Account",
+  "createTest": "Create A/B Test",
+  "dailyLimitReached": "— limit reached, resumes tomorrow",
+  "dailyUsage": "Daily",
+  "export": "Export",
+  "exportTooltip": "Export campaigns to CSV",
+  "loading": "Loading policies...",
+  "newTest": "New Test",
+  "outcome": "Outcome:",
+  "overallConversion": "Overall conversion",
+  "pauseAll": "Pause all",
+  "qualitySuffix": "Quality",
+  "recommendedFollowUp": "Recommended follow-up",
+  "recording": "Recording",
+  "resumeAll": "Resume all",
+  "sentiment": "Sentiment:",
+  "sequencePaused": "Sequence paused",
+  "sequenceResumed": "Sequence resumed",
+  "transcript": "Transcript",
+  "whatsappComingSoon": "Send and receive WhatsApp messages through your AI agent. Connect your WhatsApp Business account to get started."
 }

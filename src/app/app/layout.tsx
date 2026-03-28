@@ -87,7 +87,7 @@ async function getInitialShellData(defaultWorkspaceName: string): Promise<{
   ] = await Promise.all([
     db
       .from("workspaces")
-      .select("id, name, agent_name, knowledge_items, website, address, onboarding_completed_at, verified_phone")
+      .select("id, name, agent_name, knowledge_items, website, address, onboarding_completed_at, verified_phone, billing_status, billing_tier, trial_ends_at")
       .eq("id", workspaceId)
       .maybeSingle(),
     db.from("workspace_business_context").select("business_name").eq("workspace_id", workspaceId).maybeSingle(),
@@ -109,6 +109,9 @@ async function getInitialShellData(defaultWorkspaceName: string): Promise<{
     address?: string | null;
     verified_phone?: string | null;
     onboarding_completed_at?: string | null;
+    billing_status?: string | null;
+    billing_tier?: string | null;
+    trial_ends_at?: string | null;
   } | null;
 
   if (!row) {
@@ -160,6 +163,11 @@ async function getInitialShellData(defaultWorkspaceName: string): Promise<{
       },
       stats: {
         calls: callCount ?? 0,
+      },
+      billing: {
+        billing_status: row.billing_status ?? "trial",
+        billing_tier: row.billing_tier ?? "solo",
+        renewal_at: row.trial_ends_at ?? null,
       },
     },
   };

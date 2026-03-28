@@ -1,5 +1,5 @@
 import { getDb } from "@/lib/db/queries";
-import { BILLING_PLANS, type PlanSlug } from "@/lib/billing-plans";
+import { BILLING_PLANS, type PlanSlug, normalizeTier } from "@/lib/billing-plans";
 import { getStripe } from "@/lib/billing/stripe-client";
 
 /** Plan minute and SMS limits by tier (source of truth: BILLING_PLANS) */
@@ -70,7 +70,7 @@ interface DailyUsage {
 export function getUsageAlertLevel(pct: number): AlertLevel {
   if (pct > 100) return "exceeded";
   if (pct > 90) return "critical";
-  if (pct > 75) return "warning";
+  if (pct > 50) return "warning";
   return "normal";
 }
 
@@ -89,7 +89,7 @@ export async function checkUsageThresholds(workspaceId: string): Promise<UsageMe
     throw new Error("Workspace not found");
   }
 
-  const billingTier = ((ws as { billing_tier?: PlanSlug }).billing_tier ?? "solo") as PlanSlug;
+  const billingTier = normalizeTier((ws as { billing_tier?: string }).billing_tier);
   const limits = PLAN_LIMITS[billingTier];
 
   // Calculate minutes used this month
@@ -147,6 +147,7 @@ export async function checkUsageThresholds(workspaceId: string): Promise<UsageMe
   const overageVoiceMinutes = Math.max(0, voiceMinutesUsed - voiceMinutesLimit);
   const estimatedOverageCents =
     overageMinutes * limits.overage_cents_per_minute +
+    overageVoiceMinutes * limits.overage_cents_per_minute +
     overageSms * limits.sms_overage_cents;
 
   return {
@@ -239,12 +240,7 @@ export async function calculateOverageCharges(
   }
 
   const wsData = ws as { billing_tier?: string; stripe_subscription_id?: string | null };
-  const rawTier = (wsData.billing_tier ?? "solo").toLowerCase();
-  const tier: PlanSlug = (["solo", "business", "scale", "enterprise"] as const).includes(
-    rawTier as PlanSlug,
-  )
-    ? (rawTier as PlanSlug)
-    : "solo";
+  const tier = normalizeTier(wsData.billing_tier);
   const limits = PLAN_LIMITS[tier];
 
   // Calculate minutes used in billing period
@@ -308,16 +304,21 @@ export async function calculateOverageCharges(
 
   const voiceMinutesLimit = (limits as { voice_minutes?: number }).voice_minutes ?? 0;
 
-  // Effective limits include purchased bonus minutes
-  const effectiveMinutesLimit = limits.minutes + bonusMinutes;
-  const effectiveVoiceLimit = voiceMinutesLimit + bonusMinutes;
-
-  const overageMinutes = Math.max(0, minutesUsed - effectiveMinutesLimit);
-  const overageVoiceMinutes = Math.max(0, voiceMinutesUsed - effectiveVoiceLimit);
+  // Calculate raw overage before bonus minutes
+  const rawMinutesOverage = Math.max(0, minutesUsed - limits.minutes);
+  const rawVoiceOverage = Math.max(0, voiceMinutesUsed - voiceMinutesLimit);
   const overageSms = Math.max(0, smsUsed - limits.sms);
 
-  // Deduct consumed bonus minutes from balance
-  const bonusMinutesConsumed = Math.min(bonusMinutes, Math.max(0, minutesUsed - limits.minutes) + Math.max(0, voiceMinutesUsed - voiceMinutesLimit));
+  // Apply bonus minutes as a shared pool: first to regular minutes overage, then voice
+  const bonusForRegular = Math.min(bonusMinutes, rawMinutesOverage);
+  const bonusRemaining = bonusMinutes - bonusForRegular;
+  const bonusForVoice = Math.min(bonusRemaining, rawVoiceOverage);
+
+  const overageMinutes = rawMinutesOverage - bonusForRegular;
+  const overageVoiceMinutes = rawVoiceOverage - bonusForVoice;
+
+  // Deduct consumed bonus minutes from balance (consumed once, not double-counted)
+  const bonusMinutesConsumed = bonusForRegular + bonusForVoice;
   if (bonusMinutesConsumed > 0) {
     try {
       await db
@@ -336,10 +337,10 @@ export async function calculateOverageCharges(
     return null;
   }
 
-  const overageAmountCents =
+  const overageAmountCents = Math.max(0,
     overageMinutes * limits.overage_cents_per_minute +
     overageVoiceMinutes * limits.overage_cents_per_minute +
-    overageSms * limits.sms_overage_cents;
+    overageSms * limits.sms_overage_cents);
 
   return {
     subscription_id: wsData.stripe_subscription_id,
@@ -379,19 +380,16 @@ export async function reportUsageOverage(
 
   if (overageMinutes <= 0 && overageVoiceMinutes <= 0 && overageSms <= 0) return;
 
-  const rawTier = (tier || "solo").toLowerCase();
-  const tierSlug: PlanSlug = (["solo", "business", "scale", "enterprise"] as const).includes(
-    rawTier as PlanSlug,
-  )
-    ? (rawTier as PlanSlug)
-    : "solo";
+  const tierSlug = normalizeTier(tier);
   const ratePerMin = PLAN_LIMITS[tierSlug].overage_cents_per_minute;
   const ratePerVoiceMin = PLAN_LIMITS[tierSlug].overage_cents_per_minute;
   const ratePerSms = PLAN_LIMITS[tierSlug].sms_overage_cents;
-  const overageAmountCents =
+  const overageAmountCents = Math.max(0,
     overageMinutes * ratePerMin +
     overageVoiceMinutes * ratePerVoiceMin +
-    overageSms * ratePerSms;
+    overageSms * ratePerSms);
+
+  if (overageAmountCents <= 0) return; // Safety: never charge zero or negative
 
   const subscription = await stripe.subscriptions.retrieve(subscriptionId);
   const customerId = subscription.customer as string;

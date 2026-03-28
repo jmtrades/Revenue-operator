@@ -10,6 +10,7 @@ import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 import { toast } from "sonner";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 type InboxChannel = "phone" | "sms" | "email" | "whatsapp";
 type InboxStatus = "Open" | "Resolved" | "Pending";
@@ -182,6 +183,12 @@ function ConversationList({
             <p className="text-xs text-[var(--text-secondary)] mb-4">
               {t("inbox.empty.body")}
             </p>
+            <Link
+              href="/app/agents"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--accent-primary)] px-4 py-2 text-sm font-semibold text-[var(--text-on-accent)] hover:opacity-90"
+            >
+              {t("inbox.empty.cta", { defaultValue: "Set up an agent to start receiving messages" })} →
+            </Link>
           </div>
         ) : filtered.map((thread, idx) => {
           const Icon = channelIcon(thread.channel);
@@ -548,7 +555,6 @@ export default function InboxPage() {
         }
       })
       .catch((err) => {
-        console.error("Inbox fetch error:", err);
         toast.error(t("inbox.loadFailed"));
       });
   }, [workspaceId]);
@@ -577,7 +583,6 @@ export default function InboxPage() {
           }
         })
         .catch((err) => {
-          console.error("Inbox fetch error:", err);
           toast.error(t("inbox.loadFailed"));
         });
     }, 30000); // Poll every 30 seconds
@@ -667,6 +672,17 @@ export default function InboxPage() {
     );
   };
 
+  if (!workspaceId) {
+    return (
+      <div className="p-4 md:p-6 max-w-4xl mx-auto">
+        <EmptyState
+          title="No workspace"
+          description="Select or create a workspace to view your inbox."
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <style>{`
@@ -686,7 +702,10 @@ export default function InboxPage() {
       `}</style>
       <div className="p-4 md:p-6 lg:p-8 h-full">
         <div className="flex items-center justify-between mb-2">
-          <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)]">{t("inbox.title")}</h1>
+          <div>
+            <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)]">{t("inbox.title")}</h1>
+            <p className="text-sm text-[var(--text-tertiary)]">Agent-managed conversations</p>
+          </div>
           {lastUpdated && (
             <motion.div
               initial={{ opacity: 0 }}
@@ -698,7 +717,9 @@ export default function InboxPage() {
             </motion.div>
           )}
         </div>
-        <p className="text-sm text-[var(--text-tertiary)] mb-4">{t("inbox.subtitle")}</p>
+        <p className="text-sm text-[var(--text-tertiary)] mb-4">
+          {threads.length > 0 ? `${threads.length} active revenue ${threads.length === 1 ? "conversation" : "conversations"}` : t("inbox.subtitle")}
+        </p>
         {/* Mobile layout */}
         <div className="md:hidden h-[calc(100vh-7rem)] border border-[var(--border-default)] rounded-2xl overflow-hidden">
           {mobileMode === "list" ? (

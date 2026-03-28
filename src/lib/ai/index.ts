@@ -46,6 +46,16 @@ export async function classifyIntent(
     };
   }
 
+  // Graceful degradation when OpenAI not configured
+  if (!process.env.OPENAI_API_KEY) {
+    return {
+      intent: "unknown",
+      confidence: 0,
+      mappedAction: null,
+      extraction: {},
+    };
+  }
+
   const openai = getOpenAI();
   const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
@@ -78,6 +88,15 @@ export async function generateResponse(
     state: LeadState;
   }
 ): Promise<GenerateResponseResult> {
+  // Graceful degradation when OpenAI not configured
+  if (!process.env.OPENAI_API_KEY) {
+    return {
+      content: "",
+      confidence: 0,
+      actionUsed: action,
+    };
+  }
+
   const openai = getOpenAI();
   const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
@@ -94,11 +113,28 @@ export async function generateResponse(
   });
 
   const content = completion.choices[0]?.message?.content ?? "";
-  // Use a simple heuristic for confidence - in production, use a separate classifier
-  const confidence = 0.78;
+
+  // Compute confidence from response quality signals
+  let confidence = 0.70; // Base confidence
+  const trimmed = content.trim();
+
+  // Higher confidence if response is substantive (not too short, not too long)
+  if (trimmed.length >= 20 && trimmed.length <= 500) confidence += 0.08;
+  // Higher confidence if action was clearly addressed
+  if (trimmed.toLowerCase().includes(action.replace(/_/g, " ").toLowerCase())) confidence += 0.05;
+  // Lower confidence if response contains hedging language
+  if (/\b(maybe|perhaps|i think|not sure|i'm not certain)\b/i.test(trimmed)) confidence -= 0.10;
+  // Higher confidence if response is direct and actionable
+  if (/\b(scheduled|booked|confirmed|sent|done|updated)\b/i.test(trimmed)) confidence += 0.07;
+  // Lower confidence for very short responses (may be incomplete)
+  if (trimmed.length < 10) confidence -= 0.15;
+  // Higher confidence from model finish_reason
+  if (completion.choices[0]?.finish_reason === "stop") confidence += 0.05;
+
+  confidence = Math.min(1, Math.max(0, Math.round(confidence * 100) / 100));
 
   return {
-    content: content.trim(),
+    content: trimmed,
     confidence,
     actionUsed: action,
   };

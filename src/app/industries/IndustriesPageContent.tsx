@@ -103,7 +103,7 @@ export default function IndustriesPageContent() {
                     transition: "transform 0.15s ease-[cubic-bezier(0.23,1,0.32,1)]",
                   }}
                 >
-                  Start free →
+                  Get started →
                 </Link>
               </div>
             </div>
@@ -119,7 +119,7 @@ export default function IndustriesPageContent() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <Link href={ROUTES.START} className="btn-marketing-primary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline active:scale-[0.97]" style={{ transition: "transform 0.15s ease-[cubic-bezier(0.23,1,0.32,1)]" }}>
-                    Start free →
+                    Get started →
                   </Link>
                   <Link href="/demo" className="btn-marketing-secondary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline active:scale-[0.97]" style={{ transition: "transform 0.15s ease-[cubic-bezier(0.23,1,0.32,1)]" }}>
                     Watch the demo →

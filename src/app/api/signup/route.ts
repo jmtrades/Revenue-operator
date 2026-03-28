@@ -13,6 +13,8 @@ import { getDb } from "@/lib/db/queries";
 import { getBaseUrl } from "@/lib/runtime/base-url";
 import { parseBody, emailSchema } from "@/lib/api/validate";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 const signupSchema = z.object({
   email: emailSchema,
@@ -25,6 +27,9 @@ const signupSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   try {
     const ip = getClientIp(req);
     const rl = await checkRateLimit(`signup:${ip}`, 5, 3600_000);
@@ -82,11 +87,12 @@ export async function POST(req: NextRequest) {
         method: "POST",
         headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({ from, to: email, subject: "Welcome to Recall Touch — set up in 5 minutes", html: welcomeHtml }),
-      }).catch((err) => { console.error("[signup] error:", err instanceof Error ? err.message : err); });
+      }).catch((err) => { log("error", "signup.email_send_error", { error: err instanceof Error ? err.message : String(err) }); });
     }
 
     return NextResponse.json({ ok: true });
-  } catch {
+  } catch (err) {
+    log("error", "signup.storage_error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ ok: false, error: "Signup storage unavailable" }, { status: 500 });
   }
 }

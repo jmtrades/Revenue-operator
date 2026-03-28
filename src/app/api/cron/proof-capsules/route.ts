@@ -8,13 +8,11 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { buildProofCapsuleForPeriod, saveProofCapsule } from "@/lib/proof-capsule-period";
-import { recordCronHeartbeat } from "@/lib/runtime";
+import { recordCronHeartbeat, assertCronAuthorized } from "@/lib/runtime";
 
 export async function GET(request: NextRequest) {
-  const auth = request.headers.get("authorization");
-  if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const authErr = assertCronAuthorized(request);
+  if (authErr) return authErr;
 
   const db = getDb();
   const { data: workspaces } = await db.from("workspaces").select("id");

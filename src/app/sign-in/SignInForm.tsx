@@ -85,7 +85,7 @@ export default function SignInForm() {
       const safeNext =
         nextUrl && nextUrl.startsWith("/") && !nextUrl.startsWith("//") ? nextUrl : null;
       const redirect =
-        safeNext || (d as { redirectTo?: string }).redirectTo || "/app/activity";
+        safeNext || (d as { redirectTo?: string }).redirectTo || "/app/dashboard";
       try {
         const payload = {
           email: email.trim().toLowerCase(),

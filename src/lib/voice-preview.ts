@@ -25,11 +25,15 @@ export async function speakTextViaApi(
     return { usedFallback: true };
   }
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout for voice preview
     const res = await fetch("/api/agent/speak", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: text.slice(0, 5000), voiceId: options?.voiceId }),
+      signal: controller.signal,
     });
+    clearTimeout(timeoutId);
     if (res.ok && res.body) {
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
@@ -41,14 +45,16 @@ export async function speakTextViaApi(
       };
       audio.onerror = () => {
         URL.revokeObjectURL(url);
+        // Fall back to browser TTS — let speakText handle onEnd via its own utterance events
         speakText(text, options);
-        options?.onEnd?.();
       };
       await audio.play();
       return { usedFallback: false };
     }
-  } catch {
-    // fall through to browser TTS
+  } catch (err) {
+    if (typeof console !== "undefined") {
+      console.warn("[voice-preview] API TTS failed, falling back to browser TTS:", err instanceof Error ? err.message : String(err));
+    }
   }
   speakText(text, options);
   return { usedFallback: true };

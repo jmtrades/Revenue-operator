@@ -67,13 +67,18 @@ export async function GET(req: NextRequest) {
       .in("entity_id", leadIds)
       .eq("action", "send_message");
 
+    // Calculate average follow-up delay: time between lead creation and first follow-up action
     let totalDelayHours = 0;
     let delayCount = 0;
     for (const a of actions ?? []) {
-      const created = (a as { created_at: string }).created_at;
-      if (created) {
-        totalDelayHours += 0;
-        delayCount++;
+      const actionCreated = (a as { created_at: string }).created_at;
+      const payload = (a as { payload?: { lead_created_at?: string } }).payload;
+      if (actionCreated && payload?.lead_created_at) {
+        const delayMs = new Date(actionCreated).getTime() - new Date(payload.lead_created_at).getTime();
+        if (delayMs > 0 && delayMs < 7 * 24 * 60 * 60 * 1000) { // Cap at 7 days
+          totalDelayHours += delayMs / (1000 * 60 * 60);
+          delayCount++;
+        }
       }
     }
     const avgFollowUpDelayHours = delayCount > 0 ? totalDelayHours / delayCount : 0;
