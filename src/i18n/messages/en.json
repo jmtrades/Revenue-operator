@@ -666,7 +666,8 @@
       "paused": "Coverage paused.",
       "paymentFailed": "Could not open payment settings.",
       "portalFailed": "Could not open billing portal.",
-      "minutesAdded": "{minutes} minutes added to your account!"
+      "minutesAdded": "{minutes} minutes added to your account!",
+      "stripeFailed": "Billing service temporarily unavailable. Please try again later."
     },
     "errors": {
       "loadingFailed": "Failed to load billing information",
@@ -716,7 +717,12 @@
     "pauseBullet1": "Your data and settings will be preserved",
     "pauseBullet2": "You can resume your subscription anytime",
     "pauseBullet3": "You'll receive reminder emails",
-    "securityNote": "Payments secured with 256-bit encryption via Stripe. We never store your card details."
+    "securityNote": "Payments secured with 256-bit encryption via Stripe. We never store your card details.",
+    "roiTitle": "Platform Return on Investment",
+    "trial": {
+      "title": "You're on a free trial",
+      "description": "Subscribe to a plan to keep your agents running after the trial ends. Your data and configuration will be preserved."
+    }
   },
   "planChange": {
     "title": "Change your plan",
