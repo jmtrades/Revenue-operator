@@ -408,9 +408,6 @@ export function UnifiedDashboard() {
               {t("subtitle", { defaultValue: "Your autonomous revenue operator, always on." })}
             </p>
           </div>
-          <p className="text-sm text-[var(--text-secondary)] mt-1">
-            {t("subtitle", { defaultValue: "Revenue recovery this month" })}
-          </p>
         </div>
         <div className="flex flex-col items-end gap-2">
           <div className="flex items-center gap-2">

@@ -880,15 +880,14 @@
       "afternoon": "Good afternoon",
       "evening": "Good evening"
     },
-    "subtitle": "Revenue recovery this month",
     "kpis": {
-      "callsHandled": "Calls handled",
+      "callsHandled": "Calls handled by agent",
       "answerRate": "Answer rate",
       "leadsCreated": "Leads created",
-      "appointmentsBooked": "Appointments booked",
+      "appointmentsBooked": "Revenue opportunities created",
       "revenueProtected": "Revenue protected",
-      "recovered": "Recovered",
-      "followUpsSent": "Follow-ups sent",
+      "recovered": "Agent revenue impact",
+      "followUpsSent": "Automated recovery actions",
       "minutes": "minutes"
     },
     "quickActions": {
@@ -2146,8 +2145,7 @@
       "buyMore": "Buy more minutes",
       "manage": "Manage usage"
     },
-    "dashboard": "Dashboard",
-    "title": "Reseller Dashboard"
+    "dashboard": "Dashboard"
   },
   "analytics": {
     "pageTitle": "Analytics — Recall Touch",
