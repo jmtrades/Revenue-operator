@@ -3250,7 +3250,7 @@
     "pageTitle": "Calls — Recall Touch",
     "title": "Calls",
     "heading": "Call log",
-    "description": "Every answered call, decision, and follow-up in one place.",
+    "description": "Full audit trail — every call your operator handled, every decision it made, every dollar it touched.",
     "liveLabel": "Live",
     "exportCsv": "Export CSV",
     "searchPlaceholder": "Search by caller or phone…",
@@ -3329,13 +3329,13 @@
       "noRecording": "No recording available"
     },
     "empty": {
-      "title": "Your AI is ready.",
-      "description": "Connect your number and it will answer every call within 3 seconds, 24/7.",
-      "connectNumber": "Connect Number",
-      "testAgent": "Test your agent",
-      "body": "Once your agents start handling calls, you'll see them all here.",
-      "emptyTitle": "Make your first test call",
-      "emptyDescription": "Choose a primary agent and place a quick test call to unlock call intelligence.",
+      "title": "Your operator is standing by.",
+      "description": "Connect your number and it answers every call in under 3 seconds — 24/7, no breaks, no missed revenue.",
+      "connectNumber": "Activate Coverage",
+      "testAgent": "Run a test call",
+      "body": "Every call your operator handles appears here with full intelligence: transcript, sentiment, revenue signals, and recommended next actions.",
+      "emptyTitle": "Place your first test call",
+      "emptyDescription": "One call unlocks the full intelligence layer — transcripts, sentiment, objections, and revenue attribution.",
       "testCall": "Test Call"
     },
     "table": {
@@ -3561,7 +3561,7 @@
   },
   "inbox": {
     "title": "Inbox",
-    "subtitle": "All conversations in one place.",
+    "subtitle": "Agent-managed conversations across every channel — unified, searchable, revenue-attributed.",
     "viewInLeads": "View in Leads",
     "pageTitle": "Inbox — Recall Touch",
     "filters": {
@@ -3573,8 +3573,8 @@
       "whatsapp": "WhatsApp"
     },
     "empty": {
-      "title": "No conversations yet.",
-      "body": "Messages appear here after your first call.",
+      "title": "Your inbox activates with your first call.",
+      "body": "Every SMS, email, and voice interaction your operator handles flows here — threaded by contact, tagged by revenue stage.",
       "cta": "Enable SMS in settings"
     },
     "search": {
@@ -3640,7 +3640,7 @@
     "actionSchedule": "Schedule",
     "pageTitle": "Leads",
     "heading": "Leads",
-    "description": "Every captured opportunity, from first call through decision.",
+    "description": "Every captured opportunity, scored and staged — from first contact through closed revenue.",
     "addLead": "Add lead",
     "total": "Total:",
     "exportCsv": "Export as CSV",
@@ -3765,9 +3765,9 @@
       "agent": "Agent"
     },
     "empty": {
-      "title": "No leads yet",
-      "body": "Your AI will start creating leads automatically as it talks to your customers.",
-      "subtitle": "Leads appear when your AI captures them — or add your own",
+      "title": "Your pipeline starts with the first call.",
+      "body": "Every caller your operator qualifies becomes a scored lead — automatically created, automatically staged, automatically followed up.",
+      "subtitle": "Leads are auto-created from calls, scored by intent, and staged for recovery",
       "hint": "Create leads from calls or add leads manually. Connect your CRM via Settings → Integrations to sync with HubSpot, Salesforce, and more.",
       "description": "Create a lead manually or connect your CRM. New leads from calls will appear here automatically.",
       "connectCrm": "Connect CRM"
@@ -3784,8 +3784,8 @@
       "added": "Lead added successfully"
     },
     "unknownLead": "Unknown Lead",
-    "emptyTitle": "Import contacts or add manually",
-    "emptySubtitle": "Your leads will appear here as calls come in, or you can import a CSV to get started.",
+    "emptyTitle": "Import your pipeline or let the operator build it",
+    "emptySubtitle": "Upload a CSV to seed your pipeline, or let your operator auto-create leads from every qualified conversation.",
     "importCsv": "Import CSV",
     "addContact": "Add Contact",
     "errors": {
@@ -7648,7 +7648,7 @@
   "contacts": {
     "pageTitle": "Contacts",
     "title": "Contacts",
-    "subtitle": "Every caller your AI speaks to, in one place.",
+    "subtitle": "Every caller your operator has spoken to — scored, tagged, and ready for follow-up.",
     "callPhone": "Call {phone}",
     "email": "Email",
     "notes": "Notes",
@@ -7687,8 +7687,8 @@
       "vip": "VIP"
     },
     "empty": {
-      "title": "No contacts yet. Import a list or wait for your first call.",
-      "subtitle": "",
+      "title": "Your contact database builds itself from every call.",
+      "subtitle": "Import an existing list to get started, or let your operator build it automatically from live conversations.",
       "importCsv": "Import CSV",
       "connectNumber": "Connect Number",
       "detail": "Select a contact to see call history and notes.",
@@ -7794,7 +7794,7 @@
   "appointments": {
     "pageTitle": "Appointments — Recall Touch",
     "heading": "Appointments",
-    "description": "All booked appointments from calls, campaigns, and inbox.",
+    "description": "Every appointment your operator booked — from calls, campaigns, and recovery sequences.",
     "today": "Today",
     "tomorrow": "Tomorrow",
     "statusLabels": {
@@ -7835,8 +7835,8 @@
       "sun": "Sun"
     },
     "empty": {
-      "title": "No appointments yet",
-      "body": "As your AI books on your calendar, every appointment will show up here.",
+      "title": "Appointments appear here automatically.",
+      "body": "Your operator books directly to your calendar during calls — no manual entry, no double-booking, no no-shows without follow-up.",
       "action": "Open agent settings"
     },
     "loading": "Loading appointments...",
