@@ -8684,6 +8684,8 @@
     "submitFailed": "Failed to submit port request"
   },
   "integrations": {
+    "title": "Integrations",
+    "subtitle": "Connect your tools to automate more of your revenue operations",
     "pageTitle": "Integrations — Recall Touch",
     "toast": {
       "oauthComingSoon": "OAuth for this CRM will be available soon. Use the webhook below to send events in the meantime.",
