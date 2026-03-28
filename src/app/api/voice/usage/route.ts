@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   try {
@@ -42,7 +43,7 @@ export async function GET(req: NextRequest) {
     const { data: usage, error } = await query.order("created_at", { ascending: false }).limit(1000);
 
     if (error) {
-      console.error("[API] voice usage GET error:", error);
+      log("error", "voice.usage.GET", { error: String(error) });
       return NextResponse.json({ error: "Failed to fetch usage data" }, { status: 500 });
     }
 
@@ -123,7 +124,7 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("[API] voice usage GET error:", error);
+    log("error", "voice.usage.GET", { error: String(error) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -188,7 +189,7 @@ export async function POST(req: NextRequest) {
       .maybeSingle();
 
     if (insertError) {
-      console.error("[API] voice usage POST error:", insertError);
+      log("error", "voice.usage.POST", { error: String(insertError) });
       return NextResponse.json({ error: "Failed to record usage" }, { status: 500 });
     }
     if (!usage) {
@@ -197,7 +198,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ id: usage.id }, { status: 201 });
   } catch (error) {
-    console.error("[API] voice usage POST error:", error);
+    log("error", "voice.usage.POST", { error: String(error) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

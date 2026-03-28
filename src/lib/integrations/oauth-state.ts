@@ -53,7 +53,7 @@ export function verifyOAuthState(state: string, maxAgeMs: number = 600_000): str
     if (data.ts && Date.now() - data.ts > maxAgeMs) return null;
     return data.workspaceId;
   } catch {
-    // Fallback: treat entire state as raw workspace_id (backward compatible)
-    return state;
+    // Invalid payload — reject (no raw workspace_id fallback to prevent CSRF bypass)
+    return null;
   }
 }

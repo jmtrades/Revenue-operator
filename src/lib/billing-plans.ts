@@ -1,5 +1,25 @@
 export type PlanSlug = "solo" | "business" | "scale" | "enterprise";
 
+/**
+ * Normalize a DB billing_tier value to a BILLING_PLANS key.
+ * The DB check constraint allows: solo, growth, team, enterprise
+ * but BILLING_PLANS keys are: solo, business, scale, enterprise.
+ */
+export function normalizeTier(dbTier: string | null | undefined): PlanSlug {
+  const t = (dbTier ?? "solo").toLowerCase();
+  const map: Record<string, PlanSlug> = {
+    solo: "solo",
+    starter: "solo",
+    growth: "business",
+    business: "business",
+    team: "scale",
+    scale: "scale",
+    enterprise: "enterprise",
+    agency: "enterprise",
+  };
+  return map[t] ?? "solo";
+}
+
 /** Display names for customer-facing UI (slugs remain for DB/Stripe compat) */
 export const PLAN_DISPLAY_NAMES: Record<PlanSlug, string> = {
   solo: "Starter",

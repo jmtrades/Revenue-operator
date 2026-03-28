@@ -87,7 +87,7 @@ export async function GET(req: NextRequest) {
         // Email alerts (80% and 100% minutes only). Deduped monthly via settings.usage_alerts_state
         try {
           const minutesPct = usage.minutes_limit > 0 ? (usage.minutes_used / usage.minutes_limit) : 0;
-          const threshold = minutesPct >= 1 ? "100" : minutesPct >= 0.8 ? "80" : null;
+          const threshold = minutesPct >= 1 ? "100" : minutesPct >= 0.8 ? "80" : minutesPct >= 0.5 ? "50" : null;
           if (threshold && wsData.owner_id) {
             const monthKey = new Date().toISOString().slice(0, 7); // YYYY-MM
             const { data: settingsRow } = await db
@@ -102,14 +102,19 @@ export async function GET(req: NextRequest) {
               const { data: owner } = await db.from("users").select("email").eq("id", wsData.owner_id).maybeSingle();
               const email = (owner as { email?: string } | null)?.email?.trim();
               if (email) {
+                const appUrl = process.env.NEXT_PUBLIC_APP_URL || "";
                 const subject =
                   threshold === "100"
                     ? `Recall Touch: minutes limit exceeded`
-                    : `Recall Touch: 80% of minutes used`;
+                    : threshold === "80"
+                    ? `Recall Touch: 80% of minutes used`
+                    : `Recall Touch: you’ve used half your minutes`;
                 const body =
                   threshold === "100"
-                    ? `<p>You’ve exceeded your included minutes for this month.</p><p>Usage: <strong>${usage.minutes_used}/${usage.minutes_limit}</strong> minutes.</p><p><a href="${process.env.NEXT_PUBLIC_APP_URL || ""}/app/settings/billing">Upgrade</a> to avoid overage.</p>`
-                    : `<p>You’ve used <strong>${usage.minutes_used}/${usage.minutes_limit}</strong> minutes this month.</p><p>Upgrade before you hit 100%.</p><p><a href="${process.env.NEXT_PUBLIC_APP_URL || ""}/app/settings/billing">Upgrade</a></p>`;
+                    ? `<p>You’ve exceeded your included minutes for this month.</p><p>Usage: <strong>${usage.minutes_used}/${usage.minutes_limit}</strong> minutes.</p><p><a href="${appUrl}/app/settings/billing">Upgrade</a> to avoid overage charges.</p>`
+                    : threshold === "80"
+                    ? `<p>You’ve used <strong>${usage.minutes_used}/${usage.minutes_limit}</strong> minutes this month (80%).</p><p>Consider upgrading before you hit your limit.</p><p><a href="${appUrl}/app/settings/billing">View billing</a></p>`
+                    : `<p>You’ve used <strong>${usage.minutes_used}/${usage.minutes_limit}</strong> minutes this month (50%).</p><p>You’re on pace — just a heads-up so there are no surprises.</p><p><a href="${appUrl}/app/settings/billing">View usage</a></p>`;
                 await sendEmail(wsData.id, email, subject, body, { template_slug: "usage_alert" }).catch(() => ({ ok: false }));
                 const nextState: Record<string, string> = { ...state, [sentKey]: new Date().toISOString() };
                 await db

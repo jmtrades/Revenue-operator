@@ -134,7 +134,6 @@ export function OperationsSummary({
 
         // Calculate operational metrics from totals
         const totals = response.totals;
-        const totalLeads = 100; // placeholder - ideally from API
 
         const noShowRate =
           totals.calls_answered > 0

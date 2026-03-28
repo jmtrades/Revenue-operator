@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   try {
@@ -42,13 +43,13 @@ export async function GET(req: NextRequest) {
     const { data: consents, error } = await query.order("recorded_at", { ascending: false }).limit(500);
 
     if (error) {
-      console.error("[API] voice consents GET error:", error);
+      log("error", "voice.consents.GET", { error: String(error) });
       return NextResponse.json({ error: "Failed to fetch consent records" }, { status: 500 });
     }
 
     return NextResponse.json({ consents: consents ?? [] });
   } catch (error) {
-    console.error("[API] voice consents GET error:", error);
+    log("error", "voice.consents.GET", { error: String(error) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -91,7 +92,7 @@ export async function POST(req: NextRequest) {
         .eq("consent_type", "voice_clone")
         .gte("recorded_at", startOfDay.toISOString());
       if (countError) {
-        console.error("[API] voice consents POST rate-limit error:", countError);
+        log("error", "voice.consents.rate_limit_check", { error: String(countError) });
       } else if ((count ?? 0) >= 3) {
         return NextResponse.json(
           { error: "Voice cloning limit reached for today. Try again tomorrow or contact support.", code: "clone_rate_limited" },
@@ -123,7 +124,7 @@ export async function POST(req: NextRequest) {
       .maybeSingle();
 
     if (insertError) {
-      console.error("[API] voice consents POST error:", insertError);
+      log("error", "voice.consents.POST", { error: String(insertError) });
       return NextResponse.json({ error: "Failed to record consent" }, { status: 500 });
     }
     if (!consent) {
@@ -132,7 +133,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ id: consent.id }, { status: 201 });
   } catch (error) {
-    console.error("[API] voice consents POST error:", error);
+    log("error", "voice.consents.POST", { error: String(error) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

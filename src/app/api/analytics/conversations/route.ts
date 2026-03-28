@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 type SentimentDistribution = {
   positive: number;
@@ -126,7 +127,7 @@ export async function GET(req: NextRequest) {
     const { data: calls, error: callsErr } = await query;
 
     if (callsErr) {
-      console.error("[analytics/conversations] calls query failed:", callsErr.message);
+      log("error", "analytics.conversations.GET", { error: callsErr.message });
       return NextResponse.json({ error: "Failed to load conversations" }, { status: 500 });
     }
 
@@ -271,7 +272,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error("[analytics/conversations]", error);
+    log("error", "analytics.conversations.GET", { error: String(error) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

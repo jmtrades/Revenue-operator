@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 const CONSENT_KEY = "rt_cookie_consent";
 
@@ -12,6 +13,7 @@ const CONSENT_KEY = "rt_cookie_consent";
  * - Shows on first visit only; dismissible
  */
 export function CookieConsent() {
+  const t = useTranslations("cookies");
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -60,11 +62,11 @@ export function CookieConsent() {
     >
       <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
         <p className="text-sm flex-1" style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}>
-          We use cookies for analytics and to improve your experience. See our{" "}
+          {t("message", { defaultValue: "We use cookies for analytics and to improve your experience. See our" })}{" "}
           <Link href="/privacy" className="underline" style={{ color: "var(--text-primary)" }}>
-            privacy policy
+            {t("privacyLink", { defaultValue: "privacy policy" })}
           </Link>{" "}
-          for details.
+          {t("messageSuffix", { defaultValue: "for details." })}
         </p>
         <div className="flex gap-2 shrink-0">
           <button
@@ -77,14 +79,14 @@ export function CookieConsent() {
               background: "transparent",
             }}
           >
-            Decline
+            {t("decline", { defaultValue: "Decline" })}
           </button>
           <button
             type="button"
             onClick={handleAccept}
             className="btn-marketing-blue px-4 py-2 rounded-lg text-sm"
           >
-            Accept
+            {t("accept", { defaultValue: "Accept" })}
           </button>
         </div>
       </div>

@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 async function getConversations(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
@@ -73,7 +74,7 @@ export async function GET(req: NextRequest) {
   try {
     return await getConversations(req);
   } catch (err) {
-    console.error(`[API Error] GET ${req.url}:`, err);
+    log("error", "conversations.get_error", { error: err instanceof Error ? err.message : String(err), url: req.url });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

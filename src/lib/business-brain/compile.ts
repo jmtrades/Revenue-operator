@@ -173,12 +173,24 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
   }
   businessLines.push("");
   businessLines.push("Knowledge Base:");
-  faq.slice(0, 50).forEach((item) => { // Cap at 50 FAQ entries
-    if (item.q && item.a) {
-      businessLines.push(`Q: ${sanitizeForPrompt(item.q, 200)}\nA: ${sanitizeForPrompt(item.a, 500)}`);
-    }
+  const validFaq = faq.slice(0, 50).filter((item) => item.q && item.a);
+  validFaq.forEach((item) => {
+    businessLines.push(`Q: ${sanitizeForPrompt(item.q!, 200)}\nA: ${sanitizeForPrompt(item.a!, 500)}`);
   });
   if (safeFaqExtra) businessLines.push(safeFaqExtra);
+
+  // Sparse knowledge enhancement: when FAQ < 5, add professional conversational filler
+  // so the agent never sounds empty or unprepared
+  if (validFaq.length < 5) {
+    businessLines.push("");
+    businessLines.push("SPARSE KNOWLEDGE PROTOCOL (your knowledge base is still being built):");
+    businessLines.push("- You are a professional business assistant. Even if specific details are not yet in your knowledge base, you can STILL have a confident, helpful conversation.");
+    businessLines.push("- For common questions (hours, pricing, services, location): if you have the answer, give it. If not, say: \"I want to make sure I give you the most accurate information. Let me have our team follow up with those details right away.\"");
+    businessLines.push("- NEVER say \"I don't have that information\" or \"My knowledge base doesn't cover that\" — these sound robotic and undermine trust.");
+    businessLines.push("- INSTEAD, pivot naturally: gather the caller's needs, offer to book a callback, or connect them with someone who can help.");
+    businessLines.push("- Your tone should be warm, competent, and proactive — like a great executive assistant who always finds a way to help.");
+    businessLines.push("- Default handling for any unknown question: \"Great question — let me get you connected with someone who can give you the full details. Can I get your name and the best number to reach you?\"");
+  }
   const layer2 = businessLines.join("\n");
 
   // Mission / strategy (optional)

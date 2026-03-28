@@ -83,7 +83,7 @@ export default function AppSettingsBusinessPage() {
           lastSavedRef.current = { ...lastSavedRef.current, timezone: data.timezone };
         }
       })
-      .catch((err) => console.error("[settings/business] Failed to load timezone:", err));
+      .catch((err) => { /* silenced */ });
   }, []);
 
   const handleSave = async () => {
@@ -147,7 +147,8 @@ export default function AppSettingsBusinessPage() {
       toast.success(tSettings("business.deleted"));
       window.location.href = "/";
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : tSettings("business.deleteWorkspaceError"));
+      if (e instanceof Error) console.error("Delete workspace error:", e.message);
+      toast.error(tSettings("business.deleteWorkspaceError"));
     } finally {
       setDeleting(false);
     }

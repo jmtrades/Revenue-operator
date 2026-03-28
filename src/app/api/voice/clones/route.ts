@@ -11,6 +11,7 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 import { NextRequest, NextResponse } from "next/server";
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { resolveBillingTier } from "@/lib/feature-gate/resolver";
@@ -40,7 +41,7 @@ export async function GET(req: NextRequest) {
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.error("[voice/clones GET]", error);
+    log("error", "voice.clones.GET", { error: String(error) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 
@@ -75,15 +76,25 @@ export async function POST(req: NextRequest) {
   }
 
   const workspaceId = String(body.workspace_id ?? "").trim();
-  const name = String(body.name ?? "").trim();
-  const audioUrl = String(body.audio_url ?? "").trim();
-  const description = String(body.description ?? "").trim();
+  const name = String(body.name ?? "").trim().slice(0, 255);
+  const audioUrl = String(body.audio_url ?? "").trim().slice(0, 2048);
+  const description = String(body.description ?? "").trim().slice(0, 1000);
 
   if (!workspaceId || !name || !audioUrl) {
     return NextResponse.json(
       { error: "workspace_id, name, and audio_url are required" },
       { status: 400 }
     );
+  }
+
+  // Validate audio_url is a proper URL
+  try {
+    const parsed = new URL(audioUrl);
+    if (!["https:", "http:"].includes(parsed.protocol)) {
+      return NextResponse.json({ error: "audio_url must be an HTTP(S) URL" }, { status: 400 });
+    }
+  } catch {
+    return NextResponse.json({ error: "Invalid audio_url format" }, { status: 400 });
   }
 
   const authErr = await requireWorkspaceAccess(req, workspaceId);
@@ -142,13 +153,13 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (insertErr) {
-    console.error("[voice/clones POST]", insertErr);
+    log("error", "voice.clones.POST", { error: String(insertErr) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 
   // In production: queue voice cloning job to voice server
   // For now, mark as processing (actual cloning handled async by voice pipeline)
-  console.info(`[voice-clone] Clone requested: ${voiceId} for workspace ${workspaceId}`);
+  log("info", "voice.clone-requested", { voice_id: voiceId, workspace_id: workspaceId });
 
   return NextResponse.json({
     clone: inserted,
@@ -183,7 +194,7 @@ export async function DELETE(req: NextRequest) {
     .eq("is_cloned", true);
 
   if (error) {
-    console.error("[voice/clones DELETE]", error);
+    log("error", "voice.clones.DELETE", { error: String(error) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 

@@ -65,6 +65,7 @@ export const ACTIVE_VOICE_STACK: VoiceStackConfig = {
 export interface CreateAssistantParams {
   name: string;
   systemPrompt: string;
+  firstMessage?: string;
   voiceId: string;
   voiceProvider: "elevenlabs" | "deepgram" | "deepgram-aura" | "cartesia" | "playht";
   voiceModel?: string;

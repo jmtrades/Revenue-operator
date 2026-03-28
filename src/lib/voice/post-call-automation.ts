@@ -17,6 +17,10 @@ import type { CallSummary } from "./context-carryover";
 import { sendEmail, getTemplate, renderTemplate } from "@/lib/integrations/email";
 import { enrollContact } from "@/lib/sequences/follow-up-engine";
 import { scoreLeadPostCall } from "@/lib/intelligence/lead-scoring";
+import { fireWebhookEvent } from "@/lib/integrations/webhook-events";
+import { generateCoachingReport } from "./real-time-coaching";
+import { recordCallAnalytics } from "@/lib/analytics/conversation-analytics";
+import { processCallRecording } from "./call-recording-engine";
 
 export interface PostCallAction {
   type: "sms" | "follow_up_call" | "status_update" | "notification" | "follow_up_email";
@@ -125,6 +129,57 @@ export async function executePostCallAutomation(
     if (cfg.sms_enabled && callerPhone && summary && summary.duration_seconds > 60) {
       const npsAction = await sendNpsFeedbackRequest(callerPhone, callSessionId, workspaceId);
       actions.push(npsAction);
+    }
+
+    // 9. Record conversation analytics + A/B test tracking
+    if (summary) {
+      try {
+        const history = (meta.demo_history ?? meta.transcript ?? []) as Array<{ role: string; content: string }>;
+        const intelligenceEnabled = (meta.intelligence_enabled as boolean) ?? true;
+        await recordCallAnalytics(callSessionId, workspaceId, summary, null, intelligenceEnabled, history);
+      } catch (analyticsErr) {
+        log("warn", "post_call.analytics_failed", {
+          error: analyticsErr instanceof Error ? analyticsErr.message : String(analyticsErr),
+        });
+      }
+    }
+
+    // 10. Fire webhook event for integrations (Zapier/Make/n8n)
+    try {
+      await fireWebhookEvent(workspaceId, "call.completed", {
+        call_session_id: callSessionId,
+        lead_id: leadId,
+        phone: callerPhone,
+        outcome: summary?.outcome,
+        sentiment: summary?.sentiment,
+        duration_seconds: summary?.duration_seconds,
+        follow_up_needed: summary?.follow_up_needed,
+        buying_stage: summary?.buying_stage,
+        next_best_action: summary?.next_best_action,
+        summary: summary?.summary,
+      });
+    } catch (webhookErr) {
+      log("warn", "post_call.webhook_event_failed", {
+        error: webhookErr instanceof Error ? webhookErr.message : String(webhookErr),
+      });
+    }
+
+    // 11. Process call recording (transcription, keyword extraction, compliance cleanup)
+    if (callSessionId && meta.recording_sid) {
+      try {
+        await processCallRecording(
+          meta.recording_sid as string,
+          callSessionId,
+          (meta.recording_url as string) ?? "",
+          summary?.duration_seconds ?? 0,
+          workspaceId,
+        );
+        log("info", "post_call.recording_processed", { callSessionId });
+      } catch (recErr) {
+        log("warn", "post_call.recording_processing_failed", {
+          error: recErr instanceof Error ? recErr.message : String(recErr),
+        });
+      }
     }
 
     // Store actions in session metadata

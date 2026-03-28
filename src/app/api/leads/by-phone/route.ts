@@ -38,17 +38,29 @@ export async function GET(req: NextRequest) {
   const db = getDb();
   const needle = normalizePhone(phone);
 
-  // Use database query to match normalized phone instead of in-memory filtering
-  // This avoids fetching all leads and filtering in JavaScript
+  if (!needle) {
+    return NextResponse.json({ error: "Invalid phone number" }, { status: 400 });
+  }
+
+  // Build multiple phone format variants for DB-level matching
+  const variants = [
+    phone.trim(),
+    needle,
+    `+${needle}`,
+    `+1${needle.length === 10 ? needle : ""}`.replace("+1", "+1"),
+  ].filter(Boolean);
+
+  // Use database-level OR filter instead of fetching all leads
   const { data: leads } = await db
     .from("leads")
     .select("id, name, phone")
-    .eq("workspace_id", session.workspaceId);
+    .eq("workspace_id", session.workspaceId)
+    .or(variants.map(v => `phone.eq.${v}`).join(","))
+    .limit(1);
 
-  const match = (leads ?? []).find((l: { phone?: string | null }) => needle && normalizePhone((l.phone ?? "") || "") === needle);
-  if (!match) {
+  const row = (leads ?? [])[0] as { id: string; name: string | null } | undefined;
+  if (!row) {
     return NextResponse.json({ error: "Lead not found" }, { status: 404 });
   }
-  const row = match as { id: string; name: string | null };
   return NextResponse.json({ lead_id: row.id, name: row.name?.trim() ?? null });
 }

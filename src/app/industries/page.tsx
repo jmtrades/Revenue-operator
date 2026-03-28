@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     description:
       "AI revenue operations platform built for HVAC, dental, legal, real estate, healthcare, and every service business.",
     url: "https://www.recall-touch.com/industries",
-    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",

@@ -6,6 +6,9 @@ import { CheckCircle2, ChevronRight } from "lucide-react";
 import type { Agent, StepId } from "../AgentsPageClient";
 import type { CuratedVoice } from "@/lib/constants/curated-voices";
 import { useTranslations } from "next-intl";
+import { AgentDossier } from "@/components/agents/AgentDossier";
+import { AgentIntelligencePanel } from "@/components/agents/AgentIntelligencePanel";
+import { AgentBenchmarks } from "@/components/agents/AgentBenchmarks";
 
 interface AgentDetailProps {
   agent: Agent;
@@ -13,6 +16,7 @@ interface AgentDetailProps {
   saving: boolean;
   elevenLabsVoices: CuratedVoice[];
   workspaceName: string;
+  workspaceId: string;
   workspaceNumbers: Array<{
     id: string;
     phone_number: string;
@@ -84,6 +88,7 @@ export function AgentDetail(props: AgentDetailProps) {
     agent,
     activeStep,
     saving,
+    workspaceId,
     elevenLabsVoices: _elevenLabsVoices,
     workspaceName: _workspaceName,
     workspaceNumbers: _workspaceNumbers,
@@ -327,7 +332,7 @@ export function AgentDetail(props: AgentDetailProps) {
 
       {/* Right-side: step content */}
       <div
-        className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden p-6 relative break-words"
+        className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden p-6 relative break-words space-y-6"
         style={{ overflowWrap: "anywhere" }}
         aria-labelledby="agent-step-heading"
       >
@@ -336,6 +341,16 @@ export function AgentDetail(props: AgentDetailProps) {
             {tForms("saving")}
           </div>
         )}
+
+        {/* Agent Performance Dossier - visible for all steps */}
+        <AgentDossier workspaceId={workspaceId} agentId={agent.id} />
+
+        {/* Agent Intelligence Panel - visible for all steps */}
+        <AgentIntelligencePanel workspaceId={workspaceId} agentId={agent.id} />
+
+        {/* Agent Benchmarks - visible for all steps */}
+        <AgentBenchmarks workspaceId={workspaceId} agentId={agent.id} />
+
         <h2
           id="agent-step-heading"
           className="text-xs text-[var(--text-secondary)] mb-4 font-normal"

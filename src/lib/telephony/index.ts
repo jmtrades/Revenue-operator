@@ -351,13 +351,47 @@ function createTwilioService(): TelephonyService {
           return { error: "Twilio not configured" };
         }
 
+        // Determine base URL for callbacks
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL
+          || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+
+        // Build TwiML URL — Twilio needs a URL that returns TwiML instructions.
+        // If a voice server URL is configured, use Stream; otherwise use simple Say.
+        const voiceServerUrl = process.env.VOICE_SERVER_URL || process.env.NEXT_PUBLIC_VOICE_SERVER_URL;
+        let twimlUrl = params.webhookUrl;
+
+        // If the webhook URL is a Telnyx webhook (from fallback), use the Twilio voice webhook instead
+        if (twimlUrl.includes("/webhooks/telnyx/")) {
+          twimlUrl = twimlUrl.replace("/webhooks/telnyx/voice", "/webhooks/twilio/voice");
+        }
+
         const formData = new URLSearchParams();
         formData.append("From", params.from);
         formData.append("To", params.to);
-        formData.append("Url", params.webhookUrl);
+        formData.append("Url", twimlUrl);
+        formData.append("Method", "POST");
+
+        // Status callback for tracking call lifecycle
+        if (baseUrl) {
+          formData.append("StatusCallback", `${baseUrl}/api/webhooks/twilio/status`);
+          formData.append("StatusCallbackMethod", "POST");
+          formData.append("StatusCallbackEvent", "initiated");
+          formData.append("StatusCallbackEvent", "ringing");
+          formData.append("StatusCallbackEvent", "answered");
+          formData.append("StatusCallbackEvent", "completed");
+        }
+
+        // Enable recording if metadata is present (workspace calls)
         if (params.metadata) {
           formData.append("Record", "true");
         }
+
+        // Set timeout to 60 seconds
+        formData.append("Timeout", "60");
+
+        // Enable answering machine detection
+        formData.append("MachineDetection", "Enable");
+        formData.append("MachineDetectionTimeout", "5");
 
         const response = await twilioFetch(
           `/Accounts/${accountSid}/Calls.json`,
@@ -390,14 +424,69 @@ function createTwilioService(): TelephonyService {
 }
 
 /**
+ * Telephony service with automatic fallback.
+ * If the primary provider's createOutboundCall fails, retries with the fallback.
+ * This is critical for Telnyx trust-level restrictions (D60/D61) — calls fail
+ * at the provider level but Twilio may succeed.
+ */
+function createFallbackService(
+  primary: TelephonyService,
+  fallback: TelephonyService,
+  primaryName: string,
+  fallbackName: string,
+): TelephonyService {
+  return {
+    // SMS: try primary, fall back on failure
+    async sendSms(params: SmsParams) {
+      const result = await primary.sendSms(params);
+      if ("error" in result) {
+        console.warn(`[telephony-fallback] ${primaryName} SMS failed: ${result.error} — trying ${fallbackName}`);
+        return fallback.sendSms(params);
+      }
+      return result;
+    },
+
+    // Number search: primary only (no fallback needed for browsing)
+    searchAvailableNumbers: primary.searchAvailableNumbers.bind(primary),
+    purchaseNumber: primary.purchaseNumber.bind(primary),
+    releaseNumber: primary.releaseNumber.bind(primary),
+
+    // Outbound calls: try primary, fall back on failure (the critical path)
+    async createOutboundCall(params: CallParams) {
+      const result = await primary.createOutboundCall(params);
+      if ("error" in result) {
+        console.warn(`[telephony-fallback] ${primaryName} outbound call failed: ${result.error} — trying ${fallbackName}`);
+        // Adjust webhook URL for the fallback provider
+        const fallbackParams = { ...params };
+        if (fallbackName === "twilio" && params.webhookUrl.includes("/telnyx/")) {
+          fallbackParams.webhookUrl = params.webhookUrl.replace("/webhooks/telnyx/voice", "/webhooks/twilio/voice");
+        } else if (fallbackName === "telnyx" && params.webhookUrl.includes("/twilio/")) {
+          fallbackParams.webhookUrl = params.webhookUrl.replace("/webhooks/twilio/voice", "/webhooks/telnyx/voice");
+        }
+        return fallback.createOutboundCall(fallbackParams);
+      }
+      return result;
+    },
+  };
+}
+
+/**
  * Get the appropriate telephony service based on configuration.
+ * Supports automatic fallback: TELEPHONY_FALLBACK_PROVIDER=twilio
  */
 export function getTelephonyService(): TelephonyService {
   const provider = getTelephonyProvider();
-  if (provider === "telnyx") {
-    return createTelnyxService();
+  const primary = provider === "telnyx" ? createTelnyxService() : createTwilioService();
+  const primaryName = provider;
+
+  // Check for fallback provider
+  const fallbackRaw = process.env.TELEPHONY_FALLBACK_PROVIDER?.trim().toLowerCase();
+  if (fallbackRaw && fallbackRaw !== provider) {
+    const fallback = fallbackRaw === "telnyx" ? createTelnyxService() : createTwilioService();
+    return createFallbackService(primary, fallback, primaryName, fallbackRaw);
   }
-  return createTwilioService();
+
+  return primary;
 }
 
 // Export individual service creators for testing/flexibility

@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
     console.error("[signin] SESSION_SECRET or ENCRYPTION_KEY is not configured");
     return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
   }
-  const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/app/activity" });
+  const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/app/dashboard" });
   res.headers.set("Set-Cookie", cookie);
   return res;
 }

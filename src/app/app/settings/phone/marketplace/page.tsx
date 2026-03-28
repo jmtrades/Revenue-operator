@@ -118,22 +118,22 @@ export default function PhoneMarketplacePage() {
       if (!res.ok) {
         // If payment method required, redirect to billing to add a card
         if (res.status === 402 || data.provider_code === "PAYMENT_METHOD_REQUIRED" || (data as any).code === "PAYMENT_METHOD_REQUIRED") {
-          toast.error("Please add a payment method first");
+          toast.error(tSettings("phone.paymentRequired"));
           window.location.href = "/app/settings/billing?reason=phone_purchase";
           return;
         }
 
         if (res.status === 403 || (data as any).code === "SUBSCRIPTION_REQUIRED") {
-          toast.error("An active subscription is required to buy phone numbers");
+          toast.error(tSettings("phone.subscriptionRequired"));
           window.location.href = "/app/settings/billing?reason=subscription_required";
           return;
         }
 
-        const msg = data.error ?? tSettings("phone.provisionFailed");
-        setError(msg);
+        if (data.error) console.error("[marketplace] provision error:", data.error);
+        setError(tSettings("phone.provisionFailed"));
         setErrorType("provision");
         setLastProvisionAttempt(num);
-        toast.error(msg);
+        toast.error(tSettings("phone.provisionFailed"));
         return;
       }
       setProvisionSuccess(true);

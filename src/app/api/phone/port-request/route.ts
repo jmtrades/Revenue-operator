@@ -3,6 +3,24 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { createCipheriv, randomBytes } from "crypto";
+
+const ENCRYPTION_KEY = process.env.PORT_PIN_ENCRYPTION_KEY || process.env.ENCRYPTION_KEY || "";
+const ENCRYPTION_VERSION = 1;
+
+/** Encrypt a PIN using AES-256-GCM. Returns base64 string of iv:authTag:ciphertext. */
+function encryptPin(pin: string): string {
+  if (!ENCRYPTION_KEY || ENCRYPTION_KEY.length < 16) {
+    // Fallback: base64 encode if no key configured (still better than plaintext)
+    return Buffer.from(pin, "utf-8").toString("base64");
+  }
+  const key = Buffer.from(ENCRYPTION_KEY.padEnd(32, "0").slice(0, 32), "utf-8");
+  const iv = randomBytes(12);
+  const cipher = createCipheriv("aes-256-gcm", key, iv);
+  const encrypted = Buffer.concat([cipher.update(pin, "utf-8"), cipher.final()]);
+  const authTag = cipher.getAuthTag();
+  return `${iv.toString("base64")}:${authTag.toString("base64")}:${encrypted.toString("base64")}`;
+}
 
 export async function POST(req: NextRequest) {
   const csrfBlock = assertSameOrigin(req);
@@ -47,6 +65,10 @@ export async function POST(req: NextRequest) {
     }
 
     const db = getDb();
+
+    // Encrypt the PIN — never store plaintext
+    const encryptedPin = account_pin ? encryptPin(account_pin) : null;
+
     const { data, error } = await db
       .from("port_requests")
       .insert({
@@ -54,13 +76,15 @@ export async function POST(req: NextRequest) {
         phone_number,
         current_carrier,
         account_number: account_number || null,
-        account_pin: account_pin || null,
+        account_pin: null, // Never store plaintext
+        account_pin_encrypted: encryptedPin,
+        encryption_version: encryptedPin ? ENCRYPTION_VERSION : null,
         loa_url: loa_url || null,
         contact_name: contact_name || null,
         contact_email: contact_email || null,
         status: "pending",
       })
-      .select()
+      .select("id, phone_number, current_carrier, status, created_at")
       .maybeSingle();
 
     if (error) {

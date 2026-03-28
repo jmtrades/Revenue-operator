@@ -5,7 +5,7 @@
  */
 
 export interface LeadScoringEvent {
-  type: "call" | "sms" | "note" | "stage_change";
+  type: "call" | "sms" | "note" | "stage_change" | "demo_call";
   /** Call duration in seconds */
   durationSeconds?: number;
   sentiment?: "positive" | "neutral" | "negative";
@@ -17,6 +17,10 @@ export interface LeadScoringEvent {
   returnCaller?: boolean;
   /** "Just browsing" or low intent */
   justBrowsing?: boolean;
+  /** Demo call engagement: number of conversation turns */
+  demoTurns?: number;
+  /** Demo call quality classification */
+  demoQuality?: "high" | "medium" | "low";
 }
 
 /** Optional per-workspace weights. Omitted keys use defaults. */
@@ -30,6 +34,11 @@ export interface LeadScoringConfig {
   returnCaller?: number;
   negativeSentiment?: number;
   justBrowsing?: number;
+  /** Demo-specific scoring weights */
+  demoCallBase?: number;
+  demoHighEngagement?: number;
+  demoMediumEngagement?: number;
+  demoRepeatCaller?: number;
 }
 
 const DEFAULT_DELTAS = {
@@ -42,6 +51,11 @@ const DEFAULT_DELTAS = {
   returnCaller: 20,
   negativeSentiment: -15,
   justBrowsing: -10,
+  // Demo call scoring: people who try the demo are already interested
+  demoCallBase: 15,
+  demoHighEngagement: 25,    // 6+ turns, 2+ minutes — very interested
+  demoMediumEngagement: 12,  // 3+ turns — somewhat interested
+  demoRepeatCaller: 10,      // Came back for another demo — strong signal
 } as const;
 
 const MIN_SCORE = 0;
@@ -72,6 +86,19 @@ export function calculateLeadScore(
       if (e.booked) score += c.booked;
       if (e.returnCaller) score += c.returnCaller;
       if (e.justBrowsing) score += c.justBrowsing;
+    }
+
+    // Demo call scoring — people who try the demo are pre-qualified leads
+    if (e.type === "demo_call") {
+      score += c.demoCallBase;
+      if (e.demoQuality === "high" || (e.demoTurns ?? 0) >= 6) {
+        score += c.demoHighEngagement;
+      } else if (e.demoQuality === "medium" || (e.demoTurns ?? 0) >= 3) {
+        score += c.demoMediumEngagement;
+      }
+      if (e.returnCaller) score += c.demoRepeatCaller;
+      // Demo callers who ask about pricing are very hot
+      if (e.pricingQuestion) score += c.pricingQuestion;
     }
   }
 

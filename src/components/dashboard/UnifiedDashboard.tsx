@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
@@ -20,14 +20,50 @@ import {
   AlertCircle,
   ChevronRight,
   RefreshCw,
+  Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { NotificationCenter } from "@/components/dashboard/NotificationCenter";
 import { track } from "@/lib/analytics/posthog";
 import { safeGetItem, safeSetItem } from "@/lib/client/safe-storage";
 import { staggerContainer, staggerItem, staggerFast } from "@/lib/animations";
-import { VoiceABTestCard } from "@/components/dashboard/VoiceABTestCard";
-import { IntelligenceCard } from "@/components/dashboard/IntelligenceCard";
+
+/* ── Lazy-loaded dashboard cards for code-splitting & faster initial paint ── */
+const AutomationEngineCard = lazy(() => import("@/components/dashboard/AutomationEngineCard").then(m => ({ default: m.AutomationEngineCard })));
+const VoiceABTestCard = lazy(() => import("@/components/dashboard/VoiceABTestCard").then(m => ({ default: m.VoiceABTestCard })));
+const SequenceABTestCard = lazy(() => import("@/components/dashboard/SequenceABTestCard").then(m => ({ default: m.SequenceABTestCard })));
+const IntelligenceCard = lazy(() => import("@/components/dashboard/IntelligenceCard").then(m => ({ default: m.IntelligenceCard })));
+const VoiceAnalyticsCard = lazy(() => import("@/components/dashboard/VoiceAnalyticsCard").then(m => ({ default: m.VoiceAnalyticsCard })));
+const WebhookManagementCard = lazy(() => import("@/components/dashboard/WebhookManagementCard").then(m => ({ default: m.WebhookManagementCard })));
+const OutboundCampaignCard = lazy(() => import("@/components/dashboard/OutboundCampaignCard").then(m => ({ default: m.OutboundCampaignCard })));
+const CampaignPerformanceCard = lazy(() => import("@/components/dashboard/CampaignPerformanceCard").then(m => ({ default: m.CampaignPerformanceCard })));
+const CallRecordingsCard = lazy(() => import("@/components/dashboard/CallRecordingsCard").then(m => ({ default: m.CallRecordingsCard })));
+const CoachingReportCard = lazy(() => import("@/components/dashboard/CoachingReportCard").then(m => ({ default: m.CoachingReportCard })));
+const AppointmentManagementCard = lazy(() => import("@/components/dashboard/AppointmentManagementCard").then(m => ({ default: m.AppointmentManagementCard })));
+const EscalationLogCard = lazy(() => import("@/components/dashboard/EscalationLogCard").then(m => ({ default: m.EscalationLogCard })));
+const DNCManagementCard = lazy(() => import("@/components/dashboard/DNCManagementCard").then(m => ({ default: m.DNCManagementCard })));
+const SMSThreadsCard = lazy(() => import("@/components/dashboard/SMSThreadsCard").then(m => ({ default: m.SMSThreadsCard })));
+const CallTransferCard = lazy(() => import("@/components/dashboard/CallTransferCard").then(m => ({ default: m.CallTransferCard })));
+const WorkspaceSettingsCard = lazy(() => import("@/components/dashboard/WorkspaceSettingsCard").then(m => ({ default: m.WorkspaceSettingsCard })));
+const LiveCallFeed = lazy(() => import("@/components/dashboard/LiveCallFeed").then(m => ({ default: m.LiveCallFeed })));
+const RecommendationsCard = lazy(() => import("@/components/dashboard/RecommendationsCard").then(m => ({ default: m.RecommendationsCard })));
+const SetupHealthCard = lazy(() => import("@/components/dashboard/SetupHealthCard").then(m => ({ default: m.SetupHealthCard })));
+const RecoveryScoreCard = lazy(() => import("@/components/dashboard/RecoveryScoreCard").then(m => ({ default: m.RecoveryScoreCard })));
+const AutonomousBriefing = lazy(() => import("@/components/dashboard/AutonomousBriefing").then(m => ({ default: m.AutonomousBriefing })));
+
+function CardSkeleton() {
+  return (
+    <div className="dash-section p-5 md:p-6 animate-pulse">
+      <div className="h-4 w-32 rounded bg-[var(--bg-hover)] mb-4" />
+      <div className="space-y-2">
+        <div className="h-10 rounded-lg bg-[var(--bg-hover)]" />
+        <div className="h-10 rounded-lg bg-[var(--bg-hover)]" />
+        <div className="h-10 rounded-lg bg-[var(--bg-hover)]" />
+      </div>
+    </div>
+  );
+}
 
 type Summary = {
   revenue_recovered_cents: number;
@@ -42,10 +78,15 @@ type Summary = {
   conversion_rate: number;
   minutes_used: number;
   minutes_limit: number;
+  agent_configured?: boolean;
   phone_number_configured?: boolean;
   needs_attention: { id: string; name: string; reason: string; phone?: string | null }[];
   activity: { id: string; at: string; line: string }[];
   campaigns: { id: string; name: string; status: string; enrolled: number; booked: number }[];
+  missed_calls_today: number;
+  no_shows_this_week: number;
+  stale_leads: number;
+  pending_follow_ups: number;
 };
 
 const EMPTY: Summary = {
@@ -60,10 +101,14 @@ const EMPTY: Summary = {
   qualified_leads: 0,
   conversion_rate: 0,
   minutes_used: 0,
-  minutes_limit: 500,
+  minutes_limit: 1000,
   needs_attention: [],
   activity: [],
   campaigns: [],
+  missed_calls_today: 0,
+  no_shows_this_week: 0,
+  stale_leads: 0,
+  pending_follow_ups: 0,
 };
 
 function fmtMoney(cents: number): string {
@@ -132,10 +177,10 @@ export function UnifiedDashboard() {
         setLastUpdated(new Date());
       })
       .catch((err) => {
-        console.error("[dashboard] Failed to load summary:", err);
+        // Silently handled — error state shown in UI via setFetchError below
         setFetchError(err instanceof Error ? err.message : "Failed to load dashboard data");
         setData({ ...EMPTY });
-        setLastUpdated(new Date());
+        // Don't update lastUpdated on error — timestamp should reflect last successful load
       })
       .finally(() => {
         if (isRefresh) {
@@ -148,6 +193,12 @@ export function UnifiedDashboard() {
 
   useEffect(() => {
     load(false);
+  }, [load]);
+
+  // Auto-refresh dashboard every 60 seconds for real-time feel
+  useEffect(() => {
+    const interval = setInterval(() => { load(true); }, 60_000);
+    return () => clearInterval(interval);
   }, [load]);
 
   /* ── Analytics tracking effects ──────────────────────────────────────── */
@@ -276,30 +327,30 @@ export function UnifiedDashboard() {
 
   const kpis = [
     {
-      label: t("kpis.callsHandled", { defaultValue: "Calls answered" }),
+      label: t("kpis.callsHandled", { defaultValue: "Calls handled by agent" }),
       value: data.calls_answered,
-      sub: data.missed_calls_recovered > 0 ? `${data.missed_calls_recovered} recovered` : undefined,
+      sub: data.calls_answered === 0 && !hasSignal ? "Waiting for first call" : data.missed_calls_recovered > 0 ? `${data.missed_calls_recovered} recovered` : undefined,
       icon: Phone,
       accent: "var(--accent-primary)",
     },
     {
-      label: t("kpis.appointmentsBooked", { defaultValue: "Appointments booked" }),
+      label: t("kpis.appointmentsBooked", { defaultValue: "Revenue opportunities created" }),
       value: data.appointments_booked,
-      sub: data.conversion_rate > 0 ? `${data.conversion_rate}% conversion` : undefined,
+      sub: data.appointments_booked === 0 && !hasSignal ? "Auto-booked from calls" : data.conversion_rate > 0 ? `${data.conversion_rate}% conversion` : undefined,
       icon: CalendarCheck,
       accent: "var(--accent-secondary)",
     },
     {
-      label: t("kpis.recovered", { defaultValue: "Revenue recovered" }),
+      label: t("kpis.recovered", { defaultValue: "Agent revenue impact" }),
       value: fmtMoney(data.revenue_recovered_cents),
-      sub: data.revenue_trend_pct !== 0 ? `${data.revenue_trend_pct > 0 ? "+" : ""}${data.revenue_trend_pct}% vs last month` : undefined,
+      sub: data.revenue_recovered_cents === 0 && !hasSignal ? "Tracked automatically" : data.revenue_trend_pct !== 0 ? `${data.revenue_trend_pct > 0 ? "+" : ""}${data.revenue_trend_pct}% vs last month` : undefined,
       icon: TrendingUp,
       accent: "var(--accent-warning)",
     },
     {
-      label: t("kpis.followUpsSent", { defaultValue: "Follow-ups sent" }),
+      label: t("kpis.followUpsSent", { defaultValue: "Automated recovery actions" }),
       value: data.follow_ups_sent,
-      sub: data.qualified_leads > 0 ? `${data.qualified_leads} qualified leads` : undefined,
+      sub: data.follow_ups_sent === 0 && !hasSignal ? "SMS & email sequences" : data.qualified_leads > 0 ? `${data.qualified_leads} qualified leads` : undefined,
       icon: MailCheck,
       accent: "var(--accent-indigo, #4F46E5)",
     },
@@ -334,12 +385,12 @@ export function UnifiedDashboard() {
           <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
           <div>
             <p className="text-sm font-semibold text-[var(--text-primary)]">
-              Phone number not connected
+              {t("phoneWarning.title", { defaultValue: "Phone number not connected" })}
             </p>
             <p className="text-sm text-[var(--text-secondary)] mt-0.5">
-              Your AI can&apos;t receive calls yet.{" "}
+              {t("phoneWarning.description", { defaultValue: "Your AI can't receive calls yet." })}{" "}
               <Link href="/app/settings/phone" className="text-[var(--accent-primary)] font-medium hover:underline">
-                Connect a number
+                {t("phoneWarning.cta", { defaultValue: "Connect a number" })}
               </Link>
             </p>
           </div>
@@ -349,22 +400,30 @@ export function UnifiedDashboard() {
       {/* ── Page header ────────────────────────────────────────────────── */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] tracking-tight">
-            {t("dashboard", { defaultValue: "Dashboard" })}
-          </h1>
+          <div className="space-y-1">
+            <h1 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] tracking-tight">
+              {t("title", { defaultValue: "Revenue Command Center" })}
+            </h1>
+            <p className="text-sm text-[var(--text-secondary)]">
+              {t("subtitle", { defaultValue: "Your autonomous revenue operator, always on." })}
+            </p>
+          </div>
           <p className="text-sm text-[var(--text-secondary)] mt-1">
             {t("subtitle", { defaultValue: "Revenue recovery this month" })}
           </p>
         </div>
         <div className="flex flex-col items-end gap-2">
-          <button
-            onClick={() => load(true)}
-            disabled={refreshing}
-            className="inline-flex items-center gap-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] transition-colors active:scale-[0.97]"
-          >
-            <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
-            {t("actions.refresh", { defaultValue: "Refresh" })}
-          </button>
+          <div className="flex items-center gap-2">
+            <NotificationCenter workspaceId={workspaceId} />
+            <button
+              onClick={() => load(true)}
+              disabled={refreshing}
+              className="inline-flex items-center gap-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-hover)] transition-colors active:scale-[0.97]"
+            >
+              <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
+              {t("actions.refresh", { defaultValue: "Refresh" })}
+            </button>
+          </div>
           {lastUpdated && (
             <p className="text-xs text-[var(--text-tertiary)]">
               {t("actions.updatedAt", { defaultValue: "Updated" })} {fmtLastUpdated(lastUpdated, t)}
@@ -458,50 +517,141 @@ export function UnifiedDashboard() {
           </div>
         </div>
 
-        {/* Onboarding cards */}
+        {/* Pre-signal contextual guidance — shows when product is set up but no calls yet */}
+        {!hasSignal && data.revenue_recovered_cents === 0 && (
+          <div className="flex items-start gap-3 rounded-xl border border-blue-500/20 bg-blue-500/[0.04] px-5 py-4">
+            <CalendarCheck className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-[var(--text-primary)]">
+                {t("readyToGo.title", { defaultValue: "Your AI agent is ready to take calls" })}
+              </p>
+              <p className="text-sm text-[var(--text-secondary)] mt-0.5">
+                {t("readyToGo.body", { defaultValue: "Revenue, calls, and appointments will update in real time as your agent handles calls. Make a test call to see it in action, or forward your business number to go live." })}
+              </p>
+              <div className="flex items-center gap-3 mt-2">
+                <Link href="/app/agents" className="text-xs font-medium text-[var(--accent-primary)] hover:underline">
+                  {t("readyToGo.testCall", { defaultValue: "Test your agent" })}
+                </Link>
+                <span className="text-[var(--text-tertiary)]">·</span>
+                <Link href="/app/settings/phone" className="text-xs font-medium text-[var(--accent-primary)] hover:underline">
+                  {t("readyToGo.goLive", { defaultValue: "Go live with your number" })}
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Usage warning — show at 80%+ minute usage */}
+        {data && data.minutes_limit > 0 && data.minutes_used >= data.minutes_limit * 0.8 && (
+          <div className="flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/[0.06] px-5 py-4">
+            <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-[var(--text-primary)]">
+                {data.minutes_used >= data.minutes_limit
+                  ? t("usageWarning.limitReached", { defaultValue: "Minute limit reached" })
+                  : t("usageWarning.approaching", { defaultValue: "Approaching minute limit" })}
+              </p>
+              <p className="text-sm text-[var(--text-secondary)] mt-0.5">
+                {t("usageWarning.used", { defaultValue: `${data.minutes_used} of ${data.minutes_limit} minutes used this cycle.` })}{" "}
+                <Link href="/app/settings/billing" className="text-[var(--accent-primary)] font-medium hover:underline">
+                  {data.minutes_used >= data.minutes_limit
+                    ? t("usageWarning.buyMore", { defaultValue: "Buy more minutes" })
+                    : t("usageWarning.manage", { defaultValue: "Manage usage" })}
+                </Link>
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Onboarding checklist — sequential numbered steps */}
         {!hasSignal && (
           <div className="mt-8 pt-6 border-t border-[var(--border-default)]">
-            <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-4">{t("getStarted", { defaultValue: "Get started" })}</h3>
-            <div className="grid sm:grid-cols-3 gap-4">
+            <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">{t("getStarted", { defaultValue: "Get started" })}</h3>
+            <p className="text-xs text-[var(--text-tertiary)] mb-4">{t("getStartedSubtitle", { defaultValue: "Complete these steps to go live — takes about 5 minutes" })}</p>
+            <div className="grid sm:grid-cols-4 gap-4">
               {[
                 {
+                  step: 1,
+                  href: data.agent_configured ? "/app/agents" : "/app/agents/new",
+                  icon: Bot,
+                  title: t("onboarding.createAgent.title", { defaultValue: "Create your AI agent" }),
+                  desc: t("onboarding.createAgent.description", { defaultValue: "Choose a template and customize your agent's personality" }),
+                  done: !!data.agent_configured,
+                },
+                {
+                  step: 2,
                   href: "/app/settings/phone",
                   icon: Phone,
                   title: t("onboarding.connectNumber.title", { defaultValue: "Connect a number" }),
-                  desc: t("onboarding.connectNumber.description", { defaultValue: "Set up your phone number to start receiving calls" }),
+                  desc: t("onboarding.connectNumber.description", { defaultValue: "Get a phone number for your AI to answer" }),
+                  done: !!data.phone_number_configured,
                 },
                 {
-                  href: "/app/settings/agent",
-                  icon: Bot,
-                  title: t("onboarding.configureAgent.title", { defaultValue: "Configure your agent" }),
-                  desc: t("onboarding.configureAgent.description", { defaultValue: "Customize how your AI handles calls" }),
+                  step: 3,
+                  href: "/app/knowledge",
+                  icon: MessageSquare,
+                  title: t("onboarding.addKnowledge.title", { defaultValue: "Add your FAQs" }),
+                  desc: t("onboarding.addKnowledge.description", { defaultValue: "Teach your agent about your business" }),
+                  done: false,
                 },
                 {
+                  step: 4,
                   href: "/app/settings/phone",
                   icon: PhoneCall,
                   title: t("onboarding.makeTestCall.title", { defaultValue: "Make a test call" }),
-                  desc: t("onboarding.makeTestCall.description", { defaultValue: "Call your number from any phone to test it" }),
+                  desc: t("onboarding.makeTestCall.description", { defaultValue: "Call your number to hear your agent in action" }),
+                  done: false,
                 },
-              ].map((step) => (
+              ].map((item) => (
                 <Link
-                  key={step.href + step.title}
-                  href={step.href}
-                  className="onboard-card group flex flex-col"
+                  key={item.step}
+                  href={item.href}
+                  className={`onboard-card group flex flex-col ${item.done ? "opacity-70" : ""}`}
                 >
                   <div className="flex items-start justify-between mb-3">
-                    <div className="w-10 h-10 rounded-xl bg-[var(--accent-primary-subtle)] flex items-center justify-center">
-                      <step.icon className="w-5 h-5 text-[var(--accent-primary)]" />
-                    </div>
+                    {item.done ? (
+                      <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center">
+                        <Check className="w-5 h-5 text-emerald-500" />
+                      </div>
+                    ) : (
+                      <div className="w-10 h-10 rounded-xl bg-[var(--accent-primary-subtle)] flex items-center justify-center">
+                        <span className="text-sm font-bold text-[var(--accent-primary)]">{item.step}</span>
+                      </div>
+                    )}
                     <ChevronRight className="w-4 h-4 text-[var(--text-disabled)] group-hover:text-[var(--text-secondary)] transition-colors" />
                   </div>
-                  <h4 className="font-semibold text-sm text-[var(--text-primary)]">{step.title}</h4>
-                  <p className="text-xs text-[var(--text-secondary)] mt-1 leading-relaxed">{step.desc}</p>
+                  <h4 className={`font-semibold text-sm ${item.done ? "text-[var(--text-secondary)] line-through" : "text-[var(--text-primary)]"}`}>{item.title}</h4>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1 leading-relaxed">{item.desc}</p>
                 </Link>
               ))}
             </div>
           </div>
         )}
       </section>
+
+      {/* ── Revenue Recovery Score Card (HERO) ─────────────────────────── */}
+      <Suspense fallback={null}>
+        <motion.div
+          className="grid lg:grid-cols-2 gap-6"
+          variants={staggerContainer}
+          initial="initial"
+          animate="animate"
+        >
+          <motion.div variants={staggerItem}>
+            <RecoveryScoreCard workspaceId={workspaceId} />
+          </motion.div>
+        </motion.div>
+      </Suspense>
+
+      {/* ── Setup Health Card ──────────────────────────────────────────── */}
+      <Suspense fallback={null}>
+        <SetupHealthCard workspaceId={workspaceId} />
+      </Suspense>
+
+      {/* ── Autonomous Briefing: "Since You Were Away" ─────────────────── */}
+      <Suspense fallback={null}>
+        <AutonomousBriefing workspaceId={workspaceId} />
+      </Suspense>
 
       {/* ── KPI cards ──────────────────────────────────────────────────── */}
       <motion.div
@@ -538,6 +688,74 @@ export function UnifiedDashboard() {
         ))}
       </motion.div>
 
+      {/* ── AI Recommendations Card ────────────────────────────────────── */}
+      <Suspense fallback={<CardSkeleton />}>
+        <RecommendationsCard workspaceId={workspaceId} />
+      </Suspense>
+
+      {/* ── Revenue Leakage Radar ─────────────────────────────────────── */}
+      {(data.missed_calls_today > 0 || data.no_shows_this_week > 0 || data.stale_leads > 0 || data.pending_follow_ups > 0) && (
+        <section className="dash-section p-5 md:p-6 border-l-4 border-l-amber-500">
+          <div className="flex items-center gap-2 mb-4">
+            <AlertCircle className="w-4 h-4 text-amber-500" />
+            <h2 className="text-sm font-semibold text-[var(--text-primary)]">Revenue at risk</h2>
+            <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500">
+              {[data.missed_calls_today, data.no_shows_this_week, data.stale_leads, data.pending_follow_ups].filter(v => v > 0).length} opportunities
+            </span>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {data.missed_calls_today > 0 && (
+              <Link href="/app/calls" className="group flex items-start gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] hover:border-amber-500/40 p-4 transition-colors">
+                <div className="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0">
+                  <Phone className="w-4 h-4 text-red-500" />
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-[var(--text-primary)] tabular-nums">{data.missed_calls_today}</p>
+                  <p className="text-xs text-[var(--text-secondary)]">Unanswered revenue opportunities</p>
+                  <p className="text-[11px] text-amber-500 font-medium mt-1 group-hover:underline">Recover now →</p>
+                </div>
+              </Link>
+            )}
+            {data.no_shows_this_week > 0 && (
+              <Link href="/app/contacts" className="group flex items-start gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] hover:border-amber-500/40 p-4 transition-colors">
+                <div className="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
+                  <CalendarCheck className="w-4 h-4 text-amber-500" />
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-[var(--text-primary)] tabular-nums">{data.no_shows_this_week}</p>
+                  <p className="text-xs text-[var(--text-secondary)]">No-shows this week</p>
+                  <p className="text-[11px] text-amber-500 font-medium mt-1 group-hover:underline">Re-engage →</p>
+                </div>
+              </Link>
+            )}
+            {data.stale_leads > 0 && (
+              <Link href="/app/contacts?filter=stale" className="group flex items-start gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] hover:border-amber-500/40 p-4 transition-colors">
+                <div className="w-9 h-9 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0">
+                  <Clock className="w-4 h-4 text-orange-500" />
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-[var(--text-primary)] tabular-nums">{data.stale_leads}</p>
+                  <p className="text-xs text-[var(--text-secondary)]">Stale leads (7+ days)</p>
+                  <p className="text-[11px] text-amber-500 font-medium mt-1 group-hover:underline">Reactivate →</p>
+                </div>
+              </Link>
+            )}
+            {data.pending_follow_ups > 0 && (
+              <Link href="/app/follow-ups" className="group flex items-start gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] hover:border-amber-500/40 p-4 transition-colors">
+                <div className="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center shrink-0">
+                  <MailCheck className="w-4 h-4 text-blue-500" />
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-[var(--text-primary)] tabular-nums">{data.pending_follow_ups}</p>
+                  <p className="text-xs text-[var(--text-secondary)]">Pending follow-ups</p>
+                  <p className="text-[11px] text-amber-500 font-medium mt-1 group-hover:underline">Send now →</p>
+                </div>
+              </Link>
+            )}
+          </div>
+        </section>
+      )}
+
       {/* ── Two-column: Needs attention + Activity ─────────────────────── */}
       <motion.div
         className="grid lg:grid-cols-2 gap-6"
@@ -551,7 +769,7 @@ export function UnifiedDashboard() {
             <div className="flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-[var(--accent-warning)]" />
               <h2 className="text-sm font-semibold text-[var(--text-primary)]">
-                {t("needsAttention.title", { defaultValue: "Needs attention" })}
+                {t("needsAttention.title", { defaultValue: "Next agent actions" })}
               </h2>
               {data.needs_attention.length > 0 && (
                 <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-[var(--accent-warning-subtle)] text-[var(--accent-warning)]">
@@ -567,10 +785,19 @@ export function UnifiedDashboard() {
             </Link>
           </div>
           {data.needs_attention.length === 0 ? (
-            <div className="py-8 text-center">
+            <div className="py-6 text-center space-y-2">
               <p className="text-sm text-[var(--text-secondary)]">
                 {t("needsAttention.empty", { defaultValue: "Nothing needs your action right now." })}
               </p>
+              <div className="flex items-center justify-center gap-3">
+                <Link href="/app/campaigns" className="text-xs font-medium text-[var(--accent-primary)] hover:underline">
+                  {t("needsAttention.launchCampaign", { defaultValue: "Launch a campaign" })}
+                </Link>
+                <span className="text-[var(--text-tertiary)]">·</span>
+                <Link href="/app/contacts" className="text-xs font-medium text-[var(--accent-primary)] hover:underline">
+                  {t("needsAttention.importContacts", { defaultValue: "Import contacts" })}
+                </Link>
+              </div>
             </div>
           ) : (
             <motion.ul
@@ -617,54 +844,23 @@ export function UnifiedDashboard() {
           )}
         </motion.section>
 
-        {/* Activity feed */}
-        <motion.section className="dash-section p-5 md:p-6" variants={staggerItem}>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-[var(--accent-primary)]" />
-              <h2 className="text-sm font-semibold text-[var(--text-primary)]">
-                {t("activity.title", { defaultValue: "Today's activity" })}
-              </h2>
-            </div>
-          </div>
-          {data.activity.length === 0 ? (
-            <div className="py-8 text-center">
-              <p className="text-sm text-[var(--text-secondary)]">
-                {t("activity.empty", { defaultValue: "Activity will show as calls and messages come in." })}
-              </p>
-            </div>
-          ) : (
-            <motion.div
-              className="space-y-0 max-h-72 overflow-y-auto pr-1"
-              variants={staggerFast}
-              initial="initial"
-              animate="animate"
-            >
-              {data.activity.map((a) => (
-                <motion.div key={a.id} className="activity-item py-3" variants={staggerItem}>
-                  <span className="text-[11px] font-medium text-[var(--text-tertiary)] tabular-nums">
-                    {fmtTime(a.at)}
-                  </span>
-                  <p className="text-sm text-[var(--text-secondary)] mt-0.5 leading-relaxed">{a.line}</p>
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
+        {/* Live call feed with Suspense fallback */}
+        <motion.section variants={staggerItem}>
+          <Suspense fallback={<CardSkeleton />}>
+            <LiveCallFeed workspaceId={workspaceId} />
+          </Suspense>
         </motion.section>
       </motion.div>
 
       {/* ── Active campaigns ───────────────────────────────────────────── */}
-      <motion.section
+      <section
         className="dash-section p-5 md:p-6"
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.25, delay: 0.3 }}
       >
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Megaphone className="w-4 h-4 text-[var(--accent-primary)]" />
             <h2 className="text-sm font-semibold text-[var(--text-primary)]">
-              {t("activeCampaigns.title", { defaultValue: "Active outbound campaigns" })}
+              {t("activeCampaigns.title", { defaultValue: "Active recovery campaigns" })}
             </h2>
           </div>
           <Link
@@ -707,7 +903,7 @@ export function UnifiedDashboard() {
             ))}
           </div>
         )}
-      </motion.section>
+      </section>
 
       {/* ── Voice Intelligence + A/B Testing ──────────────────────────── */}
       <motion.div
@@ -717,10 +913,136 @@ export function UnifiedDashboard() {
         animate="animate"
       >
         <motion.div variants={staggerItem}>
-          <IntelligenceCard />
+          <Suspense fallback={<CardSkeleton />}><IntelligenceCard /></Suspense>
         </motion.div>
         <motion.div variants={staggerItem}>
-          <VoiceABTestCard />
+          <Suspense fallback={<CardSkeleton />}><VoiceABTestCard /></Suspense>
+        </motion.div>
+      </motion.div>
+
+      {/* ── Sequence A/B Testing ──────────────────────────────────────── */}
+      <motion.div
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+      >
+        <motion.div variants={staggerItem}>
+          <Suspense fallback={<CardSkeleton />}><SequenceABTestCard /></Suspense>
+        </motion.div>
+      </motion.div>
+
+      {/* ── Voice Analytics ────────────────────────────────────────────── */}
+      <motion.div
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+      >
+        <motion.div variants={staggerItem}>
+          <Suspense fallback={<CardSkeleton />}><VoiceAnalyticsCard /></Suspense>
+        </motion.div>
+      </motion.div>
+
+      {/* ── Automation Engine ─────────────────────────────────────────── */}
+      <motion.div
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+      >
+        <motion.div variants={staggerItem}>
+          <Suspense fallback={<CardSkeleton />}><AutomationEngineCard /></Suspense>
+        </motion.div>
+      </motion.div>
+
+      {/* ── Call Recordings + Outbound Campaigns ─────────────────────── */}
+      <motion.div
+        className="grid lg:grid-cols-2 gap-6"
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+      >
+        <motion.div variants={staggerItem}>
+          <Suspense fallback={<CardSkeleton />}><CallRecordingsCard /></Suspense>
+        </motion.div>
+        <motion.div variants={staggerItem}>
+          <Suspense fallback={<CardSkeleton />}><OutboundCampaignCard /></Suspense>
+        </motion.div>
+      </motion.div>
+
+      {/* ── Campaign Performance Drill-down ──────────────────────────── */}
+      <motion.div
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+      >
+        <motion.div variants={staggerItem}>
+          <Suspense fallback={<CardSkeleton />}><CampaignPerformanceCard workspaceId={workspaceId} /></Suspense>
+        </motion.div>
+      </motion.div>
+
+      {/* ── Coaching Reports + Appointments ────────────────────────── */}
+      <motion.div
+        className="grid lg:grid-cols-2 gap-6"
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+      >
+        <motion.div variants={staggerItem}>
+          <Suspense fallback={<CardSkeleton />}><CoachingReportCard /></Suspense>
+        </motion.div>
+        <motion.div variants={staggerItem}>
+          <Suspense fallback={<CardSkeleton />}><AppointmentManagementCard /></Suspense>
+        </motion.div>
+      </motion.div>
+
+      {/* ── SMS Conversations + Call Transfers ────────────────────────── */}
+      <motion.div
+        className="grid lg:grid-cols-2 gap-6"
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+      >
+        <motion.div variants={staggerItem}>
+          <Suspense fallback={<CardSkeleton />}><SMSThreadsCard /></Suspense>
+        </motion.div>
+        <motion.div variants={staggerItem}>
+          <Suspense fallback={<CardSkeleton />}><CallTransferCard /></Suspense>
+        </motion.div>
+      </motion.div>
+
+      {/* ── Escalation Log + DNC Management ──────────────────────────── */}
+      <motion.div
+        className="grid lg:grid-cols-2 gap-6"
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+      >
+        <motion.div variants={staggerItem}>
+          <Suspense fallback={<CardSkeleton />}><EscalationLogCard /></Suspense>
+        </motion.div>
+        <motion.div variants={staggerItem}>
+          <Suspense fallback={<CardSkeleton />}><DNCManagementCard /></Suspense>
+        </motion.div>
+      </motion.div>
+
+      {/* ── Webhook Management ───────────────────────────────────────── */}
+      <motion.div
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+      >
+        <motion.div variants={staggerItem}>
+          <Suspense fallback={<CardSkeleton />}><WebhookManagementCard /></Suspense>
+        </motion.div>
+      </motion.div>
+
+      {/* ── Workspace Settings ───────────────────────────────────────── */}
+      <motion.div
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+      >
+        <motion.div variants={staggerItem}>
+          <Suspense fallback={<CardSkeleton />}><WorkspaceSettingsCard /></Suspense>
         </motion.div>
       </motion.div>
     </div>

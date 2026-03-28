@@ -100,11 +100,32 @@ export function AgentList({
                   </span>
                 </div>
               )}
-              <div className="flex items-center gap-2 text-[11px] text-[var(--text-tertiary)] mb-3">
+              <div className="flex items-center gap-2 text-[11px] text-[var(--text-tertiary)] mb-1">
                 <span>{agent.stats?.totalCalls ?? 0} {t("callsSuffix")}</span>
+                {(agent.stats?.appointmentsBooked ?? 0) > 0 && (
+                  <>
+                    <span>·</span>
+                    <span className="text-emerald-400">{agent.stats?.appointmentsBooked} {t("bookedSuffix", { defaultValue: "booked" })}</span>
+                  </>
+                )}
                 <span>·</span>
                 <span>{lastActiveLabel}</span>
               </div>
+              {(agent.stats?.totalCalls ?? 0) > 0 && (
+                <div className="flex items-center gap-2 text-[11px] text-[var(--text-tertiary)] mb-3">
+                  {typeof agent.stats?.avgRating === "number" && agent.stats.avgRating > 0 && (
+                    <span className={agent.stats.avgRating >= 4 ? "text-emerald-400" : agent.stats.avgRating >= 3 ? "text-amber-400" : "text-red-400"}>
+                      {t("qualitySuffix", { defaultValue: "Quality" })}: {agent.stats.avgRating.toFixed(1)}/5
+                    </span>
+                  )}
+                  {(agent.stats?.totalCalls ?? 0) > 0 && (agent.stats?.appointmentsBooked ?? 0) > 0 && (
+                    <>
+                      <span>·</span>
+                      <span>{t("conversionSuffix", { defaultValue: "Conv" })}: {Math.round(((agent.stats?.appointmentsBooked ?? 0) / (agent.stats?.totalCalls ?? 1)) * 100)}%</span>
+                    </>
+                  )}
+                </div>
+              )}
               <div
                 className="flex items-center gap-2 pt-2 border-t border-[var(--border-default)]"
                 onClick={(e) => e.stopPropagation()}

@@ -299,10 +299,17 @@ export class RecallVoiceProvider implements VoiceProvider {
         throw new Error("No outbound phone number configured — set workspace phone config or TELNYX_PHONE_NUMBER or TWILIO_PHONE_NUMBER");
       }
 
+      const webhookBase = process.env.WEBHOOK_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+      // Use the correct webhook URL for the active telephony provider
+      const { getTelephonyProvider: getProvider } = await import("@/lib/telephony/get-telephony-provider");
+      const activeProvider = getProvider();
+      const webhookPath = activeProvider === "twilio"
+        ? "/api/webhooks/twilio/voice"
+        : "/api/webhooks/telnyx/voice";
       const result = await telephony.createOutboundCall({
         to: params.phoneNumber,
         from: fromPhoneNumber,
-        webhookUrl: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/telnyx/voice`,
+        webhookUrl: `${webhookBase}${webhookPath}`,
         metadata: {
           assistant_id: params.assistantId,
           voice_id: config.voice_id,

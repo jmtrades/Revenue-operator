@@ -7,14 +7,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { randomBytes } from "crypto";
-import { assertSameOrigin } from "@/lib/http/csrf";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
-  const csrfBlock = assertSameOrigin(req);
-  if (csrfBlock) return csrfBlock;
-
+  // No CSRF check — this is an OAuth token exchange endpoint called by Zapier's servers.
+  // Security is enforced via client_secret validation below.
 
   let body: { code?: string; client_id?: string; client_secret?: string; redirect_uri?: string; grant_type?: string };
   try {
@@ -27,14 +25,27 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "grant_type and code required" }, { status: 400 });
   }
 
+  // Validate client_secret — required for secure token exchange
+  const expectedSecret = process.env.ZAPIER_CLIENT_SECRET;
+  if (expectedSecret && body.client_secret !== expectedSecret) {
+    return NextResponse.json({ error: "Invalid client credentials" }, { status: 401 });
+  }
+
   const db = getDb();
   const { data: row } = await db
     .from("zapier_oauth_codes")
-    .select("code, workspace_id, redirect_uri")
+    .select("code, workspace_id, redirect_uri, created_at")
     .eq("code", body.code.trim())
     .maybeSingle();
 
   if (!row) return NextResponse.json({ error: "Invalid or expired code" }, { status: 400 });
+
+  // Enforce 10-minute code expiry
+  const codeCreatedAt = (row as { created_at?: string }).created_at;
+  if (codeCreatedAt && Date.now() - new Date(codeCreatedAt).getTime() > 10 * 60 * 1000) {
+    await db.from("zapier_oauth_codes").delete().eq("code", body.code.trim());
+    return NextResponse.json({ error: "Code expired" }, { status: 400 });
+  }
 
   const r = row as { workspace_id: string; redirect_uri?: string | null };
   if (body.redirect_uri && r.redirect_uri && body.redirect_uri !== r.redirect_uri) {

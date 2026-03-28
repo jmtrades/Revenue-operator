@@ -13,8 +13,14 @@ const HomepageRoiCalculator = dynamic(
       (module) => module.HomepageRoiCalculator,
     ),
 );
+const TrustedByBar = dynamic(
+  () => import("@/components/sections/TrustedByBar").then((m) => m.TrustedByBar),
+);
 const SocialProof = dynamic(
   () => import("@/components/sections/SocialProof").then((m) => m.SocialProof),
+);
+const ResultsStatsSection = dynamic(
+  () => import("@/components/sections/ResultsStatsSection").then((m) => m.ResultsStatsSection),
 );
 // ProblemStatement removed — loss-psychology framing replaced by ROI calculator
 const HowItWorks = dynamic(
@@ -29,8 +35,14 @@ const HomepageVoicePreview = dynamic(
   () => import("@/components/sections/HomepageVoicePreview").then((m) => m.HomepageVoicePreview),
 );
 // HomepageModeSelector removed — merged into HowItWorks flow
+const TestimonialsGridSection = dynamic(
+  () => import("@/components/sections/TestimonialsGridSection").then((m) => m.TestimonialsGridSection),
+);
 const TestimonialsSection = dynamic(
   () => import("@/components/sections/TestimonialsSection").then((m) => m.TestimonialsSection),
+);
+const ComparisonTableSection = dynamic(
+  () => import("@/components/sections/ComparisonTableSection").then((m) => m.ComparisonTableSection),
 );
 const FinalCTA = dynamic(
   () => import("@/components/sections/FinalCTA").then((m) => m.FinalCTA),
@@ -120,11 +132,15 @@ export default async function HomePage() {
       <Navbar initialAuthenticated={initialAuthenticated} />
       <main id="main">
         <Hero />
+        <TrustedByBar />
+        <ResultsStatsSection />
         <HomepageRoiCalculator />
         <HowItWorks />
         <HomepageVoicePreview />
         <SocialProof />
+        <TestimonialsGridSection />
         <TestimonialsSection />
+        <ComparisonTableSection />
         <PricingPreview />
         <HomepageFAQ />
         <FinalCTA />

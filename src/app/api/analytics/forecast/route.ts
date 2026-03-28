@@ -1,0 +1,136 @@
+/**
+ * GET /api/analytics/forecast?workspace_id=...
+ * Revenue forecasting/projection for current month based on daily_metrics data.
+ * Returns current month revenue, projected month-end, growth rate vs prior month, and confidence level.
+ */
+
+export const dynamic = "force-dynamic";
+
+import { NextRequest, NextResponse } from "next/server";
+import { getDb } from "@/lib/db/queries";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+
+interface ForecastResponse {
+  current_revenue_cents: number;
+  projected_revenue_cents: number;
+  growth_rate_pct: number | null;
+  daily_avg_cents: number;
+  days_remaining: number;
+  confidence: "high" | "medium" | "low";
+}
+
+export async function GET(req: NextRequest): Promise<NextResponse<ForecastResponse | { error: string } | unknown>> {
+  try {
+    const workspaceId = req.nextUrl.searchParams.get("workspace_id");
+    if (!workspaceId) {
+      return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
+    }
+
+    const authErr = await requireWorkspaceAccess(req, workspaceId);
+    if (authErr) return authErr;
+
+    const db = getDb();
+
+    // Get current date info
+    const today = new Date();
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
+    const monthStart = new Date(currentYear, currentMonth, 1);
+    const monthEnd = new Date(currentYear, currentMonth + 1, 0);
+    const daysInMonth = monthEnd.getDate();
+    const currentDay = today.getDate();
+    const daysRemaining = daysInMonth - currentDay;
+
+    // Format dates as YYYY-MM-DD
+    const monthStartStr = monthStart.toISOString().split("T")[0];
+    const monthEndStr = monthEnd.toISOString().split("T")[0];
+    const todayStr = today.toISOString().split("T")[0];
+
+    // Query: last 30 days of revenue data for this workspace
+    const thirtyDaysAgo = new Date(today);
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const thirtyDaysAgoStr = thirtyDaysAgo.toISOString().split("T")[0];
+
+    const { data: recentMetrics, error: recentErr } = await db
+      .from("daily_metrics")
+      .select("date, revenue_estimated_cents")
+      .eq("workspace_id", workspaceId)
+      .gte("date", thirtyDaysAgoStr)
+      .lte("date", todayStr)
+      .order("date", { ascending: false });
+
+    if (recentErr) {
+      console.error("[forecast] Error fetching recent metrics:", recentErr);
+      return NextResponse.json({ error: "Failed to fetch metrics" }, { status: 500 });
+    }
+
+    // Calculate current month revenue (this month's data through today)
+    const currentMonthRevenue = (recentMetrics || [])
+      .filter((m) => {
+        const date = new Date(m.date);
+        return date >= monthStart && date <= today;
+      })
+      .reduce((sum, m) => sum + (m.revenue_estimated_cents || 0), 0);
+
+    // Calculate prior month revenue for growth rate
+    const priorMonthStart = new Date(currentYear, currentMonth - 1, 1);
+    const priorMonthEnd = new Date(currentYear, currentMonth, 0);
+    const priorMonthStartStr = priorMonthStart.toISOString().split("T")[0];
+    const priorMonthEndStr = priorMonthEnd.toISOString().split("T")[0];
+
+    const { data: priorMetrics, error: priorErr } = await db
+      .from("daily_metrics")
+      .select("date, revenue_estimated_cents")
+      .eq("workspace_id", workspaceId)
+      .gte("date", priorMonthStartStr)
+      .lte("date", priorMonthEndStr);
+
+    if (priorErr) {
+      console.error("[forecast] Error fetching prior month metrics:", priorErr);
+    }
+
+    const priorMonthRevenue = (priorMetrics || []).reduce(
+      (sum, m) => sum + (m.revenue_estimated_cents || 0),
+      0
+    );
+
+    // Calculate daily average for current month (only count days with data)
+    const currentMonthMetrics = (recentMetrics || []).filter((m) => {
+      const date = new Date(m.date);
+      return date >= monthStart && date <= today;
+    });
+
+    const daysWithData = currentMonthMetrics.length;
+    const dailyAvg = daysWithData > 0 ? Math.round(currentMonthRevenue / daysWithData) : 0;
+
+    // Project month-end using linear extrapolation from daily average
+    const projectedRevenue = currentMonthRevenue + dailyAvg * daysRemaining;
+
+    // Calculate growth rate vs prior month (in percentage)
+    let growthRate: number | null = null;
+    if (priorMonthRevenue > 0) {
+      growthRate = Math.round(((currentMonthRevenue - priorMonthRevenue) / priorMonthRevenue) * 100);
+    }
+
+    // Determine confidence level based on number of data points
+    // High: 7+ days of data (about 25% of month), Medium: 3-6 days, Low: <3 days
+    let confidence: "high" | "medium" | "low" = "low";
+    if (daysWithData >= 7) {
+      confidence = "high";
+    } else if (daysWithData >= 3) {
+      confidence = "medium";
+    }
+
+    return NextResponse.json<ForecastResponse>({
+      current_revenue_cents: currentMonthRevenue,
+      projected_revenue_cents: Math.round(projectedRevenue),
+      growth_rate_pct: growthRate,
+      daily_avg_cents: dailyAvg,
+      days_remaining: daysRemaining,
+      confidence,
+    });
+  } catch (error) {
+    console.error("[forecast] Unexpected error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}

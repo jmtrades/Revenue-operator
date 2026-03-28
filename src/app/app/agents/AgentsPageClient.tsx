@@ -1214,6 +1214,7 @@ export default function AppAgentsPageClient({
                 saving={saving}
                 elevenLabsVoices={recallVoices}
                 workspaceName={initialWorkspaceName}
+                workspaceId={workspaceId}
                 workspaceNumbers={workspaceNumbers}
                 getAgentReadiness={getAgentReadinessBound}
                 handleStepChange={handleStepChange}
@@ -1363,7 +1364,7 @@ export default function AppAgentsPageClient({
 
       <p className="mt-6">
         <Link
-          href="/app/activity"
+          href="/app/dashboard"
           className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
         >
           {tAgents("backToActivity")}

@@ -27,6 +27,10 @@
 
 import { log } from "@/lib/logger";
 import { analyzeConversation, buildStrategyContext } from "./call-intelligence-engine";
+import { analyzeForCoaching, buildCoachingContext } from "./real-time-coaching";
+import { assessEscalation, buildEscalationContext } from "./sentiment-escalation";
+import { detectTransferRequest } from "./call-transfer";
+import { detectBookingIntent } from "./appointment-booking";
 
 /* ────────────────────────────────────────────────────────────────────────────
  * System Prompt — The "brain" of the demo voice agent.
@@ -529,11 +533,24 @@ export async function generateDemoResponse(
 ): Promise<string> {
   const startMs = Date.now();
 
-  // Analyze conversation for real-time intelligence
+  // Analyze conversation for real-time intelligence + coaching
   let strategyContext = "";
   try {
     const intel = analyzeConversation(history);
     strategyContext = buildStrategyContext(intel);
+
+    // Layer on real-time coaching suggestions
+    const coachingInsights = analyzeForCoaching(history);
+    if (coachingInsights.length > 0) {
+      strategyContext += buildCoachingContext(coachingInsights);
+    }
+
+    // Layer on escalation monitoring
+    const escalation = assessEscalation(history, history.length);
+    if (escalation.level !== "none") {
+      strategyContext += buildEscalationContext(escalation);
+    }
+
     log("info", "demo_agent.intelligence", {
       phase: intel.phase,
       engagement: intel.engagementScore,
@@ -541,6 +558,7 @@ export async function generateDemoResponse(
       competitor: intel.battlecard?.competitor ?? null,
       objections: intel.objectionPatterns,
       shouldClose: intel.shouldAttemptClose,
+      coachingTips: coachingInsights.length,
     });
   } catch (intelErr) {
     // Intelligence engine failure should never break the call

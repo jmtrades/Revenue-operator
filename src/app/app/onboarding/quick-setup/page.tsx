@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ChevronDown, Check, Sparkles, ArrowRight } from "lucide-react";
+import { useWorkspace } from "@/components/WorkspaceContext";
 
 interface AnalysisResult {
   businessName: string;
@@ -45,6 +46,7 @@ const INDUSTRIES = [
 
 export default function QuickSetupPage() {
   const router = useRouter();
+  const { workspaceId } = useWorkspace();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [url, setUrl] = useState("");
   const [analyzing, setAnalyzing] = useState(false);
@@ -73,6 +75,11 @@ export default function QuickSetupPage() {
       return;
     }
 
+    if (!workspaceId) {
+      toast.error("Workspace not found. Please complete setup first.");
+      return;
+    }
+
     setAnalyzing(true);
     setAnalysisMessages([]);
 
@@ -89,7 +96,7 @@ export default function QuickSetupPage() {
       const response = await fetch("/api/workspace/auto-setup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: url.trim() }),
+        body: JSON.stringify({ workspace_id: workspaceId, website_url: url.trim() }),
       });
 
       if (!response.ok) {
@@ -116,8 +123,8 @@ export default function QuickSetupPage() {
       setStep(2);
     } catch (error) {
       clearInterval(messageInterval);
+      console.error("Website analysis failed:", error);
       toast.error("Failed to analyze website. Please try again.");
-      console.error(error);
     } finally {
       setAnalyzing(false);
     }
@@ -133,12 +140,18 @@ export default function QuickSetupPage() {
   const handleActivate = async () => {
     if (!analysis) return;
 
+    if (!workspaceId) {
+      toast.error("Workspace not found. Please complete setup first.");
+      return;
+    }
+
     setActivating(true);
     try {
       const response = await fetch("/api/workspace/one-click-setup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          workspace_id: workspaceId,
           website_url: url,
           industry: industry || analysis.industry,
           businessName: analysis.businessName,
@@ -155,8 +168,8 @@ export default function QuickSetupPage() {
 
       setStep(3);
     } catch (error) {
+      console.error("Setup activation failed:", error);
       toast.error("Failed to activate setup. Please try again.");
-      console.error(error);
     } finally {
       setActivating(false);
     }

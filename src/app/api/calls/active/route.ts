@@ -4,13 +4,18 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {
-    const workspaceId = req.nextUrl.searchParams.get("workspace_id");
+    const session = await getSession(req);
+    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const workspaceId = req.nextUrl.searchParams.get("workspace_id") || session.workspaceId;
     if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
     const err = await requireWorkspaceAccess(req, workspaceId);
     if (err) return err;
@@ -78,7 +83,7 @@ export async function GET(req: NextRequest) {
     waiting: 0,
   });
   } catch (error) {
-    console.error("[API] calls/active error:", error);
+    log("error", "calls.active_error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

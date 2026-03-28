@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { reportUsageOverage } from "@/lib/billing/overage";
-import { BILLING_PLANS, type PlanSlug } from "@/lib/billing-plans";
+import { BILLING_PLANS, type PlanSlug, normalizeTier } from "@/lib/billing-plans";
 import "@/lib/runtime";
 import { assertCronAuthorized } from "@/lib/runtime";
 
@@ -51,10 +51,7 @@ export async function GET(request: NextRequest) {
         ) / 60
       );
 
-      const rawTier = (w.billing_tier ?? "solo").toLowerCase();
-      const tier: PlanSlug = (["solo", "business", "scale", "enterprise"] as const).includes(rawTier as PlanSlug)
-        ? (rawTier as PlanSlug)
-        : "solo";
+      const tier = normalizeTier(w.billing_tier);
       const included = BILLING_PLANS[tier].includedMinutes;
 
       if (totalMinutes > included) {

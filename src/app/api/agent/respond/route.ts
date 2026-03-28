@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { buildVapiSystemPrompt } from "@/lib/agents/build-vapi-system-prompt";
 
 /**
  * POST /api/agent/respond
@@ -79,43 +80,104 @@ export async function POST(req: NextRequest) {
     if (wsId) {
       try {
         const db = getDb();
-        // Load business context for this workspace
-        const { data: ctx } = await db
-          .from("workspace_business_context")
-          .select("business_name, industry, services, business_hours, address, pricing_range, tone_guidelines")
-          .eq("workspace_id", wsId)
-          .maybeSingle();
-
-        // Also load agent name + greeting from workspaces table
+        // Load full agent configuration for this workspace
         const { data: wsRow } = await db
           .from("workspaces")
-          .select("agent_name, greeting, voice_id")
+          .select("agent_name, greeting, voice_id, industry, services, special_instructions, personality, call_style, assertiveness, primary_goal, business_context, target_audience, business_hours, address, after_hours_mode, after_hours_instructions, qualification_criteria, qualification_questions, timezone, max_call_duration")
           .eq("id", wsId)
           .maybeSingle();
 
-        if (ctx?.business_name) {
-          const agentName = (wsRow as { agent_name?: string } | null)?.agent_name || "the receptionist";
-          const greeting = (wsRow as { greeting?: string } | null)?.greeting;
-          const style = (ctx as { tone_guidelines?: string }).tone_guidelines || "warm and professional";
-          systemPrompt = `You are ${agentName} answering the phone for ${ctx.business_name}.
-Style: ${style}.
+        const ws = wsRow as Record<string, unknown> | null;
+        if (ws?.agent_name) {
+          // Load FAQ from knowledge base
+          const { data: kbItems } = await db
+            .from("knowledge_base")
+            .select("content, category, metadata")
+            .eq("workspace_id", wsId)
+            .eq("source", "faq")
+            .limit(30);
 
-CRITICAL RULES:
-- You are ON A LIVE PHONE CALL. Speak naturally like a human.
-- Keep responses to 1-3 SHORT sentences. Never more.
-- No bullet points, lists, markdown. Just natural speech.
-- Ask ONE question at a time.
-- Be warm but efficient: get name, need, next step.
-- Never reveal you are AI. You are the business receptionist.
+          const faq = (kbItems ?? []).map((item: Record<string, unknown>) => {
+            const meta = (item.metadata ?? {}) as Record<string, string>;
+            return { question: meta.question ?? "", answer: String(item.content ?? "") };
+          }).filter((f: { question: string; answer: string }) => f.question && f.answer);
 
-Business info:
-- Name: ${ctx.business_name}
-- Industry: ${(ctx as { industry?: string }).industry || "general"}
-- Services: ${(ctx as { services?: string }).services || "various services"}
-- Hours: ${(ctx as { business_hours?: string }).business_hours || "regular business hours"}
-- Area: ${(ctx as { address?: string }).address || "local area"}
-- Pricing: ${(ctx as { pricing_range?: string }).pricing_range || "varies by service — offer to have someone follow up with details"}
-${greeting ? `- Opening greeting: "${greeting}"` : ""}`;
+          // Load business context
+          const { data: ctx } = await db
+            .from("workspace_business_context")
+            .select("business_name, industry, services, business_hours, address, pricing_range, tone_guidelines")
+            .eq("workspace_id", wsId)
+            .maybeSingle();
+
+          const bizCtx = ctx as Record<string, unknown> | null;
+          const businessName = String(bizCtx?.business_name ?? ws.agent_name ?? "the business");
+
+          // Load objection handling config
+          const { data: objRows } = await db
+            .from("agent_objections")
+            .select("trigger, response")
+            .eq("workspace_id", wsId)
+            .limit(20);
+
+          const objections = (objRows ?? []).map((o: Record<string, unknown>) => ({
+            trigger: String(o.trigger ?? ""),
+            response: String(o.response ?? ""),
+          })).filter((o: { trigger: string; response: string }) => o.trigger && o.response);
+
+          // Load rules
+          const { data: rulesRow } = await db
+            .from("agent_rules")
+            .select("never_say, always_transfer, escalation_triggers, transfer_phone, transfer_rules")
+            .eq("workspace_id", wsId)
+            .maybeSingle();
+
+          const rulesData = rulesRow as Record<string, unknown> | null;
+
+          // Load learned behaviors from Call Intelligence
+          const { data: learnedRows } = await db
+            .from("call_intelligence_insights")
+            .select("recommendation")
+            .eq("workspace_id", wsId)
+            .eq("applied", true)
+            .limit(10);
+
+          const learnedBehaviors = (learnedRows ?? [])
+            .map((r: Record<string, unknown>) => String(r.recommendation ?? ""))
+            .filter(Boolean);
+
+          // Build the full system prompt
+          systemPrompt = buildVapiSystemPrompt({
+            businessName,
+            industry: String(ws.industry ?? bizCtx?.industry ?? ""),
+            agentName: String(ws.agent_name),
+            greeting: String(ws.greeting ?? `Hi, thanks for calling ${businessName}! How can I help you today?`),
+            services: Array.isArray(bizCtx?.services) ? (bizCtx.services as string[]) : String(bizCtx?.services ?? "").split(",").map((s: string) => s.trim()).filter(Boolean),
+            faq,
+            specialInstructions: String(ws.special_instructions ?? ""),
+            rules: {
+              neverSay: Array.isArray(rulesData?.never_say) ? (rulesData.never_say as string[]) : [],
+              alwaysTransfer: Array.isArray(rulesData?.always_transfer) ? (rulesData.always_transfer as string[]) : [],
+              escalationTriggers: Array.isArray(rulesData?.escalation_triggers) ? (rulesData.escalation_triggers as string[]) : [],
+              transferPhone: rulesData?.transfer_phone ? String(rulesData.transfer_phone) : null,
+              transferRules: Array.isArray(rulesData?.transfer_rules) ? (rulesData.transfer_rules as Array<{ phrase?: string; phone?: string }>) : [],
+            },
+            personality: String(ws.personality ?? bizCtx?.tone_guidelines ?? "professional"),
+            callStyle: String(ws.call_style ?? "conversational"),
+            assertiveness: typeof ws.assertiveness === "number" ? ws.assertiveness : 50,
+            primaryGoal: String(ws.primary_goal ?? "answer_route"),
+            businessContext: String(ws.business_context ?? bizCtx?.business_name ?? ""),
+            targetAudience: String(ws.target_audience ?? ""),
+            businessHours: String(ws.business_hours ?? bizCtx?.business_hours ?? ""),
+            address: String(ws.address ?? bizCtx?.address ?? ""),
+            afterHoursMode: (ws.after_hours_mode as "messages" | "emergency" | "forward" | "closed" | null) ?? null,
+            afterHoursInstructions: String(ws.after_hours_instructions ?? ""),
+            qualificationCriteria: Array.isArray(ws.qualification_criteria) ? (ws.qualification_criteria as string[]) : [],
+            qualificationQuestions: Array.isArray(ws.qualification_questions) ? (ws.qualification_questions as string[]) : [],
+            objections,
+            learnedBehaviors,
+            maxCallDuration: typeof ws.max_call_duration === "number" ? ws.max_call_duration : 15,
+            timezone: String(ws.timezone ?? "America/New_York"),
+          });
         }
       } catch {
         // Fall through to default prompt — don't break the call
@@ -166,7 +228,7 @@ ${greeting ? `- Opening greeting: "${greeting}"` : ""}`;
       },
       body: JSON.stringify({
         model: "claude-haiku-4-5-20251001",
-        max_tokens: 150,
+        max_tokens: 250,
         system: systemPrompt,
         messages,
       }),

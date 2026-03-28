@@ -62,9 +62,24 @@ export function IntegrationsHealthWidget() {
           <Activity className="w-5 h-5 text-[var(--text-tertiary)]" aria-hidden />
           <h3 className="text-sm font-semibold text-[var(--text-primary)]">{t("title")}</h3>
         </div>
-        <p className="text-xs text-[var(--text-secondary)] mb-4">
+        <p className="text-xs text-[var(--text-secondary)] mb-3">
           {t("empty")}
         </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
+          <div className="rounded-lg bg-[var(--bg-inset)] border border-[var(--border-medium)] px-3 py-2">
+            <p className="text-[11px] font-medium text-[var(--text-primary)]">CRM</p>
+            <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5">Auto-sync leads &amp; deals after every call</p>
+          </div>
+          <div className="rounded-lg bg-[var(--bg-inset)] border border-[var(--border-medium)] px-3 py-2">
+            <p className="text-[11px] font-medium text-[var(--text-primary)]">Calendar</p>
+            <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5">AI checks availability &amp; books confirmed slots</p>
+          </div>
+          <div className="rounded-lg bg-[var(--bg-inset)] border border-[var(--border-medium)] px-3 py-2">
+            <p className="text-[11px] font-medium text-[var(--text-primary)]">Webhooks</p>
+            <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5">Push events to Slack, Zapier, or any app</p>
+          </div>
+        </div>
+        <p className="text-[10px] text-[var(--text-tertiary)] mb-3">Takes about 30 seconds per integration. Your data stays secure and encrypted.</p>
         <Link
           href="/app/settings/integrations"
           className="inline-flex items-center gap-2 text-xs font-medium text-[var(--accent-primary)] hover:underline"

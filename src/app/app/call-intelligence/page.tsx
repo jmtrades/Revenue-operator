@@ -434,7 +434,7 @@ export default function CallIntelligencePage() {
               <p className="text-sm text-[var(--text-secondary)] py-6 text-center">{t("chart.noData")}</p>
             ) : (
               <div className="h-[200px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={undefined}>
                   <LineChart data={qualityTrendData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
                     <XAxis dataKey="date" tick={{ fontSize: 11, fill: "var(--text-secondary)" }} stroke="var(--text-tertiary)" />

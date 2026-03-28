@@ -204,7 +204,38 @@ export function LeadsList({
                     />
                   </td>
                   <td className="py-3 px-4 text-sm text-[var(--text-primary)]">
-                    {lead.name}
+                    <div className="flex items-center gap-2">
+                      {/* Intent signal dot */}
+                      {(lead.status === "Qualified" || lead.status === "Appointment Set") && (
+                        <span className="inline-flex items-center gap-1">
+                          <span className="h-2 w-2 rounded-full bg-emerald-400" aria-hidden />
+                          <span className="text-[9px] font-medium text-emerald-300">High intent</span>
+                        </span>
+                      )}
+                      {lead.status === "Contacted" && (() => {
+                        const daysSinceContact = Math.floor(
+                          (Date.now() - new Date(lead.lastContactAt).getTime()) / (1000 * 60 * 60 * 24)
+                        );
+                        return daysSinceContact > 3 ? (
+                          <span className="inline-flex items-center gap-1">
+                            <span className="h-2 w-2 rounded-full bg-amber-400" aria-hidden />
+                            <span className="text-[9px] font-medium text-amber-300">Cooling</span>
+                          </span>
+                        ) : null;
+                      })()}
+                      {lead.status === "New" && (() => {
+                        const daysSinceCreated = Math.floor(
+                          (Date.now() - new Date(lead.createdAt).getTime()) / (1000 * 60 * 60 * 24)
+                        );
+                        return daysSinceCreated > 7 ? (
+                          <span className="inline-flex items-center gap-1">
+                            <span className="h-2 w-2 rounded-full bg-red-400" aria-hidden />
+                            <span className="text-[9px] font-medium text-red-300">Stale</span>
+                          </span>
+                        ) : null;
+                      })()}
+                      <span>{lead.name && lead.name !== "New Lead" ? lead.name : (lead.phone || lead.email || "Unknown")}</span>
+                    </div>
                   </td>
                   <td className="py-3 px-4 text-xs text-[var(--text-tertiary)]">
                     {lead.phone}
@@ -261,7 +292,7 @@ export function LeadsList({
               >
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-sm font-medium text-[var(--text-primary)] truncate">
-                    {lead.name}
+                    {lead.name && lead.name !== "New Lead" ? lead.name : (lead.phone || lead.email || "Unknown")}
                   </p>
                   <span
                     className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] ${scoreClass}`}

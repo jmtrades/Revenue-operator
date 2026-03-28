@@ -86,7 +86,7 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
     };
   }, [pathname]);
 
-  const desktopPrimaryHref = authenticated ? "/app/activity" : ROUTES.START;
+  const desktopPrimaryHref = authenticated ? "/app/dashboard" : ROUTES.START;
   const desktopPrimaryLabel = authenticated ? t("dashboardCta") : t("startFreeCta");
 
   return (

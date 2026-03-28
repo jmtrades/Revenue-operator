@@ -11,8 +11,23 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { compileSystemPrompt } from "@/lib/business-brain";
 import { getVoiceProvider } from "@/lib/voice";
-import { DEFAULT_RECALL_VOICE_ID } from "@/lib/constants/recall-voices";
+import { DEFAULT_RECALL_VOICE_ID, RECALL_VOICES } from "@/lib/constants/recall-voices";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
+
+/** Validate voice_id against known voices; fall back to default if invalid */
+function resolveVoiceId(rawVoiceId: string | null | undefined): string {
+  const vid = (rawVoiceId ?? "").trim();
+  if (!vid) return DEFAULT_RECALL_VOICE_ID;
+  // Check if it matches a known voice ID
+  if (RECALL_VOICES.some((v) => v.id === vid)) return vid;
+  // Try matching by name (case-insensitive) — handles "sarah" → "us-female-warm-receptionist"
+  const byName = RECALL_VOICES.find((v) => v.name.toLowerCase() === vid.toLowerCase());
+  if (byName) return byName.id;
+  // Unknown voice ID — fall back to default rather than failing
+  log("warn", "test_call.unknown_voice_id", { rawVoiceId: vid, fallback: DEFAULT_RECALL_VOICE_ID });
+  return DEFAULT_RECALL_VOICE_ID;
+}
 
 export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const csrfBlock = assertSameOrigin(req);
@@ -50,8 +65,29 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   // Normalize to E.164: if already has +, trust it; if 10 digits, assume US (+1); otherwise prefix +
   const phone = rawPhone.startsWith("+") ? rawPhone : digits.length === 10 ? `+1${digits}` : `+${digits}`;
 
+  // ── Pre-flight checks: catch configuration issues before attempting the call ──
   if (!process.env.VOICE_SERVER_URL && !process.env.TWILIO_ACCOUNT_SID) {
-    return NextResponse.json({ ok: true, message: "Voice server is not configured yet. Set VOICE_SERVER_URL to enable test calls." });
+    return NextResponse.json({
+      error: "Voice calling is not configured yet. Please contact support to enable test calls.",
+      code: "voice_not_configured",
+      preflight: { voice_server: false, telephony: false },
+    }, { status: 503 });
+  }
+
+  if (!process.env.TELNYX_API_KEY && !process.env.TWILIO_ACCOUNT_SID) {
+    return NextResponse.json({
+      error: "No telephony provider credentials found. Please contact support to connect Telnyx or Twilio.",
+      code: "telephony_not_configured",
+      preflight: { voice_server: true, telephony: false },
+    }, { status: 503 });
+  }
+
+  if (process.env.TELNYX_API_KEY && !process.env.TELNYX_CONNECTION_ID) {
+    return NextResponse.json({
+      error: "Telnyx connection ID is missing. Please contact support to complete telephony setup.",
+      code: "telnyx_connection_missing",
+      preflight: { voice_server: true, telephony: false },
+    }, { status: 503 });
   }
 
   const [ctxRes, agentRes] = await Promise.all([
@@ -65,9 +101,12 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   const business_name = ctxData?.business_name ?? "The business";
   const offer_summary = ctxData?.offer_summary ?? "";
   const business_hours = (ctxData?.business_hours ?? {}) as Record<string, { start: string; end: string } | null>;
-  const faq = ctxData?.faq ?? [];
-  const agent_name = a.name ?? "Sarah";
+  // Merge FAQ: use workspace_business_context FAQ first, fall back to agent knowledge_base FAQ
+  const ctxFaq = Array.isArray(ctxData?.faq) ? ctxData.faq : [];
   const kb = a.knowledge_base ?? {};
+  const agentFaq = Array.isArray((kb as { faq?: unknown }).faq) ? ((kb as { faq: Array<{ q?: string; a?: string }> }).faq) : [];
+  const faq = ctxFaq.length > 0 ? ctxFaq : agentFaq;
+  const agent_name = a.name ?? "Sarah";
   const services = typeof kb.services === "string" ? kb.services : undefined;
   const emergencies_after_hours = typeof kb.emergencies_after_hours === "string" ? kb.emergencies_after_hours : undefined;
   const appointment_handling = typeof kb.appointment_handling === "string" ? kb.appointment_handling : undefined;
@@ -95,7 +134,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     const { assistantId: aid } = await voice.createAssistant({
       name: `${agent_name} – Test – ${workspaceId.slice(0, 8)}`,
       systemPrompt,
-      voiceId: a.voice_id || DEFAULT_RECALL_VOICE_ID,
+      voiceId: resolveVoiceId(a.voice_id),
       voiceProvider: "deepgram-aura",
       language: "en",
       tools: [],
@@ -152,7 +191,13 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     });
   } catch (e) {
     await db.from("call_sessions").update({ call_ended_at: new Date().toISOString() }).eq("id", callSessionId);
-    return NextResponse.json({ error: e instanceof Error ? e.message : "Test call failed" }, { status: 502 });
+    const rawMsg = e instanceof Error ? e.message : "Test call failed";
+    // Return user-friendly error with diagnostic hint
+    return NextResponse.json({
+      error: "We couldn't connect your test call. This can happen if the phone number format is incorrect or the voice provider is temporarily unavailable. Please try again in a moment.",
+      code: "call_initiation_failed",
+      detail: rawMsg,
+    }, { status: 502 });
   }
-  return NextResponse.json({ ok: true, reason: "test_call_started" });
+  return NextResponse.json({ ok: true, reason: "test_call_started", message: "Test call initiated — your phone should ring within 10 seconds." });
 }

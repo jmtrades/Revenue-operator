@@ -18,7 +18,7 @@ import { PageHeader, EmptyState } from "@/components/ui";
 import { RECALL_VOICES } from "@/lib/constants/recall-voices";
 
 const VOICE_SERVER_URL =
-  process.env.NEXT_PUBLIC_VOICE_SERVER_URL || "http://localhost:8100";
+  process.env.NEXT_PUBLIC_VOICE_SERVER_URL || "";
 
 interface Voice {
   id: string;

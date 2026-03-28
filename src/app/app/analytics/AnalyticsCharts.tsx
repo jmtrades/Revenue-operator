@@ -67,7 +67,7 @@ export function AnalyticsCharts({ volumeData, outcomeSlices }: AnalyticsChartsPr
             {t("charts.callVolumeTitle")}
           </p>
           <div className="h-52">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={undefined}>
               <AreaChart data={volumeData}>
                 <defs>
                   <linearGradient id="volumeGradient" x1="0" y1="0" x2="0" y2="1">
@@ -114,7 +114,7 @@ export function AnalyticsCharts({ volumeData, outcomeSlices }: AnalyticsChartsPr
             {t("charts.outcomeBreakdown")}
           </p>
           <div className="h-52">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={undefined}>
               <PieChart>
                 <Pie
                   data={outcomeSlices}
@@ -136,7 +136,7 @@ export function AnalyticsCharts({ volumeData, outcomeSlices }: AnalyticsChartsPr
                   verticalAlign="middle"
                   iconSize={8}
                   formatter={(value) => (
-                    <span style={{ color: cc.legendText, fontSize: 11 }}>{value}</span>
+                    <span style={{ color: cc.legendText, fontSize: 11 }}>{typeof value === "string" ? value : String(value)}</span>
                   )}
                 />
               </PieChart>

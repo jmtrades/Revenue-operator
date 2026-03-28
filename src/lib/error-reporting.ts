@@ -33,8 +33,11 @@ export async function reportError(payload: {
         user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
       }),
     });
-  } catch {
-    // ignore report failures
+  } catch (reportErr) {
+    // Log to console as last resort — structured logger may also be broken
+    if (typeof console !== "undefined") {
+      console.warn("[error-reporting] Failed to report error:", reportErr instanceof Error ? reportErr.message : String(reportErr));
+    }
   }
 }
 

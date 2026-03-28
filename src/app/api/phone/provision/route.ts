@@ -68,28 +68,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Verify payment method exists on Stripe customer — required for ALL phone purchases
-    if (!stripeCustomerId || !process.env.STRIPE_SECRET_KEY) {
-      return NextResponse.json(
-        {
-          error: "A payment method is required to purchase phone numbers. Please add a card in Settings → Billing.",
-          code: "PAYMENT_METHOD_REQUIRED",
-        },
-        { status: 402 },
-      );
-    }
-
-    try {
-      const Stripe = (await import("stripe")).default;
-      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-        apiVersion: "2024-12-18.acacia" as unknown as import("stripe").Stripe.StripeConfig["apiVersion"],
-      });
-      const paymentMethods = await stripe.paymentMethods.list({
-        customer: stripeCustomerId,
-        type: "card",
-        limit: 1,
-      });
-      if (!paymentMethods.data.length) {
+    // Verify payment method exists on Stripe customer — required for phone purchases
+    // Skip check for active subscriptions (payment already verified through subscription)
+    if (bStatus !== "active") {
+      if (!stripeCustomerId || !process.env.STRIPE_SECRET_KEY) {
         return NextResponse.json(
           {
             error: "A payment method is required to purchase phone numbers. Please add a card in Settings → Billing.",
@@ -98,9 +80,30 @@ export async function POST(req: NextRequest) {
           { status: 402 },
         );
       }
-    } catch (err) {
-      console.error("[provision] Stripe payment method check failed:", err instanceof Error ? err.message : err);
-      // If Stripe check fails, allow provisioning to avoid blocking users with valid cards
+
+      try {
+        const Stripe = (await import("stripe")).default;
+        const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+          apiVersion: "2024-12-18.acacia" as unknown as import("stripe").Stripe.StripeConfig["apiVersion"],
+        });
+        const paymentMethods = await stripe.paymentMethods.list({
+          customer: stripeCustomerId,
+          type: "card",
+          limit: 1,
+        });
+        if (!paymentMethods.data.length) {
+          return NextResponse.json(
+            {
+              error: "A payment method is required to purchase phone numbers. Please add a card in Settings → Billing.",
+              code: "PAYMENT_METHOD_REQUIRED",
+            },
+            { status: 402 },
+          );
+        }
+      } catch (err) {
+        console.error("[provision] Stripe payment method check failed:", err instanceof Error ? err.message : err);
+        // If Stripe check fails, allow provisioning to avoid blocking users with valid cards
+      }
     }
   }
 
@@ -282,6 +285,16 @@ export async function POST(req: NextRequest) {
 
   if (error || !inserted) {
     console.error("[provision] DB insert failed:", error?.message ?? "inserted is null");
+    // Rollback: release the purchased number from provider to prevent orphaned charges
+    if (providerSid) {
+      try {
+        const telephony = getTelephonyService();
+        await telephony.releaseNumber(providerSid);
+        console.warn("[provision] Rolled back purchased number from provider after DB failure:", providerSid);
+      } catch (rollbackErr) {
+        console.error("[provision] CRITICAL: Failed to rollback purchased number:", providerSid, rollbackErr instanceof Error ? rollbackErr.message : rollbackErr);
+      }
+    }
     return NextResponse.json({ error: "Failed to save number." }, { status: 500 });
   }
 

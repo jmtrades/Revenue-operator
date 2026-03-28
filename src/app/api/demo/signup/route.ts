@@ -8,32 +8,19 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
-
-// Simple in-memory rate limit tracking (IP -> timestamp array)
-const rateLimitMap = new Map<string, number[]>();
-
-function checkRateLimit(ip: string, maxRequests: number = 5, windowMs: number = 60000): boolean {
-  const now = Date.now();
-  const windowStart = now - windowMs;
-
-  let timestamps = rateLimitMap.get(ip) || [];
-  timestamps = timestamps.filter(t => t > windowStart);
-
-  if (timestamps.length >= maxRequests) {
-    log("warn", "demo_signup.rate_limit_exceeded", { ip, count: timestamps.length, maxRequests });
-    return false;
-  }
-
-  timestamps.push(now);
-  rateLimitMap.set(ip, timestamps);
-  return true;
-}
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(req: NextRequest) {
-  try {
-    const ip = (req.headers.get("x-forwarded-for") ?? "").split(",")[0]?.trim() || req.headers.get("x-real-ip") || "unknown";
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
 
-    if (!checkRateLimit(ip, 5, 60000)) {
+  try {
+    const ip = getClientIp(req);
+
+    // Distributed rate limit: 5 per minute per IP
+    const rl = await checkRateLimit(`demo_signup:${ip}`, 5, 60_000);
+    if (!rl.allowed) {
       return NextResponse.json(
         { error: "Too many requests. Please try again in a moment." },
         { status: 429 }
@@ -63,6 +50,14 @@ export async function POST(req: NextRequest) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json(
         { error: "Invalid email format" },
+        { status: 400 }
+      );
+    }
+
+    // Length limits
+    if (email.length > 320 || industry.length > 100 || (source && source.length > 100)) {
+      return NextResponse.json(
+        { error: "Input too long" },
         { status: 400 }
       );
     }

@@ -97,7 +97,11 @@ export default function AppCalendarPage() {
       .then((r) => (r.ok ? r.json() : {}))
       .then((d: { connected?: boolean }) => setGoogleConnected(Boolean(d.connected)))
       .catch(() => setGoogleConnected(false));
-    const outlookId = setTimeout(() => setOutlookConnected(false), 0);
+    fetch("/api/integrations/outlook-calendar/status", { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : {}))
+      .then((d: { connected?: boolean }) => setOutlookConnected(Boolean(d.connected)))
+      .catch(() => setOutlookConnected(false));
+    const outlookId = 0 as unknown as ReturnType<typeof setTimeout>;
     return () => {
       clearTimeout(loadId);
       clearTimeout(outlookId);
@@ -331,24 +335,26 @@ export default function AppCalendarPage() {
         </div>
         <div className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
           <div>
-            <div className="flex items-center gap-2">
-              <p className="text-sm font-medium text-[var(--text-primary)]">{t("calendar.outlookCalendar")}</p>
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[var(--bg-inset)] text-[var(--text-secondary)]">
-                Coming soon
-              </span>
-            </div>
+            <p className="text-sm font-medium text-[var(--text-primary)]">{t("calendar.outlookCalendar")}</p>
             <p className="text-xs text-[var(--text-secondary)]">
-              {t("calendar.outlookComingSoon")}
+              {t("calendar.outlookComingSoon", { defaultValue: "Sync your Outlook calendar to manage availability and appointments." })}
             </p>
           </div>
-          {outlookConnected && (
-            <span className="text-xs text-[var(--text-tertiary)]">{t("calendar.connected")}</span>
+          {outlookConnected ? (
+            <span className="text-xs text-green-400">{t("calendar.connected")}</span>
+          ) : (
+            <a
+              href="/api/integrations/outlook-calendar/auth"
+              className="self-start sm:self-auto px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-xs font-semibold hover:opacity-90 transition-opacity"
+            >
+              {t("calendar.connect")}
+            </a>
           )}
         </div>
       </div>
 
       <p>
-        <Link href="/app/activity" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-[color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]">
+        <Link href="/app/dashboard" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-[color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]">
           ← {t("calendar.backToActivity")}
         </Link>
       </p>

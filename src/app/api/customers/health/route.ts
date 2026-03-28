@@ -10,7 +10,7 @@ import { z } from "zod";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getSession } from "@/lib/auth/request-session";
-import { BILLING_PLANS, type PlanSlug } from "@/lib/billing-plans";
+import { BILLING_PLANS, type PlanSlug, normalizeTier } from "@/lib/billing-plans";
 
 function clamp(n: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, n));
@@ -90,8 +90,8 @@ export async function GET(req: NextRequest) {
 
     const leadsRecent = Array.isArray(leads) ? leads.length : 0;
 
-    const tier = (wsRow?.billing_tier ?? "solo").toLowerCase() as PlanSlug;
-    const includedMinutes = BILLING_PLANS[tier]?.includedMinutes ?? 400;
+    const tier = normalizeTier(wsRow?.billing_tier);
+    const includedMinutes = BILLING_PLANS[tier]?.includedMinutes ?? 1000;
 
     // Minutes pressure as a "usage vs expectation" signal.
     const { data: sessions } = await db

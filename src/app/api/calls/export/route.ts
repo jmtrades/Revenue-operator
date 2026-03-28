@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -98,7 +99,7 @@ export async function GET(req: NextRequest) {
     },
   });
   } catch (error) {
-    console.error("[API] calls/export error:", error);
+    log("error", "calls.export_error", { error: error instanceof Error ? error.message : String(error) });
     return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500, headers: { "Content-Type": "application/json" } });
   }
 }

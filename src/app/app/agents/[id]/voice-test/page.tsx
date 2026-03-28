@@ -7,6 +7,7 @@ import { ArrowLeft, Play, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { CURATED_VOICES, type CuratedVoice } from "@/lib/constants/curated-voices";
+import { VoicePreviewPlayer } from "@/components/agents/VoicePreviewPlayer";
 import { cn } from "@/lib/cn";
 
 function playVoicePreview(voiceId: string, text: string): Promise<void> {
@@ -105,7 +106,8 @@ export default function AgentVoiceTestPage() {
         setAgent((a) => (a ? { ...a, voice_id: selectedVoiceId } : null));
       } else {
         const d = (await res.json()) as { error?: string };
-        toast.error(d.error ?? t("errors.applyFailed"));
+        if (d.error) console.error("[voice-test] apply error:", d.error);
+        toast.error(t("errors.applyFailed"));
       }
     } catch {
       toast.error(tToast("error.generic"));
@@ -146,6 +148,19 @@ export default function AgentVoiceTestPage() {
       <p className="text-sm text-[var(--text-tertiary)] mb-6">
         Try voices for &quot;{agent.name}&quot;. Play samples, test your script, compare two voices, then apply.
       </p>
+
+      {/* Voice Preview - Premium Player */}
+      {selectedVoiceId && (
+        <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 mb-6 bg-gradient-to-br from-[var(--bg-card)] to-[var(--bg-surface)]">
+          <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Hear Your Agent</h2>
+          <VoicePreviewPlayer
+            voiceId={selectedVoiceId}
+            greeting={customScript || t("defaultPreviewText")}
+            agentName={agent?.name}
+            voiceName={CURATED_VOICES.find((v) => v.id === selectedVoiceId)?.name}
+          />
+        </section>
+      )}
 
       {/* Test with my script */}
       <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 mb-6">

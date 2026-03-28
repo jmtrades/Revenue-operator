@@ -38,6 +38,10 @@ export default function AppSettingsLeadScoringPage() {
     returnCaller: 20,
     negativeSentiment: -15,
     justBrowsing: -10,
+    demoCallBase: 15,
+    demoHighEngagement: 25,
+    demoMediumEngagement: 12,
+    demoRepeatCaller: 10,
   });
 
   useEffect(() => {

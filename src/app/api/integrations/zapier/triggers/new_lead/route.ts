@@ -6,12 +6,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getWorkspaceIdFromZapierToken } from "@/lib/integrations/zapier-auth";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   const workspaceId = await getWorkspaceIdFromZapierToken(req.headers.get("authorization"));
   if (!workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // Rate limit: 60 polling requests per minute per workspace (Zapier polls every ~5min, but allow burst)
+  const rl = await checkRateLimit(`zapier:new_lead:${workspaceId}`, 60, 60_000);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+  }
 
   const limit = Math.min(parseInt(req.nextUrl.searchParams.get("limit") ?? "25", 10) || 25, 100);
   const since = req.nextUrl.searchParams.get("since")?.trim() || undefined;

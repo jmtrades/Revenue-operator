@@ -72,7 +72,6 @@ export default function AgencyPage() {
         setAnalytics(analyticsData.analytics);
         setSubAccounts(subAccountsData.sub_accounts);
       } catch (err) {
-        console.error("[agency] Failed to load data");
         toast.error("Failed to load agency dashboard");
       } finally {
         setLoading(false);
@@ -109,7 +108,6 @@ export default function AgencyPage() {
       setShowCreateModal(false);
       toast.success("Sub-account created successfully");
     } catch (err) {
-      console.error("[agency] Failed to create sub-account");
       toast.error("Failed to create sub-account");
     } finally {
       setCreating(false);
@@ -131,7 +129,6 @@ export default function AgencyPage() {
       setSubAccounts(subAccounts.filter((s) => s.id !== subAccountId));
       toast.success("Sub-account deactivated");
     } catch (err) {
-      console.error("[agency] Failed to delete sub-account");
       toast.error("Failed to deactivate sub-account");
     } finally {
       setDeleting(null);
@@ -159,15 +156,15 @@ export default function AgencyPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <div>
-          <h1 className="text-2xl md:text-3xl font-semibold text-[var(--text-primary)]">{t("dashboard.title")}</h1>
-          <p className="text-sm text-[var(--text-tertiary)] mt-2">{t("dashboard.subtitle")}</p>
+          <h1 className="text-2xl md:text-3xl font-semibold text-[var(--text-primary)]">{t("dashboard.title", { defaultValue: "Reseller Dashboard" })}</h1>
+          <p className="text-sm text-[var(--text-tertiary)] mt-2">{t("dashboard.subtitle", { defaultValue: "Manage your sub-accounts and track performance" })}</p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
           className="mt-4 md:mt-0 bg-[var(--accent-primary)] text-white font-semibold py-3 px-6 rounded-lg hover:opacity-90 transition-colors flex items-center gap-2 justify-center"
         >
           <Plus className="h-5 w-5" />
-          {t("createButton")}
+          {t("createButton", { defaultValue: "Create Sub-Account" })}
         </button>
       </div>
 
@@ -175,29 +172,29 @@ export default function AgencyPage() {
       {analytics && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
-            <p className="text-xs text-[var(--text-tertiary)] font-medium">{t("stats.subAccounts")}</p>
+            <p className="text-xs text-[var(--text-tertiary)] font-medium">{t("stats.subAccounts", { defaultValue: "Total Sub-Accounts" })}</p>
             <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">{analytics.total_sub_accounts}</p>
             <p className="text-xs text-[var(--text-secondary)] mt-2">
-              {analytics.active_sub_accounts} {t("stats.active")}
+              {analytics.active_sub_accounts} {t("stats.active", { defaultValue: "active" })}
             </p>
           </div>
 
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
-            <p className="text-xs text-[var(--text-tertiary)] font-medium">{t("stats.calls")}</p>
+            <p className="text-xs text-[var(--text-tertiary)] font-medium">{t("stats.calls", { defaultValue: "Total Calls" })}</p>
             <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">{analytics.total_calls.toLocaleString()}</p>
-            <p className="text-xs text-[var(--text-secondary)] mt-2">{t("stats.thisMonth")}</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-2">{t("stats.thisMonth", { defaultValue: "This month" })}</p>
           </div>
 
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
-            <p className="text-xs text-[var(--text-tertiary)] font-medium">{t("stats.leads")}</p>
+            <p className="text-xs text-[var(--text-tertiary)] font-medium">{t("stats.leads", { defaultValue: "Total Leads" })}</p>
             <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">{analytics.total_leads.toLocaleString()}</p>
-            <p className="text-xs text-[var(--text-secondary)] mt-2">{t("stats.thisMonth")}</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-2">{t("stats.thisMonth", { defaultValue: "This month" })}</p>
           </div>
 
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
-            <p className="text-xs text-[var(--text-tertiary)] font-medium">{t("stats.revenue")}</p>
+            <p className="text-xs text-[var(--text-tertiary)] font-medium">{t("stats.revenue", { defaultValue: "Monthly Revenue" })}</p>
             <p className="text-2xl font-bold text-[var(--text-primary)] mt-2">${analytics.mrr.toFixed(2)}</p>
-            <p className="text-xs text-[var(--text-secondary)] mt-2">{t("stats.mrr")}</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-2">{t("stats.mrr", { defaultValue: "MRR" })}</p>
           </div>
         </div>
       )}
@@ -223,12 +220,12 @@ export default function AgencyPage() {
                   <td colSpan={7} className="px-6 py-12 text-center">
                     <div className="flex flex-col items-center justify-center gap-2">
                       <Building2 className="h-8 w-8 text-[var(--text-tertiary)]" />
-                      <p className="text-[var(--text-secondary)]">{t("empty.message")}</p>
+                      <p className="text-[var(--text-secondary)]">{t("empty.message", { defaultValue: "No sub-accounts yet" })}</p>
                       <button
                         onClick={() => setShowCreateModal(true)}
                         className="mt-4 text-sm text-[var(--accent-primary)] font-medium hover:underline"
                       >
-                        {t("empty.cta")}
+                        {t("empty.cta", { defaultValue: "Create your first sub-account" })}
                       </button>
                     </div>
                   </td>
@@ -240,7 +237,7 @@ export default function AgencyPage() {
                     <tr key={account.id} className="border-b border-[var(--border-default)] hover:bg-[var(--bg-inset)] transition-colors">
                       <td className="px-6 py-4">
                         <p className="font-medium text-[var(--text-primary)]">{account.child_workspace?.name}</p>
-                        <p className="text-xs text-[var(--text-tertiary)]">{account.child_workspace_id}</p>
+                        <p className="text-xs text-[var(--text-tertiary)] break-all">{account.child_workspace_id}</p>
                       </td>
                       <td className="px-6 py-4">
                         <span className="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-[var(--bg-inset)] text-[var(--text-primary)]">
@@ -299,11 +296,11 @@ export default function AgencyPage() {
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-[var(--bg-surface)] rounded-xl border border-[var(--border-default)] p-6 max-w-md w-full mx-4">
-            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">{t("modal.title")}</h2>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">{t("modal.title", { defaultValue: "Create Sub-Account" })}</h2>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                  {t("modal.nameLabel")}
+                  {t("modal.nameLabel", { defaultValue: "Sub-Account Name" })}
                 </label>
                 <input
                   type="text"
@@ -316,7 +313,7 @@ export default function AgencyPage() {
 
               <div>
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                  {t("modal.emailLabel")}
+                  {t("modal.emailLabel", { defaultValue: "Owner Email" })}
                 </label>
                 <input
                   type="email"
@@ -328,16 +325,16 @@ export default function AgencyPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">{t("modal.planLabel")}</label>
+                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">{t("modal.planLabel", { defaultValue: "Plan" })}</label>
                 <select
                   value={formData.plan}
                   onChange={(e) => setFormData({ ...formData, plan: e.target.value })}
                   className="w-full px-4 py-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-inset)] text-[var(--text-primary)]"
                 >
-                  <option value="starter">{t("modal.plans.starter")}</option>
-                  <option value="standard">{t("modal.plans.standard")}</option>
-                  <option value="professional">{t("modal.plans.professional")}</option>
-                  <option value="enterprise">{t("modal.plans.enterprise")}</option>
+                  <option value="starter">{t("modal.plans.starter", { defaultValue: "Starter" })}</option>
+                  <option value="standard">{t("modal.plans.standard", { defaultValue: "Standard" })}</option>
+                  <option value="professional">{t("modal.plans.professional", { defaultValue: "Professional" })}</option>
+                  <option value="enterprise">{t("modal.plans.enterprise", { defaultValue: "Enterprise" })}</option>
                 </select>
               </div>
 
@@ -346,14 +343,14 @@ export default function AgencyPage() {
                   onClick={() => setShowCreateModal(false)}
                   className="flex-1 px-4 py-2 rounded-lg border border-[var(--border-default)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors"
                 >
-                  {t("modal.cancel")}
+                  {t("modal.cancel", { defaultValue: "Cancel" })}
                 </button>
                 <button
                   onClick={handleCreateSubAccount}
                   disabled={creating}
                   className="flex-1 px-4 py-2 rounded-lg bg-[var(--accent-primary)] text-white font-medium hover:opacity-90 transition-colors disabled:opacity-50"
                 >
-                  {creating ? t("modal.creating") : t("modal.create")}
+                  {creating ? t("modal.creating", { defaultValue: "Creating..." }) : t("modal.create", { defaultValue: "Create" })}
                 </button>
               </div>
             </div>

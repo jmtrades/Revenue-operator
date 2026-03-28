@@ -236,7 +236,7 @@ function MonthlyTrendChart({ data }: { data: ChartDataPoint[] }) {
       <CardHeader>Revenue vs Cost & ROI Trend</CardHeader>
       <CardBody>
         <div style={{ width: "100%", height: 320 }}>
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={undefined}>
             <LineChart data={data} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border-default)" />
               <XAxis dataKey="month" stroke="var(--text-tertiary)" style={{ fontSize: 12 }} />
@@ -267,7 +267,7 @@ function LeadsBySourceChart({ data }: { data: ChartDataPoint[] }) {
       <CardHeader>Lead Revenue by Source</CardHeader>
       <CardBody>
         <div style={{ width: "100%", height: 320 }}>
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={undefined}>
             <BarChart layout="vertical" data={data} margin={{ top: 5, right: 30, left: 120, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border-default)" />
               <XAxis type="number" stroke="var(--text-tertiary)" style={{ fontSize: 12 }} />
@@ -375,10 +375,10 @@ function PredictionsSection({ data }: { data: PredictionData | null }) {
                           <div className="w-2 h-2 rounded-full" style={{
                             backgroundColor:
                               lead.risk_score >= 75
-                                ? "#ef4444"
+                                ? "#dc2626"
                                 : lead.risk_score >= 50
-                                ? "#f59e0b"
-                                : "#10b981",
+                                ? "#eab308"
+                                : "#16a34a",
                           }} />
                           <span className="font-medium text-[var(--text-primary)]">
                             {Math.round(lead.risk_score)}%

@@ -2,8 +2,10 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { Shield, ShieldCheck, Download, Info } from "lucide-react";
+import { ShieldCheck, Download, Info, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useWorkspace } from "@/components/WorkspaceContext";
+import { apiFetch } from "@/lib/api";
 
 type ConsentMode = "one-party" | "two-party";
 
@@ -17,27 +19,6 @@ interface RecordingPolicies {
 
 const RETENTION_OPTIONS = [30, 60, 90, 180, 365] as const;
 
-const POLICIES_STORAGE_KEY = "compliance_policies";
-
-function loadPoliciesFromStorage(): RecordingPolicies {
-  if (typeof window === "undefined") return getDefaultPolicies();
-  try {
-    const stored = localStorage.getItem(POLICIES_STORAGE_KEY);
-    return stored ? JSON.parse(stored) : getDefaultPolicies();
-  } catch {
-    return getDefaultPolicies();
-  }
-}
-
-function savePolicesToStorage(policies: RecordingPolicies) {
-  if (typeof window === "undefined") return;
-  try {
-    localStorage.setItem(POLICIES_STORAGE_KEY, JSON.stringify(policies));
-  } catch {
-    /* storage quota exceeded — graceful fallback */
-  }
-}
-
 function getDefaultPolicies(): RecordingPolicies {
   return {
     consentMode: "two-party",
@@ -48,7 +29,7 @@ function getDefaultPolicies(): RecordingPolicies {
   };
 }
 
-/* Built-in compliance standards — static display until backend audit API is available */
+/* Built-in compliance standards — static display */
 const BUILT_IN_STANDARDS = [
   { id: "soc2", name: "SOC 2 Type II", status: "compliant" as const, description: "Security, availability, and confidentiality controls independently audited." },
   { id: "hipaa", name: "HIPAA", status: "compliant" as const, description: "Protected health information handled per HIPAA requirements." },
@@ -60,6 +41,7 @@ const BUILT_IN_STANDARDS = [
 
 export default function CompliancePage() {
   const t = useTranslations("compliance");
+  const { workspaceId } = useWorkspace();
 
   const consentOptions: { value: ConsentMode; label: string }[] = [
     { value: "one-party", label: t("consentOneParty") },
@@ -67,24 +49,49 @@ export default function CompliancePage() {
   ];
 
   const [policies, setPolicies] = useState<RecordingPolicies>(getDefaultPolicies());
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  // Load policies from backend
   useEffect(() => {
-    const stored = loadPoliciesFromStorage();
-    setPolicies(stored);
-  }, []);
+    if (!workspaceId) return;
+    let cancelled = false;
 
+    (async () => {
+      try {
+        const data = await apiFetch<RecordingPolicies>(
+          `/api/workspace/compliance-settings?workspace_id=${workspaceId}`
+        );
+        if (!cancelled && data) {
+          setPolicies({ ...getDefaultPolicies(), ...data });
+        }
+      } catch {
+        // Keep defaults on error
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [workspaceId]);
+
+  // Save policies to backend
   const handleSavePolicies = useCallback(async () => {
+    if (!workspaceId) return;
     setSaving(true);
     try {
-      savePolicesToStorage(policies);
+      await apiFetch("/api/workspace/compliance-settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(policies),
+      });
       toast.success(t("toast.changesSaved"));
     } catch {
       toast.error(t("toast.saveFailed"));
     } finally {
       setSaving(false);
     }
-  }, [t, policies]);
+  }, [t, policies, workspaceId]);
 
   const handleExportReport = useCallback(() => {
     try {
@@ -155,87 +162,96 @@ export default function CompliancePage() {
         <section>
           <h2 className="text-sm font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-4">{t("recordingPoliciesTitle")}</h2>
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 md:p-6">
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1.5">{t("consentModeLabel")}</label>
-                <select
-                  value={policies.consentMode}
-                  onChange={(e) => setPolicies((p) => ({ ...p, consentMode: e.target.value as ConsentMode }))}
-                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--border-medium)]"
-                >
-                  {consentOptions.map((o) => (
-                    <option key={o.value} value={o.value}>{o.label}</option>
-                  ))}
-                </select>
+            {loading ? (
+              <div className="flex items-center justify-center py-8 gap-2 text-sm text-[var(--text-secondary)]">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                {t("loading", { defaultValue: "Loading policies..." })}
               </div>
-              <div>
-                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1.5">{t("retentionPeriodLabel")}</label>
-                <select
-                  value={policies.retentionDays}
-                  onChange={(e) => setPolicies((p) => ({ ...p, retentionDays: Number(e.target.value) }))}
-                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--border-medium)]"
-                >
-                  {RETENTION_OPTIONS.map((d) => (
-                    <option key={d} value={d}>{t("retentionDaysOption", { days: String(d) })}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-[var(--text-secondary)]">{t("piiRedaction")}</span>
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={policies.piiRedaction}
-                  onClick={() => setPolicies((p) => ({ ...p, piiRedaction: !p.piiRedaction }))}
-                  className={`relative w-10 h-6 rounded-full transition-colors ${policies.piiRedaction ? "bg-emerald-600" : "bg-[var(--border-medium)]"}`}
-                >
-                  <span className={`absolute top-1 w-4 h-4 rounded-full bg-[var(--text-primary)] transition-transform ${policies.piiRedaction ? "left-5" : "left-1"}`} />
-                </button>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-[var(--text-secondary)]">{t("autoTranscription")}</span>
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={policies.autoTranscribe}
-                  onClick={() => setPolicies((p) => ({ ...p, autoTranscribe: !p.autoTranscribe }))}
-                  className={`relative w-10 h-6 rounded-full transition-colors ${policies.autoTranscribe ? "bg-emerald-600" : "bg-[var(--border-medium)]"}`}
-                >
-                  <span className={`absolute top-1 w-4 h-4 rounded-full bg-[var(--text-primary)] transition-transform ${policies.autoTranscribe ? "left-5" : "left-1"}`} />
-                </button>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1.5">{t("consentAnnouncementLabel")}</label>
-                <textarea
-                  value={policies.consentAnnouncement}
-                  onChange={(e) => setPolicies((p) => ({ ...p, consentAnnouncement: e.target.value }))}
-                  rows={3}
-                  className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm placeholder:text-[var(--text-secondary)] focus:outline-none focus:border-[var(--border-medium)] resize-none"
-                />
-              </div>
-            </div>
-            <div className="mt-4 flex items-center gap-3">
-              <button
-                type="button"
-                onClick={handleSavePolicies}
-                disabled={saving}
-                className="px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:opacity-90 disabled:opacity-60 transition-opacity"
-              >
-                {saving ? t("saving") : t("saveChanges")}
-              </button>
-              <button
-                type="button"
-                onClick={handleExportReport}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--border-medium)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-input)] transition-colors"
-              >
-                <Download className="w-4 h-4" />
-                {t("exportReport")}
-              </button>
-            </div>
+            ) : (
+              <>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1.5">{t("consentModeLabel")}</label>
+                    <select
+                      value={policies.consentMode}
+                      onChange={(e) => setPolicies((p) => ({ ...p, consentMode: e.target.value as ConsentMode }))}
+                      className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--border-medium)]"
+                    >
+                      {consentOptions.map((o) => (
+                        <option key={o.value} value={o.value}>{o.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1.5">{t("retentionPeriodLabel")}</label>
+                    <select
+                      value={policies.retentionDays}
+                      onChange={(e) => setPolicies((p) => ({ ...p, retentionDays: Number(e.target.value) }))}
+                      className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--border-medium)]"
+                    >
+                      {RETENTION_OPTIONS.map((d) => (
+                        <option key={d} value={d}>{t("retentionDaysOption", { days: String(d) })}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-[var(--text-secondary)]">{t("piiRedaction")}</span>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={policies.piiRedaction}
+                      onClick={() => setPolicies((p) => ({ ...p, piiRedaction: !p.piiRedaction }))}
+                      className={`relative w-10 h-6 rounded-full transition-colors ${policies.piiRedaction ? "bg-emerald-600" : "bg-[var(--border-medium)]"}`}
+                    >
+                      <span className={`absolute top-1 w-4 h-4 rounded-full bg-[var(--text-primary)] transition-transform ${policies.piiRedaction ? "left-5" : "left-1"}`} />
+                    </button>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-[var(--text-secondary)]">{t("autoTranscription")}</span>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={policies.autoTranscribe}
+                      onClick={() => setPolicies((p) => ({ ...p, autoTranscribe: !p.autoTranscribe }))}
+                      className={`relative w-10 h-6 rounded-full transition-colors ${policies.autoTranscribe ? "bg-emerald-600" : "bg-[var(--border-medium)]"}`}
+                    >
+                      <span className={`absolute top-1 w-4 h-4 rounded-full bg-[var(--text-primary)] transition-transform ${policies.autoTranscribe ? "left-5" : "left-1"}`} />
+                    </button>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1.5">{t("consentAnnouncementLabel")}</label>
+                    <textarea
+                      value={policies.consentAnnouncement}
+                      onChange={(e) => setPolicies((p) => ({ ...p, consentAnnouncement: e.target.value }))}
+                      rows={3}
+                      className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm placeholder:text-[var(--text-secondary)] focus:outline-none focus:border-[var(--border-medium)] resize-none"
+                    />
+                  </div>
+                </div>
+                <div className="mt-4 flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleSavePolicies}
+                    disabled={saving}
+                    className="px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-sm hover:opacity-90 disabled:opacity-60 transition-opacity"
+                  >
+                    {saving ? t("saving") : t("saveChanges")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleExportReport}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--border-medium)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-input)] transition-colors"
+                  >
+                    <Download className="w-4 h-4" />
+                    {t("exportReport")}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </section>
 
-        {/* Section 3: Audit Trail — clean notice instead of fake UI */}
+        {/* Section 3: Audit Trail */}
         <section>
           <h2 className="text-sm font-semibold text-[var(--text-tertiary)] uppercase tracking-wider mb-4">{t("auditTrailTitle")}</h2>
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">

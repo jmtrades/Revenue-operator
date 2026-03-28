@@ -193,8 +193,8 @@ export async function POST(req: NextRequest) {
         confidence: analysis.confidence,
         analysis_source: "gpt4o_post_call",
       });
-    } catch {
-      // non-blocking
+    } catch (err) {
+      console.error("[post-call] call_analysis insert (gpt4o) failed:", err instanceof Error ? err.message : String(err));
     }
   } else if (sessionId && combinedText) {
     try {
@@ -210,8 +210,8 @@ export async function POST(req: NextRequest) {
         confidence: 0.6,
         analysis_source: "post_call_rules",
       });
-    } catch {
-      // non-blocking
+    } catch (err) {
+      console.error("[post-call] call_analysis insert (rules) failed:", err instanceof Error ? err.message : String(err));
     }
   }
 
@@ -302,8 +302,50 @@ export async function POST(req: NextRequest) {
             }
           }
         }
-      } catch {
-        // non-blocking
+      } catch (err) {
+        console.error("[post-call] analytics/optimization insert failed:", err instanceof Error ? err.message : String(err));
+      }
+    })();
+  }
+
+  // ─── AUTO FOLLOW-UP: Zero-intervention outcome-based follow-up ───
+  if (leadId && sessionId) {
+    void (async () => {
+      try {
+        const { triggerAutoFollowUp } = await import("@/lib/intelligence/auto-followup");
+        // Determine outcome type from analysis
+        let outcomeType: string = "unknown";
+        if (businessOutcome === "appointment_booked") outcomeType = "appointment_confirmed";
+        else if (businessOutcome === "lead_captured") outcomeType = "connected";
+        else if (businessOutcome === "transfer_requested") outcomeType = "routed";
+        else if (businessOutcome === "message_taken") outcomeType = "call_back_requested";
+        else if (businessOutcome === "urgent") outcomeType = "escalation_required";
+        else if (businessOutcome === "info_provided") outcomeType = "information_provided";
+
+        await triggerAutoFollowUp({
+          workspace_id,
+          lead_id: leadId!,
+          call_session_id: sessionId!,
+          outcome: outcomeType as import("@/lib/intelligence/outcome-taxonomy").OutcomeType,
+          sentiment,
+          duration_seconds: body.duration_seconds,
+        });
+
+        // Auto-score lead after every call (lightweight heuristic — instant)
+        const { scoreLeadPostCall } = await import("@/lib/intelligence/lead-scoring");
+        await scoreLeadPostCall(workspace_id, leadId!, businessOutcome, sentiment, body.duration_seconds);
+
+        // Trigger comprehensive AI scoring async (non-blocking, fire-and-forget)
+        // Only for calls with meaningful transcripts to avoid wasting API calls
+        if (body.transcript && body.transcript.length > 200) {
+          import("@/lib/lead-scoring/ai-scorer").then(({ scoreLeadWithAI }) => {
+            scoreLeadWithAI(workspace_id, leadId!).catch((aiErr) => {
+              console.error("[ai-scorer] async score error:", aiErr instanceof Error ? aiErr.message : String(aiErr));
+            });
+          }).catch(() => { /* ai-scorer module not available */ });
+        }
+      } catch (err) {
+        console.error("[auto-followup] trigger error:", err instanceof Error ? err.message : String(err));
       }
     })();
   }
@@ -361,8 +403,8 @@ export async function POST(req: NextRequest) {
           summary: summaryText || transcriptText.slice(0, 500) || null,
           duration_seconds: durationSeconds,
         });
-      } catch {
-        // non-blocking
+      } catch (err) {
+        console.error("[post-call] slack/teams notification failed:", err instanceof Error ? err.message : String(err));
       }
     })();
   }

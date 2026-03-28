@@ -10,7 +10,7 @@ import { Container } from "@/components/ui/Container";
 export const metadata: Metadata = {
   title: "Terms of Service — Recall Touch",
   description:
-    "Recall Touch Terms of Service: service description, billing/refunds, acceptable use, and data handling. Start free or contact support for questions today.",
+    "Recall Touch Terms of Service: service description, billing/refunds, acceptable use, and data handling. Get started or contact support for questions today.",
 };
 
 export default async function TermsPage() {

@@ -107,7 +107,7 @@ export function HomepageModeSelector() {
                 href={ROUTES.START}
                 className="bg-white text-black font-semibold rounded-xl px-6 py-3 hover:opacity-90 transition-colors no-underline text-center"
               >
-                Start free →
+                Get started →
               </Link>
               <Link
                 href={ROUTES.DEMO}

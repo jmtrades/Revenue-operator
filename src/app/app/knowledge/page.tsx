@@ -16,6 +16,8 @@ import {
   Upload,
   ExternalLink,
 } from "lucide-react";
+import { useWorkspace } from "@/components/WorkspaceContext";
+import { EmptyState } from "@/components/ui/EmptyState";
 type KnowledgeType = "FAQ" | "Document" | "Website" | "Custom";
 type KnowledgeStatus = "Active" | "Draft" | "Processing";
 
@@ -138,7 +140,8 @@ function KnowledgeModal({
 
       if (!res.ok) {
         setUploadState("idle");
-        toast.error(data?.error ?? t("toast.uploadFailed"));
+        if (data?.error) console.error("[knowledge] upload error:", data.error);
+        toast.error(t("toast.uploadFailed"));
         return;
       }
 
@@ -148,7 +151,6 @@ function KnowledgeModal({
     } catch (error) {
       setUploadState("idle");
       toast.error(t("toast.uploadError"));
-      console.error("Upload error:", error);
     }
   };
 
@@ -166,7 +168,8 @@ function KnowledgeModal({
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        toast.error((data as { error?: string }).error ?? t("toast.fetchFailed"));
+        console.error("Fetch failed:", data);
+        toast.error(t("toast.fetchFailed"));
         setWebsiteFetchState("idle");
         return;
       }
@@ -385,6 +388,7 @@ export default function KnowledgePage() {
   const tToast = useTranslations("toast");
   const tCommon = useTranslations("common");
   const tForms = useTranslations("forms.state");
+  const { workspaceId } = useWorkspace();
   useEffect(() => {
     document.title = t("pageTitle");
     return () => { document.title = ""; };
@@ -474,11 +478,13 @@ export default function KnowledgePage() {
         | { response?: string; error?: string }
         | null;
       if (!res.ok || !data) {
-        toast.error(data?.error ?? t("errors.testFailed"));
+        if (data?.error) console.error("[knowledge] test error:", data.error);
+        toast.error(t("errors.testFailed"));
         return;
       }
       if (data.error) {
-        toast.error(data.error);
+        console.error("Test knowledge error:", data.error);
+        toast.error(t("errors.testFailed"));
         return;
       }
       setTestAnswer((data.response ?? "").trim() || t("errors.noResponse"));
@@ -582,6 +588,17 @@ export default function KnowledgePage() {
     setEditingEntry(entry);
     setModalOpen(true);
   };
+
+  if (!workspaceId) {
+    return (
+      <div className="p-4 md:p-6 max-w-4xl mx-auto">
+        <EmptyState
+          title="No workspace"
+          description="Select or create a workspace to manage knowledge."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
@@ -841,14 +858,135 @@ export default function KnowledgePage() {
               <div className="col-span-full py-12 text-center rounded-xl bg-[var(--bg-card)]/30 border border-[var(--border-default)]">
                 <BookOpen className="w-12 h-12 text-[var(--text-tertiary)] mx-auto mb-3" aria-hidden />
                 <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{t("noEntries")}</p>
-                <p className="text-xs text-[var(--text-secondary)] mb-4">{t("noEntriesHint")}</p>
-                <button
-                  type="button"
-                  onClick={() => openAddModal()}
-                  className="text-sm font-medium text-[var(--text-primary)] hover:underline"
-                >
-                  {t("addFirst")}
-                </button>
+                <p className="text-xs text-[var(--text-secondary)] mb-6">{t("noEntriesHint")}</p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      // Add 5-10 starter FAQ entries
+                      const starterFaqs = [
+                        {
+                          id: `kb-starter-${Date.now()}-1`,
+                          title: "What are your hours?",
+                          type: "FAQ" as const,
+                          status: "Active" as const,
+                          content: "We're open Monday through Friday from 9:00 AM to 5:00 PM.",
+                          wordCount: 16,
+                          lastUpdated: new Date().toISOString(),
+                          usageCount: 0,
+                          gapFlag: false,
+                          question: "What are your hours?",
+                        },
+                        {
+                          id: `kb-starter-${Date.now()}-2`,
+                          title: "How do I schedule an appointment?",
+                          type: "FAQ" as const,
+                          status: "Active" as const,
+                          content: "I can help book that for you right now. What day works best?",
+                          wordCount: 13,
+                          lastUpdated: new Date().toISOString(),
+                          usageCount: 0,
+                          gapFlag: false,
+                          question: "How do I schedule an appointment?",
+                        },
+                        {
+                          id: `kb-starter-${Date.now()}-3`,
+                          title: "What services do you offer?",
+                          type: "FAQ" as const,
+                          status: "Active" as const,
+                          content: "We offer a full range of services. Can I help you with something specific?",
+                          wordCount: 14,
+                          lastUpdated: new Date().toISOString(),
+                          usageCount: 0,
+                          gapFlag: false,
+                          question: "What services do you offer?",
+                        },
+                        {
+                          id: `kb-starter-${Date.now()}-4`,
+                          title: "What's your pricing?",
+                          type: "FAQ" as const,
+                          status: "Active" as const,
+                          content: "That depends on what you need. We can take your details and have someone follow up with exact pricing.",
+                          wordCount: 18,
+                          lastUpdated: new Date().toISOString(),
+                          usageCount: 0,
+                          gapFlag: false,
+                          question: "What's your pricing?",
+                        },
+                        {
+                          id: `kb-starter-${Date.now()}-5`,
+                          title: "How do I contact support?",
+                          type: "FAQ" as const,
+                          status: "Active" as const,
+                          content: "You can reach our support team through this chat, or I can have someone call you back.",
+                          wordCount: 15,
+                          lastUpdated: new Date().toISOString(),
+                          usageCount: 0,
+                          gapFlag: false,
+                          question: "How do I contact support?",
+                        },
+                        {
+                          id: `kb-starter-${Date.now()}-6`,
+                          title: "What's your return policy?",
+                          type: "FAQ" as const,
+                          status: "Active" as const,
+                          content: "I'll capture your question and have the team get back to you with our return policy details.",
+                          wordCount: 15,
+                          lastUpdated: new Date().toISOString(),
+                          usageCount: 0,
+                          gapFlag: false,
+                          question: "What's your return policy?",
+                        },
+                        {
+                          id: `kb-starter-${Date.now()}-7`,
+                          title: "How long until I hear back?",
+                          type: "FAQ" as const,
+                          status: "Active" as const,
+                          content: "Our team typically responds within 24 hours. I'll make sure your message gets to the right person.",
+                          wordCount: 16,
+                          lastUpdated: new Date().toISOString(),
+                          usageCount: 0,
+                          gapFlag: false,
+                          question: "How long until I hear back?",
+                        },
+                        {
+                          id: `kb-starter-${Date.now()}-8`,
+                          title: "Can I reschedule my appointment?",
+                          type: "FAQ" as const,
+                          status: "Active" as const,
+                          content: "Of course! Just let me know and I can help you reschedule or cancel if needed.",
+                          wordCount: 13,
+                          lastUpdated: new Date().toISOString(),
+                          usageCount: 0,
+                          gapFlag: false,
+                          question: "Can I reschedule my appointment?",
+                        },
+                      ];
+                      setEntries(starterFaqs);
+                    }}
+                    className="px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold hover:opacity-90"
+                  >
+                    {t("quickStartButton") || "Quick start: Add common Q&As"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openAddModal()}
+                    className="px-4 py-2 rounded-xl border border-[var(--border-default)] text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
+                  >
+                    {t("addFirst")}
+                  </button>
+                </div>
+                <div className="mt-8 p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]">
+                  <p className="text-sm font-medium text-[var(--text-primary)] mb-2">Suggested knowledge to add</p>
+                  <p className="text-xs text-[var(--text-secondary)] mb-3">Help your AI agent answer caller questions accurately by adding:</p>
+                  <ul className="space-y-1.5 text-xs text-[var(--text-secondary)]">
+                    <li className="flex items-start gap-2"><span className="text-[var(--accent-primary)] mt-0.5">•</span>Business hours, location, and contact details</li>
+                    <li className="flex items-start gap-2"><span className="text-[var(--accent-primary)] mt-0.5">•</span>Services offered and pricing information</li>
+                    <li className="flex items-start gap-2"><span className="text-[var(--accent-primary)] mt-0.5">•</span>Common customer questions and answers (FAQs)</li>
+                    <li className="flex items-start gap-2"><span className="text-[var(--accent-primary)] mt-0.5">•</span>Booking policies, cancellation rules, and availability</li>
+                    <li className="flex items-start gap-2"><span className="text-[var(--accent-primary)] mt-0.5">•</span>Special offers, promotions, or seasonal information</li>
+                  </ul>
+                </div>
               </div>
             ) : filtered.map((entry, idx) => {
               const TypeIcon = typeIcon(entry.type);

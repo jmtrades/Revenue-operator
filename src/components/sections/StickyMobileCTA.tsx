@@ -48,7 +48,7 @@ export function StickyMobileCTA() {
       <div className="flex items-center gap-3 px-4 py-3">
         <div className="flex-1 min-w-0">
           <p className="text-[13px] font-semibold truncate" style={{ color: "var(--text-primary)" }}>
-            AI revenue recovery
+            AI revenue operations
           </p>
           <p className="text-[11px] truncate" style={{ color: "var(--text-tertiary)" }}>
             Set up in under 3 minutes

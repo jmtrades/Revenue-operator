@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
+import { BILLING_PLANS, normalizeTier } from "@/lib/billing-plans";
 
 function startOfMonth(d: Date): Date {
   const x = new Date(d);
@@ -35,6 +36,26 @@ export async function GET(req: NextRequest) {
   const monthStart = startOfMonth(now).toISOString();
   const prevStart = prevMonthStart(now).toISOString();
   const prevEnd = startOfMonth(now).toISOString();
+
+  // Resolve plan minutes from workspace billing tier
+  let minutesLimit = 1000;
+  try {
+    const { data: ws } = await db
+      .from("workspaces")
+      .select("billing_tier")
+      .eq("id", workspaceId)
+      .maybeSingle();
+    const tier = normalizeTier((ws as { billing_tier?: string } | null)?.billing_tier);
+    minutesLimit = BILLING_PLANS[tier]?.includedMinutes ?? 1000;
+
+    // Add bonus minutes if purchased
+    const { data: balance } = await db
+      .from("workspace_minute_balance")
+      .select("bonus_minutes")
+      .eq("workspace_id", workspaceId)
+      .maybeSingle();
+    minutesLimit += (balance as { bonus_minutes?: number } | null)?.bonus_minutes ?? 0;
+  } catch { /* table missing or other error — use default */ }
 
   let callsAnswered = 0;
   let callsPrev = 0;
@@ -182,6 +203,16 @@ export async function GET(req: NextRequest) {
     qualifiedLeads = ql ?? 0;
   } catch { /* ignore */ }
 
+  // --- Agent configured ---
+  let agentConfigured = false;
+  try {
+    const { count: ac } = await db
+      .from("agents")
+      .select("id", { count: "exact", head: true })
+      .eq("workspace_id", workspaceId);
+    agentConfigured = (ac ?? 0) > 0;
+  } catch { /* ignore */ }
+
   // --- Phone number configured ---
   try {
     const { count: pn } = await db
@@ -252,6 +283,59 @@ export async function GET(req: NextRequest) {
     }
   } catch { /* ignore */ }
 
+  // --- Revenue leakage signals ---
+  let missedCallsToday = 0;
+  let noShowsThisWeek = 0;
+  let staleLeadsCount = 0;
+  let pendingFollowUps = 0;
+
+  // Missed calls today (unanswered)
+  try {
+    const todayStr = new Date().toISOString().split("T")[0];
+    const { count: mc } = await db
+      .from("call_sessions")
+      .select("id", { count: "exact", head: true })
+      .eq("workspace_id", workspaceId)
+      .gte("created_at", todayStr)
+      .is("call_ended_at", null)
+      .in("outcome", ["missed", "no_answer", "voicemail"]);
+    missedCallsToday = mc ?? 0;
+  } catch { /* ignore */ }
+
+  // No-shows this week
+  try {
+    const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
+    const { count: ns } = await db
+      .from("appointments")
+      .select("id", { count: "exact", head: true })
+      .eq("workspace_id", workspaceId)
+      .eq("status", "no_show")
+      .gte("scheduled_at", weekAgo);
+    noShowsThisWeek = ns ?? 0;
+  } catch { /* ignore */ }
+
+  // Stale leads (no activity 7+ days, not won/lost)
+  try {
+    const staleDate = new Date(Date.now() - 7 * 86400000).toISOString();
+    const { count: sl } = await db
+      .from("leads")
+      .select("id", { count: "exact", head: true })
+      .eq("workspace_id", workspaceId)
+      .lte("last_activity_at", staleDate)
+      .not("state", "in", '("won","lost","opted_out")');
+    staleLeadsCount = sl ?? 0;
+  } catch { /* ignore */ }
+
+  // Pending follow-ups
+  try {
+    const { count: pf } = await db
+      .from("follow_up_queue")
+      .select("id", { count: "exact", head: true })
+      .eq("workspace_id", workspaceId)
+      .eq("status", "pending");
+    pendingFollowUps = pf ?? 0;
+  } catch { /* ignore */ }
+
   const trendPct =
     callsPrev > 0 ? Math.round(((callsAnswered - callsPrev) / callsPrev) * 100) : callsAnswered > 0 ? 100 : 0;
 
@@ -270,10 +354,15 @@ export async function GET(req: NextRequest) {
     qualified_leads: qualifiedLeads,
     conversion_rate: conversionRate,
     minutes_used: minutesUsed,
-    minutes_limit: 500,
+    minutes_limit: minutesLimit,
+    agent_configured: agentConfigured,
     phone_number_configured: phoneConfigured,
     needs_attention: needsAttention,
     activity,
     campaigns,
+    missed_calls_today: missedCallsToday,
+    no_shows_this_week: noShowsThisWeek,
+    stale_leads: staleLeadsCount,
+    pending_follow_ups: pendingFollowUps,
   });
 }

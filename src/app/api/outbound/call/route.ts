@@ -66,6 +66,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Pre-flight: verify workspace has an active phone number configured
+  // Falls back to global env vars when phone_configs table is empty
   const db = getDb();
   const { data: phoneConfig } = await db
     .from("phone_configs")
@@ -73,7 +74,8 @@ export async function POST(req: NextRequest) {
     .eq("workspace_id", workspaceId)
     .maybeSingle();
   const cfg = phoneConfig as { proxy_number?: string | null; status?: string } | null;
-  if (!cfg?.proxy_number) {
+  const hasEnvPhone = !!(process.env.TELNYX_PHONE_NUMBER || process.env.TWILIO_PHONE_NUMBER);
+  if (!cfg?.proxy_number && !hasEnvPhone) {
     return NextResponse.json(
       {
         error: "No phone number configured. Go to Settings → Phone to set up a number before making calls.",
@@ -82,7 +84,7 @@ export async function POST(req: NextRequest) {
       { status: 400 },
     );
   }
-  if (cfg.status !== "active") {
+  if (cfg?.proxy_number && cfg.status !== "active") {
     return NextResponse.json(
       {
         error: "Your phone number is not active. Check Settings → Phone for details.",

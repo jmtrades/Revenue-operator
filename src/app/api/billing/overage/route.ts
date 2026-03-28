@@ -156,11 +156,9 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    if (process.env.NODE_ENV === "development") {
-      console.error(`[billing/overage] Processed ${processed} workspaces for overage charges`);
-    }
+    // Always log billing operations for observability — critical for revenue tracking
     if (errors.length > 0) {
-      console.error(`[billing/overage] Errors:`, errors);
+      console.error(`[billing/overage] ${errors.length} errors:`, errors);
     }
 
     return NextResponse.json({

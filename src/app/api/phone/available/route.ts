@@ -8,6 +8,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { SUPPORTED_PHONE_COUNTRIES } from "@/lib/constants";
 import { getTelephonyService } from "@/lib/telephony";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,12 @@ export async function GET(req: NextRequest) {
   }
   const authErr = await requireWorkspaceAccess(req, session.workspaceId);
   if (authErr) return authErr;
+
+  // Rate limit: 10 phone searches per minute per workspace
+  const rl = await checkRateLimit(`phone_search:${session.workspaceId}`, 10, 60000);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many search requests. Please wait a moment." }, { status: 429 });
+  }
 
   const { searchParams } = req.nextUrl;
   const country = searchParams.get("country") || "US";

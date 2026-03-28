@@ -29,6 +29,11 @@ export interface EnforcementResult {
 function getPlan(tier: string | null | undefined): PlanSlug {
   const t = (tier || "solo").toLowerCase();
   if (["solo", "business", "scale", "enterprise"].includes(t)) return t as PlanSlug;
+  // Legacy tier name mapping
+  if (t === "starter") return "solo";
+  if (t === "growth") return "business";
+  if (t === "team") return "scale";
+  if (t === "agency") return "enterprise";
   return "solo";
 }
 

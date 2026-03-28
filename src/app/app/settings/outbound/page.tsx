@@ -74,7 +74,7 @@ export default function OutboundSettingsPage() {
         const oc = data?.settings?.outbound_config;
         if (oc && typeof oc === "object") setConfig({ ...DEFAULT_CONFIG, ...oc });
       })
-      .catch((err) => console.error("[settings/outbound] Failed to load config:", err))
+      .catch((err) => { /* silenced */ })
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
@@ -100,7 +100,8 @@ export default function OutboundSettingsPage() {
       });
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
-        toast.error(body.error ?? tToast("error.generic"));
+        console.error("Outbound settings save failed:", body);
+        toast.error(tToast("error.generic"));
         return;
       }
       toast.success(t("toast.saved"));

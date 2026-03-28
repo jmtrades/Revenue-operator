@@ -176,6 +176,11 @@ export async function POST(req: NextRequest) {
         errors.push({ row: r.index + 1, reason: "Invalid phone number" });
         return false;
       }
+      // Validate email format if provided
+      if (r.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r.email)) {
+        errors.push({ row: r.index + 1, reason: "Invalid email format" });
+        return false;
+      }
       return true;
     });
 

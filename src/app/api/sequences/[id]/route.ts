@@ -7,6 +7,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import {
@@ -15,6 +16,13 @@ import {
   deleteSequence,
 } from "@/lib/sequences/follow-up-engine";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { checkRateLimit } from "@/lib/rate-limit";
+
+const updateSequenceSchema = z.object({
+  name: z.string().min(1).max(255).optional(),
+  trigger_type: z.string().max(100).optional(),
+  is_active: z.boolean().optional(),
+}).strict();
 
 export async function GET(
   req: NextRequest,
@@ -61,15 +69,20 @@ export async function PATCH(
   const err = await requireWorkspaceAccess(req, workspaceId);
   if (err) return err;
 
-  let body: { name?: string; trigger_type?: string; is_active?: boolean };
+  let raw: unknown;
   try {
-    body = await req.json();
+    raw = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
+  const parsed = updateSequenceSchema.safeParse(raw);
+  if (!parsed.success) {
+    const firstError = parsed.error.issues[0];
+    return NextResponse.json({ error: firstError?.message ?? "Invalid input" }, { status: 400 });
+  }
 
   try {
-    const sequence = await updateSequence(id, workspaceId, body);
+    const sequence = await updateSequence(id, workspaceId, parsed.data);
     if (!sequence) {
       return NextResponse.json({ error: "Sequence not found" }, { status: 404 });
     }
@@ -99,6 +112,12 @@ export async function DELETE(
   const workspaceId = session.workspaceId;
   const err = await requireWorkspaceAccess(req, workspaceId);
   if (err) return err;
+
+  // Rate limit: 10 sequence deletes per minute per workspace
+  const rl = await checkRateLimit(`sequences_delete:${workspaceId}`, 10, 60000);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many delete requests. Please slow down." }, { status: 429 });
+  }
 
   try {
     const success = await deleteSequence(id, workspaceId);

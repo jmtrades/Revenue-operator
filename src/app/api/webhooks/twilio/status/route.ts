@@ -41,8 +41,11 @@ export async function POST(request: NextRequest) {
 
   const messageSid = formParams.MessageSid ?? null;
   const messageStatus = formParams.MessageStatus ?? null;
+  const callSid = formParams.CallSid ?? null;
 
-  if (!messageSid) return new NextResponse("Missing MessageSid", { status: 400 });
+  // This endpoint handles both SMS delivery receipts (MessageSid) and call status events (CallSid).
+  // If neither is present, reject the request.
+  if (!messageSid && !callSid) return new NextResponse("Missing MessageSid or CallSid", { status: 400 });
 
   if (messageStatus === "delivered") {
     await recordDeliveryReceipt(messageSid);
@@ -98,7 +101,7 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const callSid = formParams.CallSid ?? null;
+  // callSid already declared above
   const callStatus = formParams.CallStatus ?? undefined;
   const callDuration = formParams.CallDuration ?? null;
 

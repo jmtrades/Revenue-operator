@@ -33,52 +33,7 @@ interface LeadRow {
   createdAt: string;
 }
 
-const DEMO_LEADS: LeadRow[] = [
-  {
-    id: "1",
-    name: "Sarah Johnson",
-    email: "sarah@example.com",
-    phone: "+1 (480) 555-0198",
-    company: "Johnson HVAC",
-    status: "NEW",
-    score: 72,
-    source: "phone",
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "2",
-    name: "James Lee",
-    email: "james.lee@example.com",
-    phone: "+1 (602) 555-0142",
-    company: "Lee Plumbing",
-    status: "QUALIFIED",
-    score: 88,
-    source: "web",
-    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: "3",
-    name: "Dr. Maria Gomez",
-    email: "maria@smilesdental.com",
-    phone: "+1 (512) 555-0110",
-    company: "Smiles Dental Studio",
-    status: "BOOKED",
-    score: 92,
-    source: "referral",
-    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: "4",
-    name: "Carlos Rivera",
-    email: "carlos@roofguard.com",
-    phone: "+1 (214) 555-0177",
-    company: "RoofGuard",
-    status: "CONTACTED",
-    score: 55,
-    source: "campaign",
-    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-];
+const DEMO_LEADS: LeadRow[] = [];
 
 type StatusFilter = LeadStatus | "all";
 type SourceFilter = LeadSource | "all";

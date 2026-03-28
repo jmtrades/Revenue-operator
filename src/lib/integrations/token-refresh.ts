@@ -12,6 +12,7 @@ export interface CrmTokens {
   refresh_token: string | null;
   expires_at: string | null;
   instance_url: string | null;
+  metadata?: Record<string, string> | null;
 }
 
 const TOKEN_URLS: Record<CrmProviderId, string> = {
@@ -47,7 +48,7 @@ export async function getValidTokens(
   const db = getDb();
   const { data: conn } = await db
     .from("workspace_crm_connections")
-    .select("access_token, refresh_token, token_expires_at, instance_url")
+    .select("access_token, refresh_token, token_expires_at, instance_url, metadata")
     .eq("workspace_id", workspaceId)
     .eq("provider", provider)
     .eq("status", "active")
@@ -55,12 +56,13 @@ export async function getValidTokens(
 
   if (!conn || !conn.access_token) return null;
 
-  const row = conn as { access_token: string; refresh_token: string | null; token_expires_at: string | null; instance_url: string | null };
+  const row = conn as { access_token: string; refresh_token: string | null; token_expires_at: string | null; instance_url: string | null; metadata?: Record<string, string> | null };
   const tokens: CrmTokens = {
     access_token: row.access_token,
     refresh_token: row.refresh_token,
     expires_at: row.token_expires_at,
     instance_url: row.instance_url,
+    metadata: row.metadata ?? null,
   };
 
   // Check if token is expired (with 5-minute buffer)

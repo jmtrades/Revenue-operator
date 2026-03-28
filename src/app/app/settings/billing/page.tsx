@@ -97,7 +97,9 @@ export default function AppSettingsBillingPage() {
       .then((data: { ok?: boolean; packs?: MinutePack[] }) => {
         if (data?.packs) setMinutePacks(data.packs);
       })
-      .catch((err) => console.error("[billing] Failed to load minute packs:", err));
+      .catch((err) => {
+        console.warn("Failed to fetch minute packs:", err);
+      });
   }, []);
 
   // Handle minute pack purchase
@@ -114,8 +116,12 @@ export default function AppSettingsBillingPage() {
       const data = (await res.json().catch(() => null)) as { ok?: boolean; url?: string; checkout_url?: string; reason?: string } | null;
       if (data?.url || data?.checkout_url) {
         window.location.href = data.url ?? data.checkout_url ?? "";
+      } else if (data?.reason === "subscription_required") {
+        setToast("An active subscription is required to purchase minutes.");
+      } else if (data?.reason === "missing_env" || res.status === 503) {
+        setToast("Billing is being configured. Please try again shortly.");
       } else {
-        setToast(data?.reason === "subscription_required" ? tBilling("errors.subscriptionRequired", { defaultValue: "An active subscription is required to purchase minutes." }) : tBilling("errors.purchaseFailed", { defaultValue: "Could not start purchase. Please try again." }));
+        setToast("Could not start purchase. Please try again.");
       }
     } catch {
       setToast(tBilling("errors.purchaseFailed", { defaultValue: "Could not start purchase. Please try again." }));
@@ -134,82 +140,72 @@ export default function AppSettingsBillingPage() {
     if (reason) setRedirectReason(reason);
   }, [searchParams, tBilling]);
 
-  useEffect(() => {
-    fetchWorkspaceMeCached()
-      .then((data: { id?: string | null; stats?: typeof defaultUsage } | null) => {
-        setWorkspaceId(data?.id ?? null);
-        if (data?.stats) setUsage(data.stats as typeof defaultUsage);
-      })
-      .catch((err) => console.error("[billing] Failed to load workspace data:", err))
-      .finally(() => setLoading(false));
-  }, []);
-
-  useEffect(() => {
-    if (!workspaceId) return;
-    const controller = new AbortController();
+  // Combined billing loader: fetches workspace → billing status in one chain.
+  // Used for both initial load and Retry button.
+  const loadBillingData = useCallback(async () => {
     setBillingError(false);
-    fetch(`/api/billing/status?workspace_id=${encodeURIComponent(workspaceId)}`, {
-      credentials: "include",
-      signal: controller.signal,
-    })
-      .then((res) => {
-        if (!res.ok) {
-          setBillingError(true);
-          return null;
+    try {
+      // Step 1: get workspace ID
+      let wsId = workspaceId;
+      if (!wsId) {
+        const wsData = await fetchWorkspaceMeCached({ force: true });
+        wsId = (wsData as { id?: string | null } | null)?.id ?? null;
+        if (wsId) setWorkspaceId(wsId);
+        if ((wsData as Record<string, unknown> | null)?.stats) {
+          setUsage((wsData as Record<string, unknown>).stats as typeof defaultUsage);
         }
-        return res.json();
-      })
-      .then((data: {
-        billing_status?: string;
-        renewal_at?: string | null;
-        billing_tier?: string;
-        minutes_used?: number;
-        minutes_limit?: number;
-        pending_billing_tier?: string | null;
-        pending_billing_effective_at?: string | null;
-        downgrade_warning?: string | null;
-        dunning?: {
-          amount_due_cents?: number;
-          currency?: string;
-          next_retry_at?: string | null;
-          failure_count?: number;
-        } | null;
-      } | null) => {
-        if (!data || controller.signal.aborted) return;
-        setBillingStatus(data?.billing_status ?? "trial");
-        setRenewalAt(data?.renewal_at ?? null);
-        setPendingTier(data?.pending_billing_tier ?? null);
-        setPendingEffectiveAt(data?.pending_billing_effective_at ?? null);
-        setDowngradeWarning(data?.downgrade_warning ?? null);
-        setDunning(
-          data?.dunning
-            ? {
-                amount_due_cents: data.dunning.amount_due_cents ?? 0,
-                currency: (data.dunning.currency ?? "usd").toLowerCase(),
-                next_retry_at: data.dunning.next_retry_at ?? null,
-                failure_count: data.dunning.failure_count ?? 0,
-              }
-            : null,
-        );
-        if (typeof data.minutes_used === "number") {
-          setUsage((prev) => ({ ...prev, minutes_used: data.minutes_used ?? prev.minutes_used, minutes_limit: data.minutes_limit ?? prev.minutes_limit }));
-        }
-        if ((data as Record<string, unknown>).bonus_minutes != null) {
-          setBonusMinutes((data as Record<string, unknown>).bonus_minutes as number);
-        }
-        if ((data as Record<string, unknown>).usage_alert) {
-          setUsageAlert((data as Record<string, unknown>).usage_alert as UsageAlertData);
-        }
-        const tier = (data as { billing_tier?: string })?.billing_tier?.toLowerCase();
-        if (tier === "solo" || tier === "starter") setCurrentPlanId("starter");
-        else if (tier === "growth") setCurrentPlanId("growth");
-        else if (tier === "team" || tier === "scale") setCurrentPlanId("scale");
-      })
-      .catch((err) => {
-        if ((err as Error)?.name !== "AbortError") setBillingError(true);
-      });
-    return () => controller.abort();
+      }
+      setLoading(false);
+      if (!wsId) {
+        // No workspace — show trial fallback, not skeleton
+        return;
+      }
+      // Step 2: fetch billing status
+      const res = await fetch(`/api/billing/status?workspace_id=${encodeURIComponent(wsId)}`, { credentials: "include" });
+      if (!res.ok) { setBillingError(true); return; }
+      const data = await res.json() as Record<string, unknown>;
+      if (!data) { setBillingError(true); return; }
+      setBillingStatus((data.billing_status as string) ?? "trial");
+      setRenewalAt((data.renewal_at as string) ?? null);
+      setPendingTier((data.pending_billing_tier as string) ?? null);
+      setPendingEffectiveAt((data.pending_billing_effective_at as string) ?? null);
+      setDowngradeWarning((data.downgrade_warning as string) ?? null);
+      setDunning(
+        data.dunning
+          ? {
+              amount_due_cents: (data.dunning as Record<string, unknown>).amount_due_cents as number ?? 0,
+              currency: ((data.dunning as Record<string, unknown>).currency as string ?? "usd").toLowerCase(),
+              next_retry_at: (data.dunning as Record<string, unknown>).next_retry_at as string ?? null,
+              failure_count: (data.dunning as Record<string, unknown>).failure_count as number ?? 0,
+            }
+          : null,
+      );
+      if (typeof data.minutes_used === "number") {
+        setUsage((prev) => ({ ...prev, minutes_used: data.minutes_used as number, minutes_limit: (data.minutes_limit as number) ?? prev.minutes_limit }));
+      }
+      if (data.bonus_minutes != null) setBonusMinutes(data.bonus_minutes as number);
+      if (data.usage_alert) setUsageAlert(data.usage_alert as UsageAlertData);
+      const tier = ((data.billing_tier as string) ?? "solo").toLowerCase();
+      if (tier === "solo" || tier === "starter") setCurrentPlanId("starter");
+      else if (tier === "growth") setCurrentPlanId("growth");
+      else if (tier === "team" || tier === "scale") setCurrentPlanId("scale");
+    } catch {
+      setLoading(false);
+      setBillingError(true);
+    }
   }, [workspaceId]);
+
+  // Initial load on mount
+  useEffect(() => { loadBillingData(); }, []);
+
+  // Safety timeout: if billing status hasn't loaded in 10s, force error state
+  useEffect(() => {
+    if (billingStatus !== null || billingError) return;
+    const timeout = window.setTimeout(() => {
+      if (billingStatus === null && !billingError) setBillingError(true);
+    }, 10000);
+    return () => window.clearTimeout(timeout);
+  }, [billingStatus, billingError]);
 
   useEffect(() => {
     if (!toast) return;
@@ -235,7 +231,7 @@ export default function AppSettingsBillingPage() {
         try {
           const data = await res.json() as { message?: string; error?: string } | null;
           if (data?.error) {
-            errorMessage = data.error;
+            console.error("[billing] API error:", data.error);
           }
         } catch {
           // If JSON parsing fails, use a generic message including status code
@@ -258,6 +254,30 @@ export default function AppSettingsBillingPage() {
     }
   };
 
+  function formatBillingStatus(status: string | null): string {
+    switch (status) {
+      case "trial": return "Free Trial";
+      case "active": return "Active";
+      case "trial_ended": return "Trial Ended";
+      case "cancelled": return "Cancelled";
+      case "paused": return "Paused";
+      case "payment_failed": return "Payment Failed";
+      default: return status ?? "—";
+    }
+  }
+
+  function statusBadgeColor(status: string | null): string {
+    switch (status) {
+      case "active": return "bg-emerald-500/20 text-emerald-400";
+      case "trial": return "bg-purple-500/20 text-purple-300";
+      case "trial_ended": return "bg-amber-500/20 text-amber-300";
+      case "cancelled": return "bg-red-500/20 text-red-300";
+      case "paused": return "bg-gray-500/20 text-gray-300";
+      case "payment_failed": return "bg-red-500/20 text-red-300";
+      default: return "bg-gray-500/20 text-gray-300";
+    }
+  }
+
   if (loading && !workspaceId) {
     return (
       <div className="max-w-[600px] mx-auto p-4 md:p-6">
@@ -276,6 +296,15 @@ export default function AppSettingsBillingPage() {
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       <Breadcrumbs items={[{ label: tNav("settings"), href: "/app/settings" }, { label: tNav("billing") }]} />
       <h1 className="text-lg font-semibold text-[var(--text-primary)] mb-4">{tNav("billing")}</h1>
+      {billingStatus === "trial" && (
+        <div className="p-4 rounded-xl border border-purple-500/30 bg-purple-500/10 text-purple-100 text-sm mb-4 flex items-start gap-3">
+          <div className="shrink-0 w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-300 text-sm font-bold">!</div>
+          <div>
+            <p className="font-semibold">{tBilling("trial.title", { defaultValue: "You're on a free trial" })}</p>
+            <p className="mt-1 text-purple-200/80">{tBilling("trial.description", { defaultValue: "Subscribe to a plan to keep your agents running after the trial ends. Your data and configuration will be preserved." })}</p>
+          </div>
+        </div>
+      )}
       {billingError && (
         <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-200 text-sm mb-4">
           <p className="font-medium">{tBilling("errors.loadingFailed")}</p>
@@ -285,14 +314,14 @@ export default function AppSettingsBillingPage() {
       )}
       {redirectReason === "phone_purchase" && (
         <div className="p-4 rounded-xl border border-blue-500/30 bg-blue-500/10 text-blue-100 text-sm mb-4">
-          <p className="font-semibold">Payment method required</p>
-          <p className="mt-1">You need a payment method on file to purchase phone numbers. Please add a card below or subscribe to a plan, then return to the phone marketplace.</p>
+          <p className="font-semibold">{tBilling("phonePurchase.title")}</p>
+          <p className="mt-1">{tBilling("phonePurchase.description")}</p>
         </div>
       )}
       {redirectReason === "subscription_required" && (
         <div className="p-4 rounded-xl border border-blue-500/30 bg-blue-500/10 text-blue-100 text-sm mb-4">
-          <p className="font-semibold">Active subscription required</p>
-          <p className="mt-1">You need an active subscription to purchase phone numbers. Choose a plan below to get started, then return to the phone marketplace.</p>
+          <p className="font-semibold">{tBilling("subscriptionRequired.title")}</p>
+          <p className="mt-1">{tBilling("subscriptionRequired.description")}</p>
         </div>
       )}
       {billingStatus === "payment_failed" && dunning && (
@@ -342,26 +371,53 @@ export default function AppSettingsBillingPage() {
         </div>
       )}
       <div className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4">
-        {billingStatus === null ? (
-          <div className="animate-pulse space-y-2">
-            <div className="h-4 w-48 bg-[var(--bg-inset)] rounded" />
-            <div className="h-3 w-32 bg-[var(--bg-inset)] rounded" />
-            <div className="h-3 w-40 bg-[var(--bg-inset)] rounded" />
-          </div>
-        ) : (
+        {billingStatus !== null ? (
           <>
             <p className="text-sm font-medium text-[var(--text-primary)]">{tBilling("planDisplay", { plan: String(currentPlanId) === "starter" || String(currentPlanId) === "solo" ? "Starter" : String(currentPlanId) === "growth" || String(currentPlanId) === "business" ? "Growth" : String(currentPlanId) === "scale" ? "Business" : String(currentPlanId) === "enterprise" ? "Agency" : "Starter", price: String(currentPlanId) === "starter" || String(currentPlanId) === "solo" ? "147" : String(currentPlanId) === "growth" || String(currentPlanId) === "business" ? "297" : String(currentPlanId) === "scale" ? "597" : String(currentPlanId) === "enterprise" ? "997" : "147" })}</p>
             <p className="text-xs text-[var(--text-secondary)] mt-1">
               {tBilling("minutesUsed", { used: usage.minutes_used, limit: usage.minutes_limit })}
             </p>
-            <p className="text-xs text-[var(--text-secondary)] mt-1">
-              {tBilling("status")} {billingStatus}{renewalAt ? ` · ${tBilling("renews")} ${new Date(renewalAt).toLocaleDateString()}` : ""}
+            <p className="text-xs text-emerald-300/90 mt-1.5 flex items-center gap-1.5">
+              <span>💚</span> Replaces ~$3,200/mo in manual receptionist and follow-up costs
+            </p>
+            <p className="text-xs text-[var(--text-secondary)] mt-1 flex items-center gap-2">
+              {tBilling("status")}
+              <span className={`inline-block px-2 py-0.5 rounded-full text-[11px] font-medium ${statusBadgeColor(billingStatus)}`}>
+                {formatBillingStatus(billingStatus)}
+              </span>{renewalAt ? <span className="ml-1"> · {tBilling("renews")} {new Date(renewalAt).toLocaleDateString()}</span> : null}
             </p>
           </>
+        ) : billingError ? (
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-[var(--text-primary)]">Starter Plan — $147/mo</p>
+              <p className="text-xs text-[var(--text-secondary)] mt-1">Could not load billing details right now.</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => { loadBillingData(); }}
+              className="px-3 py-1.5 rounded-lg text-xs font-medium bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90"
+            >
+              Retry
+            </button>
+          </div>
+        ) : !loading && !workspaceId ? (
+          <div>
+            <p className="text-sm font-medium text-[var(--text-primary)]">Starter Plan — $147/mo</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-1">
+              <span className="inline-block px-2 py-0.5 rounded-full text-[11px] font-medium bg-purple-500/20 text-purple-300">Free Trial</span>
+            </p>
+          </div>
+        ) : (
+          <div className="animate-pulse space-y-2">
+            <div className="h-4 w-48 bg-[var(--bg-inset)] rounded" />
+            <div className="h-3 w-32 bg-[var(--bg-inset)] rounded" />
+            <div className="h-3 w-40 bg-[var(--bg-inset)] rounded" />
+          </div>
         )}
       </div>
       {/* Minutes usage bar */}
-      {billingStatus !== null && (
+      {(billingStatus !== null || billingError || (!loading && !workspaceId)) && (
         <div className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium text-[var(--text-primary)]">{tBilling("minutesUsage")}</p>
@@ -393,6 +449,56 @@ export default function AppSettingsBillingPage() {
           )}
         </div>
       )}
+      {/* ROI Insights Section */}
+      {(billingStatus !== null || billingError || (!loading && !workspaceId)) && usage.calls > 0 && (
+        <div className="p-4 rounded-xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 mb-4">
+          <p className="text-sm font-semibold text-emerald-300 mb-3 flex items-center gap-2">
+            <span className="text-lg">💰</span> {tBilling("roiTitle", { defaultValue: "Platform Return on Investment" })}
+          </p>
+          <div className="space-y-3">
+            {/* Platform ROI */}
+            <div className="bg-emerald-500/5 rounded-lg p-3 border border-emerald-500/20">
+              <p className="text-[11px] font-medium text-emerald-300/80 uppercase tracking-wide">Platform ROI</p>
+              <p className="text-xs text-emerald-100 mt-1.5">
+                {usage.estRevenue > 0 ? (
+                  <>
+                    <span className="font-semibold text-emerald-200">
+                      {(usage.estRevenue / (String(currentPlanId) === "starter" ? 147 : String(currentPlanId) === "growth" ? 297 : String(currentPlanId) === "scale" ? 597 : 147)).toFixed(1)}x
+                    </span>
+                    {" return on your platform investment"}
+                  </>
+                ) : (
+                  "Operators typically see 3-5x ROI within the first 30 days"
+                )}
+              </p>
+            </div>
+
+            {/* Cost Comparison */}
+            <div className="bg-emerald-500/5 rounded-lg p-3 border border-emerald-500/20">
+              <p className="text-[11px] font-medium text-emerald-300/80 uppercase tracking-wide">Savings Comparison</p>
+              <p className="text-xs text-emerald-100 mt-1.5">
+                <span className="font-semibold text-emerald-200">Replaces ~$3,200/mo</span> in manual receptionist and follow-up costs
+              </p>
+            </div>
+
+            {/* Efficiency Metric */}
+            {usage.calls > 0 && (
+              <div className="bg-emerald-500/5 rounded-lg p-3 border border-emerald-500/20">
+                <p className="text-[11px] font-medium text-emerald-300/80 uppercase tracking-wide">Cost Per Call</p>
+                <p className="text-xs text-emerald-100 mt-1.5">
+                  <span className="font-semibold text-emerald-200">
+                    ${(
+                      (String(currentPlanId) === "starter" ? 147 : String(currentPlanId) === "growth" ? 297 : String(currentPlanId) === "scale" ? 597 : 147) / usage.calls
+                    ).toFixed(2)}
+                  </span>
+                  {" per call handled"}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Usage Alert Banner */}
       {usageAlert && usageAlert.level !== "healthy" && (
         <div className={`p-4 rounded-xl border mb-4 ${
@@ -452,7 +558,7 @@ export default function AppSettingsBillingPage() {
       {/* Buy More Minutes Section */}
       {minutePacks.length > 0 && (
         <div id="minute-packs-section" className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4">
-          <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">{tBilling("buyMoreMinutes")}</h3>
+          <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">{tBilling("expandAgentCapacity", { defaultValue: "Expand Agent Capacity" })}</h3>
           <p className="text-xs text-[var(--text-secondary)] mb-3">
             {tBilling("minutePacksDesc")}
           </p>
@@ -518,8 +624,14 @@ export default function AppSettingsBillingPage() {
         }}
         workspaceId={workspaceId}
       />
-        <p className="text-xs text-[var(--text-secondary)] mb-4">
-          {tBilling("paymentMethod")}{" "}
+        <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-inset)]/40 p-3 mb-4">
+          <p className="text-xs text-[var(--text-secondary)] mb-1.5">
+            {tBilling("paymentMethod")}
+          </p>
+          <div className="flex items-center gap-1.5 text-[10px] text-[var(--text-tertiary)]">
+            <svg className="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>{tBilling("securityNote", { defaultValue: "Payments are processed securely by Stripe. We never store your card details." })}</span>
+          </div>
           <button
             type="button"
             onClick={async () => {
@@ -537,11 +649,11 @@ export default function AppSettingsBillingPage() {
                 else setToast(tBilling("toast.paymentFailed"));
               } catch { setToast(tBilling("toast.paymentFailed")); }
             }}
-            className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] ml-2"
+            className="mt-2 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline underline-offset-2"
           >
             {tBilling("update")}
           </button>
-        </p>
+        </div>
       <p className="text-sm text-[var(--text-tertiary)] mb-2">{tBilling("invoiceHistory")}</p>
       <div className="rounded-xl border border-[var(--border-default)] p-3 mb-6">
         <p className="text-xs text-[var(--text-secondary)] mb-2">{tBilling("invoiceDesc")}</p>

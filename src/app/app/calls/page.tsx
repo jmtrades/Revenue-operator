@@ -156,7 +156,6 @@ export default function CallsPage() {
         if (next.length > 0) persistCallsSnapshot(workspaceId, next);
       })
       .catch((err) => {
-        console.error("Failed to load calls:", err);
         const message =
           err instanceof ApiError && err.status === 408
             ? t("calls.errors.timeout")
@@ -222,7 +221,7 @@ export default function CallsPage() {
   const pageItems = filtered.slice(start, start + PAGE_SIZE);
 
   useEffect(() => {
-    document.title = t("calls.pageTitle");
+    document.title = t("calls.pageTitle", { defaultValue: "Calls — Recall Touch" });
     return () => {
       document.title = "";
     };
@@ -295,7 +294,6 @@ export default function CallsPage() {
       setNotesStatus((prev) => ({ ...prev, [callId]: "saved" }));
       setTimeout(() => setNotesStatus((prev) => ({ ...prev, [callId]: null })), 2000);
     } catch (err) {
-      console.error("Failed to save notes:", err);
       safeSetItem(`rt_call_notes_${callId}`, notes);
       setNotesStatus((prev) => ({ ...prev, [callId]: null }));
     }
@@ -307,17 +305,17 @@ export default function CallsPage() {
         <div>
           <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
             <PhoneCall className="w-5 h-5 text-[var(--text-tertiary)]" />
-            {t("calls.heading")}
+            {t("calls.heading", { defaultValue: "Call log" })}
           </h1>
           <p className="text-sm text-[var(--text-secondary)] mt-1">
-            {t("calls.description")}
+            {t("calls.description", { defaultValue: "Every answered call, decision, and follow-up in one place." })}
           </p>
         </div>
         <Link
           href="/app/calls/live"
           className="inline-flex items-center gap-1.5 border border-[var(--border-default)] text-[var(--text-secondary)] rounded-xl px-4 py-2 text-sm font-medium hover:bg-[var(--bg-inset)] hover:text-[var(--text-primary)]"
         >
-          {t("calls.liveLabel")}
+          {t("calls.liveLabel", { defaultValue: "Live" })}
         </Link>
         <button
           type="button"
@@ -350,7 +348,7 @@ export default function CallsPage() {
           }}
           className="text-xs md:text-sm rounded-xl border border-[var(--border-default)] px-4 py-2 text-[var(--text-primary)] hover:bg-[var(--bg-input)]"
         >
-          {t("calls.exportCsv")}
+          {t("calls.exportCsv", { defaultValue: "Export CSV" })}
         </button>
       </div>
 
@@ -364,7 +362,7 @@ export default function CallsPage() {
               setPage(1);
             }}
             icon={Search}
-            placeholder={t("calls.searchPlaceholder")}
+            placeholder={t("calls.searchPlaceholder", { defaultValue: "Search by caller or phone…" })}
             className="bg-[var(--bg-input)] border-[var(--border-default)]"
           />
           {(debouncedQuery || outcomeFilter !== "all" || sentimentFilter !== "all") && (
@@ -381,9 +379,9 @@ export default function CallsPage() {
               setPage(1);
             }}
             className="text-xs md:text-sm rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-1.5 text-[var(--text-primary)] focus:outline-none focus:border-[var(--border-medium)]"
-            aria-label={t("calls.filterOutcome")}
+            aria-label={t("calls.filterOutcome", { defaultValue: "Filter by outcome" })}
           >
-            <option value="all">{t("calls.all")}</option>
+            <option value="all">{t("calls.all", { defaultValue: "All" })}</option>
             <option value="appointment">{t("calls.outcomes.booked")}</option>
             <option value="lead">{t("calls.outcomes.lead")}</option>
             <option value="info">{t("calls.outcomes.info")}</option>
@@ -398,9 +396,9 @@ export default function CallsPage() {
               setPage(1);
             }}
             className="text-xs md:text-sm rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-3 py-1.5 text-[var(--text-primary)] focus:outline-none focus:border-[var(--border-medium)]"
-            aria-label={t("calls.filterSentiment")}
+            aria-label={t("calls.filterSentiment", { defaultValue: "Filter by sentiment" })}
           >
-            <option value="all">{t("calls.all")}</option>
+            <option value="all">{t("calls.all", { defaultValue: "All" })}</option>
             <option value="positive">{t("calls.sentiments.positive")}</option>
             <option value="neutral">{t("calls.sentiments.neutral")}</option>
             <option value="negative">{t("calls.sentiments.negative")}</option>
@@ -485,14 +483,14 @@ export default function CallsPage() {
         <table className="w-full text-sm">
           <thead className="border-b border-[var(--border-default)] bg-[var(--bg-surface)]">
             <tr>
-              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.dateTime")}</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.caller")}</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.phone")}</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.duration")}</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.outcome")}</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.sentiment")}</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.agent")}</th>
-              <th className="py-3 px-4 text-right text-xs font-medium text-[var(--text-secondary)] w-20" aria-label={t("calls.table.actions")} />
+              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.dateTime", { defaultValue: "Date / time" })}</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.caller", { defaultValue: "Caller" })}</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.phone", { defaultValue: "Phone" })}</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.duration", { defaultValue: "Duration" })}</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.outcome", { defaultValue: "Outcome" })}</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.sentiment", { defaultValue: "Sentiment" })}</th>
+              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.agent", { defaultValue: "Agent" })}</th>
+              <th className="py-3 px-4 text-right text-xs font-medium text-[var(--text-secondary)] w-20" aria-label={t("calls.table.actions", { defaultValue: "Actions" })} />
             </tr>
           </thead>
           <tbody>
@@ -596,7 +594,7 @@ export default function CallsPage() {
           const sentiment =
             (c.analysis_outcome as { sentiment?: CallSentiment } | undefined)?.sentiment ??
             null;
-          const kind: Exclude<CallType, null> = "inbound";
+          const outcomeKey = (c.outcome ?? "lead") as Exclude<CallOutcome, null>;
           return (
               <button
                 key={c.id}
@@ -633,10 +631,7 @@ export default function CallsPage() {
               <div className="mt-2 flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 text-[11px] text-[var(--text-secondary)]">
                   <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-2 py-0.5">
-                    {typeLabels[kind]}
-                  </span>
-                  <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-2 py-0.5">
-                    {outcomeLabels[(c.outcome ?? "lead") as Exclude<CallOutcome, null>]}
+                    {outcomeLabels[outcomeKey]}
                   </span>
                 </div>
                 <span className="text-xs text-[var(--text-secondary)]">

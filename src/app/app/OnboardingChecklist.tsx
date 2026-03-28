@@ -13,7 +13,7 @@ const ITEM_KEYS = [
   { key: "services", href: "/activate" },
   { key: "phone", href: "/app/settings/phone" },
   { key: "test_call", href: "/activate" },
-  { key: "first_call", href: "/app/activity" },
+  { key: "first_call", href: "/app/dashboard" },
   { key: "calendar", href: "/app/settings/integrations" },
   { key: "team", href: "/app/settings/team" },
 ] as const;

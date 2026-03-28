@@ -17,7 +17,7 @@ export function AuthorityNav() {
           <Link href="/pricing" className="text-[13px] uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>Pricing</Link>
           <Link href="/docs" className="text-[13px] uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>Documentation</Link>
           <Link href="/dashboard/start" className="text-[13px] uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>Sign in</Link>
-          <Link href="/activate" className="text-[13px] uppercase tracking-wide font-semibold" style={{ color: "var(--text-primary)" }}>Start free</Link>
+          <Link href="/activate" className="text-[13px] uppercase tracking-wide font-semibold" style={{ color: "var(--text-primary)" }}>Get started</Link>
         </div>
       </div>
     </nav>

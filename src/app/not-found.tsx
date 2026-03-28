@@ -1,29 +1,35 @@
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
 
-export default async function NotFound() {
-  const t = await getTranslations("notFoundPage");
+export const metadata = {
+  title: "Page not found",
+  robots: { index: false },
+};
+
+export default function NotFound() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-[var(--bg-base)]">
-      <main className="max-w-md w-full text-center" id="main">
-        <p aria-hidden="true" className="text-6xl font-bold mb-2 text-[var(--text-primary)]">404</p>
-        <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-3">{t("title")}</h1>
-        <p className="text-sm text-[var(--text-secondary)] mb-6">{t("description")}</p>
-        <div className="flex gap-3 justify-center flex-wrap">
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
+      <div className="w-full max-w-md text-center">
+        <h1 className="text-6xl font-bold text-white mb-4">404</h1>
+        <h2 className="text-2xl font-semibold text-gray-100 mb-4">Page not found</h2>
+        <p className="text-gray-400 mb-8">
+          The page you're looking for doesn't exist or has been moved.
+        </p>
+
+        <div className="flex flex-col gap-3">
           <Link
             href="/"
-            className="px-6 py-3 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:outline-none transition"
+            className="inline-flex items-center justify-center px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
           >
-            {t("goHome")}
+            Back to homepage
           </Link>
           <Link
-            href="/contact"
-            className="px-6 py-3 rounded-xl text-sm font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:outline-none transition"
+            href="/app/dashboard"
+            className="inline-flex items-center justify-center px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-gray-100 font-medium rounded-lg transition-colors border border-slate-700"
           >
-            {t("contactSupport")}
+            Go to dashboard
           </Link>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

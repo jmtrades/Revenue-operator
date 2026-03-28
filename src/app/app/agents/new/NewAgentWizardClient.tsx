@@ -71,7 +71,7 @@ function getDefaultState(tAgents: (key: string) => string): WizardState {
     bantEnabled: false,
     phoneNumberId: null,
     activeHours: "9:00-17:00",
-    timezone: "America/New_York",
+    timezone: (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone; } catch { return "America/New_York"; } })(),
     voicemailBehavior: "messages",
   };
 }

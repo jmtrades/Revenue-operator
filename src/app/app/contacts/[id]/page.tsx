@@ -8,6 +8,9 @@ import { useWorkspace } from "@/components/WorkspaceContext";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Timeline, type TimelineItem } from "@/components/ui/Timeline";
+import { CallerContextPanel } from "@/components/CallerContextPanel";
+import { LeadScoreCard } from "@/components/leads/LeadScoreCard";
+import { LeadTimelineCard, type LeadTimelineEvent } from "@/components/leads/LeadTimelineCard";
 import { cn } from "@/lib/cn";
 import {
   ArrowLeft,
@@ -85,6 +88,10 @@ export default function ContactDetailPage() {
   const [events, setEvents] = useState<TimelineEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [leadScore, setLeadScore] = useState<number | null>(null);
+  const [leadTags, setLeadTags] = useState<string[]>([]);
+  const [nextAction, setNextAction] = useState<string>("");
+  const [leadTimelineEvents, setLeadTimelineEvents] = useState<LeadTimelineEvent[]>([]);
 
   useEffect(() => {
     if (!id) return;
@@ -112,10 +119,107 @@ export default function ContactDetailPage() {
       .then((d) => setEvents(Array.isArray(d.events) ? d.events : []))
       .catch(() => setError(t("loadFailed")))
       .finally(() => setLoading(false));
+
+    // Fetch lead intelligence context for score, tags, and next action
+    if (workspaceId) {
+      fetch(
+        `/api/leads/${encodeURIComponent(id)}/context?workspace_id=${encodeURIComponent(workspaceId)}`,
+        { credentials: "include" }
+      )
+        .then(async (r) => {
+          if (!r.ok) throw new Error(await r.text());
+          return (await r.json()) as {
+            context?: {
+              lead: { score: number | null };
+              profile: { tags: string[]; next_best_action: string };
+              history: {
+                calls: Array<{
+                  id: string;
+                  outcome: string | null;
+                  created_at: string;
+                  direction: string;
+                  duration_seconds: number | null;
+                }>;
+                appointments: Array<{
+                  id: string;
+                  status: string;
+                  scheduled_at: string;
+                }>;
+                messages: Array<{
+                  id: string;
+                  channel: string;
+                  direction: string;
+                  created_at: string;
+                }>;
+              };
+            };
+          };
+        })
+        .then((data) => {
+          const ctx = data.context;
+          if (ctx) {
+            if (ctx.lead.score !== null) setLeadScore(ctx.lead.score);
+            setLeadTags(ctx.profile.tags || []);
+            setNextAction(ctx.profile.next_best_action || "");
+
+            // Build timeline events from history
+            const timelineEvents: LeadTimelineEvent[] = [];
+
+            // Add calls
+            if (Array.isArray(ctx.history.calls)) {
+              ctx.history.calls.forEach((call) => {
+                timelineEvents.push({
+                  type: "call",
+                  description: `${call.direction || "Call"}${
+                    call.duration_seconds
+                      ? ` · ${Math.floor(call.duration_seconds / 60)}m ${call.duration_seconds % 60}s`
+                      : ""
+                  }`,
+                  timestamp: call.created_at,
+                  outcome: call.outcome || undefined,
+                });
+              });
+            }
+
+            // Add messages
+            if (Array.isArray(ctx.history.messages)) {
+              ctx.history.messages.forEach((msg) => {
+                timelineEvents.push({
+                  type: "message",
+                  description: `${msg.channel || "Message"} · ${msg.direction || ""}`,
+                  timestamp: msg.created_at,
+                });
+              });
+            }
+
+            // Add appointments
+            if (Array.isArray(ctx.history.appointments)) {
+              ctx.history.appointments.forEach((apt) => {
+                timelineEvents.push({
+                  type: "appointment",
+                  description: apt.status || "Appointment",
+                  timestamp: apt.scheduled_at,
+                });
+              });
+            }
+
+            // Sort by timestamp descending
+            timelineEvents.sort(
+              (a, b) =>
+                new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+            );
+            setLeadTimelineEvents(timelineEvents);
+          }
+        })
+        .catch(() => {
+          // Silently fail - CallerContextPanel will show the data
+        });
+    }
+
     return () => {
       active = false;
     };
-  }, [id, t]);
+  }, [id, workspaceId, t]);
 
   const breadcrumbs = useMemo(
     () => [
@@ -213,8 +317,13 @@ export default function ContactDetailPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_340px] gap-4 lg:gap-6 items-start">
-        <main className="min-w-0">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-4 lg:gap-6 items-start">
+        <main className="min-w-0 space-y-6">
+          {/* Caller Context Panel - AI Agent Intelligence */}
+          {!loading && id && workspaceId && (
+            <CallerContextPanel leadId={id} workspaceId={workspaceId} />
+          )}
+
           {loading ? (
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 text-sm text-[var(--text-secondary)]">
               {t("loading")}
@@ -240,7 +349,23 @@ export default function ContactDetailPage() {
           )}
         </main>
 
-        <aside className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
+        <aside className="space-y-4 lg:space-y-6">
+          {/* Lead Score Card */}
+          {!loading && leadScore !== null && (
+            <LeadScoreCard
+              score={leadScore}
+              tags={leadTags}
+              nextAction={nextAction || "Follow up with lead"}
+            />
+          )}
+
+          {/* Lead Timeline Card */}
+          {!loading && leadTimelineEvents.length > 0 && (
+            <LeadTimelineCard events={leadTimelineEvents} />
+          )}
+
+          {/* Contact Info Sidebar */}
+          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
           <h2 className="text-sm font-semibold text-[var(--text-primary)]">
             {t("sidebar.heading")}
           </h2>
@@ -304,6 +429,7 @@ export default function ContactDetailPage() {
               {t("sidebar.workspaceNote")}
             </p>
           ) : null}
+          </div>
         </aside>
       </div>
     </div>

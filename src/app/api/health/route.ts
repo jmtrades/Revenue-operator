@@ -16,18 +16,24 @@ export async function GET() {
     const db = getDb();
     const { error } = await db.from("workspaces").select("id").limit(1);
     checks.database = !error;
+    if (error) checks.database_error = false; // Signal error exists without leaking details
   } catch {
     checks.database = false;
   }
 
   // Voice Server
-  try {
-    const res = await fetch(`${process.env.VOICE_SERVER_URL}/health`, {
-      signal: AbortSignal.timeout(3000),
-    });
-    checks.voice_server = res.ok;
-  } catch {
-    checks.voice_server = false;
+  const voiceServerUrl = process.env.VOICE_SERVER_URL;
+  if (voiceServerUrl) {
+    try {
+      const res = await fetch(`${voiceServerUrl}/health`, {
+        signal: AbortSignal.timeout(3000),
+      });
+      checks.voice_server = res.ok;
+    } catch {
+      checks.voice_server = false;
+    }
+  } else {
+    checks.voice_server = false; // Not configured
   }
 
   // Redis

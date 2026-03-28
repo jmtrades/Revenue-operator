@@ -9,6 +9,7 @@ import { compileSystemPrompt, type BusinessBrainInput } from "@/lib/business-bra
 import { getAgentTools } from "@/lib/voice/agent-tools";
 import { getTemplateCapabilities } from "@/lib/data/agent-templates";
 import { getModelForPhase, type CallPhase, type ModelConfig } from "@/lib/voice/cost-optimizer";
+import { log } from "@/lib/logger";
 
 export interface CallResult {
   callId: string;
@@ -22,6 +23,7 @@ export interface InitiateCallParams {
   voiceId?: string;
   systemPrompt?: string;
   industry?: string;
+  leadId?: string | null;
   metadata?: Record<string, unknown>;
 }
 
@@ -126,7 +128,7 @@ async function checkVoiceTierLimits(
  * Get active A/B test for workspace and assign variant.
  * Returns voice_id for variant A or B.
  */
-async function getAbTestVariant(workspaceId: string): Promise<string | null> {
+async function getAbTestVariant(workspaceId: string, leadId?: string | null): Promise<string | null> {
   const db = getDb();
 
   // Find active A/B test
@@ -147,7 +149,30 @@ async function getAbTestVariant(workspaceId: string): Promise<string | null> {
     traffic_split: number;
   };
 
-  // Randomly assign variant based on traffic split
+  // Check for existing variant assignment for this lead (sticky assignment)
+  if (leadId) {
+    const { data: existingAssignment } = await db
+      .from("call_sessions")
+      .select("metadata")
+      .eq("workspace_id", workspaceId)
+      .eq("lead_id", leadId)
+      .not("metadata->ab_test_id", "is", null)
+      .order("call_started_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (existingAssignment) {
+      const meta = (existingAssignment as { metadata?: Record<string, unknown> }).metadata;
+      const prevTestId = meta?.ab_test_id as string | undefined;
+      const prevVariant = meta?.ab_test_variant as string | undefined;
+      // If same test is still running, keep the same variant
+      if (prevTestId === testData.id && prevVariant) {
+        return prevVariant === "a" ? testData.voice_a : testData.voice_b;
+      }
+    }
+  }
+
+  // New assignment: randomly assign variant based on traffic split
   const rand = Math.random();
   const variant = rand < testData.traffic_split ? "a" : "b";
 
@@ -163,12 +188,39 @@ export async function initiateCall(
 ): Promise<CallResult> {
   const db = getDb();
 
+  // 0. Validate workspace exists and is active
+  const { data: wsCheck } = await db
+    .from("workspaces")
+    .select("id, status, billing_status, grace_period_ends_at")
+    .eq("id", params.workspaceId)
+    .maybeSingle();
+
+  if (!wsCheck) {
+    log("error", "call_flow.workspace_not_found", { workspaceId: params.workspaceId });
+    return { callId: "", status: "failed", provider: "recall" };
+  }
+
+  const wsData = wsCheck as { status?: string; billing_status?: string; grace_period_ends_at?: string | null };
+
+  // Allow service during grace period even after payment failure
+  const inGracePeriod = wsData.grace_period_ends_at && new Date(wsData.grace_period_ends_at) > new Date();
+
+  if (wsData.status === "paused" || (wsData.billing_status === "payment_failed" && !inGracePeriod)) {
+    log("warn", "call_flow.workspace_inactive", {
+      workspaceId: params.workspaceId,
+      status: wsData.status,
+      billingStatus: wsData.billing_status,
+      gracePeriodEndsAt: wsData.grace_period_ends_at,
+    });
+    return { callId: "", status: "failed", provider: "recall" };
+  }
+
   // 1. Check tier limits
   const tierCheck = await checkVoiceTierLimits(params.workspaceId);
   if (!tierCheck.allowed) {
-    console.warn(
-      `[call-flow] Workspace ${params.workspaceId} exceeds concurrent call limit`
-    );
+    log("warn", "call_flow.tier_limit_exceeded", {
+      workspaceId: params.workspaceId,
+    });
     return {
       callId: "",
       status: "failed",
@@ -191,7 +243,7 @@ export async function initiateCall(
   }
 
   // 3. Check A/B test and override voiceId if running
-  const abVariant = await getAbTestVariant(params.workspaceId);
+  const abVariant = await getAbTestVariant(params.workspaceId, params.leadId);
   if (abVariant) {
     voiceId = abVariant;
   }
@@ -294,6 +346,22 @@ export async function initiateCall(
       }
     }
 
+    // Merge FAQ: prefer workspace_business_context, fall back to agent knowledge_base
+    let mergedFaq = ctx?.faq ?? [];
+    if (!Array.isArray(mergedFaq) || mergedFaq.length === 0) {
+      // Try loading FAQ from the agent's knowledge_base
+      const { data: agentKb } = await db
+        .from("agents")
+        .select("knowledge_base")
+        .eq("workspace_id", params.workspaceId)
+        .limit(1)
+        .maybeSingle();
+      const kbData = (agentKb as { knowledge_base?: { faq?: Array<{ q?: string; a?: string }> } } | null)?.knowledge_base;
+      if (Array.isArray(kbData?.faq) && kbData.faq.length > 0) {
+        mergedFaq = kbData.faq;
+      }
+    }
+
     const input: BusinessBrainInput = {
       business_name: businessName,
       offer_summary: ctx?.offer_summary ?? "",
@@ -301,7 +369,7 @@ export async function initiateCall(
         string,
         { start: string; end: string } | null
       >,
-      faq: ctx?.faq ?? [],
+      faq: mergedFaq,
       agent_name: agentName,
       greeting,
       industry: ctx?.industry ?? params.industry ?? undefined,
@@ -341,7 +409,10 @@ export async function initiateCall(
       callSessionId = (inserted as { id: string }).id;
     }
   } catch (err) {
-    console.error("[call-flow] Failed to create call_session:", err);
+    log("error", "call_flow.session_creation_failed", {
+      error: err instanceof Error ? err.message : String(err),
+      workspaceId: params.workspaceId,
+    });
     return {
       callId: "",
       status: "failed",
@@ -392,7 +463,9 @@ export async function initiateCall(
         if (names.length > 0) assistantMeta.staff_names = names.join(",");
       }
     } catch (err) {
-      console.warn("[call-flow] Failed to load workspace context for STT/pronunciation:", err);
+      log("warn", "call_flow.stt_context_load_failed", {
+      error: err instanceof Error ? err.message : String(err),
+    });
       // Non-critical — STT/pronunciation just won't be workspace-aware
     }
 
@@ -424,7 +497,10 @@ export async function initiateCall(
 
     return result;
   } catch (err) {
-    console.error("[call-flow] Voice provider error:", err);
+    log("error", "call_flow.voice_provider_error", {
+      error: err instanceof Error ? err.message : String(err),
+      workspaceId: params.workspaceId,
+    });
     return {
       callId: callSessionId ?? "",
       status: "failed",
@@ -481,7 +557,7 @@ export async function handleInboundCall(
   }
 
   // 2. Check for active A/B test and assign variant
-  const voiceIdOverride = await getAbTestVariant(params.workspaceId);
+  const voiceIdOverride = await getAbTestVariant(params.workspaceId, null);
 
   // 3. Get workspace voice config
   const { data: workspaceVoiceConfig } = await db
@@ -617,7 +693,10 @@ export async function handleInboundCall(
     const capabilities = templateId ? getTemplateCapabilities(templateId) : undefined;
     agentTools = getAgentTools(capabilities ?? []);
   } catch (promptErr) {
-    console.warn("[call-flow] Failed to compile inbound system prompt, using fallback:", promptErr);
+    log("warn", "call_flow.prompt_compilation_failed", {
+      error: promptErr instanceof Error ? promptErr.message : String(promptErr),
+      workspaceId: params.workspaceId,
+    });
   }
 
   // 5. Generate TwiML using voice provider
@@ -659,7 +738,10 @@ export async function handleInboundCall(
 
     return twiml;
   } catch (err) {
-    console.error("[call-flow] Failed to generate inbound TwiML:", err);
+    log("error", "call_flow.inbound_twiml_failed", {
+      error: err instanceof Error ? err.message : String(err),
+      workspaceId: params.workspaceId,
+    });
     // Fallback to basic TwiML
     return `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">Thank you for calling. Please hold.</Say><Pause length="2"/></Response>`;
   }

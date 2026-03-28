@@ -148,17 +148,20 @@ export default function AppSettingsTeamPage() {
               <p className="text-xs text-[var(--text-secondary)]">{m.email}</p>
             </div>
             <div className="flex items-center gap-2">
-              <select
-                value={m.role}
-                onChange={(e) => handleRoleChange(m.email, e.target.value)}
-                className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--bg-inset)] text-[var(--text-secondary)] border-none focus:outline-none cursor-pointer"
-                disabled={!m.email}
-              >
-                <option value="admin">{t("team.roleAdmin")}</option>
-                <option value="manager">{t("team.roleManager")}</option>
-                <option value="viewer">{t("team.roleViewer")}</option>
-              </select>
-              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: "rgba(34,197,94,0.15)", color: "var(--accent-secondary)" }}>{m.status}</span>
+              {m.email ? (
+                <select
+                  value={m.role}
+                  onChange={(e) => handleRoleChange(m.email, e.target.value)}
+                  className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--bg-inset)] text-[var(--text-secondary)] border-none focus:outline-none cursor-pointer"
+                >
+                  <option value="admin">{t("team.roleAdmin")}</option>
+                  <option value="manager">{t("team.roleManager")}</option>
+                  <option value="viewer">{t("team.roleViewer")}</option>
+                </select>
+              ) : (
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--bg-inset)] text-[var(--text-secondary)]">{t("team.roleAdmin")}</span>
+              )}
+              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: "rgba(34,197,94,0.15)", color: "var(--accent-secondary)" }}>{t(`team.status${(m.status as string).charAt(0).toUpperCase()}${(m.status as string).slice(1)}`)}</span>
               {m.email && (
                 <button
                   type="button"

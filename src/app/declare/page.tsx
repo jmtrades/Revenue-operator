@@ -26,7 +26,7 @@ export default function DeclarePage() {
     if (typeof window !== "undefined") window.sessionStorage.setItem("declared_posture", "1");
     setActivated(true);
     setTimeout(() => setFading(true), 3000);
-    setTimeout(() => router.push("/app/activity"), 3400);
+    setTimeout(() => router.push("/app/dashboard"), 3400);
   };
 
   if (activated) {

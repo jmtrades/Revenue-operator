@@ -30,7 +30,7 @@ export async function sendAgentLiveEmail(workspaceId: string): Promise<boolean> 
     <p>Hi,</p>
     <p>Your Recall Touch AI agent for <strong>${escapeHtml(businessName)}</strong> is set up and ready.</p>
     <p>Forward your phone number in Settings to start receiving calls, or try the demo anytime.</p>
-    <p><a href="${APP_URL}/app/activity">Open dashboard →</a></p>
+    <p><a href="${APP_URL}/app/dashboard">Open dashboard →</a></p>
     <p>— Recall Touch</p>
   `;
 

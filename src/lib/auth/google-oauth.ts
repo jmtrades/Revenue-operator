@@ -31,7 +31,7 @@ export function getGoogleAuthRedirectUri(requestOrigin?: string | null): string 
 }
 
 export function sanitizeNextPath(value: string | null | undefined): string {
-  if (!value || !value.startsWith("/")) return "/app/activity";
-  if (value.startsWith("//")) return "/app/activity";
+  if (!value || !value.startsWith("/")) return "/app/dashboard";
+  if (value.startsWith("//")) return "/app/dashboard";
   return value;
 }

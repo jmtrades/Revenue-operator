@@ -59,7 +59,7 @@ export default function AbTestingPage() {
       const data = await res.json();
       setTests(data.tests ?? []);
     } catch {
-      console.error("Failed to fetch A/B tests");
+      // silenced
     } finally {
       setLoading(false);
     }
@@ -97,7 +97,7 @@ export default function AbTestingPage() {
         await fetchTests();
       }
     } catch {
-      console.error("Failed to create A/B test");
+      // silenced
     } finally {
       setCreating(false);
     }
@@ -119,7 +119,7 @@ export default function AbTestingPage() {
       });
       await fetchTests();
     } catch {
-      console.error("Failed to update A/B test");
+      // silenced
     }
   }
 
@@ -128,13 +128,6 @@ export default function AbTestingPage() {
 
   return (
     <div className="max-w-4xl mx-auto py-8 px-4">
-      {/* Coming Soon Banner */}
-      <div className="mb-6 p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/30">
-        <p className="text-sm font-medium text-yellow-300">
-          {t("comingSoon", { defaultValue: "Voice A/B Testing is coming soon. This feature is not yet active." })}
-        </p>
-      </div>
-
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-semibold text-[var(--text-primary)]">{t("title", { defaultValue: "Voice A/B Testing" })}</h1>
@@ -144,8 +137,7 @@ export default function AbTestingPage() {
         </div>
         <button
           onClick={() => setShowCreate(!showCreate)}
-          disabled
-          className="px-4 py-2 text-sm font-medium rounded-lg bg-[var(--accent)] text-white opacity-50 cursor-not-allowed"
+          className="px-4 py-2 text-sm font-medium rounded-lg bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 transition-opacity"
         >
           {showCreate ? t("cancel", { defaultValue: "Cancel" }) : t("newTest", { defaultValue: "New Test" })}
         </button>
@@ -153,7 +145,7 @@ export default function AbTestingPage() {
 
       {/* Create form */}
       {showCreate && (
-        <div className="mb-6 p-5 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] opacity-50 pointer-events-none">
+        <div className="mb-6 p-5 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]">
           <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-4">{t("createTest", { defaultValue: "Create A/B Test" })}</h2>
           <div className="space-y-4">
             <div>
@@ -283,22 +275,22 @@ export default function AbTestingPage() {
                     )}
                   </div>
                 </div>
-                <div className="flex gap-2 opacity-50 pointer-events-none">
+                <div className="flex gap-2">
                   <button
-                    disabled
-                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[var(--border-default)] text-[var(--text-secondary)]"
+                    onClick={() => handleAction(test.id, "pause")}
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors"
                   >
                     Pause
                   </button>
                   <button
-                    disabled
-                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[var(--border-default)] text-[var(--text-secondary)]"
+                    onClick={() => handleAction(test.id, "complete", test.voice_a)}
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors"
                   >
                     Pick Voice A
                   </button>
                   <button
-                    disabled
-                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[var(--border-default)] text-[var(--text-secondary)]"
+                    onClick={() => handleAction(test.id, "complete", test.voice_b)}
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors"
                   >
                     Pick Voice B
                   </button>

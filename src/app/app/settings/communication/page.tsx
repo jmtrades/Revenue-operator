@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useWorkspace } from "@/components/WorkspaceContext";
-import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
+import { getWorkspaceMeSnapshotSync, invalidateWorkspaceMeCache } from "@/lib/client/workspace-me";
 import { cn } from "@/lib/cn";
 import { ArrowLeft, MessageCircle, Phone, Mail, Radio } from "lucide-react";
 
@@ -50,7 +50,7 @@ export default function CommunicationSettingsPage() {
           setConfig({ ...DEFAULT_CONFIG, ...data });
         }
       })
-      .catch((err) => console.error("[settings/communication] Failed to load config:", err))
+      .catch((err) => { /* silenced */ })
       .finally(() => {
         if (!cancelled) setLoading(false);
       });
@@ -75,10 +75,12 @@ export default function CommunicationSettingsPage() {
       });
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
-        toast.error(body.error ?? t("toast.error"));
+        console.error("Communication mode save failed:", body);
+        toast.error(t("toast.error"));
         return;
       }
       toast.success(t("toast.saved"));
+      invalidateWorkspaceMeCache();
     } catch {
       toast.error(t("toast.error"));
     } finally {

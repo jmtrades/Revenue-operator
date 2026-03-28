@@ -34,10 +34,13 @@ export async function GET(req: NextRequest) {
     }
 
     let email: string | null = null;
+    let displayName: string | null = null;
     try {
       const db = getDb();
-      const { data } = await db.from("users").select("email").eq("id", session.userId).maybeSingle();
-      email = (data as { email?: string } | null)?.email ?? null;
+      const { data } = await db.from("users").select("email, full_name").eq("id", session.userId).maybeSingle();
+      const userData = data as { email?: string; full_name?: string } | null;
+      email = userData?.email ?? null;
+      displayName = userData?.full_name ?? null;
     } catch {
       // ignore
     }
@@ -48,6 +51,7 @@ export async function GET(req: NextRequest) {
         workspaceId: session.workspaceId ?? null,
         workspace_id: session.workspaceId ?? null,
         email,
+        displayName,
         emailVerified: session.emailVerified,
       },
     });

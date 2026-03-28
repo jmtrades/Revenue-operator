@@ -52,7 +52,7 @@ export async function sendGoLiveEmail(email: string, workspaceName?: string | nu
   </p>
   <table cellpadding="0" cellspacing="0" style="margin:0 auto 24px;">
   <tr><td style="background:#10b981;border-radius:12px;">
-    <a href="${APP_URL}/app/activity" style="display:inline-block;padding:14px 32px;color:#000;font-size:15px;font-weight:700;text-decoration:none;">View Your Dashboard →</a>
+    <a href="${APP_URL}/app/dashboard" style="display:inline-block;padding:14px 32px;color:#000;font-size:15px;font-weight:700;text-decoration:none;">View Your Dashboard →</a>
   </td></tr>
   </table>
   <p style="margin:0;font-size:14px;color:#e5e5e5;">— The Recall Touch Team</p>

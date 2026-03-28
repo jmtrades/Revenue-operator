@@ -4,10 +4,21 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { log } from "@/lib/logger";
+
+const updateAppointmentSchema = z.object({
+  start_time: z.string().datetime().optional(),
+  end_time: z.string().datetime().optional(),
+}).strict().refine(
+  (data) => data.start_time || data.end_time,
+  { message: "start_time or end_time required" }
+);
 
 export const dynamic = "force-dynamic";
 
@@ -24,15 +35,19 @@ export async function PATCH(
   if (err) return err;
 
   const { id } = await ctx.params;
-  let body: { start_time?: string; end_time?: string };
+  let raw: unknown;
   try {
-    body = (await req.json()) as { start_time?: string; end_time?: string };
+    raw = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
-  const start_time = body.start_time ?? undefined;
-  const end_time = body.end_time ?? undefined;
-  if (!start_time && !end_time) return NextResponse.json({ error: "start_time or end_time required" }, { status: 400 });
+  const parsed = updateAppointmentSchema.safeParse(raw);
+  if (!parsed.success) {
+    const firstError = parsed.error.issues[0];
+    return NextResponse.json({ error: firstError?.message ?? "Invalid input" }, { status: 400 });
+  }
+  const start_time = parsed.data.start_time;
+  const end_time = parsed.data.end_time;
 
   const db = getDb();
   const { data: existing, error: fetchErr } = await db
@@ -58,7 +73,10 @@ export async function PATCH(
     .eq("id", id)
     .select()
     .maybeSingle();
-  if (updateErr) return NextResponse.json({ error: (updateErr as Error).message }, { status: 500 });
+  if (updateErr) {
+    log("error", "appointments.update_error", { error: (updateErr as Error).message });
+    return NextResponse.json({ error: "Could not update appointment. Please try again." }, { status: 500 });
+  }
 
   if (row.external_calendar_id) {
     try {
@@ -86,6 +104,12 @@ export async function DELETE(
   if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const err = await requireWorkspaceAccess(req, session.workspaceId);
   if (err) return err;
+
+  // Rate limit: 20 appointment deletes per minute per workspace
+  const rl = await checkRateLimit(`appointments_delete:${session.workspaceId}`, 20, 60000);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many delete requests. Please slow down." }, { status: 429 });
+  }
 
   const { id } = await ctx.params;
   const db = getDb();

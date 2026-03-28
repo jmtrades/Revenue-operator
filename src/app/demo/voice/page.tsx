@@ -87,7 +87,7 @@ export default function VoiceDemoPage() {
 
         if (audioRef.current) {
           audioRef.current.src = audioUrl;
-          audioRef.current.play().catch(err => console.error("Playback error:", err));
+          audioRef.current.play().catch(() => {});
 
           await new Promise(resolve => {
             setTimeout(() => {
@@ -99,7 +99,7 @@ export default function VoiceDemoPage() {
         }
       }
     } catch (error) {
-      console.error("Error starting call:", error);
+      // Error silently handled
     } finally {
       setIsLoading(false);
     }
@@ -125,7 +125,7 @@ export default function VoiceDemoPage() {
           await new Promise(resolve => {
             setTimeout(() => {
               audioRef.current!.src = audioUrl;
-              audioRef.current!.play().catch(err => console.error("Playback error:", err));
+              audioRef.current!.play().catch(() => {});
               resolve(null);
             }, 500);
           });
@@ -135,7 +135,7 @@ export default function VoiceDemoPage() {
         }
       }
     } catch (error) {
-      console.error("Error getting AI response:", error);
+      // Error silently handled
     } finally {
       setIsLoading(false);
     }
@@ -191,7 +191,7 @@ export default function VoiceDemoPage() {
         setTimeout(() => setSignupSuccess(false), 5000);
       }
     } catch (error) {
-      console.error("Signup error:", error);
+      // Error silently handled
     } finally {
       setSignupLoading(false);
     }
@@ -302,10 +302,10 @@ export default function VoiceDemoPage() {
           <div className="max-w-md mx-auto mb-8">
             <div
               className="rounded-3xl overflow-hidden"
-              style={{ border: "8px solid #1F2937", boxShadow: "var(--shadow-xl)" }}
+              style={{ border: "8px solid var(--bg-surface)", boxShadow: "var(--shadow-xl)" }}
             >
               {/* Phone Header */}
-              <div className="px-6 py-3 flex justify-between items-center text-sm" style={{ background: "#111827", color: "#fff" }}>
+              <div className="px-6 py-3 flex justify-between items-center text-sm" style={{ background: "var(--bg-base)", color: "#fff" }}>
                 <span>9:41</span>
                 <div className="flex gap-1">
                   <div className="w-1 h-1 bg-white rounded-full" />
@@ -315,7 +315,7 @@ export default function VoiceDemoPage() {
               </div>
 
               {/* Call Interface */}
-              <div className="px-6 py-12 text-center" style={{ background: "linear-gradient(to bottom, #1F2937, #111827)", color: "#fff" }}>
+              <div className="px-6 py-12 text-center" style={{ background: "linear-gradient(to bottom, var(--bg-surface), var(--bg-base))", color: "#fff" }}>
                 <div className="mb-4">
                   <Phone className="w-12 h-12 mx-auto mb-3 opacity-80" />
                 </div>
@@ -325,16 +325,16 @@ export default function VoiceDemoPage() {
               </div>
 
               {/* Transcript Area */}
-              <div className="px-4 py-4 min-h-64 max-h-64 overflow-y-auto space-y-3" style={{ background: "#0A0A0B" }}>
+              <div className="px-4 py-4 min-h-64 max-h-64 overflow-y-auto space-y-3" style={{ background: "var(--bg-primary)" }}>
                 {transcript.length === 0 && conversationStep === 0 && (
-                  <p className="text-sm italic text-center mt-20" style={{ color: "#6B7280" }}>Tap &quot;Start Call&quot; to begin...</p>
+                  <p className="text-sm italic text-center mt-20" style={{ color: "var(--text-tertiary)" }}>Tap &quot;Start Call&quot; to begin...</p>
                 )}
                 {transcript.map((msg, idx) => (
                   <div key={idx} className={`flex ${msg.speaker === "ai" ? "justify-start" : "justify-end"}`}>
                     <div
                       className="px-4 py-2 rounded-lg max-w-xs text-sm"
                       style={{
-                        background: msg.speaker === "ai" ? "#1F2937" : "#374151",
+                        background: msg.speaker === "ai" ? "var(--bg-surface)" : "var(--accent-primary)",
                         color: "#fff",
                       }}
                     >
@@ -346,13 +346,13 @@ export default function VoiceDemoPage() {
               </div>
 
               {/* Call Controls */}
-              <div className="px-4 py-4 flex justify-center gap-4" style={{ background: "#111827" }}>
+              <div className="px-4 py-4 flex justify-center gap-4" style={{ background: "var(--bg-base)" }}>
                 <button
                   onClick={startCall}
                   disabled={isLoading}
                   className="rounded-full p-4 transition-colors"
                   style={{
-                    background: isLoading ? "#4B5563" : "var(--accent-secondary)",
+                    background: isLoading ? "var(--text-tertiary)" : "var(--accent-secondary)",
                     color: "#fff",
                   }}
                 >

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
+import { getWorkspaceMeSnapshotSync, invalidateWorkspaceMeCache } from "@/lib/client/workspace-me";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 
 const NOTIFICATION_EVENT_KEYS = [
@@ -119,6 +119,7 @@ export default function AppSettingsNotificationsPage() {
       if (!res.ok) throw new Error("Failed to save");
       lastSavedRef.current = prefsSerialized;
       toast.success(tSettings("notifications.saved"));
+      invalidateWorkspaceMeCache();
     } catch {
       toast.error(tToast("error.generic"));
     } finally {

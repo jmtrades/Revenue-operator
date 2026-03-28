@@ -68,6 +68,7 @@ const STATS = [
     label: "Businesses Powered",
     sublabel: "Across 200+ industries",
     color: "emerald",
+    raw: true,
   },
   {
     icon: Phone,
@@ -110,6 +111,7 @@ const STATS = [
     label: "States Covered",
     sublabel: "Plus 12 countries",
     color: "cyan",
+    raw: true,
   },
   {
     icon: Shield,
@@ -154,7 +156,7 @@ export function AnimatedStats() {
             <p className="text-2xl font-bold mb-0.5" style={{ color: c.text }}>
               {stat.raw ? (
                 <span className="tabular-nums">
-                  {stat.prefix}{stat.value}{stat.suffix}
+                  {stat.prefix}{typeof stat.value === "number" && stat.value >= 1000 && !stat.suffix?.includes("M") && !stat.suffix?.includes("s") ? stat.value.toLocaleString() : stat.value}{stat.suffix}
                 </span>
               ) : (
                 <AnimatedNumber

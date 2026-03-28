@@ -126,7 +126,7 @@ export async function POST(req: NextRequest) {
       .from("knowledge_documents")
       .insert({
         workspace_id: workspaceId,
-        filename: file.name,
+        filename: file.name.replace(/[/\\:*?"<>|]/g, "_").slice(0, 255),
         file_type: file.type,
         content_text: extractedText,
         chunk_count: chunks.length,

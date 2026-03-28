@@ -7,12 +7,12 @@ import { getBaseUrl } from "@/lib/runtime/base-url";
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/app/activity";
+  const next = searchParams.get("next") ?? "/app/dashboard";
   const origin = getBaseUrl(new URL(request.url).origin);
 
   if (!code) {
     const signInUrl = new URL("/sign-in", origin);
-    if (next && next !== "/app/activity") signInUrl.searchParams.set("next", next);
+    if (next && next !== "/app/dashboard") signInUrl.searchParams.set("next", next);
     return NextResponse.redirect(signInUrl);
   }
 
@@ -22,7 +22,7 @@ export async function GET(request: Request) {
     if (error) {
       const signInUrl = new URL("/sign-in", origin);
       signInUrl.searchParams.set("error", "auth");
-      if (next && next !== "/app/activity") signInUrl.searchParams.set("next", next);
+      if (next && next !== "/app/dashboard") signInUrl.searchParams.set("next", next);
       return NextResponse.redirect(signInUrl.toString());
     }
     const userId = data.user?.id;
@@ -54,7 +54,8 @@ export async function GET(request: Request) {
     } catch {
       // DB unavailable — still set session with userId only
     }
-    const redirectPath = isNewUser && (next === "/dashboard" || next === "/app" || next === "/app/activity") ? "/activate" : next;
+    // Always route new users through onboarding, regardless of next param
+    const redirectPath = isNewUser ? "/activate" : next;
     const cookie = createSessionCookie({ userId, workspaceId });
     if (cookie) {
       const res = NextResponse.redirect(new URL(redirectPath, origin));

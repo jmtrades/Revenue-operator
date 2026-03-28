@@ -14,6 +14,7 @@ import {
   Upload,
   X,
   Check,
+  Mic2,
 } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { PageHeader, EmptyState } from "@/components/ui";
@@ -226,8 +227,7 @@ export default function VoicesSettingsPage() {
           setPlayingVoiceId(null);
         }
       } catch (error) {
-        const message = error instanceof Error ? error.message : t("toast.previewUnavailable");
-        toast.error(message);
+        toast.error(t("toast.previewUnavailable"));
         setPlayingVoiceId(null);
       }
     }
@@ -244,7 +244,7 @@ export default function VoicesSettingsPage() {
       body: JSON.stringify({ voiceId: voiceId }),
       credentials: "include",
     }).catch((error) => {
-      console.error("Failed to persist voice selection:", error);
+      // silenced
     });
   }, []);
 
@@ -599,11 +599,17 @@ export default function VoicesSettingsPage() {
         </div>
       )}
 
-      {/* Voice Cloning Coming Soon Banner */}
-      <div className="mb-6 p-4 rounded-xl bg-blue-500/10 border border-blue-500/30">
-        <p className="text-sm font-medium text-blue-300">
-          {t("cloneComingSoon")}
-        </p>
+      {/* Voice Cloning Info */}
+      <div className="mb-6 p-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] flex items-start gap-3">
+        <Mic2 className="w-5 h-5 text-[var(--accent-primary)] shrink-0 mt-0.5" />
+        <div>
+          <p className="text-sm font-medium text-[var(--text-primary)]">
+            {t("cloneComingSoon", { defaultValue: "Custom voice cloning" })}
+          </p>
+          <p className="text-xs text-[var(--text-secondary)] mt-1">
+            Upload a voice sample to create a custom AI voice for your agents. Supports WAV and MP3 files up to 10MB.
+          </p>
+        </div>
       </div>
 
       {/* Voice Library Browser */}
@@ -697,8 +703,7 @@ export default function VoicesSettingsPage() {
               <button
                 type="button"
                 onClick={() => setShowCloneModal(true)}
-                disabled
-                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold px-3 py-2 text-sm opacity-50 cursor-not-allowed"
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold px-3 py-2 text-sm hover:opacity-90 transition-opacity"
               >
                 <Plus className="w-4 h-4" />
                 {t("cloneVoice")}

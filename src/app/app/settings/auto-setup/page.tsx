@@ -89,7 +89,7 @@ export default function AutoSetupPage() {
           });
         }
       } catch (error) {
-        console.error("Failed to load knowledge stats:", error);
+        // silenced
       }
     };
 
@@ -151,7 +151,6 @@ export default function AutoSetupPage() {
     } catch (error) {
       clearInterval(messageInterval);
       toast.error(t("toast.analyzeFailed"));
-      console.error(error);
       setShowPreview(false);
     } finally {
       setAnalyzing(false);
@@ -200,7 +199,6 @@ export default function AutoSetupPage() {
       }, 1000);
     } catch (error) {
       toast.error(t("toast.updateFailed"));
-      console.error(error);
     } finally {
       setConfirming(false);
     }

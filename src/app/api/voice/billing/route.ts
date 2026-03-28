@@ -18,6 +18,7 @@ import {
 import { resolveBillingTier } from "@/lib/feature-gate/resolver";
 import { canUseVoice } from "@/lib/voice/feature-gate";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   try {
@@ -85,7 +86,7 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("[API] voice billing GET error:", error);
+    log("error", "voice.billing.GET", { error: String(error) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -123,6 +124,29 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Idempotency: if call_session_id is provided, check if usage was already recorded
+    if (call_session_id) {
+      const { getDb } = await import("@/lib/db/queries");
+      const db = getDb();
+      const { data: existing } = await db
+        .from("voice_usage")
+        .select("id")
+        .eq("workspace_id", workspaceId)
+        .eq("call_session_id", call_session_id)
+        .limit(1)
+        .maybeSingle();
+      if (existing) {
+        const usage = await getVoiceUsage(workspaceId);
+        return NextResponse.json({
+          recorded: true,
+          deduplicated: true,
+          minutes_used: usage.minutes_used,
+          minutes_limit: usage.minutes_limit,
+          is_over_limit: usage.is_over_limit,
+        }, { status: 200 });
+      }
+    }
+
     // Record the usage
     const usageRecord: VoiceUsageRecord = {
       workspace_id: workspaceId,
@@ -152,7 +176,7 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("[API] voice billing POST error:", error);
+    log("error", "voice.billing.POST", { error: String(error) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

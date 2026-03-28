@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   try {
@@ -44,7 +45,7 @@ export async function GET(req: NextRequest) {
     const { data: logs, error } = await query.order("created_at", { ascending: false }).limit(1000);
 
     if (error) {
-      console.error("[API] voice quality GET error:", error);
+      log("error", "voice.quality.GET", { error: String(error) });
       return NextResponse.json({ error: "Failed to fetch quality logs" }, { status: 500 });
     }
 
@@ -83,7 +84,7 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("[API] voice quality GET error:", error);
+    log("error", "voice.quality.GET", { error: String(error) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -125,7 +126,7 @@ export async function POST(req: NextRequest) {
 
     const db = getDb();
 
-    const { data: log, error: insertError } = await db
+    const { data: qualityLog, error: insertError } = await db
       .from("voice_quality_logs")
       .insert([
         {
@@ -150,16 +151,16 @@ export async function POST(req: NextRequest) {
       .maybeSingle();
 
     if (insertError) {
-      console.error("[API] voice quality POST error:", insertError);
+      log("error", "voice.quality.POST", { error: String(insertError) });
       return NextResponse.json({ error: "Failed to record quality log" }, { status: 500 });
     }
-    if (!log) {
+    if (!qualityLog) {
       return NextResponse.json({ error: "Failed to record quality log" }, { status: 500 });
     }
 
-    return NextResponse.json({ id: log.id }, { status: 201 });
+    return NextResponse.json({ id: qualityLog.id }, { status: 201 });
   } catch (error) {
-    console.error("[API] voice quality POST error:", error);
+    log("error", "voice.quality.POST", { error: String(error) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

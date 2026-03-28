@@ -15,7 +15,7 @@ export async function GET(_req: NextRequest) {
     const { data, error } = await db
       .from("industry_templates")
       .select("*")
-      .order("industry_name", { ascending: true });
+      .order("name", { ascending: true });
 
     if (error) {
       return NextResponse.json(

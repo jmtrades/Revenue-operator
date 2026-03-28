@@ -362,8 +362,8 @@ export function CompetitorComparison() {
             href="/activate"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm transition-colors hover:opacity-90"
             style={{
-              background: "#FFFFFF",
-              color: "#000000",
+              background: "var(--bg-primary)",
+              color: "var(--text-primary)",
             }}
           >
             <Phone className="w-4 h-4" />
