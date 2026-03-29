@@ -207,7 +207,7 @@ export default function QuickSetupPage() {
               <Sparkles size={32} style={{ color: "var(--accent-primary)" }} />
             </div>
             <h1 className="text-4xl font-bold mb-3" style={{ color: "var(--text-primary)" }}>
-              Set Up Your AI Agent in Seconds
+              Set Up Your AI Operator in Seconds
             </h1>
             <p style={{ color: "var(--text-secondary)", fontSize: "1.125rem" }} className="mb-2">
               We'll analyze your business and configure everything automatically.
@@ -718,13 +718,13 @@ export default function QuickSetupPage() {
             You're Live!
           </h1>
           <p className="text-lg mb-12" style={{ color: "var(--text-secondary)" }}>
-            Your AI agent is ready to handle calls and automate your revenue operations.
+            Your AI operator is ready to handle calls and automate your revenue operations.
           </p>
 
           {/* Capabilities */}
           <div className="space-y-3 mb-12">
             <h3 className="font-semibold text-lg mb-6" style={{ color: "var(--text-primary)" }}>
-              Your AI agent can now:
+              Your AI operator can now:
             </h3>
             {[
               "Answer calls with your custom greeting",

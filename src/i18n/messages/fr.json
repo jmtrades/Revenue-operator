@@ -112,7 +112,7 @@
     "developer": "Developer",
     "signOut": "Se déconnecter",
     "notifications": "Notifications",
-    "sectionMain": "Principal",
+    "sectionMain": "Centre de Commande",
     "sectionCommunication": "Communication",
     "sectionIntelligence": "Intelligence",
     "sectionWorkspace": "Espace de travail",
@@ -134,7 +134,7 @@
     "backToKnowledge": "Back to knowledge",
     "continueToTest": "Continue to test",
     "coldLeads": "Prospects froids",
-    "sectionRecovery": "Recovery & Growth",
+    "sectionRecovery": "Exécution des Revenus",
     "support": "Support"
   },
   "common": {
@@ -717,13 +717,13 @@
       "afternoon": "Bon après-midi",
       "evening": "Bonsoir"
     },
-    "subtitle": "Votre opérateur de revenus piloté par l'IA en un coup d'œil.",
+    "subtitle": "Votre opérateur autonome de revenus, toujours en exécution.",
     "kpis": {
-      "callsHandled": "Appels traités",
+      "callsHandled": "Appels exécutés",
       "answerRate": "Taux de réponse",
       "leadsCreated": "Leads créés",
       "appointmentsBooked": "Rendez-vous pris",
-      "revenueProtected": "Revenus protégés",
+      "revenueProtected": "Revenus protégés par les opérations autonomes",
       "recovered": "Récupérés",
       "followUpsSent": "Relances envoyées",
       "minutes": "minutes"
@@ -2221,20 +2221,20 @@
   },
   "agents": {
     "pageTitle": "Agents — Recall Touch",
-    "pageHeading": "Agents IA",
-    "pageSubtitle": "Différents agents pour la journée, après les heures, les urgences et le suivi.",
-    "createAgent": "+ Créer un agent",
+    "pageHeading": "Vos opérateurs autonomes de revenus",
+    "pageSubtitle": "Opérateurs IA travaillant 24h/24 pour récupérer des revenus et planifier des rendez-vous",
+    "createAgent": "+ Déployer un Opérateur",
     "callVolumeByDay": "Volume d'appels par jour",
     "title": "Agents",
     "new": "Nouvel agent",
     "empty": {
-      "title": "Aucun agent pour le moment",
-      "body": "Créez votre premier agent pour commencer à traiter les appels, prendre des rendez-vous et qualifier les leads.",
+      "title": "Aucun opérateur",
+      "body": "Déployez votre premier opérateur autonome pour commencer à traiter les appels, prendre des rendez-vous et qualifier les leads.",
       "createFirst": "Create your first AI agent",
       "createFirstBody": "Set up your voice, knowledge, and behavior so your AI can answer calls and book appointments 24/7."
     },
     "readiness": {
-      "label": "Préparation de l'agent"
+      "label": "Préparation de l'opérateur"
     },
     "steps": {
       "business": "Entreprise",
@@ -2268,14 +2268,14 @@
       "previewFailed": "Impossible de lire l'aperçu",
       "saveFailed": "Impossible d'enregistrer l'agent",
       "saveRetry": "Les modifications n'ont pas pu être enregistrées. Réessayez.",
-      "deleted": "Agent supprimé",
-      "deleteFailed": "Impossible de supprimer l'agent",
-      "created": "Agent créé et synchronisé",
+      "deleted": "Opérateur supprimé",
+      "deleteFailed": "Impossible de supprimer l'opérateur",
+      "created": "Opérateur créé et synchronisé",
       "changesSaved": "Modifications enregistrées ✓",
-      "createFailed": "Impossible de créer l'agent",
-      "agentLive": "Votre agent IA est en ligne !",
-      "active": "Agent activated",
-      "paused": "Agent paused"
+      "createFailed": "Impossible de créer l'opérateur",
+      "agentLive": "Votre opérateur IA est en ligne !",
+      "active": "Opérateur activé",
+      "paused": "Opérateur suspendu"
     },
     "actions": {
       "deleteAria": "Supprimer cet agent",
@@ -2286,8 +2286,8 @@
       "addFromSuggestions": "Ajouter depuis les suggestions",
       "activate": "Activate",
       "deactivate": "Deactivate",
-      "deleteAgent": "Delete agent",
-      "editAgent": "Edit agent",
+      "deleteAgent": "Supprimer l'opérateur",
+      "editAgent": "Modifier l'opérateur",
       "on": "On",
       "pause": "Pause"
     },
@@ -2783,7 +2783,7 @@
     "behavior": {
       "title": "Comment votre agent doit-il se comporter ?",
       "neverDoTitle": "Que votre IA ne doit-elle jamais faire ?",
-      "neverDoHint": "Définissez des limites claires pour que les appels restent conformes à la marque.",
+      "neverDoHint": "Définissez des garde-fous pour que chaque exécution reste en mission et conforme.",
       "presets": {
         "noPricing": "Ne jamais discuter des prix ni donner de devis",
         "noAfterHours": "Ne jamais planifier en dehors des heures d'ouverture",
@@ -2796,11 +2796,11 @@
       "presetLabel": "Préréglage :",
       "objectionHandling": {
         "title": "Gestion des objections",
-        "subtitle": "Aidez votre agent à gérer les objections courantes avec des réponses humaines et calmes."
+        "subtitle": "Aidez votre opérateur à gérer les objections courantes avec des réponses humaines et calmes."
       },
       "qualification": {
         "title": "Critères de qualification",
-        "subtitle": "Indiquez à votre agent à quoi ressemble un lead qualifié pour votre entreprise."
+        "subtitle": "Indiquez à votre opérateur à quoi ressemble un lead qualifié pour votre entreprise."
       },
       "customRuleLabel": "Ajouter une règle personnalisée",
       "customRulePlaceholder": "Ajouter une règle… (appuyez sur Entrée)",
@@ -2912,23 +2912,23 @@
       "purposeTitle": "Que fera cet agent ?",
       "purposeHint": "Choisissez l'usage principal.",
       "templateLabel": "Choisir un modèle (optionnel)",
-      "agentNameLabel": "Nom de l'agent",
-      "personalityTitle": "Personnalité",
+      "agentNameLabel": "Nom de l'opérateur",
+      "personalityTitle": "Voix et Identité",
       "personalityHint": "Voix et style de conversation.",
       "voiceLabel": "Voix",
-      "purposeAnswerCalls": "Répondre aux appels",
-      "purposeMakeCalls": "Passer des appels",
+      "purposeAnswerCalls": "Gérer les appels entrants — convertir en leads/rendez-vous",
+      "purposeMakeCalls": "Exécuter des campagnes sortantes — pour récupérer des revenus et réactiver des prospects",
       "purposeBoth": "Les deux",
-      "saveDraft": "Enregistrer le brouillon",
+      "saveDraft": "Enregistrer l'opérateur",
       "next": "Suivant",
-      "launch": "Lancer",
-      "stepPurpose": "Objectif",
-      "stepPersonality": "Personnalité",
-      "stepKnowledge": "Connaissances",
-      "stepRules": "Règles",
-      "stepPhoneSchedule": "Téléphone et planning",
-      "stepTest": "Tester",
-      "stepLaunch": "Lancer",
+      "launch": "Déployer",
+      "stepPurpose": "Mission",
+      "stepPersonality": "Voix et Identité",
+      "stepKnowledge": "Intelligence",
+      "stepRules": "Garde-fous",
+      "stepPhoneSchedule": "Heures d'Opération",
+      "stepTest": "Vérifier",
+      "stepLaunch": "Déployer",
       "speakingSpeedLabel": "Vitesse de parole",
       "conversationStyleLabel": "Style de conversation",
       "conversationStyleProfessional": "Professionnel",
@@ -3672,9 +3672,9 @@
     "title": "Campagnes",
     "pageTitle": "Campagnes — Recall Touch",
     "create": {
-      "back": "Back to campaigns",
-      "title": "Create campaign",
-      "subtitle": "Choose a type, audience, sequence, schedule, then launch.",
+      "back": "Retour aux campagnes",
+      "title": "Exécuter une Campagne Autonome",
+      "subtitle": "Choisissez un type, une audience, une séquence, un calendrier, puis déployez.",
       "modes": {
         "power": {
           "label": "Puissance",
@@ -3692,18 +3692,18 @@
       "steps": {
         "type": "Type",
         "audience": "Audience",
-        "sequence": "Sequence",
-        "schedule": "Schedule",
-        "review": "Review",
+        "sequence": "Séquence",
+        "schedule": "Calendrier",
+        "review": "Vérification",
         "details": "Détails de la campagne"
       },
       "type": {
-        "heading": "Campaign type",
-        "nameLabel": "Campaign name (optional)"
+        "heading": "Type de campagne",
+        "nameLabel": "Nom de la campagne (optionnel)"
       },
       "audience": {
         "heading": "Audience",
-        "subtext": "These filters are applied when the campaign is launched.",
+        "subtext": "Ces filtres sont appliqués lors du déploiement de la campagne.",
         "statusLabel": "Statuses",
         "sourceLabel": "Source",
         "sourceAny": "Any source",
@@ -3739,21 +3739,21 @@
         "optOutConfirm": "I will include opt-out instructions in the first message for any SMS sequence."
       },
       "review": {
-        "heading": "Review & launch",
-        "name": "Name",
+        "heading": "Vérifier et déployer",
+        "name": "Nom",
         "type": "Type",
-        "steps": "Steps",
-        "schedule": "Hours",
-        "hoursOn": "Business-hours only",
-        "hoursOff": "Any time",
-        "note": "Drafts can be edited from the campaigns list.",
-        "saveDraft": "Save as draft",
-        "launch": "Launch campaign",
-        "saving": "Saving…",
-        "launching": "Launching…",
-        "confirmLaunch": "Launch this campaign?",
-        "confirmLaunchDesc": "Once launched, your AI will begin contacting leads in this campaign.",
-        "confirm": "Confirm & Launch"
+        "steps": "Étapes",
+        "schedule": "Heures",
+        "hoursOn": "Heures de bureau uniquement",
+        "hoursOff": "À tout moment",
+        "note": "Les brouillons peuvent être modifiés depuis la liste des campagnes.",
+        "saveDraft": "Enregistrer comme brouillon",
+        "launch": "Exécuter la campagne",
+        "saving": "Enregistrement…",
+        "launching": "Exécution…",
+        "confirmLaunch": "Exécuter cette campagne ?",
+        "confirmLaunchDesc": "Une fois déployée, votre opérateur IA commencera à contacter les leads dans cette campagne.",
+        "confirm": "Confirmer et Exécuter"
       },
       "errors": {
         "noWorkspace": "Workspace not available.",
@@ -3823,7 +3823,7 @@
     "metricConverted": "Convertis",
     "edit": "Modifier",
     "pause": "Pause",
-    "launchCampaign": "Lancer la campagne",
+    "launchCampaign": "Exécuter la campagne",
     "pauseConfirmTitle": "Mettre cette campagne en pause ?",
     "pauseConfirmMessage": "Mettre « {name} » en pause ? Vous pourrez la reprendre plus tard depuis cette page.",
     "remaining": "Restants",
@@ -6726,7 +6726,7 @@
       }
     },
     "youAsCaller": "Vous (en tant qu'appelant)",
-    "aiAgent": "Agent IA",
+    "aiAgent": "Opérateur IA",
     "thinking": "Réflexion…",
     "speaking": "Parole…",
     "stopListening": "Arrêter d'écouter",
@@ -7974,8 +7974,8 @@
     "privacyPolicy": "Politique de confidentialité",
     "cancelError": "Pas de souci — la protection n'a pas démarré.",
     "wizardHeading": "Activation",
-    "wizardTitle": "Préparons votre agent vocal.",
-    "wizardSubtitle": "Environ 3 minutes. Vous entendrez votre agent en situation réelle à la fin.",
+    "wizardTitle": "Déployez votre opérateur autonome de revenus",
+    "wizardSubtitle": "Configurez votre opérateur autonome d'élite en 7 étapes.",
     "emailNotVerifiedBannerTitle": "Vérifiez votre e-mail pour continuer",
     "emailNotVerifiedBannerBody": "Confirmez votre boîte de réception avant de créer votre espace. Nous pouvons renvoyer un lien de vérification si besoin.",
     "resendVerificationCta": "Renvoyer la vérification",
@@ -9085,11 +9085,11 @@
   },
   "marketing": {
     "hero": {
-      "badge": "Infrastructure téléphonique IA pour équipes commerciales",
-      "heading1": "Chaque appel répondu.",
-      "heading2": "Chaque lead suivi.",
-      "heading3": "Chaque euro récupéré.",
-      "description": "Recall Touch gère votre téléphonie avec une IA qui traite les appels entrants, sortants, le suivi et les réservations — 24h/24. Qualité vocale naturelle. Conversations réelles. Attribution complète des revenus.",
+      "badge": "Système autonome d'exécution des revenus",
+      "heading1": "Vos Revenus. Entièrement Automatisés.",
+      "heading2": "Chaque lead travaillé. Chaque euro récupéré.",
+      "heading3": "",
+      "description": "Recall Touch exécute l'intégralité de votre cycle de revenus — appels entrants, campagnes sortantes, qualification des leads, prise de rendez-vous, séquences de suivi et récupération des revenus. 24h/24. Aucune intervention humaine.",
       "socialProof": "entreprises",
       "socialProofRecovered": "récupérés",
       "startFreeTrial": "Commencer",

@@ -117,15 +117,15 @@ export function LeadsList({
           aria-hidden
         />
         <p className="text-sm font-medium text-[var(--text-primary)] mb-1">
-          {tLeads("emptyTitle")}
+          {tLeads("empty.title")}
         </p>
         <p className="text-xs text-[var(--text-secondary)] mb-4">
-          {tLeads("emptySubtitle")}
+          {tLeads("empty.subtitle")}
         </p>
         <EmptyState
           icon={Users}
-          title={tLeads("emptyTitle")}
-          description="Import a CSV to bulk add leads, or add a contact manually to start qualifying and booking appointments."
+          title={tLeads("empty.title")}
+          description={tLeads("empty.description")}
           primaryAction={{
             label: tLeads("importCsv"),
             href: "/app/leads?import=1",

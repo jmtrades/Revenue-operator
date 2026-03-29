@@ -79,21 +79,26 @@ export default function AppShellClient({
   const sidebarGroups = useMemo(
     () => [
       {
-        label: t("nav.sectionMain"),
+        label: t("nav.sectionCommandCenter"),
         items: [
           { href: "/app/dashboard", label: t("nav.dashboard"), icon: LayoutList },
           { href: "/app/agents", label: t("nav.agents"), icon: Bot },
-          { href: "/app/calls", label: t("nav.calls"), icon: PhoneCall },
-          { href: "/app/inbox", label: t("nav.inbox"), icon: MessageSquare },
         ],
       },
       {
-        label: t("nav.sectionRecovery", { defaultValue: "Revenue Ops" }),
+        label: t("nav.sectionRevenueExecution"),
         items: [
           { href: "/app/leads", label: t("nav.leads", { defaultValue: "Leads" }), icon: UserPlus },
           { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
           { href: "/app/appointments", label: t("nav.appointments"), icon: CalendarCheck },
+          { href: "/app/calls", label: t("nav.calls"), icon: PhoneCall },
+        ],
+      },
+      {
+        label: t("nav.sectionIntelligence"),
+        items: [
           { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
+          { href: "/app/inbox", label: t("nav.inbox"), icon: MessageSquare },
         ],
       },
       {
@@ -108,18 +113,18 @@ export default function AppShellClient({
   const mobileTabs = useMemo(
     () => [
       { href: "/app/dashboard", label: t("nav.dashboard"), icon: LayoutList },
-      { href: "/app/calls", label: t("nav.calls"), icon: PhoneCall },
-      { href: "/app/inbox", label: t("nav.inbox"), icon: MessageSquare },
+      { href: "/app/leads", label: t("nav.leads", { defaultValue: "Leads" }), icon: UserPlus },
+      { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
     ],
     [t]
   );
   const mobileMoreLinks = useMemo(
     () => [
       { href: "/app/agents", label: t("nav.agents"), icon: Bot },
-      { href: "/app/leads", label: t("nav.leads", { defaultValue: "Leads" }), icon: UserPlus },
-      { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
       { href: "/app/appointments", label: t("nav.appointments"), icon: CalendarCheck },
+      { href: "/app/calls", label: t("nav.calls"), icon: PhoneCall },
       { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
+      { href: "/app/inbox", label: t("nav.inbox"), icon: MessageSquare },
       { href: "/app/settings", label: t("nav.settings"), icon: Settings },
     ],
     [t]

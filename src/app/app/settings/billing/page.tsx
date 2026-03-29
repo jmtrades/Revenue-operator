@@ -376,7 +376,7 @@ export default function AppSettingsBillingPage() {
               {tBilling("minutesUsed", { used: usage.minutes_used, limit: usage.minutes_limit })}
             </p>
             <p className="text-xs text-[var(--accent-primary)]/90 mt-1.5 flex items-center gap-1.5">
-              <span>💚</span> Replaces ~$3,200/mo in manual receptionist and follow-up costs
+              <span>💚</span> Replaces ~$3,200/mo in manual revenue operations and follow-up costs
             </p>
             <p className="text-xs text-[var(--text-secondary)] mt-1 flex items-center gap-2">
               {tBilling("status")}
@@ -475,7 +475,7 @@ export default function AppSettingsBillingPage() {
             <div className="bg-[var(--accent-primary)]/5 rounded-lg p-3 border border-[var(--accent-primary)]/20">
               <p className="text-[11px] font-medium text-[var(--accent-primary)] uppercase tracking-wide">Savings Comparison</p>
               <p className="text-xs text-[var(--accent-primary)] mt-1.5">
-                <span className="font-semibold text-[var(--accent-primary)]">Replaces ~$3,200/mo</span> in manual receptionist and follow-up costs
+                <span className="font-semibold text-[var(--accent-primary)]">Replaces ~$3,200/mo</span> in manual revenue operations and follow-up costs
               </p>
             </div>
 

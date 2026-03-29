@@ -114,6 +114,8 @@
     "notifications": "通知",
     "sectionMain": "メイン",
     "sectionCommunication": "コミュニケーション",
+    "sectionCommandCenter": "コマンドセンター",
+    "sectionRevenueExecution": "収益実行",
     "sectionIntelligence": "インテリジェンス",
     "sectionWorkspace": "ワークスペース",
     "appNavigation": "アプリのナビゲーション",
@@ -717,20 +719,20 @@
       "afternoon": "こんにちは",
       "evening": "こんばんは"
     },
-    "subtitle": "AI が支える売上オペレーターをひと目で確認。",
+    "subtitle": "自律型収益オペレーター、常に実行中。",
     "kpis": {
-      "callsHandled": "対応した通話数",
+      "callsHandled": "実行された通話",
       "answerRate": "応答率",
       "leadsCreated": "作成されたリード",
       "appointmentsBooked": "予約件数",
-      "revenueProtected": "保護された売上",
+      "revenueProtected": "自律運用で保護された収益",
       "recovered": "回収済み",
       "followUpsSent": "フォローアップ送信",
       "minutes": "分"
     },
     "quickActions": {
       "title": "クイックアクション",
-      "testCall": "テスト通話を行う",
+      "testCall": "オペレーターをテスト",
       "newAgent": "新しいエージェントを作成",
       "importContacts": "連絡先をインポート",
       "startCampaign": "キャンペーンを開始",
@@ -742,7 +744,7 @@
       "viewAnalyticsDesc": "通話パフォーマンスを確認",
       "createCampaign": "キャンペーンを作成",
       "createCampaignDesc": "アウトバウンド通話を開始",
-      "testCallDesc": "AIエージェントをテスト",
+      "testCallDesc": "オペレーターをテスト",
       "addLeadDesc": "新しいリードを作成"
     },
     "checklist": {
@@ -750,17 +752,17 @@
       "progressLabel": "設定の進行状況",
       "business": "ビジネス情報を追加済み",
       "use_cases": "ユースケースを選択済み",
-      "agent": "エージェント作成済み",
+      "agent": "オペレーター配備済み",
       "voice": "音声を選択済み",
       "greeting": "オープニング挨拶を設定済み",
       "knowledge": "ナレッジ3件以上",
       "behavior": "動作を設定済み",
       "phone": "電話番号を接続済み",
-      "tested": "エージェントをテスト済み",
-      "launched": "エージェントを起動済み",
+      "tested": "オペレーターをテスト済み",
+      "launched": "オペレーターを配備済み",
       "item": {
         "businessProfile": "ビジネスプロフィールを設定",
-        "agent": "最初のAIエージェントを設定",
+        "agent": "最初の自律型オペレーターを設定",
         "number": "電話番号を取得",
         "testCall": "テスト通話を実施",
         "contacts": "連絡先をインポート",
@@ -858,7 +860,7 @@
     "seeLive": {
       "title": "ライブで見る",
       "description": "ラインを接続する前に、実際のリードがどのように応答・認定・予約されるかサンプル通話でご確認ください。",
-      "cta": "エージェントを試す →"
+      "cta": "オペレーターを試す →"
     },
     "roi": {
       "title": "推定ROI",
@@ -882,7 +884,7 @@
     "empty": {
       "selectContext": "コンテキストを選択してください。",
       "analyticsAppearHere": "分析はここに表示されます。",
-      "agentsAppearHere": "エージェントはここに表示されます。",
+      "agentsAppearHere": "オペレーターはここに表示されます。",
       "teamAppearHere": "チームメンバー。",
       "calendarAppearHere": "予約はここに表示されます。",
       "callsAppearHere": "通話はここに表示されます。",
@@ -899,10 +901,10 @@
       "noDataYet": "まだデータがありません",
       "noDataYetHint": "転送を設定して数回通話してください。メトリクスはここに表示されます。",
       "setUpCallForwarding": "転送を設定 →",
-      "noAgentsYet": "まだエージェントがありません",
+      "noAgentsYet": "まだオペレーターがありません",
       "noAgentsYetHint": "AI受付はオンボーディングで設定します。音声、挨拶、ナレッジをそこで追加してください。",
-      "createFirstAgent": "最初のエージェントを作成 →",
-      "loadAgentsError": "エージェントを読み込めませんでした。",
+      "createFirstAgent": "最初のオペレーターを配備 →",
+      "loadAgentsError": "オペレーターを読み込めませんでした。",
       "recordSubtitle": "少々お待ちください…",
       "recordNotFound": "見つかりません",
       "handlingContinuesTitle": "対応は継続します。",
@@ -922,13 +924,13 @@
         "subtitleShort": "通話、結果、使用状況。"
       },
       "agents": {
-        "title": "エージェント",
-        "subtitle": "AI音声エージェントを設定。",
-        "subtitleShort": "AI音声エージェント。"
+        "title": "オペレーター",
+        "subtitle": "AI音声オペレーターを設定。",
+        "subtitleShort": "AI音声オペレーター。"
       },
       "agent": {
-        "title": "エージェント",
-        "subtitle": "エージェントを編集。"
+        "title": "オペレーター",
+        "subtitle": "オペレーターを編集。"
       },
       "team": {
         "title": "チーム",
@@ -2220,16 +2222,16 @@
     "operationalMetrics": "Operational Metrics"
   },
   "agents": {
-    "pageTitle": "エージェント — Recall Touch",
-    "pageHeading": "AIエージェント",
-    "pageSubtitle": "日中・時間外・緊急・フォローアップ用の各種エージェント。",
-    "createAgent": "+ エージェントを作成",
+    "pageTitle": "自律型収益オペレーター — Recall Touch",
+    "pageHeading": "自律型収益オペレーター",
+    "pageSubtitle": "AIオペレーターが24時間体制で収益回収と予約を実行",
+    "createAgent": "+ オペレーターを配備",
     "callVolumeByDay": "日別通話数",
     "title": "エージェント",
     "new": "新しいエージェント",
     "empty": {
-      "title": "まだエージェントがいません",
-      "body": "最初のエージェントを作成して、通話対応、予約、リードのスコアリングを自動化しましょう。",
+      "title": "オペレーターがありません",
+      "body": "最初の自律型オペレーターを配備して、通話対応、予約、リードのスコアリングを自動化しましょう。",
       "createFirst": "Create your first AI agent",
       "createFirstBody": "Set up your voice, knowledge, and behavior so your AI can answer calls and book appointments 24/7."
     },
@@ -2266,14 +2268,14 @@
       "testLinkCopied": "テストリンクをコピーしました！",
       "selectVoiceFirst": "プレビューを聞くには音声を選択してください。",
       "previewFailed": "プレビューを再生できませんでした",
-      "saveFailed": "エージェントを保存できませんでした",
+      "saveFailed": "オペレーターを保存できませんでした",
       "saveRetry": "変更を保存できませんでした。もう一度お試しください。",
-      "deleted": "エージェントを削除しました",
-      "deleteFailed": "エージェントを削除できませんでした",
-      "created": "エージェントを作成して同期しました",
+      "deleted": "オペレーターを削除しました",
+      "deleteFailed": "オペレーターを削除できませんでした",
+      "created": "オペレーターを作成して同期しました",
       "changesSaved": "変更を保存しました ✓",
-      "createFailed": "エージェントを作成できませんでした",
-      "agentLive": "AIエージェントが公開されました！",
+      "createFailed": "オペレーターを作成できませんでした",
+      "agentLive": "自律型オペレーターが公開されました！",
       "active": "Agent activated",
       "paused": "Agent paused"
     },
@@ -2282,11 +2284,11 @@
       "deactivate": "無効化",
       "pause": "一時停止",
       "on": "オン",
-      "editAgent": "エージェントを編集",
-      "deleteAgent": "エージェントを削除",
-      "deleteAria": "このエージェントを削除",
-      "savingAria": "エージェントを保存中",
-      "saveAndSyncAria": "エージェントを保存して音声と同期",
+      "editAgent": "オペレーターを編集",
+      "deleteAgent": "オペレーターを削除",
+      "deleteAria": "このオペレーターを削除",
+      "savingAria": "オペレーターを保存中",
+      "saveAndSyncAria": "オペレーターを保存して音声と同期",
       "remove": "削除",
       "addObjection": "反論を追加",
       "addFromSuggestions": "提案から追加"
@@ -2783,7 +2785,7 @@
     "behavior": {
       "title": "エージェントの振る舞い",
       "neverDoTitle": "AIが絶対にやってはいけないことは？",
-      "neverDoHint": "コールがブランド内に収まるよう、明確な境界を設定します。",
+      "neverDoHint": "すべての実行がミッションに沿い、コンプライアンスを維持するようにガードレールを定義します。",
       "presets": {
         "noPricing": "価格や見積もりを話さない",
         "noAfterHours": "営業時間外の予約を入れない",
@@ -2796,11 +2798,11 @@
       "presetLabel": "プリセット：",
       "objectionHandling": {
         "title": "反論対応",
-        "subtitle": "よくある反論に対して、落ち着いた人間らしい応答でエージェントを導きます。"
+        "subtitle": "よくある反論に対して、落ち着いた人間らしい応答でオペレーターを導きます。"
       },
       "qualification": {
         "title": "資格判定の基準",
-        "subtitle": "ビジネスにとって「有望なリード」がどのようなものかをエージェントに伝えます。"
+        "subtitle": "ビジネスにとって「有望なリード」がどのようなものかをオペレーターに伝えます。"
       },
       "customRuleLabel": "カスタムルールを追加",
       "customRulePlaceholder": "カスタムルールを追加… (Enterを押す)",
@@ -2877,8 +2879,8 @@
     "saveAndUpdate": "保存してエージェントを更新",
     "editSubtitle": "エージェントを編集。",
     "newWizard": {
-      "title": "AIエージェントを作成",
-      "subtitle": "手順に沿って音声エージェントを設定します。",
+      "title": "自律型収益オペレーターを配備",
+      "subtitle": "7つのステップでエリートオペレーターを設定。",
       "breadcrumbs": {
         "newAgent": "新しいエージェント"
       },
@@ -2916,19 +2918,19 @@
       "personalityTitle": "パーソナリティ",
       "personalityHint": "音声と会話スタイル。",
       "voiceLabel": "音声",
-      "purposeAnswerCalls": "着信に答える",
-      "purposeMakeCalls": "発信する",
+      "purposeAnswerCalls": "受信通話の対応 — リード/予約に変換",
+      "purposeMakeCalls": "アウトバウンドキャンペーンの実行 — 収益回収とプロスペクト再活性化",
       "purposeBoth": "両方",
-      "saveDraft": "下書きを保存",
+      "saveDraft": "オペレーターを保存",
       "next": "次へ",
-      "launch": "起動",
-      "stepPurpose": "目的",
-      "stepPersonality": "性格",
-      "stepKnowledge": "ナレッジ",
-      "stepRules": "ルール",
-      "stepPhoneSchedule": "電話とスケジュール",
-      "stepTest": "テスト",
-      "stepLaunch": "起動",
+      "launch": "配備",
+      "stepPurpose": "ミッション",
+      "stepPersonality": "声とアイデンティティ",
+      "stepKnowledge": "インテリジェンス",
+      "stepRules": "ガードレール",
+      "stepPhoneSchedule": "稼働時間",
+      "stepTest": "検証",
+      "stepLaunch": "配備",
       "speakingSpeedLabel": "話速",
       "conversationStyleLabel": "会話スタイル",
       "conversationStyleProfessional": "プロ",
@@ -2999,9 +3001,9 @@
     },
     "knowledgePanel": {
       "title": "ナレッジベース",
-      "subtitle": "エージェントが発信者に答えるためのQ&Aペア。",
+      "subtitle": "オペレーターが発信者に答えるためのQ&Aペア。",
       "questionPlaceholder": "発信者が…について尋ねたとき",
-      "answerPlaceholder": "エージェントの回答…",
+      "answerPlaceholder": "オペレーターの回答…",
       "remove": "削除",
       "add": "Q&Aを追加",
       "importUrlPlaceholder": "https://your-website.com"
@@ -3009,15 +3011,15 @@
     "quickActions": {
       "label": "クイックアクション",
       "edit": "編集",
-      "editAria": "エージェントを編集",
+      "editAria": "オペレーターを編集",
       "test": "テスト",
-      "testAria": "エージェントをテスト",
+      "testAria": "オペレーターをテスト",
       "goLive": "公開",
       "goLiveAria": "公開"
     },
     "testPanel": {
-      "aiAgent": "AI Agent",
-      "conversationAria": "Conversation with AI agent",
+      "aiAgent": "AIオペレーター",
+      "conversationAria": "AIオペレーターとの会話",
       "defaultGreeting": "Hi! I'm your AI assistant. How can I help you today?",
       "errors": {
         "auth": "Authentication failed. Please sign in again.",
@@ -3041,8 +3043,8 @@
       "startConversation": "Start conversation",
       "stopListening": "Stop listening",
       "tapToSpeak": "Tap to speak",
-      "testYourAgentHeading": "Test your agent",
-      "testYourAgentSubtitle": "Have a conversation with your AI agent to see how it responds.",
+      "testYourAgentHeading": "オペレーターをテスト",
+      "testYourAgentSubtitle": "AIオペレーターと会話して、どのように応答するかを確認します。",
       "testingLabel": "Testing",
       "thinking": "Thinking…",
       "youAsCaller": "You (caller)",
@@ -3673,7 +3675,7 @@
     "pageTitle": "キャンペーン — Recall Touch",
     "create": {
       "back": "Back to campaigns",
-      "title": "Create campaign",
+      "title": "自律キャンペーンを実行",
       "subtitle": "Choose a type, audience, sequence, schedule, then launch.",
       "modes": {
         "power": {
@@ -9085,11 +9087,11 @@
   },
   "marketing": {
     "hero": {
-      "badge": "収益チーム向けAI電話インフラ",
-      "heading1": "すべての通話に応答。",
-      "heading2": "すべてのリードをフォロー。",
-      "heading3": "すべての収益を回収。",
-      "description": "Recall Touchは、受信・発信・フォローアップ・予約をAIが24時間365日処理します。自然な音声品質。リアルな会話。完全な収益帰属。",
+      "badge": "自律的収益実行システム",
+      "heading1": "あなたの売上。完全に自動化。",
+      "heading2": "すべてのリードに対応。すべての利益を回収。",
+      "heading3": "",
+      "description": "Recall Touchはあなたの売上サイクル全体を実行します — インバウンド通話、アウトバウンドキャンペーン、リード選定、約束予約、フォローアップシーケンス、および売上回収。24/7。人間の介入不要。",
       "socialProof": "企業",
       "socialProofRecovered": "回収済み",
       "startFreeTrial": "今すぐ始める",

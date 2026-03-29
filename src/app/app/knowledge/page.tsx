@@ -974,7 +974,7 @@ export default function KnowledgePage() {
                 </div>
                 <div className="mt-8 p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]">
                   <p className="text-sm font-medium text-[var(--text-primary)] mb-2">Suggested knowledge to add</p>
-                  <p className="text-xs text-[var(--text-secondary)] mb-3">Help your AI agent answer caller questions accurately by adding:</p>
+                  <p className="text-xs text-[var(--text-secondary)] mb-3">Help your AI operator answer caller questions accurately by adding:</p>
                   <ul className="space-y-1.5 text-xs text-[var(--text-secondary)]">
                     <li className="flex items-start gap-2"><span className="text-[var(--accent-primary)] mt-0.5">•</span>Business hours, location, and contact details</li>
                     <li className="flex items-start gap-2"><span className="text-[var(--accent-primary)] mt-0.5">•</span>Services offered and pricing information</li>

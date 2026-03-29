@@ -38,13 +38,13 @@ const TIERS = [
     roi: "$2K–8K/mo",
     minutes: 1000,
     overage: "$0.08/min",
-    description: "AI revenue agent for solo businesses",
+    description: "Autonomous revenue execution for solo operators",
     features: [
       "1 phone number",
       "1,000 voice minutes/month",
-      "1 AI agent",
-      "Inbound + outbound call handling",
-      "Appointment booking",
+      "1 AI operator",
+      "24/7 inbound & outbound execution",
+      "Autonomous appointment scheduling",
       "1 follow-up sequence",
       "Call transcripts",
       "Industry template",
@@ -63,15 +63,15 @@ const TIERS = [
     roi: "$5K–20K/mo",
     minutes: 3000,
     overage: "$0.08/min",
-    description: "Full revenue recovery for growing teams",
+    description: "Full-stack revenue automation for growing teams",
     features: [
       "5 phone numbers",
       "3,000 voice minutes/month",
-      "5 AI agents",
+      "5 AI operators",
       "No-show recovery",
-      "Lead reactivation",
+      "Lead reactivation campaigns",
       "5 follow-up sequences",
-      "SMS + email campaigns",
+      "Multi-channel outbound execution",
       "Voice A/B testing",
       "Revenue analytics",
       "CRM webhook",
@@ -91,11 +91,11 @@ const TIERS = [
     roi: "$10K–50K/mo",
     minutes: 8000,
     overage: "$0.08/min",
-    description: "Revenue operations for multi-location businesses",
+    description: "Enterprise revenue orchestration across locations",
     features: [
       "15 phone numbers",
       "8,000 voice minutes/month",
-      "15 AI agents",
+      "15 AI operators",
       "Everything in Growth",
       "Advanced analytics",
       "Intelligence dashboard",
@@ -118,11 +118,11 @@ const TIERS = [
     roi: "$25K–100K/mo",
     minutes: 15000,
     overage: "Included",
-    description: "White-label AI revenue agent for agencies",
+    description: "White-label autonomous revenue platform for agencies",
     features: [
       "Unlimited phone numbers",
       "15,000 voice minutes/month",
-      "Unlimited AI agents",
+      "Unlimited AI operators",
       "Everything in Business",
       "White-label branding",
       "SSO / SAML",
@@ -145,15 +145,15 @@ const TIERS = [
 const COMPARISON = [
   { category: "Core", feature: "Phone Numbers", starter: "1", growth: "5", business: "15", agency: "Unlimited", enterprise: "Custom" },
   { category: "Core", feature: "Voice Minutes / Month", starter: "1,000", growth: "3,000", business: "8,000", agency: "15,000", enterprise: "Unlimited" },
-  { category: "Core", feature: "AI Agents", starter: "1", growth: "5", business: "15", agency: "Unlimited", enterprise: "Custom" },
+  { category: "Core", feature: "AI Operators", starter: "1", growth: "5", business: "15", agency: "Unlimited", enterprise: "Custom" },
   { category: "Core", feature: "Follow-Up Sequences", starter: "1", growth: "5", business: "15", agency: "Unlimited", enterprise: "Unlimited" },
   { category: "Core", feature: "Overage Rate", starter: "$0.08/min", growth: "$0.08/min", business: "$0.08/min", agency: "$0.07/min", enterprise: "Custom" },
-  { category: "Features", feature: "Call Handling & Recovery", starter: true, growth: true, business: true, agency: true, enterprise: true },
-  { category: "Features", feature: "Appointment Booking", starter: true, growth: true, business: true, agency: true, enterprise: true },
+  { category: "Features", feature: "24/7 Revenue Execution", starter: true, growth: true, business: true, agency: true, enterprise: true },
+  { category: "Features", feature: "Autonomous Scheduling & CRM Sync", starter: true, growth: true, business: true, agency: true, enterprise: true },
   { category: "Features", feature: "Appointment Reminders", starter: false, growth: true, business: true, agency: true, enterprise: true },
   { category: "Features", feature: "No-Show Recovery", starter: false, growth: true, business: true, agency: true, enterprise: true },
   { category: "Features", feature: "Lead Reactivation", starter: false, growth: true, business: true, agency: true, enterprise: true },
-  { category: "Features", feature: "SMS + Email Campaigns", starter: false, growth: true, business: true, agency: true, enterprise: true },
+  { category: "Features", feature: "Multi-Channel Outbound Execution", starter: false, growth: true, business: true, agency: true, enterprise: true },
   { category: "Features", feature: "Voice A/B Testing", starter: false, growth: true, business: true, agency: true, enterprise: true },
   { category: "Features", feature: "Revenue Analytics", starter: false, growth: true, business: true, agency: true, enterprise: true },
   { category: "Features", feature: "Advanced Analytics", starter: false, growth: false, business: true, agency: true, enterprise: true },
@@ -179,7 +179,7 @@ const FAQS = [
   { q: "Can I cancel anytime?", a: "Yes. No long-term contracts. Cancel in your dashboard or pause for 30 days. We'll ask why — your feedback matters." },
   { q: "Does Recall Touch integrate with my calendar/CRM?", a: "Yes. Growth and Business tiers get CRM webhook and integrations with Google Calendar, Cal.com, Zapier, and Make.com. Business adds API access for custom integrations." },
   { q: "What's included in your support?", a: "Starter: Email support. Growth: Priority email support. Business: Priority email + phone support + dedicated account manager." },
-  { q: "Can I test Recall Touch free first?", a: "Absolutely. Full access to all features. Cancel anytime. Your AI agent will be answering calls in under 3 minutes." },
+  { q: "Can I test Recall Touch free first?", a: "Absolutely. Full access to all features. Cancel anytime. Your AI operator will be answering calls in under 3 minutes." },
   { q: "How does Recall Touch work?", a: "Recall Touch answers all your incoming calls with an AI phone agent, qualifies leads in real-time, books appointments directly into your calendar, and automatically follows up with contacts to move them through your pipeline." },
   { q: "Can I white-label this for my clients?", a: "Yes, white-label and agency features are available. Contact our sales team to discuss custom white-label, multi-client, and reseller options." },
 ];
@@ -318,7 +318,7 @@ function FeatureCell({ value }: { value: boolean | string }) {
 
 /* ─── Main Pricing Content ─── */
 export function PricingContent() {
-  const _t = useTranslations("pricing");
+  const t = useTranslations("pricing");
   const [annual, setAnnual] = useState(true); // Annual is default
   const [faqSearch, setFaqSearch] = useState("");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -339,12 +339,12 @@ export function PricingContent() {
             className="font-bold text-3xl md:text-5xl mb-4"
             style={{ letterSpacing: "-0.02em", lineHeight: 1.15 }}
           >
-            Simple, Transparent Pricing
+            Revenue Execution Pricing
           </h1>
           <p className="text-base md:text-lg mb-2 max-w-xl mx-auto" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-            Pick the plan that fits your business. Upgrade anytime.
+            Choose your autonomous execution tier. Scale as you grow.
             <br />
-            <span className="text-emerald-400 font-medium">Less than the cost of one lost lead.</span>
+            <span className="text-emerald-400 font-medium">Costs less than one lost deal per month.</span>
           </p>
         </div>
 
@@ -625,13 +625,13 @@ export function PricingContent() {
 
           <div className="relative">
             <p className="text-xs font-semibold tracking-wider uppercase text-emerald-400 mb-3">
-              Start recovering revenue today
+              Launch autonomous revenue execution
             </p>
             <h2 className="text-2xl md:text-4xl font-bold mb-2" style={{ color: "var(--text-primary)", letterSpacing: "-0.03em" }}>
-              Ready to Never Miss Another Call?
+              Ready to Automate Your Revenue Cycle?
             </h2>
             <p className="text-base md:text-lg max-w-lg mx-auto mb-2" style={{ color: "var(--text-secondary)" }}>
-              Join 12,400+ businesses that never miss a call, never lose a lead, and never sleep on revenue.
+              Join 12,400+ businesses running autonomous revenue execution 24/7 with zero manual handoffs.
             </p>
 
             {/* Mini social proof */}

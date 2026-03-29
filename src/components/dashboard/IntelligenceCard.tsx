@@ -93,7 +93,7 @@ export function IntelligenceCard() {
         <div className="py-6 text-center">
           <Brain className="w-8 h-8 mx-auto mb-3 text-[var(--text-disabled)]" />
           <p className="text-sm text-[var(--text-secondary)] mb-1">
-            Your AI agent learns from every call
+            Your autonomous operator learns from every call
           </p>
           <p className="text-xs text-[var(--text-tertiary)]">
             Intelligence data will appear here after your first calls

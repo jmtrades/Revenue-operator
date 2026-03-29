@@ -121,11 +121,11 @@
     "developer": "Developer",
     "signOut": "Sign out",
     "notifications": "Notifications",
-    "sectionMain": "Main",
-    "sectionCommunication": "Communication",
+    "sectionCommandCenter": "Command Center",
+    "sectionRevenueExecution": "Revenue Execution",
     "sectionIntelligence": "Intelligence",
     "sectionWorkspace": "Workspace",
-    "sectionRecovery": "Revenue Ops",
+    "sectionCommunication": "Communication",
     "appNavigation": "App navigation",
     "shortcutCommandPalette": "Open command palette",
     "shortcutDashboard": "Go to Dashboard",
@@ -803,7 +803,7 @@
   "dashboard": {
     "loading": "Loading your dashboard...",
     "title": "Revenue Command Center",
-    "subtitle": "Your autonomous revenue operator, always on.",
+    "subtitle": "Your autonomous revenue operator, always executing.",
     "welcomeBack": "Welcome back",
     "phoneWarning": {
       "title": "Phone number not connected",
@@ -813,9 +813,9 @@
     "getStarted": "Get started",
     "getStartedSubtitle": "Complete these steps to go live — takes about 5 minutes",
     "readyToGo": {
-      "title": "Your AI agent is ready to take calls",
-      "body": "Revenue, calls, and appointments will update in real time as your agent handles calls. Make a test call to see it in action, or forward your business number to go live.",
-      "testCall": "Test your agent",
+      "title": "Your AI operator is standing by. Once active, it will execute revenue recovery campaigns, handle inbound calls, and qualify leads autonomously.",
+      "body": "Revenue, calls, and appointments will update in real time as your operator handles calls. Make a test call to see it in action, or forward your business number to go live.",
+      "testCall": "Test your operator",
       "goLive": "Go live with your number"
     },
     "onboarding": {
@@ -842,7 +842,7 @@
     },
     "stats": {
       "activeCalls": "Active Calls",
-      "startsAfterFirstCall": "Starts after first call",
+      "startsAfterFirstCall": "Activates on first interaction",
       "estRevenueRecovered": "Est. Revenue Recovered"
     },
     "gettingStarted": {
@@ -868,8 +868,8 @@
     "recentActivity": {
       "title": "Recent Activity",
       "viewAll": "View all",
-      "emptyTitle": "Your activity feed is ready",
-      "emptyDescription": "Once your AI agent handles its first call, you'll see real-time updates here"
+      "emptyTitle": "Execution log will populate as your AI operator processes leads, handles calls, and runs campaigns",
+      "emptyDescription": "Once your AI operator handles its first call, you'll see real-time updates here"
     },
     "analytics": {
       "title": "Revenue Dashboard",
@@ -891,11 +891,11 @@
       "evening": "Good evening"
     },
     "kpis": {
-      "callsHandled": "Calls handled by agent",
+      "callsHandled": "Calls executed",
       "answerRate": "Answer rate",
       "leadsCreated": "Leads created",
       "appointmentsBooked": "Revenue opportunities created",
-      "revenueProtected": "Revenue protected",
+      "revenueProtected": "Revenue protected by autonomous operations",
       "recovered": "Agent revenue impact",
       "followUpsSent": "Automated recovery actions",
       "minutes": "minutes"
@@ -948,7 +948,7 @@
     },
     "needsAttention": {
       "title": "Needs attention",
-      "empty": "Nothing needs your action right now.",
+      "empty": "All systems operating autonomously.",
       "launchCampaign": "Launch a campaign",
       "importContacts": "Import contacts"
     },
@@ -1149,7 +1149,7 @@
         "subtitleShort": "Calls, outcomes, and usage."
       },
       "agents": {
-        "title": "Agents",
+        "title": "Operators",
         "subtitle": "Configure AI phone agents.",
         "subtitleShort": "AI phone agents."
       },
@@ -2315,22 +2315,22 @@
     "successRateOverTime": "Success Rate Over Time"
   },
   "agents": {
-    "pageTitle": "Agents — Recall Touch",
-    "pageHeading": "Your autonomous revenue agents",
-    "pageSubtitle": "AI agents working around the clock to recover revenue and book appointments",
-    "createAgent": "Create Agent",
+    "pageTitle": "Operators — Recall Touch",
+    "pageHeading": "Your autonomous revenue operators",
+    "pageSubtitle": "Elite AI operators deployed to handle calls, book appointments, and recover revenue 24/7",
+    "createAgent": "Deploy Operator",
     "callVolumeByDay": "Call volume by day",
-    "title": "Agents",
-    "new": "New agent",
+    "title": "Operators",
+    "new": "New operator",
     "empty": {
-      "title": "No agents yet",
-      "body": "Create your first agent to start handling calls, booking appointments, and qualifying leads.",
-      "createFirst": "Create your first AI agent",
-      "createFirstBody": "Set up your voice, knowledge, and behavior so your AI can answer calls and book appointments 24/7."
+      "title": "No operators yet",
+      "body": "Deploy your first autonomous operator to start handling calls, booking appointments, and qualifying leads.",
+      "createFirst": "Deploy your first revenue operator",
+      "createFirstBody": "Configure voice, intelligence, guardrails, and operating hours so your operator can close deals 24/7."
     },
     "voicePreviewLink": "Preview all voices & A/B test",
     "readiness": {
-      "label": "Agent readiness"
+      "label": "Operator readiness"
     },
     "steps": {
       "business": "Business",
@@ -2359,30 +2359,30 @@
     "defaultBadge": "Default",
     "callsSuffix": "calls",
     "toast": {
-      "active": "Agent activated",
-      "paused": "Agent paused",
+      "active": "Operator activated",
+      "paused": "Operator paused",
       "testLinkCopied": "Test link copied!",
       "selectVoiceFirst": "Select a voice first to hear a preview.",
       "previewFailed": "Could not play preview",
-      "saveFailed": "Could not save agent",
+      "saveFailed": "Could not save operator",
       "saveRetry": "Changes couldn't be saved. Try again.",
-      "deleted": "Agent deleted",
-      "deleteFailed": "Could not delete agent",
-      "created": "Agent created and synced",
+      "deleted": "Operator deleted",
+      "deleteFailed": "Could not delete operator",
+      "created": "Operator created and synced",
       "changesSaved": "Changes saved ✓",
-      "createFailed": "Could not create agent",
-      "agentLive": "Your AI agent is live!"
+      "createFailed": "Could not create operator",
+      "agentLive": "Your AI operator is live!"
     },
     "actions": {
       "activate": "Activate",
       "deactivate": "Deactivate",
-      "deleteAgent": "Delete agent",
-      "editAgent": "Edit agent",
+      "deleteAgent": "Delete operator",
+      "editAgent": "Edit operator",
       "on": "On",
       "pause": "Pause",
-      "deleteAria": "Delete this agent",
-      "savingAria": "Saving agent",
-      "saveAndSyncAria": "Save agent and sync to voice",
+      "deleteAria": "Delete this operator",
+      "savingAria": "Saving operator",
+      "saveAndSyncAria": "Save operator and sync to voice",
       "remove": "Remove",
       "addObjection": "Add objection",
       "addFromSuggestions": "Add from suggestions"
@@ -2392,8 +2392,8 @@
       "continueToTest": "Continue to Test"
     },
     "testPanel": {
-      "aiAgent": "AI Agent",
-      "conversationAria": "Conversation with AI agent",
+      "aiAgent": "AI Operator",
+      "conversationAria": "Conversation with AI operator",
       "defaultGreeting": "Hi! I'm your AI assistant. How can I help you today?",
       "errors": {
         "auth": "Authentication failed. Please sign in again.",
@@ -2401,7 +2401,7 @@
         "generic": "Something went wrong. Please try again.",
         "mic": "Microphone access denied. Please allow microphone access.",
         "noResponse": "No response from agent. Please try again.",
-        "notConfigured": "Agent is not configured yet. Please complete setup first.",
+        "notConfigured": "Operator is not configured yet. Please complete setup first.",
         "voiceUnsupported": "Voice is not supported in this browser."
       },
       "hint": {
@@ -2417,8 +2417,8 @@
       "startConversation": "Start conversation",
       "stopListening": "Stop listening",
       "tapToSpeak": "Tap to speak",
-      "testYourAgentHeading": "Test your agent",
-      "testYourAgentSubtitle": "Have a conversation with your AI agent to see how it responds.",
+      "testYourAgentHeading": "Test your operator",
+      "testYourAgentSubtitle": "Have a conversation with your AI operator to see how it responds.",
       "testingLabel": "Testing",
       "thinking": "Thinking…",
       "youAsCaller": "You (caller)",
@@ -2473,7 +2473,7 @@
       "emergency": "Emergency",
       "review_request": "Review",
       "scratch": "Custom",
-      "receptionist": "Inbound Agent"
+      "receptionist": "Inbound Operator"
     },
     "links": {
       "analytics": "Analytics",
@@ -2495,7 +2495,7 @@
     "behavior": {
       "title": "How should your agent behave?",
       "neverDoTitle": "What should your AI never do?",
-      "neverDoHint": "Set clear boundaries so calls stay on-brand and in-bounds.",
+      "neverDoHint": "Define guardrails so every execution stays on-mission and compliant.",
       "presets": {
         "noPricing": "Never discuss pricing or give quotes",
         "noAfterHours": "Never schedule outside business hours",
@@ -2512,11 +2512,11 @@
       },
       "objectionHandling": {
         "title": "Objection handling",
-        "subtitle": "Guide your agent through common objections with calm, human responses."
+        "subtitle": "Guide your operator through common objections with calm, human responses."
       },
       "qualification": {
         "title": "Qualification criteria",
-        "subtitle": "Tell your agent what a qualified lead looks like for your business."
+        "subtitle": "Tell your operator what a qualified lead looks like for your business."
       },
       "objections": {
         "placeholder": "Anything the agent should always remember on calls."
@@ -2589,31 +2589,31 @@
       "back": "Back",
       "continue": "Continue"
     },
-    "deleteAgent": "Delete agent",
-    "deleteAgentTitle": "Delete agent",
+    "deleteAgent": "Delete operator",
+    "deleteAgentTitle": "Delete operator",
     "saveDraft": "Save draft",
     "launch": "Launch",
     "importFromWebsite": "Import from website",
-    "createFirst": "Create your first agent",
-    "saveAndUpdate": "Save and update agent",
-    "editSubtitle": "Edit agent.",
+    "createFirst": "Create your first operator",
+    "saveAndUpdate": "Save and update operator",
+    "editSubtitle": "Edit operator.",
     "newWizard": {
-      "title": "Create your AI agent",
-      "subtitle": "Follow the steps to set up your voice agent.",
+      "title": "Deploy your autonomous revenue operator",
+      "subtitle": "Configure your elite autonomous operator in 7 steps.",
       "breadcrumbs": {
-        "newAgent": "New agent"
+        "newAgent": "New operator"
       },
       "errors": {
-        "nameRequired": "Give your agent a name."
+        "nameRequired": "Give your operator a name."
       },
       "toast": {
-        "draftSaved": "Draft saved.",
+        "draftSaved": "Operator draft saved.",
         "saveError": "Could not save. Try again.",
-        "createError": "Could not create agent.",
+        "createError": "Could not create operator.",
         "activateError": "Could not activate."
       },
-      "namePlaceholder": "e.g. Sarah — Inbound",
-      "greetingPlaceholder": "What the agent says when the call starts",
+      "namePlaceholder": "e.g. Sarah — Inbound Revenue Agent",
+      "greetingPlaceholder": "What the operator says when the call starts",
       "businessHoursPlaceholder": "e.g. Mon–Fri 9am–5pm",
       "questionPlaceholder": "Question",
       "answerPlaceholder": "Answer",
@@ -2621,26 +2621,26 @@
       "objectionPlaceholder": "How to respond when someone says they're not interested",
       "activeHoursPlaceholder": "e.g. 9:00-17:00",
       "timezonePlaceholder": "America/New_York",
-      "purposeTitle": "What will this agent do?",
-      "purposeHint": "Choose the primary use.",
-      "templateLabel": "Pick a template (optional)",
-      "agentNameLabel": "Agent name",
-      "personalityTitle": "Personality",
-      "personalityHint": "Voice and conversation style.",
+      "missionTitle": "Define your operator's revenue mission",
+      "missionHint": "Choose your operator's primary revenue function.",
+      "templateLabel": "Pick a specialist template (optional)",
+      "agentNameLabel": "Operator name",
+      "voiceIdentityTitle": "Set your operator's voice & identity",
+      "voiceIdentityHint": "Voice, tone, and communication style.",
       "voiceLabel": "Voice",
-      "purposeAnswerCalls": "Answer calls",
-      "purposeMakeCalls": "Make calls",
-      "purposeBoth": "Both",
-      "saveDraft": "Save draft",
+      "purposeAnswerCalls": "Handle inbound calls — convert to leads/appointments",
+      "purposeMakeCalls": "Run outbound campaigns — to recover revenue and reactivate prospects",
+      "purposeBoth": "Both inbound and outbound",
+      "saveDraft": "Save operator",
       "next": "Next",
-      "launch": "Launch",
-      "stepPurpose": "Purpose",
-      "stepPersonality": "Personality",
-      "stepKnowledge": "Knowledge",
-      "stepRules": "Rules",
-      "stepPhoneSchedule": "Phone & Schedule",
-      "stepTest": "Test",
-      "stepLaunch": "Launch",
+      "deploy": "Deploy",
+      "stepMission": "Mission",
+      "stepVoiceIdentity": "Voice & Identity",
+      "stepIntelligence": "Intelligence",
+      "stepGuardrails": "Guardrails",
+      "stepOperatingHours": "Operating Hours",
+      "stepVerify": "Verify",
+      "stepDeploy": "Deploy",
       "speakingSpeedLabel": "Speaking speed",
       "conversationStyleLabel": "Conversation style",
       "conversationStyleProfessional": "Professional",
@@ -2648,50 +2648,52 @@
       "conversationStyleCasual": "Casual",
       "conversationStyleAuthoritative": "Authoritative",
       "greetingLabel": "Greeting",
-      "knowledgeHeading": "Knowledge",
-      "knowledgeSubtitle": "What your agent should know.",
+      "intelligenceHeading": "Equip your operator with business intelligence",
+      "intelligenceSubtitle": "Knowledge base answers and business context.",
       "businessHoursLabel": "Business hours",
-      "faqsLabel": "FAQs (question / answer)",
-      "addFaq": "+ Add FAQ",
-      "rulesHeading": "Rules",
-      "rulesSubtitle": "What the agent should never do.",
+      "faqsLabel": "Knowledge base (question / answer)",
+      "addFaq": "+ Add Q&A",
+      "guardrailsHeading": "Set operator guardrails & objection handling",
+      "guardrailsSubtitle": "Boundaries, compliance rules, and objection strategies.",
       "neverSayLabel": "Never say or do (one per line)",
       "objectionLabel": "Objection handling (optional)",
       "bantLabel": "Use BANT qualification (Budget, Authority, Need, Timeline)",
-      "phoneScheduleHeading": "Phone & schedule",
-      "phoneScheduleSubtitle": "Assign a number and when the agent is active.",
+      "operatingHoursHeading": "Configure operator working hours",
+      "operatingHoursSubtitle": "When your operator is active and how to handle off-hours.",
       "activeHoursLabel": "Active hours",
       "timezoneLabel": "Timezone",
-      "whenOutsideHoursLabel": "When outside hours",
+      "whenOutsideHoursLabel": "When outside operating hours",
       "voicemailTakeMessage": "Take a message",
-      "voicemailForward": "Forward to a number",
+      "voicemailForward": "Forward to your team",
       "voicemailClosed": "Play closed message",
       "assignNumberHint": "Assign a phone number from",
-      "assignNumberHintAfter": "after launch.",
-      "testHint": "Try your agent before going live.",
+      "assignNumberHintAfter": "after deployment.",
+      "verifyHeading": "Test your operator before deployment",
+      "verifySubtitle": "Have a conversation to verify performance and behavior.",
       "openTestCall": "Open test call",
-      "saveDraftFirst": "Save the draft first, then you can test.",
-      "testFromAgentPage": "You can also test from the agent page after launch.",
-      "launchHint": "Review and activate your agent.",
-      "reviewName": "Name:",
-      "reviewPurpose": "Purpose:",
+      "saveDraftFirst": "Save the operator first, then you can test.",
+      "testFromAgentPage": "You can also test from the operators page after deployment.",
+      "deployHeading": "Review and deploy your autonomous operator",
+      "deploySubtitle": "Final review before your operator goes live.",
+      "reviewName": "Operator:",
+      "reviewPurpose": "Mission:",
       "reviewVoice": "Voice:",
       "reviewGreeting": "Greeting:",
-      "costNote": "Estimated cost depends on usage. You can toggle the agent off anytime from the Agents page.",
+      "costNote": "Running costs depend on call volume. Pause anytime from the Operators page.",
       "back": "Back"
     },
     "quickActions": {
       "label": "Quick actions",
       "edit": "Edit",
-      "editAria": "Edit agent",
+      "editAria": "Edit operator",
       "test": "Test",
-      "testAria": "Test agent",
+      "testAria": "Test operator",
       "goLive": "Go live",
       "goLiveAria": "Go live"
     },
     "testStep": {
-      "title": "Talk to your AI",
-      "description": "Chat with your agent to see how it responds. It uses your actual greeting, knowledge, and behavior rules.",
+      "title": "Talk to your operator",
+      "description": "Chat with your operator to see how it responds. It uses your actual greeting, knowledge, and behavior rules.",
       "scenarioLabel": "Scenario",
       "scenarios": {
         "general": "General inquiry",
@@ -2722,24 +2724,24 @@
       "heading": "Go live",
       "phoneSectionAria": "Phone number assignment",
       "phoneLabel": "Phone number",
-      "phoneDescription": "Assign a workspace number to this agent. Calls to that number will be answered by this agent.",
+      "phoneDescription": "Assign a workspace number to this operator. Calls to that number will be answered by this operator.",
       "assignAria": "Assign phone number",
       "noNumbers": "No numbers available",
       "none": "None",
-      "thisAgent": "(this agent)",
+      "thisAgent": "(this operator)",
       "assigned": "Assigned",
       "readiness": "Readiness",
       "readinessChecklist": "Readiness checklist",
       "businessInfoAdded": "Business info added",
       "useCasesSelected": "Use cases selected",
-      "agentCreated": "Agent created",
+      "agentCreated": "Operator created",
       "voiceSelected": "Voice selected",
       "openingGreetingSet": "Opening greeting set",
       "knowledgeEntries": "3+ knowledge entries",
       "behaviorConfigured": "Behavior configured",
       "phoneConnected": "Phone number connected",
-      "agentTested": "Agent tested",
-      "voiceAssistantCreated": "Voice assistant created",
+      "agentTested": "Operator tested",
+      "voiceAssistantCreated": "Voice operator created",
       "syncing": "Syncing…",
       "retrySync": "Retry sync",
       "carrierAria": "Carrier forwarding instructions",
@@ -2759,18 +2761,18 @@
       "callerAfterHours": "Caller reaches you after hours",
       "callerPriceHigh": "Caller says the price feels too high",
       "callerSpeakToSomeone": "Caller asks to speak to someone else",
-      "defaultGreetingBook": "Your agent will greet the caller, confirm what they need, and offer to book a time on your calendar.",
-      "defaultGreetingMessage": "Your agent will greet the caller, gather details, and take a clear message for your team to schedule.",
-      "pricingNeverSay": "Your agent will not give exact pricing (per your rules). It will explain that a human will follow up with a quote and capture contact details.",
-      "pricingEnabled": "Your agent will share your saved pricing overview and then guide the caller toward booking or a follow-up.",
-      "pricingDefault": "Your agent will explain that pricing depends on the situation, offer a rough range if appropriate, and collect details so your team can send a precise quote.",
-      "afterHoursForward": "Your agent will explain that the office is closed and forward urgent calls to your transfer number, or take a message when forwarding isn't appropriate.",
-      "afterHoursMessages": "Your agent will let the caller know you're closed, capture their name, number, and reason for calling, and confirm that someone will follow up.",
-      "afterHoursEmergency": "Your agent will quickly check if it's an emergency and, if so, transfer to your emergency contact. Otherwise it will take a detailed message.",
-      "afterHoursClosed": "Your agent will state that the office is closed right now, share basic hours if known, and invite the caller to leave a message.",
-      "afterHoursDefault": "Your agent will check basic details, let the caller know your team is currently unavailable, and take a message for follow-up.",
-      "escalationWithTransfer": "Your agent will stay calm, confirm why they'd like a human, and then transfer to your saved number when your escalation rules match.",
-      "escalationNoTransfer": "Your agent will stay calm, explain what it can help with, and if needed, take a message with the caller's details for a human to follow up.",
+      "defaultGreetingBook": "Your operator will greet the caller, confirm what they need, and offer to book a time on your calendar.",
+      "defaultGreetingMessage": "Your operator will greet the caller, gather details, and take a clear message for your team to schedule.",
+      "pricingNeverSay": "Your operator will not give exact pricing (per your rules). It will explain that a human will follow up with a quote and capture contact details.",
+      "pricingEnabled": "Your operator will share your saved pricing overview and then guide the caller toward booking or a follow-up.",
+      "pricingDefault": "Your operator will explain that pricing depends on the situation, offer a rough range if appropriate, and collect details so your team can send a precise quote.",
+      "afterHoursForward": "Your operator will explain that the office is closed and forward urgent calls to your transfer number, or take a message when forwarding isn't appropriate.",
+      "afterHoursMessages": "Your operator will let the caller know you're closed, capture their name, number, and reason for calling, and confirm that someone will follow up.",
+      "afterHoursEmergency": "Your operator will quickly check if it's an emergency and, if so, transfer to your emergency contact. Otherwise it will take a detailed message.",
+      "afterHoursClosed": "Your operator will state that the office is closed right now, share basic hours if known, and invite the caller to leave a message.",
+      "afterHoursDefault": "Your operator will check basic details, let the caller know your team is currently unavailable, and take a message for follow-up.",
+      "escalationWithTransfer": "Your operator will stay calm, confirm why they'd like a human, and then transfer to your saved number when your escalation rules match.",
+      "escalationNoTransfer": "Your operator will stay calm, explain what it can help with, and if needed, take a message with the caller's details for a human to follow up.",
       "connectPhoneHint": "Connect your phone number or activate for test calls and outbound only.",
       "forwardExistingAria": "Forward your existing number. Set up call forwarding to your AI.",
       "forwardExistingTitle": "Forward your existing number",
@@ -2783,15 +2785,15 @@
       "backToTestAria": "Back to Test",
       "backButton": "Back",
       "activating": "Activating…",
-      "activateAgentAria": "Activate agent",
-      "activateAgent": "Activate agent"
+      "activateAgentAria": "Activate operator",
+      "activateAgent": "Activate operator"
     },
     "identityStep": {
-      "purposeLabel": "What does this agent do?",
+      "purposeLabel": "What does this operator do?",
       "industryLabel": "Industry template",
       "selectIndustry": "Select an industry",
       "toneLabel": "Tone",
-      "agentNameLabel": "Agent name",
+      "agentNameLabel": "Operator name",
       "callDirectionLabel": "Call direction",
       "nameError": "Add a name so callers know who they're speaking with.",
       "websitePrivacy": "We'll scan your public site to prefill services, FAQ, and business context. Only public information is used.",
@@ -2806,7 +2808,7 @@
       "openingLineLabel": "Opening line",
       "greetingPlaceholder": "Thanks for calling... I can help with...",
       "greetingError": "Add an opening line so callers feel welcomed.",
-      "targetAudienceLabel": "Who should this agent serve?",
+      "targetAudienceLabel": "Who should this operator serve?",
       "targetAudiencePlaceholder": "New inbound leads, existing customers, VIP callers...",
       "websiteLabel": "Website (optional)",
       "websitePlaceholder": "https://yourbusiness.com",
@@ -2851,8 +2853,8 @@
       },
       "templates": {
         "receptionist": {
-          "label": "Inbound Agent",
-          "desc": "Answer calls, take messages, and route cleanly.",
+          "label": "Inbound Operator",
+          "desc": "Answer every call instantly, qualify opportunities, and book appointments — no missed revenue.",
           "greeting": "Thanks for calling. I can help with questions, take messages, and get you to the right place. How can I help today?"
         },
         "appointment_setter": {
@@ -2867,7 +2869,7 @@
         },
         "follow_up": {
           "label": "Follow-up Caller",
-          "desc": "Call back leads and re-engage.",
+          "desc": "Proactively re-engage cold leads, recover lost deals, and drive revenue back into the pipeline.",
           "greeting": "Hi, this is your AI assistant following up so nothing falls through the cracks. Is now a good time?"
         },
         "support": {
@@ -2896,8 +2898,8 @@
       "previewVoiceAria": "Preview {name} voice"
     },
     "profile": {
-      "agentNameLabel": "Agent name",
-      "agentNamePlaceholder": "Inbound Agent",
+      "agentNameLabel": "Operator name",
+      "agentNamePlaceholder": "Inbound Operator",
       "openingGreetingLabel": "Opening greeting",
       "openingGreetingHint": "This is how your AI answers the phone. After this, it has a natural conversation based on your knowledge and rules.",
       "greetingPlaceholder": "Thanks for calling. How can I help you today?",
@@ -2918,7 +2920,7 @@
       "title": "Create agent",
       "subtitle": "Start from a proven pattern instead of configuring from scratch.",
       "closeAria": "Close create agent dialog",
-      "receptionistDesc": "Answer calls, route, and handle FAQs.",
+      "receptionistDesc": "Answer calls instantly, route intelligently, and convert every inquiry into a lead or appointment.",
       "salesCallerDesc": "Call leads, qualify, and pitch.",
       "appointmentSetterDesc": "Book meetings, confirm, and remind.",
       "supportDesc": "Triage, answer, and escalate.",
@@ -2941,11 +2943,11 @@
       "scratch": "Custom Agent"
     },
     "greetings": {
-      "receptionist": "Hi, thanks for calling. I'm your AI inbound agent — I'll get the right details and make sure nothing is missed.",
-      "after_hours": "Hi, this is your AI inbound agent for Recall Touch, handling your calls after hours. How can I help today?",
+      "receptionist": "Hi, thanks for calling. I'm your AI inbound operator — I'll get the right details and make sure nothing is missed.",
+      "after_hours": "Hi, this is your AI inbound operator for Recall Touch, handling your calls after hours. How can I help today?",
       "emergency": "This is your emergency line. I'll move quickly, keep you calm, and make sure the right person is alerted.",
       "lead_qualifier": "Thanks for reaching out. I'll ask a few quick questions so we can get you to the right next step.",
-      "follow_up": "Hi, this is your AI following up so nothing falls through the cracks. Can I check in on your last visit?",
+      "follow_up": "Hi, this is your AI operator following up — checking if you're ready to move forward. Can I help you get started?",
       "review_request": "Hi, this is your AI assistant with a quick favor about your recent visit. It will only take a moment.",
       "appointment_setter": "Hi, I'm calling to help schedule a time that works for you. What does your week look like?",
       "support": "Hi, thanks for calling. I'm here to help with questions and get you to the right person if needed.",
@@ -3060,16 +3062,16 @@
       "offTopic": "I'm the phone assistant for {business}. I can help with..."
     },
     "deleteConfirmMessage": "Delete \"{name}\"? This cannot be undone.",
-    "createFirstAria": "Create your first agent",
-    "createAgentButton": "+ Create Agent",
-    "selectOrCreate": "Select or create an agent to edit how it answers calls.",
-    "emptyTitle": "No agents yet",
-    "emptySubtitle": "Create your first AI agent to answer calls, capture leads, and book appointments.",
+    "createFirstAria": "Create your first operator",
+    "createAgentButton": "+ Create Operator",
+    "selectOrCreate": "Select or create an operator to edit how it answers calls.",
+    "emptyTitle": "No operators yet",
+    "emptySubtitle": "Create your first AI operator to answer calls, capture leads, and book appointments.",
     "backToActivity": "← Activity",
     "transferToPhoneLabel": "Transfer to phone number",
     "transferToPhoneAria": "Transfer to phone number",
     "neverSayLabel": "Never say",
-    "neverSayAria": "Words or phrases the agent should never say",
+    "neverSayAria": "Words or phrases the operator should never say",
     "neverSayPlaceholder": "Competitor names, legal advice, pricing specifics...",
     "transferRulesLabel": "Phrase-based transfer rules",
     "addTransferRule": "+ Add rule",
@@ -3086,8 +3088,8 @@
     "afterHoursOptionClosed": "Closed greeting only",
     "learnedBehaviorsLabel": "Learned behaviors (from Call Intelligence)",
     "transferRulesExample": "Examples: \"billing\" → your billing specialist, \"emergency\" → on-call phone.",
-    "toastSavedSync": "Agent saved and synced live",
-    "toastSavedVoiceFailed": "Agent saved; voice sync failed",
+    "toastSavedSync": "Operator saved and synced live",
+    "toastSavedVoiceFailed": "Operator saved; voice sync failed",
     "rulesTab": {
       "howYourAiHandlesCalls": "How your AI handles calls",
       "conversationPreviewSubtitle": "Your agent has a natural conversation after the greeting. Here's how it responds:",
@@ -3104,7 +3106,7 @@
       "maxCallDurationLabel": "Maximum call duration",
       "maxCallDurationAria": "Maximum call duration in minutes",
       "appointmentBooking": "Appointment booking",
-      "agentCanBook": "Agent can book appointments",
+      "agentCanBook": "Operator can book appointments",
       "defaultDurationLabel": "Default duration",
       "defaultDurationAria": "Default appointment duration",
       "availableSlotsHint": "Available slots: linked to calendar or manual entry.",
@@ -3160,20 +3162,20 @@
     "back": "Back",
     "continue": "Continue",
     "voiceStep": {
-      "heading": "How should your agent sound?"
+      "heading": "How should your operator sound?"
     },
     "voiceTest": {
       "defaultPreviewText": "Please enter a script for voice testing",
       "toast": {
         "played": "Voice preview played for {name}",
-        "applied": "Voice applied to agent"
+        "applied": "Voice applied to operator"
       },
       "errors": {
         "previewFailed": "Failed to preview voice",
-        "applyFailed": "Failed to apply voice to agent"
+        "applyFailed": "Failed to apply voice to operator"
       },
-      "noAgent": "Agent not found",
-      "backToAgents": "Back to Agents",
+      "noAgent": "Operator not found",
+      "backToAgents": "Back to Operators",
       "scriptSection": "Test Script",
       "scriptPlaceholder": "Enter text to preview the voice",
       "scriptHelp": "This text will be used to preview the voice quality",
@@ -3181,7 +3183,7 @@
       "voiceA": "Voice A",
       "voiceB": "Voice B",
       "allVoices": "All Voices",
-      "applyToAgent": "Apply to Agent",
+      "applyToAgent": "Apply to Operator",
       "selected": "Selected",
       "selectVoicePrompt": "Select a voice to preview"
     }
@@ -3197,8 +3199,8 @@
       "voiceUnsupported": "Voice is not supported in this browser. Use the text field below."
     },
     "defaultGreeting": "Thanks for calling {business}! How can I help you today?",
-    "testYourAgentHeading": "Test your agent",
-    "testYourAgentSubtitle": "Talk back and forth with your AI agent. It will speak to you and listen to your replies. Uses your actual greeting, knowledge, and behavior rules.",
+    "testYourAgentHeading": "Test your operator",
+    "testYourAgentSubtitle": "Talk back and forth with your AI operator. It will speak to you and listen to your replies. Uses your actual greeting, knowledge, and behavior rules.",
     "hint": {
       "micOrType": "Tap the mic to speak, or type below."
     },
@@ -3227,7 +3229,7 @@
       }
     },
     "youAsCaller": "You (as caller)",
-    "aiAgent": "AI Agent",
+    "aiAgent": "AI Operator",
     "thinking": "Thinking…",
     "speaking": "Speaking…",
     "stopListening": "Stop listening",
@@ -3430,7 +3432,8 @@
     },
     "emptyDescription": "Calls will appear here once your AI agent starts handling calls.",
     "emptyTitle": "No calls yet",
-    "testCall": "Test call"
+    "testCall": "Test call",
+    "subtitle": "Call execution log. Every inbound and outbound call, with AI intelligence and next-action recommendations."
   },
   "callIntelligence": {
     "pageTitle": "Call Intelligence — Recall Touch",
@@ -3543,10 +3546,10 @@
     }
   },
   "callRules": {
-    "pageTitle": "Call Rules — Recall Touch",
-    "heading": "Call rules",
-    "description": "Configure how your AI handles calls during and after business hours.",
-    "businessHours": "Business hours",
+    "pageTitle": "Inbound Operating Policy — Recall Touch",
+    "heading": "Inbound Operating Policy",
+    "description": "Define call handling behavior across business and non-business hours.",
+    "businessHours": "Operating hours",
     "days": {
       "mon": "Mon",
       "tue": "Tue",
@@ -3560,12 +3563,12 @@
     "closed": "Closed",
     "afterHoursBehavior": "After hours behavior",
     "afterHours": {
-      "takeMessages": "Take messages",
-      "takeMessagesDesc": "AI takes a message and emails you a summary",
-      "emergencyOnly": "Emergency only",
-      "emergencyOnlyDesc": "AI screens for emergencies and forwards those only",
-      "forwardToCell": "Forward to cell",
-      "forwardToCellDesc": "All after-hours calls ring your cell phone"
+      "takeMessages": "Capture qualified messages",
+      "takeMessagesDesc": "AI qualifies calls and captures intent. Non-emergency messages digested in your morning brief.",
+      "emergencyOnly": "Emergency triage only",
+      "emergencyOnlyDesc": "AI screens all calls. Only urgent issues trigger your phone. Others logged for next-day follow-up.",
+      "forwardToCell": "Direct human handoff",
+      "forwardToCellDesc": "All after-hours calls route to you immediately. Recommended for critical accounts only."
     },
     "emergencyKeywords": "Emergency keywords",
     "emergencyKeywordsHelp": "Comma-separated. Calls with these words are flagged as urgent.",
@@ -3574,8 +3577,8 @@
     "transferNumberPlaceholder": "Your phone number",
     "saveChanges": "Save changes",
     "savingChanges": "Saving…",
-    "businessHoursNote": "Business hours are set to your workspace timezone. Contact support to customize your schedule.",
-    "emergencyKeywordsPlaceholder": "e.g. emergency, urgent, flooding, leak",
+    "businessHoursNote": "Operating hours are set to your workspace timezone. After hours, calls follow your configured policy.",
+    "emergencyKeywordsPlaceholder": "e.g., critical issue, account emergency, payment problem",
     "backToSettings": "← Settings",
     "toast": {
       "saved": "Call rules saved",
@@ -3584,7 +3587,7 @@
   },
   "inbox": {
     "title": "Inbox",
-    "subtitle": "Agent-managed conversations across every channel — unified, searchable, revenue-attributed.",
+    "subtitle": "Revenue conversations. Your AI operator handles qualification, follow-up, and objection resolution across all channels.",
     "viewInLeads": "View in Leads",
     "pageTitle": "Inbox — Recall Touch",
     "filters": {
@@ -3663,7 +3666,7 @@
     "actionSchedule": "Schedule",
     "pageTitle": "Leads",
     "heading": "Leads",
-    "description": "Every captured opportunity, scored and staged — from first contact through closed revenue.",
+    "description": "Your pipeline, actively managed by AI. Leads are qualified, scored, and followed up automatically.",
     "addLead": "Add lead",
     "total": "Total:",
     "exportCsv": "Export as CSV",
@@ -3788,11 +3791,11 @@
       "agent": "Agent"
     },
     "empty": {
-      "title": "Your pipeline starts with the first call.",
-      "body": "Every caller your operator qualifies becomes a scored lead — automatically created, automatically staged, automatically followed up.",
-      "subtitle": "Leads are auto-created from calls, scored by intent, and staged for recovery",
+      "title": "Your pipeline starts with AI—not paperwork.",
+      "body": "Every qualified conversation becomes a scored lead. AI automatically creates, stages, and follows up—your operator continuously works your pipeline without manual intervention.",
+      "subtitle": "Leads are auto-created from calls, AI-scored by intent, and auto-followed up. Upload a CSV to seed your pipeline, or let the operator build it from every qualified conversation.",
       "hint": "Create leads from calls or add leads manually. Connect your CRM via Settings → Integrations to sync with HubSpot, Salesforce, and more.",
-      "description": "Create a lead manually or connect your CRM. New leads from calls will appear here automatically.",
+      "description": "Import a CSV or connect your CRM to seed your pipeline. Leads from qualified calls will appear here automatically—AI will handle qualification, scoring, and follow-up.",
       "connectCrm": "Connect CRM"
     },
     "saveLead": "Save lead",
@@ -3807,8 +3810,8 @@
       "added": "Lead added successfully"
     },
     "unknownLead": "Unknown Lead",
-    "emptyTitle": "Import your pipeline or let the operator build it",
-    "emptySubtitle": "Upload a CSV to seed your pipeline, or let your operator auto-create leads from every qualified conversation.",
+    "emptyTitle": "Your pipeline starts with AI—not paperwork.",
+    "emptySubtitle": "Leads are auto-created from calls, AI-scored by intent, and auto-followed up. Upload a CSV to seed your pipeline, or let the operator build it from every qualified conversation.",
     "importCsv": "Import CSV",
     "addContact": "Add Contact",
     "errors": {
@@ -3935,15 +3938,15 @@
       "modes": {
         "power": {
           "label": "Power",
-          "description": "Maximum calls, aggressive dialing strategy"
+          "description": "Maximum execution velocity. Full campaign intensity to close deals fast."
         },
         "preview": {
           "label": "Preview",
-          "description": "Preview mode, one call at a time"
+          "description": "Strategic review. Every interaction previewed before execution for full control."
         },
         "progressive": {
           "label": "Progressive",
-          "description": "Gradual ramp-up based on performance"
+          "description": "Intelligent scaling. Campaign intensity adapts based on conversion performance."
         }
       },
       "steps": {
@@ -4025,31 +4028,31 @@
       "types": {
         "speedToLead": {
           "label": "Speed-to-Lead",
-          "desc": "Text in 5 minutes, call if no reply."
+          "desc": "Instant contact after inquiry. First response within minutes wins the deal."
         },
         "leadQualification": {
           "label": "Lead Qualification",
-          "desc": "Qualify interest and book the next step."
+          "desc": "AI-driven qualification to identify and separate committed buyers from window shoppers."
         },
         "appointmentSetting": {
           "label": "Appointment Setting",
-          "desc": "Call and text until an appointment is set."
+          "desc": "Autonomous scheduling until meetings are booked. Revenue execution without manual calendar work."
         },
         "appointmentReminder": {
           "label": "Appointment Reminder",
-          "desc": "24h and 1h reminders to reduce no-shows."
+          "desc": "Intelligent confirmation sequence. Prevent no-shows with smart timing and multi-channel follow-up."
         },
         "noShowRecovery": {
           "label": "No-Show Recovery",
-          "desc": "Recover missed appointments with follow-up."
+          "desc": "Recover lost revenue. Instantly re-engage no-shows before deal momentum dies."
         },
         "reactivation": {
           "label": "Reactivation",
-          "desc": "Re-engage inactive contacts."
+          "desc": "Win back dormant prospects. Strategic re-engagement with intelligent pacing to revive stale pipeline."
         },
         "quoteChase": {
           "label": "Quote Chase",
-          "desc": "Follow up on pending quotes."
+          "desc": "Follow up on pending quotes until they convert or officially close."
         },
         "reviewRequest": {
           "label": "Review Request",
@@ -4057,11 +4060,11 @@
         },
         "coldOutreach": {
           "label": "Cold Outreach",
-          "desc": "Reach a list with a controlled cadence."
+          "desc": "Controlled pipeline acceleration. Reach new prospects with AI qualification built into the sequence."
         },
         "custom": {
           "label": "Custom",
-          "desc": "Build your own sequence."
+          "desc": "Build your own autonomous revenue execution campaign."
         }
       }
     },
@@ -4126,10 +4129,10 @@
       }
     },
     "type": {
-      "leadFollowup": "Lead qualification / follow-up",
-      "appointmentReminder": "Appointment setting / reminder",
-      "reactivation": "Reactivation",
-      "coldOutreach": "Announcement / cold outreach",
+      "leadFollowup": "Autonomous follow-up after initial contact",
+      "appointmentReminder": "Smart appointment confirmation & no-show prevention",
+      "reactivation": "Re-engage dormant leads with intelligent timing",
+      "coldOutreach": "Proactive pipeline building with AI qualification",
       "reviewRequest": "Review request",
       "custom": "Custom"
     },
@@ -4141,12 +4144,12 @@
       "referral": "Referral"
     },
     "empty": {
-      "title": "No campaigns yet.",
-      "body": "Use campaigns to follow up on unanswered calls, re-activate old leads, and fill your calendar.",
+      "title": "No active campaigns.",
+      "body": "Deploy your first autonomous campaign to start executing revenue recovery.",
       "description": ""
     },
     "heading": "Campaigns",
-    "description": "Reach your leads with automated outbound calls and messages.",
+    "description": "Intelligent revenue execution. Deploy autonomous campaigns that qualify leads, recover revenue, and re-engage stale pipeline.",
     "defaults": {
       "campaignName": "Missed-call recovery",
       "smsTemplate": "Hi {firstName}, this is {businessName}. We noticed you recently reached out — I'd love to help you get started. Would you have a few minutes to chat?",
@@ -4296,25 +4299,25 @@
         "required": "(Required for calls)"
       },
       "agent": {
-        "label": "AI agent configuration",
-        "desc": "Voice agent personality, script, and intelligence settings",
+        "label": "Agent orchestration",
+        "desc": "Agent behavior, qualification framework, escalation policy, and response handling",
         "required": "(Required)"
       },
       "voices": {
-        "label": "Voice settings",
-        "desc": "AI voice selection, language, and speech configuration"
+        "label": "Voice optimization",
+        "desc": "Voice selection and tuning for maximum conversion impact"
       },
       "callRules": {
-        "label": "Call rules",
-        "desc": "Call hours, retry logic, and escalation rules"
+        "label": "Inbound operating policy",
+        "desc": "Business hours, after-hours handling, emergency routing"
       },
       "industryTemplates": {
         "label": "Industry templates",
         "desc": "Pre-built agent configurations for your industry"
       },
       "outbound": {
-        "label": "Outbound settings",
-        "desc": "Outbound calling strategy and dialer settings"
+        "label": "Outbound execution",
+        "desc": "Outbound policy, calling hours, suppression rules, and rate limits"
       },
       "team": {
         "label": "Team & permissions",
@@ -4337,8 +4340,8 @@
         "desc": "Plan, usage, and ROI tracking"
       },
       "compliance": {
-        "label": "Compliance",
-        "desc": "DNC rules, consent tracking, and regulatory compliance"
+        "label": "Compliance & governance",
+        "desc": "Recording disclosure, consent frameworks, encryption, data retention"
       },
       "activity": {
         "label": "Activity log",
@@ -4406,10 +4409,10 @@
       "defaultBusiness": "your business",
       "defaultGreeting": "Thanks for calling {business}. How can I help?",
       "defaultWorkspaceName": "My Workspace",
-      "description": "Control your voice agent: greeting, voice, language, and knowledge.",
+      "description": "Configure agent behavior, qualification strategy, voice parameters, and response handling.",
       "endLiveTest": "End live test",
       "greetingPlaceholderDefault": "Thanks for calling {business}. How can I help you today?",
-      "heading": "Agent",
+      "heading": "Agent Orchestration",
       "knowledgeAdd": "+ Add",
       "knowledgeLabel": "Knowledge (Q&A the agent can use)",
       "loadFailed": "Failed to load agent settings. Please try again.",
@@ -4427,16 +4430,16 @@
       "saving": "Saving…",
       "startLiveTest": "Start live test",
       "testDescription": "Run a live browser call with your current assistant, then review the transcript before saving more changes.",
-      "testTitle": "Test your agent",
-      "updated": "Agent updated. Your next calls will use the new settings.",
+      "testTitle": "Test your operator",
+      "updated": "Operator updated. Your next calls will use the new settings.",
       "voiceLabel": "Voice",
       "voicePreviewText": "Thanks for calling. How can I help you today?",
-      "voiceSyncFailed": "Saved, but the voice agent could not be updated. Try again.",
+      "voiceSyncFailed": "Saved, but the voice operator could not be updated. Try again.",
       "languageLabel": "Language",
       "qualificationMethods": {
-        "none": "None",
-        "bant": "BANT",
-        "customQuestions": "Custom Questions"
+        "none": "No qualification",
+        "bant": "BANT framework",
+        "customQuestions": "Custom qualification criteria"
       },
       "tonePresets": {
         "professional": "Professional",
@@ -4460,33 +4463,33 @@
       "transferNumberPlaceholder": "Your phone number",
       "objectionsPlaceholder": "Objection",
       "responsePlaceholder": "Response",
-      "behaviorSectionTitle": "Behavior & Qualification",
-      "behaviorSectionDescription": "Configure qualification methods and tone",
+      "behaviorSectionTitle": "Qualification & Behavior",
+      "behaviorSectionDescription": "Define how the agent qualifies prospects and sets conversational tone",
       "qualificationMethodLabel": "Qualification Method",
       "bantQuestionsLabel": "BANT Questions (Read-only Examples)",
       "customQuestionsLabel": "Custom Questions",
       "tonePresetLabel": "Tone Preset",
-      "escalationSectionTitle": "Escalation & Transfer Rules",
-      "escalationSectionDescription": "Configure when to transfer to humans",
-      "transferPolicyLabel": "Transfer Policy",
-      "transferPhoneNumberLabel": "Transfer Phone Number",
-      "confidenceThresholdLabel": "Confidence Threshold",
-      "escalationTriggersLabel": "Escalation Triggers",
-      "escalationTriggersDescription": "Describe situations when the agent should transfer to a human",
-      "escalationTriggersPlaceholder": "E.g., Angry customer, technical issue, competitor comparison...",
-      "actionsSectionTitle": "Allowed & Forbidden Actions",
-      "actionsSectionDescription": "Control what the agent can and cannot do",
-      "allowedActionsLabel": "Allowed Actions",
-      "forbiddenActionsLabel": "Forbidden Actions",
-      "objectionsSectionTitle": "Objection Handling",
-      "objectionsSectionDescription": "Pre-built responses to common objections",
+      "escalationSectionTitle": "Escalation & Transfer Policy",
+      "escalationSectionDescription": "Define escalation conditions and handoff strategy for human review",
+      "transferPolicyLabel": "Transfer policy",
+      "transferPhoneNumberLabel": "Escalation number",
+      "confidenceThresholdLabel": "Decision confidence threshold",
+      "escalationTriggersLabel": "Escalation triggers",
+      "escalationTriggersDescription": "Specific conditions that require human intervention or decision review",
+      "escalationTriggersPlaceholder": "E.g., Pricing negotiation, complaint, product customization request...",
+      "actionsSectionTitle": "Agent Authority & Constraints",
+      "actionsSectionDescription": "Define which actions the agent can perform and which are restricted",
+      "allowedActionsLabel": "Permitted actions",
+      "forbiddenActionsLabel": "Restricted actions",
+      "objectionsSectionTitle": "Objection Responses",
+      "objectionsSectionDescription": "Pre-configured responses to common prospect objections",
       "objectionsLabel": "Objection/Response Pairs",
       "addButton": "+ Add"
     },
     "outbound": {
       "back": "Back to settings",
-      "title": "Outbound",
-      "subtitle": "Set limits, calling hours, and compliance controls for outbound outreach.",
+      "title": "Outbound Execution Policy",
+      "subtitle": "Define calling windows, suppression rules, and outreach rate limits.",
       "loading": "Loading settings…",
       "save": "Save",
       "saving": "Saving…",
@@ -4528,12 +4531,12 @@
         "tierHint": "Limits are capped by your plan."
       },
       "suppression": {
-        "heading": "Suppression rules",
-        "maxCallsPerDay": "Max calls per contact per day",
-        "maxCallsPerWeek": "Max calls per contact per week",
-        "maxSmsPerDay": "Max SMS per contact per day",
-        "cooldownDecline": "Cooldown after decline (days)",
-        "cooldownConversion": "Cooldown after conversion (days)"
+        "heading": "Intelligent rate limiting",
+        "maxCallsPerDay": "Max calls per prospect per day",
+        "maxCallsPerWeek": "Max calls per prospect per week",
+        "maxSmsPerDay": "Max SMS per prospect per day",
+        "cooldownDecline": "Rest period after objection (days)",
+        "cooldownConversion": "Rest period after conversion (days)"
       },
       "dnc": {
         "heading": "DNC compliance",
@@ -4667,10 +4670,10 @@
       "smsPush": "SMS + Push"
     },
     "compliance": {
-      "title": "Compliance",
-      "subtitle": "Recording, privacy, and data retention settings.",
-      "recordingConsent": "Recording consent",
-      "consentDescription": "Choose consent model for your jurisdiction. Two-party requires playing an announcement at call start.",
+      "title": "Compliance & Governance",
+      "subtitle": "Recording disclosure, consent requirements, encryption, and data retention policies.",
+      "recordingConsent": "Recording disclosure policy",
+      "consentDescription": "Select the consent framework required for your jurisdiction. Two-party states require disclosure announcement.",
       "consentMode": "Consent mode",
       "oneParty": "One-party (e.g. most US states)",
       "twoParty": "Two-party (play announcement at call start)",
@@ -4682,15 +4685,15 @@
       "savingConsent": "Saving…",
       "saveConsent": "Save recording consent",
       "callRecording": "Call recording",
-      "callRecordingHelp": "All AI calls are recorded for quality and compliance",
-      "hipaaMode": "HIPAA mode",
-      "hipaaModeHelp": "Encrypt PHI, BAA required (+$99/mo on Business plan and above)",
-      "dataRetention": "Data retention",
-      "retention30": "30 days",
-      "retention90": "90 days",
-      "retention180": "180 days",
-      "retention365": "1 year",
-      "retentionHelp": "Recordings and transcripts older than this are deleted automatically.",
+      "callRecordingHelp": "Recordings kept for quality assurance, training, and dispute resolution.",
+      "hipaaMode": "HIPAA mode (encrypted)",
+      "hipaaModeHelp": "Enable HIPAA compliance with PHI encryption. Requires BAA. (+$99/mo on Business plan and above)",
+      "dataRetention": "Recording retention policy",
+      "retention30": "30 days (regulatory minimum)",
+      "retention90": "90 days (standard)",
+      "retention180": "180 days (extended)",
+      "retention365": "365 days (comprehensive)",
+      "retentionHelp": "After the retention period, recordings and transcripts are permanently deleted from our systems.",
       "saveChanges": "Save changes",
       "exportData": "Export all data",
       "exportRequested": "Data export requested — you'll receive an email within 24 hours.",
@@ -6490,7 +6493,7 @@
       },
       {
         "q": "How is this different from an answering service?",
-        "a": "24/7, handles outbound, costs 90% less."
+        "a": "Recall Touch is an autonomous revenue execution platform — it doesn't just answer calls, it closes deals. Inbound calls are qualified, leads are booked, outbound campaigns run automatically, and every interaction drives revenue. 24/7, at 90% lower cost."
       },
       {
         "q": "What happens after hours?",
@@ -7835,7 +7838,8 @@
       "confirmed": "Confirmed",
       "pending": "Pending",
       "cancelled": "Cancelled",
-      "completed": "Completed"
+      "completed": "Completed",
+      "noShow": "No-Show"
     },
     "defaultSource": "Inbound call",
     "sourceOutbound": "Outbound",
@@ -7904,7 +7908,8 @@
       "sendReminder": "Send Reminder",
       "sending": "Sending...",
       "time": "Time"
-    }
+    },
+    "subtitle": "AI-managed meetings. Appointments are confirmed, reminded, and followed up automatically."
   },
   "continuity": {
     "calmLine": "Decisions remain on track."
@@ -8777,7 +8782,7 @@
       "whatsappLabel": "WhatsApp",
       "whatsappComingSoon": "WhatsApp integration support is coming soon. Stay tuned!",
       "crmHeading": "CRM & contacts",
-      "crmDescription": "Connect your CRM to sync leads and contacts automatically. Your data stays secure and in sync across all your business tools.",
+      "crmDescription": "When your operator captures a lead, it automatically pushes to your CRM. Contacts sync bidirectionally so your operator always has the latest data.",
       "lastSyncLabel": "Last sync:",
       "recordsSyncedLabel": "Records synced:",
       "syncError": "sync error",
@@ -8787,11 +8792,11 @@
       "webhookDesc": "Use the webhook below to send lead and appointment events to HubSpot, Salesforce, Zapier, or any tool that accepts webhooks.",
       "calendarHeading": "Calendar",
       "googleCalendarLabel": "Google Calendar",
-      "calendarDesc": "Let your AI check availability and book confirmed appointments.",
+      "calendarDesc": "Your operator checks your calendar in real-time and books qualified leads into open slots automatically.",
       "todaysSlots": "Today's first open slots",
       "automationHeading": "Automation & webhooks",
       "webhookDestinationTitle": "Slack / Zapier webhook destination",
-      "webhookDestinationDesc": "Paste a Slack incoming webhook or Zapier catch hook URL. We'll send operator-safe events only.",
+      "webhookDestinationDesc": "Paste a Slack incoming webhook or Zapier catch hook URL. We send lead capture, appointment, and call events only — no sensitive data.",
       "webhookUrlPlaceholder": "https://hooks.slack.com/... or https://hooks.zapier.com/...",
       "signingSecretLabel": "Signing secret (optional)",
       "signingSecretPlaceholderSaved": "Secret saved. Enter a new value to rotate it.",
@@ -8889,7 +8894,7 @@
   },
   "integrationsHealth": {
     "title": "Integration Health",
-    "empty": "No integrations connected yet. Connect your CRM or calendar to get started.",
+    "empty": "No integrations connected yet. Connect your CRM or calendar so your operator can sync leads and book appointments automatically.",
     "browse": "Browse integrations",
     "neverSynced": "Never synced",
     "googleCalendar": "Google Calendar",
@@ -9161,10 +9166,10 @@
   "marketing": {
     "hero": {
       "badge": "",
-      "heading1": "Never miss a call.",
-      "heading2": "Never lose a lead.",
+      "heading1": "Your Revenue. Fully Automated.",
+      "heading2": "Every lead worked. Every dollar recovered.",
       "heading3": "",
-      "description": "Recall Touch answers calls, books appointments, follows up with leads, and recovers no-shows — 24/7, without your team lifting a finger.",
+      "description": "Recall Touch runs your entire revenue cycle — inbound calls, outbound campaigns, lead qualification, appointment booking, follow-up sequences, and revenue recovery. 24/7. No humans required.",
       "socialProof": "businesses",
       "socialProofRecovered": "recovered",
       "startFreeTrial": "Get started",
@@ -10975,8 +10980,8 @@
     "scriptLabel": "Script"
   },
   "voices": {
-    "pageTitle": "Voice Library",
-    "pageSubtitle": "Configure and manage AI voices for your workspace.",
+    "pageTitle": "Voice Optimization",
+    "pageSubtitle": "Voice selection directly impacts conversion rate. Choose the voice that wins with your buyers.",
     "previewText": "I'm an AI assistant. How can I help you today?",
     "cloneErrorFormat": "Invalid audio format. Please use MP3, WAV, or M4A",
     "cloneErrorSize": "Audio file too large. Maximum size is 25MB",
@@ -10985,8 +10990,6 @@
     "genderMale": "Male",
     "genderFemale": "Female",
     "genderNeutral": "Neutral",
-    "pageTitle": "Voice Configuration",
-    "pageSubtitle": "Configure and manage voice settings",
     "selectWorkspace": "Select Workspace",
     "selectWorkspaceDesc": "Choose a workspace to configure",
     "activeConfig": "Active Configuration",

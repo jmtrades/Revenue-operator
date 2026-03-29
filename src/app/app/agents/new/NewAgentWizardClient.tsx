@@ -22,13 +22,13 @@ import { AGENT_TEMPLATES, type AgentTemplate } from "@/lib/data/agent-templates"
 import { CURATED_VOICES, DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
 
 const STEPS = [
-  { id: 1, labelKey: "stepPurpose", icon: Phone },
-  { id: 2, labelKey: "stepPersonality", icon: Mic },
-  { id: 3, labelKey: "stepKnowledge", icon: BookOpen },
-  { id: 4, labelKey: "stepRules", icon: Shield },
-  { id: 5, labelKey: "stepPhoneSchedule", icon: Calendar },
-  { id: 6, labelKey: "stepTest", icon: Play },
-  { id: 7, labelKey: "stepLaunch", icon: Rocket },
+  { id: 1, labelKey: "stepMission", icon: Phone },
+  { id: 2, labelKey: "stepVoiceIdentity", icon: Mic },
+  { id: 3, labelKey: "stepIntelligence", icon: BookOpen },
+  { id: 4, labelKey: "stepGuardrails", icon: Shield },
+  { id: 5, labelKey: "stepOperatingHours", icon: Calendar },
+  { id: 6, labelKey: "stepVerify", icon: Play },
+  { id: 7, labelKey: "stepDeploy", icon: Rocket },
 ] as const;
 
 type PurposeChoice = "inbound" | "outbound" | "both";
@@ -284,8 +284,8 @@ export default function NewAgentWizardClient({
       <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-6 mb-6">
         {step === 1 && (
           <>
-            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("purposeTitle")}</h2>
-            <p className="text-[var(--text-tertiary)] text-sm mb-4">{t("purposeHint")}</p>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("missionTitle")}</h2>
+            <p className="text-[var(--text-tertiary)] text-sm mb-4">{t("missionHint")}</p>
             <div className="grid grid-cols-3 gap-3 mb-6">
               {(
                 [
@@ -337,8 +337,8 @@ export default function NewAgentWizardClient({
 
         {step === 2 && (
           <>
-            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("personalityTitle")}</h2>
-            <p className="text-[var(--text-tertiary)] text-sm mb-4">{t("personalityHint")}</p>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("voiceIdentityTitle")}</h2>
+            <p className="text-[var(--text-tertiary)] text-sm mb-4">{t("voiceIdentityHint")}</p>
             <label className="block text-sm text-[var(--text-tertiary)] mb-1">{t("voiceLabel")}</label>
             <select
               value={state.voiceId}
@@ -386,8 +386,8 @@ export default function NewAgentWizardClient({
 
         {step === 3 && (
           <>
-            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("knowledgeHeading")}</h2>
-            <p className="text-[var(--text-tertiary)] text-sm mb-4">{t("knowledgeSubtitle")}</p>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("intelligenceHeading")}</h2>
+            <p className="text-[var(--text-tertiary)] text-sm mb-4">{t("intelligenceSubtitle")}</p>
             <label className="block text-sm text-[var(--text-tertiary)] mb-1">{t("businessHoursLabel")}</label>
             <input
               type="text"
@@ -437,8 +437,8 @@ export default function NewAgentWizardClient({
 
         {step === 4 && (
           <>
-            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("rulesHeading")}</h2>
-            <p className="text-[var(--text-tertiary)] text-sm mb-4">{t("rulesSubtitle")}</p>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("guardrailsHeading")}</h2>
+            <p className="text-[var(--text-tertiary)] text-sm mb-4">{t("guardrailsSubtitle")}</p>
             <label className="block text-sm text-[var(--text-tertiary)] mb-1">{t("neverSayLabel")}</label>
             <textarea
               value={state.neverSay.join("\n")}
@@ -469,8 +469,8 @@ export default function NewAgentWizardClient({
 
         {step === 5 && (
           <>
-            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("phoneScheduleHeading")}</h2>
-            <p className="text-[var(--text-tertiary)] text-sm mb-4">{t("phoneScheduleSubtitle")}</p>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("operatingHoursHeading")}</h2>
+            <p className="text-[var(--text-tertiary)] text-sm mb-4">{t("operatingHoursSubtitle")}</p>
             <label className="block text-sm text-[var(--text-tertiary)] mb-1">{t("activeHoursLabel")}</label>
             <input
               type="text"
@@ -505,8 +505,8 @@ export default function NewAgentWizardClient({
 
         {step === 6 && (
           <>
-            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("stepTest")}</h2>
-            <p className="text-[var(--text-tertiary)] text-sm mb-4">{t("testHint")}</p>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("verifyHeading")}</h2>
+            <p className="text-[var(--text-tertiary)] text-sm mb-4">{t("verifySubtitle")}</p>
             {agentId ? (
               <Link
                 href={`/app/agents/${agentId}/voice-test`}
@@ -524,8 +524,8 @@ export default function NewAgentWizardClient({
 
         {step === 7 && (
           <>
-            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("stepLaunch")}</h2>
-            <p className="text-[var(--text-tertiary)] text-sm mb-4">{t("launchHint")}</p>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("deployHeading")}</h2>
+            <p className="text-[var(--text-tertiary)] text-sm mb-4">{t("deploySubtitle")}</p>
             <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-4 space-y-2 text-sm">
               <p><span className="text-[var(--text-secondary)]">{t("reviewName")}</span> <span className="text-[var(--text-primary)]">{state.name}</span></p>
               <p><span className="text-[var(--text-secondary)]">{t("reviewPurpose")}</span> <span className="text-[var(--text-primary)]">{state.purpose}</span></p>
@@ -563,7 +563,7 @@ export default function NewAgentWizardClient({
             disabled={saving}
             className="flex items-center gap-1 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl px-6 py-2.5 text-sm hover:opacity-90 disabled:opacity-50"
           >
-            {step === 7 ? t("launch") : t("next")}
+            {step === 7 ? t("deploy") : t("next")}
             {step < 7 && <ChevronRight className="w-4 h-4" />}
           </button>
         </div>

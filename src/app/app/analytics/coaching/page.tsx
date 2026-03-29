@@ -48,7 +48,7 @@ export default function CoachingAnalyticsPage() {
             Coaching reports will appear here
           </p>
           <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>
-            After your AI agent handles calls, coaching analysis will generate
+            After your AI operator handles calls, coaching analysis will generate
             insights on tone, objection handling, and conversion effectiveness.
           </p>
         </div>

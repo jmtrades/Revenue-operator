@@ -172,6 +172,7 @@ export default function CampaignCreationPage() {
       router.push("/app/campaigns");
     } catch (error) {
       setIsLoading(false);
+      console.error("Campaign creation failed:", error);
     }
   };
 
@@ -183,10 +184,10 @@ export default function CampaignCreationPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2" style={{ color: "var(--text-primary)" }}>
-            Create Campaign
+            Execute Autonomous Campaign
           </h1>
           <p style={{ color: "var(--text-secondary)" }}>
-            Set up a new outbound calling campaign
+            Deploy intelligent revenue execution to qualify leads, recover revenue, or re-engage pipeline
           </p>
         </div>
 
@@ -321,7 +322,7 @@ export default function CampaignCreationPage() {
                   className="block text-sm font-medium mb-3"
                   style={{ color: "var(--text-primary)" }}
                 >
-                  Campaign Type *
+                  Execution Mode *
                 </label>
                 <div className="grid grid-cols-3 gap-3">
                   {(Object.entries(MODE_CONFIGS) as [CampaignMode, typeof MODE_CONFIGS.power][]).map(
@@ -926,12 +927,12 @@ export default function CampaignCreationPage() {
                 {isLoading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Launching...
+                    Executing...
                   </>
                 ) : (
                   <>
                     <Zap className="w-4 h-4" />
-                    Launch Campaign
+                    Execute Campaign
                   </>
                 )}
               </button>

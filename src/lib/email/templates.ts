@@ -77,7 +77,7 @@ function metricBox(label: string, value: string): string {
 
 export function buildWelcomeEmail(name: string): { subject: string; html: string } {
   const safeName = name?.trim() || "there";
-  const subject = `Welcome to Recall Touch, ${safeName} — your AI agent is ready`;
+  const subject = `Welcome to Recall Touch, ${safeName} — your AI operator is ready`;
 
   const content = `
   <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">Welcome to Recall Touch</h1>
@@ -129,7 +129,7 @@ export function buildWelcomeEmail(name: string): { subject: string; html: string
     — Junior, Founder of Recall Touch
   </p>`;
 
-  return { subject, html: emailWrapper(content, `Your account is active. Set up your AI agent in 3 minutes.`) };
+  return { subject, html: emailWrapper(content, `Your account is active. Set up your AI operator in 3 minutes.`) };
 }
 
 // ─── TRIAL EXPIRING EMAIL ───────────────────────────────────────────────
@@ -146,12 +146,12 @@ export function buildTrialExpiringEmail(params: {
   const safeName = name?.trim() || "there";
   const tierDisplay = tier === "solo" ? "Starter ($147/mo)" : tier === "business" ? "Growth ($297/mo)" : tier === "scale" ? "Business ($597/mo)" : "Agency ($997/mo)";
   const subject = daysLeft <= 1
-    ? `Your trial ends tomorrow — don't lose your AI agent`
+    ? `Your trial ends tomorrow — don't lose your AI operator`
     : `${daysLeft} days left on your trial — here's what you'd lose`;
 
   const content = `
   <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">Your trial ${daysLeft <= 1 ? "ends tomorrow" : `ends in ${daysLeft} days`}</h1>
-  <p style="margin:0 0 24px;font-size:15px;color:#a3a3a3;line-height:1.6;">Hi ${escapeHtml(safeName)}, here's what your AI agent has done so far:</p>
+  <p style="margin:0 0 24px;font-size:15px;color:#a3a3a3;line-height:1.6;">Hi ${escapeHtml(safeName)}, here's what your AI operator has done so far:</p>
 
   <table role="presentation" width="100%" cellpadding="0" cellspacing="8" style="margin-bottom:24px;">
   <tr>
@@ -165,14 +165,14 @@ export function buildTrialExpiringEmail(params: {
   <div style="background:#1a1a1a;border:1px solid #262626;border-radius:12px;padding:16px 20px;margin-bottom:24px;">
     <p style="margin:0;font-size:14px;color:#fbbf24;font-weight:600;">What happens if you don't subscribe:</p>
     <p style="margin:8px 0 0;font-size:13px;color:#a3a3a3;line-height:1.6;">
-      Your AI agent stops answering calls. Every call goes to voicemail — and
+      Your AI operator stops answering calls. Every call goes to voicemail — and
       <strong style="color:#ef4444;">80% of callers who reach voicemail never call back</strong>.
     </p>
   </div>` : ""}
 
   <p style="margin:0 0 4px;font-size:14px;color:#e5e5e5;">Continue on <strong>${tierDisplay}</strong>:</p>
 
-  ${ctaButton("Activate My Plan — Keep My AI Running", `${APP_URL}/app/settings/billing`)}
+  ${ctaButton("Activate My Plan — Keep My Operator Running", `${APP_URL}/app/settings/billing`)}
 
   <p style="margin:0;font-size:13px;color:#737373;line-height:1.6;">
     Not ready? <a href="${APP_URL}/app/settings/billing" style="color:#10b981;text-decoration:underline;">Downgrade to Starter ($147/mo)</a> or reply to this email for help.
@@ -181,7 +181,7 @@ export function buildTrialExpiringEmail(params: {
 
   return {
     subject,
-    html: emailWrapper(content, `Your Recall Touch trial ${daysLeft <= 1 ? "ends tomorrow" : `ends in ${daysLeft} days`}. ${callsHandled > 0 ? `Your AI handled ${callsHandled} calls.` : "Activate now to start."}`),
+    html: emailWrapper(content, `Your Recall Touch trial ${daysLeft <= 1 ? "ends tomorrow" : `ends in ${daysLeft} days`}. ${callsHandled > 0 ? `Your operator handled ${callsHandled} calls.` : "Activate now to start."}`),
   };
 }
 
@@ -197,14 +197,14 @@ export function buildMilestoneEmail(params: {
   const safeName = name?.trim() || "there";
 
   const milestoneMessages: Record<number, { headline: string; body: string }> = {
-    1: { headline: "Your AI agent just handled its first call", body: "Your phone line is now live with AI coverage. Every call from here is one less you have to worry about." },
-    10: { headline: "10 calls handled — your AI is working", body: "That's 10 calls answered instantly, zero hold times, zero voicemails. The ROI is already building." },
-    50: { headline: "50 calls handled — momentum is building", body: "At this pace, your AI agent is saving you hours of phone time every week." },
-    100: { headline: "100 calls — this is real ROI", body: "100 calls handled by your AI. At $47 average value per call, that's potentially $4,700 in recovered revenue." },
-    500: { headline: "500 calls — your AI is a full-time employee", body: "Most businesses need 2-3 staff to handle this volume. Your AI does it alone, 24/7." },
+    1: { headline: "Your AI operator just handled its first call", body: "Your phone line is now live with AI coverage. Every call from here is one less you have to worry about." },
+    10: { headline: "10 calls handled — your operator is working", body: "That's 10 calls answered instantly, zero hold times, zero voicemails. The ROI is already building." },
+    50: { headline: "50 calls handled — momentum is building", body: "At this pace, your AI operator is saving you hours of phone time every week." },
+    100: { headline: "100 calls — this is real ROI", body: "100 calls handled by your operator. At $47 average value per call, that's potentially $4,700 in recovered revenue." },
+    500: { headline: "500 calls — your operator is a full-time employee", body: "Most businesses need 2-3 staff to handle this volume. Your operator does it alone, 24/7." },
   };
 
-  const msg = milestoneMessages[milestone] ?? { headline: `${milestone} calls handled!`, body: `Your AI agent has handled ${milestone} calls.` };
+  const msg = milestoneMessages[milestone] ?? { headline: `${milestone} calls handled!`, body: `Your AI operator has handled ${milestone} calls.` };
 
   const subject = msg.headline;
 
@@ -234,7 +234,7 @@ export function buildMilestoneEmail(params: {
 
   return {
     subject,
-    html: emailWrapper(content, `Your Recall Touch AI has handled ${milestone} calls and saved ~$${estimatedRevenueSaved.toLocaleString()}.`),
+    html: emailWrapper(content, `Your Recall Touch operator has handled ${milestone} calls and saved ~$${estimatedRevenueSaved.toLocaleString()}.`),
   };
 }
 
@@ -297,27 +297,27 @@ export function buildDunningEmail(params: {
       subject: "Action needed: payment failed",
       urgency: "Payment Issue",
       headline: "Your payment didn't go through",
-      body: "We tried to charge your card but it was declined. Please update your payment method to keep your AI agent running without interruption.",
+      body: "We tried to charge your card but it was declined. Please update your payment method to keep your AI operator running without interruption.",
       color: "#fbbf24",
     },
     2: {
       subject: "Second attempt failed — update your payment",
       urgency: "Second Attempt Failed",
       headline: "We still can't process your payment",
-      body: "This is the second failed attempt. Your AI agent is still running, but service will be paused soon if we can't collect payment.",
+      body: "This is the second failed attempt. Your AI operator is still running, but service will be paused soon if we can't collect payment.",
       color: "#f97316",
     },
     3: {
       subject: "Final warning: service pauses in 48 hours",
       urgency: "Final Warning",
-      headline: "Your AI agent will stop in 48 hours",
-      body: "Three payment attempts have failed. If we don't receive payment within 48 hours, your AI agent will be paused and calls will go to voicemail.",
+      headline: "Your AI operator will stop in 48 hours",
+      body: "Three payment attempts have failed. If we don't receive payment within 48 hours, your AI operator will be paused and calls will go to voicemail.",
       color: "#ef4444",
     },
     4: {
       subject: "Service paused — update payment to reactivate",
       urgency: "Service Paused",
-      headline: "Your AI agent has been paused",
+      headline: "Your AI operator has been paused",
       body: "After four failed payment attempts, your service has been paused. All calls are now going to voicemail. Update your payment to reactivate instantly.",
       color: "#ef4444",
     },
@@ -358,6 +358,6 @@ export function buildDunningEmail(params: {
 
   return {
     subject: cfg.subject,
-    html: emailWrapper(content, `${cfg.headline}. Amount due: ${amountDue}. Update your payment to keep your AI running.`),
+    html: emailWrapper(content, `${cfg.headline}. Amount due: ${amountDue}. Update your payment to keep your operator running.`),
   };
 }

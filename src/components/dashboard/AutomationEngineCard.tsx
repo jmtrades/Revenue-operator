@@ -89,10 +89,10 @@ export function AutomationEngineCard() {
         <div className="py-8 text-center">
           <Zap className="w-10 h-10 mx-auto mb-3 text-[var(--text-disabled)] opacity-30" />
           <p className="text-sm text-[var(--text-secondary)] mb-1 font-medium">
-            Your automation engine is standing by
+            Your execution engine is ready
           </p>
           <p className="text-xs text-[var(--text-tertiary)]">
-            It will activate after your first calls
+            Activates on your first call
           </p>
         </div>
       ) : (
@@ -126,7 +126,7 @@ export function AutomationEngineCard() {
               <div className="flex items-center gap-1.5 mb-2">
                 <Phone className="w-3.5 h-3.5 text-purple-400" />
                 <p className="text-[10px] font-semibold text-[var(--text-tertiary)]">
-                  Agent calls
+                  Operator calls
                 </p>
               </div>
               <p className="text-xl font-bold tabular-nums text-[var(--text-primary)]">
@@ -161,7 +161,7 @@ export function AutomationEngineCard() {
 
           {/* Footer */}
           <p className="text-[10px] text-[var(--text-tertiary)] text-center pt-2 border-t border-[var(--border-default)]">
-            Your AI engine works 24/7. Refresh to see latest activity.
+            Your autonomous operator runs 24/7. Refresh for latest activity.
           </p>
         </div>
       )}

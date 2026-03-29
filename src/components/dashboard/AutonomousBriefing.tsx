@@ -222,7 +222,7 @@ export function AutonomousBriefing({ workspaceId }: AutonomousBriefingProps) {
             {/* Agent note */}
             <div className="mt-4 pt-4 border-t border-[var(--border-default)]">
               <p className="text-xs text-[var(--text-secondary)] italic">
-                Your AI agent handled it. All {data.period_hours}h.
+                Your autonomous operator handled it. All {data.period_hours}h.
               </p>
             </div>
           </div>

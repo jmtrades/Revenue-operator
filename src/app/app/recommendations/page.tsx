@@ -43,7 +43,7 @@ export default function RecommendationsPage() {
             Recommendations will appear here
           </p>
           <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>
-            As your AI agent handles more calls, the system will surface
+            As your AI operator handles more calls, the system will surface
             actionable insights on missed revenue, follow-up opportunities, and
             process improvements.
           </p>

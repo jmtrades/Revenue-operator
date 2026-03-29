@@ -70,7 +70,7 @@ export default function PartnersPage() {
       ) : revenueCents === 0 ? (
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-12 text-center">
           <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-            No revenue recovered yet. As your AI agent books calls and generates revenue, your partner share will appear here.
+            No revenue recovered yet. As your AI operator books calls and generates revenue, your partner share will appear here.
           </p>
         </div>
       ) : (

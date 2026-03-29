@@ -382,7 +382,7 @@ export default function AppSettingsIntegrationsPage() {
                 </div>
               </div>
               <p className="text-xs text-[var(--text-secondary)] mb-3">
-                {t("whatsappComingSoon", { defaultValue: "Send and receive WhatsApp messages through your AI agent. Connect your WhatsApp Business account to get started." })}
+                {t("whatsappComingSoon", { defaultValue: "Send and receive WhatsApp messages through your autonomous operator. Connect your WhatsApp Business account to get started." })}
               </p>
               <a href="https://business.whatsapp.com/" target="_blank" rel="noopener noreferrer" className="text-xs text-[var(--accent-primary)] hover:underline">
                 Learn about WhatsApp Business API →

@@ -260,7 +260,7 @@ export default function AutoSetupPage() {
             Re-analyze Your Website
           </h1>
           <p style={{ color: "var(--text-secondary)" }}>
-            Update your AI agent's knowledge base with fresh website analysis.
+            Update your AI operator's knowledge base with fresh website analysis.
           </p>
         </div>
 

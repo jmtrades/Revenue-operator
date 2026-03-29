@@ -65,8 +65,8 @@ export async function GET() {
       try {
         const ownerName = ws.name || "there";
         const subject = recoveryCount === 0
-          ? `Your AI agent is almost ready, ${ownerName}!`
-          : `Still want to set up your AI phone agent, ${ownerName}?`;
+          ? `Your AI operator is almost ready, ${ownerName}!`
+          : `Still want to set up your AI operator, ${ownerName}?`;
 
         const bodyHtml = buildRecoveryEmail(ownerName, lastStep, progressPercent, recoveryCount);
 
@@ -142,7 +142,7 @@ function buildRecoveryEmail(
 
   const stepHint = lastStep !== "unknown"
     ? `<p>You were working on the <strong>${lastStep}</strong> step — your progress is saved and waiting for you.</p>`
-    : `<p>Your account is set up and ready — you just need to finish configuring your AI agent.</p>`;
+    : `<p>Your account is set up and ready — you just need to finish configuring your AI operator.</p>`;
 
   const urgencyNote = attempt === 0
     ? `<p>Every missed call is a potential customer calling your competitor instead. Let's fix that today.</p>`
@@ -153,11 +153,11 @@ function buildRecoveryEmail(
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1a1a1a;max-width:560px;margin:0 auto;padding:24px;">
   <p>Hey ${name},</p>
-  <p>I noticed you started setting up your Recall Touch AI agent but didn't quite finish. No worries — it happens!</p>
+  <p>I noticed you started setting up your Recall Touch AI operator but didn't quite finish. No worries — it happens!</p>
   ${progressBar}
   ${stepHint}
   ${urgencyNote}
-  <p>The whole setup takes about 10-15 minutes, and then your AI agent starts answering calls immediately.</p>
+  <p>The whole setup takes about 10-15 minutes, and then your AI operator starts answering calls immediately.</p>
   <p><a href="${signupLink}" style="display:inline-block;padding:14px 28px;background:#2563EB;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;font-size:16px;">Finish Setup Now</a></p>
   <p style="margin-top:20px;">Need help? Just reply to this email — a real human will get back to you within the hour.</p>
   <p>Cheers,<br><strong>The Recall Touch Team</strong></p>

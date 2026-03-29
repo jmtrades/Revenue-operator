@@ -93,7 +93,7 @@ export async function GET(req: NextRequest) {
     const subject = "Quick question — did you get stuck?";
     const body = `Hi ${userName},
 
-I noticed you signed up but haven't finished setting up your AI agent yet.
+I noticed you signed up but haven't finished setting up your AI operator yet.
 
 If something was confusing or didn't work, reply to this email and I'll help personally.
 
