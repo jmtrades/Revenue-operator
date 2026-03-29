@@ -6,11 +6,18 @@ export const dynamic = "force-dynamic";
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
 import { isSessionEnabled } from "@/lib/auth/session";
 import { log } from "@/lib/logger";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { parseBody, safeStringSchema } from "@/lib/api/validate";
+
+const createWorkspaceSchema = z.object({
+  name: safeStringSchema(100).min(1, "Workspace name is required"),
+  owner_id: z.string().uuid("Invalid owner_id").optional(),
+});
 
 export async function GET(req: NextRequest) {
   const db = getDb();
@@ -49,15 +56,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: { name: string; owner_id?: string };
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
-  }
+  const parsed = await parseBody(request, createWorkspaceSchema);
+  if ("error" in parsed) return parsed.error;
 
-  const name = body.name;
-  let owner_id = body.owner_id;
+  const name = parsed.data.name;
+  let owner_id = parsed.data.owner_id;
 
   if (isSessionEnabled()) {
     const session = await getSession(request);

@@ -7,6 +7,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { completeActionIntent } from "@/lib/action-intents";
 import { getDb } from "@/lib/db/queries";
@@ -19,6 +20,23 @@ import { recordStrategyEffectiveness } from "@/lib/intelligence/strategy-effecti
 import { appendLedgerEvent } from "@/lib/ops/ledger";
 import type { OperationalAction } from "@/lib/reciprocal-events";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { parseBody, workspaceIdSchema, safeStringSchema } from "@/lib/api/validate";
+
+const completeIntentSchema = z.object({
+  id: z.string().uuid("Invalid intent ID"),
+  result_status: z.enum(["succeeded", "failed", "skipped"]),
+  result_ref: z.string().max(500).nullable().optional(),
+  write_back: z.object({
+    type: z.enum(["connector_event", "reciprocal_event"]),
+    workspace_id: workspaceIdSchema,
+    channel: safeStringSchema(100).optional(),
+    external_id: safeStringSchema(500).optional(),
+    payload: z.record(z.string(), z.unknown()).optional(),
+    thread_id: z.string().uuid("Invalid thread_id").optional(),
+    actor_role: z.enum(["originator", "counterparty", "downstream", "observer"]).optional(),
+    operational_action: safeStringSchema(100).optional(),
+  }).optional(),
+});
 
 const EMIT_INTENT_ACTIONS = ["schedule_followup", "request_disclosure_confirmation", "escalate_to_human", "pause_execution"] as const;
 
@@ -28,31 +46,12 @@ export async function POST(request: NextRequest) {
   const csrfBlock = assertSameOrigin(request);
   if (csrfBlock) return csrfBlock;
 
-  let body: {
-    id?: string;
-    result_status?: string;
-    result_ref?: string | null;
-    write_back?: {
-      type: "connector_event" | "reciprocal_event";
-      workspace_id: string;
-      channel?: string;
-      external_id?: string;
-      payload?: Record<string, unknown>;
-      thread_id?: string;
-      actor_role?: string;
-      operational_action?: string;
-    };
-  };
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
-  }
+  const parsed = await parseBody(request, completeIntentSchema);
+  if ("error" in parsed) return parsed.error;
+  const body = parsed.data;
+
   const id = body.id;
-  const resultStatus = body.result_status as ResultStatus | undefined;
-  if (!id || !resultStatus || !["succeeded", "failed", "skipped"].includes(resultStatus)) {
-    return NextResponse.json({ error: "id and result_status (succeeded|failed|skipped) required" }, { status: 400 });
-  }
+  const resultStatus = body.result_status;
 
   const db = getDb();
   const { data: row } = await db
