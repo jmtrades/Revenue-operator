@@ -4277,9 +4277,17 @@
         "desc": "Voice agent personality, script, and intelligence settings",
         "required": "(Required)"
       },
+      "voices": {
+        "label": "Voice settings",
+        "desc": "AI voice selection, language, and speech configuration"
+      },
       "callRules": {
         "label": "Call rules",
         "desc": "Call hours, retry logic, and escalation rules"
+      },
+      "industryTemplates": {
+        "label": "Industry templates",
+        "desc": "Pre-built agent configurations for your industry"
       },
       "outbound": {
         "label": "Outbound settings",
