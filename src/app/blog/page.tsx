@@ -25,10 +25,10 @@ export const metadata: Metadata = {
 };
 
 const RESOURCE_TOPICS = [
-  { title: "Call Answering & AI Phone Operators", description: "How AI handles inbound calls, qualifies intent, and books appointments without a human on staff." },
+  { title: "AI Revenue Operators", description: "How autonomous operators handle inbound calls, qualify intent, and book appointments without a human on staff." },
   { title: "Call Handling & Recovery", description: "Turn every call into an opportunity. Automate callbacks, follow-ups, and lead recovery at scale." },
   { title: "Speed-to-Lead & Follow-up", description: "Respond to inbound leads in seconds, not hours. Automated sequences that move prospects to appointments." },
-  { title: "Revenue Operations Automation", description: "End-to-end workflows that handle answering, qualifying, booking, and follow-up so your team focuses on closing." },
+  { title: "Revenue Operations Automation", description: "End-to-end workflows that handle qualifying, booking, follow-up, and recovery so your team focuses on closing." },
   { title: "Industry-Specific Guides", description: "Deep dives into HVAC, Dental, Legal, and Real Estate workflows optimized for missed-call recovery." },
   { title: "Measurement & ROI", description: "Track what matters: calls answered, appointments booked, revenue recovered, and attribution by source." },
 ];

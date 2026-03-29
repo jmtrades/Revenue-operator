@@ -29,6 +29,9 @@
         "calendar": "Calendar connected",
         "team": "Team member invited"
       }
+    },
+    "nav": {
+      "agents": "Operators"
     }
   },
   "banners": {
@@ -129,7 +132,7 @@
     "appNavigation": "App navigation",
     "shortcutCommandPalette": "Open command palette",
     "shortcutDashboard": "Go to Dashboard",
-    "shortcutAgents": "Go to Agents",
+    "shortcutAgents": "Go to Operators",
     "shortcutCalls": "Go to Calls",
     "shortcutLeads": "Go to Leads",
     "shortcutCampaigns": "Go to Campaigns",
@@ -158,7 +161,7 @@
       },
       "provisioning": {
         "title": "Provisioning checklist",
-        "body": "Use the same fast flow every time: pick mode + industry, create the agent, connect the phone, run a test call.",
+        "body": "Use the same fast flow every time: pick mode + industry, create the operator, connect the phone, run a test call.",
         "note": "Tip: use the demo simulator and the revenue recovered card as your proof loop during onboarding."
       },
       "branding": {
@@ -303,7 +306,7 @@
     "exportFailed": "Export failed. Try again.",
     "importFailed": "Import failed.",
     "searchFailed": "Search failed.",
-    "createAgentFirst": "Create an agent first in the Agents section, then try again.",
+    "createAgentFirst": "Create an operator first in the Operators section, then try again.",
     "activateError": "Failed to activate",
     "active": "Active",
     "addContactFirst": "Add contact first",
@@ -330,7 +333,7 @@
     "inviteRevoked": "Invite cancelled",
     "inviteSent": "Invite sent",
     "launchFailed": "Launch failed",
-    "launched": "Launched",
+    "launched": "Operator launched",
     "launchedWithCount": "Launched with count",
     "loadFailed": "Load failed",
     "minTranscript": "Min transcript",
@@ -416,7 +419,7 @@
       "clear": "Clear",
       "changeStatus": "Change Status",
       "assign": "Assign",
-      "unknownAgent": "Unknown Agent",
+      "unknownAgent": "Unknown Operator",
       "modal": {
         "title": "Lead Details",
         "nameLabel": "Name",
@@ -457,15 +460,15 @@
         "defaultPreviewText": "Please enter a script for voice testing",
         "toast": {
           "played": "Voice preview played for {name}",
-          "applied": "Voice applied to agent"
+          "applied": "Voice applied to operator"
         },
         "errors": {
           "previewFailed": "Failed to preview voice",
-          "applyFailed": "Failed to apply voice to agent",
+          "applyFailed": "Failed to apply voice to operator",
           "generic": "Something went wrong testing the voice. Please try again."
         },
-        "noAgent": "Agent not found",
-        "backToAgents": "Back to Agents",
+        "noAgent": "Operator not found",
+        "backToAgents": "Back to Operators",
         "scriptSection": "Test Script",
         "scriptPlaceholder": "Enter text to preview the voice",
         "scriptHelp": "This text will be used to preview the voice quality",
@@ -473,7 +476,7 @@
         "voiceA": "Voice A",
         "voiceB": "Voice B",
         "allVoices": "All Voices",
-        "applyToAgent": "Apply to Agent",
+        "applyToAgent": "Apply to Operator",
         "selected": "Selected",
         "selectVoicePrompt": "Select a voice to preview"
       }
@@ -509,7 +512,9 @@
     "exported": "Campaigns exported successfully",
     "exportedSelected": "Selected contacts exported",
     "selected": "selected",
-    "oauthPending": "OAuth setup is processing. Please try again in a moment."
+    "oauthPending": "OAuth setup is processing. Please try again in a moment.",
+    "agent": "Operator created",
+    "tested": "Operator tested"
   },
   "auth": {
     "signIn": {
@@ -709,7 +714,7 @@
     "buyMoreMinutes": "Buy More Minutes",
     "upgradeTo": "Upgrade to {tier}",
     "bonusMinutes": "Bonus minutes from purchased packs: {count} min",
-    "expandAgentCapacity": "Expand Agent Capacity",
+    "expandAgentCapacity": "Expand Operator Capacity",
     "minutePacksDesc": "One-time minute packs — use them anytime, no expiration. Bonus minutes are used before overage billing.",
     "popular": "Popular",
     "bestValue": "Best Value",
@@ -726,8 +731,10 @@
     "roiTitle": "Platform Return on Investment",
     "trial": {
       "title": "You're on a free trial",
-      "description": "Subscribe to a plan to keep your agents running after the trial ends. Your data and configuration will be preserved."
-    }
+      "description": "Subscribe to a plan to keep your operators running after the trial ends. Your data and configuration will be preserved."
+    },
+    "description": "Subscribe to a plan to keep your operators running after the trial ends. Your data and configuration will be preserved.",
+    "chooseVoice": "Choose Operator Voice"
   },
   "planChange": {
     "title": "Change your plan",
@@ -855,7 +862,7 @@
       "completeProfileDesc": "Add business info and preferences",
       "setupNumber": "Set Up Your Number",
       "setupNumberDesc": "Configure your AI operator's phone number",
-      "chooseVoice": "Choose Agent Voice",
+      "chooseVoice": "Choose Operator Voice",
       "chooseVoiceDesc": "Pick the perfect voice personality",
       "viewActivity": "View Recent Activity",
       "viewActivityDesc": "Check call logs and recordings"
@@ -880,9 +887,10 @@
       "subtitle": "See exactly how much money Revenue Operator has recovered.",
       "description": "Real-time view of revenue recovered by your AI operator.",
       "export": "Export",
-      "emptyDescription": "Once your AI starts answering calls, revenue metrics will appear here.",
+      "emptyDescription": "Once your AI starts executing revenue operations, revenue metrics will appear here.",
       "setupCallForwarding": "Set up call forwarding →",
-      "totalRevenueRecovered": "Total Revenue Recovered"
+      "totalRevenueRecovered": "Total Revenue Recovered",
+      "breadcrumbAgents": "Operator Analytics"
     },
     "usage": {
       "limitReached": "Limit reached.",
@@ -900,7 +908,7 @@
       "leadsCreated": "Leads created",
       "appointmentsBooked": "Revenue opportunities created",
       "revenueProtected": "Revenue protected by autonomous operations",
-      "recovered": "Agent revenue impact",
+      "recovered": "Operator revenue impact",
       "followUpsSent": "Automated recovery actions",
       "minutes": "minutes"
     },
@@ -926,14 +934,14 @@
       "progressLabel": "Setup progress",
       "business": "Business info added",
       "use_cases": "Use cases selected",
-      "agent": "Agent created",
+      "agent": "Operator created",
       "voice": "Voice selected",
       "greeting": "Opening greeting set",
       "knowledge": "3+ knowledge entries",
       "behavior": "Behavior configured",
       "phone": "Phone number connected",
-      "tested": "Agent tested",
-      "launched": "Agent launched",
+      "tested": "Operator tested",
+      "launched": "Operator launched",
       "item": {
         "businessProfile": "Set up your business profile",
         "agent": "Configure your first AI operator",
@@ -965,7 +973,7 @@
       "statAnswered": "answered",
       "statNewLeads": "new leads",
       "statAppts": "appts",
-      "setupAgent": "View your agents →",
+      "setupAgent": "View your operators →",
       "filters": {
         "all": "All",
         "needs_action": "Needs action",
@@ -1074,7 +1082,7 @@
       "title": "What to do next",
       "connectPhone": {
         "title": "Connect your phone",
-        "body": "Route your existing number or claim a new one so your AI can start answering real calls."
+        "body": "Route your existing number or claim a new one so your AI can start handling real revenue conversations."
       },
       "testCall": {
         "title": "Make a test call",
@@ -1089,7 +1097,7 @@
     "seeLive": {
       "title": "See it handled live",
       "description": "Watch the sample call walkthrough to hear how a real lead is answered, qualified, and booked before you connect your line.",
-      "cta": "Try our agent →"
+      "cta": "Try our operator →"
     },
     "roi": {
       "title": "Estimated ROI",
@@ -1101,7 +1109,8 @@
       "view": "View →"
     },
     "detail": {
-      "callLabel": "Call"
+      "callLabel": "Call",
+      "agentWillAnswerFor": "Your operator will answer calls, capture leads, and book appointments for {name}."
     },
     "filters": {
       "all": "All",
@@ -1113,7 +1122,7 @@
     "empty": {
       "selectContext": "Select a context.",
       "analyticsAppearHere": "Analytics appear here.",
-      "agentsAppearHere": "Agents appear here.",
+      "agentsAppearHere": "Operators appear here.",
       "teamAppearHere": "Team members.",
       "calendarAppearHere": "Appointments appear here.",
       "callsAppearHere": "Calls appear here.",
@@ -1127,13 +1136,13 @@
       "escalationsAppearHere": "Escalations appear here.",
       "complianceAppearHere": "Compliance settings appear here.",
       "integrationsAppearHere": "Connect calendar and CRM.",
-      "noDataYet": "No data yet",
+      "noDataYet": "Your revenue data starts here. Deploy an operator or launch a campaign to begin.",
       "noDataYetHint": "Set up call forwarding and take a few calls. Metrics and usage will appear here.",
       "setUpCallForwarding": "Set up call forwarding →",
-      "noAgentsYet": "No agents yet",
+      "noAgentsYet": "No operators yet",
       "noAgentsYetHint": "Your AI operator is configured in onboarding. Add voice, greeting, and knowledge there.",
-      "createFirstAgent": "Create your first agent →",
-      "loadAgentsError": "Could not load agents.",
+      "createFirstAgent": "Create your first operator →",
+      "loadAgentsError": "Could not load operators.",
       "recordSubtitle": "One moment…",
       "recordNotFound": "Not found",
       "handlingContinuesTitle": "Handling continues.",
@@ -1154,12 +1163,12 @@
       },
       "agents": {
         "title": "Operators",
-        "subtitle": "Configure AI phone agents.",
-        "subtitleShort": "AI phone agents."
+        "subtitle": "Configure AI phone operators.",
+        "subtitleShort": "AI phone operators."
       },
       "agent": {
-        "title": "Agent",
-        "subtitle": "Edit agent."
+        "title": "Operator",
+        "subtitle": "Edit operator."
       },
       "team": {
         "title": "Team",
@@ -1267,8 +1276,8 @@
       }
     },
     "agentDetail": {
-      "agentNotFound": "Agent not found.",
-      "backToAgents": "Back to agents",
+      "agentNotFound": "Operator not found.",
+      "backToAgents": "Back to operators",
       "greetingLabel": "Greeting",
       "voiceIdLabel": "Voice ID",
       "personalityLabel": "Personality",
@@ -1825,7 +1834,7 @@
       "saving": "Saving…",
       "somethingWentWrong": "Something went wrong",
       "failedToSave": "Failed to save",
-      "failedToSaveAgent": "Failed to save agent",
+      "failedToSaveAgent": "Failed to save operator",
       "myBusiness": "My Business",
       "theBusiness": "the business",
       "meetOperator": "Meet your AI operator",
@@ -1897,7 +1906,7 @@
         "calm": "Calm"
       },
       "greetingOptional": "Greeting (optional)",
-      "greetingPlaceholder": "Thanks for calling {business}! This is {agent}. How can I help you today?",
+      "greetingPlaceholder": "Thanks for calling {business}! This is {operator}. How can I help you today?",
       "back": "← Back",
       "teachAgentAbout": "Teach {name} about your business",
       "moreYouShare": "The more you share, the smarter your operator gets.",
@@ -1913,7 +1922,7 @@
       "anythingCallersAsk": "Anything callers always ask? (optional)",
       "faqPlaceholder": "Service call starts at $89. Serves the greater Portland area. Free estimates on remodels.",
       "yourBusinessNumber": "Your business number",
-      "youllGetNumber": "You'll get a number for your agent to answer. You can forward your existing number or use this as your main business line.",
+      "youllGetNumber": "You'll get a number for your operator to answer. You can forward your existing number or use this as your main business line.",
       "getMyNumber": "Get my number",
       "gettingNumber": "Getting your number…",
       "thisIsRevenueOperatorNumber": "This is your Revenue Operator number",
@@ -2014,7 +2023,7 @@
         "outbound": "Outbound",
         "leadScoring": "Lead scoring",
         "industryTemplates": "Industry templates",
-        "agent": "Agent",
+        "agent": "Operator",
         "marketplace": "Marketplace",
         "porting": "Port number",
         "mapping": "Field mapping",
@@ -2069,8 +2078,8 @@
       "voiceSelected": "Voice selected",
       "openingGreetingSet": "Opening greeting set",
       "behaviorConfigured": "Behavior configured",
-      "agentTested": "Agent tested",
-      "agentLaunched": "Agent launched"
+      "agentTested": "Operator tested",
+      "agentLaunched": "Operator launched"
     },
     "dayLabels": {
       "mon": "Mon",
@@ -2105,7 +2114,7 @@
     "greetingEvening": "Good evening",
     "welcomeMessage": "Welcome to {name}!",
     "heroHeading": "Welcome to your Revenue Operator dashboard",
-    "heroDescription": "Your AI agent is almost ready. Connect a number and make your first test call to see calls start appearing here automatically.",
+    "heroDescription": "Your AI operator is almost ready. Connect a number and make your first test call to see calls start appearing here automatically.",
     "todaySummary": "Here's what happened today.",
     "summaryBooked": "Appointment locked in from this call.",
     "summaryLead": "Lead captured and waiting for follow-up.",
@@ -2123,7 +2132,7 @@
     "openStep": "Open",
     "continueSetup": "Continue setup",
     "testCallCta": "Want to see your AI in action?",
-    "testCallDesc": "Use the Test tab on Agents to place a real voice call with your configured agent.",
+    "testCallDesc": "Use the Test tab on Operators to place a real voice call with your configured agent.",
     "tryTestCall": "Try a test call",
     "activityTimeline": "Activity Timeline",
     "live": "Live",
@@ -2168,9 +2177,9 @@
     "periodSummary": {
       "title": "Period summary",
       "empty": "Not enough data yet to generate a summary.",
-      "emptyState": "Analytics appear after your first calls.",
+      "emptyState": "Revenue intelligence builds from day one. Make a test call or launch your first campaign to see real-time analytics.",
       "handled": "You handled **{calls} call{calls != 1 ? 's' : ''}** with a **{answerRate}% answer rate**.",
-      "booked": "Your agents booked **{appointments} appointment{appointments != 1 ? 's' : ''}**, converting **{conversionRate}%** of qualified leads.",
+      "booked": "Your operators booked **{appointments} appointment{appointments != 1 ? 's' : ''}**, converting **{conversionRate}%** of qualified leads.",
       "revenue": "Estimated revenue impact: **${revenue}**.",
       "duration": "Average call duration: **{duration}**."
     },
@@ -2260,8 +2269,8 @@
     },
     "atAGlance": "{label} at a glance",
     "glanceSummary": "Handled {totalCalls} calls, created {leads} leads, booked {appointments} appointments, and protected an estimated ${revenue} in revenue.",
-    "glanceEmpty": "Once calls start coming in, you'll see a summary of how many became leads, appointments, and revenue.",
-    "emptyStateSummary": "Once calls start coming in, you'll see a summary of how many became leads, appointments, and revenue.",
+    "glanceEmpty": "Your autonomous pipeline is ready. Calls, conversions, and revenue will appear here in real-time once your operator is live.",
+    "emptyStateSummary": "Your autonomous pipeline is ready. Calls, conversions, and revenue will appear here in real-time once your operator is live.",
     "am": "AM",
     "pm": "PM",
     "leadConversionPct": "Lead conversion {pct}%",
@@ -2308,15 +2317,16 @@
     "periodAppointments": "{count} appointments, converting {pct}% of qualified leads.",
     "periodRevenue": "Estimated revenue impact: ${amount}.",
     "periodDuration": "Average call duration: {duration}.",
-    "breadcrumbAgents": "Agent Analytics",
+    "breadcrumbAgents": "Operator Analytics",
     "commonTopics": "Common Topics",
     "noCallData": "No call data available for this period.",
     "noOutcomes": "No outcomes recorded yet.",
     "noSummaryData": "No summary data available.",
     "noTrendData": "Not enough data to show trends.",
-    "otherAgents": "Other Agents",
+    "otherAgents": "Other Operators",
     "outcomeBreakdown": "Outcome Breakdown",
-    "successRateOverTime": "Success Rate Over Time"
+    "successRateOverTime": "Success Rate Over Time",
+    "recovered": "Operator revenue impact"
   },
   "agents": {
     "breadcrumbHome": "Home",
@@ -2346,7 +2356,7 @@
       "test": "Test",
       "launch": "Launch",
       "identity": "Mission",
-      "identityDescription": "What does this agent do?",
+      "identityDescription": "What does this operator do?",
       "voice": "Voice",
       "voiceDescription": "How does it sound?",
       "knowledgeDescription": "What does it know?",
@@ -2575,7 +2585,7 @@
       "title": "Knowledge base",
       "subtitle": "Q&A pairs your agent uses to answer callers.",
       "questionPlaceholder": "When caller asks about…",
-      "answerPlaceholder": "Agent responds with…",
+      "answerPlaceholder": "Operator responds with…",
       "remove": "Remove",
       "add": "Add Q&A",
       "importUrlPlaceholder": "https://your-website.com"
@@ -2618,7 +2628,7 @@
         "createError": "Could not create operator.",
         "activateError": "Could not activate."
       },
-      "namePlaceholder": "e.g. Sarah — Inbound Revenue Agent",
+      "namePlaceholder": "e.g. Sarah — Inbound Revenue Operator",
       "greetingPlaceholder": "What the operator says when the call starts",
       "businessHoursPlaceholder": "e.g. Mon–Fri 9am–5pm",
       "questionPlaceholder": "Question",
@@ -2926,7 +2936,7 @@
       "title": "Create agent",
       "subtitle": "Start from a proven pattern instead of configuring from scratch.",
       "closeAria": "Close create agent dialog",
-      "receptionistDesc": "Answer calls instantly, route intelligently, and convert every inquiry into a lead or appointment.",
+      "receptionistDesc": "Execute revenue instantly, route intelligently, and convert every inquiry into a lead or appointment.",
       "salesCallerDesc": "Call leads, qualify, and pitch.",
       "appointmentSetterDesc": "Book meetings, confirm, and remind.",
       "supportDesc": "Triage, answer, and escalate.",
@@ -2938,7 +2948,7 @@
       "all": "All"
     },
     "templateName": {
-      "receptionist": "Inbound Agent",
+      "receptionist": "Inbound Operator",
       "after_hours": "After-Hours",
       "emergency": "Emergency Line",
       "lead_qualifier": "Sales Caller",
@@ -2946,10 +2956,10 @@
       "review_request": "Review Request",
       "appointment_setter": "Appointment Setter",
       "support": "Support",
-      "scratch": "Custom Agent"
+      "scratch": "Custom Operator"
     },
     "greetings": {
-      "receptionist": "Hi, thanks for calling. I'm your AI inbound operator — I'll get the right details and make sure nothing is missed.",
+      "receptionist": "Hi, thanks for calling. I'm your autonomous revenue operator — I'll get the right details and make sure every opportunity is worked, every dollar recovered.",
       "after_hours": "Hi, this is your AI inbound operator for Revenue Operator, handling your calls after hours. How can I help today?",
       "emergency": "This is your emergency line. I'll move quickly, keep you calm, and make sure the right person is alerted.",
       "lead_qualifier": "Thanks for reaching out. I'll ask a few quick questions so we can get you to the right next step.",
@@ -2963,7 +2973,7 @@
       "askHuman": "Caller explicitly asks for a human",
       "angry": "Caller is angry or frustrated",
       "billing": "Question is about billing or payments",
-      "noAnswer": "Agent cannot answer after 2 attempts"
+      "noAnswer": "Operator cannot answer after 2 attempts"
     },
     "defaultFaq": {
       "hoursQuestion": "What are your hours?",
@@ -2981,7 +2991,7 @@
       "explicitlyAsksHuman": "Caller explicitly asks for a human",
       "angryFrustrated": "Caller is angry or frustrated",
       "billingPayments": "Question is about billing or payments",
-      "cannotAnswerAttempts": "Agent cannot answer after 2 attempts"
+      "cannotAnswerAttempts": "Operator cannot answer after 2 attempts"
     },
     "templateGreeting": {
       "afterHours": "Hi, you've reached us after hours. I'm the AI assistant — I can take a message, answer questions, or schedule a callback. How can I help?",
@@ -2994,12 +3004,12 @@
       "receptionist": "Thanks for calling. How can I help you today?"
     },
     "defaultAgent": {
-      "name": "Inbound Agent",
+      "name": "Inbound Operator",
       "simpleGreeting": "Thanks for calling. How can I help you today?",
       "defaultHours": "Mon–Fri 9am–5pm",
       "yourBusiness": "your business",
       "greeting": "Thanks for calling {business}. How can I help you today?",
-      "receptionist": "Inbound Agent",
+      "receptionist": "Inbound Operator",
       "hasBudget": "Has budget",
       "hasTimeline": "Has timeline",
       "isDecisionMaker": "Is decision maker",
@@ -3072,7 +3082,7 @@
     "createAgentButton": "+ Create Operator",
     "selectOrCreate": "Select or create an operator to edit how it answers calls.",
     "emptyTitle": "No operators yet",
-    "emptySubtitle": "Create your first AI operator to answer calls, capture leads, and book appointments.",
+    "emptySubtitle": "Create your first AI operator to capture leads, recover revenue, and book appointments.",
     "backToActivity": "← Activity",
     "transferToPhoneLabel": "Transfer to phone number",
     "transferToPhoneAria": "Transfer to phone number",
@@ -3252,7 +3262,7 @@
     "defaultPreviewText": "Hi, thanks for calling! How can I help you today?",
     "scriptPlaceholder": "Enter text to preview with this voice…",
     "noAgent": "No agent selected.",
-    "backToAgents": "Back to Agents",
+    "backToAgents": "Back to Operators",
     "pageTitle": "Voice preview & test",
     "scriptSection": "Test with your script",
     "scriptHelp": "Select a voice below and click Play to hear this script. Or use \"Generate Preview\" after picking a voice.",
@@ -3322,7 +3332,7 @@
       "pauseAria": "Pause",
       "seekAria": "Seek",
       "playbackSpeed": "Speed",
-      "speakerAgent": "Agent",
+      "speakerAgent": "Operator",
       "summaryTitle": "Call summary",
       "sentiment": "Sentiment:",
       "outcome": "Outcome:",
@@ -3330,7 +3340,7 @@
       "viewLead": "View lead",
       "recording": "Recording",
       "transcript": "Transcript",
-      "transcriptDesc": "Transcript (AI-processed, caller and agent turns)",
+      "transcriptDesc": "Transcript (AI-processed, caller and operator turns)",
       "noTranscript": "No transcript for this call.",
       "actionsTaken": "Actions taken",
       "actions": {
@@ -3376,7 +3386,7 @@
       "duration": "Duration",
       "outcome": "Outcome",
       "sentiment": "Sentiment",
-      "agent": "Agent",
+      "agent": "Operator",
       "actions": "Actions"
     },
     "types": {
@@ -3426,7 +3436,7 @@
       "noActiveCallsHint": "New calls will appear here when they start.",
       "unknownCaller": "Unknown caller",
       "listenIn": "Listen in (silent)",
-      "whisper": "Whisper (to agent only)",
+      "whisper": "Whisper (to operator only)",
       "bargeIn": "Barge in",
       "liveTranscript": "Live transcript",
       "noTranscript": "— No transcript yet —",
@@ -3458,7 +3468,7 @@
     },
     "chart": {
       "qualityTrends": "Quality trends",
-      "noData": "No data in this range. Analyze more calls.",
+      "noData": "No conversations in this period. Your AI operator is standing by — make a test call to see intelligence in action.",
       "avgQuality": "Avg quality"
     },
     "commonIssues": {
@@ -3467,7 +3477,7 @@
       "calls": "calls"
     },
     "leaderboard": {
-      "title": "Agent leaderboard (avg quality)",
+      "title": "Operator leaderboard (avg quality)",
       "empty": "No calls by agent yet."
     },
     "filters": {
@@ -3764,7 +3774,7 @@
       }
     },
     "detail": {
-      "agent": "Agent",
+      "agent": "Operator",
       "created": "Created",
       "contact": "Contact",
       "name": "Name",
@@ -3795,7 +3805,7 @@
       "score": "Score",
       "stage": "Stage",
       "lastContact": "Last contact",
-      "agent": "Agent"
+      "agent": "Operator"
     },
     "empty": {
       "title": "Your pipeline starts with AI—not paperwork.",
@@ -3829,7 +3839,7 @@
       "addFailed": "Failed to add lead",
       "csvNoValidRows": "No valid rows found in CSV"
     },
-    "unknownAgent": "Unknown Agent"
+    "unknownAgent": "Unknown Operator"
   },
   "knowledge": {
     "pageTitle": "Knowledge — Revenue Operator",
@@ -4309,8 +4319,8 @@
         "required": "(Required for calls)"
       },
       "agent": {
-        "label": "Agent orchestration",
-        "desc": "Agent behavior, qualification framework, escalation policy, and response handling",
+        "label": "Operator orchestration",
+        "desc": "Operator behavior, qualification framework, escalation policy, and response handling",
         "required": "(Required)"
       },
       "voices": {
@@ -4392,7 +4402,7 @@
       "industryTemplates": "Industry Templates",
       "outbound": "Outbound",
       "leadScoring": "Lead Scoring",
-      "agent": "Agent",
+      "agent": "Operator",
       "marketplace": "Marketplace",
       "porting": "Porting",
       "mapping": "Field Mapping",
@@ -4422,12 +4432,12 @@
     },
     "agent": {
       "agentNameLabel": "Agent name",
-      "agentNamePlaceholder": "Inbound Agent",
+      "agentNamePlaceholder": "Inbound Operator",
       "answerPlaceholder": "Answer",
       "backToSettings": "← Settings",
       "businessNameLabel": "Business name",
       "businessNamePlaceholder": "Your business",
-      "defaultAgentName": "Inbound Agent",
+      "defaultAgentName": "Inbound Operator",
       "defaultBusiness": "your business",
       "defaultGreeting": "Thanks for calling {business}. How can I help?",
       "defaultWorkspaceName": "My Workspace",
@@ -4448,7 +4458,7 @@
       "knowledgeDeleteConfirmTitle": "Remove knowledge entry?",
       "knowledgeDeleteConfirmMessage": "This entry will be permanently removed from the agent's knowledge base.",
       "saveAndUpdateAgent": "Save and update agent",
-      "saveFailed": "Failed to save agent settings. Please try again.",
+      "saveFailed": "Failed to save operator settings. Please try again.",
       "saving": "Saving…",
       "startLiveTest": "Start live test",
       "testDescription": "Run a live browser call with your current assistant, then review the transcript before saving more changes.",
@@ -4926,7 +4936,7 @@
   },
   "hero": {
     "title": "Your Revenue Operations Run on Autopilot.",
-    "subtitle": "Your AI phone agent answers every call, books appointments, qualifies leads, runs outbound campaigns, and follows up until the deal is closed — so your team focuses on the work, not the phone.",
+    "subtitle": "Your autonomous revenue operator captures every opportunity, books appointments, qualifies leads, runs outbound campaigns, and follows up until the deal is closed — so your team focuses on the work, not the phone.",
     "primaryCta": "Get Started →",
     "secondaryCta": "See How It Works",
     "trustLine": "AI Revenue Operations · Works with your number · ROI-first pricing",
@@ -5244,7 +5254,7 @@
     "subheading": "Handle every call, text, and follow-up. Book appointments. Qualify leads. See everything in one dashboard.",
     "coreCapabilities": "Core capabilities",
     "useCases": "Use cases",
-    "answersEveryCallTitle": "Answers every call",
+    "answersEveryCallTitle": "Captures every revenue opportunity",
     "answersEveryCallDesc": "Your AI picks up on the first ring, 24/7/365. No voicemail. No hold music. Natural conversational voice handles everything from simple questions to complex scheduling. Whether it's 2 AM or your busiest hour, every caller gets the same professional experience.",
     "outboundTitle": "Makes outbound calls",
     "outboundDesc": "New web lead? Your AI calls back within 60 seconds. Appointment tomorrow? Confirmation call the evening before. No-show? Automatic reschedule. Customer hasn't returned in 6 months? Reactivation follow-up. Your AI follows up so your team handles work that requires a human.",
@@ -5526,7 +5536,7 @@
       "personas": {
         "solo": {
           "name": "Solo operators",
-          "desc": "I can't answer the phone while I'm working. Revenue Operator answers, books, and follows up so I never miss a lead."
+          "desc": "I can't answer the phone while I'm working. Revenue Operator captures opportunities, books, and follows up so I recover every lead."
         },
         "growing": {
           "name": "Growing teams",
@@ -5595,7 +5605,7 @@
           "role": "Roofing contractor"
         }
       },
-      "badge": "Trusted by businesses that never miss a call",
+      "badge": "Trusted by businesses that recover every dollar",
       "title": "What Our Customers Report",
       "description": "Verified results from active accounts.",
       "goToTestimonial": "Go to testimonial {number}",
@@ -5864,7 +5874,7 @@
         "line3": "Audit trail complete"
       },
       "escalation": {
-        "agent": "Agent",
+        "agent": "Operator",
         "manager": "Manager",
         "director": "Director"
       },
@@ -6688,7 +6698,7 @@
     "title": "Onboarding",
     "step": {
       "business": "Business",
-      "agent": "AI agent",
+      "agent": "AI operator",
       "knowledge": "Knowledge",
       "phone": "Phone",
       "test": "Test",
@@ -6699,12 +6709,12 @@
       "description": "We use this to personalize how your AI answers the phone and introduces your company."
     },
     "agent": {
-      "heading": "Configure your first AI agent",
-      "description": "Choose a template and customize how your agent talks, handles callers, and books appointments."
+      "heading": "Configure your first AI operator",
+      "description": "Choose a template and customize how your operator talks, handles callers, and books appointments."
     },
     "knowledge": {
       "heading": "Add knowledge",
-      "description": "Give your agent the context it needs: FAQs, services, pricing, location, and more."
+      "description": "Give your operator the context it needs: FAQs, services, pricing, location, and more."
     },
     "phone": {
       "heading": "Connect your phone",
@@ -6721,7 +6731,7 @@
     "stepsAria": "Onboarding steps",
     "templates": {
       "receptionist": {
-        "name": "Inbound Agent",
+        "name": "Inbound Operator",
         "description": "Answers calls, takes messages, and routes callers cleanly.",
         "agentName": "Sarah",
         "greeting": "Thanks for calling. I can help with questions, messages, and getting you to the right next step."
@@ -6739,13 +6749,13 @@
         "greeting": "Thanks for reaching out. I'll ask a few quick questions so we can get you to the right next step."
       },
       "after_hours": {
-        "name": "After-Hours Agent",
+        "name": "After-Hours Operator",
         "description": "Handles closed-office calls gracefully and flags urgency.",
         "agentName": "Sarah",
         "greeting": "You've reached us after hours. I can take your details now and make sure the right follow-up happens next."
       },
       "follow_up": {
-        "name": "Follow-Up Agent",
+        "name": "Follow-Up Operator",
         "description": "Re-engages callers and leads so nothing gets dropped.",
         "agentName": "Alex",
         "greeting": "Hi, I'm following up so nothing slips through. I can confirm your status and help with the next step."
@@ -6758,11 +6768,11 @@
       }
     },
     "welcomeHeading": "Welcome to Revenue Operator!",
-    "welcomeSubtitle": "Let's get your AI agent running in under 3 minutes.",
+    "welcomeSubtitle": "Let's get your AI operator running in under 3 minutes.",
     "businessNameLabel": "Business name",
     "businessNamePlaceholder": "Portland Plumbing Co",
     "whatAiHandleLabel": "What will your AI handle?",
-    "whatAiHandleHint": "Select all that apply. This shapes your default knowledge and agent behavior.",
+    "whatAiHandleHint": "Select all that apply. This shapes your default knowledge and operator behavior.",
     "websiteLabel": "Website",
     "websitePlaceholder": "https://yoursite.com",
     "websiteHint": "If you have a site, we'll use it to pre-fill your hours, services, and FAQs.",
@@ -6789,13 +6799,13 @@
     "edit": "Edit",
     "remove": "Remove",
     "sidebarLabel": "Onboarding",
-    "defaultGreeting": "Thanks for calling {businessName}! This is {agentName}. How can I help you today?",
+    "defaultGreeting": "Thanks for calling {businessName}! This is {operatorName}. How can I help you today?",
     "businessPlaceholder": "[Business]",
     "defaultPreview": "Thanks for calling. How can I help you today?",
     "questionPrompt": "Question",
     "answerPrompt": "Answer",
     "addAnotherQa": "+ Add another Q&A",
-    "addMoreLater": "You can always add more later in your agent settings.",
+    "addMoreLater": "You can always add more later in your operator settings.",
     "step1Heading": "Let's set up your AI phone team.",
     "step1Subtitle": "This takes about 5 minutes.",
     "yourNameLabel": "Your name",
@@ -6815,12 +6825,12 @@
     "errorNameRequired": "Your name and business name are required.",
     "errorSomethingWentWrong": "Something went wrong",
     "creating": "Creating…",
-    "step2Heading": "Meet your AI agent.",
+    "step2Heading": "Meet your AI operator.",
     "step2Subtitle": "Choose a name and what they can do.",
-    "agentNameLabel": "Agent name",
+    "agentNameLabel": "Operator name",
     "greetingLabelOptional": "Greeting (optional)",
-    "greetingPlaceholderDynamic": "Thanks for calling {business}! This is {agent}. How can I help?",
-    "yourAgentCan": "Your agent can",
+    "greetingPlaceholderDynamic": "Thanks for calling {business}! This is {operator}. How can I help?",
+    "yourAgentCan": "Your operator can",
     "capabilities": {
       "answer_questions": "Answer questions about your services",
       "book_appointments": "Book appointments",
@@ -6936,7 +6946,8 @@
     "modeBusinessTitle": "Business Mode",
     "modeBusinessDesc": "Use Revenue Operator for business operations",
     "businessHeading": "Business Information",
-    "businessSubtitle": "Tell us about your business"
+    "businessSubtitle": "Tell us about your business",
+    "body": "Use the same fast flow every time: pick mode + industry, create the operator, connect the phone, run a test call."
   },
   "errors": {
     "heading": "Something went wrong",
@@ -7003,7 +7014,9 @@
     "title": "Errors",
     "unauthorized": "Unauthorized",
     "updateFailed": "Update failed",
-    "emptyTemplate": "At least one message template is required."
+    "emptyTemplate": "At least one message template is required.",
+    "loadAgentsError": "Could not load operators.",
+    "agentsAppearHere": "Operators appear here."
   },
   "forms": {
     "validation": {
@@ -7317,7 +7330,7 @@
     "breadcrumb": "Industry Templates",
     "title": "Industry Templates",
     "description": "Production-ready templates for AI agents across every industry. Choose a template to pre-configure your agent with industry-specific knowledge, greetings, and call flows.",
-    "emptyState": "No industry templates available yet.",
+    "emptyState": "Industry-specific configurations are loading. Templates optimize your operator for your vertical — voice, behavior, objections, and booking logic.",
     "toast": {
       "loadFailed": "Failed to load industry templates",
       "loadError": "Error loading templates",
@@ -7371,7 +7384,7 @@
     "addInLeadsToSend": "Add in Leads to send",
     "smsTwoWay": "SMS · Two-way",
     "loadingMessages": "Loading messages…",
-    "agentLabel": "Agent",
+    "agentLabel": "Operator",
     "sending": "Sending…",
     "send": "Send",
     "selectConversation": "Select a conversation",
@@ -7513,7 +7526,7 @@
       "owner": "Owner",
       "admin": "Admin",
       "manager": "Manager",
-      "agent": "Agent"
+      "agent": "Operator"
     },
     "permissions": {
       "viewCalls": "View calls",
@@ -7611,8 +7624,8 @@
   },
   "empty": {
     "generic": {
-      "title": "Nothing here yet",
-      "body": "As activity starts to flow through Revenue Operator, we’ll populate this view."
+      "title": "Your revenue execution history will appear here",
+      "body": "As your operator works leads, books appointments, and recovers revenue, activity will populate this view."
     },
     "search": {
       "title": "No results",
@@ -7625,7 +7638,7 @@
     "action": "Action",
     "activeBody": "Active body",
     "activeTitle": "Active title",
-    "agentsAppearHere": "Agents appear here",
+    "agentsAppearHere": "Operators appear here",
     "analyticsAppearHere": "Analytics appear here",
     "analyzed": "Analyzed",
     "backToContacts": "Back to contacts",
@@ -7652,10 +7665,10 @@
     "integrationsAppearHere": "Integrations appear here",
     "leadsAppearHere": "Leads appear here",
     "loadAgentsError": "Failed to load agents",
-    "noAgentsYet": "No agents yet",
+    "noAgentsYet": "No operators yet",
     "noAgentsYetHint": "Tip: no agents yet",
     "noCallsForContact": "No calls for contact",
-    "noDataYet": "No data yet",
+    "noDataYet": "Data builds as your operators execute. Launch a campaign or deploy an operator to start collecting intelligence.",
     "noTeamYet": "No team yet",
     "protectionScopeSubtitle": "Protection scope subtitle",
     "protectionScopeTitle": "Protection scope title",
@@ -7972,7 +7985,7 @@
     "item": {
       "commandPalette": "Open command palette",
       "dashboard": "Go to Dashboard",
-      "agents": "Go to Agents",
+      "agents": "Go to Operators",
       "calls": "Go to Calls",
       "leads": "Go to Leads",
       "campaigns": "Go to Campaigns",
@@ -8096,7 +8109,7 @@
     "emailNotVerifiedBannerBody": "Confirm your inbox before your workspace is created. We'll resend a verification link if you need it.",
     "resendVerificationCta": "Resend verification",
     "defaultGreeting": "Hi, thanks for calling. How can I help you today?",
-    "defaultAgentName": "Agent",
+    "defaultAgentName": "Operator",
     "greetingTemplate": "Hi, thanks for calling {business}. How can I help you today?",
     "greetingWithBusiness": "Hi, thanks for calling {business}. How can I help you today?",
     "yourBusiness": "your business",
@@ -8134,7 +8147,7 @@
       "next": "Next →"
     },
     "agent": {
-      "defaultAgentName": "Inbound Agent",
+      "defaultAgentName": "Inbound Operator",
       "greetingTemplate": "Thanks for calling {business}, how can I help you today?",
       "yourBusiness": "your business",
       "previewVoice": "Preview voice ▶",
@@ -8335,7 +8348,7 @@
         "step2Label": "Business details",
         "step2": "Enter business name, address, and phone.",
         "step3Label": "AI agent",
-        "step3": "Choose a template (Inbound Agent, Appointment Setter, etc.) and customize greeting and voice.",
+        "step3": "Choose a template (Inbound Operator, Appointment Setter, etc.) and customize greeting and voice.",
         "step4Label": "Phone number",
         "step4": "Add or verify your Revenue Operator number; forward your existing number to it if needed.",
         "step5Label": "Test call",
@@ -8527,7 +8540,7 @@
     "testForwarding": "Test forwarding",
     "testForwardingDesc": "We'll call you so you can talk to your agent right now.",
     "createAgentFirst": "Create an agent first so we know who should answer.",
-    "goToAgents": "Go to Agents →",
+    "goToAgents": "Go to Operators →",
     "validNumberError": "Enter a valid 10-digit US number.",
     "validPhoneError": "Enter a valid phone number with country code (e.g., +1 555 000 0000).",
     "callMyPhoneToTest": "Call my phone to test",
@@ -8617,7 +8630,7 @@
       "numberConnected": "Number connected. You can now receive calls and texts.",
       "saved": "Settings saved.",
       "error": "Something went wrong.",
-      "createAgentFirst": "Create an agent first in the Agents section, then try again.",
+      "createAgentFirst": "Create an operator first in the Operators section, then try again.",
       "testCallStarted": "Calling you now — answer your phone to hear your agent.",
       "errorRetry": "Something went wrong. Try again.",
       "connectFailed": "Failed to connect number. Please try again.",
@@ -9180,7 +9193,7 @@
     "configureAgent": {
       "title": "How to configure an agent",
       "desc1": "Use",
-      "agent": "Agent",
+      "agent": "Operator",
       "desc2": "to set your greeting, voice, knowledge, and behavior rules. Complete a test call and then enable go-live once the readiness checklist is met."
     },
     "inviteTeam": {
@@ -9348,7 +9361,9 @@
       "results": "Results",
       "security": "Security",
       "systemStatus": "System Status"
-    }
+    },
+    "agentsTitle": "Operator studio",
+    "agentsDesc": "Build your AI operator without code. Start from 20+ templates or from scratch. Choose voice, personality, greeting, knowledge base, business rules. Test with a real call before going live. Edit anytime — changes are instant."
   },
   "acceptInvite": {
     "acceptButton": "Accept Invite",
@@ -9395,8 +9410,8 @@
   },
   "agentDetail": {
     "activeLabel": "Active",
-    "agentNotFound": "Agent not found",
-    "backToAgents": "← Back to Agents",
+    "agentNotFound": "Operator not found",
+    "backToAgents": "← Back to Operators",
     "calling": "Calling…",
     "callsSuffix": "calls",
     "greetingLabel": "Greeting",
@@ -9570,7 +9585,7 @@
     }
   },
   "cardLabels": {
-    "agent": "Agent",
+    "agent": "Operator",
     "caller": "Caller",
     "result": "Result"
   },
@@ -9687,7 +9702,7 @@
     "hint2": "Hint2"
   },
   "configureAgent": {
-    "agent": "Agent",
+    "agent": "Operator",
     "desc1": "Desc1",
     "desc2": "Desc2",
     "title": "Configure agent"
@@ -9750,7 +9765,7 @@
   },
   "detail": {
     "addNote": "Add note",
-    "agent": "Agent",
+    "agent": "Operator",
     "archive": "Archive",
     "callPrefix": "Call prefix",
     "callTypeLabel": "Call type",
@@ -9793,7 +9808,7 @@
     "title": "Errors page"
   },
   "escalation": {
-    "agent": "Agent",
+    "agent": "Operator",
     "director": "Director",
     "manager": "Manager"
   },
@@ -10215,15 +10230,8 @@
     "loadError": "Failed to load operations metrics"
   },
   "pages": {
-    "agent": {
-      "subtitle": "Manage your agent settings",
-      "title": "Agent"
-    },
-    "agents": {
-      "subtitle": "Manage your agents settings",
-      "subtitleShort": "Subtitle short",
-      "title": "Agents"
-    },
+    "agent": "Operator",
+    "agents": "Operators",
     "billing": {
       "subtitle": "Manage your billing settings",
       "subtitleShort": "Subtitle short",
@@ -10310,7 +10318,11 @@
     "teamSettings": {
       "subtitle": "Manage your team settings settings",
       "title": "Team settings"
-    }
+    },
+    "agentsTitle": "Operators",
+    "agentEditTitle": "Edit Operator",
+    "agentTitle": "Operator",
+    "failedToSaveAgent": "Failed to save operator"
   },
   "password": {
     "label": "Label"
@@ -10529,7 +10541,7 @@
   },
   "roles": {
     "admin": "Admin",
-    "agent": "Agent",
+    "agent": "Operator",
     "manager": "Manager",
     "owner": "Owner"
   },
@@ -11245,5 +11257,58 @@
     "privacyLink": "Privacy Policy",
     "accept": "Accept",
     "decline": "Decline"
+  },
+  "navigation": {
+    "agents": "Operators"
+  },
+  "events": {
+    "agent": "Operator created",
+    "agentTested": "Operator tested",
+    "agentLaunched": "Operator launched"
+  },
+  "settingsLabels": {
+    "agentLabel": "Operator:",
+    "agent": "Operator"
+  },
+  "setupChecklist": {
+    "agentsAppearHere": "Operators appear here."
+  },
+  "settingsPages": {
+    "agentPageTitle": "Operator Settings — Revenue Operator"
+  },
+  "shortcuts": {
+    "shortcutAgents": "Go to Operators"
+  },
+  "voiceSettings": {
+    "unknownAgent": "Unknown Operator",
+    "applied": "Voice applied to operator",
+    "applyFailed": "Failed to apply voice to operator",
+    "noAgent": "Operator not found",
+    "backToAgents": "Back to Operators",
+    "applyToAgent": "Apply to Operator"
+  },
+  "deployment": {
+    "newAgent": "Create a new operator",
+    "createAgentFirst": "Create an operator first in the Operators section, then try again."
+  },
+  "hints": {
+    "setupAgent": "View your operators →",
+    "cta": "Try our operator →",
+    "createFirstAgent": "Create your first operator →",
+    "noAgentsYet": "No operators yet"
+  },
+  "configuration": {
+    "subtitle": "Configure AI phone operators.",
+    "subtitleShort": "AI phone operators.",
+    "testCallDesc": "Use the Test tab on Operators to place a real voice call with your configured operator."
+  },
+  "summary": {
+    "booked": "Your operators booked **{appointments} appointment{appointments != 1 ? 's' : ''}**, converting **{conversionRate}%** of qualified leads.",
+    "otherAgents": "Other Operators",
+    "identityDescription": "What does this operator do?",
+    "youllGetNumber": "You'll get a number for your operator to answer. You can forward your existing number or use this as your main business line."
+  },
+  "templates": {
+    "greetingPlaceholder": "Thanks for calling {business}! This is {operator}. How can I help you today?"
   }
 }
