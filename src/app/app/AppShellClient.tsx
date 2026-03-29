@@ -141,15 +141,6 @@ export default function AppShellClient({
   const [nowMs] = useState(() => Date.now());
   const [showNotifications, setShowNotifications] = useState(false);
   const [inboxUnread, setInboxUnread] = useState(0);
-  const [isDesktop, setIsDesktop] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
-    setIsDesktop(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
 
   const toggleSidebarCollapse = () => {
     setSidebarCollapsed((prev) => {
@@ -443,13 +434,12 @@ export default function AppShellClient({
               <OnboardingSidebar initialWorkspaceName={initialWorkspaceName} />
             ) : (
               <>
-              <motion.aside
-                initial={false}
-                animate={{ x: isDesktop ? 0 : mobileSidebarOpen ? 0 : -260 }}
-                transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
+              <aside
                 className={cn(
                   "fixed inset-y-0 left-0 z-40 flex flex-col shrink-0 bg-[var(--bg-surface)] border-r border-[var(--border-default)]",
+                  "transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)]",
                   "md:relative md:translate-x-0",
+                  !mobileSidebarOpen && "-translate-x-[260px] md:translate-x-0",
                   sidebarCollapsed ? "md:w-[60px]" : "md:w-[232px]",
                   "w-[260px]"
                 )}
@@ -649,7 +639,7 @@ export default function AppShellClient({
                     )}
                   </button>
                 </div>
-              </motion.aside>
+              </aside>
               <button
                 type="button"
                 onClick={() => setMobileSidebarOpen(true)}
