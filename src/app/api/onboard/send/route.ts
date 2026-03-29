@@ -7,29 +7,28 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { createAcknowledgementToken } from "@/lib/shared-transaction-assurance";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { parseBody, workspaceIdSchema, safeStringSchema } from "@/lib/api/validate";
+
+const sendOnboardSchema = z.object({
+  workspace_id: workspaceIdSchema,
+  external_ref: safeStringSchema(200).min(1, "external_ref is required"),
+  counterparty_contact: safeStringSchema(500).min(1, "counterparty_contact is required"),
+  approval_mode: z.enum(["review_required", "autopilot"]).optional(),
+});
 
 export async function POST(request: NextRequest) {
   const csrfBlock = assertSameOrigin(request);
   if (csrfBlock) return csrfBlock;
 
-  let body: { workspace_id?: string; external_ref?: string; counterparty_contact?: string; approval_mode?: string };
-  try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
-  }
+  const parsed = await parseBody(request, sendOnboardSchema);
+  if ("error" in parsed) return parsed.error;
+  const { workspace_id, external_ref, counterparty_contact, approval_mode } = parsed.data;
 
-  const { workspace_id, external_ref, counterparty_contact, approval_mode } = body;
-  if (!workspace_id || !external_ref || !counterparty_contact) {
-    return NextResponse.json(
-      { error: "workspace_id, external_ref, and counterparty_contact required" },
-      { status: 400 }
-    );
-  }
   const authErr = await requireWorkspaceAccess(request, workspace_id);
   if (authErr) return authErr;
 

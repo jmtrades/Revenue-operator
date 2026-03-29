@@ -1,9 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { createWebhookEndpoint, sendTestEvent } from "@/lib/integrations/webhook-events";
+import { parseBody, workspaceIdSchema, safeUrlSchema, safeStringSchema, webhookEventSchema } from "@/lib/api/validate";
+
+const createWebhookSchema = z.object({
+  action: z.string().max(20).optional(),
+  workspace_id: workspaceIdSchema.optional(),
+  endpoint_id: z.string().uuid("Invalid endpoint_id").optional(),
+  url: safeUrlSchema.optional(),
+  events: z.array(webhookEventSchema).max(30).optional(),
+  description: safeStringSchema(500).optional(),
+});
+
+const updateWebhookSchema = z.object({
+  endpoint_id: z.string().uuid("Invalid endpoint_id"),
+  workspace_id: workspaceIdSchema.optional(),
+  enabled: z.boolean().optional(),
+  active: z.boolean().optional(),
+  url: safeUrlSchema.optional(),
+  events: z.array(webhookEventSchema).max(30).optional(),
+  description: safeStringSchema(500).optional(),
+});
 
 export const dynamic = "force-dynamic";
 
@@ -91,14 +112,9 @@ export async function POST(request: NextRequest) {
   if (csrfBlock) return csrfBlock;
 
   try {
-    const body = await request.json() as {
-      workspace_id?: string;
-      endpoint_id?: string;
-      url?: string;
-      events?: string[];
-      description?: string;
-      action?: string;
-    };
+    const parsed = await parseBody(request, createWebhookSchema);
+    if ("error" in parsed) return parsed.error;
+    const body = parsed.data;
 
     // Handle test action
     if (body.action === "test" && body.endpoint_id) {
@@ -113,11 +129,6 @@ export async function POST(request: NextRequest) {
 
     const authErr = await requireWorkspaceAccess(request, body.workspace_id);
     if (authErr) return authErr;
-
-    // Validate URL
-    try { new URL(body.url); } catch {
-      return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
-    }
 
     const endpoint = await createWebhookEndpoint(
       body.workspace_id,
@@ -143,16 +154,9 @@ export async function PATCH(request: NextRequest) {
   if (csrfBlock) return csrfBlock;
 
   try {
-    const body = await request.json() as {
-      endpoint_id: string;
-      enabled?: boolean;
-      active?: boolean;
-      url?: string;
-      events?: string[];
-      description?: string;
-      workspace_id?: string;
-    };
-    if (!body.endpoint_id) return NextResponse.json({ error: "Missing endpoint_id" }, { status: 400 });
+    const parsed = await parseBody(request, updateWebhookSchema);
+    if ("error" in parsed) return parsed.error;
+    const body = parsed.data;
 
     const db = getDb();
     const endpoint = await db.from("webhook_endpoints").select("workspace_id").eq("id", body.endpoint_id).maybeSingle();

@@ -5,9 +5,20 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { requireWorkspaceRole } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { parseBody, workspaceIdSchema, safeStringArraySchema, approvalModeSchema } from "@/lib/api/validate";
+
+const updatePolicySchema = z.object({
+  workspace_id: workspaceIdSchema,
+  template_id: z.string().uuid("Invalid template_id").optional(),
+  approval_mode: approvalModeSchema.optional(),
+  required_disclaimers: safeStringArraySchema(20, 2000).optional(),
+  forbidden_phrases: safeStringArraySchema(100, 500).optional(),
+  required_phrases: safeStringArraySchema(100, 500).optional(),
+});
 
 export async function GET(
   req: NextRequest,
@@ -40,11 +51,12 @@ export async function PATCH(
   if (csrfBlock) return csrfBlock;
 
   const { id } = await params;
-  const body = await req.json().catch(() => null);
-  if (!body || typeof body !== "object") return NextResponse.json({ ok: false, reason: "invalid_json" }, { status: 400 });
+  const parsed = await parseBody(req, updatePolicySchema);
+  if ("error" in parsed) return parsed.error;
+  const body = parsed.data;
 
-  const workspaceId = body.workspace_id?.trim();
-  if (!workspaceId || !id) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 400 });
+  const workspaceId = body.workspace_id;
+  if (!id) return NextResponse.json({ ok: false, reason: "invalid_input" }, { status: 400 });
 
   const authErr = await requireWorkspaceRole(req, workspaceId, ["owner", "admin", "compliance"]);
   if (authErr) return authErr;
@@ -53,9 +65,9 @@ export async function PATCH(
   const update: Record<string, unknown> = { updated_at: new Date().toISOString() };
   if (body.template_id !== undefined) update.template_id = body.template_id;
   if (body.approval_mode !== undefined) update.approval_mode = body.approval_mode;
-  if (Array.isArray(body.required_disclaimers)) update.required_disclaimers = body.required_disclaimers;
-  if (Array.isArray(body.forbidden_phrases)) update.forbidden_phrases = body.forbidden_phrases;
-  if (Array.isArray(body.required_phrases)) update.required_phrases = body.required_phrases;
+  if (body.required_disclaimers !== undefined) update.required_disclaimers = body.required_disclaimers;
+  if (body.forbidden_phrases !== undefined) update.forbidden_phrases = body.forbidden_phrases;
+  if (body.required_phrases !== undefined) update.required_phrases = body.required_phrases;
 
   const { data, error } = await db
     .from("message_policies")

@@ -1,17 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { parseBody, workspaceIdSchema, phoneSchema, safeStringSchema, dncReasonSchema } from "@/lib/api/validate";
+
+const addDncSchema = z.object({
+  workspace_id: workspaceIdSchema,
+  phone_number: z.string().min(7, "Phone number too short").max(20, "Phone number too long"),
+  reason: dncReasonSchema.optional().default("manual"),
+  source: safeStringSchema(100).optional().default("dashboard"),
+  notes: safeStringSchema(1000).optional(),
+  added_by: safeStringSchema(100).optional().default("system"),
+});
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   const workspaceId = request.nextUrl.searchParams.get("workspace_id");
-  const search = request.nextUrl.searchParams.get("q") ?? "";
+  const search = (request.nextUrl.searchParams.get("q") ?? "").slice(0, 100);
   const reason = request.nextUrl.searchParams.get("reason") ?? undefined;
-  const offset = parseInt(request.nextUrl.searchParams.get("offset") ?? "0", 10);
-  const limit = Math.min(parseInt(request.nextUrl.searchParams.get("limit") ?? "25", 10), 100);
+  const offset = Math.max(0, parseInt(request.nextUrl.searchParams.get("offset") ?? "0", 10) || 0);
+  const limit = Math.min(Math.max(1, parseInt(request.nextUrl.searchParams.get("limit") ?? "25", 10) || 25), 100);
 
   if (!workspaceId) return NextResponse.json({ error: "Missing workspace_id" }, { status: 400 });
 
@@ -63,18 +74,9 @@ export async function POST(request: NextRequest) {
   if (csrfBlock) return csrfBlock;
 
   try {
-    const body = await request.json() as {
-      workspace_id: string;
-      phone_number: string;
-      reason: string;
-      source?: string;
-      notes?: string;
-      added_by?: string;
-    };
-
-    if (!body.workspace_id || !body.phone_number) {
-      return NextResponse.json({ error: "Missing workspace_id or phone_number" }, { status: 400 });
-    }
+    const parsed = await parseBody(request, addDncSchema);
+    if ("error" in parsed) return parsed.error;
+    const body = parsed.data;
 
     const authErr = await requireWorkspaceAccess(request, body.workspace_id);
     if (authErr) return authErr;

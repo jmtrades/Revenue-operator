@@ -1,9 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { parseBody, workspaceIdSchema, safeStringSchema, dialerModeSchema, campaignStatusSchema } from "@/lib/api/validate";
 import type { DialerMode, CampaignStatus } from "@/lib/voice/outbound-dialer";
+
+const createCampaignSchema = z.object({
+  workspace_id: workspaceIdSchema,
+  name: safeStringSchema(200).min(1, "Campaign name is required"),
+  mode: dialerModeSchema.optional().default("preview"),
+  from_number: z.string().max(20).optional().default(""),
+  settings: z.record(z.string(), z.unknown()).optional(),
+});
+
+const updateCampaignSchema = z.object({
+  campaign_id: z.string().uuid("Invalid campaign_id"),
+  workspace_id: workspaceIdSchema.optional(),
+  status: campaignStatusSchema.optional(),
+  name: safeStringSchema(200).optional(),
+  settings: z.record(z.string(), z.unknown()).optional(),
+});
 
 export const dynamic = "force-dynamic";
 
@@ -76,17 +94,9 @@ export async function POST(request: NextRequest) {
   if (csrfBlock) return csrfBlock;
 
   try {
-    const body = await request.json() as {
-      workspace_id: string;
-      name: string;
-      mode: DialerMode;
-      from_number: string;
-      settings?: Record<string, unknown>;
-    };
-
-    if (!body.workspace_id || !body.name) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-    }
+    const parsed = await parseBody(request, createCampaignSchema);
+    if ("error" in parsed) return parsed.error;
+    const body = parsed.data;
 
     const authErr = await requireWorkspaceAccess(request, body.workspace_id);
     if (authErr) return authErr;
@@ -155,15 +165,9 @@ export async function PATCH(request: NextRequest) {
   if (csrfBlock) return csrfBlock;
 
   try {
-    const body = await request.json() as {
-      campaign_id: string;
-      status?: CampaignStatus;
-      name?: string;
-      settings?: Record<string, unknown>;
-      workspace_id?: string;
-    };
-
-    if (!body.campaign_id) return NextResponse.json({ error: "Missing campaign_id" }, { status: 400 });
+    const parsed = await parseBody(request, updateCampaignSchema);
+    if ("error" in parsed) return parsed.error;
+    const body = parsed.data;
 
     const db = getDb();
     const campaign = await db.from("outbound_campaigns").select("workspace_id").eq("id", body.campaign_id).maybeSingle();
