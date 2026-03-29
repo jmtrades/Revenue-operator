@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 interface WhiteLabelConfig {
   id?: string;
@@ -104,7 +105,12 @@ export default function WhiteLabelSettingsPage() {
 
   return (
     <div className="p-6 md:p-8 max-w-6xl mx-auto">
-      <div className="mb-8">
+      <Breadcrumbs items={[
+        { label: "Home", href: "/app" },
+        { label: "Settings", href: "/app/settings" },
+        { label: "White label" }
+      ]} />
+      <div className="mb-8 mt-6">
         <h1 className="text-2xl md:text-3xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("title")}</h1>
         <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed">
           {t("description")}

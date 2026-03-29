@@ -6,6 +6,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { ArrowLeft, Copy, Check } from "lucide-react";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 interface WidgetConfig {
   enabled: boolean;
@@ -122,13 +123,14 @@ export default function ChatWidgetSettingsPage() {
     <div className="min-h-screen bg-white">
       {/* Header */}
       <div className="border-b border-[var(--border-default)] px-6 py-4">
+        <div className="mb-4">
+          <Breadcrumbs items={[
+            { label: "Home", href: "/app" },
+            { label: "Settings", href: "/app/settings" },
+            { label: "Chat widget" }
+          ]} />
+        </div>
         <div className="flex items-center gap-3 mb-2">
-          <Link
-            href="/app/settings"
-            className="inline-flex items-center justify-center w-8 h-8 rounded-lg hover:bg-[var(--bg-hover)] transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4 text-[var(--text-secondary)]" />
-          </Link>
           <h1 className="text-2xl font-bold text-[var(--text-primary)]">Live Chat Widget</h1>
         </div>
         <p className="text-sm text-[var(--text-secondary)] ml-11">

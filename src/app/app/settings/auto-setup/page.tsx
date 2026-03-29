@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { ChevronDown, RefreshCw, Check, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 interface KnowledgeStats {
   faqCount: number;
@@ -241,22 +242,12 @@ export default function AutoSetupPage() {
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="mb-8 animate-fade-in-up">
-          <div className="flex items-center gap-3 mb-4">
-            <Link
-              href="/app/settings"
-              className="text-sm font-medium transition-colors"
-              style={{ color: "var(--text-secondary)" }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text-primary)")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-secondary)")}
-            >
-              Settings
-            </Link>
-            <span style={{ color: "var(--border-default)" }}>/</span>
-            <span style={{ color: "var(--text-secondary)" }} className="text-sm">
-              Re-analyze Website
-            </span>
-          </div>
-          <h1 className="text-3xl font-bold mb-2" style={{ color: "var(--text-primary)" }}>
+          <Breadcrumbs items={[
+            { label: "Home", href: "/app" },
+            { label: "Settings", href: "/app/settings" },
+            { label: "Auto setup" }
+          ]} />
+          <h1 className="text-3xl font-bold mb-2 mt-6" style={{ color: "var(--text-primary)" }}>
             Re-analyze Your Website
           </h1>
           <p style={{ color: "var(--text-secondary)" }}>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { toast } from "sonner";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 type BusinessHours = {
   [day: string]: { open: string; close: string; enabled: boolean };
@@ -122,6 +123,11 @@ export default function AppSettingsCallRulesPage() {
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
+      <Breadcrumbs items={[
+        { label: "Home", href: "/app" },
+        { label: "Settings", href: "/app/settings" },
+        { label: "Call rules" }
+      ]} />
       <h1 className="text-lg font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-2">{tRules("heading")}</h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">{tRules("description")}</p>
 
