@@ -6,6 +6,7 @@ import { Plus, MoreVertical, Crown, ChevronDown, ChevronRight, Check, Minus } fr
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useWorkspace } from "@/components/WorkspaceContext";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 type TeamRole = "owner" | "admin" | "manager" | "agent";
 
 interface TeamMember {
@@ -296,6 +297,7 @@ export default function TeamPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="p-4 md:p-6 lg:p-8">
+        <Breadcrumbs items={[{ label: "Home", href: "/app" }, { label: "Team" }]} />
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
             <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("heading")}</h1>

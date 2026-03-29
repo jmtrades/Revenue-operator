@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 type SummaryResponse = {
   revenue_recovered_cents?: number;
@@ -45,6 +46,7 @@ export default function PartnersPage() {
 
   return (
     <div className="max-w-5xl mx-auto p-4 md:p-6">
+      <Breadcrumbs items={[{ label: "Home", href: "/app" }, { label: "Partners" }]} />
       <div className="flex items-center justify-between gap-4 mb-6">
         <div className="min-w-0">
           <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em]" style={{ color: "var(--text-primary)" }}>

@@ -16,6 +16,7 @@ import Link from "next/link";
 import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 import { cn } from "@/lib/cn";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 type CallExample = {
   id: string;
@@ -349,6 +350,7 @@ export default function CallIntelligencePage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 p-6">
+      <Breadcrumbs items={[{ label: "Home", href: "/app" }, { label: "Call intelligence" }]} />
       <div>
         <h1 className="text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("heading")}</h1>
         <p className="text-sm text-[var(--text-tertiary)] mt-1">

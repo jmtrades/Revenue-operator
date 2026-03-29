@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 type KnowledgeType = "FAQ" | "Document" | "Website" | "Custom";
 type KnowledgeStatus = "Active" | "Draft" | "Processing";
 
@@ -614,6 +615,7 @@ export default function KnowledgePage() {
         }
       `}</style>
       <div className="p-4 md:p-6 lg:p-8">
+        <Breadcrumbs items={[{ label: "Home", href: "/app" }, { label: "Knowledge base" }]} />
         {/* Top bar */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
           <div>
