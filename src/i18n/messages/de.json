@@ -4090,6 +4090,18 @@
         "label": "Fehlerberichte",
         "desc": "Client-Fehler und Berichte dieses Workspaces"
       },
+      "chatWidget": {
+        "label": "Chat-Widget",
+        "desc": "Einbettbares Chat-Widget für Ihre Website"
+      },
+      "communication": {
+        "label": "Kommunikation",
+        "desc": "SMS-, E-Mail- und Nachrichteneinstellungen"
+      },
+      "whiteLabel": {
+        "label": "White Label",
+        "desc": "Eigenes Branding für Agenturen und Reseller"
+      },
       "developer": {
         "label": "Entwickler",
         "desc": "API-Keys, Webhooks, technische Doku"

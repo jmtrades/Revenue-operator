@@ -4082,6 +4082,18 @@
         "label": "Rapports d'erreurs",
         "desc": "Erreurs et rapports de ce workspace"
       },
+      "chatWidget": {
+        "label": "Widget de chat",
+        "desc": "Widget de chat intégrable pour votre site web"
+      },
+      "communication": {
+        "label": "Communication",
+        "desc": "Préférences SMS, e-mail et messagerie"
+      },
+      "whiteLabel": {
+        "label": "Marque blanche",
+        "desc": "Image de marque personnalisée pour agences et revendeurs"
+      },
       "developer": {
         "label": "Développeur",
         "desc": "Clés API, webhooks, documentation technique"
