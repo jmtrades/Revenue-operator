@@ -122,17 +122,17 @@ export default function ChatWidgetSettingsPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="border-b border-gray-200 px-6 py-4">
+      <div className="border-b border-[var(--border-default)] px-6 py-4">
         <div className="flex items-center gap-3 mb-2">
           <Link
             href="/app/settings"
-            className="inline-flex items-center justify-center w-8 h-8 rounded-lg hover:bg-gray-100 transition-colors"
+            className="inline-flex items-center justify-center w-8 h-8 rounded-lg hover:bg-[var(--bg-hover)] transition-colors"
           >
-            <ArrowLeft className="w-4 h-4 text-gray-600" />
+            <ArrowLeft className="w-4 h-4 text-[var(--text-secondary)]" />
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900">Live Chat Widget</h1>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Live Chat Widget</h1>
         </div>
-        <p className="text-sm text-gray-600 ml-11">
+        <p className="text-sm text-[var(--text-secondary)] ml-11">
           Configure and customize your live chat widget for your website
         </p>
       </div>
@@ -142,20 +142,20 @@ export default function ChatWidgetSettingsPage() {
           {/* Settings Panel */}
           <div className="col-span-2 space-y-6">
             {/* Enable/Disable */}
-            <div className="border border-gray-200 rounded-lg p-4">
+            <div className="border border-[var(--border-default)] rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                     Enable Chat Widget
                   </label>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-[var(--text-tertiary)]">
                     Turn on to display the chat widget on your website
                   </p>
                 </div>
                 <button
                   onClick={() => setConfig({ ...config, enabled: !config.enabled })}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    config.enabled ? "bg-blue-500" : "bg-gray-300"
+                    config.enabled ? "bg-[var(--accent-primary)]" : "bg-gray-300"
                   }`}
                 >
                   <span
@@ -168,8 +168,8 @@ export default function ChatWidgetSettingsPage() {
             </div>
 
             {/* Color Picker */}
-            <div className="border border-gray-200 rounded-lg p-4">
-              <label className="block text-sm font-medium text-gray-900 mb-3">
+            <div className="border border-[var(--border-default)] rounded-lg p-4">
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-3">
                 Accent Color
               </label>
               <div className="flex items-center gap-3">
@@ -179,7 +179,7 @@ export default function ChatWidgetSettingsPage() {
                   onChange={(e) =>
                     setConfig({ ...config, accent_color: e.target.value })
                   }
-                  className="w-16 h-10 rounded border border-gray-300 cursor-pointer"
+                  className="w-16 h-10 rounded border border-[var(--border-medium)] cursor-pointer"
                 />
                 <input
                   type="text"
@@ -187,15 +187,15 @@ export default function ChatWidgetSettingsPage() {
                   onChange={(e) =>
                     setConfig({ ...config, accent_color: e.target.value })
                   }
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono"
+                  className="flex-1 px-3 py-2 border border-[var(--border-medium)] rounded-lg text-sm font-mono"
                   placeholder="#3b82f6"
                 />
               </div>
             </div>
 
             {/* Position */}
-            <div className="border border-gray-200 rounded-lg p-4">
-              <label className="block text-sm font-medium text-gray-900 mb-3">
+            <div className="border border-[var(--border-default)] rounded-lg p-4">
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-3">
                 Widget Position
               </label>
               <div className="grid grid-cols-2 gap-3">
@@ -210,8 +210,8 @@ export default function ChatWidgetSettingsPage() {
                     }
                     className={`py-2 px-3 rounded-lg border transition-colors ${
                       config.position === pos
-                        ? "border-blue-500 bg-blue-50 text-blue-700"
-                        : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                        ? "border-[var(--accent-primary)] bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]"
+                        : "border-[var(--border-medium)] text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
                     }`}
                   >
                     {pos === "bottom-left" ? "Bottom Left" : "Bottom Right"}
@@ -221,8 +221,8 @@ export default function ChatWidgetSettingsPage() {
             </div>
 
             {/* Greeting Message */}
-            <div className="border border-gray-200 rounded-lg p-4">
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+            <div className="border border-[var(--border-default)] rounded-lg p-4">
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                 Greeting Message
               </label>
               <textarea
@@ -230,14 +230,14 @@ export default function ChatWidgetSettingsPage() {
                 onChange={(e) =>
                   setConfig({ ...config, greeting_message: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[var(--border-medium)] rounded-lg text-sm focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent"
                 rows={3}
               />
             </div>
 
             {/* Agent Name */}
-            <div className="border border-gray-200 rounded-lg p-4">
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+            <div className="border border-[var(--border-default)] rounded-lg p-4">
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                 Agent Name
               </label>
               <input
@@ -246,14 +246,14 @@ export default function ChatWidgetSettingsPage() {
                 onChange={(e) =>
                   setConfig({ ...config, agent_name: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[var(--border-medium)] rounded-lg text-sm focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent"
                 placeholder="Support Agent"
               />
             </div>
 
             {/* Avatar URL */}
-            <div className="border border-gray-200 rounded-lg p-4">
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+            <div className="border border-[var(--border-default)] rounded-lg p-4">
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                 Avatar URL (Optional)
               </label>
               <input
@@ -262,14 +262,14 @@ export default function ChatWidgetSettingsPage() {
                 onChange={(e) =>
                   setConfig({ ...config, avatar_url: e.target.value })
                 }
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-[var(--border-medium)] rounded-lg text-sm focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent"
                 placeholder="https://example.com/avatar.jpg"
               />
             </div>
 
             {/* Auto-Open Delay */}
-            <div className="border border-gray-200 rounded-lg p-4">
-              <label className="block text-sm font-medium text-gray-900 mb-3">
+            <div className="border border-[var(--border-default)] rounded-lg p-4">
+              <label className="block text-sm font-medium text-[var(--text-primary)] mb-3">
                 Auto-Open Delay: {config.auto_open_delay === 0 ? "Disabled" : `${config.auto_open_delay}s`}
               </label>
               <input
@@ -286,7 +286,7 @@ export default function ChatWidgetSettingsPage() {
                 }
                 className="w-full"
               />
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-[var(--text-tertiary)] mt-2">
                 Automatically open the chat widget after the specified seconds. Set to 0 to disable.
               </p>
             </div>
@@ -295,7 +295,7 @@ export default function ChatWidgetSettingsPage() {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+              className="w-full bg-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/90 disabled:bg-gray-400 text-white font-medium py-2 px-4 rounded-lg transition-colors"
             >
               {saving ? "Saving..." : "Save Configuration"}
             </button>
@@ -304,18 +304,18 @@ export default function ChatWidgetSettingsPage() {
           {/* Preview & Embed Panel */}
           <div className="space-y-6">
             {/* Live Preview */}
-            <div className="border border-gray-200 rounded-lg p-4">
-              <h3 className="text-sm font-medium text-gray-900 mb-4">
+            <div className="border border-[var(--border-default)] rounded-lg p-4">
+              <h3 className="text-sm font-medium text-[var(--text-primary)] mb-4">
                 Live Preview
               </h3>
               <div
-                className="relative w-full h-80 bg-gray-100 rounded-lg border border-gray-300 overflow-hidden flex items-end justify-end p-4"
+                className="relative w-full h-80 bg-[var(--bg-hover)] rounded-lg border border-[var(--border-medium)] overflow-hidden flex items-end justify-end p-4"
                 style={{ backgroundColor: "#f3f4f6" }}
               >
                 {/* Chat bubble preview */}
                 {config.enabled && (
                   <div
-                    className="flex flex-col gap-2 w-72 bg-white rounded-lg shadow-lg border border-gray-200"
+                    className="flex flex-col gap-2 w-72 bg-white rounded-lg shadow-lg border border-[var(--border-default)]"
                   >
                     <div
                       className="px-4 py-3 rounded-t-lg text-white flex items-center justify-between"
@@ -328,14 +328,14 @@ export default function ChatWidgetSettingsPage() {
                         ✕
                       </button>
                     </div>
-                    <div className="px-4 py-3 text-sm text-gray-700 border-b border-gray-200">
+                    <div className="px-4 py-3 text-sm text-[var(--text-primary)] border-b border-[var(--border-default)]">
                       {config.greeting_message}
                     </div>
-                    <div className="px-4 py-3 border-t border-gray-200">
+                    <div className="px-4 py-3 border-t border-[var(--border-default)]">
                       <input
                         type="text"
                         placeholder="Type your message..."
-                        className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                        className="w-full px-2 py-1 border border-[var(--border-medium)] rounded text-xs"
                         readOnly
                       />
                     </div>
@@ -350,12 +350,12 @@ export default function ChatWidgetSettingsPage() {
             </div>
 
             {/* Embed Code */}
-            <div className="border border-gray-200 rounded-lg p-4">
-              <h3 className="text-sm font-medium text-gray-900 mb-3">
+            <div className="border border-[var(--border-default)] rounded-lg p-4">
+              <h3 className="text-sm font-medium text-[var(--text-primary)] mb-3">
                 Embed Code
               </h3>
-              <div className="bg-gray-50 border border-gray-300 rounded p-3 mb-3 overflow-auto">
-                <code className="text-xs text-gray-700 font-mono break-words">
+              <div className="bg-[var(--bg-hover)] border border-[var(--border-medium)] rounded p-3 mb-3 overflow-auto">
+                <code className="text-xs text-[var(--text-primary)] font-mono break-words">
                   {getEmbedCode()}
                 </code>
               </div>
@@ -378,11 +378,11 @@ export default function ChatWidgetSettingsPage() {
             </div>
 
             {/* Instructions */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h4 className="text-sm font-medium text-blue-900 mb-2">
+            <div className="bg-[var(--accent-primary)]/10 border border-[var(--accent-primary)] rounded-lg p-4">
+              <h4 className="text-sm font-medium text-[var(--accent-primary)] mb-2">
                 How to Use
               </h4>
-              <ol className="text-xs text-blue-800 space-y-1 list-decimal list-inside">
+              <ol className="text-xs text-[var(--accent-primary)] space-y-1 list-decimal list-inside">
                 <li>Copy the embed code above</li>
                 <li>Paste it into your website HTML</li>
                 <li>The widget will load automatically</li>

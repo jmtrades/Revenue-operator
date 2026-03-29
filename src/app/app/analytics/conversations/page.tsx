@@ -214,21 +214,21 @@ export default function ConversationalAnalyticsPage() {
 
   if (loading && !metrics) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-6">
+      <div className="min-h-screen bg-[var(--bg-base)] p-6">
         <div className="max-w-7xl mx-auto">
           <div className="skeleton-shimmer space-y-6">
-            <div className="h-10 bg-slate-200 dark:bg-slate-800 rounded w-1/3"></div>
+            <div className="h-10 bg-[var(--bg-inset)] rounded w-1/3"></div>
             <div className="grid grid-cols-5 gap-4">
               {Array.from({ length: 5 }).map((_, i) => (
                 <div
                   key={i}
-                  className="h-24 bg-slate-200 dark:bg-slate-800 rounded"
+                  className="h-24 bg-[var(--bg-inset)] rounded"
                 ></div>
               ))}
             </div>
             <div className="grid lg:grid-cols-2 gap-6">
-              <div className="h-72 bg-slate-200 dark:bg-slate-800 rounded"></div>
-              <div className="h-72 bg-slate-200 dark:bg-slate-800 rounded"></div>
+              <div className="h-72 bg-[var(--bg-inset)] rounded"></div>
+              <div className="h-72 bg-[var(--bg-inset)] rounded"></div>
             </div>
           </div>
         </div>
@@ -237,15 +237,15 @@ export default function ConversationalAnalyticsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-6">
+    <div className="min-h-screen bg-[var(--bg-base)] p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+            <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">
               Conversational Analytics
             </h1>
-            <p className="text-slate-600 dark:text-slate-400">
+            <p className="text-[var(--text-secondary)]">
               Analyze conversation patterns, sentiment, and effectiveness
             </p>
           </div>
@@ -258,8 +258,8 @@ export default function ConversationalAnalyticsPage() {
                 onClick={() => setDateRange(range)}
                 className={`px-4 py-2 rounded-lg font-medium transition-[background-color,border-color,color,transform] ${
                   dateRange === range
-                    ? "bg-blue-600 text-white shadow-lg"
-                    : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
+                    ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)] shadow-lg"
+                    : "bg-[var(--bg-card)] text-[var(--text-secondary)] border border-[var(--border-default)] hover:bg-[var(--bg-hover)]"
                 }`}
               >
                 {range === "7d" ? "Last 7 days" : range === "30d" ? "Last 30 days" : "Last 90 days"}
@@ -269,9 +269,9 @@ export default function ConversationalAnalyticsPage() {
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
-            <p className="text-red-800 dark:text-red-300">{error}</p>
+          <div className="mb-6 p-4 bg-[var(--accent-danger,#ef4444)]/5 border border-[var(--accent-danger,#ef4444)]/30 rounded-lg flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-[var(--accent-danger,#ef4444)] flex-shrink-0 mt-0.5" />
+            <p className="text-[var(--accent-danger,#ef4444)]">{error}</p>
           </div>
         )}
 
@@ -315,8 +315,8 @@ export default function ConversationalAnalyticsPage() {
         <div className="grid lg:grid-cols-2 gap-6 mb-6">
           {/* Sentiment Chart */}
           {sentimentData.length > 0 && (
-            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">
+            <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-default)] p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-6">
                 Conversation Sentiment
               </h2>
               <div className="h-72">
@@ -352,22 +352,22 @@ export default function ConversationalAnalyticsPage() {
 
           {/* Top Objections */}
           {objections.length > 0 && (
-            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">
+            <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-default)] p-6 shadow-sm">
+              <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-6">
                 Top Objections
               </h2>
               <div className="space-y-4 max-h-72 overflow-y-auto">
                 {objections.slice(0, 8).map((objection, idx) => (
                   <div key={idx} className="space-y-2">
                     <div className="flex items-start justify-between gap-2">
-                      <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                      <p className="text-sm font-medium text-[var(--text-primary)]">
                         {objection.text}
                       </p>
-                      <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 whitespace-nowrap">
+                      <span className="text-xs font-semibold text-[var(--text-secondary)] whitespace-nowrap">
                         {objection.count}x
                       </span>
                     </div>
-                    <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
+                    <div className="w-full bg-[var(--bg-inset)] rounded-full h-2 overflow-hidden">
                       <div
                         className="bg-gradient-to-r from-green-500 to-blue-500 h-full rounded-full transition-[width]"
                         style={{
@@ -375,7 +375,7 @@ export default function ConversationalAnalyticsPage() {
                         }}
                       ></div>
                     </div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-[var(--text-tertiary)]">
                       {(objection.resolution_rate * 100).toFixed(0)}% resolved
                     </p>
                   </div>
@@ -387,8 +387,8 @@ export default function ConversationalAnalyticsPage() {
 
         {/* Word Cloud */}
         {wordCloud.length > 0 && (
-          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm mb-6">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-default)] p-6 shadow-sm mb-6">
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-6">
               Conversation Word Cloud
             </h2>
             <div className="flex flex-wrap gap-4 justify-center items-center min-h-48 p-4">
@@ -413,30 +413,30 @@ export default function ConversationalAnalyticsPage() {
         {/* Winning Talk Tracks */}
         {winningTalkTracks.length > 0 && (
           <div className="mb-6">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
               Winning Talk Tracks
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {winningTalkTracks.slice(0, 6).map((track, idx) => (
                 <div
                   key={idx}
-                  className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-800 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow"
+                  className="bg-[var(--accent-primary)]/5 border border-[var(--accent-primary)]/30 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-slate-900 dark:text-slate-100 line-clamp-3">
+                      <p className="text-sm font-medium text-[var(--text-primary)] line-clamp-3">
                         "{track.phrase}"
                       </p>
                     </div>
-                    <ThumbsUp className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0" />
+                    <ThumbsUp className="h-5 w-5 text-[var(--accent-primary)] flex-shrink-0" />
                   </div>
-                  <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400">
+                  <div className="flex items-center justify-between text-xs text-[var(--text-secondary)]">
                     <span>Success Rate</span>
-                    <span className="font-semibold text-green-600 dark:text-green-400">
+                    <span className="font-semibold text-[var(--accent-primary)]">
                       {(track.success_rate * 100).toFixed(0)}%
                     </span>
                   </div>
-                  <div className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                  <div className="text-xs text-[var(--text-tertiary)] mt-2">
                     Used {track.usage_count} times
                   </div>
                 </div>
@@ -448,32 +448,32 @@ export default function ConversationalAnalyticsPage() {
         {/* Losing Talk Tracks */}
         {losingTalkTracks.length > 0 && (
           <div className="mb-6">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">
               Phrases to Avoid
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {losingTalkTracks.slice(0, 6).map((track, idx) => (
                 <div
                   key={idx}
-                  className="bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 border border-red-200 dark:border-red-800 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow"
+                  className="bg-[var(--accent-danger,#ef4444)]/5 border border-[var(--accent-danger,#ef4444)]/30 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-slate-900 dark:text-slate-100 line-clamp-2">
+                      <p className="text-sm font-medium text-[var(--text-primary)] line-clamp-2">
                         ❌ "{track.phrase}"
                       </p>
                     </div>
-                    <ThumbsDown className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+                    <ThumbsDown className="h-5 w-5 text-[var(--accent-danger,#ef4444)] flex-shrink-0" />
                   </div>
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400">
+                    <div className="flex items-center justify-between text-xs text-[var(--text-secondary)]">
                       <span>Failure Rate</span>
-                      <span className="font-semibold text-red-600 dark:text-red-400">
+                      <span className="font-semibold text-[var(--accent-danger,#ef4444)]">
                         {(track.failure_rate * 100).toFixed(0)}%
                       </span>
                     </div>
-                    <div className="pt-2 border-t border-red-200 dark:border-red-800">
-                      <p className="text-xs text-slate-700 dark:text-slate-300">
+                    <div className="pt-2 border-t border-[var(--accent-danger,#ef4444)]/30">
+                      <p className="text-xs text-[var(--text-secondary)]">
                         Try instead: <span className="font-medium">"{track.suggested_alternative}"</span>
                       </p>
                     </div>
@@ -486,8 +486,8 @@ export default function ConversationalAnalyticsPage() {
 
         {/* Drop-off Funnel */}
         {funnelData.length > 0 && (
-          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-default)] p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-6">
               Conversation Drop-off Funnel
             </h2>
             <div className="space-y-4">
@@ -500,10 +500,10 @@ export default function ConversationalAnalyticsPage() {
                 return (
                   <div key={idx} className="space-y-2">
                     <div className="flex items-center justify-between gap-4">
-                      <span className="text-sm font-medium text-slate-700 dark:text-slate-300 min-w-32">
+                      <span className="text-sm font-medium text-[var(--text-secondary)] min-w-32">
                         {stage.stage}
                       </span>
-                      <div className="flex-1 bg-slate-200 dark:bg-slate-700 rounded-full h-8 overflow-hidden">
+                      <div className="flex-1 bg-[var(--bg-inset)] rounded-full h-8 overflow-hidden">
                         <div
                           className="bg-gradient-to-r from-blue-500 to-blue-600 h-full flex items-center justify-end pr-3 transition-[width] rounded-full"
                           style={{ width: `${width}%` }}
@@ -515,10 +515,10 @@ export default function ConversationalAnalyticsPage() {
                       </div>
                       {stage.drop_off_percentage > 0 && (
                         <div className="text-right min-w-20">
-                          <p className="text-xs font-semibold text-red-600 dark:text-red-400">
+                          <p className="text-xs font-semibold text-[var(--accent-danger,#ef4444)]">
                             -{stage.drop_off_percentage.toFixed(1)}%
                           </p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">
+                          <p className="text-xs text-[var(--text-tertiary)]">
                             drop-off
                           </p>
                         </div>
@@ -534,11 +534,11 @@ export default function ConversationalAnalyticsPage() {
         {/* Empty State */}
         {!metrics && !loading && (
           <div className="text-center py-12">
-            <MessageSquare className="h-12 w-12 text-slate-400 dark:text-slate-600 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+            <MessageSquare className="h-12 w-12 text-[var(--text-tertiary)] mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
               No data available
             </h3>
-            <p className="text-slate-600 dark:text-slate-400">
+            <p className="text-[var(--text-secondary)]">
               Conversational analytics data will appear here once conversations are analyzed.
             </p>
           </div>
@@ -559,15 +559,15 @@ interface KPICardProps {
 
 function KPICard({ label, value, icon, trend, subtitle }: KPICardProps) {
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4 shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-default)] p-4 shadow-sm hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between mb-3">
-        <div className="text-blue-600 dark:text-blue-400">{icon}</div>
+        <div className="text-[var(--accent-primary)]">{icon}</div>
         {trend !== undefined && (
           <div
             className={`text-xs font-semibold px-2 py-1 rounded-full ${
               trend >= 0
-                ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
-                : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
+                ? "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]"
+                : "bg-[var(--accent-danger,#ef4444)]/10 text-[var(--accent-danger,#ef4444)]"
             }`}
           >
             {trend >= 0 ? "+" : ""}
@@ -575,10 +575,10 @@ function KPICard({ label, value, icon, trend, subtitle }: KPICardProps) {
           </div>
         )}
       </div>
-      <p className="text-2xl font-bold text-slate-900 dark:text-white mb-1">
+      <p className="text-2xl font-bold text-[var(--text-primary)] mb-1">
         {value}
       </p>
-      <p className="text-xs text-slate-600 dark:text-slate-400">
+      <p className="text-xs text-[var(--text-secondary)]">
         {label}
         {subtitle && <span> ({subtitle})</span>}
       </p>

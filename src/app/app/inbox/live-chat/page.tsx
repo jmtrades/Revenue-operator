@@ -180,26 +180,26 @@ export default function LiveChatInboxPage() {
   return (
     <div className="h-screen flex flex-col bg-white">
       {/* Header */}
-      <div className="border-b border-gray-200 px-6 py-4">
+      <div className="border-b border-[var(--border-default)] px-6 py-4">
         <div className="flex items-center gap-3 mb-2">
           <Link
             href="/app/inbox"
-            className="inline-flex items-center justify-center w-8 h-8 rounded-lg hover:bg-gray-100 transition-colors"
+            className="inline-flex items-center justify-center w-8 h-8 rounded-lg hover:bg-[var(--bg-hover)] transition-colors"
           >
-            <ArrowLeft className="w-4 h-4 text-gray-600" />
+            <ArrowLeft className="w-4 h-4 text-[var(--text-secondary)]" />
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900">Live Chat Inbox</h1>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Live Chat Inbox</h1>
         </div>
-        <p className="text-sm text-gray-600 ml-11">
+        <p className="text-sm text-[var(--text-secondary)] ml-11">
           Manage and respond to visitor chat messages
         </p>
       </div>
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sessions List */}
-        <div className="w-80 border-r border-gray-200 overflow-y-auto">
+        <div className="w-80 border-r border-[var(--border-default)] overflow-y-auto">
           {sessions.length === 0 ? (
-            <div className="flex items-center justify-center h-full text-gray-500">
+            <div className="flex items-center justify-center h-full text-[var(--text-tertiary)]">
               <div className="text-center">
                 <p className="text-sm font-medium">No active chat sessions</p>
                 <p className="text-xs mt-1">
@@ -208,33 +208,33 @@ export default function LiveChatInboxPage() {
               </div>
             </div>
           ) : (
-            <div className="divide-y divide-gray-200">
+            <div className="divide-y divide-[var(--border-default)]">
               {sessions.map((session) => (
                 <button
                   key={session.id}
                   onClick={() => setSelectedSessionId(session.id)}
-                  className={`w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors border-l-2 ${
+                  className={`w-full text-left px-4 py-3 hover:bg-[var(--bg-hover)] transition-colors border-l-2 ${
                     selectedSessionId === session.id
-                      ? "border-blue-500 bg-blue-50"
+                      ? "border-[var(--accent-primary)] bg-[var(--accent-primary)]/10"
                       : "border-transparent"
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">
+                      <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                         {session.visitor_name}
                       </p>
                       {session.visitor_email && (
-                        <p className="text-xs text-gray-500 truncate">
+                        <p className="text-xs text-[var(--text-tertiary)] truncate">
                           {session.visitor_email}
                         </p>
                       )}
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-[var(--text-tertiary)] mt-1">
                         {new Date(session.created_at).toLocaleTimeString()}
                       </p>
                     </div>
                     {(session.unread_count || 0) > 0 && (
-                      <span className="bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0">
+                      <span className="bg-[var(--accent-danger,#ef4444)] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center flex-shrink-0">
                         {session.unread_count}
                       </span>
                     )}
@@ -250,12 +250,12 @@ export default function LiveChatInboxPage() {
           {selectedSession ? (
             <>
               {/* Chat Header */}
-              <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+              <div className="border-b border-[var(--border-default)] px-6 py-4 flex items-center justify-between">
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900">
+                  <h2 className="text-lg font-semibold text-[var(--text-primary)]">
                     {selectedSession.visitor_name}
                   </h2>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-[var(--text-tertiary)]">
                     {selectedSession.visitor_email || "No email provided"}
                   </p>
                 </div>
@@ -271,7 +271,7 @@ export default function LiveChatInboxPage() {
               {/* Messages */}
               <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
                 {messages.length === 0 ? (
-                  <div className="flex items-center justify-center h-full text-gray-500">
+                  <div className="flex items-center justify-center h-full text-[var(--text-tertiary)]">
                     <p className="text-sm">No messages yet. Start the conversation!</p>
                   </div>
                 ) : (
@@ -287,8 +287,8 @@ export default function LiveChatInboxPage() {
                       <div
                         className={`max-w-xs px-4 py-2 rounded-lg ${
                           msg.sender_type === "agent"
-                            ? "bg-blue-600 text-white rounded-br-none"
-                            : "bg-gray-200 text-gray-900 rounded-bl-none"
+                            ? "bg-[var(--accent-primary)] text-white rounded-br-none"
+                            : "bg-[var(--bg-inset)] text-[var(--text-primary)] rounded-bl-none"
                         }`}
                       >
                         <p className="text-sm">{msg.content}</p>
@@ -303,7 +303,7 @@ export default function LiveChatInboxPage() {
               </div>
 
               {/* Message Input */}
-              <div className="border-t border-gray-200 px-6 py-4">
+              <div className="border-t border-[var(--border-default)] px-6 py-4">
                 <div className="flex gap-3">
                   <input
                     type="text"
@@ -317,12 +317,12 @@ export default function LiveChatInboxPage() {
                     }}
                     placeholder="Type your message..."
                     disabled={sending}
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+                    className="flex-1 px-4 py-2 border border-[var(--border-medium)] rounded-lg focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent disabled:bg-[var(--bg-inset)]"
                   />
                   <button
                     onClick={handleSendMessage}
                     disabled={sending || !messageText.trim()}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+                    className="px-4 py-2 bg-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/90 disabled:bg-gray-400 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
                   >
                     <Send className="w-4 h-4" />
                     {sending ? "Sending..." : "Send"}
@@ -331,7 +331,7 @@ export default function LiveChatInboxPage() {
               </div>
             </>
           ) : (
-            <div className="flex items-center justify-center h-full text-gray-500">
+            <div className="flex items-center justify-center h-full text-[var(--text-tertiary)]">
               <p className="text-sm">Select a chat session to start responding</p>
             </div>
           )}
