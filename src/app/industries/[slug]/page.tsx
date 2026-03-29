@@ -28,7 +28,7 @@ export async function generateMetadata({
     return { title: t("title") };
   }
   const title = `${industry.name} AI Revenue Operations Platform — Revenue Operator`;
-  const description = `Drive ${industry.customerType} revenue with complete AI-powered workflows: call answering, appointment scheduling, no-show prevention, follow-up automation, and campaign execution for ${industry.name}.`;
+  const description = `Drive ${industry.customerType} revenue with complete AI-powered workflows: inbound handling, appointment scheduling, no-show prevention, follow-up automation, and campaign execution for ${industry.name}.`;
   const url = `${BASE}/industries/${slug}`;
   return {
     title,
@@ -188,7 +188,7 @@ export default async function IndustryPage({
             "@type": "LocalBusiness",
             name: `${industry.name} AI Phone Agent`,
             url: `${BASE}/industries/${slug}`,
-            description: `Complete AI revenue operations for ${industry.customerType}: call answering, appointment scheduling, no-show prevention, automated follow-up, campaign execution, and revenue recovery.`,
+            description: `Complete AI revenue operations for ${industry.customerType}: inbound handling, appointment scheduling, no-show prevention, automated follow-up, campaign execution, and revenue recovery.`,
             address: {
               "@type": "PostalAddress",
               addressCountry: "US",

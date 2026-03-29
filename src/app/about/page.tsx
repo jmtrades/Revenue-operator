@@ -115,7 +115,7 @@ export default function AboutPage() {
                   className="text-xl md:text-2xl font-semibold mb-4"
                   style={{ letterSpacing: "-0.02em" }}
                 >
-                  Revenue recovery, not phone answering.
+                  Revenue execution, not phone answering.
                 </h2>
                 <p
                   className="text-sm leading-relaxed mb-4"
