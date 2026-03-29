@@ -111,31 +111,19 @@ export function LeadsList({
 
   if (filteredLeads.length === 0) {
     return (
-      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-12 text-center">
-        <Users
-          className="w-12 h-12 text-[var(--text-tertiary)] mx-auto mb-3"
-          aria-hidden
-        />
-        <p className="text-sm font-medium text-[var(--text-primary)] mb-1">
-          {tLeads("empty.title")}
-        </p>
-        <p className="text-xs text-[var(--text-secondary)] mb-4">
-          {tLeads("empty.subtitle")}
-        </p>
-        <EmptyState
-          icon={Users}
-          title={tLeads("empty.title")}
-          description={tLeads("empty.description")}
-          primaryAction={{
-            label: tLeads("importCsv"),
-            href: "/app/leads?import=1",
-          }}
-          secondaryAction={{
-            label: tLeads("addContact"),
-            href: "/app/leads?add=1",
-          }}
-        />
-      </div>
+      <EmptyState
+        icon={Users}
+        title={tLeads("empty.title")}
+        description={tLeads("empty.description")}
+        primaryAction={{
+          label: tLeads("importCsv"),
+          href: "/app/leads?import=1",
+        }}
+        secondaryAction={{
+          label: tLeads("addContact"),
+          href: "/app/leads?add=1",
+        }}
+      />
     );
   }
 
