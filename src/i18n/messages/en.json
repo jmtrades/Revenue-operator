@@ -202,6 +202,10 @@
     }
   },
   "common": {
+    "home": "Home",
+    "recommendations": {
+      "pageTitle": "Recommendations — Revenue Operator"
+    },
     "save": "Save",
     "saved": "Saved",
     "cancel": "Cancel",
@@ -2315,6 +2319,8 @@
     "successRateOverTime": "Success Rate Over Time"
   },
   "agents": {
+    "breadcrumbHome": "Home",
+    "breadcrumbOperators": "Operators",
     "pageTitle": "Operators — Revenue Operator",
     "pageHeading": "Your autonomous revenue operators",
     "pageSubtitle": "Elite AI operators deployed to handle calls, book appointments, and recover revenue 24/7",
@@ -3601,7 +3607,8 @@
     "empty": {
       "title": "Your inbox activates with your first call.",
       "body": "Every SMS, email, and voice interaction your operator handles flows here — threaded by contact, tagged by revenue stage.",
-      "cta": "Enable SMS in settings"
+      "cta": "Enable SMS in settings",
+      "hint": "Connect a phone number and your operator will start handling conversations automatically."
     },
     "search": {
       "placeholder": "Search conversations…"
@@ -4106,6 +4113,9 @@
       "cancelEdit": "Cancel",
       "campaignTypeLabel": "Campaign type",
       "campaignNameLabel": "Campaign name",
+      "campaignNamePlaceholder": "Missed-call recovery",
+      "removeStep": "Remove step",
+      "addStep": "+ Add step",
       "audienceLabel": "Audience label",
       "audiencePlaceholder": "e.g. Leads waiting on follow-up",
       "leadStatusOptionalLabel": "Lead status (optional)",
@@ -7843,6 +7853,7 @@
     }
   },
   "appointments": {
+    "syncButton": "Sync Calendar",
     "pageTitle": "Appointments — Revenue Operator",
     "heading": "Appointments",
     "description": "Every appointment your operator booked — from calls, campaigns, and recovery sequences.",
