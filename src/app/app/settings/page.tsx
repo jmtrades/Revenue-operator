@@ -403,14 +403,14 @@ export default function AppSettingsPage() {
           <button
             type="button"
             onClick={() => setConfirm("data")}
-            className="block text-sm text-red-300 hover:text-red-200 transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded text-left"
+            className="block text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded text-left"
           >
             {tSettings("requestDeleteData")}
           </button>
           <button
             type="button"
             onClick={() => setConfirm("account")}
-            className="block text-sm text-red-300 hover:text-red-200 transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded text-left"
+            className="block text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded text-left"
           >
             {tSettings("requestDeleteAccount")}
           </button>

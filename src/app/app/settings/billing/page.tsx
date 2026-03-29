@@ -268,13 +268,13 @@ export default function AppSettingsBillingPage() {
 
   function statusBadgeColor(status: string | null): string {
     switch (status) {
-      case "active": return "bg-emerald-500/20 text-emerald-400";
-      case "trial": return "bg-purple-500/20 text-purple-300";
-      case "trial_ended": return "bg-amber-500/20 text-amber-300";
-      case "cancelled": return "bg-red-500/20 text-red-300";
-      case "paused": return "bg-gray-500/20 text-gray-300";
-      case "payment_failed": return "bg-red-500/20 text-red-300";
-      default: return "bg-gray-500/20 text-gray-300";
+      case "active": return "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400";
+      case "trial": return "bg-purple-500/10 text-purple-600 dark:text-purple-400";
+      case "trial_ended": return "bg-amber-500/10 text-amber-600 dark:text-amber-400";
+      case "cancelled": return "bg-red-500/10 text-red-600 dark:text-red-400";
+      case "paused": return "bg-gray-500/10 text-gray-600 dark:text-gray-400";
+      case "payment_failed": return "bg-red-500/10 text-red-600 dark:text-red-400";
+      default: return "bg-gray-500/10 text-gray-600 dark:text-gray-400";
     }
   }
 

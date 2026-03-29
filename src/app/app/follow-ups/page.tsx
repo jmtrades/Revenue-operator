@@ -249,7 +249,7 @@ export default function AppFollowUpsPage() {
   return (
     <div className="p-4 md:p-6 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold text-[var(--text-primary)]">{t("title")}</h1>
+        <h1 className="text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("title")}</h1>
         <Link href="/app/follow-ups/create">
           <Button variant="primary" size="sm" className="gap-1">
             <Plus className="w-4 h-4" />
@@ -262,9 +262,9 @@ export default function AppFollowUpsPage() {
       </div>
       {/* Intelligence callout for follow-ups queue */}
       {sequences.length > 0 && (
-        <div className="mb-6 rounded-xl border border-blue-500/30 bg-blue-500/5 p-4 flex items-start gap-3">
+        <div className="mb-6 rounded-xl border border-[var(--accent-primary)]/20 bg-[var(--accent-primary)]/[0.04] p-4 flex items-start gap-3">
           <div className="flex-1 min-w-0">
-            <p className="text-sm text-blue-300 font-medium">
+            <p className="text-sm text-[var(--accent-primary)] font-medium">
               Your follow-up queue represents ~${(sequences.reduce((sum, s) => sum + (s.is_active ? 37.5 : 0), 0)).toLocaleString("en-US", { maximumFractionDigits: 0 })} in recoverable revenue. Recovery mode is active.
             </p>
           </div>
@@ -287,10 +287,10 @@ export default function AppFollowUpsPage() {
         </button>
       </div>
       {loading ? (
-        <div className="animate-pulse h-40 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-default)]" />
+        <div className="skeleton-shimmer h-40 rounded-2xl border border-[var(--border-default)]" />
       ) : fetchError ? (
         <div className="rounded-2xl border border-red-500/30 bg-red-500/5 p-8 text-center">
-          <p className="text-sm text-red-300">{fetchError}</p>
+          <p className="text-sm text-red-600 dark:text-red-400">{fetchError}</p>
           <button
             type="button"
             onClick={() => { setLoading(true); setFetchError(null); refetchSequences(); }}

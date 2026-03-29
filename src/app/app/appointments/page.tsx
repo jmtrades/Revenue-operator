@@ -55,9 +55,9 @@ function getAppointmentSourceDisplay(source: AppointmentSource, t: (k: string, o
 function statusColor(status: AppointmentStatus): string {
   switch (status) {
     case "Confirmed":
-      return "bg-emerald-500/20 text-emerald-300 border-emerald-500/30";
+      return "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20";
     case "Pending":
-      return "bg-amber-500/20 text-amber-200 border-amber-500/30";
+      return "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20";
     case "Cancelled":
       return "bg-[var(--bg-card)] text-[var(--text-secondary)] border-[var(--border-medium)]";
     case "Completed":
@@ -279,9 +279,9 @@ export default function AppointmentsPage() {
       <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)]">{t("appointments.heading", { defaultValue: "Appointments" })}</h1>
-            <p className="text-sm text-[var(--text-tertiary)] mt-1">
-              {t("appointments.description", { defaultValue: "All booked appointments from calls, campaigns, and inbox." })}
+            <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("appointments.heading", { defaultValue: "Appointments" })}</h1>
+            <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed">
+              {t("appointments.description", { defaultValue: "Your operator books directly to your calendar — confirmations, reminders, and no-show recovery included." })}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -307,7 +307,7 @@ export default function AppointmentsPage() {
         </div>
 
         {loading ? (
-          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 text-center">
+          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 text-center shadow-[var(--shadow-card)]">
             <div className="inline-block animate-spin">
               <div className="w-8 h-8 border-2 border-[var(--text-tertiary)] border-t-[var(--accent-primary)] rounded-full" />
             </div>
@@ -315,7 +315,7 @@ export default function AppointmentsPage() {
           </div>
         ) : fetchError ? (
           <div className="rounded-2xl border border-red-500/30 bg-red-500/5 p-8 text-center">
-            <p className="text-sm text-red-300">{fetchError}</p>
+            <p className="text-sm text-red-600 dark:text-red-400">{fetchError}</p>
             <button
               type="button"
               onClick={() => { setLoading(true); setFetchError(null); refetchAppointments(); }}
@@ -728,7 +728,7 @@ export default function AppointmentsPage() {
           className={`fixed bottom-4 right-4 z-50 px-4 py-3 rounded-lg text-sm font-medium transition-[opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] ${
             toast.type === "success"
               ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
-              : "bg-red-500/20 text-red-300 border border-red-500/30"
+              : "bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/30"
           }`}
         >
           {toast.message}

@@ -132,8 +132,8 @@ export default function CompliancePage() {
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="p-4 md:p-6 lg:p-8 space-y-8 max-w-4xl mx-auto">
         <div>
-          <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)]">{t("title")}</h1>
-          <p className="text-sm text-[var(--text-secondary)] mt-1">{t("subtitle")}</p>
+          <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("title")}</h1>
+          <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed">{t("subtitle")}</p>
         </div>
 
         {/* Section 1: Compliance Standards */}
