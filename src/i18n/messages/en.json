@@ -4570,7 +4570,10 @@
         "salesforce": "Salesforce",
         "zoho_crm": "Zoho CRM",
         "google_contacts": "Google Contacts",
-        "microsoft_365": "Microsoft 365"
+        "microsoft_365": "Microsoft 365",
+        "pipedrive": "Pipedrive",
+        "gohighlevel": "GoHighLevel",
+        "airtable": "Airtable"
       },
       "defaultsLoaded": "Default mappings loaded",
       "loadDefaults": "Load defaults",
