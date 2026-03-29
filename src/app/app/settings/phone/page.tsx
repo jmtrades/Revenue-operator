@@ -41,7 +41,7 @@ function formatPhoneNumber(num: string | null): string {
 
 /** Normalize to E.164 for API: 10 digits → +1..., 11 starting with 1 → +1... */
 function toE164(value: string): string | null {
-  const digits = value.replace(/\D/g, "");
+  const digits = (value ?? "").replace(/\D/g, "");
   if (digits.length === 10) return `+1${digits}`;
   if (digits.length === 11 && digits.startsWith("1")) return `+${digits}`;
   if (digits.length >= 10 && digits.length <= 15) return `+${digits}`;
@@ -49,7 +49,7 @@ function toE164(value: string): string | null {
 }
 
 function digitsOnly(value: string): string {
-  return value.replace(/\D/g, "");
+  return (value ?? "").replace(/\D/g, "");
 }
 
 type PhoneSettingsSnapshot = {
@@ -706,7 +706,7 @@ export default function AppSettingsPhonePage() {
                   inputMode="numeric"
                   maxLength={6}
                   value={verifyCode}
-                  onChange={(e) => setVerifyCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  onChange={(e) => setVerifyCode((e.target.value ?? "").replace(/\D/g, "").slice(0, 6))}
                   placeholder={tPhone("verificationCodePlaceholder")}
                   className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:outline-none mb-2"
                 />
@@ -772,7 +772,7 @@ export default function AppSettingsPhonePage() {
                   inputMode="numeric"
                   maxLength={3}
                   value={areaCode}
-                  onChange={(e) => setAreaCode(e.target.value.replace(/\D/g, "").slice(0, 3))}
+                  onChange={(e) => setAreaCode((e.target.value ?? "").replace(/\D/g, "").slice(0, 3))}
                   placeholder={tPhone("areaCodePlaceholder")}
                   className="w-full bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-lg px-3 py-2.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--accent-primary)]"
                 />
@@ -810,7 +810,7 @@ export default function AppSettingsPhonePage() {
                           inputMode="numeric"
                           maxLength={3}
                           value={areaCode}
-                          onChange={(e) => setAreaCode(e.target.value.replace(/\D/g, "").slice(0, 3))}
+                          onChange={(e) => setAreaCode((e.target.value ?? "").replace(/\D/g, "").slice(0, 3))}
                           placeholder={tPhone("areaCodePlaceholderAlt")}
                           className="w-24 bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)]"
                         />
@@ -901,7 +901,7 @@ export default function AppSettingsPhonePage() {
                     inputMode="numeric"
                     maxLength={6}
                     value={verifyCode}
-                    onChange={(e) => setVerifyCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                    onChange={(e) => setVerifyCode((e.target.value ?? "").replace(/\D/g, "").slice(0, 6))}
                     placeholder={tPhone("verificationCodePlaceholder")}
                     className="w-full bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)]"
                   />

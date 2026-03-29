@@ -138,8 +138,8 @@ export default function AppSettingsPage() {
           if (cancelled || !data?.session) return;
           setEmail(data.session.email ?? null);
           setDisplayName(data.session.displayName ?? "");
-          if (data.session.timezone?.trim()) {
-            setTimezone(data.session.timezone.trim());
+          if ((data.session.timezone ?? "").trim()) {
+            setTimezone((data.session.timezone ?? "").trim());
           }
         },
       )
