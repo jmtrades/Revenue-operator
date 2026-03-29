@@ -567,9 +567,27 @@ export function UnifiedDashboard() {
         {/* Onboarding checklist — sequential numbered steps */}
         {!hasSignal && (
           <div className="mt-8 pt-6 border-t border-[var(--border-default)]">
-            <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">{t("getStarted", { defaultValue: "Get started" })}</h3>
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="text-sm font-semibold text-[var(--text-primary)]">{t("getStarted", { defaultValue: "Get started" })}</h3>
+              <span className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]">
+                {[!!data.agent_configured, !!data.phone_number_configured].filter(Boolean).length}/4 complete
+              </span>
+            </div>
             <p className="text-xs text-[var(--text-tertiary)] mb-4">{t("getStartedSubtitle", { defaultValue: "Complete these steps to go live — takes about 5 minutes" })}</p>
-            <div className="grid sm:grid-cols-4 gap-4">
+
+            {/* Progress bar */}
+            <div className="mb-5">
+              <div className="h-1.5 rounded-full bg-[var(--bg-inset)] overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-[var(--accent-primary)] transition-all duration-500"
+                  style={{ width: `${([!!data.agent_configured, !!data.phone_number_configured].filter(Boolean).length / 4) * 100}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Required steps */}
+            <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--accent-primary)] mb-3">Required to go live</p>
+            <div className="grid sm:grid-cols-2 gap-3 mb-5">
               {[
                 {
                   step: 1,
@@ -587,6 +605,34 @@ export function UnifiedDashboard() {
                   desc: t("onboarding.connectNumber.description", { defaultValue: "Get a phone number for your AI to answer" }),
                   done: !!data.phone_number_configured,
                 },
+              ].map((item) => (
+                <Link
+                  key={item.step}
+                  href={item.href}
+                  className={`onboard-card group flex flex-col ${item.done ? "opacity-70" : "ring-1 ring-[var(--accent-primary)]/20"}`}
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    {item.done ? (
+                      <div className="w-10 h-10 rounded-xl bg-emerald-500/15 flex items-center justify-center">
+                        <Check className="w-5 h-5 text-emerald-500" />
+                      </div>
+                    ) : (
+                      <div className="w-10 h-10 rounded-xl bg-[var(--accent-primary-subtle)] flex items-center justify-center">
+                        <span className="text-sm font-bold text-[var(--accent-primary)]">{item.step}</span>
+                      </div>
+                    )}
+                    <ChevronRight className="w-4 h-4 text-[var(--text-disabled)] group-hover:text-[var(--text-secondary)] transition-colors" />
+                  </div>
+                  <h4 className={`font-semibold text-sm ${item.done ? "text-[var(--text-secondary)] line-through" : "text-[var(--text-primary)]"}`}>{item.title}</h4>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1 leading-relaxed">{item.desc}</p>
+                </Link>
+              ))}
+            </div>
+
+            {/* Recommended steps */}
+            <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--text-tertiary)] mb-3">Recommended</p>
+            <div className="grid sm:grid-cols-2 gap-3">
+              {[
                 {
                   step: 3,
                   href: "/app/knowledge",
@@ -597,7 +643,7 @@ export function UnifiedDashboard() {
                 },
                 {
                   step: 4,
-                  href: "/app/settings/phone",
+                  href: "/app/agents",
                   icon: PhoneCall,
                   title: t("onboarding.makeTestCall.title", { defaultValue: "Make a test call" }),
                   desc: t("onboarding.makeTestCall.description", { defaultValue: "Call your number to hear your agent in action" }),
@@ -615,8 +661,8 @@ export function UnifiedDashboard() {
                         <Check className="w-5 h-5 text-emerald-500" />
                       </div>
                     ) : (
-                      <div className="w-10 h-10 rounded-xl bg-[var(--accent-primary-subtle)] flex items-center justify-center">
-                        <span className="text-sm font-bold text-[var(--accent-primary)]">{item.step}</span>
+                      <div className="w-10 h-10 rounded-xl bg-[var(--bg-inset)] flex items-center justify-center">
+                        <span className="text-sm font-bold text-[var(--text-tertiary)]">{item.step}</span>
                       </div>
                     )}
                     <ChevronRight className="w-4 h-4 text-[var(--text-disabled)] group-hover:text-[var(--text-secondary)] transition-colors" />
