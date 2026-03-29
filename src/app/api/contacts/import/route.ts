@@ -205,7 +205,7 @@ export async function POST(req: NextRequest) {
     metadata: { source: "csv_import", notes: r.notes, score: 40 },
   }));
 
-  const insertResult = await runWithWriteContextAsync("api", () =>
+  const insertResult = await runWithWriteContextAsync("api", async () =>
     db.from("leads").insert(toInsert).select("id")
   ) as { data?: { id: string }[] | null; error?: unknown };
   if (insertResult.error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });

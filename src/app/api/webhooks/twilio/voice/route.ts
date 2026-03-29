@@ -157,7 +157,7 @@ export async function POST(req: NextRequest) {
           const { data: lead } = await db.from("leads").select("id").eq("workspace_id", workspaceId).or(`phone.eq.${from},phone.eq.${phone}`).limit(1).maybeSingle();
           leadId = (lead as { id: string } | null)?.id ?? null;
           if (!leadId) {
-            const createdResult = await runWithWriteContextAsync("api", () =>
+            const createdResult = await runWithWriteContextAsync("api", async () =>
               db.from("leads").insert({ workspace_id: workspaceId, name: "Inbound caller", phone: from ?? undefined, status: "NEW" }).select("id").maybeSingle()
             ) as { data?: { id: string } | null };
             leadId = createdResult.data?.id;

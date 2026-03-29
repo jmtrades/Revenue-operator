@@ -240,7 +240,7 @@ export async function POST(req: NextRequest) {
         .eq("id", (existingLead as { id: string }).id);
     } else {
       // Create new lead
-      await runWithWriteContextAsync("api", () =>
+      await runWithWriteContextAsync("api", async () =>
         db.from("leads").insert({
           workspace_id: DEMO_WORKSPACE,
           phone: e164Phone,

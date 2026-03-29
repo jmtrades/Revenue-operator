@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Insert into leads table with "NEW" state and website_demo source
-    const signupResult = await runWithWriteContextAsync("api", () =>
+    const signupResult = await runWithWriteContextAsync("api", async () =>
       db.from("leads").insert({
         workspace_id: DEMO_WORKSPACE_ID,
         email,

@@ -503,7 +503,7 @@ async function upsertLead(
     }
 
     // Create new lead
-    const result = await runWithWriteContextAsync("api", () =>
+    const result = await runWithWriteContextAsync("api", async () =>
       db.from("leads").insert({
         workspace_id: workspaceId,
         name: data.name || "New Lead",
