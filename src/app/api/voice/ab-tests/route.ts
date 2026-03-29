@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { checkRateLimit } from "@/lib/rate-limit";
@@ -23,6 +24,9 @@ export async function GET(req: NextRequest) {
   if (!workspaceId) {
     return NextResponse.json({ tests: [] });
   }
+
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
+  if (authErr) return authErr;
 
   const db = getDb();
   const { data, error } = await db
@@ -61,6 +65,9 @@ export async function POST(req: NextRequest) {
   if (!workspaceId) {
     return NextResponse.json({ error: "No workspace" }, { status: 400 });
   }
+
+  const authErrPost = await requireWorkspaceAccess(req, workspaceId);
+  if (authErrPost) return authErrPost;
 
   // Rate limit: 10 A/B test creations per hour per workspace
   const rl = await checkRateLimit(`voice_ab_tests:create:${workspaceId}`, 10, 3600_000);
