@@ -110,8 +110,8 @@ function TrendBadge({ value, trend }: { value: string; trend: number }) {
 
   const isUp = trend > 0;
   const Icon = isUp ? ArrowUpRight : ArrowDownRight;
-  const color = isUp ? "text-green-600" : "text-red-600";
-  const bgColor = isUp ? "bg-green-50" : "bg-red-50";
+  const color = isUp ? "text-[var(--accent-primary)]" : "text-[var(--accent-danger,#ef4444)]";
+  const bgColor = isUp ? "bg-[var(--accent-primary)]/10" : "bg-[var(--accent-danger,#ef4444)]/10";
 
   return (
     <span
@@ -128,12 +128,12 @@ function TrendBadge({ value, trend }: { value: string; trend: number }) {
 }
 
 function GradeGetter(score: number): { letter: string; color: string } {
-  if (score >= 90) return { letter: "A+", color: "text-green-700 bg-green-100" };
-  if (score >= 80) return { letter: "A", color: "text-green-600 bg-green-100" };
-  if (score >= 70) return { letter: "B+", color: "text-blue-600 bg-blue-100" };
-  if (score >= 60) return { letter: "B", color: "text-blue-500 bg-blue-100" };
-  if (score >= 50) return { letter: "C", color: "text-amber-600 bg-amber-100" };
-  return { letter: "D", color: "text-red-600 bg-red-100" };
+  if (score >= 90) return { letter: "A+", color: "text-[var(--accent-primary)] bg-[var(--accent-primary)]/10" };
+  if (score >= 80) return { letter: "A", color: "text-[var(--accent-primary)] bg-[var(--accent-primary)]/10" };
+  if (score >= 70) return { letter: "B+", color: "text-[var(--accent-primary)] bg-[var(--accent-primary)]/10" };
+  if (score >= 60) return { letter: "B", color: "text-[var(--text-secondary)] bg-[var(--bg-input)]" };
+  if (score >= 50) return { letter: "C", color: "text-[var(--accent-warning,#f59e0b)] bg-[var(--accent-warning,#f59e0b)]/10" };
+  return { letter: "D", color: "text-[var(--accent-danger,#ef4444)] bg-[var(--accent-danger,#ef4444)]/10" };
 }
 
 function getRecoveryVerdict(score: number, atRiskCents?: number): string {
@@ -185,9 +185,9 @@ export default function RevenueDigestPage() {
   if (error) {
     return (
       <div className="max-w-6xl mx-auto p-4 md:p-8">
-        <div className="rounded-xl border border-red-200 bg-red-50 p-6">
-          <p className="text-red-800 font-medium">Error Loading Report</p>
-          <p className="text-red-700 text-sm mt-1">{error}</p>
+        <div className="rounded-xl border border-[var(--accent-danger,#ef4444)]/20 bg-[var(--accent-danger,#ef4444)]/5 p-6">
+          <p className="text-[var(--accent-danger,#ef4444)] font-medium">Error Loading Report</p>
+          <p className="text-[var(--text-secondary)] text-sm mt-1">{error}</p>
         </div>
       </div>
     );
@@ -196,9 +196,9 @@ export default function RevenueDigestPage() {
   if (!digest) {
     return (
       <div className="max-w-6xl mx-auto p-4 md:p-8">
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-6">
-          <p className="text-amber-800 font-medium">No Data Available</p>
-          <p className="text-amber-700 text-sm mt-1">
+        <div className="rounded-xl border border-[var(--accent-warning,#f59e0b)]/20 bg-[var(--accent-warning,#f59e0b)]/5 p-6">
+          <p className="text-[var(--accent-warning,#f59e0b)] font-medium">No Data Available</p>
+          <p className="text-[var(--text-secondary)] text-sm mt-1">
             Your revenue digest will populate as your agent handles calls and
             creates opportunities.
           </p>
@@ -214,7 +214,7 @@ export default function RevenueDigestPage() {
   const projectionFmt = `$${(digest.revenue.projected_month_end_cents / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[var(--bg)] via-[var(--bg)] to-blue-50/30">
+    <div className="min-h-screen bg-[var(--bg-base)]">
       <div className="max-w-6xl mx-auto p-4 md:p-8">
         {/* ════════════════════════════════════════════════════════════
             REPORT HEADER
@@ -236,7 +236,7 @@ export default function RevenueDigestPage() {
             </div>
             <button
               onClick={() => window.print()}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors print:hidden"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 transition-colors print:hidden"
             >
               <Printer size={18} />
               <span className="text-sm font-medium">Print</span>
@@ -293,19 +293,19 @@ export default function RevenueDigestPage() {
                 </div>
               </div>
 
-              <p className="text-base text-[var(--text-primary)] leading-relaxed border-l-4 border-blue-400 pl-4">
+              <p className="text-base text-[var(--text-primary)] leading-relaxed border-l-4 border-[var(--accent-primary)] pl-4">
                 {verdict}
               </p>
             </div>
 
             {/* Key Metrics */}
-            <div className="grid md:grid-cols-3 gap-6 pt-8 border-t border-blue-100">
+            <div className="grid md:grid-cols-3 gap-6 pt-8 border-t border-[var(--border-default)]">
               {/* Revenue Recovered */}
               <div className="space-y-2">
                 <p className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wide">
                   Revenue Recovered
                 </p>
-                <p className="text-3xl font-bold text-green-600">{revenueFmt}</p>
+                <p className="text-3xl font-bold text-[var(--accent-primary)]">{revenueFmt}</p>
                 {digest.revenue.growth_pct != null && (
                 <TrendBadge
                   value={`${Math.abs(digest.revenue.growth_pct)}%`}
@@ -319,7 +319,7 @@ export default function RevenueDigestPage() {
                 <p className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wide">
                   Revenue at Risk
                 </p>
-                <p className="text-3xl font-bold text-amber-600">{atRiskFmt}</p>
+                <p className="text-3xl font-bold text-[var(--accent-warning,#f59e0b)]">{atRiskFmt}</p>
                 <p className="text-xs text-[var(--text-secondary)]">
                   Requires attention
                 </p>
@@ -330,7 +330,7 @@ export default function RevenueDigestPage() {
                 <p className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wide">
                   Month-end Projection
                 </p>
-                <p className="text-3xl font-bold text-blue-700">{projectionFmt}</p>
+                <p className="text-3xl font-bold text-[var(--text-primary)]">{projectionFmt}</p>
                 <p className="text-xs text-[var(--text-secondary)]">
                   Current trajectory
                 </p>
@@ -355,9 +355,9 @@ export default function RevenueDigestPage() {
           {/* 4-Column Metric Grid */}
           <div className="grid md:grid-cols-4 gap-4 mb-6">
             {/* Calls Handled */}
-            <div className="bg-white rounded-xl border border-[var(--border)] p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-default)] p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-start justify-between mb-4">
-                <Phone size={20} className="text-blue-600" />
+                <Phone size={20} className="text-[var(--accent-primary)]" />
                 <TrendBadge
                   value={`${Math.abs(digest.operations.calls_trend_pct ?? 0)}%`}
                   trend={digest.operations.calls_trend_pct ?? 0}
@@ -372,9 +372,9 @@ export default function RevenueDigestPage() {
             </div>
 
             {/* Revenue Opportunities Created */}
-            <div className="bg-white rounded-xl border border-[var(--border)] p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-default)] p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-start justify-between mb-4">
-                <Target size={20} className="text-emerald-600" />
+                <Target size={20} className="text-[var(--accent-primary)]" />
                 <TrendBadge
                   value={`${Math.abs(digest.operations.appointments_trend_pct ?? 0)}%`}
                   trend={digest.operations.appointments_trend_pct ?? 0}
@@ -389,7 +389,7 @@ export default function RevenueDigestPage() {
             </div>
 
             {/* Automated Recovery Actions */}
-            <div className="bg-white rounded-xl border border-[var(--border)] p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-default)] p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-start justify-between mb-4">
                 <Shield size={20} className="text-purple-600" />
                 <TrendBadge
@@ -406,7 +406,7 @@ export default function RevenueDigestPage() {
             </div>
 
             {/* Operator Hours Saved */}
-            <div className="bg-white rounded-xl border border-[var(--border)] p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-default)] p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-start justify-between mb-4">
                 <Clock size={20} className="text-orange-600" />
                 <span className="text-xs font-medium text-[var(--text-secondary)]">
@@ -423,8 +423,8 @@ export default function RevenueDigestPage() {
           </div>
 
           {/* Summary Sentence */}
-          <div className="bg-blue-50 rounded-xl border border-blue-100 p-4">
-            <p className="text-sm text-blue-900">
+          <div className="bg-[var(--accent-primary)]/5 rounded-xl border border-[var(--accent-primary)]/10 p-4">
+            <p className="text-sm text-[var(--text-primary)]">
               Your agent handled{" "}
               <span className="font-semibold">{digest.operations.calls_handled} calls</span>,
               created{" "}
@@ -462,7 +462,7 @@ export default function RevenueDigestPage() {
               {digest.top_wins.map((win, idx) => (
                 <div
                   key={`win-${idx}`}
-                  className="bg-white rounded-xl border border-[var(--border)] p-6 shadow-sm hover:shadow-md transition-shadow"
+                  className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-default)] p-6 shadow-sm hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-start gap-3 mb-4">
                     <Trophy
@@ -487,7 +487,7 @@ export default function RevenueDigestPage() {
                     <p className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wide mb-1">
                       Estimated Impact
                     </p>
-                    <p className="text-2xl font-bold text-green-600">
+                    <p className="text-2xl font-bold text-[var(--accent-primary)]">
                       $
                       {(win.impact_cents / 100).toLocaleString("en-US", {
                         maximumFractionDigits: 0,
@@ -498,8 +498,8 @@ export default function RevenueDigestPage() {
               ))}
             </div>
           ) : (
-            <div className="rounded-xl border border-amber-200 bg-amber-50 p-6">
-              <p className="text-amber-900 font-medium">
+            <div className="rounded-xl border border-[var(--accent-warning,#f59e0b)]/20 bg-[var(--accent-warning,#f59e0b)]/5 p-6">
+              <p className="text-[var(--text-primary)] font-medium">
                 Building momentum — wins will appear as your agent handles more
                 calls.
               </p>
@@ -525,15 +525,15 @@ export default function RevenueDigestPage() {
               {digest.top_risks.map((risk, idx) => (
                 <div
                   key={`risk-${idx}`}
-                  className="bg-white rounded-xl border border-red-200 p-6 shadow-sm hover:shadow-md transition-shadow"
+                  className="bg-[var(--bg-card)] rounded-xl border border-[var(--accent-danger,#ef4444)]/20 p-6 shadow-sm hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-start gap-3 mb-4">
                     <AlertTriangle
                       size={24}
-                      className="text-red-500 flex-shrink-0 mt-0.5"
+                      className="text-[var(--accent-danger,#ef4444)] flex-shrink-0 mt-0.5"
                     />
                     <div className="flex-1">
-                      <p className="text-sm font-bold text-red-600 uppercase tracking-wide">
+                      <p className="text-sm font-bold text-[var(--accent-danger,#ef4444)] uppercase tracking-wide">
                         Risk {idx + 1}
                       </p>
                       <h3 className="text-lg font-semibold text-[var(--text-primary)] mt-1">
@@ -546,11 +546,11 @@ export default function RevenueDigestPage() {
                     {risk.description}
                   </p>
 
-                  <div className="pt-4 border-t border-red-100">
-                    <p className="text-xs font-medium text-red-600 uppercase tracking-wide mb-1">
+                  <div className="pt-4 border-t border-[var(--accent-danger,#ef4444)]/10">
+                    <p className="text-xs font-medium text-[var(--accent-danger,#ef4444)] uppercase tracking-wide mb-1">
                       At Risk
                     </p>
-                    <p className="text-2xl font-bold text-red-600">
+                    <p className="text-2xl font-bold text-[var(--accent-danger,#ef4444)]">
                       $
                       {(risk.estimated_loss_cents / 100).toLocaleString("en-US", {
                         maximumFractionDigits: 0,
@@ -561,8 +561,8 @@ export default function RevenueDigestPage() {
               ))}
             </div>
           ) : (
-            <div className="rounded-xl border border-green-200 bg-green-50 p-6">
-              <p className="text-green-900 font-medium">
+            <div className="rounded-xl border border-[var(--accent-primary)]/20 bg-[var(--accent-primary)]/5 p-6">
+              <p className="text-[var(--text-primary)] font-medium">
                 No critical risks identified. Your pipeline is healthy.
               </p>
             </div>
@@ -587,10 +587,10 @@ export default function RevenueDigestPage() {
               {digest.recommended_actions.map((action, idx) => (
                 <div
                   key={`action-${idx}`}
-                  className="flex items-start gap-4 bg-white rounded-xl border border-[var(--border)] p-6 shadow-sm hover:shadow-md transition-shadow"
+                  className="flex items-start gap-4 bg-[var(--bg-card)] rounded-xl border border-[var(--border-default)] p-6 shadow-sm hover:shadow-md transition-shadow"
                 >
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 flex-shrink-0">
-                    <span className="text-sm font-bold text-blue-700">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[var(--accent-primary)]/10 flex-shrink-0">
+                    <span className="text-sm font-bold text-[var(--accent-primary)]">
                       {action.priority}
                     </span>
                   </div>
@@ -655,7 +655,7 @@ export default function RevenueDigestPage() {
                         key={`camp-${idx}`}
                         className={cn(
                           "border-b border-[var(--border)] hover:bg-[var(--bg-subtle)] transition-colors",
-                          isTopPerformer && "bg-amber-50"
+                          isTopPerformer && "bg-[var(--accent-warning,#f59e0b)]/5"
                         )}
                       >
                         <td className="py-4 px-4">
@@ -664,7 +664,7 @@ export default function RevenueDigestPage() {
                               {campaign.name}
                             </span>
                             {isTopPerformer && (
-                              <Star size={16} className="text-amber-500" />
+                              <Star size={16} className="text-[var(--accent-warning,#f59e0b)]" />
                             )}
                           </div>
                         </td>
@@ -679,8 +679,8 @@ export default function RevenueDigestPage() {
                             className={cn(
                               "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold",
                               campaign.conversion_pct > 10
-                                ? "bg-green-100 text-green-700"
-                                : "bg-blue-100 text-blue-700"
+                                ? "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]"
+                                : "bg-[var(--bg-input)] text-[var(--text-secondary)]"
                             )}
                           >
                             {campaign.conversion_pct.toFixed(1)}%
