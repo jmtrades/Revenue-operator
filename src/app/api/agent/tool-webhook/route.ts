@@ -503,7 +503,7 @@ async function upsertLead(
     }
 
     // Create new lead
-    const { data: created } = await runWithWriteContextAsync("api", () =>
+    const result = await runWithWriteContextAsync("api", () =>
       db.from("leads").insert({
         workspace_id: workspaceId,
         name: data.name || "New Lead",
@@ -513,9 +513,9 @@ async function upsertLead(
         notes: data.notes,
         source: "ai_agent",
       }).select("id").maybeSingle()
-    );
+    ) as { data?: { id: string } | null };
 
-    return (created as { id: string } | null)?.id ?? null;
+    return result.data?.id ?? null;
   } catch {
     return null;
   }
