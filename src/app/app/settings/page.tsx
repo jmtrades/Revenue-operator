@@ -17,6 +17,7 @@ import {
   Code,
   CreditCard,
   History,
+  AudioLines,
   Link2,
   Mic2,
   Monitor,
@@ -41,7 +42,9 @@ const SETTINGS_LINKS: { href: string; linkKey: string; icon: typeof Building2 }[
   { href: "/app/settings/lead-scoring", linkKey: "leadScoring", icon: Target },
   { href: "/app/settings/integrations", linkKey: "integrations", icon: Link2 },
   { href: "/app/settings/billing", linkKey: "billing", icon: CreditCard },
+  { href: "/app/settings/voices", linkKey: "voices", icon: AudioLines },
   { href: "/app/settings/compliance", linkKey: "compliance", icon: Shield },
+  { href: "/app/settings/industry-templates", linkKey: "industryTemplates", icon: Monitor },
   { href: "/app/settings/activity", linkKey: "activity", icon: History },
   { href: "/app/settings/errors", linkKey: "errors", icon: AlertTriangle },
   { href: "/app/developer", linkKey: "developer", icon: Code },
@@ -290,7 +293,7 @@ export default function AppSettingsPage() {
         <div className="mb-4">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)] px-1 mb-3">{tSettings("nav.sectionBusiness")}</p>
           <div className="grid gap-3">
-            {SETTINGS_LINKS.filter((s) => ["business", "phone", "agent", "callRules", "outbound"].includes(s.linkKey)).map((s) => {
+            {SETTINGS_LINKS.filter((s) => ["business", "phone", "agent", "voices", "callRules", "outbound"].includes(s.linkKey)).map((s) => {
             const isPhoneSettings = s.linkKey === "phone";
             const isAgentSettings = s.linkKey === "agent";
             const showIndicator = isPhoneSettings || isAgentSettings;
@@ -326,7 +329,7 @@ export default function AppSettingsPage() {
         <div className="mb-4">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)] px-1 mb-3">Intelligence & Automation</p>
           <div className="grid gap-3">
-            {SETTINGS_LINKS.filter((s) => ["leadScoring", "notifications", "integrations"].includes(s.linkKey)).map((s) => {
+            {SETTINGS_LINKS.filter((s) => ["leadScoring", "industryTemplates", "notifications", "integrations"].includes(s.linkKey)).map((s) => {
             return (
               <Link
                 key={s.href}
