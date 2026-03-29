@@ -443,8 +443,7 @@ export default function VoicesSettingsPage() {
           }}
         >
           <h2
-            className="text-lg font-semibold mb-6"
-            style={{ color: "var(--text-primary)" }}
+            className="text-lg font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-6"
           >
             {t("activeConfig")}
           </h2>
@@ -460,7 +459,7 @@ export default function VoicesSettingsPage() {
                   background: "var(--bg-primary)",
                 }}
               >
-                <div className="w-3 h-3 rounded-full bg-emerald-400" />
+                <div className="w-3 h-3 rounded-full bg-[var(--accent-primary)]" />
                 <div>
                   <p style={{ color: "var(--text-primary)" }} className="font-semibold">
                     {selectedVoice.name}
@@ -576,7 +575,7 @@ export default function VoicesSettingsPage() {
             <button
               type="button"
               onClick={handleTestVoice}
-              className="inline-flex items-center gap-2 rounded-xl bg-emerald-500 text-[var(--text-on-accent)] font-semibold px-4 py-2.5 text-sm hover:bg-emerald-400 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
+              className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold px-4 py-2.5 text-sm hover:bg-[var(--accent-primary)] transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
             >
               <Play className="w-4 h-4" />
               {t("testVoice")}
@@ -621,8 +620,7 @@ export default function VoicesSettingsPage() {
         }}
       >
         <h2
-          className="text-lg font-semibold mb-6"
-          style={{ color: "var(--text-primary)" }}
+          className="text-lg font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-6"
         >
           {t("libraryTitle")}
         </h2>
@@ -788,7 +786,7 @@ export default function VoicesSettingsPage() {
                           </span>
                         )}
                         {voice.id === selectedVoiceId && (
-                          <Check className="w-5 h-5 text-emerald-400" />
+                          <Check className="w-5 h-5 text-[var(--accent-primary)]" />
                         )}
                       </div>
                     </div>
@@ -837,7 +835,7 @@ export default function VoicesSettingsPage() {
                       <button
                         type="button"
                         onClick={() => handleSelectVoice(voice.id)}
-                        className="flex-1 rounded-lg bg-emerald-500 text-[var(--text-on-accent)] font-semibold text-xs px-2.5 py-1.5 hover:bg-emerald-400 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
+                        className="flex-1 rounded-lg bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold text-xs px-2.5 py-1.5 hover:bg-[var(--accent-primary)] transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                       >
                         {t("select")}
                       </button>
@@ -855,7 +853,7 @@ export default function VoicesSettingsPage() {
                     {voice.cloneProgress !== undefined && voice.cloneProgress < 100 && (
                       <div className="mt-3 bg-[var(--bg-inset)] rounded-full h-1.5">
                         <div
-                          className="bg-emerald-500 h-full rounded-full transition-[width]"
+                          className="bg-[var(--accent-primary)] h-full rounded-full transition-[width]"
                           style={{ width: `${voice.cloneProgress}%` }}
                         />
                       </div>
@@ -878,8 +876,7 @@ export default function VoicesSettingsPage() {
       >
         <div className="flex items-center justify-between mb-6">
           <h2
-            className="text-lg font-semibold"
-            style={{ color: "var(--text-primary)" }}
+            className="text-lg font-bold tracking-[-0.025em] text-[var(--text-primary)]"
           >
             {t("abTesting")}
           </h2>
@@ -958,7 +955,7 @@ export default function VoicesSettingsPage() {
                   {test.calls > 500 && test.status === "running" && (
                     <button
                       type="button"
-                      className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-semibold text-xs px-3 py-1.5 hover:bg-emerald-500/20 transition-[background-color,border-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/30 font-semibold text-xs px-3 py-1.5 hover:bg-[var(--accent-primary)]/20 transition-[background-color,border-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                     >
                       <Zap className="w-3 h-3" />
                       {t("declareWinner")}
@@ -982,7 +979,7 @@ export default function VoicesSettingsPage() {
             }}
           >
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>
+              <h3 className="text-lg font-bold tracking-[-0.025em] text-[var(--text-primary)]">
                 {t("cloneVoice")}
               </h3>
               <button
@@ -1000,7 +997,7 @@ export default function VoicesSettingsPage() {
                   Audio File (WAV/MP3, 10+ seconds)
                 </label>
                 <div
-                  className="rounded-lg border-2 border-dashed p-6 text-center cursor-pointer transition-[border-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] hover:border-emerald-500/50"
+                  className="rounded-lg border-2 border-dashed p-6 text-center cursor-pointer transition-[border-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] hover:border-[var(--accent-primary)]/50"
                   style={{
                     borderColor: "var(--border-default)",
                     background: "var(--bg-primary)",
@@ -1078,7 +1075,7 @@ export default function VoicesSettingsPage() {
                 .
               </p>
               {cloneError && (
-                <p className="text-xs" style={{ color: "#f87171" }}>
+                <p className="text-xs" style={{ color: "var(--accent-danger, #ef4444)" }}>
                   {cloneError}
                 </p>
               )}
@@ -1089,7 +1086,7 @@ export default function VoicesSettingsPage() {
                 type="button"
                 onClick={handleCloneVoice}
                 disabled={isCloning || !cloneFile || !cloneName.trim()}
-                className="flex-1 rounded-xl bg-emerald-500 text-[var(--text-on-accent)] font-semibold py-2.5 text-sm hover:bg-emerald-400 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed"
+                className="flex-1 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold py-2.5 text-sm hover:bg-[var(--accent-primary)] transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {isCloning ? t("cloning") : t("cloneVoice")}
               </button>
@@ -1116,7 +1113,7 @@ export default function VoicesSettingsPage() {
             }}
           >
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>
+              <h3 className="text-lg font-bold tracking-[-0.025em] text-[var(--text-primary)]">
                 {t("createTest")}
               </h3>
               <button

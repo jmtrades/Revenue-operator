@@ -57,12 +57,14 @@ export default function PhoneMarketplacePage() {
   const [pendingNumber, setPendingNumber] = useState<AvailableNumber | null>(null);
   const [provisionSuccess, setProvisionSuccess] = useState(false);
   const [successNumber, setSuccessNumber] = useState<AvailableNumber | null>(null);
+  const [hasSearched, setHasSearched] = useState(false);
   const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const search = async () => {
     setLoading(true);
     setError(null);
     setProvisionSuccess(false);
+    setHasSearched(true);
     try {
       const params = new URLSearchParams({ country, type });
       if (areaCode) params.set("areaCode", areaCode);
@@ -98,6 +100,12 @@ export default function PhoneMarketplacePage() {
     }, 300);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- re-search when country or type changes with debounce
   }, [country, type]);
+
+  // Auto-search on page load with default filters
+  useEffect(() => {
+    search();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleProvisionConfirmed = async (num: AvailableNumber) => {
     setProvisioning(num.phone_number);
@@ -320,7 +328,27 @@ export default function PhoneMarketplacePage() {
                 </div>
               ))}
             </div>
-          ) : numbers.length === 0 && !error ? (
+          ) : !hasSearched && numbers.length === 0 && !loading ? (
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] skeleton-shimmer"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 flex-1">
+                      <div className="w-10 h-10 rounded-xl bg-[var(--bg-input)]" />
+                      <div className="space-y-2">
+                        <div className="h-4 w-32 bg-[var(--bg-input)] rounded" />
+                        <div className="h-3 w-24 bg-[var(--bg-input)] rounded" />
+                      </div>
+                    </div>
+                    <div className="w-24 h-8 bg-[var(--bg-input)] rounded-lg" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : hasSearched && numbers.length === 0 && !error ? (
             <div className="p-8 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] text-center">
               <Phone className="w-12 h-12 mx-auto mb-3 text-[var(--text-tertiary)] opacity-50" />
               <p className="text-[var(--text-secondary)] text-sm mb-2">{tPhone("marketplaceNoNumbersFound")}</p>
