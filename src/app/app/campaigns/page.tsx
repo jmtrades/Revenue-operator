@@ -113,6 +113,7 @@ export default function CampaignsPage() {
   const [statusFilter, setStatusFilter] = useState<"all" | CampaignRow["status"]>("all");
   const [pauseConfirm, setPauseConfirm] = useState<CampaignRow | null>(null);
   const [campaignType, setCampaignType] = useState<string>("followup");
+  const [nameBlurred, setNameBlurred] = useState(false);
   const [form, setForm] = useState<{
     name: string;
     type: string;
@@ -827,15 +828,19 @@ export default function CampaignsPage() {
               </div>
               <div>
                 <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">
-                  {t("form.campaignNameLabel")}
+                  {t("form.campaignNameLabel")} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
+                  onBlur={() => setNameBlurred(true)}
                   placeholder={t("form.campaignNamePlaceholder", { defaultValue: "Missed-call recovery" })}
                   className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
                 />
+                {nameBlurred && !form.name.trim() && (
+                  <p className="text-xs text-red-500 mt-1">{t("form.nameRequired", { defaultValue: "Campaign name is required" })}</p>
+                )}
               </div>
               <div>
                 <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">
@@ -1044,20 +1049,25 @@ export default function CampaignsPage() {
                   </button>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => { void createCampaign(); }}
-                disabled={saving || !form.name.trim()}
-                className="w-full px-4 py-3 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold hover:opacity-90 disabled:opacity-60"
-              >
-                {saving
-                  ? editingId
-                    ? t("saving")
-                    : t("creating")
-                  : editingId
-                    ? t("saveChanges")
-                    : t("createCampaign")}
-              </button>
+              <div>
+                <button
+                  type="button"
+                  onClick={() => { void createCampaign(); }}
+                  disabled={saving || !form.name.trim()}
+                  className="w-full px-4 py-3 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold hover:opacity-90 disabled:opacity-60"
+                >
+                  {saving
+                    ? editingId
+                      ? t("saving")
+                      : t("creating")
+                    : editingId
+                      ? t("saveChanges")
+                      : t("createCampaign")}
+                </button>
+                {!form.name.trim() && (
+                  <p className="text-xs text-[var(--text-tertiary)] text-center mt-2">{t("form.nameRequiredHint", { defaultValue: "Enter a campaign name to continue" })}</p>
+                )}
+              </div>
             </div>
           </div>
         </div>
