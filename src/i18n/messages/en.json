@@ -10972,6 +10972,8 @@
     "scriptLabel": "Script"
   },
   "voices": {
+    "pageTitle": "Voice Library",
+    "pageSubtitle": "Configure and manage AI voices for your workspace.",
     "previewText": "I'm an AI assistant. How can I help you today?",
     "cloneErrorFormat": "Invalid audio format. Please use MP3, WAV, or M4A",
     "cloneErrorSize": "Audio file too large. Maximum size is 25MB",

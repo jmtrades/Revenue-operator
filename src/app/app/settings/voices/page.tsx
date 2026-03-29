@@ -115,7 +115,7 @@ export default function VoicesSettingsPage() {
 
   // Set document title
   useEffect(() => {
-    document.title = `${t("pageTitle")} — Recall Touch`;
+    document.title = `${t("pageTitle", { defaultValue: "Voice Library" })} — Recall Touch`;
   }, [t]);
 
   // Fetch voices from voice server on mount
