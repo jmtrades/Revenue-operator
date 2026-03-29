@@ -70,6 +70,10 @@ export default function AppSettingsPage() {
   const [theme, setTheme] = useState<"system" | "light" | "dark">("system");
   const [systemHealthData, setSystemHealthData] = useState<{ passed: number; total: number } | null>(null);
 
+  useEffect(() => {
+    document.title = `${tSettings("pageTitle", { defaultValue: "Settings — Recall Touch" })}`;
+  }, [tSettings]);
+
   // Initialize theme from DOM/localStorage
   useEffect(() => {
     const html = document.documentElement;
