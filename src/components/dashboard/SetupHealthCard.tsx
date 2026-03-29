@@ -63,10 +63,10 @@ export function SetupHealthCard({ workspaceId }: SetupHealthCardProps) {
       const setupSteps: SetupStep[] = [
         {
           id: "agent",
-          label: "Configure agent",
-          description: "Set up your AI voice agent with prompts and call handling rules",
+          label: "Configure operator",
+          description: "Set up your AI voice operator with prompts and call handling rules",
           completed: result.agent_configured ?? false,
-          actionLabel: "Configure agent",
+          actionLabel: "Configure operator",
           actionHref: "/app/agents",
         },
         {

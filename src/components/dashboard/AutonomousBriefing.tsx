@@ -104,7 +104,7 @@ export function AutonomousBriefing({ workspaceId }: AutonomousBriefingProps) {
         {/* Header */}
         <div className="mb-5">
           <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--text-tertiary)]">
-            Your Agent
+            Your Operator
           </p>
           <h2 className="text-base md:text-lg font-semibold text-[var(--text-primary)] mt-1">
             {hasData ? "While you were away" : "Ready and waiting"}
@@ -229,7 +229,7 @@ export function AutonomousBriefing({ workspaceId }: AutonomousBriefingProps) {
         ) : (
           <div className="py-3">
             <p className="text-sm text-[var(--text-secondary)]">
-              Your agent is ready and waiting for calls.
+              Your operator is ready and waiting for calls.
             </p>
             <p className="text-xs text-[var(--text-tertiary)] mt-2">
               Calls handled, appointments booked, and follow-ups will appear here.
