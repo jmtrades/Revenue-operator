@@ -289,8 +289,8 @@ export default function AppFollowUpsPage() {
       {loading ? (
         <div className="skeleton-shimmer h-40 rounded-2xl border border-[var(--border-default)]" />
       ) : fetchError ? (
-        <div className="rounded-2xl border border-red-500/30 bg-red-500/5 p-8 text-center">
-          <p className="text-sm text-red-600 dark:text-red-400">{fetchError}</p>
+        <div className="rounded-2xl border border-[var(--accent-danger,#ef4444)]/30 bg-[var(--accent-danger,#ef4444)]/5 p-8 text-center">
+          <p className="text-sm text-[var(--accent-danger,#ef4444)]">{fetchError}</p>
           <button
             type="button"
             onClick={() => { setLoading(true); setFetchError(null); refetchSequences(); }}

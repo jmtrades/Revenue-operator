@@ -75,7 +75,7 @@ export function OnboardingChecklist({
       </p>
       <div className="h-1 rounded-full bg-[var(--border-default)] overflow-hidden mb-2">
         <div
-          className="h-full rounded-full bg-green-500/80 transition-[width] duration-300"
+          className="h-full rounded-full bg-[var(--accent-primary)] transition-[width] duration-300"
           style={{ width: `${pct}%` }}
         />
       </div>
@@ -83,8 +83,8 @@ export function OnboardingChecklist({
         {items.slice(0, 4).map((item) => (
           <li key={item.key} className="flex items-center gap-2 text-[10px]">
             {progress.done.has(item.key) ? (
-              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/10">
-                <Check className="h-4 w-4 text-emerald-400" />
+              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--accent-primary)]/10">
+                <Check className="h-4 w-4 text-[var(--accent-primary)]" />
               </div>
             ) : (
               <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--bg-inset)]">
