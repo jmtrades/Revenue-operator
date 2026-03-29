@@ -22,6 +22,7 @@ import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { createOutboundCall } from "@/lib/telephony/telnyx-voice";
 import { log } from "@/lib/logger";
 import { encodeDemoState, type DemoCallState, getRandomGreeting } from "@/lib/voice/demo-agent";
+import { runWithWriteContextAsync } from "@/lib/safety/unsafe-write-guard";
 
 /**
  * Normalize a phone number to E.164 format.
@@ -239,20 +240,22 @@ export async function POST(req: NextRequest) {
         .eq("id", (existingLead as { id: string }).id);
     } else {
       // Create new lead
-      await db.from("leads").insert({
-        workspace_id: DEMO_WORKSPACE,
-        phone: e164Phone,
-        status: "NEW",
-        channel: "demo_call",
-        metadata: {
-          source,
-          page,
-          captured_at: now,
-          demo_origin: "call_me_now",
-          demo_call_count: 1,
-          ip_hash: ip.slice(0, 8),
-        },
-      });
+      await runWithWriteContextAsync("api", () =>
+        db.from("leads").insert({
+          workspace_id: DEMO_WORKSPACE,
+          phone: e164Phone,
+          status: "NEW",
+          channel: "demo_call",
+          metadata: {
+            source,
+            page,
+            captured_at: now,
+            demo_origin: "call_me_now",
+            demo_call_count: 1,
+            ip_hash: ip.slice(0, 8),
+          },
+        })
+      );
     }
   } catch (err) {
     // Non-blocking — don't fail the call if lead capture fails

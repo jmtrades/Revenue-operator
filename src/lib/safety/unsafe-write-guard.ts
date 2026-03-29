@@ -11,6 +11,7 @@ const ALLOWED_CONTEXTS = [
   "reconciliation",
   "delivery",
   "integrity",
+  "api",
 ] as const;
 
 export type WriteContext = (typeof ALLOWED_CONTEXTS)[number];

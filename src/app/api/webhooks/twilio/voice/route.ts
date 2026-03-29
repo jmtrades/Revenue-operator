@@ -21,6 +21,7 @@ import { createStreamingDemoCall, isStreamingAvailable, shouldUseStreaming } fro
 import { getReturningCallerGreeting } from "@/lib/voice/context-carryover";
 import { log } from "@/lib/logger";
 import crypto from "crypto";
+import { runWithWriteContextAsync } from "@/lib/safety/unsafe-write-guard";
 
 const FALLBACK_TWIML = `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">Thanks for calling. Please hold while we connect you.</Say><Pause length="2"/><Say voice="alice">If you need to speak to someone, please leave your name and number after the beep.</Say><Record maxLength="90" transcribe="true"/></Response>`;
 
@@ -156,7 +157,9 @@ export async function POST(req: NextRequest) {
           const { data: lead } = await db.from("leads").select("id").eq("workspace_id", workspaceId).or(`phone.eq.${from},phone.eq.${phone}`).limit(1).maybeSingle();
           leadId = (lead as { id: string } | null)?.id ?? null;
           if (!leadId) {
-            const { data: created } = await db.from("leads").insert({ workspace_id: workspaceId, name: "Inbound caller", phone: from ?? undefined, status: "NEW" }).select("id").maybeSingle();
+            const { data: created } = await runWithWriteContextAsync("api", () =>
+              db.from("leads").insert({ workspace_id: workspaceId, name: "Inbound caller", phone: from ?? undefined, status: "NEW" }).select("id").maybeSingle()
+            );
             leadId = (created as { id: string })?.id;
           }
         }

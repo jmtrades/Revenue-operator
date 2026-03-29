@@ -14,6 +14,7 @@ import { logLeadCreated } from "@/lib/log/revenue-events";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { normalizePhoneE164 } from "@/lib/phone/normalize";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { runWithWriteContextAsync } from "@/lib/safety/unsafe-write-guard";
 
 const createLeadSchema = z.object({
   name: z.string().min(1, "Name is required").max(255),
@@ -135,19 +136,21 @@ export async function POST(req: NextRequest) {
   };
 
   const db = getDb();
-  const { data: lead, error } = await db
-    .from("leads")
-    .insert({
-      workspace_id: workspaceId,
-      name: name.trim(),
-      phone: phoneStr,
-      email: (email ?? "").trim() || null,
-      company: (company ?? service_requested ?? "").trim() || null,
-      status: dbState,
-      metadata,
-    })
-    .select()
-    .maybeSingle();
+  const { data: lead, error } = await runWithWriteContextAsync("api", () =>
+    db
+      .from("leads")
+      .insert({
+        workspace_id: workspaceId,
+        name: name.trim(),
+        phone: phoneStr,
+        email: (email ?? "").trim() || null,
+        company: (company ?? service_requested ?? "").trim() || null,
+        status: dbState,
+        metadata,
+      })
+      .select()
+      .maybeSingle()
+  );
 
   if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
 
