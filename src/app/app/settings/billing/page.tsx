@@ -295,7 +295,8 @@ export default function AppSettingsBillingPage() {
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       <Breadcrumbs items={[{ label: tNav("settings"), href: "/app/settings" }, { label: tNav("billing") }]} />
-      <h1 className="text-lg font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-4">{tNav("billing")}</h1>
+      <h1 className="text-lg font-bold tracking-[-0.025em] text-[var(--text-primary)]">{tNav("billing")}</h1>
+      <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed mb-4">{tBilling("subtitle", { defaultValue: "Manage your plan, usage, and payment method." })}</p>
       {billingStatus === "trial" && (
         <div className="p-4 rounded-xl border border-purple-500/20 bg-purple-500/10 text-purple-700 dark:text-purple-200 text-sm mb-4 flex items-start gap-3">
           <div className="shrink-0 w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-300 text-sm font-bold">!</div>
