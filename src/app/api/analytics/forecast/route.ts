@@ -51,17 +51,26 @@ export async function GET(req: NextRequest): Promise<NextResponse<ForecastRespon
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     const thirtyDaysAgoStr = thirtyDaysAgo.toISOString().split("T")[0];
 
-    const { data: recentMetrics, error: recentErr } = await db
-      .from("daily_metrics")
-      .select("date, revenue_estimated_cents")
-      .eq("workspace_id", workspaceId)
-      .gte("date", thirtyDaysAgoStr)
-      .lte("date", todayStr)
-      .order("date", { ascending: false });
+    let recentMetrics: Array<{ date: string; revenue_estimated_cents: number }> = [];
+    try {
+      const { data, error: recentErr } = await db
+        .from("daily_metrics")
+        .select("date, revenue_estimated_cents")
+        .eq("workspace_id", workspaceId)
+        .gte("date", thirtyDaysAgoStr)
+        .lte("date", todayStr)
+        .order("date", { ascending: false });
 
-    if (recentErr) {
-      // Table may not exist yet or RLS blocks — return empty forecast gracefully
-      console.warn("[forecast] Could not fetch recent metrics (may be empty):", recentErr.message);
+      if (recentErr) {
+        console.warn("[forecast] Could not fetch recent metrics (may be empty):", recentErr.message);
+      } else {
+        recentMetrics = data ?? [];
+      }
+    } catch (fetchErr) {
+      console.warn("[forecast] Exception fetching recent metrics:", fetchErr);
+    }
+
+    if (recentMetrics.length === 0) {
       return NextResponse.json<ForecastResponse>({
         current_revenue_cents: 0,
         projected_revenue_cents: 0,
@@ -73,7 +82,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<ForecastRespon
     }
 
     // Calculate current month revenue (this month's data through today)
-    const currentMonthRevenue = (recentMetrics || [])
+    const currentMonthRevenue = recentMetrics
       .filter((m) => {
         const date = new Date(m.date);
         return date >= monthStart && date <= today;
@@ -86,24 +95,31 @@ export async function GET(req: NextRequest): Promise<NextResponse<ForecastRespon
     const priorMonthStartStr = priorMonthStart.toISOString().split("T")[0];
     const priorMonthEndStr = priorMonthEnd.toISOString().split("T")[0];
 
-    const { data: priorMetrics, error: priorErr } = await db
-      .from("daily_metrics")
-      .select("date, revenue_estimated_cents")
-      .eq("workspace_id", workspaceId)
-      .gte("date", priorMonthStartStr)
-      .lte("date", priorMonthEndStr);
+    let priorMetrics: Array<{ date: string; revenue_estimated_cents: number }> = [];
+    try {
+      const { data, error: priorErr } = await db
+        .from("daily_metrics")
+        .select("date, revenue_estimated_cents")
+        .eq("workspace_id", workspaceId)
+        .gte("date", priorMonthStartStr)
+        .lte("date", priorMonthEndStr);
 
-    if (priorErr) {
-      console.error("[forecast] Error fetching prior month metrics:", priorErr);
+      if (priorErr) {
+        console.warn("[forecast] Could not fetch prior month metrics:", priorErr.message);
+      } else {
+        priorMetrics = data ?? [];
+      }
+    } catch (fetchErr) {
+      console.warn("[forecast] Exception fetching prior month metrics:", fetchErr);
     }
 
-    const priorMonthRevenue = (priorMetrics || []).reduce(
+    const priorMonthRevenue = priorMetrics.reduce(
       (sum, m) => sum + (m.revenue_estimated_cents || 0),
       0
     );
 
     // Calculate daily average for current month (only count days with data)
-    const currentMonthMetrics = (recentMetrics || []).filter((m) => {
+    const currentMonthMetrics = recentMetrics.filter((m) => {
       const date = new Date(m.date);
       return date >= monthStart && date <= today;
     });
