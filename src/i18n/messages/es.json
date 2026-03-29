@@ -3044,7 +3044,29 @@
       "testYourAgentSubtitle": "Have a conversation with your AI agent to see how it responds.",
       "testingLabel": "Testing",
       "thinking": "Thinking…",
-      "youAsCaller": "You (caller)"
+      "youAsCaller": "You (caller)",
+      "scenarios": {
+        "normalCall": {
+          "label": "Normal call",
+          "prompt": "Hi, I need some information about your services."
+        },
+        "bookingRequest": {
+          "label": "Booking request",
+          "prompt": "I want to book an appointment for next Thursday."
+        },
+        "pricingQuestion": {
+          "label": "Pricing question",
+          "prompt": "How much do your services cost?"
+        },
+        "angryCaller": {
+          "label": "Angry caller",
+          "prompt": "I've been waiting for a callback for three days and nobody has contacted me. This is unacceptable."
+        },
+        "wrongNumber": {
+          "label": "Wrong number",
+          "prompt": "Is this the pizza place on Main Street?"
+        }
+      }
     },
     "emptyTitle": "No agents yet",
     "back": "Back",
