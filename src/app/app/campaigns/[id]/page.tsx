@@ -67,13 +67,40 @@ function getStatusLabel(status: Campaign["status"]): string {
   return labels[status];
 }
 
-function StatCard(p: { label: string; value: number; percentage?: number }) {
+function StatCard(p: { label: string; value: number; percentage?: number; color?: "blue" | "cyan" | "amber" | "emerald" }) {
+  const colorMap = {
+    blue: "bg-blue-50 border-blue-200",
+    cyan: "bg-cyan-50 border-cyan-200",
+    amber: "bg-amber-50 border-amber-200",
+    emerald: "bg-emerald-50 border-emerald-200",
+  };
+
+  const textColorMap = {
+    blue: "text-blue-700",
+    cyan: "text-cyan-700",
+    amber: "text-amber-700",
+    emerald: "text-emerald-700",
+  };
+
+  const badgeColorMap = {
+    blue: "bg-blue-100 text-blue-700",
+    cyan: "bg-cyan-100 text-cyan-700",
+    amber: "bg-amber-100 text-amber-700",
+    emerald: "bg-emerald-100 text-emerald-700",
+  };
+
+  const color = p.color || "blue";
+
   return (
-    <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5">
+    <div className={`rounded-2xl border ${colorMap[color]} bg-[var(--bg-card)] p-5`}>
       <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--text-secondary)]">{p.label}</p>
-      <p className="mt-2 text-2xl font-bold text-[var(--text-primary)]">{p.value}</p>
+      <p className={`mt-2 text-2xl font-bold ${textColorMap[color]}`}>{p.value}</p>
       {typeof p.percentage === "number" && (
-        <p className="mt-1 text-xs text-[var(--text-tertiary)]">{p.percentage}%</p>
+        <div className="mt-2">
+          <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${badgeColorMap[color]}`}>
+            {p.percentage}%
+          </span>
+        </div>
       )}
     </div>
   );
@@ -326,9 +353,18 @@ export default function CampaignDetailPage() {
 
             <div className="mt-2 flex items-center gap-3 flex-wrap">
               <span
-                className={`inline-flex items-center rounded-full px-3 py-1.5 text-xs font-medium ${STATUS_COLORS[campaign.status]}`}
+                className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium ${STATUS_COLORS[campaign.status]}`}
               >
+                {campaign.status === "active" && (
+                  <span className="inline-flex items-center gap-1.5">
+                    <span className="relative inline-block">
+                      <span className="absolute inline-flex h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                      <span className="inline-flex h-2 w-2 rounded-full bg-green-500" />
+                    </span>
+                  </span>
+                )}
                 {getStatusLabel(campaign.status)}
+                {campaign.status === "active" && <span className="text-xs ml-1">Executing...</span>}
               </span>
               <span className="text-xs text-[var(--text-secondary)]">
                 Created {createdDate}
@@ -394,10 +430,68 @@ export default function CampaignDetailPage() {
 
       <div className="space-y-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard label="Total Contacts" value={total} />
-          <StatCard label="Called" value={called} percentage={calledPct} />
-          <StatCard label="Reached" value={reached} percentage={reachedPct} />
-          <StatCard label="Converted" value={converted} percentage={convertedPct} />
+          <StatCard label="Total Contacts" value={total} color="blue" />
+          <StatCard label="Called" value={called} percentage={calledPct} color="cyan" />
+          <StatCard label="Reached" value={reached} percentage={reachedPct} color="amber" />
+          <StatCard label="Converted" value={converted} percentage={convertedPct} color="emerald" />
+        </div>
+
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-4">
+            Execution Progress
+          </h3>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-medium text-[var(--text-primary)]">Called / Total</span>
+              <span className="text-xs font-semibold text-cyan-600">{calledPct}%</span>
+            </div>
+            <div className="w-full bg-[var(--bg-inset)] rounded-full h-3 overflow-hidden border border-[var(--border-default)]">
+              <div
+                className="h-full bg-gradient-to-r from-cyan-400 to-cyan-600 rounded-full transition-all duration-500"
+                style={{ width: `${calledPct}%` }}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-5">
+            Conversion Funnel
+          </h3>
+          <div className="space-y-3">
+            <div className="flex items-end gap-3">
+              <div className="flex-1">
+                <div className="bg-blue-500 rounded-lg p-3 text-white">
+                  <p className="text-xs font-medium opacity-90">Total Contacts</p>
+                  <p className="text-lg font-bold">{total}</p>
+                </div>
+              </div>
+              <span className="text-[var(--text-tertiary)] font-semibold">→</span>
+              <div className="flex-1" style={{ opacity: called > 0 ? 1 : 0.5 }}>
+                <div className="bg-cyan-500 rounded-lg p-3 text-white">
+                  <p className="text-xs font-medium opacity-90">Called</p>
+                  <p className="text-lg font-bold">{called}</p>
+                  <p className="text-xs opacity-75 mt-1">{calledPct}%</p>
+                </div>
+              </div>
+              <span className="text-[var(--text-tertiary)] font-semibold">→</span>
+              <div className="flex-1" style={{ opacity: reached > 0 ? 1 : 0.5 }}>
+                <div className="bg-amber-500 rounded-lg p-3 text-white">
+                  <p className="text-xs font-medium opacity-90">Reached</p>
+                  <p className="text-lg font-bold">{reached}</p>
+                  <p className="text-xs opacity-75 mt-1">{reachedPct}%</p>
+                </div>
+              </div>
+              <span className="text-[var(--text-tertiary)] font-semibold">→</span>
+              <div className="flex-1" style={{ opacity: converted > 0 ? 1 : 0.5 }}>
+                <div className="bg-emerald-500 rounded-lg p-3 text-white">
+                  <p className="text-xs font-medium opacity-90">Converted</p>
+                  <p className="text-lg font-bold">{converted}</p>
+                  <p className="text-xs opacity-75 mt-1">{convertedPct}%</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 space-y-5">
@@ -515,6 +609,29 @@ export default function CampaignDetailPage() {
             </section>
           )}
         </div>
+
+        {converted > 0 && (
+          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6">
+            <div className="flex items-start gap-3">
+              <div className="flex-1">
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-emerald-900 mb-2">
+                  Estimated Revenue Impact
+                </h3>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-3xl font-bold text-emerald-700">
+                    ${(converted * 150).toLocaleString()}
+                  </p>
+                  <p className="text-sm text-emerald-600 font-medium">
+                    recoverable revenue
+                  </p>
+                </div>
+                <p className="mt-2 text-xs text-emerald-700">
+                  Based on {converted} conversion{converted !== 1 ? "s" : ""} at ~$150 per conversion
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {deleteConfirm && (

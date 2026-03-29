@@ -289,9 +289,23 @@ export default function PhoneMarketplacePage() {
         <div className="p-6 rounded-2xl border border-[var(--accent-primary)]/20 bg-[var(--accent-primary)]/10 flex flex-col gap-4">
           <div className="flex items-start gap-3">
             <CheckCircle2 className="w-6 h-6 text-[var(--accent-primary)] flex-shrink-0 mt-0.5" />
-            <div>
-              <p className="font-semibold text-[var(--text-primary)] mb-1">{tPhone("marketplace.provisionedSuccess")}</p>
-              <p className="text-sm text-[var(--text-secondary)]">{tPhone("marketplace.nowActive", { number: formatPhoneDisplay(successNumber.phone_number) })}</p>
+            <div className="flex-1">
+              <p className="font-semibold text-[var(--text-primary)] mb-1">{tPhone("marketplace.numberProvisioned")}</p>
+              <p className="font-mono text-lg text-[var(--text-primary)] mb-3">{formatPhoneDisplay(successNumber.phone_number)}</p>
+              <p className="text-sm text-[var(--text-secondary)] mb-4">{tPhone("marketplace.nowActive", { number: formatPhoneDisplay(successNumber.phone_number) })}</p>
+              <div className="bg-[var(--bg-card)] rounded-lg p-3 mb-4 border border-[var(--border-default)]/50">
+                <p className="text-xs font-medium text-[var(--text-tertiary)] uppercase tracking-wide mb-2">{tPhone("marketplace.nextSteps")}</p>
+                <ul className="space-y-1.5 text-sm text-[var(--text-secondary)]">
+                  <li className="flex items-center gap-2">
+                    <span className="text-[var(--accent-primary)]">•</span>
+                    <button type="button" className="text-[var(--accent-primary)] hover:underline">{tPhone("marketplace.setAsDefault")}</button>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-[var(--accent-primary)]">•</span>
+                    <button type="button" className="text-[var(--accent-primary)] hover:underline">{tPhone("marketplace.assignToAgent")}</button>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
           <Link
@@ -304,9 +318,17 @@ export default function PhoneMarketplacePage() {
       ) : (
         <div className="grid gap-3">
           {numbers.length > 0 && !loading && (
-            <p className="text-sm text-[var(--text-secondary)] mb-2">
-              {tPhone("marketplace.showingCount", { count: numbers.length })}
-            </p>
+            <div className="flex flex-col gap-2 mb-4">
+              <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-[var(--bg-card)] border border-[var(--border-default)]/50">
+                <p className="text-sm text-[var(--text-secondary)]">
+                  {tPhone("marketplace.showingCount", { count: numbers.length })}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--accent-primary)]/5 border border-[var(--accent-primary)]/10">
+                <span className="text-[var(--accent-primary)] text-xs">✓</span>
+                <p className="text-xs text-[var(--text-tertiary)]">{tPhone("marketplace.poweredByTelnyx")}</p>
+              </div>
+            </div>
           )}
           {loading && numbers.length === 0 ? (
             <div className="space-y-3">
@@ -358,39 +380,75 @@ export default function PhoneMarketplacePage() {
             numbers.map((n) => (
               <div
                 key={n.phone_number}
-                className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)]"
+                className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 hover:border-[var(--accent-primary)]/30 transition-colors"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[var(--accent-primary)]/10 flex items-center justify-center">
-                    <Phone className="w-5 h-5 text-[var(--accent-primary)]" />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
+                  <div className="lg:col-span-1">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-[var(--accent-primary)]/10 flex items-center justify-center flex-shrink-0">
+                        <Phone className="w-5 h-5 text-[var(--accent-primary)]" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-[var(--text-primary)] font-mono text-base">{formatPhoneDisplay(n.phone_number)}</p>
+                        <p className="text-xs text-[var(--text-secondary)] capitalize mt-0.5">
+                          {n.type === "toll_free" ? tPhone("marketplace.results.type.tollFree") : n.type === "mobile" ? tPhone("marketplace.mobile") : tPhone("marketplace.results.type.local")}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-semibold text-[var(--text-primary)] font-mono">{formatPhoneDisplay(n.phone_number)}</p>
-                    <p className="text-xs text-[var(--text-secondary)] capitalize">
-                      {n.type === "toll_free" ? tPhone("marketplace.results.type.tollFree") : n.type === "mobile" ? tPhone("marketplace.mobile") : tPhone("marketplace.results.type.local")}
-                    </p>
+
+                  <div className="lg:col-span-1">
+                    <div className="flex flex-wrap gap-2">
+                      {n.capabilities.voice && (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--bg-input)] text-xs font-medium text-[var(--text-secondary)]">
+                          <Phone className="w-3 h-3" />
+                          {tPhone("voice")}
+                        </span>
+                      )}
+                      {n.capabilities.sms && (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--bg-input)] text-xs font-medium text-[var(--text-secondary)]">
+                          <span>📱</span>
+                          {tPhone("sms")}
+                        </span>
+                      )}
+                      {n.capabilities.mms && (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--bg-input)] text-xs font-medium text-[var(--text-secondary)]">
+                          <span>📸</span>
+                          {tPhone("mms")}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="lg:col-span-1">
+                    <div className="bg-[var(--bg-input)]/50 rounded-lg p-3 border border-[var(--border-default)]/50">
+                      <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wide mb-1">{tPhone("marketplace.pricing")}</p>
+                      <p className="font-semibold text-[var(--text-primary)]">{formatCurrencyCents(n.monthly_cost_cents, "USD", locale)}<span className="text-xs text-[var(--text-secondary)] font-normal">/mo</span></p>
+                      <p className="text-xs text-[var(--text-tertiary)] mt-1">{tPhone("marketplace.plusSetupFee", { fee: formatCurrencyCents(n.setup_fee_cents, "USD", locale) })}</p>
+                    </div>
+                  </div>
+
+                  <div className="lg:col-span-1">
+                    <button
+                      type="button"
+                      onClick={() => handleProvision(n)}
+                      disabled={provisioning !== null}
+                      className="w-full px-4 py-3 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-medium text-sm hover:opacity-90 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                    >
+                      {provisioning === n.phone_number ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          {tPhone("marketplaceAdding")}
+                        </>
+                      ) : (
+                        <>
+                          <Phone className="w-4 h-4" />
+                          {tPhone("marketplace.purchase")}
+                        </>
+                      )}
+                    </button>
                   </div>
                 </div>
-                <div className="flex items-center gap-4 text-sm text-[var(--text-tertiary)]">
-                  <span>{formatCurrencyCents(n.monthly_cost_cents, "USD", locale)}{tPhone("perMonth")}</span>
-                  {n.capabilities.voice && <span>{tPhone("voice")}</span>}
-                  {n.capabilities.sms && <span>{tPhone("sms")}</span>}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleProvision(n)}
-                  disabled={provisioning !== null}
-                  className="px-4 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-medium text-sm hover:opacity-90 transition-colors disabled:opacity-60 flex items-center gap-2"
-                >
-                  {provisioning === n.phone_number ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      {tPhone("marketplaceAdding")}
-                    </>
-                  ) : (
-                    tPhone("marketplaceGetThisNumber")
-                  )}
-                </button>
               </div>
             ))
           )}

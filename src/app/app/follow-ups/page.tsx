@@ -6,7 +6,7 @@ import { useWorkspace } from "@/components/WorkspaceContext";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { RecoveryProfileSelector } from "@/components/settings/RecoveryProfileSelector";
-import { Plus, Pause, Play, Copy } from "lucide-react";
+import { Plus, Pause, Play, Copy, Phone, MessageSquare, Mail, ArrowRight, Zap } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
@@ -151,6 +151,70 @@ const BUILT_IN_TEMPLATES: BuiltInTemplate[] = [
       },
     ],
   },
+  {
+    id: "no-show-recovery",
+    name: "No-Show Recovery",
+    description: "SMS immediately after no-show, call after 4 hours, email next day",
+    trigger: "booking_status:no_show",
+    steps: [
+      {
+        channel: "sms",
+        delayAmount: 0,
+        delayUnit: "minutes",
+        template: "We missed you today at your scheduled appointment. Let us know if you'd like to reschedule.",
+        stopIfReply: true,
+        stopIfBooked: true,
+      },
+      {
+        channel: "call",
+        delayAmount: 4,
+        delayUnit: "hours",
+        template: "Hi {firstName}, we noticed you missed your appointment today. We'd love to help reschedule when it works better for you.",
+        stopIfReply: true,
+        stopIfBooked: true,
+      },
+      {
+        channel: "email",
+        delayAmount: 1,
+        delayUnit: "days",
+        template: "Hi {firstName},\n\nWe'd like to help you get back on track. Please let us know your availability to reschedule.\n\nBest regards,\n{businessName}",
+        stopIfReply: false,
+        stopIfBooked: true,
+      },
+    ],
+  },
+  {
+    id: "stale-pipeline-recovery",
+    name: "Stale Pipeline Recovery",
+    description: "Call immediately, SMS after 1 day, email after 3 days",
+    trigger: "manual",
+    steps: [
+      {
+        channel: "call",
+        delayAmount: 0,
+        delayUnit: "minutes",
+        template: "Hi {firstName}, it's been a while since we connected. I wanted to personally reach out and see if there's still interest in {serviceName}.",
+        stopIfReply: true,
+        stopIfBooked: true,
+      },
+      {
+        channel: "sms",
+        delayAmount: 1,
+        delayUnit: "days",
+        template: "Hi {firstName}, following up on our call. Ready to move forward when you are.",
+        stopIfReply: true,
+        stopIfBooked: true,
+      },
+      {
+        channel: "email",
+        delayAmount: 3,
+        delayUnit: "days",
+        template: "Hi {firstName},\n\nIt's been a while since we connected about {serviceName}. We're still here to help whenever you're ready.\n\nBest regards,\n{businessName}",
+        stopIfReply: false,
+        stopIfBooked: true,
+      },
+    ],
+  },
 ];
 
 export default function AppFollowUpsPage() {
@@ -266,7 +330,7 @@ export default function AppFollowUpsPage() {
         <div className="mb-6 rounded-xl border border-[var(--accent-primary)]/20 bg-[var(--accent-primary)]/[0.04] p-4 flex items-start gap-3">
           <div className="flex-1 min-w-0">
             <p className="text-sm text-[var(--accent-primary)] font-medium">
-              Your follow-up queue represents ~${(sequences.reduce((sum, s) => sum + (s.is_active ? 37.5 : 0), 0)).toLocaleString("en-US", { maximumFractionDigits: 0 })} in recoverable revenue. Recovery mode is active.
+              {sequences.filter(s => s.is_active).length} active recovery sequences running. Follow-ups are automatically executing based on call outcomes.
             </p>
           </div>
         </div>
@@ -299,6 +363,101 @@ export default function AppFollowUpsPage() {
           >
             {t("retry")}
           </button>
+        </div>
+      ) : tab === "templates" ? (
+        <div>
+          <div className="space-y-4">
+            <div className="text-center py-8">
+              <p className="text-sm text-[var(--text-secondary)] mb-6">{t("empty.templatesBody") || "Get started with a pre-built template or create your own."}</p>
+            </div>
+            <div className="grid gap-3">
+              {BUILT_IN_TEMPLATES.map((template) => (
+                <div
+                  key={template.id}
+                  className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-4"
+                >
+                  <div className="flex items-start justify-between gap-4 mb-4">
+                    <div className="flex-1">
+                      <h3 className="font-medium text-[var(--text-primary)]">{template.name}</h3>
+                      <p className="text-sm text-[var(--text-secondary)] mt-1">{template.description}</p>
+                    </div>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => void useTemplate(template)}
+                      disabled={templateInProgress !== null}
+                      className="gap-1 whitespace-nowrap"
+                    >
+                      <Copy className="w-4 h-4" />
+                      {templateInProgress === template.id ? "Using..." : "Use"}
+                    </Button>
+                  </div>
+                  {/* Step visualization */}
+                  <div className="flex items-center gap-2 overflow-x-auto pb-2">
+                    {template.steps.map((step, idx) => (
+                      <div key={idx} className="flex items-center gap-2 flex-shrink-0">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[var(--bg-hover)] border border-[var(--border-default)]">
+                          {step.channel === "call" && <Phone className="w-4 h-4 text-[var(--accent-primary)]" />}
+                          {step.channel === "sms" && <MessageSquare className="w-4 h-4 text-[var(--accent-primary)]" />}
+                          {step.channel === "email" && <Mail className="w-4 h-4 text-[var(--accent-primary)]" />}
+                        </div>
+                        {idx < template.steps.length - 1 && (
+                          <>
+                            <ArrowRight className="w-3 h-3 text-[var(--text-tertiary)] flex-shrink-0" />
+                            <div className="text-xs text-[var(--text-tertiary)] font-medium whitespace-nowrap flex-shrink-0">
+                              {step.delayAmount}{step.delayUnit === "minutes" ? "m" : step.delayUnit === "hours" ? "h" : "d"}
+                            </div>
+                            <ArrowRight className="w-3 h-3 text-[var(--text-tertiary)] flex-shrink-0" />
+                          </>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* Quick action buttons */}
+            {sequences.length === 0 && (
+              <div className="pt-4 border-t border-[var(--border-default)] space-y-3">
+                <p className="text-xs text-[var(--text-tertiary)] font-medium uppercase">Or activate quick recovery:</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="gap-2 justify-start text-sm"
+                    onClick={() => {
+                      const noShowTemplate = BUILT_IN_TEMPLATES.find(t => t.id === "no-show-recovery");
+                      if (noShowTemplate) useTemplate(noShowTemplate);
+                    }}
+                    disabled={templateInProgress !== null}
+                  >
+                    <Zap className="w-4 h-4" />
+                    Activate No-Show Recovery
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="gap-2 justify-start text-sm"
+                    onClick={() => {
+                      const stalePipelineTemplate = BUILT_IN_TEMPLATES.find(t => t.id === "stale-pipeline-recovery");
+                      if (stalePipelineTemplate) useTemplate(stalePipelineTemplate);
+                    }}
+                    disabled={templateInProgress !== null}
+                  >
+                    <Zap className="w-4 h-4" />
+                    Activate Stale Pipeline Recovery
+                  </Button>
+                </div>
+              </div>
+            )}
+            <div className="text-center pt-4 border-t border-[var(--border-default)]">
+              <Link href="/app/follow-ups/create">
+                <Button variant="ghost" size="sm">
+                  {t("create")}
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       ) : tab === "active" && sequences.length > 1 ? (
         <>
@@ -362,9 +521,25 @@ export default function AppFollowUpsPage() {
                 key={s.id}
                 className="flex items-center justify-between rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-3"
               >
-                <div>
-                  <p className="font-medium text-[var(--text-primary)]">{s.name}</p>
-                  <p className="text-xs text-[var(--text-secondary)]">{s.trigger_type ?? "manual"}</p>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <p className="font-medium text-[var(--text-primary)]">{s.name}</p>
+                    {s.is_active ? (
+                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-100 dark:bg-green-900/30">
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-600 dark:bg-green-500 animate-pulse" />
+                        <span className="text-xs font-medium text-green-600 dark:text-green-500">Active</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-[var(--bg-hover)]">
+                        <span className="text-xs font-medium text-[var(--text-tertiary)]">Paused</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs px-2 py-0.5 rounded-md bg-[var(--bg-hover)] text-[var(--text-secondary)]">
+                      Trigger: {s.trigger_type ? s.trigger_type.split(":").pop()?.replace(/_/g, " ") : "manual"}
+                    </span>
+                  </div>
                 </div>
                 <div className="flex gap-2">
                   <Button
@@ -408,101 +583,6 @@ export default function AppFollowUpsPage() {
             ))}
           </ul>
         </>
-      ) : tab === "templates" ? (
-        <div>
-          {sequences.length === 0 ? (
-            <div className="space-y-4">
-              <div className="text-center py-8">
-                <p className="text-sm text-[var(--text-secondary)] mb-6">{t("empty.templatesBody") || "Get started with a pre-built template or create your own."}</p>
-              </div>
-              <div className="grid gap-3">
-                {BUILT_IN_TEMPLATES.map((template) => (
-                  <div
-                    key={template.id}
-                    className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-4"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <h3 className="font-medium text-[var(--text-primary)]">{template.name}</h3>
-                        <p className="text-sm text-[var(--text-secondary)] mt-1">{template.description}</p>
-                        <p className="text-xs text-[var(--text-tertiary)] mt-2">{template.steps.length} steps</p>
-                      </div>
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={() => void useTemplate(template)}
-                        disabled={templateInProgress !== null}
-                        className="gap-1 whitespace-nowrap"
-                      >
-                        <Copy className="w-4 h-4" />
-                        {templateInProgress === template.id ? "Using..." : "Use"}
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="text-center pt-4 border-t border-[var(--border-default)]">
-                <Link href="/app/follow-ups/create">
-                  <Button variant="ghost" size="sm">
-                    {t("create")}
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          ) : (
-            <ul className="space-y-3">
-              {sequences.map((s) => (
-                <li
-                  key={s.id}
-                  className="flex items-center justify-between rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-3"
-                >
-                  <div>
-                    <p className="font-medium text-[var(--text-primary)]">{s.name}</p>
-                    <p className="text-xs text-[var(--text-secondary)]">{s.trigger_type ?? "manual"}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      aria-label={t("pauseSequence")}
-                      onClick={() => {
-                        fetch(`/api/sequences/${s.id}`, {
-                          method: "PATCH",
-                          credentials: "include",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ status: "paused" }),
-                        }).then((res) => {
-                          if (res.ok) { toast.success(t("sequencePaused", { defaultValue: "Sequence paused" })); refetchSequences(); }
-                          else toast.error(t("pauseFailed", { defaultValue: "Failed to pause sequence" }));
-                        }).catch(() => toast.error(t("pauseFailed", { defaultValue: "Failed to pause sequence" })));
-                      }}
-                    >
-                      <Pause className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      aria-label={t("resumeSequence")}
-                      onClick={() => {
-                        fetch(`/api/sequences/${s.id}`, {
-                          method: "PATCH",
-                          credentials: "include",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ status: "active" }),
-                        }).then((res) => {
-                          if (res.ok) { toast.success(t("sequenceResumed", { defaultValue: "Sequence resumed" })); refetchSequences(); }
-                          else toast.error(t("resumeFailed", { defaultValue: "Failed to resume sequence" }));
-                        }).catch(() => toast.error(t("resumeFailed", { defaultValue: "Failed to resume sequence" })));
-                      }}
-                    >
-                      <Play className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
       ) : (
         <EmptyState
           title={t("empty.activeTitle")}

@@ -8684,7 +8684,15 @@
       "setupFee": "Setup Fee",
       "chargedImmediately": "This will be charged to your account immediately.",
       "cancel": "Cancel",
-      "processing": "Processing"
+      "processing": "Processing",
+      "numberProvisioned": "Number provisioned",
+      "nextSteps": "Next steps",
+      "setAsDefault": "Set as default for inbound",
+      "assignToAgent": "Assign to agent",
+      "poweredByTelnyx": "Numbers powered by Telnyx · Enterprise-grade telephony",
+      "pricing": "Pricing",
+      "plusSetupFee": "plus {fee} setup fee",
+      "purchase": "Purchase"
     },
     "porting": {
       "title": "Port an existing number",
@@ -8742,7 +8750,23 @@
       "submitLabel": "Submit port request"
     },
     "unknownError": "Unknown error",
-    "submitFailed": "Failed to submit port request"
+    "submitFailed": "Failed to submit port request",
+    "statusTotalNumbers": "Total Numbers",
+    "statusMonthlyCost": "Monthly Cost",
+    "statusPerMonth": "per month",
+    "statusPrimary": "Primary Number",
+    "statusInbound": "for inbound calls",
+    "active": "active",
+    "managingNumbers": "Managing your phone numbers",
+    "assigned": "Assigned",
+    "unassigned": "Unassigned",
+    "mms": "MMS",
+    "testCall": "Test Call",
+    "testCallDescription": "Test your agent by calling it from any phone. Your agent will answer and respond based on your current configuration.",
+    "howItWorks": "How it works",
+    "testStep1": "Enter your phone number",
+    "testStep2": "We call you immediately",
+    "testStep3": "Talk to your agent and confirm setup"
   },
   "integrations": {
     "title": "Integrations",
