@@ -9014,6 +9014,14 @@
     "title": "Follow-ups",
     "create": "Create Sequence",
     "retry": "Retry",
+    "statusActive": "Active",
+    "statusPaused": "Paused",
+    "trigger": "Trigger",
+    "manual": "manual",
+    "pauseAllTitle": "Pause all sequences?",
+    "pauseAllMessage": "This will pause all active follow-up sequences. No automated follow-ups will run until you resume them.",
+    "resumeAllTitle": "Resume all sequences?",
+    "resumeAllMessage": "This will resume all paused follow-up sequences. Automated follow-ups will begin running again.",
     "tabs": {
       "templates": "Templates",
       "active": "Active enrollments"
