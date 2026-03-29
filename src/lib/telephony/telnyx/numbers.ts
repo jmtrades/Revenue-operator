@@ -49,15 +49,12 @@ export async function purchaseTelnyxPhoneNumber(params: {
   phoneNumberE164: string;
   countryCode: string;
   phoneType: "local" | "toll_free" | "mobile";
-}): Promise<{ providerSid: string | null }> {
+}): Promise<{ providerSid: string | null; error?: string; telnyxStatus?: number }> {
   const apiKey = process.env.TELNYX_API_KEY;
-  if (!apiKey) return { providerSid: null };
+  if (!apiKey) return { providerSid: null, error: "TELNYX_API_KEY not configured" };
 
   const { phoneNumberE164 } = params;
 
-  // Telnyx number ordering often requires additional profile IDs.
-  // We support configuration via env vars, but if they're not provided
-  // Telnyx may reject the order (we treat that as a failed purchase).
   const messagingProfileId = process.env.TELNYX_MESSAGING_PROFILE_ID;
   const connectionId = process.env.TELNYX_CONNECTION_ID;
   const billingGroupId = process.env.TELNYX_BILLING_GROUP_ID;
@@ -86,8 +83,19 @@ export async function purchaseTelnyxPhoneNumber(params: {
 
   if (!res.ok) {
     const errText = await res.text().catch(() => "");
-    console.error("[telnyx] Number order failed:", res.status, errText.slice(0, 300));
-    return { providerSid: null };
+    // Parse Telnyx error details for better logging
+    let errorDetail = `HTTP ${res.status}`;
+    try {
+      const errJson = JSON.parse(errText) as { errors?: Array<{ detail?: string; code?: string; title?: string }> };
+      if (errJson.errors?.[0]) {
+        const e = errJson.errors[0];
+        errorDetail = `${e.code ?? res.status}: ${e.detail ?? e.title ?? "Unknown error"}`;
+      }
+    } catch {
+      errorDetail = errText.slice(0, 200) || `HTTP ${res.status}`;
+    }
+    console.error("[telnyx] Number order failed:", res.status, errorDetail, "| body sent:", JSON.stringify({ connection_id: connectionId ? "set" : "MISSING", phone: phoneNumberE164 }));
+    return { providerSid: null, error: errorDetail, telnyxStatus: res.status };
   }
 
   const json = (await res.json()) as {
@@ -98,11 +106,6 @@ export async function purchaseTelnyxPhoneNumber(params: {
     };
   };
 
-  // IMPORTANT: Use the phone_number resource ID (not the order ID).
-  // The order ID is data.id, but to release/manage the number later we need
-  // the phone_number ID from data.phone_numbers[0].id.
-  // If no phone_numbers array (async provisioning), fall back to order ID and
-  // resolve the phone number ID later via GET /v2/phone_numbers?filter[phone_number]=...
   const phoneNumberId = json.data?.phone_numbers?.[0]?.id;
   const orderId = json.data?.id;
   const providerSid = (phoneNumberId ?? orderId ?? null) as string | null;
