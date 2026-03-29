@@ -1,23 +1,23 @@
 import type { Metadata } from "next";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export const metadata: Metadata = {
-  title: "Live demo | Recall Touch",
-  description: "Hear a live demo of Recall Touch — your AI phone team.",
+  title: "Live demo | Revenue Operator",
+  description: "Hear a live demo of Revenue Operator — your AI phone team.",
   alternates: { canonical: `${BASE}/demo` },
   openGraph: {
-    title: "Live demo | Recall Touch",
-    description: "Hear a live demo of Recall Touch — your AI phone team.",
+    title: "Live demo | Revenue Operator",
+    description: "Hear a live demo of Revenue Operator — your AI phone team.",
     url: `${BASE}/demo`,
-    siteName: "Recall Touch",
+    siteName: "Revenue Operator",
     type: "website",
-    images: [{ url: `${BASE}/opengraph-image`, width: 1200, height: 630, alt: "Recall Touch Demo" }],
+    images: [{ url: `${BASE}/opengraph-image`, width: 1200, height: 630, alt: "Revenue Operator Demo" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Live demo | Recall Touch",
-    description: "Hear a live demo of Recall Touch — your AI phone team.",
+    title: "Live demo | Revenue Operator",
+    description: "Hear a live demo of Revenue Operator — your AI phone team.",
   },
 };
 

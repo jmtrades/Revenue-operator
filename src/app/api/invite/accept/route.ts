@@ -10,7 +10,7 @@ import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
 import { assertSameOrigin } from "@/lib/http/csrf";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.revenueoperator.ai";
 
 export async function POST(req: NextRequest) {
   const csrfBlock = assertSameOrigin(req);

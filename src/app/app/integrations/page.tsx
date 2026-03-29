@@ -42,7 +42,7 @@ const AVAILABLE_INTEGRATIONS: Integration[] = [
     icon: "G",
     status: "available",
     actionLabel: "Connect",
-    href: "/app/settings/calendar",
+    href: "/app/settings/integrations",
   },
   {
     id: "zapier",
@@ -51,7 +51,7 @@ const AVAILABLE_INTEGRATIONS: Integration[] = [
     icon: "Z",
     status: "available",
     actionLabel: "Connect",
-    href: "https://zapier.com/apps/recall-touch/integrations",
+    href: "https://zapier.com/apps/revenue-operator/integrations",
     external: true,
   },
   {
@@ -61,7 +61,7 @@ const AVAILABLE_INTEGRATIONS: Integration[] = [
     icon: "W",
     status: "available",
     actionLabel: "Configure",
-    href: "/app/settings/webhooks",
+    href: "/app/developer/webhooks",
   },
 ];
 

@@ -105,10 +105,10 @@ export async function GET(req: NextRequest) {
                 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "";
                 const subject =
                   threshold === "100"
-                    ? `Recall Touch: minutes limit exceeded`
+                    ? `Revenue Operator: minutes limit exceeded`
                     : threshold === "80"
-                    ? `Recall Touch: 80% of minutes used`
-                    : `Recall Touch: you’ve used half your minutes`;
+                    ? `Revenue Operator: 80% of minutes used`
+                    : `Revenue Operator: you’ve used half your minutes`;
                 const body =
                   threshold === "100"
                     ? `<p>You’ve exceeded your included minutes for this month.</p><p>Usage: <strong>${usage.minutes_used}/${usage.minutes_limit}</strong> minutes.</p><p><a href="${appUrl}/app/settings/billing">Upgrade</a> to avoid overage charges.</p>`

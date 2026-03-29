@@ -108,7 +108,7 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
           className="text-[15px] font-semibold tracking-tight no-underline"
           style={{ color: "var(--text-primary)", letterSpacing: "-0.02em" }}
         >
-          Recall Touch
+          Revenue Operator
         </Link>
 
         {/* Desktop nav */}

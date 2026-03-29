@@ -269,14 +269,14 @@ async function executeWorkflowStep(
         const resendKey = process.env.RESEND_API_KEY;
         if (resendKey) {
           try {
-            const emailFrom = process.env.EMAIL_FROM ?? `${workspace.name || "Recall Touch"} <noreply@recall-touch.com>`;
+            const emailFrom = process.env.EMAIL_FROM ?? `${workspace.name || "Revenue Operator"} <noreply@revenueoperator.ai>`;
             const res = await fetch("https://api.resend.com/emails", {
               method: "POST",
               headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
               body: JSON.stringify({
                 from: emailFrom,
                 to: [contact.email],
-                subject: step.emailSubject || "Follow-up from " + (workspace.name || "Recall Touch"),
+                subject: step.emailSubject || "Follow-up from " + (workspace.name || "Revenue Operator"),
                 html: emailBody,
               }),
             });

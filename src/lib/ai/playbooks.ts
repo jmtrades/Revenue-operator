@@ -1,5 +1,5 @@
 /**
- * Recall Touch Playbooks
+ * Revenue Operator Playbooks
  * Expert-level, pre-built agent configurations for every common sales use case.
  * No friction onboarding - just pick your industry and go.
  */

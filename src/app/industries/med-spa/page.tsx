@@ -4,13 +4,13 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export const metadata = {
-  title: "Med Spa AI Revenue Operations Platform — Recall Touch",
+  title: "Med Spa AI Revenue Operations Platform — Revenue Operator",
   description:
     "Drive med spa revenue and patient lifetime value with complete AI-powered workflows: consultation booking, appointment reminders, no-show prevention, cancellation recovery, package upsells, and patient reactivation.",
-  alternates: { canonical: "https://www.recall-touch.com/industries/med-spa" },
+  alternates: { canonical: "https://www.revenueoperator.ai/industries/med-spa" },
 };
 
 export default function MedSpaIndustryPage() {
@@ -18,7 +18,7 @@ export default function MedSpaIndustryPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+      { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
       { "@type": "ListItem", position: 2, name: "Industries", item: `${BASE}/industries` },
       { "@type": "ListItem", position: 3, name: "Med Spa", item: `${BASE}/industries/med-spa` },
     ],
@@ -63,7 +63,7 @@ export default function MedSpaIndustryPage() {
               Even a short delay can turn a warm inquiry into silence.
               <br />
               <br />
-              Recall Touch is an AI phone system that handles the entire revenue loop for med spas: it answers inbound questions, captures the right
+              Revenue Operator is an AI phone system that handles the entire revenue loop for med spas: it answers inbound questions, captures the right
               details (service interest, timeline, goals), books consultations or treatments, and follows up with reminders that reduce no-shows.
               Then it adds the "next best touch" for package upsells — without spamming clients or breaking your cancellation policy.
             </p>
@@ -90,7 +90,7 @@ export default function MedSpaIndustryPage() {
               </div>
             </div>
 
-            <h2 className="text-lg font-semibold mb-3">How Recall Touch works for med spa clinics</h2>
+            <h2 className="text-lg font-semibold mb-3">How Revenue Operator works for med spa clinics</h2>
             <div className="space-y-4 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
               <p>
                 <strong>Consultation booking with the right questions.</strong> When a new client calls, the agent captures what they&apos;re interested in,
@@ -98,7 +98,7 @@ export default function MedSpaIndustryPage() {
                 and it routes complex requests for human review while keeping fast-moving leads moving.
               </p>
               <p>
-                <strong>Treatment reminders that reduce no-shows.</strong> After booking, Recall Touch triggers reminders for upcoming appointments.
+                <strong>Treatment reminders that reduce no-shows.</strong> After booking, Revenue Operator triggers reminders for upcoming appointments.
                 The goal isn&apos;t "generic messages." It&apos;s clear confirmations plus an easy reschedule path. When someone doesn&apos;t respond,
                 the agent can follow up again so the clinic has a better chance to recover the slot.
               </p>
@@ -109,7 +109,7 @@ export default function MedSpaIndustryPage() {
               </p>
               <p>
                 <strong>Package upsell follow-up (the "right next step" engine).</strong> Med spas earn more when packages and treatment plans convert.
-                Recall Touch uses follow-up sequences to promote packages after key milestones: completion signals, a time-based cadence,
+                Revenue Operator uses follow-up sequences to promote packages after key milestones: completion signals, a time-based cadence,
                 and a gated offer so only interested clients see the upsell. The client feels cared for, not pushed.
               </p>
               <p>
@@ -156,7 +156,7 @@ export default function MedSpaIndustryPage() {
               </p>
               <p>
                 Then look at cancellations. If <strong>12</strong> scheduled visits get canceled monthly and you recover <strong>4</strong> of them with fast outreach,
-                at <strong>$350</strong> per slot that&apos;s <strong>$1,400</strong> in recovered profit. Recall Touch increases recovery chances by making outreach
+                at <strong>$350</strong> per slot that&apos;s <strong>$1,400</strong> in recovered profit. Revenue Operator increases recovery chances by making outreach
                 immediate, consistent, and aligned to an easy rescheduling path.
               </p>
               <p>
@@ -164,7 +164,7 @@ export default function MedSpaIndustryPage() {
                 increase package conversion without raising cancellation risk or damaging trust.
               </p>
               <p>
-                With Recall Touch, every touch becomes measurable. You track what was answered, what was booked, what reminders were sent, what cancellations were recovered,
+                With Revenue Operator, every touch becomes measurable. You track what was answered, what was booked, what reminders were sent, what cancellations were recovered,
                 and how it translates into revenue attribution.
               </p>
             </div>

@@ -277,7 +277,7 @@ export default function ExportPage() {
                 color: "white",
               }}
               onClick={() => {
-                window.location.href = "mailto:support@recall-touch.com?subject=Data%20Marketplace%20Inquiry";
+                window.location.href = "mailto:support@revenueoperator.ai?subject=Data%20Marketplace%20Inquiry";
               }}
             >
               Contact Sales

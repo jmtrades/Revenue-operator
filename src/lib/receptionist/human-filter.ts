@@ -1,6 +1,6 @@
 /**
- * Human-Standard Revenue Receptionist — message filter.
- * Every message must pass: would a real receptionist at a high-end business say this?
+ * Human-Standard Revenue Operator — message filter.
+ * Every message must pass: would a real operator at a high-end business say this?
  * Optimise for believability, not intelligence. Short, casual, purposeful.
  */
 
@@ -52,7 +52,7 @@ const MAX_EXCLAMATIONS = 1;
 const MAX_SENTENCES = 2;
 
 /** Fallback when message fails filter: short, progress-oriented. */
-const RECEPTIONIST_FALLBACK = "Hey — what were you looking to get done?";
+const OPERATOR_FALLBACK = "Hey — what were you looking to get done?";
 
 function countSentences(text: string): number {
   return (text.trim().split(/[.!?]+/).filter((s) => s.trim().length > 0)).length;
@@ -63,7 +63,7 @@ function countExclamations(text: string): number {
 }
 
 /** Strip to first 1–2 sentences and cap length. */
-function shortenToReceptionistStyle(text: string): string {
+function shortenToOperatorStyle(text: string): string {
   let out = text.trim();
   const sentences = out.split(/(?<=[.!?])\s+/).filter((s) => s.trim());
   if (sentences.length > MAX_SENTENCES) {
@@ -74,7 +74,7 @@ function shortenToReceptionistStyle(text: string): string {
     out = (atSpace > 80 ? out.slice(0, atSpace) : out.slice(0, 160)).trim();
     if (!/[-.!?]$/.test(out)) out += ".";
   }
-  return out || RECEPTIONIST_FALLBACK;
+  return out || OPERATOR_FALLBACK;
 }
 
 /**
@@ -83,7 +83,7 @@ function shortenToReceptionistStyle(text: string): string {
  */
 export function applyHumanReceptionistFilter(message: string): HumanFilterResult {
   if (!message || typeof message !== "string") {
-    return { valid: false, message: RECEPTIONIST_FALLBACK, reason: "empty" };
+    return { valid: false, message: OPERATOR_FALLBACK, reason: "empty" };
   }
 
   const trimmed = message.trim();
@@ -92,10 +92,10 @@ export function applyHumanReceptionistFilter(message: string): HumanFilterResult
   // Forbidden phrases
   for (const phrase of FORBIDDEN_PHRASES) {
     if (lower.includes(phrase)) {
-      const simplified = shortenToReceptionistStyle(trimmed.replace(new RegExp(phrase, "gi"), "").replace(/\s+/g, " ").trim());
+      const simplified = shortenToOperatorStyle(trimmed.replace(new RegExp(phrase, "gi"), "").replace(/\s+/g, " ").trim());
       return {
         valid: false,
-        message: simplified.length > 10 ? simplified : RECEPTIONIST_FALLBACK,
+        message: simplified.length > 10 ? simplified : OPERATOR_FALLBACK,
         reason: "forbidden_phrase",
       };
     }
@@ -106,7 +106,7 @@ export function applyHumanReceptionistFilter(message: string): HumanFilterResult
     const fixed = trimmed.replace(/!+/g, ".");
     return {
       valid: false,
-      message: shortenToReceptionistStyle(fixed),
+      message: shortenToOperatorStyle(fixed),
       reason: "exclamation_overload",
     };
   }
@@ -115,24 +115,24 @@ export function applyHumanReceptionistFilter(message: string): HumanFilterResult
   if (countSentences(trimmed) > MAX_SENTENCES) {
     return {
       valid: false,
-      message: shortenToReceptionistStyle(trimmed),
+      message: shortenToOperatorStyle(trimmed),
       reason: "too_many_sentences",
     };
   }
 
-  // Emojis — strip unless business allows (we strip by default for high-end receptionist)
+  // Emojis — strip unless business allows (we strip by default for high-end operator)
   const emojiPattern = /[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu;
   if (emojiPattern.test(trimmed)) {
     const noEmoji = trimmed.replace(emojiPattern, "").replace(/\s+/g, " ").trim();
-    const fallback = noEmoji.length > 15 ? noEmoji : RECEPTIONIST_FALLBACK;
-    return { valid: false, message: shortenToReceptionistStyle(fallback), reason: "emoji" };
+    const fallback = noEmoji.length > 15 ? noEmoji : OPERATOR_FALLBACK;
+    return { valid: false, message: shortenToOperatorStyle(fallback), reason: "emoji" };
   }
 
   // Slightly over length — trim
   if (trimmed.length > 220) {
     return {
       valid: true,
-      message: shortenToReceptionistStyle(trimmed),
+      message: shortenToOperatorStyle(trimmed),
       reason: "trimmed_length",
     };
   }

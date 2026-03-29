@@ -181,7 +181,7 @@ export async function GET(req: NextRequest) {
         title: "Recover missed calls",
         description: `~$${(impactCents / 100).toFixed(0)} in potential revenue from ${missedCallsToday} missed calls today. Speed-to-lead recovery can capture 15-20% of these automatically.`,
         action_label: "Enable recovery",
-        action_url: "/app/settings/automation",
+        action_url: "/app/settings/call-rules",
         priority: 5,
         estimated_impact_cents: impactCents,
       });

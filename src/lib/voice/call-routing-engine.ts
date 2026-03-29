@@ -501,7 +501,7 @@ export function buildRoutingTwiml(decision: RoutingDecision, appUrl: string, wor
       return `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Gather input="speech" action="${appUrl}/api/webhooks/twilio/voice/demo-turn?workspace_id=${workspaceId}" method="POST" speechTimeout="2" language="en-US">
-    <Say voice="Polly.Joanna-Neural">Hi there! This is Sarah from Recall Touch. How can I help you today?</Say>
+    <Say voice="Polly.Joanna-Neural">Hi there! This is Sarah from Revenue Operator. How can I help you today?</Say>
   </Gather>
 </Response>`;
 

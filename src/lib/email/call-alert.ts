@@ -1,7 +1,7 @@
 import { getDb } from "@/lib/db/queries";
 
-const FROM = process.env.EMAIL_FROM ?? "Recall Touch <noreply@recall-touch.com>";
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
+const FROM = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@revenueoperator.ai>";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.revenueoperator.ai";
 
 function escapeHtml(value: string): string {
   return value

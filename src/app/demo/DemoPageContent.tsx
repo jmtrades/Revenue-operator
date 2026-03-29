@@ -121,7 +121,7 @@ export function DemoPageContent() {
       <div className="max-w-5xl mx-auto px-4 mt-8 text-center">
         <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>{t("voiceWidgetHint")}</p>
         <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>
-          You are hearing Recall Touch&apos;s real AI assistant responding live, not a recording.
+          You are hearing Revenue Operator&apos;s real AI assistant responding live, not a recording.
         </p>
         <Link
           href={ROUTES.START}
@@ -146,7 +146,7 @@ export function DemoPageContent() {
             Beyond voice: dashboard, campaigns, and timeline proof
           </h2>
           <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-            These mockups show the non-voice parts you get when Recall Touch runs end-to-end: tracking, follow-up execution,
+            These mockups show the non-voice parts you get when Revenue Operator runs end-to-end: tracking, follow-up execution,
             and contact activity you can audit.
           </p>
         </div>

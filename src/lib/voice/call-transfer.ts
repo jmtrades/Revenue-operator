@@ -280,7 +280,7 @@ async function executeConferenceTransfer(
  */
 function buildTransferBriefing(context: CallerContext): string {
   const parts: string[] = [
-    "Incoming transfer from Recall Touch AI.",
+    "Incoming transfer from Revenue Operator AI.",
   ];
 
   if (context.caller_name) {

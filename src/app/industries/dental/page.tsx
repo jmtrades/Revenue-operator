@@ -4,10 +4,10 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export const metadata = {
-  title: "Dental Practice AI Revenue Operations — Recall Touch",
+  title: "Dental Practice AI Revenue Operations — Revenue Operator",
   description:
     "Recover missed appointments, prevent no-shows, and boost practice revenue with AI-powered patient engagement and appointment recovery for dental.",
   alternates: { canonical: `${BASE}/industries/dental` },
@@ -18,7 +18,7 @@ export default function DentalIndustryPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+      { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
       { "@type": "ListItem", position: 2, name: "Industries", item: `${BASE}/industries` },
       { "@type": "ListItem", position: 3, name: "Dental", item: `${BASE}/industries/dental` },
     ],
@@ -56,7 +56,7 @@ export default function DentalIndustryPage() {
             <p className="text-base md:text-lg mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
               Dental revenue is sensitive to speed and follow-through. New patient calls often arrive when your front desk is
               busy checking in patients, running insurance, or confirming tomorrow’s schedule. When a caller hits voicemail,
-              the practice doesn’t just lose "a lead"—it loses a production slot that will take weeks to replace. Recall Touch
+              the practice doesn’t just lose "a lead"—it loses a production slot that will take weeks to replace. Revenue Operator
               is the AI phone system built to prevent that: it answers 24/7, captures intent, books appointments, and follows
               up until the patient is scheduled, converted, or opts out.
             </p>
@@ -82,16 +82,16 @@ export default function DentalIndustryPage() {
               </div>
             </div>
 
-            <h2 className="text-lg font-semibold mb-3">How Recall Touch works for dental</h2>
+            <h2 className="text-lg font-semibold mb-3">How Revenue Operator works for dental</h2>
             <div className="space-y-4 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
               <p>
-                Recall Touch answers calls with a dental-ready flow: it collects the patient’s name and number, clarifies the
+                Revenue Operator answers calls with a dental-ready flow: it collects the patient’s name and number, clarifies the
                 reason for the call (new patient, emergency, existing patient, insurance question, recall), and routes or books
                 based on your rules. When your calendar is connected, it offers available times and confirms the appointment.
                 When you prefer human confirmation, it captures a complete intake and sends your team a clean summary.
               </p>
               <p>
-                After the call, Recall Touch doesn’t stop. It runs follow-up sequences: confirmations, reminders, and
+                After the call, Revenue Operator doesn’t stop. It runs follow-up sequences: confirmations, reminders, and
                 reschedule workflows. If someone doesn’t answer, it can text. If someone replies with a question, it can answer
                 using your knowledge base and either book or hand off—without dropping context.
               </p>
@@ -137,7 +137,7 @@ export default function DentalIndustryPage() {
                 near-term production and reducing schedule volatility.
               </p>
               <p>
-                The key is consistency. Humans get busy. Systems don’t. Recall Touch makes follow-through automatic and visible.
+                The key is consistency. Humans get busy. Systems don’t. Revenue Operator makes follow-through automatic and visible.
               </p>
             </div>
 

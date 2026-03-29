@@ -4,8 +4,8 @@
 
 import { getDb } from "@/lib/db/queries";
 
-const FROM = process.env.EMAIL_FROM ?? "Recall Touch <noreply@recall-touch.com>";
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
+const FROM = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@revenueoperator.ai>";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.revenueoperator.ai";
 
 export async function sendAgentLiveEmail(workspaceId: string): Promise<boolean> {
   const db = getDb();
@@ -28,10 +28,10 @@ export async function sendAgentLiveEmail(workspaceId: string): Promise<boolean> 
   const subject = "Your AI operator is live";
   const html = `
     <p>Hi,</p>
-    <p>Your Recall Touch AI operator for <strong>${escapeHtml(businessName)}</strong> is set up and ready.</p>
+    <p>Your Revenue Operator AI operator for <strong>${escapeHtml(businessName)}</strong> is set up and ready.</p>
     <p>Forward your phone number in Settings to start receiving calls, or try the demo anytime.</p>
     <p><a href="${APP_URL}/app/dashboard">Open dashboard →</a></p>
-    <p>— Recall Touch</p>
+    <p>— Revenue Operator</p>
   `;
 
   try {

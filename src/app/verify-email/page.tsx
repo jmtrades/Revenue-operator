@@ -3,13 +3,13 @@ import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { ResendVerificationButton } from "./ResendVerificationButton";
 
-const BASE_URL = "https://www.recall-touch.com";
+const BASE_URL = "https://www.revenueoperator.ai";
 
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Verify your email — Recall Touch",
+    title: "Verify your email — Revenue Operator",
     description: "Check your inbox for a verification link. Resend if you didn’t receive it.",
     alternates: { canonical: `${BASE_URL}/verify-email` },
     robots: { index: false, follow: false },

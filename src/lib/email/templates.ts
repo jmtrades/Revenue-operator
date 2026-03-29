@@ -1,10 +1,10 @@
 /**
- * Shared email template system for Recall Touch.
+ * Shared email template system for Revenue Operator.
  * Professional, branded HTML emails that convert.
- * All emails use a consistent design language with the Recall Touch brand.
+ * All emails use a consistent design language with the Revenue Operator brand.
  */
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.revenueoperator.ai";
 
 function escapeHtml(value: string): string {
   return value
@@ -14,14 +14,14 @@ function escapeHtml(value: string): string {
     .replace(/"/g, "&quot;");
 }
 
-/** Shared email wrapper with Recall Touch branding */
+/** Shared email wrapper with Revenue Operator branding */
 function emailWrapper(content: string, preheader?: string): string {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Recall Touch</title>
+<title>Revenue Operator</title>
 ${preheader ? `<span style="display:none;font-size:1px;color:#f8f8f8;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">${escapeHtml(preheader)}</span>` : ""}
 </head>
 <body style="margin:0;padding:0;background-color:#0a0a0a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
@@ -31,7 +31,7 @@ ${preheader ? `<span style="display:none;font-size:1px;color:#f8f8f8;line-height
 
 <!-- Logo -->
 <tr><td style="padding-bottom:32px;text-align:center;">
-  <span style="font-size:20px;font-weight:700;color:#ffffff;letter-spacing:-0.5px;">Recall Touch</span>
+  <span style="font-size:20px;font-weight:700;color:#ffffff;letter-spacing:-0.5px;">Revenue Operator</span>
 </td></tr>
 
 <!-- Content Card -->
@@ -42,7 +42,7 @@ ${content}
 <!-- Footer -->
 <tr><td style="padding-top:24px;text-align:center;">
   <p style="margin:0;font-size:12px;color:#525252;line-height:1.6;">
-    Recall Touch Inc. · AI that makes and takes your phone calls<br>
+    Revenue Operator Inc. · AI that makes and takes your phone calls<br>
     <a href="${APP_URL}/app/settings" style="color:#525252;text-decoration:underline;">Manage preferences</a>
      · <a href="${APP_URL}/terms" style="color:#525252;text-decoration:underline;">Terms</a>
      · <a href="${APP_URL}/privacy" style="color:#525252;text-decoration:underline;">Privacy</a>
@@ -77,10 +77,10 @@ function metricBox(label: string, value: string): string {
 
 export function buildWelcomeEmail(name: string): { subject: string; html: string } {
   const safeName = name?.trim() || "there";
-  const subject = `Welcome to Recall Touch, ${safeName} — your AI operator is ready`;
+  const subject = `Welcome to Revenue Operator, ${safeName} — your AI operator is ready`;
 
   const content = `
-  <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">Welcome to Recall Touch</h1>
+  <h1 style="margin:0 0 8px;font-size:24px;font-weight:700;color:#ffffff;line-height:1.3;">Welcome to Revenue Operator</h1>
   <p style="margin:0 0 24px;font-size:15px;color:#a3a3a3;line-height:1.6;">Your account is ready. Let's get your AI answering calls in under 3 minutes.</p>
 
   <table role="presentation" width="100%" cellpadding="0" cellspacing="8" style="margin-bottom:24px;">
@@ -126,7 +126,7 @@ export function buildWelcomeEmail(name: string): { subject: string; html: string
     Questions? Just reply to this email — I personally read every one.
   </p>
   <p style="margin:12px 0 0;font-size:14px;color:#e5e5e5;">
-    — Junior, Founder of Recall Touch
+    — Junior, Founder of Revenue Operator
   </p>`;
 
   return { subject, html: emailWrapper(content, `Your account is active. Set up your AI operator in 3 minutes.`) };
@@ -181,7 +181,7 @@ export function buildTrialExpiringEmail(params: {
 
   return {
     subject,
-    html: emailWrapper(content, `Your Recall Touch trial ${daysLeft <= 1 ? "ends tomorrow" : `ends in ${daysLeft} days`}. ${callsHandled > 0 ? `Your operator handled ${callsHandled} calls.` : "Activate now to start."}`),
+    html: emailWrapper(content, `Your Revenue Operator trial ${daysLeft <= 1 ? "ends tomorrow" : `ends in ${daysLeft} days`}. ${callsHandled > 0 ? `Your operator handled ${callsHandled} calls.` : "Activate now to start."}`),
   };
 }
 
@@ -234,7 +234,7 @@ export function buildMilestoneEmail(params: {
 
   return {
     subject,
-    html: emailWrapper(content, `Your Recall Touch operator has handled ${milestone} calls and saved ~$${estimatedRevenueSaved.toLocaleString()}.`),
+    html: emailWrapper(content, `Your Revenue Operator has handled ${milestone} calls and saved ~$${estimatedRevenueSaved.toLocaleString()}.`),
   };
 }
 
@@ -275,7 +275,7 @@ export function buildMinutePackEmail(params: {
 
   ${ctaButton("View Usage Dashboard", `${APP_URL}/app/settings/billing`)}
 
-  <p style="margin:0;font-size:14px;color:#e5e5e5;">— Recall Touch</p>`;
+  <p style="margin:0;font-size:14px;color:#e5e5e5;">— Revenue Operator</p>`;
 
   return {
     subject,
@@ -353,7 +353,7 @@ export function buildDunningEmail(params: {
   ${ctaButton("Update Payment Method", `${APP_URL}/app/settings/billing`, cfg.color)}
 
   <p style="margin:0;font-size:13px;color:#737373;line-height:1.6;">
-    Need help? Reply to this email or contact support@recall-touch.com
+    Need help? Reply to this email or contact support@revenueoperator.ai
   </p>`;
 
   return {

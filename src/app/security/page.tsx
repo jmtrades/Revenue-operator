@@ -5,22 +5,22 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export const metadata: Metadata = {
-  title: "Security — Recall Touch",
+  title: "Security — Revenue Operator",
   description: "Enterprise-grade security for your business communications: encryption, access control, rate limiting, and compliance.",
   alternates: { canonical: `${BASE}/security` },
   openGraph: {
-    title: "Security — Recall Touch",
+    title: "Security — Revenue Operator",
     description: "Enterprise-grade security for your business communications: encryption, access control, rate limiting, and compliance.",
     url: `${BASE}/security`,
-    siteName: "Recall Touch",
+    siteName: "Revenue Operator",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Security — Recall Touch",
+    title: "Security — Revenue Operator",
     description: "Enterprise-grade security for your business communications: encryption, access control, rate limiting, and compliance.",
   },
 };
@@ -35,7 +35,7 @@ export default function SecurityPage() {
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             itemListElement: [
-              { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+              { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
               { "@type": "ListItem", position: 2, name: "Security", item: `${BASE}/security` },
             ],
           }),
@@ -51,7 +51,7 @@ export default function SecurityPage() {
                 Enterprise-Grade Security for Your Business Communications
               </h1>
               <p className="mt-4 text-base md:text-lg" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                Recall Touch is built for revenue-critical conversations. We protect sessions and data with encryption, isolate tenants with workspace-level controls, enforce rate limits, and design outbound compliance into the workflow.
+                Revenue Operator is built for revenue-critical conversations. We protect sessions and data with encryption, isolate tenants with workspace-level controls, enforce rate limits, and design outbound compliance into the workflow.
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <Link

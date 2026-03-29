@@ -526,7 +526,7 @@ async function sendBookingConfirmationSms(
 
   if (!accountSid || !authToken || !fromNumber) return;
 
-  const message = `Your appointment "${title}" is confirmed for ${slot.formatted}. Reply CANCEL to cancel or RESCHEDULE to change the time. - Recall Touch`;
+  const message = `Your appointment "${title}" is confirmed for ${slot.formatted}. Reply CANCEL to cancel or RESCHEDULE to change the time. - Revenue Operator`;
 
   try {
     await fetch(

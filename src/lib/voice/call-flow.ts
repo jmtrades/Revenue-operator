@@ -574,7 +574,7 @@ export async function handleInboundCall(
     "us-female-warm-receptionist";
 
   // 4. Compile system prompt with business brain (same as outbound)
-  let compiledPrompt = "You are a helpful receptionist. Answer calls professionally.";
+  let compiledPrompt = "You are a professional AI operator. Handle calls with expertise.";
   let agentTools: ReturnType<typeof getAgentTools> = [];
   let workspaceBizMeta: { business_name?: string; industry?: string; services?: string; address?: string } = {};
   try {

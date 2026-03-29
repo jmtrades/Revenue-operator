@@ -177,10 +177,10 @@ const FAQS = [
   { q: "Do you offer discounts for annual billing?", a: "Yes. Annual plans save you ~20% vs. monthly. Plus, paying annually gives you priority support on all tiers." },
   { q: "Is there a setup fee?", a: "No setup fee. All plans give you full access to every feature from day one." },
   { q: "Can I cancel anytime?", a: "Yes. No long-term contracts. Cancel in your dashboard or pause for 30 days. We'll ask why — your feedback matters." },
-  { q: "Does Recall Touch integrate with my calendar/CRM?", a: "Yes. Growth and Business tiers get CRM webhook and integrations with Google Calendar, Cal.com, Zapier, and Make.com. Business adds API access for custom integrations." },
+  { q: "Does Revenue Operator integrate with my calendar/CRM?", a: "Yes. Growth and Business tiers get CRM webhook and integrations with Google Calendar, Cal.com, Zapier, and Make.com. Business adds API access for custom integrations." },
   { q: "What's included in your support?", a: "Starter: Email support. Growth: Priority email support. Business: Priority email + phone support + dedicated account manager." },
-  { q: "Can I test Recall Touch free first?", a: "Absolutely. Full access to all features. Cancel anytime. Your AI operator will be answering calls in under 3 minutes." },
-  { q: "How does Recall Touch work?", a: "Recall Touch answers all your incoming calls with an AI phone agent, qualifies leads in real-time, books appointments directly into your calendar, and automatically follows up with contacts to move them through your pipeline." },
+  { q: "Can I test Revenue Operator free first?", a: "Absolutely. Full access to all features. Cancel anytime. Your AI operator will be answering calls in under 3 minutes." },
+  { q: "How does Revenue Operator work?", a: "Revenue Operator answers all your incoming calls with an AI phone agent, qualifies leads in real-time, books appointments directly into your calendar, and automatically follows up with contacts to move them through your pipeline." },
   { q: "Can I white-label this for my clients?", a: "Yes, white-label and agency features are available. Contact our sales team to discuss custom white-label, multi-client, and reseller options." },
 ];
 
@@ -216,7 +216,7 @@ function CostCalculator() {
         </h3>
       </div>
       <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
-        See what Recall Touch can do for your business
+        See what Revenue Operator can do for your business
       </p>
 
       <div className="grid gap-5 mb-6">

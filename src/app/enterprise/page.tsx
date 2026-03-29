@@ -5,24 +5,24 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export const metadata: Metadata = {
-  title: "Enterprise — Recall Touch",
+  title: "Enterprise — Revenue Operator",
   description:
     "Enterprise AI revenue operations: white-label delivery, SSO/SAML, custom SLAs, multi-location support, compliance controls, and API access.",
   alternates: { canonical: `${BASE}/enterprise` },
   openGraph: {
-    title: "Enterprise — Recall Touch",
+    title: "Enterprise — Revenue Operator",
     description:
       "Enterprise AI revenue operations: white-label delivery, SSO/SAML, custom SLAs, multi-location support, compliance controls, and API access.",
     url: `${BASE}/enterprise`,
-    siteName: "Recall Touch",
+    siteName: "Revenue Operator",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Enterprise — Recall Touch",
+    title: "Enterprise — Revenue Operator",
     description: "White-label, SSO/SAML, custom SLAs, multi-location support, and API access.",
   },
 };
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 const enterpriseSections: Array<{ title: string; body: string }> = [
   {
     title: "White-Label",
-    body: "Deliver Recall Touch under your brand. Keep the experience consistent for your customers while still operating the underlying revenue system with your own governance and reporting.",
+    body: "Deliver Revenue Operator under your brand. Keep the experience consistent for your customers while still operating the underlying revenue system with your own governance and reporting.",
   },
   {
     title: "SSO / SAML",
@@ -54,7 +54,7 @@ const enterpriseSections: Array<{ title: string; body: string }> = [
   },
   {
     title: "API Access",
-    body: "Connect Recall Touch to your internal systems through stable APIs. Integrate leads, outcomes, and operational events so your CRM and analytics stay synchronized.",
+    body: "Connect Revenue Operator to your internal systems through stable APIs. Integrate leads, outcomes, and operational events so your CRM and analytics stay synchronized.",
   },
   {
     title: "Priority Support",

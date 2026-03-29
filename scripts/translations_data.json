@@ -48,12 +48,12 @@
     "pt": "Inativo",
     "ja": "無効"
   },
-  "Billing — Recall Touch": {
-    "es": "Facturación — Recall Touch",
-    "fr": "Facturation — Recall Touch",
-    "de": "Abrechnung — Recall Touch",
-    "pt": "Faturamento — Recall Touch",
-    "ja": "請求 — Recall Touch"
+  "Billing — Revenue Operator": {
+    "es": "Facturación — Revenue Operator",
+    "fr": "Facturation — Revenue Operator",
+    "de": "Abrechnung — Revenue Operator",
+    "pt": "Faturamento — Revenue Operator",
+    "ja": "請求 — Revenue Operator"
   },
   "Pause": {
     "es": "Pausar",
@@ -321,12 +321,12 @@
     "pt": "Para {name}",
     "ja": "{name} 用"
   },
-  "Get started — Recall Touch": {
-    "es": "Comenzar — Recall Touch",
-    "fr": "Commencer — Recall Touch",
-    "de": "Starten — Recall Touch",
-    "pt": "Começar — Recall Touch",
-    "ja": "開始 — Recall Touch"
+  "Get started — Revenue Operator": {
+    "es": "Comenzar — Revenue Operator",
+    "fr": "Commencer — Revenue Operator",
+    "de": "Starten — Revenue Operator",
+    "pt": "Começar — Revenue Operator",
+    "ja": "開始 — Revenue Operator"
   },
   "Go live": {
     "es": "Poner en vivo",
@@ -363,12 +363,12 @@
     "pt": "Info",
     "ja": "情報"
   },
-  "Integrations — Recall Touch": {
-    "es": "Integraciones — Recall Touch",
-    "fr": "Intégrations — Recall Touch",
-    "de": "Integrationen — Recall Touch",
-    "pt": "Integrações — Recall Touch",
-    "ja": "連携 — Recall Touch"
+  "Integrations — Revenue Operator": {
+    "es": "Integraciones — Revenue Operator",
+    "fr": "Intégrations — Revenue Operator",
+    "de": "Integrationen — Revenue Operator",
+    "pt": "Integrações — Revenue Operator",
+    "ja": "連携 — Revenue Operator"
   },
   "Invalid integration.": {
     "es": "Integración no válida.",
@@ -433,12 +433,12 @@
     "pt": "Lead capturado",
     "ja": "リードを獲得"
   },
-  "Leads — Recall Touch": {
-    "es": "Prospectos — Recall Touch",
-    "fr": "Prospects — Recall Touch",
-    "de": "Interessenten — Recall Touch",
-    "pt": "Leads — Recall Touch",
-    "ja": "リード — Recall Touch"
+  "Leads — Revenue Operator": {
+    "es": "Prospectos — Revenue Operator",
+    "fr": "Prospects — Revenue Operator",
+    "de": "Interessenten — Revenue Operator",
+    "pt": "Leads — Revenue Operator",
+    "ja": "リード — Revenue Operator"
   },
   "Live": {
     "es": "En vivo",
@@ -475,12 +475,12 @@
     "pt": "Mensagem enviada.",
     "ja": "メッセージを送信しました。"
   },
-  "Messages — Recall Touch": {
-    "es": "Mensajes — Recall Touch",
-    "fr": "Messages — Recall Touch",
-    "de": "Nachrichten — Recall Touch",
-    "pt": "Mensagens — Recall Touch",
-    "ja": "メッセージ — Recall Touch"
+  "Messages — Revenue Operator": {
+    "es": "Mensajes — Revenue Operator",
+    "fr": "Messages — Revenue Operator",
+    "de": "Nachrichten — Revenue Operator",
+    "pt": "Mensagens — Revenue Operator",
+    "ja": "メッセージ — Revenue Operator"
   },
   "Mission": {
     "es": "Misión",
@@ -587,12 +587,12 @@
     "pt": "Permissões",
     "ja": "権限"
   },
-  "Phone Settings — Recall Touch": {
-    "es": "Ajustes de teléfono — Recall Touch",
-    "fr": "Paramètres téléphone — Recall Touch",
-    "de": "Telefoneinstellungen — Recall Touch",
-    "pt": "Configurações de telefone — Recall Touch",
-    "ja": "電話設定 — Recall Touch"
+  "Phone Settings — Revenue Operator": {
+    "es": "Ajustes de teléfono — Revenue Operator",
+    "fr": "Paramètres téléphone — Revenue Operator",
+    "de": "Telefoneinstellungen — Revenue Operator",
+    "pt": "Configurações de telefone — Revenue Operator",
+    "ja": "電話設定 — Revenue Operator"
   },
   "Phone verified ✓": {
     "es": "Teléfono verificado ✓",
@@ -762,33 +762,33 @@
     "pt": "Análises",
     "ja": "分析"
   },
-  "Agent Settings — Recall Touch": {
-    "es": "Ajustes del agente — Recall Touch",
-    "fr": "Paramètres de l'agent — Recall Touch",
-    "de": "Agent-Einstellungen — Recall Touch",
-    "pt": "Configurações do agente — Recall Touch",
-    "ja": "エージェント設定 — Recall Touch"
+  "Agent Settings — Revenue Operator": {
+    "es": "Ajustes del agente — Revenue Operator",
+    "fr": "Paramètres de l'agent — Revenue Operator",
+    "de": "Agent-Einstellungen — Revenue Operator",
+    "pt": "Configurações do agente — Revenue Operator",
+    "ja": "エージェント設定 — Revenue Operator"
   },
-  "Call Intelligence — Recall Touch": {
-    "es": "Inteligencia de llamadas — Recall Touch",
-    "fr": "Intelligence d'appels — Recall Touch",
-    "de": "Anruf-Intelligenz — Recall Touch",
-    "pt": "Inteligência de chamadas — Recall Touch",
-    "ja": "通話インテリジェンス — Recall Touch"
+  "Call Intelligence — Revenue Operator": {
+    "es": "Inteligencia de llamadas — Revenue Operator",
+    "fr": "Intelligence d'appels — Revenue Operator",
+    "de": "Anruf-Intelligenz — Revenue Operator",
+    "pt": "Inteligência de chamadas — Revenue Operator",
+    "ja": "通話インテリジェンス — Revenue Operator"
   },
-  "Call Rules — Recall Touch": {
-    "es": "Reglas de llamadas — Recall Touch",
-    "fr": "Règles d'appels — Recall Touch",
-    "de": "Anrufregeln — Recall Touch",
-    "pt": "Regras de chamadas — Recall Touch",
-    "ja": "通話ルール — Recall Touch"
+  "Call Rules — Revenue Operator": {
+    "es": "Reglas de llamadas — Revenue Operator",
+    "fr": "Règles d'appels — Revenue Operator",
+    "de": "Anrufregeln — Revenue Operator",
+    "pt": "Regras de chamadas — Revenue Operator",
+    "ja": "通話ルール — Revenue Operator"
   },
-  "Developer — Recall Touch": {
-    "es": "Desarrollador — Recall Touch",
-    "fr": "Développeur — Recall Touch",
-    "de": "Entwickler — Recall Touch",
-    "pt": "Desenvolvedor — Recall Touch",
-    "ja": "開発者 — Recall Touch"
+  "Developer — Revenue Operator": {
+    "es": "Desarrollador — Revenue Operator",
+    "fr": "Développeur — Revenue Operator",
+    "de": "Entwickler — Revenue Operator",
+    "pt": "Desenvolvedor — Revenue Operator",
+    "ja": "開発者 — Revenue Operator"
   },
   "Plan updated. Your new features are available now.": {
     "es": "Plan actualizado. Tus nuevas funciones ya están disponibles.",
@@ -1175,12 +1175,12 @@
     "pt": "Fora do horário",
     "ja": "時間外"
   },
-  "Agents — Recall Touch": {
-    "es": "Agentes — Recall Touch",
-    "fr": "Agents — Recall Touch",
-    "de": "Agenten — Recall Touch",
-    "pt": "Agentes — Recall Touch",
-    "ja": "エージェント — Recall Touch"
+  "Agents — Revenue Operator": {
+    "es": "Agentes — Revenue Operator",
+    "fr": "Agents — Revenue Operator",
+    "de": "Agenten — Revenue Operator",
+    "pt": "Agentes — Revenue Operator",
+    "ja": "エージェント — Revenue Operator"
   },
   "AI insights": {
     "es": "Información de IA",
@@ -2568,11 +2568,11 @@
     "pt": "colega@empresa.com",
     "ja": "colleague@company.com"
   },
-  "Dashboard — Recall Touch": {
-    "es": "Panel — Recall Touch",
-    "fr": "Tableau de bord — Recall Touch",
-    "de": "Übersicht — Recall Touch",
-    "pt": "Painel — Recall Touch",
-    "ja": "ダッシュボード — Recall Touch"
+  "Dashboard — Revenue Operator": {
+    "es": "Panel — Revenue Operator",
+    "fr": "Tableau de bord — Revenue Operator",
+    "de": "Übersicht — Revenue Operator",
+    "pt": "Painel — Revenue Operator",
+    "ja": "ダッシュボード — Revenue Operator"
   }
 }

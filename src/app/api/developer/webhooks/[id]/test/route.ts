@@ -49,7 +49,7 @@ export async function POST(
   const body = JSON.stringify(payload);
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    "User-Agent": "RecallTouch-Webhook/1.0",
+    "User-Agent": "RevenueOperator-Webhook/1.0",
     "X-Webhook-Event": "lead.created",
   };
   if (row.secret) {

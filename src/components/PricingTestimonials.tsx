@@ -15,7 +15,7 @@ const TESTIMONIALS = [
     plan: "Growth",
   },
   {
-    quote: "My front desk was drowning in calls. Recall Touch handles 200+ calls a day for us now. No-shows dropped 50% because the AI actually follows up. Best ROI of any tool we use.",
+    quote: "My front desk was drowning in calls. Revenue Operator handles 200+ calls a day for us now. No-shows dropped 50% because the AI actually follows up. Best ROI of any tool we use.",
     name: "Dr. Lisa Chen",
     role: "Practice Owner",
     company: "Bright Smile Dental Group",
@@ -35,7 +35,7 @@ const TESTIMONIALS = [
     plan: "Growth",
   },
   {
-    quote: "We manage 14 roofing crews across 3 states. Before Recall Touch, storm season meant 60% of calls went to voicemail. Now every single call gets answered and scheduled. Revenue is up 34%.",
+    quote: "We manage 14 roofing crews across 3 states. Before Revenue Operator, storm season meant 60% of calls went to voicemail. Now every single call gets answered and scheduled. Revenue is up 34%.",
     name: "Mike Torres",
     role: "CEO",
     company: "Apex Roofing Group",

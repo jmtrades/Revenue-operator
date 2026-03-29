@@ -27,7 +27,7 @@ export function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1 space-y-3 pr-4">
             <span className="text-[15px] font-semibold" style={{ color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
-              Recall Touch
+              Revenue Operator
             </span>
             <p className="text-[13px] leading-relaxed" style={{ color: "var(--text-tertiary)" }}>
               {t("tagline")}
@@ -79,7 +79,7 @@ export function Footer() {
               {t("company")}
             </p>
             <nav className="space-y-1.5">
-              <a href="mailto:team@recall-touch.com" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{t("emailUs")}</a>
+              <a href="mailto:team@revenueoperator.ai" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{t("emailUs")}</a>
               <Link href="/blog" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{t("blog")}</Link>
               <Link href="/contact" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{t("contact")}</Link>
               <Link href="/results" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{tMarketing("results")}</Link>
@@ -95,7 +95,7 @@ export function Footer() {
             <nav className="space-y-1.5">
               <Link href="/privacy" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{t("privacyPolicy")}</Link>
               <Link href="/terms" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{t("termsOfService")}</Link>
-              <a href="https://status.recall-touch.com" target="_blank" rel="noopener noreferrer" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{tMarketing("systemStatus")}</a>
+              <a href="https://status.revenueoperator.ai" target="_blank" rel="noopener noreferrer" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{tMarketing("systemStatus")}</a>
             </nav>
             <div className="flex flex-wrap gap-1.5 mt-4">
               {["SOC 2", "HIPAA", "GDPR", "SSL"].map((badge) => (

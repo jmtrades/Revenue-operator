@@ -218,7 +218,7 @@ async function handleDeepgramTTS(
         headers: {
           Authorization: `Token ${apiKey}`,
           "Content-Type": "application/json",
-          "User-Agent": "RecallTouch/1.0",
+          "User-Agent": "RevenueOperator/1.0",
         },
         body: JSON.stringify({ text }),
       });
@@ -249,7 +249,7 @@ async function handleDeepgramTTS(
           "Content-Length": audioBuffer.byteLength.toString(),
           "Cache-Control": "public, max-age=86400",
           "Access-Control-Allow-Origin":
-            process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com",
+            process.env.NEXT_PUBLIC_APP_URL || "https://www.revenueoperator.ai",
           "X-Voice-Provider": "deepgram",
           "X-Voice-Model": model,
         },
@@ -325,7 +325,7 @@ async function handleVoiceServerTTS(
         signal: controller.signal,
         headers: {
           "Content-Type": "application/json",
-          "User-Agent": "RecallTouch/1.0",
+          "User-Agent": "RevenueOperator/1.0",
         },
         body: JSON.stringify({
           voice_id: normalizedVoice,
@@ -357,7 +357,7 @@ async function handleVoiceServerTTS(
           "Content-Length": audioBuffer.byteLength.toString(),
           "Cache-Control": "public, max-age=86400",
           "Access-Control-Allow-Origin":
-            process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com",
+            process.env.NEXT_PUBLIC_APP_URL || "https://www.revenueoperator.ai",
           "X-Voice-Provider": "recall-orpheus",
           "X-Voice-Id": normalizedVoice,
           "X-Voice-Emotion": emotion,
@@ -418,7 +418,7 @@ export async function GET(req: NextRequest) {
           "X-Voice-Cache": "hit",
           "Access-Control-Allow-Origin":
             process.env.NEXT_PUBLIC_APP_URL ||
-            "https://www.recall-touch.com",
+            "https://www.revenueoperator.ai",
         },
       });
     }
@@ -509,7 +509,7 @@ export async function GET(req: NextRequest) {
               "Content-Length": audioBuffer.byteLength.toString(),
               "Cache-Control": "public, max-age=86400",
               "Access-Control-Allow-Origin":
-                process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com",
+                process.env.NEXT_PUBLIC_APP_URL || "https://www.revenueoperator.ai",
               "X-Voice-Provider": "edge-tts",
               "X-Voice-Id": normalizeVoiceId(voiceId),
             },

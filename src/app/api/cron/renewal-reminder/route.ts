@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
 
   for (const { workspaceId, ownerEmail, renewalAt: _renewalAt } of toNotify) {
     const subject = "Your billing renews tomorrow";
-    const body = `Recall Touch renews automatically tomorrow.
+    const body = `Revenue Operator renews automatically tomorrow.
 
 Your number, call handling, and follow-up coverage will stay active with no interruption.
 
@@ -71,7 +71,7 @@ If you need to pause instead, open billing in the app today.`;
             Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
           },
           body: JSON.stringify({
-            from: process.env.EMAIL_FROM || "Recall Touch <noreply@recall-touch.com>",
+            from: process.env.EMAIL_FROM || "Revenue Operator <noreply@revenueoperator.ai>",
             to: ownerEmail,
             subject,
             text: body,

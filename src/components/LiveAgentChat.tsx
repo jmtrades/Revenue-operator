@@ -187,7 +187,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
     <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden">
       <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-[var(--border-default)] bg-[var(--bg-base)]/40">
         <div className="flex items-center gap-2 min-w-0">
-          <span className="text-xs font-medium text-[var(--text-tertiary)] shrink-0">Recall Touch</span>
+          <span className="text-xs font-medium text-[var(--text-tertiary)] shrink-0">Revenue Operator</span>
           <span className="text-[var(--text-tertiary)]">·</span>
         </div>
         <div className="flex items-center gap-2">

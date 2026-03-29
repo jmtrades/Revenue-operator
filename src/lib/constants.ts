@@ -174,12 +174,12 @@ export const FOOTER_LEGAL = [
 export const PRICING_FAQ = [
   { q: "How does getting started work?", a: "Sign up, choose your plan, and your AI operator is live in minutes. All plans include full access to every feature." },
   { q: "What if I exceed my included minutes?", a: "Your calls never get cut off. Overage minutes are billed at your plan's per-minute rate. We alert you as you approach your limit." },
-  { q: "Can I keep my existing phone number?", a: "Yes. Forward your existing number to your Recall Touch number. Your callers won't notice any difference." },
+  { q: "Can I keep my existing phone number?", a: "Yes. Forward your existing number to your Revenue Operator number. Your callers won't notice any difference." },
   { q: "What voices are available?", a: "6 natural-sounding voices included on all plans. Premium voices available as an add-on for $29/month." },
   { q: "Is there a contract?", a: "No. Month-to-month. Cancel anytime from your dashboard. Annual plans available at a 17% discount." },
   { q: "Do you support HIPAA?", a: "HIPAA-compliant configuration with BAA is available as an add-on for healthcare practices. Contact us for details." },
   { q: "What integrations are available?", a: "Google Calendar and Outlook on all plans. CRM webhook on Business+. Native CRM sync and API on Scale+." },
-  { q: "How is this different from an AI answering service?", a: "AI answering services answer your phone. Recall Touch answers, then follows up, books appointments, sends reminders, recovers no-shows, and reactivates cold leads. The answering is just the beginning." },
+  { q: "How is this different from an AI answering service?", a: "AI answering services answer your phone. Revenue Operator answers, then follows up, books appointments, sends reminders, recovers no-shows, and reactivates cold leads. The answering is just the beginning." },
   { q: "What happens after hours?", a: "Your AI answers 24/7 following your configured after-hours rules — take messages, offer booking, or handle specific call types." },
   { q: "How fast is setup?", a: "About 5 minutes. Select your industry, connect your phone, and your AI is live with pre-built knowledge and follow-up workflows." },
 ] as const;

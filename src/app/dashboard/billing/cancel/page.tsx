@@ -83,7 +83,7 @@ export default function CancelSubscriptionPage() {
         break;
       case "support":
         // Open support modal or navigate to contact
-        window.open("mailto:hello@recall-touch.com?subject=Help%20with%20Subscription", "_blank");
+        window.open("mailto:hello@revenueoperator.ai?subject=Help%20with%20Subscription", "_blank");
         break;
     }
   };
@@ -199,7 +199,7 @@ export default function CancelSubscriptionPage() {
                     Before you go
                   </h1>
                   <p className="text-lg mt-2" style={{ color: "var(--text-secondary)" }}>
-                    We&apos;d love to help you get the most from Recall Touch
+                    We&apos;d love to help you get the most from Revenue Operator
                   </p>
                 </div>
               </div>
@@ -221,7 +221,7 @@ export default function CancelSubscriptionPage() {
                   </p>
                 </div>
                 <p className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>
-                  Since joining, Recall Touch has recovered ${billing.revenue_recovered.toLocaleString()} in revenue for your business
+                  Since joining, Revenue Operator has recovered ${billing.revenue_recovered.toLocaleString()} in revenue for your business
                 </p>
               </div>
             )}
@@ -559,7 +559,7 @@ export default function CancelSubscriptionPage() {
           <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
             Have questions?{" "}
             <a
-              href="mailto:hello@recall-touch.com?subject=Cancellation%20Help"
+              href="mailto:hello@revenueoperator.ai?subject=Cancellation%20Help"
               className="underline transition-opacity hover:opacity-70"
               style={{ color: "var(--accent-primary)" }}
             >

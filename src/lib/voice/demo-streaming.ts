@@ -125,7 +125,7 @@ export async function createStreamingDemoCall(
         direction: "outbound",
         call_type: "demo",
         call_session_id: callSessionId,
-        business_name: "Recall Touch",
+        business_name: "Revenue Operator",
         industry: "ai_saas",
       },
     });

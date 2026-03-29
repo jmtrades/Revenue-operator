@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import {
   CRM_FIELDS_BY_PROVIDER,
-  RECALL_TOUCH_FIELDS,
+  REVENUE_OPERATOR_FIELDS,
   getDefaultMappings,
   testMapping,
   SAMPLE_LEAD,
@@ -86,7 +86,7 @@ export default function IntegrationsMappingPage() {
   const addMapping = () => {
     setConfig((prev) => ({
       ...prev,
-      mappings: [...prev.mappings, { rtField: RECALL_TOUCH_FIELDS[0].key, crmField: crmFields[0]?.key ?? "", transformation: "none" }],
+      mappings: [...prev.mappings, { rtField: REVENUE_OPERATOR_FIELDS[0].key, crmField: crmFields[0]?.key ?? "", transformation: "none" }],
     }));
     setTestResult(null);
   };
@@ -159,7 +159,7 @@ export default function IntegrationsMappingPage() {
         <>
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden">
             <div className="grid grid-cols-12 gap-2 p-4 border-b border-[var(--border-default)] text-[11px] font-medium text-[var(--text-secondary)] uppercase tracking-wider">
-              <div className="col-span-4">Recall Touch</div>
+              <div className="col-span-4">Revenue Operator</div>
               <div className="col-span-1" aria-hidden />
               <div className="col-span-4">CRM field ({name})</div>
               <div className="col-span-2">Transform</div>
@@ -176,7 +176,7 @@ export default function IntegrationsMappingPage() {
                     onChange={(e) => updateMapping(index, { rtField: e.target.value })}
                     className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                   >
-                    {RECALL_TOUCH_FIELDS.map((f) => (
+                    {REVENUE_OPERATOR_FIELDS.map((f) => (
                       <option key={f.key} value={f.key}>{f.label}</option>
                     ))}
                   </select>

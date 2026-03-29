@@ -1,4 +1,4 @@
-// Lightweight analytics tracker for Recall Touch
+// Lightweight analytics tracker for Revenue Operator
 // Sends events to /api/admin/track
 
 const TRACK_ENDPOINT = "/api/admin/track";

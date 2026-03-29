@@ -1,5 +1,5 @@
 /**
- * Twilio voice webhook: inbound call to a Recall Touch number.
+ * Twilio voice webhook: inbound call to a Revenue Operator number.
  *
  * For DEMO calls (outbound from our Twilio number):
  *   → PRIORITY: Routes to streaming voice server via <Connect><Stream> (sub-800ms latency)
@@ -232,7 +232,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Fallback: TwiML <Say> + <Gather> turn-taking
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.revenueoperator.ai";
     const demoTurnUrl = `${appUrl}/api/webhooks/twilio/voice/demo-turn`;
 
     // Try personalized returning-caller greeting, fall back to random

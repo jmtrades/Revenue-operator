@@ -4,10 +4,10 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export const metadata = {
-  title: "Construction AI Revenue Operations Platform — Recall Touch",
+  title: "Construction AI Revenue Operations Platform — Revenue Operator",
   description:
     "Drive project pipeline and operational efficiency with complete AI-powered workflows: bid capture and qualification, subcontractor coordination, job-site management, bid appointment scheduling, and project tracking.",
   alternates: { canonical: `${BASE}/industries/construction` },
@@ -18,7 +18,7 @@ export default function ConstructionIndustryPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+      { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
       { "@type": "ListItem", position: 2, name: "Industries", item: `${BASE}/industries` },
       { "@type": "ListItem", position: 3, name: "Construction", item: `${BASE}/industries/construction` },
     ],
@@ -54,7 +54,7 @@ export default function ConstructionIndustryPage() {
               Capture every bid request. Coordinate subs instantly. Win more projects.
             </h1>
             <p className="text-base md:text-lg mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-              A general contractor's phone is a profit center. A property manager calls to get a bid on a commercial roof replacement. A homeowner calls about a kitchen remodel. You're on-site managing three crews and can't answer. The call goes to voicemail. The prospect calls another GC and gets a bid within 30 minutes. You call back three hours later and you've already lost the job. That $50,000+ project is gone. Recall Touch answers every bid request 24/7, captures the scope, qualifies the opportunity, and routes it to your office or project manager—so you never miss an opportunity, even when you're in the field.
+              A general contractor's phone is a profit center. A property manager calls to get a bid on a commercial roof replacement. A homeowner calls about a kitchen remodel. You're on-site managing three crews and can't answer. The call goes to voicemail. The prospect calls another GC and gets a bid within 30 minutes. You call back three hours later and you've already lost the job. That $50,000+ project is gone. Revenue Operator answers every bid request 24/7, captures the scope, qualifies the opportunity, and routes it to your office or project manager—so you never miss an opportunity, even when you're in the field.
             </p>
 
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 md:p-8 mb-8">
@@ -72,16 +72,16 @@ export default function ConstructionIndustryPage() {
               </div>
             </div>
 
-            <h2 className="text-lg font-semibold mb-3">How Recall Touch works for construction</h2>
+            <h2 className="text-lg font-semibold mb-3">How Revenue Operator works for construction</h2>
             <div className="space-y-4 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
               <p>
-                Recall Touch answers bid requests 24/7. It greets the caller, asks about the project scope (commercial roof, kitchen remodel, tenant buildout, etc.), captures the timeline and location, and qualifies budget range. It then routes the opportunity to your office or project manager with a structured summary: location, project type, scope, and contact info. All priority, no guessing.
+                Revenue Operator answers bid requests 24/7. It greets the caller, asks about the project scope (commercial roof, kitchen remodel, tenant buildout, etc.), captures the timeline and location, and qualifies budget range. It then routes the opportunity to your office or project manager with a structured summary: location, project type, scope, and contact info. All priority, no guessing.
               </p>
               <p>
-                For subcontractor routing, you can set up workflows: "If the scope includes plumbing, alert the plumbing sub." Recall Touch can even attempt to schedule a walk-through or bid appointment directly. This accelerates bid turnaround.
+                For subcontractor routing, you can set up workflows: "If the scope includes plumbing, alert the plumbing sub." Revenue Operator can even attempt to schedule a walk-through or bid appointment directly. This accelerates bid turnaround.
               </p>
               <p>
-                For job-site communication, Recall Touch can handle site-specific coordination calls. "We need additional lumber for the framing." "When's the HVAC crew arriving?" Recall Touch answers using your project info and routes critical questions to the right person, keeping your crews focused on work.
+                For job-site communication, Revenue Operator can handle site-specific coordination calls. "We need additional lumber for the framing." "When's the HVAC crew arriving?" Revenue Operator answers using your project info and routes critical questions to the right person, keeping your crews focused on work.
               </p>
             </div>
 

@@ -153,7 +153,7 @@ export function ComparisonContent({ competitor }: ComparisonContentProps) {
       {/* Hero Section */}
       <section className="max-w-4xl mx-auto space-y-6">
         <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white">
-          Recall Touch vs {data.name}
+          Revenue Operator vs {data.name}
         </h1>
         <p className="text-xl text-[var(--text-secondary)]">{data.description}</p>
       </section>
@@ -161,7 +161,7 @@ export function ComparisonContent({ competitor }: ComparisonContentProps) {
       {/* Key Stats */}
       <section className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
         <div className="rounded-xl bg-[var(--bg-card)]/50 border border-[var(--border-default)] p-6">
-          <div className="text-sm text-[var(--text-tertiary)] mb-2">Recall Touch Cost</div>
+          <div className="text-sm text-[var(--text-tertiary)] mb-2">Revenue Operator Cost</div>
           <div className="text-2xl font-bold text-white">$297-$497/mo</div>
           <div className="text-xs text-[var(--text-tertiary)] mt-2">No setup, instant activation</div>
         </div>
@@ -185,7 +185,7 @@ export function ComparisonContent({ competitor }: ComparisonContentProps) {
             <thead>
               <tr className="bg-[var(--bg-card)]/50 border-b border-[var(--border-default)]">
                 <th className="text-left px-6 py-4 text-white font-semibold">Feature</th>
-                <th className="text-center px-6 py-4 text-white font-semibold">Recall Touch</th>
+                <th className="text-center px-6 py-4 text-white font-semibold">Revenue Operator</th>
                 <th className="text-center px-6 py-4 text-[var(--text-tertiary)] font-semibold">{data.name}</th>
               </tr>
             </thead>
@@ -247,11 +247,11 @@ export function ComparisonContent({ competitor }: ComparisonContentProps) {
         </div>
       </section>
 
-      {/* Why Recall Touch Wins */}
+      {/* Why Revenue Operator Wins */}
       <section className="max-w-4xl mx-auto bg-gradient-to-br from-emerald-900/20 to-transparent border border-emerald-800/30 rounded-xl p-8">
         <div className="flex items-start gap-3 mb-6">
           <TrendingUp className="w-6 h-6 text-emerald-400 mt-1 flex-shrink-0" />
-          <h2 className="text-2xl font-bold text-white">Why Businesses Switch to Recall Touch</h2>
+          <h2 className="text-2xl font-bold text-white">Why Businesses Switch to Revenue Operator</h2>
         </div>
         <ul className="grid md:grid-cols-2 gap-4">
           {data.recallTouchAdvantage.map((advantage, idx) => (
@@ -385,70 +385,70 @@ function getFAQs(
   const faqs: Record<string, Array<{ q: string; a: string }>> = {
     "smith-ai": [
       {
-        q: "Can I try Recall Touch before committing?",
+        q: "Can I try Revenue Operator before committing?",
         a: "Yes, all plans include full access to every feature. Cancel anytime with no questions asked. You'll get unlimited calls to test it thoroughly.",
       },
       {
-        q: "How is Recall Touch different from Smith.ai?",
-        a: "Smith.ai relies on humans, which limits capacity and costs $300-$1,125/mo. Recall Touch uses AI to answer unlimited concurrent calls 24/7 for $297-$497/mo, plus automated follow-ups and revenue tracking.",
+        q: "How is Revenue Operator different from Smith.ai?",
+        a: "Smith.ai relies on humans, which limits capacity and costs $300-$1,125/mo. Revenue Operator uses AI to answer unlimited concurrent calls 24/7 for $297-$497/mo, plus automated follow-ups and revenue tracking.",
       },
       {
         q: "Will switching affect my current calls?",
-        a: "No, you can test Recall Touch alongside Smith.ai. Just forward a test number to see how it performs. Many customers run both during their trial.",
+        a: "No, you can test Revenue Operator alongside Smith.ai. Just forward a test number to see how it performs. Many customers run both during their trial.",
       },
       {
         q: "What if I need human judgment for complex calls?",
-        a: "Recall Touch can route complex calls to humans via your integrated inbox or escalation rules. You get the best of both worlds: AI efficiency + human judgment when needed.",
+        a: "Revenue Operator can route complex calls to humans via your integrated inbox or escalation rules. You get the best of both worlds: AI efficiency + human judgment when needed.",
       },
     ],
     ruby: [
       {
-        q: "How does Recall Touch handle as many calls as Ruby?",
+        q: "How does Revenue Operator handle as many calls as Ruby?",
         a: "AI can handle unlimited concurrent calls simultaneously. Ruby's humans can only take one call at a time. At scale, Ruby costs 10x more and still can't match the capacity.",
       },
       {
         q: "Will customers notice the difference?",
-        a: "Modern AI voice is indistinguishable from human. Recall Touch uses natural speech, handles interruptions, and understands context. Most customers prefer the speed and accuracy.",
+        a: "Modern AI voice is indistinguishable from human. Revenue Operator uses natural speech, handles interruptions, and understands context. Most customers prefer the speed and accuracy.",
       },
       {
         q: "Can I get appointments booked automatically?",
-        a: "Yes, Recall Touch books appointments directly into your calendar during the call. Ruby can't do this—they just log notes.",
+        a: "Yes, Revenue Operator books appointments directly into your calendar during the call. Ruby can't do this—they just log notes.",
       },
       {
         q: "What about follow-ups to unanswered calls?",
-        a: "Recall Touch automatically sends SMS or email follow-ups to no-answers. It recovers leads that Ruby would miss. This alone pays for the service.",
+        a: "Revenue Operator automatically sends SMS or email follow-ups to no-answers. It recovers leads that Ruby would miss. This alone pays for the service.",
       },
     ],
     gohighlevel: [
       {
         q: "Why not just use GoHighLevel's voice AI?",
-        a: "GoHighLevel's voice AI is basic and feels like an afterthought. Recall Touch is purpose-built for revenue execution—better understanding, call handling, and follow-up automation.",
+        a: "GoHighLevel's voice AI is basic and feels like an afterthought. Revenue Operator is purpose-built for revenue execution—better understanding, call handling, and follow-up automation.",
       },
       {
         q: "Can I connect both systems?",
-        a: "Yes, Recall Touch integrates with GoHighLevel via API and Zapier. Use Recall Touch for calls and follow-ups, sync to GoHighLevel for CRM management.",
+        a: "Yes, Revenue Operator integrates with GoHighLevel via API and Zapier. Use Revenue Operator for calls and follow-ups, sync to GoHighLevel for CRM management.",
       },
       {
-        q: "Is Recall Touch better for agencies?",
-        a: "If you're a marketing agency, GoHighLevel is great for campaigns. If you want reliable AI revenue operations — calls, follow-ups, bookings, and recovery — for your clients, Recall Touch is the better choice.",
+        q: "Is Revenue Operator better for agencies?",
+        a: "If you're a marketing agency, GoHighLevel is great for campaigns. If you want reliable AI revenue operations — calls, follow-ups, bookings, and recovery — for your clients, Revenue Operator is the better choice.",
       },
       {
         q: "How do I migrate my setup?",
-        a: "Simple: forward your phone number to Recall Touch and set up call rules. No data migration needed. You can test both simultaneously.",
+        a: "Simple: forward your phone number to Revenue Operator and set up call rules. No data migration needed. You can test both simultaneously.",
       },
     ],
     "hiring-receptionist": [
       {
         q: "Will customers accept talking to an AI?",
-        a: "Yes. Recall Touch voice is professional and natural. Customers judge by professionalism and responsiveness, not whether it's AI. Plus, it's available 24/7.",
+        a: "Yes. Revenue Operator voice is professional and natural. Customers judge by professionalism and responsiveness, not whether it's AI. Plus, it's available 24/7.",
       },
       {
         q: "What about complex or emotional calls?",
-        a: "Recall Touch routes complex calls to your team. It screens, qualifies, and handles routine calls so your team focuses on what matters.",
+        a: "Revenue Operator routes complex calls to your team. It screens, qualifies, and handles routine calls so your team focuses on what matters.",
       },
       {
         q: "Can I customize the responses?",
-        a: "Completely. Upload your knowledge base, scripts, and rules. Recall Touch learns your business and handles calls exactly how you want.",
+        a: "Completely. Upload your knowledge base, scripts, and rules. Revenue Operator learns your business and handles calls exactly how you want.",
       },
       {
         q: "How quickly can I set this up?",
@@ -456,7 +456,7 @@ function getFAQs(
       },
       {
         q: "What happens during off-hours?",
-        a: "Recall Touch follows your rules: answer after-hours, take messages, book appointments, or forward to backup. You set the rules.",
+        a: "Revenue Operator follows your rules: answer after-hours, take messages, book appointments, or forward to backup. You set the rules.",
       },
     ],
   };

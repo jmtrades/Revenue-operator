@@ -79,10 +79,10 @@ export default async function HomePage() {
             mainEntity: [
               {
                 "@type": "Question",
-                name: "What exactly does Recall Touch do?",
+                name: "What exactly does Revenue Operator do?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Recall Touch is the autonomous revenue execution system that runs your entire revenue cycle. Inbound calls, outbound campaigns, lead qualification, appointment booking, follow-up sequences, and revenue recovery. It works 24/7, improves with every conversation, and costs less than a single hire.",
+                  text: "Revenue Operator is the autonomous revenue execution system that runs your entire revenue cycle. Inbound calls, outbound campaigns, lead qualification, appointment booking, follow-up sequences, and revenue recovery. It works 24/7, improves with every conversation, and costs less than a single hire.",
                 },
               },
               {
@@ -98,7 +98,7 @@ export default async function HomePage() {
                 name: "Do I need to replace my CRM?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "No. Recall Touch is the execution layer that sits on top of your CRM. It handles communication, follow-up, booking, and attribution. Your CRM stays as your system of record.",
+                  text: "No. Revenue Operator is the execution layer that sits on top of your CRM. It handles communication, follow-up, booking, and attribution. Your CRM stays as your system of record.",
                 },
               },
               {
@@ -114,7 +114,7 @@ export default async function HomePage() {
                 name: "Does this work for outbound too?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Yes. Recall Touch supports 10 outbound campaign types including speed-to-lead, appointment setting, reactivation, quote follow-up, and cold outreach with full compliance and attribution.",
+                  text: "Yes. Revenue Operator supports 10 outbound campaign types including speed-to-lead, appointment setting, reactivation, quote follow-up, and cold outreach with full compliance and attribution.",
                 },
               },
               {

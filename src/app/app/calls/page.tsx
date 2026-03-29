@@ -221,7 +221,7 @@ export default function CallsPage() {
   const pageItems = filtered.slice(start, start + PAGE_SIZE);
 
   useEffect(() => {
-    document.title = t("calls.pageTitle", { defaultValue: "Calls — Recall Touch" });
+    document.title = t("calls.pageTitle", { defaultValue: "Calls — Revenue Operator" });
     return () => {
       document.title = "";
     };
@@ -334,7 +334,7 @@ export default function CallsPage() {
               const url = URL.createObjectURL(blob);
               const a = document.createElement("a");
               a.href = url;
-              a.download = `recall-touch-calls-${new Date()
+              a.download = `revenue-operator-calls-${new Date()
                 .toISOString()
                 .slice(0, 10)}.csv`;
               document.body.appendChild(a);

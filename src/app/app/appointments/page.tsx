@@ -142,7 +142,7 @@ export default function AppointmentsPage() {
   };
 
   useEffect(() => {
-    document.title = t("appointments.pageTitle", { defaultValue: "Appointments — Recall Touch" });
+    document.title = t("appointments.pageTitle", { defaultValue: "Appointments — Revenue Operator" });
     return () => {
       document.title = "";
     };

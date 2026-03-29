@@ -34,7 +34,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="min-h-screen flex flex-col items-center justify-center p-8 gap-4" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
         <h1 className="text-xl font-semibold">Access denied</h1>
         <p className="text-sm text-center max-w-md" style={{ color: "var(--text-secondary)" }}>
-          This area is for Recall Touch administrators only. Sign in with the admin account or contact support.
+          This area is for Revenue Operator administrators only. Sign in with the admin account or contact support.
         </p>
         <Link href="/" className="text-sm font-medium" style={{ color: "var(--accent-primary)" }}>← Back to home</Link>
       </div>

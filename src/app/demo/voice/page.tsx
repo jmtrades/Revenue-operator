@@ -438,7 +438,7 @@ export default function VoiceDemoPage() {
               <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>&quot;Thank. You. For. Calling. Please. State. Your. Name.&quot;</p>
             </div>
 
-            {/* Recall Touch Voice */}
+            {/* Revenue Operator Voice */}
             <div
               className="rounded-xl p-6"
               style={{
@@ -448,7 +448,7 @@ export default function VoiceDemoPage() {
             >
               <h3 className="font-semibold mb-4 flex items-center gap-2">
                 <Volume2 className="w-5 h-5" />
-                Recall Touch AI
+                Revenue Operator AI
               </h3>
               <div className="rounded-lg p-4 mb-4" style={{ background: "rgba(0,0,0,0.15)" }}>
                 <audio
@@ -469,7 +469,7 @@ export default function VoiceDemoPage() {
             style={{ background: "var(--bg-surface)", border: "1px solid var(--border-default)" }}
           >
             <p className="text-lg font-semibold mb-2" style={{ color: "var(--text-primary)" }}>Callers hang up when they hear a robot.</p>
-            <p className="text-xl font-semibold" style={{ color: "var(--accent-primary)" }}>Recall Touch sounds human. They stay on the line.</p>
+            <p className="text-xl font-semibold" style={{ color: "var(--accent-primary)" }}>Revenue Operator sounds human. They stay on the line.</p>
           </div>
         </div>
       </section>

@@ -6,19 +6,19 @@ import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Blog — Recall Touch",
+  title: "Blog — Revenue Operator",
   description:
     "Insights on AI phone agents, revenue operations, call handling, and growth strategies for service businesses.",
   openGraph: {
-    title: "Blog — Recall Touch",
+    title: "Blog — Revenue Operator",
     description:
       "Guides, playbooks, and insights on AI phone agents, revenue recovery, and growth for service businesses.",
-    url: "https://www.recall-touch.com/blog",
+    url: "https://www.revenueoperator.ai/blog",
     images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Blog — Recall Touch",
+    title: "Blog — Revenue Operator",
     description:
       "Guides and insights on AI phone agents and revenue recovery.",
   },
@@ -76,7 +76,7 @@ export default function ResourcesPage() {
           </div>
 
           <div className="mt-16 pt-12 border-t text-center" style={{ borderColor: "var(--border-default)" }}>
-            <p className="mb-6" style={{ color: "var(--text-secondary)" }}>Ready to see how Recall Touch handles your calls?</p>
+            <p className="mb-6" style={{ color: "var(--text-secondary)" }}>Ready to see how Revenue Operator handles your calls?</p>
             <Link href={ROUTES.START} className="btn-marketing-primary no-underline inline-block">Get started — 5 minutes →</Link>
           </div>
         </Container>

@@ -1,5 +1,5 @@
 /**
- * Voice Billing Engine for Recall Touch
+ * Voice Billing Engine for Revenue Operator
  * Integrates voice usage tracking with existing billing tiers and overage calculations
  */
 

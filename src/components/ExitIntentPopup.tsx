@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { X, Phone } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-const SESSION_KEY = "recall-touch-exit-intent-shown";
+const SESSION_KEY = "revenue-operator-exit-intent-shown";
 
 export function ExitIntentPopup() {
   const t = useTranslations("exitIntent");

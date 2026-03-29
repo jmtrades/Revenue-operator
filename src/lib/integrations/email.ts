@@ -92,12 +92,12 @@ async function getSendApiKey(workspaceId: string): Promise<{ key: string; from: 
       }
     }
     key = key || process.env.RESEND_API_KEY?.trim() || null;
-    if (key && r.provider === "resend") return { key, from: r.from_email, fromName: r.from_name?.trim() || "Recall Touch" };
+    if (key && r.provider === "resend") return { key, from: r.from_email, fromName: r.from_name?.trim() || "Revenue Operator" };
   }
   const envKey = process.env.RESEND_API_KEY?.trim();
-  const from = process.env.EMAIL_FROM ?? "Recall Touch <noreply@recall-touch.com>";
+  const from = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@revenueoperator.ai>";
   const match = from.match(/^(.+?)\s*<[^>]+>$/);
-  return envKey ? { key: envKey, from, fromName: match ? match[1].trim() : "Recall Touch" } : null;
+  return envKey ? { key: envKey, from, fromName: match ? match[1].trim() : "Revenue Operator" } : null;
 }
 
 export async function getTemplate(workspaceId: string, slug: string): Promise<EmailTemplate | null> {

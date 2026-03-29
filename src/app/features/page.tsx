@@ -9,17 +9,17 @@ const Footer = dynamic(() => import("@/components/sections/Footer").then((m) => 
 export const metadata: Metadata = {
   title: "Features — AI Phone Operators That Handle Everything",
   description:
-    "Inbound call handling, outbound campaigns, automated follow-ups, appointment booking, revenue recovery, self-learning AI, and full analytics. See every feature Recall Touch offers.",
+    "Inbound call handling, outbound campaigns, automated follow-ups, appointment booking, revenue recovery, self-learning AI, and full analytics. See every feature Revenue Operator offers.",
   openGraph: {
-    title: "Features — Recall Touch",
+    title: "Features — Revenue Operator",
     description:
       "Inbound call handling, outbound campaigns, follow-ups, appointment booking, revenue recovery, and AI that learns from every conversation.",
-    url: "https://www.recall-touch.com/features",
+    url: "https://www.revenueoperator.ai/features",
     images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Features — Recall Touch",
+    title: "Features — Revenue Operator",
     description:
       "AI revenue operations platform: inbound/outbound calling, lead qualification, appointment booking, follow-ups, SMS, and revenue recovery — all in one.",
   },
@@ -30,7 +30,7 @@ const FEATURES = [
     icon: AudioWaveform,
     title: "32 Human-Quality AI Voices",
     description:
-      "Every voice in the Recall Touch library was engineered for natural conversation. Natural pauses, real intonation, pitch variation, conversational warmth, and even subtle breathing. Most callers can't tell the difference — but don't take our word for it, listen for yourself. Choose from 32 voices across 8 accents, 3 genders, and 10 tonal styles — or clone your own voice.",
+      "Every voice in the Revenue Operator library was engineered for natural conversation. Natural pauses, real intonation, pitch variation, conversational warmth, and even subtle breathing. Most callers can't tell the difference — but don't take our word for it, listen for yourself. Choose from 32 voices across 8 accents, 3 genders, and 10 tonal styles — or clone your own voice.",
     href: "/demo/voice",
     color: "#10B981",
   },
@@ -127,7 +127,7 @@ export default function FeaturesPage() {
               className="text-base md:text-lg max-w-2xl mx-auto"
               style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}
             >
-              Recall Touch is your complete AI revenue operations platform — handling inbound and outbound calls, lead qualification, appointment booking, follow-ups, SMS campaigns, and revenue recovery. One AI employee that works 24/7 and gets smarter with every conversation.
+              Revenue Operator is your complete AI revenue operations platform — handling inbound and outbound calls, lead qualification, appointment booking, follow-ups, SMS campaigns, and revenue recovery. One AI employee that works 24/7 and gets smarter with every conversation.
             </p>
           </div>
 

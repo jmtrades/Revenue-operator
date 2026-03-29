@@ -1,4 +1,4 @@
-// Server-side event tracking for Recall Touch
+// Server-side event tracking for Revenue Operator
 // Directly inserts into Supabase
 
 import { getDb } from "@/lib/db/queries";

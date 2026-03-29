@@ -372,7 +372,7 @@ export async function getReturningCallerGreeting(
 
     if (businessType && name) {
       greetings.push(
-        `${name}! Good to hear from you again. Last time we were talking about how Recall Touch could help your ${businessType}... what's on your mind today?`,
+        `${name}! Good to hear from you again. Last time we were talking about how Revenue Operator could help your ${businessType}... what's on your mind today?`,
       );
     } else if (businessType) {
       greetings.push(

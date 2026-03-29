@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
         timestamp: new Date().toISOString(),
         data: {
           lead: { name: "Test Lead", phone: "+15551234567" },
-          source: "recall-touch-test",
+          source: "revenue-operator-test",
         },
       }),
     });

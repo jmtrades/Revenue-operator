@@ -264,7 +264,7 @@ export async function POST(req: NextRequest) {
 
   /* ── Place the call via Telnyx Call Control ───────────── */
   // Use WEBHOOK_BASE_URL if set, otherwise fall back to APP_URL.
-  // Important: must be the canonical domain (www.recall-touch.com) because
+  // Important: must be the canonical domain (www.revenueoperator.ai) because
   // non-www redirects via 307 and Telnyx won't follow POST redirects.
   const appUrl = process.env.WEBHOOK_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null);
   if (!appUrl) {

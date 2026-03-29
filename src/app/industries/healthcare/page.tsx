@@ -4,10 +4,10 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export const metadata = {
-  title: "Healthcare AI Revenue Operations Platform — Recall Touch",
+  title: "Healthcare AI Revenue Operations Platform — Revenue Operator",
   description:
     "Drive patient revenue and operational efficiency with complete AI-powered workflows: call answering, appointment management, no-show recovery, prescription handling, and follow-up automation—HIPAA-compliant.",
   alternates: { canonical: `${BASE}/industries/healthcare` },
@@ -18,7 +18,7 @@ export default function HealthcareIndustryPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+      { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
       { "@type": "ListItem", position: 2, name: "Industries", item: `${BASE}/industries` },
       { "@type": "ListItem", position: 3, name: "Healthcare", item: `${BASE}/industries/healthcare` },
     ],
@@ -54,7 +54,7 @@ export default function HealthcareIndustryPage() {
               Answer patient calls instantly. Reduce no-shows. Fill the schedule. HIPAA-compliant.
             </h1>
             <p className="text-base md:text-lg mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-              Healthcare is fundamentally a scheduling business, and scheduling breaks when your phone system doesn't answer. Patients call to book appointments, refill prescriptions, ask about test results, or report side effects. Your staff is managing charts, running clinics, and answering emails. Calls go to voicemail. Callbacks happen late. Patients get frustrated and choose a different provider. Recall Touch answers every call, books appointments into your calendar, handles routine refill requests, and prevents no-shows—all while maintaining HIPAA compliance and letting clinicians focus on care.
+              Healthcare is fundamentally a scheduling business, and scheduling breaks when your phone system doesn't answer. Patients call to book appointments, refill prescriptions, ask about test results, or report side effects. Your staff is managing charts, running clinics, and answering emails. Calls go to voicemail. Callbacks happen late. Patients get frustrated and choose a different provider. Revenue Operator answers every call, books appointments into your calendar, handles routine refill requests, and prevents no-shows—all while maintaining HIPAA compliance and letting clinicians focus on care.
             </p>
 
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 md:p-8 mb-8">
@@ -72,16 +72,16 @@ export default function HealthcareIndustryPage() {
               </div>
             </div>
 
-            <h2 className="text-lg font-semibold mb-3">How Recall Touch works for healthcare</h2>
+            <h2 className="text-lg font-semibold mb-3">How Revenue Operator works for healthcare</h2>
             <div className="space-y-4 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
               <p>
-                Recall Touch answers patient calls with a friendly, clinical-appropriate greeting. It asks the reason for the call, verifies patient identity (date of birth, last four of SSN), and routes appropriately. New appointment requests go to your calendar. Prescription refill requests go to the pharmacy or provider approval queue. Urgent symptoms trigger immediate escalation to the nurse or provider on call.
+                Revenue Operator answers patient calls with a friendly, clinical-appropriate greeting. It asks the reason for the call, verifies patient identity (date of birth, last four of SSN), and routes appropriately. New appointment requests go to your calendar. Prescription refill requests go to the pharmacy or provider approval queue. Urgent symptoms trigger immediate escalation to the nurse or provider on call.
               </p>
               <p>
-                For routine questions (lab results, insurance eligibility, appointment times), Recall Touch can answer using your knowledge base without requiring clinician time. If the patient needs clinical judgment, the system routes them to the right person with all context pre-filled.
+                For routine questions (lab results, insurance eligibility, appointment times), Revenue Operator can answer using your knowledge base without requiring clinician time. If the patient needs clinical judgment, the system routes them to the right person with all context pre-filled.
               </p>
               <p>
-                After appointments are booked, Recall Touch runs automated reminders: 48 hours before, 24 hours before, and 1 hour before. If a patient doesn't show, Recall Touch can follow up: "We missed you today. Would you like to reschedule?" This simple prompt recovers 10–15% of no-shows.
+                After appointments are booked, Revenue Operator runs automated reminders: 48 hours before, 24 hours before, and 1 hour before. If a patient doesn't show, Revenue Operator can follow up: "We missed you today. Would you like to reschedule?" This simple prompt recovers 10–15% of no-shows.
               </p>
             </div>
 

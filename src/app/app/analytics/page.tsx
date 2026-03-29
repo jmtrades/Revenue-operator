@@ -268,7 +268,7 @@ export default function AppAnalyticsPage() {
   );
 
   useEffect(() => {
-    document.title = t("analytics.pageTitle", { defaultValue: "Analytics — Recall Touch" });
+    document.title = t("analytics.pageTitle", { defaultValue: "Analytics — Revenue Operator" });
     return () => {
       document.title = "";
     };
@@ -633,7 +633,7 @@ export default function AppAnalyticsPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "recall-touch-analytics.csv";
+    a.download = "revenue-operator-analytics.csv";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

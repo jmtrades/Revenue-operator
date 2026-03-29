@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 const productJsonLd = {
   "@context": "https://schema.org",
   "@type": "Product",
-  name: "Recall Touch",
+  name: "Revenue Operator",
   description: "AI that makes and takes your phone calls",
   offers: [
     { "@type": "Offer", name: "Starter", price: "147", priceCurrency: "USD", priceValidUntil: "2026-12-31" },

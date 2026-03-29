@@ -17,12 +17,12 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const origin = process.env.NEXT_PUBLIC_APP_URL || "https://app.recalltouch.com";
+  const origin = process.env.NEXT_PUBLIC_APP_URL || "https://app.revenueoperator.ai";
   const widgetUrl = `${origin}/chat-widget?workspace_id=${encodeURIComponent(workspaceId)}`;
   const scriptUrl = `${origin}/chat-widget.js`;
 
   const embedScript = `(function() {
-  // Recall Touch Chat Widget Embed
+  // Revenue Operator Chat Widget Embed
   // Add this snippet to your website to enable live chat
 
   const workspaceId = '${workspaceId}';
@@ -34,8 +34,8 @@ export async function GET(req: NextRequest) {
   script.src = scriptUrl;
   script.async = true;
   script.onload = function() {
-    if (window.RecallChatWidget) {
-      window.RecallChatWidget.init({
+    if (window.RevenueChatWidget) {
+      window.RevenueChatWidget.init({
         workspaceId: workspaceId,
         containerUrl: widgetUrl
       });

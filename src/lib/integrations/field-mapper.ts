@@ -1,6 +1,6 @@
 /**
  * Contact/lead field mapping engine for CRM integrations (Task 18).
- * Recall Touch fields â CRM fields; default mappings; transformation rules; test with sample data.
+ * Revenue Operator fields â CRM fields; default mappings; transformation rules; test with sample data.
  */
 
 export type CrmProviderId =
@@ -19,8 +19,8 @@ export interface FieldDef {
   type: "string" | "phone" | "email" | "number" | "date" | "boolean" | "picklist";
 }
 
-/** Recall Touch lead/contact fields available for mapping. */
-export const RECALL_TOUCH_FIELDS: FieldDef[] = [
+/** Revenue Operator lead/contact fields available for mapping. */
+export const REVENUE_OPERATOR_FIELDS: FieldDef[] = [
   { key: "name", label: "Name", type: "string" },
   { key: "email", label: "Email", type: "email" },
   { key: "phone", label: "Phone", type: "phone" },
@@ -115,7 +115,7 @@ export interface FieldMappingConfig {
   customCrmFields?: Array<{ key: string; label: string }>;
 }
 
-/** Default mappings: Recall Touch â CRM for each provider. */
+/** Default mappings: Revenue Operator â CRM for each provider. */
 export function getDefaultMappings(provider: CrmProviderId): MapEntry[] {
   const defaults: Record<CrmProviderId, MapEntry[]> = {
     salesforce: [
@@ -187,7 +187,7 @@ export function formatPhone(value: unknown): string {
   return s;
 }
 
-/** Map Recall Touch state to CRM status using statusMap. */
+/** Map Revenue Operator state to CRM status using statusMap. */
 export function mapStatus(value: unknown, statusMap: Record<string, string> | undefined): string {
   if (!statusMap || value == null) return String(value ?? "");
   const key = String(value).toUpperCase();
@@ -215,7 +215,7 @@ export function applyTransformation(
   }
 }
 
-/** Lead-like record (Recall Touch shape). */
+/** Lead-like record (Revenue Operator shape). */
 export type LeadRecord = Record<string, unknown> & {
   name?: string | null;
   email?: string | null;
@@ -277,10 +277,10 @@ export const SAMPLE_LEAD: LeadRecord = {
 };
 
 // ---------------------------------------------------------------------------
-// Inbound (CRM → Recall Touch) reverse mapping
+// Inbound (CRM → Revenue Operator) reverse mapping
 // ---------------------------------------------------------------------------
 
-/** Reverse status map: CRM status value → RT state. */
+/** Reverse status map: CRM status value → RO state. */
 function reverseStatusMap(statusMap: Record<string, string> | undefined): Record<string, string> {
   if (!statusMap) return {};
   const out: Record<string, string> = {};
@@ -310,8 +310,8 @@ function getNestedValue(obj: Record<string, unknown>, path: string): unknown {
 }
 
 /**
- * Apply reverse mapping: CRM webhook payload → Recall Touch lead fields.
- * Uses the same mapping config but reads crmField → rtField.
+ * Apply reverse mapping: CRM webhook payload → Revenue Operator lead fields.
+ * Uses the same mapping config but reads crmField → roField.
  */
 export function applyReverseMapping(
   crmPayload: Record<string, unknown>,

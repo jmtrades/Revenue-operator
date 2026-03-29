@@ -10,7 +10,7 @@ import {
 } from "@/lib/data/industries";
 import { ROUTES } from "@/lib/constants";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export function generateStaticParams() {
   return INDUSTRY_SLUGS.map((slug) => ({ slug }));
@@ -27,7 +27,7 @@ export async function generateMetadata({
     const t = await getTranslations("industriesPage.fallback");
     return { title: t("title") };
   }
-  const title = `${industry.name} AI Revenue Operations Platform — Recall Touch`;
+  const title = `${industry.name} AI Revenue Operations Platform — Revenue Operator`;
   const description = `Drive ${industry.customerType} revenue with complete AI-powered workflows: call answering, appointment scheduling, no-show prevention, follow-up automation, and campaign execution for ${industry.name}.`;
   const url = `${BASE}/industries/${slug}`;
   return {
@@ -38,7 +38,7 @@ export async function generateMetadata({
       title,
       description,
       url,
-      siteName: "Recall Touch",
+      siteName: "Revenue Operator",
       type: "website",
       images: [{ url: `${BASE}/opengraph-image`, width: 1200, height: 630, alt: `${industry.name} AI Phone Agent` }],
       locale: "en_US",
@@ -47,7 +47,7 @@ export async function generateMetadata({
       card: "summary_large_image" as const,
       title,
       description,
-      creator: "@recalltouch",
+      creator: "@revenueoperator",
     },
   };
 }
@@ -84,7 +84,7 @@ export default async function IndustryPage({
               "@context": "https://schema.org",
               "@type": "BreadcrumbList",
               itemListElement: [
-                { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+                { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
                 { "@type": "ListItem", position: 2, name: "Industries", item: `${BASE}/industries` },
               ],
             }),
@@ -168,7 +168,7 @@ export default async function IndustryPage({
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             itemListElement: [
-              { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+              { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
               { "@type": "ListItem", position: 2, name: "Industries", item: `${BASE}/industries` },
               {
                 "@type": "ListItem",

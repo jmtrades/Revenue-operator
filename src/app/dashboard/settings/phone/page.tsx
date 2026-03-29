@@ -132,7 +132,7 @@ export default function SettingsPhonePage() {
         <div>
           <h1 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Phone Numbers</h1>
           <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>
-            Manage your Recall Touch phone numbers. Monthly cost:{" "}
+            Manage your Revenue Operator phone numbers. Monthly cost:{" "}
             <span className="font-medium text-emerald-400">${totalMonthlyCost}/mo</span>
           </p>
         </div>

@@ -131,7 +131,7 @@ function buildRecoveryEmail(
   progressPercent: number,
   attempt: number,
 ): string {
-  const signupLink = "https://www.recall-touch.com/activate";
+  const signupLink = "https://www.revenueoperator.ai/activate";
 
   const progressBar = progressPercent > 0
     ? `<div style="background:#e5e7eb;border-radius:8px;overflow:hidden;margin:16px 0;">
@@ -153,17 +153,17 @@ function buildRecoveryEmail(
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1a1a1a;max-width:560px;margin:0 auto;padding:24px;">
   <p>Hey ${name},</p>
-  <p>I noticed you started setting up your Recall Touch AI operator but didn't quite finish. No worries — it happens!</p>
+  <p>I noticed you started setting up your Revenue Operator AI operator but didn't quite finish. No worries — it happens!</p>
   ${progressBar}
   ${stepHint}
   ${urgencyNote}
   <p>The whole setup takes about 10-15 minutes, and then your AI operator starts answering calls immediately.</p>
   <p><a href="${signupLink}" style="display:inline-block;padding:14px 28px;background:#2563EB;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;font-size:16px;">Finish Setup Now</a></p>
   <p style="margin-top:20px;">Need help? Just reply to this email — a real human will get back to you within the hour.</p>
-  <p>Cheers,<br><strong>The Recall Touch Team</strong></p>
+  <p>Cheers,<br><strong>The Revenue Operator Team</strong></p>
   <hr style="border:none;border-top:1px solid #e5e7eb;margin:32px 0 16px;">
-  <p style="font-size:12px;color:#9ca3af;">Recall Touch Inc. | <a href="https://www.recall-touch.com" style="color:#2563EB;">recall-touch.com</a></p>
-  <p style="font-size:11px;color:#9ca3af;"><a href="https://www.recall-touch.com/unsubscribe" style="color:#9ca3af;">Unsubscribe</a> | <a href="https://www.recall-touch.com/privacy" style="color:#9ca3af;">Privacy Policy</a></p>
+  <p style="font-size:12px;color:#9ca3af;">Revenue Operator Inc. | <a href="https://www.revenueoperator.ai" style="color:#2563EB;">revenueoperator.ai</a></p>
+  <p style="font-size:11px;color:#9ca3af;"><a href="https://www.revenueoperator.ai/unsubscribe" style="color:#9ca3af;">Unsubscribe</a> | <a href="https://www.revenueoperator.ai/privacy" style="color:#9ca3af;">Privacy Policy</a></p>
 </body>
 </html>`;
 }

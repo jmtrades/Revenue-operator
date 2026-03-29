@@ -737,7 +737,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
             >
               All plans include full access to every feature. Cancel anytime. Need a custom plan?{' '}
               <a
-                href="mailto:support@recall-touch.com"
+                href="mailto:support@revenueoperator.ai"
                 style={{ color: themeVars.accentPrimary, textDecoration: 'none' }}
               >
                 Contact sales

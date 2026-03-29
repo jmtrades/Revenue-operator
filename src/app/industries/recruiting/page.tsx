@@ -4,13 +4,13 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export const metadata = {
-  title: "Recruiting AI Revenue Operations Platform — Recall Touch",
+  title: "Recruiting AI Revenue Operations Platform — Revenue Operator",
   description:
     "Maximize candidate pipeline velocity and placement conversion with complete AI-powered workflows: call answering, candidate screening, interview scheduling, no-show recovery, and pipeline follow-up automation.",
-  alternates: { canonical: "https://www.recall-touch.com/industries/recruiting" },
+  alternates: { canonical: "https://www.revenueoperator.ai/industries/recruiting" },
 };
 
 export default function RecruitingIndustryPage() {
@@ -18,7 +18,7 @@ export default function RecruitingIndustryPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+      { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
       { "@type": "ListItem", position: 2, name: "Industries", item: `${BASE}/industries` },
       { "@type": "ListItem", position: 3, name: "Recruiting", item: `${BASE}/industries/recruiting` },
     ],
@@ -62,7 +62,7 @@ export default function RecruitingIndustryPage() {
               If your team takes too long to respond — or if candidate calls are missed — the opportunity slips out of the pipeline.
               <br />
               <br />
-              Recall Touch is built to handle inbound candidate conversations end-to-end: it answers calls quickly, performs structured screening,
+              Revenue Operator is built to handle inbound candidate conversations end-to-end: it answers calls quickly, performs structured screening,
               gathers the details your hiring workflow needs, and schedules interviews into the right windows. It also runs follow-ups so
               candidate engagement doesn&apos;t drop between steps, and it recovers interview no-shows with a calm rescheduling sequence.
             </p>
@@ -89,7 +89,7 @@ export default function RecruitingIndustryPage() {
               </div>
             </div>
 
-            <h2 className="text-lg font-semibold mb-3">How Recall Touch works for recruiting teams</h2>
+            <h2 className="text-lg font-semibold mb-3">How Revenue Operator works for recruiting teams</h2>
             <div className="space-y-4 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
               <p>
                 <strong>Answer and screen with structure.</strong> The agent answers candidate calls and captures the details that matter for your workflow:
@@ -97,7 +97,7 @@ export default function RecruitingIndustryPage() {
                 so candidates get clarity and your recruiters get clean data.
               </p>
               <p>
-                <strong>Schedule interviews quickly.</strong> When scheduling is enabled, Recall Touch offers interview windows based on your calendar rules.
+                <strong>Schedule interviews quickly.</strong> When scheduling is enabled, Revenue Operator offers interview windows based on your calendar rules.
                 It confirms key details with candidates and then triggers the right reminders so candidates show up.
               </p>
               <p>
@@ -106,7 +106,7 @@ export default function RecruitingIndustryPage() {
                 the agent hands off with a transcript summary and the exact status needed to act.
               </p>
               <p>
-                <strong>Follow up to keep the pipeline moving.</strong> After interviews (or after a candidate chooses not to continue right away), Recall Touch can follow up with
+                <strong>Follow up to keep the pipeline moving.</strong> After interviews (or after a candidate chooses not to continue right away), Revenue Operator can follow up with
                 next-step messaging and appointment confirmation prompts. That keeps the pipeline warm and reduces "lost after interview" churn.
               </p>
               <p>
@@ -153,7 +153,7 @@ export default function RecruitingIndustryPage() {
                 Even if only a portion of recovered interviews converts, the calendar efficiency gains can cover the cost quickly.
               </p>
               <p>
-                Recall Touch improves both sides: it answers consistently so candidates keep moving, and it runs automated recovery so scheduling problems don&apos;t cascade.
+                Revenue Operator improves both sides: it answers consistently so candidates keep moving, and it runs automated recovery so scheduling problems don&apos;t cascade.
                 With structured screening and follow-up, recruiters spend more time interviewing and less time chasing or fixing details.
               </p>
               <p>

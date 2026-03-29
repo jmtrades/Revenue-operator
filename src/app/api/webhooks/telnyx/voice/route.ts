@@ -76,13 +76,13 @@ setInterval(() => {
  * Silence prompts — varied to feel natural, not repetitive
  * ──────────────────────────────────────────────────────────────────────────── */
 const SILENCE_PROMPTS_INITIAL = [
-  "Hey, are you still there? I'm Sarah from Recall Touch. Feel free to ask me anything about our AI phone agents!",
+  "Hey, are you still there? I'm Sarah from Revenue Operator. Feel free to ask me anything about our AI phone agents!",
   "Hi there! I'm Sarah, your AI demo agent. I'd love to show you what I can do — got any questions?",
-  "Hey! Still there? No rush at all. Whenever you're ready, I'm here to chat about how Recall Touch can help your business.",
+  "Hey! Still there? No rush at all. Whenever you're ready, I'm here to chat about how Revenue Operator can help your business.",
 ];
 
 const SILENCE_PROMPTS_ONGOING = [
-  "I'm still here! Got any questions about Recall Touch? I could tell you about pricing, how setup works, or anything else.",
+  "I'm still here! Got any questions about Revenue Operator? I could tell you about pricing, how setup works, or anything else.",
   "Take your time! If you're curious about anything — pricing, how it works, what industries we serve — just ask.",
   "Still here whenever you're ready! I could tell you about our free trial if you're interested.",
 ];
@@ -415,7 +415,7 @@ export async function POST(req: NextRequest) {
                 // Strategy 4: Ultimate fallback — static TTS pitch
                 await speakText(
                   callInfo.callControlId,
-                  "Hey there! This is Sarah from Recall Touch. I'm your AI phone agent demo. " +
+                  "Hey there! This is Sarah from Revenue Operator. I'm your AI phone agent demo. " +
                   "I'm having a brief technical hiccup connecting right now, but normally I'd be having " +
                   "a natural conversation with you — answering questions, booking appointments, and " +
                   "recovering revenue around the clock. Head to recall dash touch dot com to get started, or " +
@@ -745,8 +745,8 @@ export async function POST(req: NextRequest) {
         if (machineType === "machine_start" && isDemoCall && callInfo.callControlId) {
           await speakText(
             callInfo.callControlId,
-            "Hey there! This is Sarah from Recall Touch. We got your demo request, but it looks like I got your voicemail. " +
-            "Recall Touch is an AI phone agent that answers your business calls twenty-four seven, books appointments, and makes sure you never miss a customer again. " +
+            "Hey there! This is Sarah from Revenue Operator. We got your demo request, but it looks like I got your voicemail. " +
+            "Revenue Operator is an AI phone agent that answers your business calls twenty-four seven, books appointments, and makes sure you never miss a customer again. " +
             "Head to recall dash touch dot com to try it free for fourteen days. Talk soon!",
             "female",
           );

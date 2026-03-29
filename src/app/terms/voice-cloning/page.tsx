@@ -4,19 +4,19 @@ import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export const metadata: Metadata = {
-  title: "Voice Cloning Terms — Recall Touch",
+  title: "Voice Cloning Terms — Revenue Operator",
   description:
     "Terms for voice cloning consent and usage, including authorization, legal compliance, and customer responsibilities.",
   alternates: { canonical: `${BASE}/terms/voice-cloning` },
   openGraph: {
-    title: "Voice Cloning Terms — Recall Touch",
+    title: "Voice Cloning Terms — Revenue Operator",
     description:
       "Terms for voice cloning consent and usage, including authorization, legal compliance, and customer responsibilities.",
     url: `${BASE}/terms/voice-cloning`,
-    siteName: "Recall Touch",
+    siteName: "Revenue Operator",
     type: "article",
   },
 };
@@ -47,7 +47,7 @@ export default function VoiceCloningTermsPage() {
             <section className="mb-8">
               <h2 className="font-semibold text-xl mb-3">Permitted Use</h2>
               <p style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                Cloned voices may only be used for lawful business communication through Recall Touch, and must comply
+                Cloned voices may only be used for lawful business communication through Revenue Operator, and must comply
                 with applicable telephony, privacy, and biometric or voice-likeness regulations in your jurisdiction.
                 Misleading impersonation, fraud, harassment, and unauthorized identity simulation are prohibited.
               </p>
@@ -56,7 +56,7 @@ export default function VoiceCloningTermsPage() {
             <section className="mb-8">
               <h2 className="font-semibold text-xl mb-3">Consent Records and Audit</h2>
               <p style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                Recall Touch stores consent records including consent text version, timestamp, and request metadata.
+                Revenue Operator stores consent records including consent text version, timestamp, and request metadata.
                 You acknowledge these records may be used to investigate policy breaches, legal claims, or abuse.
               </p>
             </section>

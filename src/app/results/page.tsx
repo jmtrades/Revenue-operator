@@ -8,22 +8,22 @@ import { getDb } from "@/lib/db/queries";
 
 export const dynamic = "force-dynamic";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export const metadata: Metadata = {
-  title: "Results — Recall Touch",
+  title: "Results — Revenue Operator",
   description: "Real revenue recovered from real calls — with proof in your dashboard.",
   alternates: { canonical: `${BASE}/results` },
   openGraph: {
-    title: "Results — Recall Touch",
+    title: "Results — Revenue Operator",
     description: "Real revenue recovered from real calls — with proof in your dashboard.",
     url: `${BASE}/results`,
-    siteName: "Recall Touch",
+    siteName: "Revenue Operator",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Results — Recall Touch",
+    title: "Results — Revenue Operator",
     description: "Real revenue recovered from real calls — with proof in your dashboard.",
   },
 };
@@ -58,7 +58,7 @@ export default async function ResultsPage() {
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             itemListElement: [
-              { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+              { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
               { "@type": "ListItem", position: 2, name: "Results", item: `${BASE}/results` },
             ],
           }),
@@ -74,7 +74,7 @@ export default async function ResultsPage() {
                 Real Results from Real Businesses
               </h1>
               <p className="mt-4 text-base md:text-lg" style={{ color: "var(--text-secondary)" }}>
-                Recall Touch answers inbound calls 24/7, qualifies intent, and then executes the follow-up work until revenue is recovered.
+                Revenue Operator answers inbound calls 24/7, qualifies intent, and then executes the follow-up work until revenue is recovered.
                 Your dashboard shows the proof: calls answered, appointments booked, follow-ups sent, and the revenue impact.
               </p>
             </div>
@@ -149,7 +149,7 @@ export default async function ResultsPage() {
                 Ready to see it in action?
               </h2>
               <p className="mt-4" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                Watch a live demo of Recall Touch answering calls, qualifying leads, and automating follow-ups. Then get started and see your own results on day one.
+                Watch a live demo of Revenue Operator answering calls, qualifying leads, and automating follow-ups. Then get started and see your own results on day one.
               </p>
 
               <div className="mt-8 flex flex-wrap items-center justify-center gap-4">

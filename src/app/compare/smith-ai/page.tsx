@@ -5,19 +5,19 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { CheckCircle2, XCircle } from "lucide-react";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export const metadata: Metadata = {
-  title: "Recall Touch vs Smith.ai — Recall Touch",
+  title: "Revenue Operator vs Smith.ai — Revenue Operator",
   description:
-    "Smith.ai vs Recall Touch: compare pricing, follow-up capability, outbound campaigns, and revenue attribution to see which system recovers more revenue.",
+    "Smith.ai vs Revenue Operator: compare pricing, follow-up capability, outbound campaigns, and revenue attribution to see which system recovers more revenue.",
   alternates: { canonical: `${BASE}/compare/smith-ai` },
   openGraph: {
-    title: "Recall Touch vs Smith.ai — Recall Touch",
+    title: "Revenue Operator vs Smith.ai — Revenue Operator",
     description:
-      "Compare Smith.ai’s per-call pricing with Recall Touch’s flat monthly pricing, full follow-up engine, outbound campaigns, and revenue attribution.",
+      "Compare Smith.ai’s per-call pricing with Revenue Operator’s flat monthly pricing, full follow-up engine, outbound campaigns, and revenue attribution.",
     url: `${BASE}/compare/smith-ai`,
-    siteName: "Recall Touch",
+    siteName: "Revenue Operator",
     type: "website",
   },
 };
@@ -26,7 +26,7 @@ type Row = { feature: string; recall: boolean; smith: boolean; note?: string };
 
 const rows: Row[] = [
   { feature: "AI voice answering (24/7)", recall: true, smith: true },
-  { feature: "Automated follow-up engine", recall: true, smith: false, note: "Recall Touch runs follow-ups until the next outcome." },
+  { feature: "Automated follow-up engine", recall: true, smith: false, note: "Revenue Operator runs follow-ups until the next outcome." },
   { feature: "No-show recovery sequences", recall: true, smith: false },
   { feature: "Outbound campaigns (call + SMS sequences)", recall: true, smith: false },
   { feature: "Revenue attribution to recovered outcomes", recall: true, smith: false },
@@ -41,7 +41,7 @@ export default function SmithAiComparisonPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+      { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
       { "@type": "ListItem", position: 2, name: "Comparisons", item: `${BASE}/compare` },
       { "@type": "ListItem", position: 3, name: "Smith.ai", item: `${BASE}/compare/smith-ai` },
     ],
@@ -58,10 +58,10 @@ export default function SmithAiComparisonPage() {
               Comparison
             </p>
             <h1 className="font-bold text-4xl md:text-5xl leading-tight">
-              Recall Touch vs Smith.ai
+              Revenue Operator vs Smith.ai
             </h1>
             <p className="mt-4 text-base md:text-lg" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-              Smith.ai is built for answering calls. Recall Touch is built for revenue execution: follow-up until the next outcome,
+              Smith.ai is built for answering calls. Revenue Operator is built for revenue execution: follow-up until the next outcome,
               outbound campaigns when the funnel needs it, and dashboards that attribute recovered value.
             </p>
             <p className="mt-3 text-xs" style={{ color: "var(--text-tertiary)" }}>
@@ -80,7 +80,7 @@ export default function SmithAiComparisonPage() {
 
           <div className="mt-12 grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
-              <h2 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>Recall Touch (what you get)</h2>
+              <h2 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>Revenue Operator (what you get)</h2>
               <ul className="mt-4 space-y-2 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
                 <li>Flat monthly pricing</li>
                 <li>Full follow-up engine: appointment booking, no-show recovery, and reactivation</li>
@@ -110,7 +110,7 @@ export default function SmithAiComparisonPage() {
                 <thead>
                   <tr className="border-b border-[var(--border-default)]">
                     <th className="text-left px-6 py-4 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Feature</th>
-                    <th className="text-center px-6 py-4 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Recall Touch</th>
+                    <th className="text-center px-6 py-4 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Revenue Operator</th>
                     <th className="text-center px-6 py-4 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Smith.ai</th>
                   </tr>
                 </thead>
@@ -143,7 +143,7 @@ export default function SmithAiComparisonPage() {
                   and sometimes just a consistent next step after voicemail would have happened.
                 </p>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
-                  Recall Touch runs the follow-up engine as part of the same system. That means the revenue journey doesn&apos;t stop when the call ends.
+                  Revenue Operator runs the follow-up engine as part of the same system. That means the revenue journey doesn&apos;t stop when the call ends.
                   It continues until an appointment is booked, a no-show is recovered, a pending quote is chased, or the lead opts out.
                 </p>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
@@ -158,7 +158,7 @@ export default function SmithAiComparisonPage() {
                   costs scale with every answered opportunity.
                 </p>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
-                  Recall Touch uses flat monthly plans so your costs stay predictable. The plan is designed around your capacity needs and your follow-up workload —
+                  Revenue Operator uses flat monthly plans so your costs stay predictable. The plan is designed around your capacity needs and your follow-up workload —
                   not around how many calls were placed in a month.
                 </p>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
@@ -173,7 +173,7 @@ export default function SmithAiComparisonPage() {
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-inset)] p-8">
               <h2 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Ready to run revenue execution?</h2>
               <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                If you want call answering plus automated recovery, outbound sequences, and revenue attribution, Recall Touch is the execution layer your team needs.
+                If you want call answering plus automated recovery, outbound sequences, and revenue attribution, Revenue Operator is the execution layer your team needs.
               </p>
               <div className="mt-6 flex flex-col sm:flex-row gap-3">
                 <Link href="/activate" className="btn-marketing-primary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline active:scale-[0.97]" style={{ transition: "transform 0.15s ease-[cubic-bezier(0.23,1,0.32,1)]" }}>

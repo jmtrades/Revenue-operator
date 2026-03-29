@@ -8,7 +8,7 @@ export default function CoachingAnalyticsPage() {
   const t = useTranslations("common");
 
   useEffect(() => {
-    document.title = t("coaching.pageTitle", { defaultValue: "Coaching Analytics — Recall Touch" });
+    document.title = t("coaching.pageTitle", { defaultValue: "Coaching Analytics — Revenue Operator" });
     return () => { document.title = ""; };
   }, [t]);
 

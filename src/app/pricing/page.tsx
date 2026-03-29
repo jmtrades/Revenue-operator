@@ -3,7 +3,7 @@ import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { PricingContent } from "@/components/PricingContent";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 // NOTE: Metadata is static and cannot use next-intl translations.
 // To support localized metadata, use generateMetadata() with getLocale() and getTranslations().
@@ -18,16 +18,16 @@ export const metadata: Metadata = {
     title: "Pricing",
     description: "Pricing for the AI Revenue Execution System. Transparent, ROI-first plans that scale with your call volume and outcomes.",
     url: `${BASE}/pricing`,
-    siteName: "Recall Touch",
+    siteName: "Revenue Operator",
     type: "website",
-    images: [{ url: `${BASE}/opengraph-image`, width: 1200, height: 630, alt: "Recall Touch Pricing" }],
+    images: [{ url: `${BASE}/opengraph-image`, width: 1200, height: 630, alt: "Revenue Operator Pricing" }],
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
     title: "Pricing",
     description: "ROI-first pricing for the AI Revenue Execution System.",
-    creator: "@recalltouch",
+    creator: "@revenueoperator",
   },
 };
 
@@ -36,7 +36,7 @@ export default function PricingPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+      { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
       { "@type": "ListItem", position: 2, name: "Pricing", item: `${BASE}/pricing` },
     ],
   };
