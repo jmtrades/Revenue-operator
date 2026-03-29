@@ -7869,6 +7869,7 @@
   },
   "appointments": {
     "syncButton": "Sync Calendar",
+    "syncTooltip": "Sync appointments with your connected calendar",
     "pageTitle": "Appointments — Revenue Operator",
     "heading": "Appointments",
     "description": "Every appointment your operator booked — from calls, campaigns, and recovery sequences.",
@@ -9167,7 +9168,17 @@
     "sdkExamples": "SDK Examples",
     "workspaceNote": "Workspace",
     "fixPayment": "Fix payment →",
-    "upgradeCta": "Upgrade now →"
+    "upgradeCta": "Upgrade now →",
+    "statusTrial": "Trial",
+    "statusActive": "Active",
+    "statusCancelled": "Cancelled",
+    "statusPaymentFailed": "Payment Failed",
+    "statusTrialEnded": "Trial Ended",
+    "statusPaused": "Paused",
+    "trialDaysLeft": "{days} days left",
+    "subscriptionCancelled": "Subscription cancelled",
+    "paymentIssue": "Payment issue — update card",
+    "trialEnded": "Trial ended — upgrade now"
   },
   "help": {
     "breadcrumbs": {
