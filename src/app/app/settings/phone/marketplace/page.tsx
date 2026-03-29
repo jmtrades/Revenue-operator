@@ -181,7 +181,7 @@ export default function PhoneMarketplacePage() {
         </Link>
       </div>
       <h1 className="text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-1">{tPhone("marketplaceGetNewNumber")}</h1>
-      <p className="text-sm text-[var(--text-tertiary)] mb-6">
+      <p className="text-[13px] text-[var(--text-tertiary)] mt-1.5 leading-relaxed mb-6">
         {tPhone("marketplaceGetNewNumberDesc")}
       </p>
 
@@ -246,7 +246,7 @@ export default function PhoneMarketplacePage() {
       </div>
 
       {error && (
-        <div className="mb-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-200 text-sm flex flex-col gap-3">
+        <div className="mb-4 p-4 rounded-xl bg-[var(--accent-warning,#f59e0b)]/10 border border-[var(--accent-warning,#f59e0b)]/20 text-[var(--accent-warning,#f59e0b)] text-sm flex flex-col gap-3">
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
             <span>{error}</span>
@@ -257,7 +257,7 @@ export default function PhoneMarketplacePage() {
                 type="button"
                 onClick={() => { setError(null); handleProvisionConfirmed(lastProvisionAttempt); }}
                 disabled={provisioning !== null}
-                className="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-xs font-medium transition-colors disabled:opacity-50"
+                className="px-3 py-1.5 rounded-lg bg-[var(--accent-warning,#f59e0b)]/20 hover:bg-[var(--accent-warning,#f59e0b)]/30 text-xs font-medium transition-colors disabled:opacity-50"
               >
                 {tPhone("marketplace.tryAgainButton")}
               </button>
@@ -267,7 +267,7 @@ export default function PhoneMarketplacePage() {
                 type="button"
                 onClick={() => { setError(null); search(); }}
                 disabled={loading}
-                className="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-xs font-medium transition-colors disabled:opacity-50"
+                className="px-3 py-1.5 rounded-lg bg-[var(--accent-warning,#f59e0b)]/20 hover:bg-[var(--accent-warning,#f59e0b)]/30 text-xs font-medium transition-colors disabled:opacity-50"
               >
                 {tPhone("marketplace.retrySearch")}
               </button>
@@ -276,7 +276,7 @@ export default function PhoneMarketplacePage() {
               <button
                 type="button"
                 onClick={() => { setError(null); }}
-                className="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-xs font-medium transition-colors"
+                className="px-3 py-1.5 rounded-lg bg-[var(--accent-warning,#f59e0b)]/20 hover:bg-[var(--accent-warning,#f59e0b)]/30 text-xs font-medium transition-colors"
               >
                 {tPhone("marketplace.dismiss")}
               </button>
@@ -286,17 +286,17 @@ export default function PhoneMarketplacePage() {
       )}
 
       {provisionSuccess && successNumber ? (
-        <div className="p-6 rounded-2xl border border-green-500/20 bg-green-500/10 flex flex-col gap-4">
+        <div className="p-6 rounded-2xl border border-[var(--accent-primary)]/20 bg-[var(--accent-primary)]/10 flex flex-col gap-4">
           <div className="flex items-start gap-3">
-            <CheckCircle2 className="w-6 h-6 text-green-400 flex-shrink-0 mt-0.5" />
+            <CheckCircle2 className="w-6 h-6 text-[var(--accent-primary)] flex-shrink-0 mt-0.5" />
             <div>
-              <p className="font-semibold text-green-100 mb-1">{tPhone("marketplace.provisionedSuccess")}</p>
-              <p className="text-sm text-green-200">{tPhone("marketplace.nowActive", { number: formatPhoneDisplay(successNumber.phone_number) })}</p>
+              <p className="font-semibold text-[var(--text-primary)] mb-1">{tPhone("marketplace.provisionedSuccess")}</p>
+              <p className="text-sm text-[var(--text-secondary)]">{tPhone("marketplace.nowActive", { number: formatPhoneDisplay(successNumber.phone_number) })}</p>
             </div>
           </div>
           <Link
             href="/app/settings/phone"
-            className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-green-500 text-white font-medium text-sm hover:opacity-90 transition-colors w-fit"
+            className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-medium text-sm hover:opacity-90 transition-colors w-fit"
           >
             {tPhone("marketplace.goToPhoneSettings")}
           </Link>
