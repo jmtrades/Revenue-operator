@@ -70,8 +70,10 @@ export async function GET(request: NextRequest) {
         return {
           id: campaign.id as string,
           name: campaign.name as string,
+          type: (campaign.type as string) ?? "custom",
           mode: (campaign.mode ?? "preview") as "power" | "preview" | "progressive",
           status: (campaign.status ?? "draft") as "draft" | "active" | "paused" | "completed",
+          target_filter: (campaign.target_filter as Record<string, unknown>) ?? {},
           total_leads: totalLeads,
           leads_called: dialed,
           leads_remaining: Math.max(0, totalLeads - dialed),

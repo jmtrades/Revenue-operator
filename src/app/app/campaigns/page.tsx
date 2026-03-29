@@ -389,7 +389,7 @@ export default function CampaignsPage() {
         const createdAt = new Date(campaign.created_at).toLocaleDateString();
 
         return [
-          `"${campaign.name.replace(/"/g, '""')}"`, // Escape quotes in name
+          `"${(campaign.name ?? "").replace(/"/g, '""')}"`, // Escape quotes in name
           campaign.status,
           campaign.called,
           campaign.answered,
@@ -588,7 +588,7 @@ export default function CampaignsPage() {
                       </p>
                       <div className="mt-2 flex flex-wrap gap-2">
                         <span className="rounded-full border border-[var(--border-medium)] px-2.5 py-1 text-[11px] text-[var(--text-secondary)] capitalize">
-                          {t.has(`campaignType.${campaign.type}`) ? t(`campaignType.${campaign.type}` as never) : campaign.type.replace(/_/g, " ")}
+                          {campaign.type ? (t.has(`campaignType.${campaign.type}`) ? t(`campaignType.${campaign.type}` as never) : campaign.type.replace(/_/g, " ")) : "custom"}
                         </span>
                         {(() => {
                           const statusBadgeClasses = {

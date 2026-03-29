@@ -11227,5 +11227,12 @@
   "sequencePaused": "Sequence paused",
   "sequenceResumed": "Sequence resumed",
   "transcript": "Transcript",
-  "whatsappComingSoon": "Send and receive WhatsApp messages through your AI agent. Connect your WhatsApp Business account to get started."
+  "whatsappComingSoon": "Send and receive WhatsApp messages through your AI agent. Connect your WhatsApp Business account to get started.",
+  "cookies": {
+    "message": "This site uses cookies to improve your experience.",
+    "messageSuffix": "Learn more in our",
+    "privacyLink": "Privacy Policy",
+    "accept": "Accept",
+    "decline": "Decline"
+  }
 }

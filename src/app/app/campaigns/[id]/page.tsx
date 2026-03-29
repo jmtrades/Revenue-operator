@@ -505,7 +505,7 @@ export default function CampaignDetailPage() {
                   Type
                 </p>
                 <p className="mt-1.5 text-sm font-medium text-[var(--text-primary)] capitalize">
-                  {campaign.type.replace(/_/g, " ")}
+                  {(campaign.type ?? "custom").replace(/_/g, " ")}
                 </p>
               </div>
               <div>

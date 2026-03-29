@@ -21,6 +21,9 @@ export function ExitIntentPopup() {
   useEffect(() => {
     if (!mounted || typeof window === "undefined") return;
 
+    // Never show inside the authenticated app shell
+    if (window.location.pathname.startsWith("/app")) return;
+
     // Check if already shown in this session
     if (sessionStorage.getItem(SESSION_KEY) === "1") return;
 
