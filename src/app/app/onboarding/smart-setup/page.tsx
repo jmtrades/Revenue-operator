@@ -97,12 +97,17 @@ export default function SmartSetupPage() {
         throw new Error(error.error || "Failed to apply playbook");
       }
 
+      const result = await response.json();
       setStep("loading");
-      toast.success("Your agent is live and ready to take calls!");
+      toast.success(`Your agent "${result.agent_name}" is live and ready to take calls!`);
 
-      // Redirect to dashboard
+      // Redirect to agent page if agent was created, otherwise to dashboard
+      const redirectUrl = result.agent_id
+        ? `/app/agents/${result.agent_id}`
+        : "/app/dashboard";
+
       setTimeout(() => {
-        router_internal.push("/app/dashboard");
+        router_internal.push(redirectUrl);
       }, 2000);
     } catch (error) {
       toast.error("Something went wrong activating your agent. Please try again.");

@@ -95,6 +95,7 @@ export default function AppointmentsPage() {
   const [newRescheduleTime, setNewRescheduleTime] = useState<string>("");
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const [syncLoading, setSyncLoading] = useState(false);
 
   const dayDefaults: Record<string, string> = {
     mon: "Mon",
@@ -279,6 +280,52 @@ export default function AppointmentsPage() {
     }
   }, [selected, t, showToast]);
 
+  const handleSyncCalendar = useCallback(async () => {
+    setSyncLoading(true);
+    try {
+      const response = await fetch("/api/integrations/google-calendar/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        const errData = (await response.json().catch(() => null)) as { code?: string; error?: string } | null;
+        if (errData?.code === "calendar_connection_expired") {
+          showToast(t("appointments.syncExpired", { defaultValue: "Calendar connection expired. Reconnect in Settings." }), "error");
+        } else {
+          throw new Error(errData?.error || `Sync failed (${response.status})`);
+        }
+        return;
+      }
+
+      const result = (await response.json()) as { synced?: number; created?: number; updated?: number };
+      const { synced = 0, created = 0, updated = 0 } = result;
+
+      if (synced > 0) {
+        showToast(
+          t("appointments.syncSuccess", {
+            defaultValue: `Synced {{count}} event(s): {{created}} new, {{updated}} updated`,
+            count: String(synced),
+            created: String(created),
+            updated: String(updated),
+          }),
+          "success"
+        );
+        refetchAppointments();
+      } else {
+        showToast(t("appointments.syncNoEvents", { defaultValue: "No new events to sync" }), "success");
+      }
+    } catch (err) {
+      showToast(
+        err instanceof Error ? err.message : t("appointments.syncFailed", { defaultValue: "Failed to sync calendar" }),
+        "error"
+      );
+    } finally {
+      setSyncLoading(false);
+    }
+  }, [t, showToast, refetchAppointments]);
+
   return (
     <div className="min-h-screen bg-[var(--bg-base)] text-[var(--text-primary)]">
       <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto">
@@ -299,6 +346,22 @@ export default function AppointmentsPage() {
             )}
           </div>
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleSyncCalendar}
+              disabled={syncLoading}
+              className="px-3 py-1.5 rounded-lg text-sm font-medium bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-medium)] transition-[background-color,opacity] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--bg-hover)]"
+              title={t("appointments.syncTooltip", { defaultValue: "Sync Google Calendar events" })}
+            >
+              {syncLoading ? (
+                <span className="inline-flex items-center gap-2">
+                  <span className="inline-block w-3 h-3 border-2 border-[var(--text-tertiary)] border-t-[var(--text-primary)] rounded-full animate-spin" />
+                  {t("appointments.syncing", { defaultValue: "Syncing..." })}
+                </span>
+              ) : (
+                t("appointments.syncButton", { defaultValue: "Sync Calendar" })
+              )}
+            </button>
             <button
               type="button"
               onClick={() => setView("list")}
