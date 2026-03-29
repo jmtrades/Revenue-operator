@@ -126,15 +126,14 @@ export function CampaignStrategyAdvisor({
           <div
             className="rounded-lg p-4 border relative overflow-hidden"
             style={{
-              backgroundColor: `var(--accent-primary)`,
-              borderColor: `var(--accent-primary)`,
-              opacity: 0.1,
+              backgroundColor: "var(--bg-hover)",
+              borderColor: "var(--border-default)",
             }}
           >
             <div
-              className="absolute inset-0"
+              className="absolute inset-0 opacity-10"
               style={{
-                background: `linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(79, 70, 229, 0.05))`,
+                background: `var(--accent-primary)`,
               }}
             />
             <div className="relative">
@@ -158,11 +157,11 @@ export function CampaignStrategyAdvisor({
                   style={{
                     backgroundColor:
                       recommendation.priority === "critical"
-                        ? "rgb(239, 68, 68)"
+                        ? "var(--accent-danger, #ef4444)"
                         : recommendation.priority === "high"
-                          ? "rgb(245, 158, 11)"
-                          : "rgb(34, 197, 94)",
-                    color: "white",
+                          ? "var(--accent-warning, #f59e0b)"
+                          : "var(--accent-primary)",
+                    color: "var(--text-on-accent, #fff)",
                   }}
                 >
                   {recommendation.priority === "critical"
@@ -239,14 +238,14 @@ export function CampaignStrategyAdvisor({
               }}
             >
               <div className="flex items-center gap-1.5 mb-1">
-                <Clock className="w-3.5 h-3.5" style={{ color: "rgb(239, 68, 68)" }} />
+                <Clock className="w-3.5 h-3.5" style={{ color: "var(--accent-danger, #ef4444)" }} />
                 <span className="text-xs" style={{ color: "var(--text-secondary)" }}>
                   Risk/Week
                 </span>
               </div>
               <p
                 className="text-sm font-semibold"
-                style={{ color: "rgb(239, 68, 68)" }}
+                style={{ color: "var(--accent-danger, #ef4444)" }}
               >
                 ~${recommendation.impact.riskPerWeek.toLocaleString()}
               </p>
