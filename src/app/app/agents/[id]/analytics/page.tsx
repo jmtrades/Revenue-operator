@@ -160,7 +160,7 @@ export default function AgentAnalyticsPage({
         <ChevronRight className="w-4 h-4" />
         <span className="text-[var(--text-primary)]">Analytics</span>
       </div>
-      <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">Performance</h1>
+      <h1 className="text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-1">Performance</h1>
       <p className="text-[var(--text-tertiary)] text-sm mb-6">Last {data.periodDays} days</p>
 
       {/* KPIs */}

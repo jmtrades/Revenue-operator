@@ -298,7 +298,7 @@ export default function TeamPage() {
       <div className="p-4 md:p-6 lg:p-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)]">{t("heading")}</h1>
+            <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("heading")}</h1>
             <p className="text-sm text-[var(--text-secondary)] mt-0.5">{loading ? t("loading") : t("membersCount", { count: members.length })}</p>
           </div>
           <button

@@ -355,7 +355,7 @@ export default function AppSettingsIntegrationsPage() {
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       <Breadcrumbs items={[{ label: t("hub.breadcrumbSettings"), href: "/app/settings" }, { label: t("hub.title") }]} />
-      <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">{t("hub.title")}</h1>
+      <h1 className="text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-1">{t("hub.title")}</h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">{t("hub.subtitle")}</p>
 
       <IntegrationsHealthWidget />

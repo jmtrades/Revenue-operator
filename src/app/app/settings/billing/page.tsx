@@ -272,9 +272,9 @@ export default function AppSettingsBillingPage() {
       case "trial": return "bg-purple-500/10 text-purple-600 dark:text-purple-400";
       case "trial_ended": return "bg-amber-500/10 text-amber-600 dark:text-amber-400";
       case "cancelled": return "bg-red-500/10 text-red-600 dark:text-red-400";
-      case "paused": return "bg-gray-500/10 text-gray-600 dark:text-gray-400";
+      case "paused": return "bg-[var(--bg-inset)] text-[var(--text-secondary)]";
       case "payment_failed": return "bg-red-500/10 text-red-600 dark:text-red-400";
-      default: return "bg-gray-500/10 text-gray-600 dark:text-gray-400";
+      default: return "bg-[var(--bg-inset)] text-[var(--text-tertiary)]";
     }
   }
 
@@ -282,7 +282,7 @@ export default function AppSettingsBillingPage() {
     return (
       <div className="max-w-[600px] mx-auto p-4 md:p-6">
         <Breadcrumbs items={[{ label: tNav("settings"), href: "/app/settings" }, { label: tNav("billing") }]} />
-        <h1 className="text-lg font-semibold text-[var(--text-primary)] mb-4">{tNav("billing")}</h1>
+        <h1 className="text-lg font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-4">{tNav("billing")}</h1>
         <div className="skeleton-shimmer space-y-3">
           <div className="h-20 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)]" />
           <div className="h-10 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] w-1/2" />
@@ -295,7 +295,7 @@ export default function AppSettingsBillingPage() {
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       <Breadcrumbs items={[{ label: tNav("settings"), href: "/app/settings" }, { label: tNav("billing") }]} />
-      <h1 className="text-lg font-semibold text-[var(--text-primary)] mb-4">{tNav("billing")}</h1>
+      <h1 className="text-lg font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-4">{tNav("billing")}</h1>
       {billingStatus === "trial" && (
         <div className="p-4 rounded-xl border border-purple-500/30 bg-purple-500/10 text-purple-100 text-sm mb-4 flex items-start gap-3">
           <div className="shrink-0 w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-300 text-sm font-bold">!</div>

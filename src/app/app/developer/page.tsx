@@ -708,7 +708,7 @@ export default function DeveloperPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="p-4 md:p-6 lg:p-8">
-        <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] mb-2">{t("heading")}</h1>
+        <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-2">{t("heading")}</h1>
         <p className="text-sm text-[var(--text-secondary)] mb-6">
           {t("pageSubtitle")}{" "}
           <a href="/docs#integrations" className="text-[var(--accent-primary)] hover:underline">{t("docsIntegrations")}</a>.

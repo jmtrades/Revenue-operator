@@ -530,7 +530,7 @@ export default function AppContactsPage() {
       `}</style>
       <div className="flex items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-lg md:text-xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
+          <h1 className="text-lg md:text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)] flex items-center gap-2">
             {t("title")}
             <span className="text-xs font-normal text-[var(--text-secondary)]">· {t("savedCount", { count })}</span>
           </h1>

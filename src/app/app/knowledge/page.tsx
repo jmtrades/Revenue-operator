@@ -621,7 +621,7 @@ export default function KnowledgePage() {
         {/* Top bar */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
           <div>
-            <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)]">{t("heading")}</h1>
+            <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("heading")}</h1>
             <p className="text-sm text-[var(--text-secondary)] mt-0.5">
               {entries.length} {entries.length === 1 ? tCommon("item") : tCommon("items")}
             </p>

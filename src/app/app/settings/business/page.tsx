@@ -157,7 +157,7 @@ export default function AppSettingsBusinessPage() {
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       <Breadcrumbs items={[{ label: tNav("settings"), href: "/app/settings" }, { label: tSettings("business.label") }]} />
-      <h1 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{tSettings("businessPage.heading")}</h1>
+      <h1 className="text-lg font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-2">{tSettings("businessPage.heading")}</h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">{tSettings("businessPage.description")}</p>
       <div className="space-y-4 mb-6">
         <div>

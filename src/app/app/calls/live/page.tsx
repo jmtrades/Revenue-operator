@@ -135,7 +135,7 @@ export default function CallsLivePage() {
         <span className="text-[var(--text-primary)]">{t("calls.live.breadcrumbLive", { defaultValue: "Live" })}</span>
       </div>
       <div className="flex items-center justify-between mb-1">
-        <h1 className="text-xl font-semibold text-[var(--text-primary)]">{t("calls.live.pageTitle", { defaultValue: "Live call monitoring" })}</h1>
+        <h1 className="text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("calls.live.pageTitle", { defaultValue: "Live call monitoring" })}</h1>
         {!loading && (
           <div className="flex items-center gap-2 text-xs text-[var(--text-tertiary)]">
             <span className="relative flex h-2 w-2">
@@ -146,7 +146,7 @@ export default function CallsLivePage() {
           </div>
         )}
       </div>
-      <p className="text-[var(--text-tertiary)] text-sm mb-6">{t("calls.live.pageSubtitle", { defaultValue: "Active calls across your workspace. Updates every 5 seconds." })}</p>
+      <p className="text-[var(--text-secondary)] text-[13px] mt-1.5 leading-relaxed mb-6">{t("calls.live.pageSubtitle", { defaultValue: "Active calls across your workspace. Updates every 5 seconds." })}</p>
 
       {loading ? (
         <div className="space-y-4">

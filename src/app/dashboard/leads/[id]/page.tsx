@@ -157,7 +157,7 @@ export default function LeadViewPage() {
             <span style={{ color: "var(--text-secondary)" }}>{displayName}</span>
           </p>
           <section className="mb-10">
-            <h1 className="text-xl font-semibold tracking-tight" style={{ color: "var(--text-primary)", lineHeight: 1.4 }}>{displayName}</h1>
+            <h1 className="text-xl font-bold tracking-[-0.025em]" style={{ color: "var(--text-primary)", lineHeight: 1.4 }}>{displayName}</h1>
             {lead.company && <p className="mt-2 text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>{lead.company}</p>}
             <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>{tLead("recordIntegrityDemonstrable")}</p>
           </section>
@@ -212,7 +212,7 @@ export default function LeadViewPage() {
 
         {/* Identity — no label */}
         <section className="mb-10">
-          <h1 className="text-xl font-semibold tracking-tight" style={{ color: "var(--text-primary)", lineHeight: 1.4 }}>{displayName}</h1>
+          <h1 className="text-xl font-bold tracking-[-0.025em]" style={{ color: "var(--text-primary)", lineHeight: 1.4 }}>{displayName}</h1>
           {lead.company && <p className="mt-2 text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>{lead.company}</p>}
           <p className="mt-2 text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>{situationLine}</p>
           <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>{tLead("recordIntegrityDemonstrable")}</p>

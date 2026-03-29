@@ -161,7 +161,7 @@ export default function RecordLeadPage() {
       </div>
 
       <section className="mb-10">
-        <h1 className="text-lg font-medium" style={{ color: "var(--text-primary)", lineHeight: 1.5 }}>{displayName}</h1>
+        <h1 className="text-lg font-bold tracking-[-0.025em]" style={{ color: "var(--text-primary)", lineHeight: 1.5 }}>{displayName}</h1>
         {lead.company && <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>{lead.company}</p>}
       </section>
 

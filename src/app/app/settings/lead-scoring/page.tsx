@@ -95,7 +95,7 @@ export default function AppSettingsLeadScoringPage() {
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       <Breadcrumbs items={[{ label: tSettings("title"), href: "/app/settings" }, { label: tSettings("leadScoring.title") }]} />
-      <h1 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{tSettings("leadScoring.title")}</h1>
+      <h1 className="text-lg font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-2">{tSettings("leadScoring.title")}</h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">
         {tSettings("leadScoring.description")}
       </p>

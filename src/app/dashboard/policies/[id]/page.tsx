@@ -112,7 +112,7 @@ export default function PolicyEditPage({ params }: { params: Promise<{ id: strin
   return (
     <Shell>
       <div className="space-y-6">
-        <h1 className="text-lg font-medium" style={{ color: "var(--text-primary)" }}>
+        <h1 className="text-lg font-bold tracking-[-0.025em]" style={{ color: "var(--text-primary)" }}>
           {tPolicy("policyTitle", {
             domain: policy.domain_type,
             jurisdiction: policy.jurisdiction,

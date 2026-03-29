@@ -174,7 +174,7 @@ export default function DeveloperWebhooksPage() {
         <span>/</span>
         <span className="text-[var(--text-primary)]">Webhooks</span>
       </div>
-      <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">{tDev("title")}</h1>
+      <h1 className="text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-1">{tDev("title")}</h1>
       <p className="text-sm text-[var(--text-tertiary)] mb-6">
         {tDev("subtitle")}
       </p>
