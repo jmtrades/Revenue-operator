@@ -593,7 +593,7 @@ export default function AppShellClient({
                           </div>
                         )}
                         {billingInfo?.billing_status === "payment_failed" && (
-                          <span className="block text-[11px] font-medium text-red-400 mt-1.5 underline underline-offset-2">
+                          <span className="block text-[11px] font-medium text-[var(--accent-danger,#ef4444)] mt-1.5 underline underline-offset-2">
                             {t("sidebar.fixPayment", { defaultValue: "Fix payment →" })}
                           </span>
                         )}

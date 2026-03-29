@@ -414,7 +414,7 @@ export default function AppSettingsPhonePage() {
                   {n.capabilities?.sms && <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--bg-inset)] text-[var(--text-secondary)]">{tPhone("sms")}</span>}
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={`text-[10px] px-2 py-0.5 rounded capitalize ${n.status === "active" ? "bg-emerald-500/20 text-emerald-300" : "bg-[var(--bg-inset)] text-[var(--text-tertiary)]"}`}>
+                  <span className={`text-[10px] px-2 py-0.5 rounded capitalize ${n.status === "active" ? "bg-[var(--accent-primary)]/20 text-[var(--accent-primary)]/80" : "bg-[var(--bg-inset)] text-[var(--text-tertiary)]"}`}>
                     {n.status}
                   </span>
                   {n.status === "active" && (
@@ -565,7 +565,7 @@ export default function AppSettingsPhonePage() {
             <p className="text-xs text-[var(--text-tertiary)] mb-3">{tPhone("verifyBySmsDesc")}</p>
             {verifiedNumber ? (
               <>
-                <p className="text-sm text-green-400">{tPhone("verifiedLabel")} {formatPhoneNumber(verifiedNumber)}</p>
+                <p className="text-sm text-[var(--accent-primary)]">{tPhone("verifiedLabel")} {formatPhoneNumber(verifiedNumber)}</p>
                 {phoneNumber && (
                   <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5 mt-4">
                     <h3 className="text-base font-medium text-[var(--text-primary)] mb-3">
@@ -729,7 +729,7 @@ export default function AppSettingsPhonePage() {
               <p className="text-xs text-[var(--text-tertiary)] mt-2 text-center">{tPhone("takesAbout10Seconds")}</p>
               {connectError ? (
                 <div className="mt-4 rounded-xl border border-[var(--accent-danger,#ef4444)]/20 bg-[var(--accent-danger,#ef4444)]/[0.06] p-4" role="alert">
-                  <p className="text-sm text-red-400 mb-2">{connectError}</p>
+                  <p className="text-sm text-[var(--accent-danger,#ef4444)] mb-2">{connectError}</p>
                   {connectErrorCode === "NOT_CONFIGURED" && (
                     <div className="flex gap-2 mt-2">
                       <input
@@ -766,8 +766,8 @@ export default function AppSettingsPhonePage() {
               ) : null}
             </div>
             <div className="bg-[var(--bg-elevated)] border border-[var(--border-default)] rounded-2xl p-6">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4">
-                <PhoneForwarded className="w-5 h-5 text-emerald-400" />
+              <div className="w-10 h-10 rounded-xl bg-[var(--accent-primary)]/10 flex items-center justify-center mb-4">
+                <PhoneForwarded className="w-5 h-5 text-[var(--accent-primary)]" />
               </div>
               <h2 className="text-base font-semibold text-[var(--text-primary)] mb-1">{tPhone("useExistingNumber")}</h2>
               <p className="text-sm text-[var(--text-tertiary)] mb-1">{tPhone("forwardCallsToAi")}</p>
@@ -820,10 +820,10 @@ export default function AppSettingsPhonePage() {
                 {verifySending ? tPhone("sendingCode") : tPhone("verifyMyNumber")}
               </button>
               <p className="text-xs text-[var(--text-tertiary)] mt-2 text-center">{tPhone("weSendVerificationCode")}</p>
-              {verifyError && <p className="mt-2 text-xs text-red-400" role="alert">{verifyError}</p>}
+              {verifyError && <p className="mt-2 text-xs text-[var(--accent-danger,#ef4444)]" role="alert">{verifyError}</p>}
               {verifiedNumber ? (
                 <div className="mt-4 pt-4 border-t border-[var(--border-default)] space-y-3">
-                  <p className="text-sm text-emerald-400">{tPhone("verifiedLabel")} {formatPhoneNumber(verifiedNumber)}</p>
+                  <p className="text-sm text-[var(--accent-primary)]">{tPhone("verifiedLabel")} {formatPhoneNumber(verifiedNumber)}</p>
                   <p className="text-xs text-[var(--text-tertiary)] mb-2">{tPhone("forwardUnansweredHint")}</p>
                   <div className="space-y-2 text-xs text-[var(--text-secondary)]">
                     <p className="font-medium text-[var(--text-secondary)]">{tPhone("iphone")}:</p>
@@ -833,7 +833,7 @@ export default function AppSettingsPhonePage() {
                     <p className="font-medium text-[var(--text-secondary)] mt-2">{tPhone("businessLine")}:</p>
                     <p>{tPhone("forwardInstructionBusiness")}</p>
                   </div>
-                  <Link href="/app/settings/phone#test" className="inline-block mt-2 text-sm font-medium text-emerald-400 hover:text-emerald-300">{tPhone("testForwardingLink")}</Link>
+                  <Link href="/app/settings/phone#test" className="inline-block mt-2 text-sm font-medium text-[var(--accent-primary)] hover:text-[var(--accent-primary)]/80">{tPhone("testForwardingLink")}</Link>
                 </div>
               ) : (verifyCodeSent || verifyCode.length >= 4) && (
                 <div className="mt-4 space-y-2">

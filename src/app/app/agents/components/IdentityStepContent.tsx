@@ -316,7 +316,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
               onChange={(e) => onChange({ name: e.target.value })}
             />
             {showNameError && (
-              <p className="mt-1 text-[10px] text-red-400">
+              <p className="mt-1 text-[10px] text-[var(--accent-danger,#ef4444)]">
                 {t("identityStep.nameError")}
               </p>
             )}
@@ -371,7 +371,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
             placeholder={t("identityStep.greetingPlaceholder")}
           />
           {showGreetingError && (
-            <p className="mt-1 text-[10px] text-red-400">
+            <p className="mt-1 text-[10px] text-[var(--accent-danger,#ef4444)]">
               {t("identityStep.greetingError")}
             </p>
           )}
@@ -419,7 +419,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
             </button>
           </div>
           {extractError && (
-            <p className="mt-1 text-[10px] text-red-400">{extractError}</p>
+            <p className="mt-1 text-[10px] text-[var(--accent-danger,#ef4444)]">{extractError}</p>
           )}
           {pendingExtract && (
             <div className="mt-2 rounded-xl border border-[var(--accent-primary)]/40 bg-[var(--accent-primary)]/5 p-2.5 text-[11px] text-[var(--text-secondary)]">

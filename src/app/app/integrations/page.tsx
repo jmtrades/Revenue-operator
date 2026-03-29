@@ -311,7 +311,7 @@ export default function IntegrationsPage() {
         {filteredComingSoon.length > 0 && (
           <div className="mb-12">
             <div className="mb-6 flex items-center gap-2">
-              <Bell size={20} className="text-amber-400" />
+              <Bell size={20} className="text-[var(--accent-warning,#f59e0b)]" />
               <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                 Coming Soon
               </h2>

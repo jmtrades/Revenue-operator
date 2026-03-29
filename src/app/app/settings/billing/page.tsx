@@ -268,12 +268,12 @@ export default function AppSettingsBillingPage() {
 
   function statusBadgeColor(status: string | null): string {
     switch (status) {
-      case "active": return "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400";
-      case "trial": return "bg-purple-500/10 text-purple-600 dark:text-purple-400";
-      case "trial_ended": return "bg-amber-500/10 text-amber-600 dark:text-amber-400";
-      case "cancelled": return "bg-red-500/10 text-red-600 dark:text-red-400";
+      case "active": return "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] dark:text-[var(--accent-primary)]";
+      case "trial": return "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] dark:text-[var(--accent-primary)]";
+      case "trial_ended": return "bg-[var(--accent-warning,#f59e0b)]/10 text-[var(--accent-warning,#f59e0b)] dark:text-[var(--accent-warning,#f59e0b)]";
+      case "cancelled": return "bg-[var(--accent-danger,#ef4444)]/10 text-[var(--accent-danger,#ef4444)] dark:text-[var(--accent-danger,#ef4444)]";
       case "paused": return "bg-[var(--bg-inset)] text-[var(--text-secondary)]";
-      case "payment_failed": return "bg-red-500/10 text-red-600 dark:text-red-400";
+      case "payment_failed": return "bg-[var(--accent-danger,#ef4444)]/10 text-[var(--accent-danger,#ef4444)] dark:text-[var(--accent-danger,#ef4444)]";
       default: return "bg-[var(--bg-inset)] text-[var(--text-tertiary)]";
     }
   }
@@ -364,11 +364,11 @@ export default function AppSettingsBillingPage() {
         </div>
       )}
       {pendingTier && (
-        <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-100 text-sm mb-4">
+        <div className="p-4 rounded-xl border border-[var(--accent-warning,#f59e0b)]/20 bg-[var(--accent-warning,#f59e0b)]/10 text-[var(--accent-warning,#f59e0b)]/70 text-sm mb-4">
           <p className="font-medium">
             {tBilling("downgradeScheduled", { date: pendingEffectiveAt ? new Date(pendingEffectiveAt).toLocaleDateString() : "your next billing date" })}
           </p>
-          {downgradeWarning && <p className="mt-1 text-amber-200/90">{downgradeWarning}</p>}
+          {downgradeWarning && <p className="mt-1 text-[var(--accent-warning,#f59e0b)]/80/90">{downgradeWarning}</p>}
         </div>
       )}
       <div className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4">
@@ -430,7 +430,7 @@ export default function AppSettingsBillingPage() {
             <div
               className={`h-full rounded-full transition-[width] ${
                 usage.minutes_limit > 0 && usage.minutes_used / usage.minutes_limit > 0.8
-                  ? "bg-amber-500"
+                  ? "bg-[var(--accent-warning,#f59e0b)]"
                   : "bg-[var(--accent-primary)]"
               }`}
               style={{ width: `${Math.min(100, usage.minutes_limit > 0 ? (usage.minutes_used / usage.minutes_limit) * 100 : 0)}%` }}

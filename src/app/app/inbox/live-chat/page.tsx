@@ -261,7 +261,7 @@ export default function LiveChatInboxPage() {
                 </div>
                 <button
                   onClick={handleResolveSession}
-                  className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-[var(--accent-primary)] hover:bg-[var(--accent-primary)] text-white rounded-lg text-sm font-medium transition-colors"
                 >
                   <CheckCircle className="w-4 h-4" />
                   Resolve
@@ -322,7 +322,7 @@ export default function LiveChatInboxPage() {
                   <button
                     onClick={handleSendMessage}
                     disabled={sending || !messageText.trim()}
-                    className="px-4 py-2 bg-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/90 disabled:bg-gray-400 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+                    className="px-4 py-2 bg-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/90 disabled:bg-[var(--bg-card)] text-white rounded-lg font-medium transition-colors flex items-center gap-2"
                   >
                     <Send className="w-4 h-4" />
                     {sending ? "Sending..." : "Send"}

@@ -341,7 +341,7 @@ export default function AppCalendarPage() {
             </p>
           </div>
           {outlookConnected ? (
-            <span className="text-xs text-green-400">{t("calendar.connected")}</span>
+            <span className="text-xs text-[var(--accent-primary)]">{t("calendar.connected")}</span>
           ) : (
             <a
               href="/api/integrations/outlook-calendar/auth"

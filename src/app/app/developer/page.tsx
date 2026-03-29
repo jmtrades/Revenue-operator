@@ -197,7 +197,7 @@ function ApiKeysTab({
                 <td className="py-3 px-4 text-[var(--text-secondary)]">{formatDate(key.createdAt)}</td>
                 <td className="py-3 px-4 text-[var(--text-secondary)]">{formatRelative(key.lastUsedAt, t)}</td>
                 <td className="py-3 px-4">
-                  <span className="text-emerald-400 text-xs">{t("active")}</span>
+                  <span className="text-[var(--accent-primary)] text-xs">{t("active")}</span>
                 </td>
                 <td className="py-3 px-2 relative">
                   <button
@@ -240,7 +240,7 @@ function ApiKeysTab({
           >
             <div className="flex items-start justify-between">
               <span className="font-medium text-[var(--text-primary)]">{key.label}</span>
-              <span className="text-emerald-400 text-xs">{t("active")}</span>
+              <span className="text-[var(--accent-primary)] text-xs">{t("active")}</span>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
               <span className="font-mono text-xs text-[var(--text-secondary)]">{maskKey(key.keyPrefix, key.keySuffix)}</span>
@@ -322,8 +322,8 @@ function ApiKeysTab({
       {newKeyModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)]" onClick={(e) => e.target === e.currentTarget && setNewKeyModal(null)}>
           <div className="bg-[var(--bg-card)] border border-[var(--accent-warning,#f59e0b)]/30 rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-lg font-semibold text-amber-200 mb-2">{t("apiKeyCreatedTitle", { label: newKeyModal.label })}</h3>
-            <p className="text-sm text-amber-200/80 mb-4">{t("saveKeyWarning")}</p>
+            <h3 className="text-lg font-semibold text-[var(--accent-warning,#f59e0b)]/80 mb-2">{t("apiKeyCreatedTitle", { label: newKeyModal.label })}</h3>
+            <p className="text-sm text-[var(--accent-warning,#f59e0b)]/80/80 mb-4">{t("saveKeyWarning")}</p>
             <div className="p-3 rounded-xl bg-[var(--bg-inset)] border border-[var(--border-medium)] mb-4">
               <code className="font-mono text-xs text-[var(--text-secondary)] break-all">{newKeyModal.fullKey}</code>
             </div>
@@ -444,9 +444,9 @@ function WebhooksTab({
                 </div>
               </div>
               <div className="flex items-center gap-3 shrink-0">
-                <span className={`text-xs font-medium ${wh.lastDeliveryStatus === 200 ? "text-emerald-400" : "text-red-400"}`}>{wh.lastDeliveryStatus}</span>
+                <span className={`text-xs font-medium ${wh.lastDeliveryStatus === 200 ? "text-[var(--accent-primary)]" : "text-[var(--accent-danger,#ef4444)]"}`}>{wh.lastDeliveryStatus}</span>
                 <span className="text-xs text-[var(--text-secondary)]">{formatRelative(wh.lastDeliveryAt, t)}</span>
-                <span className="text-xs text-emerald-400">{t("active")}</span>
+                <span className="text-xs text-[var(--accent-primary)]">{t("active")}</span>
               </div>
             </button>
             {expandedId === wh.id && (
@@ -460,7 +460,7 @@ function WebhooksTab({
                         <span className="text-[10px] text-[var(--text-tertiary)] ml-2">{formatRelative(d.timestamp, t)}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className={`text-xs font-mono ${d.statusCode === 200 ? "text-emerald-400" : "text-red-400"}`}>{d.statusCode}</span>
+                        <span className={`text-xs font-mono ${d.statusCode === 200 ? "text-[var(--accent-primary)]" : "text-[var(--accent-danger,#ef4444)]"}`}>{d.statusCode}</span>
                         <span className="text-[10px] text-[var(--text-secondary)]">{d.responseTimeMs}ms</span>
                         <button
                           type="button"
@@ -610,7 +610,7 @@ function EventLogTab({ events, kindFilter, statusFilter, onKindFilter, onStatusF
                   {row.kind === "api_call" ? `${row.method} ${row.endpoint}` : row.webhookUrl}
                 </td>
                 <td className="py-3 px-4">
-                  <span className={`font-mono text-xs ${row.statusCode >= 200 && row.statusCode < 300 ? "text-emerald-400" : "text-red-400"}`}>{row.statusCode}</span>
+                  <span className={`font-mono text-xs ${row.statusCode >= 200 && row.statusCode < 300 ? "text-[var(--accent-primary)]" : "text-[var(--accent-danger,#ef4444)]"}`}>{row.statusCode}</span>
                 </td>
                 <td className="py-3 px-4 text-[var(--text-secondary)] text-xs">{row.responseTimeMs}ms</td>
               </tr>
@@ -624,7 +624,7 @@ function EventLogTab({ events, kindFilter, statusFilter, onKindFilter, onStatusF
           <div key={row.id} className="p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)]">
             <div className="flex items-center justify-between mb-1">
               <span className="text-xs text-[var(--text-secondary)]">{formatRelative(row.timestamp, t)}</span>
-              <span className={`font-mono text-xs ${row.statusCode >= 200 && row.statusCode < 300 ? "text-emerald-400" : "text-red-400"}`}>{row.statusCode}</span>
+              <span className={`font-mono text-xs ${row.statusCode >= 200 && row.statusCode < 300 ? "text-[var(--accent-primary)]" : "text-[var(--accent-danger,#ef4444)]"}`}>{row.statusCode}</span>
             </div>
             <p className="text-sm text-[var(--text-secondary)]">{row.kind === "api_call" ? t("apiCall") : t("webhookDelivery")}</p>
             <p className="font-mono text-xs text-[var(--text-secondary)] truncate">{row.kind === "api_call" ? `${row.method} ${row.endpoint}` : row.webhookUrl}</p>
