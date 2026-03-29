@@ -297,24 +297,24 @@ export default function AppSettingsBillingPage() {
       <Breadcrumbs items={[{ label: tNav("settings"), href: "/app/settings" }, { label: tNav("billing") }]} />
       <h1 className="text-lg font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-4">{tNav("billing")}</h1>
       {billingStatus === "trial" && (
-        <div className="p-4 rounded-xl border border-purple-500/30 bg-purple-500/10 text-purple-100 text-sm mb-4 flex items-start gap-3">
-          <div className="shrink-0 w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-300 text-sm font-bold">!</div>
+        <div className="p-4 rounded-xl border border-purple-500/20 bg-purple-500/10 text-purple-700 dark:text-purple-200 text-sm mb-4 flex items-start gap-3">
+          <div className="shrink-0 w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-300 text-sm font-bold">!</div>
           <div>
-            <p className="font-semibold">{tBilling("trial.title", { defaultValue: "You're on a free trial" })}</p>
-            <p className="mt-1 text-purple-200/80">{tBilling("trial.description", { defaultValue: "Subscribe to a plan to keep your agents running after the trial ends. Your data and configuration will be preserved." })}</p>
+            <p className="font-semibold text-purple-800 dark:text-purple-100">{tBilling("trial.title", { defaultValue: "You're on a free trial" })}</p>
+            <p className="mt-1 text-purple-600 dark:text-purple-300/80">{tBilling("trial.description", { defaultValue: "Subscribe to a plan to keep your agents running after the trial ends. Your data and configuration will be preserved." })}</p>
           </div>
         </div>
       )}
       {billingError && (
-        <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-200 text-sm mb-4">
+        <div className="p-4 rounded-xl border border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-200 text-sm mb-4">
           <p className="font-medium">{tBilling("errors.loadingFailed")}</p>
-          <p className="mt-1 text-amber-200/80">{tBilling("errors.loadingFailedDesc")}</p>
+          <p className="mt-1 text-amber-600 dark:text-amber-300/80">{tBilling("errors.loadingFailedDesc")}</p>
           <Link href="/app/settings" className="inline-block mt-2 text-sm font-medium underline underline-offset-2">{tBilling("backToSettingsLink")}</Link>
         </div>
       )}
       {redirectReason === "phone_purchase" && (
-        <div className="p-4 rounded-xl border border-blue-500/30 bg-blue-500/10 text-blue-100 text-sm mb-4">
-          <p className="font-semibold">{tBilling("phonePurchase.title")}</p>
+        <div className="p-4 rounded-xl border border-blue-500/20 bg-blue-500/10 text-blue-700 dark:text-blue-200 text-sm mb-4">
+          <p className="font-semibold text-blue-800 dark:text-blue-100">{tBilling("phonePurchase.title")}</p>
           <p className="mt-1">{tBilling("phonePurchase.description")}</p>
         </div>
       )}
@@ -405,7 +405,7 @@ export default function AppSettingsBillingPage() {
           <div>
             <p className="text-sm font-medium text-[var(--text-primary)]">Starter Plan — $147/mo</p>
             <p className="text-xs text-[var(--text-secondary)] mt-1">
-              <span className="inline-block px-2 py-0.5 rounded-full text-[11px] font-medium bg-purple-500/20 text-purple-300">Free Trial</span>
+              <span className="inline-block px-2 py-0.5 rounded-full text-[11px] font-medium bg-purple-500/10 text-purple-600 dark:text-purple-400">Free Trial</span>
             </p>
           </div>
         ) : (
@@ -475,18 +475,18 @@ export default function AppSettingsBillingPage() {
 
             {/* Cost Comparison */}
             <div className="bg-emerald-500/5 rounded-lg p-3 border border-emerald-500/20">
-              <p className="text-[11px] font-medium text-emerald-300/80 uppercase tracking-wide">Savings Comparison</p>
-              <p className="text-xs text-emerald-100 mt-1.5">
-                <span className="font-semibold text-emerald-200">Replaces ~$3,200/mo</span> in manual receptionist and follow-up costs
+              <p className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400/80 uppercase tracking-wide">Savings Comparison</p>
+              <p className="text-xs text-emerald-700 dark:text-emerald-200 mt-1.5">
+                <span className="font-semibold text-emerald-800 dark:text-emerald-100">Replaces ~$3,200/mo</span> in manual receptionist and follow-up costs
               </p>
             </div>
 
             {/* Efficiency Metric */}
             {usage.calls > 0 && (
               <div className="bg-emerald-500/5 rounded-lg p-3 border border-emerald-500/20">
-                <p className="text-[11px] font-medium text-emerald-300/80 uppercase tracking-wide">Cost Per Call</p>
-                <p className="text-xs text-emerald-100 mt-1.5">
-                  <span className="font-semibold text-emerald-200">
+                <p className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400/80 uppercase tracking-wide">Cost Per Call</p>
+                <p className="text-xs text-emerald-700 dark:text-emerald-200 mt-1.5">
+                  <span className="font-semibold text-emerald-800 dark:text-emerald-100">
                     ${(
                       (String(currentPlanId) === "starter" ? 147 : String(currentPlanId) === "growth" ? 297 : String(currentPlanId) === "scale" ? 597 : 147) / usage.calls
                     ).toFixed(2)}
@@ -503,10 +503,10 @@ export default function AppSettingsBillingPage() {
       {usageAlert && usageAlert.level !== "healthy" && (
         <div className={`p-4 rounded-xl border mb-4 ${
           usageAlert.level === "overage" || usageAlert.level === "critical"
-            ? "border-red-500/30 bg-red-500/10 text-red-100"
+            ? "border-red-500/20 bg-red-500/10 text-red-700 dark:text-red-200"
             : usageAlert.level === "warning"
-              ? "border-amber-500/30 bg-amber-500/10 text-amber-100"
-              : "border-blue-500/30 bg-blue-500/10 text-blue-100"
+              ? "border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-200"
+              : "border-blue-500/20 bg-blue-500/10 text-blue-700 dark:text-blue-200"
         }`}>
           <p className="text-sm font-medium">
             {usageAlert.level === "overage"
@@ -678,6 +678,13 @@ export default function AppSettingsBillingPage() {
         >
           {tBilling("viewInvoices")}
         </button>
+      </div>
+      {/* Trust strip */}
+      <div className="flex items-center gap-4 text-[10px] text-[var(--text-tertiary)] mb-4 py-2">
+        <span className="flex items-center gap-1"><svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>256-bit SSL</span>
+        <span className="flex items-center gap-1"><svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>PCI DSS</span>
+        <span className="flex items-center gap-1"><svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>SOC 2</span>
+        <span className="flex items-center gap-1"><svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>HIPAA</span>
       </div>
       <div className="flex gap-2">
         <button type="button" onClick={() => setPauseStep(1)} disabled={pausing || !workspaceId} className="px-4 py-2 rounded-xl text-sm border border-[var(--border-default)] text-[var(--text-tertiary)] disabled:opacity-60 hover:bg-[var(--bg-inset)]/50 transition-[background-color,border-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]" title="Pause your subscription temporarily while keeping your data safe">{pausing ? tBilling("pausing") : tBilling("pauseAccount")}</button>
