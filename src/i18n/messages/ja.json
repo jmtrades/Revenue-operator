@@ -524,6 +524,7 @@
   },
   "billing": {
     "pageTitle": "請求 — Recall Touch",
+    "subtitle": "プラン、利用状況、お支払い方法を管理します。",
     "failureBanner": {
       "primary": "処理カバレッジを継続できませんでした。",
       "message": "設定で支払い方法を更新すると、カバレッジが再開されます。",
@@ -8492,7 +8493,8 @@
       "getAiNumber": "「新しいAI番号を取得」で専用回線を取得できます。",
       "phoneVerified": "電話を確認しました ✓",
       "waitlistJoined": "番号が利用可能になったらお知らせします。",
-      "invalidAreaCode": "有効な3桁の市外局番を入力してください"
+      "invalidAreaCode": "有効な3桁の市外局番を入力してください",
+      "copyFailed": "電話番号のコピーに失敗しました"
     },
     "marketplace": {
       "title": "電話番号マーケットプレイス",

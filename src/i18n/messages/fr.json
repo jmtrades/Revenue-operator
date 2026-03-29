@@ -524,6 +524,7 @@
   },
   "billing": {
     "pageTitle": "Facturation — Recall Touch",
+    "subtitle": "Gérez votre forfait, votre utilisation et votre moyen de paiement.",
     "failureBanner": {
       "primary": "La couverture de gestion n'a pas pu continuer.",
       "message": "Mettez à jour votre moyen de paiement dans Préférences pour rétablir la couverture.",
@@ -8492,7 +8493,8 @@
       "getAiNumber": "Utilisez « Obtenir un numéro IA » pour une ligne dédiée.",
       "phoneVerified": "Téléphone vérifié ✓",
       "waitlistJoined": "Nous vous préviendrons quand des numéros seront disponibles.",
-      "invalidAreaCode": "Veuillez entrer un indicatif régional valide à 3 chiffres"
+      "invalidAreaCode": "Veuillez entrer un indicatif régional valide à 3 chiffres",
+      "copyFailed": "Échec de la copie du numéro de téléphone"
     },
     "marketplace": {
       "title": "Place de marché des numéros",

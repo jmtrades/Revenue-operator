@@ -554,7 +554,7 @@ export default function VoiceDemoPage() {
               { stat: "<0.8s", label: "Answer Time" },
               { stat: "24/7", label: "Always On" },
               { stat: "99.97%", label: "Uptime SLA" },
-              { stat: "41", label: "AI Voices" },
+              { stat: "40+", label: "AI Voices" },
             ].map((item) => (
               <div
                 key={item.label}
