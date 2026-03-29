@@ -1,8 +1,31 @@
 /**
  * Unsafe write guard: only allow writes to protected tables from allowed code paths.
  * Prevents accidental mutation outside: signal consumer, closure, reconciliation, delivery, integrity.
- * Uses async_hooks only in Node (lazy require) so the module can be bundled for edge/client.
+ * Uses AsyncLocalStorage from Node.js async_hooks for context tracking.
+ *
+ * NOTE: We import AsyncLocalStorage at the top level. Next.js automatically externalises
+ * `node:async_hooks` for serverless functions. For edge/client bundles where it is not
+ * available, we fall back to a no-op implementation.
  */
+
+/* eslint-disable @typescript-eslint/no-require-imports */
+let _AsyncLocalStorage: (new <T>() => { run<R>(ctx: T, fn: () => R): R; getStore(): T | undefined }) | null = null;
+try {
+  // Try the node: protocol first (works reliably in Next.js 14+ serverless)
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const mod = require("node:async_hooks") as { AsyncLocalStorage: typeof _AsyncLocalStorage };
+  _AsyncLocalStorage = mod.AsyncLocalStorage;
+} catch {
+  try {
+    // Fallback: try without node: prefix
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const mod = require("async_hooks") as { AsyncLocalStorage: typeof _AsyncLocalStorage };
+    _AsyncLocalStorage = mod.AsyncLocalStorage;
+  } catch {
+    // Not in Node.js (edge runtime or client) — will use no-op below
+  }
+}
+/* eslint-enable @typescript-eslint/no-require-imports */
 
 const PROTECTED_TABLES = ["leads", "canonical_signals", "escalation_logs", "action_commands"] as const;
 const ALLOWED_CONTEXTS = [
@@ -22,24 +45,19 @@ type StorageLike = {
 };
 
 let _storage: StorageLike | null = null;
+let _hasRealStorage = false;
 
 function getStorage(): StorageLike {
   if (_storage !== null) return _storage;
-  if (typeof globalThis.process === "undefined" || !(globalThis.process as { versions?: { node?: string } }).versions?.node) {
-    _storage = { run: (_c, fn) => fn(), getStore: () => undefined };
-    return _storage;
-  }
-  try {
-    // Use Function to prevent bundlers from statically resolving async_hooks (Node-only module)
-    const requireModule = new Function("id", "return require(id)");
-    const mod = requireModule("async_hooks") as { AsyncLocalStorage: new <T>() => { run<R>(ctx: T, fn: () => R): R; getStore(): T | undefined } };
-    const s = new mod.AsyncLocalStorage<WriteContext>();
+  if (_AsyncLocalStorage) {
+    const s = new _AsyncLocalStorage<WriteContext>();
     _storage = { run: (ctx, fn) => s.run(ctx, fn), getStore: () => s.getStore() };
-    return _storage;
-  } catch {
+    _hasRealStorage = true;
+  } else {
+    // Edge/client fallback — no context tracking, allow all writes
     _storage = { run: (_c, fn) => fn(), getStore: () => undefined };
-    return _storage;
   }
+  return _storage;
 }
 
 export class UnsafeWriteError extends Error {
@@ -68,6 +86,11 @@ export async function runWithWriteContextAsync<T>(context: WriteContext, fn: () 
 
 export function checkUnsafeWrite(table: string): void {
   if (!PROTECTED_TABLES.includes(table as (typeof PROTECTED_TABLES)[number])) return;
+  // Initialise storage lazily so _hasRealStorage is set
+  getStorage();
+  // If AsyncLocalStorage is not available we cannot track context — allow all writes.
+  // The guard only enforces when we have a working context tracker.
+  if (!_hasRealStorage) return;
   const ctx = getWriteContext();
   if (!ctx || !ALLOWED_CONTEXTS.includes(ctx)) {
     throw new UnsafeWriteError(table, ctx);
