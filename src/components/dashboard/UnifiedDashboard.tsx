@@ -329,28 +329,28 @@ export function UnifiedDashboard() {
     {
       label: t("kpis.callsHandled", { defaultValue: "Calls handled" }),
       value: data.calls_answered,
-      sub: data.calls_answered === 0 && !hasSignal ? "Waiting for first call" : data.missed_calls_recovered > 0 ? `${data.missed_calls_recovered} recovered` : undefined,
+      sub: data.calls_answered === 0 && !hasSignal ? "Ready to execute" : data.missed_calls_recovered > 0 ? `${data.missed_calls_recovered} recovered` : undefined,
       icon: Phone,
       accent: "var(--accent-primary)",
     },
     {
       label: t("kpis.appointmentsBooked", { defaultValue: "Opportunities created" }),
       value: data.appointments_booked,
-      sub: data.appointments_booked === 0 && !hasSignal ? "Auto-booked from calls" : data.conversion_rate > 0 ? `${data.conversion_rate}% conversion` : undefined,
+      sub: data.appointments_booked === 0 && !hasSignal ? "Booked automatically from calls" : data.conversion_rate > 0 ? `${data.conversion_rate}% conversion` : undefined,
       icon: CalendarCheck,
       accent: "var(--accent-secondary)",
     },
     {
       label: t("kpis.recovered", { defaultValue: "Revenue impact" }),
       value: fmtMoney(data.revenue_recovered_cents),
-      sub: data.revenue_recovered_cents === 0 && !hasSignal ? "Tracked automatically" : data.revenue_trend_pct !== 0 ? `${data.revenue_trend_pct > 0 ? "+" : ""}${data.revenue_trend_pct}% vs last month` : undefined,
+      sub: data.revenue_recovered_cents === 0 && !hasSignal ? "Revenue tracked automatically" : data.revenue_trend_pct !== 0 ? `${data.revenue_trend_pct > 0 ? "+" : ""}${data.revenue_trend_pct}% vs last month` : undefined,
       icon: TrendingUp,
       accent: "var(--accent-warning)",
     },
     {
       label: t("kpis.followUpsSent", { defaultValue: "Recovery actions" }),
       value: data.follow_ups_sent,
-      sub: data.follow_ups_sent === 0 && !hasSignal ? "SMS & email sequences" : data.qualified_leads > 0 ? `${data.qualified_leads} qualified leads` : undefined,
+      sub: data.follow_ups_sent === 0 && !hasSignal ? "Recovery sequences active" : data.qualified_leads > 0 ? `${data.qualified_leads} qualified leads` : undefined,
       icon: MailCheck,
       accent: "var(--accent-indigo, #4F46E5)",
     },
@@ -388,7 +388,7 @@ export function UnifiedDashboard() {
               {t("phoneWarning.title", { defaultValue: "Phone number not connected" })}
             </p>
             <p className="text-sm text-[var(--text-secondary)] mt-0.5">
-              {t("phoneWarning.description", { defaultValue: "Your AI can't receive calls yet." })}{" "}
+              {t("phoneWarning.description", { defaultValue: "Your operator isn't connected yet." })}{" "}
               <Link href="/app/settings/phone" className="text-[var(--accent-primary)] font-medium hover:underline">
                 {t("phoneWarning.cta", { defaultValue: "Connect a number" })}
               </Link>
@@ -520,7 +520,7 @@ export function UnifiedDashboard() {
             <CalendarCheck className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
             <div>
               <p className="text-sm font-semibold text-[var(--text-primary)]">
-                {t("readyToGo.title", { defaultValue: "Your AI agent is ready to take calls" })}
+                {t("readyToGo.title", { defaultValue: "Your autonomous operator is ready to execute" })}
               </p>
               <p className="text-sm text-[var(--text-secondary)] mt-0.5">
                 {t("readyToGo.body", { defaultValue: "Revenue, calls, and appointments will update in real time as your agent handles calls. Make a test call to see it in action, or forward your business number to go live." })}
@@ -571,7 +571,7 @@ export function UnifiedDashboard() {
                   step: 1,
                   href: data.agent_configured ? "/app/agents" : "/app/agents/new",
                   icon: Bot,
-                  title: t("onboarding.createAgent.title", { defaultValue: "Create your AI agent" }),
+                  title: t("onboarding.createAgent.title", { defaultValue: "Create your AI operator" }),
                   desc: t("onboarding.createAgent.description", { defaultValue: "Choose a template and customize your agent's personality" }),
                   done: !!data.agent_configured,
                 },

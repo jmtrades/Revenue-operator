@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     default: "Recall Touch — AI Revenue Operations Platform",
   },
   description:
-    "AI revenue operations platform that handles inbound calls, outbound campaigns, follow-ups, appointment booking, no-show recovery, and lead qualification. Built for every business, every industry.",
+    "Autonomous revenue operations platform that automates your entire revenue cycle — inbound calls, outbound campaigns, lead qualification, appointment booking, follow-ups, and recovery. Built for every business, every industry.",
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     siteName: "Recall Touch",
     title: "Recall Touch — AI Revenue Operations Platform",
     description:
-      "AI revenue agents that handle inbound calls, outbound campaigns, follow-ups, bookings, no-show recovery, lead qualification, and reactivation. Any business. Any industry. Try free.",
+      "Autonomous revenue execution system that automates inbound calls, outbound campaigns, lead qualification, appointment booking, follow-ups, and revenue recovery. Any business. Any industry. Try free.",
     images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Recall Touch — AI revenue operations for every business" }],
   },
   icons: { icon: "/icon" },
@@ -72,7 +72,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Recall Touch — AI Revenue Operations Platform",
     description:
-      "AI revenue agents that handle inbound calls, outbound campaigns, follow-ups, bookings, no-show recovery, lead qualification, and reactivation. Any business. Any industry. Try free.",
+      "Autonomous revenue execution system that automates inbound calls, outbound campaigns, lead qualification, appointment booking, follow-ups, and revenue recovery. Any business. Any industry. Try free.",
     creator: "@recalltouch",
   },
   alternates: { canonical: "https://www.recall-touch.com" },
@@ -90,7 +90,7 @@ const organizationJsonLd = {
   "@type": "Organization",
   name: "Recall Touch",
   url: BASE_URL,
-  description: "AI revenue operations platform. Automates inbound, outbound, follow-up, booking, and revenue attribution for every business.",
+  description: "Autonomous revenue operations platform. Automates inbound, outbound, lead qualification, appointment booking, follow-ups, and revenue recovery for every business.",
   sameAs: [
     // Add social profile URLs when they exist:
     // "https://twitter.com/recalltouch",
@@ -104,7 +104,7 @@ const softwareApplicationJsonLd = {
   name: "Recall Touch",
   applicationCategory: "BusinessApplication",
   description:
-    "AI revenue operations platform. Runs inbound and outbound communication, automated follow-up sequences, appointment booking, and revenue attribution.",
+    "Autonomous revenue execution system. Runs inbound and outbound communication, lead qualification, appointment booking, follow-up sequences, and revenue recovery.",
   url: BASE_URL,
   offers: {
     "@type": "AggregateOffer",

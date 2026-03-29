@@ -57,7 +57,7 @@ export function buildWorkspaceReadiness(input: Input): WorkspaceReadiness {
 
   const items: WorkspaceProgressItem[] = [
     { key: "business", label: "Set up your business profile", href: "/app/settings/business", completed: hasBusiness },
-    { key: "agent", label: "Configure your first AI agent", href: "/app/agents", completed: hasAgent },
+    { key: "agent", label: "Configure your first AI operator", href: "/app/agents", completed: hasAgent },
     { key: "phone", label: "Get a phone number", href: "/app/settings/phone", completed: hasPhone },
     { key: "test_call", label: "Make a test call", href: "/activate", completed: hasTestCall },
     { key: "contacts", label: "Import your contacts", href: "/app/contacts", completed: hasContacts },

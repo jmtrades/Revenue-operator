@@ -136,7 +136,7 @@ export function ActivateStep({
         </div>
         <h3 className="text-xl font-bold text-[var(--text-primary)]">Your agent is live</h3>
         <p className="text-sm text-[var(--text-secondary)] max-w-md mx-auto">
-          Call your new number now to hear your AI agent in action. It already knows your business, handles objections, and books appointments.
+          Call your new number now to hear your AI operator in action. It already knows your business, handles objections, and books appointments.
         </p>
         {phoneNumber && (
           <div className="flex items-center justify-center gap-3">

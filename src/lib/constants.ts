@@ -61,9 +61,9 @@ export const PRICING_TIERS = [
     priceMonthly: "$147",
     priceAnnual: "$117",
     period: "/mo",
-    description: "One AI agent that answers and follows up.",
+    description: "One AI operator that answers and follows up.",
     features: [
-      "1 AI agent",
+      "1 AI operator",
       "1,000 voice minutes/month",
       "1 phone number",
       "Appointment booking",
@@ -81,9 +81,9 @@ export const PRICING_TIERS = [
     priceMonthly: "$297",
     priceAnnual: "$237",
     period: "/mo",
-    description: "Multi-agent revenue operations.",
+    description: "Multi-operator revenue operations.",
     features: [
-      "5 AI agents",
+      "5 AI operators",
       "3,000 voice minutes/month",
       "5 phone numbers",
       "No-show recovery",
@@ -106,7 +106,7 @@ export const PRICING_TIERS = [
     period: "/mo",
     description: "Full-scale AI call center.",
     features: [
-      "15 AI agents",
+      "15 AI operators",
       "8,000 voice minutes/month",
       "15 phone numbers",
       "Outbound campaigns",
@@ -127,7 +127,7 @@ export const PRICING_TIERS = [
     period: "/mo",
     description: "White-label AI for your clients.",
     features: [
-      "Unlimited AI agents",
+      "Unlimited AI operators",
       "15,000 voice minutes/month",
       "Unlimited phone numbers",
       "White-label branding",
@@ -172,7 +172,7 @@ export const FOOTER_LEGAL = [
 ] as const;
 
 export const PRICING_FAQ = [
-  { q: "How does getting started work?", a: "Sign up, choose your plan, and your AI agent is live in minutes. All plans include full access to every feature." },
+  { q: "How does getting started work?", a: "Sign up, choose your plan, and your AI operator is live in minutes. All plans include full access to every feature." },
   { q: "What if I exceed my included minutes?", a: "Your calls never get cut off. Overage minutes are billed at your plan's per-minute rate. We alert you as you approach your limit." },
   { q: "Can I keep my existing phone number?", a: "Yes. Forward your existing number to your Recall Touch number. Your callers won't notice any difference." },
   { q: "What voices are available?", a: "6 natural-sounding voices included on all plans. Premium voices available as an add-on for $29/month." },
@@ -186,7 +186,7 @@ export const PRICING_FAQ = [
 
 export const COMPARISON_FEATURES = [
   { category: "Core", name: "Voice minutes / month", solo: "1,000", business: "3,000", scale: "8,000", enterprise: "15,000" },
-  { category: "Core", name: "AI agents", solo: "1", business: "5", scale: "15", enterprise: "Unlimited" },
+  { category: "Core", name: "AI operators", solo: "1", business: "5", scale: "15", enterprise: "Unlimited" },
   { category: "Core", name: "Follow-ups", solo: "SMS + email", business: "SMS + email + voice", scale: "SMS + email + voice", enterprise: "Unlimited" },
   { category: "Core", name: "Team seats", solo: "1", business: "5", scale: "Unlimited", enterprise: "Unlimited" },
   { category: "Core", name: "Phone numbers", solo: "1", business: "5", scale: "15", enterprise: "Unlimited" },

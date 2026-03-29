@@ -308,7 +308,7 @@ export default function CallsPage() {
             {t("calls.heading", { defaultValue: "Call log" })}
           </h1>
           <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed">
-            {t("calls.description", { defaultValue: "Every answered call, decision, and follow-up in one place." })}
+            {t("calls.subtitle", { defaultValue: "Call execution log. Every inbound and outbound call, with AI intelligence and next-action recommendations." })}
           </p>
         </div>
         <Link
@@ -473,8 +473,8 @@ export default function CallsPage() {
         <div className="mt-6 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]">
           <EmptyState
             icon={PhoneCall}
-            title={t("calls.emptyTitle") ?? "Make your first test call"}
-            description={t("calls.emptyDescription") ?? "Choose a primary agent and place a quick test call to unlock call intelligence."}
+            title={t("calls.emptyTitle") ?? "Your operator is standing by"}
+            description={t("calls.emptyDescription") ?? "Connect your number and it answers every call in under 3 seconds — 24/7, no breaks, no missed revenue. Every call will appear here with full AI intelligence."}
             primaryAction={{ label: t("calls.testCall") ?? "Test Call", href: "/app/settings/phone" }}
           />
         </div>

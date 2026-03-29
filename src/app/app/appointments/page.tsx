@@ -7,7 +7,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { useTranslations } from "next-intl";
 
-type AppointmentStatus = "Confirmed" | "Pending" | "Cancelled" | "Completed";
+type AppointmentStatus = "Confirmed" | "Pending" | "Cancelled" | "Completed" | "No-Show";
 type AppointmentSource = "Inbound call" | "Outbound" | "Inbox" | "Manual";
 
 interface Appointment {
@@ -38,6 +38,7 @@ function getAppointmentStatusDisplay(status: AppointmentStatus, t: (k: string, o
     "Pending": t("appointments.statusLabels.pending", { defaultValue: "Pending" }),
     "Cancelled": t("appointments.statusLabels.cancelled", { defaultValue: "Cancelled" }),
     "Completed": t("appointments.statusLabels.completed", { defaultValue: "Completed" }),
+    "No-Show": t("appointments.statusLabels.noShow", { defaultValue: "No-Show" }),
   };
   return map[status] ?? status;
 }
@@ -62,6 +63,8 @@ function statusColor(status: AppointmentStatus): string {
       return "bg-[var(--bg-card)] text-[var(--text-secondary)] border-[var(--border-medium)]";
     case "Completed":
       return "bg-[var(--bg-card)] text-[var(--text-tertiary)] border-[var(--border-medium)]";
+    case "No-Show":
+      return "bg-[var(--accent-danger,#ef4444)]/10 text-[var(--accent-danger,#ef4444)] border-[var(--accent-danger,#ef4444)]/20";
     default:
       return "bg-[var(--bg-card)] text-[var(--text-secondary)] border-[var(--border-medium)]";
   }
@@ -70,7 +73,8 @@ function statusColor(status: AppointmentStatus): string {
 function mapApiStatus(s: string): AppointmentStatus {
   if (s === "confirmed") return "Confirmed";
   if (s === "cancelled") return "Cancelled";
-  if (s === "completed" || s === "no_show") return "Completed";
+  if (s === "completed") return "Completed";
+  if (s === "no_show") return "No-Show";
   return "Pending";
 }
 
@@ -281,7 +285,7 @@ export default function AppointmentsPage() {
           <div>
             <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("appointments.heading", { defaultValue: "Appointments" })}</h1>
             <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed">
-              {t("appointments.description", { defaultValue: "Your operator books directly to your calendar — confirmations, reminders, and no-show recovery included." })}
+              {t("appointments.subtitle", { defaultValue: "AI-managed meetings. Appointments are confirmed, reminded, and followed up automatically." })}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -328,10 +332,10 @@ export default function AppointmentsPage() {
           <div className="space-y-6">
             <EmptyState
               icon={Calendar}
-              title={t("appointments.empty.title", { defaultValue: "No appointments yet" })}
-              description={t("appointments.empty.body", { defaultValue: "As your AI books on your calendar, every appointment will show up here." })}
+              title={t("appointments.empty.title", { defaultValue: "No appointments scheduled yet" })}
+              description={t("appointments.empty.body", { defaultValue: "Once your AI operator books meetings, they'll appear here with automatic confirmations and reminders." })}
               primaryAction={{
-                label: t("appointments.empty.action", { defaultValue: "Open agent settings" }),
+                label: t("appointments.empty.action", { defaultValue: "Open operator settings" }),
                 href: "/app/settings/agent",
               }}
               secondaryAction={{
@@ -341,7 +345,7 @@ export default function AppointmentsPage() {
             />
             <div className="mt-6 p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]">
               <p className="text-sm font-medium text-[var(--text-primary)] mb-2">{t("appointments.getStartedTitle", { defaultValue: "Get started with appointments" })}</p>
-              <p className="text-xs text-[var(--text-secondary)] mb-3">{t("appointments.getStartedDesc", { defaultValue: "Your AI agent will book appointments automatically during calls. Here's how to set up:" })}</p>
+              <p className="text-xs text-[var(--text-secondary)] mb-3">{t("appointments.getStartedDesc", { defaultValue: "Your AI operator will book appointments automatically during calls. Here's how to set up:" })}</p>
               <div className="space-y-2">
                 <Link href="/app/settings/integrations" className="flex items-center gap-2 text-xs text-[var(--accent-primary)] hover:underline">
                   <Calendar className="w-3.5 h-3.5" />
@@ -353,7 +357,7 @@ export default function AppointmentsPage() {
                 </Link>
                 <Link href="/app/agents" className="flex items-center gap-2 text-xs text-[var(--accent-primary)] hover:underline">
                   <Calendar className="w-3.5 h-3.5" />
-                  {t("appointments.trainAgent", { defaultValue: "Train your agent to handle booking requests" })}
+                  {t("appointments.trainAgent", { defaultValue: "Train your operator to handle booking requests" })}
                 </Link>
               </div>
             </div>

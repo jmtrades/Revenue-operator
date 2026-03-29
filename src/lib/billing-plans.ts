@@ -91,7 +91,7 @@ export const BILLING_PLANS: Record<PlanSlug, BillingPlan> = {
   solo: {
     slug: "solo",
     label: "Starter",
-    description: "One AI agent that answers and follows up",
+    description: "One AI operator that executes",
     monthlyPrice: 14700,
     annualPrice: 140400,
     includedMinutes: 1000,

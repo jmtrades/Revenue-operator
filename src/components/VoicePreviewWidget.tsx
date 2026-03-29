@@ -284,7 +284,7 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
           </div>
           <div>
             <p className="text-sm font-semibold text-white">Hear It Live</p>
-            <p className="text-xs text-[var(--text-tertiary)]">Click play to hear our AI agent</p>
+            <p className="text-xs text-[var(--text-tertiary)]">Click play to hear our AI operator</p>
           </div>
         </div>
         <VoiceWaveform active={playing} />

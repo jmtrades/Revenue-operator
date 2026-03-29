@@ -82,7 +82,7 @@ export default async function HomePage() {
                 name: "What exactly does Recall Touch do?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Recall Touch is the AI revenue operations platform that runs your entire phone-based business. Inbound calls, outbound campaigns, follow-ups, appointment booking, no-show recovery, lead qualification, reactivation, and more. It works 24/7, gets smarter with every conversation, and costs less than a single hire.",
+                  text: "Recall Touch is the autonomous revenue execution system that runs your entire revenue cycle. Inbound calls, outbound campaigns, lead qualification, appointment booking, follow-up sequences, and revenue recovery. It works 24/7, improves with every conversation, and costs less than a single hire.",
                 },
               },
               {

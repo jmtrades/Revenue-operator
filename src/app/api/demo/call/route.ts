@@ -466,7 +466,7 @@ export async function POST(req: NextRequest) {
 
             return NextResponse.json({
               ok: true,
-              message: "Calling you now! Pick up to hear your AI agent in action.",
+              message: "Calling you now! Pick up to hear your AI operator in action.",
               callId: twilioData.sid,
               provider: "twilio",
               sessionId: callSessionId,
@@ -515,7 +515,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       ok: true,
-      message: "Calling you now! Pick up to hear your AI agent in action.",
+      message: "Calling you now! Pick up to hear your AI operator in action.",
       callId: result.callId,
     });
   } catch (err) {

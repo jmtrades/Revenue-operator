@@ -25,10 +25,10 @@ export async function sendAgentLiveEmail(workspaceId: string): Promise<boolean> 
   if (!email) return false;
 
   const businessName = (ws as { name?: string }).name ?? "Your business";
-  const subject = "Your AI agent is live";
+  const subject = "Your AI operator is live";
   const html = `
     <p>Hi,</p>
-    <p>Your Recall Touch AI agent for <strong>${escapeHtml(businessName)}</strong> is set up and ready.</p>
+    <p>Your Recall Touch AI operator for <strong>${escapeHtml(businessName)}</strong> is set up and ready.</p>
     <p>Forward your phone number in Settings to start receiving calls, or try the demo anytime.</p>
     <p><a href="${APP_URL}/app/dashboard">Open dashboard →</a></p>
     <p>— Recall Touch</p>

@@ -42,7 +42,7 @@ export function TrialGraceEndedBanner() {
             {t("trialGraceEnded", { defaultValue: "Your trial has ended" })}
           </p>
           <p className="text-sm mt-0.5" style={{ color: "var(--text-secondary)" }}>
-            {t("trialExpiredBody", { defaultValue: "Upgrade now to keep your AI agent running and avoid losing leads." })}{" "}
+            {t("trialExpiredBody", { defaultValue: "Upgrade now to keep your AI operator running and avoid losing leads." })}{" "}
             <Link href="/app/settings/billing" className="font-medium underline" style={{ color: "var(--accent-primary)" }}>
               {t("trialUpgradeToContinue", { defaultValue: "Choose a plan" })}
             </Link>

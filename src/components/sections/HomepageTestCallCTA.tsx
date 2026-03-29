@@ -48,7 +48,7 @@ export function HomepageTestCallCTA() {
       }
 
       setError(null);
-      setSuccess(json.message ?? "Calling you now! Pick up to hear your AI agent.");
+      setSuccess(json.message ?? "Calling you now! Pick up to hear your AI operator.");
     } finally {
       setBusy(false);
     }

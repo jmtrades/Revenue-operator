@@ -70,8 +70,8 @@ export function ProtectionPausedBanner() {
             </h2>
             <p className="text-xs" style={{ color: "var(--text-secondary)" }}>
               {daysLeft <= 2
-                ? "Your AI agent will stop answering calls when the trial ends. Upgrade now to keep recovering revenue."
-                : "Lock in your plan to keep your AI agent answering calls 24/7 — no interruption."}
+                ? "Your AI operator will stop answering calls when the trial ends. Upgrade now to keep recovering revenue."
+                : "Lock in your plan to keep your AI operator running 24/7 — no interruption."}
             </p>
           </div>
           <div className="flex items-center gap-3">

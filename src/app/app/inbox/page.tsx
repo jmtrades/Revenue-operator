@@ -187,7 +187,7 @@ function ConversationList({
               href="/app/agents"
               className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--accent-primary)] px-4 py-2 text-sm font-semibold text-[var(--text-on-accent)] hover:opacity-90"
             >
-              {t("inbox.empty.cta", { defaultValue: "Set up an agent to start receiving messages" })} →
+              {t("inbox.empty.cta", { defaultValue: "Set up an operator to start receiving messages" })} →
             </Link>
           </div>
         ) : filtered.map((thread, idx) => {
@@ -704,7 +704,7 @@ export default function InboxPage() {
         <div className="flex items-center justify-between mb-2">
           <div>
             <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("inbox.title")}</h1>
-            <p className="text-sm text-[var(--text-tertiary)]">Agent-managed conversations</p>
+            <p className="text-sm text-[var(--text-tertiary)]">{t("inbox.subtitle", { defaultValue: "Revenue conversations. Your AI operator handles qualification, follow-up, and objection resolution across all channels." })}</p>
           </div>
           {lastUpdated && (
             <motion.div

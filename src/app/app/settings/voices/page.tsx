@@ -77,7 +77,7 @@ const BUILT_IN_VOICES: Voice[] = RECALL_VOICES.map((v, index) => ({
 }));
 
 /* Default first voice ID for initial selection */
-const DEFAULT_VOICE_ID = BUILT_IN_VOICES[0]?.id ?? "us-female-warm-receptionist";
+const DEFAULT_VOICE_ID = BUILT_IN_VOICES[0]?.id ?? "us-female-warm-operator";
 const DEFAULT_VOICE_B_ID = BUILT_IN_VOICES[1]?.id ?? "us-female-confident-closer";
 
 export default function VoicesSettingsPage() {

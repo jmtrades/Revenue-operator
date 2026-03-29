@@ -66,10 +66,10 @@ export async function GET(req: NextRequest) {
 
   checks.push({
     key: "agent_configured",
-    label: "AI agent",
+    label: "AI operator",
     status: agent ? "pass" : "fail",
-    detail: agent ? `${agent.name || "Unnamed"} — active` : "No agent configured",
-    action: agent ? undefined : "Create your AI agent",
+    detail: agent ? `${agent.name || "Unnamed"} — active` : "No operator configured",
+    action: agent ? undefined : "Create your AI operator",
     href: agent ? undefined : "/app/agents",
   });
 

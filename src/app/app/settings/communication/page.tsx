@@ -103,7 +103,7 @@ export default function CommunicationSettingsPage() {
             Communication & Agent Mode
           </h1>
           <p className="mt-1.5 text-[13px] text-[var(--text-secondary)] leading-relaxed">
-            Configure how your AI agent communicates with contacts
+            Configure how your AI operator communicates with contacts
           </p>
         </div>
         <button
@@ -128,7 +128,7 @@ export default function CommunicationSettingsPage() {
             <h2 className="text-sm font-semibold text-[var(--text-primary)]">Communication Channels</h2>
           </div>
           <p className="text-xs text-[var(--text-secondary)] mb-4">
-            Choose which channels your AI agent can use to reach contacts.
+            Choose which channels your AI operator can use to reach contacts.
           </p>
           <div className="grid gap-3">
             {(
@@ -187,7 +187,7 @@ export default function CommunicationSettingsPage() {
             <h2 className="text-sm font-semibold text-[var(--text-primary)]">Agent Operating Mode</h2>
           </div>
           <p className="text-xs text-[var(--text-secondary)] mb-4">
-            Control how your AI agent initiates and receives interactions.
+            Control how your AI operator initiates and receives interactions.
           </p>
           <div className="grid gap-3">
             {(
