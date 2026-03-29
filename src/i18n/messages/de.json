@@ -11031,6 +11031,8 @@
     "actionNeeded": "Action needed"
   },
   "voices": {
+    "pageTitle": "Stimmbibliothek",
+    "pageSubtitle": "Konfigurieren und verwalten Sie KI-Stimmen für Ihren Arbeitsbereich.",
     "previewText": "I'm an AI assistant. How can I help you today?",
     "cloneErrorFormat": "Invalid audio format. Please use MP3, WAV, or M4A",
     "cloneErrorSize": "Audio file too large. Maximum size is 25MB",

@@ -11031,6 +11031,8 @@
     "actionNeeded": "Action needed"
   },
   "voices": {
+    "pageTitle": "Biblioteca de vozes",
+    "pageSubtitle": "Configure e gerencie vozes de IA para seu espaço de trabalho.",
     "previewText": "I'm an AI assistant. How can I help you today?",
     "cloneErrorFormat": "Invalid audio format. Please use MP3, WAV, or M4A",
     "cloneErrorSize": "Audio file too large. Maximum size is 25MB",

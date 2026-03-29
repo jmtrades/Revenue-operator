@@ -26,7 +26,7 @@ export default function AppSettingsCompliancePage() {
   useUnsavedChanges(isDirty);
 
   useEffect(() => {
-    document.title = `${tSettings("compliance.pageTitle", { defaultValue: "Compliance" })} — Recall Touch`;
+    document.title = `${tSettings("compliance.title", { defaultValue: "Compliance" })} — Recall Touch`;
   }, [tSettings]);
 
   useEffect(() => {
