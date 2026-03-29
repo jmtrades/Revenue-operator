@@ -524,6 +524,7 @@
   },
   "billing": {
     "pageTitle": "Facturación — Recall Touch",
+    "subtitle": "Administra tu plan, uso y método de pago.",
     "failureBanner": {
       "primary": "La cobertura de manejo no pudo continuar.",
       "message": "Actualiza tu método de pago en Preferencias para reanudar la cobertura.",
@@ -8489,7 +8490,8 @@
       "getAiNumber": "Usa «Obtener un número de IA» para tener una línea dedicada.",
       "phoneVerified": "Teléfono verificado ✓",
       "waitlistJoined": "Te avisaremos cuando haya números disponibles.",
-      "invalidAreaCode": "Ingrese un código de área válido de 3 dígitos"
+      "invalidAreaCode": "Ingrese un código de área válido de 3 dígitos",
+      "copyFailed": "Error al copiar el número de teléfono"
     },
     "marketplace": {
       "title": "Marketplace de números de teléfono",

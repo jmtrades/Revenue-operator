@@ -524,6 +524,7 @@
   },
   "billing": {
     "pageTitle": "Abrechnung — Recall Touch",
+    "subtitle": "Verwalten Sie Ihren Plan, Ihre Nutzung und Ihre Zahlungsmethode.",
     "failureBanner": {
       "primary": "Der Verwaltungsschutz konnte nicht fortgesetzt werden.",
       "message": "Aktualisiere deine Zahlungsmethode in den Einstellungen, um den Schutz wiederherzustellen.",
@@ -8492,7 +8493,8 @@
       "getAiNumber": "Nutzen Sie „Neue KI-Nummer“, um eine eigene Leitung zu erhalten.",
       "phoneVerified": "Telefon verifiziert ✓",
       "waitlistJoined": "Wir benachrichtigen Sie, wenn Nummern verfügbar sind.",
-      "invalidAreaCode": "Bitte geben Sie eine gültige 3-stellige Vorwahl ein"
+      "invalidAreaCode": "Bitte geben Sie eine gültige 3-stellige Vorwahl ein",
+      "copyFailed": "Telefonnummer konnte nicht kopiert werden"
     },
     "marketplace": {
       "title": "Telefonnummern-Marktplatz",

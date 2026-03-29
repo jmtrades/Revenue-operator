@@ -604,6 +604,7 @@
   },
   "billing": {
     "pageTitle": "Billing — Recall Touch",
+    "subtitle": "Manage your plan, usage, and payment method.",
     "failureBanner": {
       "primary": "Handling coverage could not continue.",
       "message": "Update your payment method in Preferences to resume coverage.",
@@ -8595,7 +8596,8 @@
       "getAiNumber": "Use 'Get a new AI number' to get a dedicated line.",
       "phoneVerified": "Phone verified ✓",
       "waitlistJoined": "We'll notify you when numbers are available.",
-      "invalidAreaCode": "Please enter a valid 3-digit area code"
+      "invalidAreaCode": "Please enter a valid 3-digit area code",
+      "copyFailed": "Failed to copy phone number"
     },
     "getNewAiNumber": "Get a new AI number",
     "recommended": "Recommended",

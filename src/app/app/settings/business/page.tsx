@@ -62,6 +62,10 @@ export default function AppSettingsBusinessPage() {
   useUnsavedChanges(isDirty);
 
   useEffect(() => {
+    document.title = `${tSettings("business.pageTitle", { defaultValue: "Business Settings" })} — Recall Touch`;
+  }, [tSettings]);
+
+  useEffect(() => {
     fetchWorkspaceMeCached()
       .then((data: { name?: string; address?: string; website?: string; industry?: string } | null) => {
         const n = data?.name ?? "";

@@ -113,6 +113,11 @@ export default function VoicesSettingsPage() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [testCustomText, setTestCustomText] = useState<string>("Hello, I'm testing this voice. How does it sound?");
 
+  // Set document title
+  useEffect(() => {
+    document.title = `${t("pageTitle")} — Recall Touch`;
+  }, [t]);
+
   // Fetch voices from voice server on mount
   useEffect(() => {
     const fetchVoices = async () => {
