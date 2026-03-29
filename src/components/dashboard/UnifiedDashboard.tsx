@@ -50,6 +50,7 @@ const WorkspaceSettingsCard = lazy(() => import("@/components/dashboard/Workspac
 const LiveCallFeed = lazy(() => import("@/components/dashboard/LiveCallFeed").then(m => ({ default: m.LiveCallFeed })));
 const RecommendationsCard = lazy(() => import("@/components/dashboard/RecommendationsCard").then(m => ({ default: m.RecommendationsCard })));
 const SetupHealthCard = lazy(() => import("@/components/dashboard/SetupHealthCard").then(m => ({ default: m.SetupHealthCard })));
+const SystemReadiness = lazy(() => import("@/components/dashboard/SystemReadiness").then(m => ({ default: m.SystemReadiness })));
 const RecoveryScoreCard = lazy(() => import("@/components/dashboard/RecoveryScoreCard").then(m => ({ default: m.RecoveryScoreCard })));
 const AutonomousBriefing = lazy(() => import("@/components/dashboard/AutonomousBriefing").then(m => ({ default: m.AutonomousBriefing })));
 
@@ -691,6 +692,11 @@ export function UnifiedDashboard() {
             <RecoveryScoreCard workspaceId={workspaceId} />
           </motion.div>
         </motion.div>
+      </Suspense>
+
+      {/* ── System Readiness ──────────────────────────────────────────── */}
+      <Suspense fallback={null}>
+        <SystemReadiness workspaceId={workspaceId} />
       </Suspense>
 
       {/* ── Setup Health Card ──────────────────────────────────────────── */}
