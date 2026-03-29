@@ -338,7 +338,7 @@ export default function IndustryTemplatesPage() {
                           key={idx}
                           className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[var(--bg-inset)] text-[var(--text-primary)]"
                         >
-                          {feature.replace(/_/g, " ")}
+                          {(feature ?? "").replace(/_/g, " ")}
                         </span>
                       ))}
                     </div>

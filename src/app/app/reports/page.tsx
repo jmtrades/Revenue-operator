@@ -151,6 +151,7 @@ function getRecoveryVerdict(score: number, atRiskCents?: number): string {
 }
 
 export default function RevenueDigestPage() {
+  const t = useTranslations();
   const ws = useWorkspaceSafe();
   const [digest, setDigest] = useState<RevenueDigestData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -239,7 +240,6 @@ export default function RevenueDigestPage() {
   const atRiskFmt = `$${(digest.revenue.at_risk_cents / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
   const projectionFmt = `$${(digest.revenue.projected_month_end_cents / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
 
-  const t = useTranslations();
   return (
     <div className="min-h-screen bg-[var(--bg-base)]">
       <div className="max-w-6xl mx-auto p-4 md:p-8">

@@ -567,7 +567,7 @@ export default function VoicesSettingsPage() {
                   step={slider.step}
                   value={slider.value}
                   onChange={(e) => {
-                    const key = slider.label.toLowerCase().replace(/\s+/g, "") as keyof WorkspaceVoiceConfig;
+                    const key = (slider.label ?? "").toLowerCase().replace(/\s+/g, "") as keyof WorkspaceVoiceConfig;
                     setVoiceConfig((prev) => ({
                       ...prev,
                       [key]: parseFloat(e.target.value),
