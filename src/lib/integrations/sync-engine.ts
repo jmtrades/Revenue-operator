@@ -277,12 +277,11 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
       // 2. Get field mapping config (custom or defaults) and reverse-map to RT fields
       const { data: configRow } = await db
         .from("integration_configs")
-        .select("config")
+        .select("field_mapping")
         .eq("workspace_id", row.workspace_id)
         .eq("provider", provider)
-        .eq("config_type", "field_mapping")
         .maybeSingle();
-      const mappingConfig = (configRow as { config?: FieldMappingConfig } | null)?.config;
+      const mappingConfig = (configRow as { field_mapping?: FieldMappingConfig } | null)?.field_mapping;
       let effectiveConfig = mappingConfig as FieldMappingConfig;
       if (!effectiveConfig || !Array.isArray(effectiveConfig.mappings) || effectiveConfig.mappings.length === 0) {
         effectiveConfig = { mappings: getDefaultMappings(provider) };
