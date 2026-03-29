@@ -10,6 +10,7 @@ import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { runWithWriteContextAsync } from "@/lib/safety/unsafe-write-guard";
 
 export async function POST(req: NextRequest) {
   const csrfBlock = assertSameOrigin(req);
@@ -72,19 +73,21 @@ export async function POST(req: NextRequest) {
     }
 
     // Insert into leads table with "NEW" state and website_demo source
-    const { error } = await db.from("leads").insert({
-      workspace_id: DEMO_WORKSPACE_ID,
-      email,
-      channel: industry,
-      status: "NEW",
-      metadata: {
-        source: source || "website_demo",
-        industry,
-        demo_origin: "voice_demo",
-        captured_at: new Date().toISOString(),
-      },
-      detected_behaviour: "voice_demo_signup",
-    });
+    const { error } = await runWithWriteContextAsync("api", () =>
+      db.from("leads").insert({
+        workspace_id: DEMO_WORKSPACE_ID,
+        email,
+        channel: industry,
+        status: "NEW",
+        metadata: {
+          source: source || "website_demo",
+          industry,
+          demo_origin: "voice_demo",
+          captured_at: new Date().toISOString(),
+        },
+        detected_behaviour: "voice_demo_signup",
+      })
+    );
 
     if (error) {
       log("error", "demo_signup.database_error", { error: String(error) });

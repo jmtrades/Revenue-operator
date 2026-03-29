@@ -405,7 +405,7 @@ export function AgentTestPanel({
             type="button"
             onClick={() => sendMessage()}
             disabled={loading || isListening || !input.trim()}
-            className="px-4 py-2.5 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl text-sm disabled:opacity-30 hover:opacity-90 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
+            className="shrink-0 whitespace-nowrap px-4 py-2.5 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl text-sm disabled:opacity-30 hover:opacity-90 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
           >
             {tAgents("send")}
           </button>

@@ -107,7 +107,7 @@ export function TestStepContent({
                   key={label}
                   className="flex items-center justify-between rounded-lg bg-[var(--bg-input)]/50 px-3 py-2"
                 >
-                  <span className="text-xs text-[var(--text-secondary)]">{label}</span>
+                  <span className="text-xs text-[var(--text-secondary)] whitespace-nowrap shrink-0 mr-1.5">{label}</span>
                   <span className="flex gap-0.5" aria-label={t("testStep.starsAria", { count: stars })}>
                     {[1, 2, 3, 4, 5].map((i) => (
                       <span

@@ -13,6 +13,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { normalizePhoneE164 } from "@/lib/phone/normalize";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { runWithWriteContextAsync } from "@/lib/safety/unsafe-write-guard";
 
 /**
  * CSV parser that properly handles quoted fields with commas
@@ -204,7 +205,9 @@ export async function POST(req: NextRequest) {
     metadata: { source: "csv_import", notes: r.notes, score: 40 },
   }));
 
-  const { data, error } = await db.from("leads").insert(toInsert).select("id");
+  const { data, error } = await runWithWriteContextAsync("api", () =>
+    db.from("leads").insert(toInsert).select("id")
+  );
   if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   const imported = Array.isArray(data) ? data.length : 0;
 

@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { runWithWriteContextAsync } from "@/lib/safety/unsafe-write-guard";
 
 /**
  * POST /api/agent/tool-webhook
@@ -502,15 +503,17 @@ async function upsertLead(
     }
 
     // Create new lead
-    const { data: created } = await db.from("leads").insert({
-      workspace_id: workspaceId,
-      name: data.name || "New Lead",
-      phone: data.phone,
-      email: data.email,
-      status: "NEW",
-      notes: data.notes,
-      source: "ai_agent",
-    }).select("id").maybeSingle();
+    const { data: created } = await runWithWriteContextAsync("api", () =>
+      db.from("leads").insert({
+        workspace_id: workspaceId,
+        name: data.name || "New Lead",
+        phone: data.phone,
+        email: data.email,
+        status: "NEW",
+        notes: data.notes,
+        source: "ai_agent",
+      }).select("id").maybeSingle()
+    );
 
     return (created as { id: string } | null)?.id ?? null;
   } catch {
