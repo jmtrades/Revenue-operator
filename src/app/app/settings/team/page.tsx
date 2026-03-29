@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 interface TeamMember {
   name: string;
@@ -131,6 +132,11 @@ export default function AppSettingsTeamPage() {
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
+      <Breadcrumbs items={[
+        { label: "Home", href: "/app" },
+        { label: "Settings", href: "/app/settings" },
+        { label: "Team" }
+      ]} />
       <h1 className="text-lg font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-2">{t("team.pageTitle")}</h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">{t("team.subtitle")}</p>
 

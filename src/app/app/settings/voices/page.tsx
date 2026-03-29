@@ -20,6 +20,7 @@ import { useWorkspace } from "@/components/WorkspaceContext";
 import { PageHeader, EmptyState } from "@/components/ui";
 import { RECALL_VOICES } from "@/lib/constants/recall-voices";
 import { HUMAN_VOICE_DEFAULTS } from "@/lib/voice/human-voice-defaults";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 const VOICE_SERVER_URL =
   process.env.NEXT_PUBLIC_VOICE_SERVER_URL || "";
@@ -433,6 +434,11 @@ export default function VoicesSettingsPage() {
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-8">
+      <Breadcrumbs items={[
+        { label: "Home", href: "/app" },
+        { label: "Settings", href: "/app/settings" },
+        { label: "Voices" }
+      ]} />
       <PageHeader
         title={t("pageTitle")}
         subtitle={t("pageSubtitle")}

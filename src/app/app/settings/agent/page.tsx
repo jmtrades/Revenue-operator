@@ -6,6 +6,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { RECALL_VOICES, DEFAULT_RECALL_VOICE_ID } from "@/lib/constants/recall-voices";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { SUPPORTED_LANGUAGES } from "@/lib/constants/languages";
 import { getWorkspaceMeSnapshotSync, invalidateWorkspaceMeCache } from "@/lib/client/workspace-me";
 import { previewVoiceViaApi } from "@/lib/voice-preview";
@@ -398,7 +399,12 @@ export default function AppSettingsAgentPage() {
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
-      <h1 className="text-lg font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-2">{tSettings("agent.heading")}</h1>
+      <Breadcrumbs items={[
+        { label: "Home", href: "/app" },
+        { label: "Settings", href: "/app/settings" },
+        { label: "Operator settings" }
+      ]} />
+      <h1 className="text-lg font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-2 mt-4">{tSettings("agent.heading")}</h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">{tSettings("agent.description")}</p>
 
       <div className="space-y-4 mb-6">

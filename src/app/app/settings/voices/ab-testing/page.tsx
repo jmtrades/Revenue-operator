@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { RECALL_VOICES } from "@/lib/constants/recall-voices";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 interface AbTest {
   id: string;
@@ -128,7 +129,13 @@ export default function AbTestingPage() {
 
   return (
     <div className="max-w-4xl mx-auto py-8 px-4">
-      <div className="flex items-center justify-between mb-6">
+      <Breadcrumbs items={[
+        { label: "Home", href: "/app" },
+        { label: "Settings", href: "/app/settings" },
+        { label: "Voices", href: "/app/settings/voices" },
+        { label: "A/B testing" }
+      ]} />
+      <div className="flex items-center justify-between mb-6 mt-6">
         <div>
           <h1 className="text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("title", { defaultValue: "Voice A/B Testing" })}</h1>
           <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed">
