@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
@@ -9,6 +9,7 @@ import { Phone, MessageCircle, Cloud, Building2, Database, TrendingUp, Layers, U
 import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
 import { IntegrationsHealthWidget } from "@/components/settings/IntegrationsHealthWidget";
 import type { CrmProviderId, CrmStatusResponse } from "@/app/api/integrations/crm/status/route";
+import type { SyncProgressResponse } from "@/app/api/integrations/crm/[provider]/sync-status/route";
 
 function getCrmIntegrations(t: ReturnType<typeof useTranslations>): Array<{
   id: CrmProviderId;
@@ -69,6 +70,8 @@ export default function AppSettingsIntegrationsPage() {
   const [importingProvider, setImportingProvider] = useState<CrmProviderId | null>(null);
   const [disconnectingProvider, setDisconnectingProvider] = useState<CrmProviderId | null>(null);
   const [confirmDisconnect, setConfirmDisconnect] = useState<CrmProviderId | null>(null);
+  const [syncProgress, setSyncProgress] = useState<Partial<Record<CrmProviderId, SyncProgressResponse | null>>>({});
+  const syncPollingRef = useRef<Partial<Record<CrmProviderId, NodeJS.Timeout | null>>>({});
   const searchParams = useSearchParams();
   const calendarParam = searchParams.get("calendar");
   const crmParam = searchParams.get("crm");
@@ -99,6 +102,15 @@ export default function AppSettingsIntegrationsPage() {
   useEffect(() => {
     document.title = t("pageTitle");
   }, [t]);
+
+  // Cleanup polling intervals on unmount
+  useEffect(() => {
+    return () => {
+      Object.values(syncPollingRef.current).forEach((interval) => {
+        if (interval) clearInterval(interval);
+      });
+    };
+  }, []);
 
   useEffect(() => {
     if (crmParam === "oauth_pending") {
@@ -284,8 +296,61 @@ export default function AppSettingsIntegrationsPage() {
     }
   };
 
+  const startSyncPolling = (provider: CrmProviderId) => {
+    // Clear any existing polling for this provider
+    if (syncPollingRef.current[provider]) {
+      clearInterval(syncPollingRef.current[provider]!);
+    }
+
+    let pollCount = 0;
+    const maxPolls = 40; // 40 polls * 3 seconds = 2 minutes max timeout
+
+    const poll = async () => {
+      try {
+        const res = await fetch(`/api/integrations/crm/${provider}/sync-status`, {
+          credentials: "include",
+        });
+        const progress = (await res.json().catch(() => null)) as SyncProgressResponse | null;
+        if (progress) {
+          setSyncProgress((prev) => ({ ...prev, [provider]: progress }));
+
+          // If sync is complete, stop polling and refresh main status
+          if (!progress.is_syncing) {
+            if (syncPollingRef.current[provider]) {
+              clearInterval(syncPollingRef.current[provider]!);
+              syncPollingRef.current[provider] = null;
+            }
+            // Refresh main CRM status to show final results
+            fetch("/api/integrations/crm/status", { credentials: "include" })
+              .then((r) => (r.ok ? r.json() : null))
+              .then((data: CrmStatusResponse | null) => data && setCrmStatus(data))
+              .catch(() => {});
+            setSyncingProvider(null);
+            return;
+          }
+
+          // Stop after 2 minutes max (timeout safety)
+          pollCount += 1;
+          if (pollCount >= maxPolls) {
+            if (syncPollingRef.current[provider]) {
+              clearInterval(syncPollingRef.current[provider]!);
+              syncPollingRef.current[provider] = null;
+            }
+            setSyncingProvider(null);
+          }
+        }
+      } catch {
+        // Silently handle polling errors, continue polling
+      }
+    };
+
+    // Start polling every 3 seconds
+    syncPollingRef.current[provider] = setInterval(poll, 3000) as any as NodeJS.Timeout;
+  };
+
   const handleSyncNow = async (provider: CrmProviderId) => {
     setSyncingProvider(provider);
+    setSyncProgress((prev) => ({ ...prev, [provider]: null }));
     try {
       const res = await fetch(`/api/integrations/crm/${provider}/batch-sync`, {
         method: "POST",
@@ -294,6 +359,7 @@ export default function AppSettingsIntegrationsPage() {
       const data = (await res.json().catch(() => null)) as { enqueued?: number; error?: string } | null;
       if (!res.ok) {
         setToast(data?.error ?? t("toast.syncFailed"));
+        setSyncingProvider(null);
         return;
       }
       const enqueued = data?.enqueued ?? 0;
@@ -302,17 +368,12 @@ export default function AppSettingsIntegrationsPage() {
           ? t("toast.syncStarted", { count: enqueued })
           : t("toast.syncStartedNoCount")
       );
-      // Refresh CRM status after a short delay
-      setTimeout(() => {
-        fetch("/api/integrations/crm/status", { credentials: "include" })
-          .then((r) => (r.ok ? r.json() : null))
-          .then((data: CrmStatusResponse | null) => data && setCrmStatus(data))
-          .catch(() => {});
-      }, 1000);
+      // Start polling for sync progress
+      startSyncPolling(provider);
     } catch {
       setToast(t("toast.syncFailed"));
-    } finally {
       setSyncingProvider(null);
+    } finally {
       setTimeout(() => setToast(null), 4000);
     }
   };
@@ -476,10 +537,26 @@ export default function AppSettingsIntegrationsPage() {
                         <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-[var(--accent-warning,#f59e0b)]/40 text-[var(--accent-warning,#f59e0b)] shrink-0">
                           {t("comingSoon")}
                         </span>
+                      ) : status?.tokenStatus === 'expired' ? (
+                        <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-[var(--accent-danger,#ef4444)]/30 text-[var(--accent-danger,#ef4444)] shrink-0 flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" />
+                          {t("status.reauthRequired", { defaultValue: "Re-auth required" })}
+                        </span>
+                      ) : status?.tokenStatus === 'expiring_soon' ? (
+                        <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-[var(--accent-warning,#f59e0b)]/40 text-[var(--accent-warning,#f59e0b)] shrink-0">
+                          {t("status.expiringToken", { defaultValue: "Token expiring" })}
+                        </span>
+                      ) : status?.tokenStatus === 'error' ? (
+                        <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-[var(--accent-danger,#ef4444)]/30 text-[var(--accent-danger,#ef4444)] shrink-0 flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" />
+                          {t("status.tokenError", { defaultValue: "Token error" })}
+                        </span>
                       ) : syncingProvider === crm.id ? (
                         <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-[var(--accent-primary)]/30 text-[var(--accent-primary)] shrink-0 flex items-center gap-1">
                           <Loader className="w-3 h-3 animate-spin" />
-                          {t("status.syncing", { defaultValue: "Syncing..." })}
+                          {syncProgress[crm.id]
+                            ? `Syncing... ${syncProgress[crm.id]!.completed}/${syncProgress[crm.id]!.total}`
+                            : t("status.syncing", { defaultValue: "Syncing..." })}
                         </span>
                       ) : connected ? (
                         <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-[var(--accent-primary)]/30 text-[var(--accent-primary)] shrink-0">
@@ -525,6 +602,29 @@ export default function AppSettingsIntegrationsPage() {
                       >
                         {t("comingSoon")}
                       </button>
+                    ) : (status?.tokenStatus === 'expired' || status?.tokenStatus === 'error') && status?.connected === false ? (
+                      <>
+                        <a
+                          href={`/api/integrations/crm/${crm.id}/connect`}
+                          className="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-semibold bg-[var(--accent-danger,#ef4444)] text-white hover:opacity-90 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
+                        >
+                          <AlertCircle className="w-3 h-3" />
+                          {t("button.reauthenticate", { defaultValue: "Re-authenticate" })}
+                        </a>
+                        <button
+                          type="button"
+                          onClick={() => setConfirmDisconnect(crm.id)}
+                          disabled={disconnectingProvider === crm.id}
+                          className="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-medium border border-[var(--accent-danger,#ef4444)]/30 text-[var(--accent-danger,#ef4444)] hover:bg-[var(--accent-danger,#ef4444)]/10 transition-[background-color,border-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed"
+                        >
+                          {disconnectingProvider === crm.id ? (
+                            <Loader className="w-3 h-3 animate-spin" />
+                          ) : (
+                            <Unplug className="w-3 h-3" />
+                          )}
+                          {t("button.disconnect")}
+                        </button>
+                      </>
                     ) : connected ? (
                       <>
                         <button

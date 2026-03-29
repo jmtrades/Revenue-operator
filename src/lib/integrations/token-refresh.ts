@@ -75,6 +75,8 @@ export async function getValidTokens(
       // Token is expired or about to expire — refresh it
       if (!tokens.refresh_token) {
         log("warn", "crm_token.no_refresh_token", { provider, workspaceId });
+        // Log failure to sync_log and update token_error
+        await recordTokenRefreshFailure(workspaceId, provider, "No refresh token available");
         return null;
       }
       return refreshTokens(workspaceId, provider, tokens.refresh_token);
@@ -82,6 +84,46 @@ export async function getValidTokens(
   }
 
   return tokens;
+}
+
+/**
+ * Record a token refresh failure to sync_log and update token_error field.
+ */
+async function recordTokenRefreshFailure(
+  workspaceId: string,
+  provider: CrmProviderId,
+  errorMessage: string
+): Promise<void> {
+  const db = getDb();
+  try {
+    // Log failure to sync_log
+    await db
+      .from("sync_log")
+      .insert({
+        workspace_id: workspaceId,
+        provider,
+        direction: "inbound",
+        entity_type: "token",
+        action: "token_refresh_failed",
+        summary: errorMessage,
+        payload_snapshot: { error: errorMessage },
+      });
+
+    // Update token_error in workspace_crm_connections
+    await db
+      .from("workspace_crm_connections")
+      .update({
+        token_error: errorMessage,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("workspace_id", workspaceId)
+      .eq("provider", provider);
+  } catch (err) {
+    log("error", "crm_token.record_failure_error", {
+      provider,
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
 }
 
 /**
@@ -119,11 +161,14 @@ async function refreshTokens(
 
     if (!res.ok) {
       const errText = await res.text();
+      const errorMsg = `Token refresh failed: ${res.status} ${errText.slice(0, 100)}`;
       log("error", "crm_token.refresh_failed", {
         provider,
         status: res.status,
         error: errText.slice(0, 200),
       });
+      // Record failure
+      await recordTokenRefreshFailure(workspaceId, provider, errorMsg);
       return null;
     }
 
@@ -135,7 +180,10 @@ async function refreshTokens(
     };
 
     if (!data.access_token) {
+      const errorMsg = "Token refresh returned no access token";
       log("error", "crm_token.no_access_token_in_refresh", { provider });
+      // Record failure
+      await recordTokenRefreshFailure(workspaceId, provider, errorMsg);
       return null;
     }
 
@@ -152,6 +200,7 @@ async function refreshTokens(
         refresh_token: data.refresh_token ?? refreshToken, // Some providers rotate refresh tokens
         token_expires_at: expiresAt,
         instance_url: data.instance_url ?? undefined,
+        token_error: null, // Clear any previous errors on successful refresh
         updated_at: new Date().toISOString(),
       })
       .eq("workspace_id", workspaceId)
@@ -166,10 +215,13 @@ async function refreshTokens(
       instance_url: data.instance_url ?? null,
     };
   } catch (err) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
     log("error", "crm_token.refresh_error", {
       provider,
-      error: err instanceof Error ? err.message : String(err),
+      error: errorMsg,
     });
+    // Record failure
+    await recordTokenRefreshFailure(workspaceId, provider, `Token refresh error: ${errorMsg}`);
     return null;
   }
 }
