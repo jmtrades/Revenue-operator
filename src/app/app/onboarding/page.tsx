@@ -464,7 +464,7 @@ export default function AppOnboardingPage() {
                       }`}
                     >
                       <div className="flex items-start justify-between mb-3">
-                        <Icon className={`w-5 h-5 ${isSelected ? "text-emerald-400" : "text-[var(--text-tertiary)]"}`} />
+                        <Icon className={`w-5 h-5 ${isSelected ? "text-[var(--accent-primary)]" : "text-[var(--text-tertiary)]"}`} />
                         {isSelected && (
                           <div className="w-5 h-5 rounded-full bg-[var(--accent-primary)] border-2 border-[var(--accent-primary)] flex items-center justify-center">
                             <span className="w-2 h-2 rounded-full bg-[var(--text-primary)]" />
@@ -480,7 +480,7 @@ export default function AppOnboardingPage() {
                       <ul className="space-y-1.5 mb-3">
                         {template.features.map((feature, idx) => (
                           <li key={idx} className="text-xs text-[var(--text-secondary)] flex items-start gap-2">
-                            <span className="text-emerald-400 mt-0.5">•</span>
+                            <span className="text-[var(--accent-primary)] mt-0.5">•</span>
                             <span>{feature}</span>
                           </li>
                         ))}
@@ -817,7 +817,7 @@ export default function AppOnboardingPage() {
                         className="w-full px-3 py-1.5 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                       />
                       <div className="flex gap-2">
-                        <button type="button" onClick={() => { const next = [...knowledgeItems]; next[i] = { q: editingQ.trim() || item.q || "", a: editingA.trim() || item.a || "" }; setKnowledgeItems(next); setEditingKnowledgeIdx(null); }} className="text-xs text-green-400 hover:text-green-300">Save</button>
+                        <button type="button" onClick={() => { const next = [...knowledgeItems]; next[i] = { q: editingQ.trim() || item.q || "", a: editingA.trim() || item.a || "" }; setKnowledgeItems(next); setEditingKnowledgeIdx(null); }} className="text-xs text-[var(--accent-primary)] hover:text-[var(--accent-primary)]/80">Save</button>
                         <button type="button" onClick={() => setEditingKnowledgeIdx(null)} className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]">Cancel</button>
                       </div>
                     </div>
@@ -836,7 +836,7 @@ export default function AppOnboardingPage() {
                         <button
                           type="button"
                           onClick={() => setKnowledgeItems((prev) => prev.filter((_, j) => j !== i))}
-                          className="text-xs text-[var(--text-tertiary)] hover:text-red-400"
+                          className="text-xs text-[var(--text-tertiary)] hover:text-[var(--accent-danger,#ef4444)]"
                           aria-label={t("remove")}
                         >
                           <X className="w-4 h-4" />
@@ -908,20 +908,20 @@ export default function AppOnboardingPage() {
               <p className="text-xs font-medium text-[var(--text-secondary)] mb-3">{t("readinessChecklistLabel")}</p>
               <ul className="space-y-2 text-xs text-[var(--text-secondary)]">
                 <li className="flex items-center gap-2">
-                  {greeting.trim() ? <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" aria-hidden /> : <span className="h-4 w-4 shrink-0 rounded-full border border-[var(--border-medium)] text-[var(--text-tertiary)]" aria-hidden />}
+                  {greeting.trim() ? <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--accent-primary)]" aria-hidden /> : <span className="h-4 w-4 shrink-0 rounded-full border border-[var(--border-medium)] text-[var(--text-tertiary)]" aria-hidden />}
                   <span className={greeting.trim() ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}>{t("greetingConfigured")}</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  {voiceId?.trim() ? <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" aria-hidden /> : <span className="h-4 w-4 shrink-0 rounded-full border border-[var(--border-medium)] text-[var(--text-tertiary)]" aria-hidden />}
+                  {voiceId?.trim() ? <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--accent-primary)]" aria-hidden /> : <span className="h-4 w-4 shrink-0 rounded-full border border-[var(--border-medium)] text-[var(--text-tertiary)]" aria-hidden />}
                   <span className={voiceId?.trim() ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}>{t("voiceSelected")}</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  {knowledgeItems.filter((i) => (i.q ?? "").trim() && (i.a ?? "").trim()).length >= 3 ? <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" aria-hidden /> : <span className="h-4 w-4 shrink-0 rounded-full border border-[var(--border-medium)] text-[var(--text-tertiary)]" aria-hidden />}
+                  {knowledgeItems.filter((i) => (i.q ?? "").trim() && (i.a ?? "").trim()).length >= 3 ? <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--accent-primary)]" aria-hidden /> : <span className="h-4 w-4 shrink-0 rounded-full border border-[var(--border-medium)] text-[var(--text-tertiary)]" aria-hidden />}
                   <span className={knowledgeItems.filter((i) => (i.q ?? "").trim() && (i.a ?? "").trim()).length >= 3 ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}>{t("atLeast3Entries")}</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <span className="h-4 w-4 shrink-0 rounded-full border border-[var(--border-medium)] text-[var(--text-tertiary)]" aria-hidden />
-                  <span className="text-[var(--text-secondary)]">{t("phoneOptional")} <span className="text-amber-400 text-xs font-medium ml-1">Recommended</span></span>
+                  <span className="text-[var(--text-secondary)]">{t("phoneOptional")} <span className="text-[var(--accent-warning,#f59e0b)] text-xs font-medium ml-1">Recommended</span></span>
                 </li>
               </ul>
             </div>

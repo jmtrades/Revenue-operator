@@ -331,7 +331,7 @@ export default function TeamPage() {
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5">
                         <span className="font-medium text-[var(--text-primary)] truncate">{member.name}</span>
-                        {isOwner && <Crown className="w-4 h-4 text-amber-400 shrink-0" aria-label={t("roles.owner")} />}
+                        {isOwner && <Crown className="w-4 h-4 text-[var(--accent-warning,#f59e0b)] shrink-0" aria-label={t("roles.owner")} />}
                       </div>
                       <p className="text-xs text-[var(--text-secondary)] truncate">{member.email}</p>
                     </div>
@@ -366,7 +366,7 @@ export default function TeamPage() {
                                 setRemoveConfirmMember(member);
                                 setMenuMemberId(null);
                               }}
-                              className="block w-full text-left px-3 py-2 text-sm text-red-400 hover:bg-[var(--bg-inset)]"
+                              className="block w-full text-left px-3 py-2 text-sm text-[var(--accent-danger,#ef4444)] hover:bg-[var(--bg-inset)]"
                             >
                               {t("removeMemberBtn")}
                             </button>
@@ -424,7 +424,7 @@ export default function TeamPage() {
                         type="button"
                         onClick={() => handleRevokeInvite(inv.id)}
                         disabled={revokingId === inv.id}
-                        className="text-xs font-medium text-[var(--accent-red)] hover:text-red-300 disabled:opacity-50"
+                        className="text-xs font-medium text-[var(--accent-red)] hover:text-[var(--accent-danger,#ef4444)]/80 disabled:opacity-50"
                       >
                         {revokingId === inv.id ? t("revoking") : t("revoke")}
                       </button>
@@ -462,10 +462,10 @@ export default function TeamPage() {
                   {permissionsMatrix.map((row) => (
                     <tr key={row.id} className="border-b border-[var(--border-default)]/80">
                       <td className="py-2.5 pr-4 text-[var(--text-secondary)]">{row.label}</td>
-                      <td className="py-2.5 px-2 text-center">{row.roles.owner ? <Check className="w-4 h-4 text-emerald-400 mx-auto" /> : <Minus className="w-4 h-4 text-[var(--text-tertiary)] mx-auto" />}</td>
-                      <td className="py-2.5 px-2 text-center">{row.roles.admin ? <Check className="w-4 h-4 text-emerald-400 mx-auto" /> : <Minus className="w-4 h-4 text-[var(--text-tertiary)] mx-auto" />}</td>
-                      <td className="py-2.5 px-2 text-center">{row.roles.manager ? <Check className="w-4 h-4 text-emerald-400 mx-auto" /> : <Minus className="w-4 h-4 text-[var(--text-tertiary)] mx-auto" />}</td>
-                      <td className="py-2.5 px-2 text-center">{row.roles.agent ? <Check className="w-4 h-4 text-emerald-400 mx-auto" /> : <Minus className="w-4 h-4 text-[var(--text-tertiary)] mx-auto" />}</td>
+                      <td className="py-2.5 px-2 text-center">{row.roles.owner ? <Check className="w-4 h-4 text-[var(--accent-primary)] mx-auto" /> : <Minus className="w-4 h-4 text-[var(--text-tertiary)] mx-auto" />}</td>
+                      <td className="py-2.5 px-2 text-center">{row.roles.admin ? <Check className="w-4 h-4 text-[var(--accent-primary)] mx-auto" /> : <Minus className="w-4 h-4 text-[var(--text-tertiary)] mx-auto" />}</td>
+                      <td className="py-2.5 px-2 text-center">{row.roles.manager ? <Check className="w-4 h-4 text-[var(--accent-primary)] mx-auto" /> : <Minus className="w-4 h-4 text-[var(--text-tertiary)] mx-auto" />}</td>
+                      <td className="py-2.5 px-2 text-center">{row.roles.agent ? <Check className="w-4 h-4 text-[var(--accent-primary)] mx-auto" /> : <Minus className="w-4 h-4 text-[var(--text-tertiary)] mx-auto" />}</td>
                     </tr>
                   ))}
                 </tbody>

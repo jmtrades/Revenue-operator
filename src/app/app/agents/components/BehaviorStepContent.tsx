@@ -194,7 +194,7 @@ export function BehaviorStepContent({
             <button
               type="button"
               onClick={() => removeQuestion(i)}
-              className="text-xs text-white/20 hover:text-red-400 p-1"
+              className="text-xs text-white/20 hover:text-[var(--accent-danger,#ef4444)] p-1"
             >
               {t("behavior.remove")}
             </button>
@@ -278,7 +278,7 @@ export function BehaviorStepContent({
               }`}
             />
             {transferPhoneError && (
-              <p className="text-xs text-red-400 mt-1">
+              <p className="text-xs text-[var(--accent-danger,#ef4444)] mt-1">
                 Phone number must start with + or contain 10+ digits
               </p>
             )}

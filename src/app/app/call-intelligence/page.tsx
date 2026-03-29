@@ -462,7 +462,7 @@ export default function CallIntelligencePage() {
                   {commonIssues.map((issue) => (
                     <li key={issue.label} className="flex items-center justify-between text-sm">
                       <span className="text-[var(--text-secondary)]">{issue.label}</span>
-                      <span className="text-amber-400 font-medium">{issue.count} {t("commonIssues.calls")}</span>
+                      <span className="text-[var(--accent-warning,#f59e0b)] font-medium">{issue.count} {t("commonIssues.calls")}</span>
                     </li>
                   ))}
                 </ul>
@@ -704,7 +704,7 @@ export default function CallIntelligencePage() {
                                       </div>
                                       <div className="flex items-center gap-2 shrink-0">
                                         {i.applied ? (
-                                          <span className="text-xs text-emerald-400">
+                                          <span className="text-xs text-[var(--accent-primary)]">
                                             Applied
                                           </span>
                                         ) : (
@@ -794,7 +794,7 @@ export default function CallIntelligencePage() {
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
                               {i.applied ? (
-                                <span className="text-xs text-green-500">Applied</span>
+                                <span className="text-xs text-[var(--accent-primary)]">Applied</span>
                               ) : (
                                 <>
                                   <button

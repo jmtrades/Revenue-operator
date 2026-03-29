@@ -114,7 +114,7 @@ export default function ChatWidgetSettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-gray-500">{t("loading")}</div>
+        <div className="text-[var(--text-secondary)]">{t("loading")}</div>
       </div>
     );
   }
@@ -155,7 +155,7 @@ export default function ChatWidgetSettingsPage() {
                 <button
                   onClick={() => setConfig({ ...config, enabled: !config.enabled })}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    config.enabled ? "bg-[var(--accent-primary)]" : "bg-gray-300"
+                    config.enabled ? "bg-[var(--accent-primary)]" : "bg-[var(--bg-card)]"
                   }`}
                 >
                   <span
@@ -295,7 +295,7 @@ export default function ChatWidgetSettingsPage() {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="w-full bg-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/90 disabled:bg-gray-400 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+              className="w-full bg-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/90 disabled:bg-[var(--bg-card)] text-white font-medium py-2 px-4 rounded-lg transition-colors"
             >
               {saving ? "Saving..." : "Save Configuration"}
             </button>
@@ -361,7 +361,7 @@ export default function ChatWidgetSettingsPage() {
               </div>
               <button
                 onClick={handleCopyEmbed}
-                className="w-full flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-900 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                className="w-full flex items-center justify-center gap-2 bg-[var(--bg-primary)] hover:bg-[var(--bg-primary)] text-white font-medium py-2 px-4 rounded-lg transition-colors"
               >
                 {copied ? (
                   <>

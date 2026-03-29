@@ -208,7 +208,7 @@ export function LeadsList({
                       {/* Intent signal dot */}
                       {(lead.status === "Qualified" || lead.status === "Appointment Set") && (
                         <span className="inline-flex items-center gap-1">
-                          <span className="h-2 w-2 rounded-full bg-emerald-400" aria-hidden />
+                          <span className="h-2 w-2 rounded-full bg-[var(--accent-primary)]" aria-hidden />
                           <span className="text-[9px] font-medium text-[var(--accent-primary)]">High intent</span>
                         </span>
                       )}
@@ -218,7 +218,7 @@ export function LeadsList({
                         );
                         return daysSinceContact > 3 ? (
                           <span className="inline-flex items-center gap-1">
-                            <span className="h-2 w-2 rounded-full bg-amber-400" aria-hidden />
+                            <span className="h-2 w-2 rounded-full bg-[var(--accent-warning,#f59e0b)]" aria-hidden />
                             <span className="text-[9px] font-medium text-[var(--accent-warning,#f59e0b)]">Cooling</span>
                           </span>
                         ) : null;
@@ -229,7 +229,7 @@ export function LeadsList({
                         );
                         return daysSinceCreated > 7 ? (
                           <span className="inline-flex items-center gap-1">
-                            <span className="h-2 w-2 rounded-full bg-red-400" aria-hidden />
+                            <span className="h-2 w-2 rounded-full bg-[var(--accent-danger,#ef4444)]" aria-hidden />
                             <span className="text-[9px] font-medium text-[var(--accent-danger,#ef4444)]">Stale</span>
                           </span>
                         ) : null;

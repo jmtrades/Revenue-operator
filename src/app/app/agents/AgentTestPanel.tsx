@@ -381,7 +381,7 @@ export function AgentTestPanel({
             </p>
           </>
         ) : (
-          <p className="text-[11px] text-amber-500/90 text-center">
+          <p className="text-[11px] text-[var(--accent-warning,#f59e0b)]/90 text-center">
             {tAgents("errors.voiceUnsupported")}
           </p>
         )}

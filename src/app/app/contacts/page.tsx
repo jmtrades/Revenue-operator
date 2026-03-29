@@ -127,11 +127,11 @@ function mapLeadToContact(lead: {
 }
 
 const CRM_SOURCE_META: Record<string, { label: string; icon: React.ComponentType<{ className?: string }>; color: string }> = {
-  hubspot: { label: "HubSpot", icon: Building2, color: "text-orange-400" },
-  salesforce: { label: "Salesforce", icon: Cloud, color: "text-blue-400" },
-  zoho_crm: { label: "Zoho", icon: Database, color: "text-red-400" },
-  pipedrive: { label: "Pipedrive", icon: TrendingUp, color: "text-green-400" },
-  gohighlevel: { label: "GHL", icon: Layers, color: "text-purple-400" },
+  hubspot: { label: "HubSpot", icon: Building2, color: "text-[var(--accent-warning,#f59e0b)]" },
+  salesforce: { label: "Salesforce", icon: Cloud, color: "text-[var(--accent-primary)]" },
+  zoho_crm: { label: "Zoho", icon: Database, color: "text-[var(--accent-danger,#ef4444)]" },
+  pipedrive: { label: "Pipedrive", icon: TrendingUp, color: "text-[var(--accent-primary)]" },
+  gohighlevel: { label: "GHL", icon: Layers, color: "text-[var(--accent-primary)]" },
   google_contacts: { label: "Google", icon: UsersIcon, color: "text-sky-400" },
   microsoft_365: { label: "Microsoft", icon: Building, color: "text-cyan-400" },
   airtable: { label: "Airtable", icon: Database, color: "text-yellow-400" },
@@ -154,7 +154,7 @@ function getSourceBadge(source: string | undefined, t: (key: string) => string) 
   // Generic sources
   if (source === "demo_call" || source === "website_hero") {
     return (
-      <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-[var(--bg-inset)]/60 text-emerald-400">
+      <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-[var(--bg-inset)]/60 text-[var(--accent-primary)]">
         {t("source.demo")}
       </span>
     );

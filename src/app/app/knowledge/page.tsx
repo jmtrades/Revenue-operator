@@ -293,7 +293,7 @@ function KnowledgeModal({
                   <p className="text-sm text-[var(--text-tertiary)]">{tForms("uploading")}</p>
                 )}
                 {uploadState === "done" && (
-                  <p className="text-sm text-emerald-400">{t("modal.indexedFile", { fileName })}</p>
+                  <p className="text-sm text-[var(--accent-primary)]">{t("modal.indexedFile", { fileName })}</p>
                 )}
               </div>
             </div>
@@ -1024,8 +1024,8 @@ export default function KnowledgePage() {
                   </div>
                   {entry.gapFlag && (
                     <div className="flex items-center gap-2 mt-2 p-2 rounded-lg bg-[var(--accent-warning,#f59e0b)]/10 border border-[var(--accent-warning,#f59e0b)]/30">
-                      <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
-                      <span className="text-xs text-amber-200">{t("gapFlag")}</span>
+                      <AlertTriangle className="w-4 h-4 text-[var(--accent-warning,#f59e0b)] shrink-0" />
+                      <span className="text-xs text-[var(--accent-warning,#f59e0b)]/80">{t("gapFlag")}</span>
                     </div>
                   )}
                   <p className="text-[11px] text-[var(--text-secondary)] mt-2">{t("updatedAt", { date: formatDate(entry.lastUpdated) })}</p>
@@ -1038,7 +1038,7 @@ export default function KnowledgePage() {
           <div className="space-y-6 lg:order-2">
             {/* Knowledge Gaps — prominent */}
             <div className="rounded-xl bg-[var(--accent-warning,#f59e0b)]/5 border border-[var(--accent-warning,#f59e0b)]/20 p-4">
-              <h3 className="text-sm font-semibold text-amber-200 flex items-center gap-2 mb-3">
+              <h3 className="text-sm font-semibold text-[var(--accent-warning,#f59e0b)]/80 flex items-center gap-2 mb-3">
                 <AlertTriangle className="w-4 h-4" />
                 {t("gapsHeading")}
               </h3>
@@ -1054,7 +1054,7 @@ export default function KnowledgePage() {
                     <button
                       type="button"
                       onClick={() => openAddModal(gap.topic)}
-                      className="shrink-0 text-xs font-medium text-amber-300 hover:text-amber-200"
+                      className="shrink-0 text-xs font-medium text-[var(--accent-warning,#f59e0b)] hover:text-[var(--accent-warning,#f59e0b)]/80"
                     >
                       {t("addEntry")} →
                     </button>

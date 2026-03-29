@@ -647,9 +647,9 @@ export default function CampaignsPage() {
                     <span>·</span>
                     <span>{t("failed")}: {Math.max(0, campaign.called - campaign.answered)}</span>
                     <span>·</span>
-                    <span className={dailyUsed >= dailyLimit ? "text-amber-400 font-medium" : ""}>{t("dailyUsage", { defaultValue: "Daily" })}: {dailyUsed}/{dailyLimit}</span>
+                    <span className={dailyUsed >= dailyLimit ? "text-[var(--accent-warning,#f59e0b)] font-medium" : ""}>{t("dailyUsage", { defaultValue: "Daily" })}: {dailyUsed}/{dailyLimit}</span>
                     {dailyUsed >= dailyLimit && (
-                      <span className="text-amber-400 font-medium">{t("dailyLimitReached", { defaultValue: "— limit reached, resumes tomorrow" })}</span>
+                      <span className="text-[var(--accent-warning,#f59e0b)] font-medium">{t("dailyLimitReached", { defaultValue: "— limit reached, resumes tomorrow" })}</span>
                     )}
                   </div>
                   {campaign.total_contacts > 0 && (
@@ -690,7 +690,7 @@ export default function CampaignsPage() {
                           <p className="text-[10px] text-[var(--text-tertiary)]">{t("answerRate", { defaultValue: "Answer rate" })}</p>
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-emerald-400">{campaign.appointments_booked}</p>
+                          <p className="text-sm font-semibold text-[var(--accent-primary)]">{campaign.appointments_booked}</p>
                           <p className="text-[10px] text-[var(--text-tertiary)]">{t("booked", { defaultValue: "Booked" })}</p>
                         </div>
                       </div>
