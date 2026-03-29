@@ -209,18 +209,25 @@ export async function POST(req: NextRequest) {
       personality_traits: appliedConfig.personality_traits,
     };
 
-    // Update agent if one exists
+    // Get agent name from customizations or playbook suggestion
+    const agentName = customizations?.agent_name ||
+      (appliedConfig.agent_name_suggestion as unknown as string | undefined) ||
+      `${appliedConfig.title} Operator`;
+
+    // Check if an agent already exists for this workspace
     const { data: agents } = await db
       .from("agents")
       .select("id")
       .eq("workspace_id", workspace_id)
       .limit(1);
 
-    if (agents && agents.length > 0) {
-      const agentId = agents[0].id;
+    let agentId: string | undefined;
 
-      // Merge playbook config into agent's knowledge base
-      await db
+    if (agents && agents.length > 0) {
+      // Update existing agent with playbook data
+      agentId = agents[0].id;
+
+      const { error: updateError } = await db
         .from("agents")
         .update({
           knowledge_base: {
@@ -237,11 +244,52 @@ export async function POST(req: NextRequest) {
           },
         })
         .eq("id", agentId);
+
+      if (updateError) {
+        console.error("Error updating agent:", updateError);
+      }
+    } else {
+      // No agent exists - create one from the playbook
+      const { DEFAULT_VOICE_ID } = await import("@/lib/constants/curated-voices");
+
+      const { data: newAgent, error: insertError } = await db
+        .from("agents")
+        .insert({
+          workspace_id,
+          name: agentName,
+          voice_id: DEFAULT_VOICE_ID,
+          personality: appliedConfig.personality_traits?.[0] || "professional",
+          purpose: "both",
+          greeting: appliedConfig.greeting_script,
+          knowledge_base: {
+            ...knowledgeBaseEntry,
+            faq: appliedConfig.faqs,
+            scripts: appliedConfig.call_scripts,
+          },
+          rules: {
+            neverSay: appliedConfig.things_to_never_say,
+            keyPhrases: appliedConfig.key_phrases,
+            escalationTriggers: appliedConfig.escalation_triggers,
+            personality: appliedConfig.personality_traits,
+          },
+          is_active: true,
+        })
+        .select()
+        .maybeSingle();
+
+      if (insertError || !newAgent) {
+        console.error("Error creating agent:", insertError);
+        // Don't fail the entire request if agent creation fails - playbook config was still saved
+      } else {
+        agentId = newAgent.id;
+      }
     }
 
     return NextResponse.json({
       ok: true,
       playbook_id: playbook_id,
+      agent_id: agentId,
+      agent_name: agentName,
       applied_config: {
         title: appliedConfig.title,
         subtitle: appliedConfig.subtitle,
@@ -251,7 +299,7 @@ export async function POST(req: NextRequest) {
         tone: appliedConfig.tone,
         recommended_settings: appliedConfig.recommended_settings,
       },
-      message: `Playbook "${appliedConfig.title}" applied successfully`,
+      message: `Playbook "${appliedConfig.title}" applied successfully${agentId ? ` and agent "${agentName}" created` : ""}`,
     });
   } catch (err) {
     console.error("Unexpected error applying playbook:", err);

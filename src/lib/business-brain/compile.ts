@@ -89,6 +89,8 @@ export interface BusinessBrainInput {
   max_call_duration?: number;
   /** Timezone for context */
   timezone?: string;
+  /** Pause recording when caller shares sensitive information (credit cards, SSN, passwords, etc.) */
+  recording_pause_on_sensitive?: boolean;
 }
 
 /**
@@ -151,6 +153,7 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
     personality,
     max_call_duration,
     timezone,
+    recording_pause_on_sensitive,
   } = input;
 
   const langName = preferred_language ? getLanguageName(preferred_language) : "English";
@@ -549,6 +552,21 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
     }
   }
 
+  // Layer 9b: Recording pause on sensitive information (if enabled)
+  let layer9b = "";
+  if (recording_pause_on_sensitive) {
+    layer9b = [
+      "RECORDING SAFETY: This call is being recorded.",
+      "",
+      "When the caller begins sharing sensitive information (credit card numbers, SSN, bank account details, passwords, PINs, security codes, mother's maiden name, etc.), you MUST:",
+      "1. Say: \"For your security, I'll pause the recording while you share that information.\"",
+      "2. Include [PAUSE_RECORDING] in your response (this signals the voice engine to pause recording).",
+      "3. When they finish sharing, say: \"Recording has resumed\" and include [RESUME_RECORDING].",
+      "",
+      "This protects the caller's sensitive data from being retained in the recording.",
+    ].join("\n");
+  }
+
   // Layer 10: Never-fail guardrails — critical error recovery and edge-case handling
   const layer10 = [
     "CRITICAL GUARDRAILS (never break these rules):",
@@ -597,7 +615,7 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
   ].join("\n");
 
   // Assemble in priority order: identity → business → mission → conversation → language →
-  // caller context → call history → industry → agent rules → objections → compliance → guardrails
+  // caller context → call history → industry → agent rules → objections → compliance → recording safety → guardrails
   const blocks = [layer1, layer2];
   if (layer2b) blocks.push(layer2b);
   if (layer2c) blocks.push(layer2c);
@@ -608,6 +626,7 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
   if (layer7b) blocks.push(layer7b); // Agent rules (never say, transfer, qualification, objections)
   blocks.push(layer8);              // Objection handling
   if (layer9) blocks.push(layer9); // Compliance
+  if (layer9b) blocks.push(layer9b); // Recording pause on sensitive
   blocks.push(layer10);             // Guardrails last (always enforced)
 
   // Replace {business_name} placeholder in objection handling and guardrails

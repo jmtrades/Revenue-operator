@@ -342,7 +342,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
           .from("sequences")
           .insert({
             workspace_id: workspaceId,
-            name: `Campaign ${id.slice(0, 8)} - ${campaign.name}`,
+            name: `Campaign ${id.slice(0, 8)}`,
             trigger_type: "campaign_" + id,
             is_active: true,
           })
