@@ -21,6 +21,11 @@ type AgentConfig = {
   preferredLanguage: string;
   voiceId: string;
   knowledgeItems: Array<{ q?: string; a?: string }>;
+  industry: string;
+  servicesOffered: string;
+  primaryGoal: string;
+  uniqueSellingPoints: string;
+  targetAudience: string;
   qualificationMethod: "None" | "BANT" | "Custom Questions";
   customQualificationQuestions: Array<{ q?: string; a?: string }>;
   tonePreset: "Professional" | "Casual & Friendly" | "Concise & Direct" | "Empathetic & Warm";
@@ -75,6 +80,11 @@ export default function AppSettingsAgentPage() {
       preferredLanguage: "en",
       voiceId: DEFAULT_RECALL_VOICE_ID,
       knowledgeItems: [],
+      industry: "",
+      servicesOffered: "",
+      primaryGoal: "",
+      uniqueSellingPoints: "",
+      targetAudience: "",
       qualificationMethod: "None",
       customQualificationQuestions: [],
       tonePreset: "Professional",
@@ -103,6 +113,11 @@ export default function AppSettingsAgentPage() {
           preferredLanguage: data.preferredLanguage ?? "en",
           voiceId: data.voiceId || DEFAULT_RECALL_VOICE_ID,
           knowledgeItems: Array.isArray(data.knowledgeItems) ? data.knowledgeItems : [],
+          industry: data.industry ?? "",
+          servicesOffered: data.servicesOffered ?? "",
+          primaryGoal: data.primaryGoal ?? "",
+          uniqueSellingPoints: data.uniqueSellingPoints ?? "",
+          targetAudience: data.targetAudience ?? "",
           qualificationMethod: data.qualificationMethod ?? "None",
           customQualificationQuestions: Array.isArray(data.customQualificationQuestions) ? data.customQualificationQuestions : [],
           tonePreset: data.tonePreset ?? "Professional",
@@ -148,6 +163,11 @@ export default function AppSettingsAgentPage() {
           preferredLanguage: config.preferredLanguage,
           voiceId: config.voiceId || null,
           knowledgeItems: config.knowledgeItems.filter((i) => (i.q ?? "").trim()),
+          industry: config.industry,
+          servicesOffered: config.servicesOffered,
+          primaryGoal: config.primaryGoal,
+          uniqueSellingPoints: config.uniqueSellingPoints,
+          targetAudience: config.targetAudience,
           qualificationMethod: config.qualificationMethod,
           customQualificationQuestions: config.customQualificationQuestions.filter((i) => (i.q ?? "").trim()),
           tonePreset: config.tonePreset,
@@ -273,6 +293,43 @@ export default function AppSettingsAgentPage() {
     }));
   };
 
+  const addCustomAllowedAction = (action: string) => {
+    const trimmed = action.trim();
+    if (trimmed && !config.allowedActions.includes(trimmed)) {
+      setConfig((prev) => ({
+        ...prev,
+        allowedActions: [...prev.allowedActions, trimmed],
+      }));
+    }
+  };
+
+  const addCustomForbiddenAction = (action: string) => {
+    const trimmed = action.trim();
+    if (trimmed && !config.forbiddenActions.includes(trimmed)) {
+      setConfig((prev) => ({
+        ...prev,
+        forbiddenActions: [...prev.forbiddenActions, trimmed],
+      }));
+    }
+  };
+
+  const removeAllowedAction = (action: string) => {
+    setConfig((prev) => ({
+      ...prev,
+      allowedActions: prev.allowedActions.filter((a) => a !== action),
+    }));
+  };
+
+  const removeForbiddenAction = (action: string) => {
+    setConfig((prev) => ({
+      ...prev,
+      forbiddenActions: prev.forbiddenActions.filter((a) => a !== action),
+    }));
+  };
+
+  const [customAllowedInput, setCustomAllowedInput] = useState("");
+  const [customForbiddenInput, setCustomForbiddenInput] = useState("");
+
   const BANT_QUESTIONS = [
     "What's your budget for this solution?",
     "Who is the decision maker on your team?",
@@ -296,6 +353,7 @@ export default function AppSettingsAgentPage() {
   ];
 
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    businessContext: false,
     behavior: false,
     escalation: false,
     actions: false,
@@ -414,6 +472,83 @@ export default function AppSettingsAgentPage() {
             ))}
           </select>
         </div>
+      </div>
+
+      {/* Business Context Section */}
+      <div className="mb-6 border border-[var(--border-default)] rounded-xl overflow-hidden">
+        <button
+          type="button"
+          onClick={() => toggleSection("businessContext")}
+          className="w-full px-4 py-3 flex items-center justify-between bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] transition-[background-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
+        >
+          <div className="text-left">
+            <h3 className="text-sm font-semibold text-[var(--text-primary)]">Business Context</h3>
+            <p className="text-xs text-[var(--text-secondary)] mt-0.5">Industry, goals, and target audience</p>
+          </div>
+          <ChevronDown className={`w-4 h-4 text-[var(--text-tertiary)] transition-[transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] ${expandedSections.businessContext ? "rotate-180" : ""}`} />
+        </button>
+        {expandedSections.businessContext && (
+          <div className="px-4 py-4 space-y-4 border-t border-[var(--border-default)]">
+            <div>
+              <label htmlFor="industry" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">Industry</label>
+              <input
+                id="industry"
+                type="text"
+                value={config.industry}
+                onChange={(e) => setConfig((c) => ({ ...c, industry: e.target.value }))}
+                placeholder="e.g., Real Estate, SaaS, Healthcare"
+                className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
+              />
+            </div>
+            <div>
+              <label htmlFor="services" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">Services Offered</label>
+              <textarea
+                id="services"
+                rows={2}
+                value={config.servicesOffered}
+                onChange={(e) => setConfig((c) => ({ ...c, servicesOffered: e.target.value }))}
+                placeholder="e.g., Property sales, Real estate consulting, Home valuation"
+                className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none resize-none"
+              />
+            </div>
+            <div>
+              <label htmlFor="primary-goal" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">Primary Goal</label>
+              <input
+                id="primary-goal"
+                type="text"
+                value={config.primaryGoal}
+                onChange={(e) => setConfig((c) => ({ ...c, primaryGoal: e.target.value }))}
+                placeholder="e.g., Generate qualified leads, Schedule property viewings"
+                className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
+              />
+            </div>
+            <div>
+              <label htmlFor="usp" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">Unique Selling Points</label>
+              <textarea
+                id="usp"
+                rows={2}
+                value={config.uniqueSellingPoints}
+                onChange={(e) => setConfig((c) => ({ ...c, uniqueSellingPoints: e.target.value }))}
+                placeholder="e.g., 20 years of experience, Award-winning service, Local market expertise"
+                className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none resize-none"
+              />
+            </div>
+            <div>
+              <label htmlFor="target-audience" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">Target Audience</label>
+              <input
+                id="target-audience"
+                type="text"
+                value={config.targetAudience}
+                onChange={(e) => setConfig((c) => ({ ...c, targetAudience: e.target.value }))}
+                placeholder="e.g., First-time homebuyers, Real estate investors"
+                className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="space-y-4 mb-6">
         <div>
           <div className="flex items-center justify-between mb-1">
             <label className="block text-xs font-medium text-[var(--text-tertiary)]">{tSettings("agent.knowledgeLabel")}</label>
@@ -637,6 +772,44 @@ export default function AppSettingsAgentPage() {
                       <span className="text-xs text-[var(--text-primary)]">{action}</span>
                     </label>
                   ))}
+                  {config.allowedActions.map((action) =>
+                    !ALLOWED_ACTIONS_LIST.includes(action) ? (
+                      <div key={action} className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={true}
+                          onChange={() => removeAllowedAction(action)}
+                          className="w-4 h-4 rounded border-[var(--border-default)] text-[var(--accent-primary)] focus:ring-[var(--accent-primary)]"
+                        />
+                        <span className="text-xs text-[var(--text-primary)]">{action}</span>
+                      </div>
+                    ) : null
+                  )}
+                </div>
+                <div className="mt-3 flex gap-1">
+                  <input
+                    type="text"
+                    value={customAllowedInput}
+                    onChange={(e) => setCustomAllowedInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        addCustomAllowedAction(customAllowedInput);
+                        setCustomAllowedInput("");
+                      }
+                    }}
+                    placeholder="Add custom action"
+                    className="flex-1 px-2 py-1 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-xs focus:border-[var(--border-medium)] focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      addCustomAllowedAction(customAllowedInput);
+                      setCustomAllowedInput("");
+                    }}
+                    className="px-2 py-1 rounded-lg bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-xs font-medium hover:opacity-90 transition-opacity"
+                  >
+                    Add
+                  </button>
                 </div>
               </div>
               <div>
@@ -653,6 +826,44 @@ export default function AppSettingsAgentPage() {
                       <span className="text-xs text-[var(--text-primary)]">{action}</span>
                     </label>
                   ))}
+                  {config.forbiddenActions.map((action) =>
+                    !FORBIDDEN_ACTIONS_LIST.includes(action) ? (
+                      <div key={action} className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={true}
+                          onChange={() => removeForbiddenAction(action)}
+                          className="w-4 h-4 rounded border-[var(--border-default)] text-[var(--accent-danger)] focus:ring-[var(--accent-danger)]"
+                        />
+                        <span className="text-xs text-[var(--text-primary)]">{action}</span>
+                      </div>
+                    ) : null
+                  )}
+                </div>
+                <div className="mt-3 flex gap-1">
+                  <input
+                    type="text"
+                    value={customForbiddenInput}
+                    onChange={(e) => setCustomForbiddenInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        addCustomForbiddenAction(customForbiddenInput);
+                        setCustomForbiddenInput("");
+                      }
+                    }}
+                    placeholder="Add custom action"
+                    className="flex-1 px-2 py-1 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-xs focus:border-[var(--border-medium)] focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      addCustomForbiddenAction(customForbiddenInput);
+                      setCustomForbiddenInput("");
+                    }}
+                    className="px-2 py-1 rounded-lg bg-[var(--accent-danger)] text-[var(--text-on-accent)] text-xs font-medium hover:opacity-90 transition-opacity"
+                  >
+                    Add
+                  </button>
                 </div>
               </div>
             </div>

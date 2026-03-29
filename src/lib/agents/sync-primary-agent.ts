@@ -14,11 +14,13 @@ type WorkspaceAgentSeed = {
   // Advanced fields from workspace_business_context
   industry?: string | null;
   services?: string | null;
+  services_offered?: string | null;
   address?: string | null;
   phone?: string | null;
   primary_goal?: string | null;
   business_context?: string | null;
   target_audience?: string | null;
+  unique_selling_points?: string | null;
   assertiveness?: number | null;
   when_hesitation?: string | null;
   when_think_about_it?: string | null;

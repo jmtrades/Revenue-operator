@@ -55,6 +55,30 @@ export async function GET(req: NextRequest) {
       custom_qualification_questions?: unknown;
     };
 
+    // Fetch business context data
+    let businessContext: {
+      industry?: string | null;
+      services_offered?: string | null;
+      primary_goal?: string | null;
+      unique_selling_points?: string | null;
+      target_audience?: string | null;
+    } = {};
+
+    try {
+      const { data: bcData } = await db
+        .from("workspace_business_context")
+        .select("industry, services_offered, primary_goal, unique_selling_points, target_audience")
+        .eq("workspace_id", session.workspaceId)
+        .maybeSingle();
+
+      if (bcData) {
+        businessContext = bcData as typeof businessContext;
+      }
+    } catch (bc_err) {
+      // If table doesn't exist or query fails, just continue without business context
+      console.warn("[GET /api/workspace/agent] business context query failed");
+    }
+
     // For backwards compatibility, return elevenlabsVoiceId if it exists, otherwise empty string
     const voiceId = row.voice_id ?? "";
 
@@ -79,6 +103,12 @@ export async function GET(req: NextRequest) {
       forbiddenActions: Array.isArray(row.forbidden_actions) ? row.forbidden_actions : [],
       objections: Array.isArray(row.objections) ? row.objections : [],
       customQualificationQuestions: Array.isArray(row.custom_qualification_questions) ? row.custom_qualification_questions : [],
+      // Business context fields
+      industry: businessContext.industry ?? "",
+      servicesOffered: businessContext.services_offered ?? "",
+      primaryGoal: businessContext.primary_goal ?? "",
+      uniqueSellingPoints: businessContext.unique_selling_points ?? "",
+      targetAudience: businessContext.target_audience ?? "",
     });
   } catch {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
@@ -112,14 +142,17 @@ export async function PATCH(req: NextRequest) {
     elevenlabsVoiceId?: string; // Deprecated but kept for backwards compatibility
     knowledgeItems?: Array<{ q?: string; a?: string }>;
     workingHours?: Record<string, unknown>;
-    // Advanced fields for workspace_business_context
+    // Business context fields (from workspace_business_context table)
     industry?: string;
+    servicesOffered?: string;
+    primaryGoal?: string;
+    uniqueSellingPoints?: string;
+    targetAudience?: string;
+    // Advanced fields for workspace_business_context (legacy)
     services?: string;
     address?: string;
     phone?: string;
-    primaryGoal?: string;
     businessContext?: string;
-    targetAudience?: string;
     assertiveness?: number;
     whenHesitation?: string;
     whenThinkAboutIt?: string;
@@ -202,12 +235,15 @@ export async function PATCH(req: NextRequest) {
     // Update workspace_business_context with advanced fields if provided
     const businessContextUpdate: Record<string, unknown> = {};
     if (typeof body.industry === "string") businessContextUpdate.industry = body.industry.trim() || null;
+    if (typeof body.servicesOffered === "string") businessContextUpdate.services_offered = body.servicesOffered.trim() || null;
+    if (typeof body.primaryGoal === "string") businessContextUpdate.primary_goal = body.primaryGoal.trim() || null;
+    if (typeof body.uniqueSellingPoints === "string") businessContextUpdate.unique_selling_points = body.uniqueSellingPoints.trim() || null;
+    if (typeof body.targetAudience === "string") businessContextUpdate.target_audience = body.targetAudience.trim() || null;
+    // Legacy fields
     if (typeof body.services === "string") businessContextUpdate.services = body.services.trim() || null;
     if (typeof body.address === "string") businessContextUpdate.address = body.address.trim() || null;
     if (typeof body.phone === "string") businessContextUpdate.phone = body.phone.trim() || null;
-    if (typeof body.primaryGoal === "string") businessContextUpdate.primary_goal = body.primaryGoal.trim() || null;
     if (typeof body.businessContext === "string") businessContextUpdate.business_context = body.businessContext.trim() || null;
-    if (typeof body.targetAudience === "string") businessContextUpdate.target_audience = body.targetAudience.trim() || null;
     if (typeof body.assertiveness === "number") businessContextUpdate.assertiveness = body.assertiveness;
     if (typeof body.whenHesitation === "string") businessContextUpdate.when_hesitation = body.whenHesitation.trim() || null;
     if (typeof body.whenThinkAboutIt === "string") businessContextUpdate.when_think_about_it = body.whenThinkAboutIt.trim() || null;
@@ -249,14 +285,17 @@ export async function PATCH(req: NextRequest) {
       knowledgeItems: Array.isArray(update.knowledge_items)
         ? (update.knowledge_items as Array<{ q?: string; a?: string }>)
         : null,
-      // Pass through advanced fields
+      // Pass through business context fields
       industry: typeof body.industry === "string" ? body.industry : null,
+      services_offered: typeof body.servicesOffered === "string" ? body.servicesOffered : null,
+      primary_goal: typeof body.primaryGoal === "string" ? body.primaryGoal : null,
+      unique_selling_points: typeof body.uniqueSellingPoints === "string" ? body.uniqueSellingPoints : null,
+      target_audience: typeof body.targetAudience === "string" ? body.targetAudience : null,
+      // Legacy fields
       services: typeof body.services === "string" ? body.services : null,
       address: typeof body.address === "string" ? body.address : null,
       phone: typeof body.phone === "string" ? body.phone : null,
-      primary_goal: typeof body.primaryGoal === "string" ? body.primaryGoal : null,
       business_context: typeof body.businessContext === "string" ? body.businessContext : null,
-      target_audience: typeof body.targetAudience === "string" ? body.targetAudience : null,
       assertiveness: typeof body.assertiveness === "number" ? body.assertiveness : null,
       when_hesitation: typeof body.whenHesitation === "string" ? body.whenHesitation : null,
       when_think_about_it: typeof body.whenThinkAboutIt === "string" ? body.whenThinkAboutIt : null,
