@@ -733,7 +733,7 @@ export default function VoicesSettingsPage() {
                           : "var(--border-default)",
                       background:
                         voice.id === selectedVoiceId
-                          ? "rgba(59, 130, 246, 0.08)"
+                          ? "rgba(var(--tier-growth), 0.08)"
                           : "var(--bg-primary)",
                     }}
                   >
@@ -757,28 +757,28 @@ export default function VoicesSettingsPage() {
                             style={{
                               borderColor:
                                 voice.tier === "free"
-                                  ? "rgba(34, 197, 94, 0.3)"
+                                  ? "rgba(var(--tier-free), 0.3)"
                                   : voice.tier === "growth"
-                                  ? "rgba(59, 130, 246, 0.3)"
+                                  ? "rgba(var(--tier-growth), 0.3)"
                                   : voice.tier === "business"
-                                  ? "rgba(147, 51, 234, 0.3)"
-                                  : "rgba(202, 138, 4, 0.3)",
+                                  ? "rgba(var(--tier-business), 0.3)"
+                                  : "rgba(var(--tier-agency), 0.3)",
                               background:
                                 voice.tier === "free"
-                                  ? "rgba(34, 197, 94, 0.1)"
+                                  ? "rgba(var(--tier-free), 0.1)"
                                   : voice.tier === "growth"
-                                  ? "rgba(59, 130, 246, 0.1)"
+                                  ? "rgba(var(--tier-growth), 0.1)"
                                   : voice.tier === "business"
-                                  ? "rgba(147, 51, 234, 0.1)"
-                                  : "rgba(202, 138, 4, 0.1)",
+                                  ? "rgba(var(--tier-business), 0.1)"
+                                  : "rgba(var(--tier-agency), 0.1)",
                               color:
                                 voice.tier === "free"
-                                  ? "#22c55e"
+                                  ? "rgb(var(--tier-free))"
                                   : voice.tier === "growth"
-                                  ? "#3b82f6"
+                                  ? "rgb(var(--tier-growth))"
                                   : voice.tier === "business"
-                                  ? "#9333ea"
-                                  : "#ca8a04",
+                                  ? "rgb(var(--tier-business))"
+                                  : "rgb(var(--tier-agency))",
                             }}
                           >
                             {voice.tier === "free"
