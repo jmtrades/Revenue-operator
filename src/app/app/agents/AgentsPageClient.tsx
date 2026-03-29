@@ -1696,7 +1696,7 @@ function ProfileTab({
             aria-checked={agent.active}
             onClick={() => onChange({ active: !agent.active })}
             className={`w-10 h-5 rounded-full relative transition-colors ${
-              agent.active ? "bg-green-500" : "bg-[var(--bg-inset)]"
+              agent.active ? "bg-[var(--accent-primary)]" : "bg-[var(--bg-inset)]"
             }`}
           >
             <span

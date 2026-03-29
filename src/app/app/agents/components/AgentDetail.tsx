@@ -6,9 +6,8 @@ import { CheckCircle2, ChevronRight } from "lucide-react";
 import type { Agent, StepId } from "../AgentsPageClient";
 import type { CuratedVoice } from "@/lib/constants/curated-voices";
 import { useTranslations } from "next-intl";
-import { AgentDossier } from "@/components/agents/AgentDossier";
-import { AgentIntelligencePanel } from "@/components/agents/AgentIntelligencePanel";
-import { AgentBenchmarks } from "@/components/agents/AgentBenchmarks";
+// Analytics panels (AgentDossier, AgentIntelligencePanel, AgentBenchmarks)
+// moved to dedicated agent analytics page — not shown in setup wizard
 
 interface AgentDetailProps {
   agent: Agent;
@@ -341,15 +340,6 @@ export function AgentDetail(props: AgentDetailProps) {
             {tForms("saving")}
           </div>
         )}
-
-        {/* Agent Performance Dossier - visible for all steps */}
-        <AgentDossier workspaceId={workspaceId} agentId={agent.id} />
-
-        {/* Agent Intelligence Panel - visible for all steps */}
-        <AgentIntelligencePanel workspaceId={workspaceId} agentId={agent.id} />
-
-        {/* Agent Benchmarks - visible for all steps */}
-        <AgentBenchmarks workspaceId={workspaceId} agentId={agent.id} />
 
         <h2
           id="agent-step-heading"

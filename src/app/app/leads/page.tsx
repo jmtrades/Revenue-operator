@@ -65,9 +65,9 @@ const STATUS_ORDER: LeadStatus[] = [
 ];
 
 const SCORE_COLORS: Record<ScoreBucket, string> = {
-  high: "bg-emerald-500/15 text-emerald-300 border-emerald-500/40",
-  medium: "bg-amber-500/15 text-amber-200 border-amber-500/40",
-  low: "bg-rose-500/15 text-rose-200 border-rose-500/40",
+  high: "bg-[var(--accent-primary)]/15 text-[var(--accent-primary)] border-[var(--accent-primary)]/40",
+  medium: "bg-[var(--accent-warning,#f59e0b)]/15 text-[var(--accent-warning,#f59e0b)] border-[var(--accent-warning,#f59e0b)]/40",
+  low: "bg-[var(--accent-danger,#ef4444)]/15 text-[var(--accent-danger,#ef4444)] border-[var(--accent-danger,#ef4444)]/40",
   all: "bg-[var(--bg-card)] text-[var(--text-secondary)] border-[var(--border-medium)]",
 };
 
