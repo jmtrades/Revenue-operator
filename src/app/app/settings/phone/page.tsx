@@ -352,16 +352,34 @@ export default function AppSettingsPhonePage() {
       <h1 className="text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-1">{tPhone("heading")}</h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">{tPhone("description")}</p>
 
+      {/* Phone Status Summary Card */}
+      {!numbersLoading && workspaceNumbers.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+            <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wide mb-2">{tPhone("statusTotalNumbers")}</p>
+            <p className="text-2xl font-bold text-[var(--text-primary)]">{workspaceNumbers.length}</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-2">{workspaceNumbers.filter(n => n.status === "active").length} {tPhone("active")}</p>
+          </div>
+          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+            <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wide mb-2">{tPhone("statusMonthlyCost")}</p>
+            <p className="text-2xl font-bold text-[var(--text-primary)]">{formatCurrencyCents(totalMonthlyCents, "USD", locale)}</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-2">{tPhone("statusPerMonth")}</p>
+          </div>
+          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+            <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wide mb-2">{tPhone("statusPrimary")}</p>
+            <p className="text-sm font-mono text-[var(--text-primary)] mt-2">{phoneNumber && !loading ? formatPhoneNumber(phoneNumber) : "—"}</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-2">{tPhone("statusInbound")}</p>
+          </div>
+        </div>
+      )}
+
       {/* Management dashboard: list + Get New / Port */}
       <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 mb-6">
         <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
           <div className="flex items-center gap-4">
-            <span className="text-sm text-[var(--text-tertiary)]">
-              {numbersLoading ? "…" : tPhone("numbersCount", { count: workspaceNumbers.length })}
+            <span className="text-sm text-[var(--text-secondary)]">
+              {numbersLoading ? "…" : tPhone("managingNumbers")}
             </span>
-            {!numbersLoading && totalMonthlyCents > 0 && (
-              <span className="text-sm text-[var(--text-tertiary)]">{formatCurrencyCents(totalMonthlyCents, "USD", locale)}{tPhone("moTotal")}</span>
-            )}
           </div>
           <div className="flex items-center gap-2">
             <Link
@@ -400,19 +418,44 @@ export default function AppSettingsPhonePage() {
             {workspaceNumbers.map((n) => (
               <li
                 key={n.id}
-                className="flex flex-wrap items-center justify-between gap-3 py-3 px-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]"
+                className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 py-3 px-4 rounded-xl border transition-colors ${
+                  n.status === "active"
+                    ? "bg-[var(--accent-primary)]/5 border-[var(--accent-primary)]/20 hover:border-[var(--accent-primary)]/40"
+                    : "bg-[var(--bg-input)]/50 border-[var(--border-default)] opacity-60"
+                }`}
               >
-                <div className="flex items-center gap-3">
-                  <Phone className="w-4 h-4 text-[var(--accent-primary)]" />
-                  <div>
-                    <p className="font-medium text-[var(--text-primary)] font-mono text-sm">{formatPhoneNumber(n.phone_number)}</p>
-                    <p className="text-xs text-[var(--text-secondary)] capitalize">{n.number_type.replace("_", " ")} · {formatCurrencyCents(n.monthly_cost_cents, "USD", locale)}/mo</p>
+                <div className="flex items-start sm:items-center gap-3 flex-1">
+                  <div className={`w-2 h-2 rounded-full flex-shrink-0 mt-1.5 sm:mt-0 ${
+                    n.status === "active" ? "bg-[var(--accent-primary)]" : "bg-[var(--text-tertiary)]/30"
+                  }`} />
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 flex-wrap mb-1">
+                      <p className="font-medium text-[var(--text-primary)] font-mono text-sm">{formatPhoneNumber(n.phone_number)}</p>
+                      {n.assigned_agent_id && n.status === "active" && (
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--accent-primary)]/20 text-[var(--accent-primary)] font-medium">
+                          ✓ {tPhone("assigned")}
+                        </span>
+                      )}
+                      {!n.assigned_agent_id && n.status === "active" && (
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--accent-warning,#f59e0b)]/20 text-[var(--accent-warning,#f59e0b)] font-medium">
+                          {tPhone("unassigned")}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-[var(--text-secondary)] capitalize mb-2">{n.number_type.replace("_", " ")} · {formatCurrencyCents(n.monthly_cost_cents, "USD", locale)}/mo</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {n.capabilities?.voice && <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--bg-inset)] text-[var(--text-secondary)]">{tPhone("voice")}</span>}
+                      {n.capabilities?.sms && <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--bg-inset)] text-[var(--text-secondary)]">{tPhone("sms")}</span>}
+                      {n.capabilities?.mms && <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--bg-inset)] text-[var(--text-secondary)]">{tPhone("mms")}</span>}
+                    </div>
                   </div>
-                  {n.capabilities?.voice && <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--bg-inset)] text-[var(--text-secondary)]">{tPhone("voice")}</span>}
-                  {n.capabilities?.sms && <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--bg-inset)] text-[var(--text-secondary)]">{tPhone("sms")}</span>}
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className={`text-[10px] px-2 py-0.5 rounded capitalize ${n.status === "active" ? "bg-[var(--accent-primary)]/20 text-[var(--accent-primary)]/80" : "bg-[var(--bg-inset)] text-[var(--text-tertiary)]"}`}>
+                <div className="flex items-center gap-2 sm:flex-shrink-0">
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium capitalize ${
+                    n.status === "active"
+                      ? "bg-[var(--accent-primary)]/20 text-[var(--accent-primary)]"
+                      : "bg-[var(--bg-inset)] text-[var(--text-tertiary)]"
+                  }`}>
                     {n.status}
                   </span>
                   {n.status === "active" && (
@@ -424,7 +467,7 @@ export default function AppSettingsPhonePage() {
                         if (n.assigned_agent_id) return;
                         setReleaseConfirm(n);
                       }}
-                      className="text-[10px] px-2 py-1 rounded-lg border border-[var(--border-default)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="text-[10px] px-2 py-1 rounded-lg border border-[var(--border-default)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       {releasingId === n.id ? "…" : tPhone("releaseLabel")}
                     </button>
@@ -488,14 +531,31 @@ export default function AppSettingsPhonePage() {
             </details>
           </div>
 
-          {/* Test forwarding */}
-          <div id="test" className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-6">
-            <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{tPhone("testForwarding")}</p>
-            <p className="text-xs text-[var(--text-tertiary)] mb-3">{tPhone("testForwardingDesc")}</p>
+          {/* Test call section */}
+          <div id="test" className="p-6 rounded-2xl border border-[var(--accent-primary)]/20 bg-[var(--accent-primary)]/5 mb-6">
+            <div className="flex items-start gap-3 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-[var(--accent-primary)]/20 flex items-center justify-center flex-shrink-0">
+                <Phone className="w-4 h-4 text-[var(--accent-primary)]" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-[var(--text-primary)]">{tPhone("testCall")}</p>
+                <p className="text-xs text-[var(--text-secondary)] mt-1">{tPhone("testCallDescription")}</p>
+              </div>
+            </div>
+            <div className="bg-[var(--bg-card)] rounded-lg p-4 border border-[var(--border-default)] mb-4">
+              <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wide mb-2">{tPhone("howItWorks")}</p>
+              <ol className="space-y-1.5 text-xs text-[var(--text-secondary)]">
+                <li><span className="text-[var(--accent-primary)] font-semibold">1.</span> {tPhone("testStep1")}</li>
+                <li><span className="text-[var(--accent-primary)] font-semibold">2.</span> {tPhone("testStep2")}</li>
+                <li><span className="text-[var(--accent-primary)] font-semibold">3.</span> {tPhone("testStep3")}</li>
+              </ol>
+            </div>
             {!primaryAgentId ? (
-              <div className="rounded-xl border border-[var(--border-medium)] bg-[var(--bg-card)]/50 px-4 py-3 text-sm text-[var(--text-tertiary)]">
-                <p>{tPhone("createAgentFirst")}</p>
-                <Link href="/app/agents" className="mt-2 inline-block text-[var(--text-primary)] font-medium hover:underline">{tPhone("goToAgents")}</Link>
+              <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)]/50 px-4 py-3 text-sm">
+                <p className="text-[var(--text-secondary)]">{tPhone("createAgentFirst")}</p>
+                <Link href="/app/agents" className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-medium text-xs hover:opacity-90 transition-colors">
+                  {tPhone("goToAgents")}
+                </Link>
               </div>
             ) : (
               <>
@@ -515,8 +575,9 @@ export default function AppSettingsPhonePage() {
                   onClick={handleTestCall}
                   disabled={testingCall || !testCallValid}
                   aria-label={testCallValid ? tPhone("ariaCallTest") : tPhone("ariaEnterValid")}
-                  className="w-full py-3 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
+                  className="w-full py-3 rounded-xl text-sm font-semibold bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] flex items-center justify-center gap-2"
                 >
+                  <Phone className="w-4 h-4" />
                   {testingCall ? tPhone("callingYou") : tPhone("callMyPhoneToTest")}
                 </button>
               </>

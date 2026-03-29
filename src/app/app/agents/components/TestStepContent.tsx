@@ -44,57 +44,72 @@ export function TestStepContent({
 
   return (
     <div className="space-y-6">
-      <h3 className="text-sm font-semibold text-[var(--text-primary)]">{t("testStep.title")}</h3>
-      <p className="text-xs text-[var(--text-secondary)]">
-        {t("testStep.description")}
-      </p>
       <div>
-        <label
-          htmlFor="test-scenario"
-          className="block text-[11px] text-[var(--text-tertiary)] mb-1.5"
-        >
-          {t("testStep.scenarioLabel")}
-        </label>
-        <select
-          id="test-scenario"
-          value={scenarioId}
-          onChange={(e) => setScenarioId(e.target.value)}
-          className="w-full max-w-xs rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
-        >
-          {testScenarios.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.label}
-            </option>
-          ))}
-        </select>
+        <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">{t("testStep.title")}</h3>
+        <p className="text-xs text-[var(--text-secondary)]">
+          {t("testStep.description")}
+        </p>
       </div>
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex-1">
-          <AgentTestPanel
-            agent={{ id: agent.id, name: agent.name, greeting: agent.greeting }}
-            workspace={{ name: workspaceName ?? undefined }}
-            onTested={() => setShowGoLiveCta(true)}
-            defaultScenarioPrompt={scenarioPrompt}
-          />
+
+      <div className="rounded-2xl border-2 border-[var(--accent-primary)] bg-[var(--accent-primary)]/5 p-5 space-y-4">
+        <div>
+          <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-1">
+            Test Your Agent
+          </h4>
+          <p className="text-xs text-[var(--text-secondary)] mb-3">
+            We'll call you and your agent will answer. Test its greeting, knowledge, and call handling in real time.
+          </p>
         </div>
-        <div className="shrink-0 self-start">
-          <button
-            type="button"
-            onClick={async () => {
-              try {
-                const url = `${window.location.origin}/test/${agent.id}`;
-                await navigator.clipboard.writeText(url);
-                window.dispatchEvent(
-                  new CustomEvent("agents:test-link-copied", { detail: { url } }),
-                );
-              } catch {
-                // ignore clipboard failures
-              }
-            }}
-            className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] border border-[var(--border-default)] rounded-lg px-3 py-1.5"
+
+        <div>
+          <label
+            htmlFor="test-scenario"
+            className="block text-[11px] font-medium text-[var(--text-tertiary)] mb-2"
           >
-            {t("testStep.copyLink")}
-          </button>
+            Choose a test scenario:
+          </label>
+          <select
+            id="test-scenario"
+            value={scenarioId}
+            onChange={(e) => setScenarioId(e.target.value)}
+            className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-input)] px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
+          >
+            {testScenarios.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex-1">
+            <AgentTestPanel
+              agent={{ id: agent.id, name: agent.name, greeting: agent.greeting }}
+              workspace={{ name: workspaceName ?? undefined }}
+              onTested={() => setShowGoLiveCta(true)}
+              defaultScenarioPrompt={scenarioPrompt}
+            />
+          </div>
+          <div className="shrink-0 self-start">
+            <button
+              type="button"
+              onClick={async () => {
+                try {
+                  const url = `${window.location.origin}/test/${agent.id}`;
+                  await navigator.clipboard.writeText(url);
+                  window.dispatchEvent(
+                    new CustomEvent("agents:test-link-copied", { detail: { url } }),
+                  );
+                } catch {
+                  // ignore clipboard failures
+                }
+              }}
+              className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] border border-[var(--border-default)] rounded-lg px-3 py-1.5 transition-colors"
+            >
+              {t("testStep.copyLink")}
+            </button>
+          </div>
         </div>
       </div>
       {showGoLiveCta && (

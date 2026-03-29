@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useSearchParams } from "next/navigation";
-import { Phone, MessageCircle, Cloud, Building2, Database, TrendingUp, Layers, Users, Building, RefreshCw, AlertCircle, Loader, Download, Unplug } from "lucide-react";
+import { Phone, MessageCircle, Cloud, Building2, Database, TrendingUp, Layers, Users, Building, RefreshCw, AlertCircle, Loader, Download, Unplug, ChevronDown, CheckCircle2 } from "lucide-react";
 import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
 import { IntegrationsHealthWidget } from "@/components/settings/IntegrationsHealthWidget";
 import type { CrmProviderId, CrmStatusResponse } from "@/app/api/integrations/crm/status/route";
@@ -71,6 +71,7 @@ export default function AppSettingsIntegrationsPage() {
   const [disconnectingProvider, setDisconnectingProvider] = useState<CrmProviderId | null>(null);
   const [confirmDisconnect, setConfirmDisconnect] = useState<CrmProviderId | null>(null);
   const [syncProgress, setSyncProgress] = useState<Partial<Record<CrmProviderId, SyncProgressResponse | null>>>({});
+  const [expandedSyncInfo, setExpandedSyncInfo] = useState<Partial<Record<CrmProviderId, boolean>>>({});
   const syncPollingRef = useRef<Partial<Record<CrmProviderId, NodeJS.Timeout | null>>>({});
   const searchParams = useSearchParams();
   const calendarParam = searchParams.get("calendar");
@@ -443,6 +444,24 @@ export default function AppSettingsIntegrationsPage() {
     }
   };
 
+  const formatTimeAgo = (dateString: string): string => {
+    const now = new Date();
+    const then = new Date(dateString);
+    const seconds = Math.floor((now.getTime() - then.getTime()) / 1000);
+
+    if (seconds < 60) return "just now";
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+    if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
+    return then.toLocaleDateString();
+  };
+
+  const connectedCount = crmStatus
+    ? Object.values(crmStatus.integrations).filter((s) => s.connected).length
+    : 0;
+  const totalSynced = crmStatus?.global.recordsSynced ?? 0;
+  const totalErrors = crmStatus?.global.errors ?? 0;
+
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
       <Breadcrumbs items={[{ label: t("hub.breadcrumbSettings"), href: "/app/settings" }, { label: t("hub.title") }]} />
@@ -488,30 +507,47 @@ export default function AppSettingsIntegrationsPage() {
           <div className="mb-3 px-4 py-3 rounded-xl border text-xs" style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)", background: "var(--bg-card)" }}>
             {t("hub.crmDescription")}
           </div>
-          <div className="mb-4 p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
-              <RefreshCw className="w-4 h-4 text-[var(--text-secondary)]" aria-hidden />
-              <span>
-                {t("hub.lastSyncLabel")} {crmStatus?.global.lastSyncAt
-                  ? new Date(crmStatus.global.lastSyncAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })
-                  : "Never"}
-              </span>
+          {/* Sync Health Summary Card */}
+          <div className="mb-4 p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-[var(--text-primary)]">Sync Health Summary</h3>
+              <Link
+                href="/app/settings/integrations/sync-log"
+                className="text-xs font-medium text-[var(--accent-primary)] hover:underline"
+              >
+                {t("hub.viewSyncLog")}
+              </Link>
             </div>
-            <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)]">
-              <span>{t("hub.recordsSyncedLabel")} {crmStatus?.global.recordsSynced ?? 0}</span>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-[var(--accent-primary)]" aria-hidden />
+                <div className="flex flex-col">
+                  <span className="text-xs text-[var(--text-secondary)]">Connected</span>
+                  <span className="text-sm font-semibold text-[var(--text-primary)]">{connectedCount}</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <RefreshCw className="w-4 h-4 text-[var(--text-secondary)]" aria-hidden />
+                <div className="flex flex-col">
+                  <span className="text-xs text-[var(--text-secondary)]">Records Synced</span>
+                  <span className="text-sm font-semibold text-[var(--text-primary)]">{totalSynced}</span>
+                </div>
+              </div>
+              {totalErrors > 0 && (
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-[var(--accent-warning,#f59e0b)]" aria-hidden />
+                  <div className="flex flex-col">
+                    <span className="text-xs text-[var(--text-secondary)]">Sync Errors</span>
+                    <span className="text-sm font-semibold text-[var(--accent-warning,#f59e0b)]">{totalErrors}</span>
+                  </div>
+                </div>
+              )}
             </div>
-            {(crmStatus?.global.errors ?? 0) > 0 && (
-              <div className="flex items-center gap-2 text-sm text-[var(--accent-warning,#f59e0b)]">
-                <AlertCircle className="w-4 h-4" aria-hidden />
-                <span>{crmStatus?.global.errors ?? 0} {(crmStatus?.global.errors ?? 0) !== 1 ? t("hub.syncErrors") : t("hub.syncError")}</span>
+            {crmStatus?.global.lastSyncAt && (
+              <div className="text-xs text-[var(--text-secondary)]">
+                Last sync: {formatTimeAgo(crmStatus.global.lastSyncAt)}
               </div>
             )}
-            <Link
-              href="/app/settings/integrations/sync-log"
-              className="text-xs font-medium text-[var(--accent-primary)] hover:underline ml-auto"
-            >
-              {t("hub.viewSyncLog")}
-            </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
             {getCrmIntegrations(t).map((crm) => {
@@ -521,8 +557,12 @@ export default function AppSettingsIntegrationsPage() {
               return (
                 <div
                   key={crm.id}
-                  className={`bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl p-5 flex flex-col ${
-                    crm.comingSoon ? "opacity-60" : ""
+                  className={`bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl p-5 flex flex-col border-l-4 ${
+                    crm.comingSoon ? "opacity-60 border-l-[var(--border-default)]" : connected && status?.tokenStatus !== 'expired' && status?.tokenStatus !== 'error'
+                      ? "border-l-[var(--accent-primary)]"
+                      : (status?.tokenStatus === 'expired' || status?.tokenStatus === 'error') && !connected
+                      ? "border-l-[var(--accent-danger,#ef4444)]"
+                      : "border-l-[var(--border-default)]"
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
@@ -571,24 +611,76 @@ export default function AppSettingsIntegrationsPage() {
                   </div>
                   <h4 className="text-sm font-medium text-[var(--text-primary)]">{t(`card.${crm.id === "zoho_crm" ? "zoho" : crm.id === "google_contacts" ? "googleContacts" : crm.id === "microsoft_365" ? "microsoft365" : crm.id}.title`)}</h4>
                   <p className="text-xs text-[var(--text-secondary)] mt-1 flex-1">{t(`card.${crm.id === "zoho_crm" ? "zoho" : crm.id === "google_contacts" ? "googleContacts" : crm.id === "microsoft_365" ? "microsoft365" : crm.id}.body`)}</p>
-                  {connected && (
+
+                  {/* Post-Connect Value Indicators */}
+                  {connected && status?.tokenStatus !== 'expired' && status?.tokenStatus !== 'error' && (
                     <div className="mt-3 space-y-1.5">
-                      {status?.lastSyncAt && (
+                      {(status?.recordsSynced ?? 0) > 0 ? (
                         <p className="text-[11px] text-[var(--text-secondary)]">
-                          <span className="font-medium">{t("label.lastSynced")}:</span> {new Date(status.lastSyncAt).toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })}
+                          <CheckCircle2 className="w-3 h-3 text-[var(--accent-primary)] inline mr-1" />
+                          {status?.recordsSynced ?? 0} contacts synced · {status?.lastSyncAt ? `Last sync ${formatTimeAgo(status.lastSyncAt)}` : "Syncing..."}
+                        </p>
+                      ) : (
+                        <p className="text-[11px] text-[var(--text-secondary)]">
+                          Connected — sync your first contacts
                         </p>
                       )}
-                      <div className="flex items-center gap-2">
-                        <span className="text-[11px] text-[var(--text-secondary)]"><span className="font-medium">{t("label.synced")}:</span> {status?.recordsSynced ?? 0} {t("label.records")}</span>
-                        {(status?.errorCount ?? 0) > 0 && (
-                          <span className="text-[10px] font-medium text-[var(--accent-warning,#f59e0b)] bg-[var(--accent-warning,#f59e0b)]/10 px-1.5 py-0.5 rounded">
-                            {t("label.errors", { count: status?.errorCount ?? 0 })}
-                          </span>
-                        )}
-                      </div>
+                      {(status?.errorCount ?? 0) > 0 && (
+                        <p className="text-[10px] font-medium text-[var(--accent-warning,#f59e0b)] bg-[var(--accent-warning,#f59e0b)]/10 px-1.5 py-0.5 rounded inline-block">
+                          {status?.errorCount} sync {(status?.errorCount ?? 0) === 1 ? "error" : "errors"}
+                        </p>
+                      )}
                     </div>
                   )}
+
+                  {/* Re-auth Required State */}
+                  {(status?.tokenStatus === 'expired' || status?.tokenStatus === 'error') && (
+                    <div className="mt-3 p-2 rounded-lg bg-[var(--accent-danger,#ef4444)]/5 border border-[var(--accent-danger,#ef4444)]/20">
+                      <p className="text-[11px] font-medium text-[var(--accent-danger,#ef4444)]">
+                        <AlertCircle className="w-3 h-3 inline mr-1" />
+                        Re-authentication required
+                      </p>
+                    </div>
+                  )}
+
+                  {/* What Gets Synced Section */}
                   {!connected && !crm.comingSoon && (
+                    <div className="mt-3">
+                      <button
+                        type="button"
+                        onClick={() => setExpandedSyncInfo((prev) => ({ ...prev, [crm.id]: !prev[crm.id] }))}
+                        className="w-full text-left flex items-center justify-between px-2 py-1.5 rounded-lg hover:bg-[var(--bg-hover)] transition-colors text-[11px] font-medium text-[var(--text-secondary)]"
+                      >
+                        <span>What gets synced?</span>
+                        <ChevronDown
+                          className={`w-3 h-3 transition-transform ${expandedSyncInfo[crm.id] ? "rotate-180" : ""}`}
+                          aria-hidden
+                        />
+                      </button>
+                      {expandedSyncInfo[crm.id] && (
+                        <div className="mt-2 space-y-1.5 text-[10px] text-[var(--text-secondary)]">
+                          <div className="flex items-start gap-1.5">
+                            <span className="text-[var(--accent-primary)] mt-0.5">•</span>
+                            <span>New leads auto-sync to operator system</span>
+                          </div>
+                          <div className="flex items-start gap-1.5">
+                            <span className="text-[var(--accent-primary)] mt-0.5">•</span>
+                            <span>Call outcomes pushed back to CRM</span>
+                          </div>
+                          <div className="flex items-start gap-1.5">
+                            <span className="text-[var(--accent-primary)] mt-0.5">•</span>
+                            <span>Appointments synced both ways</span>
+                          </div>
+                          <div className="flex items-start gap-1.5">
+                            <span className="text-[var(--accent-primary)] mt-0.5">•</span>
+                            <span>Contact updates stay in sync</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {!connected && !crm.comingSoon && !expandedSyncInfo[crm.id] && (
                     <p className="text-[10px] text-[var(--text-tertiary)] mt-2 italic">
                       Connects in 30 seconds · Data stays encrypted · Disconnect anytime
                     </p>

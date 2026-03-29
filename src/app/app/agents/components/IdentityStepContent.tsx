@@ -457,7 +457,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
       </section>
 
       <section
-        aria-label="Playbooks"
+        aria-label="Agent Playbooks"
         className="space-y-3 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4"
       >
         <div>
@@ -472,12 +472,20 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
           {templates.map((tpl) => {
             const Icon = PLAYBOOK_ICONS[tpl.id] ?? Settings;
             const selected = agent.template === tpl.id;
+            const revenueImpact: Record<string, string> = {
+              receptionist: "Answers every call, qualifies leads, books appointments",
+              appointment_setter: "Converts qualified leads into booked meetings",
+              lead_qualifier: "Pre-screens inbound calls, identifies buyers",
+              follow_up: "Re-engages cold leads with persistent outreach",
+              support: "Handles support calls, reduces tickets",
+              scratch: "Build your own custom agent behavior",
+            };
             return (
               <button
                 key={tpl.id}
                 type="button"
                 onClick={() => applyTemplate(tpl)}
-                className={`group flex flex-col items-start gap-1.5 rounded-2xl border p-3 text-left transition ${
+                className={`group flex flex-col items-start gap-2 rounded-2xl border p-3 text-left transition ${
                   selected
                     ? "border-[var(--accent-primary)] bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
                     : "border-[var(--border-subtle)] bg-black/40 text-[var(--text-secondary)] hover:border-[var(--border-default)] hover:text-[var(--text-primary)]"
@@ -493,7 +501,10 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
                   </span>
                   <span className="text-xs font-semibold">{t(`identity.templates.${tpl.id}.label`)}</span>
                 </div>
-                <p className="text-[10px] leading-snug opacity-80">{t(`identity.templates.${tpl.id}.desc`)}</p>
+                <p className="text-[11px] leading-relaxed font-medium opacity-90">
+                  {revenueImpact[tpl.id] || t(`identity.templates.${tpl.id}.desc`)}
+                </p>
+                <p className="text-[10px] leading-snug opacity-60">{t(`identity.templates.${tpl.id}.desc`)}</p>
               </button>
             );
           })}

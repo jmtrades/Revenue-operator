@@ -92,8 +92,26 @@ export function GoLiveStepContent({
           />
         </div>
       </div>
-      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
-        <p className="text-xs font-medium text-[var(--text-secondary)] mb-3">{t("goLive.readinessChecklist")}</p>
+      <div className={`rounded-2xl border-2 p-4 ${
+        allowActivate
+          ? "border-[var(--accent-primary)] bg-[var(--accent-primary)]/5"
+          : "border-[var(--accent-danger)]/50 bg-[var(--accent-danger)]/5"
+      }`}>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <p className="text-sm font-semibold text-[var(--text-primary)]">{t("goLive.readinessChecklist")}</p>
+            <p className="text-[11px] text-[var(--text-tertiary)] mt-1">
+              {allowActivate
+                ? "Your agent is ready to go live!"
+                : `Complete ${r.tasks.filter((t) => !t.complete).length} more item${r.tasks.filter((t) => !t.complete).length !== 1 ? "s" : ""} to launch`}
+            </p>
+          </div>
+          <div className="text-center">
+            <p className="text-2xl font-bold text-[var(--text-primary)]">{r.percent}%</p>
+            <p className="text-[10px] text-[var(--text-tertiary)]">Complete</p>
+          </div>
+        </div>
+
         <ul className="space-y-2 text-xs text-[var(--text-secondary)]" role="list">
           {(() => {
           const readinessLabelKeys: Record<string, string> = {
@@ -109,13 +127,19 @@ export function GoLiveStepContent({
             launched: "voiceAssistantCreated",
           };
           return r.tasks.map((task) => (
-            <li key={task.key} className="flex items-center gap-2">
+            <li key={task.key} className={`flex items-center gap-3 px-3 py-2 rounded-lg transition ${
+              task.complete
+                ? "bg-[var(--accent-primary)]/10"
+                : "bg-[var(--accent-danger)]/10"
+            }`}>
               {task.complete ? (
-                <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--accent-primary)]" aria-hidden />
+                <CheckCircle2 className="h-5 w-5 shrink-0 text-[var(--accent-primary)]" aria-hidden />
               ) : (
-                <span className="h-4 w-4 shrink-0 rounded-full border border-white/30 text-[var(--text-tertiary)]" aria-hidden />
+                <div className="h-5 w-5 shrink-0 rounded-full border-2 border-[var(--accent-danger)] flex items-center justify-center" aria-hidden>
+                  <span className="w-2 h-2 rounded-full bg-[var(--accent-danger)]" />
+                </div>
               )}
-              <span className={task.complete ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"}>
+              <span className={task.complete ? "text-[var(--text-primary)] font-medium" : "text-[var(--accent-danger)] font-medium"}>
                 {t(`goLive.${readinessLabelKeys[task.key] ?? task.key}`)}
               </span>
               {task.key === "launched" && allowActivate && (
@@ -123,7 +147,7 @@ export function GoLiveStepContent({
                   type="button"
                   onClick={() => void onActivate()}
                   disabled={activating}
-                  className="ml-auto rounded text-[11px] font-medium text-[var(--text-primary)] underline underline-offset-1 hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] disabled:opacity-50"
+                  className="ml-auto rounded text-[11px] font-semibold text-[var(--accent-primary)] hover:text-[var(--accent-primary)]/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] disabled:opacity-50 transition-colors"
                 >
                   {activating ? t("goLive.syncing") : t("goLive.retrySync")}
                 </button>

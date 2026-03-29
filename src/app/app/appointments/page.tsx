@@ -114,6 +114,15 @@ export default function AppointmentsPage() {
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [syncLoading, setSyncLoading] = useState(false);
 
+  // Compute summary metrics for dashboard cards
+  const totalAppointments = appointments.length;
+  const completedAppointments = appointments.filter(a => a.status === "Completed").length;
+  const noShowAppointments = appointments.filter(a => a.status === "No-Show").length;
+  const confirmedAppointments = appointments.filter(a => a.status === "Confirmed").length;
+  const completionRate = totalAppointments > 0 ? Math.round((completedAppointments / totalAppointments) * 100) : 0;
+  const estimatedRevenue = completedAppointments * 150; // $150 average per appointment
+  const hasNoShows = noShowAppointments > 0;
+
   // Outcome form state
   const [outcomeData, setOutcomeData] = useState<{
     outcome: OutcomeType | null;
@@ -521,6 +530,80 @@ export default function AppointmentsPage() {
           </div>
         </div>
 
+        {/* ── Appointment Summary Cards ──────────────────────────────────── */}
+        {!loading && !fetchError && totalAppointments > 0 && (
+          <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+            {/* Total Appointments */}
+            <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+              <p className="text-[11px] font-medium text-[var(--text-secondary)] uppercase tracking-wide mb-2">
+                {t("appointments.summary.total", { defaultValue: "Total Appointments" })}
+              </p>
+              <p className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] tabular-nums">
+                {totalAppointments}
+              </p>
+            </div>
+
+            {/* Completed */}
+            <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+              <p className="text-[11px] font-medium text-[var(--text-secondary)] uppercase tracking-wide mb-2">
+                {t("appointments.summary.completed", { defaultValue: "Completed" })}
+              </p>
+              <div className="flex items-baseline gap-2">
+                <p className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] tabular-nums">
+                  {completedAppointments}
+                </p>
+                <p className="text-sm font-medium text-green-600 dark:text-green-400">
+                  {completionRate}%
+                </p>
+              </div>
+            </div>
+
+            {/* No-Shows */}
+            <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+              <p className="text-[11px] font-medium text-[var(--text-secondary)] uppercase tracking-wide mb-2">
+                {t("appointments.summary.noShows", { defaultValue: "No-Shows" })}
+              </p>
+              <p className={`text-2xl md:text-3xl font-bold tabular-nums ${
+                noShowAppointments > 0 ? "text-red-600 dark:text-red-400" : "text-[var(--text-primary)]"
+              }`}>
+                {noShowAppointments}
+              </p>
+            </div>
+
+            {/* Estimated Revenue */}
+            <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+              <p className="text-[11px] font-medium text-[var(--text-secondary)] uppercase tracking-wide mb-2">
+                {t("appointments.summary.pipelineValue", { defaultValue: "Pipeline Value" })}
+              </p>
+              <p className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] tabular-nums">
+                ${(estimatedRevenue / 100).toLocaleString()}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* ── No-Show Recovery Alert ──────────────────────────────────────── */}
+        {!loading && !fetchError && hasNoShows && (
+          <div className="mb-6 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 flex items-start gap-3">
+            <div className="flex-shrink-0 mt-0.5">
+              <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-amber-900 dark:text-amber-200 mb-1">
+                {t("appointments.noShowAlert", {
+                  defaultValue: `${noShowAppointments} no-show${noShowAppointments !== 1 ? 's' : ''} detected — Recovery sequences are active.`
+                })}
+              </p>
+              <Link
+                href="/app/follow-ups"
+                className="text-xs font-medium text-amber-700 dark:text-amber-300 hover:underline"
+              >
+                {t("appointments.viewFollowUps", { defaultValue: "View follow-ups" })} →
+              </Link>
+            </div>
+          </div>
+        )}
+
         {loading ? (
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-8 text-center shadow-[var(--shadow-card)]">
             <div className="inline-block animate-spin">
@@ -543,11 +626,11 @@ export default function AppointmentsPage() {
           <div className="space-y-6">
             <EmptyState
               icon={Calendar}
-              title={t("appointments.empty.title", { defaultValue: "No appointments scheduled yet" })}
-              description={t("appointments.empty.body", { defaultValue: "Once your AI operator books meetings, they'll appear here with automatic confirmations and reminders." })}
+              title={t("appointments.empty.title", { defaultValue: "Your operator is ready to book" })}
+              description={t("appointments.empty.body", { defaultValue: "Your AI operator automatically books appointments from inbound and outbound calls. Connect your calendar to sync scheduled meetings, or let your operator start booking from live interactions." })}
               primaryAction={{
-                label: t("appointments.empty.action", { defaultValue: "Open operator settings" }),
-                href: "/app/settings/agent",
+                label: t("appointments.empty.action", { defaultValue: "Connect Calendar" }),
+                href: "/app/settings/integrations",
               }}
               secondaryAction={{
                 label: t("appointments.viewCalls", { defaultValue: "View Calls" }),
@@ -1125,9 +1208,15 @@ export default function AppointmentsPage() {
                     setShowCancelConfirm(false);
                   }}
                   disabled={modalActionLoading !== null}
-                  className="w-full px-3 py-2 rounded-lg border border-[var(--accent-primary)]/30 text-xs font-medium text-[var(--accent-primary)] bg-[var(--accent-primary)]/5 hover:bg-[var(--accent-primary)]/10 disabled:opacity-50 disabled:cursor-not-allowed transition-[background-color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
+                  className="w-full mt-2 px-3 py-2.5 rounded-lg bg-[var(--accent-primary)] text-xs font-semibold text-white hover:bg-[var(--accent-primary)]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-[background-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                 >
-                  {t("appointments.outcome.recordButton", { defaultValue: "Record Outcome" })}
+                  {showOutcomeForm ? (
+                    t("appointments.outcome.hideForm", { defaultValue: "Close" })
+                  ) : (
+                    <>
+                      {t("appointments.outcome.recordButton", { defaultValue: "Record Outcome" })}
+                    </>
+                  )}
                 </button>
               )}
               <div className="flex gap-2">

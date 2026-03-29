@@ -66,74 +66,102 @@ export function AgentList({
             <Card
               key={agent.id}
               variant="interactive"
-              className={`text-left p-4 ${
+              className={`text-left p-3.5 transition-all ${
                 isSelected
-                  ? "ring-1 ring-[var(--accent-primary)]/50 border-[var(--border-medium)]"
-                  : ""
+                  ? "ring-2 ring-[var(--accent-primary)] border-[var(--accent-primary)]"
+                  : "hover:border-[var(--border-medium)]"
               }`}
               onClick={() => {
                 setSelectedId(agent.id);
                 setActiveStep(getFirstIncompleteStep(agent));
               }}
             >
-              <div className="flex items-start justify-between gap-2 mb-2">
-                <p className="font-semibold text-sm text-[var(--text-primary)] truncate flex-1 min-w-0">
-                  {agent.name}
-                </p>
+              <div className="flex items-start justify-between gap-2 mb-2.5">
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm text-[var(--text-primary)] truncate">
+                    {agent.name}
+                  </p>
+                  <p className="text-[11px] text-[var(--text-tertiary)] mt-0.5">
+                    {templateLabel}
+                  </p>
+                </div>
                 <Badge variant={agent.active ? "success" : "neutral"} dot>
                   {agent.active ? t("status.active") : t("status.inactive")}
                 </Badge>
               </div>
-              <div className="flex items-center gap-2 mb-2 flex-wrap">
-                <Badge variant="neutral">{templateLabel}</Badge>
-                {agent.id === defaultAgentId && (
-                  <span className="text-[10px] text-[var(--text-tertiary)]">
-                    {t("defaultBadge")}
-                  </span>
-                )}
-              </div>
+
               {assigned && (
-                <div className="flex items-center gap-1.5 text-[11px] text-[var(--accent-primary)] mb-2">
+                <div className="flex items-center gap-1.5 text-[10px] text-[var(--accent-primary)] mb-2.5 px-2 py-1.5 bg-[var(--accent-primary)]/10 rounded-lg">
                   <PhoneCall className="w-3 h-3 shrink-0" />
                   <span className="font-mono truncate">
                     {assigned.phone_number}
                   </span>
                 </div>
               )}
-              <div className="flex items-center gap-2 text-[11px] text-[var(--text-tertiary)] mb-1">
-                <span>{agent.stats?.totalCalls ?? 0} {t("callsSuffix")}</span>
-                {(agent.stats?.appointmentsBooked ?? 0) > 0 && (
-                  <>
-                    <span>·</span>
-                    <span className="text-[var(--accent-primary)]">{agent.stats?.appointmentsBooked} {t("bookedSuffix", { defaultValue: "booked" })}</span>
-                  </>
-                )}
-                <span>·</span>
-                <span>{lastActiveLabel}</span>
-              </div>
+
               {(agent.stats?.totalCalls ?? 0) > 0 && (
-                <div className="flex items-center gap-2 text-[11px] text-[var(--text-tertiary)] mb-3">
-                  {typeof agent.stats?.avgRating === "number" && agent.stats.avgRating > 0 && (
-                    <span className={agent.stats.avgRating >= 4 ? "text-[var(--accent-primary)]" : agent.stats.avgRating >= 3 ? "text-[var(--accent-warning)]" : "text-[var(--accent-danger)]"}>
-                      {t("qualitySuffix", { defaultValue: "Quality" })}: {agent.stats.avgRating.toFixed(1)}/5
-                    </span>
-                  )}
-                  {(agent.stats?.totalCalls ?? 0) > 0 && (agent.stats?.appointmentsBooked ?? 0) > 0 && (
-                    <>
-                      <span>·</span>
-                      <span>{t("conversionSuffix", { defaultValue: "Conv" })}: {Math.round(((agent.stats?.appointmentsBooked ?? 0) / (agent.stats?.totalCalls ?? 1)) * 100)}%</span>
-                    </>
-                  )}
+                <div className="space-y-2 mb-3 pt-2.5 border-t border-[var(--border-default)]">
+                  <div className="grid grid-cols-2 gap-2 text-[11px]">
+                    <div className="rounded-lg bg-[var(--bg-inset)] p-2">
+                      <p className="text-[var(--text-tertiary)] mb-0.5">Calls Handled</p>
+                      <p className="font-semibold text-[var(--text-primary)]">
+                        {agent.stats?.totalCalls ?? 0}
+                      </p>
+                    </div>
+                    {(agent.stats?.appointmentsBooked ?? 0) > 0 && (
+                      <div className="rounded-lg bg-[var(--accent-primary)]/10 p-2">
+                        <p className="text-[var(--text-tertiary)] mb-0.5">Booked</p>
+                        <p className="font-semibold text-[var(--accent-primary)]">
+                          {agent.stats?.appointmentsBooked}
+                        </p>
+                      </div>
+                    )}
+                    {typeof agent.stats?.avgRating === "number" && agent.stats.avgRating > 0 && (
+                      <div className={`rounded-lg p-2 ${
+                        agent.stats.avgRating >= 4
+                          ? "bg-[var(--accent-primary)]/10"
+                          : agent.stats.avgRating >= 3
+                            ? "bg-[var(--accent-warning)]/10"
+                            : "bg-[var(--accent-danger)]/10"
+                      }`}>
+                        <p className="text-[var(--text-tertiary)] mb-0.5">Quality</p>
+                        <p className={`font-semibold ${
+                          agent.stats.avgRating >= 4
+                            ? "text-[var(--accent-primary)]"
+                            : agent.stats.avgRating >= 3
+                              ? "text-[var(--accent-warning)]"
+                              : "text-[var(--accent-danger)]"
+                        }`}>
+                          {agent.stats.avgRating.toFixed(1)}/5
+                        </p>
+                      </div>
+                    )}
+                    {(agent.stats?.totalCalls ?? 0) > 0 && (agent.stats?.appointmentsBooked ?? 0) > 0 && (
+                      <div className="rounded-lg bg-[var(--bg-inset)] p-2">
+                        <p className="text-[var(--text-tertiary)] mb-0.5">Conversion</p>
+                        <p className="font-semibold text-[var(--text-primary)]">
+                          {Math.round(((agent.stats?.appointmentsBooked ?? 0) / (agent.stats?.totalCalls ?? 1)) * 100)}%
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
+
+              {(agent.stats?.totalCalls ?? 0) === 0 && (
+                <div className="text-[11px] text-[var(--text-tertiary)] mb-3 pt-2.5 border-t border-[var(--border-default)]">
+                  <p className="text-center py-1.5">Awaiting first call</p>
+                </div>
+              )}
+
               <div
-                className="flex items-center gap-2 pt-2 border-t border-[var(--border-default)]"
+                className="flex items-center gap-1.5 pt-2.5 border-t border-[var(--border-default)]"
                 onClick={(e) => e.stopPropagation()}
               >
                 <button
                   type="button"
                   aria-label={agent.active ? t("actions.deactivate") : t("actions.activate")}
-                  className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-inset)]"
+                  className="flex-1 p-1.5 rounded-lg text-[10px] font-medium text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-inset)] transition-colors"
                   onClick={async () => {
                     const next = { ...agent, active: !agent.active };
                     setAgents((current) =>
@@ -145,14 +173,12 @@ export function AgentList({
                     });
                   }}
                 >
-                  <span className="text-[10px] font-medium">
-                    {agent.active ? t("actions.pause") : t("actions.on")}
-                  </span>
+                  {agent.active ? t("actions.pause") : t("actions.on")}
                 </button>
                 <button
                   type="button"
                   aria-label={t("actions.editAgent")}
-                  className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-inset)]"
+                  className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-inset)] transition-colors"
                   onClick={() => {
                     setSelectedId(agent.id);
                     setActiveStep(getFirstIncompleteStep(agent));
@@ -163,7 +189,7 @@ export function AgentList({
                 <button
                   type="button"
                   aria-label={t("actions.deleteAgent")}
-                  className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--accent-danger)] hover:bg-[var(--accent-danger)]/10"
+                  className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--accent-danger)] hover:bg-[var(--accent-danger)]/10 transition-colors"
                   onClick={() => setDeleteConfirmAgent(agent)}
                 >
                   <Trash2 className="h-3.5 w-3.5" />
