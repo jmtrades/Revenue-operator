@@ -188,7 +188,7 @@ export async function GET(req: NextRequest) {
     } catch (err) {
       checks.DB_PHONE_FALLBACK = {
         status: "error",
-        detail: `DB error: ${err instanceof Error ? err.message : String(err)}`,
+        detail: "DB connectivity check failed",
       };
     }
   }
