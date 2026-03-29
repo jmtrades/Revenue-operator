@@ -920,129 +920,14 @@ export function UnifiedDashboard() {
         </motion.div>
       </motion.div>
 
-      {/* ── Sequence A/B Testing ──────────────────────────────────────── */}
+      {/* ── Call Recordings ────────────────────────────────────────────── */}
       <motion.div
-        variants={staggerContainer}
-        initial="initial"
-        animate="animate"
-      >
-        <motion.div variants={staggerItem}>
-          <Suspense fallback={<CardSkeleton />}><SequenceABTestCard /></Suspense>
-        </motion.div>
-      </motion.div>
-
-      {/* ── Voice Analytics ────────────────────────────────────────────── */}
-      <motion.div
-        variants={staggerContainer}
-        initial="initial"
-        animate="animate"
-      >
-        <motion.div variants={staggerItem}>
-          <Suspense fallback={<CardSkeleton />}><VoiceAnalyticsCard /></Suspense>
-        </motion.div>
-      </motion.div>
-
-      {/* ── Automation Engine ─────────────────────────────────────────── */}
-      <motion.div
-        variants={staggerContainer}
-        initial="initial"
-        animate="animate"
-      >
-        <motion.div variants={staggerItem}>
-          <Suspense fallback={<CardSkeleton />}><AutomationEngineCard /></Suspense>
-        </motion.div>
-      </motion.div>
-
-      {/* ── Call Recordings + Outbound Campaigns ─────────────────────── */}
-      <motion.div
-        className="grid lg:grid-cols-2 gap-6"
         variants={staggerContainer}
         initial="initial"
         animate="animate"
       >
         <motion.div variants={staggerItem}>
           <Suspense fallback={<CardSkeleton />}><CallRecordingsCard /></Suspense>
-        </motion.div>
-        <motion.div variants={staggerItem}>
-          <Suspense fallback={<CardSkeleton />}><OutboundCampaignCard /></Suspense>
-        </motion.div>
-      </motion.div>
-
-      {/* ── Campaign Performance Drill-down ──────────────────────────── */}
-      <motion.div
-        variants={staggerContainer}
-        initial="initial"
-        animate="animate"
-      >
-        <motion.div variants={staggerItem}>
-          <Suspense fallback={<CardSkeleton />}><CampaignPerformanceCard workspaceId={workspaceId} /></Suspense>
-        </motion.div>
-      </motion.div>
-
-      {/* ── Coaching Reports + Appointments ────────────────────────── */}
-      <motion.div
-        className="grid lg:grid-cols-2 gap-6"
-        variants={staggerContainer}
-        initial="initial"
-        animate="animate"
-      >
-        <motion.div variants={staggerItem}>
-          <Suspense fallback={<CardSkeleton />}><CoachingReportCard /></Suspense>
-        </motion.div>
-        <motion.div variants={staggerItem}>
-          <Suspense fallback={<CardSkeleton />}><AppointmentManagementCard /></Suspense>
-        </motion.div>
-      </motion.div>
-
-      {/* ── SMS Conversations + Call Transfers ────────────────────────── */}
-      <motion.div
-        className="grid lg:grid-cols-2 gap-6"
-        variants={staggerContainer}
-        initial="initial"
-        animate="animate"
-      >
-        <motion.div variants={staggerItem}>
-          <Suspense fallback={<CardSkeleton />}><SMSThreadsCard /></Suspense>
-        </motion.div>
-        <motion.div variants={staggerItem}>
-          <Suspense fallback={<CardSkeleton />}><CallTransferCard /></Suspense>
-        </motion.div>
-      </motion.div>
-
-      {/* ── Escalation Log + DNC Management ──────────────────────────── */}
-      <motion.div
-        className="grid lg:grid-cols-2 gap-6"
-        variants={staggerContainer}
-        initial="initial"
-        animate="animate"
-      >
-        <motion.div variants={staggerItem}>
-          <Suspense fallback={<CardSkeleton />}><EscalationLogCard /></Suspense>
-        </motion.div>
-        <motion.div variants={staggerItem}>
-          <Suspense fallback={<CardSkeleton />}><DNCManagementCard /></Suspense>
-        </motion.div>
-      </motion.div>
-
-      {/* ── Webhook Management ───────────────────────────────────────── */}
-      <motion.div
-        variants={staggerContainer}
-        initial="initial"
-        animate="animate"
-      >
-        <motion.div variants={staggerItem}>
-          <Suspense fallback={<CardSkeleton />}><WebhookManagementCard /></Suspense>
-        </motion.div>
-      </motion.div>
-
-      {/* ── Workspace Settings ───────────────────────────────────────── */}
-      <motion.div
-        variants={staggerContainer}
-        initial="initial"
-        animate="animate"
-      >
-        <motion.div variants={staggerItem}>
-          <Suspense fallback={<CardSkeleton />}><WorkspaceSettingsCard /></Suspense>
         </motion.div>
       </motion.div>
     </div>
