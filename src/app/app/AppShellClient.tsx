@@ -156,9 +156,25 @@ export default function AppShellClient({
   };
 
   const handleSignOut = async () => {
+    // Clean up all cached data to prevent leakage
+    try {
+      localStorage.removeItem("rt_workspace_me_snapshot");
+      localStorage.removeItem("revenue_last_workspace_id");
+      // Clear all rt_feature_ and rt_ prefixed keys
+      Object.keys(localStorage)
+        .filter(k => k.startsWith("rt_"))
+        .forEach(k => localStorage.removeItem(k));
+    } catch (_) {
+      /* ignore storage errors */
+    }
+
     const client = getClientOrNull();
     if (client) {
-      await client.auth.signOut();
+      try {
+        await client.auth.signOut();
+      } catch (_) {
+        /* ignore signOut errors to ensure redirect happens */
+      }
     }
     router.push("/sign-in");
   };
@@ -238,7 +254,7 @@ export default function AppShellClient({
 
   useEffect(() => {
     const client = getClientOrNull();
-    if (!client) return;
+    if (!client || !initialWorkspaceId) return;
     const fetchActive = () =>
       client
         .from("call_sessions")
@@ -255,7 +271,7 @@ export default function AppShellClient({
       .channel("active-calls")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "call_sessions" },
+        { event: "*", schema: "public", table: "call_sessions", filter: `workspace_id=eq.${initialWorkspaceId}` },
         () => {
           void fetchActive();
         },
@@ -265,7 +281,7 @@ export default function AppShellClient({
     return () => {
       client.removeChannel(channel);
     };
-  }, []);
+  }, [initialWorkspaceId]);
 
   useEffect(() => {
     fetchWorkspaceMeCached()
