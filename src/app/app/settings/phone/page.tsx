@@ -509,7 +509,7 @@ export default function AppSettingsPhonePage() {
                   aria-label={tPhone("yourPhoneNumber")}
                   aria-invalid={!!testCallError}
                   aria-describedby={testCallError ? "test-call-error" : undefined}
-                  className={`w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] text-base focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none mb-2 ${testCallError ? "border-red-500/50" : "border-[var(--border-default)] focus:border-[var(--border-medium)]"}`}
+                  className={`w-full px-4 py-3 rounded-xl bg-[var(--bg-input)] border text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] text-base focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none mb-2 ${testCallError ? "border-[var(--accent-danger,#ef4444)]/50" : "border-[var(--border-default)] focus:border-[var(--border-medium)]"}`}
                 />
                 {testCallError ? <p id="test-call-error" className="text-sm text-[var(--accent-red)] mb-3" role="alert">{testCallError}</p> : null}
                 <button
@@ -728,7 +728,7 @@ export default function AppSettingsPhonePage() {
               </button>
               <p className="text-xs text-[var(--text-tertiary)] mt-2 text-center">{tPhone("takesAbout10Seconds")}</p>
               {connectError ? (
-                <div className="mt-4 rounded-xl border border-red-500/20 bg-red-500/[0.06] p-4" role="alert">
+                <div className="mt-4 rounded-xl border border-[var(--accent-danger,#ef4444)]/20 bg-[var(--accent-danger,#ef4444)]/[0.06] p-4" role="alert">
                   <p className="text-sm text-red-400 mb-2">{connectError}</p>
                   {connectErrorCode === "NOT_CONFIGURED" && (
                     <div className="flex gap-2 mt-2">

@@ -121,14 +121,14 @@ function IntegrationCard({ integration }: { integration: Integration }) {
 
   const getIconColor = (letter: string) => {
     const colors: Record<string, string> = {
-      S: "bg-blue-500/20 text-blue-300",
-      G: "bg-green-500/20 text-green-300",
-      Z: "bg-amber-500/20 text-amber-300",
-      W: "bg-purple-500/20 text-purple-300",
-      H: "bg-orange-500/20 text-orange-300",
-      Q: "bg-red-500/20 text-red-300",
+      S: "bg-[var(--accent-primary)]/20 text-[var(--accent-primary)]",
+      G: "bg-[var(--accent-primary)]/20 text-[var(--accent-primary)]",
+      Z: "bg-[var(--accent-warning,#f59e0b)]/20 text-[var(--accent-warning,#f59e0b)]",
+      W: "bg-[var(--accent-primary)]/20 text-[var(--accent-primary)]",
+      H: "bg-[var(--accent-warning,#f59e0b)]/20 text-[var(--accent-warning,#f59e0b)]",
+      Q: "bg-[var(--accent-danger,#ef4444)]/20 text-[var(--accent-danger,#ef4444)]",
     };
-    return colors[letter] || "bg-slate-500/20 text-slate-300";
+    return colors[letter] || "bg-[var(--bg-inset)] text-[var(--text-tertiary)]";
   };
 
   const handleNotifyClick = () => {
@@ -161,14 +161,14 @@ function IntegrationCard({ integration }: { integration: Integration }) {
         </div>
 
         {integration.status === "connected" && (
-          <div className="flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-300 border border-emerald-500/40">
+          <div className="flex items-center gap-1.5 rounded-full bg-[var(--accent-primary)]/15 px-3 py-1 text-xs font-semibold text-[var(--accent-primary)] border border-[var(--accent-primary)]/40">
             <Check size={12} />
             Connected
           </div>
         )}
 
         {isComingSoon && (
-          <div className="rounded-full bg-amber-500/15 px-3 py-1 text-xs font-semibold text-amber-200 border border-amber-500/40">
+          <div className="rounded-full bg-[var(--accent-warning,#f59e0b)]/15 px-3 py-1 text-xs font-semibold text-[var(--accent-warning,#f59e0b)] border border-[var(--accent-warning,#f59e0b)]/40">
             Coming Soon
           </div>
         )}
@@ -213,7 +213,7 @@ function IntegrationCard({ integration }: { integration: Integration }) {
         {integration.status === "connected" && (
           <button
             disabled
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-sm font-semibold cursor-default"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)]/15 border border-[var(--accent-primary)]/40 text-[var(--accent-primary)] text-sm font-semibold cursor-default"
           >
             <Check size={14} />
             Connected

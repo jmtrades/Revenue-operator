@@ -358,10 +358,10 @@ export function AgentTestPanel({
                 <button
                   type="button"
                   onClick={stopListening}
-                  className="flex items-center gap-2 px-5 py-3 rounded-xl bg-red-500/20 border border-red-500/40 text-red-300 font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
+                  className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[var(--accent-danger,#ef4444)]/20 border border-[var(--accent-danger,#ef4444)]/40 text-[var(--accent-danger,#ef4444)] font-medium text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-danger,#ef4444)]"
                   aria-label={tAgents("stopListening")}
                 >
-                  <span className="w-3 h-3 rounded-full bg-red-400 animate-pulse" />
+                  <span className="w-3 h-3 rounded-full bg-[var(--accent-danger,#ef4444)] animate-pulse" />
                   {tAgents("listeningClickToStop")}
                 </button>
               ) : (

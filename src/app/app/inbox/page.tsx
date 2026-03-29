@@ -347,9 +347,9 @@ function ConversationDetail({
           <span
             className={`ml-1 inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium ${
               thread.status === "Open"
-                ? "bg-emerald-500/20 text-emerald-300"
+                ? "bg-[var(--accent-primary)]/20 text-[var(--accent-primary)]"
                 : thread.status === "Pending"
-                  ? "bg-amber-500/20 text-amber-200"
+                  ? "bg-[var(--accent-warning,#f59e0b)]/20 text-[var(--accent-warning,#f59e0b)]"
                   : "bg-[var(--bg-card)] text-[var(--text-secondary)]"
             }`}
           >
@@ -462,12 +462,12 @@ function ConversationDetail({
           ))}
         </div>
         {sendError && (
-          <div className="mb-2 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/30 text-red-200 text-xs flex items-center justify-between">
+          <div className="mb-2 px-3 py-2 rounded-lg bg-[var(--accent-danger,#ef4444)]/10 border border-[var(--accent-danger,#ef4444)]/30 text-[var(--accent-danger,#ef4444)] text-xs flex items-center justify-between">
             <span>{sendError}</span>
             <button
               type="button"
               onClick={() => setSendError(null)}
-              className="text-red-200 hover:text-red-100 ml-2"
+              className="text-[var(--accent-danger,#ef4444)] hover:opacity-80 ml-2"
               aria-label={t("inbox.dismissError")}
             >
               ×
@@ -711,7 +711,7 @@ export default function InboxPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="text-xs text-emerald-400 font-medium"
+              className="text-xs text-[var(--accent-primary)] font-medium"
             >
               {t("inbox.updatedJustNow")}
             </motion.div>

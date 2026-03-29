@@ -321,7 +321,7 @@ function ApiKeysTab({
       {/* New key shown once */}
       {newKeyModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)]" onClick={(e) => e.target === e.currentTarget && setNewKeyModal(null)}>
-          <div className="bg-[var(--bg-card)] border border-amber-500/30 rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-[var(--bg-card)] border border-[var(--accent-warning,#f59e0b)]/30 rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-amber-200 mb-2">{t("apiKeyCreatedTitle", { label: newKeyModal.label })}</h3>
             <p className="text-sm text-amber-200/80 mb-4">{t("saveKeyWarning")}</p>
             <div className="p-3 rounded-xl bg-[var(--bg-inset)] border border-[var(--border-medium)] mb-4">

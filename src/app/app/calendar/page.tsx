@@ -286,8 +286,8 @@ export default function AppCalendarPage() {
                         .map((a) => {
                           const statusClasses =
                             a.status === "confirmed"
-                              ? "border-green-500 bg-green-500/15"
-                              : "border-amber-500 bg-amber-500/15";
+                              ? "border-[var(--accent-primary)] bg-[var(--accent-primary)]/15"
+                              : "border-[var(--accent-warning,#f59e0b)] bg-[var(--accent-warning,#f59e0b)]/15";
                           return (
                             <button
                               key={a.id}

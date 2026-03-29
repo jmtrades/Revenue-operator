@@ -145,7 +145,7 @@ function LoadingState() {
 
 function TrendBadge({ value, isPositive }: { value: number; isPositive: boolean }) {
   return (
-    <div className={`flex items-center gap-1 text-xs font-medium ${isPositive ? "text-emerald-500" : "text-red-500"}`}>
+    <div className={`flex items-center gap-1 text-xs font-medium ${isPositive ? "text-[var(--accent-primary)]" : "text-[var(--accent-danger,#ef4444)]"}`}>
       {isPositive ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
       {Math.abs(value).toFixed(1)}%
     </div>
@@ -296,7 +296,7 @@ function PredictionsSection({ data }: { data: PredictionData | null }) {
     <div className="space-y-6">
       {/* AI Predictions KPIs */}
       <div className="grid md:grid-cols-2 gap-6">
-        <div className="rounded-2xl border border-[var(--border-default)] bg-gradient-to-br from-[var(--bg-card)] to-blue-500/5 p-6">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-gradient-to-br from-[var(--bg-card)] to-[var(--accent-primary)]/5 p-6">
           <div className="flex items-start justify-between mb-4">
             <div>
               <p className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider mb-2">
@@ -306,12 +306,12 @@ function PredictionsSection({ data }: { data: PredictionData | null }) {
                 {Math.round(data.predicted_conversions_30d)}
               </p>
             </div>
-            <Sparkles className="text-blue-500" size={24} />
+            <Sparkles className="text-[var(--accent-primary)]" size={24} />
           </div>
           <div className="flex items-center gap-2">
             <div className="h-2 bg-[var(--border-default)] rounded-full flex-1 overflow-hidden">
               <div
-                className="h-full bg-blue-500 rounded-full"
+                className="h-full bg-[var(--accent-primary)] rounded-full"
                 style={{ width: `${data.predicted_conversions_confidence}%` }}
               />
             </div>
@@ -321,7 +321,7 @@ function PredictionsSection({ data }: { data: PredictionData | null }) {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-[var(--border-default)] bg-gradient-to-br from-[var(--bg-card)] to-emerald-500/5 p-6">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-gradient-to-br from-[var(--bg-card)] to-[var(--accent-primary)]/5 p-6">
           <div className="flex items-start justify-between mb-4">
             <div>
               <p className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider mb-2">
@@ -331,12 +331,12 @@ function PredictionsSection({ data }: { data: PredictionData | null }) {
                 {formatCurrency(data.predicted_revenue_30d, "USD", "en")}
               </p>
             </div>
-            <TrendingUp className="text-emerald-500" size={24} />
+            <TrendingUp className="text-[var(--accent-primary)]" size={24} />
           </div>
           <div className="flex items-center gap-2">
             <div className="h-2 bg-[var(--border-default)] rounded-full flex-1 overflow-hidden">
               <div
-                className="h-full bg-emerald-500 rounded-full"
+                className="h-full bg-[var(--accent-primary)] rounded-full"
                 style={{ width: `${data.predicted_revenue_confidence}%` }}
               />
             </div>
@@ -351,7 +351,7 @@ function PredictionsSection({ data }: { data: PredictionData | null }) {
       {data.churn_risk_leads && data.churn_risk_leads.length > 0 && (
         <Card variant="elevated">
           <CardHeader className="flex items-center gap-2">
-            <AlertTriangle size={16} className="text-amber-500" />
+            <AlertTriangle size={16} className="text-[var(--accent-warning,#f59e0b)]" />
             At-Risk Leads ({data.churn_risk_leads.length})
           </CardHeader>
           <CardBody>
@@ -401,7 +401,7 @@ function PredictionsSection({ data }: { data: PredictionData | null }) {
       {data.growth_opportunities && data.growth_opportunities.length > 0 && (
         <div>
           <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-            <Zap size={20} className="text-amber-500" />
+            <Zap size={20} className="text-[var(--accent-warning,#f59e0b)]" />
             Growth Opportunities
           </h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -431,7 +431,7 @@ function PredictionsSection({ data }: { data: PredictionData | null }) {
                   </div>
                   <div className="pt-3 border-t border-[var(--border-default)]">
                     <p className="text-xs text-[var(--text-secondary)]">Estimated Impact</p>
-                    <p className="text-lg font-bold text-emerald-500 mt-1">
+                    <p className="text-lg font-bold text-[var(--accent-primary)] mt-1">
                       +{formatCurrency(opp.estimated_impact, "USD", "en")}
                     </p>
                   </div>
@@ -525,7 +525,7 @@ export default function ROIPage() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
             <div>
               <h1 className="text-4xl font-bold text-[var(--text-primary)] flex items-center gap-3 mb-2">
-                <Sparkles size={32} className="text-blue-500" />
+                <Sparkles size={32} className="text-[var(--accent-primary)]" />
                 ROI & Revenue Intelligence
               </h1>
               <p className="text-[var(--text-secondary)]">Track your AI platform's impact on revenue and efficiency</p>
@@ -537,8 +537,8 @@ export default function ROIPage() {
                   onClick={() => setDateRange(range)}
                   className={`px-4 py-2 rounded-lg font-medium transition-[background-color,border-color,color,transform] ${
                     dateRange === range
-                      ? "bg-blue-500 text-white"
-                      : "bg-[var(--bg-card)] text-[var(--text-secondary)] border border-[var(--border-default)] hover:border-blue-500"
+                      ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
+                      : "bg-[var(--bg-card)] text-[var(--text-secondary)] border border-[var(--border-default)] hover:border-[var(--accent-primary)]"
                   }`}
                 >
                   {range === "7d" ? "7 Days" : range === "30d" ? "30 Days" : "90 Days"}
@@ -570,14 +570,14 @@ export default function ROIPage() {
                 label="ROI %"
                 value={roiData.roi_percentage.toFixed(1)}
                 unit="%"
-                icon={<TrendingUp size={20} className="text-emerald-500" />}
+                icon={<TrendingUp size={20} className="text-[var(--accent-primary)]" />}
                 subtext="Return on investment"
               />
               <KPICard
                 label="Time Saved"
                 value={roiData.time_saved_hours.toFixed(0)}
                 unit="hrs"
-                icon={<Clock size={20} className="text-blue-500" />}
+                icon={<Clock size={20} className="text-[var(--accent-primary)]" />}
                 subtext="Manual work eliminated"
               />
             </div>

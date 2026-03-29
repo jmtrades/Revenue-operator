@@ -11,9 +11,9 @@ import { getSourceDisplay, getStatusDisplay } from "../helpers";
 type ScoreBucket = "all" | "high" | "medium" | "low";
 
 const SCORE_COLORS: Record<ScoreBucket, string> = {
-  high: "bg-emerald-500/15 text-emerald-300 border-emerald-500/40",
-  medium: "bg-amber-500/15 text-amber-200 border-amber-500/40",
-  low: "bg-rose-500/15 text-rose-200 border-rose-500/40",
+  high: "bg-[var(--accent-primary)]/15 text-[var(--accent-primary)] border-[var(--accent-primary)]/40",
+  medium: "bg-[var(--accent-warning,#f59e0b)]/15 text-[var(--accent-warning,#f59e0b)] border-[var(--accent-warning,#f59e0b)]/40",
+  low: "bg-[var(--accent-danger,#ef4444)]/15 text-[var(--accent-danger,#ef4444)] border-[var(--accent-danger,#ef4444)]/40",
   all: "bg-[var(--bg-card)] text-[var(--text-secondary)] border-[var(--border-medium)]",
 };
 
@@ -209,7 +209,7 @@ export function LeadsList({
                       {(lead.status === "Qualified" || lead.status === "Appointment Set") && (
                         <span className="inline-flex items-center gap-1">
                           <span className="h-2 w-2 rounded-full bg-emerald-400" aria-hidden />
-                          <span className="text-[9px] font-medium text-emerald-300">High intent</span>
+                          <span className="text-[9px] font-medium text-[var(--accent-primary)]">High intent</span>
                         </span>
                       )}
                       {lead.status === "Contacted" && (() => {
@@ -219,7 +219,7 @@ export function LeadsList({
                         return daysSinceContact > 3 ? (
                           <span className="inline-flex items-center gap-1">
                             <span className="h-2 w-2 rounded-full bg-amber-400" aria-hidden />
-                            <span className="text-[9px] font-medium text-amber-300">Cooling</span>
+                            <span className="text-[9px] font-medium text-[var(--accent-warning,#f59e0b)]">Cooling</span>
                           </span>
                         ) : null;
                       })()}
@@ -230,7 +230,7 @@ export function LeadsList({
                         return daysSinceCreated > 7 ? (
                           <span className="inline-flex items-center gap-1">
                             <span className="h-2 w-2 rounded-full bg-red-400" aria-hidden />
-                            <span className="text-[9px] font-medium text-red-300">Stale</span>
+                            <span className="text-[9px] font-medium text-[var(--accent-danger,#ef4444)]">Stale</span>
                           </span>
                         ) : null;
                       })()}

@@ -554,9 +554,9 @@ export default function AppShellClient({
                           <span className={cn(
                             "text-[10px] font-medium px-1.5 py-0.5 rounded-full",
                             billingInfo?.billing_status === "active"
-                              ? "bg-emerald-500/15 text-emerald-400"
+                              ? "bg-[var(--accent-primary)]/15 text-[var(--accent-primary)]"
                               : billingInfo?.billing_status === "cancelled" || billingInfo?.billing_status === "payment_failed"
-                              ? "bg-red-500/15 text-red-400"
+                              ? "bg-[var(--accent-danger,#ef4444)]/15 text-[var(--accent-danger,#ef4444)]"
                               : "bg-[var(--accent-amber)]/15 text-[var(--accent-amber)]"
                           )}>
                             {billingInfo?.billing_status === "trial" ? "Trial" : billingInfo?.billing_status === "active" ? "Active" : billingInfo?.billing_status === "cancelled" ? "Cancelled" : billingInfo?.billing_status === "payment_failed" ? "Payment Failed" : billingInfo?.billing_status === "trial_ended" ? "Trial Ended" : billingInfo?.billing_status ? billingInfo.billing_status.charAt(0).toUpperCase() + billingInfo.billing_status.slice(1) : "Trial"}
@@ -902,7 +902,7 @@ function OnboardingSidebar({ initialWorkspaceName }: { initialWorkspaceName?: st
                   <div
                     className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-medium shrink-0 ${
                       isComplete
-                        ? "bg-green-500 text-[var(--text-primary)]"
+                        ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
                         : isCurrent
                           ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
                           : "bg-[var(--bg-input)] text-[var(--text-tertiary)]"
@@ -911,7 +911,7 @@ function OnboardingSidebar({ initialWorkspaceName }: { initialWorkspaceName?: st
                     {isComplete ? <Check className="w-3 h-3" /> : stepNum}
                   </div>
                   {i < ONBOARDING_STEP_LABELS.length - 1 && (
-                    <div className={`w-0.5 min-h-[14px] ${step > stepNum ? "bg-green-500/50" : "bg-[var(--border-default)]"}`} />
+                    <div className={`w-0.5 min-h-[14px] ${step > stepNum ? "bg-[var(--accent-primary)]/50" : "bg-[var(--border-default)]"}`} />
                   )}
                 </div>
                 <span

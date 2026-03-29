@@ -108,13 +108,13 @@ function getStatusBadgeVariant(status: ColdLeadStatus): "neutral" | "info" | "su
 function getPriorityColor(priority: ColdLeadPriority): string {
   switch (priority) {
     case "high":
-      return "text-red-400 bg-red-500/15 border-red-500/30";
+      return "text-[var(--accent-danger,#ef4444)] bg-[var(--accent-danger,#ef4444)]/15 border-[var(--accent-danger,#ef4444)]/30";
     case "medium":
-      return "text-yellow-400 bg-yellow-500/15 border-yellow-500/30";
+      return "text-[var(--accent-warning,#f59e0b)] bg-[var(--accent-warning,#f59e0b)]/15 border-[var(--accent-warning,#f59e0b)]/30";
     case "low":
-      return "text-green-400 bg-green-500/15 border-green-500/30";
+      return "text-[var(--accent-primary)] bg-[var(--accent-primary)]/15 border-[var(--accent-primary)]/30";
     default:
-      return "text-gray-400 bg-gray-500/15 border-gray-500/30";
+      return "text-[var(--text-tertiary)] bg-[var(--bg-inset)] border-[var(--border-default)]";
   }
 }
 
@@ -647,12 +647,12 @@ export default function ColdLeadsPage() {
                 <div className="md:col-span-1">
                   <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${
                     lead.status === "in_progress"
-                      ? "bg-blue-500/15 text-blue-400 border-blue-500/30"
+                      ? "bg-[var(--accent-primary)]/15 text-[var(--accent-primary)] border-[var(--accent-primary)]/30"
                       : lead.status === "pending"
-                        ? "bg-gray-500/15 text-gray-400 border-gray-500/30"
+                        ? "bg-[var(--bg-inset)] text-[var(--text-tertiary)] border-[var(--border-default)]"
                         : lead.status === "completed"
-                          ? "bg-green-500/15 text-green-400 border-green-500/30"
-                          : "bg-red-500/15 text-red-400 border-red-500/30"
+                          ? "bg-[var(--accent-primary)]/15 text-[var(--accent-primary)] border-[var(--accent-primary)]/30"
+                          : "bg-[var(--accent-danger,#ef4444)]/15 text-[var(--accent-danger,#ef4444)] border-[var(--accent-danger,#ef4444)]/30"
                   }`}>
                     {lead.status === "in_progress"
                       ? t("status.inProgress")

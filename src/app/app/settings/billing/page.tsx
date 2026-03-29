@@ -298,35 +298,35 @@ export default function AppSettingsBillingPage() {
       <h1 className="text-lg font-bold tracking-[-0.025em] text-[var(--text-primary)]">{tNav("billing")}</h1>
       <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed mb-4">{tBilling("subtitle", { defaultValue: "Manage your plan, usage, and payment method." })}</p>
       {billingStatus === "trial" && (
-        <div className="p-4 rounded-xl border border-purple-500/20 bg-purple-500/10 text-purple-700 dark:text-purple-200 text-sm mb-4 flex items-start gap-3">
-          <div className="shrink-0 w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-300 text-sm font-bold">!</div>
+        <div className="p-4 rounded-xl border border-[var(--accent-primary)]/20 bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] text-sm mb-4 flex items-start gap-3">
+          <div className="shrink-0 w-8 h-8 rounded-full bg-[var(--accent-primary)]/20 flex items-center justify-center text-[var(--accent-primary)] text-sm font-bold">!</div>
           <div>
-            <p className="font-semibold text-purple-800 dark:text-purple-100">{tBilling("trial.title", { defaultValue: "You're on a free trial" })}</p>
-            <p className="mt-1 text-purple-600 dark:text-purple-300/80">{tBilling("trial.description", { defaultValue: "Subscribe to a plan to keep your agents running after the trial ends. Your data and configuration will be preserved." })}</p>
+            <p className="font-semibold text-[var(--accent-primary)]">{tBilling("trial.title", { defaultValue: "You're on a free trial" })}</p>
+            <p className="mt-1 text-[var(--accent-primary)]/80">{tBilling("trial.description", { defaultValue: "Subscribe to a plan to keep your agents running after the trial ends. Your data and configuration will be preserved." })}</p>
           </div>
         </div>
       )}
       {billingError && (
-        <div className="p-4 rounded-xl border border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-200 text-sm mb-4">
+        <div className="p-4 rounded-xl border border-[var(--accent-warning,#f59e0b)]/20 bg-[var(--accent-warning,#f59e0b)]/10 text-[var(--accent-warning,#f59e0b)] text-sm mb-4">
           <p className="font-medium">{tBilling("errors.loadingFailed")}</p>
-          <p className="mt-1 text-amber-600 dark:text-amber-300/80">{tBilling("errors.loadingFailedDesc")}</p>
+          <p className="mt-1 text-[var(--accent-warning,#f59e0b)]/80">{tBilling("errors.loadingFailedDesc")}</p>
           <Link href="/app/settings" className="inline-block mt-2 text-sm font-medium underline underline-offset-2">{tBilling("backToSettingsLink")}</Link>
         </div>
       )}
       {redirectReason === "phone_purchase" && (
-        <div className="p-4 rounded-xl border border-blue-500/20 bg-blue-500/10 text-blue-700 dark:text-blue-200 text-sm mb-4">
-          <p className="font-semibold text-blue-800 dark:text-blue-100">{tBilling("phonePurchase.title")}</p>
+        <div className="p-4 rounded-xl border border-[var(--accent-primary)]/20 bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] text-sm mb-4">
+          <p className="font-semibold text-[var(--accent-primary)]">{tBilling("phonePurchase.title")}</p>
           <p className="mt-1">{tBilling("phonePurchase.description")}</p>
         </div>
       )}
       {redirectReason === "subscription_required" && (
-        <div className="p-4 rounded-xl border border-blue-500/30 bg-blue-500/10 text-blue-100 text-sm mb-4">
+        <div className="p-4 rounded-xl border border-[var(--accent-primary)]/30 bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] text-sm mb-4">
           <p className="font-semibold">{tBilling("subscriptionRequired.title")}</p>
           <p className="mt-1">{tBilling("subscriptionRequired.description")}</p>
         </div>
       )}
       {billingStatus === "payment_failed" && dunning && (
-        <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/10 text-red-100 text-sm mb-4">
+        <div className="p-4 rounded-xl border border-[var(--accent-danger,#ef4444)]/30 bg-[var(--accent-danger,#ef4444)]/10 text-[var(--accent-danger,#ef4444)] text-sm mb-4">
           <p className="font-semibold">{tBilling("paymentFailedBanner")}</p>
           <p className="mt-1">
             {tBilling("amountDue")} {(dunning.amount_due_cents / 100).toLocaleString(undefined, {
@@ -378,7 +378,7 @@ export default function AppSettingsBillingPage() {
             <p className="text-xs text-[var(--text-secondary)] mt-1">
               {tBilling("minutesUsed", { used: usage.minutes_used, limit: usage.minutes_limit })}
             </p>
-            <p className="text-xs text-emerald-300/90 mt-1.5 flex items-center gap-1.5">
+            <p className="text-xs text-[var(--accent-primary)]/90 mt-1.5 flex items-center gap-1.5">
               <span>💚</span> Replaces ~$3,200/mo in manual receptionist and follow-up costs
             </p>
             <p className="text-xs text-[var(--text-secondary)] mt-1 flex items-center gap-2">
@@ -406,7 +406,7 @@ export default function AppSettingsBillingPage() {
           <div>
             <p className="text-sm font-medium text-[var(--text-primary)]">Starter Plan — $147/mo</p>
             <p className="text-xs text-[var(--text-secondary)] mt-1">
-              <span className="inline-block px-2 py-0.5 rounded-full text-[11px] font-medium bg-purple-500/10 text-purple-600 dark:text-purple-400">Free Trial</span>
+              <span className="inline-block px-2 py-0.5 rounded-full text-[11px] font-medium bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]">Free Trial</span>
             </p>
           </div>
         ) : (
@@ -443,7 +443,7 @@ export default function AppSettingsBillingPage() {
             <button
               type="button"
               onClick={() => setPlanChangeOpen(true)}
-              className="mt-2 px-4 py-2 rounded-xl text-xs font-semibold bg-amber-500 text-[var(--text-on-accent)] hover:bg-amber-400 transition-[background-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
+              className="mt-2 px-4 py-2 rounded-xl text-xs font-semibold bg-[var(--accent-warning,#f59e0b)] text-[var(--text-on-accent)] hover:bg-[var(--accent-warning,#f59e0b)]/80 transition-[background-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
             >
               {tBilling("upgradeForMore")}
             </button>
@@ -452,18 +452,18 @@ export default function AppSettingsBillingPage() {
       )}
       {/* ROI Insights Section */}
       {(billingStatus !== null || billingError || (!loading && !workspaceId)) && usage.calls > 0 && (
-        <div className="p-4 rounded-xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 mb-4">
-          <p className="text-sm font-semibold text-emerald-300 mb-3 flex items-center gap-2">
+        <div className="p-4 rounded-xl border border-[var(--accent-primary)]/30 bg-[var(--accent-primary)]/10 mb-4">
+          <p className="text-sm font-semibold text-[var(--accent-primary)] mb-3 flex items-center gap-2">
             <span className="text-lg">💰</span> {tBilling("roiTitle", { defaultValue: "Platform Return on Investment" })}
           </p>
           <div className="space-y-3">
             {/* Platform ROI */}
-            <div className="bg-emerald-500/5 rounded-lg p-3 border border-emerald-500/20">
-              <p className="text-[11px] font-medium text-emerald-300/80 uppercase tracking-wide">Platform ROI</p>
-              <p className="text-xs text-emerald-100 mt-1.5">
+            <div className="bg-[var(--accent-primary)]/5 rounded-lg p-3 border border-[var(--accent-primary)]/20">
+              <p className="text-[11px] font-medium text-[var(--accent-primary)]/80 uppercase tracking-wide">Platform ROI</p>
+              <p className="text-xs text-[var(--accent-primary)] mt-1.5">
                 {usage.estRevenue > 0 ? (
                   <>
-                    <span className="font-semibold text-emerald-200">
+                    <span className="font-semibold text-[var(--accent-primary)]">
                       {(usage.estRevenue / (String(currentPlanId) === "starter" ? 147 : String(currentPlanId) === "growth" ? 297 : String(currentPlanId) === "scale" ? 597 : 147)).toFixed(1)}x
                     </span>
                     {" return on your platform investment"}
@@ -475,19 +475,19 @@ export default function AppSettingsBillingPage() {
             </div>
 
             {/* Cost Comparison */}
-            <div className="bg-emerald-500/5 rounded-lg p-3 border border-emerald-500/20">
-              <p className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400/80 uppercase tracking-wide">Savings Comparison</p>
-              <p className="text-xs text-emerald-700 dark:text-emerald-200 mt-1.5">
-                <span className="font-semibold text-emerald-800 dark:text-emerald-100">Replaces ~$3,200/mo</span> in manual receptionist and follow-up costs
+            <div className="bg-[var(--accent-primary)]/5 rounded-lg p-3 border border-[var(--accent-primary)]/20">
+              <p className="text-[11px] font-medium text-[var(--accent-primary)] uppercase tracking-wide">Savings Comparison</p>
+              <p className="text-xs text-[var(--accent-primary)] mt-1.5">
+                <span className="font-semibold text-[var(--accent-primary)]">Replaces ~$3,200/mo</span> in manual receptionist and follow-up costs
               </p>
             </div>
 
             {/* Efficiency Metric */}
             {usage.calls > 0 && (
-              <div className="bg-emerald-500/5 rounded-lg p-3 border border-emerald-500/20">
-                <p className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400/80 uppercase tracking-wide">Cost Per Call</p>
-                <p className="text-xs text-emerald-700 dark:text-emerald-200 mt-1.5">
-                  <span className="font-semibold text-emerald-800 dark:text-emerald-100">
+              <div className="bg-[var(--accent-primary)]/5 rounded-lg p-3 border border-[var(--accent-primary)]/20">
+                <p className="text-[11px] font-medium text-[var(--accent-primary)] uppercase tracking-wide">Cost Per Call</p>
+                <p className="text-xs text-[var(--accent-primary)] mt-1.5">
+                  <span className="font-semibold text-[var(--accent-primary)]">
                     ${(
                       (String(currentPlanId) === "starter" ? 147 : String(currentPlanId) === "growth" ? 297 : String(currentPlanId) === "scale" ? 597 : 147) / usage.calls
                     ).toFixed(2)}
@@ -504,10 +504,10 @@ export default function AppSettingsBillingPage() {
       {usageAlert && usageAlert.level !== "healthy" && (
         <div className={`p-4 rounded-xl border mb-4 ${
           usageAlert.level === "overage" || usageAlert.level === "critical"
-            ? "border-red-500/20 bg-red-500/10 text-red-700 dark:text-red-200"
+            ? "border-[var(--accent-danger,#ef4444)]/20 bg-[var(--accent-danger,#ef4444)]/10 text-[var(--accent-danger,#ef4444)]"
             : usageAlert.level === "warning"
-              ? "border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-200"
-              : "border-blue-500/20 bg-blue-500/10 text-blue-700 dark:text-blue-200"
+              ? "border-[var(--accent-warning,#f59e0b)]/20 bg-[var(--accent-warning,#f59e0b)]/10 text-[var(--accent-warning,#f59e0b)]"
+              : "border-[var(--accent-primary)]/20 bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]"
         }`}>
           <p className="text-sm font-medium">
             {usageAlert.level === "overage"
@@ -574,7 +574,7 @@ export default function AppSettingsBillingPage() {
                   pack.popular
                     ? "border-[var(--border-medium)] bg-[var(--bg-inset)] ring-1 ring-[var(--border-default)]"
                     : pack.best_value
-                      ? "border-emerald-500/30 bg-emerald-500/5"
+                      ? "border-[var(--accent-primary)]/30 bg-[var(--accent-primary)]/5"
                       : "border-[var(--border-default)] hover:border-[var(--border-medium)] hover:bg-[var(--bg-hover)]"
                 } ${buyingPack === pack.id ? "opacity-60" : "cursor-pointer"}`}
               >
@@ -582,7 +582,7 @@ export default function AppSettingsBillingPage() {
                   <span className="absolute -top-2 right-2 px-2 py-0.5 text-[9px] uppercase tracking-wide bg-[var(--accent-primary)] text-[var(--text-on-accent)] rounded-full font-bold">{tBilling("popular")}</span>
                 )}
                 {pack.best_value && (
-                  <span className="absolute -top-2 right-2 px-2 py-0.5 text-[9px] uppercase tracking-wide bg-emerald-500 text-white rounded-full font-bold">{tBilling("bestValue")}</span>
+                  <span className="absolute -top-2 right-2 px-2 py-0.5 text-[9px] uppercase tracking-wide bg-[var(--accent-primary)] text-white rounded-full font-bold">{tBilling("bestValue")}</span>
                 )}
                 <p className="text-[var(--text-primary)] font-bold text-sm">{pack.minutes.toLocaleString()} min</p>
                 <p className="text-[var(--text-primary)] text-lg font-bold mt-0.5">{pack.price_display}</p>
@@ -692,7 +692,7 @@ export default function AppSettingsBillingPage() {
         <button
           type="button"
           onClick={() => setCancelStep(1)}
-          className="px-4 py-2 rounded-xl text-sm border border-[var(--accent-red)]/30 text-[var(--accent-red)] hover:bg-red-500/10"
+          className="px-4 py-2 rounded-xl text-sm border border-[var(--accent-danger,#ef4444)]/30 text-[var(--accent-danger,#ef4444)] hover:bg-[var(--accent-danger,#ef4444)]/10"
           title="Cancel your subscription permanently"
         >
           {tBilling("cancel")}
@@ -769,7 +769,7 @@ export default function AppSettingsBillingPage() {
                 </p>
                 <div className="flex gap-2 justify-end">
                   <button type="button" onClick={() => setCancelStep(0)} className="px-4 py-2 rounded-xl text-sm border border-[var(--border-default)] text-[var(--text-secondary)] transition-[background-color,border-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">{tBilling("back")}</button>
-                  <button type="button" onClick={() => { void handlePauseCoverage(); setCancelStep(0); }} disabled={pausing || !workspaceId} className="px-4 py-2 rounded-xl text-sm bg-red-600 text-[var(--text-primary)] font-medium disabled:opacity-60 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">{pausing ? tBilling("pausing") : tBilling("confirmCancel")}</button>
+                  <button type="button" onClick={() => { void handlePauseCoverage(); setCancelStep(0); }} disabled={pausing || !workspaceId} className="px-4 py-2 rounded-xl text-sm bg-[var(--accent-danger,#ef4444)] text-white font-medium disabled:opacity-60 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">{pausing ? tBilling("pausing") : tBilling("confirmCancel")}</button>
                 </div>
               </>
             )}
@@ -780,11 +780,11 @@ export default function AppSettingsBillingPage() {
       {toast && (
         <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-xl shadow-lg text-sm flex items-center gap-2 animate-in fade-in slide-in-from-right-2 duration-300 ${
           toast.includes("updated") || toast.includes("success") || toast.includes("paused") || toast.includes("added")
-            ? "bg-emerald-500/10 border border-emerald-500/30 text-emerald-300"
+            ? "bg-[var(--accent-primary)]/10 border border-[var(--accent-primary)]/30 text-[var(--accent-primary)]"
             : "bg-[var(--bg-card)] border border-[var(--border-medium)] text-[var(--text-primary)]"
         }`}>
           {(toast.includes("updated") || toast.includes("success") || toast.includes("paused") || toast.includes("added")) ? (
-            <span className="w-4 h-4 rounded-full bg-emerald-500 flex-shrink-0">✓</span>
+            <span className="w-4 h-4 rounded-full bg-[var(--accent-primary)] flex-shrink-0">✓</span>
           ) : null}
           {toast}
         </div>
