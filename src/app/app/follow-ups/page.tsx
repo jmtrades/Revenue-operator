@@ -10,6 +10,7 @@ import { Plus, Pause, Play, Copy, Phone, MessageSquare, Mail, ArrowRight, Zap } 
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 type Sequence = { id: string; name: string; trigger_type?: string; is_active?: boolean };
 
@@ -226,6 +227,8 @@ export default function AppFollowUpsPage() {
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [templateInProgress, setTemplateInProgress] = useState<string | null>(null);
+  const [confirmPauseAll, setConfirmPauseAll] = useState(false);
+  const [confirmResumeAll, setConfirmResumeAll] = useState(false);
 
   const refetchSequences = useCallback(() => {
     if (!workspaceId) return;
@@ -466,24 +469,7 @@ export default function AppFollowUpsPage() {
               variant="ghost"
               size="sm"
               className="gap-1 text-xs"
-              onClick={async () => {
-                try {
-                  await Promise.all(
-                    sequences.map((s) =>
-                      fetch(`/api/sequences/${s.id}`, {
-                        method: "PATCH",
-                        credentials: "include",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ status: "paused" }),
-                      })
-                    )
-                  );
-                  toast.success(t("allPaused", { defaultValue: "All sequences paused" }));
-                  refetchSequences();
-                } catch {
-                  toast.error(t("pauseFailed", { defaultValue: "Failed to pause sequences" }));
-                }
-              }}
+              onClick={() => setConfirmPauseAll(true)}
             >
               <Pause className="w-3.5 h-3.5" />
               {t("pauseAll", { defaultValue: "Pause all" })}
@@ -492,24 +478,7 @@ export default function AppFollowUpsPage() {
               variant="ghost"
               size="sm"
               className="gap-1 text-xs"
-              onClick={async () => {
-                try {
-                  await Promise.all(
-                    sequences.map((s) =>
-                      fetch(`/api/sequences/${s.id}`, {
-                        method: "PATCH",
-                        credentials: "include",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ status: "active" }),
-                      })
-                    )
-                  );
-                  toast.success(t("allResumed", { defaultValue: "All sequences resumed" }));
-                  refetchSequences();
-                } catch {
-                  toast.error(t("resumeFailed", { defaultValue: "Failed to resume sequences" }));
-                }
-              }}
+              onClick={() => setConfirmResumeAll(true)}
             >
               <Play className="w-3.5 h-3.5" />
               {t("resumeAll", { defaultValue: "Resume all" })}
@@ -590,6 +559,62 @@ export default function AppFollowUpsPage() {
           primaryAction={{ label: t("create"), href: "/app/follow-ups/create" }}
         />
       )}
+
+      <ConfirmDialog
+        open={confirmPauseAll}
+        title={t("pauseAllTitle", { defaultValue: "Pause all sequences?" })}
+        message={t("pauseAllMessage", { defaultValue: "This will pause all active follow-up sequences. No automated follow-ups will run until you resume them." })}
+        confirmLabel={t("pauseAll", { defaultValue: "Pause all" })}
+        onConfirm={async () => {
+          try {
+            await Promise.all(
+              sequences.map((s) =>
+                fetch(`/api/sequences/${s.id}`, {
+                  method: "PATCH",
+                  credentials: "include",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ status: "paused" }),
+                })
+              )
+            );
+            toast.success(t("allPaused", { defaultValue: "All sequences paused" }));
+            refetchSequences();
+          } catch {
+            toast.error(t("pauseFailed", { defaultValue: "Failed to pause sequences" }));
+          } finally {
+            setConfirmPauseAll(false);
+          }
+        }}
+        onClose={() => setConfirmPauseAll(false)}
+      />
+
+      <ConfirmDialog
+        open={confirmResumeAll}
+        title={t("resumeAllTitle", { defaultValue: "Resume all sequences?" })}
+        message={t("resumeAllMessage", { defaultValue: "This will resume all paused follow-up sequences. Automated follow-ups will begin running again." })}
+        confirmLabel={t("resumeAll", { defaultValue: "Resume all" })}
+        onConfirm={async () => {
+          try {
+            await Promise.all(
+              sequences.map((s) =>
+                fetch(`/api/sequences/${s.id}`, {
+                  method: "PATCH",
+                  credentials: "include",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ status: "active" }),
+                })
+              )
+            );
+            toast.success(t("allResumed", { defaultValue: "All sequences resumed" }));
+            refetchSequences();
+          } catch {
+            toast.error(t("resumeFailed", { defaultValue: "Failed to resume sequences" }));
+          } finally {
+            setConfirmResumeAll(false);
+          }
+        }}
+        onClose={() => setConfirmResumeAll(false)}
+      />
     </div>
   );
 }

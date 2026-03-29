@@ -5088,7 +5088,9 @@
       "lastAttempt": "Last Attempt",
       "nextAttempt": "Next Attempt",
       "status": "Status",
-      "actions": "Actions"
+      "actions": "Actions",
+      "stage": "Stage",
+      "stageLabel": "Reactivation progress"
     },
     "status": {
       "all": "All Status",

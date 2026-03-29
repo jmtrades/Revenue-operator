@@ -206,6 +206,7 @@ export default function ColdLeadsPage() {
     reason: "no_activity_30d",
     priority: "medium",
   });
+  const [addLeadError, setAddLeadError] = useState<string | null>(null);
   const [reengageDialog, setReengageDialog] = useState<ReengageDialogState>({
     open: false,
     isBulk: false,
@@ -313,7 +314,13 @@ export default function ColdLeadsPage() {
   );
 
   const handleAddLead = async () => {
-    if (!addLeadForm.name.trim() || !workspaceId) {
+    if (!addLeadForm.name.trim()) {
+      const errorMsg = t("toast.error.nameRequired", { defaultValue: "Name is required" });
+      setAddLeadError(errorMsg);
+      toast.error(errorMsg);
+      return;
+    }
+    if (!workspaceId) {
       toast.error(t("toast.error.fillRequired"));
       return;
     }
@@ -604,7 +611,7 @@ export default function ColdLeadsPage() {
             <div>{t("table.lead")}</div>
             <div>{t("table.reason")}</div>
             <div>{t("table.priority")}</div>
-            <div>Stage</div>
+            <div>{t("table.stage")}</div>
             <div>{t("table.attempts")}</div>
             <div>{t("table.lastAttempt")}</div>
             <div>{t("table.nextAttempt")}</div>
@@ -647,7 +654,7 @@ export default function ColdLeadsPage() {
                 </div>
 
                 {/* Reactivation Stage */}
-                <div className="md:col-span-1 flex gap-1 items-center">
+                <div className="md:col-span-1 flex gap-1 items-center" aria-label={t("table.stageLabel", { defaultValue: "Reactivation progress" })}>
                   {[...Array(6)].map((_, i) => (
                     <div
                       key={i}
@@ -757,17 +764,21 @@ export default function ColdLeadsPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
-                  {t("modal.nameLabel")}
+                  {t("modal.nameLabel")} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   placeholder={t("namePlaceholder")}
                   value={addLeadForm.name}
-                  onChange={(e) =>
-                    setAddLeadForm({ ...addLeadForm, name: e.target.value })
-                  }
+                  onChange={(e) => {
+                    setAddLeadForm({ ...addLeadForm, name: e.target.value });
+                    setAddLeadError(null);
+                  }}
                   className="w-full px-3 py-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm"
                 />
+                {addLeadError && (
+                  <p className="text-xs text-red-500 mt-1">{addLeadError}</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
