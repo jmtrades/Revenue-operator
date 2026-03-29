@@ -9,6 +9,7 @@ import { getVoicemailConfigForBehavior } from "@/lib/voice/voicemail-detection";
 import { buildFirstMessageWithConsent } from "@/lib/compliance/recording-consent";
 import { buildCampaignPrompt, type CampaignType, type LeadForPrompt } from "@/lib/campaigns/prompt";
 import { getVoiceProvider } from "@/lib/voice";
+import { resolveVoiceForCall } from "@/lib/voice/resolve-voice";
 import { DEFAULT_RECALL_VOICE_ID as DEFAULT_VOICE_ID } from "@/lib/constants/recall-voices";
 import { normalizePhoneE164 } from "@/lib/phone/normalize";
 
@@ -363,13 +364,22 @@ YOUR GOAL:
 
   const voice = getVoiceProvider();
 
+  // Resolve voice: check A/B test, fall back to workspace active voice, then default
+  let resolvedVoice;
+  try {
+    resolvedVoice = await resolveVoiceForCall(workspaceId);
+  } catch (resolveErr) {
+    console.warn("[outbound] Voice resolution failed, using default:", resolveErr instanceof Error ? resolveErr.message : resolveErr);
+    resolvedVoice = { voiceId: DEFAULT_VOICE_ID };
+  }
+
   let assistantId: string;
   try {
     const { assistantId: createdId } = await voice.createAssistant({
       name: `${agent_name} – outbound ${leadId.slice(0, 8)}`,
       systemPrompt,
       firstMessage: outboundFirstMessage,
-      voiceId: DEFAULT_VOICE_ID,
+      voiceId: resolvedVoice.voiceId,
       voiceProvider: "deepgram-aura",
       language: "en",
       tools: [],
@@ -380,6 +390,8 @@ YOUR GOAL:
         workspace_id: workspaceId,
         voicemailDetection: voicemailDetection ? JSON.stringify(voicemailDetection) : "",
         voicemailMessage: vmMessage ?? "",
+        ...(resolvedVoice.abTestId && { ab_test_id: resolvedVoice.abTestId }),
+        ...(resolvedVoice.variant && { ab_test_variant: resolvedVoice.variant }),
       },
     });
     assistantId = createdId;
