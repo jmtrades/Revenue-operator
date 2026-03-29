@@ -614,20 +614,20 @@ export default function AppShellClient({
                               ? "bg-[var(--accent-danger,#ef4444)]/15 text-[var(--accent-danger,#ef4444)]"
                               : "bg-[var(--accent-amber)]/15 text-[var(--accent-amber)]"
                           )}>
-                            {billingInfo?.billing_status === "trial" ? "Trial" : billingInfo?.billing_status === "active" ? "Active" : billingInfo?.billing_status === "cancelled" ? "Cancelled" : billingInfo?.billing_status === "payment_failed" ? "Payment Failed" : billingInfo?.billing_status === "trial_ended" ? "Trial Ended" : billingInfo?.billing_status ? billingInfo.billing_status.charAt(0).toUpperCase() + billingInfo.billing_status.slice(1) : "Trial"}
+                            {billingInfo?.billing_status === "trial" ? t("sidebar.statusTrial", { defaultValue: "Trial" }) : billingInfo?.billing_status === "active" ? t("sidebar.statusActive", { defaultValue: "Active" }) : billingInfo?.billing_status === "cancelled" ? t("sidebar.statusCancelled", { defaultValue: "Cancelled" }) : billingInfo?.billing_status === "payment_failed" ? t("sidebar.statusPaymentFailed", { defaultValue: "Payment Failed" }) : billingInfo?.billing_status === "trial_ended" ? t("sidebar.statusTrialEnded", { defaultValue: "Trial Ended" }) : billingInfo?.billing_status ? billingInfo.billing_status.charAt(0).toUpperCase() + billingInfo.billing_status.slice(1) : t("sidebar.statusTrial", { defaultValue: "Trial" })}
                           </span>
                         </div>
                         <span className="block text-[11px] text-[var(--text-tertiary)] mt-1">
                           {billingInfo?.billing_status === "trial" && billingInfo?.renewal_at
-                            ? `${Math.max(0, Math.ceil((new Date(billingInfo.renewal_at).getTime() - nowMs) / 86400000))} days left`
+                            ? t("sidebar.trialDaysLeft", { defaultValue: "{days} days left", days: Math.max(0, Math.ceil((new Date(billingInfo.renewal_at).getTime() - nowMs) / 86400000)) })
                             : billingInfo?.billing_status === "active"
                             ? t("sidebar.activeSubscription", { defaultValue: "Active subscription" })
                             : billingInfo?.billing_status === "cancelled"
-                            ? "Subscription cancelled"
+                            ? t("sidebar.subscriptionCancelled", { defaultValue: "Subscription cancelled" })
                             : billingInfo?.billing_status === "payment_failed"
-                            ? "Payment issue — update card"
+                            ? t("sidebar.paymentIssue", { defaultValue: "Payment issue — update card" })
                             : billingInfo?.billing_status === "trial_ended"
-                            ? "Trial ended — upgrade now"
+                            ? t("sidebar.trialEnded", { defaultValue: "Trial ended — upgrade now" })
                             : ""}
                           {(workspaceMeta?.stats?.calls ?? 0) > 0
                             ? ` · ${workspaceMeta?.stats?.calls ?? 0} ${t("sidebar.callsAnswered", { defaultValue: "calls" })}`
