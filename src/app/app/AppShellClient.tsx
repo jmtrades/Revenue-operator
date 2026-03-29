@@ -33,6 +33,7 @@ import {
   UserPlus,
   Plug,
   FileText,
+  RotateCcw,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { PageTransition } from "@/components/ui/PageTransition";
@@ -91,8 +92,10 @@ export default function AppShellClient({
         items: [
           { href: "/app/leads", label: t("nav.leads", { defaultValue: "Leads" }), icon: UserPlus },
           { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
+          { href: "/app/follow-ups", label: t("nav.followUps", { defaultValue: "Follow-ups" }), icon: Clock },
           { href: "/app/appointments", label: t("nav.appointments"), icon: CalendarCheck },
           { href: "/app/calls", label: t("nav.calls"), icon: PhoneCall },
+          { href: "/app/cold-leads", label: t("nav.coldLeads", { defaultValue: "Reactivation" }), icon: RotateCcw },
         ],
       },
       {
