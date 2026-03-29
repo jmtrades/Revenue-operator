@@ -60,8 +60,8 @@ export function Modal({ open, onClose, title, size = "md", children }: ModalProp
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.2, ease: easeOutExpo }}
             className={cn(
-              "relative w-full rounded-[var(--radius-xl)] border border-[var(--border-default)] bg-[var(--bg-surface)] shadow-[var(--shadow-xl)]",
-              "max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:top-auto max-md:rounded-b-none max-md:rounded-t-[var(--radius-2xl)] max-md:max-w-none max-md:max-h-[85vh]",
+              "relative w-full rounded-[var(--radius-xl)] border border-[var(--border-default)] bg-[var(--bg-surface)] shadow-[var(--shadow-xl)] flex flex-col max-h-[85vh]",
+              "max-md:fixed max-md:inset-x-0 max-md:bottom-0 max-md:top-auto max-md:rounded-b-none max-md:rounded-t-[var(--radius-2xl)] max-md:max-w-none",
               maxWidth,
             )}
             onClick={(e) => e.stopPropagation()}
@@ -84,7 +84,7 @@ export function Modal({ open, onClose, title, size = "md", children }: ModalProp
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <div className="px-6 py-5 overflow-y-auto flex-1 min-h-0 max-md:max-h-[calc(85vh-57px)]">
+            <div className="px-6 py-5 overflow-y-auto flex-1 min-h-0">
               {children}
             </div>
           </motion.div>
