@@ -171,7 +171,6 @@ export default function CampaignCreationPage() {
 
       router.push("/app/campaigns");
     } catch (error) {
-      console.error("Error creating campaign:", error);
       setIsLoading(false);
     }
   };

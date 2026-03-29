@@ -151,7 +151,6 @@ export default function AppSettingsBusinessPage() {
       toast.success(tSettings("business.deleted"));
       window.location.href = "/";
     } catch (e) {
-      if (e instanceof Error) console.error("Delete workspace error:", e.message);
       toast.error(tSettings("business.deleteWorkspaceError"));
     } finally {
       setDeleting(false);

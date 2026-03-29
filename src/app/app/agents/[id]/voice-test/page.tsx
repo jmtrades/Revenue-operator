@@ -106,7 +106,6 @@ export default function AgentVoiceTestPage() {
         setAgent((a) => (a ? { ...a, voice_id: selectedVoiceId } : null));
       } else {
         const d = (await res.json()) as { error?: string };
-        if (d.error) console.error("[voice-test] apply error:", d.error);
         toast.error(t("errors.applyFailed"));
       }
     } catch {

@@ -198,7 +198,6 @@ export default function AppMessagesPage() {
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        console.error("[messages] send error:", err);
         toast.error(t("failedToSend"));
         return;
       }

@@ -119,7 +119,6 @@ export default function AppSettingsAgentPage() {
         lastSavedRef.current = JSON.stringify(nextConfig);
       }
     } catch (error) {
-      console.error("Agent settings load failed:", error);
       const message = tSettings("agent.loadFailed");
       setInlineToast(message);
       toast.error(message);
@@ -163,7 +162,6 @@ export default function AppSettingsAgentPage() {
       });
       if (!patchRes.ok) {
         const err = await patchRes.json().catch(() => ({}));
-        console.error("Agent settings save failed:", err);
         const message = tSettings("agent.saveFailed");
         setInlineToast(message);
         toast.error(message);

@@ -140,7 +140,6 @@ function KnowledgeModal({
 
       if (!res.ok) {
         setUploadState("idle");
-        if (data?.error) console.error("[knowledge] upload error:", data.error);
         toast.error(t("toast.uploadFailed"));
         return;
       }
@@ -168,7 +167,6 @@ function KnowledgeModal({
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        console.error("Fetch failed:", data);
         toast.error(t("toast.fetchFailed"));
         setWebsiteFetchState("idle");
         return;
@@ -478,12 +476,10 @@ export default function KnowledgePage() {
         | { response?: string; error?: string }
         | null;
       if (!res.ok || !data) {
-        if (data?.error) console.error("[knowledge] test error:", data.error);
         toast.error(t("errors.testFailed"));
         return;
       }
       if (data.error) {
-        console.error("Test knowledge error:", data.error);
         toast.error(t("errors.testFailed"));
         return;
       }

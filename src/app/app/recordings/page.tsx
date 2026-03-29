@@ -259,7 +259,6 @@ export default function RecordingsPage() {
       setRecordings(sorted);
       setTotal(data.total);
     } catch (err) {
-      console.error("Fetch recordings error:", err);
       setError("Unable to load recordings. Please try again.");
       toast.error("Failed to load recordings");
     } finally {

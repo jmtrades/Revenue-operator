@@ -105,7 +105,6 @@ export default function SmartSetupPage() {
         router_internal.push("/app/dashboard");
       }, 2000);
     } catch (error) {
-      console.error("[smart-setup] activate error:", error);
       toast.error("Something went wrong activating your agent. Please try again.");
       setIsActivating(false);
     }
@@ -138,7 +137,6 @@ export default function SmartSetupPage() {
         router_internal.push("/app/dashboard");
       }, 2000);
     } catch (error) {
-      console.error("[smart-setup] description error:", error);
       toast.error("Something went wrong. Please try again.");
       setStep("preview-agent");
     }

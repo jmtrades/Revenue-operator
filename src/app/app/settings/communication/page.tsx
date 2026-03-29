@@ -75,7 +75,6 @@ export default function CommunicationSettingsPage() {
       });
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
-        console.error("Communication mode save failed:", body);
         toast.error(t("toast.error"));
         return;
       }

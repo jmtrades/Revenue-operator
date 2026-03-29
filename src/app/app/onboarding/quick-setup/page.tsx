@@ -123,7 +123,6 @@ export default function QuickSetupPage() {
       setStep(2);
     } catch (error) {
       clearInterval(messageInterval);
-      console.error("Website analysis failed:", error);
       toast.error("Failed to analyze website. Please try again.");
     } finally {
       setAnalyzing(false);
@@ -168,7 +167,6 @@ export default function QuickSetupPage() {
 
       setStep(3);
     } catch (error) {
-      console.error("Setup activation failed:", error);
       toast.error("Failed to activate setup. Please try again.");
     } finally {
       setActivating(false);
