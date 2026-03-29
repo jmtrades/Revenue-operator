@@ -552,7 +552,7 @@ export default function CampaignsPage() {
                 icon={Megaphone}
                 title={t("empty.title", { defaultValue: "No campaigns yet" })}
                 description={t("empty.body", { defaultValue: "Launch your first autonomous campaign to start reaching leads, recovering no-shows, and reactivating cold pipeline." })}
-                primaryAction={{ label: t("createCampaign"), href: "/app/campaigns/new" }}
+                primaryAction={{ label: t("createCampaign"), href: "/app/campaigns/create" }}
               />
             ) : (
               pagedCampaigns.map((campaign, idx) => (
