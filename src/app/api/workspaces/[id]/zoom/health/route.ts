@@ -33,7 +33,7 @@ export async function GET(
   const expiresAt = a.expires_at ? new Date(a.expires_at) : null;
   const tokenValid = expiresAt ? expiresAt.getTime() - now.getTime() > 60 * 1000 : false;
   return NextResponse.json({
-    connected: true,
+    connected: tokenValid,
     token_valid: tokenValid,
     expires_at: a.expires_at,
     last_webhook_at: a.last_webhook_at ?? null,

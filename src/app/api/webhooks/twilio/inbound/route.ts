@@ -106,8 +106,9 @@ export async function POST(request: NextRequest) {
           return new NextResponse("OK", { status: 200, headers: { "Content-Type": "text/xml" } });
         }
       }
-      // No workspace; 404 below
-      return new NextResponse("OK", { status: 200, headers: { "Content-Type": "text/xml" } });
+      // No workspace found for this phone number
+      log("warn", "twilio_inbound.no_workspace", { from: formData.get("From"), to: formData.get("To") });
+      return new NextResponse("Not Found", { status: 404, headers: { "Content-Type": "text/xml" } });
     }
 
     const workspaceId = (phoneConfig as { workspace_id: string }).workspace_id;

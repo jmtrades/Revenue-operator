@@ -31,6 +31,9 @@ const CORE_STEPS = [
   "/api/cron/proof-capsules",
   "/api/cron/assurance-delivery",
   "/api/cron/settlement-export",
+  "/api/cron/calendar-ended",
+  "/api/cron/reconcile-reality",
+  "/api/cron/process-reactivation",
 ];
 
 export async function GET(request: NextRequest) {
