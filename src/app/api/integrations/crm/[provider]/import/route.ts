@@ -247,7 +247,7 @@ export async function POST(
     const msg = err instanceof Error ? err.message : String(err);
     log("error", "crm_import.failed", { provider, error: msg });
     return NextResponse.json(
-      { error: `Failed to import from ${provider}: ${msg}` },
+      { error: `Failed to import from ${provider}. Please check your connection and try again.` },
       { status: 500 }
     );
   }

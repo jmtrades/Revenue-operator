@@ -269,8 +269,8 @@ export default function ColdLeadsPage() {
     }
 
     // Search filter
-    if (debouncedSearch.trim()) {
-      const q = debouncedSearch.toLowerCase();
+    if ((debouncedSearch ?? "").trim()) {
+      const q = (debouncedSearch ?? "").toLowerCase();
       result = result.filter(
         (l) =>
           l.name.toLowerCase().includes(q) ||
@@ -314,7 +314,7 @@ export default function ColdLeadsPage() {
   );
 
   const handleAddLead = async () => {
-    if (!addLeadForm.name.trim()) {
+    if (!(addLeadForm.name ?? "").trim()) {
       const errorMsg = t("toast.error.nameRequired", { defaultValue: "Name is required" });
       setAddLeadError(errorMsg);
       toast.error(errorMsg);
@@ -333,9 +333,9 @@ export default function ColdLeadsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           workspace_id: workspaceId,
-          name: addLeadForm.name.trim(),
-          email: addLeadForm.email.trim() || undefined,
-          phone: addLeadForm.phone.trim() || undefined,
+          name: (addLeadForm.name ?? "").trim(),
+          email: (addLeadForm.email ?? "").trim() || undefined,
+          phone: (addLeadForm.phone ?? "").trim() || undefined,
           reason: addLeadForm.reason,
           priority: addLeadForm.priority,
         }),

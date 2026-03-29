@@ -168,7 +168,7 @@ export default function CallsPage() {
   }, [workspaceId, t, retryTrigger]);
 
   const filtered = useMemo(() => {
-    const q = debouncedQuery.trim().toLowerCase();
+    const q = (debouncedQuery ?? "").trim().toLowerCase();
     let list = [...records];
     if (q) {
       list = list.filter((c) => {
