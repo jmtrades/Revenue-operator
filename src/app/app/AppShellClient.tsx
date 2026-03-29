@@ -141,6 +141,15 @@ export default function AppShellClient({
   const [nowMs] = useState(() => Date.now());
   const [showNotifications, setShowNotifications] = useState(false);
   const [inboxUnread, setInboxUnread] = useState(0);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    setIsDesktop(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
   const toggleSidebarCollapse = () => {
     setSidebarCollapsed((prev) => {
@@ -436,7 +445,7 @@ export default function AppShellClient({
               <>
               <motion.aside
                 initial={false}
-                animate={{ x: mobileSidebarOpen ? 0 : -260 }}
+                animate={{ x: isDesktop ? 0 : mobileSidebarOpen ? 0 : -260 }}
                 transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
                 className={cn(
                   "fixed inset-y-0 left-0 z-40 flex flex-col shrink-0 bg-[var(--bg-surface)] border-r border-[var(--border-default)]",
@@ -655,9 +664,7 @@ export default function AppShellClient({
             <main
               id="main"
               className="flex-1 overflow-auto overflow-x-hidden min-w-0 bg-[var(--bg-base)] flex flex-col transition-[margin-left] duration-250 ease-[cubic-bezier(0.23,1,0.32,1)]"
-              style={{
-                marginLeft: sidebarCollapsed && typeof window !== "undefined" && window.innerWidth >= 768 ? "0" : undefined,
-              } as React.CSSProperties}
+              style={{} as React.CSSProperties}
               tabIndex={-1}
               role="main"
             >
