@@ -88,7 +88,8 @@ export async function GET(req: NextRequest) {
   );
 
   if (!res.ok) {
-    return NextResponse.json({ slots: [], connected: true });
+    // API call failed — token may be revoked or permissions missing
+    return NextResponse.json({ slots: [], connected: false, error: "calendar_api_error" });
   }
 
   const data = (await res.json()) as { calendars?: { primary?: { busy?: { start: string; end: string }[] } } };

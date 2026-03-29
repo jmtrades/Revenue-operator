@@ -44,7 +44,7 @@ const OAUTH_CONFIG: Record<string, { clientIdEnv: string; redirectUriPath: strin
   microsoft_365: {
     clientIdEnv: "MICROSOFT_CLIENT_ID",
     redirectUriPath: "/api/integrations/crm/microsoft_365/callback",
-    authUrl: (clientId, redirectUri) => `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=Contacts.ReadWrite%20offline_access`,
+    authUrl: (clientId, redirectUri) => `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=Contacts.ReadWrite%20Calendars.ReadWrite%20offline_access`,
   },
   airtable: {
     clientIdEnv: "AIRTABLE_CLIENT_ID",
