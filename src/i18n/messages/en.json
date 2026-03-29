@@ -4351,6 +4351,18 @@
         "label": "Error reports",
         "desc": "Client errors and reports from this workspace"
       },
+      "chatWidget": {
+        "label": "Chat widget",
+        "desc": "Embeddable chat widget for your website"
+      },
+      "communication": {
+        "label": "Communication",
+        "desc": "SMS, email, and messaging preferences"
+      },
+      "whiteLabel": {
+        "label": "White label",
+        "desc": "Custom branding for agency and reseller accounts"
+      },
       "developer": {
         "label": "Developer",
         "desc": "API keys, webhooks, technical documentation"
