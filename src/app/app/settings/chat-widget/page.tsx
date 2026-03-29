@@ -92,7 +92,7 @@ export default function ChatWidgetSettingsPage() {
   // Generate embed code
   const getEmbedCode = () => {
     const origin =
-      process.env.NEXT_PUBLIC_APP_URL || "https://app.recalltouch.com";
+      process.env.NEXT_PUBLIC_APP_URL || "https://app.revenueoperator.ai";
     return `<script src="${origin}/api/chat-widget/embed?workspace_id=${encodeURIComponent(
       workspaceId || ""
     )}"></script>`;

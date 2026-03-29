@@ -251,7 +251,7 @@ async function deliverToEndpoint(
 
 /**
  * HMAC-SHA256 signature for payload verification.
- * Customers verify: HMAC-SHA256(payload, secret) === X-Recall-Touch-Signature
+ * Customers verify: HMAC-SHA256(payload, secret) === X-Revenue-Operator-Signature
  */
 function signPayload(payload: string, secret: string): string {
   return crypto

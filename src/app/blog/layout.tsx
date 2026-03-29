@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Blog — Revenue Operator",
     description: "Practical guides on AI phone agents, speed-to-lead, and AI phone agents for your business.",
-    creator: "@recalltouch",
+    creator: "@revenueoperator",
   },
 };
 

@@ -157,7 +157,7 @@ export async function POST(req: NextRequest) {
     const response = await fetch(parsed.toString(), {
       signal: controller.signal,
       headers: {
-        "User-Agent": "RecallTouch-Onboarding/1.0 (business-scraper)",
+        "User-Agent": "RevenueOperator-Onboarding/1.0 (business-scraper)",
         Accept: "text/html,application/xhtml+xml,*/*",
       },
       redirect: "follow",

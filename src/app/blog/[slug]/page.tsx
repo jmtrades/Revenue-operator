@@ -58,7 +58,7 @@ First: your voicemail is full of "I called but nobody answered" messages. That m
 
 The fix isn't always hiring. A 24/7 AI revenue operations platform can answer every call, take messages, book appointments, run follow-up campaigns, and recover missed opportunities — so your team can focus on closing and delivery. Revenue Operator gives you a single number that never goes to voicemail and never leaves a caller waiting. Once you see the difference in answer rate, booking conversion, and revenue recovered, you'll understand why call handling is a revenue engine, not just a service cost.`,
   },
-  "recall-touch-vs-hiring": {
+  "revenue-operator-vs-hiring": {
     title: "Revenue Operator vs hiring: the real cost comparison",
     date: "March 2026",
     body: `How the cost of a 24/7 AI phone agent stacks up against hiring and retaining a human receptionist or SDR.
@@ -529,7 +529,7 @@ The final step is accountability.
 Your KPI should be revenue recovered, appointments booked, and outcomes executed, not just "calls answered."
 When you track revenue impact, you can tune scripts and sequences until the leak stops.`,
   },
-  "recall-touch-vs-smith-ai-which-is-right": {
+  "revenue-operator-vs-smith-ai-which-is-right": {
     title: "Revenue Operator vs Smith.ai: Which Is Right?",
     date: "May 2026",
     metaDescription:

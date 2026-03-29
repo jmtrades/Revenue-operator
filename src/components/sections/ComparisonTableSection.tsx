@@ -12,37 +12,37 @@ export function ComparisonTableSection() {
     {
       feature: t("features.0", { default: "AI Voice Agent" }),
       traditional: false,
-      recallTouch: true,
+      revenueOperator: true,
     },
     {
       feature: t("features.1", { default: "Real-time Coaching" }),
       traditional: false,
-      recallTouch: true,
+      revenueOperator: true,
     },
     {
       feature: t("features.2", { default: "Sentiment Analysis" }),
       traditional: false,
-      recallTouch: true,
+      revenueOperator: true,
     },
     {
       feature: t("features.3", { default: "Appointment Booking" }),
       traditional: "Manual",
-      recallTouch: "Automated",
+      revenueOperator: "Automated",
     },
     {
       feature: t("features.4", { default: "Missed Call Recovery" }),
       traditional: "None",
-      recallTouch: "Instant AI callback",
+      revenueOperator: "Instant AI callback",
     },
     {
       feature: t("features.5", { default: "Setup Time" }),
       traditional: "2-4 weeks",
-      recallTouch: "5 minutes",
+      revenueOperator: "5 minutes",
     },
     {
       feature: t("features.6", { default: "Starting Price" }),
       traditional: "$300+/seat",
-      recallTouch: "$147/month",
+      revenueOperator: "$147/month",
     },
   ];
 
@@ -140,8 +140,8 @@ export function ComparisonTableSection() {
                       className="p-4 text-center text-sm font-medium"
                       style={{ color: "var(--accent-primary)" }}
                     >
-                      {typeof row.recallTouch === "boolean" ? (
-                        row.recallTouch ? (
+                      {typeof row.revenueOperator === "boolean" ? (
+                        row.revenueOperator ? (
                           <CheckCircle2
                             className="w-5 h-5 mx-auto"
                             style={{ color: "var(--accent-success, #10B981)" }}
@@ -154,7 +154,7 @@ export function ComparisonTableSection() {
                         )
                       ) : (
                         <span style={{ color: "var(--accent-primary)" }}>
-                          {row.recallTouch}
+                          {row.revenueOperator}
                         </span>
                       )}
                     </td>

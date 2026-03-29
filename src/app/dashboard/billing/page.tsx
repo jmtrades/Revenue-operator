@@ -175,7 +175,7 @@ export default function DashboardBillingPage() {
           {tb("cancelBody")}
         </p>
         <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-          {tb("cancelHint")} <a href="mailto:hello@revenue-operator.com" className="underline" style={{ color: "var(--accent-primary)" }}>hello@revenue-operator.com</a>
+          {tb("cancelHint")} <a href="mailto:hello@revenueoperator.ai" className="underline" style={{ color: "var(--accent-primary)" }}>hello@revenueoperator.ai</a>
         </p>
       </div>
     </div>

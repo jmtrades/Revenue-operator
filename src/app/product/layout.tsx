@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Product — Revenue Operator",
     description: "One platform for every phone interaction — inbound calls, outbound campaigns, SMS, scheduling, lead capture, and analytics.",
-    creator: "@recalltouch",
+    creator: "@revenueoperator",
   },
 };
 

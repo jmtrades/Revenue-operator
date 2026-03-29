@@ -20,7 +20,7 @@ import {
 
 interface ComparisonRow {
   feature: string;
-  recallTouch: string | boolean;
+  revenueOperator: string | boolean;
   humanServices: string | boolean;
   basicAI: string | boolean;
   diyPlatforms: string | boolean;
@@ -34,7 +34,7 @@ interface ComparisonDataProvider {
 const getComparisonData: ComparisonDataProvider = (t) => [
   {
     feature: t("features.0.name"),
-    recallTouch: t("features.0.recallTouch"),
+    revenueOperator: t("features.0.revenueOperator"),
     humanServices: t("features.0.humanServices"),
     basicAI: t("features.0.basicAI"),
     diyPlatforms: t("features.0.diyPlatforms"),
@@ -42,7 +42,7 @@ const getComparisonData: ComparisonDataProvider = (t) => [
   },
   {
     feature: t("features.1.name"),
-    recallTouch: true,
+    revenueOperator: true,
     humanServices: t("features.1.humanServices"),
     basicAI: true,
     diyPlatforms: true,
@@ -50,7 +50,7 @@ const getComparisonData: ComparisonDataProvider = (t) => [
   },
   {
     feature: t("features.2.name"),
-    recallTouch: true,
+    revenueOperator: true,
     humanServices: true,
     basicAI: t("features.2.basicAI"),
     diyPlatforms: t("features.2.diyPlatforms"),
@@ -58,7 +58,7 @@ const getComparisonData: ComparisonDataProvider = (t) => [
   },
   {
     feature: t("features.3.name"),
-    recallTouch: t("features.3.recallTouch"),
+    revenueOperator: t("features.3.revenueOperator"),
     humanServices: false,
     basicAI: t("features.3.basicAI"),
     diyPlatforms: t("features.3.diyPlatforms"),
@@ -66,7 +66,7 @@ const getComparisonData: ComparisonDataProvider = (t) => [
   },
   {
     feature: t("features.4.name"),
-    recallTouch: true,
+    revenueOperator: true,
     humanServices: false,
     basicAI: false,
     diyPlatforms: false,
@@ -74,7 +74,7 @@ const getComparisonData: ComparisonDataProvider = (t) => [
   },
   {
     feature: t("features.5.name"),
-    recallTouch: t("features.5.recallTouch"),
+    revenueOperator: t("features.5.revenueOperator"),
     humanServices: false,
     basicAI: false,
     diyPlatforms: false,
@@ -82,7 +82,7 @@ const getComparisonData: ComparisonDataProvider = (t) => [
   },
   {
     feature: t("features.6.name"),
-    recallTouch: t("features.6.recallTouch"),
+    revenueOperator: t("features.6.revenueOperator"),
     humanServices: t("features.6.humanServices"),
     basicAI: t("features.6.basicAI"),
     diyPlatforms: false,
@@ -90,7 +90,7 @@ const getComparisonData: ComparisonDataProvider = (t) => [
   },
   {
     feature: t("features.7.name"),
-    recallTouch: t("features.7.recallTouch"),
+    revenueOperator: t("features.7.revenueOperator"),
     humanServices: t("features.7.humanServices"),
     basicAI: t("features.7.basicAI"),
     diyPlatforms: t("features.7.diyPlatforms"),
@@ -98,7 +98,7 @@ const getComparisonData: ComparisonDataProvider = (t) => [
   },
   {
     feature: t("features.8.name"),
-    recallTouch: true,
+    revenueOperator: true,
     humanServices: false,
     basicAI: false,
     diyPlatforms: t("features.8.diyPlatforms"),
@@ -106,7 +106,7 @@ const getComparisonData: ComparisonDataProvider = (t) => [
   },
   {
     feature: t("features.9.name"),
-    recallTouch: t("features.9.recallTouch"),
+    revenueOperator: t("features.9.revenueOperator"),
     humanServices: t("features.9.humanServices"),
     basicAI: t("features.9.basicAI"),
     diyPlatforms: t("features.9.diyPlatforms"),
@@ -114,7 +114,7 @@ const getComparisonData: ComparisonDataProvider = (t) => [
   },
   {
     feature: t("features.10.name"),
-    recallTouch: true,
+    revenueOperator: true,
     humanServices: true,
     basicAI: t("features.10.basicAI"),
     diyPlatforms: t("features.10.diyPlatforms"),
@@ -124,7 +124,7 @@ const getComparisonData: ComparisonDataProvider = (t) => [
 
 interface CompetitorColProvider {
   (t: ReturnType<typeof useTranslations>): Array<{
-    key: "recallTouch" | "humanServices" | "basicAI" | "diyPlatforms";
+    key: "revenueOperator" | "humanServices" | "basicAI" | "diyPlatforms";
     label: string;
     subtitle?: string;
     highlight?: boolean;
@@ -132,7 +132,7 @@ interface CompetitorColProvider {
 }
 
 const getCompetitorCols: CompetitorColProvider = (t) => [
-  { key: "recallTouch" as const, label: t("competitors.0.name"), highlight: true },
+  { key: "revenueOperator" as const, label: t("competitors.0.name"), highlight: true },
   { key: "humanServices" as const, label: t("competitors.1.name"), subtitle: t("competitors.1.subtitle") },
   { key: "basicAI" as const, label: t("competitors.2.name"), subtitle: t("competitors.2.subtitle") },
   { key: "diyPlatforms" as const, label: t("competitors.3.name"), subtitle: t("competitors.3.subtitle") },

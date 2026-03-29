@@ -7,9 +7,9 @@
     "contactSupport": "Contacter le support"
   },
   "app": {
-    "title": "Recall Touch — Appels téléphoniques IA",
+    "title": "Revenue Operator — Appels téléphoniques IA",
     "dashboardTitle": "Tableau de bord",
-    "dashboardDescription": "Recall Touch — activité, appels, prospects et paramètres.",
+    "dashboardDescription": "Revenue Operator — activité, appels, prospects et paramètres.",
     "defaultWorkspaceName": "Mon espace",
     "onboardingChecklist": {
       "complete": "{completed}/{total} complété",
@@ -446,10 +446,10 @@
   "auth": {
     "signIn": {
       "title": "Se connecter",
-      "subtitle": "Bienvenue à nouveau sur Recall Touch",
+      "subtitle": "Bienvenue à nouveau sur Revenue Operator",
       "backToHome": "Retour à l'accueil",
       "button": "Se connecter",
-      "pageTitle": "Connexion — Recall Touch",
+      "pageTitle": "Connexion — Revenue Operator",
       "googleComingSoon": "Bientôt disponible…",
       "noAccountPrefix": "Aucun compte trouvé. ",
       "startFreeCta": "Commencer →",
@@ -523,7 +523,7 @@
     "genericError": "Something went wrong"
   },
   "billing": {
-    "pageTitle": "Facturation — Recall Touch",
+    "pageTitle": "Facturation — Revenue Operator",
     "subtitle": "Gérez votre forfait, votre utilisation et votre moyen de paiement.",
     "failureBanner": {
       "primary": "La couverture de gestion n'a pas pu continuer.",
@@ -771,7 +771,7 @@
       "dismiss": "Je sais ce que je fais"
     },
     "welcome": {
-      "title": "Bienvenue sur Recall Touch",
+      "title": "Bienvenue sur Revenue Operator",
       "body": "Nous garderons cet espace prêt jusqu'à l'arrivée de vos premiers appels."
     },
     "needsAttention": {
@@ -811,7 +811,7 @@
       "completed": "Terminé",
       "inProgress": "En cours",
       "noCallsYet": "Pas encore d'appels",
-      "noCallsHint": "Configurez le renvoi d'appel pour que votre numéro atteigne Recall Touch. Les nouveaux appels apparaîtront ici.",
+      "noCallsHint": "Configurez le renvoi d'appel pour que votre numéro atteigne Revenue Operator. Les nouveaux appels apparaîtront ici.",
       "setUpForwarding": "Configurer le renvoi d'appel →",
       "recordACall": "Enregistrer un appel",
       "calling": "Appel…",
@@ -825,7 +825,7 @@
       "empty": "L'activité s'affichera dès que des appels et messages arrivent.",
       "setupAgent": "View your agents →"
     },
-    "pageTitle": "Tableau de bord — Recall Touch",
+    "pageTitle": "Tableau de bord — Revenue Operator",
     "importContacts": "Importer vos contacts",
     "addLead": "Ajouter un lead",
     "loadError": {
@@ -1075,7 +1075,7 @@
       "operators": "Opérateurs",
       "operatorManagementHint": "La gestion des opérateurs se configure dans les paramètres principaux.",
       "integrationSettingsHint": "Les paramètres d'intégration sont dans les paramètres principaux.",
-      "phoneManageHint": "Gérez votre numéro Recall Touch et le renvoi d'appels.",
+      "phoneManageHint": "Gérez votre numéro Revenue Operator et le renvoi d'appels.",
       "callRulesHint": "Configurez la gestion des appels, l'escalade et le temps d'attente max.",
       "notificationsHint": "Choisissez comment et quand être notifié pour les leads, urgences et transferts.",
       "businessUpdateHint": "Mettez à jour votre profil entreprise pour que votre agent IA ait le bon contexte à chaque appel.",
@@ -1685,7 +1685,7 @@
       "youllGetNumber": "Vous obtiendrez un numéro pour que votre agent réponde. Vous pouvez transférer votre numéro actuel ou l'utiliser comme ligne principale.",
       "getMyNumber": "Obtenir mon numéro",
       "gettingNumber": "Obtention du numéro…",
-      "thisIsRecallTouchNumber": "C'est votre numéro Recall Touch",
+      "thisIsRevenueOperatorNumber": "C'est votre numéro Revenue Operator",
       "chooseHowToUse": "Choisissez comment l'utiliser :",
       "forwardExisting": "Transférer mon numéro actuel",
       "forwardSub": "Les appels sont transférés quand vous ne pouvez pas répondre.",
@@ -1873,7 +1873,7 @@
     "greetingAfternoon": "Bon après-midi",
     "greetingEvening": "Bonsoir",
     "welcomeMessage": "Bienvenue sur {name} !",
-    "heroHeading": "Bienvenue sur votre tableau de bord Recall Touch",
+    "heroHeading": "Bienvenue sur votre tableau de bord Revenue Operator",
     "heroDescription": "Votre système téléphonique IA est presque prêt. Connectez un numéro et passez votre premier appel test pour voir les appels apparaître ici.",
     "todaySummary": "Voici ce qui s'est passé aujourd'hui.",
     "summaryBooked": "Rendez-vous confirmé pour cet appel.",
@@ -2012,7 +2012,7 @@
     },
     "analytics": {
       "title": "Revenue Dashboard",
-      "subtitle": "See exactly how much money Recall Touch has recovered.",
+      "subtitle": "See exactly how much money Revenue Operator has recovered.",
       "description": "Real-time view of revenue recovered by your AI agent.",
       "export": "Export",
       "emptyDescription": "Once your AI starts answering calls, revenue metrics will appear here.",
@@ -2063,7 +2063,7 @@
     "title": "Reseller Dashboard"
   },
   "analytics": {
-    "pageTitle": "Analyses — Recall Touch",
+    "pageTitle": "Analyses — Revenue Operator",
     "heading": "Analyses",
     "title": "Analyses",
     "periodSummary": {
@@ -2220,7 +2220,7 @@
     "operationalMetrics": "Operational Metrics"
   },
   "agents": {
-    "pageTitle": "Agents — Recall Touch",
+    "pageTitle": "Agents — Revenue Operator",
     "pageHeading": "Vos opérateurs autonomes de revenus",
     "pageSubtitle": "Opérateurs IA travaillant 24h/24 pour récupérer des revenus et planifier des rendez-vous",
     "createAgent": "+ Déployer un Opérateur",
@@ -2400,13 +2400,13 @@
       "previewHeading": "Aperçu — comment votre IA répondra",
       "callerBookAppt": "L'appelant souhaite prendre rendez-vous",
       "carrierAtt": "AT&T",
-      "carrierAttBody": "Composez *72 puis votre numéro Recall Touch. Attendez la confirmation. Pour désactiver, composez *73.",
+      "carrierAttBody": "Composez *72 puis votre numéro Revenue Operator. Attendez la confirmation. Pour désactiver, composez *73.",
       "carrierVerizon": "Verizon",
-      "carrierVerizonBody": "Composez *72 suivi de votre numéro Recall Touch. Écoutez la tonalité de confirmation. Pour annuler, composez *73.",
+      "carrierVerizonBody": "Composez *72 suivi de votre numéro Revenue Operator. Écoutez la tonalité de confirmation. Pour annuler, composez *73.",
       "carrierTMobile": "T-Mobile",
-      "carrierTMobileBody": "Dans l'app T-Mobile : Téléphone → Plus → Renvoi d'appel. Entrez votre numéro Recall Touch. Ou composez *72 + numéro.",
+      "carrierTMobileBody": "Dans l'app T-Mobile : Téléphone → Plus → Renvoi d'appel. Entrez votre numéro Revenue Operator. Ou composez *72 + numéro.",
       "carrierOther": "Autres opérateurs",
-      "carrierOtherBody": "La plupart : composez *72 ou 72 + votre numéro Recall Touch pour activer le renvoi. Composez *73 ou 73 pour désactiver. Consultez le site de votre opérateur.",
+      "carrierOtherBody": "La plupart : composez *72 ou 72 + votre numéro Revenue Operator pour activer le renvoi. Composez *73 ou 73 pour désactiver. Consultez le site de votre opérateur.",
       "callerPricing": "L'appelant demande les tarifs",
       "callerAfterHours": "L'appelant vous joint hors horaires",
       "callerPriceHigh": "L'appelant trouve le prix trop élevé",
@@ -2594,7 +2594,7 @@
     },
     "greetings": {
       "receptionist": "Bonjour, merci d'avoir appelé. Je suis votre agent IA — je recueille les informations et ne laisse rien passer.",
-      "after_hours": "Bonjour, c'est votre réceptionniste IA Recall Touch pour les appels hors horaires. Comment puis-je vous aider ?",
+      "after_hours": "Bonjour, c'est votre réceptionniste IA Revenue Operator pour les appels hors horaires. Comment puis-je vous aider ?",
       "emergency": "C'est votre ligne d'urgence. J'agis vite, je vous rassure et j'alerte la bonne personne.",
       "lead_qualifier": "Merci de votre contact. Je vais poser quelques questions pour vous orienter.",
       "follow_up": "Bonjour, c'est votre IA de suivi pour ne rien laisser passer. Puis-je faire le point sur votre dernière visite ?",
@@ -3101,7 +3101,7 @@
     "voicePreviewLink": "Preview all voices & A/B test"
   },
   "calls": {
-    "pageTitle": "Appels — Recall Touch",
+    "pageTitle": "Appels — Revenue Operator",
     "title": "Appels",
     "heading": "Journal des appels",
     "description": "Chaque appel répondu, décision et suivi en un seul endroit.",
@@ -3280,7 +3280,7 @@
     "testCall": "Test call"
   },
   "callIntelligence": {
-    "pageTitle": "Intelligence d'appels — Recall Touch",
+    "pageTitle": "Intelligence d'appels — Revenue Operator",
     "heading": "Intelligence d'appel",
     "pageSubtitle": "Analysez les vraies conversations pour rendre votre agent IA plus performant.",
     "title": "Intelligence d'appel",
@@ -3390,7 +3390,7 @@
     }
   },
   "callRules": {
-    "pageTitle": "Règles d'appels — Recall Touch",
+    "pageTitle": "Règles d'appels — Revenue Operator",
     "heading": "Règles d'appel",
     "description": "Configurez la façon dont votre IA gère les appels pendant et hors heures de bureau.",
     "businessHours": "Heures d'ouverture",
@@ -3433,7 +3433,7 @@
     "title": "Boîte de réception",
     "subtitle": "Toutes les conversations au même endroit.",
     "viewInLeads": "Voir dans Leads",
-    "pageTitle": "Boîte de réception — Recall Touch",
+    "pageTitle": "Boîte de réception — Revenue Operator",
     "filters": {
       "all": "Tous",
       "unread": "Non lus",
@@ -3670,7 +3670,7 @@
   },
   "campaigns": {
     "title": "Campagnes",
-    "pageTitle": "Campagnes — Recall Touch",
+    "pageTitle": "Campagnes — Revenue Operator",
     "create": {
       "back": "Retour aux campagnes",
       "title": "Exécuter une Campagne Autonome",
@@ -4006,8 +4006,8 @@
     "dailyLimitReached": "— limit reached, resumes tomorrow"
   },
   "settings": {
-    "pageTitle": "Paramètres — Recall Touch",
-    "agentPageTitle": "Paramètres de l'agent — Recall Touch",
+    "pageTitle": "Paramètres — Revenue Operator",
+    "agentPageTitle": "Paramètres de l'agent — Revenue Operator",
     "title": "Paramètres",
     "pageSubtitle": "Préférences et configuration",
     "profile": {
@@ -4343,8 +4343,8 @@
       "breadcrumbIntegrations": "Intégrations",
       "mappingTitle": "Mappage des champs — {name}",
       "mappingBreadcrumb": "Mappage {name}",
-      "mappingDescription": "Mappez les champs contact/lead Recall Touch vers les champs {name}. Utilisez les transformations pour le format téléphone ou les statuts.",
-      "recallTouch": "Recall Touch",
+      "mappingDescription": "Mappez les champs contact/lead Revenue Operator vers les champs {name}. Utilisez les transformations pour le format téléphone ou les statuts.",
+      "revenueOperator": "Revenue Operator",
       "crmField": "Champ CRM ({name})",
       "transform": "Transformation",
       "addMapping": "Ajouter un mappage",
@@ -4466,7 +4466,7 @@
     "syncLog": {
       "breadcrumb": "Journal de synchronisation",
       "heading": "Journal de synchronisation",
-      "description": "Historique des événements de synchronisation CRM : sortant (Recall Touch → CRM) et entrant (CRM → Recall Touch).",
+      "description": "Historique des événements de synchronisation CRM : sortant (Revenue Operator → CRM) et entrant (CRM → Revenue Operator).",
       "allProviders": "Tous les fournisseurs",
       "allDirections": "Toutes les directions",
       "outbound": "Sortant",
@@ -4626,7 +4626,7 @@
     "requestDeleteAccount": "Demander la suppression du compte",
     "appearance": {
       "title": "Apparence",
-      "description": "Choisissez l'apparence de Recall Touch.",
+      "description": "Choisissez l'apparence de Revenue Operator.",
       "system": "Système",
       "light": "Clair",
       "dark": "Sombre"
@@ -4641,7 +4641,7 @@
   },
   "hero": {
     "title": "Cette semaine, nous avons répondu à 12 847 appels qui seraient allés sur la messagerie.",
-    "subtitle": "Recall Touch décroche quand vous ne pouvez pas. L’IA répond à vos appels manqués, prend des rendez-vous et vous envoie les détails par SMS — 24h/24, 7j/7, pour 297 $/mois.",
+    "subtitle": "Revenue Operator décroche quand vous ne pouvez pas. L’IA répond à vos appels manqués, prend des rendez-vous et vous envoie les détails par SMS — 24h/24, 7j/7, pour 297 $/mois.",
     "primaryCta": "Commencer maintenant →",
     "secondaryCta": "Voir comment ça marche",
     "trustLine": "Revenue Execution OS · Fonctionne avec votre numéro · Démarrez en minutes",
@@ -4893,7 +4893,7 @@
     "attempts": "{current} of {max}"
   },
   "demoPage": {
-    "title": "Découvrez Recall Touch",
+    "title": "Découvrez Revenue Operator",
     "subtitle": "Parlez à un agent IA qui gère de vrais appels. Tout de suite.",
     "tapMic": "Appuyez sur le micro ci-dessous pour parler",
     "orTryScenario": "Ou essayez un scénario :",
@@ -4903,7 +4903,7 @@
     "scenario4": "Demander un rappel",
     "scenario5": "Obtenir un devis",
     "liveTranscript": "Transcription en direct",
-    "greeting": "Bonjour ! Je suis l'agent Recall Touch. Je peux aider pour la prise de rendez-vous, les tarifs, les rappels ou autre. De quoi avez-vous besoin ?",
+    "greeting": "Bonjour ! Je suis l'agent Revenue Operator. Je peux aider pour la prise de rendez-vous, les tarifs, les rappels ou autre. De quoi avez-vous besoin ?",
     "voiceStyle": "Style de voix",
     "voiceStyleHelp": "Choisissez Professionnel, Amical ou Concis dans l'en-tête du chat.",
     "whatJustHappened": "Ce qui vient de se passer",
@@ -4922,9 +4922,9 @@
   },
   "contactPage": {
     "metaTitle": "Contact",
-    "metaDescription": "Contactez Recall Touch. Ventes, entreprise et support technique. Réponse sous 4 heures.",
+    "metaDescription": "Contactez Revenue Operator. Ventes, entreprise et support technique. Réponse sous 4 heures.",
     "heading": "Nous contacter",
-    "subheading": "Que vous évaluiez Recall Touch pour votre équipe ou ayez besoin du support technique, nous sommes là.",
+    "subheading": "Que vous évaluiez Revenue Operator pour votre équipe ou ayez besoin du support technique, nous sommes là.",
     "formName": "Nom",
     "formEmail": "E-mail",
     "formCompany": "Société",
@@ -4981,12 +4981,12 @@
     "forTeams": "Pour les équipes",
     "forTeamsDesc": "Multi-sites, agences et équipes distribuées. Une plateforme, un standard. Réponses cohérentes et visibilité complète.",
     "forDevelopers": "Pour les développeurs",
-    "forDevelopersDesc": "API, webhooks et intégrations. Intégrez Recall Touch et documentez chaque conversation.",
+    "forDevelopersDesc": "API, webhooks et intégrations. Intégrez Revenue Operator et documentez chaque conversation.",
     "documentation": "Documentation →",
     "complianceHeading": "Conformité et gouvernance",
     "complianceBody": "Chaque appel enregistré et transcrit. Traçabilité et chaîne de custode. Mode HIPAA. Rétention 30-365 jours.",
     "complianceBullets": "Enregistrement et transcription · Option HIPAA · Rétention 30-365 jours · Audit",
-    "ctaSubtext": "Recall Touch à partir de $297/mo, configuration en 5 minutes.",
+    "ctaSubtext": "Revenue Operator à partir de $297/mo, configuration en 5 minutes.",
     "ctaHeading": "Prêt à gérer chaque appel, SMS et suivi automatiquement ?",
     "ctaBody": "Démarrez en moins de 60 secondes. Annulez à tout moment.",
     "ctaButton": "Commencer gratuit → 5 minutes",
@@ -5248,12 +5248,12 @@
       }
     },
     "whoUses": {
-      "label": "Qui utilise Recall Touch",
+      "label": "Qui utilise Revenue Operator",
       "heading": "Conçu pour votre façon de communiquer",
       "personas": {
         "solo": {
           "name": "Indépendants",
-          "desc": "Je ne peux pas décrocher en travaillant. Recall Touch répond, réserve et relance pour ne jamais rater un lead."
+          "desc": "Je ne peux pas décrocher en travaillant. Revenue Operator répond, réserve et relance pour ne jamais rater un lead."
         },
         "growing": {
           "name": "Équipes en croissance",
@@ -5269,14 +5269,14 @@
         },
         "outbound": {
           "name": "Campagnes sortantes",
-          "desc": "On doit relancer des centaines de leads. Recall Touch contacte, qualifie et réserve — à l'échelle."
+          "desc": "On doit relancer des centaines de leads. Revenue Operator contacte, qualifie et réserve — à l'échelle."
         },
         "anyone": {
           "name": "Toute personne avec un téléphone",
           "desc": "Je veux que mes appels soient gérés intelligemment. Répondre, réserver, relancer, filtrer — sans embaucher un standard."
         }
       },
-      "additionalNote": "Vous ne trouvez pas votre cas ? Recall Touch sert tout flux basé sur le téléphone.",
+      "additionalNote": "Vous ne trouvez pas votre cas ? Revenue Operator sert tout flux basé sur le téléphone.",
       "cta": {
         "link": "Commencer →"
       }
@@ -5286,8 +5286,8 @@
       "heading": "Les chiffres qui comptent",
       "items": {
         "revenueLost": "Revenus moyens perdus par an à cause des appels manqués",
-        "answerRate": "Taux de réponse avec Recall Touch (vs ~60 % moyenne nationale)",
-        "speedToLead": "Délai moyen de Recall Touch pour relancer un nouveau lead par appel ou SMS",
+        "answerRate": "Taux de réponse avec Revenue Operator (vs ~60 % moyenne nationale)",
+        "speedToLead": "Délai moyen de Revenue Operator pour relancer un nouveau lead par appel ou SMS",
         "inbox": "Tous les appels, SMS et relances au même endroit (vs 4+ outils pour la plupart des équipes)",
         "setupTime": "Temps de mise en place (vs 6 semaines pour les solutions enterprise)"
       }
@@ -5328,14 +5328,14 @@
       "goToTestimonial": "Go to testimonial {number}",
       "items": {
         "0": {
-          "quote": "We were losing 40% of after-hours calls — that's $23K in missed revenue every month. Within a week of going live, Recall Touch was booking appointments at 2 AM, recovering storm damage leads at midnight, and following up with quotes before my crew even woke up. First month: $23K in recovered revenue. It paid for the entire year in 12 days.",
+          "quote": "We were losing 40% of after-hours calls — that's $23K in missed revenue every month. Within a week of going live, Revenue Operator was booking appointments at 2 AM, recovering storm damage leads at midnight, and following up with quotes before my crew even woke up. First month: $23K in recovered revenue. It paid for the entire year in 12 days.",
           "name": "Marcus Johnson",
           "role": "Owner",
           "company": "Premier Plumbing & HVAC — Houston, TX",
           "metric": "+$23K/mo recovered"
         },
         "1": {
-          "quote": "We have 4 locations and our front desk was drowning — 200+ calls a day, half going to voicemail. Recall Touch handles every single one now. No-shows dropped 52% because the AI actually follows up with reminders and reschedules cancellations automatically. We've added $180K in annual revenue without hiring a single person.",
+          "quote": "We have 4 locations and our front desk was drowning — 200+ calls a day, half going to voicemail. Revenue Operator handles every single one now. No-shows dropped 52% because the AI actually follows up with reminders and reschedules cancellations automatically. We've added $180K in annual revenue without hiring a single person.",
           "name": "Dr. Lisa Chen",
           "role": "Practice Owner",
           "company": "Bright Smile Dental Group — Miami, FL",
@@ -5349,28 +5349,28 @@
           "metric": "68% intake conversion"
         },
         "3": {
-          "quote": "We manage 14 crews across 3 states. Storm season used to mean 60% of calls went to voicemail — those are $5K-$15K jobs just evaporating. Recall Touch answers every call in under a second, qualifies the lead, books the inspection, and routes it to the right crew. Revenue is up 34% year-over-year and we process 500+ calls a day without breaking a sweat.",
+          "quote": "We manage 14 crews across 3 states. Storm season used to mean 60% of calls went to voicemail — those are $5K-$15K jobs just evaporating. Revenue Operator answers every call in under a second, qualifies the lead, books the inspection, and routes it to the right crew. Revenue is up 34% year-over-year and we process 500+ calls a day without breaking a sweat.",
           "name": "Mike Torres",
           "role": "CEO",
           "company": "Apex Roofing Group — Dallas, TX",
           "metric": "500+ calls/day"
         },
         "4": {
-          "quote": "I tested 6 AI phone products before finding Recall Touch. The difference is night and day — this one actually books appointments, follows up on quotes, and routes urgent calls to my cell. Connected my existing number and it was handling the full workflow within an hour. First week ROI was 11x.",
+          "quote": "I tested 6 AI phone products before finding Revenue Operator. The difference is night and day — this one actually books appointments, follows up on quotes, and routes urgent calls to my cell. Connected my existing number and it was handling the full workflow within an hour. First week ROI was 11x.",
           "name": "Sarah Kim",
           "role": "Owner",
           "company": "AutoCare Express — Atlanta, GA",
           "metric": "11x ROI in week one"
         },
         "5": {
-          "quote": "I white-label Recall Touch for 12 clients and make $4K/mo in pure margin. My clients think the AI is a real person on their team. Zero complaints in 8 months. When I showed my agency partner the demo, he signed up the same day and put 6 of his clients on it. This is the best agency tool nobody's talking about yet.",
+          "quote": "I white-label Revenue Operator for 12 clients and make $4K/mo in pure margin. My clients think the AI is a real person on their team. Zero complaints in 8 months. When I showed my agency partner the demo, he signed up the same day and put 6 of his clients on it. This is the best agency tool nobody's talking about yet.",
           "name": "Chris Martinez",
           "role": "Founder",
           "company": "Scale Digital Agency — Los Angeles, CA",
           "metric": "$4K/mo agency profit"
         },
         "6": {
-          "quote": "As a solo practitioner, I was losing patients to the big clinics because I couldn't answer during appointments. Recall Touch runs my entire patient communication — scheduling, follow-ups, no-show recovery, reactivation campaigns for lapsed patients. My patient volume increased 40% in the first quarter without adding any staff. It's a full operations layer, not just a phone tool.",
+          "quote": "As a solo practitioner, I was losing patients to the big clinics because I couldn't answer during appointments. Revenue Operator runs my entire patient communication — scheduling, follow-ups, no-show recovery, reactivation campaigns for lapsed patients. My patient volume increased 40% in the first quarter without adding any staff. It's a full operations layer, not just a phone tool.",
           "name": "Dr. James Park",
           "role": "Chiropractor",
           "company": "Park Wellness Center — Denver, CO",
@@ -5475,8 +5475,8 @@
           "i2": "Pas de qualification, pas de réservation",
           "i3": "C'est toujours à vous de rappeler"
         },
-        "recallTouch": {
-          "label": "Recall Touch",
+        "revenueOperator": {
+          "label": "Revenue Operator",
           "i1": "Chaque appel répondu 24h/24",
           "i2": "Leads captés et qualifiés en temps réel",
           "i3": "Rendez-vous pris pendant l'appel"
@@ -5484,7 +5484,7 @@
       }
     },
     "enterpriseComparison": {
-      "text": "La voix IA enterprise coûte 150 000 $/an et prend 6 semaines à déployer. Recall Touch à partir de 297 $/mois en 5 minutes."
+      "text": "La voix IA enterprise coûte 150 000 $/an et prend 6 semaines à déployer. Revenue Operator à partir de 297 $/mois en 5 minutes."
     },
     "finalCta": {
       "heading": "Votre équipe téléphone IA en 5 minutes",
@@ -5509,7 +5509,7 @@
     "industries": {
       "label": "Secteurs",
       "heading": "Voir comment ça marche par secteur",
-      "subheading": "Recall Touch s'adapte à toute entreprise qui reçoit des appels. Voici quelques exemples.",
+      "subheading": "Revenue Operator s'adapte à toute entreprise qui reçoit des appels. Voici quelques exemples.",
       "industries": {
         "plumbing": {
           "name": "HVAC",
@@ -5545,7 +5545,7 @@
         },
         "custom": {
           "name": "Votre secteur",
-          "desc": "Vous ne voyez pas votre activité ? Recall Touch convient à toute entreprise qui décroche le téléphone."
+          "desc": "Vous ne voyez pas votre activité ? Revenue Operator convient à toute entreprise qui décroche le téléphone."
         },
         "autoRepair": {
           "name": "Auto Repair",
@@ -5560,7 +5560,7 @@
           "desc": "Qualify project leads, schedule estimates, and follow up on bids. Never lose a job to a slow response."
         }
       },
-      "footer": "Vous ne voyez pas votre secteur ? Recall Touch fonctionne pour toute entreprise de services.",
+      "footer": "Vous ne voyez pas votre secteur ? Revenue Operator fonctionne pour toute entreprise de services.",
       "footerCta": "Commencer →"
     },
     "bentoVisuals": {
@@ -5600,8 +5600,8 @@
       "channelNote": "Une seule couche de gouvernance"
     },
     "activityPreview": {
-      "ariaLabel": "Aperçu du tableau de bord d'activité Recall Touch",
-      "title": "Recall Touch — Activité",
+      "ariaLabel": "Aperçu du tableau de bord d'activité Revenue Operator",
+      "title": "Revenue Operator — Activité",
       "heading": "Appels récents",
       "typeLead": "Prospect",
       "typeAppointment": "Rendez-vous",
@@ -5667,8 +5667,8 @@
       }
     },
     "mockDashboard": {
-      "ariaLabel": "Aperçu de l'interface tableau de bord Recall Touch",
-      "title": "Recall Touch — Enregistrements actifs",
+      "ariaLabel": "Aperçu de l'interface tableau de bord Revenue Operator",
+      "title": "Revenue Operator — Enregistrements actifs",
       "heading": "Enregistrements actifs",
       "searchPlaceholder": "Rechercher des appels…",
       "headerName": "Nom",
@@ -5752,11 +5752,11 @@
     "comparison": {
       "sectionLabel": "The Full Revenue Operations Stack",
       "heading": "Not Just Another Point Solution.",
-      "description": "Most tools handle one step. Recall Touch runs the full execution loop: qualification, booking, follow-up, reactivation, and clear attribution so teams can measure outcomes in one system.",
+      "description": "Most tools handle one step. Revenue Operator runs the full execution loop: qualification, booking, follow-up, reactivation, and clear attribution so teams can measure outcomes in one system.",
       "features": {
         "0": {
           "name": "Answer Speed",
-          "recallTouch": "< 3 seconds",
+          "revenueOperator": "< 3 seconds",
           "humanServices": "15–30 seconds",
           "basicAI": "5–10 seconds",
           "diyPlatforms": "Build it yourself"
@@ -5772,7 +5772,7 @@
         },
         "3": {
           "name": "Follow-Up Sequences",
-          "recallTouch": "Automated SMS + email",
+          "revenueOperator": "Automated SMS + email",
           "basicAI": "Basic SMS only",
           "diyPlatforms": "Build it yourself"
         },
@@ -5781,17 +5781,17 @@
         },
         "5": {
           "name": "Revenue Dashboard",
-          "recallTouch": "Real-time $ recovered"
+          "revenueOperator": "Real-time $ recovered"
         },
         "6": {
           "name": "Industry Templates",
-          "recallTouch": "8 verticals, auto-seeded",
+          "revenueOperator": "8 verticals, auto-seeded",
           "humanServices": "Generic scripts",
           "basicAI": "1–2 templates"
         },
         "7": {
           "name": "Setup Time",
-          "recallTouch": "< 3 minutes",
+          "revenueOperator": "< 3 minutes",
           "humanServices": "1–2 weeks",
           "basicAI": "30–60 minutes",
           "diyPlatforms": "Weeks to months"
@@ -5802,7 +5802,7 @@
         },
         "9": {
           "name": "Transparent Pricing",
-          "recallTouch": "$147–$997/mo flat",
+          "revenueOperator": "$147–$997/mo flat",
           "humanServices": "$4–10/call or /min",
           "basicAI": "$0.50/caller + fees",
           "diyPlatforms": "$0.05–0.15/min + infra"
@@ -5815,7 +5815,7 @@
       },
       "competitors": {
         "0": {
-          "name": "Recall Touch"
+          "name": "Revenue Operator"
         },
         "1": {
           "name": "Human Services",
@@ -5831,19 +5831,19 @@
         }
       },
       "ctaDescription": "Still comparing? Try a free test call and hear the difference.",
-      "ctaButton": "Try Recall Touch Free"
+      "ctaButton": "Try Revenue Operator Free"
     },
     "roiCalculator": {
       "sectionLabel": "Revenue math",
       "heading": "Calculate your revenue operations gap.",
-      "description": "Drag the sliders. We estimate your monthly revenue operations gap, then show what Recall Touch can recover with consistent automation and follow-up execution.",
+      "description": "Drag the sliders. We estimate your monthly revenue operations gap, then show what Revenue Operator can recover with consistent automation and follow-up execution.",
       "disclaimer1": "Uses conservative 70% recovery rate based on aggregated call data.",
       "disclaimer2": "Shows monthly recovery and whether Growth plan pays for itself.",
       "sliderMonthlyOpportunitiesLabel": "Monthly opportunities",
       "sliderRevenueGapLabel": "Revenue gap (%)",
       "sliderAverageDealValueLabel": "Average deal value",
       "resultMonthlyLost": "You're currently losing about {amount}/month in revenue leak.",
-      "resultMonthlyRecovered": "With Recall Touch answering 24/7 and running recovery follow-up, you could recover around {monthlyAmount}/month and {annualAmount}/year in recovered bookings and no-show rescue.",
+      "resultMonthlyRecovered": "With Revenue Operator answering 24/7 and running recovery follow-up, you could recover around {monthlyAmount}/month and {annualAmount}/year in recovered bookings and no-show rescue.",
       "resultPaysForItself": "Business plan pays for itself at {multiple}x.",
       "ctaButtonText": "Get full ROI report",
       "ctaDescription": "Share your email on the next step and we'll send a detailed breakdown by call volume, channel, and plan."
@@ -5878,23 +5878,23 @@
         },
         "2": {
           "question": "Can I use my existing business number?",
-          "answer": "Yes. Keep your current number and forward to Recall Touch, or provision new numbers directly."
+          "answer": "Yes. Keep your current number and forward to Revenue Operator, or provision new numbers directly."
         },
         "3": {
-          "question": "What exactly does Recall Touch do?",
-          "answer": "Recall Touch is an AI revenue operations platform. It handles inbound and outbound communication, automated follow-up sequences, appointment booking, lead qualification, escalation to your team, and full revenue attribution. Think of it as the execution layer that runs your revenue operations automatically."
+          "question": "What exactly does Revenue Operator do?",
+          "answer": "Revenue Operator is an AI revenue operations platform. It handles inbound and outbound communication, automated follow-up sequences, appointment booking, lead qualification, escalation to your team, and full revenue attribution. Think of it as the execution layer that runs your revenue operations automatically."
         },
         "4": {
           "question": "Does the AI sound robotic?",
-          "answer": "Not even close. Recall Touch uses 32 premium AI voices engineered with natural pauses, real intonation, pitch variation, and conversational warmth. Play a sample on our voice preview above and judge for yourself."
+          "answer": "Not even close. Revenue Operator uses 32 premium AI voices engineered with natural pauses, real intonation, pitch variation, and conversational warmth. Play a sample on our voice preview above and judge for yourself."
         },
         "5": {
           "question": "Who is this for?",
-          "answer": "Any business or team that generates revenue through conversations. Solo consultants, sales teams, agencies, service businesses, clinics, law firms, real estate teams, recruiters, multi-location operators, and more. If you have leads, appointments, or follow-up to manage, Recall Touch runs it."
+          "answer": "Any business or team that generates revenue through conversations. Solo consultants, sales teams, agencies, service businesses, clinics, law firms, real estate teams, recruiters, multi-location operators, and more. If you have leads, appointments, or follow-up to manage, Revenue Operator runs it."
         },
         "6": {
           "question": "Do I need to replace my CRM?",
-          "answer": "No. Recall Touch is the execution layer that sits on top of your CRM. It handles communication, follow-up, booking, and attribution. Your CRM stays as your system of record."
+          "answer": "No. Revenue Operator is the execution layer that sits on top of your CRM. It handles communication, follow-up, booking, and attribution. Your CRM stays as your system of record."
         },
         "7": {
           "question": "How do you prevent bad automation?",
@@ -5902,7 +5902,7 @@
         },
         "8": {
           "question": "Does this work for outbound too?",
-          "answer": "Yes. Recall Touch supports 10 outbound campaign types including speed-to-lead, appointment setting, reactivation, quote follow-up, and cold outreach. Outbound runs with the same guardrails, compliance, and attribution as inbound."
+          "answer": "Yes. Revenue Operator supports 10 outbound campaign types including speed-to-lead, appointment setting, reactivation, quote follow-up, and cold outreach. Outbound runs with the same guardrails, compliance, and attribution as inbound."
         },
         "9": {
           "question": "How is ROI measured?",
@@ -5998,7 +5998,7 @@
       "title": "What customers are saying",
       "testimonials": {
         "0": {
-          "quote": "Recall Touch transformed our missed call recovery. We went from losing 40% of inbound leads to capturing 97% with AI-powered follow-ups. Revenue increased 280% in the first quarter.",
+          "quote": "Revenue Operator transformed our missed call recovery. We went from losing 40% of inbound leads to capturing 97% with AI-powered follow-ups. Revenue increased 280% in the first quarter.",
           "author": "Sarah Mitchell",
           "role": "VP Sales",
           "company": "TechScale Inc"
@@ -6010,7 +6010,7 @@
           "company": "GrowthEngine"
         },
         "2": {
-          "quote": "We replaced 3 different tools with Recall Touch — dialer, coaching platform, and analytics suite. Saved $4,200/month while getting better results. The ROI is undeniable.",
+          "quote": "We replaced 3 different tools with Revenue Operator — dialer, coaching platform, and analytics suite. Saved $4,200/month while getting better results. The ROI is undeniable.",
           "author": "Jennifer Park",
           "role": "CRO",
           "company": "RevenuePro Solutions"
@@ -6018,7 +6018,7 @@
       }
     },
     "comparisonTable": {
-      "title": "Why teams switch to Recall Touch",
+      "title": "Why teams switch to Revenue Operator",
       "features": {
         "0": "AI Voice Agent",
         "1": "Real-time Coaching",
@@ -6032,9 +6032,9 @@
   },
   "footer": {
     "tagline": "Communication téléphone et SMS par IA pour les entreprises qui dépendent de chaque appel.",
-    "founderPhotoAlt": "Junior, fondateur de Recall Touch",
+    "founderPhotoAlt": "Junior, fondateur de Revenue Operator",
     "founderName": "Junior",
-    "founderBio": "Fondateur de Recall Touch. Développe la récupération de revenus avec l'IA pour que chaque appel compte.",
+    "founderBio": "Fondateur de Revenue Operator. Développe la récupération de revenus avec l'IA pour que chaque appel compte.",
     "product": "Produit",
     "features": "Fonctionnalités",
     "pricing": "Tarifs",
@@ -6048,7 +6048,7 @@
     "privacyPolicy": "Politique de confidentialité",
     "termsOfService": "Conditions d'utilisation",
     "securityBadges": "SOC 2 en cours · Chiffrement 256 bits",
-    "copyright": "© {year} Recall Touch. Tous droits réservés.",
+    "copyright": "© {year} Revenue Operator. Tous droits réservés.",
     "cta": {
       "bookDemo": "Réserver une démo",
       "contact": "Contact"
@@ -6240,7 +6240,7 @@
       },
       {
         "q": "Puis-je garder mon numéro actuel ?",
-        "a": "Oui, transférez-le vers votre numéro Recall Touch."
+        "a": "Oui, transférez-le vers votre numéro Revenue Operator."
       },
       {
         "q": "Quelles voix sont disponibles ?",
@@ -6285,7 +6285,7 @@
       "avgValuePerCall": "Valeur moyenne par appel ($)",
       "monthlyRecovered": "Revenus récupérés par mois",
       "annualBaseline": "Base annuelle de coûts",
-      "annualProtected": "Revenus annuels que Recall Touch protège",
+      "annualProtected": "Revenus annuels que Revenue Operator protège",
       "receptionistCost": "coût annuel type.",
       "recommendedPlan": "Forfait recommandé :",
       "description": "Calculez votre potentiel de recouvrement avec notre calculateur ROI."
@@ -6431,7 +6431,7 @@
     "tooltip": "Changer la langue de l’interface"
   },
   "onboarding": {
-    "pageTitle": "Commencer — Recall Touch",
+    "pageTitle": "Commencer — Revenue Operator",
     "title": "Intégration",
     "step": {
       "business": "Entreprise",
@@ -6503,7 +6503,7 @@
         "greeting": "Merci d'avoir appelé. Comment puis-je vous aider ?"
       }
     },
-    "welcomeHeading": "Bienvenue sur Recall Touch !",
+    "welcomeHeading": "Bienvenue sur Revenue Operator !",
     "welcomeSubtitle": "Mettons en place votre système téléphonique IA en 2 minutes.",
     "businessNameLabel": "Nom de l'entreprise",
     "businessNamePlaceholder": "ex. Plomberie Portland",
@@ -6644,7 +6644,7 @@
     "phoneOptional": "Connexion téléphone (optionnelle pour l'instant)",
     "phoneHelpParagraph": "Nous vous aiderons à obtenir un numéro après la configuration. Vous pouvez utiliser le vôtre ou en demander un dans Paramètres → Téléphone.",
     "forwardExistingTitle": "Transférer votre numéro actuel",
-    "forwardExistingDesc": "Appelez votre opérateur et configurez le renvoi vers votre numéro Recall Touch.",
+    "forwardExistingDesc": "Appelez votre opérateur et configurez le renvoi vers votre numéro Revenue Operator.",
     "showMeHow": "Comment faire",
     "orDivider": "— ou —",
     "getNewNumberTitle": "Obtenir un nouveau numéro",
@@ -6677,11 +6677,11 @@
     },
     "modeLabel": "Select Mode",
     "modeSoloTitle": "Solo Mode",
-    "modeSoloDesc": "Use Recall Touch for personal calls",
+    "modeSoloDesc": "Use Revenue Operator for personal calls",
     "modeSalesTitle": "Sales Mode",
-    "modeSalesDesc": "Use Recall Touch for outbound sales calls",
+    "modeSalesDesc": "Use Revenue Operator for outbound sales calls",
     "modeBusinessTitle": "Business Mode",
-    "modeBusinessDesc": "Use Recall Touch for business operations",
+    "modeBusinessDesc": "Use Revenue Operator for business operations",
     "businessHeading": "Business Information",
     "businessSubtitle": "Tell us about your business"
   },
@@ -6935,7 +6935,7 @@
     "dismiss": "Ignorer"
   },
   "industry": {
-    "heroSubtitle": "Un exemple de la façon dont Recall Touch fonctionne. Il s'adapte à toute entreprise.",
+    "heroSubtitle": "Un exemple de la façon dont Revenue Operator fonctionne. Il s'adapte à toute entreprise.",
     "solutionsLabel": "Solutions",
     "heroTitle": "Agent téléphonique IA {industry}",
     "heroTagline": "Ne ratez plus jamais un {customerType}.",
@@ -6955,7 +6955,7 @@
     "roiThatsLost": "soit",
     "roiPerMonth": "${amount}/mois",
     "roiInLostRevenue": "de chiffre d'affaires perdu.",
-    "roiPayback": "Recall Touch se rentabilise en {days}.",
+    "roiPayback": "Revenue Operator se rentabilise en {days}.",
     "per": "par {label}",
     "month": "mois",
     "day": "jour",
@@ -7053,7 +7053,7 @@
   "webhooks": {
     "deleteTitle": "Supprimer l'endpoint webhook ?",
     "title": "Webhooks",
-    "subtitle": "Envoyez les événements Recall Touch en temps réel vers vos propres systèmes.",
+    "subtitle": "Envoyez les événements Revenue Operator en temps réel vers vos propres systèmes.",
     "list": {
       "empty": {
         "title": "Aucun webhook configuré",
@@ -7148,7 +7148,7 @@
     }
   },
   "messages": {
-    "pageTitle": "Messages — Recall Touch",
+    "pageTitle": "Messages — Revenue Operator",
     "liveChat": {
       "misheard": "Désolé — pouvez-vous répéter ?",
       "misheardCatch": "Je n'ai pas bien compris. Pouvez-vous répéter ?",
@@ -7262,7 +7262,7 @@
       "expiredTitle": "Cette invitation a expiré",
       "expiredDesc": "Demandez à la personne qui vous a invité d'en envoyer une nouvelle.",
       "joinTitle": "Rejoindre {workspaceName}",
-      "invitedYou": "{inviterName} vous a invité à rejoindre cet espace sur Recall Touch.",
+      "invitedYou": "{inviterName} vous a invité à rejoindre cet espace sur Revenue Operator.",
       "accepting": "Acceptation…",
       "acceptButton": "Accepter l'invitation",
       "noAccount": "Pas encore de compte ?",
@@ -7326,7 +7326,7 @@
     "inviteTeamMemberTitle": "Invite team member"
   },
   "knowledge": {
-    "pageTitle": "Base de connaissances — Recall Touch",
+    "pageTitle": "Base de connaissances — Revenue Operator",
     "defaultTitle": "Sans titre",
     "fromCall": "D'après un appel",
     "addEntry": "Ajouter une entrée",
@@ -7435,7 +7435,7 @@
     "activity": "Filtrer l'activité"
   },
   "developer": {
-    "pageTitle": "Développeur — Recall Touch",
+    "pageTitle": "Développeur — Revenue Operator",
     "justNow": "À l'instant",
     "minAgo": "il y a {count} min",
     "hrAgo": "il y a {count} h",
@@ -7531,7 +7531,7 @@
   "empty": {
     "generic": {
       "title": "Rien ici pour l’instant",
-      "body": "Lorsque l’activité commencera à circuler dans Recall Touch, nous remplirons cette vue."
+      "body": "Lorsque l’activité commencera à circuler dans Revenue Operator, nous remplirons cette vue."
     },
     "search": {
       "title": "Aucun résultat",
@@ -7770,7 +7770,7 @@
     }
   },
   "appointments": {
-    "pageTitle": "Rendez-vous — Recall Touch",
+    "pageTitle": "Rendez-vous — Revenue Operator",
     "heading": "Rendez-vous",
     "description": "Tous les rendez-vous réservés depuis les appels, campagnes et boîte de réception.",
     "today": "Aujourd'hui",
@@ -7908,11 +7908,11 @@
     "heading": {
       "label": "Explorez les secteurs",
       "title": "Secteurs que nous servons",
-      "subtitle": "Recall Touch fonctionne pour toute entreprise qui reçoit des appels téléphoniques. Que vous soyez un prestataire de services, un cabinet professionnel, une clinique de santé ou une entreprise de commerce électronique, nos agents IA répondent aux appels, prennent des rendez-vous et assurent le suivi — 24/7."
+      "subtitle": "Revenue Operator fonctionne pour toute entreprise qui reçoit des appels téléphoniques. Que vous soyez un prestataire de services, un cabinet professionnel, une clinique de santé ou une entreprise de commerce électronique, nos agents IA répondent aux appels, prennent des rendez-vous et assurent le suivi — 24/7."
     },
     "cta": {
       "title": "Vous ne voyez pas votre secteur ?",
-      "description": "Recall Touch fonctionne pour toute entreprise qui reçoit des appels. Commencez maintenant."
+      "description": "Revenue Operator fonctionne pour toute entreprise qui reçoit des appels. Commencez maintenant."
     },
     "bottomCta": {
       "title": "Prêt à transformer vos opérations téléphoniques ?",
@@ -8049,10 +8049,10 @@
       "carrierVerizon": "Verizon",
       "carrierTmobile": "T-Mobile",
       "carrierOther": "Autre",
-      "forwardOtherHint": "Configurez le renvoi d'appel vers votre numéro Recall Touch.",
+      "forwardOtherHint": "Configurez le renvoi d'appel vers votre numéro Revenue Operator.",
       "forwardingCodeLabel": "Code de renvoi",
       "forwardingHint": "Composez ce code depuis votre téléphone pro puis validez. Le premier appel transféré sera détecté automatiquement.",
-      "useRecallNumberTitle": "Utiliser un numéro Recall Touch",
+      "useRecallNumberTitle": "Utiliser un numéro Revenue Operator",
       "useRecallNumberDesc": "Idéal pour le suivi ou les départements. Les appels seront routés vers votre agent.",
       "generateNumber": "Générer un numéro dédié",
       "back": "← Retour",
@@ -8171,7 +8171,7 @@
   },
   "docs": {
     "title": "Documentation",
-    "description": "Guides pas à pas pour transférer votre numéro, configurer votre agent vocal et connecter Recall Touch aux outils de votre entreprise.",
+    "description": "Guides pas à pas pour transférer votre numéro, configurer votre agent vocal et connecter Revenue Operator aux outils de votre entreprise.",
     "sidebar": {
       "quickStart": "Démarrage rapide",
       "callForwarding": "Renvoi d'appel",
@@ -8191,7 +8191,7 @@
       },
       "apiReference": {
         "title": "Référence API",
-        "desc": "Intégrez Recall Touch à vos systèmes existants."
+        "desc": "Intégrez Revenue Operator à vos systèmes existants."
       },
       "compliance": {
         "title": "Cadre de conformité",
@@ -8199,7 +8199,7 @@
       },
       "integrations": {
         "title": "Intégrations",
-        "desc": "Connectez Recall Touch à vos outils de vente et de communication."
+        "desc": "Connectez Revenue Operator à vos outils de vente et de communication."
       },
       "faq": {
         "title": "FAQ",
@@ -8215,7 +8215,7 @@
     "sections": {
       "quickStart": {
         "title": "Démarrage rapide",
-        "description": "Configurez Recall Touch en 5 minutes : inscription, détails de l'entreprise, agent IA, numéro de téléphone et appel test.",
+        "description": "Configurez Revenue Operator en 5 minutes : inscription, détails de l'entreprise, agent IA, numéro de téléphone et appel test.",
         "step1Label": "Inscription",
         "step1": "Allez sur Démarrer gratuitement et créez votre compte.",
         "step2Label": "Détails entreprise",
@@ -8223,19 +8223,19 @@
         "step3Label": "Agent IA",
         "step3": "Choisissez un modèle (Réceptionniste, Prise de RDV, etc.) et personnalisez salutation et voix.",
         "step4Label": "Numéro de téléphone",
-        "step4": "Ajoutez ou vérifiez votre numéro Recall Touch ; transférez votre numéro existant si besoin.",
+        "step4": "Ajoutez ou vérifiez votre numéro Revenue Operator ; transférez votre numéro existant si besoin.",
         "step5Label": "Appel test",
         "step5": "Utilisez l'onglet Test sur la page Agents pour passer un appel réel et confirmer que tout fonctionne.",
         "cta": "Démarrer gratuitement →"
       },
       "callForwarding": {
         "title": "Renvoi d'appel",
-        "description": "Transférez votre numéro professionnel vers votre numéro Recall Touch, ou utilisez le numéro fourni comme ligne principale. Votre agent répond 24h/24 et 7j/7.",
+        "description": "Transférez votre numéro professionnel vers votre numéro Revenue Operator, ou utilisez le numéro fourni comme ligne principale. Votre agent répond 24h/24 et 7j/7.",
         "carrierSteps": "Étapes par opérateur",
         "att": "Composez *21*[votre numéro RT]# puis appelez. Pour annuler : #21#",
-        "verizon": "Composez *72 puis votre numéro Recall Touch. Pour annuler : *73",
+        "verizon": "Composez *72 puis votre numéro Revenue Operator. Pour annuler : *73",
         "tmobile": "Composez **21*[numéro RT]#. Pour annuler : ##21#",
-        "comcast": "Voice → Renvoi d'appel → entrez votre numéro Recall Touch.",
+        "comcast": "Voice → Renvoi d'appel → entrez votre numéro Revenue Operator.",
         "googleVoice": "Paramètres → Appels → renvoyer vers votre numéro RT."
       },
       "aiAgents": {
@@ -8248,9 +8248,9 @@
       },
       "integrations": {
         "title": "Intégrations",
-        "description": "Connectez Recall Touch à votre opérateur , calendrier et CRM. Webhooks et API sur les offres Scale et Enterprise.",
+        "description": "Connectez Revenue Operator à votre opérateur , calendrier et CRM. Webhooks et API sur les offres Scale et Enterprise.",
         "zapierHeading": "Zapier et Make",
-        "zapierDesc": "Utilisez OAuth pour connecter votre espace Recall Touch, puis interrogez les déclencheurs ou appelez les actions.",
+        "zapierDesc": "Utilisez OAuth pour connecter votre espace Revenue Operator, puis interrogez les déclencheurs ou appelez les actions.",
         "authorizeLabel": "Autoriser",
         "tokenLabel": "Token",
         "triggersHeading": "Déclencheurs (GET, Bearer token)",
@@ -8263,7 +8263,7 @@
       },
       "api": {
         "title": "Référence API",
-        "description": "API REST pour intégrer Recall Touch. Tous les endpoints requièrent une session (cookie) ou un token Bearer valide. URL de base : https://your-domain.com.",
+        "description": "API REST pour intégrer Revenue Operator. Tous les endpoints requièrent une session (cookie) ou un token Bearer valide. URL de base : https://your-domain.com.",
         "contactCta": "Contacter pour accès API complet →",
         "workspaceMeDesc": "Retourne l'espace et l'utilisateur actuels. Auth : requis (session ou Bearer).",
         "leadsListDesc": "Liste des leads de l'espace. Auth : requis. Query : limit, offset, state.",
@@ -8294,18 +8294,18 @@
     },
     "quickStart": {
       "title": "Démarrage rapide",
-      "subtitle": "Mettez Recall Touch en production en moins de 5 minutes.",
+      "subtitle": "Mettez Revenue Operator en production en moins de 5 minutes.",
       "step": {
         "signUp": "Inscrivez-vous et créez votre espace de travail.",
         "connectPhone": "Connectez un numéro de téléphone ou portez un numéro existant.",
         "createAgent": "Créez votre premier agent IA.",
         "test": "Effectuez un appel test et examinez la transcription.",
-        "launch": "Pointez le téléphone de votre entreprise vers Recall Touch et lancez-vous."
+        "launch": "Pointez le téléphone de votre entreprise vers Revenue Operator et lancez-vous."
       }
     },
     "api": {
       "title": "Référence API",
-      "description": "Apprenez à intégrer Recall Touch dans vos outils et flux de travail existants.",
+      "description": "Apprenez à intégrer Revenue Operator dans vos outils et flux de travail existants.",
       "section": {
         "auth": "Authentification",
         "calls": "API d’appels",
@@ -8424,7 +8424,7 @@
     }
   },
   "phone": {
-    "pageTitle": "Paramètres téléphone — Recall Touch",
+    "pageTitle": "Paramètres téléphone — Revenue Operator",
     "heading": "Numéros de téléphone",
     "description": "Gérez les numéros de votre espace et connectez votre IA.",
     "getNumber": "Obtenir un numéro",
@@ -8556,7 +8556,7 @@
     },
     "porting": {
       "title": "Porter un numéro existant",
-      "subtitle": "Apportez vos numéros actuels sur Recall Touch sans interruption.",
+      "subtitle": "Apportez vos numéros actuels sur Revenue Operator sans interruption.",
       "step": {
         "number": "Détails du numéro",
         "documents": "Autorisation",
@@ -8588,7 +8588,7 @@
       "breadcrumbPort": "Porter un numéro",
       "backToPhone": "Retour au téléphone",
       "title": "Porter votre numéro existant",
-      "subtitle": "Apportez votre numéro actuel à Recall Touch. Nous vous guiderons et vous préviendrons à la fin du portage.",
+      "subtitle": "Apportez votre numéro actuel à Revenue Operator. Nous vous guiderons et vous préviendrons à la fin du portage.",
       "requestReceived": "Demande reçue",
       "requestReceivedBody": "Notre équipe examinera votre demande et vous enverra un e-mail avec les prochaines étapes et un délai estimé.",
       "backToPhoneSettings": "Retour aux paramètres téléphone",
@@ -8657,7 +8657,7 @@
     "addNumberLater": "J'ajouterai un numéro plus tard",
     "backToSettings": "← Paramètres",
     "releaseConfirmTitle": "Release this number?",
-    "releaseConfirmMessage": "This number will be released and will no longer receive or make calls through Recall Touch. You can connect a new number anytime.",
+    "releaseConfirmMessage": "This number will be released and will no longer receive or make calls through Revenue Operator. You can connect a new number anytime.",
     "provisionFailed": "Failed to provision phone number",
     "provisioned": "Phone number provisioned",
     "searchFailed": "Failed to search phone numbers",
@@ -8675,7 +8675,7 @@
     "needHelpPhoneSetup": "Need help with phone setup?"
   },
   "integrations": {
-    "pageTitle": "Intégrations — Recall Touch",
+    "pageTitle": "Intégrations — Revenue Operator",
     "toast": {
       "oauthComingSoon": "OAuth pour ce CRM sera bientôt disponible. Utilisez le webhook ci-dessous en attendant.",
       "invalidIntegration": "Intégration invalide.",
@@ -8749,8 +8749,8 @@
       "crmDescription": "Connect your CRM to sync leads and contacts automatically. Your data stays secure and in sync across all your business tools.",
       "otherCrmsHeading": "Other CRMs (xLeads, Podio, etc.)",
       "otherCrmsTitle": "Connect any CRM via webhooks",
-      "otherCrmsDesc": "Use the webhook configuration above to push lead and call data in real-time. Configure your webhook endpoint URL, select events, and Recall Touch will send JSON payloads when they occur.",
-      "otherCrmsZapier": "You can also use Zapier as a bridge — connect Recall Touch webhooks to 5,000+ apps without writing any code.",
+      "otherCrmsDesc": "Use the webhook configuration above to push lead and call data in real-time. Configure your webhook endpoint URL, select events, and Revenue Operator will send JSON payloads when they occur.",
+      "otherCrmsZapier": "You can also use Zapier as a bridge — connect Revenue Operator webhooks to 5,000+ apps without writing any code.",
       "needHelp": "Need help?",
       "contactSupport": "Contact support",
       "outlookCalendarLabel": "Outlook Calendar"
@@ -8852,7 +8852,7 @@
   },
   "slack": {
     "title": "Notifications Slack",
-    "subtitle": "Envoyez les événements importants de Recall Touch vers votre espace de travail Slack.",
+    "subtitle": "Envoyez les événements importants de Revenue Operator vers votre espace de travail Slack.",
     "button": {
       "connect": "Connecter Slack",
       "disconnect": "Déconnecter Slack"
@@ -8934,7 +8934,7 @@
     "languageNotice": "Ce document n'est disponible qu'en anglais."
   },
   "compare": {
-    "title": "Recall Touch vs {name}",
+    "title": "Revenue Operator vs {name}",
     "subtitle": "See how the AI Revenue Execution System compares.",
     "cta": "Start free"
   },
@@ -9089,7 +9089,7 @@
       "heading1": "Vos Revenus. Entièrement Automatisés.",
       "heading2": "Chaque lead travaillé. Chaque euro récupéré.",
       "heading3": "",
-      "description": "Recall Touch exécute l'intégralité de votre cycle de revenus — appels entrants, campagnes sortantes, qualification des leads, prise de rendez-vous, séquences de suivi et récupération des revenus. 24h/24. Aucune intervention humaine.",
+      "description": "Revenue Operator exécute l'intégralité de votre cycle de revenus — appels entrants, campagnes sortantes, qualification des leads, prise de rendez-vous, séquences de suivi et récupération des revenus. 24h/24. Aucune intervention humaine.",
       "socialProof": "entreprises",
       "socialProofRecovered": "récupérés",
       "startFreeTrial": "Commencer",
@@ -9128,11 +9128,11 @@
     "features": {
       "label": "Ce qu'il fait",
       "heading": "Opérations de revenus IA qui bouclent la boucle.",
-      "description": "Les assistants de messagerie répondent aux appels et prennent des messages. Recall Touch répond aux appels, prend des rendez-vous et assure le suivi jusqu'à récupérer le revenu.",
+      "description": "Les assistants de messagerie répondent aux appels et prennent des messages. Revenue Operator répond aux appels, prend des rendez-vous et assure le suivi jusqu'à récupérer le revenu.",
       "messageOnlyTitle": "Réponse messagerie uniquement",
       "messageOnlyDesc": "Répond aux appels, prend des messages et s'arrête.",
-      "recallTouchTitle": "Recall Touch",
-      "recallTouchDesc": "Répond aux appels et assure le suivi jusqu'à ce que le lead réserve, convertisse ou se désiste.",
+      "revenueOperatorTitle": "Revenue Operator",
+      "revenueOperatorDesc": "Répond aux appels et assure le suivi jusqu'à ce que le lead réserve, convertisse ou se désiste.",
       "automatedFollowUp": {
         "title": "Suivi automatisé",
         "desc": "Appels manqués, devis, absences, réactivation — sans relance manuelle."
@@ -9172,7 +9172,7 @@
       },
       "calculator": {
         "title": "Calculez votre ROI",
-        "description": "Découvrez ce que Recall Touch peut faire pour votre entreprise",
+        "description": "Découvrez ce que Revenue Operator peut faire pour votre entreprise",
         "missedCalls": "Appels manqués par semaine :",
         "jobValue": "Valeur moyenne du contrat :",
         "conversionRate": "Taux de conversion appel-RDV :",
@@ -9187,7 +9187,7 @@
     "finalCta": {
       "label": "Commencer",
       "heading": "Chaque appel sans réponse, c'est du revenu qui s'échappe.",
-      "description": "Mettez Recall Touch en direct en moins de 5 minutes. Annulez à tout moment. Sans engagement. Sans risque.",
+      "description": "Mettez Revenue Operator en direct en moins de 5 minutes. Annulez à tout moment. Sans engagement. Sans risque.",
       "noCreditCard": "Annulez à tout moment",
       "moneyBackGuarantee": "Garantie satisfait ou remboursé 30 jours",
       "compliance": "Conforme SOC 2 + HIPAA",
@@ -9223,7 +9223,7 @@
   },
   "signUp": {
     "title": "Créez votre compte",
-    "subtitle": "Commencez à utiliser Recall Touch",
+    "subtitle": "Commencez à utiliser Revenue Operator",
     "businessName": "Business name",
     "businessNamePlaceholder": "Your company name",
     "email": "Email address",
@@ -10510,7 +10510,7 @@
       "i3": "I3",
       "label": "Label"
     },
-    "recallTouch": {
+    "revenueOperator": {
       "i1": "I1",
       "i2": "I2",
       "i3": "I3",
@@ -11165,7 +11165,7 @@
       },
       "hidePoweredBy": {
         "label": "Hide Powered By",
-        "description": "Remove \"Powered by Recall Touch\" branding"
+        "description": "Remove \"Powered by Revenue Operator\" branding"
       }
     },
     "preview": {

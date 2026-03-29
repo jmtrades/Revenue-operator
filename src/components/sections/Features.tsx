@@ -39,10 +39,10 @@ export function Features() {
           </motion.div>
           <motion.div variants={fadeUpVariants} className="card-marketing p-6 md:p-8">
             <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
-              {t("recallTouchTitle")}
+              {t("revenueOperatorTitle")}
             </p>
             <p className="mt-2 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-              {t("recallTouchDesc")}
+              {t("revenueOperatorDesc")}
             </p>
           </motion.div>
         </StaggerChildren>

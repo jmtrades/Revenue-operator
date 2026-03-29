@@ -1912,7 +1912,7 @@
       "youllGetNumber": "You'll get a number for your agent to answer. You can forward your existing number or use this as your main business line.",
       "getMyNumber": "Get my number",
       "gettingNumber": "Getting your number…",
-      "thisIsRecallTouchNumber": "This is your Revenue Operator number",
+      "thisIsRevenueOperatorNumber": "This is your Revenue Operator number",
       "chooseHowToUse": "Choose how to use it:",
       "forwardExisting": "Forward my existing number",
       "forwardSub": "Calls forward when you can't answer.",
@@ -5729,7 +5729,7 @@
           "i2": "No qualification, no booking",
           "i3": "You still do the callback work"
         },
-        "recallTouch": {
+        "revenueOperator": {
           "label": "Revenue Operator",
           "i1": "Every call answered 24/7",
           "i2": "Leads captured and qualified in real time",
@@ -6068,7 +6068,7 @@
       "features": {
         "0": {
           "name": "Answer Speed",
-          "recallTouch": "< 3 seconds",
+          "revenueOperator": "< 3 seconds",
           "humanServices": "15–30 seconds",
           "basicAI": "5–10 seconds",
           "diyPlatforms": "Build it yourself"
@@ -6084,7 +6084,7 @@
         },
         "3": {
           "name": "Follow-Up Sequences",
-          "recallTouch": "Automated SMS + email",
+          "revenueOperator": "Automated SMS + email",
           "basicAI": "Basic SMS only",
           "diyPlatforms": "Build it yourself"
         },
@@ -6093,17 +6093,17 @@
         },
         "5": {
           "name": "Revenue Dashboard",
-          "recallTouch": "Real-time $ recovered"
+          "revenueOperator": "Real-time $ recovered"
         },
         "6": {
           "name": "Industry Templates",
-          "recallTouch": "8 verticals, auto-seeded",
+          "revenueOperator": "8 verticals, auto-seeded",
           "humanServices": "Generic scripts",
           "basicAI": "1–2 templates"
         },
         "7": {
           "name": "Setup Time",
-          "recallTouch": "< 3 minutes",
+          "revenueOperator": "< 3 minutes",
           "humanServices": "1–2 weeks",
           "basicAI": "30–60 minutes",
           "diyPlatforms": "Weeks to months"
@@ -6114,7 +6114,7 @@
         },
         "9": {
           "name": "Transparent Pricing",
-          "recallTouch": "$147–$997/mo flat",
+          "revenueOperator": "$147–$997/mo flat",
           "humanServices": "$4–10/call or /min",
           "basicAI": "$0.50/caller + fees",
           "diyPlatforms": "$0.05–0.15/min + infra"
@@ -9211,8 +9211,8 @@
       "description": "Message-only assistants answer calls and take messages. Revenue Operator answers calls, books appointments, and runs follow-up until revenue is recovered.",
       "messageOnlyTitle": "Message-only answering",
       "messageOnlyDesc": "Answers calls, takes messages, and stops.",
-      "recallTouchTitle": "Revenue Operator",
-      "recallTouchDesc": "Answers calls and follows up until the lead books, converts, or opts out.",
+      "revenueOperatorTitle": "Revenue Operator",
+      "revenueOperatorDesc": "Answers calls and follows up until the lead books, converts, or opts out.",
       "automatedFollowUp": {
         "title": "Automated follow-up",
         "desc": "Unanswered calls, quotes, no-shows, reactivation — without manual chasing."
@@ -10497,7 +10497,7 @@
       "i3": "I3",
       "label": "Label"
     },
-    "recallTouch": {
+    "revenueOperator": {
       "i1": "I1",
       "i2": "I2",
       "i3": "I3",

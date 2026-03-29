@@ -20,7 +20,7 @@ const COMPARE_SLUGS = ["smith-ai", "ruby", "gohighlevel", "hiring-receptionist"]
 const BLOG_SLUGS = [
   "how-ai-phone-agents-work",
   "5-signs-losing-revenue-missed-calls",
-  "recall-touch-vs-hiring",
+  "revenue-operator-vs-hiring",
   "setup-guide-5-minutes",
   "why-missed-calls-cost-more",
   "speed-to-lead-60-second-rule",
@@ -40,7 +40,7 @@ const BLOG_SLUGS = [
   "hvac-companies-how-to-answer-every-call-without-hiring",
   "legal-intake-automation-capture-every-potential-client",
   "how-to-calculate-your-missed-call-revenue-leak",
-  "recall-touch-vs-smith-ai-which-is-right",
+  "revenue-operator-vs-smith-ai-which-is-right",
   "follow-up-playbook-why-80-percent-of-revenue-second-touch",
 ];
 

@@ -13,7 +13,7 @@ type ComparisonData = {
     details: string;
   };
   callCapacity: string;
-  recallTouchAdvantage: string[];
+  revenueOperatorAdvantage: string[];
 };
 
 const COMPARISONS: Record<string, ComparisonData> = {
@@ -37,7 +37,7 @@ const COMPARISONS: Record<string, ComparisonData> = {
       details: "Based on 30-120 calls per month",
     },
     callCapacity: "Limited by human availability",
-    recallTouchAdvantage: [
+    revenueOperatorAdvantage: [
       "10x more calls at fraction of cost",
       "Fully automated follow-ups",
       "Revenue attribution built in",
@@ -66,7 +66,7 @@ const COMPARISONS: Record<string, ComparisonData> = {
       details: "Based on 100-500 minutes per month",
     },
     callCapacity: "100-500 minutes/mo",
-    recallTouchAdvantage: [
+    revenueOperatorAdvantage: [
       "AI handles unlimited concurrent calls",
       "Automated follow-up sequences",
       "Appointment booking built in",
@@ -95,7 +95,7 @@ const COMPARISONS: Record<string, ComparisonData> = {
       details: "Base pricing for core features",
     },
     callCapacity: "Minimal voice capabilities",
-    recallTouchAdvantage: [
+    revenueOperatorAdvantage: [
       "Purpose-built for revenue execution",
       "AI revenue operations that actually work",
       "Intelligent follow-up engine",
@@ -126,7 +126,7 @@ const COMPARISONS: Record<string, ComparisonData> = {
       details: "Salary + benefits + payroll taxes + training",
     },
     callCapacity: "1 person = single call at a time",
-    recallTouchAdvantage: [
+    revenueOperatorAdvantage: [
       "Answers unlimited calls simultaneously 24/7",
       "Never calls in sick or takes vacation",
       "No training needed, ready in minutes",
@@ -254,7 +254,7 @@ export function ComparisonContent({ competitor }: ComparisonContentProps) {
           <h2 className="text-2xl font-bold text-white">Why Businesses Switch to Revenue Operator</h2>
         </div>
         <ul className="grid md:grid-cols-2 gap-4">
-          {data.recallTouchAdvantage.map((advantage, idx) => (
+          {data.revenueOperatorAdvantage.map((advantage, idx) => (
             <li key={idx} className="flex items-start gap-3">
               <div className="w-2 h-2 rounded-full bg-emerald-400 mt-2 flex-shrink-0" />
               <span className="text-[var(--text-primary)]">{advantage}</span>

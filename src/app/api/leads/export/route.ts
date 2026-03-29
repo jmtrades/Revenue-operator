@@ -84,7 +84,7 @@ export async function GET(req: NextRequest) {
   return new Response(csvLines, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="recall-touch-leads.csv"`,
+      "Content-Disposition": `attachment; filename="revenue-operator-leads.csv"`,
       "Cache-Control": "no-store",
     },
   });

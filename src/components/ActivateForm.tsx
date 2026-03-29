@@ -7,9 +7,9 @@ import { useTranslations } from "next-intl";
 import { Sparkles } from "lucide-react";
 import { track } from "@/lib/analytics/posthog";
 
-const ACTIVATE_STORAGE_KEY = "recall_touch_activate";
+const ACTIVATE_STORAGE_KEY = "revenue_operator_activate";
 const RT_SIGNUP_KEY = "rt_signup";
-const RECALLTOUCH_SIGNUP_KEY = "recalltouch_signup";
+const REVENUEOPERATOR_SIGNUP_KEY = "revenueoperator_signup";
 
 const BUSINESS_TYPE_IDS = [
   "home_services",
@@ -56,7 +56,7 @@ export function ActivateForm() {
     try {
       const raw =
         localStorage.getItem(RT_SIGNUP_KEY) ??
-        localStorage.getItem(RECALLTOUCH_SIGNUP_KEY) ??
+        localStorage.getItem(REVENUEOPERATOR_SIGNUP_KEY) ??
         localStorage.getItem(ACTIVATE_STORAGE_KEY);
       if (raw) {
         const data = JSON.parse(raw) as { submittedAt?: number };
@@ -171,7 +171,7 @@ export function ActivateForm() {
     try {
       const json = JSON.stringify(formData);
       localStorage.setItem(RT_SIGNUP_KEY, json);
-      localStorage.setItem(RECALLTOUCH_SIGNUP_KEY, json);
+      localStorage.setItem(REVENUEOPERATOR_SIGNUP_KEY, json);
       localStorage.setItem(ACTIVATE_STORAGE_KEY, json);
       localStorage.setItem("rt_authenticated", "true");
     } catch {

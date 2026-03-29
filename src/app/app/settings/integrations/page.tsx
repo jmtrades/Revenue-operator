@@ -874,7 +874,7 @@ export default function AppSettingsIntegrationsPage() {
               {t("hub.otherCrmsZapier")}
             </p>
             <p className="text-xs text-[var(--text-secondary)] mt-2">
-              {t("hub.needHelp")} <a href="mailto:support@revenue-operator.com" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline underline-offset-2">{t("hub.contactSupport")}</a>
+              {t("hub.needHelp")} <a href="mailto:support@revenueoperator.ai" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline underline-offset-2">{t("hub.contactSupport")}</a>
             </p>
           </div>
         </section>
@@ -912,7 +912,7 @@ export default function AppSettingsIntegrationsPage() {
       )}
 
       <p className="text-xs text-[var(--text-secondary)] mt-6">
-        {t("hub.needHelp")} <a href="mailto:support@revenue-operator.com" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline underline-offset-2">support@revenue-operator.com</a>
+        {t("hub.needHelp")} <a href="mailto:support@revenueoperator.ai" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline underline-offset-2">support@revenueoperator.ai</a>
       </p>
       <p className="mt-4"><Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">{t("hub.backToSettings")}</Link></p>
     </div>
