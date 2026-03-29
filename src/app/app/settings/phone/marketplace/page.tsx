@@ -122,25 +122,26 @@ export default function PhoneMarketplacePage() {
           country,
         }),
       });
-      const data = (await res.json()) as { error?: string; provider_code?: string; phone_number?: string };
+      const data = (await res.json()) as { error?: string; provider_code?: string; phone_number?: string; code?: string; detail?: string };
       if (!res.ok) {
         // If payment method required, redirect to billing to add a card
-        if (res.status === 402 || data.provider_code === "PAYMENT_METHOD_REQUIRED" || (data as any).code === "PAYMENT_METHOD_REQUIRED") {
+        if (res.status === 402 || data.provider_code === "PAYMENT_METHOD_REQUIRED" || data.code === "PAYMENT_METHOD_REQUIRED") {
           toast.error(tSettings("phone.paymentRequired"));
           window.location.href = "/app/settings/billing?reason=phone_purchase";
           return;
         }
 
-        if (res.status === 403 || (data as any).code === "SUBSCRIPTION_REQUIRED") {
+        if (res.status === 403 || data.code === "SUBSCRIPTION_REQUIRED") {
           toast.error(tSettings("phone.subscriptionRequired"));
           window.location.href = "/app/settings/billing?reason=subscription_required";
           return;
         }
 
-        setError(tSettings("phone.provisionFailed"));
+        const errorMsg = data.error ?? tSettings("phone.provisionFailed");
+        setError(errorMsg);
         setErrorType("provision");
         setLastProvisionAttempt(num);
-        toast.error(tSettings("phone.provisionFailed"));
+        toast.error(errorMsg);
         return;
       }
       setProvisionSuccess(true);

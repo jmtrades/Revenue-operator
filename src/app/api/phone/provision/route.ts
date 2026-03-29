@@ -164,24 +164,31 @@ export async function POST(req: NextRequest) {
   let providerSid: string | null = null;
   if (telephonyProvider === "telnyx") {
     try {
-      const { providerSid: telnyxSid } = await purchaseTelnyxPhoneNumber({
+      const result = await purchaseTelnyxPhoneNumber({
         phoneNumberE164: e164,
         countryCode: country || "US",
         phoneType: (number_type ?? "local") as "local" | "toll_free" | "mobile",
       });
 
-      providerSid = telnyxSid;
+      providerSid = result.providerSid;
       if (!providerSid) {
+        const detail = result.error ?? "Unknown";
+        console.error("[provision] Telnyx returned no providerSid:", detail);
+        // Provide actionable error when connection_id is missing
+        const isMissingConfig = detail.includes("connection") || !process.env.TELNYX_CONNECTION_ID;
         return NextResponse.json(
           {
-            error: "Phone number purchase failed. This is temporary — try again in a few minutes.",
+            error: isMissingConfig
+              ? "Phone provisioning requires Telnyx connection configuration. Please verify TELNYX_CONNECTION_ID is set."
+              : `Phone number purchase failed: ${detail}`,
             code: "TELNYX_TEMPORARY_FAILURE",
+            detail,
           },
           { status: 502 },
         );
       }
     } catch (err) {
-      console.error("[provision] Telnyx purchase failed:", err instanceof Error ? err.message : err);
+      console.error("[provision] Telnyx purchase exception:", err instanceof Error ? err.message : err);
       return NextResponse.json(
         {
           error: "Phone number purchase failed. This is temporary — try again in a few minutes.",
