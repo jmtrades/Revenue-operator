@@ -641,6 +641,49 @@ export async function handleInboundCall(
       }
     }
 
+    // Load after-hours settings if outside business hours
+    let afterHoursMode: "messages" | "emergency" | "forward" | "closed" | null = null;
+    let afterHoursInstructions = "";
+    if (!isBusinessHours) {
+      try {
+        const { data: settings } = await db
+          .from("settings")
+          .select("after_hours_behavior, emergency_keywords, transfer_phone")
+          .eq("workspace_id", params.workspaceId)
+          .maybeSingle();
+
+        const settingsRow = settings as { after_hours_behavior?: string; emergency_keywords?: string; transfer_phone?: string } | null;
+        const behavior = settingsRow?.after_hours_behavior as string | undefined;
+
+        // Map behavior to after_hours_mode for system prompt
+        if (behavior === "emergency_only") {
+          afterHoursMode = "emergency";
+          const keywords = settingsRow?.emergency_keywords ?? "emergency, urgent, ambulance, police";
+          const transferPhone = settingsRow?.transfer_phone ?? "";
+          afterHoursInstructions = transferPhone
+            ? `If the caller mentions any of these keywords: "${keywords}", immediately indicate you will transfer them: "I'm connecting you to our emergency line right away."`
+            : "";
+        } else if (behavior === "voicemail") {
+          afterHoursMode = "closed";
+          afterHoursInstructions = "We're currently closed. Please leave a message and we'll get back to you during business hours.";
+        } else if (behavior === "take_messages") {
+          afterHoursMode = "messages";
+          afterHoursInstructions = "We're currently closed. Take a detailed message with the caller's name, phone, and reason for calling. Let them know someone will call them back during business hours.";
+        } else if (behavior === "forward") {
+          afterHoursMode = "forward";
+          afterHoursInstructions = "We're currently closed. Calls should be forwarded to our emergency line.";
+        }
+      } catch (err) {
+        log("warn", "call_flow.after_hours_settings_load_failed", {
+          error: err instanceof Error ? err.message : String(err),
+          workspaceId: params.workspaceId,
+        });
+        // Default to message-taking mode
+        afterHoursMode = "messages";
+        afterHoursInstructions = "We're currently closed. Take a message and let the caller know someone will call them back during business hours.";
+      }
+    }
+
     // Determine lead state for objective routing
     const leadState = lead?.state as string | undefined;
     const leadScore = lead?.score as number | undefined;
@@ -684,6 +727,8 @@ export async function handleInboundCall(
         outcome: (h.outcome as string) || "",
         topics: (h.topics as string[]) || [],
       })) : undefined,
+      after_hours_mode: afterHoursMode,
+      after_hours_instructions: afterHoursInstructions,
     };
 
     compiledPrompt = compileSystemPrompt(brainInput);

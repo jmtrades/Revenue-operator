@@ -90,9 +90,11 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     }, { status: 503 });
   }
 
-  const [ctxRes, agentRes] = await Promise.all([
+  const [ctxRes, agentRes, rulesRes, objRes] = await Promise.all([
     db.from("workspace_business_context").select("business_name, offer_summary, business_hours, faq").eq("workspace_id", workspaceId).maybeSingle(),
     db.from("agents").select("id, name, greeting, knowledge_base, voice_id").eq("id", id).maybeSingle(),
+    db.from("agent_rules").select("never_say, always_transfer, escalation_triggers, transfer_phone, transfer_rules").eq("workspace_id", workspaceId).maybeSingle(),
+    db.from("agent_objections").select("trigger, response").eq("workspace_id", workspaceId).limit(20),
   ]);
   const a = agentRes.data as { id: string; name?: string; greeting?: string; knowledge_base?: Record<string, unknown>; voice_id?: string | null } | null;
   if (!a) return NextResponse.json({ error: "Agent not found" }, { status: 404 });
@@ -111,6 +113,23 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   const emergencies_after_hours = typeof kb.emergencies_after_hours === "string" ? kb.emergencies_after_hours : undefined;
   const appointment_handling = typeof kb.appointment_handling === "string" ? kb.appointment_handling : undefined;
   const faq_extra = typeof kb.faq_extra === "string" ? kb.faq_extra : undefined;
+
+  // Load agent rules
+  const rulesData = rulesRes.data as Record<string, unknown> | null;
+  const agentRules = rulesData ? {
+    neverSay: Array.isArray(rulesData.never_say) ? (rulesData.never_say as string[]) : [],
+    alwaysTransfer: Array.isArray(rulesData.always_transfer) ? (rulesData.always_transfer as string[]) : [],
+    escalationTriggers: Array.isArray(rulesData.escalation_triggers) ? (rulesData.escalation_triggers as string[]) : [],
+    transferPhone: rulesData.transfer_phone ? String(rulesData.transfer_phone) : null,
+    transferRules: Array.isArray(rulesData.transfer_rules) ? (rulesData.transfer_rules as Array<{ phrase?: string; phone?: string }>) : [],
+  } : undefined;
+
+  // Load objections
+  const objections = (objRes.data ?? []).map((o: Record<string, unknown>) => ({
+    trigger: String(o.trigger ?? ""),
+    response: String(o.response ?? ""),
+  })).filter((o: { trigger: string; response: string }) => o.trigger && o.response);
+
   const systemPrompt = compileSystemPrompt({
     business_name,
     offer_summary,
@@ -122,6 +141,8 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     emergencies_after_hours,
     appointment_handling,
     faq_extra,
+    rules: agentRules,
+    objections,
   });
   const _firstMessage = (a.greeting && String(a.greeting).trim()) || `Hello, this is ${agent_name}. How can I help you today?`;
 

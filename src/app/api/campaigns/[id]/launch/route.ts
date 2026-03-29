@@ -308,30 +308,113 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       }
     }
 
+    // Check if campaign has sequence steps (SMS/email)
+    const hasSequenceSteps = steps.some((s) => s.channel === "sms" || s.channel === "email");
+
+    // If campaign has sequence steps, create or use a sequence for enrollment
+    let sequenceId: string | null = null;
+    if (hasSequenceSteps) {
+      // Try to find or create a sequence for this campaign
+      const { data: existingSeq } = await db
+        .from("sequences")
+        .select("id")
+        .eq("workspace_id", workspaceId)
+        .eq("trigger_type", "campaign_" + id)
+        .limit(1)
+        .maybeSingle();
+
+      if (existingSeq) {
+        sequenceId = (existingSeq as { id: string }).id;
+      } else {
+        // Create a new sequence from the campaign's sequence steps
+        const sequenceStepsData = steps
+          .map((step, idx) => ({
+            step_order: idx + 1,
+            type: step.channel as "sms" | "email" | "call",
+            delay_minutes: idx === 0 ? 0 : 60, // First step immediately, subsequent steps 1h apart
+            config: {
+              template_content: step.message || step.subject || "",
+              campaign_step_index: idx,
+            },
+          }));
+
+        const { data: newSeq, error: seqErr } = await db
+          .from("sequences")
+          .insert({
+            workspace_id: workspaceId,
+            name: `Campaign ${id.slice(0, 8)} - ${campaign.name}`,
+            trigger_type: "campaign_" + id,
+            is_active: true,
+          })
+          .select("id")
+          .maybeSingle();
+
+        if (!seqErr && newSeq) {
+          sequenceId = (newSeq as { id: string }).id;
+
+          // Insert sequence steps
+          if (sequenceStepsData.length > 0) {
+            await db.from("sequence_steps").insert(
+              sequenceStepsData.map((step) => ({
+                ...step,
+                sequence_id: sequenceId,
+              }))
+            );
+          }
+        }
+      }
+    }
+
     // Enqueue leads for outbound execution
     for (const lead of eligibleLeads) {
       const leadId = (lead as { id: string }).id;
-      const result = await executeLeadOutboundCall(
-        workspaceId,
-        leadId,
-        {
-          campaignType: (campaign.type as CampaignType) ?? "lead_followup",
-          campaignPromptOptions: {
-            followUpContext: "their recent inquiry",
+
+      // If there are sequence steps, enroll the lead in the sequence
+      if (sequenceId) {
+        try {
+          const { enrollContact } = await import("@/lib/sequences/follow-up-engine");
+          await enrollContact(workspaceId, sequenceId, leadId);
+        } catch (enrollErr) {
+          console.warn(
+            `[campaign/launch] Failed to enroll lead ${leadId} in sequence: ${enrollErr instanceof Error ? enrollErr.message : String(enrollErr)}`
+          );
+          // Non-blocking: if enrollment fails, continue with call execution
+        }
+      }
+
+      // Only execute call step if the first step is a call (or if no sequence)
+      const firstStep = steps[0];
+      const shouldExecuteCall = !hasSequenceSteps || (firstStep && firstStep.channel === "call");
+
+      if (shouldExecuteCall) {
+        const result = await executeLeadOutboundCall(
+          workspaceId,
+          leadId,
+          {
+            campaignType: (campaign.type as CampaignType) ?? "lead_followup",
+            campaignPromptOptions: {
+              followUpContext: "their recent inquiry",
+            },
           },
-        },
-      );
-      if (result.ok) {
+        );
+        if (result.ok) {
+          enqueued += 1;
+          // Mark as sent in campaign_leads
+          await db
+            .from("campaign_leads")
+            .update({ status: "sent", sent_at: new Date().toISOString() })
+            .eq("campaign_id", id)
+            .eq("lead_id", leadId);
+        }
+      } else {
+        // Sequence-first campaign: mark as sent when sequence is enrolled
         enqueued += 1;
-        // Mark as sent in campaign_leads
         await db
           .from("campaign_leads")
           .update({ status: "sent", sent_at: new Date().toISOString() })
           .eq("campaign_id", id)
           .eq("lead_id", leadId);
       }
-
-      // Multi-step sequences (SMS/email) are executed by the outbound pipeline, not directly in this route.
     }
 
     // Only update to active if enqueuing succeeded

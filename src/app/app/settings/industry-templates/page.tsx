@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { toast } from "sonner";
-import { Copy, ExternalLink, ChevronDown, ChevronUp } from "lucide-react";
+import { Copy, ExternalLink, ChevronDown, ChevronUp, Loader2, Check } from "lucide-react";
 
 interface IndustryTemplate {
   id: string;
@@ -48,6 +48,13 @@ export default function IndustryTemplatesPage() {
   const [templates, setTemplates] = useState<IndustryTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedSlug, setExpandedSlug] = useState<string | null>(null);
+  const [applyingSlug, setApplyingSlug] = useState<string | null>(null);
+  const [appliedSlugs, setAppliedSlugs] = useState<Set<string>>(new Set());
+  const [confirmDialog, setConfirmDialog] = useState<{
+    open: boolean;
+    templateSlug: string;
+    templateName: string;
+  }>({ open: false, templateSlug: "", templateName: "" });
 
   useEffect(() => {
     const fetchTemplates = async () => {
@@ -77,6 +84,54 @@ export default function IndustryTemplatesPage() {
       toast.success(tTemplates("toast.copied"));
     } catch {
       toast.error(tTemplates("toast.copyFailed"));
+    }
+  };
+
+  const handleApplyTemplate = (slug: string, name: string) => {
+    setConfirmDialog({
+      open: true,
+      templateSlug: slug,
+      templateName: name,
+    });
+  };
+
+  const confirmApplyTemplate = async () => {
+    const { templateSlug } = confirmDialog;
+    setConfirmDialog({ open: false, templateSlug: "", templateName: "" });
+    setApplyingSlug(templateSlug);
+
+    try {
+      const res = await fetch(
+        `/api/industry-templates/${templateSlug}/apply`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (res.ok) {
+        setAppliedSlugs((prev) => new Set(prev).add(templateSlug));
+        toast.success(
+          tTemplates("toast.templateApplied") ||
+            "Template applied successfully! Your operator has been updated."
+        );
+      } else {
+        const error = await res.json();
+        toast.error(
+          error.error ||
+            tTemplates("toast.applyFailed") ||
+            "Failed to apply template"
+        );
+      }
+    } catch (err) {
+      toast.error(
+        tTemplates("toast.applyError") || "An error occurred while applying the template"
+      );
+    } finally {
+      setApplyingSlug(null);
     }
   };
 
@@ -129,31 +184,57 @@ export default function IndustryTemplatesPage() {
               className="border border-[var(--border-default)] rounded-lg bg-[var(--bg-surface)] overflow-hidden hover:border-[var(--border-default)] transition-colors"
             >
               {/* Header - Always visible */}
-              <button
-                onClick={() =>
-                  setExpandedSlug(
-                    expandedSlug === template.industry_slug ? null : template.industry_slug
-                  )
-                }
-                className="w-full p-4 flex items-start justify-between hover:bg-[var(--bg-inset)]/20 transition-colors"
-              >
-                <div className="flex-1 text-left">
-                  <div className="flex items-center gap-3 mb-1">
-                    <h2 className="text-lg font-semibold text-[var(--text-primary)]">{template.name}</h2>
-                    <code className="text-xs px-2 py-1 rounded bg-[var(--bg-inset)] text-[var(--text-secondary)]">
-                      {template.industry_slug}
-                    </code>
+              <div className="p-4 flex items-start justify-between hover:bg-[var(--bg-inset)]/20 transition-colors">
+                <button
+                  onClick={() =>
+                    setExpandedSlug(
+                      expandedSlug === template.industry_slug ? null : template.industry_slug
+                    )
+                  }
+                  className="flex-1 text-left flex items-start gap-4"
+                >
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-1">
+                      <h2 className="text-lg font-semibold text-[var(--text-primary)]">{template.name}</h2>
+                      <code className="text-xs px-2 py-1 rounded bg-[var(--bg-inset)] text-[var(--text-secondary)]">
+                        {template.industry_slug}
+                      </code>
+                      {appliedSlugs.has(template.industry_slug) && (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium bg-[var(--success-bg)]/20 text-[var(--success-fg)]">
+                          <Check className="w-3 h-3" />
+                          Applied
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-[var(--text-tertiary)]">{template.description}</p>
                   </div>
-                  <p className="text-sm text-[var(--text-tertiary)]">{template.description}</p>
-                </div>
-                <div className="ml-4 flex-shrink-0 text-[var(--text-tertiary)]">
-                  {expandedSlug === template.industry_slug ? (
-                    <ChevronUp className="w-5 h-5" />
+                  <div className="ml-4 flex-shrink-0 text-[var(--text-tertiary)]">
+                    {expandedSlug === template.industry_slug ? (
+                      <ChevronUp className="w-5 h-5" />
+                    ) : (
+                      <ChevronDown className="w-5 h-5" />
+                    )}
+                  </div>
+                </button>
+
+                {/* Apply button */}
+                <button
+                  onClick={() =>
+                    handleApplyTemplate(template.industry_slug, template.name)
+                  }
+                  disabled={applyingSlug === template.industry_slug}
+                  className="ml-4 flex-shrink-0 px-4 py-2 rounded-md text-sm font-medium bg-[var(--accent-primary)] text-white hover:bg-[var(--accent-primary)]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                >
+                  {applyingSlug === template.industry_slug ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Applying...
+                    </>
                   ) : (
-                    <ChevronDown className="w-5 h-5" />
+                    "Apply to Operator"
                   )}
-                </div>
-              </button>
+                </button>
+              </div>
 
               {/* Expanded content */}
               {expandedSlug === template.industry_slug && (
@@ -330,6 +411,40 @@ export default function IndustryTemplatesPage() {
           </div>
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      {confirmDialog.open && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-[var(--bg-surface)] rounded-lg border border-[var(--border-default)] max-w-sm w-full p-6 shadow-lg">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+              Apply Template?
+            </h3>
+            <p className="text-sm text-[var(--text-secondary)] mb-6">
+              Apply <span className="font-medium text-[var(--text-primary)]">{confirmDialog.templateName}</span> to your operator? This will update your operator's greeting, knowledge base, and configuration.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() =>
+                  setConfirmDialog({
+                    open: false,
+                    templateSlug: "",
+                    templateName: "",
+                  })
+                }
+                className="px-4 py-2 rounded-md text-sm font-medium text-[var(--text-secondary)] bg-[var(--bg-inset)] hover:bg-[var(--bg-inset)]/80 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmApplyTemplate}
+                className="px-4 py-2 rounded-md text-sm font-medium text-white bg-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/90 transition-colors"
+              >
+                Apply
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
