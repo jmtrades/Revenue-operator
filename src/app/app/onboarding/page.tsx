@@ -446,7 +446,7 @@ export default function AppOnboardingPage() {
             {/* Template Selection */}
             <div className="space-y-4">
               <p className="text-xs font-medium text-[var(--text-tertiary)]">
-                Select Your AI Agent Template
+                Select Your AI Operator Template
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {onboardingTemplates.map((template) => {

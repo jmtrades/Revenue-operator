@@ -99,7 +99,7 @@ export default function SmartSetupPage() {
 
       const result = await response.json();
       setStep("loading");
-      toast.success(`Your agent "${result.agent_name}" is live and ready to take calls!`);
+      toast.success(`Your operator "${result.agent_name}" is live and ready to take calls!`);
 
       // Redirect to agent page if agent was created, otherwise to dashboard
       const redirectUrl = result.agent_id
@@ -110,7 +110,7 @@ export default function SmartSetupPage() {
         router_internal.push(redirectUrl);
       }, 2000);
     } catch (error) {
-      toast.error("Something went wrong activating your agent. Please try again.");
+      toast.error("Something went wrong activating your operator. Please try again.");
       setIsActivating(false);
     }
   };
@@ -123,7 +123,7 @@ export default function SmartSetupPage() {
       }
 
       setStep("loading");
-      toast.success("Building your agent...");
+      toast.success("Building your operator...");
 
       const response = await fetch("/api/workspace/auto-setup", {
         method: "POST",
@@ -293,7 +293,7 @@ export default function SmartSetupPage() {
                 style={{ color: "var(--text-secondary)" }}
                 className="text-lg"
               >
-                Pick your role and we'll show you your agent in action
+                Pick your role and we'll show you your operator in action
               </p>
             </div>
 
@@ -387,7 +387,7 @@ export default function SmartSetupPage() {
                 className="text-4xl font-bold mb-2"
                 style={{ color: "var(--text-primary)" }}
               >
-                Meet your agent
+                Meet your operator
               </h1>
               <p style={{ color: "var(--text-secondary)" }}>
                 Here's how {selectedPlaybook.title} handles real situations
@@ -445,7 +445,7 @@ export default function SmartSetupPage() {
                       className="text-sm"
                       style={{ color: "var(--text-secondary)" }}
                     >
-                      Your agent knows:
+                      Your operator knows:
                     </p>
                     <ul
                       className="text-xs mt-3 space-y-1"
@@ -610,7 +610,7 @@ export default function SmartSetupPage() {
               className="text-2xl font-bold mb-2"
               style={{ color: "var(--text-primary)" }}
             >
-              Activating your agent...
+              Activating your operator...
             </h2>
             <p style={{ color: "var(--text-secondary)" }}>
               This usually takes a few seconds
