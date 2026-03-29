@@ -636,7 +636,7 @@ export default function LeadsPage() {
               <Users className="w-5 h-5 text-[var(--text-tertiary)]" />
               {t("leads.heading")}
             </h1>
-            <p className="text-sm text-[var(--text-secondary)] mt-1">
+            <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed">
               {t("leads.description")}
             </p>
           </div>
