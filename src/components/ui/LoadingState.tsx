@@ -17,7 +17,7 @@ const SPIN_FAST_ANIMATION = `@keyframes spin-fast {
 export function LoadingState({ message = "In progress.", submessage, className = "" }: LoadingStateProps) {
   return (
     <div
-      className={`flex flex-col items-center justify-center rounded-[var(--radius-card)] border border-[var(--border-default)] bg-[var(--bg-card)] py-12 px-6 text-center ${className}`}
+      className={`flex flex-col items-center justify-center rounded-[var(--radius-card)] border border-[var(--border-default)] bg-[var(--bg-card)] shadow-[var(--shadow-card)] py-12 px-6 text-center ${className}`}
     >
       <style>{SPIN_FAST_ANIMATION}</style>
       <span

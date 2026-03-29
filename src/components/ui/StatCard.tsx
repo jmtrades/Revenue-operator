@@ -48,7 +48,7 @@ export function StatCard({
   return (
     <div
       className={cn(
-        "rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 flex flex-col justify-between gap-3 transition-[border-color,box-shadow] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]",
+        "rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 flex flex-col justify-between gap-3 shadow-[var(--shadow-card)] transition-[border-color,box-shadow,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] hover:shadow-[var(--shadow-card-hover)] hover:border-[var(--border-hover)] hover:-translate-y-px",
         className,
       )}
     >

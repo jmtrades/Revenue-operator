@@ -54,12 +54,12 @@ const AutonomousBriefing = lazy(() => import("@/components/dashboard/AutonomousB
 
 function CardSkeleton() {
   return (
-    <div className="dash-section p-5 md:p-6 animate-pulse">
-      <div className="h-4 w-32 rounded bg-[var(--bg-hover)] mb-4" />
+    <div className="dash-section p-5 md:p-6">
+      <div className="h-4 w-32 rounded skeleton-shimmer mb-4" />
       <div className="space-y-2">
-        <div className="h-10 rounded-lg bg-[var(--bg-hover)]" />
-        <div className="h-10 rounded-lg bg-[var(--bg-hover)]" />
-        <div className="h-10 rounded-lg bg-[var(--bg-hover)]" />
+        <div className="h-10 rounded-lg skeleton-shimmer" />
+        <div className="h-10 rounded-lg skeleton-shimmer" />
+        <div className="h-10 rounded-lg skeleton-shimmer" />
       </div>
     </div>
   );
@@ -304,17 +304,17 @@ export function UnifiedDashboard() {
 
   if (loading || !data) {
     return (
-      <div className="p-4 md:p-8 max-w-[1200px] mx-auto space-y-6 animate-pulse">
-        <div className="h-10 w-48 rounded-lg bg-[var(--bg-hover)]" />
-        <div className="h-44 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-default)]" />
+      <div className="p-4 md:p-8 max-w-[1200px] mx-auto space-y-6">
+        <div className="h-10 w-48 rounded-lg skeleton-shimmer" />
+        <div className="h-44 rounded-2xl skeleton-shimmer border border-[var(--border-default)]" />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-28 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)]" />
+            <div key={i} className="h-28 rounded-xl skeleton-shimmer border border-[var(--border-default)]" />
           ))}
         </div>
         <div className="grid lg:grid-cols-2 gap-6">
-          <div className="h-56 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-default)]" />
-          <div className="h-56 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-default)]" />
+          <div className="h-56 rounded-2xl skeleton-shimmer border border-[var(--border-default)]" />
+          <div className="h-56 rounded-2xl skeleton-shimmer border border-[var(--border-default)]" />
         </div>
       </div>
     );
@@ -327,28 +327,28 @@ export function UnifiedDashboard() {
 
   const kpis = [
     {
-      label: t("kpis.callsHandled", { defaultValue: "Calls handled by agent" }),
+      label: t("kpis.callsHandled", { defaultValue: "Calls handled" }),
       value: data.calls_answered,
       sub: data.calls_answered === 0 && !hasSignal ? "Waiting for first call" : data.missed_calls_recovered > 0 ? `${data.missed_calls_recovered} recovered` : undefined,
       icon: Phone,
       accent: "var(--accent-primary)",
     },
     {
-      label: t("kpis.appointmentsBooked", { defaultValue: "Revenue opportunities created" }),
+      label: t("kpis.appointmentsBooked", { defaultValue: "Opportunities created" }),
       value: data.appointments_booked,
       sub: data.appointments_booked === 0 && !hasSignal ? "Auto-booked from calls" : data.conversion_rate > 0 ? `${data.conversion_rate}% conversion` : undefined,
       icon: CalendarCheck,
       accent: "var(--accent-secondary)",
     },
     {
-      label: t("kpis.recovered", { defaultValue: "Agent revenue impact" }),
+      label: t("kpis.recovered", { defaultValue: "Revenue impact" }),
       value: fmtMoney(data.revenue_recovered_cents),
       sub: data.revenue_recovered_cents === 0 && !hasSignal ? "Tracked automatically" : data.revenue_trend_pct !== 0 ? `${data.revenue_trend_pct > 0 ? "+" : ""}${data.revenue_trend_pct}% vs last month` : undefined,
       icon: TrendingUp,
       accent: "var(--accent-warning)",
     },
     {
-      label: t("kpis.followUpsSent", { defaultValue: "Automated recovery actions" }),
+      label: t("kpis.followUpsSent", { defaultValue: "Recovery actions" }),
       value: data.follow_ups_sent,
       sub: data.follow_ups_sent === 0 && !hasSignal ? "SMS & email sequences" : data.qualified_leads > 0 ? `${data.qualified_leads} qualified leads` : undefined,
       icon: MailCheck,
@@ -463,11 +463,11 @@ export function UnifiedDashboard() {
 
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--text-tertiary)]">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--text-tertiary)]">
               {t("revenueLabel", { defaultValue: "Revenue recovered" })}
             </p>
-            <div className="mt-2 flex items-baseline gap-3">
-              <h2 className="text-3xl md:text-4xl font-bold text-emerald-500 dark:text-emerald-400 tabular-nums tracking-tight">
+            <div className="mt-2.5 flex items-baseline gap-3">
+              <h2 className="text-3xl md:text-[2.75rem] font-bold text-emerald-500 dark:text-emerald-400 tabular-nums tracking-tight leading-none">
                 {fmtMoney(data.revenue_recovered_cents)}
               </h2>
               {data.revenue_trend_pct !== 0 && (
@@ -666,20 +666,24 @@ export function UnifiedDashboard() {
               "--kpi-accent": k.accent,
             } as React.CSSProperties}
           >
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center justify-between mb-3">
               <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center"
-                style={{ background: `color-mix(in srgb, ${k.accent} 10%, transparent)` }}
+                className="w-9 h-9 rounded-xl flex items-center justify-center ring-1"
+                style={{
+                  background: `color-mix(in srgb, ${k.accent} 8%, transparent)`,
+                  boxShadow: `0 1px 4px color-mix(in srgb, ${k.accent} 8%, transparent)`,
+                  ringColor: `color-mix(in srgb, ${k.accent} 12%, transparent)`,
+                }}
               >
-                <k.icon className="w-4 h-4" style={{ color: k.accent }} />
+                <k.icon className="w-[18px] h-[18px]" style={{ color: k.accent }} strokeWidth={1.75} />
               </div>
             </div>
-            <p className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] tabular-nums tracking-tight">
+            <p className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] tabular-nums tracking-tight leading-none">
               {typeof k.value === "string" ? k.value : k.value.toLocaleString()}
             </p>
-            <p className="text-xs font-medium text-[var(--text-secondary)] mt-1">{k.label}</p>
+            <p className="text-[11px] font-medium text-[var(--text-secondary)] mt-2 tracking-wide">{k.label}</p>
             {k.sub && (
-              <p className="text-[11px] text-[var(--text-tertiary)] mt-0.5">{k.sub}</p>
+              <p className="text-[10px] text-[var(--text-tertiary)] mt-1">{k.sub}</p>
             )}
           </motion.div>
         ))}

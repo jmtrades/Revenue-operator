@@ -465,8 +465,8 @@ export default function AppShellClient({
                   sidebarCollapsed ? "md:justify-center md:px-0 px-5 py-4 md:py-4" : "px-5 py-4 justify-between"
                 )}>
                   <div className={cn("flex items-center min-w-0", sidebarCollapsed && "md:justify-center")}>
-                    <div className="w-8 h-8 bg-[var(--accent-primary)] rounded-[var(--radius-btn)] flex items-center justify-center shrink-0 shadow-[0_1px_3px_rgba(0,0,0,0.12)]">
-                      <span className="text-[var(--text-on-accent)] font-bold text-sm leading-none">RT</span>
+                    <div className="w-8 h-8 bg-gradient-to-br from-[var(--accent-primary)] to-[#1D4ED8] rounded-[var(--radius-btn)] flex items-center justify-center shrink-0 shadow-[0_2px_6px_rgba(37,99,235,0.25)]">
+                      <span className="text-[var(--text-on-accent)] font-bold text-sm leading-none tracking-tight">RT</span>
                     </div>
                     {!sidebarCollapsed && (
                       <WorkspaceName
@@ -519,7 +519,7 @@ export default function AppShellClient({
                                 "transition-[background-color,color,transform] duration-160 ease-[cubic-bezier(0.23,1,0.32,1)]",
                                 sidebarCollapsed ? "md:justify-center md:px-0 px-3 py-2" : "gap-2.5 px-3 py-[7px]",
                                 active
-                                  ? "bg-[var(--accent-primary)]/[0.08] text-[var(--accent-primary)]"
+                                  ? "bg-[var(--accent-primary)]/[0.07] text-[var(--accent-primary)] font-semibold before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-[3px] before:h-[18px] before:rounded-r-[3px] before:bg-[var(--accent-primary)]"
                                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
                               )}
                               aria-current={active ? "page" : undefined}

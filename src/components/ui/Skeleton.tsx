@@ -21,7 +21,7 @@ export function Skeleton({
 }: SkeletonProps) {
   const delayStyle = delay > 0 ? { animationDelay: `${delay}ms` } : undefined;
   const baseClasses =
-    "relative overflow-hidden bg-[var(--bg-inset)]/60 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_1.5s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/[0.06] before:to-transparent";
+    "relative overflow-hidden bg-[var(--bg-hover)] before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_1.8s_ease-in-out_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/[0.08] before:to-transparent";
 
   if (variant === "text" && lines > 1) {
     return (
