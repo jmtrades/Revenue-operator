@@ -6,12 +6,17 @@ import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { toast } from "sonner";
 
+type BusinessHours = {
+  [day: string]: { open: string; close: string; enabled: boolean };
+};
+
 export default function AppSettingsCallRulesPage() {
   const tRules = useTranslations("callRules");
   const { workspaceId } = useWorkspace();
   const [afterHours, setAfterHours] = useState("messages");
   const [emergencyKeywords, setEmergencyKeywords] = useState("");
   const [transferPhone, setTransferPhone] = useState("");
+  const [businessHours, setBusinessHours] = useState<BusinessHours>({});
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -31,6 +36,7 @@ export default function AppSettingsCallRulesPage() {
           if (data.after_hours_behavior) setAfterHours(data.after_hours_behavior);
           if (data.emergency_keywords) setEmergencyKeywords(data.emergency_keywords);
           if (data.transfer_phone) setTransferPhone(data.transfer_phone);
+          if (data.business_hours) setBusinessHours(data.business_hours);
         }
       } catch {
         /* use defaults — non-critical */
@@ -54,6 +60,7 @@ export default function AppSettingsCallRulesPage() {
           after_hours_behavior: afterHours,
           emergency_keywords: emergencyKeywords,
           transfer_phone: transferPhone,
+          business_hours: businessHours,
         }),
       });
       if (res.ok) {
@@ -66,15 +73,52 @@ export default function AppSettingsCallRulesPage() {
     } finally {
       setSaving(false);
     }
-  }, [workspaceId, afterHours, emergencyKeywords, transferPhone, tRules, saving]);
+  }, [workspaceId, afterHours, emergencyKeywords, transferPhone, businessHours, tRules, saving]);
 
-  const weekdays = ["mon", "tue", "wed", "thu", "fri"] as const;
-  const weekend = ["sat", "sun"] as const;
+  const weekdayKeys = ["monday", "tuesday", "wednesday", "thursday", "friday"];
+  const weekendKeys = ["saturday", "sunday"];
+  const allDayKeys = [...weekdayKeys, ...weekendKeys];
+  const dayLabels: Record<string, string> = {
+    monday: "Mon",
+    tuesday: "Tue",
+    wednesday: "Wed",
+    thursday: "Thu",
+    friday: "Fri",
+    saturday: "Sat",
+    sunday: "Sun",
+  };
+
   const afterHoursOptions = [
     { value: "messages", labelKey: "afterHours.takeMessages", descKey: "afterHours.takeMessagesDesc" },
     { value: "emergency", labelKey: "afterHours.emergencyOnly", descKey: "afterHours.emergencyOnlyDesc" },
     { value: "forward", labelKey: "afterHours.forwardToCell", descKey: "afterHours.forwardToCellDesc" },
   ] as const;
+
+  const handleBusinessHourChange = (day: string, field: "open" | "close", value: string) => {
+    setBusinessHours((prev) => ({
+      ...prev,
+      [day]: { ...prev[day], [field]: value },
+    }));
+  };
+
+  const handleBusinessHourToggle = (day: string) => {
+    setBusinessHours((prev) => ({
+      ...prev,
+      [day]: { ...prev[day], enabled: !prev[day]?.enabled },
+    }));
+  };
+
+  const handleCopyToWeekdays = () => {
+    const weekdayConfig = businessHours.monday;
+    if (!weekdayConfig) return;
+    setBusinessHours((prev) => {
+      const updated = { ...prev };
+      weekdayKeys.forEach((day) => {
+        updated[day] = { ...weekdayConfig };
+      });
+      return updated;
+    });
+  };
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
@@ -91,22 +135,53 @@ export default function AppSettingsCallRulesPage() {
         <>
           <div className="space-y-6 mb-6">
             <div className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)]">
-              <p className="text-sm font-medium text-[var(--text-primary)] mb-3">{tRules("businessHours")}</p>
-              <div className="space-y-1.5">
-                {weekdays.map((day) => (
-                  <div key={day} className="flex items-center justify-between text-xs">
-                    <span className="text-[var(--text-tertiary)] w-8">{tRules(`days.${day}`)}</span>
-                    <span className="text-[var(--text-secondary)]">{tRules("timeRange")}</span>
-                  </div>
-                ))}
-                {weekend.map((day) => (
-                  <div key={day} className="flex items-center justify-between text-xs">
-                    <span className="text-[var(--text-tertiary)] w-8">{tRules(`days.${day}`)}</span>
-                    <span className="text-[var(--text-tertiary)]">{tRules("closed")}</span>
-                  </div>
-                ))}
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-sm font-medium text-[var(--text-primary)]">{tRules("businessHours")}</p>
+                <button
+                  type="button"
+                  onClick={handleCopyToWeekdays}
+                  className="text-xs font-medium text-[var(--accent-primary)] hover:opacity-80 transition-opacity"
+                >
+                  {tRules("businessHours.copyToWeekdays", { defaultValue: "Copy to all weekdays" })}
+                </button>
               </div>
-              <p className="mt-3 text-[11px] text-[var(--text-tertiary)]">{tRules("businessHoursNote")}</p>
+              <div className="space-y-3">
+                {allDayKeys.map((day) => {
+                  const hours = businessHours[day];
+                  if (!hours) return null;
+                  return (
+                    <div key={day} className="flex items-center gap-3 pb-3 border-b border-[var(--border-default)] last:border-b-0 last:pb-0">
+                      <input
+                        type="checkbox"
+                        checked={hours.enabled}
+                        onChange={() => handleBusinessHourToggle(day)}
+                        className="w-4 h-4 rounded accent-[var(--accent-primary)]"
+                      />
+                      <span className="text-xs font-medium text-[var(--text-tertiary)] w-12">{dayLabels[day]}</span>
+                      {hours.enabled ? (
+                        <div className="flex items-center gap-2 ml-auto">
+                          <input
+                            type="time"
+                            value={hours.open}
+                            onChange={(e) => handleBusinessHourChange(day, "open", e.target.value)}
+                            className="w-24 px-2 py-1.5 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-xs focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
+                          />
+                          <span className="text-xs text-[var(--text-tertiary)]">{tRules("businessHours.to", { defaultValue: "to" })}</span>
+                          <input
+                            type="time"
+                            value={hours.close}
+                            onChange={(e) => handleBusinessHourChange(day, "close", e.target.value)}
+                            className="w-24 px-2 py-1.5 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-xs focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
+                          />
+                        </div>
+                      ) : (
+                        <span className="text-xs text-[var(--text-tertiary)] ml-auto">{tRules("closed")}</span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="mt-4 text-[11px] text-[var(--text-tertiary)]">{tRules("businessHoursNote")}</p>
             </div>
 
             <div>
