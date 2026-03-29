@@ -136,7 +136,7 @@ export async function POST(req: NextRequest) {
   };
 
   const db = getDb();
-  const { data: lead, error } = await runWithWriteContextAsync("api", () =>
+  const { data: lead, error } = await runWithWriteContextAsync("api", async () =>
     db
       .from("leads")
       .insert({
