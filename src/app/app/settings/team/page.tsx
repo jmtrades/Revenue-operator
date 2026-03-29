@@ -161,12 +161,12 @@ export default function AppSettingsTeamPage() {
               ) : (
                 <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[var(--bg-inset)] text-[var(--text-secondary)]">{t("team.roleAdmin")}</span>
               )}
-              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: "rgba(34,197,94,0.15)", color: "var(--accent-secondary)" }}>{t(`team.status${(m.status as string).charAt(0).toUpperCase()}${(m.status as string).slice(1)}`)}</span>
+              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: "rgba(34,197,94,0.15)", color: "var(--accent-primary)" }}>{t(`team.status${(m.status as string).charAt(0).toUpperCase()}${(m.status as string).slice(1)}`)}</span>
               {m.email && (
                 <button
                   type="button"
                   onClick={() => handleRemoveMember(m.email)}
-                  className="text-[10px] px-1.5 py-0.5 rounded-full hover:bg-red-500/15 transition-colors"
+                  className="text-[10px] px-1.5 py-0.5 rounded-full hover:bg-[var(--accent-danger)]/15 transition-colors"
                   style={{ color: "var(--text-tertiary)" }}
                   title={t("team.removeMember")}
                 >

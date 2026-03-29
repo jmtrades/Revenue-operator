@@ -257,8 +257,8 @@ export default function AgencyPage() {
                         <span
                           className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${
                             account.status === "active"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-gray-100 text-gray-700"
+                              ? "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]"
+                              : "bg-[var(--bg-inset)] text-[var(--text-secondary)]"
                           }`}
                         >
                           {account.status}
@@ -276,7 +276,7 @@ export default function AgencyPage() {
                           <button
                             onClick={() => handleDeleteSubAccount(account.id)}
                             disabled={deleting === account.id}
-                            className="p-2 hover:bg-red-100 rounded transition-colors text-red-600 disabled:opacity-50"
+                            className="p-2 hover:bg-[var(--accent-danger)]/10 rounded transition-colors text-[var(--accent-danger)] disabled:opacity-50"
                             title="Deactivate"
                           >
                             <Trash2 className="h-4 w-4" />

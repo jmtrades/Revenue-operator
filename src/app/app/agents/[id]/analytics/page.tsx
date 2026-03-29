@@ -304,7 +304,7 @@ export default function AgentAnalyticsPage({
       {recommendations.length > 0 && (
         <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl p-5">
           <p className="text-sm font-medium text-[var(--text-primary)] mb-3 flex items-center gap-2">
-            <Lightbulb className="w-4 h-4 text-amber-500" />
+            <Lightbulb className="w-4 h-4 text-[var(--accent-warning)]" />
             Recommendations
           </p>
           <ul className="space-y-2">

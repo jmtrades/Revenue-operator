@@ -72,9 +72,9 @@ function DurationTimer({ startedAt }: { startedAt: string | null }) {
 function SentimentBadge({ sentiment }: { sentiment?: "positive" | "neutral" | "negative" | null }) {
   if (!sentiment) return <span className="text-xs text-[var(--text-tertiary)]">Analyzing…</span>;
   const config = {
-    positive: { label: "Positive", color: "text-green-400", bg: "bg-green-500/10" },
+    positive: { label: "Positive", color: "text-[var(--accent-primary)]", bg: "bg-[color:var(--accent-primary)]/10" },
     neutral: { label: "Neutral", color: "text-[var(--text-secondary)]", bg: "bg-[var(--bg-inset)]" },
-    negative: { label: "Negative", color: "text-red-400", bg: "bg-red-500/10" },
+    negative: { label: "Negative", color: "text-[var(--accent-danger,#ef4444)]", bg: "bg-[color:var(--accent-danger,#ef4444)]/10" },
   }[sentiment];
   return (
     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${config.bg} ${config.color}`}>
@@ -139,8 +139,8 @@ export default function CallsLivePage() {
         {!loading && (
           <div className="flex items-center gap-2 text-xs text-[var(--text-tertiary)]">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--accent-primary)] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--accent-primary)]" />
             </span>
             {lastRefreshed ? `Updated ${lastRefreshed.toLocaleTimeString()}` : "Connecting…"}
           </div>
@@ -156,7 +156,7 @@ export default function CallsLivePage() {
       ) : (
         <>
           {error && (
-            <div className="mb-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-400 flex items-center gap-2">
+            <div className="mb-4 px-4 py-3 rounded-xl bg-[color:var(--accent-danger,#ef4444)]/10 border border-[color:var(--accent-danger,#ef4444)]/20 text-sm text-[var(--accent-danger,#ef4444)] flex items-center gap-2">
               <AlertTriangle className="w-4 h-4 shrink-0" />
               Could not load live call data. Retrying automatically…
             </div>
@@ -197,8 +197,8 @@ export default function CallsLivePage() {
                   >
                     <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-green-500/20 border border-green-500/40 flex items-center justify-center">
-                          <Phone className="w-5 h-5 text-green-400" />
+                        <div className="w-10 h-10 rounded-xl bg-[color:var(--accent-primary)]/20 border border-[color:var(--accent-primary)]/40 flex items-center justify-center">
+                          <Phone className="w-5 h-5 text-[var(--accent-primary)]" />
                         </div>
                         <div>
                           <p className="font-medium text-[var(--text-primary)]">
@@ -229,7 +229,7 @@ export default function CallsLivePage() {
                           disabled={actionLoading === `${call.id}-mute` || actionLoading === `${call.id}-unmute`}
                           className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors disabled:opacity-50 ${
                             isMuted
-                              ? "border-amber-500/30 text-amber-400 bg-amber-500/10 hover:bg-amber-500/20"
+                              ? "border-[color:var(--accent-warning,#f59e0b)]/30 text-[var(--accent-warning,#f59e0b)] bg-[color:var(--accent-warning,#f59e0b)]/10 hover:bg-[color:var(--accent-warning,#f59e0b)]/20"
                               : "border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-inset)]"
                           }`}
                           title={isMuted ? "Unmute" : "Mute"}
@@ -243,7 +243,7 @@ export default function CallsLivePage() {
                           disabled={actionLoading === `${call.id}-hold` || actionLoading === `${call.id}-unhold`}
                           className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors disabled:opacity-50 ${
                             isHeld
-                              ? "border-blue-500/30 text-blue-400 bg-blue-500/10 hover:bg-blue-500/20"
+                              ? "border-[var(--accent-primary)]/30 text-[var(--accent-primary)] bg-[color:var(--accent-primary)]/10 hover:bg-[color:var(--accent-primary)]/20"
                               : "border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-inset)]"
                           }`}
                           title={isHeld ? "Resume" : "Hold"}

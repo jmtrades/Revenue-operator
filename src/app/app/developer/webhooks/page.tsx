@@ -239,7 +239,7 @@ export default function DeveloperWebhooksPage() {
                   <button
                     type="button"
                     onClick={() => setDeleteConfirm(ep)}
-                    className="p-1.5 rounded-lg text-[var(--text-secondary)] hover:text-red-400 hover:bg-red-500/10"
+                    className="p-1.5 rounded-lg text-[var(--text-secondary)] hover:text-[var(--accent-danger)] hover:bg-[var(--accent-danger)]/10"
                     aria-label={tCommon("delete")}
                   >
                     <Trash2 className="w-4 h-4" />
@@ -264,7 +264,7 @@ export default function DeveloperWebhooksPage() {
                             <span className="text-xs text-[var(--text-secondary)]">{formatTime(d.created_at)}</span>
                           </div>
                           <div className="flex items-center gap-3 mt-1.5 text-xs">
-                            <span className={d.success ? "text-green-500" : "text-red-400"}>
+                            <span className={d.success ? "text-[var(--accent-primary)]" : "text-[var(--accent-danger)]"}>
                               {d.response_status ?? "—"} {d.response_time_ms != null ? `· ${d.response_time_ms} ms` : ""}
                             </span>
                             {!d.success && (

@@ -277,7 +277,7 @@ export default function AppMessagesPage() {
                   <p className="text-[11px] text-[var(--text-secondary)]">{t("smsTwoWay")}</p>
                 </div>
                 {!active.lead_id && (
-                  <span className="text-[10px] text-amber-500">{t("addInLeadsToSend")}</span>
+                  <span className="text-[10px] text-[var(--accent-warning)]">{t("addInLeadsToSend")}</span>
                 )}
               </div>
               <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">

@@ -121,7 +121,7 @@ export function AgentDetail(props: AgentDetailProps) {
             <span
               className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
                 agent.active
-                  ? "bg-green-500/15 text-green-400"
+                  ? "bg-[var(--accent-primary)]/15 text-[var(--accent-primary)]"
                   : "bg-[var(--bg-inset)] text-[var(--text-tertiary)]"
               }`}
             >
@@ -132,9 +132,9 @@ export function AgentDetail(props: AgentDetailProps) {
             <span
               className={
                 readiness.percent >= 80
-                  ? "text-green-500/80"
+                  ? "text-[var(--accent-primary)]/80"
                   : readiness.percent >= 40
-                    ? "text-amber-500/80"
+                    ? "text-[var(--accent-warning)]/80"
                     : "text-[var(--text-secondary)]"
               }
             >
@@ -230,7 +230,7 @@ export function AgentDetail(props: AgentDetailProps) {
                   <div
                     className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
                       complete
-                        ? "bg-emerald-500/20"
+                        ? "bg-[var(--accent-primary)]/20"
                         : active
                           ? "bg-[var(--bg-hover)]"
                           : "bg-[var(--bg-input)]"
@@ -238,7 +238,7 @@ export function AgentDetail(props: AgentDetailProps) {
                   >
                     {complete ? (
                       <CheckCircle2
-                        className="w-3.5 h-3.5 text-emerald-400"
+                        className="w-3.5 h-3.5 text-[var(--accent-primary)]"
                         aria-hidden
                       />
                     ) : (

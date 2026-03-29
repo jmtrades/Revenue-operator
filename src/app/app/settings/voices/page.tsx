@@ -843,7 +843,7 @@ export default function VoicesSettingsPage() {
                         <button
                           type="button"
                           onClick={() => handleDeleteClone(voice.id)}
-                          className="inline-flex items-center justify-center rounded-lg border border-red-500/30 px-2.5 py-1.5 text-xs text-red-400 hover:bg-red-500/10 transition-[background-color,border-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
+                          className="inline-flex items-center justify-center rounded-lg border border-[var(--accent-danger)]/30 px-2.5 py-1.5 text-xs text-[var(--accent-danger)] hover:bg-[var(--accent-danger)]/10 transition-[background-color,border-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                         >
                           <Trash2 className="w-3 h-3" />
                         </button>

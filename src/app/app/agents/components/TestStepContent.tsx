@@ -112,7 +112,7 @@ export function TestStepContent({
                     {[1, 2, 3, 4, 5].map((i) => (
                       <span
                         key={i}
-                        className={i <= stars ? "text-amber-400" : "text-[var(--text-tertiary)]"}
+                        className={i <= stars ? "text-[var(--accent-warning)]" : "text-[var(--text-tertiary)]"}
                       >
                         ★
                       </span>

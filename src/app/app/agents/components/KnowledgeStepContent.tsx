@@ -120,7 +120,7 @@ export function KnowledgeStepContent({
             {importing ? t("knowledge.importing") : t("knowledge.importFromWebsite")}
           </button>
         </div>
-        {importError && <p className="text-xs text-red-400">{importError}</p>}
+        {importError && <p className="text-xs text-[var(--accent-danger)]">{importError}</p>}
         <p className="text-[11px] text-[var(--text-tertiary)]">
           {t("knowledge.quickStartHint")}
         </p>
@@ -136,7 +136,7 @@ export function KnowledgeStepContent({
       </section>
       <AgentKnowledgePanel agent={agent} updateAgent={onChange} />
       {(agent.faq?.length ?? 0) === 0 && (
-        <p className="text-[11px] text-amber-500/90">
+        <p className="text-[11px] text-[var(--accent-warning)]/90">
           {t("knowledge.minQAHint")}
         </p>
       )}
