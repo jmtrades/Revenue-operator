@@ -372,17 +372,33 @@ export default function RecordingsPage() {
             ))}
           </div>
         ) : error ? (
-          <EmptyState
-            icon={MessageSquare}
-            title="Something went wrong"
-            description={error}
-          />
+          <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+            <EmptyState
+              icon={MessageSquare}
+              title="Something went wrong"
+              description={error}
+            />
+            <Button
+              onClick={fetchRecordings}
+              className="mt-6 bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90"
+            >
+              Try Again
+            </Button>
+          </div>
         ) : recordings.length === 0 ? (
-          <EmptyState
-            icon={Mic}
-            title="No recordings found"
-            description="Try adjusting your filters or search terms"
-          />
+          <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+            <EmptyState
+              icon={Mic}
+              title="No recordings found"
+              description="Try adjusting your filters or search terms"
+            />
+            <Button
+              href="/app/agents"
+              className="mt-6 bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90"
+            >
+              Set Up an Operator
+            </Button>
+          </div>
         ) : (
           <>
             <div className="space-y-3 mb-8">

@@ -1599,7 +1599,7 @@
       "failedToSaveAgent": "エージェントの保存に失敗しました",
       "myBusiness": "マイビジネス",
       "theBusiness": "当社",
-      "meetReceptionist": "受付AIをご紹介",
+      "meetOperator": "オペレーターをご紹介",
       "agentWillAnswerFor": "エージェントが {name} の電話対応・リード取得・予約取得を行います。",
       "agentName": "エージェント名",
       "voice": "声",

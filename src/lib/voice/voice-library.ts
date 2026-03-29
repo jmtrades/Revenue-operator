@@ -83,7 +83,7 @@ export const VOICE_LIBRARY: VoiceProfile[] = [
       "That's a great question. Let me look into that for you real quick.",
       "I totally understand your concern. Here's what I'd recommend...",
     ],
-    tags: ["warm", "professional", "sales", "receptionist", "default"],
+    tags: ["warm", "professional", "sales", "operator", "default"],
     available: true,
     provider: "recall",
     fallback_polly_id: "Polly.Joanna-Neural",
