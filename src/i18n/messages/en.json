@@ -100,7 +100,7 @@
   },
   "nav": {
     "dashboard": "Dashboard",
-    "agents": "Agents",
+    "agents": "Operators",
     "calls": "Calls",
     "leads": "Leads",
     "contacts": "Contacts",
@@ -252,7 +252,7 @@
     "item": "item",
     "items": "items",
     "activity": "Activity",
-    "agents": "Agents",
+    "agents": "Operators",
     "title": "Title",
     "url": "URL",
     "calendar": {
@@ -1331,7 +1331,7 @@
       "navLabels": {
         "activity": "Activity",
         "contacts": "Contacts",
-        "agents": "Agents",
+        "agents": "Operators",
         "campaigns": "Campaigns",
         "messages": "Messages",
         "calendar": "Calendar",
@@ -2473,7 +2473,7 @@
       "outcomeBreakdown": "Outcome breakdown",
       "commonTopics": "Common topics (from summaries)",
       "otherAgents": "Other agents in this workspace",
-      "breadcrumbAgents": "Agents"
+      "breadcrumbAgents": "Operators"
     },
     "purpose": {
       "inbound": "Inbound",
@@ -7694,7 +7694,7 @@
     },
     "page": {
       "dashboard": "Dashboard",
-      "agents": "Agents",
+      "agents": "Operators",
       "calls": "Calls",
       "leads": "Leads",
       "campaigns": "Campaigns",

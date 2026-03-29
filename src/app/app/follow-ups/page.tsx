@@ -496,17 +496,17 @@ export default function AppFollowUpsPage() {
                     {s.is_active ? (
                       <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-100 dark:bg-green-900/30">
                         <div className="w-1.5 h-1.5 rounded-full bg-green-600 dark:bg-green-500 animate-pulse" />
-                        <span className="text-xs font-medium text-green-600 dark:text-green-500">Active</span>
+                        <span className="text-xs font-medium text-green-600 dark:text-green-500">{t("statusActive", { defaultValue: "Active" })}</span>
                       </div>
                     ) : (
                       <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-[var(--bg-hover)]">
-                        <span className="text-xs font-medium text-[var(--text-tertiary)]">Paused</span>
+                        <span className="text-xs font-medium text-[var(--text-tertiary)]">{t("statusPaused", { defaultValue: "Paused" })}</span>
                       </div>
                     )}
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs px-2 py-0.5 rounded-md bg-[var(--bg-hover)] text-[var(--text-secondary)]">
-                      Trigger: {s.trigger_type ? s.trigger_type.split(":").pop()?.replace(/_/g, " ") : "manual"}
+                      {t("trigger", { defaultValue: "Trigger" })}: {s.trigger_type ? s.trigger_type.split(":").pop()?.replace(/_/g, " ") : t("manual", { defaultValue: "manual" })}
                     </span>
                   </div>
                 </div>
