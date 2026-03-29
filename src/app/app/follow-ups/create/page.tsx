@@ -143,8 +143,8 @@ export default function FollowUpCreatePage() {
 
       <div className="mt-3 flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)]">{t("title")}</h1>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">{t("subtitle")}</p>
+          <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("title")}</h1>
+          <p className="mt-1.5 text-[13px] text-[var(--text-secondary)] leading-relaxed">{t("subtitle")}</p>
         </div>
         <button
           type="button"

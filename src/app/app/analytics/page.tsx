@@ -655,11 +655,11 @@ export default function AppAnalyticsPage() {
     <div className="p-6 md:p-8 max-w-6xl mx-auto">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-6">
         <div>
-          <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
+          <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)] flex items-center gap-2">
             <BarChart3 className="w-5 h-5 text-[var(--text-tertiary)]" />
             {t("analytics.heading", { defaultValue: "Analytics" })}
           </h1>
-          <p className="text-sm text-[var(--text-secondary)] mt-1">
+          <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed">
             Revenue intelligence for your autonomous pipeline
           </p>
         </div>

@@ -249,10 +249,10 @@ export default function CampaignCreatePage() {
             <ArrowLeft className="h-4 w-4" />
             {t("back")}
           </Link>
-          <h1 className="mt-3 text-xl md:text-2xl font-semibold text-[var(--text-primary)]">
+          <h1 className="mt-3 text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">
             {t("title")}
           </h1>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+          <p className="mt-1.5 text-[13px] text-[var(--text-secondary)] leading-relaxed">
             {t("subtitle")}
           </p>
         </div>

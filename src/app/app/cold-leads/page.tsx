@@ -453,10 +453,10 @@ export default function ColdLeadsPage() {
     <div className="p-4 md:p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-[var(--text-primary)]">
+        <h1 className="text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">
           {t("title")}
         </h1>
-        <p className="text-sm text-[var(--text-secondary)] mt-1">
+        <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed">
           {t("description")}
         </p>
       </div>
