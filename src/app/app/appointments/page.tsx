@@ -19,7 +19,12 @@ interface Appointment {
   type: string;
   status: AppointmentStatus;
   source: AppointmentSource;
+  start_time?: string;
+  metadata?: Record<string, unknown>;
 }
+
+type OutcomeType = "completed" | "no_show" | "rescheduled" | "cancelled" | "partial";
+type SentimentType = "positive" | "neutral" | "negative";
 
 function formatDate(dateStr: string, t: (key: string, opts?: Record<string, string>) => string): string {
   const d = new Date(dateStr + "T12:00:00");
@@ -79,6 +84,17 @@ function mapApiStatus(s: string): AppointmentStatus {
   return "Pending";
 }
 
+function isPastAppointment(appointment: Appointment): boolean {
+  if (!appointment.start_time) return false;
+  return new Date(appointment.start_time) < new Date();
+}
+
+function shouldShowOutcomeForm(appointment: Appointment): boolean {
+  if (!isPastAppointment(appointment)) return false;
+  const outcomeRecorded = appointment.metadata?.outcome;
+  return !outcomeRecorded && appointment.status !== "Cancelled";
+}
+
 export default function AppointmentsPage() {
   const t = useTranslations();
   const { workspaceId } = useWorkspace();
@@ -89,13 +105,31 @@ export default function AppointmentsPage() {
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
-  const [modalActionLoading, setModalActionLoading] = useState<"reschedule" | "cancel" | "remind" | null>(null);
+  const [modalActionLoading, setModalActionLoading] = useState<"reschedule" | "cancel" | "remind" | "outcome" | null>(null);
   const [showRescheduleForm, setShowRescheduleForm] = useState(false);
   const [newRescheduleDate, setNewRescheduleDate] = useState<string>("");
   const [newRescheduleTime, setNewRescheduleTime] = useState<string>("");
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [showOutcomeForm, setShowOutcomeForm] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [syncLoading, setSyncLoading] = useState(false);
+
+  // Outcome form state
+  const [outcomeData, setOutcomeData] = useState<{
+    outcome: OutcomeType | null;
+    notes: string;
+    sentiment: SentimentType | null;
+    dealValue: string;
+    nextSteps: string;
+    followUpDate: string;
+  }>({
+    outcome: null,
+    notes: "",
+    sentiment: null,
+    dealValue: "",
+    nextSteps: "",
+    followUpDate: "",
+  });
 
   const dayDefaults: Record<string, string> = {
     mon: "Mon",
@@ -123,7 +157,7 @@ export default function AppointmentsPage() {
         if (!r.ok) throw new Error(`Failed to load appointments (${r.status})`);
         return r.json();
       })
-      .then((data: { appointments?: { id: string; date: string; time: string; contactName: string; type: string; status: string; source: string }[] }) => {
+      .then((data: { appointments?: { id: string; date: string; time: string; contactName: string; type: string; status: string; source: string; start_time?: string; metadata?: Record<string, unknown> }[] }) => {
         const list = data.appointments ?? [];
         if (list.length > 0) {
           setAppointments(
@@ -135,6 +169,8 @@ export default function AppointmentsPage() {
               type: a.type,
               status: mapApiStatus(a.status),
               source: (a.source || "Inbound call") as AppointmentSource,
+              start_time: a.start_time,
+              metadata: a.metadata,
             }))
           );
         } else {
@@ -279,6 +315,82 @@ export default function AppointmentsPage() {
       setModalActionLoading(null);
     }
   }, [selected, t, showToast]);
+
+  const handleRecordOutcome = useCallback(async () => {
+    if (!selected || !outcomeData.outcome) {
+      showToast(t("appointments.outcome.selectOutcome", { defaultValue: "Please select an outcome" }), "error");
+      return;
+    }
+
+    setModalActionLoading("outcome");
+    try {
+      const payload = {
+        outcome: outcomeData.outcome,
+        notes: outcomeData.notes || undefined,
+        sentiment: outcomeData.sentiment || undefined,
+        deal_value: outcomeData.dealValue ? parseFloat(outcomeData.dealValue) : undefined,
+        next_steps: outcomeData.nextSteps || undefined,
+        follow_up_date: outcomeData.followUpDate ? new Date(outcomeData.followUpDate).toISOString() : undefined,
+        tags: [],
+      };
+
+      const response = await fetch(`/api/appointments/${selected.id}/outcome`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) throw new Error(`Failed to record outcome (${response.status})`);
+
+      const result = (await response.json()) as { ok: boolean; outcome: string };
+
+      // Update local state with new outcome metadata
+      const newMetadata = {
+        ...(selected.metadata ?? {}),
+        outcome: outcomeData.outcome,
+        outcome_recorded_at: new Date().toISOString(),
+        sentiment: outcomeData.sentiment,
+        deal_value: outcomeData.dealValue ? parseFloat(outcomeData.dealValue) : null,
+        next_steps: outcomeData.nextSteps || null,
+        follow_up_date: outcomeData.followUpDate || null,
+      };
+
+      // Update appointment in local state
+      const newStatus: AppointmentStatus =
+        result.outcome === "completed" || result.outcome === "partial" ? "Completed" :
+        result.outcome === "no_show" ? "No-Show" :
+        result.outcome === "cancelled" ? "Cancelled" : "Pending";
+
+      setAppointments((prev) =>
+        prev.map((a) =>
+          a.id === selected.id ? { ...a, status: newStatus, metadata: newMetadata } : a
+        )
+      );
+
+      setSelected((prev) =>
+        prev ? { ...prev, status: newStatus, metadata: newMetadata } : null
+      );
+
+      showToast(t("appointments.outcome.recordSuccess", { defaultValue: "Outcome recorded successfully" }), "success");
+      setShowOutcomeForm(false);
+      setOutcomeData({
+        outcome: null,
+        notes: "",
+        sentiment: null,
+        dealValue: "",
+        nextSteps: "",
+        followUpDate: "",
+      });
+    } catch (err) {
+      showToast(
+        err instanceof Error ? err.message : t("appointments.outcome.recordFailed", { defaultValue: "Failed to record outcome" }),
+        "error"
+      );
+    } finally {
+      setModalActionLoading(null);
+    }
+  }, [selected, outcomeData, t, showToast]);
 
   const handleSyncCalendar = useCallback(async () => {
     setSyncLoading(true);
@@ -777,6 +889,208 @@ export default function AppointmentsPage() {
               </div>
             )}
 
+            {showOutcomeForm && shouldShowOutcomeForm(selected) && (
+              <div className="mt-4 pt-4 border-t border-[var(--border-default)]">
+                <h3 className="text-xs font-medium text-[var(--text-secondary)] mb-3 uppercase">
+                  {t("appointments.outcome.title", { defaultValue: "Record Meeting Outcome" })}
+                </h3>
+                <div className="space-y-3">
+                  {/* Outcome selector */}
+                  <div>
+                    <label className="block text-xs text-[var(--text-secondary)] mb-2 font-medium">
+                      {t("appointments.outcome.label", { defaultValue: "Outcome" })}
+                    </label>
+                    <div className="grid grid-cols-5 gap-1.5">
+                      {(["completed", "no_show", "rescheduled", "cancelled", "partial"] as const).map((opt) => {
+                        const labels: Record<OutcomeType, string> = {
+                          completed: t("appointments.outcome.completed", { defaultValue: "Completed" }),
+                          no_show: t("appointments.outcome.noShow", { defaultValue: "No Show" }),
+                          rescheduled: t("appointments.outcome.rescheduled", { defaultValue: "Rescheduled" }),
+                          cancelled: t("appointments.outcome.cancelled", { defaultValue: "Cancelled" }),
+                          partial: t("appointments.outcome.partial", { defaultValue: "Partial" }),
+                        };
+                        return (
+                          <button
+                            key={opt}
+                            type="button"
+                            onClick={() => setOutcomeData({ ...outcomeData, outcome: opt })}
+                            className={`px-2 py-1.5 rounded-lg text-xs font-medium transition-[background-color,border-color,color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] ${
+                              outcomeData.outcome === opt
+                                ? "bg-[var(--accent-primary)] text-white border border-[var(--accent-primary)]"
+                                : "bg-[var(--bg-inset)] border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-focus)]"
+                            }`}
+                          >
+                            {labels[opt]}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Sentiment selector */}
+                  <div>
+                    <label className="block text-xs text-[var(--text-secondary)] mb-2 font-medium">
+                      {t("appointments.outcome.sentiment", { defaultValue: "Sentiment" })}
+                    </label>
+                    <div className="flex gap-2">
+                      {(["positive", "neutral", "negative"] as const).map((sent) => {
+                        const icons: Record<SentimentType, string> = {
+                          positive: "+",
+                          neutral: "=",
+                          negative: "-",
+                        };
+                        const labels: Record<SentimentType, string> = {
+                          positive: t("appointments.outcome.positive", { defaultValue: "Positive" }),
+                          neutral: t("appointments.outcome.neutral", { defaultValue: "Neutral" }),
+                          negative: t("appointments.outcome.negative", { defaultValue: "Negative" }),
+                        };
+                        return (
+                          <button
+                            key={sent}
+                            type="button"
+                            onClick={() => setOutcomeData({ ...outcomeData, sentiment: sent })}
+                            className={`flex-1 px-2 py-1.5 rounded-lg text-xs font-medium transition-[background-color,border-color,color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] ${
+                              outcomeData.sentiment === sent
+                                ? "bg-[var(--accent-primary)] text-white border border-[var(--accent-primary)]"
+                                : "bg-[var(--bg-inset)] border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-focus)]"
+                            }`}
+                          >
+                            <span className="inline-block mr-1">{icons[sent]}</span>
+                            {labels[sent]}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Notes */}
+                  <div>
+                    <label className="block text-xs text-[var(--text-secondary)] mb-1 font-medium">
+                      {t("appointments.outcome.notes", { defaultValue: "Notes" })}
+                    </label>
+                    <textarea
+                      value={outcomeData.notes}
+                      onChange={(e) => setOutcomeData({ ...outcomeData, notes: e.target.value })}
+                      placeholder={t("appointments.outcome.notesPlaceholder", { defaultValue: "Any additional notes about the meeting..." })}
+                      maxLength={5000}
+                      className="w-full px-3 py-2 rounded-lg bg-[var(--bg-inset)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--border-focus)] transition-[border-color] duration-[var(--duration-fast)] resize-none"
+                      rows={3}
+                    />
+                  </div>
+
+                  {/* Deal value */}
+                  <div>
+                    <label className="block text-xs text-[var(--text-secondary)] mb-1 font-medium">
+                      {t("appointments.outcome.dealValue", { defaultValue: "Deal Value (optional)" })}
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-2 text-[var(--text-tertiary)] text-sm">$</span>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={outcomeData.dealValue}
+                        onChange={(e) => setOutcomeData({ ...outcomeData, dealValue: e.target.value })}
+                        placeholder={t("appointments.outcome.dealValuePlaceholder", { defaultValue: "0.00" })}
+                        className="w-full pl-6 pr-3 py-2 rounded-lg bg-[var(--bg-inset)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--border-focus)] transition-[border-color] duration-[var(--duration-fast)]"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Next steps */}
+                  <div>
+                    <label className="block text-xs text-[var(--text-secondary)] mb-1 font-medium">
+                      {t("appointments.outcome.nextSteps", { defaultValue: "Next Steps (optional)" })}
+                    </label>
+                    <input
+                      type="text"
+                      value={outcomeData.nextSteps}
+                      onChange={(e) => setOutcomeData({ ...outcomeData, nextSteps: e.target.value })}
+                      placeholder={t("appointments.outcome.nextStepsPlaceholder", { defaultValue: "What's the next action?" })}
+                      maxLength={2000}
+                      className="w-full px-3 py-2 rounded-lg bg-[var(--bg-inset)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--border-focus)] transition-[border-color] duration-[var(--duration-fast)]"
+                    />
+                  </div>
+
+                  {/* Follow-up date */}
+                  <div>
+                    <label className="block text-xs text-[var(--text-secondary)] mb-1 font-medium">
+                      {t("appointments.outcome.followUpDate", { defaultValue: "Follow-up Date (optional)" })}
+                    </label>
+                    <input
+                      type="datetime-local"
+                      value={outcomeData.followUpDate}
+                      onChange={(e) => setOutcomeData({ ...outcomeData, followUpDate: e.target.value })}
+                      className="w-full px-3 py-2 rounded-lg bg-[var(--bg-inset)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--border-focus)] transition-[border-color] duration-[var(--duration-fast)]"
+                    />
+                  </div>
+
+                  {/* Submit buttons */}
+                  <div className="flex gap-2 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowOutcomeForm(false);
+                        setOutcomeData({
+                          outcome: null,
+                          notes: "",
+                          sentiment: null,
+                          dealValue: "",
+                          nextSteps: "",
+                          followUpDate: "",
+                        });
+                      }}
+                      className="flex-1 px-3 py-2 rounded-lg border border-[var(--border-medium)] text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] transition-[background-color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
+                    >
+                      {t("appointments.actions.cancel", { defaultValue: "Cancel" })}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleRecordOutcome}
+                      disabled={modalActionLoading === "outcome"}
+                      className="flex-1 px-3 py-2 rounded-lg bg-[var(--accent-primary)] text-xs font-medium text-white hover:bg-[var(--accent-primary)]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-[background-color,opacity] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
+                    >
+                      {modalActionLoading === "outcome"
+                        ? t("appointments.outcome.recording", { defaultValue: "Recording..." })
+                        : t("appointments.outcome.record", { defaultValue: "Record Outcome" })}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {(selected.metadata as { outcome?: string; sentiment?: string; deal_value?: number; next_steps?: string })?.outcome && (
+              <div className="mt-4 pt-4 border-t border-[var(--border-default)] bg-[var(--bg-inset)] p-3 rounded-lg">
+                <h3 className="text-xs font-medium text-[var(--text-secondary)] mb-2 uppercase">
+                  {t("appointments.outcome.recorded", { defaultValue: "Meeting Outcome" })}
+                </h3>
+                <div className="space-y-1.5 text-xs">
+                  <div className="flex justify-between gap-4">
+                    <dt className="text-[var(--text-secondary)]">{t("appointments.outcome.label", { defaultValue: "Outcome" })}</dt>
+                    <dd className="text-[var(--text-primary)] font-medium">{(selected.metadata as { outcome?: string })?.outcome ?? "unknown"}</dd>
+                  </div>
+                  {(selected.metadata as { sentiment?: string })?.sentiment && (
+                    <div className="flex justify-between gap-4">
+                      <dt className="text-[var(--text-secondary)]">{t("appointments.outcome.sentiment", { defaultValue: "Sentiment" })}</dt>
+                      <dd className="text-[var(--text-primary)]">{(selected.metadata as { sentiment?: string })?.sentiment}</dd>
+                    </div>
+                  )}
+                  {(selected.metadata as { deal_value?: number })?.deal_value && (
+                    <div className="flex justify-between gap-4">
+                      <dt className="text-[var(--text-secondary)]">{t("appointments.outcome.dealValue", { defaultValue: "Deal Value" })}</dt>
+                      <dd className="text-[var(--text-primary)]">{"$" + ((selected.metadata as { deal_value?: number })?.deal_value ?? 0).toFixed(2)}</dd>
+                    </div>
+                  )}
+                  {(selected.metadata as { next_steps?: string })?.next_steps && (
+                    <div className="flex justify-between gap-4">
+                      <dt className="text-[var(--text-secondary)]">{t("appointments.outcome.nextSteps", { defaultValue: "Next Steps" })}</dt>
+                      <dd className="text-[var(--text-primary)] text-right">{(selected.metadata as { next_steps?: string })?.next_steps}</dd>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             <div className="mt-4 pt-4 border-t border-[var(--border-default)] flex flex-col gap-2">
               <div className="flex gap-2">
                 <button
@@ -784,6 +1098,7 @@ export default function AppointmentsPage() {
                   onClick={() => {
                     setShowRescheduleForm(!showRescheduleForm);
                     setShowCancelConfirm(false);
+                    setShowOutcomeForm(false);
                   }}
                   disabled={modalActionLoading !== null}
                   className="flex-1 px-3 py-2 rounded-lg border border-[var(--border-medium)] text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] disabled:opacity-50 disabled:cursor-not-allowed transition-[background-color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
@@ -801,12 +1116,27 @@ export default function AppointmentsPage() {
                     : t("appointments.actions.sendReminder", { defaultValue: "Send Reminder" })}
                 </button>
               </div>
+              {shouldShowOutcomeForm(selected) && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowOutcomeForm(!showOutcomeForm);
+                    setShowRescheduleForm(false);
+                    setShowCancelConfirm(false);
+                  }}
+                  disabled={modalActionLoading !== null}
+                  className="w-full px-3 py-2 rounded-lg border border-[var(--accent-primary)]/30 text-xs font-medium text-[var(--accent-primary)] bg-[var(--accent-primary)]/5 hover:bg-[var(--accent-primary)]/10 disabled:opacity-50 disabled:cursor-not-allowed transition-[background-color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
+                >
+                  {t("appointments.outcome.recordButton", { defaultValue: "Record Outcome" })}
+                </button>
+              )}
               <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={() => {
                     setShowCancelConfirm(!showCancelConfirm);
                     setShowRescheduleForm(false);
+                    setShowOutcomeForm(false);
                   }}
                   disabled={modalActionLoading !== null}
                   className="flex-1 px-3 py-2 rounded-lg border border-[var(--border-medium)] text-xs font-medium text-[var(--accent-danger,#ef4444)] hover:bg-[var(--accent-danger,#ef4444)]/10 disabled:opacity-50 disabled:cursor-not-allowed transition-[background-color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"

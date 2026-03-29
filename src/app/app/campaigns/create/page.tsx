@@ -143,6 +143,10 @@ export default function CampaignCreatePage() {
 
   useEffect(() => {
     setSequence(DEFAULT_TEMPLATES[type]);
+    // Smart default: auto-populate "not contacted for 30 days" for reactivation campaigns
+    if (type === "reactivation" && notContactedDays === "") {
+      setNotContactedDays(30);
+    }
   }, [type]);
 
   useEffect(() => {

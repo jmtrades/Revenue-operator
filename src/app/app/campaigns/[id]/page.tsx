@@ -24,7 +24,7 @@ type TouchpointType = "call" | "sms" | "email" | "wait";
 type TargetFilter = {
   audience?: string;
   message_template?: string;
-  schedule?: string | null;
+  schedule?: string | null | { start_at?: string | null; business_hours_only?: boolean; daily_limit?: number; hourly_throttle?: number };
   schedule_type?: "manual" | "once" | "recurring" | "trigger";
   audience_statuses?: string[];
   audience_source?: string;
@@ -422,7 +422,7 @@ export default function CampaignDetailPage() {
                   {tf?.schedule_type ? tf.schedule_type.replace(/_/g, " ") : "—"}
                 </p>
               </div>
-              {tf?.schedule && (
+              {tf?.schedule && typeof tf.schedule === "string" && (
                 <div>
                   <p className="text-[11px] text-[var(--text-tertiary)] uppercase tracking-wide">
                     Schedule
@@ -464,6 +464,31 @@ export default function CampaignDetailPage() {
                 {typeof tf?.audience_not_contacted_days === "number" && (
                   <li>
                     <span className="text-[var(--text-tertiary)]">Not Contacted for:</span> {tf.audience_not_contacted_days} days
+                  </li>
+                )}
+              </ul>
+            </section>
+          )}
+
+          {(tf?.schedule && typeof tf.schedule === "object" && (tf.schedule.business_hours_only !== undefined || tf.schedule.daily_limit !== undefined || tf.schedule.hourly_throttle !== undefined)) && (
+            <section>
+              <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-3">
+                Schedule & Limits
+              </h2>
+              <ul className="space-y-2 text-sm text-[var(--text-primary)]">
+                {typeof tf.schedule.business_hours_only === "boolean" && (
+                  <li>
+                    <span className="text-[var(--text-tertiary)]">Business Hours:</span> {tf.schedule.business_hours_only ? "Enabled" : "Disabled"}
+                  </li>
+                )}
+                {typeof tf.schedule.daily_limit === "number" && (
+                  <li>
+                    <span className="text-[var(--text-tertiary)]">Daily Limit:</span> {tf.schedule.daily_limit} contacts
+                  </li>
+                )}
+                {typeof tf.schedule.hourly_throttle === "number" && (
+                  <li>
+                    <span className="text-[var(--text-tertiary)]">Hourly Throttle:</span> {tf.schedule.hourly_throttle} per hour
                   </li>
                 )}
               </ul>
