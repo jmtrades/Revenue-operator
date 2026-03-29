@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Building2, Plus, Trash2, Eye } from "lucide-react";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 interface SubAccount {
   id: string;
@@ -153,6 +154,7 @@ export default function AgencyPage() {
 
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto">
+      <Breadcrumbs items={[{ label: t("common.home"), href: "/app" }, { label: t("dashboard.title", { defaultValue: "Agency" }) }]} />
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <div>

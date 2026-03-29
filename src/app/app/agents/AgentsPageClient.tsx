@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import {
   BellRing,
   Calendar,
@@ -1151,6 +1152,7 @@ export default function AppAgentsPageClient({
   return (
     <div className="relative max-w-5xl mx-auto p-4 md:p-6 overflow-x-hidden min-w-0">
       {showConfetti && <Confetti key="agent-activate-confetti" />}
+      <Breadcrumbs items={[{ label: tAgents("breadcrumbHome"), href: "/app" }, { label: tAgents("breadcrumbOperators") }]} />
       <div className="flex items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="text-lg md:text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{tAgents("pageHeading")}</h1>

@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useWorkspaceSafe } from "@/components/WorkspaceContext";
 import {
   Trophy,
@@ -237,9 +239,11 @@ export default function RevenueDigestPage() {
   const atRiskFmt = `$${(digest.revenue.at_risk_cents / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
   const projectionFmt = `$${(digest.revenue.projected_month_end_cents / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
 
+  const t = useTranslations();
   return (
     <div className="min-h-screen bg-[var(--bg-base)]">
       <div className="max-w-6xl mx-auto p-4 md:p-8">
+        <Breadcrumbs items={[{ label: t("common.home"), href: "/app" }, { label: "Reports" }]} />
         {/* ════════════════════════════════════════════════════════════
             REPORT HEADER
             ════════════════════════════════════════════════════════════ */}

@@ -5,6 +5,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Search, ChevronLeft, ChevronRight, PhoneCall, Play, FileText, MessageSquare, UserPlus, Flag, Brain, AlertCircle, Smile, Frown, Minus } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
@@ -301,6 +302,7 @@ export default function CallsPage() {
 
   return (
     <div className="p-6 md:p-8 max-w-6xl mx-auto">
+      <Breadcrumbs items={[{ label: t("common.home"), href: "/app" }, { label: t("calls.heading", { defaultValue: "Calls" }) }]} />
       <div className="flex items-center justify-between gap-3 mb-6 flex-wrap">
         <div>
           <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)] flex items-center gap-2">

@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { getDb } from "@/lib/db/queries";
 import { createClient } from "@/lib/supabase/server";
 import { getSessionFromCookie } from "@/lib/auth/session";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import AgentsPageClient from "./AgentsPageClient";
 
 type InitialFallbackAgent = {
