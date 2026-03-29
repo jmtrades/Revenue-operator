@@ -668,11 +668,10 @@ export function UnifiedDashboard() {
           >
             <div className="flex items-center justify-between mb-3">
               <div
-                className="w-9 h-9 rounded-xl flex items-center justify-center ring-1"
+                className="w-9 h-9 rounded-xl flex items-center justify-center"
                 style={{
                   background: `color-mix(in srgb, ${k.accent} 8%, transparent)`,
-                  boxShadow: `0 1px 4px color-mix(in srgb, ${k.accent} 8%, transparent)`,
-                  ringColor: `color-mix(in srgb, ${k.accent} 12%, transparent)`,
+                  boxShadow: `0 1px 4px color-mix(in srgb, ${k.accent} 8%, transparent), inset 0 0 0 1px color-mix(in srgb, ${k.accent} 12%, transparent)`,
                 }}
               >
                 <k.icon className="w-[18px] h-[18px]" style={{ color: k.accent }} strokeWidth={1.75} />
