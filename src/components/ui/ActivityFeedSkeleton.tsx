@@ -4,7 +4,7 @@
 export function ActivityFeedSkeleton() {
   const bar = (width: string) => (
     <div
-      className="animate-pulse rounded"
+      className="skeleton-shimmer rounded"
       style={{ background: "var(--border-default)", minHeight: 12, width }}
       aria-hidden
     />
@@ -15,7 +15,7 @@ export function ActivityFeedSkeleton() {
         {[1, 2, 3, 4, 5].map((i) => (
           <div
             key={i}
-            className="h-8 rounded-full animate-pulse shrink-0"
+            className="h-8 rounded-full skeleton-shimmer shrink-0"
             style={{ width: 80, background: "var(--border-default)" }}
           />
         ))}

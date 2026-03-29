@@ -31,7 +31,7 @@ export function ReadinessChecklist() {
       .finally(() => setLoading(false));
   }, [workspaceId]);
 
-  if (loading) return <div className="animate-pulse h-48 rounded-2xl bg-[var(--bg-surface)]" />;
+  if (loading) return <div className="skeleton-shimmer h-48 rounded-2xl bg-[var(--bg-surface)]" />;
 
   const passed = items.filter((i) => i.passed).length;
   const total = items.length;

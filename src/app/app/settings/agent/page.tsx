@@ -323,7 +323,7 @@ export default function AppSettingsAgentPage() {
 
   if (loading) {
     return (
-      <div className="max-w-[600px] mx-auto p-4 md:p-6 space-y-6 animate-pulse">
+      <div className="max-w-[600px] mx-auto p-4 md:p-6 space-y-6 skeleton-shimmer">
         <div className="h-6 w-48 bg-[var(--bg-inset)] rounded" />
         <div className="h-4 w-full max-w-md bg-[var(--bg-inset)] rounded" />
         <div className="space-y-4">

@@ -160,7 +160,7 @@ export default function MessagesPage() {
           {loading ? (
             <div className="p-4 space-y-2">
               {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="rounded animate-pulse py-3" style={{ background: "var(--border)" }}>
+                <div key={i} className="rounded skeleton-shimmer py-3" style={{ background: "var(--border)" }}>
                   <div className="h-3 rounded mb-1.5" style={{ background: "var(--border)", width: "70%" }} />
                   <div className="h-2.5 rounded" style={{ background: "var(--border)", width: "50%" }} />
                 </div>

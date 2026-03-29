@@ -225,7 +225,7 @@ export function DNCManagementCard() {
       {loading ? (
         <div className="space-y-2">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-14 rounded-lg bg-[var(--bg-hover)] animate-pulse" />
+            <div key={i} className="h-14 rounded-lg bg-[var(--bg-hover)] skeleton-shimmer" />
           ))}
         </div>
       ) : entries.length === 0 ? (

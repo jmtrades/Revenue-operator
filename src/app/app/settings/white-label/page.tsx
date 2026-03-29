@@ -90,7 +90,7 @@ export default function WhiteLabelSettingsPage() {
   if (loading) {
     return (
       <div className="p-6 md:p-8 max-w-6xl mx-auto">
-        <div className="animate-pulse">
+        <div className="skeleton-shimmer">
           <div className="h-8 w-64 bg-[var(--bg-inset)] rounded mb-6" />
           <div className="space-y-4">
             <div className="h-10 bg-[var(--bg-inset)] rounded" />

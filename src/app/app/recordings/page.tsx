@@ -369,7 +369,7 @@ export default function RecordingsPage() {
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="h-24 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] animate-pulse" />
+              <div key={i} className="h-24 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] skeleton-shimmer" />
             ))}
           </div>
         ) : error ? (

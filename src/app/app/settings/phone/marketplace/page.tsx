@@ -305,7 +305,7 @@ export default function PhoneMarketplacePage() {
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] animate-pulse"
+                  className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] skeleton-shimmer"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-4">
                     <div className="flex items-center gap-3 flex-1">

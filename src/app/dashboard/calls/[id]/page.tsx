@@ -81,7 +81,7 @@ export default function CallRecordDetailPage() {
     return (
       <div className="p-8 max-w-4xl">
         <PageHeader title={tc("loadingTitle")} subtitle={t("loadingMessage")} />
-        <div className="h-32 rounded-lg animate-pulse" style={{ background: "var(--bg-elevated)" }} />
+        <div className="h-32 rounded-lg skeleton-shimmer" style={{ background: "var(--bg-elevated)" }} />
       </div>
     );
   }

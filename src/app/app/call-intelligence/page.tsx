@@ -522,8 +522,8 @@ export default function CallIntelligencePage() {
             </div>
             {loading && callExamples.length === 0 ? (
               <div className="py-6 flex flex-col items-center justify-center text-center">
-                <div className="h-8 w-48 rounded-xl bg-[var(--bg-inset)] animate-pulse mb-3" />
-                <div className="h-4 w-32 rounded-xl bg-[var(--bg-inset)] animate-pulse" />
+                <div className="h-8 w-48 rounded-xl bg-[var(--bg-inset)] skeleton-shimmer mb-3" />
+                <div className="h-4 w-32 rounded-xl bg-[var(--bg-inset)] skeleton-shimmer" />
               </div>
             ) : callExamples.length === 0 ? (
               <div className="py-8 px-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]/50 text-center">
@@ -754,8 +754,8 @@ export default function CallIntelligencePage() {
             </h2>
             {loading && callInsights.length === 0 ? (
               <div className="py-8 flex flex-col items-center justify-center text-center">
-                <div className="h-8 w-48 rounded bg-[var(--bg-inset)] animate-pulse mb-3" />
-                <div className="h-4 w-32 rounded bg-[var(--bg-inset)] animate-pulse" />
+                <div className="h-8 w-48 rounded bg-[var(--bg-inset)] skeleton-shimmer mb-3" />
+                <div className="h-4 w-32 rounded bg-[var(--bg-inset)] skeleton-shimmer" />
               </div>
             ) : Object.keys(insightsByCategory).length === 0 ? (
               <p className="text-sm text-[var(--text-tertiary)] py-6">

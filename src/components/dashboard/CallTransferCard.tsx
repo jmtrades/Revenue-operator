@@ -142,7 +142,7 @@ export function CallTransferCard() {
       {loading ? (
         <div className="space-y-2">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-16 rounded-lg bg-[var(--bg-hover)] animate-pulse" />
+            <div key={i} className="h-16 rounded-lg bg-[var(--bg-hover)] skeleton-shimmer" />
           ))}
         </div>
       ) : transfers.length === 0 ? (

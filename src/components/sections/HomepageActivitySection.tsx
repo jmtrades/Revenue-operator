@@ -7,7 +7,7 @@ const HomepageActivityPreview = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="w-full max-w-[900px] mx-auto rounded-2xl h-64 bg-[var(--bg-card)]/50 border border-[var(--border-default)] animate-pulse" aria-hidden />
+      <div className="w-full max-w-[900px] mx-auto rounded-2xl h-64 bg-[var(--bg-card)]/50 border border-[var(--border-default)] skeleton-shimmer" aria-hidden />
     ),
   }
 );

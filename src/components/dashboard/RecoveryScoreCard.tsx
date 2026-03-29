@@ -27,14 +27,14 @@ interface RecoveryScoreCardProps {
 
 function CardSkeleton() {
   return (
-    <div className="dash-section p-6 md:p-8 animate-pulse">
-      <div className="h-6 w-48 rounded bg-[var(--bg-hover)] mb-6" />
+    <div className="dash-section p-6 md:p-8">
+      <div className="h-6 w-48 rounded bg-[var(--bg-hover)] mb-6 skeleton-shimmer" />
       <div className="flex items-center justify-center mb-8">
-        <div className="w-32 h-32 rounded-full bg-[var(--bg-hover)]" />
+        <div className="w-32 h-32 rounded-full bg-[var(--bg-hover)] skeleton-shimmer" />
       </div>
       <div className="space-y-4">
-        <div className="h-5 w-full rounded bg-[var(--bg-hover)]" />
-        <div className="h-5 w-3/4 rounded bg-[var(--bg-hover)]" />
+        <div className="h-5 w-full rounded bg-[var(--bg-hover)] skeleton-shimmer" />
+        <div className="h-5 w-3/4 rounded bg-[var(--bg-hover)] skeleton-shimmer" />
       </div>
     </div>
   );

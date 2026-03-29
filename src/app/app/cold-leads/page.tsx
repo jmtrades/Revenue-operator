@@ -553,7 +553,7 @@ export default function ColdLeadsPage() {
 
       {/* Table or Empty State */}
       {loading ? (
-        <div className="animate-pulse space-y-3">
+        <div className="skeleton-shimmer space-y-3">
           {[...Array(5)].map((_, i) => (
             <div
               key={i}

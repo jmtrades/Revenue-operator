@@ -5,7 +5,7 @@ export function ContactsListSkeleton() {
   return (
     <div className="space-y-4" aria-hidden>
       <div
-        className="h-10 rounded-lg animate-pulse max-w-md"
+        className="h-10 rounded-lg skeleton-shimmer max-w-md"
         style={{ background: "var(--border-default)" }}
       />
       <ul className="space-y-2">
@@ -16,16 +16,16 @@ export function ContactsListSkeleton() {
             style={{ borderColor: "var(--border-default)", background: "var(--surface-card)" }}
           >
             <div
-              className="h-8 w-8 rounded-full animate-pulse shrink-0"
+              className="h-8 w-8 rounded-full skeleton-shimmer shrink-0"
               style={{ background: "var(--border-default)" }}
             />
             <div className="flex-1 space-y-1.5 min-w-0">
               <div
-                className="h-4 animate-pulse rounded"
+                className="h-4 skeleton-shimmer rounded"
                 style={{ background: "var(--border-default)", width: "40%" }}
               />
               <div
-                className="h-3 animate-pulse rounded"
+                className="h-3 skeleton-shimmer rounded"
                 style={{ background: "var(--border-default)", width: "60%" }}
               />
             </div>

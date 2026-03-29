@@ -149,7 +149,7 @@ export default function AppSettingsCompliancePage() {
             {tSettings("compliance.consentDescription")}
           </p>
           {consentLoading ? (
-            <div className="h-20 rounded-xl bg-[var(--bg-inset)] animate-pulse" />
+            <div className="h-20 rounded-xl bg-[var(--bg-inset)] skeleton-shimmer" />
           ) : (
             <>
               <div className="space-y-2 mb-3">

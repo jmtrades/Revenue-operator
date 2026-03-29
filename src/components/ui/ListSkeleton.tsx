@@ -12,7 +12,7 @@ export function ListSkeleton({ rows = 5, header }: ListSkeletonProps) {
     <div className="space-y-3" aria-hidden>
       {header && (
         <div
-          className="h-5 w-24 rounded animate-pulse"
+          className="h-5 w-24 rounded skeleton-shimmer"
           style={{ background: "var(--border-default)" }}
         />
       )}
@@ -24,11 +24,11 @@ export function ListSkeleton({ rows = 5, header }: ListSkeletonProps) {
             style={{ borderColor: "var(--border-default)" }}
           >
             <div
-              className="h-4 rounded animate-pulse mb-1.5"
+              className="h-4 rounded skeleton-shimmer mb-1.5"
               style={{ background: "var(--border-default)", width: i % 2 === 0 ? "60%" : "45%" }}
             />
             <div
-              className="h-3 rounded animate-pulse"
+              className="h-3 rounded skeleton-shimmer"
               style={{ background: "var(--border-default)", width: "35%" }}
             />
           </li>

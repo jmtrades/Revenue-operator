@@ -27,9 +27,9 @@ const EMPTY_RECOMMENDATIONS: Recommendation[] = [];
 
 function RecommendationSkeleton() {
   return (
-    <div className="space-y-2 animate-pulse">
+    <div className="space-y-2">
       {[...Array(3)].map((_, i) => (
-        <div key={i} className="h-24 rounded-lg bg-[var(--bg-hover)]" />
+        <div key={i} className="h-24 rounded-lg bg-[var(--bg-hover)] skeleton-shimmer" />
       ))}
     </div>
   );
@@ -93,7 +93,7 @@ export function RecommendationsCard({ workspaceId: propsWorkspaceId }: { workspa
   if (loading) {
     return (
       <div className="dash-section p-5 md:p-6">
-        <div className="h-5 w-40 rounded bg-[var(--bg-hover)] mb-4" />
+        <div className="h-5 w-40 rounded bg-[var(--bg-hover)] mb-4 skeleton-shimmer" />
         <RecommendationSkeleton />
       </div>
     );

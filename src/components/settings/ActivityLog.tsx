@@ -48,11 +48,11 @@ function ActivitySkeleton() {
   return (
     <div className="space-y-4">
       {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="flex gap-4 animate-pulse">
-          <div className="w-10 h-10 rounded-lg bg-[var(--bg-hover)]" />
+        <div key={i} className="flex gap-4">
+          <div className="w-10 h-10 rounded-lg bg-[var(--bg-hover)] skeleton-shimmer" />
           <div className="flex-1 space-y-2">
-            <div className="h-4 w-48 bg-[var(--bg-hover)] rounded" />
-            <div className="h-3 w-32 bg-[var(--bg-hover)] rounded" />
+            <div className="h-4 w-48 bg-[var(--bg-hover)] rounded skeleton-shimmer" />
+            <div className="h-3 w-32 bg-[var(--bg-hover)] rounded skeleton-shimmer" />
           </div>
         </div>
       ))}

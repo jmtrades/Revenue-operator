@@ -84,7 +84,7 @@ export default function DashboardBillingPage() {
     return (
       <div className="p-6 max-w-lg space-y-4">
         <PageHeader title={t("pages.billing.title")} subtitle={t("pages.billing.subtitleShort")} />
-        <div className="rounded-xl border p-4 space-y-3 animate-pulse" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+        <div className="rounded-xl border p-4 space-y-3 skeleton-shimmer" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
           <div className="h-4 w-32 rounded" style={{ background: "var(--border-default)" }} />
           <div className="h-3 w-full rounded" style={{ background: "var(--border-default)" }} />
           <div className="h-3 w-3/4 rounded" style={{ background: "var(--border-default)" }} />

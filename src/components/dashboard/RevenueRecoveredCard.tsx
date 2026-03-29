@@ -51,13 +51,13 @@ export function RevenueRecoveredCard() {
 
   if (loading) {
     return (
-      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 animate-pulse">
-        <div className="h-8 bg-[var(--bg-hover)] rounded w-40 mb-4" />
-        <div className="h-16 bg-[var(--bg-hover)] rounded mb-4" />
+      <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
+        <div className="h-8 bg-[var(--bg-hover)] rounded w-40 mb-4 skeleton-shimmer" />
+        <div className="h-16 bg-[var(--bg-hover)] rounded mb-4 skeleton-shimmer" />
         <div className="grid grid-cols-3 gap-2">
-          <div className="h-12 bg-[var(--bg-hover)] rounded" />
-          <div className="h-12 bg-[var(--bg-hover)] rounded" />
-          <div className="h-12 bg-[var(--bg-hover)] rounded" />
+          <div className="h-12 bg-[var(--bg-hover)] rounded skeleton-shimmer" />
+          <div className="h-12 bg-[var(--bg-hover)] rounded skeleton-shimmer" />
+          <div className="h-12 bg-[var(--bg-hover)] rounded skeleton-shimmer" />
         </div>
       </div>
     );

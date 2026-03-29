@@ -124,11 +124,11 @@ export function WorkspaceSettingsCard() {
       <div className="dash-section p-5 md:p-6">
         <div className="flex items-center gap-2 mb-4">
           <Settings className="w-4 h-4 text-[var(--text-disabled)]" />
-          <div className="h-4 w-32 bg-[var(--bg-hover)] rounded animate-pulse" />
+          <div className="h-4 w-32 bg-[var(--bg-hover)] rounded skeleton-shimmer" />
         </div>
         <div className="space-y-3">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-10 rounded-lg bg-[var(--bg-hover)] animate-pulse" />
+            <div key={i} className="h-10 rounded-lg bg-[var(--bg-hover)] skeleton-shimmer" />
           ))}
         </div>
       </div>
