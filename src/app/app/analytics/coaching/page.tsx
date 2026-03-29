@@ -8,7 +8,8 @@ export default function CoachingAnalyticsPage() {
   const t = useTranslations("common");
 
   useEffect(() => {
-    document.title = `Coaching Analytics — ${t("appName")}`;
+    document.title = t("coaching.pageTitle", { defaultValue: "Coaching Analytics — Recall Touch" });
+    return () => { document.title = ""; };
   }, [t]);
 
   return (
