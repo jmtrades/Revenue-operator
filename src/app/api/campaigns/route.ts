@@ -5,6 +5,7 @@ import { log } from "@/lib/logger";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { parseBody, workspaceIdSchema, safeStringSchema, dialerModeSchema, campaignStatusSchema } from "@/lib/api/validate";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 
 const createCampaignSchema = z.object({
@@ -92,6 +93,10 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const csrfBlock = assertSameOrigin(request);
   if (csrfBlock) return csrfBlock;
+
+  // Rate limit: 10 campaign creates per minute per IP
+  const rl = await checkRateLimit(`campaign_create:${getClientIp(request)}`, 10, 60_000);
+  if (!rl.allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 
   try {
     const parsed = await parseBody(request, createCampaignSchema);

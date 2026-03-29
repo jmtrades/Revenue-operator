@@ -6,6 +6,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { createWebhookEndpoint, sendTestEvent } from "@/lib/integrations/webhook-events";
 import { parseBody, workspaceIdSchema, safeUrlSchema, safeStringSchema, webhookEventSchema } from "@/lib/api/validate";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 const createWebhookSchema = z.object({
   action: z.string().max(20).optional(),
@@ -110,6 +111,10 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   const csrfBlock = assertSameOrigin(request);
   if (csrfBlock) return csrfBlock;
+
+  // Rate limit: 20 webhook creates/tests per minute per IP
+  const rl = await checkRateLimit(`webhook_create:${getClientIp(request)}`, 20, 60_000);
+  if (!rl.allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 
   try {
     const parsed = await parseBody(request, createWebhookSchema);

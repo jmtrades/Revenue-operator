@@ -13,6 +13,7 @@ import { isSessionEnabled } from "@/lib/auth/session";
 import { log } from "@/lib/logger";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { parseBody, safeStringSchema } from "@/lib/api/validate";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 const createWorkspaceSchema = z.object({
   name: safeStringSchema(100).min(1, "Workspace name is required"),
@@ -55,6 +56,10 @@ export async function POST(request: NextRequest) {
   if (process.env.NODE_ENV === "production" && !isSessionEnabled()) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  // Rate limit: 5 workspace creates per minute per IP
+  const rl = await checkRateLimit(`workspace_create:${getClientIp(request)}`, 5, 60_000);
+  if (!rl.allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 
   const parsed = await parseBody(request, createWorkspaceSchema);
   if ("error" in parsed) return parsed.error;
