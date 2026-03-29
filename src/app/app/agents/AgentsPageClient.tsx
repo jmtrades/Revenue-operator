@@ -1177,18 +1177,18 @@ export default function AppAgentsPageClient({
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(320px,1fr)] gap-4 lg:gap-6 items-stretch lg:min-h-[480px]">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 content-start">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 animate-pulse" aria-hidden>
-                <div className="h-4 w-3/4 rounded bg-[var(--border-default)] mb-3" />
-                <div className="h-3 w-1/2 rounded bg-[var(--border-default)] mb-2" />
-                <div className="h-3 w-full rounded bg-[var(--border-default)] mb-2" />
-                <div className="h-3 w-2/3 rounded bg-[var(--border-default)]" />
+              <div key={i} className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 shadow-[var(--shadow-card)]" aria-hidden>
+                <div className="h-4 w-3/4 rounded skeleton-shimmer mb-3" />
+                <div className="h-3 w-1/2 rounded skeleton-shimmer mb-2" />
+                <div className="h-3 w-full rounded skeleton-shimmer mb-2" />
+                <div className="h-3 w-2/3 rounded skeleton-shimmer" />
               </div>
             ))}
           </div>
-          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 animate-pulse" aria-hidden>
-            <div className="h-4 w-1/3 rounded bg-[var(--border-default)] mb-4" />
-            <div className="h-20 rounded bg-[var(--border-default)] mb-4" />
-            <div className="h-32 rounded bg-[var(--border-default)]" />
+          <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 shadow-[var(--shadow-card)]" aria-hidden>
+            <div className="h-4 w-1/3 rounded skeleton-shimmer mb-4" />
+            <div className="h-20 rounded skeleton-shimmer mb-4" />
+            <div className="h-32 rounded skeleton-shimmer" />
           </div>
         </div>
       ) : (
