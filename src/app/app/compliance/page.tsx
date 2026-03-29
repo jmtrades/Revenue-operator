@@ -143,14 +143,14 @@ export default function CompliancePage() {
             {BUILT_IN_STANDARDS.map((std) => (
               <div
                 key={std.id}
-                className="rounded-xl border p-4 flex flex-col bg-emerald-500/5 border-emerald-500/20"
+                className="rounded-xl border p-4 flex flex-col bg-[var(--accent-primary)]/5 border-[var(--accent-primary)]/20"
               >
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <span className="font-medium text-[var(--text-primary)]">{std.name}</span>
-                  <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
+                  <ShieldCheck className="w-5 h-5 text-[var(--accent-primary)] shrink-0" />
                 </div>
                 <p className="text-xs text-[var(--text-secondary)] leading-relaxed">{std.description}</p>
-                <span className="inline-flex self-start mt-3 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-300">
+                <span className="inline-flex self-start mt-3 px-2 py-0.5 rounded-full text-xs font-medium bg-[var(--accent-primary)]/20 text-[var(--accent-primary)]">
                   {t("statusCompliant")}
                 </span>
               </div>
@@ -201,7 +201,7 @@ export default function CompliancePage() {
                       role="switch"
                       aria-checked={policies.piiRedaction}
                       onClick={() => setPolicies((p) => ({ ...p, piiRedaction: !p.piiRedaction }))}
-                      className={`relative w-10 h-6 rounded-full transition-colors ${policies.piiRedaction ? "bg-emerald-600" : "bg-[var(--border-medium)]"}`}
+                      className={`relative w-10 h-6 rounded-full transition-colors ${policies.piiRedaction ? "bg-[var(--accent-primary)]" : "bg-[var(--border-medium)]"}`}
                     >
                       <span className={`absolute top-1 w-4 h-4 rounded-full bg-[var(--text-primary)] transition-transform ${policies.piiRedaction ? "left-5" : "left-1"}`} />
                     </button>
@@ -213,7 +213,7 @@ export default function CompliancePage() {
                       role="switch"
                       aria-checked={policies.autoTranscribe}
                       onClick={() => setPolicies((p) => ({ ...p, autoTranscribe: !p.autoTranscribe }))}
-                      className={`relative w-10 h-6 rounded-full transition-colors ${policies.autoTranscribe ? "bg-emerald-600" : "bg-[var(--border-medium)]"}`}
+                      className={`relative w-10 h-6 rounded-full transition-colors ${policies.autoTranscribe ? "bg-[var(--accent-primary)]" : "bg-[var(--border-medium)]"}`}
                     >
                       <span className={`absolute top-1 w-4 h-4 rounded-full bg-[var(--text-primary)] transition-transform ${policies.autoTranscribe ? "left-5" : "left-1"}`} />
                     </button>

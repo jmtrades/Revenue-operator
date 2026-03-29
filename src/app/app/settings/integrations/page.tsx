@@ -410,7 +410,7 @@ export default function AppSettingsIntegrationsPage() {
               <span>{t("hub.recordsSyncedLabel")} {crmStatus?.global.recordsSynced ?? 0}</span>
             </div>
             {(crmStatus?.global.errors ?? 0) > 0 && (
-              <div className="flex items-center gap-2 text-sm text-amber-400">
+              <div className="flex items-center gap-2 text-sm text-[var(--accent-warning,#f59e0b)]">
                 <AlertCircle className="w-4 h-4" aria-hidden />
                 <span>{crmStatus?.global.errors ?? 0} {(crmStatus?.global.errors ?? 0) !== 1 ? t("hub.syncErrors") : t("hub.syncError")}</span>
               </div>
@@ -439,15 +439,15 @@ export default function AppSettingsIntegrationsPage() {
                       <Icon className="w-5 h-5 text-[var(--text-tertiary)]" aria-hidden />
                     </div>
                     <div className="flex flex-col gap-1 items-end">
-                      <span className="px-1.5 py-0.5 rounded-full text-xs bg-blue-500/20 text-blue-400 shrink-0">
+                      <span className="px-1.5 py-0.5 rounded-full text-xs bg-[var(--accent-primary)]/20 text-[var(--accent-primary)] shrink-0">
                         {t("status.beta")}
                       </span>
                       {crm.comingSoon ? (
-                        <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-amber-500/40 text-amber-400 shrink-0">
+                        <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-[var(--accent-warning,#f59e0b)]/40 text-[var(--accent-warning,#f59e0b)] shrink-0">
                           {t("comingSoon")}
                         </span>
                       ) : connected ? (
-                        <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-green-500/30 text-green-400 shrink-0">
+                        <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-[var(--accent-primary)]/30 text-[var(--accent-primary)] shrink-0">
                           {t("status.connected")}
                         </span>
                       ) : (
@@ -469,7 +469,7 @@ export default function AppSettingsIntegrationsPage() {
                       <div className="flex items-center gap-2">
                         <span className="text-[11px] text-[var(--text-secondary)]"><span className="font-medium">{t("label.synced")}:</span> {status?.recordsSynced ?? 0} {t("label.records")}</span>
                         {(status?.errorCount ?? 0) > 0 && (
-                          <span className="text-[10px] font-medium text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded">
+                          <span className="text-[10px] font-medium text-[var(--accent-warning,#f59e0b)] bg-[var(--accent-warning,#f59e0b)]/10 px-1.5 py-0.5 rounded">
                             {t("label.errors", { count: status?.errorCount ?? 0 })}
                           </span>
                         )}
@@ -538,7 +538,7 @@ export default function AppSettingsIntegrationsPage() {
                           type="button"
                           onClick={() => setConfirmDisconnect(crm.id)}
                           disabled={disconnectingProvider === crm.id}
-                          className="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-medium border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-[background-color,border-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed"
+                          className="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-medium border border-[var(--accent-danger,#ef4444)]/30 text-[var(--accent-danger,#ef4444)] hover:bg-[var(--accent-danger,#ef4444)]/10 transition-[background-color,border-color,color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] disabled:opacity-60 disabled:cursor-not-allowed"
                         >
                           {disconnectingProvider === crm.id ? (
                             <Loader className="w-3 h-3 animate-spin" />
@@ -579,7 +579,7 @@ export default function AppSettingsIntegrationsPage() {
                   <p className="text-xs text-[var(--text-secondary)] mt-1">{t("hub.calendarDesc")}</p>
                 </div>
                 {googleCalendarConnected ? (
-                  <span className="px-3 py-1.5 rounded-xl text-xs font-medium border border-green-500/30 text-green-400">
+                  <span className="px-3 py-1.5 rounded-xl text-xs font-medium border border-[var(--accent-primary)]/30 text-[var(--accent-primary)]">
                     {t("status.connected")}
                   </span>
                 ) : (
@@ -763,7 +763,7 @@ export default function AppSettingsIntegrationsPage() {
               <button
                 type="button"
                 onClick={() => handleDisconnect(confirmDisconnect)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 text-white hover:bg-red-700"
+                className="px-4 py-2 rounded-xl text-xs font-semibold bg-[var(--accent-danger,#ef4444)] text-white hover:opacity-90"
               >
                 {t("button.disconnect")}
               </button>
