@@ -16,6 +16,7 @@ import {
   Brain,
   BookOpen,
   CalendarDays,
+  RotateCcw,
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { scaleIn } from "@/lib/animations";
@@ -41,9 +42,11 @@ const STATIC_ITEM_KEYS: Array<{ id: string; labelKey: string; icon: ComponentTyp
   { id: "page-calls", labelKey: "page.calls", icon: PhoneCall, href: "/app/calls", section: "Pages" },
   { id: "page-leads", labelKey: "page.leads", icon: Users, href: "/app/leads", section: "Pages" },
   { id: "page-campaigns", labelKey: "page.campaigns", icon: Mail, href: "/app/campaigns", section: "Pages" },
+  { id: "page-follow-ups", labelKey: "page.followUps", icon: CalendarDays, href: "/app/follow-ups", section: "Pages" },
   { id: "page-inbox", labelKey: "page.inbox", icon: Mail, href: "/app/inbox", section: "Pages" },
   { id: "page-appointments", labelKey: "page.appointments", icon: CalendarDays, href: "/app/appointments", section: "Pages" },
   { id: "page-analytics", labelKey: "page.analytics", icon: BarChart3, href: "/app/analytics", section: "Pages" },
+  { id: "page-reactivation", labelKey: "page.reactivation", icon: RotateCcw, href: "/app/cold-leads", section: "Pages" },
   { id: "page-call-intelligence", labelKey: "page.callIntelligence", icon: Brain, href: "/app/call-intelligence", section: "Pages" },
   { id: "page-knowledge", labelKey: "page.knowledge", icon: BookOpen, href: "/app/knowledge", section: "Pages" },
   { id: "page-team", labelKey: "page.team", icon: Users, href: "/app/team", section: "Pages" },

@@ -132,8 +132,13 @@ interface StatsBarProps extends StatsProps {
 }
 
 function StatsBar({ total, pending, inProgress, reengaged, exhausted, t }: StatsBarProps) {
+  const recoverableRevenue = (pending + inProgress) * 150;
+  const recoveryRate = reengaged + exhausted > 0
+    ? Math.round((reengaged / (reengaged + exhausted)) * 100)
+    : 0;
+
   return (
-    <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+    <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-6">
       <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-3">
         <p className="text-xs text-[var(--text-secondary)] font-medium">{t("stats.totalColdLeads")}</p>
         <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">{total}</p>
@@ -151,8 +156,12 @@ function StatsBar({ total, pending, inProgress, reengaged, exhausted, t }: Stats
         <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">{reengaged}</p>
       </div>
       <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-3">
-        <p className="text-xs text-[var(--text-secondary)] font-medium">{t("stats.exhausted")}</p>
-        <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">{exhausted}</p>
+        <p className="text-xs text-[var(--text-secondary)] font-medium">Recoverable</p>
+        <p className="text-lg font-semibold text-[#10b981] mt-1">~${recoverableRevenue.toLocaleString()}</p>
+      </div>
+      <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-3">
+        <p className="text-xs text-[var(--text-secondary)] font-medium">Recovery Rate</p>
+        <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">{recoveryRate}%</p>
       </div>
     </div>
   );
@@ -463,6 +472,18 @@ export default function ColdLeadsPage() {
         </p>
       </div>
 
+      {/* Reactivation Engine Status Banner */}
+      <div className="mb-6 rounded-xl border border-[#10b981]/20 bg-[#10b981]/5 px-4 py-3 flex items-center gap-2">
+        <div className="w-2 h-2 rounded-full bg-[#10b981] animate-pulse"></div>
+        <p className="text-sm text-[var(--text-primary)]">
+          <span className="font-medium">Reactivation engine active</span>
+          {' · '}
+          <span>{stats.pending} leads in queue</span>
+          {' · '}
+          <span className="text-[var(--text-secondary)]">Next batch processes automatically</span>
+        </p>
+      </div>
+
       {/* Stats Bar */}
       <StatsBar
         total={stats.total}
@@ -579,10 +600,11 @@ export default function ColdLeadsPage() {
       ) : (
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] overflow-hidden">
           {/* Table Header */}
-          <div className="hidden md:grid grid-cols-[2fr,1fr,1fr,1fr,1fr,1fr,1fr,0.5fr] gap-4 px-4 py-3 border-b border-[var(--border-default)] bg-[var(--bg-inset)] text-xs font-medium text-[var(--text-secondary)]">
+          <div className="hidden md:grid grid-cols-[2fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,0.5fr] gap-4 px-4 py-3 border-b border-[var(--border-default)] bg-[var(--bg-inset)] text-xs font-medium text-[var(--text-secondary)]">
             <div>{t("table.lead")}</div>
             <div>{t("table.reason")}</div>
             <div>{t("table.priority")}</div>
+            <div>Stage</div>
             <div>{t("table.attempts")}</div>
             <div>{t("table.lastAttempt")}</div>
             <div>{t("table.nextAttempt")}</div>
@@ -595,7 +617,7 @@ export default function ColdLeadsPage() {
             {filtered.map((lead) => (
               <div
                 key={lead.id}
-                className="md:grid md:grid-cols-[2fr,1fr,1fr,1fr,1fr,1fr,1fr,0.5fr] gap-4 md:gap-4 px-4 py-4 hover:bg-[var(--bg-inset)]/30 transition-colors flex flex-col md:items-center"
+                className="md:grid md:grid-cols-[2fr,1fr,1fr,1fr,1fr,1fr,1fr,1fr,0.5fr] gap-4 md:gap-4 px-4 py-4 hover:bg-[var(--bg-inset)]/30 transition-colors flex flex-col md:items-center"
               >
                 {/* Lead Name / Contact */}
                 <div className="md:col-span-1">
@@ -622,6 +644,21 @@ export default function ColdLeadsPage() {
                   >
                     {lead.priority.charAt(0).toUpperCase() + lead.priority.slice(1)}
                   </span>
+                </div>
+
+                {/* Reactivation Stage */}
+                <div className="md:col-span-1 flex gap-1 items-center">
+                  {[...Array(6)].map((_, i) => (
+                    <div
+                      key={i}
+                      className={`w-2 h-2 rounded-full transition-colors ${
+                        i < lead.attempts
+                          ? "bg-[#10b981]"
+                          : "bg-[var(--border-default)]"
+                      }`}
+                      title={`Stage ${i} ${i < lead.attempts ? "(completed)" : "(pending)"}`}
+                    />
+                  ))}
                 </div>
 
                 {/* Attempts */}
@@ -859,6 +896,20 @@ export default function ColdLeadsPage() {
                   <option value="urgency">{t("strategy.urgency")}</option>
                   <option value="direct_close">{t("strategy.directClose")}</option>
                 </select>
+                {/* Strategy Explanation */}
+                <p className="text-xs text-[var(--text-secondary)] mt-2 leading-relaxed">
+                  {reengageDialog.strategy === "auto"
+                    ? "AI selects the best angle based on history"
+                    : reengageDialog.strategy === "value_first"
+                      ? "Lead with value proposition and outcomes"
+                      : reengageDialog.strategy === "clarification"
+                        ? "Check in and offer to clarify"
+                        : reengageDialog.strategy === "social_proof"
+                          ? "Share case studies and results"
+                          : reengageDialog.strategy === "urgency"
+                            ? "Create time-sensitive incentive"
+                            : "Final outreach before closing file"}
+                </p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
