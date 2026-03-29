@@ -347,7 +347,7 @@ function OnboardingWizard() {
         {step === 2 && (
           <div className="space-y-6">
             <div>
-              <h1 className="text-2xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>{t("meetReceptionist")}</h1>
+              <h1 className="text-2xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>{t("meetOperator")}</h1>
               <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("agentWillAnswerFor", { name: businessName || t("theBusiness") })}</p>
             </div>
 

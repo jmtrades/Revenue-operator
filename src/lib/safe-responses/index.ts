@@ -27,7 +27,7 @@ export function getSafeResponse(type: SensitiveType): string {
   return RESPONSES[type] ?? RESPONSES.pricing_request;
 }
 
-/** Escalation holding message: human receptionist handoff. */
+/** Escalation holding message: human operator handoff. */
 export function getEscalationHoldingMessage(): string {
   return "Let me grab the owner — they'll message you shortly.";
 }

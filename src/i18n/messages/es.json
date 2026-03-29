@@ -1597,7 +1597,7 @@
       "failedToSaveAgent": "Error al guardar el agente",
       "myBusiness": "Mi negocio",
       "theBusiness": "el negocio",
-      "meetReceptionist": "Conoce a tu recepcionista",
+      "meetOperator": "Conoce a tu operador",
       "agentWillAnswerFor": "Tu agente atenderá llamadas, capturará leads y reservará citas para {name}.",
       "agentName": "Nombre del agente",
       "voice": "Voz",

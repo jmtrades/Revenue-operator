@@ -1597,7 +1597,7 @@
       "failedToSaveAgent": "Échec de l'enregistrement de l'agent",
       "myBusiness": "Mon entreprise",
       "theBusiness": "l'entreprise",
-      "meetReceptionist": "Faites connaissance avec votre réceptionniste",
+      "meetOperator": "Faites connaissance avec votre opérateur",
       "agentWillAnswerFor": "Votre agent répondra aux appels, capturera les leads et prendra rendez-vous pour {name}.",
       "agentName": "Nom de l'agent",
       "voice": "Voix",

@@ -1605,7 +1605,7 @@
       "failedToSaveAgent": "Agent speichern fehlgeschlagen",
       "myBusiness": "Mein Unternehmen",
       "theBusiness": "das Unternehmen",
-      "meetReceptionist": "Lernen Sie Ihre Empfangsdame kennen",
+      "meetOperator": "Lernen Sie Ihren Operator kennen",
       "agentWillAnswerFor": "Ihr Agent nimmt Anrufe entgegen, erfasst Leads und bucht Termine für {name}.",
       "agentName": "Agentenname",
       "voice": "Stimme",

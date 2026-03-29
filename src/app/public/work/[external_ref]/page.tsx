@@ -87,7 +87,16 @@ export default function PublicWorkPage() {
   if (!externalRef || notFound) {
     return (
       <main className="min-h-screen flex items-center justify-center p-6" style={{ background: "var(--background)" }}>
-        <p className="text-lg" style={{ color: "var(--text-muted)" }}>Not found.</p>
+        <div className="text-center">
+          <p className="text-lg mb-4" style={{ color: "var(--text-muted)" }}>Not found.</p>
+          <a
+            href="/"
+            className="text-sm font-medium"
+            style={{ color: "var(--accent)" }}
+          >
+            Return to homepage
+          </a>
+        </div>
       </main>
     );
   }

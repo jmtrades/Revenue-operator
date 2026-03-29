@@ -74,7 +74,12 @@ export default function OutboundSettingsPage() {
         const oc = data?.settings?.outbound_config;
         if (oc && typeof oc === "object") setConfig({ ...DEFAULT_CONFIG, ...oc });
       })
-      .catch((err) => { /* silenced */ })
+      .catch((err) => {
+        if (!cancelled) {
+          setLoading(false);
+          toast.error(t("loadFailed"));
+        }
+      })
       .finally(() => {
         if (!cancelled) setLoading(false);
       });

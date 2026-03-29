@@ -61,7 +61,7 @@ const BATTLECARDS: Record<string, CompetitiveBattlecard> = {
   "smith.ai": {
     competitor: "Smith.ai",
     weaknesses: [
-      "Human receptionists — expensive ($300+/mo for 30 calls)",
+      "Human answering services — expensive ($300+/mo for 30 calls)",
       "Limited hours — not true 24/7",
       "Inconsistent quality depends on who picks up",
       "Long hold times during peak hours",

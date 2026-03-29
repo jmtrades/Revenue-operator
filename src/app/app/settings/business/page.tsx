@@ -87,7 +87,10 @@ export default function AppSettingsBusinessPage() {
           lastSavedRef.current = { ...lastSavedRef.current, timezone: data.timezone };
         }
       })
-      .catch((err) => { /* silenced */ });
+      .catch((err) => {
+        setLoading(false);
+        toast.error(tSettings("business.loadFailed"));
+      });
   }, []);
 
   const handleSave = async () => {

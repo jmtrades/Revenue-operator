@@ -24,8 +24,8 @@ export const RECALL_VOICES: RecallVoice[] = [
   {
     id: "us-female-warm-receptionist",
     name: "Sarah",
-    desc: "Warm receptionist",
-    description: "Warm & welcoming receptionist voice",
+    desc: "Warm professional",
+    description: "Warm & welcoming professional voice",
     accent: "American",
     gender: "female",
     age: "young",

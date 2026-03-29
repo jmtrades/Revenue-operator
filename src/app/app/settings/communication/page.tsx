@@ -50,7 +50,12 @@ export default function CommunicationSettingsPage() {
           setConfig({ ...DEFAULT_CONFIG, ...data });
         }
       })
-      .catch((err) => { /* silenced */ })
+      .catch((err) => {
+        if (!cancelled) {
+          setLoading(false);
+          toast.error(t("toast.error"));
+        }
+      })
       .finally(() => {
         if (!cancelled) setLoading(false);
       });

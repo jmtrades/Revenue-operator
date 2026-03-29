@@ -1,11 +1,11 @@
 /**
- * Preset system — vertical-based revenue receptionist config.
+ * Preset system — vertical-based revenue operator config.
  * User never configures; preset is applied when business type is selected.
  */
 
 import type { LeadState } from "@/lib/types";
 
-/** Display names for pipeline stages (receptionist language, no tech) */
+/** Display names for pipeline stages (operator language, no tech) */
 export const PIPELINE_STAGE_DISPLAY: Record<LeadState, string> = {
   NEW: "New Lead",
   CONTACTED: "Contacted",

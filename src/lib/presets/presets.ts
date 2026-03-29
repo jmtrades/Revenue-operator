@@ -8,7 +8,7 @@ import type { RevenuePreset } from "./types";
 /** Default preset: applies when no vertical selected or generic business */
 export const DEFAULT_PRESET: RevenuePreset = {
   id: "default",
-  name: "Revenue receptionist",
+  name: "Revenue operator",
   business_type: "general",
   pipeline_stages: ["NEW", "CONTACTED", "ENGAGED", "QUALIFIED", "BOOKED", "SHOWED", "WON", "LOST", "REACTIVATE", "RETAIN", "CLOSED"],
   automations: [

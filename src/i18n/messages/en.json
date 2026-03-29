@@ -1824,7 +1824,7 @@
       "failedToSaveAgent": "Failed to save agent",
       "myBusiness": "My Business",
       "theBusiness": "the business",
-      "meetReceptionist": "Meet your AI operator",
+      "meetOperator": "Meet your AI operator",
       "agentWillAnswerFor": "Your operator will answer calls, capture leads, and book appointments for {name}.",
       "agentName": "Agent name",
       "voice": "Voice",
