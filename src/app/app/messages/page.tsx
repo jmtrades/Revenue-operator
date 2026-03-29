@@ -7,6 +7,7 @@ import { Bot } from "lucide-react";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 type ApiThread = {
   lead_id: string;
@@ -215,6 +216,7 @@ export default function AppMessagesPage() {
 
   return (
     <div className="max-w-5xl mx-auto p-4 md:p-6">
+      <Breadcrumbs items={[{ label: t("common.home"), href: "/app" }, { label: t("title") }]} />
       <div className="flex items-center justify-between gap-3 mb-4">
         <h1 className="text-lg md:text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("title")}</h1>
       </div>

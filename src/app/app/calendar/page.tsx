@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
@@ -194,6 +195,7 @@ export default function AppCalendarPage() {
 
   return (
     <div className="relative max-w-5xl mx-auto p-4 md:p-6">
+      <Breadcrumbs items={[{ label: t("common.home"), href: "/app" }, { label: t("calendar.heading") }]} />
       <div className="flex items-center justify-between gap-3 mb-4">
         <div className="flex items-center gap-3">
           <h1 className="text-lg md:text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("calendar.heading")}</h1>

@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import { Mic, Play, Pause, Download, ChevronLeft, ChevronRight, Upload, MessageSquare } from "lucide-react";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useWorkspaceSafe } from "@/components/WorkspaceContext";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Button } from "@/components/ui/Button";
@@ -296,6 +297,7 @@ export default function RecordingsPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-primary)]">
       <div className="p-4 md:p-8 max-w-[1200px] mx-auto">
+        <Breadcrumbs items={[{ label: "Home", href: "/app" }, { label: "Recordings" }]} />
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">

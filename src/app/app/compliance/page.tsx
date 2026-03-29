@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { ShieldCheck, Download, Info, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { apiFetch } from "@/lib/api";
 
@@ -131,6 +132,7 @@ export default function CompliancePage() {
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="p-4 md:p-6 lg:p-8 space-y-8 max-w-4xl mx-auto">
+        <Breadcrumbs items={[{ label: t("common.home"), href: "/app" }, { label: t("title") }]} />
         <div>
           <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("title")}</h1>
           <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed">{t("subtitle")}</p>
