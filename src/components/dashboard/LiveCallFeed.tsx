@@ -144,7 +144,7 @@ export function LiveCallFeed({ workspaceId }: LiveCallFeedProps) {
         <div className="flex items-center gap-2">
           <Clock className="w-4 h-4 text-[var(--accent-primary)]" />
           <h2 className="text-sm font-semibold text-[var(--text-primary)]">
-            Live agent activity
+            Live operator activity
           </h2>
           {isLive && (
             <motion.div
