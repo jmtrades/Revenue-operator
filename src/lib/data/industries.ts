@@ -82,7 +82,7 @@ const INDUSTRIES_DATA: Record<IndustrySlug, IndustryData> = {
     howItWorks: [
       {
         title: "Connect",
-        description: "Forward your business line or get a dedicated number. Every emergency and routine call reaches your AI agent in seconds.",
+        description: "Forward your business line or get a dedicated number. Every emergency and routine call reaches your AI operator in seconds.",
       },
       {
         title: "Teach",
@@ -618,7 +618,7 @@ const INDUSTRIES_DATA: Record<IndustrySlug, IndustryData> = {
     howItWorks: [
       {
         title: "Connect",
-        description: "Forward your business line or get a dedicated number. Every consultation and booking call reaches your AI agent instantly.",
+        description: "Forward your business line or get a dedicated number. Every consultation and booking call reaches your AI operator instantly.",
       },
       {
         title: "Teach",

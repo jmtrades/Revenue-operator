@@ -31,7 +31,7 @@ export default async function Image() {
             marginBottom: 16,
           }}
         >
-          AI Phone Agents
+          AI Phone Operators
         </div>
         <div
           style={{

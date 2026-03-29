@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 };
 
 const RESOURCE_TOPICS = [
-  { title: "Call Answering & AI Phone Agents", description: "How AI handles inbound calls, qualifies intent, and books appointments without a human receptionist." },
+  { title: "Call Answering & AI Phone Operators", description: "How AI handles inbound calls, qualifies intent, and books appointments without a human receptionist." },
   { title: "Call Handling & Recovery", description: "Turn every call into an opportunity. Automate callbacks, follow-ups, and lead recovery at scale." },
   { title: "Speed-to-Lead & Follow-up", description: "Respond to inbound leads in seconds, not hours. Automated sequences that move prospects to appointments." },
   { title: "Revenue Operations Automation", description: "End-to-end workflows that handle answering, qualifying, booking, and follow-up so your team focuses on closing." },

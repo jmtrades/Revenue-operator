@@ -299,7 +299,7 @@ export default function AppSettingsBillingPage() {
           <div className="shrink-0 w-8 h-8 rounded-full bg-[var(--accent-primary)]/20 flex items-center justify-center text-[var(--accent-primary)] text-sm font-bold">!</div>
           <div>
             <p className="font-semibold text-[var(--accent-primary)]">{tBilling("trial.title", { defaultValue: "You're on a free trial" })}</p>
-            <p className="mt-1 text-[var(--accent-primary)]/80">{tBilling("trial.description", { defaultValue: "Subscribe to a plan to keep your agents running after the trial ends. Your data and configuration will be preserved." })}</p>
+            <p className="mt-1 text-[var(--accent-primary)]/80">{tBilling("trial.description", { defaultValue: "Subscribe to a plan to keep your operators running after the trial ends. Your data and configuration will be preserved." })}</p>
           </div>
         </div>
       )}

@@ -2439,7 +2439,7 @@ function VoiceStepContent({
   const t = useTranslations("agents");
   return (
     <div className="space-y-6">
-      <h3 className="text-sm font-semibold text-[var(--text-primary)]">{t("voiceStep.heading", { defaultValue: "How should your agent sound?" })}</h3>
+      <h3 className="text-sm font-semibold text-[var(--text-primary)]">{t("voiceStep.heading", { defaultValue: "How should your operator sound?" })}</h3>
       <ProfileTab agent={agent} voices={voices} workspaceName={workspaceName} onChange={onChange} onVoicePreview={onVoicePreview} previewingVoiceId={previewingVoiceId} />
       <div className="flex justify-between pt-4">
         <button type="button" onClick={onBack} className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black">

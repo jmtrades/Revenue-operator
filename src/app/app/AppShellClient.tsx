@@ -43,6 +43,7 @@ import { TranslatedErrorBoundary } from "@/components/ErrorBoundary";
 import { initErrorReporting } from "@/lib/error-reporting";
 import { initPostHogClient, track } from "@/lib/analytics/posthog";
 import { getClientOrNull } from "@/lib/supabase/client";
+import { toast } from "sonner";
 import {
   OnboardingStepProvider,
   useOnboardingStep,
@@ -146,6 +147,7 @@ export default function AppShellClient({
   const [nowMs] = useState(() => Date.now());
   const [showNotifications, setShowNotifications] = useState(false);
   const [inboxUnread, setInboxUnread] = useState(0);
+  const [sessionExpiredShown, setSessionExpiredShown] = useState(false);
 
   const toggleSidebarCollapse = () => {
     setSidebarCollapsed((prev) => {
@@ -183,6 +185,36 @@ export default function AppShellClient({
     initErrorReporting();
     initPostHogClient();
   }, []);
+
+  // Session heartbeat check: every 5 minutes
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const res = await fetch("/api/auth/session", {
+          credentials: "include",
+          cache: "no-store",
+          headers: { "Cache-Control": "no-store" },
+        });
+        const data = (await res.json().catch(() => null)) as { session: unknown } | null;
+
+        if (!data?.session || !res.ok) {
+          // Session has expired
+          if (!sessionExpiredShown) {
+            setSessionExpiredShown(true);
+            toast.error("Your session has expired. Please sign in again.", { icon: "⏱️" });
+            setTimeout(() => {
+              handleSignOut();
+            }, 3000);
+          }
+        }
+      } catch {
+        // Network error, don't redirect yet
+      }
+    };
+
+    const interval = setInterval(checkSession, 5 * 60 * 1000); // 5 minutes
+    return () => clearInterval(interval);
+  }, [sessionExpiredShown]);
 
   useEffect(() => {
     if (!pathname) return;

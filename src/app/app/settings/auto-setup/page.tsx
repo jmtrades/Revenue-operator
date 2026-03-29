@@ -71,7 +71,7 @@ export default function AutoSetupPage() {
   const analyzeMessages = [
     "Reading your website...",
     "Understanding your business...",
-    "Building your agent's knowledge...",
+    "Building your operator's knowledge...",
     "Creating scripts and responses...",
   ];
 

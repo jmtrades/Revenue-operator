@@ -5,6 +5,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { ReadinessChecklist } from "@/components/settings/ReadinessChecklist";
 import { ActivityLog } from "@/components/settings/ActivityLog";
 import { useWorkspace } from "@/components/WorkspaceContext";
@@ -69,6 +70,8 @@ export default function AppSettingsPage() {
   const [savingProfile, setSavingProfile] = useState(false);
   const [theme, setTheme] = useState<"system" | "light" | "dark">("system");
   const [systemHealthData, setSystemHealthData] = useState<{ passed: number; total: number } | null>(null);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [syncing, setSyncing] = useState(false);
 
   useEffect(() => {
     document.title = `${tSettings("pageTitle", { defaultValue: "Settings — Recall Touch" })}`;
@@ -103,6 +106,21 @@ export default function AppSettingsPage() {
 
   useEffect(() => {
     let cancelled = false;
+
+    // Load from cache first for instant UI
+    try {
+      const cached = localStorage.getItem("rt_profile_cache");
+      if (cached) {
+        const { displayName: cachedName, timezone: cachedTz } = JSON.parse(cached) as { displayName?: string; timezone?: string };
+        if (cachedName) setDisplayName(cachedName);
+        if (cachedTz) setTimezone(cachedTz);
+      }
+    } catch {
+      // ignore cache errors
+    }
+
+    // Fetch fresh data in background
+    setSyncing(true);
     fetch("/api/auth/session", {
       credentials: "include",
       cache: "no-store",
@@ -121,6 +139,9 @@ export default function AppSettingsPage() {
       )
       .catch(() => {
         // ignore; profile is optional
+      })
+      .finally(() => {
+        if (!cancelled) setSyncing(false);
       });
     return () => {
       cancelled = true;
@@ -143,6 +164,17 @@ export default function AppSettingsPage() {
 
   const handleSaveProfile = async () => {
     if (savingProfile) return;
+
+    // Validate form
+    if (displayName.trim().length > 100) {
+      toast.error("Display name must be 100 characters or less", { icon: "❌" });
+      return;
+    }
+    if (!timezone.trim()) {
+      toast.error("Timezone is required", { icon: "❌" });
+      return;
+    }
+
     setSavingProfile(true);
     try {
       const res = await fetch("/api/auth/profile", {
@@ -160,6 +192,21 @@ export default function AppSettingsPage() {
         toast.error(errorMsg, { icon: "❌" });
         return;
       }
+
+      // Cache the profile data
+      try {
+        localStorage.setItem(
+          "rt_profile_cache",
+          JSON.stringify({
+            displayName: displayName.trim(),
+            timezone: timezone.trim(),
+          })
+        );
+      } catch {
+        // ignore cache errors
+      }
+
+      setLastSaved(new Date());
       toast.success(tSettings("profile.saved"), { icon: "✓" });
     } catch {
       toast.error(tToast("error.generic"), { icon: "❌" });
@@ -192,6 +239,9 @@ export default function AppSettingsPage() {
         </div>
 
         <div className="relative z-10">
+          <div className="mb-4">
+            <Breadcrumbs items={[{ label: "Dashboard", href: "/app" }, { label: "Settings" }]} />
+          </div>
           <h1 className="text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-1">{tSettings("title")}</h1>
           <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed">{tSettings("pageSubtitle")}</p>
         </div>
@@ -200,20 +250,40 @@ export default function AppSettingsPage() {
       {/* Content Area */}
       <div className="p-4 md:p-6">
         <div className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-xl p-6 mb-6">
-          <h2 className="text-base font-medium text-[var(--text-primary)] mb-4">{tSettings("profileTitle")}</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base font-medium text-[var(--text-primary)]">{tSettings("profileTitle")}</h2>
+            {lastSaved && (
+              <span className="text-xs text-[var(--text-tertiary)]">
+                Last saved: {lastSaved.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+              </span>
+            )}
+          </div>
+          {syncing && (
+            <div className="mb-4 text-xs text-[var(--text-secondary)] flex items-center gap-1.5">
+              <div className="inline-block w-1.5 h-1.5 bg-[var(--text-tertiary)] rounded-full animate-pulse" />
+              Syncing...
+            </div>
+          )}
           <div className="space-y-4">
             <div>
               <label className="text-xs text-[var(--text-tertiary)] mb-1 block">{tSettings("emailLabel")}</label>
               <p className="text-sm text-[var(--text-secondary)]">{email ?? "—"}</p>
+              <p className="text-xs text-[var(--text-tertiary)] mt-1">Contact support to change your email</p>
             </div>
           <div>
-            <label className="text-xs text-[var(--text-tertiary)] mb-1 block">
-              {tSettings("displayNameLabel")}
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="text-xs text-[var(--text-tertiary)] mb-1 block">
+                {tSettings("displayNameLabel")}
+              </label>
+              <span className="text-xs text-[var(--text-tertiary)]">
+                {displayName.length}/100
+              </span>
+            </div>
             <input
               value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
+              onChange={(e) => setDisplayName(e.target.value.slice(0, 100))}
               placeholder={tSettings("displayNamePlaceholder")}
+              maxLength={100}
               className="w-full max-w-sm bg-[var(--bg-base)] border border-[var(--border-default)] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] focus:border-[var(--border-default)] focus:outline-none"
             />
           </div>

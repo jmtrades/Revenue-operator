@@ -21,7 +21,7 @@
       "finishCta": "Finish setup for the best experience",
       "item": {
         "business": "Business info added",
-        "agent": "AI agent created",
+        "agent": "AI operator created",
         "services": "Services configured",
         "phone": "Phone number connected",
         "test_call": "First test call",
@@ -749,7 +749,7 @@
       "starter": {
         "name": "Starter",
         "features": [
-          "1 AI agent",
+          "1 AI operator",
           "1 phone number",
           "1,000 min/mo",
           "Appointment booking",
@@ -759,7 +759,7 @@
       "growth": {
         "name": "Growth",
         "features": [
-          "5 AI agents",
+          "5 AI operators",
           "5 phone numbers",
           "3,000 min/mo",
           "No-show recovery",
@@ -770,7 +770,7 @@
       "scale": {
         "name": "Business",
         "features": [
-          "Unlimited AI agents",
+          "Unlimited AI operators",
           "10 phone numbers",
           "8,000 min/mo",
           "Detailed reports",
@@ -780,7 +780,7 @@
       "business": {
         "name": "Business",
         "features": [
-          "15 AI agents",
+          "15 AI operators",
           "15 phone numbers",
           "8,000 min/mo",
           "Outbound campaigns",
@@ -820,8 +820,8 @@
     },
     "onboarding": {
       "createAgent": {
-        "title": "Create your AI agent",
-        "description": "Choose a template and customize your agent's personality"
+        "title": "Create your AI operator",
+        "description": "Choose a template and customize your operator's personality"
       },
       "connectNumber": {
         "title": "Connect a number",
@@ -829,10 +829,10 @@
       },
       "addKnowledge": {
         "title": "Add your FAQs",
-        "description": "Teach your agent about your business"
+        "description": "Teach your operator about your business"
       },
       "configureAgent": {
-        "title": "Configure your agent",
+        "title": "Configure your operator",
         "description": "Customize how your AI handles calls"
       },
       "makeTestCall": {
@@ -850,7 +850,7 @@
       "completeProfile": "Complete Your Profile",
       "completeProfileDesc": "Add business info and preferences",
       "setupNumber": "Set Up Your Number",
-      "setupNumberDesc": "Configure your AI agent's phone number",
+      "setupNumberDesc": "Configure your AI operator's phone number",
       "chooseVoice": "Choose Agent Voice",
       "chooseVoiceDesc": "Pick the perfect voice personality",
       "viewActivity": "View Recent Activity",
@@ -874,7 +874,7 @@
     "analytics": {
       "title": "Revenue Dashboard",
       "subtitle": "See exactly how much money Recall Touch has recovered.",
-      "description": "Real-time view of revenue recovered by your AI agent.",
+      "description": "Real-time view of revenue recovered by your AI operator.",
       "export": "Export",
       "emptyDescription": "Once your AI starts answering calls, revenue metrics will appear here.",
       "setupCallForwarding": "Set up call forwarding →",
@@ -914,7 +914,7 @@
       "viewAnalyticsDesc": "See call performance",
       "createCampaign": "Create campaign",
       "createCampaignDesc": "Start outbound calls",
-      "testCallDesc": "Test your AI agent",
+      "testCallDesc": "Test your AI operator",
       "addLeadDesc": "Create a new lead record"
     },
     "checklist": {
@@ -932,7 +932,7 @@
       "launched": "Agent launched",
       "item": {
         "businessProfile": "Set up your business profile",
-        "agent": "Configure your first AI agent",
+        "agent": "Configure your first AI operator",
         "number": "Get a phone number",
         "testCall": "Make a test call",
         "contacts": "Import your contacts",
@@ -1061,10 +1061,10 @@
       "retryAria": "Retry loading activity"
     },
     "agentReady": {
-      "title": "Your AI agent is ready",
+      "title": "Your AI operator is ready",
       "description": "Connect your phone number to start receiving real calls.",
       "connectPhone": "Connect phone",
-      "footnote": "Businesses like yours recover $2,400+/month with an AI phone agent."
+      "footnote": "Businesses like yours recover $2,400+/month with an AI phone operator."
     },
     "nextActions": {
       "title": "What to do next",
@@ -1127,7 +1127,7 @@
       "noDataYetHint": "Set up call forwarding and take a few calls. Metrics and usage will appear here.",
       "setUpCallForwarding": "Set up call forwarding →",
       "noAgentsYet": "No agents yet",
-      "noAgentsYetHint": "Your AI agent is configured in onboarding. Add voice, greeting, and knowledge there.",
+      "noAgentsYetHint": "Your AI operator is configured in onboarding. Add voice, greeting, and knowledge there.",
       "createFirstAgent": "Create your first agent →",
       "loadAgentsError": "Could not load agents.",
       "recordSubtitle": "One moment…",
@@ -1305,7 +1305,7 @@
       "phoneManageHint": "Manage your Recall Touch number and call forwarding.",
       "callRulesHint": "Configure how calls are handled, when to escalate, and max hold time.",
       "notificationsHint": "Choose how and when you get notified for new leads, emergencies, and handoffs.",
-      "businessUpdateHint": "Update your business profile so your AI agent has the right context for every call.",
+      "businessUpdateHint": "Update your business profile so your AI operator has the right context for every call.",
       "teamManageHint": "Manage team members and who gets notified for handoffs.",
       "billingViewHint": "View your plan, update payment method, and access invoices.",
       "complianceConfigureHint": "Configure recording disclosure, jurisdiction tagging, and how long records are kept."
@@ -1798,7 +1798,7 @@
     },
     "onboardingWizard": {
       "getStartedHeading": "Get started",
-      "getStartedSubtitle": "Create an account first. Your AI agent will be ready in minutes.",
+      "getStartedSubtitle": "Create an account first. Your AI operator will be ready in minutes.",
       "startFree": "Get started",
       "stepOf": "Step {step} of {total}",
       "tellUsAboutBusiness": "Tell us about your business",
@@ -1824,8 +1824,8 @@
       "failedToSaveAgent": "Failed to save agent",
       "myBusiness": "My Business",
       "theBusiness": "the business",
-      "meetReceptionist": "Meet your AI agent",
-      "agentWillAnswerFor": "Your agent will answer calls, capture leads, and book appointments for {name}.",
+      "meetReceptionist": "Meet your AI operator",
+      "agentWillAnswerFor": "Your operator will answer calls, capture leads, and book appointments for {name}.",
       "agentName": "Agent name",
       "voice": "Voice",
       "voices": {
@@ -1896,7 +1896,7 @@
       "greetingPlaceholder": "Thanks for calling {business}! This is {agent}. How can I help you today?",
       "back": "← Back",
       "teachAgentAbout": "Teach {name} about your business",
-      "moreYouShare": "The more you share, the smarter your agent gets.",
+      "moreYouShare": "The more you share, the smarter your operator gets.",
       "whatServicesOffer": "What services do you offer?",
       "servicesPlaceholder": "Drain cleaning, water heater repair, leak detection, pipe repair...",
       "handleEmergenciesAfterHours": "Do you handle emergencies after hours?",
@@ -2050,7 +2050,7 @@
     "stepsComplete": "{done} of {total} steps complete",
     "progress": {
       "setupBusinessProfile": "Set up your business profile",
-      "configureAgent": "Configure your first AI agent",
+      "configureAgent": "Configure your first AI operator",
       "connectPhone": "Connect a phone number",
       "testCall": "Make a test call",
       "enableForwarding": "Enable call forwarding",
@@ -3092,7 +3092,7 @@
     "toastSavedVoiceFailed": "Operator saved; voice sync failed",
     "rulesTab": {
       "howYourAiHandlesCalls": "How your AI handles calls",
-      "conversationPreviewSubtitle": "Your agent has a natural conversation after the greeting. Here's how it responds:",
+      "conversationPreviewSubtitle": "Your operator has a natural conversation after the greeting. Here's how it responds:",
       "generatedFromKnowledge": "Generated from your knowledge base and rules. Add more entries to make your AI smarter.",
       "conversationStyle": "Conversation style",
       "assertiveness": "Assertiveness",
@@ -3430,7 +3430,7 @@
       "whisperComingSoon": "Whisper mode requires an active call.",
       "bargeInComingSoon": "Barge in requires an active call."
     },
-    "emptyDescription": "Calls will appear here once your AI agent starts handling calls.",
+    "emptyDescription": "Calls will appear here once your AI operator starts handling calls.",
     "emptyTitle": "No calls yet",
     "testCall": "Test call",
     "subtitle": "Call execution log. Every inbound and outbound call, with AI intelligence and next-action recommendations."
@@ -3438,7 +3438,7 @@
   "callIntelligence": {
     "pageTitle": "Call Intelligence — Recall Touch",
     "heading": "Call Intelligence",
-    "pageSubtitle": "Analyze real conversations to make your AI agent smarter.",
+    "pageSubtitle": "Analyze real conversations to make your AI operator smarter.",
     "title": "Call intelligence",
     "tabs": {
       "analyzed": "Analyzed Calls",
@@ -3838,7 +3838,7 @@
     "gapsHeading": "Knowledge Gaps",
     "mostReferenced": "Most Referenced",
     "testHeading": "Test your knowledge base",
-    "testDescription": "Ask a question to see how your AI agent would respond using your knowledge entries.",
+    "testDescription": "Ask a question to see how your AI operator would respond using your knowledge entries.",
     "testPlaceholder": "e.g. What are your business hours?",
     "testButton": "Test",
     "noEntries": "No entries found",
@@ -3862,7 +3862,7 @@
     "importUrlPlaceholder": "https://yourbusiness.com/faq",
     "updatedAt": "Updated {date}",
     "gapsDescription": "Callers asked about these topics but your content is limited or missing.",
-    "mostReferencedDescription": "Top 5 entries used by your agent in calls.",
+    "mostReferencedDescription": "Top 5 entries used by your operator in calls.",
     "fromCall": "From call",
     "toast": {
       "callSummaryDraftAdded": "Call summary added as a draft knowledge entry. Edit and save when you're ready.",
@@ -4276,7 +4276,7 @@
     },
     "emailLabel": "Email",
     "revisitOnboarding": "Need to revisit onboarding?",
-    "revisitOnboardingDesc": "Run the 5-step setup again to tune your AI agent and phone settings.",
+    "revisitOnboardingDesc": "Run the 5-step setup again to tune your AI operator and phone settings.",
     "openSetup": "Open setup",
     "dangerZone": "Danger zone",
     "cancelSubscription": "Cancel subscription →",
@@ -4918,7 +4918,7 @@
       "heading": "See how your AI handles a call",
       "cardSubtitle": "Real-time appointment booking — fully automated",
       "callerLabel": "Caller",
-      "agentLabel": "AI Agent",
+      "agentLabel": "AI Operator",
       "line1": "“Hi, I’d like to schedule an appointment for Thursday.”",
       "line2": "“Of course! I have openings at 10 AM, 2 PM, and 4 PM. Which works best?”",
       "line3": "“2 PM sounds perfect.”",
@@ -4933,7 +4933,7 @@
       "disclaimer": "This is a text-based preview of an actual AI conversation. In production, your agent speaks with premium self-hosted Recall voices on every call.",
       "callInProgress": "Call in progress — ",
       "skipToResult": "Skip to result →",
-      "aiAgent": "AI Agent",
+      "aiAgent": "AI Operator",
       "caller": "Caller",
       "tabInbound": "Inbound Lead",
       "tabAppointment": "Appointment",
@@ -5157,7 +5157,7 @@
   },
   "demoPage": {
     "title": "Experience Recall Touch",
-    "subtitle": "Talk to an AI agent that handles real calls. Right now.",
+    "subtitle": "Talk to an AI operator that handles real calls. Right now.",
     "tapMic": "Tap mic below to talk",
     "orTryScenario": "Or try a scenario:",
     "scenario1": "Schedule an appointment",
