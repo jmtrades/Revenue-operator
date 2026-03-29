@@ -29,6 +29,7 @@ export interface RoutingDecision {
   priority: number;
   estimated_wait_seconds?: number;
   twiml?: string;
+  metadata?: Record<string, unknown>; // For passing after-hours mode, emergency keywords, etc.
 }
 
 export interface RoutingRule {
@@ -58,6 +59,88 @@ export interface AgentAvailability {
 }
 
 /* ── Core Router ─────────────────────────────────────────────────── */
+
+/**
+ * After-hours settings from the database.
+ */
+interface AfterHoursSettings {
+  after_hours_behavior?: "take_messages" | "emergency_only" | "forward" | "voicemail";
+  emergency_keywords?: string;
+  transfer_phone?: string;
+}
+
+/**
+ * Check if business is currently open based on business_hours from workspace.
+ */
+async function isCurrentlyBusinessHours(workspaceId: string): Promise<boolean> {
+  const db = getDb();
+  try {
+    const { data: workspace } = await db
+      .from("workspaces")
+      .select("business_hours, timezone")
+      .eq("id", workspaceId)
+      .maybeSingle();
+
+    if (!workspace) return true; // Default to business hours if not configured
+
+    const ws = workspace as {
+      business_hours?: Record<string, { start: string; end: string } | null> | null;
+      timezone?: string | null;
+    };
+
+    const businessHours = ws.business_hours;
+    if (!businessHours || Object.keys(businessHours).length === 0) {
+      return true; // Not configured, assume open
+    }
+
+    const now = new Date();
+    const dayNames = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+    const todayHours = businessHours[dayNames[now.getDay()]];
+
+    if (!todayHours) {
+      return false; // Closed today
+    }
+
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+    const [startH, startM] = todayHours.start.split(":").map(Number);
+    const [endH, endM] = todayHours.end.split(":").map(Number);
+
+    if (isNaN(startH) || isNaN(startM) || isNaN(endH) || isNaN(endM)) {
+      return true; // Invalid format, assume open
+    }
+
+    const startMinutes = startH * 60 + startM;
+    const endMinutes = endH * 60 + endM;
+
+    return currentMinutes >= startMinutes && currentMinutes < endMinutes;
+  } catch {
+    return true; // Default to business hours on error
+  }
+}
+
+/**
+ * Load after-hours settings from workspace settings table.
+ */
+async function getAfterHoursSettings(workspaceId: string): Promise<AfterHoursSettings> {
+  const db = getDb();
+  try {
+    const { data } = await db
+      .from("settings")
+      .select("after_hours_behavior, emergency_keywords, transfer_phone")
+      .eq("workspace_id", workspaceId)
+      .maybeSingle();
+
+    const row = data as { after_hours_behavior?: string; emergency_keywords?: string; transfer_phone?: string } | null;
+
+    return {
+      after_hours_behavior: (row?.after_hours_behavior as "take_messages" | "emergency_only" | "forward" | "voicemail" | undefined) ?? "take_messages",
+      emergency_keywords: row?.emergency_keywords ?? "",
+      transfer_phone: row?.transfer_phone ?? "",
+    };
+  } catch {
+    return { after_hours_behavior: "take_messages" };
+  }
+}
 
 /**
  * Route an inbound call to the optimal destination.
@@ -112,21 +195,66 @@ export async function routeInboundCall(
       }
     }
 
-    // 5. Default: route to AI agent
-    // Check if we're within business hours
-    const hour = new Date().getHours();
-    const isBusinessHours = hour >= 9 && hour < 20;
+    // 5. Check business hours and apply after-hours settings
+    const isBusinessHours = await isCurrentlyBusinessHours(workspaceId);
 
     if (!isBusinessHours) {
-      return {
-        action: "ai_agent",
-        reason: "After-hours: AI agent handling",
-        priority: 3,
-        agent_name: "Sarah (AI)",
-      };
+      const afterHoursSettings = await getAfterHoursSettings(workspaceId);
+
+      log("info", "call_routing.after_hours", {
+        workspaceId,
+        behavior: afterHoursSettings.after_hours_behavior,
+      });
+
+      switch (afterHoursSettings.after_hours_behavior) {
+        case "forward":
+          if (afterHoursSettings.transfer_phone) {
+            return {
+              action: "forward",
+              forward_to: afterHoursSettings.transfer_phone,
+              reason: "After-hours: Forwarding to transfer number",
+              priority: 1,
+            };
+          }
+          // Fall through to AI agent if no transfer phone configured
+          break;
+
+        case "emergency_only":
+          // AI will answer but check for emergency keywords and transfer if detected
+          // (emergency detection happens in system prompt layer)
+          return {
+            action: "ai_agent",
+            reason: "After-hours: Emergency-only mode (AI will check for keywords)",
+            priority: 2,
+            metadata: {
+              after_hours_mode: "emergency_only",
+              emergency_keywords: afterHoursSettings.emergency_keywords,
+              transfer_phone: afterHoursSettings.transfer_phone,
+            },
+          };
+
+        case "voicemail":
+          return {
+            action: "voicemail",
+            reason: "After-hours: Voicemail",
+            priority: 2,
+          };
+
+        case "take_messages":
+        default:
+          // AI answers but takes messages only
+          return {
+            action: "ai_agent",
+            reason: "After-hours: Take messages mode",
+            priority: 3,
+            metadata: {
+              after_hours_mode: "take_messages",
+            },
+          };
+      }
     }
 
-    // During business hours, try to find the best available agent
+    // 6. During business hours, try to find the best available agent
     const availableAgents = await getAvailableAgents(workspaceId);
 
     if (availableAgents.length === 0) {

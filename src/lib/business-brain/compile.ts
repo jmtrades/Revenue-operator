@@ -63,6 +63,32 @@ export interface BusinessBrainInput {
     last_contacted?: string;
     notes?: string;
   };
+  /** Agent rules: never_say, always_transfer, qualification questions, objection handling */
+  rules?: {
+    neverSay?: string[];
+    alwaysTransfer?: string[];
+    escalationTriggers?: string[];
+    transferPhone?: string | null;
+    transferRules?: Array<{ phrase?: string; phone?: string }>;
+  };
+  /** Qualification questions to ask during conversation */
+  qualification_questions?: string[];
+  /** Objection trigger -> response pairs */
+  objections?: Array<{ trigger?: string; response?: string }>;
+  /** Business hours string for context */
+  business_hours_text?: string;
+  /** After-hours instructions */
+  after_hours_instructions?: string;
+  /** After-hours mode: messages, emergency, forward, closed */
+  after_hours_mode?: "messages" | "emergency" | "forward" | "closed" | null;
+  /** Call style: thorough, conversational, quick */
+  call_style?: string;
+  /** Personality hint: professional, friendly, etc. */
+  personality?: string;
+  /** Maximum call duration in minutes */
+  max_call_duration?: number;
+  /** Timezone for context */
+  timezone?: string;
 }
 
 /**
@@ -115,6 +141,16 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
     learned_behaviors,
     call_history,
     lead_context,
+    rules,
+    qualification_questions,
+    objections,
+    business_hours_text,
+    after_hours_instructions,
+    after_hours_mode,
+    call_style,
+    personality,
+    max_call_duration,
+    timezone,
   } = input;
 
   const langName = preferred_language ? getLanguageName(preferred_language) : "English";
@@ -159,11 +195,25 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
   }
   if (safeOfferSummary) businessLines.push(`What we offer: ${safeOfferSummary}`);
   if (safeServices) businessLines.push(`Services: ${safeServices}`);
-  if (emergencies_after_hours === "call_me") {
+  if (after_hours_mode === "messages") {
+    businessLines.push("🔴 AFTER-HOURS MODE: Take message only");
+    if (after_hours_instructions) businessLines.push(`Instructions: ${sanitizeForPrompt(after_hours_instructions, 300)}`);
+  } else if (after_hours_mode === "emergency") {
+    businessLines.push("🚨 AFTER-HOURS MODE: Emergency-only (check for keywords, transfer if emergency detected)");
+    if (after_hours_instructions) businessLines.push(`Instructions: ${sanitizeForPrompt(after_hours_instructions, 300)}`);
+  } else if (after_hours_mode === "forward") {
+    businessLines.push("↗️ AFTER-HOURS MODE: Forward to emergency line (handled by routing)");
+  } else if (after_hours_mode === "closed") {
+    businessLines.push("🔒 AFTER-HOURS MODE: Closed (voicemail/message only)");
+    if (after_hours_instructions) businessLines.push(`Instructions: ${sanitizeForPrompt(after_hours_instructions, 300)}`);
+  }
+
+  // Legacy support for old after-hours field
+  if (!after_hours_mode && emergencies_after_hours === "call_me") {
     businessLines.push("After hours emergencies: take details and tell the caller someone will call back soon.");
-  } else if (emergencies_after_hours === "message") {
+  } else if (!after_hours_mode && emergencies_after_hours === "message") {
     businessLines.push("After hours: take a message and say someone will call back.");
-  } else if (emergencies_after_hours === "next_day") {
+  } else if (!after_hours_mode && emergencies_after_hours === "next_day") {
     businessLines.push("After hours: take a message for the next business day.");
   }
   if (appointment_handling === "calendar") {
@@ -366,6 +416,76 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
     }
   }
 
+  // Layer 7b: Agent rules — critical behavior constraints
+  let layer7b = "";
+  const agentRules: string[] = [];
+
+  // Never Say rules
+  const neverSay = (rules?.neverSay ?? []).map((v) => String(v).trim()).filter(Boolean);
+  if (neverSay.length > 0) {
+    const forbiddenPhrases = neverSay.join("\n- ");
+    agentRules.push(
+      `FORBIDDEN PHRASES (CRITICAL — you must NEVER say these under any circumstances):\n- ${forbiddenPhrases}\n` +
+      `If any response you would generate contains these phrases, rephrase immediately before speaking. ` +
+      `If asked directly about these topics, redirect the conversation politely.`
+    );
+  }
+
+  // Always Transfer rules
+  const alwaysTransfer = (rules?.alwaysTransfer ?? [])
+    .map((v) => String(v).trim())
+    .filter(Boolean);
+  const escalationLabels = (rules?.escalationTriggers ?? [])
+    .map((v) => String(v).trim())
+    .filter(Boolean);
+  const allTransferTriggers = [...alwaysTransfer, ...escalationLabels];
+  const transferPhone = rules?.transferPhone?.trim() || "";
+  const transferRules = (rules?.transferRules ?? []).filter(
+    (r) => (r.phrase ?? "").trim() && (r.phone ?? "").trim()
+  );
+
+  if (allTransferTriggers.length > 0 || transferRules.length > 0 || transferPhone) {
+    const transferParts: string[] = [];
+    if (allTransferTriggers.length > 0) {
+      transferParts.push(`TRANSFER TRIGGERS (immediate escalation required):\n- ${allTransferTriggers.join("\n- ")}`);
+    }
+    transferRules.forEach((r) => {
+      transferParts.push(`When caller says "${(r.phrase ?? "").trim()}" → transfer to ${(r.phone ?? "").trim()}`);
+    });
+    if (transferPhone && !transferParts.join("").includes(transferPhone)) {
+      transferParts.push(`Default transfer number: ${transferPhone}`);
+    }
+    agentRules.push("TRANSFER RULES:\n" + transferParts.join("\n"));
+  }
+
+  // Qualification questions
+  const qualQuestions = (qualification_questions ?? [])
+    .map((q) => String(q ?? "").trim())
+    .filter((q) => q.length > 0);
+  if (qualQuestions.length > 0) {
+    agentRules.push(
+      "QUALIFICATION QUESTIONS (ask naturally during the conversation, not interrogation-style):\n" +
+      qualQuestions.map((q, i) => `${i + 1}. ${q}`).join("\n")
+    );
+  }
+
+  // Custom objection handling
+  const customObjections = (objections ?? []).filter(
+    (o) => (o.trigger ?? "").trim() && (o.response ?? "").trim()
+  );
+  if (customObjections.length > 0) {
+    agentRules.push(
+      "CUSTOM OBJECTION HANDLING:\n" +
+      customObjections
+        .map((o) => `If they say "${(o.trigger ?? "").trim()}": ${(o.response ?? "").trim()}`)
+        .join("\n")
+    );
+  }
+
+  if (agentRules.length > 0) {
+    layer7b = "AGENT RULES & BEHAVIOR CONSTRAINTS:\n" + agentRules.join("\n\n");
+  }
+
   // Layer 8: Objection handling (universal — every agent needs this)
   const layer8 = [
     "OBJECTION HANDLING (use these strategies naturally — never read them verbatim):",
@@ -477,7 +597,7 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
   ].join("\n");
 
   // Assemble in priority order: identity → business → mission → conversation → language →
-  // caller context → call history → industry → objections → compliance → guardrails
+  // caller context → call history → industry → agent rules → objections → compliance → guardrails
   const blocks = [layer1, layer2];
   if (layer2b) blocks.push(layer2b);
   if (layer2c) blocks.push(layer2c);
@@ -485,6 +605,7 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
   if (layer5) blocks.push(layer5); // Lead context early so agent can personalize
   if (layer6) blocks.push(layer6); // Call history for returning callers
   if (layer7) blocks.push(layer7); // Industry knowledge
+  if (layer7b) blocks.push(layer7b); // Agent rules (never say, transfer, qualification, objections)
   blocks.push(layer8);              // Objection handling
   if (layer9) blocks.push(layer9); // Compliance
   blocks.push(layer10);             // Guardrails last (always enforced)

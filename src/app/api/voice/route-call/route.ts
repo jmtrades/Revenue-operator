@@ -77,6 +77,12 @@ export async function POST(request: NextRequest) {
       { callSid: twilio.callSid, accountSid: twilio.accountSid }
     );
 
+    // If decision includes after-hours metadata, handle special cases
+    const routingMetadata = decision.metadata ?? {};
+
+    // For emergency_only mode, we'll pass metadata through to voice provider
+    // For forward action, buildRoutingTwiml will handle it directly
+
     // Build TwiML response
     const appUrl = request.nextUrl.origin;
     const twiml = buildRoutingTwiml(decision, appUrl, workspaceId);
