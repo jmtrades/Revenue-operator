@@ -12,35 +12,44 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params;
-  const session = await getSession(req);
-  if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  // Verify workspace access before fetching lead
-  const authErr = await requireWorkspaceAccess(req, session.workspaceId);
-  if (authErr) return authErr;
-
-  const db = getDb();
-  const { data: lead, error } = await db
-    .from("leads")
-    .select("*")
-    .eq("id", id)
-    .eq("workspace_id", session.workspaceId)
-    .maybeSingle();
-  if (error || !lead) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  const { data: deals } = await db.from("deals").select("id, value_cents, status").eq("lead_id", id);
-  let responsibility_state: string | undefined;
   try {
-    const { resolveResponsibility } = await import("@/lib/closure/resolver");
-    responsibility_state = await resolveResponsibility(id);
-  } catch {
-    // closure may throw if no signals; leave undefined
+    const { id } = await params;
+    const session = await getSession(req);
+    if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    // Verify workspace access before fetching lead
+    const authErr = await requireWorkspaceAccess(req, session.workspaceId);
+    if (authErr) return authErr;
+
+    const db = getDb();
+    const { data: lead, error } = await db
+      .from("leads")
+      .select("*")
+      .eq("id", id)
+      .eq("workspace_id", session.workspaceId)
+      .maybeSingle();
+    if (error) {
+      log("error", "leads.get_by_id_error", { error: error.message });
+      return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+    }
+    if (!lead) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    const { data: deals } = await db.from("deals").select("id, value_cents, status").eq("lead_id", id);
+    let responsibility_state: string | undefined;
+    try {
+      const { resolveResponsibility } = await import("@/lib/closure/resolver");
+      responsibility_state = await resolveResponsibility(id);
+    } catch {
+      // closure may throw if no signals; leave undefined
+    }
+    return NextResponse.json({
+      ...lead,
+      deals: deals ?? [],
+      ...(responsibility_state != null && { responsibility_state }),
+    });
+  } catch (err) {
+    log("error", "leads.get_by_id_route_error", { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-  return NextResponse.json({
-    ...lead,
-    deals: deals ?? [],
-    ...(responsibility_state != null && { responsibility_state }),
-  });
 }
 
 const STATUS_TO_STATE: Record<string, string> = {
@@ -59,64 +68,72 @@ export async function PATCH(
   const csrfBlock = assertSameOrigin(req);
   if (csrfBlock) return csrfBlock;
 
-  const { id } = await params;
-  let body: { paused_for_followup?: boolean; state?: string } = {};
   try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
-  }
-  const db = getDb();
-  const { data: existing } = await db.from("leads").select("metadata, workspace_id").eq("id", id).maybeSingle();
-  if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  const workspaceId = (existing as { workspace_id?: string }).workspace_id;
-  if (workspaceId) {
-    const session = await getSession(req);
-    if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    const authErr = await requireWorkspaceAccess(req, workspaceId);
-    if (authErr) return authErr;
-  }
-  const meta = (existing as { metadata?: Record<string, unknown> })?.metadata ?? {};
-  const nextMeta =
-    body.paused_for_followup !== undefined
-      ? { ...meta, paused_for_followup: body.paused_for_followup }
-      : meta;
-  const stateInput = body.state != null ? String(body.state).toLowerCase().replace(/\s+/g, "_") : undefined;
-  const dbState = stateInput != null ? STATUS_TO_STATE[stateInput] ?? stateInput : undefined;
-  const updatePayload: { metadata: Record<string, unknown>; updated_at: string; status?: string } = {
-    metadata: nextMeta,
-    updated_at: new Date().toISOString(),
-  };
-  if (dbState != null) updatePayload.status = dbState;
-  const { data: updated, error } = await db
-    .from("leads")
-    .update(updatePayload)
-    .eq("id", id)
-    .select()
-    .maybeSingle();
-  if (error) return NextResponse.json({ error: "Failed to update lead" }, { status: 500 });
-  const leadWorkspaceId = (updated as { workspace_id?: string })?.workspace_id;
-  if (leadWorkspaceId) {
-    const { recordProviderInteraction } = await import("@/lib/detachment");
-    recordProviderInteraction(leadWorkspaceId, `lead:${id}`).catch((err) => { log("error", "leads.record_provider_interaction_error", { error: err instanceof Error ? err.message : String(err) }); });
-    // Enqueue outbound CRM sync for connected providers (Task 19)
+    const { id } = await params;
+    let body: { paused_for_followup?: boolean; state?: string } = {};
     try {
-      const { getConnectedCrmProviders, enqueueSync } = await import("@/lib/integrations/sync-engine");
-      const providers = await getConnectedCrmProviders(leadWorkspaceId);
-      for (const provider of providers) {
-        await enqueueSync({
-          workspaceId: leadWorkspaceId,
-          provider,
-          direction: "outbound",
-          entityType: "lead",
-          entityId: id,
-        });
-      }
+      body = await req.json();
     } catch {
-      // Do not block lead update on sync enqueue
+      return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
     }
+    const db = getDb();
+    const { data: existing } = await db.from("leads").select("metadata, workspace_id").eq("id", id).maybeSingle();
+    if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    const workspaceId = (existing as { workspace_id?: string }).workspace_id;
+    if (workspaceId) {
+      const session = await getSession(req);
+      if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      const authErr = await requireWorkspaceAccess(req, workspaceId);
+      if (authErr) return authErr;
+    }
+    const meta = (existing as { metadata?: Record<string, unknown> })?.metadata ?? {};
+    const nextMeta =
+      body.paused_for_followup !== undefined
+        ? { ...meta, paused_for_followup: body.paused_for_followup }
+        : meta;
+    const stateInput = body.state != null ? String(body.state).toLowerCase().replace(/\s+/g, "_") : undefined;
+    const dbState = stateInput != null ? STATUS_TO_STATE[stateInput] ?? stateInput : undefined;
+    const updatePayload: { metadata: Record<string, unknown>; updated_at: string; status?: string } = {
+      metadata: nextMeta,
+      updated_at: new Date().toISOString(),
+    };
+    if (dbState != null) updatePayload.status = dbState;
+    const { data: updated, error } = await db
+      .from("leads")
+      .update(updatePayload)
+      .eq("id", id)
+      .select()
+      .maybeSingle();
+    if (error) {
+      log("error", "leads.patch_error", { error: error.message });
+      return NextResponse.json({ error: "Failed to update lead" }, { status: 500 });
+    }
+    const leadWorkspaceId = (updated as { workspace_id?: string })?.workspace_id;
+    if (leadWorkspaceId) {
+      const { recordProviderInteraction } = await import("@/lib/detachment");
+      recordProviderInteraction(leadWorkspaceId, `lead:${id}`).catch(() => { /* non-blocking */ });
+      // Enqueue outbound CRM sync for connected providers (Task 19)
+      try {
+        const { getConnectedCrmProviders, enqueueSync } = await import("@/lib/integrations/sync-engine");
+        const providers = await getConnectedCrmProviders(leadWorkspaceId);
+        for (const provider of providers) {
+          await enqueueSync({
+            workspaceId: leadWorkspaceId,
+            provider,
+            direction: "outbound",
+            entityType: "lead",
+            entityId: id,
+          });
+        }
+      } catch {
+        // Do not block lead update on sync enqueue
+      }
+    }
+    return NextResponse.json(updated);
+  } catch (err) {
+    log("error", "leads.patch_route_error", { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-  return NextResponse.json(updated);
 }
 
 export async function DELETE(

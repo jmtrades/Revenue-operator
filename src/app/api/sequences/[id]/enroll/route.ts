@@ -14,6 +14,7 @@ import {
   getSequenceWithSteps,
 } from "@/lib/sequences/follow-up-engine";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function GET(
   req: NextRequest,
@@ -54,7 +55,7 @@ export async function GET(
 
     return NextResponse.json({ enrollments: enrollments ?? [] });
   } catch (error) {
-    console.error("[Sequences] Error fetching enrollments:", error);
+    log("error", "sequences.enrollments_get_error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json(
       { error: "Failed to fetch enrollments" },
       { status: 500 }
@@ -172,7 +173,7 @@ export async function POST(
       .maybeSingle();
 
     if (enrollmentCheckErr) {
-      console.error("[sequences/[id]/enroll POST enrollment check]", enrollmentCheckErr);
+      log("error", "sequences.enroll_check_error", { error: enrollmentCheckErr.message ?? String(enrollmentCheckErr) });
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 
@@ -195,7 +196,7 @@ export async function POST(
 
     return NextResponse.json({ enrollment }, { status: 201 });
   } catch (error) {
-    console.error("[sequences/[id]/enroll POST]", error);
+    log("error", "sequences.enroll_post_error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

@@ -14,6 +14,7 @@ import { logLeadCreated } from "@/lib/log/revenue-events";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { normalizePhoneE164 } from "@/lib/phone/normalize";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { isSafeExternalUrl } from "@/lib/http/url-safety";
 import { runWithWriteContextAsync } from "@/lib/safety/unsafe-write-guard";
 
 const createLeadSchema = z.object({
@@ -179,8 +180,8 @@ export async function POST(req: NextRequest) {
     const webhookUrl =
       (ws as { webhook_url?: string | null } | null)?.webhook_url?.toString().trim() ??
       "";
-    if (webhookUrl) {
-      // Fire-and-forget CRM webhook for lead capture
+    if (webhookUrl && isSafeExternalUrl(webhookUrl)) {
+      // Fire-and-forget CRM webhook for lead capture (SSRF-safe)
       void fetch(webhookUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -231,7 +232,7 @@ export async function POST(req: NextRequest) {
       name: createdLead.name,
       phone: createdLead.phone,
       email: createdLead.email,
-    }).catch((err) => { console.error("[leads] error:", err instanceof Error ? err.message : err); });
+    }).catch(() => { /* non-blocking */ });
   } catch {
     // non-blocking
   }
@@ -244,7 +245,7 @@ export async function POST(req: NextRequest) {
       title: "New lead",
       body: [createdLead.name, createdLead.phone].filter(Boolean).join(" · ") || "New lead captured",
       metadata: { lead_id: createdLead.id },
-    }).catch((err) => { console.error("[leads] error:", err instanceof Error ? err.message : err); });
+    }).catch(() => { /* non-blocking */ });
   } catch {
     // non-blocking
   }

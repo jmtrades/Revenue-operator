@@ -13,6 +13,7 @@ import {
   getWorkspaceSequences,
 } from "@/lib/sequences/follow-up-engine";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
@@ -27,7 +28,7 @@ export async function GET(req: NextRequest) {
     const sequences = await getWorkspaceSequences(workspaceId);
     return NextResponse.json({ sequences });
   } catch (error) {
-    console.error("[Sequences] Error fetching sequences:", error);
+    log("error", "sequences.get_error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json(
       { error: "Failed to fetch sequences" },
       { status: 500 }
@@ -83,7 +84,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ sequence }, { status: 201 });
   } catch (error) {
-    console.error("[Sequences] Error creating sequence:", error);
+    log("error", "sequences.create_error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json(
       { error: "Failed to create sequence" },
       { status: 500 }
