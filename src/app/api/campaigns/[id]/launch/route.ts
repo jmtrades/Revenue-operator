@@ -10,6 +10,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { executeLeadOutboundCall } from "@/lib/outbound/execute-lead-call";
 import type { CampaignType } from "@/lib/campaigns/prompt";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { checkDNC } from "@/lib/compliance/dnc-check";
 
 type TargetFilter = {
   audience_statuses?: string[];
@@ -286,6 +287,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   }
 
   let enqueued = 0;
+  let dncBlocked = 0;
   let campaignStatus = "active";
   let errorMessage: string | null = null;
 
@@ -368,6 +370,21 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     // Enqueue leads for outbound execution
     for (const lead of eligibleLeads) {
       const leadId = (lead as { id: string }).id;
+      const leadPhone = (lead as { phone?: string | null }).phone;
+
+      // DNC compliance check — skip leads on Do Not Call list
+      if (leadPhone) {
+        const dncResult = await checkDNC(workspaceId, leadPhone);
+        if (dncResult.blocked) {
+          dncBlocked += 1;
+          await db
+            .from("campaign_leads")
+            .update({ status: "dnc_blocked", sent_at: new Date().toISOString() })
+            .eq("campaign_id", id)
+            .eq("lead_id", leadId);
+          continue; // Skip this lead entirely
+        }
+      }
 
       // If there are sequence steps, enroll the lead in the sequence
       if (sequenceId) {
@@ -443,6 +460,6 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     return NextResponse.json({ ok: false, error: errorMessage, enqueued }, { status: 500 });
   }
 
-  return NextResponse.json({ ok: true, enqueued, launched_at: launchAt });
+  return NextResponse.json({ ok: true, enqueued, dnc_blocked: dncBlocked, launched_at: launchAt });
 }
 
