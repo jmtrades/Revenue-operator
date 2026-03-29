@@ -260,9 +260,9 @@ export default function CallsPage() {
   };
 
   const sentimentDotColor = (s: CallSentiment): string => {
-    if (s === "positive") return "bg-emerald-500";
-    if (s === "negative") return "bg-rose-500";
-    return "bg-amber-400";
+    if (s === "positive") return "bg-[var(--accent-primary)]";
+    if (s === "negative") return "bg-[var(--accent-danger,#ef4444)]";
+    return "bg-[var(--accent-warning,#f59e0b)]";
   };
 
   const toggleFlagCall = (callId: string) => {
@@ -454,8 +454,8 @@ export default function CallsPage() {
         </div>
       ) : error && records.length === 0 ? (
         <div className="mt-6 flex flex-col items-center justify-center py-16 text-center rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)]">
-          <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
-            <AlertCircle className="h-6 w-6 text-red-400" />
+          <div className="w-12 h-12 rounded-full bg-[var(--accent-danger,#ef4444)]/10 flex items-center justify-center mb-4">
+            <AlertCircle className="h-6 w-6 text-[var(--accent-danger,#ef4444)]" />
           </div>
           <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("calls.errors.errorTitle")}</h3>
           <p className="text-sm text-[var(--text-tertiary)] mb-6 max-w-sm">{error}</p>
@@ -509,7 +509,7 @@ export default function CallsPage() {
                 null;
               const _kind: Exclude<CallType, null> = "inbound";
               const outcomeKey = (c.outcome ?? "lead") as Exclude<CallOutcome, null>;
-              const sentimentIcon = sentiment === "positive" ? <Smile className="w-4 h-4 text-emerald-400" /> : sentiment === "negative" ? <Frown className="w-4 h-4 text-red-400" /> : sentiment === "neutral" ? <Minus className="w-4 h-4 text-[var(--text-tertiary)]" /> : null;
+              const sentimentIcon = sentiment === "positive" ? <Smile className="w-4 h-4 text-[var(--accent-primary)]" /> : sentiment === "negative" ? <Frown className="w-4 h-4 text-[var(--accent-danger,#ef4444)]" /> : sentiment === "neutral" ? <Minus className="w-4 h-4 text-[var(--text-tertiary)]" /> : null;
               const durationLabel = durSec > 0 ? `${durMin}m ${(durSec % 60).toString().padStart(2, "0")}s` : "—";
               return (
                 <tr
@@ -829,7 +829,7 @@ export default function CallsPage() {
                   <span className="text-xs text-[var(--text-tertiary)]">Saving...</span>
                 )}
                 {notesStatus[selectedCall.id] === "saved" && (
-                  <span className="text-xs text-emerald-500">Saved</span>
+                  <span className="text-xs text-[var(--accent-primary)]">Saved</span>
                 )}
               </div>
               <textarea
@@ -887,7 +887,7 @@ export default function CallsPage() {
                 variant="ghost"
                 size="sm"
                 onClick={() => toggleFlagCall(selectedCall.id)}
-                className={flaggedCalls.has(selectedCall.id) ? "text-red-500 hover:text-red-600" : ""}
+                className={flaggedCalls.has(selectedCall.id) ? "text-[var(--accent-danger,#ef4444)] hover:opacity-80" : ""}
               >
                 <Flag className={`h-3.5 w-3.5 ${flaggedCalls.has(selectedCall.id) ? "fill-current" : ""}`} />
                 {t("calls.detail.flag")}
