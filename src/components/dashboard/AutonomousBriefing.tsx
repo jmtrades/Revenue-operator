@@ -73,11 +73,11 @@ export function AutonomousBriefing({ workspaceId }: AutonomousBriefingProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="p-5 md:p-6 animate-pulse">
-          <div className="h-5 w-40 rounded bg-[var(--bg-hover)] mb-4" />
+        <div className="p-5 md:p-6">
+          <div className="h-5 w-40 rounded bg-[var(--bg-hover)] mb-4 skeleton-shimmer" />
           <div className="space-y-3">
-            <div className="h-4 w-full rounded bg-[var(--bg-hover)]" />
-            <div className="h-4 w-3/4 rounded bg-[var(--bg-hover)]" />
+            <div className="h-4 w-full rounded bg-[var(--bg-hover)] skeleton-shimmer" />
+            <div className="h-4 w-3/4 rounded bg-[var(--bg-hover)] skeleton-shimmer" />
           </div>
         </div>
       </motion.div>

@@ -136,7 +136,7 @@ export default function AppSettingsTeamPage() {
 
       <div className="space-y-2 mb-6">
         {loadingMembers && displayMembers.length === 0 && (
-          <div className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] animate-pulse">
+          <div className="p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] skeleton-shimmer">
             <div className="h-4 w-32 bg-[var(--bg-inset)] rounded mb-2" />
             <div className="h-3 w-48 bg-[var(--bg-inset)] rounded" />
           </div>

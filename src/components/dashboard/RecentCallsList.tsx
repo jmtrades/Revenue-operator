@@ -19,7 +19,7 @@ const SkeletonRow = () => (
   <tr className="border-b border-[var(--border-default)]">
     {[1, 2, 3, 4].map((i) => (
       <td key={i} className="py-3 px-2">
-        <div className="h-4 bg-[var(--bg-hover)] rounded animate-pulse" style={{ width: i === 3 ? '80px' : '60px' }} />
+        <div className="h-4 bg-[var(--bg-hover)] rounded skeleton-shimmer" style={{ width: i === 3 ? '80px' : '60px' }} />
       </td>
     ))}
   </tr>

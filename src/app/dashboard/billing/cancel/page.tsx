@@ -157,7 +157,7 @@ export default function CancelSubscriptionPage() {
   if (loading || !workspaceId) {
     return (
       <div className="min-h-screen p-6 flex items-center justify-center" style={{ background: "var(--bg-primary)" }}>
-        <div className="w-full max-w-2xl rounded-2xl p-8 animate-pulse" style={{ background: "var(--bg-surface)" }}>
+        <div className="w-full max-w-2xl rounded-2xl p-8 skeleton-shimmer" style={{ background: "var(--bg-surface)" }}>
           <div className="h-8 w-48 rounded mb-6" style={{ background: "var(--border-default)" }} />
           <div className="space-y-4">
             <div className="h-4 w-full rounded" style={{ background: "var(--border-default)" }} />

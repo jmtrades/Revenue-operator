@@ -60,7 +60,7 @@ function LoadingSkeleton() {
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-8">
       {/* Header skeleton */}
-      <div className="mb-12 pb-8 border-b border-[var(--border)] animate-pulse">
+      <div className="mb-12 pb-8 border-b border-[var(--border)] skeleton-shimmer">
         <div className="h-10 w-96 rounded-lg bg-[var(--bg-hover)] mb-4" />
         <div className="h-4 w-64 rounded bg-[var(--bg-hover)] mb-2" />
         <div className="h-4 w-48 rounded bg-[var(--bg-hover)]" />
@@ -71,7 +71,7 @@ function LoadingSkeleton() {
         {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="p-6 rounded-xl border border-[var(--border)] bg-[var(--bg-subtle)] animate-pulse"
+            className="p-6 rounded-xl border border-[var(--border)] bg-[var(--bg-subtle)] skeleton-shimmer"
           >
             <div className="h-4 w-24 rounded bg-[var(--bg-hover)] mb-4" />
             <div className="h-8 w-32 rounded bg-[var(--bg-hover)] mb-2" />
@@ -84,7 +84,7 @@ function LoadingSkeleton() {
       {[1, 2, 3].map((section) => (
         <div
           key={section}
-          className="mb-12 p-6 rounded-xl border border-[var(--border)] bg-[var(--bg-subtle)] animate-pulse"
+          className="mb-12 p-6 rounded-xl border border-[var(--border)] bg-[var(--bg-subtle)] skeleton-shimmer"
         >
           <div className="h-6 w-48 rounded bg-[var(--bg-hover)] mb-6" />
           <div className="space-y-4">

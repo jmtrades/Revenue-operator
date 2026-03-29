@@ -57,7 +57,7 @@ export default function PartnersPage() {
       </div>
 
       {!loaded ? (
-        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 animate-pulse">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 skeleton-shimmer">
           <div className="h-10 w-56 bg-[var(--bg-hover)] rounded mb-4" />
           <div className="h-14 w-full bg-[var(--bg-hover)] rounded" />
         </div>

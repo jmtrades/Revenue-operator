@@ -86,10 +86,10 @@ export function AgentIntelligencePanel({
 
   if (loading) {
     return (
-      <div className="rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] p-6 animate-pulse">
-        <div className="h-6 w-40 rounded bg-[var(--bg-hover)] mb-4" />
-        <div className="h-20 rounded-lg bg-[var(--bg-hover)] mb-4" />
-        <div className="h-32 rounded-lg bg-[var(--bg-hover)]" />
+      <div className="rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] p-6">
+        <div className="h-6 w-40 rounded bg-[var(--bg-hover)] mb-4 skeleton-shimmer" />
+        <div className="h-20 rounded-lg bg-[var(--bg-hover)] mb-4 skeleton-shimmer" />
+        <div className="h-32 rounded-lg bg-[var(--bg-hover)] skeleton-shimmer" />
       </div>
     );
   }

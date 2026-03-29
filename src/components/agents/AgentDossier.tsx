@@ -54,10 +54,10 @@ export function AgentDossier({ workspaceId, agentId }: AgentDossierProps) {
         transition={{ duration: 0.3 }}
         className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 space-y-2"
       >
-        <div className="h-4 w-20 bg-[var(--bg-input)] rounded animate-pulse" />
+        <div className="h-4 w-20 bg-[var(--bg-input)] rounded skeleton-shimmer" />
         <div className="space-y-2">
-          <div className="h-3 w-full bg-[var(--bg-input)] rounded animate-pulse" />
-          <div className="h-3 w-5/6 bg-[var(--bg-input)] rounded animate-pulse" />
+          <div className="h-3 w-full bg-[var(--bg-input)] rounded skeleton-shimmer" />
+          <div className="h-3 w-5/6 bg-[var(--bg-input)] rounded skeleton-shimmer" />
         </div>
       </motion.div>
     );

@@ -89,7 +89,7 @@ export default function IndustryTemplatesPage() {
             { label: tTemplates("breadcrumb"), href: "/app/settings/industry-templates" },
           ]}
         />
-        <div className="animate-pulse">
+        <div className="skeleton-shimmer">
           <div className="h-8 bg-[var(--bg-inset)] rounded w-48 mb-6" />
           <div className="space-y-4">
             {Array.from({ length: 3 }).map((_, i) => (

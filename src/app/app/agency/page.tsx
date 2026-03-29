@@ -138,7 +138,7 @@ export default function AgencyPage() {
   if (loading) {
     return (
       <div className="p-6 md:p-8 max-w-7xl mx-auto">
-        <div className="animate-pulse">
+        <div className="skeleton-shimmer">
           <div className="h-8 w-64 bg-[var(--bg-inset)] rounded mb-8" />
           <div className="grid grid-cols-4 gap-4 mb-8">
             {[...Array(4)].map((_, i) => (

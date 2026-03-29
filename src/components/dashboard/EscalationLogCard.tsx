@@ -87,11 +87,11 @@ export function EscalationLogCard() {
 
   if (loading) {
     return (
-      <div className="dash-section p-5 md:p-6 animate-pulse">
-        <div className="h-5 w-40 rounded bg-[var(--bg-hover)] mb-4" />
+      <div className="dash-section p-5 md:p-6">
+        <div className="h-5 w-40 rounded bg-[var(--bg-hover)] mb-4 skeleton-shimmer" />
         <div className="space-y-2">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-16 rounded-lg bg-[var(--bg-hover)]" />
+            <div key={i} className="h-16 rounded-lg bg-[var(--bg-hover)] skeleton-shimmer" />
           ))}
         </div>
       </div>

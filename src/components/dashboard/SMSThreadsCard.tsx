@@ -194,7 +194,7 @@ export function SMSThreadsCard() {
           {loading ? (
             <div className="space-y-2">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-16 rounded-lg bg-[var(--bg-hover)] animate-pulse" />
+                <div key={i} className="h-16 rounded-lg bg-[var(--bg-hover)] skeleton-shimmer" />
               ))}
             </div>
           ) : threads.length === 0 ? (

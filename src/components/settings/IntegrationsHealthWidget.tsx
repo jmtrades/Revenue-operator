@@ -43,7 +43,7 @@ export function IntegrationsHealthWidget() {
   }, []);
 
   if (loading) {
-    return <div className="animate-pulse h-32 rounded-2xl bg-[var(--bg-surface)]" />;
+    return <div className="skeleton-shimmer h-32 rounded-2xl bg-[var(--bg-surface)]" />;
   }
 
   const connectedCrms = Object.entries(crmStatus?.integrations ?? {})

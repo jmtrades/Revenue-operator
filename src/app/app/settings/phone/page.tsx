@@ -442,7 +442,7 @@ export default function AppSettingsPhonePage() {
       <p className="text-sm text-[var(--text-secondary)] mb-6">{tPhone("connectDescription")}</p>
 
       {loading ? (
-        <div className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] animate-pulse h-24 mb-4" />
+        <div className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] skeleton-shimmer h-24 mb-4" />
       ) : phoneNumber ? (
         <>
           {/* Option A — Your AI number */}

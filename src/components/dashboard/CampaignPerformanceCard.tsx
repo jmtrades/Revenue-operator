@@ -231,13 +231,13 @@ function CampaignSkeletons() {
         <motion.div
           key={i}
           variants={staggerItem}
-          className="rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] p-4 animate-pulse"
+          className="rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] p-4"
         >
-          <div className="h-4 w-40 rounded bg-[var(--bg-hover)] mb-3" />
-          <div className="h-1.5 w-full rounded-full bg-[var(--bg-hover)] mb-3" />
+          <div className="h-4 w-40 rounded bg-[var(--bg-hover)] mb-3 skeleton-shimmer" />
+          <div className="h-1.5 w-full rounded-full bg-[var(--bg-hover)] mb-3 skeleton-shimmer" />
           <div className="grid grid-cols-2 gap-3">
-            <div className="h-8 rounded bg-[var(--bg-hover)]" />
-            <div className="h-8 rounded bg-[var(--bg-hover)]" />
+            <div className="h-8 rounded bg-[var(--bg-hover)] skeleton-shimmer" />
+            <div className="h-8 rounded bg-[var(--bg-hover)] skeleton-shimmer" />
           </div>
         </motion.div>
       ))}

@@ -154,7 +154,7 @@ export default function IntegrationsMappingPage() {
       </p>
 
       {loading ? (
-        <div className="h-48 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-default)] animate-pulse" />
+        <div className="h-48 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-default)] skeleton-shimmer" />
       ) : (
         <>
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-hidden">

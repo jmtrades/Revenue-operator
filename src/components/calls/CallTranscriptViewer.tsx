@@ -232,13 +232,13 @@ export default function CallTranscriptViewer({
         {loading && (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="animate-pulse">
+              <div key={i}>
                 <div className="flex gap-3 p-3 rounded-xl">
-                  <div className="shrink-0 w-7 h-7 bg-[var(--bg-inset)] rounded-full" />
+                  <div className="shrink-0 w-7 h-7 bg-[var(--bg-inset)] rounded-full skeleton-shimmer" />
                   <div className="flex-1 space-y-2">
-                    <div className="h-3 w-20 bg-[var(--bg-inset)] rounded" />
-                    <div className="h-3 w-full bg-[var(--bg-inset)] rounded" />
-                    <div className="h-3 w-3/4 bg-[var(--bg-inset)] rounded" />
+                    <div className="h-3 w-20 bg-[var(--bg-inset)] rounded skeleton-shimmer" />
+                    <div className="h-3 w-full bg-[var(--bg-inset)] rounded skeleton-shimmer" />
+                    <div className="h-3 w-3/4 bg-[var(--bg-inset)] rounded skeleton-shimmer" />
                   </div>
                 </div>
               </div>

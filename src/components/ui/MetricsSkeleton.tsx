@@ -11,11 +11,11 @@ export function MetricsSkeleton({ cards = 3 }: { cards?: number }) {
           style={{ borderColor: "var(--border-default)", background: "var(--surface-card)" }}
         >
           <div
-            className="h-3 rounded animate-pulse mb-3"
+            className="h-3 rounded skeleton-shimmer mb-3"
             style={{ background: "var(--border-default)", width: "50%" }}
           />
           <div
-            className="h-8 rounded animate-pulse"
+            className="h-8 rounded skeleton-shimmer"
             style={{ background: "var(--border-default)", width: "40%" }}
           />
         </div>

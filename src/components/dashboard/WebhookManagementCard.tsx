@@ -144,9 +144,9 @@ export function WebhookManagementCard() {
 
   if (loading) {
     return (
-      <div className="dash-section p-5 md:p-6 animate-pulse">
-        <div className="h-5 w-44 rounded bg-[var(--bg-hover)] mb-4" />
-        <div className="h-24 rounded-lg bg-[var(--bg-hover)]" />
+      <div className="dash-section p-5 md:p-6">
+        <div className="h-5 w-44 rounded bg-[var(--bg-hover)] mb-4 skeleton-shimmer" />
+        <div className="h-24 rounded-lg bg-[var(--bg-hover)] skeleton-shimmer" />
       </div>
     );
   }

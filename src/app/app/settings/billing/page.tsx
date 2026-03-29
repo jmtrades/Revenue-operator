@@ -283,7 +283,7 @@ export default function AppSettingsBillingPage() {
       <div className="max-w-[600px] mx-auto p-4 md:p-6">
         <Breadcrumbs items={[{ label: tNav("settings"), href: "/app/settings" }, { label: tNav("billing") }]} />
         <h1 className="text-lg font-semibold text-[var(--text-primary)] mb-4">{tNav("billing")}</h1>
-        <div className="animate-pulse space-y-3">
+        <div className="skeleton-shimmer space-y-3">
           <div className="h-20 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)]" />
           <div className="h-10 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)] w-1/2" />
           <div className="h-32 rounded-xl bg-[var(--bg-card)] border border-[var(--border-default)]" />
@@ -409,7 +409,7 @@ export default function AppSettingsBillingPage() {
             </p>
           </div>
         ) : (
-          <div className="animate-pulse space-y-2">
+          <div className="skeleton-shimmer space-y-2">
             <div className="h-4 w-48 bg-[var(--bg-inset)] rounded" />
             <div className="h-3 w-32 bg-[var(--bg-inset)] rounded" />
             <div className="h-3 w-40 bg-[var(--bg-inset)] rounded" />
