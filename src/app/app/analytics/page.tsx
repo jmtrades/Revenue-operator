@@ -1046,7 +1046,7 @@ export default function AppAnalyticsPage() {
                     key={s.id}
                     className="flex items-start gap-3 p-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]"
                   >
-                    <Lightbulb className="h-4 w-4 shrink-0 text-amber-400 mt-0.5" />
+                    <Lightbulb className="h-4 w-4 shrink-0 text-[var(--accent-warning,#f59e0b)] mt-0.5" />
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-[var(--text-primary)]">{s.title}</p>
                       {s.description && <p className="text-xs text-[var(--text-secondary)] mt-0.5">{s.description}</p>}
@@ -1075,18 +1075,18 @@ export default function AppAnalyticsPage() {
               : (
                 <>
                   <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]">
-                    <TrendingUp className="h-4 w-4 shrink-0 text-emerald-400 mt-0.5" />
+                    <TrendingUp className="h-4 w-4 shrink-0 text-[var(--accent-primary)] mt-0.5" />
                     <p className="text-sm text-[var(--text-secondary)]">{t("analytics.insightBusyHour")}</p>
                   </div>
                   <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]">
-                    <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400 mt-0.5" />
+                    <AlertTriangle className="h-4 w-4 shrink-0 text-[var(--accent-warning,#f59e0b)] mt-0.5" />
                     <div>
                       <p className="text-sm text-[var(--text-secondary)]">{t("analytics.insightAvailability")}</p>
                       <Link href="/app/knowledge" className="text-xs text-[var(--accent-primary)] mt-1 inline-block">{t("analytics.addToKnowledge")} →</Link>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]">
-                    <BadgeCheck className="h-4 w-4 shrink-0 text-emerald-400 mt-0.5" />
+                    <BadgeCheck className="h-4 w-4 shrink-0 text-[var(--accent-primary)] mt-0.5" />
                     <p className="text-sm text-[var(--text-secondary)]">{t("analytics.insightLiveAnswer")}</p>
                   </div>
                   <div className="flex items-start gap-3 p-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-default)]">
@@ -1153,7 +1153,7 @@ export default function AppAnalyticsPage() {
         <p className="text-sm font-medium text-[var(--text-primary)] mb-3">{t("analytics.sentimentOverview")}</p>
         <div className="h-4 w-full rounded-full bg-[var(--border-default)] overflow-hidden flex">
           <div
-            className="h-full bg-emerald-500"
+            className="h-full bg-[var(--accent-primary)]"
             style={{ width: `${positivePct}%` }}
           />
           <div
@@ -1161,7 +1161,7 @@ export default function AppAnalyticsPage() {
             style={{ width: `${neutralPct}%` }}
           />
           <div
-            className="h-full bg-rose-500"
+            className="h-full bg-[var(--accent-danger,#ef4444)]"
             style={{ width: `${negativePct}%` }}
           />
         </div>
