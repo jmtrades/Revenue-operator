@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
 interface ReadinessCheck {
   key: string;
@@ -20,9 +21,14 @@ interface ReadinessCheck {
 }
 
 export async function GET(req: NextRequest) {
+  try {
   const session = await getSession(req);
   const workspaceId = req.nextUrl.searchParams.get("workspace_id") || session?.workspaceId;
   if (!workspaceId) return NextResponse.json({ error: "No workspace" }, { status: 401 });
+
+  // Enforce workspace access — prevent unauthenticated data access
+  const authErr = await requireWorkspaceAccess(req, workspaceId);
+  if (authErr) return authErr;
 
   const db = getDb();
   const checks: ReadinessCheck[] = [];
@@ -233,4 +239,8 @@ export async function GET(req: NextRequest) {
     next_action: nextAction ? { label: nextAction.action, href: nextAction.href, key: nextAction.key } : null,
     checks,
   });
+  } catch (error) {
+    console.error("[voice/readiness] Unexpected error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }
