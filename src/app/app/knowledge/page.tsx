@@ -353,7 +353,7 @@ function KnowledgeModal({
                       : "bg-[var(--bg-input)] border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-medium)]"
                   }`}
                 >
-                  {t(`status.${s.value.toLowerCase()}`)}
+                  {t(`status.${(s.value ?? "").toLowerCase()}`)}
                 </button>
               ))}
             </div>
@@ -500,7 +500,7 @@ export default function KnowledgePage() {
         (e) =>
           e.title.toLowerCase().includes(q) ||
           e.content.toLowerCase().includes(q) ||
-          (e.question?.toLowerCase().includes(q))
+          ((e.question ?? "").toLowerCase().includes(q))
       );
     }
     if (typeFilter !== "all") list = list.filter((e) => e.type === typeFilter);
@@ -652,7 +652,7 @@ export default function KnowledgePage() {
             >
               <option value="all">{t("allStatuses")}</option>
               {getStatusOptions().map((o) => (
-                <option key={o.value} value={o.value}>{t(`status.${o.value.toLowerCase()}`)}</option>
+                <option key={o.value} value={o.value}>{t(`status.${(o.value ?? "").toLowerCase()}`)}</option>
               ))}
             </select>
             <div className="flex gap-2">
@@ -1013,7 +1013,7 @@ export default function KnowledgePage() {
                             : "bg-[var(--bg-inset)] text-[var(--text-tertiary)]"
                       }`}
                     >
-                      {t(`status.${entry.status.toLowerCase()}`)}
+                      {t(`status.${(entry.status ?? "").toLowerCase()}`)}
                     </span>
                     <span className="text-[10px] text-[var(--text-secondary)]">{t("wordCount", { count: entry.wordCount })}</span>
                     <span className="text-[10px] text-[var(--text-secondary)]">

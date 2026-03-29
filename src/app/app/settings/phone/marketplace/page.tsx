@@ -215,7 +215,7 @@ export default function PhoneMarketplacePage() {
             <input
               type="text"
               value={areaCode}
-              onChange={(e) => setAreaCode(e.target.value.replace(/\D/g, "").slice(0, 3))}
+              onChange={(e) => setAreaCode((e.target.value ?? "").replace(/\D/g, "").slice(0, 3))}
               placeholder={tPhone("marketplace.areaCodePlaceholder")}
               maxLength={3}
               className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm placeholder:text-[var(--text-secondary)] focus:border-[var(--accent-primary)] focus:outline-none"
