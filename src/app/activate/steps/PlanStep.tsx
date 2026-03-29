@@ -20,13 +20,17 @@ export function PlanStep({ selectedPlan, onSelectPlan, onNext, canGoNext }: Plan
     const plan = BILLING_PLANS[slug];
     const features = [];
 
-    if (plan.maxAgents > 0) {
+    if (plan.maxAgents === -1) {
+      features.push("Unlimited AI Agents");
+    } else if (plan.maxAgents > 0) {
       features.push(`${plan.maxAgents} AI Agent${plan.maxAgents > 1 ? "s" : ""}`);
     }
     if (plan.includedMinutes > 0) {
-      features.push(`${plan.includedMinutes} min/month`);
+      features.push(`${plan.includedMinutes.toLocaleString()} min/month`);
     }
-    if (plan.maxPhoneNumbers > 0) {
+    if (plan.maxPhoneNumbers === -1) {
+      features.push("Unlimited Phone Numbers");
+    } else if (plan.maxPhoneNumbers > 0) {
       features.push(`${plan.maxPhoneNumbers} Phone Number${plan.maxPhoneNumbers > 1 ? "s" : ""}`);
     }
     if (plan.features.appointmentBooking) {
