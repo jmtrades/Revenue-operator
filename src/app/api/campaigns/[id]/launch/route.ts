@@ -382,15 +382,20 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
 
       // DNC compliance check — skip leads on Do Not Call list
       if (leadPhone) {
-        const dncResult = await checkDNC(workspaceId, leadPhone);
-        if (dncResult.blocked) {
-          dncBlocked += 1;
-          await db
-            .from("campaign_leads")
-            .update({ status: "dnc_blocked", sent_at: new Date().toISOString() })
-            .eq("campaign_id", id)
-            .eq("lead_id", leadId);
-          continue; // Skip this lead entirely
+        try {
+          const dncResult = await checkDNC(workspaceId, leadPhone);
+          if (dncResult.blocked) {
+            dncBlocked += 1;
+            await db
+              .from("campaign_leads")
+              .update({ status: "dnc_blocked", sent_at: new Date().toISOString() })
+              .eq("campaign_id", id)
+              .eq("lead_id", leadId);
+            continue; // Skip this lead entirely
+          }
+        } catch (dncErr) {
+          console.warn(`[campaign/launch] DNC check failed for lead ${leadId}: ${dncErr instanceof Error ? dncErr.message : String(dncErr)}`);
+          // Non-blocking: if DNC check fails, proceed with caution (don't skip the lead)
         }
       }
 

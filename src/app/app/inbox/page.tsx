@@ -138,9 +138,9 @@ function ConversationList({
     if (q) {
       list = list.filter(
         (t) =>
-          t.contactName.toLowerCase().includes(q) ||
-          t.contactPhone.toLowerCase().includes(q) ||
-          t.lastMessage.toLowerCase().includes(q),
+          (t.contactName ?? "").toLowerCase().includes(q) ||
+          (t.contactPhone ?? "").toLowerCase().includes(q) ||
+          (t.lastMessage ?? "").toLowerCase().includes(q),
       );
     }
     return [...list].sort(

@@ -80,8 +80,8 @@ function mapLeadToContact(lead: {
   source?: string | null;
   channel?: string | null;
 }): Contact | null {
-  const name = (lead.name ?? "").trim();
-  const parts = name.split(/\s+/, 2);
+  const name = ((lead.name ?? "") as string).trim();
+  const parts = (name ?? "").split(/\s+/, 2);
   const firstName = parts[0] ?? "";
   const lastName = parts[1] ?? "";
   const phone = (lead.phone ?? "").trim();
@@ -172,7 +172,7 @@ function getSourceBadge(source: string | undefined, t: (key: string) => string) 
 }
 
 function getInitials(first: string, last: string) {
-  return `${first.charAt(0)}${last.charAt(0)}`.toUpperCase();
+  return `${(first ?? "").charAt(0)}${(last ?? "").charAt(0)}`.toUpperCase();
 }
 
 function formatLastContact(iso: string, t: (k: string, p?: { count?: number }) => string) {

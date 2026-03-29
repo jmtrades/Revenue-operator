@@ -51,38 +51,59 @@ export async function GET(request: NextRequest) {
     // Transform each campaign to flatten stats and calculate missing fields
     const campaigns = await Promise.all(
       rawCampaigns.map(async (campaign: Record<string, unknown>) => {
-        const stats = (campaign.stats ?? {}) as Record<string, unknown>;
-        const totalLeads = (stats.total_leads as number) ?? 0;
-        const dialed = (stats.dialed as number) ?? 0;
-        const answered = (stats.answered as number) ?? 0;
+        try {
+          const stats = (campaign.stats ?? {}) as Record<string, unknown>;
+          const totalLeads = (stats.total_leads as number) ?? 0;
+          const dialed = (stats.dialed as number) ?? 0;
+          const answered = (stats.answered as number) ?? 0;
 
-        // Count appointments for this campaign
-        let appointmentsBooked = (stats.appointments_booked as number) ?? 0;
-        if (appointmentsBooked === 0) {
-          const { count } = await db
-            .from("appointments")
-            .select("*", { count: "exact", head: true })
-            .eq("workspace_id", workspaceId)
-            .ilike("notes", `%campaign:${campaign.id}%`);
-          appointmentsBooked = count ?? 0;
+          // Count appointments for this campaign
+          let appointmentsBooked = (stats.appointments_booked as number) ?? 0;
+          if (appointmentsBooked === 0) {
+            const { count } = await db
+              .from("appointments")
+              .select("*", { count: "exact", head: true })
+              .eq("workspace_id", workspaceId)
+              .ilike("notes", `%campaign:${campaign.id}%`);
+            appointmentsBooked = count ?? 0;
+          }
+
+          return {
+            id: campaign.id as string,
+            name: campaign.name as string,
+            type: (campaign.type as string) ?? "custom",
+            mode: (campaign.mode ?? "preview") as "power" | "preview" | "progressive",
+            status: (campaign.status ?? "draft") as "draft" | "active" | "paused" | "completed",
+            target_filter: (campaign.target_filter as Record<string, unknown>) ?? {},
+            total_leads: totalLeads,
+            leads_called: dialed,
+            leads_remaining: Math.max(0, totalLeads - dialed),
+            connects: answered,
+            appointments_booked: appointmentsBooked,
+            created_at: campaign.created_at as string,
+            started_at: (campaign.started_at as string | null) ?? null,
+            completed_at: (campaign.completed_at as string | null) ?? null,
+          };
+        } catch (err) {
+          log("error", "api.campaigns.transform_failed", { campaignId: campaign.id, error: err instanceof Error ? err.message : String(err) });
+          // Return campaign with minimal data on enrichment failure
+          return {
+            id: campaign.id as string,
+            name: campaign.name as string,
+            type: (campaign.type as string) ?? "custom",
+            mode: (campaign.mode ?? "preview") as "power" | "preview" | "progressive",
+            status: (campaign.status ?? "draft") as "draft" | "active" | "paused" | "completed",
+            target_filter: (campaign.target_filter as Record<string, unknown>) ?? {},
+            total_leads: 0,
+            leads_called: 0,
+            leads_remaining: 0,
+            connects: 0,
+            appointments_booked: 0,
+            created_at: campaign.created_at as string,
+            started_at: (campaign.started_at as string | null) ?? null,
+            completed_at: (campaign.completed_at as string | null) ?? null,
+          };
         }
-
-        return {
-          id: campaign.id as string,
-          name: campaign.name as string,
-          type: (campaign.type as string) ?? "custom",
-          mode: (campaign.mode ?? "preview") as "power" | "preview" | "progressive",
-          status: (campaign.status ?? "draft") as "draft" | "active" | "paused" | "completed",
-          target_filter: (campaign.target_filter as Record<string, unknown>) ?? {},
-          total_leads: totalLeads,
-          leads_called: dialed,
-          leads_remaining: Math.max(0, totalLeads - dialed),
-          connects: answered,
-          appointments_booked: appointmentsBooked,
-          created_at: campaign.created_at as string,
-          started_at: (campaign.started_at as string | null) ?? null,
-          completed_at: (campaign.completed_at as string | null) ?? null,
-        };
       })
     );
 
