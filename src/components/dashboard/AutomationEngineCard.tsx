@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
 import { MailCheck, Phone, CalendarCheck, TrendingUp, Zap } from "lucide-react";
 import { useWorkspaceSafe } from "@/components/WorkspaceContext";
 
@@ -88,12 +89,29 @@ export function AutomationEngineCard() {
       {!hasActivity ? (
         <div className="py-8 text-center">
           <Zap className="w-10 h-10 mx-auto mb-3 text-[var(--text-disabled)] opacity-30" />
-          <p className="text-sm text-[var(--text-secondary)] mb-1 font-medium">
-            Your execution engine is ready
+          <p className="text-sm text-[var(--text-secondary)] mb-4 font-medium">
+            No autonomous activity yet
           </p>
-          <p className="text-xs text-[var(--text-tertiary)]">
-            Activates on your first call
+          <p className="text-xs text-[var(--text-tertiary)] mb-4 font-medium">
+            To activate automated operations:
           </p>
+          <ul className="space-y-2 text-left max-w-xs mx-auto">
+            <li className="text-xs">
+              <Link href="/app/agents" className="text-xs text-[var(--accent-primary)] hover:text-[var(--accent-primary)]/80 transition-colors">
+                Configure your AI operator
+              </Link>
+            </li>
+            <li className="text-xs">
+              <Link href="/app/settings/phone" className="text-xs text-[var(--accent-primary)] hover:text-[var(--accent-primary)]/80 transition-colors">
+                Set up a phone number
+              </Link>
+            </li>
+            <li className="text-xs">
+              <Link href="/app/follow-ups" className="text-xs text-[var(--accent-primary)] hover:text-[var(--accent-primary)]/80 transition-colors">
+                Create a follow-up sequence
+              </Link>
+            </li>
+          </ul>
         </div>
       ) : (
         <div className="space-y-4">

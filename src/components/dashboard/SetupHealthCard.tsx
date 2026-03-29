@@ -64,7 +64,7 @@ export function SetupHealthCard({ workspaceId }: SetupHealthCardProps) {
         {
           id: "agent",
           label: "Configure operator",
-          description: "Set up your AI voice operator with prompts and call handling rules",
+          description: "Set up your AI voice operator with prompts and call handling rules. Required for all inbound and outbound calling.",
           completed: result.agent_configured ?? false,
           actionLabel: "Configure operator",
           actionHref: "/app/agents",
@@ -72,7 +72,7 @@ export function SetupHealthCard({ workspaceId }: SetupHealthCardProps) {
         {
           id: "phone",
           label: "Set up phone number",
-          description: "Connect your business phone number to receive and make calls",
+          description: "Connect your business phone number to receive and make calls. Required for voice and SMS capabilities.",
           completed: result.phone_number_configured ?? false,
           actionLabel: "Set up phone",
           actionHref: "/app/settings/phone",
@@ -80,7 +80,7 @@ export function SetupHealthCard({ workspaceId }: SetupHealthCardProps) {
         {
           id: "call",
           label: "Make your first call",
-          description: "Place your first outbound call to test the agent end-to-end",
+          description: "Place your first outbound call to verify the operator works end-to-end.",
           completed: result.calls_answered > 0,
           actionLabel: "Test call",
           actionHref: "/app/agents",
@@ -89,14 +89,14 @@ export function SetupHealthCard({ workspaceId }: SetupHealthCardProps) {
         {
           id: "appointment",
           label: "Book first appointment",
-          description: "Enable the agent to qualify and schedule meetings with prospects",
+          description: "Enable the operator to qualify prospects and schedule meetings automatically. Requires operator + calendar setup.",
           completed: result.appointments_booked > 0,
           actionText: "Configure qualifying questions to enable auto-booking",
         },
         {
           id: "followups",
           label: "Enable follow-ups",
-          description: "Set up automated SMS and email sequences for leads",
+          description: "Set up automated SMS and email sequences to nurture leads. Requires phone number + email provider.",
           completed: result.follow_ups_sent > 0,
           actionLabel: "Enable follow-ups",
           actionHref: "/app/follow-ups",
@@ -229,8 +229,7 @@ export function SetupHealthCard({ workspaceId }: SetupHealthCardProps) {
       {completedCount > 0 && (
         <div className="mt-4 p-3 rounded-lg bg-[var(--accent-primary)]/5 border border-[var(--accent-primary)]/20">
           <p className="text-xs text-[var(--text-secondary)]">
-            You're {totalCount - completedCount} step{totalCount - completedCount === 1 ? "" : "s"} away from full activation.
-            Complete your setup to unlock all features.
+            Complete {steps.filter(s => !s.completed).map(s => s.label).join(' and ')} to start processing leads automatically.
           </p>
         </div>
       )}

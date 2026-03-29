@@ -101,14 +101,13 @@ export function AgentTestPanel({
           body: JSON.stringify({ agentId: agent.id, messages: updatedMessages }),
         });
         if (!res.ok) {
-          const err = (await res.json().catch(() => ({}))) as { error?: string };
-          const errorText =
-            err.error?.trim() ||
-            (res.status === 401
-              ? tAgents("errors.auth")
-              : res.status === 503
-                ? tAgents("errors.notConfigured")
-                : tAgents("errors.generic"));
+          const err = (await res.json().catch(() => ({}))) as { error?: string; code?: string };
+          let errorText = err.error?.trim() || "";
+          if (!errorText) {
+            if (res.status === 401) errorText = tAgents("errors.auth");
+            else if (res.status === 503) errorText = "Voice calling is not fully configured. Check that your operator has a voice selected, a phone number assigned, and the voice server is running.";
+            else errorText = tAgents("errors.generic");
+          }
           setMessages([...updatedMessages, { role: "agent", text: errorText }]);
         } else {
           const data = (await res.json().catch(() => ({}))) as { response?: string };
