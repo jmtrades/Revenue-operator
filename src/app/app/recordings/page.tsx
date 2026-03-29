@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
+import Link from "next/link";
 import { Mic, Play, Pause, Download, ChevronLeft, ChevronRight, Upload, MessageSquare } from "lucide-react";
 import { useWorkspaceSafe } from "@/components/WorkspaceContext";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -392,12 +393,12 @@ export default function RecordingsPage() {
               title="No recordings found"
               description="Try adjusting your filters or search terms"
             />
-            <Button
+            <Link
               href="/app/agents"
-              className="mt-6 bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90"
+              className="mt-6 inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium bg-[var(--accent-primary)] text-[var(--text-on-accent)] hover:opacity-90"
             >
               Set Up an Operator
-            </Button>
+            </Link>
           </div>
         ) : (
           <>
