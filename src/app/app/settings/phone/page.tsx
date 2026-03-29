@@ -580,6 +580,7 @@ export default function AppSettingsPhonePage() {
                   <Phone className="w-4 h-4" />
                   {testingCall ? tPhone("callingYou") : tPhone("callMyPhoneToTest")}
                 </button>
+                <p className="text-[11px] text-[var(--text-tertiary)] mt-2">For calls to work, you also need an AI operator configured with a voice and greeting.</p>
               </>
             )}
           </div>

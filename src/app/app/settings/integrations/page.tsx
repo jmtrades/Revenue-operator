@@ -804,6 +804,9 @@ export default function AppSettingsIntegrationsPage() {
                 <div>
                   <p className="text-sm font-medium text-[var(--text-primary)]">{t("hub.googleCalendarLabel")}</p>
                   <p className="text-xs text-[var(--text-secondary)] mt-1">{t("hub.calendarDesc")}</p>
+                  {!googleCalendarConnected && (
+                    <p className="text-[11px] text-[var(--text-tertiary)] mt-1.5">Unlocks: automatic availability, appointment booking, calendar sync, and meeting reminders for your leads.</p>
+                  )}
                 </div>
                 {googleCalendarConnected ? (
                   <span className="px-3 py-1.5 rounded-xl text-xs font-medium border border-[var(--accent-primary)]/30 text-[var(--accent-primary)]">

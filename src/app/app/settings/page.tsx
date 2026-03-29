@@ -364,8 +364,11 @@ export default function AppSettingsPage() {
           <div className="mb-6 flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full ${systemHealthData.passed === systemHealthData.total ? "bg-[var(--accent-primary)]" : "bg-[var(--accent-warning,#f59e0b)]"}`} />
             <span className="text-xs font-medium text-[var(--text-secondary)]">
-              {systemHealthData.passed === systemHealthData.total ? "All systems operational" : "Setup incomplete"}
+              {systemHealthData.passed === systemHealthData.total ? "All systems operational" : `Setup incomplete — ${systemHealthData.passed} of ${systemHealthData.total} checks passing`}
             </span>
+            {systemHealthData.passed !== systemHealthData.total && (
+              <Link href="/app/dashboard" className="text-[11px] text-[var(--accent-primary)] hover:underline ml-2">View details →</Link>
+            )}
           </div>
         )}
 

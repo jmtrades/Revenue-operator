@@ -323,6 +323,9 @@ export default function AppCalendarPage() {
             <p className="text-xs text-[var(--text-secondary)]">
               {googleConnected ? t("calendar.googleSynced") : t("calendar.googleNotSynced")}
             </p>
+            {!googleConnected && (
+              <p className="text-[11px] text-[var(--text-tertiary)] mt-1">Enables automatic availability, appointment booking, and meeting reminders.</p>
+            )}
           </div>
           {googleConnected ? (
             <span className="text-xs text-[var(--text-tertiary)]">{t("calendar.connected")}</span>
@@ -341,6 +344,9 @@ export default function AppCalendarPage() {
             <p className="text-xs text-[var(--text-secondary)]">
               {t("calendar.outlookComingSoon", { defaultValue: "Sync your Outlook calendar to manage availability and appointments." })}
             </p>
+            {!outlookConnected && (
+              <p className="text-[11px] text-[var(--text-tertiary)] mt-1">Sync Outlook events and availability for appointment scheduling.</p>
+            )}
           </div>
           {outlookConnected ? (
             <span className="text-xs text-[var(--accent-primary)]">{t("calendar.connected")}</span>
