@@ -13,6 +13,8 @@ const createCampaignSchema = z.object({
   name: safeStringSchema(200).min(1, "Campaign name is required"),
   mode: dialerModeSchema.optional().default("preview"),
   from_number: z.string().max(20).optional().default(""),
+  type: z.string().max(50).optional(),
+  target_filter: z.record(z.string(), z.unknown()).optional(),
   settings: z.record(z.string(), z.unknown()).optional(),
 });
 
@@ -122,17 +124,18 @@ export async function POST(request: NextRequest) {
         fromNumber = (phoneConfig as { phone_number?: string } | null)?.phone_number ?? "";
       } catch { /* ignore */ }
     }
-    if (!fromNumber) {
-      return NextResponse.json({ error: "No phone number configured. Please set up a phone number first." }, { status: 400 });
-    }
+    // Allow draft creation without phone — launch endpoint enforces phone requirement
+    if (!fromNumber) fromNumber = "";
 
     const { data, error } = await db
       .from("outbound_campaigns")
       .insert({
         workspace_id: body.workspace_id,
         name: body.name,
+        type: body.type ?? "custom",
         mode: body.mode ?? "preview",
         from_number: fromNumber,
+        target_filter: body.target_filter ?? {},
         settings: body.settings ?? {
           max_concurrent_calls: 1,
           max_attempts_per_lead: 3,

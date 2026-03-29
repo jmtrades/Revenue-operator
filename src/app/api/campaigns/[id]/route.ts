@@ -29,16 +29,22 @@ const CAMPAIGN_TYPES = [
   "lead_followup",
 ] as const;
 
+/** Helper: find campaign in outbound_campaigns first, fall back to campaigns */
+async function findCampaign(db: ReturnType<typeof getDb>, id: string, select = "*") {
+  const primary = await db.from("outbound_campaigns").select(select).eq("id", id).maybeSingle();
+  if (primary.data && !primary.error) {
+    return { data: primary.data as unknown as Record<string, unknown>, error: null, table: "outbound_campaigns" as const };
+  }
+  const fallback = await db.from("campaigns").select(select).eq("id", id).maybeSingle();
+  return { data: fallback.data as unknown as Record<string, unknown> | null, error: fallback.error, table: "campaigns" as const };
+}
+
 export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
   const db = getDb();
-  const { data: campaign, error } = await db
-    .from("campaigns")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
+  const { data: campaign, error } = await findCampaign(db, id);
   if (error || !campaign) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  const workspaceId = (campaign as { workspace_id: string }).workspace_id;
+  const workspaceId = (campaign as Record<string, unknown>).workspace_id as string;
   const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;
 
@@ -69,9 +75,9 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
 
   const { id } = await ctx.params;
   const db = getDb();
-  const { data: existing } = await db.from("campaigns").select("workspace_id").eq("id", id).maybeSingle();
+  const { data: existing, table } = await findCampaign(db, id, "workspace_id");
   if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  const err = await requireWorkspaceAccess(req, (existing as { workspace_id: string }).workspace_id);
+  const err = await requireWorkspaceAccess(req, (existing as Record<string, unknown>).workspace_id as string);
   if (err) return err;
   let raw: unknown;
   try {
@@ -98,7 +104,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
   if (parsed.data.name !== undefined) updates.name = parsed.data.name.trim();
   if (parsed.data.type !== undefined) updates.type = parsed.data.type;
   if (parsed.data.target_filter !== undefined) updates.target_filter = parsed.data.target_filter;
-  const { data: campaign, error } = await db.from("campaigns").update(updates).eq("id", id).select().maybeSingle();
+  const { data: campaign, error } = await db.from(table).update(updates).eq("id", id).select().maybeSingle();
   if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   return NextResponse.json(campaign);
 }
@@ -122,15 +128,12 @@ export async function DELETE(req: NextRequest, ctx: { params: Promise<{ id: stri
   }
 
   const db = getDb();
-  const { data: existing } = await db
-    .from("campaigns")
-    .select("id, status, workspace_id")
-    .eq("id", id)
-    .eq("workspace_id", session.workspaceId)
-    .maybeSingle();
-  if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  const { data: existing, table } = await findCampaign(db, id, "id, status, workspace_id");
+  if (!existing || (existing as Record<string, unknown>).workspace_id !== session.workspaceId) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
 
-  const status = (existing as { status: string }).status;
+  const status = (existing as Record<string, unknown>).status as string;
   if (status === "active") {
     return NextResponse.json(
       { error: "Pause the campaign before deleting it." },
@@ -142,7 +145,7 @@ export async function DELETE(req: NextRequest, ctx: { params: Promise<{ id: stri
   await db.from("campaign_leads").delete().eq("campaign_id", id);
 
   const { error } = await db
-    .from("campaigns")
+    .from(table)
     .delete()
     .eq("id", id)
     .eq("workspace_id", session.workspaceId);
