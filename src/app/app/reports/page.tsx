@@ -199,7 +199,7 @@ export default function RevenueDigestPage() {
         <div className="rounded-xl border border-[var(--accent-warning,#f59e0b)]/20 bg-[var(--accent-warning,#f59e0b)]/5 p-6">
           <p className="text-[var(--accent-warning,#f59e0b)] font-medium">No Data Available</p>
           <p className="text-[var(--text-secondary)] text-sm mt-1">
-            Your revenue digest will populate as your agent handles calls and
+            Your revenue digest will populate as your operator handles calls and
             creates opportunities.
           </p>
         </div>
@@ -500,7 +500,7 @@ export default function RevenueDigestPage() {
           ) : (
             <div className="rounded-xl border border-[var(--accent-warning,#f59e0b)]/20 bg-[var(--accent-warning,#f59e0b)]/5 p-6">
               <p className="text-[var(--text-primary)] font-medium">
-                Building momentum — wins will appear as your agent handles more
+                Building momentum — wins will appear as your operator handles more
                 calls.
               </p>
             </div>

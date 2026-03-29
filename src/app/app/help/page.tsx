@@ -24,7 +24,7 @@ export default function HelpPage() {
         <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5">
           <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-2">{t("connectNumber.title", { defaultValue: "How to connect a number" })}</h2>
           <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
-            {t("connectNumber.desc1", { defaultValue: "Go to" })} <Link className="underline" href="/app/settings/phone">{t("connectNumber.phone", { defaultValue: "Phone" })}</Link>, {t("connectNumber.desc2", { defaultValue: "provision or connect a number, and verify forwarding. Once connected, run a test call so your agent can handle live inbound conversations." })}
+            {t("connectNumber.desc1", { defaultValue: "Go to" })} <Link className="underline" href="/app/settings/phone">{t("connectNumber.phone", { defaultValue: "Phone" })}</Link>, {t("connectNumber.desc2", { defaultValue: "provision or connect a number, and verify forwarding. Once connected, run a test call so your operator can handle live inbound conversations." })}
           </p>
         </section>
 

@@ -282,48 +282,74 @@ export default function AppointmentsPage() {
 
   const handleSyncCalendar = useCallback(async () => {
     setSyncLoading(true);
+    let totalSynced = 0;
+    let totalCreated = 0;
+    let totalUpdated = 0;
+    const errors: string[] = [];
+
+    // Try Google Calendar sync
     try {
-      const response = await fetch("/api/integrations/google-calendar/sync", {
+      const googleRes = await fetch("/api/integrations/google-calendar/sync", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
-
-      if (!response.ok) {
-        const errData = (await response.json().catch(() => null)) as { code?: string; error?: string } | null;
-        if (errData?.code === "calendar_connection_expired") {
-          showToast(t("appointments.syncExpired", { defaultValue: "Calendar connection expired. Reconnect in Settings." }), "error");
-        } else {
-          throw new Error(errData?.error || `Sync failed (${response.status})`);
-        }
-        return;
-      }
-
-      const result = (await response.json()) as { synced?: number; created?: number; updated?: number };
-      const { synced = 0, created = 0, updated = 0 } = result;
-
-      if (synced > 0) {
-        showToast(
-          t("appointments.syncSuccess", {
-            defaultValue: `Synced {{count}} event(s): {{created}} new, {{updated}} updated`,
-            count: String(synced),
-            created: String(created),
-            updated: String(updated),
-          }),
-          "success"
-        );
-        refetchAppointments();
+      if (googleRes.ok) {
+        const result = (await googleRes.json()) as { synced?: number; created?: number; updated?: number };
+        totalSynced += result.synced ?? 0;
+        totalCreated += result.created ?? 0;
+        totalUpdated += result.updated ?? 0;
       } else {
-        showToast(t("appointments.syncNoEvents", { defaultValue: "No new events to sync" }), "success");
+        const errData = (await googleRes.json().catch(() => null)) as { code?: string; error?: string } | null;
+        if (errData?.code !== "calendar_connection_expired") {
+          errors.push(errData?.error || "Google Calendar sync failed");
+        }
+        // Silently skip if not connected (401 with expired code)
       }
-    } catch (err) {
-      showToast(
-        err instanceof Error ? err.message : t("appointments.syncFailed", { defaultValue: "Failed to sync calendar" }),
-        "error"
-      );
-    } finally {
-      setSyncLoading(false);
+    } catch {
+      // Google Calendar not connected — skip silently
     }
+
+    // Try Outlook Calendar sync
+    try {
+      const outlookRes = await fetch("/api/integrations/outlook-calendar/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      if (outlookRes.ok) {
+        const result = (await outlookRes.json()) as { synced?: number; created?: number; updated?: number };
+        totalSynced += result.synced ?? 0;
+        totalCreated += result.created ?? 0;
+        totalUpdated += result.updated ?? 0;
+      } else {
+        const errData = (await outlookRes.json().catch(() => null)) as { code?: string; error?: string } | null;
+        if (errData?.code !== "calendar_connection_expired") {
+          errors.push(errData?.error || "Outlook Calendar sync failed");
+        }
+      }
+    } catch {
+      // Outlook Calendar not connected — skip silently
+    }
+
+    if (totalSynced > 0) {
+      showToast(
+        t("appointments.syncSuccess", {
+          defaultValue: `Synced {{count}} event(s): {{created}} new, {{updated}} updated`,
+          count: String(totalSynced),
+          created: String(totalCreated),
+          updated: String(totalUpdated),
+        }),
+        "success"
+      );
+      refetchAppointments();
+    } else if (errors.length > 0) {
+      showToast(errors[0], "error");
+    } else {
+      showToast(t("appointments.syncNoEvents", { defaultValue: "No new events to sync" }), "success");
+    }
+
+    setSyncLoading(false);
   }, [t, showToast, refetchAppointments]);
 
   return (
@@ -351,7 +377,7 @@ export default function AppointmentsPage() {
               onClick={handleSyncCalendar}
               disabled={syncLoading}
               className="px-3 py-1.5 rounded-lg text-sm font-medium bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-medium)] transition-[background-color,opacity] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--bg-hover)]"
-              title={t("appointments.syncTooltip", { defaultValue: "Sync Google Calendar events" })}
+              title={t("appointments.syncTooltip", { defaultValue: "Sync Google & Outlook Calendar events" })}
             >
               {syncLoading ? (
                 <span className="inline-flex items-center gap-2">
