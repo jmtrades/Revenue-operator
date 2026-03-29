@@ -208,19 +208,21 @@ export default function CampaignCreatePage() {
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          workspace_id: effectiveWorkspaceId,
           name: (name || inferredName).trim(),
           type,
           target_filter: targetFilter,
         }),
       });
-      const created = (await res.json().catch(() => null)) as { id?: string; error?: string } | null;
-      if (!res.ok || !created?.id) {
+      const created = (await res.json().catch(() => null)) as { campaign?: { id?: string }; id?: string; error?: string } | null;
+      const campaignId = created?.campaign?.id ?? created?.id;
+      if (!res.ok || !campaignId) {
         setToast(created?.error || t("errors.createFailed"));
         return;
       }
       track("campaign_created", { type });
       if (launch) {
-        const launchRes = await fetch(`/api/campaigns/${encodeURIComponent(created.id)}/launch`, {
+        const launchRes = await fetch(`/api/campaigns/${encodeURIComponent(campaignId)}/launch`, {
           method: "POST",
           credentials: "include",
         });

@@ -26,11 +26,19 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   const { id } = await ctx.params;
   const db = getDb();
 
-  const { data: row, error } = await db
-    .from("campaigns")
+  // Try outbound_campaigns first (campaign wizard stores here), fall back to campaigns
+  let { data: row, error } = await db
+    .from("outbound_campaigns")
     .select("id, workspace_id, status, type, target_filter, sequence_steps")
     .eq("id", id)
     .maybeSingle();
+  if (!row && !error) {
+    ({ data: row, error } = await db
+      .from("campaigns")
+      .select("id, workspace_id, status, type, target_filter, sequence_steps")
+      .eq("id", id)
+      .maybeSingle());
+  }
 
   if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   if (!row) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -131,7 +139,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
 
   // Validate: workspace can't have more than 3 active campaigns at once
   const { count: activeCampaignCount } = await db
-    .from("campaigns")
+    .from("outbound_campaigns")
     .select("id", { count: "exact", head: true })
     .eq("workspace_id", workspaceId)
     .eq("status", "active");
@@ -272,7 +280,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   // Atomic lock: transition status from draft/paused → launching to prevent double-launch.
   // If another request already changed the status, this update affects 0 rows.
   const { data: lockResult, error: lockErr } = await db
-    .from("campaigns")
+    .from("outbound_campaigns")
     .update({ status: "launching", updated_at: launchAt })
     .eq("id", id)
     .in("status", ["draft", "paused"])
@@ -447,7 +455,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
 
   // Update campaign status based on enqueuing outcome
   await db
-    .from("campaigns")
+    .from("outbound_campaigns")
     .update({
       status: campaignStatus,
       last_launched_at: launchAt,
