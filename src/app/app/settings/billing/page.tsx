@@ -98,7 +98,7 @@ export default function AppSettingsBillingPage() {
         if (data?.packs) setMinutePacks(data.packs);
       })
       .catch((err) => {
-        console.warn("Failed to fetch minute packs:", err);
+        // silenced
       });
   }, []);
 
@@ -230,9 +230,6 @@ export default function AppSettingsBillingPage() {
         let errorMessage = tBilling("toast.pauseFailed");
         try {
           const data = await res.json() as { message?: string; error?: string } | null;
-          if (data?.error) {
-            console.error("[billing] API error:", data.error);
-          }
         } catch {
           // If JSON parsing fails, use a generic message including status code
           if (res.status === 502) {

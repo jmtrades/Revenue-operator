@@ -126,7 +126,6 @@ export default function LiveChatInboxPage() {
         const errorData = (await res.json().catch(() => ({
           error: "Failed to send message",
         }))) as { error?: string };
-        if (errorData.error) console.error("Send message error:", errorData.error);
         toast.error("Failed to send message");
         setMessageText(text);
         return;

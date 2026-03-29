@@ -102,7 +102,6 @@ export default function CallsLivePage() {
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        if ((err as { error?: string }).error) console.error(`Call ${action} error:`, (err as { error?: string }).error);
         toast.error("Failed to update call");
         return;
       }
@@ -112,7 +111,6 @@ export default function CallsLivePage() {
       if (action === "unhold") setHeldCalls((prev) => { const next = new Set(prev); next.delete(callId); return next; });
       if (action === "transfer") toast.success("Call transferred to fallback number");
     } catch (err) {
-      console.error(`Call ${action} failed:`, err);
       toast.error("Failed to update call");
     } finally {
       setActionLoading(null);

@@ -204,7 +204,6 @@ export default function AppSettingsPhonePage() {
         setPrimaryAgentId(data?.agents?.[0]?.id ?? null);
       })
       .catch((err) => {
-        console.warn("Failed to fetch agents:", err);
         setPrimaryAgentId(null);
       });
   }, []);
@@ -340,7 +339,6 @@ export default function AppSettingsPhonePage() {
       setCopySuccess(true);
       setTimeout(() => setCopySuccess(false), 2000);
     }).catch((err) => {
-      console.warn("Failed to copy phone number:", err);
       setToast(tPhone("toast.copyFailed", { defaultValue: "Failed to copy phone number" }));
     });
   };

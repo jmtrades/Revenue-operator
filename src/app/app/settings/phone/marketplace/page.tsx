@@ -137,7 +137,6 @@ export default function PhoneMarketplacePage() {
           return;
         }
 
-        if (data.error) console.error("[marketplace] provision error:", data.error);
         setError(tSettings("phone.provisionFailed"));
         setErrorType("provision");
         setLastProvisionAttempt(num);

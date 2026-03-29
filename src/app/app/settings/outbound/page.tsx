@@ -100,7 +100,6 @@ export default function OutboundSettingsPage() {
       });
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
-        console.error("Outbound settings save failed:", body);
         toast.error(tToast("error.generic"));
         return;
       }

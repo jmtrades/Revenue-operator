@@ -99,7 +99,6 @@ export default function AppSettingsCompliancePage() {
       });
       if (!res.ok) {
         const err = (await res.json()).error ?? tSettings("compliance.saveFailed");
-        console.error("Compliance settings save failed:", err);
         toast.error(tSettings("compliance.saveFailed"));
         return;
       }

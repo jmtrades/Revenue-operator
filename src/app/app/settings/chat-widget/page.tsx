@@ -77,7 +77,6 @@ export default function ChatWidgetSettingsPage() {
         const errorData = (await res.json().catch(() => ({
           error: t("toast.unknownError"),
         }))) as { error?: string };
-        console.error("Save failed:", errorData);
         toast.error(t("toast.saveFailed"));
         return;
       }

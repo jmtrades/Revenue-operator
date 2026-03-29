@@ -565,7 +565,6 @@ export default function LeadsPage() {
         error?: string;
       } | null;
       if (!res.ok) {
-        if (data?.error) console.error("[leads] add error:", data.error);
         setAddLeadError(t("leads.errors.addFailed"));
         toast.error(t("leads.errors.addFailed"));
         return;
@@ -608,7 +607,6 @@ export default function LeadsPage() {
         toast.success(t("leads.toast.callStarted"));
         closeDrawer();
       } else {
-        if (data?.error) console.error("[leads] call error:", data.error);
         toast.error(t("leads.toast.callFailed"));
       }
     } catch {
@@ -1099,7 +1097,6 @@ export default function LeadsPage() {
                             t("leads.toast.importSuccess", { count: data.imported }),
                           );
                         } else {
-                          if (data?.error) console.error("[leads] import error:", data.error);
                           toast.error(t("leads.toast.importFailed"));
                         }
                       } catch {

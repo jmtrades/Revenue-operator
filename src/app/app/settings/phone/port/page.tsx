@@ -35,7 +35,6 @@ export default function PhonePortPage() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
-        if (errorData?.error) console.error("[port] submit error:", errorData.error);
         toast.error(t("submitFailed"));
         return;
       }

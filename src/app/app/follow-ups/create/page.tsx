@@ -91,7 +91,6 @@ export default function FollowUpCreatePage() {
       const created = (await res.json().catch(() => null)) as { sequence?: { id?: string } ; error?: string } | null;
       const sequenceId = created?.sequence?.id;
       if (!res.ok || !sequenceId) {
-        if (created?.error) console.error("[follow-ups] create error:", created.error);
         toast.error(t("errors.createFailed"));
         return;
       }
