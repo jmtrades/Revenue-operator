@@ -55,7 +55,7 @@ export async function POST(
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     "X-Event-Type": "lead_qualified",
-    "X-Recall-Touch-Test": "true",
+    "X-Revenue-Operator-Test": "true",
   };
 
   if (row.secret) {

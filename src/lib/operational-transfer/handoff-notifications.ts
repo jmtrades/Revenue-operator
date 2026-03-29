@@ -13,7 +13,7 @@ import {
 import { recordHandoffAcknowledgement } from "@/lib/delivery-assurance/handoff-ack";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const EMAIL_FROM = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@revenue-operator.com>";
+const EMAIL_FROM = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@revenueoperator.ai>";
 const CLUSTER_WINDOW_MS = 10 * 60 * 1000;
 const QUIET_PERIOD_MS = 10 * 60 * 1000;
 
@@ -117,7 +117,7 @@ export async function runHandoffNotifications(): Promise<
           const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
           const email = (user as { email?: string } | null)?.email;
           if (email) {
-            const text = "Outside authority.\n\nMultiple items exist outside authority.\n\nOpen: " + (process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://app.revenue-operator.com") + "/dashboard" + "\n\nEntry restores reliance." + "\n\nEntry is the operational boundary.";
+            const text = "Outside authority.\n\nMultiple items exist outside authority.\n\nOpen: " + (process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://app.revenueoperator.ai") + "/dashboard" + "\n\nEntry restores reliance." + "\n\nEntry is the operational boundary.";
             const sent = await sendEmail(email, "Outside authority.", text);
             if (sent) {
               const { data: settings } = await db.from("settings").select("team_handoff_emails").eq("workspace_id", workspaceId).maybeSingle();
@@ -200,7 +200,7 @@ export async function runHandoffBatchSend(workspaceId: string, escalationIds: st
     const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
     const email = (user as { email?: string } | null)?.email;
     if (email) {
-      const text = "Outside authority.\n\nMultiple items exist outside authority.\n\nOpen: " + (process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://app.revenue-operator.com") + "/dashboard" + "\n\nEntry restores reliance." + "\n\nEntry is the operational boundary.";
+      const text = "Outside authority.\n\nMultiple items exist outside authority.\n\nOpen: " + (process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://app.revenueoperator.ai") + "/dashboard" + "\n\nEntry restores reliance." + "\n\nEntry is the operational boundary.";
       const sent = await sendEmail(email, "Outside authority.", text);
       if (sent) {
         const { data: settings } = await db.from("settings").select("team_handoff_emails").eq("workspace_id", workspaceId).maybeSingle();

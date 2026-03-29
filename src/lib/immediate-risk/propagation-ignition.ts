@@ -62,7 +62,7 @@ export async function runPropagationIgnition(): Promise<void> {
             Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
           },
           body: JSON.stringify({
-            from: process.env.EMAIL_FROM ?? "Revenue Operator <noreply@revenue-operator.com>",
+            from: process.env.EMAIL_FROM ?? "Revenue Operator <noreply@revenueoperator.ai>",
             to: email,
             subject: "Coordination",
             text: MESSAGE_TEXT,

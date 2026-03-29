@@ -82,7 +82,7 @@ export default function HelpPage() {
       <div className="mt-8 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5">
         <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-2">{t("stuck.title", { defaultValue: "Still stuck?" })}</h2>
         <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
-          {t("stuck.desc1", { defaultValue: "Email" })} <a className="underline" href="mailto:support@revenue-operator.com">support@revenue-operator.com</a> {t("stuck.desc2", { defaultValue: "and include what you were trying to do. We typically respond within 1 business day." })}
+          {t("stuck.desc1", { defaultValue: "Email" })} <a className="underline" href="mailto:support@revenueoperator.ai">support@revenueoperator.ai</a> {t("stuck.desc2", { defaultValue: "and include what you were trying to do. We typically respond within 1 business day." })}
         </p>
       </div>
     </div>

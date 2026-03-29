@@ -578,7 +578,7 @@ function OnboardingWizard() {
             ) : (
               <>
                 <div className="p-6 rounded-xl text-center border-2" style={{ borderColor: "var(--accent-primary)", background: "var(--accent-primary-subtle)" }}>
-                  <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>{t("thisIsRecallTouchNumber")}</p>
+                  <p className="text-sm mb-2" style={{ color: "var(--text-secondary)" }}>{t("thisIsRevenueOperatorNumber")}</p>
                   <p className="text-4xl font-bold" style={{ color: "var(--accent-primary)" }}>{phoneNumber}</p>
                 </div>
 

@@ -23,8 +23,8 @@ export function WhatMakesUsDifferentSection() {
       },
       {
         icon: CheckCircle2,
-        label: t("rows.recallTouch.label"),
-        items: [t("rows.recallTouch.i1"), t("rows.recallTouch.i2"), t("rows.recallTouch.i3")],
+        label: t("rows.revenueOperator.label"),
+        items: [t("rows.revenueOperator.i1"), t("rows.revenueOperator.i2"), t("rows.revenueOperator.i3")],
         color: "text-emerald-400",
       },
     ],

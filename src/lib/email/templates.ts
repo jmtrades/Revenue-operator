@@ -229,7 +229,7 @@ export function buildMilestoneEmail(params: {
   </div>
 
   <p style="margin:0;font-size:13px;color:#737373;line-height:1.6;text-align:center;">
-    Share the love — <a href="https://twitter.com/intent/tweet?text=My+AI+phone+agent+just+handled+${milestone}+calls+with+@RecallTouch" style="color:#10b981;text-decoration:underline;">tweet about it</a>
+    Share the love — <a href="https://twitter.com/intent/tweet?text=My+AI+phone+agent+just+handled+${milestone}+calls+with+@RevenueOperator" style="color:#10b981;text-decoration:underline;">tweet about it</a>
   </p>`;
 
   return {

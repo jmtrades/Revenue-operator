@@ -7,8 +7,8 @@
 import { getDb } from "@/lib/db/queries";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const EMAIL_FROM = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@revenue-operator.com>";
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://app.revenue-operator.com";
+const EMAIL_FROM = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@revenueoperator.ai>";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://app.revenueoperator.ai";
 
 export type PresenceType = "daily" | "weekly" | "monthly" | "escalation" | "decision_required";
 

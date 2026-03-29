@@ -924,7 +924,7 @@ export default function AppSettingsPhonePage() {
       )}
 
       <p className="text-xs text-[var(--text-secondary)] mt-6">
-        {tPhone("needHelpPhoneSetup")} <a href="mailto:support@revenue-operator.com" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline underline-offset-2">support@revenue-operator.com</a>
+        {tPhone("needHelpPhoneSetup")} <a href="mailto:support@revenueoperator.ai" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline underline-offset-2">support@revenueoperator.ai</a>
       </p>
       <p className="mt-4"><Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">{tPhone("backToSettings")}</Link></p>
     </div>

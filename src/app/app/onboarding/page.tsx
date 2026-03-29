@@ -167,7 +167,7 @@ export default function AppOnboardingPage() {
   useEffect(() => {
     const apply = () => {
       try {
-        const raw = safeGetItem("rt_signup") ?? safeGetItem("recalltouch_signup");
+        const raw = safeGetItem("rt_signup") ?? safeGetItem("revenueoperator_signup");
         if (raw) {
           try {
             const d = JSON.parse(raw) as { businessName?: string; businessType?: string; industry?: string; website?: string };
@@ -175,7 +175,7 @@ export default function AppOnboardingPage() {
             if (d?.website?.trim()) setWebsite(d.website.trim());
           } catch {
             safeRemoveItem("rt_signup");
-            safeRemoveItem("recalltouch_signup");
+            safeRemoveItem("revenueoperator_signup");
           }
         }
         const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Los_Angeles";

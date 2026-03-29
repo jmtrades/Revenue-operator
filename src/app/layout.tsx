@@ -93,8 +93,8 @@ const organizationJsonLd = {
   description: "Autonomous revenue operations platform. Automates inbound, outbound, lead qualification, appointment booking, follow-ups, and revenue recovery for every business.",
   sameAs: [
     // Add social profile URLs when they exist:
-    // "https://twitter.com/recalltouch",
-    // "https://linkedin.com/company/recalltouch",
+    // "https://twitter.com/revenueoperator",
+    // "https://linkedin.com/company/revenueoperator",
   ],
 };
 

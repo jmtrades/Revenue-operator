@@ -182,7 +182,7 @@ export function ActivateWizard() {
       }
       const existing = (() => {
         try {
-          const raw = localStorage.getItem("rt_signup") ?? localStorage.getItem("recalltouch_signup");
+          const raw = localStorage.getItem("rt_signup") ?? localStorage.getItem("revenueoperator_signup");
           return raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
         } catch { return {}; }
       })();
