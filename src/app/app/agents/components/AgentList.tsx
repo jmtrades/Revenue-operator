@@ -105,7 +105,7 @@ export function AgentList({
                 {(agent.stats?.appointmentsBooked ?? 0) > 0 && (
                   <>
                     <span>·</span>
-                    <span className="text-emerald-400">{agent.stats?.appointmentsBooked} {t("bookedSuffix", { defaultValue: "booked" })}</span>
+                    <span className="text-[var(--accent-primary)]">{agent.stats?.appointmentsBooked} {t("bookedSuffix", { defaultValue: "booked" })}</span>
                   </>
                 )}
                 <span>·</span>
@@ -114,7 +114,7 @@ export function AgentList({
               {(agent.stats?.totalCalls ?? 0) > 0 && (
                 <div className="flex items-center gap-2 text-[11px] text-[var(--text-tertiary)] mb-3">
                   {typeof agent.stats?.avgRating === "number" && agent.stats.avgRating > 0 && (
-                    <span className={agent.stats.avgRating >= 4 ? "text-emerald-400" : agent.stats.avgRating >= 3 ? "text-amber-400" : "text-red-400"}>
+                    <span className={agent.stats.avgRating >= 4 ? "text-[var(--accent-primary)]" : agent.stats.avgRating >= 3 ? "text-[var(--accent-warning)]" : "text-[var(--accent-danger)]"}>
                       {t("qualitySuffix", { defaultValue: "Quality" })}: {agent.stats.avgRating.toFixed(1)}/5
                     </span>
                   )}
@@ -163,7 +163,7 @@ export function AgentList({
                 <button
                   type="button"
                   aria-label={t("actions.deleteAgent")}
-                  className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-red-400 hover:bg-red-500/10"
+                  className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--accent-danger)] hover:bg-[var(--accent-danger)]/10"
                   onClick={() => setDeleteConfirmAgent(agent)}
                 >
                   <Trash2 className="h-3.5 w-3.5" />

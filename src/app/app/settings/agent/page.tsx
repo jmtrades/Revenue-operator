@@ -438,7 +438,7 @@ export default function AppSettingsAgentPage() {
                   placeholder={tSettings("agent.answerPlaceholder")}
                   className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                 />
-                <button type="button" onClick={() => setPendingKnowledgeDelete(idx)} className="shrink-0 text-[var(--text-secondary)] hover:text-red-400 text-sm px-1 transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]" aria-label={tSettings("agent.removeAria")}>×</button>
+                <button type="button" onClick={() => setPendingKnowledgeDelete(idx)} className="shrink-0 text-[var(--text-secondary)] hover:text-[var(--accent-danger)] text-sm px-1 transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]" aria-label={tSettings("agent.removeAria")}>×</button>
               </div>
             ))}
           </div>
@@ -510,7 +510,7 @@ export default function AppSettingsAgentPage() {
                         placeholder={tSettings("agent.customAnswerPlaceholder")}
                         className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                       />
-                      <button type="button" onClick={() => removeCustomQuestion(idx)} className="shrink-0 text-[var(--text-secondary)] hover:text-red-400 text-sm px-1 transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">×</button>
+                      <button type="button" onClick={() => removeCustomQuestion(idx)} className="shrink-0 text-[var(--text-secondary)] hover:text-[var(--accent-danger)] text-sm px-1 transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">×</button>
                     </div>
                   ))}
                 </div>
@@ -650,7 +650,7 @@ export default function AppSettingsAgentPage() {
                         type="checkbox"
                         checked={config.forbiddenActions.includes(action)}
                         onChange={() => toggleForbiddenAction(action)}
-                        className="w-4 h-4 rounded border-[var(--border-default)] text-red-500 focus:ring-red-500"
+                        className="w-4 h-4 rounded border-[var(--border-default)] text-[var(--accent-danger)] focus:ring-[var(--accent-danger)]"
                       />
                       <span className="text-xs text-[var(--text-primary)]">{action}</span>
                     </label>
@@ -699,7 +699,7 @@ export default function AppSettingsAgentPage() {
                       placeholder={tSettings("agent.responsePlaceholder")}
                       className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                     />
-                    <button type="button" onClick={() => removeObjection(idx)} className="shrink-0 text-[var(--text-secondary)] hover:text-red-400 text-sm px-1">×</button>
+                    <button type="button" onClick={() => removeObjection(idx)} className="shrink-0 text-[var(--text-secondary)] hover:text-[var(--accent-danger)] text-sm px-1">×</button>
                   </div>
                 ))}
               </div>
@@ -734,9 +734,9 @@ export default function AppSettingsAgentPage() {
       {inlineToast && (
         <div className="fixed top-4 right-4 z-50 px-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-medium)] shadow-lg text-sm text-[var(--text-primary)] flex items-center gap-2 animate-in fade-in slide-in-from-right-2 duration-300">
           {inlineToast.includes("updated") || inlineToast.includes("success") ? (
-            <span className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">✓</span>
+            <span className="w-5 h-5 rounded-full bg-[var(--accent-primary)]/20 flex items-center justify-center text-[var(--accent-primary)]">✓</span>
           ) : (
-            <span className="w-5 h-5 rounded-full bg-red-500/20 flex items-center justify-center text-red-400">!</span>
+            <span className="w-5 h-5 rounded-full bg-[var(--accent-danger)]/20 flex items-center justify-center text-[var(--accent-danger)]">!</span>
           )}
           {inlineToast}
         </div>

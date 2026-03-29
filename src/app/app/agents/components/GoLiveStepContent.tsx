@@ -80,7 +80,7 @@ export function GoLiveStepContent({
           ))}
         </select>
         {assignedNumber && (
-          <p className="text-[11px] text-emerald-400/90 mt-1.5">{t("goLive.assigned")}: {assignedNumber.phone_number}</p>
+          <p className="text-[11px] text-[var(--accent-primary)]/90 mt-1.5">{t("goLive.assigned")}: {assignedNumber.phone_number}</p>
         )}
       </section>
       <div>
@@ -111,7 +111,7 @@ export function GoLiveStepContent({
           return r.tasks.map((task) => (
             <li key={task.key} className="flex items-center gap-2">
               {task.complete ? (
-                <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" aria-hidden />
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--accent-primary)]" aria-hidden />
               ) : (
                 <span className="h-4 w-4 shrink-0 rounded-full border border-white/30 text-[var(--text-tertiary)]" aria-hidden />
               )}

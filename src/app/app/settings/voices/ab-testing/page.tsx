@@ -218,12 +218,12 @@ export default function AbTestingPage() {
             <button
               onClick={handleCreate}
               disabled={creating || !newName.trim() || !newVoiceA || !newVoiceB || newVoiceA === newVoiceB}
-              className="px-4 py-2 text-sm font-medium rounded-lg bg-[var(--accent)] text-white hover:opacity-90 transition-opacity disabled:opacity-40"
+              className="px-4 py-2 text-sm font-medium rounded-lg bg-[var(--accent-primary)] text-white hover:opacity-90 transition-opacity disabled:opacity-40"
             >
               {creating ? "Creating..." : "Start Test"}
             </button>
             {newVoiceA && newVoiceB && newVoiceA === newVoiceB && (
-              <p className="text-xs text-red-400">Voice A and Voice B must be different.</p>
+              <p className="text-xs text-[var(--accent-danger)]">Voice A and Voice B must be different.</p>
             )}
           </div>
         </div>
@@ -240,7 +240,7 @@ export default function AbTestingPage() {
           <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Running Tests</h2>
           <div className="space-y-4">
             {runningTests.map((test) => (
-              <div key={test.id} className="p-5 rounded-xl border border-green-500/20 bg-[var(--bg-card)]">
+              <div key={test.id} className="p-5 rounded-xl border border-[var(--accent-primary)]/20 bg-[var(--bg-card)]">
                 <div className="flex items-center justify-between mb-3">
                   <div>
                     <h3 className="text-sm font-medium text-[var(--text-primary)]">{test.name}</h3>
@@ -249,7 +249,7 @@ export default function AbTestingPage() {
                       {test.end_date && ` · Ends ${formatDate(test.end_date)}`}
                     </p>
                   </div>
-                  <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-green-500/10 text-green-400">
+                  <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]">
                     Running
                   </span>
                 </div>
@@ -321,8 +321,8 @@ export default function AbTestingPage() {
                   <div className="flex items-center gap-2">
                     <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${
                       test.status === "completed"
-                        ? "bg-blue-500/10 text-blue-400"
-                        : "bg-yellow-500/10 text-yellow-400"
+                        ? "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]"
+                        : "bg-[var(--accent-warning)]/10 text-[var(--accent-warning)]"
                     }`}>
                       {test.status === "completed" ? "Completed" : "Paused"}
                     </span>

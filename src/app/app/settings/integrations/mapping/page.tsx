@@ -208,7 +208,7 @@ export default function IntegrationsMappingPage() {
                   <button
                     type="button"
                     onClick={() => removeMapping(index)}
-                    className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-red-400 hover:bg-[var(--bg-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
+                    className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--accent-danger)] hover:bg-[var(--bg-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
                     aria-label="Remove mapping"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -256,7 +256,7 @@ export default function IntegrationsMappingPage() {
             <div className="mt-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
               <h3 className="text-sm font-medium text-[var(--text-primary)] mb-2">{tSettings("integrations.testOutput", { name: SAMPLE_LEAD.name ?? "Sample" })}</h3>
               {testResult.errors.length > 0 && (
-                <ul className="text-sm text-amber-400 mb-2">
+                <ul className="text-sm text-[var(--accent-warning)] mb-2">
                   {testResult.errors.map((e, i) => (
                     <li key={i}>{e}</li>
                   ))}

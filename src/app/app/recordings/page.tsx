@@ -87,9 +87,9 @@ function RecordingCard({
   const isExpanded = expandedId === recording.id;
 
   const sentimentColors: Record<string, string> = {
-    positive: "bg-emerald-100 text-emerald-800",
-    neutral: "bg-gray-100 text-gray-800",
-    negative: "bg-red-100 text-red-800",
+    positive: "bg-[color:var(--accent-primary)]/10 text-[var(--accent-primary)]",
+    neutral: "bg-[var(--bg-inset)] text-[var(--text-primary)]",
+    negative: "bg-[color:var(--accent-danger,#ef4444)]/10 text-[var(--accent-danger,#ef4444)]",
   };
 
   return (

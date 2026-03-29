@@ -288,7 +288,7 @@ export default function IndustryTemplatesPage() {
                         <Link
                           href={`/api/industry-templates/${template.industry_slug}`}
                           target="_blank"
-                          className="inline-flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300"
+                          className="inline-flex items-center gap-1 text-xs text-[var(--accent-primary)] hover:text-[var(--accent-primary)]/80"
                         >
                           Open API endpoint
                           <ExternalLink className="w-3 h-3" />

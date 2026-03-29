@@ -48,7 +48,7 @@ export default function AppSettingsErrorsPage() {
                   key={type}
                   className="inline-flex items-center gap-1.5 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 py-2 text-sm text-[var(--text-secondary)]"
                 >
-                  <AlertTriangle className="w-4 h-4 text-amber-500" />
+                  <AlertTriangle className="w-4 h-4 text-[var(--accent-warning)]" />
                   {type}: {count}
                 </span>
               ))}
