@@ -369,13 +369,13 @@ export default function CampaignsPage() {
     try {
       // CSV headers
       const headers = [
-        "Name",
-        "Status",
-        "Called",
-        "Answered",
-        "Appointments Booked",
-        "Conversion Rate",
-        "Created At",
+        t("export.column.name", { defaultValue: "Name" }),
+        t("export.column.status", { defaultValue: "Status" }),
+        t("export.column.called", { defaultValue: "Called" }),
+        t("export.column.answered", { defaultValue: "Answered" }),
+        t("export.column.booked", { defaultValue: "Appointments Booked" }),
+        t("export.column.conversionRate", { defaultValue: "Conversion Rate" }),
+        t("export.column.createdAt", { defaultValue: "Created At" }),
       ];
 
       // CSV rows from campaigns data
@@ -451,8 +451,8 @@ export default function CampaignsPage() {
     return (
       <div className="p-4 md:p-6 max-w-4xl mx-auto">
         <EmptyState
-          title="No workspace"
-          description="Select or create a workspace to view campaigns."
+          title={t("noWorkspace.title", { defaultValue: "No workspace" })}
+          description={t("noWorkspace.description", { defaultValue: "Select or create a workspace to view campaigns." })}
         />
       </div>
     );
@@ -547,9 +547,9 @@ export default function CampaignsPage() {
             ) : filtered.length === 0 ? (
               <EmptyState
                 icon={Megaphone}
-                title={t("empty.title")}
-                description={t("empty.body")}
-                primaryAction={{ label: t("createCampaign"), href: "/app/campaigns/create" }}
+                title={t("empty.title", { defaultValue: "No campaigns yet" })}
+                description={t("empty.body", { defaultValue: "Launch your first autonomous campaign to start reaching leads, recovering no-shows, and reactivating cold pipeline." })}
+                primaryAction={{ label: t("createCampaign"), href: "/app/campaigns/new" }}
               />
             ) : (
               pagedCampaigns.map((campaign, idx) => (
@@ -582,9 +582,22 @@ export default function CampaignsPage() {
                         <span className="rounded-full border border-[var(--border-medium)] px-2.5 py-1 text-[11px] text-[var(--text-secondary)] capitalize">
                           {t.has(`campaignType.${campaign.type}`) ? t(`campaignType.${campaign.type}` as never) : campaign.type.replace(/_/g, " ")}
                         </span>
-                        <span className="rounded-full border border-[var(--border-medium)] px-2.5 py-1 text-[11px] text-[var(--text-secondary)] capitalize">
-                          {t.has(`statusFilter.${campaign.status}`) ? t(`statusFilter.${campaign.status}` as never) : campaign.status}
-                        </span>
+                        {(() => {
+                          const statusBadgeClasses = {
+                            draft: "bg-[var(--text-disabled,#6b7280)]/10 text-[var(--text-disabled,#6b7280)]",
+                            active: "bg-[var(--accent-success,#10b981)]/10 text-[var(--accent-success,#10b981)]",
+                            paused: "bg-[var(--accent-warning,#f59e0b)]/10 text-[var(--accent-warning,#f59e0b)]",
+                            completed: "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]",
+                          };
+                          return (
+                            <span className={`rounded-full px-2.5 py-1 text-[11px] font-medium capitalize flex items-center gap-1.5 ${statusBadgeClasses[campaign.status]}`}>
+                              {campaign.status === "active" && (
+                                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--accent-success,#10b981)] animate-pulse" />
+                              )}
+                              {t.has(`statusFilter.${campaign.status}`) ? t(`statusFilter.${campaign.status}` as never) : campaign.status}
+                            </span>
+                          );
+                        })()}
                       </div>
                     </div>
                   <div className="flex items-center gap-1.5">
@@ -652,29 +665,27 @@ export default function CampaignsPage() {
                       <span className="text-[var(--accent-warning,#f59e0b)] font-medium">{t("dailyLimitReached", { defaultValue: "— limit reached, resumes tomorrow" })}</span>
                     )}
                   </div>
-                  {campaign.total_contacts > 0 && (
-                    <div className="mt-3">
-                      <div className="flex items-center justify-between text-[11px] text-[var(--text-secondary)] mb-1">
-                        <span>{t("progress")}</span>
-                        <span>
-                          {campaign.called}/{campaign.total_contacts} {t("contacted")}
-                        </span>
-                      </div>
-                      <div className="h-1.5 w-full rounded-full bg-[var(--bg-surface)] overflow-hidden">
-                        <div
-                          className="h-full rounded-full bg-[var(--accent-primary)]"
-                          style={{
-                            width: `${Math.min(
-                              100,
-                              Math.round(
-                                (campaign.called / campaign.total_contacts) * 100,
-                              ),
-                            )}%`,
-                          }}
-                        />
-                      </div>
+                  <div className="mt-3">
+                    <div className="flex items-center justify-between text-[11px] text-[var(--text-secondary)] mb-1">
+                      <span>{t("progress")}</span>
+                      <span>
+                        {campaign.called}/{campaign.total_contacts} {t("contacted")}
+                      </span>
                     </div>
-                  )}
+                    <div className="h-1.5 w-full rounded-full bg-[var(--bg-surface)] overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-[var(--accent-primary)] transition-all duration-300"
+                        style={{
+                          width: `${campaign.total_contacts > 0 ? Math.min(
+                            100,
+                            Math.round(
+                              (campaign.called / campaign.total_contacts) * 100,
+                            ),
+                          ) : 0}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
                   {campaign.called > 0 && campaign.appointments_booked > 0 && (
                     <div className="mt-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-3">
                       <div className="flex items-center gap-1.5">
@@ -682,11 +693,15 @@ export default function CampaignsPage() {
                       </div>
                       <div className="mt-1 grid grid-cols-3 gap-2 text-center">
                         <div>
-                          <p className="text-sm font-semibold text-[var(--text-primary)]">{campaign.answered > 0 ? Math.round((campaign.appointments_booked / campaign.answered) * 100) : 0}%</p>
+                          <p className="text-sm font-semibold text-[var(--text-primary)]">
+                            {campaign.answered > 0 ? `${Math.round((campaign.appointments_booked / campaign.answered) * 100)}%` : "0%"}
+                          </p>
                           <p className="text-[10px] text-[var(--text-tertiary)]">{t("conversionRate", { defaultValue: "Conversion" })}</p>
                         </div>
                         <div>
-                          <p className="text-sm font-semibold text-[var(--text-primary)]">{campaign.answered}/{campaign.called}</p>
+                          <p className="text-sm font-semibold text-[var(--text-primary)]">
+                            {campaign.called > 0 ? `${Math.round((campaign.answered / campaign.called) * 100)}%` : "0%"}
+                          </p>
                           <p className="text-[10px] text-[var(--text-tertiary)]">{t("answerRate", { defaultValue: "Answer rate" })}</p>
                         </div>
                         <div>
@@ -810,7 +825,7 @@ export default function CampaignsPage() {
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
-                  placeholder="Missed-call recovery"
+                  placeholder={t("form.campaignNamePlaceholder", { defaultValue: "Missed-call recovery" })}
                   className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
                 />
               </div>
@@ -1001,9 +1016,9 @@ export default function CampaignsPage() {
                           }))
                         }
                         className="p-2 rounded-lg border border-[var(--border-default)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] text-xs"
-                        aria-label={t("removeStep")}
+                        aria-label={t("form.removeStep", { defaultValue: "Remove step" })}
                       >
-                        {t("removeStep")}
+                        {t("form.removeStep", { defaultValue: "Remove" })}
                       </button>
                     </div>
                   ))}
@@ -1017,7 +1032,7 @@ export default function CampaignsPage() {
                     }
                     className="mt-1 px-3 py-2 rounded-xl border border-[var(--border-default)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] text-xs"
                   >
-                    {t("addStep")}
+                    {t("form.addStep", { defaultValue: "Add step" })}
                   </button>
                 </div>
               </div>

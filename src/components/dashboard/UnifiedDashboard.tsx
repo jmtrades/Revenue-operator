@@ -168,6 +168,10 @@ export function UnifiedDashboard() {
     setFetchError(null);
     fetch(`/api/dashboard/summary?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
       .then((r) => {
+        if (r.status === 401) {
+          window.location.href = "/sign-in";
+          return;
+        }
         if (!r.ok) throw new Error(`Dashboard returned ${r.status}`);
         return r.json();
       })
@@ -367,14 +371,14 @@ export function UnifiedDashboard() {
               {t("errors.loadFailed", { defaultValue: "Dashboard data could not be loaded" })}
             </p>
             <p className="text-sm text-[var(--text-secondary)] mt-0.5">
-              {t("errors.loadFailedDesc", { defaultValue: "Showing empty values. " })}
-              <button
-                onClick={() => load(true)}
-                className="text-[var(--accent-primary)] font-medium hover:underline"
-              >
-                {t("actions.tryAgain", { defaultValue: "Try again" })}
-              </button>
+              {t("errors.loadFailedDesc", { defaultValue: "Check your connection and try again." })}
             </p>
+            <button
+              onClick={() => load(true)}
+              className="mt-3 px-3 py-1.5 text-xs font-medium bg-[var(--accent-primary-subtle)] text-[var(--accent-primary)] rounded-lg hover:bg-[var(--accent-primary-subtle)]/80 transition-colors"
+            >
+              {t("actions.tryAgain", { defaultValue: "Try Again" })}
+            </button>
           </div>
         </div>
       )}
@@ -523,7 +527,7 @@ export function UnifiedDashboard() {
                 {t("readyToGo.title", { defaultValue: "Your autonomous operator is ready to execute" })}
               </p>
               <p className="text-sm text-[var(--text-secondary)] mt-0.5">
-                {t("readyToGo.body", { defaultValue: "Revenue, calls, and appointments will update in real time as your agent handles calls. Make a test call to see it in action, or forward your business number to go live." })}
+                {t("readyToGo.body", { defaultValue: "Revenue, calls, and appointments will update in real time as your operator handles calls. Make a test call to see it in action, or forward your business number to go live." })}
               </p>
               <div className="flex items-center gap-3 mt-2">
                 <Link href="/app/agents" className="text-xs font-medium text-[var(--accent-primary)] hover:underline">
@@ -572,7 +576,7 @@ export function UnifiedDashboard() {
                   href: data.agent_configured ? "/app/agents" : "/app/agents/new",
                   icon: Bot,
                   title: t("onboarding.createAgent.title", { defaultValue: "Create your AI operator" }),
-                  desc: t("onboarding.createAgent.description", { defaultValue: "Choose a template and customize your agent's personality" }),
+                  desc: t("onboarding.createAgent.description", { defaultValue: "Choose a template and customize your operator's voice and personality" }),
                   done: !!data.agent_configured,
                 },
                 {

@@ -113,27 +113,47 @@ export default function AppSettingsIntegrationsPage() {
     }
     if (crmParam === "connected") {
       const provider = searchParams.get("provider") ?? "";
-      setToast(t("toast.crmConnected", { provider: provider.charAt(0).toUpperCase() + provider.slice(1).replace(/_/g, " ") }));
-      // Refresh CRM status
+      const providerName = provider.charAt(0).toUpperCase() + provider.slice(1).replace(/_/g, " ");
+      setToast(t("toast.crmConnected", { provider: providerName }) + " Syncing your contacts now...");
+      setSyncingProvider(provider as CrmProviderId);
+
+      // Refresh CRM status first
       fetch("/api/integrations/crm/status", { credentials: "include" })
         .then((r) => (r.ok ? r.json() : null))
         .then((data: CrmStatusResponse | null) => {
           if (data) {
             setCrmStatus(data);
-            // Trigger auto-sync after connection succeeds
-            if (workspaceId) {
-              fetch("/api/integrations/crm/sync", {
+            // Trigger auto-sync after status is refreshed
+            if (provider) {
+              fetch(`/api/integrations/crm/${provider}/batch-sync`, {
                 method: "POST",
                 credentials: "include",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ workspace_id: workspaceId }),
               }).catch(() => {});
             }
           }
         })
         .catch(() => {});
-      const id = setTimeout(() => setToast(null), 4000);
-      return () => clearTimeout(id);
+
+      // Refresh status again after 3 seconds to show initial sync results
+      const statusRefreshId = setTimeout(() => {
+        fetch("/api/integrations/crm/status", { credentials: "include" })
+          .then((r) => (r.ok ? r.json() : null))
+          .then((data: CrmStatusResponse | null) => {
+            if (data) {
+              setCrmStatus(data);
+            }
+            setSyncingProvider(null);
+          })
+          .catch(() => {
+            setSyncingProvider(null);
+          });
+      }, 3000);
+
+      const toastId = setTimeout(() => setToast(null), 4000);
+      return () => {
+        clearTimeout(statusRefreshId);
+        clearTimeout(toastId);
+      };
     }
     if (crmParam === "error") {
       const reason = searchParams.get("reason") ?? "";
@@ -338,8 +358,18 @@ export default function AppSettingsIntegrationsPage() {
         setToast(data?.error ?? t("toast.disconnectFailed"));
         return;
       }
-      setToast(t("toast.crmDisconnected", { provider: provider.charAt(0).toUpperCase() + provider.slice(1).replace(/_/g, " ") }));
-      // Refresh CRM status
+      const providerName = provider.charAt(0).toUpperCase() + provider.slice(1).replace(/_/g, " ");
+      setToast(t("toast.crmDisconnected", { provider: providerName }));
+
+      // Reset card visually immediately by removing from status
+      setCrmStatus((prev) => {
+        if (!prev) return null;
+        const updated = { ...prev };
+        delete updated.integrations[provider];
+        return updated;
+      });
+
+      // Refresh CRM status to ensure consistency
       fetch("/api/integrations/crm/status", { credentials: "include" })
         .then((r) => (r.ok ? r.json() : null))
         .then((d: CrmStatusResponse | null) => d && setCrmStatus(d))
@@ -445,6 +475,11 @@ export default function AppSettingsIntegrationsPage() {
                       {crm.comingSoon ? (
                         <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-[var(--accent-warning,#f59e0b)]/40 text-[var(--accent-warning,#f59e0b)] shrink-0">
                           {t("comingSoon")}
+                        </span>
+                      ) : syncingProvider === crm.id ? (
+                        <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-[var(--accent-primary)]/30 text-[var(--accent-primary)] shrink-0 flex items-center gap-1">
+                          <Loader className="w-3 h-3 animate-spin" />
+                          {t("status.syncing", { defaultValue: "Syncing..." })}
                         </span>
                       ) : connected ? (
                         <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-[var(--accent-primary)]/30 text-[var(--accent-primary)] shrink-0">

@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useCallback, useEffect, useRef } from "react";
-import { fetchWorkspaceMeCached, getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
+import { fetchWorkspaceMeCached, getWorkspaceMeSnapshotSync, invalidateWorkspaceMeCache } from "@/lib/client/workspace-me";
 
 const LOCAL_STORAGE_KEY = "revenue_last_workspace_id";
 
@@ -89,13 +89,11 @@ export function WorkspaceProvider({
       const res = await fetch("/api/workspaces", { signal: controller.signal, credentials: "include" });
       clearTimeout(timeoutId);
       clearTimeout(guardId);
-      const data = await res.json().catch(() => ({}));
       if (res.status === 401) {
-        setWorkspaces([]);
-        setWorkspaceIdState("");
-        setWorkspaceName("");
+        window.location.href = "/sign-in";
         return;
       }
+      const data = await res.json().catch(() => ({}));
       const list: Workspace[] = Array.isArray(data.workspaces) ? data.workspaces : [];
       setWorkspaces(list);
 
@@ -140,6 +138,8 @@ export function WorkspaceProvider({
     const ws = workspaces.find((w) => w.id === id);
     setWorkspaceName(ws?.name ?? "");
     persistWorkspaceId(id);
+    // Invalidate cached workspace data when workspace changes
+    invalidateWorkspaceMeCache();
   }, [workspaces]);
 
   const retry = useCallback(() => {
