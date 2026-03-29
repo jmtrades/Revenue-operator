@@ -5,7 +5,7 @@ import { log } from "@/lib/logger";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { parseBody, workspaceIdSchema, safeStringSchema, dialerModeSchema, campaignStatusSchema } from "@/lib/api/validate";
-import type { DialerMode, CampaignStatus } from "@/lib/voice/outbound-dialer";
+
 
 const createCampaignSchema = z.object({
   workspace_id: workspaceIdSchema,

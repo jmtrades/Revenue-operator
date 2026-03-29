@@ -4,7 +4,7 @@ import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
-import { parseBody, workspaceIdSchema, phoneSchema, safeStringSchema, dncReasonSchema } from "@/lib/api/validate";
+import { parseBody, workspaceIdSchema, safeStringSchema, dncReasonSchema } from "@/lib/api/validate";
 
 const addDncSchema = z.object({
   workspace_id: workspaceIdSchema,
