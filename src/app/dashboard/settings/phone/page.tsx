@@ -156,7 +156,7 @@ export default function SettingsPhonePage() {
         <EmptyState
           icon="phone"
           title="No phone numbers yet"
-          subtitle="Add a phone number to start receiving calls with your AI agent."
+          subtitle="Add a phone number to start receiving calls with your AI operator."
         />
       ) : (
         <div className="space-y-3 mb-8">
@@ -325,7 +325,7 @@ export default function SettingsPhonePage() {
               >
                 <p className="text-xs" style={{ color: "var(--text-secondary)" }}>
                   New numbers cost <span className="font-medium text-emerald-400">$5/month</span> with a one-time $2 setup fee.
-                  Your AI agent will be assigned automatically.
+                  Your AI operator will be assigned automatically.
                 </p>
               </div>
             </div>

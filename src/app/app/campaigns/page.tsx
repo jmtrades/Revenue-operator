@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Megaphone, Plus, Copy, Trash2, Play, Pause, Pencil, ArrowRight, Download } from "lucide-react";
 import { Pagination } from "@/components/ui/Pagination";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
@@ -476,6 +478,7 @@ export default function CampaignsPage() {
         }
       `}</style>
       <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto">
+        <Breadcrumbs items={[{ label: "Dashboard", href: "/app" }, { label: "Campaigns" }]} />
         <div className="flex items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("heading")}</h1>
@@ -556,7 +559,12 @@ export default function CampaignsPage() {
                 <div key={campaign.id} className="campaign-card rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4" style={{ animationDelay: `${idx * 30}ms` }}>
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm font-semibold text-[var(--text-primary)]">{campaign.name}</p>
+                      <Link
+                        href={`/app/campaigns/${campaign.id}`}
+                        className="text-sm font-semibold text-[var(--accent-primary)] hover:text-[var(--accent-primary)]/80 transition-colors"
+                      >
+                        {campaign.name}
+                      </Link>
                       <p className="mt-2 text-xs text-[var(--text-secondary)]">
                         {campaign.target_filter?.audience ?? t("outcomeAudience")}
                         {(() => {

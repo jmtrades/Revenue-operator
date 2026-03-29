@@ -343,7 +343,7 @@ function OnboardingWizard() {
           </div>
         )}
 
-        {/* Step 2: Meet your AI agent */}
+        {/* Step 2: Meet your AI operator */}
         {step === 2 && (
           <div className="space-y-6">
             <div>
@@ -555,7 +555,7 @@ function OnboardingWizard() {
           <div className="space-y-6">
             <div>
               <h1 className="text-2xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>{t("yourBusinessNumber")}</h1>
-              <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Get a dedicated number for your AI agent</p>
+              <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Get a dedicated number for your AI operator</p>
             </div>
 
             {!phoneNumber ? (

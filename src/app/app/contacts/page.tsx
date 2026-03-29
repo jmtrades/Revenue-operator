@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useWorkspace } from "@/components/WorkspaceContext";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import Link from "next/link";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 import { Download, Upload, Building2, Cloud, Database, TrendingUp, Layers, Users as UsersIcon, Building, X } from "lucide-react";
@@ -528,6 +529,7 @@ export default function AppContactsPage() {
           animation: fadeInUp 300ms cubic-bezier(0.23, 1, 0.32, 1) both;
         }
       `}</style>
+      <Breadcrumbs items={[{ label: "Dashboard", href: "/app" }, { label: "Contacts" }]} />
       <div className="flex items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="text-lg md:text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)] flex items-center gap-2">
@@ -552,8 +554,11 @@ export default function AppContactsPage() {
       </div>
 
       {apiError && (
-        <div className="mb-4 px-4 py-3 rounded-lg bg-[var(--accent-danger,#ef4444)]/10 border border-[var(--accent-danger,#ef4444)]/30 text-sm text-[var(--accent-danger,#ef4444)]">
-          {apiError}
+        <div className="mb-4 px-4 py-3 rounded-lg bg-[var(--accent-danger,#ef4444)]/10 border border-[var(--accent-danger,#ef4444)]/30 text-sm text-[var(--accent-danger,#ef4444)] flex items-center justify-between">
+          <span>{apiError}</span>
+          <button onClick={() => { setApiError(null); setLoading(true); window.location.reload(); }} className="ml-2 px-3 py-1.5 rounded-lg text-xs font-medium" style={{ background: "var(--accent-primary)", color: "var(--text-on-accent)" }}>
+            Try Again
+          </button>
         </div>
       )}
 

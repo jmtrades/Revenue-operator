@@ -293,7 +293,7 @@ export default function LeadsPage() {
           <span className="px-2 py-0.5 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-300">
             Sample data
           </span>
-          <span>Leads from your AI agent and forms will appear here automatically.</span>
+          <span>Leads from your AI operator and forms will appear here automatically.</span>
         </div>
       )}
 
@@ -301,7 +301,7 @@ export default function LeadsPage() {
         <EmptyState
           icon="pulse"
           title="No leads yet"
-          subtitle="Your AI agent will capture leads from incoming calls and missed-call recovery."
+          subtitle="Your AI operator will capture leads from incoming calls and missed-call recovery."
         />
       ) : (
         <div

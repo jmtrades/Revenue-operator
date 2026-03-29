@@ -106,7 +106,7 @@ export default async function HomePage() {
                 name: "How do I get started?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Sign up, choose your plan, and your AI agent is live in minutes.",
+                  text: "Sign up, choose your plan, and your AI operator is live in minutes.",
                 },
               },
               {

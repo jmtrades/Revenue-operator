@@ -10,6 +10,7 @@ import { Tabs } from "@/components/ui/Tabs";
 import { Sheet } from "@/components/ui/Sheet";
 import { Modal } from "@/components/ui/Modal";
 import { Input } from "@/components/ui/Input";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { getClientOrNull } from "@/lib/supabase/client";
 import { useDebounce } from "@/hooks/useDebounce";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
@@ -628,6 +629,7 @@ export default function LeadsPage() {
   return (
     <div>
       <div className="p-6 md:p-8 max-w-6xl mx-auto">
+        <Breadcrumbs items={[{ label: "Dashboard", href: "/app" }, { label: "Leads" }]} />
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-6">
           <div>
             <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)] flex items-center gap-2">
@@ -637,6 +639,14 @@ export default function LeadsPage() {
             <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed">
               {t("leads.description")}
             </p>
+            {error && (
+              <div className="mt-3 flex items-center gap-2">
+                <p className="text-sm text-[var(--accent-danger,#ef4444)]">{error}</p>
+                <button onClick={() => { setError(null); setLoading(true); refetchLeads(); }} className="mt-0 px-3 py-1.5 rounded-lg text-xs font-medium" style={{ background: "var(--accent-primary)", color: "var(--text-on-accent)" }}>
+                  Try Again
+                </button>
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <button

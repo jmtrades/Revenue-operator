@@ -98,7 +98,7 @@ const ONBOARDING_TEMPLATE_IDS = [
     features: [
       "Multi-channel customer support",
       "Ticket creation and tracking",
-      "Smart escalation to human agents"
+      "Smart escalation to your team"
     ],
     recommendedFor: "Companies with customer support teams"
   },

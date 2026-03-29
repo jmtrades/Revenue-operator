@@ -77,6 +77,18 @@ export function WorkspaceProvider({
   const loadWorkspaces = useCallback(async () => {
     setLoading(true);
     setError(null);
+
+    // Try to load from cache first to show optimistic UI
+    try {
+      const cached = localStorage.getItem("rt_workspaces_cache");
+      if (cached) {
+        const cachedList = JSON.parse(cached) as Workspace[];
+        setWorkspaces(cachedList);
+      }
+    } catch {
+      // ignore cache errors
+    }
+
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
     const guardId = setTimeout(() => {
@@ -96,6 +108,13 @@ export function WorkspaceProvider({
       const data = await res.json().catch(() => ({}));
       const list: Workspace[] = Array.isArray(data.workspaces) ? data.workspaces : [];
       setWorkspaces(list);
+
+      // Cache the workspace list
+      try {
+        localStorage.setItem("rt_workspaces_cache", JSON.stringify(list));
+      } catch {
+        // ignore cache errors
+      }
 
       const urlWid = getUrlWorkspaceId();
       const savedWid = getSavedWorkspaceId();

@@ -611,7 +611,7 @@ export default function VoicesSettingsPage() {
             {t("cloneComingSoon", { defaultValue: "Custom voice cloning" })}
           </p>
           <p className="text-xs text-[var(--text-secondary)] mt-1">
-            Upload a voice sample to create a custom AI voice for your agents. Supports WAV and MP3 files up to 10MB.
+            Upload a voice sample to create a custom AI voice for your operators. Supports WAV and MP3 files up to 10MB.
           </p>
         </div>
       </div>

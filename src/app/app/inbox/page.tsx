@@ -6,6 +6,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import Link from "next/link";
 import { Search, PhoneCall, MessageSquare, Mail, ChevronLeft, PanelRightClose, PanelRightOpen, User, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
@@ -701,6 +702,7 @@ export default function InboxPage() {
         }
       `}</style>
       <div className="p-4 md:p-6 lg:p-8 h-full">
+        <Breadcrumbs items={[{ label: "Dashboard", href: "/app" }, { label: "Inbox" }]} />
         <div className="flex items-center justify-between mb-2">
           <div>
             <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("inbox.title")}</h1>

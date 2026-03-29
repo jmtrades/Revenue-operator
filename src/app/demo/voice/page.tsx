@@ -489,16 +489,16 @@ export default function VoiceDemoPage() {
           <div className="grid md:grid-cols-4 gap-5 mb-12">
             {[
               {
-                name: "Starter", price: "$147", features: ["1 AI agent", "1,000 voice minutes/month", "Appointment booking", "SMS follow-up"], popular: false,
+                name: "Starter", price: "$147", features: ["1 AI operator", "1,000 voice minutes/month", "Appointment booking", "SMS follow-up"], popular: false,
               },
               {
-                name: "Growth", price: "$297", features: ["5 AI agents", "3,000 voice minutes/month", "No-show recovery", "Revenue analytics", "Priority support"], popular: true,
+                name: "Growth", price: "$297", features: ["5 AI operators", "3,000 voice minutes/month", "No-show recovery", "Revenue analytics", "Priority support"], popular: true,
               },
               {
-                name: "Business", price: "$597", features: ["15 AI agents", "8,000 voice minutes/month", "Outbound campaigns", "Advanced analytics + API", "Phone support"], popular: false,
+                name: "Business", price: "$597", features: ["15 AI operators", "8,000 voice minutes/month", "Outbound campaigns", "Advanced analytics + API", "Phone support"], popular: false,
               },
               {
-                name: "Agency", price: "$997", features: ["Unlimited AI agents", "15,000 voice minutes/month", "White-label branding", "Multi-client dashboard", "Dedicated account manager"], popular: false,
+                name: "Agency", price: "$997", features: ["Unlimited AI operators", "15,000 voice minutes/month", "White-label branding", "Multi-client dashboard", "Dedicated account manager"], popular: false,
               },
             ].map((tier) => (
               <div

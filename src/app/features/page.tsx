@@ -7,7 +7,7 @@ const Navbar = dynamic(() => import("@/components/sections/Navbar").then((m) => 
 const Footer = dynamic(() => import("@/components/sections/Footer").then((m) => m.Footer));
 
 export const metadata: Metadata = {
-  title: "Features — AI Phone Agents That Handle Everything",
+  title: "Features — AI Phone Operators That Handle Everything",
   description:
     "Inbound call handling, outbound campaigns, automated follow-ups, appointment booking, revenue recovery, self-learning AI, and full analytics. See every feature Recall Touch offers.",
   openGraph: {

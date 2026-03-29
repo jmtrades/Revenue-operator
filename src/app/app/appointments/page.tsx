@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { Calendar, ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { useTranslations } from "next-intl";
 
@@ -281,12 +282,21 @@ export default function AppointmentsPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-base)] text-[var(--text-primary)]">
       <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto">
+        <Breadcrumbs items={[{ label: "Dashboard", href: "/app" }, { label: "Appointments" }]} />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
             <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("appointments.heading", { defaultValue: "Appointments" })}</h1>
             <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed">
               {t("appointments.subtitle", { defaultValue: "AI-managed meetings. Appointments are confirmed, reminded, and followed up automatically." })}
             </p>
+            {fetchError && (
+              <div className="mt-3 flex items-center gap-2">
+                <p className="text-sm text-[var(--accent-danger,#ef4444)]">{fetchError}</p>
+                <button onClick={() => { setFetchError(null); setLoading(true); refetchAppointments(); }} className="mt-0 px-3 py-1.5 rounded-lg text-xs font-medium" style={{ background: "var(--accent-primary)", color: "var(--text-on-accent)" }}>
+                  Try Again
+                </button>
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <button
