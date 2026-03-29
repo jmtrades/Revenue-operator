@@ -60,8 +60,16 @@ export async function GET(req: NextRequest): Promise<NextResponse<ForecastRespon
       .order("date", { ascending: false });
 
     if (recentErr) {
-      console.error("[forecast] Error fetching recent metrics:", recentErr);
-      return NextResponse.json({ error: "Failed to fetch metrics" }, { status: 500 });
+      // Table may not exist yet or RLS blocks — return empty forecast gracefully
+      console.warn("[forecast] Could not fetch recent metrics (may be empty):", recentErr.message);
+      return NextResponse.json<ForecastResponse>({
+        current_revenue_cents: 0,
+        projected_revenue_cents: 0,
+        growth_rate_pct: null,
+        daily_avg_cents: 0,
+        days_remaining: daysInMonth - currentDay,
+        confidence: "low",
+      });
     }
 
     // Calculate current month revenue (this month's data through today)

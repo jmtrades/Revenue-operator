@@ -130,7 +130,7 @@ export function RevenueForecast({ workspaceId }: RevenueForecastProps) {
           <h3 className="text-lg font-semibold text-[var(--text-primary)]">Revenue Trajectory</h3>
         </div>
         <p className="text-sm text-[var(--text-secondary)]">
-          {error || "Unable to load forecast data. Please try again later."}
+          Revenue forecasting activates after your first calls. Your trajectory, projections, and pace will appear here automatically.
         </p>
       </div>
     );
