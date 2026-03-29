@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { NotificationCenter } from "@/components/dashboard/NotificationCenter";
 import { track } from "@/lib/analytics/posthog";
 import { safeGetItem, safeSetItem } from "@/lib/client/safe-storage";
@@ -362,6 +363,8 @@ export function UnifiedDashboard() {
 
   return (
     <div className="p-4 md:p-8 max-w-[1200px] mx-auto space-y-8">
+      <Breadcrumbs items={[{ label: "Home", href: "/app" }, { label: "Dashboard" }]} />
+
       {/* ── Fetch error banner ──────────────────────────────────────────── */}
       {fetchError && (
         <div className="flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/[0.06] px-5 py-4">
