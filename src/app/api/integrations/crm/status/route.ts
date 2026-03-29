@@ -27,6 +27,8 @@ export interface CrmIntegrationStatus {
   lastSyncAt: string | null;
   recordsSynced: number;
   errorCount: number;
+  tokenStatus?: 'valid' | 'expired' | 'expiring_soon' | 'error';
+  tokenError?: string | null;
 }
 
 export type CrmStatusResponse = {
@@ -58,10 +60,10 @@ export async function GET(req: NextRequest) {
   if (authErr) return authErr;
 
   const db = getDb();
-  // workspace_crm_connections has: provider, status, updated_at, metadata (NO connected_at, last_sync_at, records_synced, sync_errors)
+  // workspace_crm_connections has: provider, status, updated_at, token_expires_at, token_error, metadata
   const { data: rows, error } = await db
     .from("workspace_crm_connections")
-    .select("provider, status, updated_at")
+    .select("provider, status, updated_at, token_expires_at, token_error, refresh_token")
     .eq("workspace_id", session.workspaceId)
     .in("provider", [...CRM_PROVIDERS]);
 
@@ -94,15 +96,41 @@ export async function GET(req: NextRequest) {
   }
 
   const byProvider = new Map(
-    (rows ?? []).map((r: { provider: string; status?: string | null; updated_at?: string | null }) => {
+    (rows ?? []).map((r: { provider: string; status?: string | null; updated_at?: string | null; token_expires_at?: string | null; token_error?: string | null; refresh_token?: string | null }) => {
       const stats = syncStatsByProvider.get(r.provider);
+
+      // Determine token status
+      let tokenStatus: 'valid' | 'expired' | 'expiring_soon' | 'error' = 'valid';
+      if (r.token_error) {
+        tokenStatus = 'error';
+      } else if (r.status === 'active' && r.token_expires_at) {
+        const expiresAt = new Date(r.token_expires_at).getTime();
+        const now = Date.now();
+        const oneHourMs = 60 * 60 * 1000;
+
+        if (now >= expiresAt) {
+          // Token is expired
+          if (!r.refresh_token) {
+            tokenStatus = 'expired';
+          } else {
+            // Token is expired but we have a refresh token, so it may still be recoverable
+            tokenStatus = 'expired';
+          }
+        } else if (now >= expiresAt - oneHourMs) {
+          // Token expires within the next hour
+          tokenStatus = 'expiring_soon';
+        }
+      }
+
       return [
         r.provider,
         {
-          connected: r.status === "active",
+          connected: r.status === "active" && tokenStatus !== 'expired',
           lastSyncAt: stats?.lastSyncAt ?? r.updated_at ?? null,
           recordsSynced: stats?.recordsSynced ?? 0,
           errorCount: stats?.errorCount ?? 0,
+          tokenStatus,
+          tokenError: r.token_error ?? null,
         },
       ];
     })
