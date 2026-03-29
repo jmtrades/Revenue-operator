@@ -15,8 +15,8 @@ import { assertCronAuthorized } from "@/lib/runtime";
 import { getDb } from "@/lib/db/queries";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const EMAIL_FROM = process.env.EMAIL_FROM ?? "Recall Touch <noreply@recall-touch.com>";
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
+const EMAIL_FROM = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@revenueoperator.ai>";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.revenueoperator.ai";
 
 const GRACE_MS = 3 * 24 * 60 * 60 * 1000;
 
@@ -96,8 +96,8 @@ export async function GET(req: NextRequest) {
         if (email) {
           void sendEmail(
             email,
-            "Reactivate your Recall Touch trial",
-            `<p>Your Recall Touch trial has ended.</p>
+            "Reactivate your Revenue Operator trial",
+            `<p>Your Revenue Operator trial has ended.</p>
              <p>You can restore service by upgrading your billing.</p>
              <p><a href="${APP_URL}/app/settings/billing">Upgrade to continue →</a></p>`,
           ).catch((err) => { console.error("[trial-expiry] Failed to send reactivation email:", err instanceof Error ? err.message : String(err)); });

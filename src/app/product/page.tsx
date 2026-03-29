@@ -6,7 +6,7 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 const SECTION_IDS = [
   "answers-every-call",
@@ -33,7 +33,7 @@ const SECTION_KEY_MAP: Record<(typeof SECTION_IDS)[number], { title: string; des
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("productPage");
   return {
-    title: `${t("metaTitle")} — Recall Touch`,
+    title: `${t("metaTitle")} — Revenue Operator`,
     description: t("metaDescription"),
   };
 }
@@ -41,10 +41,10 @@ export async function generateMetadata(): Promise<Metadata> {
 const productJsonLd = {
   "@context": "https://schema.org",
   "@type": "Product",
-  name: "Recall Touch",
+  name: "Revenue Operator",
   description: "AI phone system. Answers every call 24/7, books appointments, qualifies leads, outbound campaigns, SMS, analytics.",
   url: BASE,
-  brand: { "@type": "Brand", name: "Recall Touch" },
+  brand: { "@type": "Brand", name: "Revenue Operator" },
 };
 
 export default async function ProductPage() {
@@ -53,7 +53,7 @@ export default async function ProductPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+      { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
       { "@type": "ListItem", position: 2, name: "Product", item: `${BASE}/product` },
     ],
   };
@@ -61,7 +61,7 @@ export default async function ProductPage() {
   const howToJsonLd = {
     "@context": "https://schema.org",
     "@type": "HowTo",
-    name: "Go live with Recall Touch",
+    name: "Go live with Revenue Operator",
     description: "Set up your AI phone agent in minutes. Answer calls, book appointments, and recover missed revenue with automated follow-up.",
     totalTime: "PT5M",
     step: [

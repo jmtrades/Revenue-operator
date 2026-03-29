@@ -1,23 +1,23 @@
 import type { Metadata } from "next";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export const metadata: Metadata = {
-  title: "Product — Recall Touch",
+  title: "Product — Revenue Operator",
   description: "Call governance, automated follow-ups, compliance records, and escalation control — built for regulated commercial operations.",
   alternates: { canonical: `${BASE}/product` },
   openGraph: {
-    title: "Product — Recall Touch",
+    title: "Product — Revenue Operator",
     description: "One platform for every phone interaction — inbound calls, outbound campaigns, SMS, scheduling, lead capture, and analytics.",
     url: `${BASE}/product`,
-    siteName: "Recall Touch",
+    siteName: "Revenue Operator",
     type: "website",
-    images: [{ url: `${BASE}/opengraph-image`, width: 1200, height: 630, alt: "Recall Touch Product" }],
+    images: [{ url: `${BASE}/opengraph-image`, width: 1200, height: 630, alt: "Revenue Operator Product" }],
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Product — Recall Touch",
+    title: "Product — Revenue Operator",
     description: "One platform for every phone interaction — inbound calls, outbound campaigns, SMS, scheduling, lead capture, and analytics.",
     creator: "@recalltouch",
   },

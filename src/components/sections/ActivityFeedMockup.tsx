@@ -82,7 +82,7 @@ export function ActivityFeedMockup() {
         </div>
         <div className="px-3 pt-4 pb-6" style={{ minHeight: "320px" }}>
           <div className="flex items-center justify-between mb-3 px-1">
-            <span className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>Recall Touch</span>
+            <span className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>Revenue Operator</span>
             <span className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>{t("dateLabel")}</span>
           </div>
           <div className="flex gap-1.5 overflow-x-auto pb-2 -mx-1 scrollbar-hide">

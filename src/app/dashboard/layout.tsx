@@ -266,7 +266,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
       >
         <div className="p-5 border-b" style={{ borderColor: "var(--border)" }}>
           <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
-            Recall Touch
+            Revenue Operator
           </p>
         </div>
         <WorkspaceSelect />

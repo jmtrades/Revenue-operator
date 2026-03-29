@@ -1,7 +1,7 @@
 {
-  "name": "Recall Touch",
-  "short_name": "Recall Touch",
-  "description": "AI Phone Calls, Handled — never miss a call, never lose a lead. Recall Touch answers, qualifies, and books appointments 24/7.",
+  "name": "Revenue Operator",
+  "short_name": "Revenue Operator",
+  "description": "AI Phone Calls, Handled — never miss a call, never lose a lead. Revenue Operator answers, qualifies, and books appointments 24/7.",
   "start_url": "/app/activity",
   "display": "standalone",
   "background_color": "#0A0A0B",

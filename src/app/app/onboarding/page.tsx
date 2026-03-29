@@ -349,7 +349,7 @@ export default function AppOnboardingPage() {
       <aside className="hidden md:flex w-64 flex-col border-r border-[var(--border-default)] bg-[var(--bg-base)] px-6 py-8 gap-8">
         <div>
           <p className="text-xs font-semibold tracking-wide text-[var(--text-tertiary)]">
-            Recall Touch
+            Revenue Operator
           </p>
           <p className="text-sm text-[var(--text-secondary)] mt-1">{t("sidebarLabel")}</p>
         </div>

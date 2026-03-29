@@ -1,7 +1,7 @@
 /**
  * Build the layered system prompt for voice agents from agent + workspace config.
- * Aligned with Recall Touch doctrine: identity, voice rules, knowledge, behavior, qualification, objections, flow.
- * Now used by Recall voice server (previously Vapi).
+ * Aligned with Revenue Operator doctrine: identity, voice rules, knowledge, behavior, qualification, objections, flow.
+ * Now used by Revenue Operator voice server (previously Vapi).
  */
 
 type FaqItem = {

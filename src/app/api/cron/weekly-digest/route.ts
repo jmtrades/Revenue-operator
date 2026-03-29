@@ -168,12 +168,12 @@ export async function GET(req: NextRequest) {
     </table>
 
     <div style="text-align: center;">
-      <a href="https://recall-touch.com/app/analytics" class="cta">View Full Dashboard →</a>
+      <a href="https://revenueoperator.ai/app/analytics" class="cta">View Full Dashboard →</a>
     </div>
 
     <div class="footer">
-      Recall Touch — The AI Revenue Execution System<br>
-      <a href="https://recall-touch.com/app/settings/notifications" style="color: #71717a;">Manage email preferences</a>
+      Revenue Operator — The AI Revenue Execution System<br>
+      <a href="https://revenueoperator.ai/app/settings/notifications" style="color: #71717a;">Manage email preferences</a>
     </div>
   </div>
 </body>
@@ -182,7 +182,7 @@ export async function GET(req: NextRequest) {
       await sendEmail(
         ws.id,
         ownerEmail,
-        `Your Recall Touch weekly recap: $${revenue} recovered`,
+        `Your Revenue Operator weekly recap: $${revenue} recovered`,
         html,
       );
 

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { X } from "lucide-react";
 import { ROUTES } from "@/lib/constants";
 
-const SESSION_KEY = "recall-touch-scroll-cta-shown";
+const SESSION_KEY = "revenue-operator-scroll-cta-shown";
 
 export function ScrollDepthCTA() {
   const t = useTranslations("homepage.scrollCta");

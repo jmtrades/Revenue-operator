@@ -5,19 +5,19 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { CheckCircle2, XCircle } from "lucide-react";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export const metadata: Metadata = {
-  title: "Recall Touch vs Ruby Receptionists — Recall Touch",
+  title: "Revenue Operator vs Ruby Receptionists — Revenue Operator",
   description:
-    "Ruby Receptionists vs Recall Touch: compare per-minute human receptionist pricing, automation limits, outbound capabilities, and revenue attribution.",
+    "Ruby Receptionists vs Revenue Operator: compare per-minute human receptionist pricing, automation limits, outbound capabilities, and revenue attribution.",
   alternates: { canonical: `${BASE}/compare/ruby` },
   openGraph: {
-    title: "Recall Touch vs Ruby Receptionists — Recall Touch",
+    title: "Revenue Operator vs Ruby Receptionists — Revenue Operator",
     description:
-      "Ruby Receptionists charges per minute with humans only. Recall Touch is AI-powered 24/7 with automated follow-up, outbound campaigns, and revenue attribution.",
+      "Ruby Receptionists charges per minute with humans only. Revenue Operator is AI-powered 24/7 with automated follow-up, outbound campaigns, and revenue attribution.",
     url: `${BASE}/compare/ruby`,
-    siteName: "Recall Touch",
+    siteName: "Revenue Operator",
     type: "website",
   },
 };
@@ -27,7 +27,7 @@ type Row = { feature: string; recall: boolean; ruby: boolean; note?: string };
 const rows: Row[] = [
   { feature: "Human receptionist coverage", recall: false, ruby: true, note: "Ruby is primarily a human coverage model." },
   { feature: "AI voice answering (24/7)", recall: true, ruby: false },
-  { feature: "Automated follow-up engine", recall: true, ruby: false, note: "Recall Touch runs follow-ups until the next outcome." },
+  { feature: "Automated follow-up engine", recall: true, ruby: false, note: "Revenue Operator runs follow-ups until the next outcome." },
   { feature: "No-show recovery sequences", recall: true, ruby: false },
   { feature: "Outbound campaigns (call + SMS sequences)", recall: true, ruby: false },
   { feature: "Revenue attribution to recovered outcomes", recall: true, ruby: false },
@@ -42,7 +42,7 @@ export default function RubyComparisonPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+      { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
       { "@type": "ListItem", position: 2, name: "Comparisons", item: `${BASE}/compare` },
       { "@type": "ListItem", position: 3, name: "Ruby Receptionists", item: `${BASE}/compare/ruby` },
     ],
@@ -59,10 +59,10 @@ export default function RubyComparisonPage() {
               Comparison
             </p>
             <h1 className="font-bold text-4xl md:text-5xl leading-tight">
-              Recall Touch vs Ruby Receptionists
+              Revenue Operator vs Ruby Receptionists
             </h1>
             <p className="mt-4 text-base md:text-lg" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-              Ruby Receptionists can cover your calls with humans. Recall Touch adds AI-driven qualification, automated follow-up,
+              Ruby Receptionists can cover your calls with humans. Revenue Operator adds AI-driven qualification, automated follow-up,
               outbound campaigns, and revenue attribution — so coverage turns into recovered revenue.
             </p>
             <p className="mt-3 text-xs" style={{ color: "var(--text-tertiary)" }}>
@@ -81,7 +81,7 @@ export default function RubyComparisonPage() {
 
           <div className="mt-12 grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
-              <h2 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>Recall Touch (the revenue system)</h2>
+              <h2 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>Revenue Operator (the revenue system)</h2>
               <ul className="mt-4 space-y-2 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
                 <li>AI-powered answering 24/7 with consistent scripts</li>
                 <li>Automated follow-up engine (bookings, no-shows, reactivation)</li>
@@ -110,7 +110,7 @@ export default function RubyComparisonPage() {
                 <thead>
                   <tr className="border-b border-[var(--border-default)]">
                     <th className="text-left px-6 py-4 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Feature</th>
-                    <th className="text-center px-6 py-4 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Recall Touch</th>
+                    <th className="text-center px-6 py-4 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Revenue Operator</th>
                     <th className="text-center px-6 py-4 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Ruby</th>
                   </tr>
                 </thead>
@@ -143,7 +143,7 @@ export default function RubyComparisonPage() {
                   a reliable follow-up engine.
                 </p>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
-                  Recall Touch uses AI to handle the repeatable parts of your intake and qualification. Then it turns outcomes into structured next actions:
+                  Revenue Operator uses AI to handle the repeatable parts of your intake and qualification. Then it turns outcomes into structured next actions:
                   appointment booking, confirmation reminders, no-show recovery, and reactivation sequences for leads who went quiet.
                 </p>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
@@ -157,7 +157,7 @@ export default function RubyComparisonPage() {
                   Outbound campaigns — including call + SMS sequences — are how you create controlled follow-through when the funnel needs it.
                 </p>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
-                  Recall Touch runs those campaigns as part of a unified system. Each outbound motion connects to a tracked outcome, so you can see which sequences drive bookings and recovered value.
+                  Revenue Operator runs those campaigns as part of a unified system. Each outbound motion connects to a tracked outcome, so you can see which sequences drive bookings and recovered value.
                 </p>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
                   Ruby-style coverage can answer calls — but it doesn&apos;t provide the outbound and attribution layer that turns outreach into measurable revenue execution.
@@ -170,7 +170,7 @@ export default function RubyComparisonPage() {
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-inset)] p-8">
               <h2 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Ready to replace manual chasing?</h2>
               <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                If you want AI coverage plus automated follow-up, outbound campaigns, and dashboard proof for revenue attribution, Recall Touch is the complete execution layer.
+                If you want AI coverage plus automated follow-up, outbound campaigns, and dashboard proof for revenue attribution, Revenue Operator is the complete execution layer.
               </p>
               <div className="mt-6 flex flex-col sm:flex-row gap-3">
                 <Link href="/activate" className="btn-marketing-primary inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold no-underline active:scale-[0.97]" style={{ transition: "transform 0.15s ease-[cubic-bezier(0.23,1,0.32,1)]" }}>

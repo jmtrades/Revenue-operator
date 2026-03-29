@@ -4,24 +4,24 @@
  */
 export const dynamic = "force-dynamic";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export const metadata = {
-  title: { absolute: "Sign in — Recall Touch" },
-  description: "Sign in or create your Recall Touch account.",
+  title: { absolute: "Sign in — Revenue Operator" },
+  description: "Sign in or create your Revenue Operator account.",
   alternates: { canonical: `${BASE}/sign-in` },
   openGraph: {
-    title: "Sign in — Recall Touch",
-    description: "Sign in or create your Recall Touch account.",
+    title: "Sign in — Revenue Operator",
+    description: "Sign in or create your Revenue Operator account.",
     url: `${BASE}/sign-in`,
-    siteName: "Recall Touch",
+    siteName: "Revenue Operator",
     type: "website",
-    images: [{ url: `${BASE}/opengraph-image`, width: 1200, height: 630, alt: "Recall Touch Sign In" }],
+    images: [{ url: `${BASE}/opengraph-image`, width: 1200, height: 630, alt: "Revenue Operator Sign In" }],
   },
   twitter: {
     card: "summary",
-    title: "Sign in — Recall Touch",
-    description: "Sign in or create your Recall Touch account.",
+    title: "Sign in — Revenue Operator",
+    description: "Sign in or create your Revenue Operator account.",
   },
 };
 

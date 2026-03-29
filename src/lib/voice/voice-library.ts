@@ -1,5 +1,5 @@
 /**
- * Curated voice library for Recall Touch.
+ * Curated voice library for Revenue Operator.
  *
  * Provides a catalog of phone-optimized voices with:
  * - Industry-specific recommendations
@@ -68,7 +68,7 @@ export const VOICE_LIBRARY: VoiceProfile[] = [
     gender: "female",
     accent: "American (General)",
     personality: "Warm, confident, approachable",
-    description: "The default Recall Touch voice. Warm and professional with natural conversational rhythm. Perfect for sales and customer service.",
+    description: "The default Revenue Operator voice. Warm and professional with natural conversational rhythm. Perfect for sales and customer service.",
     phone_quality: 9,
     recommended_industries: ["dental", "medical", "legal", "real_estate", "insurance", "financial", "consulting"],
     config: {

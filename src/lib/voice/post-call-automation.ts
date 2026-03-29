@@ -42,7 +42,7 @@ const DEFAULT_CONFIG: PostCallConfig = {
   sms_enabled: false,  // TCPA: SMS must be opt-in, not default-on
   follow_up_enabled: true,
   follow_up_delay_hours: 2,
-  signup_link: "https://www.recall-touch.com/signup",
+  signup_link: "https://www.revenue-operator.ai/signup",
 };
 
 /**
@@ -317,19 +317,19 @@ async function sendPostCallSms(
 function buildSmsMessage(outcome: string, signupLink: string): string {
   switch (outcome) {
     case "signup_initiated":
-      return `Thanks for chatting with Sarah from Recall Touch! Ready to get started? Complete your signup here: ${signupLink} — Your 14-day free trial is waiting. Reply STOP to opt out.`;
+      return `Thanks for chatting with Sarah from Revenue Operator! Ready to get started? Complete your signup here: ${signupLink} — Your 14-day free trial is waiting. Reply STOP to opt out.`;
 
     case "demo_completed":
-      return `Great talking with you! Sarah here from Recall Touch. If you're ready to stop missing calls and start closing more deals, start your free trial: ${signupLink} — No credit card needed. Reply STOP to opt out.`;
+      return `Great talking with you! Sarah here from Revenue Operator. If you're ready to stop missing calls and start closing more deals, start your free trial: ${signupLink} — No credit card needed. Reply STOP to opt out.`;
 
     case "callback_requested":
-      return `Thanks for your interest in Recall Touch! We'll follow up with you shortly. In the meantime, check out what we can do: ${signupLink} — Reply STOP to opt out.`;
+      return `Thanks for your interest in Revenue Operator! We'll follow up with you shortly. In the meantime, check out what we can do: ${signupLink} — Reply STOP to opt out.`;
 
     case "objection_unresolved":
-      return `Thanks for taking the time to chat with us at Recall Touch. We'd love to answer any remaining questions — feel free to call back anytime or start a free trial: ${signupLink} Reply STOP to opt out.`;
+      return `Thanks for taking the time to chat with us at Revenue Operator. We'd love to answer any remaining questions — feel free to call back anytime or start a free trial: ${signupLink} Reply STOP to opt out.`;
 
     default:
-      return `Thanks for trying the Recall Touch demo! Start your free 14-day trial — no credit card required: ${signupLink} Reply STOP to opt out.`;
+      return `Thanks for trying the Revenue Operator demo! Start your free 14-day trial — no credit card required: ${signupLink} Reply STOP to opt out.`;
   }
 }
 
@@ -721,7 +721,7 @@ async function ensureDemoNurtureSequence(workspaceId: string): Promise<string | 
         delay_minutes: 2880, // 48 hours after step 1
         config: {
           template_content: "follow_up_social_proof",
-          subject: "Businesses like yours are seeing this with Recall Touch",
+          subject: "Businesses like yours are seeing this with Revenue Operator",
           conditions: {},
         },
       },
@@ -827,7 +827,7 @@ async function analyzeCallQuality(
       .join("\n");
 
     // Call the coaching endpoint internally
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.revenueoperator.ai";
     const resp = await fetch(`${appUrl}/api/call-intelligence/coaching`, {
       method: "POST",
       headers: {
@@ -943,7 +943,7 @@ async function sendNpsFeedbackRequest(
       return action;
     }
 
-    const message = `Thanks for chatting with Sarah from Recall Touch! Quick question: On a scale of 1-10, how was your experience? Just reply with a number. Your feedback helps us improve! Reply STOP to opt out.`;
+    const message = `Thanks for chatting with Sarah from Revenue Operator! Quick question: On a scale of 1-10, how was your experience? Just reply with a number. Your feedback helps us improve! Reply STOP to opt out.`;
 
     const auth = Buffer.from(`${twilioSid}:${twilioToken}`).toString("base64");
     const params = new URLSearchParams();
@@ -1006,7 +1006,7 @@ function buildDefaultFollowUpEmail(
   summary: CallSummary,
   nextAction?: string,
 ): string {
-  const signupLink = "https://www.recall-touch.com/signup";
+  const signupLink = "https://www.revenueoperator.ai/signup";
 
   let ctaBlock = "";
   switch (nextAction) {
@@ -1016,7 +1016,7 @@ function buildDefaultFollowUpEmail(
       break;
     case "send_case_study":
       ctaBlock = `<p>I mentioned we have some great results from businesses like yours. I'll follow up with a case study shortly.</p>
-        <p>In the meantime, you can explore what Recall Touch can do:</p>
+        <p>In the meantime, you can explore what Revenue Operator can do:</p>
         <p><a href="${signupLink}" style="display:inline-block;padding:12px 24px;background:#2563EB;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;">Start Your 14-Day Free Trial</a></p>`;
       break;
     case "schedule_team_demo":
@@ -1037,10 +1037,10 @@ function buildDefaultFollowUpEmail(
   ${summary.follow_up_reason ? `<p>${summary.follow_up_reason}</p>` : ""}
   ${ctaBlock}
   <p style="margin-top:24px;">No pressure at all — just wanted to make sure you have everything you need.</p>
-  <p>Talk soon,<br><strong>Sarah</strong><br><span style="color:#6b7280;font-size:14px;">AI Sales Agent, Recall Touch</span></p>
+  <p>Talk soon,<br><strong>Sarah</strong><br><span style="color:#6b7280;font-size:14px;">AI Sales Agent, Revenue Operator</span></p>
   <hr style="border:none;border-top:1px solid #e5e7eb;margin:32px 0 16px;">
-  <p style="font-size:12px;color:#9ca3af;">This email was sent by Recall Touch AI. <a href="https://www.recall-touch.com" style="color:#2563EB;">recall-touch.com</a></p>
-  <p style="font-size:11px;color:#9ca3af;">Recall Touch Inc. | <a href="https://www.recall-touch.com/unsubscribe" style="color:#9ca3af;">Unsubscribe</a> | <a href="https://www.recall-touch.com/privacy" style="color:#9ca3af;">Privacy Policy</a></p>
+  <p style="font-size:12px;color:#9ca3af;">This email was sent by Revenue Operator AI. <a href="https://www.revenueoperator.ai" style="color:#2563EB;">revenueoperator.ai</a></p>
+  <p style="font-size:11px;color:#9ca3af;">Revenue Operator Inc. | <a href="https://www.revenueoperator.ai/unsubscribe" style="color:#9ca3af;">Unsubscribe</a> | <a href="https://www.revenueoperator.ai/privacy" style="color:#9ca3af;">Privacy Policy</a></p>
 </body>
 </html>`;
 }
@@ -1053,7 +1053,7 @@ function buildReassuranceEmail(
   name: string,
   summary: CallSummary,
 ): string {
-  const signupLink = "https://www.recall-touch.com/signup";
+  const signupLink = "https://www.revenueoperator.ai/signup";
   const objections = summary.objections_raised?.length
     ? summary.objections_raised.map((o) => `<li style="margin-bottom:8px;">${o}</li>`).join("")
     : "";
@@ -1068,10 +1068,10 @@ function buildReassuranceEmail(
   <p>If you'd like to give it a try (zero risk, zero commitment):</p>
   <p><a href="${signupLink}" style="display:inline-block;padding:12px 24px;background:#2563EB;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;">Start Your Free Trial</a></p>
   <p style="margin-top:24px;">And if you have any other questions, just reply to this email or call back anytime. I'm always here.</p>
-  <p>Best,<br><strong>Sarah</strong><br><span style="color:#6b7280;font-size:14px;">AI Sales Agent, Recall Touch</span></p>
+  <p>Best,<br><strong>Sarah</strong><br><span style="color:#6b7280;font-size:14px;">AI Sales Agent, Revenue Operator</span></p>
   <hr style="border:none;border-top:1px solid #e5e7eb;margin:32px 0 16px;">
-  <p style="font-size:12px;color:#9ca3af;">This email was sent by Recall Touch AI. <a href="https://www.recall-touch.com" style="color:#2563EB;">recall-touch.com</a></p>
-  <p style="font-size:11px;color:#9ca3af;">Recall Touch Inc. | <a href="https://www.recall-touch.com/unsubscribe" style="color:#9ca3af;">Unsubscribe</a> | <a href="https://www.recall-touch.com/privacy" style="color:#9ca3af;">Privacy Policy</a></p>
+  <p style="font-size:12px;color:#9ca3af;">This email was sent by Revenue Operator AI. <a href="https://www.revenueoperator.ai" style="color:#2563EB;">revenueoperator.ai</a></p>
+  <p style="font-size:11px;color:#9ca3af;">Revenue Operator Inc. | <a href="https://www.revenueoperator.ai/unsubscribe" style="color:#9ca3af;">Unsubscribe</a> | <a href="https://www.revenueoperator.ai/privacy" style="color:#9ca3af;">Privacy Policy</a></p>
 </body>
 </html>`;
 }

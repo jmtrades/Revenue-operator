@@ -98,7 +98,7 @@ export function LiveActivityFeed() {
     <div className="rounded-2xl border border-[var(--border-default)] bg-black/30 p-5 max-w-sm w-full">
       <div className="flex items-center gap-2 mb-4">
         <span className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
-          What businesses are doing with Recall Touch
+          What businesses are doing with Revenue Operator
         </span>
       </div>
 

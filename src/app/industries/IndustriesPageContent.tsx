@@ -16,7 +16,7 @@ function getIconComponent(iconName: string) {
   return Icon ? <Icon className="w-8 h-8" /> : null;
 }
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export default function IndustriesPageContent() {
   const t = useTranslations("industriesPage");
@@ -26,7 +26,7 @@ export default function IndustriesPageContent() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+      { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
       { "@type": "ListItem", position: 2, name: "Industries", item: `${BASE}/industries` },
     ],
   };

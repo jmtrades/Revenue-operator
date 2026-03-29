@@ -50,32 +50,32 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.recall-touch.com"),
+  metadataBase: new URL("https://www.revenueoperator.ai"),
   title: {
-    template: "%s — Recall Touch",
-    default: "Recall Touch — AI Revenue Operations Platform",
+    template: "%s — Revenue Operator",
+    default: "Revenue Operator — AI Revenue Operations Platform",
   },
   description:
     "Autonomous revenue operations platform that automates your entire revenue cycle — inbound calls, outbound campaigns, lead qualification, appointment booking, follow-ups, and recovery. Built for every business, every industry.",
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://www.recall-touch.com",
-    siteName: "Recall Touch",
-    title: "Recall Touch — AI Revenue Operations Platform",
+    url: "https://www.revenueoperator.ai",
+    siteName: "Revenue Operator",
+    title: "Revenue Operator — AI Revenue Operations Platform",
     description:
       "Autonomous revenue execution system that automates inbound calls, outbound campaigns, lead qualification, appointment booking, follow-ups, and revenue recovery. Any business. Any industry. Try free.",
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Recall Touch — AI revenue operations for every business" }],
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Revenue Operator — AI revenue operations for every business" }],
   },
   icons: { icon: "/icon" },
   twitter: {
     card: "summary_large_image",
-    title: "Recall Touch — AI Revenue Operations Platform",
+    title: "Revenue Operator — AI Revenue Operations Platform",
     description:
       "Autonomous revenue execution system that automates inbound calls, outbound campaigns, lead qualification, appointment booking, follow-ups, and revenue recovery. Any business. Any industry. Try free.",
-    creator: "@recalltouch",
+    creator: "@revenueoperator",
   },
-  alternates: { canonical: "https://www.recall-touch.com" },
+  alternates: { canonical: "https://www.revenueoperator.ai" },
   robots: {
     index: true,
     follow: true,
@@ -83,12 +83,12 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
 };
 
-const BASE_URL = "https://www.recall-touch.com";
+const BASE_URL = "https://www.revenueoperator.ai";
 
 const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "Recall Touch",
+  name: "Revenue Operator",
   url: BASE_URL,
   description: "Autonomous revenue operations platform. Automates inbound, outbound, lead qualification, appointment booking, follow-ups, and revenue recovery for every business.",
   sameAs: [
@@ -101,7 +101,7 @@ const organizationJsonLd = {
 const softwareApplicationJsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  name: "Recall Touch",
+  name: "Revenue Operator",
   applicationCategory: "BusinessApplication",
   description:
     "Autonomous revenue execution system. Runs inbound and outbound communication, lead qualification, appointment booking, follow-up sequences, and revenue recovery.",

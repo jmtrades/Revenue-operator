@@ -157,7 +157,7 @@ export default function AdminDashboardPage() {
       <div>
         <h1 className="text-3xl font-bold">Dashboard Overview</h1>
         <p style={{ color: "var(--text-secondary)" }} className="text-sm mt-1">
-          Real-time metrics for Recall Touch platform
+          Real-time metrics for Revenue Operator platform
         </p>
       </div>
 

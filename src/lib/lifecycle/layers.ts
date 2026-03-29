@@ -1,6 +1,6 @@
 /**
  * Revenue Lifecycle — 6 financial control layers
- * Recall-Touch is a Revenue Operator: every feature maps to one of these layers.
+ * Revenue Operator is a Revenue Operator: every feature maps to one of these layers.
  * No technical language; used for dashboard, reporting, and product logic.
  */
 

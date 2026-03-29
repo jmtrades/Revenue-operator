@@ -4,10 +4,10 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export const metadata = {
-  title: "Legal Practice AI Revenue Operations — Recall Touch",
+  title: "Legal Practice AI Revenue Operations — Revenue Operator",
   description:
     "Maximize intake conversion and consultation booking with complete AI-powered workflows: instant call answering, case intake, urgency screening, consultation scheduling, follow-up automation, and lead qualification.",
   alternates: { canonical: `${BASE}/industries/legal` },
@@ -18,7 +18,7 @@ export default function LegalIndustryPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+      { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
       { "@type": "ListItem", position: 2, name: "Industries", item: `${BASE}/industries` },
       { "@type": "ListItem", position: 3, name: "Legal", item: `${BASE}/industries/legal` },
     ],
@@ -58,7 +58,7 @@ export default function LegalIndustryPage() {
               In legal, the cost of an unanswered call can be enormous. Potential clients often call multiple firms in a row, and
               the firm that answers first usually wins. The problem is simple: your team is busy. Attorneys are in meetings.
               Staff is juggling documents, court deadlines, and existing clients. If a new matter goes to voicemail, the client
-              moves on. Recall Touch prevents that by answering 24/7, collecting a structured intake, and booking a consultation
+              moves on. Revenue Operator prevents that by answering 24/7, collecting a structured intake, and booking a consultation
               (or escalating urgent matters) with consistent follow-up.
             </p>
 
@@ -82,21 +82,21 @@ export default function LegalIndustryPage() {
               </div>
             </div>
 
-            <h2 className="text-lg font-semibold mb-3">How Recall Touch runs legal intake</h2>
+            <h2 className="text-lg font-semibold mb-3">How Revenue Operator runs legal intake</h2>
             <div className="space-y-4 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
               <p>
-                Recall Touch answers with a calm, professional intake script aligned to your practice area. It asks the right
+                Revenue Operator answers with a calm, professional intake script aligned to your practice area. It asks the right
                 questions, collects contact details, and captures the case summary in a structured format your team can act on.
                 You decide escalation rules: emergencies, time-sensitive matters, high-value leads, or specific keywords can
                 route to a person immediately—while routine intake is handled automatically.
               </p>
               <p>
-                For consultations, Recall Touch can book directly against your availability or propose times and let your staff
+                For consultations, Revenue Operator can book directly against your availability or propose times and let your staff
                 confirm. Either way, the system drives to a concrete next step: a scheduled consult, a document request, or a
                 respectful decline with proper notes.
               </p>
               <p>
-                After intake, Recall Touch follows up. If the prospect doesn’t respond, it sends a short message with a clear
+                After intake, Revenue Operator follows up. If the prospect doesn’t respond, it sends a short message with a clear
                 CTA. If they reply with questions, it answers using your policies and language, then continues the scheduling flow.
               </p>
             </div>
@@ -132,7 +132,7 @@ export default function LegalIndustryPage() {
                 consistent intake and follow-up means fewer dropped consultations and fewer empty calendar blocks.
               </p>
               <p>
-                Recall Touch is designed for measured professionalism: it doesn’t "spam." It follows your rules. It documents
+                Revenue Operator is designed for measured professionalism: it doesn’t "spam." It follows your rules. It documents
                 every interaction. And it helps your team spend time where it matters—qualified matters that are ready to move.
               </p>
               <p>

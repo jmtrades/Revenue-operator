@@ -238,7 +238,7 @@ export async function POST(request: NextRequest) {
     const isSilence = request.nextUrl.searchParams.get("silence") === "1";
 
     const db = getDb();
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.revenueoperator.ai";
     const callbackUrl = `${appUrl}/api/webhooks/twilio/voice/demo-turn`;
 
     /* ── Resolve call session (3-tier lookup) ── */
@@ -343,7 +343,7 @@ export async function POST(request: NextRequest) {
       const prompts = [
         "Hey, still with me? No rush at all... just tell me a bit about your business whenever you're ready.",
         "Take your time! I'm curious — what kind of business do you run?",
-        "I'm right here whenever you're ready. What brings you to Recall Touch today?",
+        "I'm right here whenever you're ready. What brings you to Revenue Operator today?",
       ];
       const nudge = prompts[silenceCount % prompts.length]!;
       history.push({ role: "assistant", content: nudge });

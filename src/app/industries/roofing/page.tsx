@@ -4,13 +4,13 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export const metadata = {
-  title: "Roofing AI Revenue Operations Platform — Recall Touch",
+  title: "Roofing AI Revenue Operations Platform — Revenue Operator",
   description:
     "Maximize storm response and inspection-to-job conversion with complete AI-powered workflows: instant call answering, damage assessment and qualification, inspection scheduling, estimate follow-up, and no-show prevention.",
-  alternates: { canonical: "https://www.recall-touch.com/industries/roofing" },
+  alternates: { canonical: "https://www.revenueoperator.ai/industries/roofing" },
 };
 
 export default function RoofingIndustryPage() {
@@ -18,7 +18,7 @@ export default function RoofingIndustryPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+      { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
       { "@type": "ListItem", position: 2, name: "Industries", item: `${BASE}/industries` },
       { "@type": "ListItem", position: 3, name: "Roofing", item: `${BASE}/industries/roofing` },
     ],
@@ -63,7 +63,7 @@ export default function RoofingIndustryPage() {
               stops shopping after the "next available" appointment is booked.
               <br />
               <br />
-              Recall Touch is the AI phone system built for roofing execution: it answers calls 24/7, qualifies storm damage intent, books
+              Revenue Operator is the AI phone system built for roofing execution: it answers calls 24/7, qualifies storm damage intent, books
               inspection windows, and runs follow-up sequences for estimates and insurance conversations. Most importantly, it doesn&apos;t
               assume the sale is lost when someone misses an appointment — it recovers no-shows and reactivates leads who need a second touch.
             </p>
@@ -93,10 +93,10 @@ export default function RoofingIndustryPage() {
               </div>
             </div>
 
-            <h2 className="text-lg font-semibold mb-3">How Recall Touch works for roofing</h2>
+            <h2 className="text-lg font-semibold mb-3">How Revenue Operator works for roofing</h2>
             <div className="space-y-4 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
               <p>
-                <strong>Answer and qualify the storm intent.</strong> When someone calls, Recall Touch captures the caller&apos;s name, phone,
+                <strong>Answer and qualify the storm intent.</strong> When someone calls, Revenue Operator captures the caller&apos;s name, phone,
                 address, and the symptoms they&apos;re seeing (hail damage, leaks, fallen branches, visible roof wear). It also confirms what
                 they&apos;re trying to achieve — inspection booking, damage question, insurance process, or estimate follow-up — so your team
                 is working from a clean intake rather than guessing.
@@ -107,13 +107,13 @@ export default function RoofingIndustryPage() {
                 so the inspection coordinator starts prepared.
               </p>
               <p>
-                <strong>Run follow-up sequences until the next appointment step is scheduled.</strong> After the inspection, Recall Touch follows up
+                <strong>Run follow-up sequences until the next appointment step is scheduled.</strong> After the inspection, Revenue Operator follows up
                 on the estimate process. If the caller is waiting to hear back, it prompts the right next action — a quote review, a clarification call,
                 or an updated appointment for next steps.
               </p>
               <p>
                 <strong>Recover no-shows and bring leads back.</strong> If the inspection is missed, the system triggers a respectful reschedule
-                flow: confirmation reminders, a clear rescheduling path, and (when needed) an escalation call. If the caller goes quiet, Recall Touch
+                flow: confirmation reminders, a clear rescheduling path, and (when needed) an escalation call. If the caller goes quiet, Revenue Operator
                 reactivates the lead with a new "next step" so revenue doesn&apos;t wait for your next office-hour slot.
               </p>
               <p>
@@ -166,7 +166,7 @@ export default function RoofingIndustryPage() {
                 coordinator" to call. Quote chase keeps momentum and reduces the time your competitors spend winning the next touch.
               </p>
               <p>
-                Recall Touch makes the process predictable. Storm demand becomes booked work, not voicemail triage — and the revenue recovery system
+                Revenue Operator makes the process predictable. Storm demand becomes booked work, not voicemail triage — and the revenue recovery system
                 keeps running even when your team is in the field.
               </p>
             </div>

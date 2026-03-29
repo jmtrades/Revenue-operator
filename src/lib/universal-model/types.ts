@@ -1,6 +1,6 @@
 /**
  * Universal Conversation Model
- * All channels normalize into this model. Recall-Touch owns the conversation layer.
+ * All channels normalize into this model. Revenue Operator owns the conversation layer.
  */
 
 /** Business location (1 workspace = 1 location for billing) */

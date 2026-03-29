@@ -1,5 +1,5 @@
 /**
- * Smart Cost Optimization Engine for Recall Touch Voice
+ * Smart Cost Optimization Engine for Revenue Operator Voice
  *
  * Reduces per-minute cost from ~3.5¢ to ~1.2¢ through:
  * 1. Intelligent model routing (cheap model for simple tasks, premium for complex)

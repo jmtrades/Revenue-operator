@@ -69,7 +69,7 @@ export class RecallAgent {
 
     const firstMessage =
       this.config.greeting?.trim() ||
-      `Hello, this is ${businessInput.agent_name ?? "the receptionist"}. How can I help you today?`;
+      `Hello, this is ${businessInput.agent_name ?? "the operator"}. How can I help you today?`;
 
     return {
       systemPrompt,

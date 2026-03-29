@@ -3,7 +3,7 @@
  * Use getBaseUrl() in API routes and server components; getPublicBaseUrl() in client.
  */
 
-const FALLBACK_ORIGIN = "https://recall-touch.com";
+const FALLBACK_ORIGIN = "https://revenueoperator.ai";
 
 /**
  * Server-side: BASE_URL or NEXT_PUBLIC_APP_URL or request origin. Deterministic for redirects.

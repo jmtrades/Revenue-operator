@@ -1,22 +1,22 @@
 import type { Metadata } from "next";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export const metadata: Metadata = {
   title: "Documentation",
-  description: "Guides, API reference, and compliance framework documentation for Recall Touch.",
+  description: "Guides, API reference, and compliance framework documentation for Revenue Operator.",
   alternates: { canonical: `${BASE}/docs` },
   openGraph: {
-    title: "Documentation — Recall Touch",
-    description: "Guides, API reference, and compliance framework documentation for Recall Touch.",
+    title: "Documentation — Revenue Operator",
+    description: "Guides, API reference, and compliance framework documentation for Revenue Operator.",
     url: `${BASE}/docs`,
-    siteName: "Recall Touch",
+    siteName: "Revenue Operator",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Documentation — Recall Touch",
-    description: "Guides, API reference, and compliance framework documentation for Recall Touch.",
+    title: "Documentation — Revenue Operator",
+    description: "Guides, API reference, and compliance framework documentation for Revenue Operator.",
   },
 };
 

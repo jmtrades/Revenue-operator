@@ -4,18 +4,18 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export const metadata: Metadata = {
-  title: "Status — Recall Touch",
-  description: "System status and health checks for Recall Touch.",
+  title: "Status — Revenue Operator",
+  description: "System status and health checks for Revenue Operator.",
   alternates: { canonical: `${BASE}/status` },
   robots: { index: true, follow: true },
   openGraph: {
-    title: "Status — Recall Touch",
-    description: "System status and health checks for Recall Touch.",
+    title: "Status — Revenue Operator",
+    description: "System status and health checks for Revenue Operator.",
     url: `${BASE}/status`,
-    siteName: "Recall Touch",
+    siteName: "Revenue Operator",
     type: "website",
   },
 };
@@ -59,7 +59,7 @@ export default async function StatusPage() {
           <Container>
             <div className="max-w-3xl mx-auto text-center">
               <SectionLabel>System Status</SectionLabel>
-              <h1 className="font-bold text-4xl md:text-6xl leading-tight">Recall Touch is {status === "ok" ? "operational" : "degraded"}</h1>
+              <h1 className="font-bold text-4xl md:text-6xl leading-tight">Revenue Operator is {status === "ok" ? "operational" : "degraded"}</h1>
               <p className="mt-4 text-base md:text-lg" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
                 Live health checks for hosting, database, and billing webhooks.
               </p>

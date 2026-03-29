@@ -53,7 +53,7 @@ export default function ModeSelector({ onSelect, selected, disabled }: ModeSelec
 
   return (
     <div className="space-y-3">
-      <h2 className="text-lg font-semibold text-white">How will you use Recall Touch?</h2>
+      <h2 className="text-lg font-semibold text-white">How will you use Revenue Operator?</h2>
       <p className="text-sm text-[var(--text-tertiary)]">This customizes your dashboard, templates, and default settings.</p>
       <div className="grid md:grid-cols-3 gap-4 mt-4">
         {MODES.map((m) => {

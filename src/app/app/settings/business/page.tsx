@@ -62,7 +62,7 @@ export default function AppSettingsBusinessPage() {
   useUnsavedChanges(isDirty);
 
   useEffect(() => {
-    document.title = `${tSettings("business.label", { defaultValue: "Business" })} — Recall Touch`;
+    document.title = `${tSettings("business.label", { defaultValue: "Business" })} — Revenue Operator`;
   }, [tSettings]);
 
   useEffect(() => {

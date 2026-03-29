@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
 
       // Reply with confirmation per CTIA guidelines
       return new NextResponse(
-        '<?xml version="1.0" encoding="UTF-8"?><Response><Message>You have been unsubscribed and will no longer receive messages from Recall Touch. Reply START to re-subscribe.</Message></Response>',
+        '<?xml version="1.0" encoding="UTF-8"?><Response><Message>You have been unsubscribed and will no longer receive messages from Revenue Operator. Reply START to re-subscribe.</Message></Response>',
         { status: 200, headers: { "Content-Type": "text/xml" } }
       );
     }
@@ -171,7 +171,7 @@ export async function POST(request: NextRequest) {
       log("info", "sms_webhook.resubscribe", { phone: normalizedPhone });
 
       return new NextResponse(
-        '<?xml version="1.0" encoding="UTF-8"?><Response><Message>You have been re-subscribed to Recall Touch messages. Reply STOP at any time to unsubscribe.</Message></Response>',
+        '<?xml version="1.0" encoding="UTF-8"?><Response><Message>You have been re-subscribed to Revenue Operator messages. Reply STOP at any time to unsubscribe.</Message></Response>',
         { status: 200, headers: { "Content-Type": "text/xml" } }
       );
     }
@@ -282,10 +282,10 @@ export async function POST(request: NextRequest) {
         let thankYouMsg = "Thank you for your feedback!";
         if (npsScore >= 9) {
           thankYouMsg =
-            "Thank you! We're thrilled you had a great experience. If you'd like to share your story, we'd love to hear it at hello@recall-touch.com";
+            "Thank you! We're thrilled you had a great experience. If you'd like to share your story, we'd love to hear it at hello@revenueoperator.ai";
         } else if (npsScore >= 7) {
           thankYouMsg =
-            "Thank you for your feedback! We're always working to improve. If there's anything specific we can do better, reply here or email hello@recall-touch.com";
+            "Thank you for your feedback! We're always working to improve. If there's anything specific we can do better, reply here or email hello@revenueoperator.ai";
         } else {
           thankYouMsg =
             "Thank you for your honest feedback. We take this seriously and want to make it right. A team member will reach out to you shortly.";

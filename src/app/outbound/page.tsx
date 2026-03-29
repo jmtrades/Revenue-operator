@@ -17,24 +17,24 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export const metadata: Metadata = {
-  title: "AI Outbound Campaigns — Recall Touch",
+  title: "AI Outbound Campaigns — Revenue Operator",
   description:
     "Automated outbound calling with compliance guardrails: suppression rules, business hours enforcement, DNC checks, and measurable revenue outcomes.",
   alternates: { canonical: `${BASE}/outbound` },
   openGraph: {
-    title: "AI Outbound Campaigns — Recall Touch",
+    title: "AI Outbound Campaigns — Revenue Operator",
     description:
       "Automated outbound calling with compliance guardrails: suppression rules, business hours enforcement, DNC checks, and measurable revenue outcomes.",
     url: `${BASE}/outbound`,
-    siteName: "Recall Touch",
+    siteName: "Revenue Operator",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI Outbound Campaigns — Recall Touch",
+    title: "AI Outbound Campaigns — Revenue Operator",
     description: "Automated outbound calling with compliance guardrails and measurable revenue outcomes.",
   },
 };
@@ -163,7 +163,7 @@ export default function OutboundPage() {
                   Compliance Built In
                 </h2>
                 <p className="mt-3" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                  Outbound is only valuable when it&apos;s safe. Recall Touch applies suppression rules, business-hours constraints, and DNC checks so outreach stays responsible.
+                  Outbound is only valuable when it&apos;s safe. Revenue Operator applies suppression rules, business-hours constraints, and DNC checks so outreach stays responsible.
                 </p>
 
                 <ul className="mt-6 space-y-3" style={{ color: "var(--text-secondary)" }}>

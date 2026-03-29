@@ -8,9 +8,9 @@ import { Container } from "@/components/ui/Container";
 // Note: Dynamic metadata with translations requires generateMetadata.
 // Static metadata.title/description do not have access to i18n.
 export const metadata: Metadata = {
-  title: "Privacy Policy — Recall Touch",
+  title: "Privacy Policy — Revenue Operator",
   description:
-    "Recall Touch Privacy Policy covering data collection, usage, storage, and your rights. Learn how we protect your data and handle personal information.",
+    "Revenue Operator Privacy Policy covering data collection, usage, storage, and your rights. Learn how we protect your data and handle personal information.",
 };
 
 export default async function PrivacyPage() {
@@ -42,7 +42,7 @@ export default async function PrivacyPage() {
             <section className="mb-10">
               <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>How We Use It</h2>
               <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                We use your information to provide and improve Recall Touch: to set up and maintain your account, to operate our AI phone system (including answering and placing calls, transcribing and storing recordings, and sending you alerts and summaries), to process and store compliance-grade records where applicable, and to communicate with you about your account, product updates, and support.
+                We use your information to provide and improve Revenue Operator: to set up and maintain your account, to operate our AI phone system (including answering and placing calls, transcribing and storing recordings, and sending you alerts and summaries), to process and store compliance-grade records where applicable, and to communicate with you about your account, product updates, and support.
               </p>
               <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
                 We may use aggregated or de-identified data for analytics, product improvement, and industry benchmarks. We do not sell your personal information to third parties. We may share data with service providers who assist us in operating the platform (such as cloud hosting, telephony, and email) under strict confidentiality and data-processing agreements.
@@ -72,7 +72,7 @@ export default async function PrivacyPage() {
             <section className="mb-10">
               <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>Your Rights</h2>
               <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                Depending on your location, you may have rights to access, correct, delete, or port your personal data, to object to or restrict certain processing, and to withdraw consent where processing is consent-based. To exercise these rights, contact us at <a href="mailto:privacy@recall-touch.com" className="underline" style={{ color: "var(--accent-primary)" }}>privacy@recall-touch.com</a>. If you are in the European Economic Area or the United Kingdom, you also have the right to lodge a complaint with your local data protection authority.
+                Depending on your location, you may have rights to access, correct, delete, or port your personal data, to object to or restrict certain processing, and to withdraw consent where processing is consent-based. To exercise these rights, contact us at <a href="mailto:privacy@revenueoperator.ai" className="underline" style={{ color: "var(--accent-primary)" }}>privacy@revenueoperator.ai</a>. If you are in the European Economic Area or the United Kingdom, you also have the right to lodge a complaint with your local data protection authority.
               </p>
             </section>
             <section className="mb-10">
@@ -84,19 +84,19 @@ export default async function PrivacyPage() {
             <section className="mb-10">
               <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>Children</h2>
               <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                Recall Touch is not intended for use by individuals under the age of 18. We do not knowingly collect personal information from children. If you believe we have collected such information, please contact us and we will delete it promptly.
+                Revenue Operator is not intended for use by individuals under the age of 18. We do not knowingly collect personal information from children. If you believe we have collected such information, please contact us and we will delete it promptly.
               </p>
             </section>
             <section className="mb-10">
               <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>Changes to This Policy</h2>
               <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                We may update this Privacy Policy from time to time. We will post the revised policy on this page and update the effective date. For material changes, we will provide additional notice (such as by email or a prominent notice in the product). Your continued use of Recall Touch after the effective date constitutes acceptance of the updated policy.
+                We may update this Privacy Policy from time to time. We will post the revised policy on this page and update the effective date. For material changes, we will provide additional notice (such as by email or a prominent notice in the product). Your continued use of Revenue Operator after the effective date constitutes acceptance of the updated policy.
               </p>
             </section>
             <section className="mb-10">
               <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>Contact</h2>
               <p className="text-base" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                For privacy questions, requests, or complaints: <a href="mailto:privacy@recall-touch.com" className="underline" style={{ color: "var(--accent-primary)" }}>privacy@recall-touch.com</a>. We will respond within a reasonable time.
+                For privacy questions, requests, or complaints: <a href="mailto:privacy@revenueoperator.ai" className="underline" style={{ color: "var(--accent-primary)" }}>privacy@revenueoperator.ai</a>. We will respond within a reasonable time.
               </p>
             </section>
             <p className="text-sm mt-12" style={{ color: "var(--text-tertiary)" }}>

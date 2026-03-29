@@ -33,9 +33,9 @@ export function ActivateStep({
   const [carrier, setCarrier] = useState<"att" | "verizon" | "tmobile" | "other">("att");
 
   let code: string;
-  if (carrier === "att") code = "*21*[your Recall Touch number]#";
-  else if (carrier === "verizon") code = "*72[your Recall Touch number]";
-  else if (carrier === "tmobile") code = "**21*[your Recall Touch number]#";
+  if (carrier === "att") code = "*21*[your Revenue Operator number]#";
+  else if (carrier === "verizon") code = "*72[your Revenue Operator number]";
+  else if (carrier === "tmobile") code = "**21*[your Revenue Operator number]#";
   else code = t("forwardOtherHint");
 
   const carrierOptions = [

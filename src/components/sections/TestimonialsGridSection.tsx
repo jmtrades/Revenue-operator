@@ -15,7 +15,7 @@ export function TestimonialsGridSection() {
         "testimonials.0.quote",
         {
           default:
-            "Recall Touch transformed our missed call recovery. We went from losing 40% of inbound leads to capturing 97% with AI-powered follow-ups. Revenue increased 280% in the first quarter.",
+            "Revenue Operator transformed our missed call recovery. We went from losing 40% of inbound leads to capturing 97% with AI-powered follow-ups. Revenue increased 280% in the first quarter.",
         }
       ),
       author: t("testimonials.0.author", { default: "Sarah Mitchell" }),
@@ -45,7 +45,7 @@ export function TestimonialsGridSection() {
         "testimonials.2.quote",
         {
           default:
-            "We replaced 3 different tools with Recall Touch — dialer, coaching platform, and analytics suite. Saved $4,200/month while getting better results. The ROI is undeniable.",
+            "We replaced 3 different tools with Revenue Operator — dialer, coaching platform, and analytics suite. Saved $4,200/month while getting better results. The ROI is undeniable.",
         }
       ),
       author: t("testimonials.2.author", { default: "Jennifer Park" }),

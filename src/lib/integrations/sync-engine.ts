@@ -268,7 +268,7 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
     }
 
     if (row.direction === "inbound") {
-      // ── Inbound CRM → Recall Touch (last-write-wins) ──────────────────
+      // ── Inbound CRM → Revenue Operator (last-write-wins) ──────────────────
       const provider = row.provider as CrmProviderId;
 
       // 1. Normalize the provider-specific payload into a flat object

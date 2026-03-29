@@ -10,8 +10,8 @@ import "@/lib/runtime";
 import { assertCronAuthorized } from "@/lib/runtime";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const EMAIL_FROM = process.env.EMAIL_FROM ?? "Recall Touch <noreply@recall-touch.com>";
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
+const EMAIL_FROM = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@revenueoperator.ai>";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.revenueoperator.ai";
 
 async function sendEmail(to: string, subject: string, text: string): Promise<boolean> {
   if (!RESEND_API_KEY) {

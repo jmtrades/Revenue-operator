@@ -4,10 +4,10 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export const metadata = {
-  title: "Plumbing & HVAC AI Revenue Operations Platform — Recall Touch",
+  title: "Plumbing & HVAC AI Revenue Operations Platform — Revenue Operator",
   description:
     "Maximize emergency revenue and operational efficiency with complete AI-powered workflows: 24/7 call answering, emergency dispatch, seasonal campaign automation, appointment scheduling, no-show prevention, and job tracking.",
   alternates: { canonical: `${BASE}/industries/plumbing-hvac` },
@@ -18,7 +18,7 @@ export default function PlumbingHvacIndustryPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+      { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
       { "@type": "ListItem", position: 2, name: "Industries", item: `${BASE}/industries` },
       { "@type": "ListItem", position: 3, name: "Plumbing & HVAC", item: `${BASE}/industries/plumbing-hvac` },
     ],
@@ -54,7 +54,7 @@ export default function PlumbingHvacIndustryPage() {
               Answer 24/7 emergency calls. Dispatch faster. Dominate seasonal spikes.
             </h1>
             <p className="text-base md:text-lg mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-              Emergency plumbing and HVAC calls don't wait. A customer with a burst pipe or a dead AC doesn't care if it's midnight or lunch—they need help now. Your dispatch team is stretched. Calls come in during peak hours, nights, and weekends. Miss one, and the customer calls your competitor. Recall Touch answers every call 24/7, captures location and urgency, books emergency slots, and keeps your dispatch running smoothly—even when you're slammed.
+              Emergency plumbing and HVAC calls don't wait. A customer with a burst pipe or a dead AC doesn't care if it's midnight or lunch—they need help now. Your dispatch team is stretched. Calls come in during peak hours, nights, and weekends. Miss one, and the customer calls your competitor. Revenue Operator answers every call 24/7, captures location and urgency, books emergency slots, and keeps your dispatch running smoothly—even when you're slammed.
             </p>
 
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 md:p-8 mb-8">
@@ -72,13 +72,13 @@ export default function PlumbingHvacIndustryPage() {
               </div>
             </div>
 
-            <h2 className="text-lg font-semibold mb-3">How Recall Touch works for plumbing & HVAC</h2>
+            <h2 className="text-lg font-semibold mb-3">How Revenue Operator works for plumbing & HVAC</h2>
             <div className="space-y-4 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
               <p>
-                Recall Touch answers every inbound call, whether it's 2 AM or 2 PM. It greets the customer, asks for location and urgency, and captures what's wrong (heating, cooling, plumbing, electrical). It checks your technician availability in real-time and either books the emergency slot directly or queues the job for dispatch review.
+                Revenue Operator answers every inbound call, whether it's 2 AM or 2 PM. It greets the customer, asks for location and urgency, and captures what's wrong (heating, cooling, plumbing, electrical). It checks your technician availability in real-time and either books the emergency slot directly or queues the job for dispatch review.
               </p>
               <p>
-                For after-hours calls, Recall Touch can confirm a callback window or immediately notify your on-call dispatcher via SMS/alert. For seasonal campaigns, you can set up automated outreach: spring AC tune-ups, winter heating checks, or post-emergency follow-up.
+                For after-hours calls, Revenue Operator can confirm a callback window or immediately notify your on-call dispatcher via SMS/alert. For seasonal campaigns, you can set up automated outreach: spring AC tune-ups, winter heating checks, or post-emergency follow-up.
               </p>
               <p>
                 Every call and booking is logged. You see no-shows, callback patterns, peak hours, and which techs are getting booked. That visibility lets you staff smarter and upsell smarter.
@@ -114,7 +114,7 @@ export default function PlumbingHvacIndustryPage() {
                 The math is direct: capture one additional $450 HVAC call or $350 plumbing emergency per month and the system pays for itself. Most teams see recovery of 2–5 calls per month that would otherwise have gone to voicemail. In peak season, that's 2–5 jobs × $400+ = $800–2,000 in recovered monthly revenue.
               </p>
               <p>
-                Beyond emergency captures, seasonal automation reduces labor: your marketing team sends one campaign brief; Recall Touch runs the follow-up calls, texts, and scheduling. Spring tune-ups and winter preventive calls drive steady, predictable revenue.
+                Beyond emergency captures, seasonal automation reduces labor: your marketing team sends one campaign brief; Revenue Operator runs the follow-up calls, texts, and scheduling. Spring tune-ups and winter preventive calls drive steady, predictable revenue.
               </p>
               <p>
                 The operational win is smoothing demand-capture across your dispatch team. Less dropped calls means fewer frustrated customers and fewer one-star reviews that cost you.

@@ -74,7 +74,7 @@ export default function AppSettingsPage() {
   const [syncing, setSyncing] = useState(false);
 
   useEffect(() => {
-    document.title = `${tSettings("pageTitle", { defaultValue: "Settings — Recall Touch" })}`;
+    document.title = `${tSettings("pageTitle", { defaultValue: "Settings — Revenue Operator" })}`;
   }, [tSettings]);
 
   // Initialize theme from DOM/localStorage

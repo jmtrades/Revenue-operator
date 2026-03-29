@@ -10,19 +10,19 @@ const Footer = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: "About Recall Touch — AI Revenue Operations Platform",
+  title: "About Revenue Operator — AI Revenue Operations Platform",
   description:
-    "Recall Touch is the AI revenue operations platform that handles inbound calls, outbound campaigns, follow-ups, bookings, no-show recovery, and lead qualification for every industry.",
+    "Revenue Operator is the AI revenue operations platform that handles inbound calls, outbound campaigns, follow-ups, bookings, no-show recovery, and lead qualification for every industry.",
   openGraph: {
-    title: "About Recall Touch",
+    title: "About Revenue Operator",
     description:
       "AI revenue operations platform — inbound calls, outbound campaigns, follow-ups, bookings, and revenue recovery for every business.",
-    url: "https://www.recall-touch.com/about",
+    url: "https://www.revenueoperator.ai/about",
     images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "About Recall Touch",
+    title: "About Revenue Operator",
     description: "AI revenue operations platform — calls, campaigns, follow-ups, bookings, and recovery for every industry.",
   },
 };
@@ -56,7 +56,7 @@ export default function AboutPage() {
                   border: "1px solid rgba(37, 99, 235, 0.1)",
                 }}
               >
-                About Recall Touch
+                About Revenue Operator
               </div>
               <h1
                 className="font-semibold mb-5"
@@ -72,7 +72,7 @@ export default function AboutPage() {
                 className="text-base md:text-lg max-w-2xl mx-auto leading-relaxed"
                 style={{ color: "var(--text-secondary)" }}
               >
-                Recall Touch was built to solve a clear problem: service businesses lose
+                Revenue Operator was built to solve a clear problem: service businesses lose
                 thousands of dollars every month from missed opportunities — calls that go
                 unanswered, appointments that no-show, and leads that never get followed up.
                 We built the AI to handle all of it automatically.

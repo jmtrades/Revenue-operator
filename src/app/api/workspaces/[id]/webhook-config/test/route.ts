@@ -47,7 +47,7 @@ export async function POST(
     payload: {
       workspace_id: id,
       lead_name: "Test caller",
-      note: "This is a Recall Touch test delivery.",
+      note: "This is a Revenue Operator test delivery.",
     },
     timestamp: new Date().toISOString(),
   });

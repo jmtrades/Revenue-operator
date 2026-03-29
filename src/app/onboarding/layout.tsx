@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Set up your AI phone team | Recall Touch",
+  title: "Set up your AI phone team | Revenue Operator",
   description: "Get your AI phone team ready in 5 minutes.",
 };
 

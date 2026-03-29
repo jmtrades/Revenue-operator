@@ -103,7 +103,7 @@ export async function generateResponse(
     messages: [
       {
         role: "system",
-        content: `You write like a calm receptionist: 1–2 short sentences, casual, no "thanks for reaching out" or "happy to assist". Move toward booking. No emojis, no bullet points, no corporate tone. Action: ${action}. Never mention AI, bot, or automation.`,
+        content: `You write like a calm professional: 1–2 short sentences, casual, no "thanks for reaching out" or "happy to assist". Move toward booking. No emojis, no bullet points, no corporate tone. Action: ${action}. Never mention AI, bot, or automation.`,
       },
       {
         role: "user",

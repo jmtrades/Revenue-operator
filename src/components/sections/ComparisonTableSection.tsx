@@ -62,7 +62,7 @@ export function ComparisonTableSection() {
               color: "var(--text-primary)",
             }}
           >
-            {t("title", { default: "Why teams switch to Recall Touch" })}
+            {t("title", { default: "Why teams switch to Revenue Operator" })}
           </h2>
         </AnimateOnScroll>
 
@@ -99,7 +99,7 @@ export function ComparisonTableSection() {
                       borderBottom: "1px solid var(--border-default)",
                     }}
                   >
-                    Recall Touch
+                    Revenue Operator
                   </th>
                 </tr>
               </thead>

@@ -1,5 +1,5 @@
 /**
- * POST /api/integrations/crm/[provider]/import — Pull contacts FROM a CRM into Recall Touch.
+ * POST /api/integrations/crm/[provider]/import — Pull contacts FROM a CRM into Revenue Operator.
  * Fetches contacts from the CRM API and enqueues inbound sync jobs to create/update leads.
  * Rate-limited to prevent abuse.
  */

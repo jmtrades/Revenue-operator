@@ -74,19 +74,19 @@ export async function POST(req: NextRequest) {
     }
 
     const resendKey = process.env.RESEND_API_KEY;
-    const from = process.env.EMAIL_FROM ?? "Recall Touch <noreply@recall-touch.com>";
+    const from = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@revenueoperator.ai>";
     if (resendKey && email) {
       const baseUrl = getBaseUrl(req.nextUrl?.origin ?? null);
       const welcomeHtml = `
         <p>Hi${name ? ` ${name.split(" ")[0]}` : ""},</p>
-        <p>Welcome to Recall Touch. Set up your AI phone system in 5 minutes.</p>
+        <p>Welcome to Revenue Operator. Set up your AI phone system in 5 minutes.</p>
         <p><a href="${baseUrl}/activate">Go to onboarding →</a></p>
         <p>If you didn't request this, you can ignore this email.</p>
       `;
       fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ from, to: email, subject: "Welcome to Recall Touch — set up in 5 minutes", html: welcomeHtml }),
+        body: JSON.stringify({ from, to: email, subject: "Welcome to Revenue Operator — set up in 5 minutes", html: welcomeHtml }),
       }).catch((err) => { log("error", "signup.email_send_error", { error: err instanceof Error ? err.message : String(err) }); });
     }
 

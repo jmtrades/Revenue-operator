@@ -89,7 +89,7 @@ const BATTLECARDS: Record<string, CompetitiveBattlecard> = {
       "No industry-specific templates",
     ],
     ourAdvantage: "Ready out of the box — no developers needed",
-    talkTrack: "Bland is a great platform for developers who want to build custom solutions. But if you want to be answering calls in fifteen minutes with zero coding, that's exactly what Recall Touch does. Analytics, industry templates, CRM integrations — all built in.",
+    talkTrack: "Bland is a great platform for developers who want to build custom solutions. But if you want to be answering calls in fifteen minutes with zero coding, that's exactly what Revenue Operator does. Analytics, industry templates, CRM integrations — all built in.",
   },
   synthflow: {
     competitor: "Synthflow",
@@ -111,7 +111,7 @@ const BATTLECARDS: Record<string, CompetitiveBattlecard> = {
       "Limited industry customization",
     ],
     ourAdvantage: "Complete business solution vs. developer toolkit",
-    talkTrack: "Retell builds great AI voice infrastructure for developers. But if you're a business owner who needs calls answered today, Recall Touch gives you everything — dashboard, analytics, industry templates, CRM integration — ready to go in minutes.",
+    talkTrack: "Retell builds great AI voice infrastructure for developers. But if you're a business owner who needs calls answered today, Revenue Operator gives you everything — dashboard, analytics, industry templates, CRM integration — ready to go in minutes.",
   },
   dialpad: {
     competitor: "Dialpad",
@@ -321,14 +321,14 @@ function generateStrategyHints(
       hints.push("They've shown interest! Reinforce with social proof. Mention similar businesses succeeding.");
       break;
     case "pricing":
-      hints.push("Anchor on value before price. Frame as ROI: 'one missed call costs more than a month of Recall Touch.'");
+      hints.push("Anchor on value before price. Frame as ROI: 'one missed call costs more than a month of Revenue Operator.'");
       hints.push("Always end pricing discussion with the free trial — remove all risk.");
       break;
     case "objection_handling":
       hints.push("Use empathy first. Validate their concern, then address it.");
       break;
     case "closing":
-      hints.push("They're ready! Be direct and helpful. Guide them to recall-touch.com/signup.");
+      hints.push("They're ready! Be direct and helpful. Guide them to revenueoperator.ai/signup.");
       hints.push("Make it feel easy and low-risk: 'takes thirty seconds, no credit card.'");
       break;
   }

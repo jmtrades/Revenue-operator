@@ -69,7 +69,7 @@ const INTEGRATIONS: Integration[] = [
   {
     id: "zapier",
     name: "Zapier",
-    description: "Connect Recall Touch to 5,000+ apps. Automate your entire workflow.",
+    description: "Connect Revenue Operator to 5,000+ apps. Automate your entire workflow.",
     icon: Zap,
     color: "text-amber-400",
     bg: "bg-amber-500/10",
@@ -94,7 +94,7 @@ const INTEGRATIONS: Integration[] = [
     color: "text-cyan-400",
     bg: "bg-cyan-500/10",
     status: "configured",
-    detail: "Sending from hello@recall-touch.com",
+    detail: "Sending from hello@revenueoperator.ai",
     actionLabel: "Test Email",
   },
 ];
@@ -127,7 +127,7 @@ function StatusDot({ status }: { status: ConnectionStatus }) {
 export default function IntegrationsPage() {
   const _t = useTranslations("dashboard");
   const { workspaceId } = useWorkspace();
-  const [webhookUrl] = useState("https://hooks.recall-touch.com/wh/ws_abc123");
+  const [webhookUrl] = useState("https://hooks.revenueoperator.ai/wh/ws_abc123");
   const [copied, setCopied] = useState(false);
 
   const handleCopyWebhook = () => {
@@ -225,7 +225,7 @@ export default function IntegrationsPage() {
           Inbound Webhook URL
         </h3>
         <p className="text-xs mb-4" style={{ color: "var(--text-secondary)" }}>
-          Use this URL to send external events (form submissions, CRM updates) into Recall Touch.
+          Use this URL to send external events (form submissions, CRM updates) into Revenue Operator.
         </p>
         <div className="flex items-center gap-2">
           <div

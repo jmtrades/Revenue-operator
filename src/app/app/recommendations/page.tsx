@@ -8,7 +8,7 @@ export default function RecommendationsPage() {
   const t = useTranslations("common");
 
   useEffect(() => {
-    document.title = t("recommendations.pageTitle", { defaultValue: "Recommendations — Recall Touch" });
+    document.title = t("recommendations.pageTitle", { defaultValue: "Recommendations — Revenue Operator" });
     return () => { document.title = ""; };
   }, [t]);
 

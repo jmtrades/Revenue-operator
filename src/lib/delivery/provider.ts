@@ -262,7 +262,7 @@ export async function sendOutbound(
       }
     } else if (ch === "email" && to.email) {
       const { sendEmail } = await import("@/lib/integrations/email");
-      const sendResult = await sendEmail(workspaceId, to.email, emailSubject ?? "Message from Recall Touch", safeContent);
+      const sendResult = await sendEmail(workspaceId, to.email, emailSubject ?? "Message from Revenue Operator", safeContent);
       result = sendResult.ok && sendResult.externalId ? { sid: sendResult.externalId } : { error: sendResult.error ?? "Send failed" };
     } else {
       result = { error: "Email provider not implemented" };

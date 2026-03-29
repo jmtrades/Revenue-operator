@@ -1,15 +1,15 @@
 /** Billing email subject (e.g. Stripe invoice email). */
-export const BILLING_EMAIL_SUBJECT = "Your Recall Touch subscription";
+export const BILLING_EMAIL_SUBJECT = "Your Revenue Operator subscription";
 
 /** Invoice line / product description (use in Stripe Product description). */
 export const INVOICE_DESCRIPTION =
-  "Recall Touch subscription plan for AI revenue operations (voice, SMS, follow-up automation).";
+  "Revenue Operator subscription plan for AI revenue operations (voice, SMS, follow-up automation).";
 
 /** Receipt footer. */
-export const RECEIPT_FOOTER = "Thank you for your subscription to Recall Touch.";
+export const RECEIPT_FOOTER = "Thank you for your subscription to Revenue Operator.";
 
 /** Payment failure primary message. */
-export const PAYMENT_FAILURE_PRIMARY = "Your Recall Touch subscription payment failed.";
+export const PAYMENT_FAILURE_PRIMARY = "Your Revenue Operator subscription payment failed.";
 
 /** Trial / plan messaging. */
 export function planEndsOn(date: Date): string {

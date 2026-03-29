@@ -164,7 +164,7 @@ export async function POST(req: NextRequest) {
             unit_amount: pack.price_cents,
             product_data: {
               name: `${pack.minutes} Minute Pack`,
-              description: `${pack.minutes} voice minutes for Recall Touch (${pack.price_display})`,
+              description: `${pack.minutes} voice minutes for Revenue Operator (${pack.price_display})`,
               metadata: {
                 pack_id: packId,
                 minutes: String(pack.minutes),

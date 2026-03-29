@@ -5,21 +5,21 @@ import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
 
 const DEMO_SYSTEM =
-  `You answer phone calls for Recall Touch. Adapt to the caller's business context, stay calm and natural, and guide the conversation toward the next clear step. Keep replies short, human, and focused on the caller's name, need, and next step.`;
+  `You answer phone calls for Revenue Operator. Adapt to the caller's business context, stay calm and natural, and guide the conversation toward the next clear step. Keep replies short, human, and focused on the caller's name, need, and next step.`;
 
 const AGENTS: Record<string, { name: string; style: string; greeting: string }> = {
   sarah: {
-    name: "Recall Touch",
+    name: "Revenue Operator",
     style: "professional, formal tone",
     greeting: "Hello. Thanks for calling. How can I help you today?",
   },
   alex: {
-    name: "Recall Touch",
+    name: "Revenue Operator",
     style: "friendly, casual tone",
     greeting: "Hi there! Thanks for reaching out. What can I do for you?",
   },
   emma: {
-    name: "Recall Touch",
+    name: "Revenue Operator",
     style: "direct, calm tone",
     greeting: "Hi. How can I help?",
   },

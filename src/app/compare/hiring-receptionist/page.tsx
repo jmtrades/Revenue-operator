@@ -5,19 +5,19 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { CheckCircle2, XCircle } from "lucide-react";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export const metadata: Metadata = {
-  title: "Recall Touch vs Hiring a Receptionist — Recall Touch",
+  title: "Revenue Operator vs Hiring a Receptionist — Revenue Operator",
   description:
-    "Hiring a receptionist costs $35K–50K/year, 8 hours/day, and vacation days. Recall Touch costs $1,164–$11,964/year, works 24/7/365, and never misses a call.",
+    "Hiring a receptionist costs $35K–50K/year, 8 hours/day, and vacation days. Revenue Operator costs $1,164–$11,964/year, works 24/7/365, and never misses a call.",
   alternates: { canonical: `${BASE}/compare/hiring-receptionist` },
   openGraph: {
-    title: "Recall Touch vs Hiring a Receptionist — Recall Touch",
+    title: "Revenue Operator vs Hiring a Receptionist — Revenue Operator",
     description:
-      "A full-time receptionist costs $35K–50K/year and works 8 hours. Recall Touch costs $147–997/month and answers every call, every time.",
+      "A full-time receptionist costs $35K–50K/year and works 8 hours. Revenue Operator costs $147–997/month and answers every call, every time.",
     url: `${BASE}/compare/hiring-receptionist`,
-    siteName: "Recall Touch",
+    siteName: "Revenue Operator",
     type: "website",
   },
 };
@@ -25,16 +25,16 @@ export const metadata: Metadata = {
 type Row = { feature: string; recall: boolean; receptionist: boolean; note?: string };
 
 const rows: Row[] = [
-  { feature: "Annual cost", recall: false, receptionist: false, note: "Recall Touch: $1,164–$11,964/year. Receptionist: $35,000–$50,000/year salary + benefits." },
-  { feature: "24/7/365 availability", recall: true, receptionist: false, note: "Recall Touch never sleeps. Receptionists work 8 hours/day, take vacations, and get sick." },
-  { feature: "Concurrent call handling", recall: true, receptionist: false, note: "Recall Touch answers unlimited calls simultaneously. One receptionist = one call at a time." },
-  { feature: "Response time (first ring to answer)", recall: true, receptionist: false, note: "Recall Touch: <3 seconds. Receptionist: 15–30 seconds (if available)." },
-  { feature: "Consistent execution", recall: true, receptionist: false, note: "Recall Touch follows the same process every time. Humans vary, have off days, forget steps." },
-  { feature: "Automatic follow-up sequences", recall: true, receptionist: false, note: "Recall Touch sends SMS reminders, booking links, and follow-ups. Receptionist does manual follow-ups (if they remember)." },
-  { feature: "Scales without hiring", recall: true, receptionist: false, note: "Recall Touch handles 1 call or 1,000. Receptionist needs a second hire to cover." },
-  { feature: "No-show recovery", recall: true, receptionist: false, note: "Recall Touch automatically texts and calls no-show leads. Receptionist can't reach them if not at desk." },
-  { feature: "Personal, human touch", recall: false, receptionist: true, note: "A real receptionist can build rapport and handle complex objections. Recall Touch AI is getting better at this." },
-  { feature: "Subject matter expertise", recall: false, receptionist: true, note: "A receptionist trained in your field can answer detailed questions. Recall Touch can be trained but has limits." },
+  { feature: "Annual cost", recall: false, receptionist: false, note: "Revenue Operator: $1,164–$11,964/year. Receptionist: $35,000–$50,000/year salary + benefits." },
+  { feature: "24/7/365 availability", recall: true, receptionist: false, note: "Revenue Operator never sleeps. Receptionists work 8 hours/day, take vacations, and get sick." },
+  { feature: "Concurrent call handling", recall: true, receptionist: false, note: "Revenue Operator answers unlimited calls simultaneously. One receptionist = one call at a time." },
+  { feature: "Response time (first ring to answer)", recall: true, receptionist: false, note: "Revenue Operator: <3 seconds. Receptionist: 15–30 seconds (if available)." },
+  { feature: "Consistent execution", recall: true, receptionist: false, note: "Revenue Operator follows the same process every time. Humans vary, have off days, forget steps." },
+  { feature: "Automatic follow-up sequences", recall: true, receptionist: false, note: "Revenue Operator sends SMS reminders, booking links, and follow-ups. Receptionist does manual follow-ups (if they remember)." },
+  { feature: "Scales without hiring", recall: true, receptionist: false, note: "Revenue Operator handles 1 call or 1,000. Receptionist needs a second hire to cover." },
+  { feature: "No-show recovery", recall: true, receptionist: false, note: "Revenue Operator automatically texts and calls no-show leads. Receptionist can't reach them if not at desk." },
+  { feature: "Personal, human touch", recall: false, receptionist: true, note: "A real receptionist can build rapport and handle complex objections. Revenue Operator AI is getting better at this." },
+  { feature: "Subject matter expertise", recall: false, receptionist: true, note: "A receptionist trained in your field can answer detailed questions. Revenue Operator can be trained but has limits." },
   { feature: "Payroll, taxes, benefits", recall: false, receptionist: true, note: "Receptionist requires W-2, payroll taxes, health insurance, workers comp, vacation pay." },
 ];
 
@@ -43,7 +43,7 @@ export default function HiringReceptionistComparisonPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+      { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
       { "@type": "ListItem", position: 2, name: "Comparisons", item: `${BASE}/compare` },
       { "@type": "ListItem", position: 3, name: "Hiring a Receptionist", item: `${BASE}/compare/hiring-receptionist` },
     ],
@@ -60,11 +60,11 @@ export default function HiringReceptionistComparisonPage() {
               Comparison
             </p>
             <h1 className="font-bold text-4xl md:text-5xl leading-tight">
-              Recall Touch vs Hiring a Receptionist
+              Revenue Operator vs Hiring a Receptionist
             </h1>
             <p className="mt-4 text-base md:text-lg" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
               A full-time receptionist costs $35,000–$50,000/year, works 8 hours a day, takes vacations, and still misses calls.
-              Recall Touch costs $147–$997/month and answers every call 24/7/365. You get the reliability of AI without replacing your team.
+              Revenue Operator costs $147–$997/month and answers every call 24/7/365. You get the reliability of AI without replacing your team.
             </p>
             <p className="mt-3 text-xs" style={{ color: "var(--text-tertiary)" }}>
               Pricing as of March 2026. Receptionist salary based on U.S. Bureau of Labor Statistics and industry averages.
@@ -73,7 +73,7 @@ export default function HiringReceptionistComparisonPage() {
 
           <div className="mt-12 grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
-              <h2 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>Recall Touch (what you get)</h2>
+              <h2 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>Revenue Operator (what you get)</h2>
               <ul className="mt-4 space-y-2 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
                 <li>Costs $1,164–$11,964/year (not $35K–$50K+)</li>
                 <li>Available 24/7/365: never sleeps, never takes vacation, never calls in sick</li>
@@ -106,7 +106,7 @@ export default function HiringReceptionistComparisonPage() {
                 <thead>
                   <tr className="border-b border-[var(--border-default)]">
                     <th className="text-left px-6 py-4 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Feature</th>
-                    <th className="text-center px-6 py-4 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Recall Touch</th>
+                    <th className="text-center px-6 py-4 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Revenue Operator</th>
                     <th className="text-center px-6 py-4 text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Receptionist</th>
                   </tr>
                 </thead>
@@ -143,7 +143,7 @@ export default function HiringReceptionistComparisonPage() {
                   and your annual cost doubles.
                 </p>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
-                  Recall Touch costs $147–$997/month. That&apos;s $1,164–$11,964/year. For 24/7 coverage. With zero ongoing payroll.
+                  Revenue Operator costs $147–$997/month. That&apos;s $1,164–$11,964/year. For 24/7 coverage. With zero ongoing payroll.
                 </p>
               </div>
               <div>
@@ -153,7 +153,7 @@ export default function HiringReceptionistComparisonPage() {
                   A receptionist can answer that call in 15–30 seconds (if they&apos;re available).
                 </p>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
-                  Recall Touch answers in under 3 seconds. Every time. You capture the customer while they&apos;re still engaged and motivated to talk.
+                  Revenue Operator answers in under 3 seconds. Every time. You capture the customer while they&apos;re still engaged and motivated to talk.
                 </p>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
                   That speed difference compounds: one unanswered call today = one lost customer. One call answered quickly = one scheduled appointment.
@@ -171,7 +171,7 @@ export default function HiringReceptionistComparisonPage() {
                   and you lose institutional knowledge and take weeks to find a replacement.
                 </p>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
-                  Recall Touch runs the same script, with the same tone, the same quality, the same follow-ups, every single call.
+                  Revenue Operator runs the same script, with the same tone, the same quality, the same follow-ups, every single call.
                   It never has an off day. It never forgets. It never quits.
                 </p>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
@@ -184,11 +184,11 @@ export default function HiringReceptionistComparisonPage() {
                   A receptionist takes a message. But who sends the SMS confirmation? Who texts the reminder the night before? Who calls the no-show and re-books them?
                 </p>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
-                  That work gets assigned to someone else, or it doesn&apos;t happen at all. Recall Touch handles all of it automatically.
+                  That work gets assigned to someone else, or it doesn&apos;t happen at all. Revenue Operator handles all of it automatically.
                   Answer call → send SMS → reminder → follow-up → next outcome.
                 </p>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
-                  Your receptionist answers the phone. Recall Touch closes the revenue loop.
+                  Your receptionist answers the phone. Revenue Operator closes the revenue loop.
                 </p>
               </div>
             </div>
@@ -198,7 +198,7 @@ export default function HiringReceptionistComparisonPage() {
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-inset)] p-8">
               <h2 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>You&apos;re not replacing your receptionist</h2>
               <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                Recall Touch handles the unanswered calls, the after-hours volume, the follow-ups, and the no-show recovery. Your receptionist stays focused
+                Revenue Operator handles the unanswered calls, the after-hours volume, the follow-ups, and the no-show recovery. Your receptionist stays focused
                 on what they&apos;re good at: building relationships with customers who reach you during business hours.
               </p>
               <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
@@ -213,7 +213,7 @@ export default function HiringReceptionistComparisonPage() {
                 </Link>
               </div>
               <p className="mt-4 text-xs" style={{ color: "var(--text-tertiary)" }}>
-                Tip: most teams use Recall Touch for after-hours + weekend overflow, while keeping their receptionist for daytime relationship-building.
+                Tip: most teams use Revenue Operator for after-hours + weekend overflow, while keeping their receptionist for daytime relationship-building.
               </p>
             </div>
           </section>

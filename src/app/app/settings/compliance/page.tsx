@@ -26,7 +26,7 @@ export default function AppSettingsCompliancePage() {
   useUnsavedChanges(isDirty);
 
   useEffect(() => {
-    document.title = `${tSettings("compliance.title", { defaultValue: "Compliance" })} — Recall Touch`;
+    document.title = `${tSettings("compliance.title", { defaultValue: "Compliance" })} — Revenue Operator`;
   }, [tSettings]);
 
   useEffect(() => {
@@ -129,7 +129,7 @@ export default function AppSettingsCompliancePage() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `recall-touch-compliance-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.download = `revenue-operator-compliance-${new Date().toISOString().slice(0, 10)}.csv`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

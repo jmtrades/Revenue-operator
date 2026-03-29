@@ -4,10 +4,10 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
-const BASE = "https://www.recall-touch.com";
+const BASE = "https://www.revenueoperator.ai";
 
 export const metadata = {
-  title: "HVAC AI Revenue Operations Platform — Recall Touch",
+  title: "HVAC AI Revenue Operations Platform — Revenue Operator",
   description:
     "Maximize emergency response and seasonal revenue with complete AI-powered workflows: 24/7 call answering, urgent call qualification, service booking and scheduling, appointment reminders, estimate follow-up, and predictive maintenance campaigns.",
   alternates: { canonical: `${BASE}/industries/hvac` },
@@ -18,7 +18,7 @@ export default function HvacIndustryPage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Recall Touch", item: BASE },
+      { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
       { "@type": "ListItem", position: 2, name: "Industries", item: `${BASE}/industries` },
       { "@type": "ListItem", position: 3, name: "HVAC", item: `${BASE}/industries/hvac` },
     ],
@@ -56,7 +56,7 @@ export default function HvacIndustryPage() {
             <p className="text-base md:text-lg mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
               HVAC demand spikes are unforgiving. When it’s 95°F and an AC dies, the customer calls the first company that
               answers. If your phones roll to voicemail after hours—or even during a busy afternoon—you lose the job to a competitor.
-              Recall Touch is an AI phone system built for HVAC: answer every call 24/7, qualify urgency, book service windows,
+              Revenue Operator is an AI phone system built for HVAC: answer every call 24/7, qualify urgency, book service windows,
               and run follow-up until the work is scheduled, completed, or the customer opts out.
             </p>
 
@@ -79,15 +79,15 @@ export default function HvacIndustryPage() {
               </div>
             </div>
 
-            <h2 className="text-lg font-semibold mb-3">What Recall Touch does for HVAC teams</h2>
+            <h2 className="text-lg font-semibold mb-3">What Revenue Operator does for HVAC teams</h2>
             <div className="space-y-4 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
               <p>
-                Recall Touch answers calls and runs an HVAC-specific intake: name, address, unit type, symptoms, urgency signals,
+                Revenue Operator answers calls and runs an HVAC-specific intake: name, address, unit type, symptoms, urgency signals,
                 and preferred time windows. You can route emergencies to an on-call tech or dispatch line while non-urgent calls
                 are scheduled automatically. If you operate multiple crews, you can segment schedules and routing by service area.
               </p>
               <p>
-                For booking, Recall Touch can offer appointment windows based on your availability, confirm details by SMS, and
+                For booking, Revenue Operator can offer appointment windows based on your availability, confirm details by SMS, and
                 trigger reminders to reduce missed appointments. If someone wants to "think about it," the system sets follow-up
                 so the job doesn’t vanish.
               </p>

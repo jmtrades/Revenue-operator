@@ -3,14 +3,14 @@
 import Link from "next/link";
 
 /**
- * Minimal top nav: Recall Touch, Product, Pricing, Documentation, Sign in, Start free.
+ * Minimal top nav: Revenue Operator, Product, Pricing, Documentation, Sign in, Start free.
  */
 export function AuthorityNav() {
   return (
     <nav className="border-b py-4 px-6 sm:px-8" style={{ borderColor: "var(--border)" }}>
       <div className="max-w-[1100px] mx-auto flex flex-wrap items-center justify-between gap-4">
         <Link href="/" className="text-[13px] font-medium uppercase tracking-wide" style={{ color: "var(--text-primary)" }}>
-          Recall Touch
+          Revenue Operator
         </Link>
         <div className="flex items-center gap-6">
           <Link href="/product" className="text-[13px] uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>Product</Link>

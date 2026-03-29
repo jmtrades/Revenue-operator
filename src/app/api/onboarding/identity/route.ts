@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
     // Non-blocking — workspace was created, settings can be retried
   }
   try {
-    await db.from("users").insert({ id: userId, email: `onboarding+${workspaceId.slice(0, 8)}@recall-touch.com`, full_name: your_name.trim() });
+    await db.from("users").insert({ id: userId, email: `onboarding+${workspaceId.slice(0, 8)}@revenueoperator.ai`, full_name: your_name.trim() });
   } catch {
     // ignore — user row is optional for onboarding
   }
