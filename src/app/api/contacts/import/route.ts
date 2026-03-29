@@ -205,11 +205,11 @@ export async function POST(req: NextRequest) {
     metadata: { source: "csv_import", notes: r.notes, score: 40 },
   }));
 
-  const { data, error } = await runWithWriteContextAsync("api", () =>
+  const insertResult = await runWithWriteContextAsync("api", () =>
     db.from("leads").insert(toInsert).select("id")
-  );
-  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
-  const imported = Array.isArray(data) ? data.length : 0;
+  ) as { data?: { id: string }[] | null; error?: unknown };
+  if (insertResult.error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  const imported = Array.isArray(insertResult.data) ? insertResult.data.length : 0;
 
   return NextResponse.json({
     imported,

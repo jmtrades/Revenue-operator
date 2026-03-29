@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Insert into leads table with "NEW" state and website_demo source
-    const { error } = await runWithWriteContextAsync("api", () =>
+    const signupResult = await runWithWriteContextAsync("api", () =>
       db.from("leads").insert({
         workspace_id: DEMO_WORKSPACE_ID,
         email,
@@ -87,10 +87,10 @@ export async function POST(req: NextRequest) {
         },
         detected_behaviour: "voice_demo_signup",
       })
-    );
+    ) as { error?: unknown };
 
-    if (error) {
-      log("error", "demo_signup.database_error", { error: String(error) });
+    if (signupResult.error) {
+      log("error", "demo_signup.database_error", { error: String(signupResult.error) });
       return NextResponse.json(
         { error: "Failed to save signup" },
         { status: 500 }
