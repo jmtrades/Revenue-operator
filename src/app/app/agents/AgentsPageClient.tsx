@@ -1154,7 +1154,7 @@ export default function AppAgentsPageClient({
       <div className="flex items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="text-lg md:text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{tAgents("pageHeading")}</h1>
-          <p className="text-xs text-[var(--text-secondary)] mt-1">
+          <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed">
             {tAgents("pageSubtitle")}
           </p>
         </div>
