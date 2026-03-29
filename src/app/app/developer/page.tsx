@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 type ApiKeyPermission = "read" | "read_write" | "admin";
 
@@ -708,6 +709,7 @@ export default function DeveloperPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="p-4 md:p-6 lg:p-8">
+        <Breadcrumbs items={[{ label: "Home", href: "/app" }, { label: "Developer" }]} />
         <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-2">{t("heading")}</h1>
         <p className="text-sm text-[var(--text-secondary)] mb-6">
           {t("pageSubtitle")}{" "}

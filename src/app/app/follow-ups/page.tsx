@@ -9,6 +9,7 @@ import { RecoveryProfileSelector } from "@/components/settings/RecoveryProfileSe
 import { Plus, Pause, Play, Copy } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 type Sequence = { id: string; name: string; trigger_type?: string; is_active?: boolean };
 
@@ -247,6 +248,7 @@ export default function AppFollowUpsPage() {
 
   return (
     <div className="p-4 md:p-6 max-w-4xl mx-auto">
+      <Breadcrumbs items={[{ label: "Home", href: "/app" }, { label: "Follow-ups" }]} />
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("title")}</h1>
         <Link href="/app/follow-ups/create">

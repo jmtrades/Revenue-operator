@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/cn";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 interface Integration {
   id: string;
@@ -249,6 +250,7 @@ export default function IntegrationsPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+        <Breadcrumbs items={[{ label: "Home", href: "/app" }, { label: "Integrations" }]} />
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)]">

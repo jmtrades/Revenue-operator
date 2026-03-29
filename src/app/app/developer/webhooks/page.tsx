@@ -15,6 +15,7 @@ import { useTranslations } from "next-intl";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useWorkspace } from "@/components/WorkspaceContext";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 const EVENT_TYPES = [
   "call.started",
@@ -167,13 +168,7 @@ export default function DeveloperWebhooksPage() {
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-6">
-      <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)] mb-2">
-        <Link href="/app/developer" className="hover:text-[var(--text-primary)] transition-colors">
-          Developer
-        </Link>
-        <span>/</span>
-        <span className="text-[var(--text-primary)]">Webhooks</span>
-      </div>
+      <Breadcrumbs items={[{ label: "Home", href: "/app" }, { label: "Developer", href: "/app/developer" }, { label: "Webhooks" }]} />
       <h1 className="text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-1">{tDev("title")}</h1>
       <p className="text-sm text-[var(--text-tertiary)] mb-6">
         {tDev("subtitle")}

@@ -8,6 +8,7 @@ import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 import { useDebounce } from "@/hooks/useDebounce";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 type ColdLeadStatus = "pending" | "in_progress" | "completed" | "exhausted";
 type ColdLeadReason = "no_activity_30d" | "no_reply_14d" | "lost_deal" | "manual";
@@ -451,6 +452,7 @@ export default function ColdLeadsPage() {
 
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto">
+      <Breadcrumbs items={[{ label: "Home", href: "/app" }, { label: "Cold leads" }]} />
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">
