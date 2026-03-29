@@ -55,9 +55,9 @@ function getAppointmentSourceDisplay(source: AppointmentSource, t: (k: string, o
 function statusColor(status: AppointmentStatus): string {
   switch (status) {
     case "Confirmed":
-      return "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20";
+      return "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border-[var(--accent-primary)]/20";
     case "Pending":
-      return "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20";
+      return "bg-[var(--accent-warning,#f59e0b)]/10 text-[var(--accent-warning,#f59e0b)] border-[var(--accent-warning,#f59e0b)]/20";
     case "Cancelled":
       return "bg-[var(--bg-card)] text-[var(--text-secondary)] border-[var(--border-medium)]";
     case "Completed":
@@ -314,8 +314,8 @@ export default function AppointmentsPage() {
             <p className="mt-4 text-sm text-[var(--text-secondary)]">{t("appointments.loading", { defaultValue: "Loading appointments..." })}</p>
           </div>
         ) : fetchError ? (
-          <div className="rounded-2xl border border-red-500/30 bg-red-500/5 p-8 text-center">
-            <p className="text-sm text-red-600 dark:text-red-400">{fetchError}</p>
+          <div className="rounded-2xl border border-[var(--accent-danger,#ef4444)]/30 bg-[var(--accent-danger,#ef4444)]/5 p-8 text-center">
+            <p className="text-sm text-[var(--accent-danger,#ef4444)]">{fetchError}</p>
             <button
               type="button"
               onClick={() => { setLoading(true); setFetchError(null); refetchAppointments(); }}
@@ -645,9 +645,9 @@ export default function AppointmentsPage() {
             )}
 
             {showCancelConfirm && (
-              <div className="mt-4 pt-4 border-t border-[var(--border-default)] p-3 rounded-lg bg-red-500/10 border border-red-500/30">
+              <div className="mt-4 pt-4 border-t border-[var(--border-default)] p-3 rounded-lg bg-[var(--accent-danger,#ef4444)]/10 border border-[var(--accent-danger,#ef4444)]/30">
                 <div className="flex gap-2 mb-3">
-                  <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+                  <AlertCircle className="w-4 h-4 text-[var(--accent-danger,#ef4444)] flex-shrink-0 mt-0.5" />
                   <p className="text-xs text-[var(--text-primary)]">
                     {t("appointments.actions.cancelConfirmText", { defaultValue: "Are you sure? This cannot be undone." })}
                   </p>
@@ -664,7 +664,7 @@ export default function AppointmentsPage() {
                     type="button"
                     onClick={handleCancelAppointment}
                     disabled={modalActionLoading === "cancel"}
-                    className="flex-1 px-3 py-2 rounded-lg bg-red-600 text-xs font-medium text-white hover:bg-red-600/90 disabled:opacity-50 disabled:cursor-not-allowed transition-[background-color,opacity] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
+                    className="flex-1 px-3 py-2 rounded-lg bg-[var(--accent-danger,#ef4444)] text-xs font-medium text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-[background-color,opacity] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                   >
                     {modalActionLoading === "cancel"
                       ? t("appointments.actions.cancelling", { defaultValue: "Cancelling..." })
@@ -706,7 +706,7 @@ export default function AppointmentsPage() {
                     setShowRescheduleForm(false);
                   }}
                   disabled={modalActionLoading !== null}
-                  className="flex-1 px-3 py-2 rounded-lg border border-[var(--border-medium)] text-xs font-medium text-red-400 hover:bg-red-500/10 disabled:opacity-50 disabled:cursor-not-allowed transition-[background-color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
+                  className="flex-1 px-3 py-2 rounded-lg border border-[var(--border-medium)] text-xs font-medium text-[var(--accent-danger,#ef4444)] hover:bg-[var(--accent-danger,#ef4444)]/10 disabled:opacity-50 disabled:cursor-not-allowed transition-[background-color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
                 >
                   {t("appointments.actions.cancelAppointment", { defaultValue: "Cancel Appointment" })}
                 </button>
@@ -727,8 +727,8 @@ export default function AppointmentsPage() {
         <div
           className={`fixed bottom-4 right-4 z-50 px-4 py-3 rounded-lg text-sm font-medium transition-[opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] ${
             toast.type === "success"
-              ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
-              : "bg-red-500/20 text-red-600 dark:text-red-400 border border-red-500/30"
+              ? "bg-[var(--accent-primary)]/20 text-[var(--accent-primary)] border border-[var(--accent-primary)]/30"
+              : "bg-[var(--accent-danger,#ef4444)]/20 text-[var(--accent-danger,#ef4444)] border border-[var(--accent-danger,#ef4444)]/30"
           }`}
         >
           {toast.message}

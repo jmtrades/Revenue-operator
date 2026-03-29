@@ -459,14 +459,14 @@ export default function AppOnboardingPage() {
                       onClick={() => setSelectedTemplate(template.id)}
                       className={`rounded-xl border p-5 text-left transition-[border-color,box-shadow,transform] relative group ${
                         isSelected
-                          ? "border-emerald-500/50 bg-emerald-950/20 ring-2 ring-emerald-500/30"
+                          ? "border-[var(--accent-primary)]/50 bg-[var(--accent-primary)]/5 ring-2 ring-[var(--accent-primary)]/30"
                           : "border-[var(--border-default)] bg-transparent hover:border-[var(--border-medium)] hover:bg-[var(--bg-card)]/40"
                       }`}
                     >
                       <div className="flex items-start justify-between mb-3">
                         <Icon className={`w-5 h-5 ${isSelected ? "text-emerald-400" : "text-[var(--text-tertiary)]"}`} />
                         {isSelected && (
-                          <div className="w-5 h-5 rounded-full bg-emerald-500 border-2 border-emerald-400 flex items-center justify-center">
+                          <div className="w-5 h-5 rounded-full bg-[var(--accent-primary)] border-2 border-[var(--accent-primary)] flex items-center justify-center">
                             <span className="w-2 h-2 rounded-full bg-[var(--text-primary)]" />
                           </div>
                         )}

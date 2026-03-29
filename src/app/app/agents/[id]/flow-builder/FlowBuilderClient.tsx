@@ -45,13 +45,13 @@ function BaseFlowNode({
   const label = data?.label ?? nodeType ?? "Node";
   const isSource = nodeType === "start" || nodeType === "end_call";
   const colors: Record<string, string> = {
-    start: "bg-green-500/20 border-green-500/50",
+    start: "bg-[var(--accent-primary)]/20 border-[var(--accent-primary)]/50",
     greeting: "bg-[var(--bg-inset)]/20 border-[var(--border-default)]/50",
-    question: "bg-amber-500/20 border-amber-500/50",
+    question: "bg-[var(--accent-warning,#f59e0b)]/20 border-[var(--accent-warning,#f59e0b)]/50",
     branch: "bg-[var(--bg-inset)]/20 border-[var(--text-tertiary)]/50",
-    transfer: "bg-orange-500/20 border-orange-500/50",
-    book_appointment: "bg-emerald-500/20 border-emerald-500/50",
-    end_call: "bg-red-500/20 border-red-500/50",
+    transfer: "bg-[var(--accent-warning,#f59e0b)]/20 border-[var(--accent-warning,#f59e0b)]/50",
+    book_appointment: "bg-[var(--accent-primary)]/20 border-[var(--accent-primary)]/50",
+    end_call: "bg-[var(--accent-danger,#ef4444)]/20 border-[var(--accent-danger,#ef4444)]/50",
     custom_action: "bg-[var(--bg-inset)]/20 border-[var(--border-default)]/50",
   };
   const style = colors[nodeType ?? ""] ?? "bg-[var(--bg-inset)] border-[var(--border-default)]";

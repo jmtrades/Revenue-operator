@@ -500,7 +500,7 @@ export default function CallIntelligencePage() {
                   className={cn(
                     "inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors",
                     qualityFilter === "flagged"
-                      ? "bg-red-500/20 border-red-500/40 text-red-300"
+                      ? "bg-[var(--accent-danger,#ef4444)]/20 border-[var(--accent-danger,#ef4444)]/40 text-[var(--accent-danger,#ef4444)]"
                       : "border-[var(--border-default)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]",
                   )}
                 >

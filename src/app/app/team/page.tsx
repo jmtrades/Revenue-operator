@@ -380,7 +380,7 @@ export default function TeamPage() {
                   <span
                     className={`inline-flex px-2 py-0.5 rounded-md text-xs font-medium ${
                       member.role === "owner"
-                        ? "bg-amber-500/20 text-amber-300"
+                        ? "bg-[var(--accent-warning,#f59e0b)]/20 text-[var(--accent-warning,#f59e0b)]"
                         : member.role === "admin"
                           ? "bg-[var(--bg-inset)] text-[var(--text-primary)]"
                           : member.role === "manager"

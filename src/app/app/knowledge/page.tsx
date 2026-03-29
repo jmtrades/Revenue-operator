@@ -1009,9 +1009,9 @@ export default function KnowledgePage() {
                     <span
                       className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium ${
                         entry.status === "Active"
-                          ? "bg-emerald-500/20 text-emerald-300"
+                          ? "bg-[var(--accent-primary)]/20 text-[var(--accent-primary)]"
                           : entry.status === "Processing"
-                            ? "bg-amber-500/20 text-amber-300"
+                            ? "bg-[var(--accent-warning,#f59e0b)]/20 text-[var(--accent-warning,#f59e0b)]"
                             : "bg-[var(--bg-inset)] text-[var(--text-tertiary)]"
                       }`}
                     >
@@ -1023,7 +1023,7 @@ export default function KnowledgePage() {
                     </span>
                   </div>
                   {entry.gapFlag && (
-                    <div className="flex items-center gap-2 mt-2 p-2 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                    <div className="flex items-center gap-2 mt-2 p-2 rounded-lg bg-[var(--accent-warning,#f59e0b)]/10 border border-[var(--accent-warning,#f59e0b)]/30">
                       <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
                       <span className="text-xs text-amber-200">{t("gapFlag")}</span>
                     </div>
@@ -1037,7 +1037,7 @@ export default function KnowledgePage() {
           {/* Insights sidebar */}
           <div className="space-y-6 lg:order-2">
             {/* Knowledge Gaps — prominent */}
-            <div className="rounded-xl bg-amber-500/5 border border-amber-500/20 p-4">
+            <div className="rounded-xl bg-[var(--accent-warning,#f59e0b)]/5 border border-[var(--accent-warning,#f59e0b)]/20 p-4">
               <h3 className="text-sm font-semibold text-amber-200 flex items-center gap-2 mb-3">
                 <AlertTriangle className="w-4 h-4" />
                 {t("gapsHeading")}
@@ -1076,7 +1076,7 @@ export default function KnowledgePage() {
                     </div>
                     <div className="h-1.5 rounded-full bg-[var(--bg-input)] overflow-hidden">
                       <div
-                        className="h-full rounded-full bg-emerald-500/60"
+                        className="h-full rounded-full bg-[var(--accent-primary)]/60"
                         style={{ width: `${(entry.usageCount / maxUsage) * 100}%` }}
                       />
                     </div>

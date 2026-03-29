@@ -197,14 +197,14 @@ function avatarColorFromName(name: string) {
 
 function typeStyles(type: ContactType) {
   if (type === "lead") return "border-l-4 border-[var(--border-default)]";
-  if (type === "customer") return "border-l-4 border-green-500";
-  return "border-l-4 border-amber-500";
+  if (type === "customer") return "border-l-4 border-[var(--accent-primary)]";
+  return "border-l-4 border-[var(--accent-warning,#f59e0b)]";
 }
 
 function typeBadgeStyles(type: ContactType) {
-  if (type === "lead") return "bg-[var(--bg-inset)]/60 text-blue-400";
-  if (type === "customer") return "bg-[var(--bg-inset)]/60 text-green-400";
-  return "bg-[var(--bg-inset)]/60 text-amber-400";
+  if (type === "lead") return "bg-[var(--bg-inset)]/60 text-[var(--accent-primary)]";
+  if (type === "customer") return "bg-[var(--bg-inset)]/60 text-[var(--accent-primary)]";
+  return "bg-[var(--bg-inset)]/60 text-[var(--accent-warning,#f59e0b)]";
 }
 
 export default function AppContactsPage() {
@@ -552,7 +552,7 @@ export default function AppContactsPage() {
       </div>
 
       {apiError && (
-        <div className="mb-4 px-4 py-3 rounded-lg bg-red-900/20 border border-red-900/30 text-sm text-red-200">
+        <div className="mb-4 px-4 py-3 rounded-lg bg-[var(--accent-danger,#ef4444)]/10 border border-[var(--accent-danger,#ef4444)]/30 text-sm text-[var(--accent-danger,#ef4444)]">
           {apiError}
         </div>
       )}
@@ -765,11 +765,11 @@ export default function AppContactsPage() {
                           <div className="flex items-center gap-2 mt-1">
                             {c.status && c.status !== "new" && (
                               <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${
-                                c.status === "won" ? "bg-emerald-500/10 text-emerald-400" :
-                                c.status === "appointment_set" ? "bg-blue-500/10 text-blue-400" :
-                                c.status === "qualified" ? "bg-purple-500/10 text-purple-400" :
-                                c.status === "contacted" ? "bg-amber-500/10 text-amber-400" :
-                                c.status === "lost" ? "bg-red-500/10 text-red-400" :
+                                c.status === "won" ? "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]" :
+                                c.status === "appointment_set" ? "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]" :
+                                c.status === "qualified" ? "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]" :
+                                c.status === "contacted" ? "bg-[var(--accent-warning,#f59e0b)]/10 text-[var(--accent-warning,#f59e0b)]" :
+                                c.status === "lost" ? "bg-[var(--accent-danger,#ef4444)]/10 text-[var(--accent-danger,#ef4444)]" :
                                 "bg-[var(--bg-inset)] text-[var(--text-tertiary)]"
                               }`}>
                                 {t(`status.${c.status}`, { defaultValue: c.status.replace("_", " ") })}

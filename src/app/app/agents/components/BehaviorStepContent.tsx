@@ -273,7 +273,7 @@ export function BehaviorStepContent({
               placeholder={t("behavior.transferPhonePlaceholder")}
               className={`w-full bg-[var(--bg-input)] border rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-white/25 focus:outline-none ${
                 transferPhoneError
-                  ? "border-red-500/50 focus:border-red-500/70"
+                  ? "border-[var(--accent-danger,#ef4444)]/50 focus:border-[var(--accent-danger,#ef4444)]/70"
                   : "border-[var(--border-default)] focus:border-[var(--border-default)]"
               }`}
             />

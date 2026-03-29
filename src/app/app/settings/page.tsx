@@ -396,7 +396,7 @@ export default function AppSettingsPage() {
         </div>
         <div className="mt-8 pt-6 border-t border-[var(--border-default)]">
           <p className="text-xs font-semibold uppercase tracking-wider text-red-400/90 mb-3">{tSettings("dangerZone")}</p>
-          <div className="rounded-xl border border-red-900/40 bg-red-950/20 p-4 space-y-3">
+          <div className="rounded-xl border border-[var(--accent-danger,#ef4444)]/30 bg-[var(--accent-danger,#ef4444)]/10 p-4 space-y-3">
           <Link
             href="/app/settings/billing"
             className="block text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:outline-none rounded"

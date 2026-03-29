@@ -310,7 +310,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
               id="agent-name"
               type="text"
               className={`h-9 w-full rounded-xl border bg-black/40 px-3 text-xs text-[var(--text-primary)] outline-none focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--border-focus)] ${
-                showNameError ? "border-red-500/70" : "border-[var(--border-subtle)]"
+                showNameError ? "border-[var(--accent-danger,#ef4444)]/70" : "border-[var(--border-subtle)]"
               }`}
               value={agent.name ?? ""}
               onChange={(e) => onChange({ name: e.target.value })}
@@ -364,7 +364,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
           <textarea
             id="agent-greeting"
             className={`min-h-[72px] w-full resize-none rounded-xl border bg-black/40 px-3 py-2 text-xs text-[var(--text-primary)] outline-none focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--border-focus)] ${
-              showGreetingError ? "border-red-500/70" : "border-[var(--border-subtle)]"
+              showGreetingError ? "border-[var(--accent-danger,#ef4444)]/70" : "border-[var(--border-subtle)]"
             }`}
             value={agent.greeting ?? ""}
             onChange={(e) => onChange({ greeting: e.target.value })}
@@ -422,11 +422,11 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
             <p className="mt-1 text-[10px] text-red-400">{extractError}</p>
           )}
           {pendingExtract && (
-            <div className="mt-2 rounded-xl border border-emerald-500/40 bg-emerald-500/5 p-2.5 text-[11px] text-[var(--text-secondary)]">
-              <p className="mb-1 font-medium text-emerald-300">
+            <div className="mt-2 rounded-xl border border-[var(--accent-primary)]/40 bg-[var(--accent-primary)]/5 p-2.5 text-[11px] text-[var(--text-secondary)]">
+              <p className="mb-1 font-medium text-[var(--accent-primary)]">
                 {t("identityStep.websiteDetailsReady")}
               </p>
-              <p className="mb-2 text-xs text-emerald-100/80">
+              <p className="mb-2 text-xs text-[var(--accent-primary)]/80">
                 {t("identityStep.websiteDetailsBody")}
               </p>
               <div className="flex gap-2">

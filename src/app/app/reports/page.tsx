@@ -263,7 +263,7 @@ export default function RevenueDigestPage() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="mb-12"
         >
-          <div className="bg-gradient-to-br from-white to-blue-50 rounded-2xl border border-blue-100 p-8 shadow-sm">
+          <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-default)] p-8 shadow-sm">
             {/* Recovery Score Card */}
             <div className="mb-8">
               <div className="flex items-center justify-between mb-6">
@@ -272,7 +272,7 @@ export default function RevenueDigestPage() {
                     Recovery Score
                   </p>
                   <div className="flex items-center gap-4 mt-3">
-                    <div className="text-5xl font-bold text-blue-700">
+                    <div className="text-5xl font-bold text-[var(--accent-primary)]">
                       {digest.recovery_score.score}
                     </div>
                     <div
@@ -391,7 +391,7 @@ export default function RevenueDigestPage() {
             {/* Automated Recovery Actions */}
             <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-default)] p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-start justify-between mb-4">
-                <Shield size={20} className="text-purple-600" />
+                <Shield size={20} className="text-[var(--accent-primary)]" />
                 <TrendBadge
                   value={`${Math.abs(digest.operations.follow_ups_trend_pct ?? 0)}%`}
                   trend={digest.operations.follow_ups_trend_pct ?? 0}
@@ -408,7 +408,7 @@ export default function RevenueDigestPage() {
             {/* Operator Hours Saved */}
             <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-default)] p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-start justify-between mb-4">
-                <Clock size={20} className="text-orange-600" />
+                <Clock size={20} className="text-[var(--accent-warning,#f59e0b)]" />
                 <span className="text-xs font-medium text-[var(--text-secondary)]">
                   est.
                 </span>
@@ -467,7 +467,7 @@ export default function RevenueDigestPage() {
                   <div className="flex items-start gap-3 mb-4">
                     <Trophy
                       size={24}
-                      className="text-amber-500 flex-shrink-0 mt-0.5"
+                      className="text-[var(--accent-warning,#f59e0b)] flex-shrink-0 mt-0.5"
                     />
                     <div className="flex-1">
                       <p className="text-sm font-bold text-[var(--text-secondary)] uppercase tracking-wide">

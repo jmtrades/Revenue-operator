@@ -611,7 +611,7 @@ export default function CampaignsPage() {
                         type="button"
                         onClick={() => setDeleteConfirm(campaign)}
                         disabled={deleting}
-                        className="p-2 rounded-lg border border-red-500/20 text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-[color,background-color,transform] duration-160 active:scale-[0.95] disabled:opacity-50"
+                        className="p-2 rounded-lg border border-[var(--accent-danger,#ef4444)]/20 text-[var(--accent-danger,#ef4444)] hover:opacity-80 hover:bg-[var(--accent-danger,#ef4444)]/10 transition-[color,background-color,transform] duration-160 active:scale-[0.95] disabled:opacity-50"
                         title={t("delete")}
                         aria-label={t("delete")}
                       >
@@ -662,7 +662,7 @@ export default function CampaignsPage() {
                       </div>
                       <div className="h-1.5 w-full rounded-full bg-[var(--bg-surface)] overflow-hidden">
                         <div
-                          className="h-full rounded-full bg-emerald-500"
+                          className="h-full rounded-full bg-[var(--accent-primary)]"
                           style={{
                             width: `${Math.min(
                               100,
@@ -1086,20 +1086,20 @@ function StatCard({
 }) {
   const border =
     color === "blue"
-      ? "border-blue-500/30"
+      ? "border-[var(--accent-primary)]/30"
       : color === "emerald"
-        ? "border-emerald-500/30"
+        ? "border-[var(--accent-primary)]/30"
         : color === "cyan"
-          ? "border-cyan-500/30"
-          : "border-amber-500/30";
+          ? "border-[var(--accent-primary)]/30"
+          : "border-[var(--accent-warning,#f59e0b)]/30";
   const text =
     color === "blue"
-      ? "text-blue-400"
+      ? "text-[var(--accent-primary)]"
       : color === "emerald"
-        ? "text-emerald-400"
+        ? "text-[var(--accent-primary)]"
         : color === "cyan"
-          ? "text-cyan-400"
-          : "text-amber-400";
+          ? "text-[var(--accent-primary)]"
+          : "text-[var(--accent-warning,#f59e0b)]";
   return (
     <div className={`rounded-xl border bg-[var(--bg-surface)] p-4 ${border}`}>
       <p className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide">{label}</p>
