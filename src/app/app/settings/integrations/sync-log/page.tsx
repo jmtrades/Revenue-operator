@@ -6,7 +6,7 @@ import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { ArrowLeft, RefreshCw, Inbox, Send } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-const SYNC_LOG_PROVIDERS = ["salesforce", "hubspot", "zoho_crm", "pipedrive", "gohighlevel", "google_contacts", "microsoft_365"] as const;
+const SYNC_LOG_PROVIDERS = ["salesforce", "hubspot", "zoho_crm", "pipedrive", "gohighlevel", "google_contacts", "microsoft_365", "airtable"] as const;
 
 type SyncLogEntry = {
   id: string;
@@ -15,9 +15,9 @@ type SyncLogEntry = {
   direction: string;
   entity_type: string;
   entity_id: string | null;
-  action: string;
-  summary: string | null;
-  payload_snapshot: Record<string, unknown>;
+  status: string;
+  error: string | null;
+  metadata: Record<string, unknown>;
   created_at: string;
 };
 
@@ -134,8 +134,8 @@ export default function IntegrationsSyncLogPage() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm text-[var(--text-primary)]">
-                    {SYNC_LOG_PROVIDERS.includes(e.provider as typeof SYNC_LOG_PROVIDERS[number]) ? tSettings(`integrations.providers.${e.provider}`) : e.provider} · {e.action}
-                    {e.summary ? ` — ${e.summary}` : ""}
+                    {SYNC_LOG_PROVIDERS.includes(e.provider as typeof SYNC_LOG_PROVIDERS[number]) ? tSettings(`integrations.providers.${e.provider}`) : e.provider} · {e.status}
+                    {e.error ? ` — ${e.error}` : ""}
                   </p>
                   <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">
                     {new Date(e.created_at).toLocaleString()}

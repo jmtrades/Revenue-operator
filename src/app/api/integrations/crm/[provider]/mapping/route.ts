@@ -66,17 +66,16 @@ export async function GET(
   const db = getDb();
   const { data, error } = await db
     .from("integration_configs")
-    .select("config")
+    .select("field_mapping")
     .eq("workspace_id", session.workspaceId)
     .eq("provider", provider)
-    .eq("config_type", "field_mapping")
     .maybeSingle();
 
   if (error) {
     return NextResponse.json({ error: "Failed to load mapping" }, { status: 500 });
   }
 
-  const config = (data as { config?: FieldMappingConfig } | null)?.config;
+  const config = (data as { field_mapping?: FieldMappingConfig } | null)?.field_mapping;
   if (config && typeof config === "object" && Array.isArray((config as FieldMappingConfig).mappings)) {
     return NextResponse.json(config as FieldMappingConfig);
   }
@@ -131,11 +130,10 @@ export async function PUT(
       {
         workspace_id: session.workspaceId,
         provider,
-        config_type: "field_mapping",
-        config: config as unknown as Record<string, unknown>,
+        field_mapping: config as unknown as Record<string, unknown>,
         updated_at: new Date().toISOString(),
       },
-      { onConflict: "workspace_id,provider,config_type" }
+      { onConflict: "workspace_id,provider" }
     );
 
   if (error) {
