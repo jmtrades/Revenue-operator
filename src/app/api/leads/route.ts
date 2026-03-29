@@ -117,15 +117,22 @@ export async function POST(req: NextRequest) {
   const phoneStr = normalizePhoneE164(phoneRaw);
 
   const state = (status ?? "new").toLowerCase().replace(/\s+/g, "_");
+  // DB enum is UPPERCASE: NEW, CONTACTED, ENGAGED, QUALIFIED, BOOKED, SHOWED, WON, LOST, RETAIN, REACTIVATE, CLOSED
   const stateMap: Record<string, string> = {
-    new: "new",
-    contacted: "contacted",
-    qualified: "qualified",
-    appointment_set: "appointment_set",
-    won: "won",
-    lost: "lost",
+    new: "NEW",
+    contacted: "CONTACTED",
+    engaged: "ENGAGED",
+    qualified: "QUALIFIED",
+    appointment_set: "BOOKED",
+    booked: "BOOKED",
+    showed: "SHOWED",
+    won: "WON",
+    lost: "LOST",
+    retain: "RETAIN",
+    reactivate: "REACTIVATE",
+    closed: "CLOSED",
   };
-  const dbState = stateMap[state] ?? "new";
+  const dbState = stateMap[state] ?? "NEW";
 
   const score = leadScoreFromInput({ name, phone: phoneStr, email, service_requested, source });
   const metadata: Record<string, unknown> = {
