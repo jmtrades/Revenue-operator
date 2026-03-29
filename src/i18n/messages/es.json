@@ -9246,7 +9246,7 @@
   "industryTemplates": {
     "breadcrumb": "Industry Templates",
     "title": "Industry Templates",
-    "description": "Production-ready templates for AI agents across",
+    "description": "Production-ready templates for AI agents across every industry. Choose a template to pre-configure your agent with industry-specific knowledge, greetings, and call flows.",
     "emptyState": "No industry templates available yet.",
     "toast": {
       "loadFailed": "Error al cargar plantillas de industria",
