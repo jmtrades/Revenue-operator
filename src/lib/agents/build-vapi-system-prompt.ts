@@ -234,7 +234,10 @@ export function buildVapiSystemPrompt(input: AgentPromptInput): string {
     rules.push(parts.join(". "));
   }
 
-  if (input.afterHoursMode && AFTER_HOURS_LABELS[input.afterHoursMode]) {
+  // Use dynamic after-hours instructions if available; otherwise fall back to mode-based labels
+  if (input.afterHoursInstructions?.trim()) {
+    rules.push(`AFTER HOURS: ${input.afterHoursInstructions.trim()}`);
+  } else if (input.afterHoursMode && AFTER_HOURS_LABELS[input.afterHoursMode]) {
     rules.push(`AFTER HOURS: ${AFTER_HOURS_LABELS[input.afterHoursMode]}`);
   }
 

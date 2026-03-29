@@ -5,6 +5,7 @@ import { getDb } from "@/lib/db/queries";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { buildVapiSystemPrompt } from "@/lib/agents/build-vapi-system-prompt";
+import { buildAfterHoursInstructions } from "@/lib/voice/after-hours";
 
 /**
  * POST /api/agent/respond
@@ -81,11 +82,25 @@ export async function POST(req: NextRequest) {
       try {
         const db = getDb();
         // Load full agent configuration for this workspace
-        const { data: wsRow } = await db
-          .from("workspaces")
-          .select("agent_name, greeting, voice_id, industry, services, special_instructions, personality, call_style, assertiveness, primary_goal, business_context, target_audience, business_hours, address, after_hours_mode, after_hours_instructions, qualification_criteria, qualification_questions, timezone, max_call_duration")
-          .eq("id", wsId)
-          .maybeSingle();
+        const [wsRes, settingsRes] = await Promise.all([
+          db
+            .from("workspaces")
+            .select("agent_name, greeting, voice_id, industry, services, special_instructions, personality, call_style, assertiveness, primary_goal, business_context, target_audience, business_hours, address, qualification_criteria, qualification_questions, timezone, max_call_duration")
+            .eq("id", wsId)
+            .maybeSingle(),
+          db
+            .from("settings")
+            .select("after_hours_behavior, emergency_keywords, transfer_phone")
+            .eq("workspace_id", wsId)
+            .maybeSingle(),
+        ]);
+
+        const wsRow = wsRes.data;
+        const settingsRow = settingsRes.data as {
+          after_hours_behavior?: string;
+          emergency_keywords?: string;
+          transfer_phone?: string;
+        } | null;
 
         const ws = wsRow as Record<string, unknown> | null;
         if (ws?.agent_name) {
@@ -133,6 +148,22 @@ export async function POST(req: NextRequest) {
 
           const rulesData = rulesRow as Record<string, unknown> | null;
 
+          // Get after-hours behavior from settings and determine if we're currently after-hours
+          const afterHoursBehavior = (settingsRow?.after_hours_behavior || "messages") as "messages" | "emergency" | "forward";
+          const emergencyKeywords = settingsRow?.emergency_keywords || "";
+          const settingsTransferPhone = settingsRow?.transfer_phone || "";
+          const businessHours = (ws.business_hours as Record<string, { start: string; end: string } | null> | null) ?? null;
+          const timezone = String(ws.timezone ?? "America/New_York");
+
+          // Build after-hours instructions if currently outside business hours
+          const afterHoursInstructions = buildAfterHoursInstructions(
+            businessHours,
+            afterHoursBehavior,
+            emergencyKeywords,
+            settingsTransferPhone,
+            timezone
+          );
+
           // Load learned behaviors from Call Intelligence
           const { data: learnedRows } = await db
             .from("call_intelligence_insights")
@@ -169,14 +200,13 @@ export async function POST(req: NextRequest) {
             targetAudience: String(ws.target_audience ?? ""),
             businessHours: String(ws.business_hours ?? bizCtx?.business_hours ?? ""),
             address: String(ws.address ?? bizCtx?.address ?? ""),
-            afterHoursMode: (ws.after_hours_mode as "messages" | "emergency" | "forward" | "closed" | null) ?? null,
-            afterHoursInstructions: String(ws.after_hours_instructions ?? ""),
+            afterHoursInstructions: afterHoursInstructions ?? "",
             qualificationCriteria: Array.isArray(ws.qualification_criteria) ? (ws.qualification_criteria as string[]) : [],
             qualificationQuestions: Array.isArray(ws.qualification_questions) ? (ws.qualification_questions as string[]) : [],
             objections,
             learnedBehaviors,
             maxCallDuration: typeof ws.max_call_duration === "number" ? ws.max_call_duration : 15,
-            timezone: String(ws.timezone ?? "America/New_York"),
+            timezone,
           });
         }
       } catch {

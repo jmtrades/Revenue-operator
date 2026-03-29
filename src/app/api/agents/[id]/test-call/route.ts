@@ -11,23 +11,9 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { compileSystemPrompt } from "@/lib/business-brain";
 import { getVoiceProvider } from "@/lib/voice";
-import { DEFAULT_RECALL_VOICE_ID, RECALL_VOICES } from "@/lib/constants/recall-voices";
+import { resolveVoiceForCall, validateVoiceId } from "@/lib/voice/resolve-voice";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { log } from "@/lib/logger";
-
-/** Validate voice_id against known voices; fall back to default if invalid */
-function resolveVoiceId(rawVoiceId: string | null | undefined): string {
-  const vid = (rawVoiceId ?? "").trim();
-  if (!vid) return DEFAULT_RECALL_VOICE_ID;
-  // Check if it matches a known voice ID
-  if (RECALL_VOICES.some((v) => v.id === vid)) return vid;
-  // Try matching by name (case-insensitive) — handles "sarah" → "us-female-warm-receptionist"
-  const byName = RECALL_VOICES.find((v) => v.name.toLowerCase() === vid.toLowerCase());
-  if (byName) return byName.id;
-  // Unknown voice ID — fall back to default rather than failing
-  log("warn", "test_call.unknown_voice_id", { rawVoiceId: vid, fallback: DEFAULT_RECALL_VOICE_ID });
-  return DEFAULT_RECALL_VOICE_ID;
-}
 
 export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const csrfBlock = assertSameOrigin(req);
@@ -148,6 +134,21 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
 
   const voice = getVoiceProvider();
 
+  // Resolve voice: check A/B test, fall back to workspace active voice, then default
+  let resolvedVoice;
+  try {
+    resolvedVoice = await resolveVoiceForCall(workspaceId);
+  } catch (resolveErr) {
+    // If voice resolution fails, use agent's voice_id or default
+    log("warn", "test_call.voice_resolution_failed", {
+      workspaceId,
+      error: resolveErr instanceof Error ? resolveErr.message : String(resolveErr),
+    });
+    resolvedVoice = {
+      voiceId: validateVoiceId(a.voice_id),
+    };
+  }
+
   // Create a temporary assistant for the test call
   // NOTE: We don't store test assistant IDs in the agents table anymore
   let assistantId: string | null = null;
@@ -155,14 +156,19 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     const { assistantId: aid } = await voice.createAssistant({
       name: `${agent_name} – Test – ${workspaceId.slice(0, 8)}`,
       systemPrompt,
-      voiceId: resolveVoiceId(a.voice_id),
+      voiceId: resolvedVoice.voiceId,
       voiceProvider: "deepgram-aura",
       language: "en",
       tools: [],
       maxDuration: undefined,
       silenceTimeout: 30,
       backgroundDenoising: true,
-      metadata: { workspace_id: workspaceId, greeting: a.greeting || "Hello, how can I help you?" },
+      metadata: {
+        workspace_id: workspaceId,
+        greeting: a.greeting || "Hello, how can I help you?",
+        ...(resolvedVoice.abTestId && { ab_test_id: resolvedVoice.abTestId }),
+        ...(resolvedVoice.variant && { ab_test_variant: resolvedVoice.variant }),
+      },
     });
     assistantId = aid;
   } catch (err) {
