@@ -216,20 +216,6 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
           >
-            <motion.div
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium mb-6"
-              style={{
-                background: "var(--accent-primary-subtle)",
-                color: "var(--accent-primary)",
-                border: "1px solid rgba(37, 99, 235, 0.1)",
-              }}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0, ease: [0.23, 1, 0.32, 1] }}
-            >
-              {t("badge")}
-            </motion.div>
-
             <motion.h1
               className="font-semibold max-w-xl mb-5"
               style={{
@@ -266,19 +252,11 @@ export function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.24, ease: [0.23, 1, 0.32, 1] }}
             >
-              <div className="flex items-center gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <svg key={i} className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="var(--accent-warning, #F59E0B)">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                  </svg>
-                ))}
-                <span className="text-xs ml-1" style={{ color: "var(--text-tertiary)" }}>4.9/5</span>
-              </div>
-              <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-                <strong style={{ color: "var(--text-secondary)" }}>{SOCIAL_PROOF.businessCount}</strong> {t("socialProof")}
+              <span className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
+                {SOCIAL_PROOF.revenueRecovered}
               </span>
               <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-                <strong style={{ color: "var(--text-secondary)" }}>{SOCIAL_PROOF.revenueRecovered}</strong> {t("socialProofRecovered")}
+                {t("socialProofRecovered")}
               </span>
             </motion.div>
 
@@ -295,12 +273,6 @@ export function Hero() {
               >
                 {t("getStarted")}
                 <ArrowRight className="w-4 h-4" style={{ transition: "transform 200ms cubic-bezier(0.23, 1, 0.32, 1)" }} />
-              </Link>
-              <Link
-                href="/demo"
-                className="btn-marketing-ghost btn-lg no-underline flex items-center justify-center w-full sm:w-auto active:scale-[0.97]"
-              >
-                {t("watchDemo")}
               </Link>
             </motion.div>
             <motion.p
@@ -369,24 +341,6 @@ export function Hero() {
           </motion.div>
         </div>
 
-        {/* Compliance bar */}
-        <motion.div
-          className="max-w-4xl mx-auto mt-16 text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-        >
-          <Link href="/security" className="inline-flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium no-underline hover:opacity-80" style={{ color: "var(--text-tertiary)", transition: "opacity 200ms ease" }}>
-            {t.raw("compliance").map((label: string) => (
-              <span key={label} className="flex items-center gap-1.5">
-                <svg className="w-3.5 h-3.5" style={{ color: "var(--accent-secondary)" }} viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd"/>
-                </svg>
-                {label}
-              </span>
-            ))}
-          </Link>
-        </motion.div>
       </Container>
     </section>
   );
