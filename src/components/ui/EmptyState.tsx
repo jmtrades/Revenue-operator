@@ -68,7 +68,7 @@ export function EmptyState({
       role="region"
       aria-label={finalAriaLabel}
       className={cn(
-        "flex flex-col items-center justify-center text-center px-8 py-20 rounded-[var(--radius-card)] border border-[var(--border-default)] bg-[var(--bg-card)]",
+        "flex flex-col items-center justify-center text-center px-8 py-20 rounded-[var(--radius-card)] border border-[var(--border-default)] bg-[var(--bg-card)] shadow-[var(--shadow-card)]",
         className,
       )}
       variants={containerVariants}
@@ -77,7 +77,7 @@ export function EmptyState({
     >
       {Icon && (
         <motion.div
-          className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--accent-primary)]/[0.08] ring-1 ring-[var(--accent-primary)]/15"
+          className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-b from-[var(--accent-primary)]/[0.08] to-[var(--accent-primary)]/[0.03] ring-1 ring-[var(--accent-primary)]/10 shadow-[0_2px_8px_rgba(37,99,235,0.06)]"
           aria-hidden="true"
           variants={itemVariants}
         >
@@ -85,18 +85,18 @@ export function EmptyState({
         </motion.div>
       )}
       <motion.h3
-        className="text-base font-semibold text-[var(--text-primary)] tracking-tight"
+        className="text-[15px] font-semibold text-[var(--text-primary)] tracking-tight"
         variants={itemVariants}
       >
         {title}
       </motion.h3>
       {desc && (
-        <motion.p className="mt-2 max-w-sm text-sm text-[var(--text-secondary)] leading-relaxed" variants={itemVariants}>
+        <motion.p className="mt-2.5 max-w-md text-sm text-[var(--text-secondary)] leading-relaxed" variants={itemVariants}>
           {desc}
         </motion.p>
       )}
       {(primaryAction || secondaryAction) && (
-        <motion.div className="mt-7 flex flex-wrap items-center justify-center gap-3" variants={itemVariants}>
+        <motion.div className="mt-8 flex flex-wrap items-center justify-center gap-3" variants={itemVariants}>
           {primaryAction && (
             <Button
               variant="primary"
@@ -120,7 +120,7 @@ export function EmptyState({
         </motion.div>
       )}
       {footnote && (
-        <motion.p className="mt-5 text-xs text-[var(--text-tertiary)] max-w-sm" variants={itemVariants}>
+        <motion.p className="mt-6 text-xs text-[var(--text-tertiary)] max-w-sm leading-relaxed" variants={itemVariants}>
           {footnote}
         </motion.p>
       )}

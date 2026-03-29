@@ -60,14 +60,17 @@
   --gradient-cta-section: none;
   --gradient-problem-bg: none;
 
-  /* Shadows: refined depth hierarchy */
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
-  --shadow-xl: 0 24px 60px rgba(0, 0, 0, 0.1), 0 8px 20px rgba(0, 0, 0, 0.04);
+  /* Shadows: refined depth hierarchy — Stripe/Linear precision */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.03), 0 0 0 1px rgba(0, 0, 0, 0.02);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.07), 0 4px 12px rgba(0, 0, 0, 0.03);
+  --shadow-xl: 0 24px 60px rgba(0, 0, 0, 0.09), 0 8px 20px rgba(0, 0, 0, 0.03);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  --shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03), 0 0 0 1px rgba(0, 0, 0, 0.06);
   --shadow-glow-primary: 0 0 0 1px rgba(37, 99, 235, 0.12), 0 2px 8px rgba(37, 99, 235, 0.08);
   --shadow-glow-lg: 0 0 0 1px rgba(37, 99, 235, 0.08), 0 12px 40px rgba(37, 99, 235, 0.12);
+  --shadow-inner-subtle: inset 0 1px 2px rgba(0, 0, 0, 0.02);
 
   /* Overlays */
   --overlay: rgba(0, 0, 0, 0.5);
@@ -218,13 +221,16 @@
   --card-info: #A1A1AA;
   --card-spam: #71717A;
 
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
-  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.2);
-  --shadow-xl: 0 24px 60px rgba(0, 0, 0, 0.5), 0 8px 20px rgba(0, 0, 0, 0.2);
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.03);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 24px 60px rgba(0, 0, 0, 0.45), 0 8px 20px rgba(0, 0, 0, 0.15);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.06);
   --shadow-glow-primary: 0 0 0 1px rgba(59, 130, 246, 0.2), 0 2px 8px rgba(59, 130, 246, 0.15);
   --shadow-glow-lg: 0 0 0 1px rgba(59, 130, 246, 0.15), 0 12px 40px rgba(59, 130, 246, 0.2);
+  --shadow-inner-subtle: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 
   /* App (dashboard) tokens — dark */
   --background: #09090B;
@@ -695,17 +701,21 @@ textarea:focus-visible,
   .marketing-section { padding: var(--section-py-desktop) 0; }
 }
 
-/* Cards: clean, flat, subtle border */
+/* Cards: clean, elevated, subtle border */
 .card-marketing {
   background: var(--bg-surface);
   border: 1px solid var(--border-default);
   border-radius: var(--radius-card);
   padding: 28px;
-  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base);
 }
-.card-marketing:hover {
-  border-color: var(--border-hover);
-  box-shadow: var(--shadow-sm);
+@media (hover: hover) and (pointer: fine) {
+  .card-marketing:hover {
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-1px);
+  }
 }
 
 .card-feature {
@@ -951,12 +961,13 @@ textarea:focus {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 .card-lift {
+  box-shadow: var(--shadow-card);
   transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
 }
 @media (hover: hover) and (pointer: fine) {
   .card-lift:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-card-hover);
   }
 }
 
@@ -970,13 +981,15 @@ textarea:focus {
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-default);
   background: var(--bg-surface);
-  padding: 20px;
-  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  padding: 20px 22px;
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base);
 }
 @media (hover: hover) and (pointer: fine) {
   .kpi-card:hover {
     border-color: var(--border-hover);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-1px);
   }
 }
 .kpi-card::before {
@@ -985,10 +998,10 @@ textarea:focus {
   top: 0;
   left: 0;
   right: 0;
-  height: 3px;
+  height: 2px;
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   background: var(--kpi-accent, var(--accent-primary));
-  opacity: 0;
+  opacity: 0.7;
   transition: opacity var(--transition-base);
 }
 @media (hover: hover) and (pointer: fine) {
@@ -1002,10 +1015,14 @@ textarea:focus {
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-default);
   background: var(--bg-surface);
+  box-shadow: var(--shadow-card);
   transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
-.dash-section:hover {
-  border-color: var(--border-hover);
+@media (hover: hover) and (pointer: fine) {
+  .dash-section:hover {
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-card-hover);
+  }
 }
 
 /* Premium gradient accent for hero metrics */
@@ -1015,6 +1032,7 @@ textarea:focus {
   border-radius: var(--radius-xl);
   border: 1px solid var(--border-default);
   background: var(--bg-surface);
+  box-shadow: var(--shadow-card);
 }
 .metric-hero::before {
   content: "";
@@ -1022,9 +1040,20 @@ textarea:focus {
   top: 0;
   left: 0;
   right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
-  opacity: 0.5;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary), var(--accent-primary));
+  background-size: 200% 100%;
+  opacity: 0.8;
+}
+.metric-hero::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(180deg, var(--accent-primary-subtle), transparent);
+  pointer-events: none;
 }
 
 /* Activity timeline item */
@@ -1063,12 +1092,14 @@ textarea:focus {
   border-radius: var(--radius-md);
   border: 1px solid var(--border-default);
   background: var(--bg-surface);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: var(--shadow-xs);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
 }
 @media (hover: hover) and (pointer: fine) {
   .attention-item:hover {
     border-color: var(--border-hover);
-    box-shadow: var(--shadow-xs);
+    box-shadow: var(--shadow-card);
+    transform: translateY(-1px);
   }
 }
 
@@ -1091,14 +1122,131 @@ textarea:focus {
   border: 1px solid var(--border-default);
   background: var(--bg-surface);
   padding: 24px;
+  box-shadow: var(--shadow-card);
   transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base);
 }
 @media (hover: hover) and (pointer: fine) {
   .onboard-card:hover {
     border-color: var(--border-hover);
-    box-shadow: var(--shadow-sm);
-    transform: translateY(-1px);
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-2px);
   }
+}
+.onboard-card.completed {
+  border-color: var(--accent-secondary-subtle);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PREMIUM SKELETON SHIMMER — Smooth loading placeholder
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-hover);
+  border-radius: var(--radius-md);
+}
+.skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 40%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0.08) 60%,
+    transparent 100%
+  );
+  animation: shimmer 1.8s ease-in-out infinite;
+  transform: translateX(-100%);
+}
+.dark .skeleton-shimmer::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.03) 40%,
+    rgba(255, 255, 255, 0.05) 50%,
+    rgba(255, 255, 255, 0.03) 60%,
+    transparent 100%
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PREMIUM STATUS INDICATORS — Refined dots, badges, labels
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.status-dot-active {
+  background: var(--accent-secondary);
+  box-shadow: 0 0 0 3px var(--accent-secondary-subtle);
+}
+.status-dot-warning {
+  background: var(--accent-warning);
+  box-shadow: 0 0 0 3px var(--accent-warning-subtle);
+}
+.status-dot-inactive {
+  background: var(--text-disabled);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PREMIUM SIDEBAR — Linear/Notion-grade nav
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.sidebar-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  padding: 0 12px;
+  margin-bottom: 4px;
+  user-select: none;
+}
+
+.sidebar-nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  border-radius: var(--radius-btn);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: background-color var(--duration-fast) var(--ease-out-expo),
+              color var(--duration-fast) var(--ease-out-expo),
+              transform 80ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .sidebar-nav-item:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+  }
+}
+.sidebar-nav-item:active {
+  transform: scale(0.98);
+}
+.sidebar-nav-item[data-active="true"] {
+  background: var(--accent-primary-subtle);
+  color: var(--accent-primary);
+  font-weight: 600;
+}
+.sidebar-nav-item[data-active="true"]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 18px;
+  border-radius: 0 3px 3px 0;
+  background: var(--accent-primary);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
