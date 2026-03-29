@@ -84,28 +84,22 @@ export default function AppShellClient({
           { href: "/app/dashboard", label: t("nav.dashboard"), icon: LayoutList },
           { href: "/app/agents", label: t("nav.agents"), icon: Bot },
           { href: "/app/calls", label: t("nav.calls"), icon: PhoneCall },
-          { href: "/app/contacts", label: t("nav.contacts"), icon: Users },
           { href: "/app/inbox", label: t("nav.inbox"), icon: MessageSquare },
         ],
       },
       {
-        label: t("nav.sectionRecovery", { defaultValue: "Recovery & Growth" }),
+        label: t("nav.sectionRecovery", { defaultValue: "Revenue Ops" }),
         items: [
           { href: "/app/leads", label: t("nav.leads", { defaultValue: "Leads" }), icon: UserPlus },
           { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
-          { href: "/app/follow-ups", label: t("nav.followUps"), icon: Clock },
           { href: "/app/appointments", label: t("nav.appointments"), icon: CalendarCheck },
           { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
-          { href: "/app/reports", label: t("nav.reports", { defaultValue: "Revenue Digest" }), icon: FileText },
-          { href: "/app/knowledge", label: t("nav.knowledge"), icon: BookOpen },
         ],
       },
       {
         label: t("nav.sectionWorkspace"),
         items: [
           { href: "/app/settings", label: t("nav.settings"), icon: Settings },
-          { href: "/app/integrations", label: t("nav.integrations", { defaultValue: "Integrations" }), icon: Plug },
-          { href: "/app/billing", label: t("nav.billing"), icon: CreditCard },
         ],
       },
     ],
@@ -122,17 +116,11 @@ export default function AppShellClient({
   const mobileMoreLinks = useMemo(
     () => [
       { href: "/app/agents", label: t("nav.agents"), icon: Bot },
-      { href: "/app/contacts", label: t("nav.contacts"), icon: Users },
       { href: "/app/leads", label: t("nav.leads", { defaultValue: "Leads" }), icon: UserPlus },
       { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
-      { href: "/app/follow-ups", label: t("nav.followUps"), icon: Clock },
       { href: "/app/appointments", label: t("nav.appointments"), icon: CalendarCheck },
       { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
-      { href: "/app/reports", label: t("nav.reports", { defaultValue: "Revenue Digest" }), icon: FileText },
-      { href: "/app/knowledge", label: t("nav.knowledge"), icon: BookOpen },
       { href: "/app/settings", label: t("nav.settings"), icon: Settings },
-      { href: "/app/integrations", label: t("nav.integrations", { defaultValue: "Integrations" }), icon: Plug },
-      { href: "/app/billing", label: t("nav.billing"), icon: CreditCard },
     ],
     [t]
   );
