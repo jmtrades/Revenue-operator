@@ -80,7 +80,7 @@ export default function IntelligencePage() {
       <div className="max-w-3xl">
         <div className="flex items-center gap-2 mb-1">
           <Brain className="w-5 h-5" style={{ color: "var(--accent-primary)" }} />
-          <h1 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>AI Intelligence</h1>
+          <h1 className="text-lg font-bold tracking-[-0.025em]" style={{ color: "var(--text-primary)" }}>AI Intelligence</h1>
         </div>
         <p className="text-sm mb-8" style={{ color: "var(--text-muted)" }}>
           Your AI gets smarter with every call. Track learning metrics, fill knowledge gaps, and watch performance improve.

@@ -172,7 +172,7 @@ export default function PhoneMarketplacePage() {
           {tPhone("marketplaceBack")}
         </Link>
       </div>
-      <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">{tPhone("marketplaceGetNewNumber")}</h1>
+      <h1 className="text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-1">{tPhone("marketplaceGetNewNumber")}</h1>
       <p className="text-sm text-[var(--text-tertiary)] mb-6">
         {tPhone("marketplaceGetNewNumberDesc")}
       </p>

@@ -185,7 +185,7 @@ export default function AppSettingsPage() {
         </div>
 
         <div className="relative z-10">
-          <h1 className="text-2xl font-semibold text-[var(--text-primary)] mb-1">{tSettings("title")}</h1>
+          <h1 className="text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-1">{tSettings("title")}</h1>
           <p className="text-sm text-[var(--text-secondary)]">{tSettings("pageSubtitle")}</p>
         </div>
       </div>

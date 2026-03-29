@@ -350,7 +350,7 @@ export default function CallIntelligencePage() {
   return (
     <div className="max-w-4xl mx-auto space-y-8 p-6">
       <div>
-        <h1 className="text-xl font-semibold text-[var(--text-primary)]">{t("heading")}</h1>
+        <h1 className="text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("heading")}</h1>
         <p className="text-sm text-[var(--text-tertiary)] mt-1">
           {t("pageSubtitle")}
         </p>

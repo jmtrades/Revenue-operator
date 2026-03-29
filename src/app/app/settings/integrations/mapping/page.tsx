@@ -146,7 +146,7 @@ export default function IntegrationsMappingPage() {
           { label: tSettings("integrations.mappingBreadcrumb", { name }) },
         ]}
       />
-      <h1 className="text-xl font-semibold text-[var(--text-primary)] mt-2 mb-1">
+      <h1 className="text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)] mt-2 mb-1">
         {tSettings("integrations.mappingTitle", { name })}
       </h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">

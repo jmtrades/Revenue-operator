@@ -332,11 +332,11 @@ export default function AppCallDetailPage() {
 
       <header className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-6">
         <div>
-          <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] flex items-center gap-2 flex-wrap">
+          <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)] flex items-center gap-2 flex-wrap">
             <PhoneCall className="w-5 h-5 text-[var(--text-secondary)]" />
             {name}
           </h1>
-          <p className="mt-1 text-sm text-[var(--text-secondary)] flex items-center gap-3 flex-wrap">
+          <p className="mt-1.5 text-[13px] text-[var(--text-secondary)] leading-relaxed flex items-center gap-3 flex-wrap">
             <span className="inline-flex items-center gap-1.5">
               <CalendarClock className="w-4 h-4" />
               {formatTime(call.call_started_at)}

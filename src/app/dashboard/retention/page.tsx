@@ -20,7 +20,7 @@ export default function RetentionPage() {
   return (
     <div className="p-8 max-w-2xl space-y-16">
       <header>
-        <h1 className="text-xl font-semibold" style={{ color: "var(--text-primary)" }}>
+        <h1 className="text-xl font-bold tracking-[-0.025em]" style={{ color: "var(--text-primary)" }}>
           Retention
         </h1>
         <p className="mt-2 text-sm" style={{ color: "var(--text-muted)", lineHeight: 1.6 }}>

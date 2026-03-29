@@ -131,7 +131,7 @@ export default function AppSettingsTeamPage() {
 
   return (
     <div className="max-w-[600px] mx-auto p-4 md:p-6">
-      <h1 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("team.pageTitle")}</h1>
+      <h1 className="text-lg font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-2">{t("team.pageTitle")}</h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">{t("team.subtitle")}</p>
 
       <div className="space-y-2 mb-6">

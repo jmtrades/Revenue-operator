@@ -703,7 +703,7 @@ export default function InboxPage() {
       <div className="p-4 md:p-6 lg:p-8 h-full">
         <div className="flex items-center justify-between mb-2">
           <div>
-            <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)]">{t("inbox.title")}</h1>
+            <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("inbox.title")}</h1>
             <p className="text-sm text-[var(--text-tertiary)]">Agent-managed conversations</p>
           </div>
           {lastUpdated && (

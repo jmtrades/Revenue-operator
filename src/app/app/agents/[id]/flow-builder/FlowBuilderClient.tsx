@@ -199,7 +199,7 @@ export default function FlowBuilderClient({
         <span className="text-[var(--text-primary)]">Flow builder</span>
       </div>
       <div className="flex items-center justify-between gap-4 mb-3">
-        <h1 className="text-xl font-semibold text-[var(--text-primary)]">Conversation flow</h1>
+        <h1 className="text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">Conversation flow</h1>
         <div className="flex items-center gap-2">
           {toast && <span className="text-sm text-[var(--text-tertiary)]">{toast}</span>}
           <div className="flex flex-wrap gap-1 border border-[var(--border-default)] rounded-xl p-1.5 bg-[var(--bg-surface)] max-w-xl">

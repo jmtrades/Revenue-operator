@@ -478,7 +478,7 @@ export default function CampaignsPage() {
       <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto">
         <div className="flex items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)]">{t("heading")}</h1>
+            <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("heading")}</h1>
             <p className="text-sm text-[var(--text-secondary)] mt-1">
               {t("description")}
             </p>

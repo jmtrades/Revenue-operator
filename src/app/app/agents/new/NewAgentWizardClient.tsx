@@ -260,7 +260,7 @@ export default function NewAgentWizardClient({
         <span className="text-[var(--text-primary)]">{t("breadcrumbs.newAgent")}</span>
       </div>
 
-      <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">{t("title")}</h1>
+      <h1 className="text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-1">{t("title")}</h1>
       <p className="text-[var(--text-tertiary)] text-sm mb-8">{t("subtitle")}</p>
 
       {/* Progress */}

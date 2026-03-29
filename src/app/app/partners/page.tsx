@@ -47,7 +47,7 @@ export default function PartnersPage() {
     <div className="max-w-5xl mx-auto p-4 md:p-6">
       <div className="flex items-center justify-between gap-4 mb-6">
         <div className="min-w-0">
-          <h1 className="text-xl md:text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>
+          <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em]" style={{ color: "var(--text-primary)" }}>
             {t("title")}
           </h1>
           <p className="text-sm" style={{ color: "var(--text-secondary)", marginTop: 4 }}>

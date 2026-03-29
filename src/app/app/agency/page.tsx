@@ -156,8 +156,8 @@ export default function AgencyPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <div>
-          <h1 className="text-2xl md:text-3xl font-semibold text-[var(--text-primary)]">{t("dashboard.title", { defaultValue: "Reseller Dashboard" })}</h1>
-          <p className="text-sm text-[var(--text-tertiary)] mt-2">{t("dashboard.subtitle", { defaultValue: "Manage your sub-accounts and track performance" })}</p>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("dashboard.title", { defaultValue: "Reseller Dashboard" })}</h1>
+          <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed">{t("dashboard.subtitle", { defaultValue: "Manage your sub-accounts and track performance" })}</p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}

@@ -144,7 +144,7 @@ export default function AgentVoiceTestPage() {
         <ArrowLeft className="w-4 h-4" />
         Back to Agents
       </Link>
-      <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">Voice preview & test</h1>
+      <h1 className="text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-1">Voice preview & test</h1>
       <p className="text-sm text-[var(--text-tertiary)] mb-6">
         Try voices for &quot;{agent.name}&quot;. Play samples, test your script, compare two voices, then apply.
       </p>

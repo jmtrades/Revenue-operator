@@ -34,7 +34,7 @@ export default function AppSettingsErrorsPage() {
   return (
     <div className="max-w-[700px] mx-auto p-4 md:p-6">
       <Breadcrumbs items={[{ label: t("title"), href: "/app/settings" }, { label: t("errorsPage.title") }]} />
-      <h1 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("errorsPage.title")}</h1>
+      <h1 className="text-lg font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-2">{t("errorsPage.title")}</h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">{t("errorsPage.description")}</p>
 
       {loading ? (

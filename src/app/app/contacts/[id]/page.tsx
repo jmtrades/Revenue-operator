@@ -308,7 +308,7 @@ export default function ContactDetailPage() {
               {t("back")}
             </Link>
           </div>
-          <h1 className="mt-3 text-xl md:text-2xl font-semibold text-[var(--text-primary)] truncate">
+          <h1 className="mt-3 text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)] truncate">
             {contact?.name?.trim() || t("contact")}
           </h1>
           {contact?.company && (

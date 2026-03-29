@@ -64,7 +64,7 @@ export default function PhonePortPage() {
         <ArrowLeft className="w-4 h-4" />
         {t("portPage.backToPhone")}
       </Link>
-      <h1 className="text-xl font-semibold text-[var(--text-primary)] mb-1">{t("portPage.title")}</h1>
+      <h1 className="text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-1">{t("portPage.title")}</h1>
       <p className="text-sm text-[var(--text-tertiary)] mb-8">
         {t("portPage.subtitle")}
       </p>

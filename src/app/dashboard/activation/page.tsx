@@ -51,7 +51,7 @@ export default function ActivationPage() {
   return (
     <div className="p-8 max-w-2xl">
       <header className="mb-8">
-        <h1 className="text-2xl font-semibold" style={{ color: "var(--text-primary)" }}>Connect your calendar</h1>
+        <h1 className="text-2xl font-bold tracking-[-0.025em]" style={{ color: "var(--text-primary)" }}>Connect your calendar</h1>
         <p className="mt-1" style={{ color: "var(--text-secondary)" }}>
           Connect once. New enquiries then enter handling under governance.
         </p>

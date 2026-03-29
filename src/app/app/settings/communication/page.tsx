@@ -100,10 +100,10 @@ export default function CommunicationSettingsPage() {
 
       <div className="mt-3 flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)]">
+          <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">
             Communication & Agent Mode
           </h1>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+          <p className="mt-1.5 text-[13px] text-[var(--text-secondary)] leading-relaxed">
             Configure how your AI agent communicates with contacts
           </p>
         </div>

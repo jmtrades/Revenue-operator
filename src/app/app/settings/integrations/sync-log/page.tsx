@@ -73,7 +73,7 @@ export default function IntegrationsSyncLogPage() {
           { label: tSettings("syncLog.breadcrumb") },
         ]}
       />
-      <h1 className="text-xl font-semibold text-[var(--text-primary)] mt-2 mb-1">
+      <h1 className="text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)] mt-2 mb-1">
         {tSettings("syncLog.heading")}
       </h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">

@@ -36,7 +36,7 @@ export default function AdminDLQPage() {
 
   return (
     <div className="min-h-screen bg-stone-950 text-stone-100 p-8">
-      <h1 className="text-2xl font-semibold mb-6">Dead Letter Queue</h1>
+      <h1 className="text-2xl font-bold tracking-[-0.025em] mb-6">Dead Letter Queue</h1>
       {loading ? (
         <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>One moment…</p>
       ) : (

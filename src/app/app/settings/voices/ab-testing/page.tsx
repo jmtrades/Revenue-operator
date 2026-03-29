@@ -130,8 +130,8 @@ export default function AbTestingPage() {
     <div className="max-w-4xl mx-auto py-8 px-4">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-semibold text-[var(--text-primary)]">{t("title", { defaultValue: "Voice A/B Testing" })}</h1>
-          <p className="text-sm text-[var(--text-secondary)] mt-1">
+          <h1 className="text-xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("title", { defaultValue: "Voice A/B Testing" })}</h1>
+          <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed">
             {t("subtitle", { defaultValue: "Test different voices to find which one converts best for your business." })}
           </p>
         </div>

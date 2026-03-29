@@ -15,7 +15,7 @@ export default function HelpPage() {
           { label: t("breadcrumbs.help", { defaultValue: "Help" }), href: "/app/help" },
         ]}
       />
-      <h1 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("title", { defaultValue: "Help & Support" })}</h1>
+      <h1 className="text-lg font-bold tracking-[-0.025em] text-[var(--text-primary)] mb-2">{t("title", { defaultValue: "Help & Support" })}</h1>
       <p className="text-sm text-[var(--text-secondary)] mb-6">
         {t("subtitle", { defaultValue: "Answers to common questions from onboarding through daily operations." })}
       </p>

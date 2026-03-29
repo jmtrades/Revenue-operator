@@ -182,7 +182,7 @@ export default function ActivityPage() {
     <Shell size="md" className="max-w-[600px]">
       <div className="flex items-center justify-between gap-4 mb-4">
         <div className="flex items-center gap-2">
-          <h1 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>{ta("title")}</h1>
+          <h1 className="text-lg font-bold tracking-[-0.025em]" style={{ color: "var(--text-primary)" }}>{ta("title")}</h1>
           <span className="rounded-full px-2 py-0.5 text-[10px] font-medium" style={{ background: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }} aria-live="polite">{ta("liveBadge")}</span>
         </div>
         <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>

@@ -303,11 +303,11 @@ export default function CallsPage() {
     <div className="p-6 md:p-8 max-w-6xl mx-auto">
       <div className="flex items-center justify-between gap-3 mb-6 flex-wrap">
         <div>
-          <h1 className="text-xl md:text-2xl font-semibold text-[var(--text-primary)] flex items-center gap-2">
+          <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)] flex items-center gap-2">
             <PhoneCall className="w-5 h-5 text-[var(--text-tertiary)]" />
             {t("calls.heading", { defaultValue: "Call log" })}
           </h1>
-          <p className="text-sm text-[var(--text-secondary)] mt-1">
+          <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed">
             {t("calls.description", { defaultValue: "Every answered call, decision, and follow-up in one place." })}
           </p>
         </div>

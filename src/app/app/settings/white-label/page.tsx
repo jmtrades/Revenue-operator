@@ -105,8 +105,8 @@ export default function WhiteLabelSettingsPage() {
   return (
     <div className="p-6 md:p-8 max-w-6xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl md:text-3xl font-semibold text-[var(--text-primary)]">{t("title")}</h1>
-        <p className="text-sm text-[var(--text-tertiary)] mt-2">
+        <h1 className="text-2xl md:text-3xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("title")}</h1>
+        <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed">
           {t("description")}
         </p>
       </div>
