@@ -722,9 +722,11 @@ export default function InboxPage() {
             </motion.div>
           )}
         </div>
-        <p className="text-sm text-[var(--text-tertiary)] mb-4">
-          {threads.length > 0 ? `${threads.length} active revenue ${threads.length === 1 ? "conversation" : "conversations"}` : t("inbox.subtitle")}
-        </p>
+        {threads.length > 0 && (
+          <p className="text-sm text-[var(--text-tertiary)] mb-4">
+            {`${threads.length} active revenue ${threads.length === 1 ? "conversation" : "conversations"}`}
+          </p>
+        )}
         {/* Mobile layout */}
         <div className="md:hidden h-[calc(100vh-7rem)] border border-[var(--border-default)] rounded-2xl overflow-hidden">
           {mobileMode === "list" ? (
