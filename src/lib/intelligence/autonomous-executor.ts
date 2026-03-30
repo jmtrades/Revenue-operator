@@ -49,31 +49,8 @@ export async function executeAutonomousAction(
   const executedAt = new Date().toISOString();
 
   try {
-    // 1. Check confidence threshold
-    if (intelligence.action_confidence < CONFIDENCE_THRESHOLD) {
-      await logAutonomousAction({
-        action_type: "no_action",
-        success: true,
-        details: "Confidence below threshold",
-        executed_at: executedAt,
-        lead_id: intelligence.lead_id,
-        workspace_id: intelligence.workspace_id,
-        confidence: intelligence.action_confidence,
-        reason: "confidence_too_low",
-      });
-      return {
-        action_type: "no_action",
-        success: true,
-        details: "Confidence below threshold",
-        executed_at: executedAt,
-        lead_id: intelligence.lead_id,
-        workspace_id: intelligence.workspace_id,
-        confidence: intelligence.action_confidence,
-        reason: "confidence_too_low",
-      };
-    }
-
-    // 2. Check risk flags for safety halts
+    // 1. SAFETY FIRST — check risk flags before confidence gate
+    // Opt-out and anger/hostile flags always execute regardless of confidence
     if (intelligence.risk_flags.includes("opt_out_signal")) {
       await logAutonomousAction({
         action_type: "pause",
@@ -135,6 +112,30 @@ export async function executeAutonomousAction(
         workspace_id: intelligence.workspace_id,
         confidence: intelligence.action_confidence,
         reason: "anger_or_hostile",
+      };
+    }
+
+    // 2. Check confidence threshold (after safety flags, so safety always fires)
+    if (intelligence.action_confidence < CONFIDENCE_THRESHOLD) {
+      await logAutonomousAction({
+        action_type: "no_action",
+        success: true,
+        details: "Confidence below threshold",
+        executed_at: executedAt,
+        lead_id: intelligence.lead_id,
+        workspace_id: intelligence.workspace_id,
+        confidence: intelligence.action_confidence,
+        reason: "confidence_too_low",
+      });
+      return {
+        action_type: "no_action",
+        success: true,
+        details: "Confidence below threshold",
+        executed_at: executedAt,
+        lead_id: intelligence.lead_id,
+        workspace_id: intelligence.workspace_id,
+        confidence: intelligence.action_confidence,
+        reason: "confidence_too_low",
       };
     }
 
