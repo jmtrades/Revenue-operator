@@ -516,7 +516,7 @@ async function scheduleFollowupAction(
 ): Promise<AutonomousActionResult> {
   try {
     const db = getDb();
-    const { enrollContact, createSequence } = await import("@/lib/sequences/follow-up-engine");
+    const { enrollContact, createSequence, addSequenceStep } = await import("@/lib/sequences/follow-up-engine");
 
     // Use adaptive follow-up system to choose the right strategy
     let strategy: AdaptiveStrategy | null = null;
@@ -593,6 +593,38 @@ async function scheduleFollowupAction(
         confidence: intelligence.action_confidence,
         reason: "no_sequence",
       };
+    }
+
+    // Ensure sequence has steps — populate from adaptive plan if empty
+    const { count: stepCount } = await db
+      .from("sequence_steps")
+      .select("*", { count: "exact", head: true })
+      .eq("sequence_id", sequenceId);
+
+    if ((stepCount ?? 0) === 0 && adaptivePlan && adaptivePlan.steps.length > 0) {
+      console.log(
+        `[autonomous-executor] Sequence ${sequenceId} has 0 steps — populating from adaptive plan (${strategy}, ${adaptivePlan.steps.length} steps)`
+      );
+      for (const step of adaptivePlan.steps) {
+        const channelType = step.channel === "voicemail_drop" ? "call" : step.channel;
+        const template = getDefaultFollowUpTemplate(step.template_key ?? "schedule_followup", {
+          contact_name: lead.name,
+          business_name: "Our team",
+        });
+        const content = channelType === "email" ? template.email_body : template.sms;
+        try {
+          await addSequenceStep(
+            sequenceId,
+            step.order,
+            channelType as "sms" | "email" | "call",
+            step.delay_minutes,
+            content ?? undefined,
+            step.condition ? { condition: step.condition } : {}
+          );
+        } catch {
+          // Non-blocking per step
+        }
+      }
     }
 
     const enrollment = await enrollContact(intelligence.workspace_id, sequenceId, intelligence.lead_id);
