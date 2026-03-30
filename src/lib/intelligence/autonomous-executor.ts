@@ -173,7 +173,10 @@ export async function executeAutonomousAction(
 
     // 4. Map next_best_action to AutonomousActionType and execute
     const result = await executeBasedOnAction(intelligence, executedAt);
-    await logAutonomousAction(result);
+    // Don't log dedup skips — they're noise (every 2min cron cycle)
+    if (result.reason !== "already_enrolled") {
+      await logAutonomousAction(result);
+    }
     return result;
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err);
@@ -533,6 +536,33 @@ async function scheduleFollowupAction(
         `[autonomous-executor] Adaptive strategy selection failed, falling back to default:`,
         strategyErr instanceof Error ? strategyErr.message : String(strategyErr)
       );
+    }
+
+    // DEDUP: Check if lead already has an active sequence enrollment
+    const { data: activeEnrollment } = await db
+      .from("sequence_enrollments")
+      .select("id, sequence_id")
+      .eq("lead_id", intelligence.lead_id)
+      .eq("workspace_id", intelligence.workspace_id)
+      .eq("status", "active")
+      .limit(1)
+      .maybeSingle();
+
+    if (activeEnrollment) {
+      const enrollmentData = activeEnrollment as { id: string; sequence_id: string };
+      console.log(
+        `[autonomous-executor] Lead ${intelligence.lead_id} already enrolled in sequence ${enrollmentData.sequence_id} — skipping duplicate enrollment`
+      );
+      return {
+        action_type: "enroll_sequence",
+        success: true,
+        details: `Already enrolled in sequence ${enrollmentData.sequence_id} — skipped duplicate`,
+        executed_at: executedAt,
+        lead_id: intelligence.lead_id,
+        workspace_id: intelligence.workspace_id,
+        confidence: intelligence.action_confidence,
+        reason: "already_enrolled",
+      };
     }
 
     // Find or create a default followup sequence
