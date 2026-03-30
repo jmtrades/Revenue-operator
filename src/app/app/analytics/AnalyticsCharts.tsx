@@ -135,8 +135,9 @@ export function AnalyticsCharts({ volumeData, outcomeSlices }: AnalyticsChartsPr
                   align="right"
                   verticalAlign="middle"
                   iconSize={8}
-                  formatter={(value) => (
-                    <span style={{ color: cc.legendText, fontSize: 11 }}>{typeof value === "string" ? value : String(value)}</span>
+                  iconType="circle"
+                  formatter={(value: string) => (
+                    <span style={{ color: cc.legendText, fontSize: 11 }}>{value}</span>
                   )}
                 />
               </PieChart>
