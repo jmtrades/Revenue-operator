@@ -63,16 +63,16 @@ export function SetupHealthCard({ workspaceId }: SetupHealthCardProps) {
       const setupSteps: SetupStep[] = [
         {
           id: "agent",
-          label: "Configure operator",
-          description: "Set up your AI voice operator with prompts and call handling rules. Required for all inbound and outbound calling.",
+          label: "Configure your AI operator",
+          description: "Your brain learns your business rules, tone, and qualification criteria. Once configured, it handles every call autonomously.",
           completed: result.agent_configured ?? false,
           actionLabel: "Configure operator",
           actionHref: "/app/agents",
         },
         {
           id: "phone",
-          label: "Set up phone number",
-          description: "Connect your business phone number to receive and make calls. Required for voice and SMS capabilities.",
+          label: "Connect your phone number",
+          description: "Your brain answers every call in under 3 seconds, 24/7. It qualifies leads, books appointments, and follows up — all from this number.",
           completed: result.phone_number_configured ?? false,
           actionLabel: "Set up phone",
           actionHref: "/app/settings/phone",
@@ -80,7 +80,7 @@ export function SetupHealthCard({ workspaceId }: SetupHealthCardProps) {
         {
           id: "call",
           label: "Make your first call",
-          description: "Place your first outbound call to verify the operator works end-to-end.",
+          description: "Your brain starts learning immediately. It analyzes the conversation, scores the lead, and decides the best follow-up — all in real time.",
           completed: result.calls_answered > 0,
           actionLabel: "Test call",
           actionHref: "/app/agents",
@@ -88,15 +88,15 @@ export function SetupHealthCard({ workspaceId }: SetupHealthCardProps) {
         },
         {
           id: "appointment",
-          label: "Book first appointment",
-          description: "Enable the operator to qualify prospects and schedule meetings automatically. Requires operator + calendar setup.",
+          label: "Enable auto-booking",
+          description: "Your brain qualifies prospects during the call and books appointments directly into your calendar. No manual scheduling needed.",
           completed: result.appointments_booked > 0,
           actionText: "Configure qualifying questions to enable auto-booking",
         },
         {
           id: "followups",
-          label: "Enable follow-ups",
-          description: "Set up automated SMS and email sequences to nurture leads. Requires phone number + email provider.",
+          label: "Activate follow-up sequences",
+          description: "Your brain auto-creates and executes follow-up sequences via SMS, email, and calls based on each lead's intent and engagement signals.",
           completed: result.follow_ups_sent > 0,
           actionLabel: "Enable follow-ups",
           actionHref: "/app/follow-ups",
@@ -227,9 +227,9 @@ export function SetupHealthCard({ workspaceId }: SetupHealthCardProps) {
 
       {/* Call to Action */}
       {completedCount > 0 && (
-        <div className="mt-4 p-3 rounded-lg bg-[var(--accent-primary)]/5 border border-[var(--accent-primary)]/20">
+        <div className="mt-4 p-3 rounded-lg bg-violet-500/5 border border-violet-500/20">
           <p className="text-xs text-[var(--text-secondary)]">
-            Complete {steps.filter(s => !s.completed).map(s => s.label).join(' and ')} to start processing leads automatically.
+            <span className="font-medium text-violet-400">Almost there.</span> Complete the remaining steps to activate your autonomous brain. It will field calls 24/7, qualify leads, book appointments, and grow smarter with every interaction.
           </p>
         </div>
       )}
