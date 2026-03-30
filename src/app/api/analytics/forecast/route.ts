@@ -51,11 +51,11 @@ export async function GET(req: NextRequest): Promise<NextResponse<ForecastRespon
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     const thirtyDaysAgoStr = thirtyDaysAgo.toISOString().split("T")[0];
 
-    let recentMetrics: Array<{ date: string; revenue_estimated_cents: number }> = [];
+    let recentMetrics: Array<{ date: string; total_revenue_cents: number }> = [];
     try {
       const { data, error: recentErr } = await db
         .from("daily_metrics")
-        .select("date, revenue_estimated_cents")
+        .select("date, total_revenue_cents")
         .eq("workspace_id", workspaceId)
         .gte("date", thirtyDaysAgoStr)
         .lte("date", todayStr)
@@ -87,7 +87,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<ForecastRespon
         const date = new Date(m.date);
         return date >= monthStart && date <= today;
       })
-      .reduce((sum, m) => sum + (m.revenue_estimated_cents || 0), 0);
+      .reduce((sum, m) => sum + (m.total_revenue_cents || 0), 0);
 
     // Calculate prior month revenue for growth rate
     const priorMonthStart = new Date(currentYear, currentMonth - 1, 1);
@@ -95,11 +95,11 @@ export async function GET(req: NextRequest): Promise<NextResponse<ForecastRespon
     const priorMonthStartStr = priorMonthStart.toISOString().split("T")[0];
     const priorMonthEndStr = priorMonthEnd.toISOString().split("T")[0];
 
-    let priorMetrics: Array<{ date: string; revenue_estimated_cents: number }> = [];
+    let priorMetrics: Array<{ date: string; total_revenue_cents: number }> = [];
     try {
       const { data, error: priorErr } = await db
         .from("daily_metrics")
-        .select("date, revenue_estimated_cents")
+        .select("date, total_revenue_cents")
         .eq("workspace_id", workspaceId)
         .gte("date", priorMonthStartStr)
         .lte("date", priorMonthEndStr);
@@ -114,7 +114,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<ForecastRespon
     }
 
     const priorMonthRevenue = priorMetrics.reduce(
-      (sum, m) => sum + (m.revenue_estimated_cents || 0),
+      (sum, m) => sum + (m.total_revenue_cents || 0),
       0
     );
 

@@ -1,6 +1,10 @@
 /**
  * POST /api/call-intelligence/analyze
  * Accept transcript (and optional title, call_type). Run Claude analysis, store call_example + call_insights.
+ *
+ * Actual schema (revenue_operator):
+ *   call_examples:  id, workspace_id, scenario, example_text, category, created_at
+ *   call_insights:  id, workspace_id, call_session_id, insight_type, content, confidence, metadata, created_at
  */
 
 export const dynamic = "force-dynamic";
@@ -135,44 +139,57 @@ export async function POST(req: NextRequest) {
     const title = typeof body.title === "string" ? body.title.trim().slice(0, 256) : null;
     const callType = typeof body.call_type === "string" ? body.call_type.trim().slice(0, 64) : null;
 
+    // Insert into call_examples — uses actual DB columns: scenario, example_text, category
     const { data: example, error: insertExampleErr } = await db
       .from("call_examples")
       .insert({
         workspace_id: session.workspaceId,
-        title: title || "Untitled call",
-        source: "upload",
-        transcript,
-        call_type: callType || null,
-        status: "analyzed",
-        analysis: { insightCount: insights.length },
+        scenario: title || "Untitled call",
+        example_text: transcript,
+        category: callType || "general",
       })
-      .select("id, title, status, created_at")
+      .select("id, scenario, created_at")
       .maybeSingle();
 
     if (insertExampleErr || !example) {
+      console.error("[call-intelligence/analyze] insert call_example failed:", insertExampleErr?.message);
       return NextResponse.json({ error: "Failed to save." }, { status: 500 });
     }
 
     const exampleId = (example as { id: string }).id;
     if (insights.length > 0) {
-      await db.from("call_insights").insert(
+      // Insert into call_insights — uses actual DB columns: insight_type, content, confidence, metadata
+      const { error: insErr } = await db.from("call_insights").insert(
         insights.map((i) => ({
           workspace_id: session.workspaceId,
-          call_example_id: exampleId,
-          category: i.category,
-          insight: i.insight,
-          example_from_transcript: i.example_from_transcript ?? null,
+          call_session_id: exampleId, // link insight back to the example
+          insight_type: i.category,
+          content: i.insight,
           confidence: i.confidence,
+          metadata: {
+            example_from_transcript: i.example_from_transcript ?? null,
+            applied: false,
+            dismissed: false,
+          },
         }))
       );
+      if (insErr) {
+        console.error("[call-intelligence/analyze] insert call_insights failed:", insErr.message);
+      }
     }
 
     return NextResponse.json({
       ok: true,
-      call_example: { id: exampleId, title: (example as { title: string }).title, status: "analyzed", created_at: (example as { created_at: string }).created_at },
+      call_example: {
+        id: exampleId,
+        title: (example as { scenario: string }).scenario,
+        status: "analyzed",
+        created_at: (example as { created_at: string }).created_at,
+      },
       insights_count: insights.length,
     });
-  } catch {
+  } catch (err) {
+    console.error("[call-intelligence/analyze] unexpected error:", err instanceof Error ? err.message : String(err));
     return NextResponse.json(
       { error: "Something went wrong with this service. Please try again." },
       { status: 502 }

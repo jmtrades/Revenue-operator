@@ -160,7 +160,11 @@ export async function POST(req: NextRequest) {
       .maybeSingle()
   );
 
-  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  if (error) {
+    const isWriteGuard = error instanceof Error && error.name === "UnsafeWriteError";
+    console.error("[leads] POST insert failed:", isWriteGuard ? `UnsafeWriteError: ${(error as Error).message}` : (error as { message?: string })?.message ?? String(error));
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  }
 
   const createdLead = lead as {
     id: string;
