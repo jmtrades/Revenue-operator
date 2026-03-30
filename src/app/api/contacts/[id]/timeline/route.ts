@@ -78,16 +78,15 @@ async function getTimeline(req: NextRequest, id: string) {
   try {
     const { data: calls } = await db
       .from("call_sessions")
-      .select("id, created_at, direction, duration_seconds, outcome, summary, transcript, recording_url")
+      .select("id, started_at, duration_seconds, outcome, summary, transcript, recording_url")
       .eq("lead_id", id)
-      .order("created_at", { ascending: false })
+      .order("started_at", { ascending: false })
       .limit(limit);
     (calls ?? []).forEach((c: Record<string, unknown>) =>
       events.push({
         id: String(c.id),
         type: "call",
-        created_at: String(c.created_at),
-        direction: (c.direction as string | null) ?? null,
+        created_at: String(c.started_at),
         duration_seconds: (c.duration_seconds as number | null) ?? null,
         outcome: (c.outcome as string | null) ?? null,
         summary: (c.summary as string | null) ?? null,

@@ -244,7 +244,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<DigestResponse
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
       .eq("status", "no_show")
-      .gte("scheduled_at", monthStartStr);
+      .gte("start_time", monthStartStr);
     noShowsCount = ns ?? 0;
   } catch {
     /* ignore */

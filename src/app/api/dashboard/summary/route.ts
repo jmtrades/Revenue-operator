@@ -228,7 +228,7 @@ export async function GET(req: NextRequest) {
       .from("leads")
       .select("id, name, phone, status, created_at")
       .eq("workspace_id", workspaceId)
-      .eq("status", "new")
+      .eq("status", "NEW")
       .order("created_at", { ascending: false })
       .limit(7);
     if (leads?.length) {
@@ -310,7 +310,7 @@ export async function GET(req: NextRequest) {
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
       .eq("status", "no_show")
-      .gte("scheduled_at", weekAgo);
+      .gte("start_time", weekAgo);
     noShowsThisWeek = ns ?? 0;
   } catch { /* ignore */ }
 
