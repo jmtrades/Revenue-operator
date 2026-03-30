@@ -3428,6 +3428,8 @@
       "error": "Falha ao salvar regras de chamadas"
     },
     "savingChanges": "Saving…",
+    "businessHoursTo": "até",
+    "businessHoursCopyToWeekdays": "Copiar para todos os dias úteis",
     "businessHoursNote": "Business hours are set to your workspace timezone. Contact support to customize your schedule.",
     "emergencyKeywordsPlaceholder": "e.g. emergency, urgent, flooding, leak"
   },
