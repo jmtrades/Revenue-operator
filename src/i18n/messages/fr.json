@@ -1987,7 +1987,10 @@
       "makeTestCall": {
         "title": "Make a test call",
         "description": "Call your number from any phone to test it"
-      }
+      },
+      "readyTitle": "Votre Opérateur de Revenus IA",
+      "readyDescription": "Configurez votre espace de travail pour automatiser les opérations de revenus — appels, suivis et rendez-vous gérés par l'IA.",
+      "startTrial": "Commencer"
     },
     "stats": {
       "activeCalls": "Active Calls",

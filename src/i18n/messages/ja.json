@@ -1989,7 +1989,10 @@
       "makeTestCall": {
         "title": "Make a test call",
         "description": "Call your number from any phone to test it"
-      }
+      },
+      "readyTitle": "AIレベニューオペレーター",
+      "readyDescription": "ワークスペースを設定して、収益オペレーションを自動化しましょう — 通話、フォローアップ、予約をAIが管理します。",
+      "startTrial": "始める"
     },
     "stats": {
       "activeCalls": "Active Calls",

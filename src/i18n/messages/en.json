@@ -859,7 +859,10 @@
       "makeTestCall": {
         "title": "Make a test call",
         "description": "Call your number from any phone to test it"
-      }
+      },
+      "readyTitle": "Your AI Revenue Operator",
+      "readyDescription": "Set up your workspace to start automating revenue operations — calls, follow-ups, and appointments handled by AI.",
+      "startTrial": "Get Started"
     },
     "stats": {
       "activeCalls": "Active Calls",

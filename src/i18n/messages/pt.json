@@ -1989,7 +1989,10 @@
       "makeTestCall": {
         "title": "Make a test call",
         "description": "Call your number from any phone to test it"
-      }
+      },
+      "readyTitle": "Seu Operador de Receita com IA",
+      "readyDescription": "Configure seu espaço de trabalho para automatizar operações de receita — chamadas, acompanhamentos e compromissos gerenciados por IA.",
+      "startTrial": "Começar"
     },
     "stats": {
       "activeCalls": "Active Calls",
