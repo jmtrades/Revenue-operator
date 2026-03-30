@@ -1970,6 +1970,9 @@
     "getStarted": "Get started",
     "getStartedSubtitle": "Complete these steps to go live — takes about 5 minutes",
     "onboarding": {
+      "readyTitle": "Seu Operador de Receita com IA",
+      "readyDescription": "Configure seu espaço de trabalho para automatizar operações de receita — chamadas, acompanhamentos e compromissos gerenciados por IA.",
+      "startTrial": "Começar",
       "createAgent": {
         "title": "Create your AI agent",
         "description": "Choose a template and customize your agent's personality"

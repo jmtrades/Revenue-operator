@@ -840,6 +840,9 @@
       "goLive": "Go live with your number"
     },
     "onboarding": {
+      "readyTitle": "Your AI Revenue Operator",
+      "readyDescription": "Set up your workspace to start automating revenue operations — calls, follow-ups, and appointments handled by AI.",
+      "startTrial": "Get Started",
       "createAgent": {
         "title": "Create your AI operator",
         "description": "Choose a template and customize your operator's personality"

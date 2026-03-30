@@ -1968,6 +1968,9 @@
     "getStarted": "Get started",
     "getStartedSubtitle": "Complete these steps to go live — takes about 5 minutes",
     "onboarding": {
+      "readyTitle": "Tu Operador de Ingresos con IA",
+      "readyDescription": "Configura tu espacio de trabajo para comenzar a automatizar las operaciones de ingresos — llamadas, seguimientos y citas gestionadas por IA.",
+      "startTrial": "Comenzar",
       "createAgent": {
         "title": "Create your AI agent",
         "description": "Choose a template and customize your agent's personality"
