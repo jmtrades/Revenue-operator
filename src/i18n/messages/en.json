@@ -8936,7 +8936,11 @@
     "status": {
       "connected": "Connected",
       "disconnected": "Not connected",
-      "beta": ""
+      "beta": "Beta",
+      "reauthRequired": "Re-auth required",
+      "expiringToken": "Token expiring soon",
+      "tokenError": "Token error",
+      "syncing": "Syncing\u2026"
     },
     "lastSync": "Last sync",
     "button": {
@@ -8946,7 +8950,8 @@
       "syncing": "Syncing...",
       "syncNow": "Sync Now",
       "importing": "Importing...",
-      "import": "Import"
+      "import": "Import",
+      "reauthenticate": "Re-authenticate"
     },
     "syncStatus": {
       "title": "Sync status",
