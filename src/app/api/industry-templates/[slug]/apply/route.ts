@@ -36,6 +36,7 @@ function substituteVariables(
   substitutions: Record<string, string>
 ): string {
   if (!text) return "";
+  if (typeof text !== "string") return String(text);
 
   let result = text;
   for (const [placeholder, value] of Object.entries(substitutions)) {
@@ -268,16 +269,18 @@ export async function POST(
     const agentName = (existingAgent as { name?: string }).name || "Agent";
     substitutions["Agent Name"] = agentName;
 
-    const existingKb = (existingAgent as { knowledge_base?: Record<string, unknown> })
-      ?.knowledge_base || {};
-    const existingFaq = (existingKb.faq as Array<{ q: string; a: string }>) || [];
-    const existingRules = (existingAgent as { rules?: Record<string, unknown> })?.rules || {};
+    const rawKb = (existingAgent as { knowledge_base?: unknown })?.knowledge_base;
+    const existingKb = (rawKb && typeof rawKb === "object" && !Array.isArray(rawKb) ? rawKb : {}) as Record<string, unknown>;
+    const rawFaq = existingKb.faq;
+    const existingFaq = (Array.isArray(rawFaq) ? rawFaq : []) as Array<{ q: string; a: string }>;
+    const rawRules = (existingAgent as { rules?: unknown })?.rules;
+    const existingRules = (rawRules && typeof rawRules === "object" && !Array.isArray(rawRules) ? rawRules : {}) as Record<string, unknown>;
 
     let updatedKnowledgeBase = { ...existingKb };
     let updatedRules = { ...existingRules };
 
     // Apply greeting if included in sections
-    let newGreeting = (existingAgent as { greeting: string }).greeting;
+    let newGreeting = (existingAgent as { greeting?: string | null }).greeting ?? "";
     if (applyAllSections || sectionSet.has("greeting")) {
       newGreeting = substituteVariables(template.default_greeting || "", substitutions);
     }
