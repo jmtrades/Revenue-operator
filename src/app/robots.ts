@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const BASE = "https://www.revenueoperator.ai";
+const BASE = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
 
 export default function robots(): MetadataRoute.Robots {
   return {
