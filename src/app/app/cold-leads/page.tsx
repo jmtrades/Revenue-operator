@@ -254,6 +254,53 @@ export default function ColdLeadsPage() {
     };
   }, [workspaceId]);
 
+  // Auto-sync leads from REACTIVATE/LOST/CONTACTED states into cold_lead_queue
+  useEffect(() => {
+    if (!workspaceId) return;
+    let cancelled = false;
+
+    const syncColdLeads = async () => {
+      try {
+        const res = await fetch("/api/cold-leads/sync", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ workspace_id: workspaceId }),
+          credentials: "include",
+        });
+
+        if (!res.ok) return;
+
+        const data: { synced?: number } = await res.json();
+        if (cancelled) return;
+
+        if (data.synced && data.synced > 0) {
+          toast.success(t("toast.success.syncedLeads", { defaultValue: `Synced ${data.synced} leads` }));
+          // Refetch leads after sync
+          const refreshRes = await fetch(`/api/cold-leads?workspace_id=${encodeURIComponent(workspaceId)}`, {
+            credentials: "include",
+          });
+          if (refreshRes.ok && !cancelled) {
+            const refreshData: { items?: ColdLead[] } = await refreshRes.json();
+            setLeads(refreshData.items ?? []);
+            persistColdLeadsSnapshot(workspaceId, refreshData.items ?? []);
+          }
+        }
+      } catch {
+        // Sync failures are non-fatal; proceed without interrupting user
+      }
+    };
+
+    // Delay sync to avoid race with initial fetch
+    const syncTimeout = window.setTimeout(() => {
+      if (!cancelled) syncColdLeads();
+    }, 500);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(syncTimeout);
+    };
+  }, [workspaceId, t]);
+
   // Filter and sort leads
   const filtered = useMemo(() => {
     let result = leads;

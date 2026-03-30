@@ -54,6 +54,7 @@ const SystemReadiness = lazy(() => import("@/components/dashboard/SystemReadines
 const RecoveryScoreCard = lazy(() => import("@/components/dashboard/RecoveryScoreCard").then(m => ({ default: m.RecoveryScoreCard })));
 const AutonomousBriefing = lazy(() => import("@/components/dashboard/AutonomousBriefing").then(m => ({ default: m.AutonomousBriefing })));
 const AutonomousBrainCard = lazy(() => import("@/components/dashboard/AutonomousBrainCard").then(m => ({ default: m.AutonomousBrainCard })));
+const TodaysActivity = lazy(() => import("@/components/dashboard/TodaysActivity").then(m => ({ default: m.TodaysActivity })));
 
 function CardSkeleton() {
   return (
@@ -761,6 +762,11 @@ export function UnifiedDashboard() {
       {/* ── AI Recommendations Card ────────────────────────────────────── */}
       <Suspense fallback={<CardSkeleton />}>
         <RecommendationsCard workspaceId={workspaceId} />
+      </Suspense>
+
+      {/* ── Today's Activity ──────────────────────────────────────────── */}
+      <Suspense fallback={<CardSkeleton />}>
+        <TodaysActivity workspaceId={workspaceId} />
       </Suspense>
 
       {/* ── Revenue Leakage Radar ─────────────────────────────────────── */}

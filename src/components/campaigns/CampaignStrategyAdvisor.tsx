@@ -296,14 +296,14 @@ export function CampaignStrategyAdvisor({
 
         {/* Quick Launch Button */}
         <Link
-          href={`/app/campaigns/new?template=${recommendation.templateSlug}`}
+          href={`/app/follow-ups/create?template=${recommendation.templateSlug}`}
           className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold transition-all duration-200 text-white"
           style={{
             backgroundColor: "var(--accent-primary)",
           }}
         >
           <Zap className="w-4 h-4" />
-          Launch Recommended Campaign
+          Create sequence
           <ChevronRight className="w-4 h-4" />
         </Link>
       </div>

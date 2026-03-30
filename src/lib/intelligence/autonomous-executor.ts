@@ -1,6 +1,7 @@
 /**
  * Autonomous Executor — Takes LeadIntelligence and autonomously executes the recommended action.
  * Safety-first: checks confidence, risk flags, and daily limits before taking any action.
+ * Integrates with Recovery Profile for customizable persistence levels.
  */
 
 import { getDb } from "@/lib/db/queries";
@@ -8,6 +9,7 @@ import type { LeadIntelligence } from "./lead-brain";
 import { getTelephonyService } from "@/lib/telephony";
 import { getDefaultFollowUpTemplate } from "./outcome-followup-router";
 import { selectAdaptiveStrategy, buildAdaptiveFollowUpPlan, type AdaptiveStrategy } from "./adaptive-followup";
+import { getRecoveryProfile, type RecoveryProfile } from "@/lib/recovery-profile";
 import { enqueue } from "@/lib/queue";
 
 export type AutonomousActionType =
@@ -508,6 +510,7 @@ async function scheduleCallAction(
 /**
  * Schedule followup via sequence enrollment or SMS.
  * Uses adaptive follow-up strategy to choose the right approach.
+ * Respects recovery profile settings for persistence level customization.
  */
 async function scheduleFollowupAction(
   intelligence: LeadIntelligence,
@@ -518,17 +521,28 @@ async function scheduleFollowupAction(
     const db = getDb();
     const { enrollContact, createSequence, addSequenceStep } = await import("@/lib/sequences/follow-up-engine");
 
+    // Fetch recovery profile for this workspace
+    let recoveryProfile: RecoveryProfile | null = null;
+    try {
+      recoveryProfile = await getRecoveryProfile(lead.workspace_id);
+    } catch (profileErr) {
+      console.warn(
+        `[autonomous-executor] Could not fetch recovery profile, using default:`,
+        profileErr instanceof Error ? profileErr.message : String(profileErr)
+      );
+    }
+
     // Use adaptive follow-up system to choose the right strategy
     let strategy: AdaptiveStrategy | null = null;
     let adaptivePlan = null;
     let chosenStrategyDetails = "";
 
     try {
-      strategy = selectAdaptiveStrategy(intelligence);
-      adaptivePlan = buildAdaptiveFollowUpPlan(strategy, intelligence);
-      chosenStrategyDetails = `Adaptive strategy: ${strategy}`;
+      strategy = selectAdaptiveStrategy(intelligence, recoveryProfile ?? undefined);
+      adaptivePlan = buildAdaptiveFollowUpPlan(strategy, intelligence, recoveryProfile ?? undefined);
+      chosenStrategyDetails = `Adaptive strategy: ${strategy}${recoveryProfile ? ` (${recoveryProfile} recovery)` : ""}`;
       console.log(
-        `[autonomous-executor] Selected adaptive strategy for lead ${intelligence.lead_id}: ${strategy}`
+        `[autonomous-executor] Selected adaptive strategy for lead ${intelligence.lead_id}: ${strategy}${recoveryProfile ? ` with ${recoveryProfile} recovery profile` : ""}`
       );
     } catch (strategyErr) {
       // Non-blocking: fall back to default sequence enrollment

@@ -2,10 +2,12 @@
  * Adaptive Follow-Up Intelligence
  * Context-aware dynamic follow-up paths that adapt based on lead intelligence.
  * Replaces static sequence enrollment with intelligent strategy selection.
+ * Integrates with Recovery Profile for customizable persistence levels.
  */
 
 import { getDb } from "@/lib/db/queries";
 import type { LeadIntelligence } from "@/lib/intelligence/lead-brain";
+import type { RecoveryProfile } from "@/lib/recovery-profile";
 import { setLeadPlan } from "@/lib/plans/lead-plan";
 import { enqueue } from "@/lib/queue";
 
@@ -37,10 +39,30 @@ export interface AdaptiveFollowUpPlan {
 }
 
 /**
+ * Get delay multiplier for recovery profile.
+ * Conservative: longer delays (1.5x), Standard: no change (1.0x), Assertive: shorter (0.7x)
+ */
+function getDelayMultiplierForProfile(recoveryProfile?: RecoveryProfile): number {
+  switch (recoveryProfile) {
+    case "conservative":
+      return 1.5; // Stretch delays by 50% for gentle pacing
+    case "assertive":
+      return 0.7; // Compress delays by 30% for faster cadence
+    case "standard":
+    default:
+      return 1.0; // No adjustment
+  }
+}
+
+/**
  * Pure function: deterministic strategy selection based on lead intelligence.
  * No side effects, no DB calls, no randomness.
+ * Optionally biased by recovery profile for persistence level customization.
  */
-export function selectAdaptiveStrategy(intelligence: LeadIntelligence): AdaptiveStrategy {
+export function selectAdaptiveStrategy(
+  intelligence: LeadIntelligence,
+  recoveryProfile?: RecoveryProfile
+): AdaptiveStrategy {
   const { risk_flags, lifecycle_phase, conversion_probability, urgency_score } = intelligence;
 
   // Opt-out / do-not-contact takes absolute precedence
@@ -67,14 +89,32 @@ export function selectAdaptiveStrategy(intelligence: LeadIntelligence): Adaptive
     return "appointment_protect";
   }
 
-  // Hot lead: high probability + urgency
+  // Recovery profile biases for hot leads
   if (conversion_probability >= 0.7 && urgency_score >= 60) {
+    // "assertive" or "aggressive" profiles push toward aggressive_nurture
+    if (recoveryProfile === "assertive") {
+      return "aggressive_nurture";
+    }
+    // "conservative" profile scales back to gentle even for hot leads
+    if (recoveryProfile === "conservative") {
+      return "gentle_nurture";
+    }
+    // standard/default: use normal aggressive_nurture for hot leads
     return "aggressive_nurture";
   }
 
   // Warm lead: moderate probability
   if (conversion_probability >= 0.4) {
+    // "conservative" profile: only proceed if conversion prob is higher
+    if (recoveryProfile === "conservative" && conversion_probability < 0.6) {
+      return "value_drip";
+    }
     return "gentle_nurture";
+  }
+
+  // "minimal" profile equivalent: only pursue if high confidence
+  if (recoveryProfile === "conservative" && conversion_probability < 0.5) {
+    return "value_drip";
   }
 
   // Default: cold/unknown intent
@@ -84,24 +124,28 @@ export function selectAdaptiveStrategy(intelligence: LeadIntelligence): Adaptive
 /**
  * Build a multi-step follow-up plan based on strategy.
  * Each strategy has predefined channel mix and timing.
+ * Recovery profile optionally adjusts delays: conservative = longer, assertive = shorter.
  */
 export function buildAdaptiveFollowUpPlan(
   strategy: AdaptiveStrategy,
-  intelligence: LeadIntelligence
+  intelligence: LeadIntelligence,
+  recoveryProfile?: RecoveryProfile
 ): AdaptiveFollowUpPlan {
+  // Calculate delay multiplier based on recovery profile
+  const delayMultiplier = getDelayMultiplierForProfile(recoveryProfile);
   switch (strategy) {
     case "aggressive_nurture":
       return {
         strategy,
         steps: [
           { order: 1, channel: "sms", delay_minutes: 0, template_key: "aggressive_open" },
-          { order: 2, channel: "email", delay_minutes: 60, template_key: "aggressive_follow" },
-          { order: 3, channel: "call", delay_minutes: 240, template_key: "aggressive_call" },
-          { order: 4, channel: "sms", delay_minutes: 1440, template_key: "aggressive_reminder" },
-          { order: 5, channel: "email", delay_minutes: 2880, template_key: "aggressive_close" },
+          { order: 2, channel: "email", delay_minutes: Math.round(60 * delayMultiplier), template_key: "aggressive_follow" },
+          { order: 3, channel: "call", delay_minutes: Math.round(240 * delayMultiplier), template_key: "aggressive_call" },
+          { order: 4, channel: "sms", delay_minutes: Math.round(1440 * delayMultiplier), template_key: "aggressive_reminder" },
+          { order: 5, channel: "email", delay_minutes: Math.round(2880 * delayMultiplier), template_key: "aggressive_close" },
         ],
         max_touches: 5,
-        cooldown_hours: 24,
+        cooldown_hours: Math.round(24 * delayMultiplier),
         exit_conditions: ["reply_received", "opted_out", "scheduled_appointment"],
       };
 
@@ -110,11 +154,11 @@ export function buildAdaptiveFollowUpPlan(
         strategy,
         steps: [
           { order: 1, channel: "sms", delay_minutes: 0, template_key: "gentle_open" },
-          { order: 2, channel: "email", delay_minutes: 1440, template_key: "gentle_value" },
-          { order: 3, channel: "sms", delay_minutes: 4320, template_key: "gentle_close" },
+          { order: 2, channel: "email", delay_minutes: Math.round(1440 * delayMultiplier), template_key: "gentle_value" },
+          { order: 3, channel: "sms", delay_minutes: Math.round(4320 * delayMultiplier), template_key: "gentle_close" },
         ],
         max_touches: 3,
-        cooldown_hours: 48,
+        cooldown_hours: Math.round(48 * delayMultiplier),
         exit_conditions: ["reply_received", "opted_out", "no_reply_after_72h"],
       };
 
@@ -123,11 +167,11 @@ export function buildAdaptiveFollowUpPlan(
         strategy,
         steps: [
           { order: 1, channel: "email", delay_minutes: 0, template_key: "value_1_intro" },
-          { order: 2, channel: "email", delay_minutes: 4320, template_key: "value_2_social_proof" },
-          { order: 3, channel: "sms", delay_minutes: 10080, template_key: "value_3_cta" },
+          { order: 2, channel: "email", delay_minutes: Math.round(4320 * delayMultiplier), template_key: "value_2_social_proof" },
+          { order: 3, channel: "sms", delay_minutes: Math.round(10080 * delayMultiplier), template_key: "value_3_cta" },
         ],
         max_touches: 3,
-        cooldown_hours: 72,
+        cooldown_hours: Math.round(72 * delayMultiplier),
         exit_conditions: ["reply_received", "opted_out"],
       };
 
@@ -136,11 +180,11 @@ export function buildAdaptiveFollowUpPlan(
         strategy,
         steps: [
           { order: 1, channel: "sms", delay_minutes: 0, template_key: "reactivate_value_angle" },
-          { order: 2, channel: "email", delay_minutes: 2880, template_key: "reactivate_proof_angle" },
-          { order: 3, channel: "sms", delay_minutes: 7200, template_key: "reactivate_urgency_angle" },
+          { order: 2, channel: "email", delay_minutes: Math.round(2880 * delayMultiplier), template_key: "reactivate_proof_angle" },
+          { order: 3, channel: "sms", delay_minutes: Math.round(7200 * delayMultiplier), template_key: "reactivate_urgency_angle" },
         ],
         max_touches: 3,
-        cooldown_hours: 48,
+        cooldown_hours: Math.round(48 * delayMultiplier),
         exit_conditions: ["reply_received", "opted_out", "scheduled_call"],
       };
 
@@ -149,7 +193,7 @@ export function buildAdaptiveFollowUpPlan(
         strategy,
         steps: [
           { order: 1, channel: "sms", delay_minutes: 0, template_key: "appt_confirm" },
-          { order: 2, channel: "sms", delay_minutes: 1440, template_key: "appt_reminder_24h" },
+          { order: 2, channel: "sms", delay_minutes: Math.round(1440 * delayMultiplier), template_key: "appt_reminder_24h" },
           { order: 3, channel: "email", delay_minutes: 60, template_key: "appt_prep_info", condition: "1h_before_apt" },
         ],
         max_touches: 3,
@@ -173,11 +217,11 @@ export function buildAdaptiveFollowUpPlan(
         strategy,
         steps: [
           { order: 1, channel: "email", delay_minutes: 0, template_key: "winback_value_prop" },
-          { order: 2, channel: "sms", delay_minutes: 4320, template_key: "winback_special_offer" },
-          { order: 3, channel: "call", delay_minutes: 10080, template_key: "winback_personal_outreach" },
+          { order: 2, channel: "sms", delay_minutes: Math.round(4320 * delayMultiplier), template_key: "winback_special_offer" },
+          { order: 3, channel: "call", delay_minutes: Math.round(10080 * delayMultiplier), template_key: "winback_personal_outreach" },
         ],
         max_touches: 3,
-        cooldown_hours: 72,
+        cooldown_hours: Math.round(72 * delayMultiplier),
         exit_conditions: ["reply_received", "opted_out", "re_engaged"],
       };
 
@@ -186,11 +230,11 @@ export function buildAdaptiveFollowUpPlan(
         strategy,
         steps: [
           { order: 1, channel: "email", delay_minutes: 0, template_key: "retain_thank_you" },
-          { order: 2, channel: "sms", delay_minutes: 10080, template_key: "retain_checkin" },
-          { order: 3, channel: "email", delay_minutes: 43200, template_key: "retain_loyalty_offer" },
+          { order: 2, channel: "sms", delay_minutes: Math.round(10080 * delayMultiplier), template_key: "retain_checkin" },
+          { order: 3, channel: "email", delay_minutes: Math.round(43200 * delayMultiplier), template_key: "retain_loyalty_offer" },
         ],
         max_touches: 3,
-        cooldown_hours: 168,
+        cooldown_hours: Math.round(168 * delayMultiplier),
         exit_conditions: ["opted_out", "support_ticket"],
       };
 
