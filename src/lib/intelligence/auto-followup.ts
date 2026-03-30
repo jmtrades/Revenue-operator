@@ -63,7 +63,26 @@ export async function triggerAutoFollowUp(params: {
       return { action_taken: "skipped", success: true, details: "Lead opted out — no follow-up" };
     }
 
-    // Check if lead is an existing customer
+    // BRAIN-FIRST: If fresh brain intelligence exists, let the autonomous executor handle it.
+    // The brain was just recomputed in the post-call route, so intelligence should be fresh.
+    try {
+      const { getLeadIntelligence } = await import("@/lib/intelligence/lead-brain");
+      const intel = await getLeadIntelligence(params.workspace_id, params.lead_id);
+      if (intel && intel.action_confidence >= 0.5) {
+        // Brain has a confident recommendation — execute autonomously
+        const { executeAutonomousAction } = await import("@/lib/intelligence/autonomous-executor");
+        await executeAutonomousAction(intel);
+        return {
+          action_taken: `brain:${intel.next_best_action}`,
+          success: true,
+          details: `Brain-driven: ${intel.next_best_action} (confidence ${(intel.action_confidence * 100).toFixed(0)}%, timing: ${intel.action_timing})`,
+        };
+      }
+    } catch {
+      // Brain unavailable — fall through to legacy routing
+    }
+
+    // LEGACY FALLBACK: Static outcome routing when brain has no confident recommendation
     const { count: previousCalls } = await db
       .from("call_sessions")
       .select("id", { count: "exact", head: true })
