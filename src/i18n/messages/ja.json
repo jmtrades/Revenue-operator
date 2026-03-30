@@ -3428,6 +3428,8 @@
       "error": "通話ルールの保存に失敗しました"
     },
     "savingChanges": "Saving…",
+    "businessHoursTo": "から",
+    "businessHoursCopyToWeekdays": "すべての平日にコピー",
     "businessHoursNote": "Business hours are set to your workspace timezone. Contact support to customize your schedule.",
     "emergencyKeywordsPlaceholder": "e.g. emergency, urgent, flooding, leak"
   },
