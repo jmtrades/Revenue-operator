@@ -68,6 +68,7 @@ export async function GET(req: NextRequest) {
     .in("provider", [...CRM_PROVIDERS]);
 
   if (error) {
+    console.error("[CRM Status] Failed to query workspace_crm_connections:", error.message, error.code);
     const integrations = Object.fromEntries(
       CRM_PROVIDERS.map((p) => [p, emptyStatus()])
     ) as Record<CrmProviderId, CrmIntegrationStatus>;
