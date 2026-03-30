@@ -6,7 +6,7 @@
 
 import { getDb } from "@/lib/db/queries";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://www.revenueoperator.ai";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://www.recall-touch.com";
 
 function formatHoursSaved(callCount: number): string {
   const hours = Math.max(0.5, Math.round((callCount * 4) / 60 * 10) / 10);
@@ -110,7 +110,7 @@ export async function sendWeeklyTrustEmails(): Promise<Array<{ workspaceId: stri
             Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
           },
           body: JSON.stringify({
-            from: process.env.EMAIL_FROM || "Revenue Operator <noreply@revenueoperator.ai>",
+            from: process.env.EMAIL_FROM || "Revenue Operator <noreply@recall-touch.com>",
             to: email,
             subject,
             text: body,

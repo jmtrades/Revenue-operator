@@ -238,7 +238,7 @@ export async function POST(request: NextRequest) {
     const isSilence = request.nextUrl.searchParams.get("silence") === "1";
 
     const db = getDb();
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.revenueoperator.ai";
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
     const callbackUrl = `${appUrl}/api/webhooks/twilio/voice/demo-turn`;
 
     /* ── Resolve call session (3-tier lookup) ── */

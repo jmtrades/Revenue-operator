@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: "Blog — Revenue Operator",
     description:
       "Guides, playbooks, and insights on AI phone agents, revenue recovery, and growth for service businesses.",
-    url: "https://www.revenueoperator.ai/blog",
+    url: "https://www.recall-touch.com/blog",
     images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
   twitter: {

@@ -16,7 +16,7 @@ function getIconComponent(iconName: string) {
   return Icon ? <Icon className="w-8 h-8" /> : null;
 }
 
-const BASE = "https://www.revenueoperator.ai";
+const BASE = "https://www.recall-touch.com";
 
 export default function IndustriesPageContent() {
   const t = useTranslations("industriesPage");

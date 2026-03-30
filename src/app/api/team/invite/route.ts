@@ -15,7 +15,7 @@ import { sendInviteEmail } from "@/lib/email/invite";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.revenueoperator.ai";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
 const INVITABLE_ROLES = ["admin", "manager", "agent"] as const;
 const EXPIRES_DAYS = 7;
 

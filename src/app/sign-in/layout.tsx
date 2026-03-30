@@ -4,7 +4,7 @@
  */
 export const dynamic = "force-dynamic";
 
-const BASE = "https://www.revenueoperator.ai";
+const BASE = "https://www.recall-touch.com";
 
 export const metadata = {
   title: { absolute: "Sign in — Revenue Operator" },

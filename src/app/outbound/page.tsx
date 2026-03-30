@@ -17,7 +17,7 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 
-const BASE = "https://www.revenueoperator.ai";
+const BASE = "https://www.recall-touch.com";
 
 export const metadata: Metadata = {
   title: "AI Outbound Campaigns — Revenue Operator",

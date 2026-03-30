@@ -5,8 +5,8 @@
 
 import { buildWelcomeEmail } from "@/lib/email/templates";
 
-const FROM = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@revenueoperator.ai>";
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.revenueoperator.ai";
+const FROM = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@recall-touch.com>";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
 
 export async function sendWelcomeEmail(email: string, nameOrBusiness?: string | null): Promise<boolean> {
   if (!email) return false;

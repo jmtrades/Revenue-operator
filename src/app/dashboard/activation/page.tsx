@@ -85,8 +85,9 @@ export default function ActivationPage() {
               </>
             ) : (
               <>
-                <p className="text-sm" style={{ color: "var(--text-muted)" }}>Zoom is not configured. We work with calendar events without it.</p>
-                <p className="text-xs mt-1" style={{ color: "var(--text-muted)" }}>Connect via external source or calendar.</p>
+                <p className="text-sm font-medium" style={{ color: "var(--text-muted)" }}>Calendar &amp; calls</p>
+                <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>Zoom is not yet configured for this workspace. All other features — including Google Calendar, appointment booking, and follow-ups — work normally without it.</p>
+                <p className="text-xs mt-2" style={{ color: "var(--text-muted)" }}>To enable Zoom: your workspace administrator must set up a Zoom OAuth app and add credentials. This is optional.</p>
               </>
             )}
           </div>

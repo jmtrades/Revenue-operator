@@ -420,8 +420,18 @@
         "disconnectDesc": "This will remove the connection and stop syncing. Your existing contacts will not be deleted.",
         "cancel": "Cancel"
       },
+      "status": {
+        "beta": "Bêta",
+        "reauthRequired": "Réauthentification requise",
+        "expiringToken": "Jeton expirant bientôt",
+        "tokenError": "Erreur de jeton",
+        "syncing": "Synchronisation…",
+        "connected": "Connecté",
+        "disconnected": "Déconnecté"
+      },
       "button": {
-        "disconnect": "Disconnect"
+        "disconnect": "Disconnect",
+        "reauthenticate": "Réauthentifier"
       },
       "hub": {
         "needHelp": "Need help with integrations?"
@@ -4647,7 +4657,7 @@
     },
     "support": {
       "requestSubmitted": "Your request has been submitted. Our team will contact you within 24 hours.",
-      "requestFailed": "Could not submit request. Please email support@revenueoperator.ai directly."
+      "requestFailed": "Could not submit request. Please email support@recall-touch.com directly."
     },
     "error": {
       "generic": "Something went wrong. Please try again."

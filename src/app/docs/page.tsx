@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import DocsPageContent from "./DocsPageContent";
 
-const BASE = "https://www.revenueoperator.ai";
+const BASE = "https://www.recall-touch.com";
 
 export const metadata: Metadata = {
   title: "Docs — Revenue Operator",

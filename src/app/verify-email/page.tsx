@@ -3,7 +3,7 @@ import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { ResendVerificationButton } from "./ResendVerificationButton";
 
-const BASE_URL = "https://www.revenueoperator.ai";
+const BASE_URL = "https://www.recall-touch.com";
 
 export const dynamic = "force-dynamic";
 

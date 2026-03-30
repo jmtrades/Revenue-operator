@@ -8,7 +8,7 @@ import { getDb } from "@/lib/db/queries";
 
 export const dynamic = "force-dynamic";
 
-const BASE = "https://www.revenueoperator.ai";
+const BASE = "https://www.recall-touch.com";
 
 export const metadata: Metadata = {
   title: "Results — Revenue Operator",

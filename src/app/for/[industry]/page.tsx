@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const mapped = INDUSTRY_MAP[industry] ?? industry;
   return {
     alternates: {
-      canonical: `https://www.revenueoperator.ai/industries/${mapped}`,
+      canonical: `https://www.recall-touch.com/industries/${mapped}`,
     },
   };
 }

@@ -4,7 +4,7 @@
  * All emails use a consistent design language with the Revenue Operator brand.
  */
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.revenueoperator.ai";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
 
 function escapeHtml(value: string): string {
   return value
@@ -353,7 +353,7 @@ export function buildDunningEmail(params: {
   ${ctaButton("Update Payment Method", `${APP_URL}/app/settings/billing`, cfg.color)}
 
   <p style="margin:0;font-size:13px;color:#737373;line-height:1.6;">
-    Need help? Reply to this email or contact support@revenueoperator.ai
+    Need help? Reply to this email or contact support@recall-touch.com
   </p>`;
 
   return {

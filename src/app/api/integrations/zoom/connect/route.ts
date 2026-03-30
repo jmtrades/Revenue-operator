@@ -24,7 +24,18 @@ export async function GET(req: NextRequest) {
   const redirectUri = `${baseUrl}/api/integrations/zoom/callback`;
 
   if (!clientId) {
-    return NextResponse.json({ error: "Zoom not configured" }, { status: 503 });
+    return NextResponse.json(
+      {
+        error: "Zoom integration not configured",
+        detail:
+          "The Zoom OAuth application has not been set up for this workspace. " +
+          "A workspace administrator must create a Zoom OAuth app in the Zoom Marketplace " +
+          "and add the ZOOM_CLIENT_ID and ZOOM_CLIENT_SECRET environment variables.",
+        impact: "Zoom meeting links will not be auto-created for appointments. All other features continue to work normally.",
+        action: "Contact your workspace administrator to complete the Zoom OAuth setup.",
+      },
+      { status: 503 }
+    );
   }
 
   const state = createOAuthState(workspaceId, { returnTo });

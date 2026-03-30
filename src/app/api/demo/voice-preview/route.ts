@@ -249,7 +249,7 @@ async function handleDeepgramTTS(
           "Content-Length": audioBuffer.byteLength.toString(),
           "Cache-Control": "public, max-age=86400",
           "Access-Control-Allow-Origin":
-            process.env.NEXT_PUBLIC_APP_URL || "https://www.revenueoperator.ai",
+            process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com",
           "X-Voice-Provider": "deepgram",
           "X-Voice-Model": model,
         },
@@ -357,7 +357,7 @@ async function handleVoiceServerTTS(
           "Content-Length": audioBuffer.byteLength.toString(),
           "Cache-Control": "public, max-age=86400",
           "Access-Control-Allow-Origin":
-            process.env.NEXT_PUBLIC_APP_URL || "https://www.revenueoperator.ai",
+            process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com",
           "X-Voice-Provider": "recall-orpheus",
           "X-Voice-Id": normalizedVoice,
           "X-Voice-Emotion": emotion,
@@ -418,7 +418,7 @@ export async function GET(req: NextRequest) {
           "X-Voice-Cache": "hit",
           "Access-Control-Allow-Origin":
             process.env.NEXT_PUBLIC_APP_URL ||
-            "https://www.revenueoperator.ai",
+            "https://www.recall-touch.com",
         },
       });
     }
@@ -509,7 +509,7 @@ export async function GET(req: NextRequest) {
               "Content-Length": audioBuffer.byteLength.toString(),
               "Cache-Control": "public, max-age=86400",
               "Access-Control-Allow-Origin":
-                process.env.NEXT_PUBLIC_APP_URL || "https://www.revenueoperator.ai",
+                process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com",
               "X-Voice-Provider": "edge-tts",
               "X-Voice-Id": normalizeVoiceId(voiceId),
             },

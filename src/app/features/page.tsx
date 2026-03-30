@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     title: "Features — Revenue Operator",
     description:
       "Inbound call handling, outbound campaigns, follow-ups, appointment booking, revenue recovery, and AI that learns from every conversation.",
-    url: "https://www.revenueoperator.ai/features",
+    url: "https://www.recall-touch.com/features",
     images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
   twitter: {

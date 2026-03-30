@@ -72,7 +72,7 @@ export default async function PrivacyPage() {
             <section className="mb-10">
               <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>Your Rights</h2>
               <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                Depending on your location, you may have rights to access, correct, delete, or port your personal data, to object to or restrict certain processing, and to withdraw consent where processing is consent-based. To exercise these rights, contact us at <a href="mailto:privacy@revenueoperator.ai" className="underline" style={{ color: "var(--accent-primary)" }}>privacy@revenueoperator.ai</a>. If you are in the European Economic Area or the United Kingdom, you also have the right to lodge a complaint with your local data protection authority.
+                Depending on your location, you may have rights to access, correct, delete, or port your personal data, to object to or restrict certain processing, and to withdraw consent where processing is consent-based. To exercise these rights, contact us at <a href="mailto:privacy@recall-touch.com" className="underline" style={{ color: "var(--accent-primary)" }}>privacy@recall-touch.com</a>. If you are in the European Economic Area or the United Kingdom, you also have the right to lodge a complaint with your local data protection authority.
               </p>
             </section>
             <section className="mb-10">
@@ -96,7 +96,7 @@ export default async function PrivacyPage() {
             <section className="mb-10">
               <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>Contact</h2>
               <p className="text-base" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                For privacy questions, requests, or complaints: <a href="mailto:privacy@revenueoperator.ai" className="underline" style={{ color: "var(--accent-primary)" }}>privacy@revenueoperator.ai</a>. We will respond within a reasonable time.
+                For privacy questions, requests, or complaints: <a href="mailto:privacy@recall-touch.com" className="underline" style={{ color: "var(--accent-primary)" }}>privacy@recall-touch.com</a>. We will respond within a reasonable time.
               </p>
             </section>
             <p className="text-sm mt-12" style={{ color: "var(--text-tertiary)" }}>

@@ -83,7 +83,7 @@ export default function CancelSubscriptionPage() {
         break;
       case "support":
         // Open support modal or navigate to contact
-        window.open("mailto:hello@revenueoperator.ai?subject=Help%20with%20Subscription", "_blank");
+        window.open("mailto:hello@recall-touch.com?subject=Help%20with%20Subscription", "_blank");
         break;
     }
   };
@@ -559,7 +559,7 @@ export default function CancelSubscriptionPage() {
           <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
             Have questions?{" "}
             <a
-              href="mailto:hello@revenueoperator.ai?subject=Cancellation%20Help"
+              href="mailto:hello@recall-touch.com?subject=Cancellation%20Help"
               className="underline transition-opacity hover:opacity-70"
               style={{ color: "var(--accent-primary)" }}
             >

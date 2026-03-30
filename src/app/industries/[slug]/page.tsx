@@ -10,7 +10,7 @@ import {
 } from "@/lib/data/industries";
 import { ROUTES } from "@/lib/constants";
 
-const BASE = "https://www.revenueoperator.ai";
+const BASE = "https://www.recall-touch.com";
 
 export function generateStaticParams() {
   return INDUSTRY_SLUGS.map((slug) => ({ slug }));
@@ -47,7 +47,7 @@ export async function generateMetadata({
       card: "summary_large_image" as const,
       title,
       description,
-      creator: "@revenueoperator",
+      creator: "@recalltouch",
     },
   };
 }

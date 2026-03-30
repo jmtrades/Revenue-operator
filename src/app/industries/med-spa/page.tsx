@@ -4,13 +4,13 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
-const BASE = "https://www.revenueoperator.ai";
+const BASE = "https://www.recall-touch.com";
 
 export const metadata = {
   title: "Med Spa AI Revenue Operations Platform — Revenue Operator",
   description:
     "Drive med spa revenue and patient lifetime value with complete AI-powered workflows: consultation booking, appointment reminders, no-show prevention, cancellation recovery, package upsells, and patient reactivation.",
-  alternates: { canonical: "https://www.revenueoperator.ai/industries/med-spa" },
+  alternates: { canonical: "https://www.recall-touch.com/industries/med-spa" },
 };
 
 export default function MedSpaIndustryPage() {

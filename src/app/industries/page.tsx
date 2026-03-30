@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     title: "Industries — Revenue Operator",
     description:
       "AI revenue operations platform built for HVAC, dental, legal, real estate, healthcare, and every service business.",
-    url: "https://www.revenueoperator.ai/industries",
+    url: "https://www.recall-touch.com/industries",
     images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
   twitter: {

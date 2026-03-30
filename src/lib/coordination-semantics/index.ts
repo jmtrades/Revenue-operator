@@ -12,7 +12,7 @@ import {
 } from "@/lib/human-override/human-activity";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const EMAIL_FROM = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@revenueoperator.ai>";
+const EMAIL_FROM = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@recall-touch.com>";
 
 async function sendEmail(to: string, subject: string, text: string): Promise<boolean> {
   if (!RESEND_API_KEY) return false;

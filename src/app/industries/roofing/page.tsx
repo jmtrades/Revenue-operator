@@ -4,13 +4,13 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
-const BASE = "https://www.revenueoperator.ai";
+const BASE = "https://www.recall-touch.com";
 
 export const metadata = {
   title: "Roofing AI Revenue Operations Platform — Revenue Operator",
   description:
     "Maximize storm response and inspection-to-job conversion with complete AI-powered workflows: instant call answering, damage assessment and qualification, inspection scheduling, estimate follow-up, and no-show prevention.",
-  alternates: { canonical: "https://www.revenueoperator.ai/industries/roofing" },
+  alternates: { canonical: "https://www.recall-touch.com/industries/roofing" },
 };
 
 export default function RoofingIndustryPage() {

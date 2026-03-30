@@ -5,18 +5,18 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { CheckCircle2, XCircle } from "lucide-react";
 
-const BASE = "https://www.revenueoperator.ai";
+const BASE = "https://www.recall-touch.com";
 
 export const metadata: Metadata = {
   title: "Revenue Operator vs GoHighLevel (GHL) — Revenue Operator",
   description:
     "GoHighLevel vs Revenue Operator: compare setup time, voice AI capability, AI phone agent capabilities, and pricing. Revenue Operator delivers AI phone + revenue ops in under 3 minutes.",
-  alternates: { canonical: `${BASE}/compare/gohighlevel` },
+  alternates: { canonical: "https://www.recall-touch.com/compare/gohighlevel" },
   openGraph: {
     title: "Revenue Operator vs GoHighLevel (GHL) — Revenue Operator",
     description:
       "GoHighLevel requires weeks of setup for marketing automation. Revenue Operator is purpose-built AI phone + revenue operations that works in under 3 minutes.",
-    url: `${BASE}/compare/gohighlevel`,
+    url: "https://www.recall-touch.com/compare/gohighlevel",
     siteName: "Revenue Operator",
     type: "website",
   },
