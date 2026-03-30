@@ -62,9 +62,7 @@ export async function runDecisionJob(
       const sixHoursMs = 6 * 60 * 60 * 1000;
       if (computedAge < sixHoursMs && brainIntel.action_confidence >= 0.6) {
         // Brain has a fresh, confident recommendation — use it
-        console.log(
-          `[decision-job] Using brain intelligence for lead ${leadId}: ${brainIntel.next_best_action} (confidence: ${brainIntel.action_confidence})`
-        );
+        // Brain intelligence available — executing recommended action
         const { executeAutonomousAction } = await import("@/lib/intelligence/autonomous-executor");
         const actionResult = await executeAutonomousAction(brainIntel);
         if (actionResult.success) {
@@ -94,10 +92,7 @@ export async function runDecisionJob(
     }
   } catch (brainErr) {
     // Non-blocking — fall through to legacy decision
-    console.debug(
-      "[decision-job] Brain intelligence unavailable or stale:",
-      brainErr instanceof Error ? brainErr.message : String(brainErr)
-    );
+    // Brain intelligence unavailable — falling through to legacy decision path
   }
 
   const { data: settingsRow } = await db
