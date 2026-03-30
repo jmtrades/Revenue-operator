@@ -226,12 +226,12 @@ export async function GET(req: NextRequest) {
     key: "outlook_calendar",
     label: "Outlook Calendar",
     category: "Calendar",
-    status: outlookConnected ? "ready" : hasMsClientId ? "unconfigured" : "blocked",
+    status: outlookConnected ? "ready" : hasMsClientId ? "unconfigured" : "unconfigured",
     detail: outlookConnected ? "Connected via Microsoft 365"
-      : hasMsClientId ? "OAuth configured — not yet connected" : "Missing MICROSOFT_CLIENT_ID",
+      : hasMsClientId ? "OAuth configured — not yet connected" : "MICROSOFT_CLIENT_ID not set (coming soon — optional)",
     impact: "Outlook calendar sync and event management will not work",
     action: outlookConnected ? "Connected" : hasMsClientId ? "Connect Microsoft 365 in Integrations"
-      : "Set MICROSOFT_CLIENT_ID and MICROSOFT_CLIENT_SECRET in environment variables",
+      : "Set MICROSOFT_CLIENT_ID and MICROSOFT_CLIENT_SECRET when Outlook integration is desired",
     href: hasMsClientId ? "/app/settings/integrations" : undefined,
     dependency_type: outlookConnected ? "oauth" : hasMsClientId ? "user_config" : "env_var",
   });
