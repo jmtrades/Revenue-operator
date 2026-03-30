@@ -1995,7 +1995,10 @@
       "makeTestCall": {
         "title": "Make a test call",
         "description": "Call your number from any phone to test it"
-      }
+      },
+      "readyTitle": "Ihr KI-Umsatzoperator",
+      "readyDescription": "Richten Sie Ihren Arbeitsbereich ein, um Umsatzoperationen zu automatisieren — Anrufe, Nachfassaktionen und Termine werden von KI verwaltet.",
+      "startTrial": "Loslegen"
     },
     "stats": {
       "activeCalls": "Active Calls",
