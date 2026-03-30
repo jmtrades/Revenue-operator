@@ -185,7 +185,9 @@ export async function POST(request: NextRequest) {
     log("info", "api.campaigns.created", { campaignId: (data as Record<string, unknown>)?.id, name: body.name });
     return NextResponse.json({ campaign: data }, { status: 201 });
   } catch (err) {
-    log("error", "api.campaigns.create_failed", { error: err instanceof Error ? err.message : String(err) });
+    const msg = err instanceof Error ? err.message : String(err);
+    log("error", "api.campaigns.create_failed", { error: msg });
+    console.error("[campaigns] POST failed:", msg);
     return NextResponse.json({ error: "Failed to create campaign" }, { status: 500 });
   }
 }
