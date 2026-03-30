@@ -7421,8 +7421,8 @@
       "sent": "Message sent."
     },
     "empty": {
-      "title": "No conversations yet",
-      "body": "When your AI starts texting and messaging contacts, every conversation will appear here.",
+      "title": "Brain is listening",
+      "body": "Your autonomous brain handles messaging automatically. When it follows up with leads via SMS or email, conversations will appear here. No manual compose needed.",
       "action": "Review recent activity",
       "viewContacts": "View Contacts"
     },

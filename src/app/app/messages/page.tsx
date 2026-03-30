@@ -299,7 +299,12 @@ export default function AppMessagesPage() {
                       >
                         <div className="flex items-center gap-1 mb-1">
                           <span className="flex items-center gap-1 text-[10px] text-[var(--text-tertiary)]">
-                            {m.from === "user" ? active.name : <><Bot className="h-3 w-3" /> {t("agentLabel")}</>}
+                            {m.from === "user" ? active.name : (
+                              <>
+                                <Bot className="h-3 w-3 text-violet-400" />
+                                <span className="text-violet-400 font-medium">Autonomous</span>
+                              </>
+                            )}
                           </span>
                           <span className="text-[10px] text-[var(--text-secondary)]">{m.time}</span>
                         </div>
