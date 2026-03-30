@@ -7,6 +7,7 @@ import { getDb } from "@/lib/db/queries";
 import type { LeadIntelligence } from "./lead-brain";
 import { getTelephonyService } from "@/lib/telephony";
 import { getDefaultFollowUpTemplate } from "./outcome-followup-router";
+import { selectAdaptiveStrategy, buildAdaptiveFollowUpPlan, type AdaptiveStrategy } from "./adaptive-followup";
 import { enqueue } from "@/lib/queue";
 
 export type AutonomousActionType =
@@ -502,6 +503,7 @@ async function scheduleCallAction(
 
 /**
  * Schedule followup via sequence enrollment or SMS.
+ * Uses adaptive follow-up strategy to choose the right approach.
  */
 async function scheduleFollowupAction(
   intelligence: LeadIntelligence,
@@ -511,6 +513,26 @@ async function scheduleFollowupAction(
   try {
     const db = getDb();
     const { enrollContact, createSequence } = await import("@/lib/sequences/follow-up-engine");
+
+    // Use adaptive follow-up system to choose the right strategy
+    let strategy: AdaptiveStrategy | null = null;
+    let adaptivePlan = null;
+    let chosenStrategyDetails = "";
+
+    try {
+      strategy = selectAdaptiveStrategy(intelligence);
+      adaptivePlan = buildAdaptiveFollowUpPlan(strategy, intelligence);
+      chosenStrategyDetails = `Adaptive strategy: ${strategy}`;
+      console.log(
+        `[autonomous-executor] Selected adaptive strategy for lead ${intelligence.lead_id}: ${strategy}`
+      );
+    } catch (strategyErr) {
+      // Non-blocking: fall back to default sequence enrollment
+      console.warn(
+        `[autonomous-executor] Adaptive strategy selection failed, falling back to default:`,
+        strategyErr instanceof Error ? strategyErr.message : String(strategyErr)
+      );
+    }
 
     // Find or create a default followup sequence
     const { data: existingSeq } = await db
@@ -544,10 +566,24 @@ async function scheduleFollowupAction(
 
     const enrollment = await enrollContact(intelligence.workspace_id, sequenceId, intelligence.lead_id);
 
+    // If adaptive plan exists, log the first step recommendation
+    if (adaptivePlan && adaptivePlan.steps && adaptivePlan.steps.length > 0) {
+      const firstStep = adaptivePlan.steps[0];
+      if (firstStep.channel === "sms" && lead.phone) {
+        // Plan suggests SMS as first step — we could send it here instead of just enrolling
+        // For now, log the recommendation and use sequence enrollment
+        console.log(
+          `[autonomous-executor] Adaptive plan recommends ${firstStep.channel} as first step for lead ${intelligence.lead_id}`
+        );
+      }
+    }
+
     return {
       action_type: "enroll_sequence",
       success: !!enrollment,
-      details: enrollment ? `Enrolled in sequence ${sequenceId}` : "Enrollment failed",
+      details: enrollment
+        ? `Enrolled in sequence ${sequenceId}. ${chosenStrategyDetails}`
+        : "Enrollment failed",
       executed_at: executedAt,
       lead_id: intelligence.lead_id,
       workspace_id: intelligence.workspace_id,

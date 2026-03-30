@@ -53,6 +53,53 @@ export async function runDecisionJob(
     return;
   }
 
+  // Brain-first: use autonomous intelligence if available and fresh
+  try {
+    const { getLeadIntelligence } = await import("@/lib/intelligence/lead-brain");
+    const brainIntel = await getLeadIntelligence(workspaceId, leadId);
+    if (brainIntel) {
+      const computedAge = Date.now() - new Date(brainIntel.computed_at).getTime();
+      const sixHoursMs = 6 * 60 * 60 * 1000;
+      if (computedAge < sixHoursMs && brainIntel.action_confidence >= 0.6) {
+        // Brain has a fresh, confident recommendation — use it
+        console.log(
+          `[decision-job] Using brain intelligence for lead ${leadId}: ${brainIntel.next_best_action} (confidence: ${brainIntel.action_confidence})`
+        );
+        const { executeAutonomousAction } = await import("@/lib/intelligence/autonomous-executor");
+        const actionResult = await executeAutonomousAction(brainIntel);
+        if (actionResult.success) {
+          // Log the brain-driven decision
+          try {
+            await db.from("action_logs").insert({
+              workspace_id: workspaceId,
+              entity_type: "lead",
+              entity_id: leadId,
+              action: "brain_decision_executed",
+              actor: "brain",
+              role: "autonomous_agent",
+              payload: {
+                brain_action: brainIntel.next_best_action,
+                confidence: brainIntel.action_confidence,
+                executor_result: actionResult.action_type,
+                reason: actionResult.reason,
+              },
+            });
+          } catch {
+            // Non-blocking
+          }
+          return;
+        }
+        // If brain action failed, fall through to legacy path
+      }
+    }
+  } catch (brainErr) {
+    // Non-blocking — fall through to legacy decision
+    console.debug(
+      "[decision-job] Brain intelligence unavailable or stale:",
+      brainErr instanceof Error ? brainErr.message : String(brainErr)
+    );
+  }
+
   const { data: settingsRow } = await db
     .from("settings")
     .select("*")

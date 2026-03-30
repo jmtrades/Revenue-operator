@@ -44,10 +44,12 @@ export async function triggerBrainAfterSignal(params: TriggerBrainParams): Promi
       console.warn("[brain-trigger] persistLeadIntelligence failed");
     }
 
-    // 3. If immediate action + high confidence, execute
+    // 3. Execute if immediate action with 50% confidence, or scheduled action with 70% confidence (no opt-out)
     if (
-      intelligence.action_timing === "immediate" &&
-      intelligence.action_confidence >= 0.5
+      (intelligence.action_timing === "immediate" && intelligence.action_confidence >= 0.5) ||
+      (intelligence.action_timing === "scheduled" &&
+        intelligence.action_confidence >= 0.7 &&
+        !intelligence.risk_flags.includes("opt_out_signal"))
     ) {
       const result = await executeAutonomousAction(intelligence);
       await logAutonomousAction(result);

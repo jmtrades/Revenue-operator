@@ -22,6 +22,7 @@ import { cn } from "@/lib/cn";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 import CallTranscriptViewer from "@/components/calls/CallTranscriptViewer";
 import CallIntelligenceSummary from "@/components/calls/CallIntelligenceSummary";
+import { LeadBrainPanel } from "@/components/intelligence/LeadBrainPanel";
 
 const PLAYBACK_SPEEDS = [1, 1.25, 1.5, 2] as const;
 
@@ -457,6 +458,11 @@ export default function AppCallDetailPage() {
             </section>
           )}
         </div>
+
+        {/* Brain Intelligence for this call's lead */}
+        {(call.lead_id || call.matched_lead_id || call.matched_lead?.id) && (
+          <LeadBrainPanel leadId={(call.lead_id || call.matched_lead_id || call.matched_lead?.id)!} />
+        )}
 
         <div className="h-[500px]">
           <CallTranscriptViewer
