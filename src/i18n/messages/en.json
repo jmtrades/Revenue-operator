@@ -3593,6 +3593,8 @@
     "transferNumberPlaceholder": "Your phone number",
     "saveChanges": "Save changes",
     "savingChanges": "Saving…",
+    "businessHoursTo": "to",
+    "businessHoursCopyToWeekdays": "Copy to all weekdays",
     "businessHoursNote": "Operating hours are set to your workspace timezone. After hours, calls follow your configured policy.",
     "emergencyKeywordsPlaceholder": "e.g., critical issue, account emergency, payment problem",
     "backToSettings": "← Settings",
