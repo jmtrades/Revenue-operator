@@ -3,7 +3,6 @@
 import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
-import { motion } from "framer-motion";
 
 export function TestimonialsGridSection() {
   const t = useTranslations("homepage.testimonialsGrid");
@@ -82,30 +81,12 @@ export function TestimonialsGridSection() {
           </h2>
         </AnimateOnScroll>
 
-        <motion.div
+        <div
           className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
-          variants={{
-            visible: { transition: { staggerChildren: 0.1 } },
-            hidden: {},
-          }}
         >
           {testimonials.map((testimonial) => (
-            <motion.div
+            <div
               key={testimonial.id}
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: {
-                  opacity: 1,
-                  y: 0,
-                  transition: {
-                    duration: 0.6,
-                    ease: [0.23, 1, 0.32, 1],
-                  },
-                },
-              }}
               className="rounded-xl p-6 md:p-8 flex flex-col"
               style={{
                 background: "var(--bg-surface)",
@@ -161,9 +142,9 @@ export function TestimonialsGridSection() {
                   </p>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </Container>
     </section>
   );
