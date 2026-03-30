@@ -527,14 +527,14 @@ export default function CampaignsPage() {
         <div className="mb-6 grid grid-cols-2 md:grid-cols-5 gap-4 drop-shadow-sm">
           <StatCard label={t("statTotal")} value={campaigns.length} color="blue" />
           <StatCard label={t("statActive")} value={campaigns.filter((c) => c.status === "active").length} color="emerald" />
-          <StatCard label={t("statContacted")} value={campaigns.reduce((sum, c) => sum + c.called, 0)} color="cyan" />
-          <StatCard label={t("statConverted")} value={campaigns.reduce((sum, c) => sum + c.appointments_booked, 0)} color="amber" />
+          <StatCard label={t("statContacted")} value={campaigns.reduce((sum, c) => sum + (c.called ?? 0), 0)} color="cyan" />
+          <StatCard label={t("statConverted")} value={campaigns.reduce((sum, c) => sum + (c.appointments_booked ?? 0), 0)} color="amber" />
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-4">
             <p className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide">{t("overallConversion", { defaultValue: "Overall conversion" })}</p>
             <p className="mt-1 text-sm font-semibold text-[var(--text-primary)]">
               {(() => {
-                const totalAnswered = campaigns.reduce((s, c) => s + c.answered, 0);
-                const totalBooked = campaigns.reduce((s, c) => s + c.appointments_booked, 0);
+                const totalAnswered = campaigns.reduce((s, c) => s + (c.answered ?? 0), 0);
+                const totalBooked = campaigns.reduce((s, c) => s + (c.appointments_booked ?? 0), 0);
                 const rate = totalAnswered > 0 ? Math.round((totalBooked / totalAnswered) * 100) : 0;
                 return `${rate}% · ${totalBooked} ${t("appointmentsBooked", { defaultValue: "booked" })}`;
               })()}
@@ -659,15 +659,15 @@ export default function CampaignsPage() {
                   </div>
                   </div>
                   <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <Metric label={t("metricContacts")} value={campaign.total_contacts} />
-                    <Metric label={t("metricContacted")} value={campaign.called} />
-                    <Metric label={t("metricReached")} value={campaign.answered} />
-                    <Metric label={t("metricConverted")} value={campaign.appointments_booked} />
+                    <Metric label={t("metricContacts")} value={campaign.total_contacts ?? 0} />
+                    <Metric label={t("metricContacted")} value={campaign.called ?? 0} />
+                    <Metric label={t("metricReached")} value={campaign.answered ?? 0} />
+                    <Metric label={t("metricConverted")} value={campaign.appointments_booked ?? 0} />
                   </div>
                   <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-[var(--text-secondary)]">
-                    <span>{t("remaining")}: {Math.max(0, campaign.total_contacts - campaign.called)}</span>
+                    <span>{t("remaining")}: {Math.max(0, (campaign.total_contacts ?? 0) - (campaign.called ?? 0))}</span>
                     <span>·</span>
-                    <span>{t("failed")}: {Math.max(0, campaign.called - campaign.answered)}</span>
+                    <span>{t("failed")}: {Math.max(0, (campaign.called ?? 0) - (campaign.answered ?? 0))}</span>
                     <span>·</span>
                     <span className={dailyUsed >= dailyLimit ? "text-[var(--accent-warning,#f59e0b)] font-medium" : ""}>{t("dailyUsage", { defaultValue: "Daily" })}: {dailyUsed}/{dailyLimit}</span>
                     {dailyUsed >= dailyLimit && (
