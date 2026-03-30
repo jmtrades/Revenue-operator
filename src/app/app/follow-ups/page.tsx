@@ -328,16 +328,35 @@ export default function AppFollowUpsPage() {
       <div className="mb-8 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
         <RecoveryProfileSelector />
       </div>
-      {/* Intelligence callout for follow-ups queue */}
-      {sequences.length > 0 && (
-        <div className="mb-6 rounded-xl border border-[var(--accent-primary)]/20 bg-[var(--accent-primary)]/[0.04] p-4 flex items-start gap-3">
-          <div className="flex-1 min-w-0">
-            <p className="text-sm text-[var(--accent-primary)] font-medium">
-              {sequences.filter(s => s.is_active).length} active recovery sequences running. Follow-ups are automatically executing based on call outcomes.
-            </p>
-          </div>
+      {/* Brain-managed follow-ups status */}
+      <div className="mb-6 rounded-xl border border-violet-500/15 bg-violet-500/[0.04] p-4 flex items-start gap-3">
+        <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center shrink-0 mt-0.5">
+          <Zap className="w-4 h-4 text-violet-400" />
         </div>
-      )}
+        <div className="flex-1 min-w-0">
+          {sequences.length > 0 ? (
+            <>
+              <div className="flex items-center gap-2 mb-1">
+                <p className="text-sm text-violet-400 font-semibold">Brain is managing follow-ups</p>
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                </span>
+              </div>
+              <p className="text-xs text-[var(--text-secondary)]">
+                {sequences.filter(s => s.is_active).length} active sequences running autonomously. The brain decides when, how, and through which channel to follow up with each lead based on their engagement and intent signals.
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-sm text-violet-400 font-semibold mb-1">Brain will auto-create follow-ups</p>
+              <p className="text-xs text-[var(--text-secondary)]">
+                When new leads arrive, the brain automatically creates and executes follow-up sequences based on each lead&apos;s intent, urgency, and preferred channel. You can also manually create sequences below.
+              </p>
+            </>
+          )}
+        </div>
+      </div>
       <div className="flex gap-2 mb-6 border-b border-[var(--border-default)] pb-2">
         <button
           type="button"

@@ -480,8 +480,15 @@ export default function AppointmentsPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
             <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("appointments.heading", { defaultValue: "Appointments" })}</h1>
-            <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed">
-              {t("appointments.subtitle", { defaultValue: "AI-managed meetings. Appointments are confirmed, reminded, and followed up automatically." })}
+            <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed flex items-center gap-2">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-violet-500/[0.08] text-violet-400 text-[11px] font-medium">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                </span>
+                Brain-managed
+              </span>
+              Reminders sent automatically at 24h and 1h before. No-shows trigger recovery sequences.
             </p>
             {fetchError && (
               <div className="mt-3 flex items-center gap-2">

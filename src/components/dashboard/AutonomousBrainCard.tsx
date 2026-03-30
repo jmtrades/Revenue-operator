@@ -99,10 +99,10 @@ export function AutonomousBrainCard() {
               <Brain className="w-5 h-5 text-violet-400/60" />
             </div>
             <p className="text-sm font-medium text-[var(--text-primary)] mb-1">
-              Your brain is ready
+              Brain is standing by
             </p>
             <p className="text-xs text-[var(--text-tertiary)] max-w-[280px] mx-auto">
-              Once leads arrive, it will automatically score intent, flag risks, schedule follow-ups, and execute actions 24/7.
+              When leads arrive, the brain will autonomously score them, decide the best action, execute follow-ups, and advance your pipeline — no manual work required.
             </p>
           </div>
         ) : (

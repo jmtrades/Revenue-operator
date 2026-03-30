@@ -479,15 +479,18 @@ export default function ColdLeadsPage() {
         </p>
       </div>
 
-      {/* Reactivation Engine Status Banner */}
-      <div className="mb-6 rounded-xl border border-[#10b981]/20 bg-[#10b981]/5 px-4 py-3 flex items-center gap-2">
-        <div className="w-2 h-2 rounded-full bg-[#10b981] animate-pulse"></div>
+      {/* Brain-managed reactivation banner */}
+      <div className="mb-6 rounded-xl border border-violet-500/15 bg-violet-500/[0.04] px-4 py-3 flex items-center gap-3">
+        <span className="relative flex h-2 w-2 shrink-0">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+        </span>
         <p className="text-sm text-[var(--text-primary)]">
-          <span className="font-medium">Reactivation engine active</span>
+          <span className="font-semibold text-violet-400">Brain reactivation active</span>
           {' · '}
-          <span>{stats.pending} leads in queue</span>
+          <span>{stats.pending} leads queued</span>
           {' · '}
-          <span className="text-[var(--text-secondary)]">Next batch processes automatically</span>
+          <span className="text-[var(--text-secondary)]">Automatically reaching out based on churn risk and last contact timing</span>
         </p>
       </div>
 
