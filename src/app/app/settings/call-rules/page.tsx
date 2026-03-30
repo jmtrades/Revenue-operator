@@ -148,7 +148,7 @@ export default function AppSettingsCallRulesPage() {
                   onClick={handleCopyToWeekdays}
                   className="text-xs font-medium text-[var(--accent-primary)] hover:opacity-80 transition-opacity"
                 >
-                  {tRules("businessHours.copyToWeekdays", { defaultValue: "Copy to all weekdays" })}
+                  {tRules("businessHoursCopyToWeekdays")}
                 </button>
               </div>
               <div className="space-y-3">
@@ -172,7 +172,7 @@ export default function AppSettingsCallRulesPage() {
                             onChange={(e) => handleBusinessHourChange(day, "open", e.target.value)}
                             className="w-24 px-2 py-1.5 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-xs focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
                           />
-                          <span className="text-xs text-[var(--text-tertiary)]">{tRules("businessHours.to", { defaultValue: "to" })}</span>
+                          <span className="text-xs text-[var(--text-tertiary)]">{tRules("businessHoursTo")}</span>
                           <input
                             type="time"
                             value={hours.close}
