@@ -293,6 +293,15 @@ export async function POST(req: NextRequest) {
                   })
                   .eq("id", leadId);
 
+                // Autonomous Brain: recompute intelligence after appointment booking
+                void (async () => {
+                  try {
+                    const { computeLeadIntelligence, persistLeadIntelligence } = await import("@/lib/intelligence/lead-brain");
+                    const intelligence = await computeLeadIntelligence(payload.workspace_id, leadId);
+                    await persistLeadIntelligence(intelligence);
+                  } catch { /* Non-blocking */ }
+                })();
+
                 // Create appointment record — with idempotency check to prevent duplicate bookings
                 try {
                   const { data: existingAppt } = await db
@@ -365,6 +374,15 @@ export async function POST(req: NextRequest) {
                 updatePayload.company = capturedData.company;
 
               await db.from("leads").update(updatePayload).eq("id", leadId);
+
+              // Autonomous Brain: recompute intelligence after voice lead capture
+              void (async () => {
+                try {
+                  const { computeLeadIntelligence, persistLeadIntelligence } = await import("@/lib/intelligence/lead-brain");
+                  const intelligence = await computeLeadIntelligence(payload.workspace_id, leadId);
+                  await persistLeadIntelligence(intelligence);
+                } catch { /* Non-blocking */ }
+              })();
             }
           }
         }

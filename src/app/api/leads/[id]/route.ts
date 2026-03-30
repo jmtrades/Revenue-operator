@@ -128,6 +128,15 @@ export async function PATCH(
       } catch {
         // Do not block lead update on sync enqueue
       }
+
+      // Autonomous Brain: recompute intelligence after lead update
+      void (async () => {
+        try {
+          const { computeLeadIntelligence, persistLeadIntelligence } = await import("@/lib/intelligence/lead-brain");
+          const intelligence = await computeLeadIntelligence(leadWorkspaceId, id);
+          await persistLeadIntelligence(intelligence);
+        } catch { /* Non-blocking */ }
+      })();
     }
     return NextResponse.json(updated);
   } catch (err) {
