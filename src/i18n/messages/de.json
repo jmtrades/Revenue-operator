@@ -3434,6 +3434,8 @@
       "error": "Anrufregeln konnten nicht gespeichert werden"
     },
     "savingChanges": "Saving…",
+    "businessHoursTo": "bis",
+    "businessHoursCopyToWeekdays": "Auf alle Wochentage kopieren",
     "businessHoursNote": "Business hours are set to your workspace timezone. Contact support to customize your schedule.",
     "emergencyKeywordsPlaceholder": "e.g. emergency, urgent, flooding, leak"
   },
