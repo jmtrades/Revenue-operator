@@ -65,7 +65,7 @@ export async function executeAutonomousAction(
       // Pause all automation for this lead
       await db
         .from("leads")
-        .update({ status: "PAUSED", updated_at: executedAt })
+        .update({ status: "CLOSED", updated_at: executedAt })
         .eq("id", intelligence.lead_id);
 
       return {

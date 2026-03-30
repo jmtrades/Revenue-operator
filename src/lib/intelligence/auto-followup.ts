@@ -59,7 +59,7 @@ export async function triggerAutoFollowUp(params: {
     if (!lead) {
       return { action_taken: "skipped", success: false, details: "Lead not found" };
     }
-    if (lead.status === "OPTED_OUT" || lead.status === "DO_NOT_CONTACT") {
+    if (lead.status === "CLOSED" || lead.status === "LOST") {
       return { action_taken: "skipped", success: true, details: "Lead opted out — no follow-up" };
     }
 
@@ -128,7 +128,7 @@ async function executeFollowUpRouting(
   if (routing.action === "do_not_contact") {
     await db
       .from("leads")
-      .update({ status: "DO_NOT_CONTACT", updated_at: new Date().toISOString() })
+      .update({ status: "CLOSED", updated_at: new Date().toISOString() })
       .eq("id", params.lead_id);
     // Cancel all active enrollments
     const { pauseOnLeadReply } = await import("@/lib/sequences/follow-up-engine");

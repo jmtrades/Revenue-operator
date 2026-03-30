@@ -238,7 +238,7 @@ export async function executeAdaptiveStep(
       return { success: false, details: "Lead not found" };
     }
 
-    if (lead.status === "DO_NOT_CONTACT" || lead.status === "OPTED_OUT") {
+    if (lead.status === "CLOSED" || lead.status === "LOST") {
       return { success: false, details: "Lead opted out — cannot execute" };
     }
 
