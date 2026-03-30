@@ -69,10 +69,14 @@ export async function GET(request: NextRequest) {
       failures++;
     }
 
-    // 3. Refresh stale intelligence (leads not computed in last 6 hours)
+    // 3. Refresh stale intelligence AND execute pending actions
+    let actionsExecuted = 0;
     try {
-      const { computeLeadIntelligence, persistLeadIntelligence } =
+      const { computeLeadIntelligence, persistLeadIntelligence, getLeadIntelligence } =
         await import("@/lib/intelligence/lead-brain");
+      const { executeAutonomousAction } = await import(
+        "@/lib/intelligence/autonomous-executor"
+      );
       const { getDb } = await import("@/lib/db/queries");
       const db = getDb();
 
@@ -85,7 +89,7 @@ export async function GET(request: NextRequest) {
         .from("leads")
         .select("id, workspace_id")
         .gte("updated_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
-        .not("state", "in", '("CLOSED","OPTED_OUT","DO_NOT_CONTACT")')
+        .not("status", "in", '("CLOSED","OPTED_OUT","DO_NOT_CONTACT","PAUSED")')
         .limit(30);
 
       for (const lead of (staleLeads ?? []) as Array<{
@@ -103,14 +107,38 @@ export async function GET(request: NextRequest) {
 
           const computedAt = (existing as { computed_at?: string } | null)
             ?.computed_at;
-          if (computedAt && computedAt > sixHoursAgo) continue;
 
-          const intelligence = await computeLeadIntelligence(
-            lead.workspace_id,
-            lead.id
-          );
-          await persistLeadIntelligence(intelligence);
-          intelligenceRefreshed++;
+          let intelligence;
+          if (computedAt && computedAt > sixHoursAgo) {
+            // Intelligence is fresh — use it directly
+            intelligence = await getLeadIntelligence(lead.workspace_id, lead.id);
+          } else {
+            // Recompute stale intelligence
+            intelligence = await computeLeadIntelligence(
+              lead.workspace_id,
+              lead.id
+            );
+            await persistLeadIntelligence(intelligence);
+            intelligenceRefreshed++;
+          }
+
+          // Execute action if brain has a confident recommendation
+          // This is the continuous execution loop — the brain doesn't just think, it acts
+          if (
+            intelligence &&
+            intelligence.action_confidence >= 0.3 &&
+            intelligence.next_best_action !== "no_action" &&
+            !intelligence.risk_flags.includes("opt_out_signal")
+          ) {
+            try {
+              const result = await executeAutonomousAction(intelligence);
+              if (result.success && result.action_type !== "no_action") {
+                actionsExecuted++;
+              }
+            } catch {
+              // Non-blocking per lead execution
+            }
+          }
         } catch {
           // Non-blocking per lead
         }
@@ -124,11 +152,12 @@ export async function GET(request: NextRequest) {
     }
 
     return {
-      run: reactivated + meetingActions + intelligenceRefreshed,
+      run: reactivated + meetingActions + intelligenceRefreshed + actionsExecuted,
       failures,
       reactivated,
       meetingActions,
       intelligenceRefreshed,
+      actionsExecuted,
     };
   });
 

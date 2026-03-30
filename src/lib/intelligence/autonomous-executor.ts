@@ -567,15 +567,54 @@ async function scheduleFollowupAction(
 
     const enrollment = await enrollContact(intelligence.workspace_id, sequenceId, intelligence.lead_id);
 
-    // If adaptive plan exists, log the first step recommendation
+    // Execute the first adaptive step immediately (don't wait for cron)
     if (adaptivePlan && adaptivePlan.steps && adaptivePlan.steps.length > 0) {
       const firstStep = adaptivePlan.steps[0];
-      if (firstStep.channel === "sms" && lead.phone) {
-        // Plan suggests SMS as first step — we could send it here instead of just enrolling
-        // For now, log the recommendation and use sequence enrollment
-        console.log(
-          `[autonomous-executor] Adaptive plan recommends ${firstStep.channel} as first step for lead ${intelligence.lead_id}`
-        );
+      try {
+        if (firstStep.channel === "sms" && lead.phone) {
+          const { data: phoneConfig } = await db
+            .from("phone_configs")
+            .select("proxy_number")
+            .eq("workspace_id", intelligence.workspace_id)
+            .eq("status", "active")
+            .maybeSingle();
+          const fromNumber = (phoneConfig as { proxy_number?: string } | null)?.proxy_number;
+          if (fromNumber) {
+            const svc = getTelephonyService();
+            const template = getDefaultFollowUpTemplate(firstStep.template_key ?? "schedule_followup", {
+              contact_name: lead.name,
+              business_name: "Our team",
+            });
+            if (template.sms) {
+              await svc.sendSms({ from: fromNumber, to: lead.phone, text: template.sms });
+              console.log(`[autonomous-executor] Immediate SMS sent to lead ${intelligence.lead_id} (adaptive first step)`);
+            }
+          }
+        } else if (firstStep.channel === "email" && lead.email) {
+          const resendKey = process.env.RESEND_API_KEY;
+          if (resendKey) {
+            const template = getDefaultFollowUpTemplate(firstStep.template_key ?? "schedule_followup", {
+              contact_name: lead.name,
+              business_name: "Our team",
+            });
+            if (template.email_body) {
+              await fetch("https://api.resend.com/emails", {
+                method: "POST",
+                headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  from: process.env.RESEND_FROM_EMAIL ?? "noreply@recall-touch.com",
+                  to: lead.email,
+                  subject: template.email_subject ?? "Following up",
+                  text: template.email_body,
+                }),
+              });
+              console.log(`[autonomous-executor] Immediate email sent to lead ${intelligence.lead_id} (adaptive first step)`);
+            }
+          }
+        }
+      } catch (stepErr) {
+        // Non-blocking: sequence enrollment is the safety net
+        console.warn(`[autonomous-executor] Immediate first step failed, sequence will pick up:`, stepErr instanceof Error ? stepErr.message : String(stepErr));
       }
     }
 

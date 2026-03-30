@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
       const { data: duePlans } = await db
         .from("lead_plans")
         .select("workspace_id, lead_id, next_action_type")
-        .in("next_action_type", ["retry_call", "scheduled_callback"])
+        .in("next_action_type", ["retry_call", "scheduled_callback", "schedule_call"])
         .lt("next_action_at", now)
         .eq("status", "pending")
         .limit(50);
