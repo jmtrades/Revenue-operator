@@ -358,7 +358,7 @@ export default function AppSettingsPhonePage() {
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
             <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wide mb-2">{tPhone("statusTotalNumbers")}</p>
             <p className="text-2xl font-bold text-[var(--text-primary)]">{workspaceNumbers.length}</p>
-            <p className="text-xs text-[var(--text-secondary)] mt-2">{workspaceNumbers.filter(n => n.status === "active").length} {tPhone("active")}</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-2">{workspaceNumbers.filter(n => n.status === "active").length} {tPhone("active")} (provisioned via telephony provider)</p>
           </div>
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
             <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wide mb-2">{tPhone("statusMonthlyCost")}</p>

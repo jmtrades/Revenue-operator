@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Plus, X, ChevronDown } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Plus, X, ChevronDown, AlertTriangle } from 'lucide-react';
 
 interface WorkflowStep {
   id: string;
@@ -81,6 +81,32 @@ export default function WorkflowEditor({
       },
     }
   );
+
+  // Check which channels are actually available (providers configured)
+  const [channelAvailability, setChannelAvailability] = useState<Record<string, boolean>>({
+    SMS: true,
+    Call: true,
+    Email: true,
+  });
+  const [channelCheckDone, setChannelCheckDone] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/admin/system-readiness?workspace_id=_", { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: { checks?: Array<{ key: string; status: string }> } | null) => {
+        if (!data?.checks) return;
+        const smsCheck = data.checks.find((c) => c.key === "sms");
+        const emailCheck = data.checks.find((c) => c.key === "email");
+        const voiceCheck = data.checks.find((c) => c.key === "voice_server");
+        setChannelAvailability({
+          SMS: smsCheck?.status === "ready",
+          Call: voiceCheck?.status === "ready",
+          Email: emailCheck?.status === "ready",
+        });
+      })
+      .catch(() => {})
+      .finally(() => setChannelCheckDone(true));
+  }, []);
 
   const handleNameChange = (name: string) => {
     setWorkflow({ ...workflow, name });
@@ -238,7 +264,7 @@ export default function WorkflowEditor({
                     >
                       {CHANNELS.map((channel) => (
                         <option key={channel.value} value={channel.value}>
-                          {channel.label}
+                          {channel.label}{channelCheckDone && !channelAvailability[channel.value] ? ' (not configured)' : ''}
                         </option>
                       ))}
                     </select>
@@ -247,6 +273,18 @@ export default function WorkflowEditor({
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[var(--text-tertiary)] pointer-events-none"
                     />
                   </div>
+                  {channelCheckDone && !channelAvailability[step.channel] && (
+                    <div className="mt-1.5 flex items-start gap-1.5 text-amber-400">
+                      <AlertTriangle size={12} className="flex-shrink-0 mt-0.5" />
+                      <p className="text-[11px]">
+                        {step.channel === 'Email'
+                          ? 'Email provider (Resend) is not configured. This step will fail to send. Set up email in Settings → Integrations.'
+                          : step.channel === 'SMS'
+                            ? 'SMS provider (Telnyx) is not configured. This step will fail to send. Set up a phone number in Settings → Phone.'
+                            : 'Voice server is not configured. This step will fail to execute. Configure your AI operator first.'}
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Delay */}
