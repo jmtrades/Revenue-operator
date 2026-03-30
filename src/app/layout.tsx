@@ -50,7 +50,7 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.revenueoperator.ai"),
+  metadataBase: new URL("https://www.recall-touch.com"),
   title: {
     template: "%s — Revenue Operator",
     default: "Revenue Operator — AI Revenue Operations Platform",
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://www.revenueoperator.ai",
+    url: "https://www.recall-touch.com",
     siteName: "Revenue Operator",
     title: "Revenue Operator — AI Revenue Operations Platform",
     description:
@@ -75,7 +75,7 @@ export const metadata: Metadata = {
       "Autonomous revenue execution system that automates inbound calls, outbound campaigns, lead qualification, appointment booking, follow-ups, and revenue recovery. Any business. Any industry. Try free.",
     creator: "@revenueoperator",
   },
-  alternates: { canonical: "https://www.revenueoperator.ai" },
+  alternates: { canonical: "https://www.recall-touch.com" },
   robots: {
     index: true,
     follow: true,
@@ -83,7 +83,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
 };
 
-const BASE_URL = "https://www.revenueoperator.ai";
+const BASE_URL = "https://www.recall-touch.com";
 
 const organizationJsonLd = {
   "@context": "https://schema.org",
