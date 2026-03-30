@@ -193,8 +193,7 @@ export async function scoreLeadFull(
     // Persist score
     try {
       await db.from("leads").update({
-        lead_score: score,
-        lead_grade: grade,
+        qualification_score: score,
         scored_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       }).eq("id", leadId);
@@ -270,10 +269,8 @@ export async function scoreLeadPostCall(
   // Quick persist
   const db = getDb();
   try {
-    const grade = score >= 80 ? "A" : score >= 60 ? "B" : score >= 40 ? "C" : score >= 20 ? "D" : "F";
     await db.from("leads").update({
-      lead_score: score,
-      lead_grade: grade,
+      qualification_score: score,
       scored_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     }).eq("id", leadId).eq("workspace_id", workspaceId);
@@ -298,7 +295,7 @@ export async function autoScoreRecentLeads(): Promise<number> {
     const { data: unscored } = await db
       .from("leads")
       .select("id, workspace_id")
-      .is("lead_score", null)
+      .is("qualification_score", null)
       .gte("updated_at", sevenDaysAgo)
       .limit(100);
 

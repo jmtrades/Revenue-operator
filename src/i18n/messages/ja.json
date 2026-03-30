@@ -11058,8 +11058,8 @@
     "actionNeeded": "Action needed"
   },
   "voices": {
-    "pageTitle": "ボイスライブラリ",
-    "pageSubtitle": "ワークスペースのAIボイスを設定・管理します。",
+    "pageTitle": "Voice Configuration",
+    "pageSubtitle": "Configure and manage voice settings",
     "previewText": "I'm an AI assistant. How can I help you today?",
     "cloneErrorFormat": "Invalid audio format. Please use MP3, WAV, or M4A",
     "cloneErrorSize": "Audio file too large. Maximum size is 25MB",
@@ -11068,8 +11068,6 @@
     "genderMale": "Male",
     "genderFemale": "Female",
     "genderNeutral": "Neutral",
-    "pageTitle": "Voice Configuration",
-    "pageSubtitle": "Configure and manage voice settings",
     "selectWorkspace": "Select Workspace",
     "selectWorkspaceDesc": "Choose a workspace to configure",
     "activeConfig": "Active Configuration",
@@ -11269,5 +11267,65 @@
   "sequencePaused": "Sequence paused",
   "sequenceResumed": "Sequence resumed",
   "transcript": "Transcript",
-  "whatsappComingSoon": "Send and receive WhatsApp messages through your AI agent. Connect your WhatsApp Business account to get started."
+  "whatsappComingSoon": "Send and receive WhatsApp messages through your AI agent. Connect your WhatsApp Business account to get started.",
+  "configuration": {
+    "subtitle": "Configure AI phone operators.",
+    "subtitleShort": "AI phone operators.",
+    "testCallDesc": "Use the Test tab on Operators to place a real voice call with your configured operator."
+  },
+  "cookies": {
+    "message": "This site uses cookies to improve your experience.",
+    "messageSuffix": "Learn more in our",
+    "privacyLink": "Privacy Policy",
+    "accept": "Accept",
+    "decline": "Decline"
+  },
+  "deployment": {
+    "newAgent": "Create a new operator",
+    "createAgentFirst": "Create an operator first in the Operators section, then try again."
+  },
+  "events": {
+    "agent": "Operator created",
+    "agentTested": "Operator tested",
+    "agentLaunched": "Operator launched"
+  },
+  "hints": {
+    "setupAgent": "View your operators →",
+    "cta": "Try our operator →",
+    "createFirstAgent": "Create your first operator →",
+    "noAgentsYet": "No operators yet"
+  },
+  "navigation": {
+    "agents": "Operators"
+  },
+  "settingsLabels": {
+    "agentLabel": "Operator:",
+    "agent": "Operator"
+  },
+  "settingsPages": {
+    "agentPageTitle": "Operator Settings — Revenue Operator"
+  },
+  "setupChecklist": {
+    "agentsAppearHere": "Operators appear here."
+  },
+  "shortcuts": {
+    "shortcutAgents": "Go to Operators"
+  },
+  "summary": {
+    "booked": "Your operators booked **{appointments} appointment{appointments != 1 ? 's' : ''}**, converting **{conversionRate}%** of qualified leads.",
+    "otherAgents": "Other Operators",
+    "identityDescription": "What does this operator do?",
+    "youllGetNumber": "You'll get a number for your operator to answer. You can forward your existing number or use this as your main business line."
+  },
+  "templates": {
+    "greetingPlaceholder": "Thanks for calling {business}! This is {operator}. How can I help you today?"
+  },
+  "voiceSettings": {
+    "unknownAgent": "Unknown Operator",
+    "applied": "Voice applied to operator",
+    "applyFailed": "Failed to apply voice to operator",
+    "noAgent": "Operator not found",
+    "backToAgents": "Back to Operators",
+    "applyToAgent": "Apply to Operator"
+  }
 }

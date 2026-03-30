@@ -54,7 +54,7 @@ interface LeadRecord {
   email: string | null;
   phone: string | null;
   source: string | null;
-  lead_score?: number;
+  qualification_score?: number;
   stage?: string;
 }
 
@@ -78,7 +78,7 @@ async function getLeadProfile(
   const db = getDb();
   const { data } = await db
     .from("leads")
-    .select("id, name, company, email, phone, source, lead_score, stage")
+    .select("id, name, company, email, phone, source, qualification_score, stage")
     .eq("id", leadId)
     .eq("workspace_id", workspaceId)
     .maybeSingle();
