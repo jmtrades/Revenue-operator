@@ -34,6 +34,7 @@ const CORE_STEPS = [
   "/api/cron/calendar-ended",
   "/api/cron/reconcile-reality",
   "/api/cron/process-reactivation",
+  "/api/cron/autonomous-brain",
 ];
 
 export async function GET(request: NextRequest) {

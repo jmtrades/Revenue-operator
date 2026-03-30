@@ -20,10 +20,21 @@ export async function GET(request: NextRequest) {
   try {
     const scheduled = await scheduleReactivationAttempts();
 
+    // Also run smart reactivation for intelligence-driven decisions
+    let smartReactivated = 0;
+    try {
+      const { runSmartReactivationSweep } = await import("@/lib/intelligence/smart-reactivation");
+      const result = await runSmartReactivationSweep();
+      smartReactivated = result.reactivated;
+    } catch {
+      // Non-blocking — smart reactivation is additive
+    }
+
     return NextResponse.json({
       ok: true,
-      message: `Reactivation scheduling completed. Scheduled ${scheduled} leads for reactivation attempts.`,
+      message: `Reactivation scheduling completed. Scheduled ${scheduled} leads (legacy) + ${smartReactivated} leads (smart).`,
       scheduled,
+      smart_reactivated: smartReactivated,
       duration_ms: Date.now() - start,
     });
   } catch (error) {

@@ -278,6 +278,15 @@ export async function processCanonicalSignal(signalId: string): Promise<{ ok: bo
   await setSignalProcessed(signalId);
   const { assertPostSignalInvariants } = await import("@/lib/integrity/post-signal-invariants");
   await assertPostSignalInvariants(signalId);
+
+  // Trigger Autonomous Revenue Brain — non-blocking
+  try {
+    const { triggerBrainAfterSignal } = await import("@/lib/intelligence/brain-trigger");
+    triggerBrainAfterSignal({ signalId, leadId: lead_id, workspaceId: workspace_id, signalType: signal_type }).catch(() => {});
+  } catch {
+    // Non-blocking: brain trigger failure does not affect signal processing
+  }
+
   return { ok: true };
   } finally {
     await releaseLeadLock(lead_id);
