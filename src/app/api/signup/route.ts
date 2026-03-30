@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
     }
 
     const resendKey = process.env.RESEND_API_KEY;
-    const from = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@revenueoperator.ai>";
+    const from = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@recall-touch.com>";
     if (resendKey && email) {
       const baseUrl = getBaseUrl(req.nextUrl?.origin ?? null);
       const welcomeHtml = `

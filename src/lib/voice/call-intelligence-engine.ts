@@ -328,7 +328,7 @@ function generateStrategyHints(
       hints.push("Use empathy first. Validate their concern, then address it.");
       break;
     case "closing":
-      hints.push("They're ready! Be direct and helpful. Guide them to revenueoperator.ai/signup.");
+      hints.push("They're ready! Be direct and helpful. Guide them to recall-touch.com/signup.");
       hints.push("Make it feel easy and low-risk: 'takes thirty seconds, no credit card.'");
       break;
   }

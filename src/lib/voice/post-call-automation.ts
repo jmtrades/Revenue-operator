@@ -827,7 +827,7 @@ async function analyzeCallQuality(
       .join("\n");
 
     // Call the coaching endpoint internally
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.revenueoperator.ai";
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
     const resp = await fetch(`${appUrl}/api/call-intelligence/coaching`, {
       method: "POST",
       headers: {
@@ -1006,7 +1006,7 @@ function buildDefaultFollowUpEmail(
   summary: CallSummary,
   nextAction?: string,
 ): string {
-  const signupLink = "https://www.revenueoperator.ai/signup";
+  const signupLink = "https://www.recall-touch.com/signup";
 
   let ctaBlock = "";
   switch (nextAction) {
@@ -1039,8 +1039,8 @@ function buildDefaultFollowUpEmail(
   <p style="margin-top:24px;">No pressure at all — just wanted to make sure you have everything you need.</p>
   <p>Talk soon,<br><strong>Sarah</strong><br><span style="color:#6b7280;font-size:14px;">AI Sales Agent, Revenue Operator</span></p>
   <hr style="border:none;border-top:1px solid #e5e7eb;margin:32px 0 16px;">
-  <p style="font-size:12px;color:#9ca3af;">This email was sent by Revenue Operator AI. <a href="https://www.revenueoperator.ai" style="color:#2563EB;">revenueoperator.ai</a></p>
-  <p style="font-size:11px;color:#9ca3af;">Revenue Operator Inc. | <a href="https://www.revenueoperator.ai/unsubscribe" style="color:#9ca3af;">Unsubscribe</a> | <a href="https://www.revenueoperator.ai/privacy" style="color:#9ca3af;">Privacy Policy</a></p>
+  <p style="font-size:12px;color:#9ca3af;">This email was sent by Revenue Operator AI. <a href="https://www.recall-touch.com" style="color:#2563EB;">recall-touch.com</a></p>
+  <p style="font-size:11px;color:#9ca3af;">Revenue Operator Inc. | <a href="https://www.recall-touch.com/unsubscribe" style="color:#9ca3af;">Unsubscribe</a> | <a href="https://www.recall-touch.com/privacy" style="color:#9ca3af;">Privacy Policy</a></p>
 </body>
 </html>`;
 }
@@ -1053,7 +1053,7 @@ function buildReassuranceEmail(
   name: string,
   summary: CallSummary,
 ): string {
-  const signupLink = "https://www.revenueoperator.ai/signup";
+  const signupLink = "https://www.recall-touch.com/signup";
   const objections = summary.objections_raised?.length
     ? summary.objections_raised.map((o) => `<li style="margin-bottom:8px;">${o}</li>`).join("")
     : "";
@@ -1070,8 +1070,8 @@ function buildReassuranceEmail(
   <p style="margin-top:24px;">And if you have any other questions, just reply to this email or call back anytime. I'm always here.</p>
   <p>Best,<br><strong>Sarah</strong><br><span style="color:#6b7280;font-size:14px;">AI Sales Agent, Revenue Operator</span></p>
   <hr style="border:none;border-top:1px solid #e5e7eb;margin:32px 0 16px;">
-  <p style="font-size:12px;color:#9ca3af;">This email was sent by Revenue Operator AI. <a href="https://www.revenueoperator.ai" style="color:#2563EB;">revenueoperator.ai</a></p>
-  <p style="font-size:11px;color:#9ca3af;">Revenue Operator Inc. | <a href="https://www.revenueoperator.ai/unsubscribe" style="color:#9ca3af;">Unsubscribe</a> | <a href="https://www.revenueoperator.ai/privacy" style="color:#9ca3af;">Privacy Policy</a></p>
+  <p style="font-size:12px;color:#9ca3af;">This email was sent by Revenue Operator AI. <a href="https://www.recall-touch.com" style="color:#2563EB;">recall-touch.com</a></p>
+  <p style="font-size:11px;color:#9ca3af;">Revenue Operator Inc. | <a href="https://www.recall-touch.com/unsubscribe" style="color:#9ca3af;">Unsubscribe</a> | <a href="https://www.recall-touch.com/privacy" style="color:#9ca3af;">Privacy Policy</a></p>
 </body>
 </html>`;
 }

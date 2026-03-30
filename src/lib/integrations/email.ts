@@ -95,7 +95,7 @@ async function getSendApiKey(workspaceId: string): Promise<{ key: string; from: 
     if (key && r.provider === "resend") return { key, from: r.from_email, fromName: r.from_name?.trim() || "Revenue Operator" };
   }
   const envKey = process.env.RESEND_API_KEY?.trim();
-  const from = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@revenueoperator.ai>";
+  const from = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@recall-touch.com>";
   const match = from.match(/^(.+?)\s*<[^>]+>$/);
   return envKey ? { key: envKey, from, fromName: match ? match[1].trim() : "Revenue Operator" } : null;
 }

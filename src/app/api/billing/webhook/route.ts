@@ -221,7 +221,7 @@ async function handleStripeWebhookEvent(
                       newBalance,
                     });
 
-                    const emailFrom = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@revenueoperator.ai>";
+                    const emailFrom = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@recall-touch.com>";
                     await fetch("https://api.resend.com/emails", {
                       method: "POST",
                       headers: {

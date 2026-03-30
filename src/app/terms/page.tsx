@@ -121,7 +121,7 @@ export default async function TermsPage() {
             <section className="mb-10">
               <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>Contact</h2>
               <p className="text-base" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                For questions about these terms: <a href="mailto:legal@revenueoperator.ai" className="underline" style={{ color: "var(--accent-primary)" }}>legal@revenueoperator.ai</a>. We will respond within a reasonable time.
+                For questions about these terms: <a href="mailto:legal@recall-touch.com" className="underline" style={{ color: "var(--accent-primary)" }}>legal@recall-touch.com</a>. We will respond within a reasonable time.
               </p>
             </section>
 

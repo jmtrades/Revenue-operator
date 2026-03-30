@@ -232,7 +232,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Fallback: TwiML <Say> + <Gather> turn-taking
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.revenueoperator.ai";
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
     const demoTurnUrl = `${appUrl}/api/webhooks/twilio/voice/demo-turn`;
 
     // Try personalized returning-caller greeting, fall back to random

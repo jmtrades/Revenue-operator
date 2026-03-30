@@ -71,7 +71,7 @@ If you need to pause instead, open billing in the app today.`;
             Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
           },
           body: JSON.stringify({
-            from: process.env.EMAIL_FROM || "Revenue Operator <noreply@revenueoperator.ai>",
+            from: process.env.EMAIL_FROM || "Revenue Operator <noreply@recall-touch.com>",
             to: ownerEmail,
             subject,
             text: body,

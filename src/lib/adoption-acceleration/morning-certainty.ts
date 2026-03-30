@@ -44,7 +44,7 @@ export async function sendDailyCertaintyStatus(workspaceId: string): Promise<{ s
         Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: process.env.EMAIL_FROM ?? "Revenue Operator <noreply@revenueoperator.ai>",
+        from: process.env.EMAIL_FROM ?? "Revenue Operator <noreply@recall-touch.com>",
         to: email,
         subject: "Daily status",
         text: message,

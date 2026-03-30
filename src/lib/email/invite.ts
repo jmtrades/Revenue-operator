@@ -2,8 +2,8 @@
  * Team invite email via Resend.
  */
 
-const FROM = process.env.EMAIL_FROM ?? "Revenue Operator <team@revenueoperator.ai>";
-const _APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.revenueoperator.ai";
+const FROM = process.env.EMAIL_FROM ?? "Revenue Operator <team@recall-touch.com>";
+const _APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
 
 function escapeHtml(value: string): string {
   return value

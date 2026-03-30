@@ -5,18 +5,18 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { CheckCircle2, XCircle } from "lucide-react";
 
-const BASE = "https://www.revenueoperator.ai";
+const BASE = "https://www.recall-touch.com";
 
 export const metadata: Metadata = {
   title: "Revenue Operator vs Hiring a Receptionist — Revenue Operator",
   description:
     "Hiring a receptionist costs $35K–50K/year, 8 hours/day, and vacation days. Revenue Operator costs $1,164–$11,964/year, works 24/7/365, and never misses a call.",
-  alternates: { canonical: `${BASE}/compare/hiring-receptionist` },
+  alternates: { canonical: "https://www.recall-touch.com/compare/hiring-receptionist" },
   openGraph: {
     title: "Revenue Operator vs Hiring a Receptionist — Revenue Operator",
     description:
       "A full-time receptionist costs $35K–50K/year and works 8 hours. Revenue Operator costs $147–997/month and answers every call, every time.",
-    url: `${BASE}/compare/hiring-receptionist`,
+    url: "https://www.recall-touch.com/compare/hiring-receptionist",
     siteName: "Revenue Operator",
     type: "website",
   },

@@ -4,13 +4,13 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
-const BASE = "https://www.revenueoperator.ai";
+const BASE = "https://www.recall-touch.com";
 
 export const metadata = {
   title: "Recruiting AI Revenue Operations Platform — Revenue Operator",
   description:
     "Maximize candidate pipeline velocity and placement conversion with complete AI-powered workflows: call answering, candidate screening, interview scheduling, no-show recovery, and pipeline follow-up automation.",
-  alternates: { canonical: "https://www.revenueoperator.ai/industries/recruiting" },
+  alternates: { canonical: "https://www.recall-touch.com/industries/recruiting" },
 };
 
 export default function RecruitingIndustryPage() {

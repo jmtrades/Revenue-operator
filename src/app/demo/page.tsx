@@ -20,7 +20,7 @@ export default async function DemoPage() {
     cookieStore.has("revenue_session") ||
     cookieStore.getAll().some((c) => c.name.startsWith("sb-"));
 
-  const BASE = "https://www.revenueoperator.ai";
+  const BASE = "https://www.recall-touch.com";
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",

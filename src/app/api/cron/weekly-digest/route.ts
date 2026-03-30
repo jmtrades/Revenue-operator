@@ -168,12 +168,12 @@ export async function GET(req: NextRequest) {
     </table>
 
     <div style="text-align: center;">
-      <a href="https://revenueoperator.ai/app/analytics" class="cta">View Full Dashboard →</a>
+      <a href="https://recall-touch.com/app/analytics" class="cta">View Full Dashboard →</a>
     </div>
 
     <div class="footer">
       Revenue Operator — The AI Revenue Execution System<br>
-      <a href="https://revenueoperator.ai/app/settings/notifications" style="color: #71717a;">Manage email preferences</a>
+      <a href="https://recall-touch.com/app/settings/notifications" style="color: #71717a;">Manage email preferences</a>
     </div>
   </div>
 </body>

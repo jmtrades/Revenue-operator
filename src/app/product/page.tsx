@@ -6,7 +6,7 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 
-const BASE = "https://www.revenueoperator.ai";
+const BASE = "https://www.recall-touch.com";
 
 const SECTION_IDS = [
   "answers-every-call",

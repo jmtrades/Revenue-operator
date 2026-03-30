@@ -131,7 +131,7 @@ function buildRecoveryEmail(
   progressPercent: number,
   attempt: number,
 ): string {
-  const signupLink = "https://www.revenueoperator.ai/activate";
+  const signupLink = "https://www.recall-touch.com/activate";
 
   const progressBar = progressPercent > 0
     ? `<div style="background:#e5e7eb;border-radius:8px;overflow:hidden;margin:16px 0;">
@@ -162,8 +162,8 @@ function buildRecoveryEmail(
   <p style="margin-top:20px;">Need help? Just reply to this email — a real human will get back to you within the hour.</p>
   <p>Cheers,<br><strong>The Revenue Operator Team</strong></p>
   <hr style="border:none;border-top:1px solid #e5e7eb;margin:32px 0 16px;">
-  <p style="font-size:12px;color:#9ca3af;">Revenue Operator Inc. | <a href="https://www.revenueoperator.ai" style="color:#2563EB;">revenueoperator.ai</a></p>
-  <p style="font-size:11px;color:#9ca3af;"><a href="https://www.revenueoperator.ai/unsubscribe" style="color:#9ca3af;">Unsubscribe</a> | <a href="https://www.revenueoperator.ai/privacy" style="color:#9ca3af;">Privacy Policy</a></p>
+  <p style="font-size:12px;color:#9ca3af;">Revenue Operator Inc. | <a href="https://www.recall-touch.com" style="color:#2563EB;">recall-touch.com</a></p>
+  <p style="font-size:11px;color:#9ca3af;"><a href="https://www.recall-touch.com/unsubscribe" style="color:#9ca3af;">Unsubscribe</a> | <a href="https://www.recall-touch.com/privacy" style="color:#9ca3af;">Privacy Policy</a></p>
 </body>
 </html>`;
 }

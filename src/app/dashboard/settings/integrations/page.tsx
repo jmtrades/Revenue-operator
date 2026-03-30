@@ -94,7 +94,7 @@ const INTEGRATIONS: Integration[] = [
     color: "text-cyan-400",
     bg: "bg-cyan-500/10",
     status: "configured",
-    detail: "Sending from hello@revenueoperator.ai",
+    detail: "Sending from hello@recall-touch.com",
     actionLabel: "Test Email",
   },
 ];
@@ -127,7 +127,7 @@ function StatusDot({ status }: { status: ConnectionStatus }) {
 export default function IntegrationsPage() {
   const _t = useTranslations("dashboard");
   const { workspaceId } = useWorkspace();
-  const [webhookUrl] = useState("https://hooks.revenueoperator.ai/wh/ws_abc123");
+  const [webhookUrl] = useState("https://hooks.recall-touch.com/wh/ws_abc123");
   const [copied, setCopied] = useState(false);
 
   const handleCopyWebhook = () => {

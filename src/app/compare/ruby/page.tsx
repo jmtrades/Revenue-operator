@@ -5,18 +5,18 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { CheckCircle2, XCircle } from "lucide-react";
 
-const BASE = "https://www.revenueoperator.ai";
+const BASE = "https://www.recall-touch.com";
 
 export const metadata: Metadata = {
   title: "Revenue Operator vs Ruby Receptionists — Revenue Operator",
   description:
     "Ruby Receptionists vs Revenue Operator: compare per-minute human receptionist pricing, automation limits, outbound capabilities, and revenue attribution.",
-  alternates: { canonical: `${BASE}/compare/ruby` },
+  alternates: { canonical: "https://www.recall-touch.com/compare/ruby" },
   openGraph: {
     title: "Revenue Operator vs Ruby Receptionists — Revenue Operator",
     description:
       "Ruby Receptionists charges per minute with humans only. Revenue Operator is AI-powered 24/7 with automated follow-up, outbound campaigns, and revenue attribution.",
-    url: `${BASE}/compare/ruby`,
+    url: "https://www.recall-touch.com/compare/ruby",
     siteName: "Revenue Operator",
     type: "website",
   },

@@ -39,7 +39,7 @@ async function sendSettlementOwnerMessage(workspaceId: string, bodyText: string)
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
     body: JSON.stringify({
-      from: process.env.EMAIL_FROM ?? "Revenue Operator <noreply@revenueoperator.ai>",
+      from: process.env.EMAIL_FROM ?? "Revenue Operator <noreply@recall-touch.com>",
       to: email,
       subject: "Settlement",
       text: bodyText,

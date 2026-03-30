@@ -12,7 +12,7 @@ import "@/lib/runtime";
 import { assertCronAuthorized } from "@/lib/runtime";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const EMAIL_FROM = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@revenueoperator.ai>";
+const EMAIL_FROM = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@recall-touch.com>";
 const CONSECUTIVE_DAYS_REQUIRED = 14;
 
 export async function GET(req: NextRequest) {

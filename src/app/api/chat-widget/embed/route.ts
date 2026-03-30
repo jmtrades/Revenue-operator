@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const origin = process.env.NEXT_PUBLIC_APP_URL || "https://app.revenueoperator.ai";
+  const origin = process.env.NEXT_PUBLIC_APP_URL || "https://app.recall-touch.com";
   const widgetUrl = `${origin}/chat-widget?workspace_id=${encodeURIComponent(workspaceId)}`;
   const scriptUrl = `${origin}/chat-widget.js`;
 

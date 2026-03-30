@@ -831,22 +831,20 @@ export default function AppSettingsIntegrationsPage() {
                 </div>
               )}
             </div>
-            <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5">
+            <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5 opacity-75">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="text-sm font-medium text-[var(--text-primary)]">{t("hub.outlookCalendarLabel")}</p>
                   <p className="text-xs text-[var(--text-secondary)] mt-1">{t("hub.calendarDesc")}</p>
                 </div>
-                <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-[var(--border-default)] text-[var(--text-secondary)] shrink-0">
-                  {t("status.disconnected")}
+                <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-[var(--border-default)] text-[var(--text-tertiary)] shrink-0">
+                  {t("outlookComingSoon", { defaultValue: "Coming soon" })}
                 </span>
               </div>
-              <a
-                href="/api/integrations/outlook-calendar/auth"
-                className="inline-flex items-center gap-1.5 mt-3 px-3 py-2 rounded-xl text-xs font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] hover:border-[var(--border-default)] transition-colors"
-              >
-                {t("connectOutlook", { defaultValue: "Connect Outlook" })}
-              </a>
+              <p className="text-[11px] text-[var(--text-tertiary)] mt-3 leading-relaxed">
+                Outlook Calendar integration requires Microsoft OAuth configuration by your workspace administrator.
+                Google Calendar is fully supported — connect above to unlock availability, booking, and sync.
+              </p>
             </div>
           </div>
         </section>
@@ -969,7 +967,7 @@ export default function AppSettingsIntegrationsPage() {
               {t("hub.otherCrmsZapier")}
             </p>
             <p className="text-xs text-[var(--text-secondary)] mt-2">
-              {t("hub.needHelp")} <a href="mailto:support@revenueoperator.ai" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline underline-offset-2">{t("hub.contactSupport")}</a>
+              {t("hub.needHelp")} <a href="mailto:support@recall-touch.com" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline underline-offset-2">{t("hub.contactSupport")}</a>
             </p>
           </div>
         </section>
@@ -1007,7 +1005,7 @@ export default function AppSettingsIntegrationsPage() {
       )}
 
       <p className="text-xs text-[var(--text-secondary)] mt-6">
-        {t("hub.needHelp")} <a href="mailto:support@revenueoperator.ai" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline underline-offset-2">support@revenueoperator.ai</a>
+        {t("hub.needHelp")} <a href="mailto:support@recall-touch.com" className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] underline underline-offset-2">support@recall-touch.com</a>
       </p>
       <p className="mt-4"><Link href="/app/settings" className="text-sm text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-[color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">{t("hub.backToSettings")}</Link></p>
     </div>

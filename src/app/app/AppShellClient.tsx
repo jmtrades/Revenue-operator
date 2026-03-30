@@ -659,7 +659,7 @@ export default function AppShellClient({
                         )}
                       </Link>
                       <a
-                        href="mailto:support@revenueoperator.ai"
+                        href="mailto:support@recall-touch.com"
                         className="w-full flex items-center gap-2 px-3 py-2 rounded-[var(--radius-btn)] text-[13px] font-medium text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-[background-color,border-color,color,transform] duration-150 focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/50 focus-visible:outline-none"
                       >
                         <MessageSquare className="w-4 h-4 shrink-0" strokeWidth={1.75} />

@@ -13,7 +13,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { sendInviteEmail } from "@/lib/email/invite";
 import { assertSameOrigin } from "@/lib/http/csrf";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.revenueoperator.ai";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
 const EXPIRES_DAYS = 7;
 
 export async function POST(req: NextRequest) {

@@ -4,15 +4,15 @@ export const metadata: Metadata = {
   title: "Blog — Revenue Operator",
   description:
     "Resources and insights on answering every call, follow-up speed, and turning calls into revenue.",
-  alternates: { canonical: "https://www.revenueoperator.ai/blog" },
+  alternates: { canonical: "https://www.recall-touch.com/blog" },
   openGraph: {
     title: "Blog — Revenue Operator",
     description:
       "Practical guides on AI phone agents, speed-to-lead, and AI phone agents for your business.",
-    url: "https://www.revenueoperator.ai/blog",
+    url: "https://www.recall-touch.com/blog",
     siteName: "Revenue Operator",
     type: "website",
-    images: [{ url: "https://www.revenueoperator.ai/opengraph-image", width: 1200, height: 630, alt: "Revenue Operator Blog" }],
+    images: [{ url: "https://www.recall-touch.com/opengraph-image", width: 1200, height: 630, alt: "Revenue Operator Blog" }],
     locale: "en_US",
   },
   twitter: {

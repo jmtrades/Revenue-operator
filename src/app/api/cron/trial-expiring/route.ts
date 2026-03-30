@@ -14,7 +14,7 @@ import { log } from "@/lib/logger";
 
 const CRON_SECRET = process.env.CRON_SECRET;
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const FROM = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@revenueoperator.ai>";
+const FROM = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@recall-touch.com>";
 
 export async function GET(req: NextRequest) {
   // Verify cron secret (Vercel Cron sends this)

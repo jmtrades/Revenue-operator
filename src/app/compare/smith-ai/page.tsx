@@ -5,18 +5,18 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { CheckCircle2, XCircle } from "lucide-react";
 
-const BASE = "https://www.revenueoperator.ai";
+const BASE = "https://www.recall-touch.com";
 
 export const metadata: Metadata = {
   title: "Revenue Operator vs Smith.ai — Revenue Operator",
   description:
     "Smith.ai vs Revenue Operator: compare pricing, follow-up capability, outbound campaigns, and revenue attribution to see which system recovers more revenue.",
-  alternates: { canonical: `${BASE}/compare/smith-ai` },
+  alternates: { canonical: "https://www.recall-touch.com/compare/smith-ai" },
   openGraph: {
     title: "Revenue Operator vs Smith.ai — Revenue Operator",
     description:
       "Compare Smith.ai’s per-call pricing with Revenue Operator’s flat monthly pricing, full follow-up engine, outbound campaigns, and revenue attribution.",
-    url: `${BASE}/compare/smith-ai`,
+    url: "https://www.recall-touch.com/compare/smith-ai",
     siteName: "Revenue Operator",
     type: "website",
   },

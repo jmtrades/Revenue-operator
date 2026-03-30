@@ -7,7 +7,7 @@ import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 import { ContactForm } from "@/components/ContactForm";
 
-const BASE = "https://www.revenueoperator.ai";
+const BASE = "https://www.recall-touch.com";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("contactPage");
@@ -48,7 +48,7 @@ export default async function ContactPage() {
               {t("subheading")}
             </p>
             <div className="mb-8 p-4 rounded-xl border" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
-              <p className="font-medium" style={{ color: "var(--text-primary)" }}>hello@revenueoperator.ai</p>
+              <p className="font-medium" style={{ color: "var(--text-primary)" }}>hello@recall-touch.com</p>
               <p className="text-sm mt-1" style={{ color: "var(--text-tertiary)" }}>{t("responseTime")}</p>
             </div>
 
@@ -60,11 +60,11 @@ export default async function ContactPage() {
                 <p className="text-sm mb-6 flex-1" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
                   {t("salesEnterpriseDesc")}
                 </p>
-                <a href="mailto:enterprise@revenueoperator.ai?subject=Enterprise%20inquiry" className="btn-marketing-primary w-full block text-center py-3 rounded-lg no-underline">
+                <a href="mailto:enterprise@recall-touch.com?subject=Enterprise%20inquiry" className="btn-marketing-primary w-full block text-center py-3 rounded-lg no-underline">
                   {t("bookACall")}
                 </a>
                 <p className="text-xs mt-4" style={{ color: "var(--text-tertiary)" }}>
-                  enterprise@revenueoperator.ai
+                  enterprise@recall-touch.com
                 </p>
               </div>
               <div className="card-marketing p-8 flex flex-col">
@@ -74,11 +74,11 @@ export default async function ContactPage() {
                 <p className="text-sm mb-6 flex-1" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
                   {t("supportDesc")}
                 </p>
-                <a href="mailto:support@revenueoperator.ai" className="btn-marketing-ghost w-full block text-center py-3 rounded-lg no-underline">
+                <a href="mailto:support@recall-touch.com" className="btn-marketing-ghost w-full block text-center py-3 rounded-lg no-underline">
                   {t("emailSupport")}
                 </a>
                 <p className="text-xs mt-4" style={{ color: "var(--text-tertiary)" }}>
-                  support@revenueoperator.ai
+                  support@recall-touch.com
                 </p>
               </div>
             </div>
@@ -89,7 +89,7 @@ export default async function ContactPage() {
               </h2>
               <ContactForm />
               <p className="text-sm mt-4" style={{ color: "var(--text-tertiary)" }}>
-                hello@revenueoperator.ai · <a href="mailto:hello@revenueoperator.ai?subject=Schedule%20a%20call" className="underline" style={{ color: "var(--accent-primary)" }}>{t("scheduleCall")}</a>
+                hello@recall-touch.com · <a href="mailto:hello@recall-touch.com?subject=Schedule%20a%20call" className="underline" style={{ color: "var(--accent-primary)" }}>{t("scheduleCall")}</a>
               </p>
             </div>
 

@@ -3,7 +3,7 @@ import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { PricingContent } from "@/components/PricingContent";
 
-const BASE = "https://www.revenueoperator.ai";
+const BASE = "https://www.recall-touch.com";
 
 // NOTE: Metadata is static and cannot use next-intl translations.
 // To support localized metadata, use generateMetadata() with getLocale() and getTranslations().

@@ -4,7 +4,7 @@ import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 
-const BASE = "https://www.revenueoperator.ai";
+const BASE = "https://www.recall-touch.com";
 
 export const metadata: Metadata = {
   title: "Voice Cloning Terms — Revenue Operator",

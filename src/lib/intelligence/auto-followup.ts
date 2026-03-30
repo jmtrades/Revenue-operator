@@ -143,7 +143,7 @@ async function executeFollowUpRouting(
               method: "POST",
               headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
               body: JSON.stringify({
-                from: process.env.RESEND_FROM_EMAIL ?? "noreply@revenueoperator.ai",
+                from: process.env.RESEND_FROM_EMAIL ?? "noreply@recall-touch.com",
                 to: ownerEmail,
                 subject: `[Action Required] ${routing.message_template_key.replace(/_/g, " ")} — ${lead.name ?? lead.phone ?? "Unknown"}`,
                 text: `A call requires your attention.\n\nCaller: ${lead.name ?? "Unknown"} (${lead.phone ?? "no phone"})\nOutcome: ${params.outcome}\nPriority: ${routing.priority}\n\nNotes: ${routing.notes}`,
@@ -200,7 +200,7 @@ async function executeFollowUpRouting(
           method: "POST",
           headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
           body: JSON.stringify({
-            from: process.env.RESEND_FROM_EMAIL ?? "noreply@revenueoperator.ai",
+            from: process.env.RESEND_FROM_EMAIL ?? "noreply@recall-touch.com",
             to: lead.email,
             subject: template.email_subject ?? `Following up — ${businessName}`,
             text: template.email_body,

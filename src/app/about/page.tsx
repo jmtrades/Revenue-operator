@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     title: "About Revenue Operator",
     description:
       "AI revenue operations platform — inbound calls, outbound campaigns, follow-ups, bookings, and revenue recovery for every business.",
-    url: "https://www.revenueoperator.ai/about",
+    url: "https://www.recall-touch.com/about",
     images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
   twitter: {
