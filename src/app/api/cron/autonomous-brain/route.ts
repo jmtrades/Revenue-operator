@@ -88,8 +88,8 @@ export async function GET(request: NextRequest) {
       const { data: staleLeads } = await db
         .from("leads")
         .select("id, workspace_id")
-        .gte("updated_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
-        .not("status", "in", '("CLOSED","OPTED_OUT","DO_NOT_CONTACT","PAUSED")')
+        .gte("updated_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+        .not("status", "in", '("CLOSED","WON","LOST")')
         .limit(30);
 
       for (const lead of (staleLeads ?? []) as Array<{
