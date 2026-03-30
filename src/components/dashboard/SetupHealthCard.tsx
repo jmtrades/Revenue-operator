@@ -63,16 +63,16 @@ export function SetupHealthCard({ workspaceId }: SetupHealthCardProps) {
       const setupSteps: SetupStep[] = [
         {
           id: "agent",
-          label: "Configure your AI operator",
-          description: "Your brain learns your business rules, tone, and qualification criteria. Once configured, it handles every call autonomously.",
+          label: "Configure your revenue brain",
+          description: "The brain learns your business rules, tone, and qualification criteria. Once configured, it handles every call autonomously.",
           completed: result.agent_configured ?? false,
-          actionLabel: "Configure operator",
+          actionLabel: "Configure brain",
           actionHref: "/app/agents",
         },
         {
           id: "phone",
           label: "Connect your phone number",
-          description: "Your brain answers every call in under 3 seconds, 24/7. It qualifies leads, books appointments, and follows up — all from this number.",
+          description: "The brain answers every call in under 3 seconds, 24/7. It qualifies leads, books appointments, and follows up — all from this number.",
           completed: result.phone_number_configured ?? false,
           actionLabel: "Set up phone",
           actionHref: "/app/settings/phone",
@@ -80,7 +80,7 @@ export function SetupHealthCard({ workspaceId }: SetupHealthCardProps) {
         {
           id: "call",
           label: "Make your first call",
-          description: "Your brain starts learning immediately. It analyzes the conversation, scores the lead, and decides the best follow-up — all in real time.",
+          description: "The brain starts learning immediately. It analyzes the conversation, scores the lead, and decides the best follow-up — all in real time.",
           completed: result.calls_answered > 0,
           actionLabel: "Test call",
           actionHref: "/app/agents",
@@ -89,14 +89,15 @@ export function SetupHealthCard({ workspaceId }: SetupHealthCardProps) {
         {
           id: "appointment",
           label: "Enable auto-booking",
-          description: "Your brain qualifies prospects during the call and books appointments directly into your calendar. No manual scheduling needed.",
+          description: "The brain qualifies prospects during the call and books appointments directly into your calendar. No manual scheduling needed.",
           completed: result.appointments_booked > 0,
-          actionText: "Configure qualifying questions to enable auto-booking",
+          actionLabel: "Set up auto-booking",
+          actionHref: "/app/settings/agent",
         },
         {
           id: "followups",
           label: "Activate follow-up sequences",
-          description: "Your brain auto-creates and executes follow-up sequences via SMS, email, and calls based on each lead's intent and engagement signals.",
+          description: "The brain auto-creates and executes follow-up sequences via SMS, email, and calls based on each lead's intent and engagement signals.",
           completed: result.follow_ups_sent > 0,
           actionLabel: "Enable follow-ups",
           actionHref: "/app/follow-ups",
