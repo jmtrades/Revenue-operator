@@ -222,6 +222,54 @@ export function SystemReadiness({ workspaceId }: { workspaceId: string }) {
             </div>
           )}
 
+          {/* Prioritized Next Steps — shows top 3 most impactful actions */}
+          {data.status !== "ready" && (() => {
+            const actionable = data.checks
+              .filter((c) => c.status !== "ready" && c.href)
+              .sort((a, b) => {
+                const priority: Record<string, number> = { blocked: 0, degraded: 1, unconfigured: 2 };
+                return (priority[a.status] ?? 3) - (priority[b.status] ?? 3);
+              })
+              .slice(0, 3);
+            if (actionable.length === 0) return null;
+            return (
+              <div className="mb-4 p-4 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-default)]">
+                <p className="text-xs font-semibold text-[var(--text-primary)] mb-3">Recommended next steps</p>
+                <ol className="space-y-2.5">
+                  {actionable.map((check, idx) => {
+                    const stepConfig = STATUS_CONFIG[check.status];
+                    const StepIcon = stepConfig.icon;
+                    return (
+                      <li key={check.key} className="flex items-start gap-2.5">
+                        <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] text-[10px] font-bold flex items-center justify-center mt-0.5">
+                          {idx + 1}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <StepIcon className={`w-3 h-3 flex-shrink-0 ${stepConfig.color}`} />
+                            <span className="text-xs font-medium text-[var(--text-primary)]">{check.label}</span>
+                          </div>
+                          <p className="text-[11px] text-[var(--text-tertiary)] mt-0.5">{check.impact}</p>
+                          <Link
+                            href={check.href!}
+                            className="inline-flex items-center gap-1 text-[11px] font-medium text-[var(--accent-primary)] hover:underline mt-1"
+                          >
+                            {check.action} <ExternalLink className="w-2.5 h-2.5" />
+                          </Link>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ol>
+                {data.checks.filter((c) => c.status !== "ready").length > 3 && (
+                  <p className="text-[10px] text-[var(--text-tertiary)] mt-3 pt-2 border-t border-[var(--border-default)]">
+                    + {data.checks.filter((c) => c.status !== "ready").length - 3} more items below. Complete these first for the biggest impact.
+                  </p>
+                )}
+              </div>
+            );
+          })()}
+
           {/* Categories */}
           <div className="space-y-2">
             {data.categories.map((cat) => (

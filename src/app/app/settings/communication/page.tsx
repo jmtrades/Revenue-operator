@@ -291,6 +291,7 @@ export default function CommunicationSettingsPage() {
               <div>
                 <p className="text-sm font-medium text-[var(--text-primary)]">SMS Messages</p>
                 <p className="text-xs text-[var(--text-secondary)] mt-0.5">Allow agent to send and receive SMS text messages</p>
+                <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5">Requires a phone number with SMS capability. <Link href="/app/settings/phone" className="text-[var(--accent-primary)] hover:underline">Set up phone →</Link></p>
               </div>
               <button
                 type="button"
@@ -324,6 +325,7 @@ export default function CommunicationSettingsPage() {
               <div>
                 <p className="text-sm font-medium text-[var(--text-primary)]">Email</p>
                 <p className="text-xs text-[var(--text-secondary)] mt-0.5">Allow agent to send and receive emails</p>
+                <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5">Requires email provider (Resend) to be configured. <Link href="/app/settings/integrations" className="text-[var(--accent-primary)] hover:underline">Set up email →</Link></p>
               </div>
               <button
                 type="button"

@@ -328,7 +328,7 @@ export default function AppCalendarPage() {
             )}
           </div>
           {googleConnected ? (
-            <span className="text-xs text-[var(--text-tertiary)]">{t("calendar.connected")}</span>
+            <span className="text-xs text-[var(--text-tertiary)]">Authorized — sync active while token is valid</span>
           ) : (
             <a
               href="/api/integrations/google-calendar/auth"
@@ -349,7 +349,7 @@ export default function AppCalendarPage() {
             )}
           </div>
           {outlookConnected ? (
-            <span className="text-xs text-[var(--accent-primary)]">{t("calendar.connected")}</span>
+            <span className="text-xs text-[var(--text-tertiary)]">Authorized — sync active while token is valid</span>
           ) : (
             <a
               href="/api/integrations/outlook-calendar/auth"

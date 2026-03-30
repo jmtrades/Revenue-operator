@@ -100,7 +100,14 @@ export function IntegrationsHealthWidget() {
       <div className="space-y-2">
         {connectedCrms.map(({ provider, status }) => {
           const hasErrors = (status.errorCount ?? 0) > 0;
+          const lastSyncDate = status.lastSyncAt ? new Date(status.lastSyncAt) : null;
+          const syncAgeMs = lastSyncDate ? Date.now() - lastSyncDate.getTime() : Infinity;
+          const syncStale = syncAgeMs > 24 * 60 * 60 * 1000; // > 24 hours
+          const neverSynced = !lastSyncDate;
+
           const statusIcon = hasErrors ? (
+            <AlertCircle className="w-4 h-4 text-amber-400" aria-hidden />
+          ) : syncStale || neverSynced ? (
             <AlertCircle className="w-4 h-4 text-amber-400" aria-hidden />
           ) : (
             <CheckCircle className="w-4 h-4 text-green-400" aria-hidden />
@@ -117,19 +124,23 @@ export function IntegrationsHealthWidget() {
                   <div className="flex items-center gap-2 text-[11px] text-[var(--text-secondary)] mt-0.5">
                     <Clock className="w-3 h-3 flex-shrink-0" aria-hidden />
                     <span className="truncate">
-                      {status.lastSyncAt
-                        ? new Date(status.lastSyncAt).toLocaleString(undefined, {
-                            dateStyle: "short",
-                            timeStyle: "short",
-                          })
-                        : t("neverSynced")}
+                      {neverSynced
+                        ? t("neverSynced")
+                        : syncStale
+                          ? `Last synced ${lastSyncDate!.toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })} — may be stale`
+                          : lastSyncDate!.toLocaleString(undefined, { dateStyle: "short", timeStyle: "short" })}
                     </span>
                   </div>
+                  {neverSynced && (
+                    <p className="text-[10px] text-amber-400 mt-0.5">Connected but no data synced yet. Check your CRM permissions.</p>
+                  )}
                 </div>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0 ml-2">
-                <span className="text-[11px] font-medium text-[var(--text-secondary)] bg-[var(--bg-hover)] px-2 py-1 rounded">
-                  {t("synced", { count: status.recordsSynced ?? 0 })}
+                <span className={`text-[11px] font-medium px-2 py-1 rounded ${
+                  neverSynced || syncStale ? "text-amber-400 bg-amber-500/10" : "text-[var(--text-secondary)] bg-[var(--bg-hover)]"
+                }`}>
+                  {neverSynced ? "0 synced" : t("synced", { count: status.recordsSynced ?? 0 })}
                 </span>
               </div>
             </div>
@@ -142,7 +153,7 @@ export function IntegrationsHealthWidget() {
               <CheckCircle className="w-4 h-4 text-green-400" aria-hidden />
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-[var(--text-primary)]">{t("googleCalendar")}</p>
-                <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">{t("connected")}</p>
+                <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">Authorized — sync active while token is valid</p>
               </div>
             </div>
           </div>
