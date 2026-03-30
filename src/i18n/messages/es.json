@@ -8803,13 +8803,18 @@
     "status": {
       "connected": "Conectado",
       "disconnected": "No conectado",
-      "beta": ""
+      "beta": "",
+      "reauthRequired": "Reautenticación requerida",
+      "expiringToken": "Token por expirar",
+      "tokenError": "Error de token",
+      "syncing": "Sincronizando…"
     },
     "lastSync": "Última sincronización",
     "button": {
       "connect": "Conectar",
       "configure": "Configurar",
       "disconnect": "Desconectar",
+      "reauthenticate": "Reautenticar",
       "syncing": "Syncing...",
       "syncNow": "Sync Now",
       "importing": "Importing...",
