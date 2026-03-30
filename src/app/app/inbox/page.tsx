@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useDebounce } from "@/hooks/useDebounce";
 import Link from "next/link";
-import { Search, PhoneCall, MessageSquare, Mail, ChevronLeft, PanelRightClose, PanelRightOpen, User, Loader2 } from "lucide-react";
+import { Search, PhoneCall, MessageSquare, Mail, ChevronLeft, PanelRightClose, PanelRightOpen, User, Loader2, Bot } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useWorkspace } from "@/components/WorkspaceContext";
@@ -425,6 +425,12 @@ function ConversationDetail({
                       : "bg-[var(--bg-input)] text-[var(--text-primary)] rounded-bl-sm border border-[var(--border-default)]"
                   }`}
                 >
+                  {isAgent && (
+                    <div className="flex items-center gap-1 mb-1">
+                      <Bot className="h-3 w-3 text-violet-400" />
+                      <span className="text-[10px] text-violet-400 font-medium">Autonomous</span>
+                    </div>
+                  )}
                   <p className="whitespace-pre-wrap break-words">{m.content}</p>
                   <p
                     className={`mt-1 text-[10px] ${

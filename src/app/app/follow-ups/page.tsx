@@ -6,7 +6,7 @@ import { useWorkspace } from "@/components/WorkspaceContext";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { RecoveryProfileSelector } from "@/components/settings/RecoveryProfileSelector";
-import { Plus, Pause, Play, Copy, Phone, MessageSquare, Mail, ArrowRight, Zap } from "lucide-react";
+import { Plus, Pause, Play, Copy, Phone, MessageSquare, Mail, ArrowRight, Zap, Activity } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
@@ -218,17 +218,31 @@ const BUILT_IN_TEMPLATES: BuiltInTemplate[] = [
   },
 ];
 
+type BrainActivity = {
+  follow_ups_sent: number;
+};
+
+type AutonomousAction = {
+  id: string;
+  action_type: string;
+  timestamp: string;
+  status: string;
+};
+
 export default function AppFollowUpsPage() {
   const { workspaceId } = useWorkspace();
   const t = useTranslations("followUps");
   const tToast = useTranslations("toast");
-  const [tab, setTab] = useState<"templates" | "active">("templates");
+  const [tab, setTab] = useState<"templates" | "active" | "brain">("templates");
   const [sequences, setSequences] = useState<Sequence[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [templateInProgress, setTemplateInProgress] = useState<string | null>(null);
   const [confirmPauseAll, setConfirmPauseAll] = useState(false);
   const [confirmResumeAll, setConfirmResumeAll] = useState(false);
+  const [brainActivity, setBrainActivity] = useState<BrainActivity | null>(null);
+  const [autonomousActions, setAutonomousActions] = useState<AutonomousAction[]>([]);
+  const [brainLoading, setBrainLoading] = useState(false);
 
   const refetchSequences = useCallback(() => {
     if (!workspaceId) return;
@@ -251,6 +265,44 @@ export default function AppFollowUpsPage() {
       });
   }, [workspaceId, t]);
 
+  const refetchBrainActivity = useCallback(() => {
+    if (!workspaceId) return;
+    setBrainLoading(true);
+
+    // Fetch summary data for follow-ups count
+    fetch(`/api/dashboard/summary?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
+      .then((r) => {
+        if (!r.ok) return null;
+        return r.json();
+      })
+      .then((d) => {
+        if (d && typeof d.follow_ups_sent === "number") {
+          setBrainActivity({ follow_ups_sent: d.follow_ups_sent });
+        }
+      })
+      .catch(() => {
+        // Graceful failure
+      });
+
+    // Fetch autonomous actions
+    fetch(`/api/autonomous-actions?workspace_id=${encodeURIComponent(workspaceId)}&action_type=schedule_followup`, { credentials: "include" })
+      .then((r) => {
+        if (!r.ok) return null;
+        return r.json();
+      })
+      .then((d) => {
+        if (d && Array.isArray(d.actions)) {
+          setAutonomousActions(d.actions);
+        }
+      })
+      .catch(() => {
+        // Graceful failure - API may not exist
+      })
+      .finally(() => {
+        setBrainLoading(false);
+      });
+  }, [workspaceId]);
+
   useEffect(() => {
     if (!workspaceId) {
       queueMicrotask(() => setLoading(false));
@@ -258,6 +310,12 @@ export default function AppFollowUpsPage() {
     }
     refetchSequences();
   }, [workspaceId, refetchSequences]);
+
+  useEffect(() => {
+    if (tab === "brain" && workspaceId) {
+      refetchBrainActivity();
+    }
+  }, [tab, workspaceId, refetchBrainActivity]);
 
   const useTemplate = async (template: BuiltInTemplate) => {
     setTemplateInProgress(template.id);
@@ -334,7 +392,7 @@ export default function AppFollowUpsPage() {
           <Zap className="w-4 h-4 text-violet-400" />
         </div>
         <div className="flex-1 min-w-0">
-          {sequences.length > 0 ? (
+          {sequences.length > 0 || brainActivity?.follow_ups_sent ? (
             <>
               <div className="flex items-center gap-2 mb-1">
                 <p className="text-sm text-violet-400 font-semibold">Brain is managing follow-ups</p>
@@ -349,7 +407,7 @@ export default function AppFollowUpsPage() {
             </>
           ) : (
             <>
-              <p className="text-sm text-violet-400 font-semibold mb-1">Brain will auto-create follow-ups</p>
+              <p className="text-sm text-violet-400 font-semibold mb-1">Brain will activate follow-ups when leads arrive</p>
               <p className="text-xs text-[var(--text-secondary)]">
                 When new leads arrive, the brain automatically creates and executes follow-up sequences based on each lead&apos;s intent, urgency, and preferred channel. You can also manually create sequences below.
               </p>
@@ -372,8 +430,102 @@ export default function AppFollowUpsPage() {
         >
           {t("tabs.active")}
         </button>
+        <button
+          type="button"
+          onClick={() => setTab("brain")}
+          className={`text-sm font-medium px-3 py-1.5 rounded-lg transition-[background-color,color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] ${tab === "brain" ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]" : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"}`}
+        >
+          Brain Activity
+        </button>
       </div>
-      {loading ? (
+      {tab === "brain" ? (
+        brainLoading ? (
+          <div className="skeleton-shimmer h-40 rounded-2xl border border-[var(--border-default)]" />
+        ) : (
+          <div className="space-y-4">
+            {/* Brain Activity Dashboard */}
+            <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
+              <div className="flex items-center gap-2 mb-6">
+                <Activity className="w-5 h-5 text-[var(--accent-primary)]" />
+                <h2 className="text-lg font-semibold text-[var(--text-primary)]">Autonomous Brain Execution</h2>
+              </div>
+
+              {/* Follow-ups Executed */}
+              <div className="mb-6 p-4 rounded-xl bg-[var(--bg-hover)] border border-[var(--border-default)]">
+                <p className="text-xs uppercase font-medium text-[var(--text-tertiary)] mb-2">Follow-ups Executed</p>
+                <p className="text-3xl font-bold text-[var(--accent-primary)]">
+                  {brainActivity?.follow_ups_sent ?? 0}
+                </p>
+                <p className="text-xs text-[var(--text-secondary)] mt-2">
+                  Total follow-up actions sent by the brain engine
+                </p>
+              </div>
+
+              {/* Strategy Breakdown */}
+              <div className="mb-6">
+                <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Active Adaptive Strategies</h3>
+                <div className="space-y-2">
+                  {[
+                    { name: "Aggressive Nurture", status: sequences.some(s => s.trigger_type?.includes("nurture")) },
+                    { name: "Gentle Nurture", status: sequences.some(s => s.name?.toLowerCase().includes("nurture")) },
+                    { name: "Value Drip", status: sequences.length > 0 },
+                    { name: "Reactivation Sequence", status: sequences.some(s => s.trigger_type?.includes("reengagement")) },
+                    { name: "Appointment Protect", status: sequences.some(s => s.trigger_type?.includes("booking") || s.trigger_type?.includes("appointment")) },
+                    { name: "Escalation Prep", status: sequences.length > 0 },
+                    { name: "Win Back", status: sequences.some(s => s.name?.toLowerCase().includes("recovery")) },
+                    { name: "Retention Loop", status: sequences.length > 0 },
+                    { name: "Pause", status: sequences.some(s => !s.is_active) },
+                  ].map((strategy) => (
+                    <div key={strategy.name} className="flex items-center justify-between p-3 rounded-lg bg-[var(--bg-hover)] border border-[var(--border-default)]">
+                      <span className="text-sm text-[var(--text-primary)]">{strategy.name}</span>
+                      {strategy.status ? (
+                        <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-100 dark:bg-green-900/30">
+                          <div className="w-1.5 h-1.5 rounded-full bg-green-600 dark:bg-green-500" />
+                          <span className="text-xs font-medium text-green-600 dark:text-green-500">Active</span>
+                        </div>
+                      ) : (
+                        <span className="text-xs font-medium text-[var(--text-tertiary)]">Idle</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Recent Autonomous Actions */}
+              <div>
+                <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Recent Autonomous Actions</h3>
+                {autonomousActions.length > 0 ? (
+                  <div className="space-y-2">
+                    {autonomousActions.slice(0, 5).map((action) => (
+                      <div key={action.id} className="p-3 rounded-lg bg-[var(--bg-hover)] border border-[var(--border-default)]">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm text-[var(--text-primary)]">
+                            {action.action_type.replace(/_/g, " ").replace(/^\w/, (c) => c.toUpperCase())}
+                          </span>
+                          {action.status === "completed" && (
+                            <span className="text-xs px-2 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-500 font-medium">
+                              Completed
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-[var(--text-secondary)]">
+                          {new Date(action.timestamp).toLocaleString()}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-4 rounded-lg bg-[var(--bg-hover)] border border-[var(--border-default)] text-center">
+                    <p className="text-sm text-[var(--text-secondary)]">
+                      Brain activity will appear here as leads are processed
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )
+      ) : loading ? (
         <div className="skeleton-shimmer h-40 rounded-2xl border border-[var(--border-default)]" />
       ) : fetchError ? (
         <div className="rounded-2xl border border-[var(--accent-danger,#ef4444)]/30 bg-[var(--accent-danger,#ef4444)]/5 p-8 text-center">
