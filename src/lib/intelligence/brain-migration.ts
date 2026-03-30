@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS revenue_operator.lead_intelligence (
   engagement_score integer NOT NULL DEFAULT 50,
   conversion_probability numeric(4,3) NOT NULL DEFAULT 0.5,
   churn_risk numeric(4,3) NOT NULL DEFAULT 0.5,
-  risk_flags text[] NOT NULL DEFAULT '{}',
+  risk_flags_json text[] NOT NULL DEFAULT '{}',
   next_best_action text NOT NULL DEFAULT 'schedule_followup',
   action_reason text NOT NULL DEFAULT '',
   action_timing text NOT NULL DEFAULT 'scheduled',
