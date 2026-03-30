@@ -209,7 +209,7 @@ export function LiveCallFeed({ workspaceId }: LiveCallFeedProps) {
                     <p className="text-sm text-[var(--text-primary)] truncate">
                       {event.description}
                     </p>
-                    <span className="text-[10px] text-[var(--text-tertiary)] whitespace-nowrap shrink-0">
+                    <span className="text-[10px] text-[var(--text-tertiary)] whitespace-nowrap shrink-0" suppressHydrationWarning>
                       {getRelativeTime(event.timestamp)}
                     </span>
                   </div>

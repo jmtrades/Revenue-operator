@@ -124,7 +124,12 @@ function fmtMoney(cents: number): string {
 
 function fmtTime(iso: string): string {
   try {
-    return new Date(iso).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    const d = new Date(iso);
+    const h = d.getUTCHours();
+    const m = d.getUTCMinutes().toString().padStart(2, "0");
+    const ampm = h >= 12 ? "PM" : "AM";
+    const h12 = h % 12 || 12;
+    return `${h12}:${m} ${ampm}`;
   } catch {
     return "";
   }
@@ -430,7 +435,7 @@ export function UnifiedDashboard() {
             </button>
           </div>
           {lastUpdated && (
-            <p className="text-xs text-[var(--text-tertiary)]">
+            <p className="text-xs text-[var(--text-tertiary)]" suppressHydrationWarning>
               {t("actions.updatedAt", { defaultValue: "Updated" })} {fmtLastUpdated(lastUpdated, t)}
             </p>
           )}
