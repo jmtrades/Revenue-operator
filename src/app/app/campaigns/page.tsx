@@ -518,6 +518,27 @@ export default function CampaignsPage() {
           </div>
         </div>
 
+        {/* Brain-managed campaigns status */}
+        <div className="mb-6 rounded-xl border border-violet-500/15 bg-violet-500/[0.04] p-4 flex items-start gap-3">
+          <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center shrink-0 mt-0.5">
+            <Megaphone className="w-4 h-4 text-violet-400" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <p className="text-sm text-violet-400 font-semibold">Brain-optimized campaigns</p>
+              {campaigns.filter(c => c.status === "active").length > 0 && (
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-[var(--text-secondary)]">
+              The brain automatically segments leads by temperature (hot/warm/cold) and assigns them to the right campaign. Active campaigns execute touches autonomously — you supervise results.
+            </p>
+          </div>
+        </div>
+
         {/* Campaign Strategy Advisor */}
         <CampaignStrategyAdvisor workspaceId={snapshotWorkspaceId} />
 

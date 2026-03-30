@@ -28,16 +28,19 @@ function getTemperature(
   return { label: "Cold", bg: "bg-gray-500/20", text: "text-gray-400" };
 }
 
-function getActionIcon(action: string): string {
-  const lower = action.toLowerCase();
-  if (lower.includes("call")) return "📞";
-  if (lower.includes("email")) return "📧";
-  if (lower.includes("sms") || lower.includes("message")) return "📱";
-  if (lower.includes("follow")) return "↗";
-  if (lower.includes("reactivat")) return "🔄";
-  if (lower.includes("escalat")) return "🚨";
-  if (lower.includes("book")) return "📅";
-  return "→";
+const ACTION_LABELS: Record<string, string> = {
+  ask_clarification: "Clarifying needs",
+  send_proof: "Sending proof",
+  reframe_value: "Reframing value",
+  book_call: "Booking call",
+  schedule_call: "Scheduling call",
+  schedule_followup: "Follow-up sequence",
+  reactivate_later: "Queued reactivation",
+  escalate_human: "Escalating",
+};
+
+function getActionLabel(action: string): string {
+  return ACTION_LABELS[action] || action.replace(/_/g, " ");
 }
 
 function hasRiskFlag(flags: string[]): { hasCritical: boolean; hasWarning: boolean } {
@@ -54,38 +57,32 @@ export function LeadScoreBadge({
   riskFlags,
 }: LeadScoreBadgeProps) {
   const temp = getTemperature(urgency, intent, engagement);
-  const icon = getActionIcon(nextAction);
+  const actionLabel = getActionLabel(nextAction);
   const { hasCritical, hasWarning } = hasRiskFlag(riskFlags);
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1.5 flex-wrap">
       <div
-        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold border border-current/20 ${temp.bg} ${temp.text}`}
+        className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold border border-current/20 ${temp.bg} ${temp.text}`}
       >
-        <span className="h-1.5 w-1.5 rounded-full bg-current" />
+        <span className="h-1.5 w-1.5 rounded-full bg-current animate-pulse" />
         {temp.label}
       </div>
 
-      <span className="text-xs text-[var(--text-secondary)]">·</span>
-
-      <span className="text-xs font-medium text-[var(--text-primary)]">
-        {icon} {nextAction}
+      <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 bg-violet-500/[0.08] text-[10px] font-medium text-violet-400">
+        {actionLabel}
       </span>
 
       {(hasCritical || hasWarning) && (
-        <>
-          <span className="text-xs text-[var(--text-secondary)]">·</span>
-          <div
-            className={`h-2 w-2 rounded-full ${
-              hasCritical ? "bg-red-500" : "bg-orange-500"
-            }`}
-            title={
-              hasCritical
-                ? "Critical risk flags"
-                : "Warning risk flags"
-            }
-          />
-        </>
+        <span
+          className={`inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium ${
+            hasCritical ? "bg-red-500/10 text-red-400" : "bg-orange-500/10 text-orange-400"
+          }`}
+          title={riskFlags.join(", ")}
+        >
+          <AlertCircle className="w-2.5 h-2.5" />
+          {hasCritical ? "risk" : "watch"}
+        </span>
       )}
     </div>
   );

@@ -155,11 +155,20 @@ export function LeadBrainPanel({ leadId }: LeadBrainPanelProps) {
 
   return (
     <section className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Brain className="w-4 h-4 text-violet-400" />
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
-          Brain is managing this lead
-        </h3>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Brain className="w-4 h-4 text-violet-400" />
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
+            Autonomous management
+          </h3>
+        </div>
+        <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-400">
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+          </span>
+          active
+        </span>
       </div>
 
       {/* Active management status */}
@@ -185,19 +194,26 @@ export function LeadBrainPanel({ leadId }: LeadBrainPanelProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 mb-2">
+        <div className="flex items-center gap-2 mb-1">
           <Zap className="w-3.5 h-3.5 text-violet-400 shrink-0" />
           <p className="text-sm font-medium text-[var(--text-primary)]">{actionLabel}</p>
         </div>
-        <p className="text-[11px] text-[var(--text-tertiary)] ml-5.5">{intelligence.action_reason}</p>
+        <p className="text-[11px] text-[var(--text-secondary)] ml-5.5 leading-relaxed">{intelligence.action_reason}</p>
 
-        <div className="flex items-center gap-3 mt-3 pt-2 border-t border-[var(--border-default)]">
-          <span className="text-[11px] text-[var(--text-tertiary)]">
-            {confidencePct}% confidence · via {intelligence.action_channel}
+        <div className="flex items-center gap-2 mt-3 pt-2 border-t border-[var(--border-default)] flex-wrap">
+          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+            confidencePct >= 70 ? "bg-emerald-500/10 text-emerald-400" :
+            confidencePct >= 40 ? "bg-orange-500/10 text-orange-400" :
+            "bg-red-500/10 text-red-400"
+          }`}>
+            {confidencePct}% confident
+          </span>
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--bg-surface)] border border-[var(--border-default)] text-[10px] text-[var(--text-tertiary)]">
+            via {intelligence.action_channel}
           </span>
           {intelligence.hours_since_last_contact > 0 && (
-            <span className="text-[11px] text-[var(--text-tertiary)]">
-              · {intelligence.hours_since_last_contact < 24
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--bg-surface)] border border-[var(--border-default)] text-[10px] text-[var(--text-tertiary)]">
+              {intelligence.hours_since_last_contact < 24
                 ? `${Math.round(intelligence.hours_since_last_contact)}h since contact`
                 : `${Math.round(intelligence.hours_since_last_contact / 24)}d since contact`}
             </span>
@@ -241,14 +257,14 @@ export function LeadBrainPanel({ leadId }: LeadBrainPanelProps) {
         </div>
       )}
 
-      {/* Recent brain actions */}
+      {/* Autonomous action log — what the brain has done */}
       {recentBrainActions.length > 0 && (
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <Activity className="w-3 h-3 text-[var(--text-tertiary)]" />
-            <p className="text-[11px] font-medium uppercase tracking-wide text-[var(--text-tertiary)]">Brain actions</p>
+            <Activity className="w-3 h-3 text-violet-400" />
+            <p className="text-[11px] font-medium uppercase tracking-wide text-[var(--text-tertiary)]">What the brain did</p>
           </div>
-          <div className="space-y-1.5">
+          <div className="rounded-lg bg-[var(--bg-surface)] border border-[var(--border-default)] divide-y divide-[var(--border-default)]">
             {recentBrainActions.map((action) => {
               const hoursAgo = Math.floor(
                 (Date.now() - new Date(action.executed_at).getTime()) / (1000 * 60 * 60)
@@ -259,7 +275,7 @@ export function LeadBrainPanel({ leadId }: LeadBrainPanelProps) {
                     : `${Math.floor(hoursAgo / 24)}d ago`;
 
               return (
-                <div key={action.id} className="flex items-center justify-between text-xs py-1.5">
+                <div key={action.id} className="flex items-center justify-between text-xs px-3 py-2">
                   <div className="flex items-center gap-2">
                     {action.success ? (
                       <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
@@ -269,8 +285,13 @@ export function LeadBrainPanel({ leadId }: LeadBrainPanelProps) {
                     <span className="text-[var(--text-primary)] capitalize">
                       {action.action_type.replace(/_/g, " ")}
                     </span>
+                    {action.details && (
+                      <span className="text-[var(--text-tertiary)] text-[10px] truncate max-w-[140px]" title={action.details}>
+                        — {action.details}
+                      </span>
+                    )}
                   </div>
-                  <span className="text-[var(--text-tertiary)]">{timeLabel}</span>
+                  <span className="text-[var(--text-tertiary)] shrink-0">{timeLabel}</span>
                 </div>
               );
             })}

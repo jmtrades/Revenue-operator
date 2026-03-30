@@ -210,7 +210,10 @@ export function LeadsList({
                 {tLeads("table.lastContact")}
               </th>
               <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">
-                {tLeads("table.agent")}
+                <span className="flex items-center gap-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-violet-400 animate-pulse" />
+                  Brain
+                </span>
               </th>
             </tr>
           </thead>
@@ -282,8 +285,18 @@ export function LeadsList({
                   <td className="py-3 px-4 text-xs text-[var(--text-tertiary)]">
                     {timeSince(lead.lastContactAt, tLeads)}
                   </td>
-                  <td className="py-3 px-4 text-xs text-[var(--text-secondary)]">
-                    {lead.assignedAgent}
+                  <td className="py-3 px-4 text-xs">
+                    {intelligence[lead.id] ? (
+                      <span className="inline-flex items-center gap-1 text-emerald-400 font-medium">
+                        <span className="relative flex h-1.5 w-1.5">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                        </span>
+                        Active
+                      </span>
+                    ) : (
+                      <span className="text-[var(--text-tertiary)]">Pending</span>
+                    )}
                   </td>
                 </tr>
               );

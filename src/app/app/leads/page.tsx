@@ -207,7 +207,7 @@ export default function LeadsPage() {
   const [statusFilter, setStatusFilter] = useState<LeadStatus[]>([]);
   const [sourceFilter, setSourceFilter] = useState<LeadSource[]>([]);
   const [scoreFilter, setScoreFilter] = useState<ScoreBucket>("all");
-  const [sort, setSort] = useState<SortKey>("newest");
+  const [sort, setSort] = useState<SortKey>("score"); // Default to brain priority
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [drawerLead, setDrawerLead] = useState<LeadView | null>(null);
   const [drawerCalls, setDrawerCalls] = useState<Array<{ id: string; call_started_at?: string; outcome?: string }>>([]);
@@ -875,8 +875,8 @@ export default function LeadsPage() {
               onChange={(e) => setSort(e.target.value as SortKey)}
               className="text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-2.5 py-1 text-[var(--text-primary)] focus:outline-none focus:border-[var(--border-medium)]"
             >
+              <option value="score">🧠 Brain priority</option>
               <option value="newest">{t("leads.sortOptions.newest")}</option>
-              <option value="score">{t("leads.sortOptions.highestScore")}</option>
               <option value="recent-contact">{t("leads.sortOptions.recentContact")}</option>
             </select>
           </div>
