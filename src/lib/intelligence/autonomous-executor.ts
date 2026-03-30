@@ -629,6 +629,19 @@ async function scheduleFollowupAction(
 
     const enrollment = await enrollContact(intelligence.workspace_id, sequenceId, intelligence.lead_id);
 
+    // Safety net: if enrollment was created but next_step_due_at is null (steps weren't
+    // readable at enrollment time), set it to NOW so process-sequences picks it up
+    if (enrollment) {
+      const enrollmentData = enrollment as { id: string; next_step_due_at?: string | null };
+      if (!enrollmentData.next_step_due_at) {
+        await db
+          .from("sequence_enrollments")
+          .update({ next_step_due_at: new Date().toISOString() })
+          .eq("id", enrollmentData.id);
+        console.log(`[autonomous-executor] Set next_step_due_at=NOW for enrollment ${enrollmentData.id} (was null)`);
+      }
+    }
+
     // Execute the first adaptive step immediately (don't wait for cron)
     if (adaptivePlan && adaptivePlan.steps && adaptivePlan.steps.length > 0) {
       const firstStep = adaptivePlan.steps[0];
