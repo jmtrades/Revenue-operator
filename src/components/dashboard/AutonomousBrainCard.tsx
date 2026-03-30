@@ -33,18 +33,23 @@ export function AutonomousBrainCard() {
   const workspaceId = ws?.workspaceId ?? "";
   const [stats, setStats] = useState<BrainDashboardStats>(EMPTY);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
 
   const load = useCallback(() => {
     if (!workspaceId) {
       setLoading(false);
       return;
     }
+    setFetchError(false);
     fetch(`/api/dashboard/brain-stats?workspace_id=${encodeURIComponent(workspaceId)}`, {
       credentials: "include",
     })
-      .then((r) => (r.ok ? r.json() : null))
+      .then((r) => {
+        if (!r.ok) { setFetchError(true); return null; }
+        return r.json();
+      })
       .then((data: BrainDashboardStats | null) => setStats(data ?? EMPTY))
-      .catch(() => setStats(EMPTY))
+      .catch(() => { setFetchError(true); setStats(EMPTY); })
       .finally(() => setLoading(false));
   }, [workspaceId]);
 
@@ -61,6 +66,26 @@ export function AutonomousBrainCard() {
 
   const hasData = stats.total_leads_with_intelligence > 0;
   const totalManaged = stats.hot_leads + stats.warm_leads + stats.cold_leads;
+
+  if (fetchError) {
+    return (
+      <div className="dash-section p-5 md:p-6">
+        <div className="flex items-center gap-2.5 mb-3">
+          <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center">
+            <Brain className="w-4 h-4 text-violet-400" />
+          </div>
+          <h2 className="text-sm font-semibold text-[var(--text-primary)]">Revenue Brain</h2>
+        </div>
+        <div className="flex items-center gap-2.5 rounded-lg bg-orange-500/[0.06] border border-orange-500/10 px-4 py-3">
+          <AlertTriangle className="w-4 h-4 text-orange-400 shrink-0" />
+          <div>
+            <p className="text-xs font-medium text-orange-400">Temporarily unable to load brain stats</p>
+            <p className="text-[11px] text-[var(--text-tertiary)] mt-0.5">Your brain is still running — this is a display issue only</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="dash-section p-5 md:p-6 relative overflow-hidden">

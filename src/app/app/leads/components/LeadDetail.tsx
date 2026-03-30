@@ -22,6 +22,15 @@ const STATUS_ORDER: LeadStatus[] = [
   "Lost",
 ];
 
+const STATUS_HINTS: Record<LeadStatus, string> = {
+  New: "Lead just arrived — brain is evaluating",
+  Contacted: "First outreach sent — awaiting response",
+  Qualified: "Interest confirmed — brain is nurturing",
+  "Appointment Set": "Meeting booked — brain will send reminders",
+  Won: "Deal closed — brain may offer retention outreach",
+  Lost: "Did not convert — brain may attempt reactivation",
+};
+
 function formatDate(iso: string): string {
   const d = new Date(iso);
   return d.toLocaleDateString();
@@ -165,8 +174,8 @@ export function LeadDetail({
                 const isCurrent = lead.status === s;
                 const isPast = STATUS_ORDER.indexOf(s) < STATUS_ORDER.indexOf(lead.status);
                 return (
-                  <div key={s} className="flex items-center gap-1">
-                    <div className={`h-1.5 rounded-full transition-all ${
+                  <div key={s} className="flex items-center gap-1" title={`${getStatusDisplay(s, tRoot)}: ${STATUS_HINTS[s]}`}>
+                    <div className={`h-1.5 rounded-full transition-all cursor-help ${
                       isCurrent
                         ? "w-6 bg-violet-400"
                         : isPast

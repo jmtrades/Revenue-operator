@@ -12,6 +12,8 @@ interface AutonomousAction {
   executed_at: string;
   outcome?: string;
   details?: Record<string, unknown>;
+  reason?: string;
+  confidence?: number;
 }
 
 interface AutonomousActivityFeedProps {
@@ -86,7 +88,7 @@ export function AutonomousActivityFeed({ leadId }: AutonomousActivityFeedProps) 
           if (response.status === 404) {
             setError("Lead not found");
           } else {
-            setError("Failed to load activity");
+            setError("Temporarily unable to load brain activity — actions are still running");
           }
           return;
         }
@@ -191,16 +193,29 @@ export function AutonomousActivityFeed({ leadId }: AutonomousActivityFeedProps) 
                       )}
                     </div>
 
-                    {action.outcome && (
-                      <div className="mt-2">
+                    {action.reason && (
+                      <p className="text-[11px] text-[var(--text-tertiary)] mt-1 leading-relaxed">{action.reason}</p>
+                    )}
+
+                    <div className="flex items-center gap-2 mt-2 flex-wrap">
+                      {action.outcome && (
                         <Badge
                           variant={getOutcomeBadgeVariant(action.outcome)}
                           size="sm"
                         >
                           {action.outcome}
                         </Badge>
-                      </div>
-                    )}
+                      )}
+                      {action.confidence != null && (
+                        <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${
+                          action.confidence >= 0.7 ? "bg-emerald-500/10 text-emerald-400" :
+                          action.confidence >= 0.4 ? "bg-orange-500/10 text-orange-400" :
+                          "bg-red-500/10 text-red-400"
+                        }`}>
+                          {Math.round(action.confidence * 100)}%
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

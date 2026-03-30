@@ -138,8 +138,26 @@ export function LeadBrainPanel({ leadId }: LeadBrainPanelProps) {
     );
   }
 
-  if (error || !intelligence) {
-    return null; // Silent fallback — don't show broken panel
+  if (error) {
+    return (
+      <section className="space-y-2">
+        <div className="flex items-center gap-2">
+          <Brain className="w-4 h-4 text-violet-400" />
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">Autonomous management</h3>
+        </div>
+        <div className="flex items-center gap-2.5 rounded-xl bg-orange-500/[0.06] border border-orange-500/10 px-4 py-3">
+          <AlertCircle className="w-4 h-4 text-orange-400 shrink-0" />
+          <div>
+            <p className="text-xs font-medium text-orange-400">Brain temporarily unavailable</p>
+            <p className="text-[11px] text-[var(--text-tertiary)] mt-0.5">Intelligence will resume automatically — lead is still being tracked</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!intelligence) {
+    return null;
   }
 
   const temp = getTemperature(
@@ -218,6 +236,15 @@ export function LeadBrainPanel({ leadId }: LeadBrainPanelProps) {
                 : `${Math.round(intelligence.hours_since_last_contact / 24)}d since contact`}
             </span>
           )}
+          {intelligence.computed_at && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--bg-surface)] border border-[var(--border-default)] text-[10px] text-[var(--text-tertiary)]" title={new Date(intelligence.computed_at).toLocaleString()}>
+              <Clock className="w-2.5 h-2.5" />
+              computed {(() => {
+                const h = Math.floor((Date.now() - new Date(intelligence.computed_at).getTime()) / 3600000);
+                return h === 0 ? "just now" : h < 24 ? `${h}h ago` : `${Math.floor(h / 24)}d ago`;
+              })()}
+            </span>
+          )}
         </div>
       </div>
 
@@ -275,23 +302,37 @@ export function LeadBrainPanel({ leadId }: LeadBrainPanelProps) {
                     : `${Math.floor(hoursAgo / 24)}d ago`;
 
               return (
-                <div key={action.id} className="flex items-center justify-between text-xs px-3 py-2">
-                  <div className="flex items-center gap-2">
-                    {action.success ? (
-                      <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
-                    ) : (
-                      <AlertTriangle className="w-3 h-3 text-orange-400 shrink-0" />
-                    )}
-                    <span className="text-[var(--text-primary)] capitalize">
-                      {action.action_type.replace(/_/g, " ")}
-                    </span>
-                    {action.details && (
-                      <span className="text-[var(--text-tertiary)] text-[10px] truncate max-w-[140px]" title={action.details}>
-                        — {action.details}
+                <div key={action.id} className="px-3 py-2 text-xs">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      {action.success !== false ? (
+                        <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
+                      ) : (
+                        <AlertTriangle className="w-3 h-3 text-orange-400 shrink-0" />
+                      )}
+                      <span className="text-[var(--text-primary)] capitalize">
+                        {action.action_type.replace(/_/g, " ")}
                       </span>
-                    )}
+                      {action.success === false && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-orange-500/10 text-orange-400 font-medium">retrying</span>
+                      )}
+                    </div>
+                    <span className="text-[var(--text-tertiary)] shrink-0">{timeLabel}</span>
                   </div>
-                  <span className="text-[var(--text-tertiary)] shrink-0">{timeLabel}</span>
+                  {(action.reason || action.details) && (
+                    <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5 ml-5 leading-relaxed truncate" title={action.reason || action.details}>
+                      {action.reason || action.details}
+                    </p>
+                  )}
+                  {action.confidence != null && (
+                    <span className={`inline-block ml-5 mt-0.5 text-[9px] font-semibold px-1.5 py-0.5 rounded-full ${
+                      action.confidence >= 0.7 ? "bg-emerald-500/10 text-emerald-400" :
+                      action.confidence >= 0.4 ? "bg-orange-500/10 text-orange-400" :
+                      "bg-red-500/10 text-red-400"
+                    }`}>
+                      {Math.round(action.confidence * 100)}% confidence
+                    </span>
+                  )}
                 </div>
               );
             })}
