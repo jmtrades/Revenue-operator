@@ -188,7 +188,19 @@ export async function POST(request: NextRequest) {
     const msg = err instanceof Error ? err.message : String(err);
     log("error", "api.campaigns.create_failed", { error: msg });
     console.error("[campaigns] POST failed:", msg);
-    return NextResponse.json({ error: "Failed to create campaign" }, { status: 500 });
+
+    // Return specific error messages instead of generic 500
+    const lower = msg.toLowerCase();
+    if (lower.includes("permission") || lower.includes("rls") || lower.includes("policy")) {
+      return NextResponse.json({ error: "You don't have permission to create campaigns in this workspace." }, { status: 403 });
+    }
+    if (lower.includes("foreign key") || lower.includes("violates") || lower.includes("constraint")) {
+      return NextResponse.json({ error: "Invalid workspace or related data. Please check your workspace configuration." }, { status: 422 });
+    }
+    if (lower.includes("duplicate") || lower.includes("unique")) {
+      return NextResponse.json({ error: "A campaign with this name already exists." }, { status: 409 });
+    }
+    return NextResponse.json({ error: "Failed to create campaign. Please try again or contact support." }, { status: 500 });
   }
 }
 
