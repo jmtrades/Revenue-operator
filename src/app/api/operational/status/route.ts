@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 
   const db = getDb();
 
-  let call_handling = "Active";
+  let call_handling = "Unknown";
   let inbound_source = "—";
   let outbound_queue = "—";
   let review_level = "Standard";
@@ -29,6 +29,7 @@ export async function GET(request: NextRequest) {
     const row = ws as { status?: string; pause_reason?: string } | null;
     if (row?.pause_reason || row?.status === "paused" || row?.status === "expired") call_handling = "Paused";
     else if (row?.status === "under_review") call_handling = "Under review";
+    else call_handling = "Active";
 
     const { count } = await db.from("leads").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId);
     if (typeof count === "number") outbound_queue = count === 0 ? "0 leads" : `${count} leads`;
@@ -51,7 +52,7 @@ export async function GET(request: NextRequest) {
       .maybeSingle();
     if (anyThread) inbound_source = "Connected";
   } catch {
-    // leave defaults
+    call_handling = "Unable to verify";
   }
 
   return NextResponse.json({
