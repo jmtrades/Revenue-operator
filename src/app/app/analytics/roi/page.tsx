@@ -249,7 +249,7 @@ function MonthlyTrendChart({ data }: { data: ChartDataPoint[] }) {
                   color: "var(--text-primary)",
                 }}
               />
-              <Legend />
+              <Legend iconType="circle" iconSize={8} />
               <Line type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={2} name="Revenue" />
               <Line type="monotone" dataKey="cost" stroke="#f87171" strokeWidth={2} name="Cost" />
               <Line type="monotone" dataKey="roi" stroke="#3b82f6" strokeWidth={2} name="ROI %" />
@@ -386,7 +386,7 @@ function PredictionsSection({ data }: { data: PredictionData | null }) {
                         </div>
                       </td>
                       <td className="py-3 px-4 text-[var(--text-tertiary)] text-xs">
-                        {new Date(lead.last_activity).toLocaleDateString()}
+                        {new Date(lead.last_activity).toISOString().split("T")[0]}
                       </td>
                     </tr>
                   ))}

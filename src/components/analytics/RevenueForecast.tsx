@@ -43,9 +43,9 @@ function getConfidenceLabel(confidence: string): string {
 
 function getStatusText(current: number, projected: number): string {
   const monthStart = new Date();
-  const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0);
-  const daysInMonth = monthEnd.getDate();
-  const currentDay = monthStart.getDate();
+  const monthEnd = new Date(Date.UTC(monthStart.getUTCFullYear(), monthStart.getUTCMonth() + 1, 0));
+  const daysInMonth = monthEnd.getUTCDate();
+  const currentDay = monthStart.getUTCDate();
   const expectedRevenue = (current / currentDay) * daysInMonth;
 
   if (Math.abs(projected - expectedRevenue) < expectedRevenue * 0.1) {
@@ -140,11 +140,11 @@ export function RevenueForecast({ workspaceId }: RevenueForecastProps) {
   const statusColor = getStatusColor(status);
   const growthIsPositive = data.growth_rate_pct === null ? null : data.growth_rate_pct >= 0;
 
-  // Calculate progress bar percentage (0 to 100%)
+  // Calculate progress bar percentage (0 to 100%) — use stable UTC values to avoid hydration mismatch
   const monthStart = new Date();
-  const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0);
-  const daysInMonth = monthEnd.getDate();
-  const currentDay = monthStart.getDate();
+  const monthEnd = new Date(Date.UTC(monthStart.getUTCFullYear(), monthStart.getUTCMonth() + 1, 0));
+  const daysInMonth = monthEnd.getUTCDate();
+  const currentDay = monthStart.getUTCDate();
   const progressPct = Math.min(100, (currentDay / daysInMonth) * 100);
 
   return (

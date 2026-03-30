@@ -280,7 +280,7 @@ export default function ConversationalAnalyticsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
             <KPICard
               label="Total Conversations"
-              value={metrics.total_conversations.toLocaleString()}
+              value={String(metrics.total_conversations)}
               icon={<MessageSquare className="h-5 w-5" />}
               trend={12}
             />
@@ -509,7 +509,7 @@ export default function ConversationalAnalyticsPage() {
                           style={{ width: `${width}%` }}
                         >
                           <span className="text-xs font-semibold text-white">
-                            {stage.conversations.toLocaleString()}
+                            {String(stage.conversations)}
                           </span>
                         </div>
                       </div>
