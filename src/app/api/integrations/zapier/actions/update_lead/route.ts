@@ -43,5 +43,15 @@ export async function POST(req: NextRequest) {
 
   const { data, error } = await db.from("leads").update(updates).eq("id", id).select("id, name, phone, email, company, state").maybeSingle();
   if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+
+  // Autonomous Brain: recompute intelligence after Zapier update
+  void (async () => {
+    try {
+      const { computeLeadIntelligence, persistLeadIntelligence } = await import("@/lib/intelligence/lead-brain");
+      const intelligence = await computeLeadIntelligence(workspaceId, id);
+      await persistLeadIntelligence(intelligence);
+    } catch { /* Non-blocking */ }
+  })();
+
   return NextResponse.json(data);
 }

@@ -344,6 +344,16 @@ export async function POST(req: NextRequest) {
             });
           }).catch(() => { /* ai-scorer module not available */ });
         }
+
+        // Autonomous Brain: recompute intelligence after call (non-blocking)
+        // This is the most critical brain trigger — every call outcome reshapes the brain's model
+        try {
+          const { computeLeadIntelligence, persistLeadIntelligence } = await import("@/lib/intelligence/lead-brain");
+          const intelligence = await computeLeadIntelligence(workspace_id, leadId!);
+          await persistLeadIntelligence(intelligence);
+        } catch {
+          // Non-blocking: brain will catch up via cron
+        }
       } catch (err) {
         console.error("[auto-followup] trigger error:", err instanceof Error ? err.message : String(err));
       }

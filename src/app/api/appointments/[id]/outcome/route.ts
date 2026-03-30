@@ -215,6 +215,17 @@ export async function POST(
       }
     }
 
+    // Autonomous Brain: recompute intelligence after appointment outcome
+    if (apt.lead_id) {
+      void (async () => {
+        try {
+          const { computeLeadIntelligence, persistLeadIntelligence } = await import("@/lib/intelligence/lead-brain");
+          const intelligence = await computeLeadIntelligence(session.workspaceId!, apt.lead_id);
+          await persistLeadIntelligence(intelligence);
+        } catch { /* Non-blocking */ }
+      })();
+    }
+
     log("info", `Appointment outcome recorded: appointment=${id} outcome=${outcome} lead=${apt.lead_id}`);
 
     return NextResponse.json({
