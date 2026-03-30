@@ -285,9 +285,14 @@ export async function computeLeadIntelligence(
     const actionChannel = channelMap[nbaResult.action] || "multi";
 
     // 17. Determine action timing
+    // Safety-critical risk flags → immediate (escalation/pause must fire, not be deferred)
+    // High urgency or explicit escalation → immediate
+    // Everything else → scheduled
     let actionTiming: "immediate" | "scheduled" | "deferred" = "scheduled";
-    if (riskFlags.includes("anger") || riskFlags.includes("opt_out_signal")) {
-      actionTiming = "deferred";
+    if (riskFlags.includes("opt_out_signal")) {
+      actionTiming = "immediate"; // Pause must fire immediately
+    } else if (riskFlags.includes("anger")) {
+      actionTiming = "immediate"; // Escalation must fire immediately
     } else if (urgencyScore > 75 || nbaResult.action === "escalate_human") {
       actionTiming = "immediate";
     }

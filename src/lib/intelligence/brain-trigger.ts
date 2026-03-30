@@ -5,7 +5,7 @@
  */
 
 import { computeLeadIntelligence, persistLeadIntelligence } from "./lead-brain";
-import { executeAutonomousAction, logAutonomousAction } from "./autonomous-executor";
+import { executeAutonomousAction } from "./autonomous-executor";
 import { ensureBrainTables } from "./brain-migration";
 
 let _tablesEnsured = false;
@@ -44,15 +44,17 @@ export async function triggerBrainAfterSignal(params: TriggerBrainParams): Promi
       console.warn("[brain-trigger] persistLeadIntelligence failed");
     }
 
-    // 3. Execute if immediate action with 50% confidence, or scheduled action with 70% confidence (no opt-out)
+    // 3. Execute autonomous action based on timing and confidence gates
+    // - Immediate (safety/urgent): 50% confidence minimum
+    // - Scheduled (normal cadence): 70% confidence, no opt-out
+    // Note: executor handles its own logging; no duplicate log needed here
     if (
       (intelligence.action_timing === "immediate" && intelligence.action_confidence >= 0.5) ||
       (intelligence.action_timing === "scheduled" &&
         intelligence.action_confidence >= 0.7 &&
         !intelligence.risk_flags.includes("opt_out_signal"))
     ) {
-      const result = await executeAutonomousAction(intelligence);
-      await logAutonomousAction(result);
+      await executeAutonomousAction(intelligence);
     }
 
     // 4. Log trigger event (non-blocking)
