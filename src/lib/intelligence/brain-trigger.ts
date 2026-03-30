@@ -45,13 +45,14 @@ export async function triggerBrainAfterSignal(params: TriggerBrainParams): Promi
     }
 
     // 3. Execute autonomous action based on timing and confidence gates
-    // - Immediate (safety/urgent): 50% confidence minimum
-    // - Scheduled (normal cadence): 70% confidence, no opt-out
-    // Note: executor handles its own logging; no duplicate log needed here
+    // - Immediate (safety/urgent): always execute (executor has its own 30% floor)
+    // - Scheduled (normal cadence): 40% confidence minimum, no opt-out
+    // The executor applies its own safety checks (daily limits, confidence floor, risk flags)
+    // so the trigger gate should be permissive to let the executor make the final call.
     if (
-      (intelligence.action_timing === "immediate" && intelligence.action_confidence >= 0.5) ||
+      intelligence.action_timing === "immediate" ||
       (intelligence.action_timing === "scheduled" &&
-        intelligence.action_confidence >= 0.7 &&
+        intelligence.action_confidence >= 0.4 &&
         !intelligence.risk_flags.includes("opt_out_signal"))
     ) {
       await executeAutonomousAction(intelligence);
