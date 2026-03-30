@@ -92,6 +92,10 @@
     {
       "path": "/api/cron/outbound-dialer",
       "schedule": "*/2 * * * *"
+    },
+    {
+      "path": "/api/cron/autonomous-brain",
+      "schedule": "*/2 * * * *"
     }
   ]
 }
