@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
-    let leadQuery = db.from("leads").select("id, name, phone, email, lead_score, lead_grade, status")
+    let leadQuery = db.from("leads").select("id, name, phone, email, qualification_score, status")
       .eq("workspace_id", workspace_id)
       .not("status", "in", "(OPTED_OUT,DO_NOT_CONTACT)")
       .not("phone", "is", null);
@@ -59,12 +59,12 @@ export async function POST(req: NextRequest) {
 
     switch (segment) {
       case "hot_leads":
-        leadQuery = leadQuery.gte("lead_score", 70).order("lead_score", { ascending: false });
+        leadQuery = leadQuery.gte("qualification_score", 70).order("qualification_score", { ascending: false });
         campaignName = `Hot Leads — ${now.toLocaleDateString()}`;
         campaignDescription = "High-scoring leads ready for conversion. Priority outreach.";
         break;
       case "cold_leads":
-        leadQuery = leadQuery.lte("lead_score", 30).gte("updated_at", thirtyDaysAgo);
+        leadQuery = leadQuery.lte("qualification_score", 30).gte("updated_at", thirtyDaysAgo);
         campaignName = `Re-warm Cold Leads — ${now.toLocaleDateString()}`;
         campaignDescription = "Low-scoring leads that need re-engagement with value-add content.";
         break;

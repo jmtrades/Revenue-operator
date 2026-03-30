@@ -1,4 +1,4 @@
-# Launch Now — revenueoperator.ai
+# Launch Now — recall-touch.com
 
 What to do, in order. Migrations are already applied. **Cron:** `vercel.json` is configured so Vercel Cron calls `/api/cron/core` every 2 minutes; no extra cron setup needed if you deploy with this repo.
 
@@ -15,7 +15,7 @@ In **Vercel → Project → Settings → Environment Variables** (Production), s
 | `SUPABASE_SERVICE_ROLE_KEY` | Yes | Supabase service role key |
 | `SESSION_SECRET` or `ENCRYPTION_KEY` | Yes | 32+ chars, random |
 | `CRON_SECRET` | Yes | 32+ chars, for cron route auth |
-| `NEXT_PUBLIC_APP_URL` | Yes | `https://revenueoperator.ai` |
+| `NEXT_PUBLIC_APP_URL` | Yes | `https://recall-touch.com` |
 | `PUBLIC_VIEW_SALT` | Yes | For public record hashing |
 | `FOUNDER_EXPORT_KEY` | Yes | For founder export / scenario ingest |
 | `BASE_URL` | For prod:gate only | Same as `NEXT_PUBLIC_APP_URL` when running gate locally |
@@ -36,14 +36,14 @@ In **Vercel → Project → Settings → Environment Variables** (Production), s
 
 ## 2. DNS
 
-Point **revenueoperator.ai** (and optionally **www.revenueoperator.ai**) to your Vercel deployment (Vercel will show the target, e.g. cname or A record).
+Point **recall-touch.com** (and optionally **www.recall-touch.com**) to your Vercel deployment (Vercel will show the target, e.g. cname or A record).
 
 ---
 
 ## 3. Stripe webhook (if billing enabled)
 
 1. Stripe Dashboard → Developers → Webhooks → Add endpoint.
-2. URL: `https://revenueoperator.ai/api/billing/webhook`
+2. URL: `https://recall-touch.com/api/billing/webhook`
 3. Events: `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`
 4. Copy signing secret → Vercel env `STRIPE_WEBHOOK_SECRET`
 
@@ -74,7 +74,7 @@ Confirm build succeeds in Vercel.
 From your machine (with env vars loaded or Vercel envs set for the project):
 
 ```bash
-BASE_URL=https://revenueoperator.ai npm run prod:gate
+BASE_URL=https://recall-touch.com npm run prod:gate
 ```
 
 - Runs `verify-prod-config` (required env vars) then `self-check` (10 steps against live URL).
@@ -88,8 +88,8 @@ BASE_URL=https://revenueoperator.ai npm run prod:gate
 - **Seed domain packs / templates** (idempotent):  
   `npx tsx scripts/seed-domain-packs.ts`  
   (Run once with prod env; or ensure global templates/policies exist in DB.)
-- **Smoke test** (if you have a smoke script):  
-  `BASE_URL=https://revenueoperator.ai CRON_SECRET=... npm run smoke`
+- **Smoke test** (if you have a smoke script):
+  `BASE_URL=https://recall-touch.com CRON_SECRET=... npm run smoke`
 - Manually: hit `/activate`, start trial, complete checkout with test card `4242 4242 4242 4242`, then check dashboard and public record.
 
 ---

@@ -27,7 +27,7 @@ All must pass. Fix any failures before deploying.
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key |
 | `SUPABASE_SERVICE_ROLE_KEY` | Server-side Supabase access |
 | `SESSION_SECRET` | Session cookie signing (32+ chars) |
-| `NEXT_PUBLIC_APP_URL` | Full app URL (e.g. `https://www.revenueoperator.ai`) |
+| `NEXT_PUBLIC_APP_URL` | Full app URL (e.g. `https://www.recall-touch.com`) |
 | `CRON_SECRET` | Protects cron endpoints (any secret string) |
 
 ### Required for full experience
