@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -6,6 +7,7 @@ import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+
 export default function SignInForm() {
   const t = useTranslations("auth");
   const sp = useSearchParams();
@@ -19,6 +21,7 @@ export default function SignInForm() {
   const [showPw, setShowPw] = useState(false);
   const [checking, setChecking] = useState(true);
   const _tToast = useTranslations("toast");
+
   // Check if user already has a valid session
   useEffect(() => {
     const checkSession = async () => {
@@ -36,6 +39,7 @@ export default function SignInForm() {
     };
     checkSession();
   }, [router]);
+
   const oauthErrorMessage =
     oauthError === "google_config"
       ? t("oauth.googleNotConfigured")
@@ -48,6 +52,7 @@ export default function SignInForm() {
             : oauthError === "auth"
               ? t("toasts.signInFailed")
               : "";
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setErr("");
@@ -97,6 +102,7 @@ export default function SignInForm() {
       setBusy(false);
     }
   }
+
   function google() {
     if (googleBusy) return;
     setGoogleBusy(true);
@@ -105,6 +111,7 @@ export default function SignInForm() {
     // cannot follow cross-origin, but full-page navigation handles it correctly.
     window.location.href = "/api/auth/google";
   }
+
   if (checking) {
     return (
       <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center px-4">
@@ -119,6 +126,7 @@ export default function SignInForm() {
       </div>
     );
   }
+
   return (
     <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center px-4">
       <div className="w-full max-w-[420px] space-y-5">
@@ -134,6 +142,7 @@ export default function SignInForm() {
           <p className="text-[var(--text-secondary)] text-[13px] text-center mt-1 mb-7">
             {t("signIn.subtitle")}
           </p>
+
           <form onSubmit={submit} className="space-y-3.5">
             <div>
               <label className="block text-[13px] font-medium text-[var(--text-secondary)] mb-1.5">
@@ -195,11 +204,13 @@ export default function SignInForm() {
               {busy ? t("signingIn") : `${t("signIn.button")} →`}
             </button>
           </form>
+
           <div className="flex items-center gap-3 my-5">
             <div className="flex-1 h-px bg-[var(--border-default)]" />
             <span className="text-[var(--text-tertiary)] text-[11px] font-medium uppercase tracking-wider">or</span>
             <div className="flex-1 h-px bg-[var(--border-default)]" />
           </div>
+
           <button
             type="button"
             onClick={google}
@@ -235,6 +246,7 @@ export default function SignInForm() {
               </>
             )}
           </button>
+
           <p className="text-center text-[var(--text-tertiary)] text-[13px] mt-4">
             <Link
               href="/forgot-password"
@@ -244,6 +256,7 @@ export default function SignInForm() {
             </Link>
           </p>
         </motion.div>
+
         <p className="text-center text-[var(--text-secondary)] text-[13px]">
           {t("noAccount")}{" "}
           <Link
