@@ -491,8 +491,18 @@
         "disconnectDesc": "This will remove the connection and stop syncing. Your existing contacts will not be deleted.",
         "cancel": "Cancel"
       },
+      "status": {
+        "beta": "Beta",
+        "reauthRequired": "Re-auth required",
+        "expiringToken": "Token expiring soon",
+        "tokenError": "Token error",
+        "syncing": "Syncing\u2026",
+        "connected": "Connected",
+        "disconnected": "Disconnected"
+      },
       "button": {
-        "disconnect": "Disconnect"
+        "disconnect": "Disconnect",
+        "reauthenticate": "Re-authenticate"
       },
       "hub": {
         "needHelp": "Need help with integrations?"
