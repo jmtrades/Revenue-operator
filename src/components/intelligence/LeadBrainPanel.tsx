@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertCircle, TrendingUp, Clock, CheckCircle2, AlertTriangle } from "lucide-react";
+import { AlertCircle, TrendingUp, Clock, CheckCircle2, AlertTriangle, Brain, Zap, Shield, Activity } from "lucide-react";
 import { Card, CardHeader, CardBody } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -18,6 +18,7 @@ interface LeadIntelligence {
   action_reason: string;
   action_confidence: number;
   action_timing: "immediate" | "scheduled" | "deferred";
+  action_channel: string;
   lifecycle_phase: string;
   hours_since_last_contact: number;
   computed_at: string;
@@ -26,73 +27,65 @@ interface LeadIntelligence {
 interface AutonomousAction {
   id: string;
   action_type: string;
+  success?: boolean;
+  details?: string;
   executed_at: string;
-  outcome?: string;
-  details?: Record<string, unknown>;
+  confidence?: number;
+  reason?: string;
 }
 
 interface LeadBrainPanelProps {
   leadId: string;
 }
 
-const ACTION_ICONS: Record<string, string> = {
-  sms: "📱",
-  email: "📧",
-  call: "📞",
-  sequence: "⚡",
-  reactivation: "🔄",
-  escalation: "🚨",
-  task: "✅",
-  note: "📝",
-};
-
 function getTemperature(
   urgency: number,
   intent: number,
   engagement: number
-): { label: string; color: string } {
+): { label: string; color: string; bgColor: string } {
   const avg = (urgency + intent + engagement) / 3;
-  if (avg >= 70) return { label: "Hot", color: "bg-red-500" };
-  if (avg >= 50) return { label: "Warm", color: "bg-orange-500" };
-  if (avg >= 30) return { label: "Cool", color: "bg-blue-500" };
-  return { label: "Cold", color: "bg-gray-500" };
+  if (avg >= 70) return { label: "Hot", color: "text-red-400", bgColor: "bg-red-500/10" };
+  if (avg >= 50) return { label: "Warm", color: "text-orange-400", bgColor: "bg-orange-500/10" };
+  if (avg >= 30) return { label: "Cool", color: "text-blue-400", bgColor: "bg-blue-500/10" };
+  return { label: "Cold", color: "text-gray-400", bgColor: "bg-gray-500/10" };
 }
 
 function getRiskBadgeVariant(flag: string): "error" | "warning" | "info" {
-  if (flag === "anger" || flag === "opt_out") return "error";
+  if (flag === "anger" || flag === "opt_out_signal") return "error";
   if (flag === "going_cold" || flag === "no_show_risk") return "warning";
   return "info";
 }
 
-function ScoreBar({
-  label,
-  value,
-  isInverse = false,
-}: {
-  label: string;
-  value: number;
-  isInverse?: boolean;
-}) {
-  const getColor = () => {
-    if (isInverse) {
-      if (value >= 70) return "bg-emerald-500";
-      if (value >= 50) return "bg-blue-500";
-      return "bg-red-500";
-    }
-    if (value >= 80) return "bg-red-500";
-    if (value >= 50) return "bg-orange-500";
-    return "bg-emerald-500";
-  };
+const ACTION_LABELS: Record<string, string> = {
+  ask_clarification: "Clarifying needs via SMS",
+  send_proof: "Sending proof of value",
+  reframe_value: "Reframing the value proposition",
+  book_call: "Scheduling a call",
+  schedule_call: "Scheduling a call",
+  schedule_followup: "Running follow-up sequence",
+  reactivate_later: "Queuing for reactivation",
+  escalate_human: "Escalating to your team",
+};
+
+const TIMING_LABELS: Record<string, string> = {
+  immediate: "Executing now",
+  scheduled: "Scheduled",
+  deferred: "On hold",
+};
+
+function ScoreBar({ label, value }: { label: string; value: number }) {
+  const color =
+    value >= 70 ? "bg-emerald-500" : value >= 40 ? "bg-orange-500" : "bg-red-500";
 
   return (
     <div className="space-y-1">
       <div className="flex justify-between text-xs">
         <span className="text-[var(--text-secondary)]">{label}</span>
-        <span className="font-semibold text-[var(--text-primary)]">{Math.round(value)}</span>
+        <span className="font-semibold tabular-nums text-[var(--text-primary)]">{Math.round(value)}</span>
       </div>
-      <div className="w-full h-2 rounded-full bg-[var(--bg-inset)] overflow-hidden">
+      <div className="w-full h-1.5 rounded-full bg-[var(--bg-inset)] overflow-hidden">
         <div
-          className={`h-full rounded-full transition-all ${getColor()}`}
+          className={`h-full rounded-full transition-all ${color}`}
           style={{ width: `${Math.min(100, value)}%` }}
         />
       </div>
@@ -135,38 +128,18 @@ export function LeadBrainPanel({ leadId }: LeadBrainPanelProps) {
 
   if (loading) {
     return (
-      <Card>
-        <CardHeader>Brain Intelligence</CardHeader>
-        <CardBody className="space-y-6">
-          <div className="space-y-3">
-            <Skeleton variant="text" className="h-4 w-32" />
-            <Skeleton variant="text" className="h-2 w-full" />
-          </div>
-          <div className="space-y-3">
-            <Skeleton variant="text" className="h-4 w-32" />
-            <Skeleton variant="text" className="h-2 w-full" />
-          </div>
-          <div className="space-y-3">
-            <Skeleton variant="text" className="h-4 w-32" />
-            <Skeleton variant="text" className="h-2 w-full" />
-          </div>
-        </CardBody>
-      </Card>
+      <section className="space-y-3">
+        <div className="flex items-center gap-2 mb-2">
+          <Brain className="w-4 h-4 text-violet-400" />
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">Brain Status</h3>
+        </div>
+        <Skeleton variant="text" className="h-16 w-full rounded-xl" />
+      </section>
     );
   }
 
   if (error || !intelligence) {
-    return (
-      <Card>
-        <CardHeader>Brain Intelligence</CardHeader>
-        <CardBody>
-          <div className="flex items-start gap-3 p-4 rounded-lg bg-red-500/10 border border-red-500/20">
-            <AlertCircle className="h-5 w-5 text-red-400 shrink-0 mt-0.5" />
-            <p className="text-sm text-red-400">{error || "Unable to load intelligence"}</p>
-          </div>
-        </CardBody>
-      </Card>
-    );
+    return null; // Silent fallback — don't show broken panel
   }
 
   const temp = getTemperature(
@@ -175,133 +148,135 @@ export function LeadBrainPanel({ leadId }: LeadBrainPanelProps) {
     intelligence.engagement_score
   );
 
-  return (
-    <div className="space-y-5">
-      <Card>
-        <CardHeader>Lead Temperature</CardHeader>
-        <CardBody>
-          <div className="flex items-center gap-3">
-            <div className={`h-3 w-3 rounded-full ${temp.color}`} />
-            <span className="text-lg font-semibold text-[var(--text-primary)]">{temp.label}</span>
-          </div>
-        </CardBody>
-      </Card>
+  const actionLabel = ACTION_LABELS[intelligence.next_best_action] || intelligence.next_best_action.replace(/_/g, " ");
+  const timingLabel = TIMING_LABELS[intelligence.action_timing] || intelligence.action_timing;
+  const confidencePct = Math.round(intelligence.action_confidence * 100);
+  const recentBrainActions = actions.filter((a) => a.action_type !== "brain_computed").slice(0, 5);
 
-      <Card>
-        <CardHeader>Scores</CardHeader>
-        <CardBody className="space-y-4">
+  return (
+    <section className="space-y-4">
+      <div className="flex items-center gap-2">
+        <Brain className="w-4 h-4 text-violet-400" />
+        <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
+          Brain is managing this lead
+        </h3>
+      </div>
+
+      {/* Active management status */}
+      <div className={`rounded-xl ${temp.bgColor} border border-[var(--border-default)] p-4`}>
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <div className="flex items-center gap-2">
+            <span className={`text-sm font-semibold ${temp.color}`}>{temp.label}</span>
+            <span className="text-[11px] text-[var(--text-tertiary)]">·</span>
+            <span className="text-[11px] text-[var(--text-tertiary)]">{intelligence.lifecycle_phase}</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            {intelligence.action_timing === "immediate" ? (
+              <>
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                </span>
+                <span className="text-[11px] font-medium text-emerald-400">{timingLabel}</span>
+              </>
+            ) : (
+              <Badge variant="neutral" size="sm">{timingLabel}</Badge>
+            )}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 mb-2">
+          <Zap className="w-3.5 h-3.5 text-violet-400 shrink-0" />
+          <p className="text-sm font-medium text-[var(--text-primary)]">{actionLabel}</p>
+        </div>
+        <p className="text-[11px] text-[var(--text-tertiary)] ml-5.5">{intelligence.action_reason}</p>
+
+        <div className="flex items-center gap-3 mt-3 pt-2 border-t border-[var(--border-default)]">
+          <span className="text-[11px] text-[var(--text-tertiary)]">
+            {confidencePct}% confidence · via {intelligence.action_channel}
+          </span>
+          {intelligence.hours_since_last_contact > 0 && (
+            <span className="text-[11px] text-[var(--text-tertiary)]">
+              · {intelligence.hours_since_last_contact < 24
+                ? `${Math.round(intelligence.hours_since_last_contact)}h since contact`
+                : `${Math.round(intelligence.hours_since_last_contact / 24)}d since contact`}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Scores */}
+      <div className="rounded-xl bg-[var(--bg-surface)] border border-[var(--border-default)] p-4 space-y-3">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-[11px] text-[var(--text-tertiary)] mb-1">Conversion</p>
+            <p className="text-lg font-bold tabular-nums text-emerald-400">
+              {(intelligence.conversion_probability * 100).toFixed(0)}%
+            </p>
+          </div>
+          <div>
+            <p className="text-[11px] text-[var(--text-tertiary)] mb-1">Churn risk</p>
+            <p className={`text-lg font-bold tabular-nums ${intelligence.churn_risk > 0.5 ? "text-red-400" : "text-[var(--text-primary)]"}`}>
+              {(intelligence.churn_risk * 100).toFixed(0)}%
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-2 pt-2 border-t border-[var(--border-default)]">
           <ScoreBar label="Urgency" value={intelligence.urgency_score} />
           <ScoreBar label="Intent" value={intelligence.intent_score} />
-          <ScoreBar label="Engagement" value={intelligence.engagement_score} isInverse />
-        </CardBody>
-      </Card>
+          <ScoreBar label="Engagement" value={intelligence.engagement_score} />
+        </div>
+      </div>
 
-      <Card>
-        <CardHeader>Probabilities</CardHeader>
-        <CardBody className="space-y-3">
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-[var(--text-secondary)]">Conversion Probability</span>
-            <span className="text-lg font-semibold text-emerald-400">
-              {(intelligence.conversion_probability * 100).toFixed(0)}%
-            </span>
-          </div>
-          <div className="h-2 rounded-full bg-[var(--bg-inset)] overflow-hidden">
-            <div
-              className="h-full bg-emerald-500 transition-all"
-              style={{ width: `${intelligence.conversion_probability * 100}%` }}
-            />
-          </div>
-          <div className="mt-4 flex justify-between items-center">
-            <span className="text-sm text-[var(--text-secondary)]">Churn Risk</span>
-            <span className="text-lg font-semibold text-red-400">
-              {(intelligence.churn_risk * 100).toFixed(0)}%
-            </span>
-          </div>
-          <div className="h-2 rounded-full bg-[var(--bg-inset)] overflow-hidden">
-            <div
-              className="h-full bg-red-500 transition-all"
-              style={{ width: `${intelligence.churn_risk * 100}%` }}
-            />
-          </div>
-        </CardBody>
-      </Card>
-
+      {/* Risk flags */}
       {intelligence.risk_flags.length > 0 && (
-        <Card>
-          <CardHeader>Risk Flags</CardHeader>
-          <CardBody className="flex flex-wrap gap-2">
-            {intelligence.risk_flags.map((flag) => (
-              <Badge key={flag} variant={getRiskBadgeVariant(flag)} size="sm">
-                {flag.replace(/_/g, " ")}
-              </Badge>
-            ))}
-          </CardBody>
-        </Card>
+        <div className="flex items-center gap-2 flex-wrap">
+          <Shield className="w-3.5 h-3.5 text-orange-400 shrink-0" />
+          {intelligence.risk_flags.map((flag) => (
+            <Badge key={flag} variant={getRiskBadgeVariant(flag)} size="sm">
+              {flag.replace(/_/g, " ")}
+            </Badge>
+          ))}
+        </div>
       )}
 
-      <Card>
-        <CardHeader>Next Best Action</CardHeader>
-        <CardBody className="space-y-3">
-          <div className="flex items-start gap-3">
-            <TrendingUp className="h-5 w-5 text-[var(--accent-primary)] shrink-0 mt-0.5" />
-            <div className="flex-1">
-              <p className="font-semibold text-[var(--text-primary)]">{intelligence.next_best_action}</p>
-              <p className="text-xs text-[var(--text-secondary)] mt-1">{intelligence.action_reason}</p>
-            </div>
+      {/* Recent brain actions */}
+      {recentBrainActions.length > 0 && (
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Activity className="w-3 h-3 text-[var(--text-tertiary)]" />
+            <p className="text-[11px] font-medium uppercase tracking-wide text-[var(--text-tertiary)]">Brain actions</p>
           </div>
-          <div className="flex gap-2 flex-wrap">
-            <Badge variant="info" size="sm">
-              {intelligence.action_timing}
-            </Badge>
-            <Badge variant="neutral" size="sm">
-              {Math.round(intelligence.action_confidence * 100)}% confidence
-            </Badge>
-          </div>
-        </CardBody>
-      </Card>
-
-      {actions.length > 0 && (
-        <Card>
-          <CardHeader>Recent Autonomous Activity</CardHeader>
-          <CardBody className="space-y-3">
-            {actions.slice(0, 5).map((action) => {
+          <div className="space-y-1.5">
+            {recentBrainActions.map((action) => {
               const hoursAgo = Math.floor(
                 (Date.now() - new Date(action.executed_at).getTime()) / (1000 * 60 * 60)
               );
               const timeLabel =
-                hoursAgo === 0
-                  ? "now"
-                  : hoursAgo === 1
-                    ? "1 hour ago"
-                    : `${hoursAgo} hours ago`;
+                hoursAgo === 0 ? "just now"
+                  : hoursAgo < 24 ? `${hoursAgo}h ago`
+                    : `${Math.floor(hoursAgo / 24)}d ago`;
 
               return (
-                <div key={action.id} className="flex items-start gap-3 pb-3 border-b border-[var(--border-default)] last:border-b-0 last:pb-0">
-                  <span className="text-lg">{ACTION_ICONS[action.action_type] || "📌"}</span>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-start gap-2">
-                      <span className="text-sm font-medium text-[var(--text-primary)] capitalize">
-                        {action.action_type.replace(/_/g, " ")}
-                      </span>
-                      <span className="text-xs text-[var(--text-secondary)] whitespace-nowrap">{timeLabel}</span>
-                    </div>
-                    {action.outcome && (
-                      <div className="mt-1">
-                        <Badge
-                          variant={action.outcome === "success" ? "success" : "warning"}
-                          size="sm"
-                        >
-                          {action.outcome}
-                        </Badge>
-                      </div>
+                <div key={action.id} className="flex items-center justify-between text-xs py-1.5">
+                  <div className="flex items-center gap-2">
+                    {action.success ? (
+                      <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
+                    ) : (
+                      <AlertTriangle className="w-3 h-3 text-orange-400 shrink-0" />
                     )}
+                    <span className="text-[var(--text-primary)] capitalize">
+                      {action.action_type.replace(/_/g, " ")}
+                    </span>
                   </div>
+                  <span className="text-[var(--text-tertiary)]">{timeLabel}</span>
                 </div>
               );
             })}
-          </CardBody>
-        </Card>
+          </div>
+        </div>
       )}
-    </div>
+    </section>
   );
 }

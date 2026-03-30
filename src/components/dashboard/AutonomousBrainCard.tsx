@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Brain, Zap, TrendingUp, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Brain, Zap, TrendingUp, AlertTriangle, CheckCircle2, Activity, Shield } from "lucide-react";
 import { useWorkspaceSafe } from "@/components/WorkspaceContext";
 
 interface BrainDashboardStats {
@@ -60,106 +60,137 @@ export function AutonomousBrainCard() {
   }
 
   const hasData = stats.total_leads_with_intelligence > 0;
+  const totalManaged = stats.hot_leads + stats.warm_leads + stats.cold_leads;
 
   return (
-    <div className="dash-section p-5 md:p-6">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <Brain className="w-4 h-4 text-violet-400" />
-          <h2 className="text-sm font-semibold text-[var(--text-primary)]">
-            Autonomous Revenue Brain
-          </h2>
-          {stats.autonomous_actions_24h > 0 && (
-            <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400">
-              <Zap className="w-3 h-3" />
-              {stats.autonomous_actions_24h} actions today
-            </span>
-          )}
-        </div>
-      </div>
+    <div className="dash-section p-5 md:p-6 relative overflow-hidden">
+      {/* Subtle gradient background to signal this is the brain */}
+      <div className="absolute inset-0 bg-gradient-to-br from-violet-500/[0.03] via-transparent to-emerald-500/[0.03] pointer-events-none" />
 
-      {!hasData ? (
-        <div className="py-6 text-center">
-          <Brain className="w-8 h-8 mx-auto mb-3 text-[var(--text-disabled)]" />
-          <p className="text-sm text-[var(--text-secondary)] mb-1">
-            Brain intelligence activates after your first leads
-          </p>
-          <p className="text-xs text-[var(--text-tertiary)]">
-            The autonomous brain will compute scores, detect risk, and execute actions automatically
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {/* Temperature distribution */}
-          <div className="grid grid-cols-3 gap-3">
-            <div className="rounded-lg bg-[var(--bg-surface)] border border-[var(--border-default)] p-3">
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <span className="h-2 w-2 rounded-full bg-red-500" />
-                <p className="text-[11px] font-medium text-[var(--text-tertiary)]">Hot</p>
-              </div>
-              <p className="text-lg font-bold tabular-nums text-[var(--text-primary)]">
-                {stats.hot_leads}
-              </p>
-              <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5">high-intent leads</p>
+      <div className="relative">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center">
+              <Brain className="w-4 h-4 text-violet-400" />
             </div>
-
-            <div className="rounded-lg bg-[var(--bg-surface)] border border-[var(--border-default)] p-3">
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <span className="h-2 w-2 rounded-full bg-orange-500" />
-                <p className="text-[11px] font-medium text-[var(--text-tertiary)]">Warm</p>
-              </div>
-              <p className="text-lg font-bold tabular-nums text-[var(--text-primary)]">
-                {stats.warm_leads}
+            <div>
+              <h2 className="text-sm font-semibold text-[var(--text-primary)]">
+                Revenue Brain
+              </h2>
+              <p className="text-[11px] text-[var(--text-tertiary)]">
+                {hasData ? "Actively managing your pipeline" : "Standing by"}
               </p>
-              <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5">nurturing</p>
-            </div>
-
-            <div className="rounded-lg bg-[var(--bg-surface)] border border-[var(--border-default)] p-3">
-              <div className="flex items-center gap-1.5 mb-1.5">
-                <span className="h-2 w-2 rounded-full bg-blue-500" />
-                <p className="text-[11px] font-medium text-[var(--text-tertiary)]">Cool/Cold</p>
-              </div>
-              <p className="text-lg font-bold tabular-nums text-[var(--text-primary)]">
-                {stats.cold_leads}
-              </p>
-              <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5">reactivation queue</p>
             </div>
           </div>
-
-          {/* Key metrics */}
-          <div className="flex items-center justify-between pt-3 border-t border-[var(--border-default)]">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="text-xs text-[var(--text-secondary)]">Avg conversion probability</span>
-            </div>
-            <span className="text-sm font-semibold text-emerald-400">
-              {(stats.avg_conversion_probability * 100).toFixed(0)}%
-            </span>
-          </div>
-
-          {stats.leads_with_risk_flags > 0 && (
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <AlertTriangle className="w-3.5 h-3.5 text-orange-400" />
-                <span className="text-xs text-[var(--text-secondary)]">Leads with risk flags</span>
-              </div>
-              <span className="text-sm font-semibold text-orange-400">
-                {stats.leads_with_risk_flags}
+          {hasData && (
+            <div className="flex items-center gap-1.5">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
               </span>
+              <span className="text-[11px] font-medium text-emerald-400">Active</span>
             </div>
           )}
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-3.5 h-3.5 text-violet-400" />
-              <span className="text-xs text-[var(--text-secondary)]">Actions this week</span>
-            </div>
-            <span className="text-sm font-semibold text-[var(--text-primary)]">
-              {stats.autonomous_actions_7d}
-            </span>
-          </div>
         </div>
-      )}
+
+        {!hasData ? (
+          <div className="py-5 text-center">
+            <div className="w-10 h-10 rounded-xl bg-violet-500/10 flex items-center justify-center mx-auto mb-3">
+              <Brain className="w-5 h-5 text-violet-400/60" />
+            </div>
+            <p className="text-sm font-medium text-[var(--text-primary)] mb-1">
+              Your brain is ready
+            </p>
+            <p className="text-xs text-[var(--text-tertiary)] max-w-[280px] mx-auto">
+              Once leads arrive, it will automatically score intent, flag risks, schedule follow-ups, and execute actions 24/7.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {/* Active operations summary */}
+            {stats.autonomous_actions_24h > 0 && (
+              <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-emerald-500/[0.06] border border-emerald-500/10">
+                <Zap className="w-4 h-4 text-emerald-400 shrink-0" />
+                <p className="text-xs text-[var(--text-primary)]">
+                  <span className="font-semibold text-emerald-400">{stats.autonomous_actions_24h} actions</span>{" "}
+                  executed today across {totalManaged} leads
+                </p>
+              </div>
+            )}
+
+            {/* Pipeline temperature */}
+            <div className="grid grid-cols-3 gap-3">
+              <div className="rounded-lg bg-[var(--bg-surface)] border border-[var(--border-default)] p-3">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+                  <p className="text-[11px] font-medium text-[var(--text-tertiary)]">Hot</p>
+                </div>
+                <p className="text-lg font-bold tabular-nums text-[var(--text-primary)]">
+                  {stats.hot_leads}
+                </p>
+                <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5">brain is pursuing</p>
+              </div>
+
+              <div className="rounded-lg bg-[var(--bg-surface)] border border-[var(--border-default)] p-3">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <span className="h-2 w-2 rounded-full bg-orange-500" />
+                  <p className="text-[11px] font-medium text-[var(--text-tertiary)]">Warm</p>
+                </div>
+                <p className="text-lg font-bold tabular-nums text-[var(--text-primary)]">
+                  {stats.warm_leads}
+                </p>
+                <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5">brain is nurturing</p>
+              </div>
+
+              <div className="rounded-lg bg-[var(--bg-surface)] border border-[var(--border-default)] p-3">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <span className="h-2 w-2 rounded-full bg-blue-500" />
+                  <p className="text-[11px] font-medium text-[var(--text-tertiary)]">Cool</p>
+                </div>
+                <p className="text-lg font-bold tabular-nums text-[var(--text-primary)]">
+                  {stats.cold_leads}
+                </p>
+                <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5">queued for reactivation</p>
+              </div>
+            </div>
+
+            {/* Key metrics row */}
+            <div className="space-y-2.5 pt-2 border-t border-[var(--border-default)]">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="text-xs text-[var(--text-secondary)]">Conversion probability</span>
+                </div>
+                <span className="text-sm font-semibold text-emerald-400">
+                  {(stats.avg_conversion_probability * 100).toFixed(0)}%
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Activity className="w-3.5 h-3.5 text-violet-400" />
+                  <span className="text-xs text-[var(--text-secondary)]">Actions this week</span>
+                </div>
+                <span className="text-sm font-semibold text-[var(--text-primary)]">
+                  {stats.autonomous_actions_7d}
+                </span>
+              </div>
+
+              {stats.leads_with_risk_flags > 0 && (
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Shield className="w-3.5 h-3.5 text-orange-400" />
+                    <span className="text-xs text-[var(--text-secondary)]">Risk flags detected</span>
+                  </div>
+                  <span className="text-sm font-semibold text-orange-400">
+                    {stats.leads_with_risk_flags}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -114,6 +114,25 @@ export function LeadDetail({
         </section>
       )}
 
+      {/* Brain directive — show above stage when brain is active */}
+      {brainHint && (
+        <section className="rounded-xl bg-violet-500/[0.06] border border-violet-500/10 px-3.5 py-3">
+          <div className="flex items-center gap-2 mb-1.5">
+            <Brain className="w-3.5 h-3.5 text-violet-400 shrink-0" />
+            <span className="text-xs font-semibold text-violet-400">
+              Brain: {brainHint.next_best_action.replace(/_/g, " ")}
+            </span>
+            {brainHint.action_timing === "immediate" && (
+              <span className="px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-400 text-[10px] font-semibold animate-pulse">now</span>
+            )}
+          </div>
+          <p className="text-[11px] text-[var(--text-secondary)] ml-5.5">
+            Phase: {brainHint.lifecycle_phase}
+            {brainHint.action_timing === "immediate" ? " · Executing autonomously" : " · Scheduled"}
+          </p>
+        </section>
+      )}
+
       <section>
         <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">{t("detail.stage")}</h3>
         <select
@@ -125,15 +144,6 @@ export function LeadDetail({
             <option key={s} value={s}>{getStatusDisplay(s, tRoot)}</option>
           ))}
         </select>
-        {brainHint && (
-          <div className="mt-2 flex items-center gap-2 text-[11px] text-violet-400">
-            <Brain className="w-3 h-3" />
-            <span>Brain: {brainHint.next_best_action}</span>
-            {brainHint.action_timing === "immediate" && (
-              <span className="px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-400 text-[10px] font-medium">now</span>
-            )}
-          </div>
-        )}
       </section>
 
       <section>
@@ -165,7 +175,7 @@ export function LeadDetail({
       {/* Autonomous Revenue Brain — Intelligence Panel */}
       <LeadBrainPanel leadId={lead.id} />
 
-      <section>
+      <section className="pt-2 border-t border-[var(--border-default)]">
         <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">{t("detail.notes")}</h3>
         <textarea
           defaultValue={lead.notes}
