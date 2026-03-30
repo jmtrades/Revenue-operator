@@ -1,12 +1,56 @@
 "use client";
 
+import { useEffect, useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Users } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { LeadScoreBadge } from "@/components/intelligence/LeadScoreBadge";
 import type { LeadView } from "../page";
 import { getSourceDisplay, getStatusDisplay } from "../helpers";
+
+interface LeadIntelligenceSummary {
+  urgency_score: number;
+  intent_score: number;
+  engagement_score: number;
+  next_best_action: string;
+  risk_flags: string[];
+  conversion_probability: number;
+}
+
+function useLeadIntelligenceBatch(leadIds: string[]) {
+  const [data, setData] = useState<Record<string, LeadIntelligenceSummary>>({});
+  const fetchedRef = useRef<string>("");
+
+  useEffect(() => {
+    const key = leadIds.slice().sort().join(",");
+    if (!key || key === fetchedRef.current) return;
+    fetchedRef.current = key;
+
+    fetch("/api/leads/intelligence/batch", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ lead_ids: leadIds.slice(0, 50) }),
+    })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((json) => {
+        if (json && typeof json === "object") {
+          // Filter out null entries — only keep leads with intelligence data
+          const valid: Record<string, LeadIntelligenceSummary> = {};
+          for (const [k, v] of Object.entries(json)) {
+            if (v && typeof v === "object" && "urgency_score" in (v as Record<string, unknown>)) {
+              valid[k] = v as LeadIntelligenceSummary;
+            }
+          }
+          setData(valid);
+        }
+      })
+      .catch(() => {});
+  }, [leadIds]);
+
+  return data;
+}
 
 type ScoreBucket = "all" | "high" | "medium" | "low";
 
@@ -127,6 +171,9 @@ export function LeadsList({
     );
   }
 
+  const leadIds = filteredLeads.map((l) => l.id);
+  const intelligence = useLeadIntelligenceBatch(leadIds);
+
   return (
     <>
       <div className="hidden md:block rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] overflow-x-auto">
@@ -192,37 +239,17 @@ export function LeadsList({
                     />
                   </td>
                   <td className="py-3 px-4 text-sm text-[var(--text-primary)]">
-                    <div className="flex items-center gap-2">
-                      {/* Intent signal dot */}
-                      {(lead.status === "Qualified" || lead.status === "Appointment Set") && (
-                        <span className="inline-flex items-center gap-1">
-                          <span className="h-2 w-2 rounded-full bg-[var(--accent-primary)]" aria-hidden />
-                          <span className="text-[9px] font-medium text-[var(--accent-primary)]">High intent</span>
-                        </span>
-                      )}
-                      {lead.status === "Contacted" && (() => {
-                        const daysSinceContact = Math.floor(
-                          (Date.now() - new Date(lead.lastContactAt).getTime()) / (1000 * 60 * 60 * 24)
-                        );
-                        return daysSinceContact > 3 ? (
-                          <span className="inline-flex items-center gap-1">
-                            <span className="h-2 w-2 rounded-full bg-[var(--accent-warning,#f59e0b)]" aria-hidden />
-                            <span className="text-[9px] font-medium text-[var(--accent-warning,#f59e0b)]">Cooling</span>
-                          </span>
-                        ) : null;
-                      })()}
-                      {lead.status === "New" && (() => {
-                        const daysSinceCreated = Math.floor(
-                          (Date.now() - new Date(lead.createdAt).getTime()) / (1000 * 60 * 60 * 24)
-                        );
-                        return daysSinceCreated > 7 ? (
-                          <span className="inline-flex items-center gap-1">
-                            <span className="h-2 w-2 rounded-full bg-[var(--accent-danger,#ef4444)]" aria-hidden />
-                            <span className="text-[9px] font-medium text-[var(--accent-danger,#ef4444)]">Stale</span>
-                          </span>
-                        ) : null;
-                      })()}
+                    <div className="flex flex-col gap-1">
                       <span>{lead.name && lead.name !== "New Lead" ? lead.name : (lead.phone || lead.email || "Unknown")}</span>
+                      {intelligence[lead.id] ? (
+                        <LeadScoreBadge
+                          urgency={intelligence[lead.id].urgency_score}
+                          intent={intelligence[lead.id].intent_score}
+                          engagement={intelligence[lead.id].engagement_score}
+                          nextAction={intelligence[lead.id].next_best_action}
+                          riskFlags={intelligence[lead.id].risk_flags}
+                        />
+                      ) : null}
                     </div>
                   </td>
                   <td className="py-3 px-4 text-xs text-[var(--text-tertiary)]">
@@ -289,7 +316,19 @@ export function LeadsList({
                   </span>
                 </div>
                 <p className="text-xs text-[var(--text-tertiary)]">{lead.phone}</p>
-                <p className="text-xs text-[var(--text-secondary)]">{lead.service}</p>
+                {intelligence[lead.id] ? (
+                  <div className="mt-0.5">
+                    <LeadScoreBadge
+                      urgency={intelligence[lead.id].urgency_score}
+                      intent={intelligence[lead.id].intent_score}
+                      engagement={intelligence[lead.id].engagement_score}
+                      nextAction={intelligence[lead.id].next_best_action}
+                      riskFlags={intelligence[lead.id].risk_flags}
+                    />
+                  </div>
+                ) : (
+                  <p className="text-xs text-[var(--text-secondary)]">{lead.service}</p>
+                )}
                 <div className="mt-1 flex items-center justify-between gap-2">
                   <span className="inline-flex items-center rounded-full border border-[var(--border-medium)] px-2 py-0.5 text-[11px] text-[var(--text-primary)]">
                     {getStatusDisplay(lead.status, t)}

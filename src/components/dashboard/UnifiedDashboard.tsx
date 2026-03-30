@@ -53,6 +53,7 @@ const SetupHealthCard = lazy(() => import("@/components/dashboard/SetupHealthCar
 const SystemReadiness = lazy(() => import("@/components/dashboard/SystemReadiness").then(m => ({ default: m.SystemReadiness })));
 const RecoveryScoreCard = lazy(() => import("@/components/dashboard/RecoveryScoreCard").then(m => ({ default: m.RecoveryScoreCard })));
 const AutonomousBriefing = lazy(() => import("@/components/dashboard/AutonomousBriefing").then(m => ({ default: m.AutonomousBriefing })));
+const AutonomousBrainCard = lazy(() => import("@/components/dashboard/AutonomousBrainCard").then(m => ({ default: m.AutonomousBrainCard })));
 
 function CardSkeleton() {
   return (
@@ -976,6 +977,9 @@ export function UnifiedDashboard() {
         initial="initial"
         animate="animate"
       >
+        <motion.div variants={staggerItem}>
+          <Suspense fallback={<CardSkeleton />}><AutonomousBrainCard /></Suspense>
+        </motion.div>
         <motion.div variants={staggerItem}>
           <Suspense fallback={<CardSkeleton />}><IntelligenceCard /></Suspense>
         </motion.div>

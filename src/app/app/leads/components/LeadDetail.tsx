@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Phone, MessageSquare, Calendar, StickyNote, Archive } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Phone, MessageSquare, Calendar, StickyNote, Archive, Brain } from "lucide-react";
 import type { LeadView } from "../page";
 import { getSourceDisplay, getStatusDisplay } from "../helpers";
 import { Badge } from "@/components/ui/Badge";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { LeadBrainPanel } from "@/components/intelligence/LeadBrainPanel";
 
 export type LeadStatus = "New" | "Contacted" | "Qualified" | "Appointment Set" | "Won" | "Lost";
 
@@ -39,6 +41,12 @@ export type LeadDetailProps = {
   outboundCalling: boolean;
 };
 
+interface BrainHint {
+  next_best_action: string;
+  action_timing: string;
+  lifecycle_phase: string;
+}
+
 export function LeadDetail({
   lead,
   calls,
@@ -54,6 +62,23 @@ export function LeadDetail({
 }: LeadDetailProps) {
   const tRoot = useTranslations();
   const t = useTranslations("leads");
+  const [brainHint, setBrainHint] = useState<BrainHint | null>(null);
+
+  useEffect(() => {
+    fetch(`/api/leads/${lead.id}/intelligence`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.intelligence) {
+          setBrainHint({
+            next_best_action: data.intelligence.next_best_action,
+            action_timing: data.intelligence.action_timing,
+            lifecycle_phase: data.intelligence.lifecycle_phase,
+          });
+        }
+      })
+      .catch(() => {});
+  }, [lead.id]);
+
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-3">
@@ -100,6 +125,15 @@ export function LeadDetail({
             <option key={s} value={s}>{getStatusDisplay(s, tRoot)}</option>
           ))}
         </select>
+        {brainHint && (
+          <div className="mt-2 flex items-center gap-2 text-[11px] text-violet-400">
+            <Brain className="w-3 h-3" />
+            <span>Brain: {brainHint.next_best_action}</span>
+            {brainHint.action_timing === "immediate" && (
+              <span className="px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-400 text-[10px] font-medium">now</span>
+            )}
+          </div>
+        )}
       </section>
 
       <section>
@@ -127,6 +161,9 @@ export function LeadDetail({
         </ol>
         {callsLoading && <p className="text-xs text-[var(--text-secondary)]">{t("loadingCalls")}</p>}
       </section>
+
+      {/* Autonomous Revenue Brain — Intelligence Panel */}
+      <LeadBrainPanel leadId={lead.id} />
 
       <section>
         <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-2">{t("detail.notes")}</h3>
