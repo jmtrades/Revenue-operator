@@ -125,10 +125,17 @@ export async function GET(
 
     if (!tokenRes.ok) {
       const errText = await tokenRes.text();
-      console.error(`[CRM Callback] Token exchange failed for ${provider}: ${tokenRes.status}`);
-      // Don't log errText as it may contain sensitive details like tokens or error messages with PII
-      return NextResponse.redirect(
-        `${returnUrl}?crm=error&provider=${provider}&reason=token_exchange_failed`
+      console.error(`[CRM Callback] Token exchange failed for ${provider}: ${tokenRes.status}`, errText);
+      // TEMPORARY DEBUG: Return error details as JSON to diagnose token exchange failure
+      return NextResponse.json(
+        {
+          error: "token_exchange_failed",
+          status: tokenRes.status,
+          provider,
+          redirectUri,
+          responseBody: errText,
+        },
+        { status: 502 }
       );
     }
 
