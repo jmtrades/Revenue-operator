@@ -715,6 +715,11 @@ export function UnifiedDashboard() {
         <AutonomousBriefing workspaceId={workspaceId} />
       </Suspense>
 
+      {/* ── Autonomous Revenue Brain — Top of Dashboard ─────────────────── */}
+      <Suspense fallback={<CardSkeleton />}>
+        <AutonomousBrainCard />
+      </Suspense>
+
       {/* ── KPI cards ──────────────────────────────────────────────────── */}
       <motion.div
         className="grid grid-cols-2 md:grid-cols-4 gap-4"
@@ -977,9 +982,6 @@ export function UnifiedDashboard() {
         initial="initial"
         animate="animate"
       >
-        <motion.div variants={staggerItem}>
-          <Suspense fallback={<CardSkeleton />}><AutonomousBrainCard /></Suspense>
-        </motion.div>
         <motion.div variants={staggerItem}>
           <Suspense fallback={<CardSkeleton />}><IntelligenceCard /></Suspense>
         </motion.div>

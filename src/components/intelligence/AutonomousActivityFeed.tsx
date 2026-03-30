@@ -138,10 +138,10 @@ export function AutonomousActivityFeed({ leadId }: AutonomousActivityFeedProps) 
   if (actions.length === 0) {
     return (
       <Card>
-        <CardHeader>Autonomous Activity</CardHeader>
+        <CardHeader>Brain Activity</CardHeader>
         <CardBody>
           <p className="text-sm text-[var(--text-secondary)] text-center py-4">
-            No autonomous activity yet
+            Brain is standing by — actions will appear here as it manages this lead
           </p>
         </CardBody>
       </Card>
