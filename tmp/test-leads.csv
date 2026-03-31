@@ -1,0 +1,4 @@
+name,phone,email,company,source
+CSV Import Lead A,+15551112222,leada@test.com,Acme Corp,Website
+CSV Import Lead B,+15553334444,leadb@test.com,Beta Inc,Referral
+CSV Import Lead C,+15555556666,leadc@test.com,Gamma LLC,Inbound Call

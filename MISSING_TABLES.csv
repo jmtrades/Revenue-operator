@@ -1,0 +1,132 @@
+Table Name,Usage Count,Severity,Primary Files,Line Numbers
+call_sessions,161,CRITICAL,src/app/app/AppShellClient.tsx src/app/app/layout.tsx src/app/results/page.tsx,233 95 38
+action_logs,36,CRITICAL,src/app/api/command-center/route.ts,142 323 401
+automation_states,10,CRITICAL,src/app/api/command-center/route.ts src/app/api/assurance/misses/route.ts,788 43 44
+call_analytics,2,HIGH,src/app/api/admin/calls-deep/route.ts,119
+call_coaching,1,HIGH,src/app/api/calls/[id]/coaching/route.ts,38
+call_quality_metrics,1,HIGH,src/app/api/admin/calls-deep/route.ts,119
+call_outcomes,8,HIGH,src/app/api/contacts/[id]/timeline/route.ts,128
+commitment_registry,8,HIGH,src/lib/conversational-engine/Brain.ts src/lib/intelligence/commitment-registry.ts,163 52
+conversation_state_snapshots,2,HIGH,src/lib/intelligence/conversation-snapshot.ts,33 82
+conversation_memory,2,MEDIUM,src/lib/human-presence/conversation-memory.ts,34 72
+conversation_readiness,1,MEDIUM,src/lib/readiness/engine.ts,329
+commitment_signals,4,MEDIUM,src/lib/intelligence,various
+commitment_events,3,MEDIUM,src/lib/intelligence,various
+campaign_enrollments,2,HIGH,src/app/api/contacts/[id]/timeline/route.ts src/lib/lead-scoring/ai-scorer.ts,175 135
+campaign_leads,8,HIGH,src/app/api/campaigns/[id]/launch/route.ts src/app/api/cron/campaign-process/route.ts,232 98
+billing_events,1,MEDIUM,src/app/api/billing/change-plan/route.ts,249
+after_hours_stability_sent,2,MEDIUM,src/lib/organizational-embedding/index.ts,238 263
+analytics_snapshots,1,MEDIUM,src/app/api/cron/benchmark-aggregation/route.ts,177
+attribution_records,1,MEDIUM,src/app/api/cron/billing/route.ts,29
+behavioral_patterns,2,MEDIUM,src/lib/network/pattern-aggregator.ts src/lib/network/behavioral-blend.ts,211 95
+benchmark_aggregates,2,MEDIUM,src/app/api/admin/benchmarks/route.ts src/app/api/cron/benchmark-aggregation/route.ts,23 155
+booking_quiet_sent,2,MEDIUM,src/lib/negative-signal-semantics/index.ts,205 236
+booking_shortly_sent,2,MEDIUM,src/lib/negative-signal-semantics/index.ts src/lib/operational-transfer/notify.ts,197 210
+bookings,3,MEDIUM,src/app/api/contacts/[id]/timeline/route.ts,128
+calendar_sessions,1,MEDIUM,src/app/api/revenue-signals/route.ts,58
+cancellation_reasons,1,MEDIUM,src/app/api/dashboard/cancel-subscription/route.ts,32
+channel_capabilities,1,MEDIUM,src/lib/channels/capabilities.ts,29
+closer_feedback,1,MEDIUM,src/lib/outcomes/closer-feedback.ts,46
+continuity_scope_units,1,MEDIUM,src/app/api/billing/scope/route.ts,23
+daily_attention,2,MEDIUM,src/app/api/attention/route.ts,28 134
+daily_completion_sent,2,MEDIUM,src/lib/negative-signal-semantics/index.ts,288 306
+deal_death_signals,2,MEDIUM,src/lib/intelligence/deal-death.ts,95
+deal_outcomes,2,MEDIUM,src/lib/intelligence,various
+deals,2,MEDIUM,src/lib/intelligence,various
+demo_requests,1,LOW,various,various
+email_logs,2,LOW,src/lib/email,various
+events,1,LOW,various,various
+executor_heartbeats,1,LOW,src/app/api/cron/executor,various
+executor_outcome_reports,2,LOW,src/lib/execution-plan,various
+executor_outcome_reports_archive,1,LOW,src/lib/execution-plan,various
+feature_usage,1,LOW,src/app/api/admin,various
+guarantee_capacity_state,1,LOW,src/lib/guarantee,various
+guarantee_commitment_state,1,LOW,src/lib/guarantee,various
+guarantee_economic_priority,1,LOW,src/lib/guarantee,various
+guarantee_temporal_urgency,1,LOW,src/lib/guarantee,various
+guarantee_trajectory_state,1,LOW,src/lib/guarantee,various
+human_presence_meta,1,LOW,src/lib/human-presence,various
+inaction_reasons,1,LOW,various,various
+inbox_messages,2,LOW,src/lib/connectors,various
+interactions,1,LOW,src/lib/intelligence,various
+interruption_signal_sent,1,LOW,src/lib/signals,various
+invoice_items,2,LOW,src/lib/billing,various
+invoices,2,LOW,src/lib/billing,various
+job_queue,1,LOW,src/lib/queue,various
+knowledge_gaps,2,LOW,src/lib/connectors,various
+knowledge_items,1,LOW,src/lib/knowledge,various
+lead_assignments,1,LOW,src/lib/leads,various
+lead_intervention_limits,1,LOW,src/lib/leads,various
+lead_plans,1,LOW,src/lib/leads,various
+learning_weights,1,LOW,src/lib/intelligence,various
+message_drift_alerts,1,LOW,src/lib/message-compiler,various
+metrics,2,LOW,src/app/api/metrics,various
+minute_pack_purchases,2,LOW,src/lib/billing,various
+month_end_anchor_sent,1,LOW,src/lib/signals,various
+month_start_anchor_sent,1,LOW,src/lib/signals,various
+morning_absence_sent,1,LOW,src/lib/signals,various
+morning_certainty_sent,1,LOW,src/lib/signals,various
+morning_state_sent,1,LOW,src/lib/signals,various
+network_patterns,1,LOW,src/lib/network,various
+no_further_decisions_sent,1,LOW,src/lib/signals,various
+operational_confidence_streak,2,MEDIUM,src/lib/operational,various
+operational_ledger,3,MEDIUM,src/lib/operational,various
+operational_ledger_archive,1,MEDIUM,src/lib/operational,various
+operational_view_memory,1,MEDIUM,src/lib/operational,various
+ops_alerts,1,LOW,src/app/api/ops,various
+optimization_suggestions,1,LOW,src/lib/optimization,various
+organizational_embedding_state,2,LOW,src/lib/organizational-embedding,various
+outbound_messages,2,MEDIUM,src/lib/outbound,various
+outcome_attribution,2,MEDIUM,src/lib/outcomes,various
+page_events,1,LOW,src/lib/tracking,various
+payment_records,2,MEDIUM,src/lib/billing,various
+payroll_safety_sent,1,LOW,src/lib/human-safety,various
+pending_approvals,1,MEDIUM,src/lib/approvals,various
+personal_references,1,LOW,src/lib/relationships,various
+post_decision_calm_pending,1,LOW,src/lib/signals,various
+profiles,1,LOW,src/lib/user,various
+public_record_views,2,MEDIUM,src/lib/public-record,various
+public_record_views_archive,1,MEDIUM,src/lib/public-record,various
+rate_limits,1,MEDIUM,src/lib/rate-limit,various
+raw_webhook_events,1,LOW,src/lib/webhooks,various
+replay_defense,1,LOW,src/lib/scenarios,various
+reply_rate_baseline,1,LOW,src/lib/intelligence,various
+revenue_events,2,MEDIUM,src/lib/revenue-lifecycle,various
+scenario_incidents,2,MEDIUM,src/lib/scenarios,various
+scenario_profiles,2,MEDIUM,src/lib/scenarios,various
+sequence_runs,3,MEDIUM,src/lib/sequences,various
+sequences,2,MEDIUM,src/lib/sequences,various
+sms_logs,1,LOW,src/lib/telephony,various
+staff_action_logs,1,LOW,src/lib/staff,various
+staff_magic_links,1,LOW,src/lib/staff,various
+staff_sessions,1,LOW,src/lib/staff,various
+staff_users,1,LOW,src/lib/staff,various
+strategic_pattern_registry,1,LOW,src/lib/strategy,various
+strategy_effectiveness_registry,1,LOW,src/lib/strategy,various
+system_cron_heartbeats,1,MEDIUM,src/app/api/cron,various
+system_webhook_failures,1,LOW,src/lib/webhooks,various
+template_activations,1,LOW,src/lib/templates,various
+universal_outcomes,1,LOW,src/lib/outcomes,various
+unresolved_questions,1,LOW,src/lib/intelligence,various
+user_profiles,1,LOW,src/lib/user,various
+voice_ab_tests,1,LOW,src/lib/voice,various
+voice_consents,1,LOW,src/lib/voice,various
+voice_models,1,LOW,src/lib/voice,various
+voice_quality_logs,1,LOW,src/lib/voice,various
+voice_usage,1,LOW,src/lib/voice,various
+waitlist_signups,1,LOW,src/lib/signups,various
+week_completion_anchor_sent,1,LOW,src/lib/signals,various
+weekend_prepared_sent,1,LOW,src/lib/signals,various
+workflow_enrollments,1,MEDIUM,src/lib/workflows,various
+workspace_billing,2,MEDIUM,src/lib/workspace,various
+workspace_health,1,MEDIUM,src/lib/workspace,various
+workspace_integrations,2,MEDIUM,src/lib/workspace,various
+workspace_knowledge,1,MEDIUM,src/lib/workspace,various
+workspace_members,1,MEDIUM,src/lib/workspace,various
+workspace_minute_balance,1,MEDIUM,src/lib/workspace,various
+workspace_objectives,1,MEDIUM,src/lib/workspace,various
+workspace_scenario_state,1,MEDIUM,src/lib/workspace,various
+workspace_settings,1,MEDIUM,src/lib/workspace,various
+workspace_strategy_state,1,MEDIUM,src/lib/workspace,various
+action_queue,1,CRITICAL,src/app/api/leads/route.ts,232
+activation_milestones,1,CRITICAL,src/lib/ops/milestones.ts,27

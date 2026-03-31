@@ -1,0 +1,340 @@
+# Claude Code Configuration - RuFlo V3
+
+## Behavioral Rules (Always Enforced)
+
+- Do what has been asked; nothing more, nothing less
+- NEVER create files unless they're absolutely necessary for achieving your goal
+- ALWAYS prefer editing an existing file to creating a new one
+- NEVER proactively create documentation files (*.md) or README files unless explicitly requested
+- NEVER save working files, text/mds, or tests to the root folder
+- Never continuously check status after spawning a swarm — wait for results
+- ALWAYS read a file before editing it
+- NEVER commit secrets, credentials, or .env files
+
+## File Organization
+
+- NEVER save to root folder — use the directories below
+- Use `/src` for source code files
+- Use `/tests` for test files
+- Use `/docs` for documentation and markdown files
+- Use `/config` for configuration files
+- Use `/scripts` for utility scripts
+- Use `/examples` for example code
+
+## Project Architecture
+
+- Follow Domain-Driven Design with bounded contexts
+- Keep files under 500 lines
+- Use typed interfaces for all public APIs
+- Prefer TDD London School (mock-first) for new code
+- Use event sourcing for state changes
+- Ensure input validation at system boundaries
+
+### Project Config
+
+- **Topology**: hierarchical-mesh
+- **Max Agents**: 15
+- **Memory**: hybrid
+- **HNSW**: Enabled
+- **Neural**: Enabled
+
+## Build & Test
+
+```bash
+# Build
+npm run build
+
+# Test
+npm test
+
+# Lint
+npm run lint
+```
+
+- ALWAYS run tests after making code changes
+- ALWAYS verify build succeeds before committing
+
+## Security Rules
+
+- NEVER hardcode API keys, secrets, or credentials in source files
+- NEVER commit .env files or any file containing secrets
+- Always validate user input at system boundaries
+- Always sanitize file paths to prevent directory traversal
+- Run `npx @claude-flow/cli@latest security scan` after security-related changes
+
+## Concurrency: 1 MESSAGE = ALL RELATED OPERATIONS
+
+- All operations MUST be concurrent/parallel in a single message
+- Use Claude Code's Task tool for spawning agents, not just MCP
+- ALWAYS batch ALL todos in ONE TodoWrite call (5-10+ minimum)
+- ALWAYS spawn ALL agents in ONE message with full instructions via Task tool
+- ALWAYS batch ALL file reads/writes/edits in ONE message
+- ALWAYS batch ALL Bash commands in ONE message
+
+## Swarm Orchestration
+
+- MUST initialize the swarm using CLI tools when starting complex tasks
+- MUST spawn concurrent agents using Claude Code's Task tool
+- Never use CLI tools alone for execution — Task tool agents do the actual work
+- MUST call CLI tools AND Task tool in ONE message for complex work
+
+### 3-Tier Model Routing (ADR-026)
+
+| Tier | Handler | Latency | Cost | Use Cases |
+|------|---------|---------|------|-----------|
+| **1** | Agent Booster (WASM) | <1ms | $0 | Simple transforms (var→const, add types) — Skip LLM |
+| **2** | Haiku | ~500ms | $0.0002 | Simple tasks, low complexity (<30%) |
+| **3** | Sonnet/Opus | 2-5s | $0.003-0.015 | Complex reasoning, architecture, security (>30%) |
+
+- Always check for `[AGENT_BOOSTER_AVAILABLE]` or `[TASK_MODEL_RECOMMENDATION]` before spawning agents
+- Use Edit tool directly when `[AGENT_BOOSTER_AVAILABLE]`
+
+## Swarm Configuration & Anti-Drift
+
+- ALWAYS use hierarchical topology for coding swarms
+- Keep maxAgents at 6-8 for tight coordination
+- Use specialized strategy for clear role boundaries
+- Use `raft` consensus for hive-mind (leader maintains authoritative state)
+- Run frequent checkpoints via `post-task` hooks
+- Keep shared memory namespace for all agents
+
+```bash
+npx @claude-flow/cli@latest swarm init --topology hierarchical --max-agents 8 --strategy specialized
+```
+
+## Swarm Execution Rules
+
+- ALWAYS use `run_in_background: true` for all agent Task calls
+- ALWAYS put ALL agent Task calls in ONE message for parallel execution
+- After spawning, STOP — do NOT add more tool calls or check status
+- Never poll TaskOutput or check swarm status — trust agents to return
+- When agent results arrive, review ALL results before proceeding
+
+## V3 CLI Commands
+
+### Core Commands
+
+| Command | Subcommands | Description |
+|---------|-------------|-------------|
+| `init` | 4 | Project initialization |
+| `agent` | 8 | Agent lifecycle management |
+| `swarm` | 6 | Multi-agent swarm coordination |
+| `memory` | 11 | AgentDB memory with HNSW search |
+| `task` | 6 | Task creation and lifecycle |
+| `session` | 7 | Session state management |
+| `hooks` | 17 | Self-learning hooks + 12 workers |
+| `hive-mind` | 6 | Byzantine fault-tolerant consensus |
+
+### Quick CLI Examples
+
+```bash
+npx @claude-flow/cli@latest init --wizard
+npx @claude-flow/cli@latest agent spawn -t coder --name my-coder
+npx @claude-flow/cli@latest swarm init --v3-mode
+npx @claude-flow/cli@latest memory search --query "authentication patterns"
+npx @claude-flow/cli@latest doctor --fix
+```
+
+## Available Agents (60+ Types)
+
+### Core Development
+`coder`, `reviewer`, `tester`, `planner`, `researcher`
+
+### Specialized
+`security-architect`, `security-auditor`, `memory-specialist`, `performance-engineer`
+
+### Swarm Coordination
+`hierarchical-coordinator`, `mesh-coordinator`, `adaptive-coordinator`
+
+### GitHub & Repository
+`pr-manager`, `code-review-swarm`, `issue-tracker`, `release-manager`
+
+### SPARC Methodology
+`sparc-coord`, `sparc-coder`, `specification`, `pseudocode`, `architecture`
+
+## Memory Commands Reference
+
+```bash
+# Store (REQUIRED: --key, --value; OPTIONAL: --namespace, --ttl, --tags)
+npx @claude-flow/cli@latest memory store --key "pattern-auth" --value "JWT with refresh" --namespace patterns
+
+# Search (REQUIRED: --query; OPTIONAL: --namespace, --limit, --threshold)
+npx @claude-flow/cli@latest memory search --query "authentication patterns"
+
+# List (OPTIONAL: --namespace, --limit)
+npx @claude-flow/cli@latest memory list --namespace patterns --limit 10
+
+# Retrieve (REQUIRED: --key; OPTIONAL: --namespace)
+npx @claude-flow/cli@latest memory retrieve --key "pattern-auth" --namespace patterns
+```
+
+## Quick Setup
+
+```bash
+claude mcp add claude-flow -- npx -y @claude-flow/cli@latest
+npx @claude-flow/cli@latest daemon start
+npx @claude-flow/cli@latest doctor --fix
+```
+
+## Claude Code vs CLI Tools
+
+- Claude Code's Task tool handles ALL execution: agents, file ops, code generation, git
+- CLI tools handle coordination via Bash: swarm init, memory, hooks, routing
+- NEVER use CLI tools as a substitute for Task tool agents
+
+## Installed Skills (Auto-Apply)
+
+ALWAYS read and follow the relevant SKILL.md before performing work in that domain.
+Skills are located in `.claude/skills/<skill-name>/SKILL.md`.
+
+### Code Quality & Review
+| Skill | When to Use |
+|-------|-------------|
+| `review` | Before committing — review staged changes for security, performance, bugs |
+| `code-optimizer` | Performance audits — spawns 13 parallel specialist agents |
+| `lint` | Auto-detect and run ESLint/Biome/Prettier with auto-fix |
+| `test` | Generate or run tests, auto-detect framework |
+| `debug-like-expert` | Complex debugging requiring systematic root cause analysis |
+| `best-practices` | Security audits, modernize code, code quality reviews |
+
+### Frontend & Design
+| Skill | When to Use |
+|-------|-------------|
+| `react-best-practices` | Writing/reviewing React/Next.js code — 57 Vercel engineering rules |
+| `frontend-design` | Building distinctive, production-grade UI — avoid AI slop aesthetics |
+| `make-interfaces-feel-better` | UI polish — animations, shadows, typography, micro-interactions |
+| `userinterface-wiki` | UI/UX review — animations, CSS, audio, typography, prefetching |
+| `web-design-guidelines` | Web Interface Guidelines compliance checks |
+| `ui-ux-pro-max-v2` | Advanced UI/UX design system and component patterns |
+
+### Web Performance & Accessibility
+| Skill | When to Use |
+|-------|-------------|
+| `core-web-vitals` | Optimize LCP, INP, CLS for search ranking |
+| `web-quality-audit` | Comprehensive audit — performance, a11y, SEO, best practices |
+| `accessibility` | WCAG 2.1 compliance, screen reader support, keyboard navigation |
+
+### DevOps & Workflows
+| Skill | When to Use |
+|-------|-------------|
+| `github-workflows` | GitHub Actions CI/CD — live syntax, monitor runs, debug failures |
+| `create-workflow` | Create YAML workflow definitions |
+| `gsd-workflow` | GSD orchestration workflow reference |
+| `gsd-headless` | Headless/automated GSD agent operation |
+
+### Document Creation (Cowork Skills)
+| Skill | When to Use |
+|-------|-------------|
+| `docx` | Word documents — reports, memos, letters |
+| `xlsx` | Excel spreadsheets — data, formulas, charts |
+| `pptx` | PowerPoint presentations — decks, slides |
+| `pdf` | PDF creation, merging, splitting, form filling |
+
+### Orchestration (RuFlo + Superpowers)
+| Skill | When to Use |
+|-------|-------------|
+| `sparc-methodology` | SPARC development methodology |
+| `swarm-orchestration` | Multi-agent swarm coordination |
+| `systematic-debugging` | Methodical debugging protocols |
+| `test-driven-development` | TDD workflow patterns |
+| `verification-before-completion` | Pre-completion verification gates |
+
+### UI/UX Pro Max (nextlevelbuilder)
+| Skill | When to Use |
+|-------|-------------|
+| `ui-ux-pro-max` | Master UI/UX design skill — comprehensive design system |
+| `ui-ux-pro-max-v2` | V2 advanced design system and component patterns |
+| `banner-design` | Banner and hero section design |
+| `brand` | Brand identity, color palettes, visual language |
+| `design` | General design principles and patterns |
+| `design-system` | Design system architecture, tokens, components |
+| `ui-styling` | Styling techniques, CSS patterns, visual polish |
+| `slides` | Presentation slide design |
+| `emil-design-eng` | Design engineering — bridging design and code |
+
+### Superpowers (obra)
+| Skill | When to Use |
+|-------|-------------|
+| `using-superpowers` | Overview of all Superpowers capabilities |
+| `brainstorming` | Structured ideation and brainstorming sessions |
+| `pair-programming` | Collaborative coding patterns |
+| `writing-plans` | Writing structured implementation plans |
+| `executing-plans` | Executing plans step by step |
+| `writing-skills` | Creating new skills from scratch |
+| `skill-builder` | Advanced skill creation and optimization |
+| `dispatching-parallel-agents` | Spawning and managing parallel sub-agents |
+| `subagent-driven-development` | Using sub-agents for development tasks |
+| `stream-chain` | Chaining operations in streaming pipelines |
+| `github-code-review` | GitHub PR code review workflows |
+| `github-multi-repo` | Multi-repository GitHub operations |
+| `github-project-management` | GitHub Projects/Issues management |
+| `github-release-management` | GitHub Releases and versioning |
+| `github-workflow-automation` | GitHub Actions automation |
+| `hooks-automation` | Git hooks and automation triggers |
+| `using-git-worktrees` | Git worktree management for parallel work |
+| `finishing-a-development-branch` | Branch completion, merge, cleanup |
+| `requesting-code-review` | Preparing and requesting code reviews |
+| `receiving-code-review` | Processing and applying review feedback |
+| `verification-quality` | Quality verification gates |
+
+### RuFlo v3 (ruvnet) — Agent Infrastructure
+| Skill | When to Use |
+|-------|-------------|
+| `agentdb-advanced` | Advanced AgentDB patterns |
+| `agentdb-learning` | Self-learning agent memory |
+| `agentdb-memory-patterns` | Memory access patterns for agents |
+| `agentdb-optimization` | AgentDB performance optimization |
+| `agentdb-vector-search` | HNSW vector search in AgentDB |
+| `reasoningbank-agentdb` | ReasoningBank + AgentDB integration |
+| `reasoningbank-intelligence` | ReasoningBank intelligence patterns |
+| `swarm-advanced` | Advanced multi-agent swarm patterns |
+| `v3-cli-modernization` | V3 CLI command modernization |
+| `v3-core-implementation` | V3 core implementation patterns |
+| `v3-ddd-architecture` | Domain-Driven Design architecture |
+| `v3-integration-deep` | Deep integration patterns |
+| `v3-mcp-optimization` | MCP server optimization |
+| `v3-memory-unification` | Unified memory architecture |
+| `v3-performance-optimization` | Performance optimization |
+| `v3-security-overhaul` | Security hardening patterns |
+| `v3-swarm-coordination` | Swarm coordination protocols |
+| `browser` | Browser automation skill |
+
+### GSD-2 (gsd-build)
+| Skill | When to Use |
+|-------|-------------|
+| `react-best-practices` | 57 Vercel React/Next.js performance rules |
+| `review` | Code review — security, performance, bugs |
+| `code-optimizer` | 13-agent parallel performance audit |
+| `frontend-design` | Distinctive UI design — anti-AI-slop |
+| `make-interfaces-feel-better` | UI micro-interactions and polish |
+| `debug-like-expert` | Scientific root cause analysis |
+| `accessibility` | WCAG 2.1 compliance |
+| `core-web-vitals` | LCP, INP, CLS optimization |
+| `web-quality-audit` | 150+ Lighthouse-style checks |
+| `best-practices` | Security + code quality |
+| `test` | Auto-detect framework, generate/run tests |
+| `lint` | ESLint/Biome/Prettier auto-fix |
+| `github-workflows` | GitHub Actions live syntax |
+| `userinterface-wiki` | 11-category UI/UX reference |
+| `web-design-guidelines` | Web Interface Guidelines |
+| `agent-browser` | Browser automation for AI agents |
+| `create-workflow` | YAML workflow definitions |
+| `gsd-headless` | Headless GSD agent operation |
+| `gsd-workflow` | GSD workflow engine reference |
+
+## GSD-2 CLI (v2.48.0)
+
+GSD-2 is installed globally as a coding agent orchestrator.
+
+```bash
+gsd              # Interactive mode
+gsd --web        # Browser interface
+gsd auto         # Fully autonomous — walk away
+gsd doctor       # Health check
+```
+
+## Support
+
+- Documentation: https://github.com/ruvnet/claude-flow
+- Issues: https://github.com/ruvnet/claude-flow/issues
+- GSD-2: https://github.com/gsd-build/gsd-2
