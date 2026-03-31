@@ -14,10 +14,10 @@ export default function Error({
       <div className="w-full max-w-md text-center">
         <h1 className="text-6xl font-bold text-[var(--text-primary)] mb-4">Oops</h1>
         <h2 className="text-2xl font-semibold text-[var(--text-primary)] mb-4">
-          Something went wrong
+          Temporary issue
         </h2>
         <p className="text-[var(--text-secondary)] mb-2">
-          An error occurred in your workspace. Please try again or return to the dashboard.
+          This page ran into an issue loading. Your data is safe — try refreshing, or go back to the dashboard.
         </p>
         {error.digest && (
           <p className="text-sm text-[var(--text-tertiary)] mb-8 font-mono break-words">

@@ -17,7 +17,7 @@ export default function Error({
           Something went wrong
         </h2>
         <p className="text-[var(--text-secondary)] mb-2">
-          We encountered an unexpected error. Please try again.
+          This page ran into an issue. Try refreshing, or return to the homepage.
         </p>
         {error.digest && (
           <p className="text-sm text-[var(--text-tertiary)] mb-8 font-mono break-words">

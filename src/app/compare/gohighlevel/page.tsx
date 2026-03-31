@@ -66,7 +66,7 @@ export default function GoHighLevelComparisonPage() {
               that answers calls, generates revenue through outbound campaigns, and scales inbound operations — live in under 3 minutes.
             </p>
             <p className="mt-3 text-xs" style={{ color: "var(--text-tertiary)" }}>
-              Pricing as of March 2026. Visit{" "}
+              {`Pricing as of ${new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })}`}. Visit{" "}
               <a
                 href="https://gohighlevel.com/pricing"
                 target="_blank"

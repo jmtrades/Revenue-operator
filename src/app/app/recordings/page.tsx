@@ -378,8 +378,8 @@ export default function RecordingsPage() {
           <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
             <EmptyState
               icon={MessageSquare}
-              title="Something went wrong"
-              description={error}
+              title="Could not load recordings"
+              description="There was a problem fetching your recordings. Try refreshing the page."
             />
             <Button
               onClick={fetchRecordings}

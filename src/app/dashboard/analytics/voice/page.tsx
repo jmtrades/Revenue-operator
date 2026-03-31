@@ -56,12 +56,16 @@ const FALLBACK_DATA = {
     { model: 'Kokoro', calls: 890, latency: 260, quality: 4.1, costPerMin: 0.14 },
     { model: 'Fish Speech', calls: 650, latency: 255, quality: 3.9, costPerMin: 0.16 },
   ],
-  issues: [
-    { timestamp: '2024-03-17 14:32:00', voice: 'Kokoro', callId: 'call_892831', type: 'mos' as const, value: '2.8' },
-    { timestamp: '2024-03-17 13:15:00', voice: 'Fish Speech', callId: 'call_892710', type: 'glitch' as const, value: '245ms gap' },
-    { timestamp: '2024-03-17 12:04:00', voice: 'Orpheus', callId: 'call_892601', type: 'latency' as const, value: '580ms' },
-    { timestamp: '2024-03-17 10:52:00', voice: 'Kokoro', callId: 'call_892445', type: 'mos' as const, value: '2.4' },
-  ],
+  issues: (() => {
+    const today = new Date();
+    const daysAgo = (n: number) => new Date(today.getTime() - n * 86400000).toISOString().split("T")[0];
+    return [
+      { timestamp: `${daysAgo(1)} 14:32:00`, voice: 'Kokoro', callId: 'call_892831', type: 'mos' as const, value: '2.8' },
+      { timestamp: `${daysAgo(3)} 13:15:00`, voice: 'Fish Speech', callId: 'call_892710', type: 'glitch' as const, value: '245ms gap' },
+      { timestamp: `${daysAgo(5)} 12:04:00`, voice: 'Orpheus', callId: 'call_892601', type: 'latency' as const, value: '580ms' },
+      { timestamp: `${daysAgo(7)} 10:52:00`, voice: 'Kokoro', callId: 'call_892445', type: 'mos' as const, value: '2.4' },
+    ];
+  })(),
 };
 
 function getMOSColor(score: number): string {
