@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 /** Max HTML bytes to download (2 MB) */
 const MAX_BYTES = 2 * 1024 * 1024;
@@ -107,6 +108,13 @@ function extractServices(text: string): string {
 export async function POST(req: NextRequest) {
   const csrfBlock = assertSameOrigin(req);
   if (csrfBlock) return csrfBlock;
+
+  // Rate limit: 10 scrapes per minute per IP
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const rl = await checkRateLimit(`onboarding_scrape:${ip}`, 10, 60000);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many requests. Please wait a moment." }, { status: 429 });
+  }
 
   let body: { url?: string };
   try {
