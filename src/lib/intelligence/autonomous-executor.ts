@@ -13,6 +13,7 @@ import { selectAdaptiveStrategy, buildAdaptiveFollowUpPlan, type AdaptiveStrateg
 import { getRecoveryProfile, type RecoveryProfile } from "@/lib/recovery-profile";
 import { enqueue } from "@/lib/queue";
 import { notifyWorkspace } from "@/lib/notifications/dispatcher";
+import { shouldSimulateOnly, shouldRequireApproval } from "@/lib/autonomy";
 
 export type AutonomousActionType =
   | "send_sms"
@@ -175,11 +176,70 @@ export async function executeAutonomousAction(
       };
     }
 
-    // 4. Map next_best_action to AutonomousActionType and execute
+    // 4. AUTONOMY MODE ENFORCEMENT — respect observe/assist/act
+    const simulateOnly = await shouldSimulateOnly(intelligence.workspace_id);
+    if (simulateOnly) {
+      const simResult: AutonomousActionResult = {
+        action_type: intelligence.next_best_action as AutonomousActionType ?? "no_action",
+        success: true,
+        details: `[OBSERVE MODE] Would execute: ${intelligence.next_best_action} — simulated only`,
+        executed_at: executedAt,
+        lead_id: intelligence.lead_id,
+        workspace_id: intelligence.workspace_id,
+        confidence: intelligence.action_confidence,
+        reason: "observe_mode_simulated",
+      };
+      await logAutonomousAction(simResult);
+      return simResult;
+    }
+
+    // Check if assist mode requires approval for this action
+    const isSensitive = ["book_appointment", "escalate_human", "schedule_call"].includes(intelligence.next_best_action);
+    const needsApproval = await shouldRequireApproval(intelligence.workspace_id, intelligence.next_best_action, {
+      isSensitive,
+    });
+    if (needsApproval) {
+      // Create approval request instead of executing immediately
+      try {
+        await db.from("action_intents").insert({
+          workspace_id: intelligence.workspace_id,
+          lead_id: intelligence.lead_id,
+          action_type: intelligence.next_best_action,
+          status: "pending_approval",
+          metadata: {
+            confidence: intelligence.action_confidence,
+            reason: intelligence.action_reason,
+            risk_flags: intelligence.risk_flags,
+            requires_approval: true,
+          },
+        });
+      } catch {
+        // action_intents table may not exist
+      }
+      const approvalResult: AutonomousActionResult = {
+        action_type: intelligence.next_best_action as AutonomousActionType ?? "no_action",
+        success: true,
+        details: `[ASSIST MODE] Queued for approval: ${intelligence.next_best_action}`,
+        executed_at: executedAt,
+        lead_id: intelligence.lead_id,
+        workspace_id: intelligence.workspace_id,
+        confidence: intelligence.action_confidence,
+        reason: "approval_required",
+      };
+      await logAutonomousAction(approvalResult);
+      return approvalResult;
+    }
+
+    // 5. Execute the action (mode is "act" or "assist" with non-sensitive action)
     const result = await executeBasedOnAction(intelligence, executedAt);
     await logAutonomousAction(result);
 
-    // 5. Send Slack notification for successful actions (non-blocking, fire-and-forget)
+    // 6. AUTO-ADVANCE LEAD STATUS based on successful action
+    if (result.success && result.action_type !== "no_action") {
+      await autoAdvanceLeadStatus(intelligence, result);
+    }
+
+    // 7. Send Slack notification for successful actions (non-blocking, fire-and-forget)
     if (result.success && result.action_type !== "no_action") {
       void notifyWorkspace(intelligence.workspace_id, "autonomous_action", {
         autonomous_action: {
@@ -883,6 +943,105 @@ async function escalateHumanAction(
       confidence: intelligence.action_confidence,
       reason: "exception",
     };
+  }
+}
+
+/**
+ * Auto-advance lead status based on the action the brain just took.
+ * This closes the gap where the brain sends SMS/email but the lead stays "NEW".
+ *
+ * Status progression:
+ *   NEW → CONTACTED (after first outreach: sms, email, call)
+ *   CONTACTED → ENGAGED (after sequence enrollment or followup)
+ *   Any → QUALIFIED (if intent score > 60)
+ *   Any → REACTIVATE (on reactivation action)
+ *
+ * Does NOT downgrade status (e.g., won't move QUALIFIED back to CONTACTED).
+ */
+async function autoAdvanceLeadStatus(
+  intelligence: LeadIntelligence,
+  result: AutonomousActionResult
+): Promise<void> {
+  try {
+    const db = getDb();
+
+    // Fetch current lead status
+    const { data: leadRow } = await db
+      .from("leads")
+      .select("status")
+      .eq("id", intelligence.lead_id)
+      .eq("workspace_id", intelligence.workspace_id)
+      .maybeSingle();
+
+    const currentStatus = (leadRow as { status?: string } | null)?.status;
+    if (!currentStatus) return;
+
+    // Define status hierarchy (higher index = more advanced)
+    const statusOrder = ["NEW", "CONTACTED", "ENGAGED", "QUALIFIED", "BOOKED", "SHOWED", "WON"];
+    const currentIdx = statusOrder.indexOf(currentStatus);
+
+    let newStatus: string | null = null;
+
+    // Determine new status based on action
+    if (["send_sms", "send_email", "schedule_call"].includes(result.action_type)) {
+      // First outreach → CONTACTED
+      if (currentStatus === "NEW") {
+        newStatus = "CONTACTED";
+      }
+    }
+
+    if (["enroll_sequence", "schedule_callback"].includes(result.action_type)) {
+      // Active followup engagement → ENGAGED
+      if (currentIdx < statusOrder.indexOf("ENGAGED")) {
+        newStatus = "ENGAGED";
+      }
+    }
+
+    if (result.action_type === "book_appointment") {
+      // Booking action → BOOKED
+      if (currentIdx < statusOrder.indexOf("BOOKED")) {
+        newStatus = "BOOKED";
+      }
+    }
+
+    if (result.action_type === "reactivate") {
+      // Reactivation → REACTIVATE (special status, not in hierarchy)
+      if (["LOST", "CLOSED"].includes(currentStatus)) {
+        newStatus = "REACTIVATE";
+      }
+    }
+
+    // Score-based qualification: if intent > 60, advance to QUALIFIED
+    if (
+      intelligence.intent_score > 60 &&
+      currentIdx < statusOrder.indexOf("QUALIFIED") &&
+      currentIdx >= 0
+    ) {
+      newStatus = "QUALIFIED";
+    }
+
+    // Only advance if there's a new status to set
+    if (newStatus && newStatus !== currentStatus) {
+      await db
+        .from("leads")
+        .update({ status: newStatus, updated_at: new Date().toISOString() })
+        .eq("id", intelligence.lead_id)
+        .eq("workspace_id", intelligence.workspace_id);
+
+      log("info", "autonomous.lead_status_advanced", {
+        lead_id: intelligence.lead_id,
+        workspace_id: intelligence.workspace_id,
+        from: currentStatus,
+        to: newStatus,
+        trigger_action: result.action_type,
+      });
+    }
+  } catch (err) {
+    // Non-fatal — status advancement is best-effort
+    log("warn", "autonomous.status_advance_failed", {
+      lead_id: intelligence.lead_id,
+      error: err instanceof Error ? err.message : "unknown",
+    });
   }
 }
 

@@ -132,7 +132,7 @@ export async function appendSyncLog(params: {
 
 /**
  * Process one pending job from the queue (outbound: load lead, apply mapping, push to CRM).
- * Push is stubbed until CRM API clients exist; we still log success/failure.
+ * Loads lead, applies field mapping, pushes to CRM via provider-specific API client.
  */
 export async function processSyncJob(jobId: string): Promise<{ ok: boolean; error?: string }> {
   const db = getDb();
