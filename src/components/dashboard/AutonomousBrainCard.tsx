@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Brain, Zap, TrendingUp, AlertTriangle, CheckCircle2, Activity, Shield } from "lucide-react";
+import { Brain, Zap, TrendingUp, AlertTriangle, CheckCircle2, Activity, Shield, RefreshCw } from "lucide-react";
 import { useWorkspaceSafe } from "@/components/WorkspaceContext";
 
 interface BrainDashboardStats {
@@ -34,6 +34,7 @@ export function AutonomousBrainCard() {
   const [stats, setStats] = useState<BrainDashboardStats>(EMPTY);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const load = useCallback(() => {
     if (!workspaceId) {
@@ -51,6 +52,22 @@ export function AutonomousBrainCard() {
       .then((data: BrainDashboardStats | null) => setStats(data ?? EMPTY))
       .catch(() => { setFetchError(true); setStats(EMPTY); })
       .finally(() => setLoading(false));
+  }, [workspaceId]);
+
+  const handleRefresh = useCallback(() => {
+    if (!workspaceId) return;
+    setRefreshing(true);
+    setFetchError(false);
+    fetch(`/api/dashboard/brain-stats?workspace_id=${encodeURIComponent(workspaceId)}`, {
+      credentials: "include",
+    })
+      .then((r) => {
+        if (!r.ok) { setFetchError(true); return null; }
+        return r.json();
+      })
+      .then((data: BrainDashboardStats | null) => setStats(data ?? EMPTY))
+      .catch(() => { setFetchError(true); })
+      .finally(() => setRefreshing(false));
   }, [workspaceId]);
 
   useEffect(() => { load(); }, [load]);
@@ -107,15 +124,27 @@ export function AutonomousBrainCard() {
               </p>
             </div>
           </div>
-          {hasData && (
-            <div className="flex items-center gap-1.5">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-              </span>
-              <span className="text-[11px] font-medium text-emerald-400">Active</span>
-            </div>
-          )}
+          <div className="flex items-center gap-2">
+            {hasData && (
+              <button
+                onClick={handleRefresh}
+                disabled={refreshing}
+                className="p-1.5 rounded-lg hover:bg-[var(--bg-hover)] transition-colors disabled:opacity-50"
+                title="Refresh stats"
+              >
+                <RefreshCw className={`w-4 h-4 text-[var(--text-tertiary)] ${refreshing ? 'animate-spin' : ''}`} />
+              </button>
+            )}
+            {hasData && (
+              <div className="flex items-center gap-1.5">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                </span>
+                <span className="text-[11px] font-medium text-emerald-400">Active</span>
+              </div>
+            )}
+          </div>
         </div>
 
         {!hasData ? (
