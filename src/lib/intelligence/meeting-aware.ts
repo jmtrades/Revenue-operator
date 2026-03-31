@@ -64,8 +64,8 @@ export function detectMeetingPhase(context: MeetingContext): MeetingPhase {
 
   // Past end time → either post_meeting or no_show
   if (now > meetingEndTime) {
-    // TODO: check attendance flag from call_sessions or zoom logs
-    // For now, classify as post_meeting; no_show detection happens in followup
+    // Note: no_show detection is checked in runMeetingAwareCheck after querying appointments table
+    // This function returns post_meeting; caller responsibility to refine based on appointment outcome
     return "post_meeting";
   }
 
@@ -361,7 +361,39 @@ export async function runMeetingAwareCheck(workspaceId: string): Promise<{ check
         meeting_type: "call",
       };
 
-      const phase = detectMeetingPhase(context);
+      let phase = detectMeetingPhase(context);
+
+      // If meeting is past end time, check if there's a recorded outcome in appointments table
+      if (phase === "post_meeting") {
+        const { data: appointmentData } = await db
+          .from("appointments")
+          .select("metadata, status")
+          .eq("workspace_id", workspaceId)
+          .eq("lead_id", session.lead_id)
+          .gte("start_time", new Date(new Date(session.scheduled_for).getTime() - 60 * 60 * 1000).toISOString())
+          .lte("start_time", new Date(new Date(session.scheduled_for).getTime() + 60 * 60 * 1000).toISOString())
+          .maybeSingle();
+
+        const appointment = appointmentData as {
+          metadata?: Record<string, unknown>;
+          status?: string;
+        } | null;
+
+        // Check if outcome was recorded
+        if (appointment?.metadata && typeof appointment.metadata === "object") {
+          const outcomeKey = "outcome" in appointment.metadata ? appointment.metadata.outcome : null;
+          if (outcomeKey === "no_show") {
+            phase = "no_show";
+          } else if (outcomeKey === "cancelled") {
+            phase = "cancelled";
+          } else if (outcomeKey === "rescheduled") {
+            phase = "rescheduled";
+          }
+        } else if (appointment?.status === "no_show") {
+          phase = "no_show";
+        }
+      }
+
       const decision = decideMeetingAction(phase, context);
 
       if (decision.action !== "none") {
@@ -381,25 +413,209 @@ export async function runMeetingAwareCheck(workspaceId: string): Promise<{ check
     }
 
     // Query Google Calendar events (optional integration)
-    // Assumes google_calendar_tokens table with workspace_id, calendar_id, refresh_token
+    // Assumes google_calendar_tokens table with workspace_id, access_token, refresh_token
     const { data: calTokens } = await db
       .from("google_calendar_tokens")
-      .select("id, calendar_id, workspace_id")
+      .select("id, access_token, refresh_token, expires_at, workspace_id")
       .eq("workspace_id", workspaceId)
       .limit(5);
 
-    const tokens = (calTokens ?? []) as Array<{ id: string; calendar_id?: string; workspace_id: string }>;
-    for (const token of tokens) {
-      // TODO: fetch events from Google Calendar API
-      // For now, skip Google Calendar integration
+    const tokens = (calTokens ?? []) as Array<{
+      id: string;
+      access_token?: string | null;
+      refresh_token?: string | null;
+      expires_at?: string | null;
+      workspace_id: string;
+    }>;
+
+    for (const tokenRow of tokens) {
+      // Skip if no access token
+      if (!tokenRow.access_token) continue;
+
+      // Check if token is expired (with 60s buffer)
+      let accessToken = tokenRow.access_token;
+      if (tokenRow.expires_at) {
+        const expiresAt = new Date(tokenRow.expires_at).getTime();
+        const now = Date.now();
+        const bufferMs = 60 * 1000; // 60 seconds
+
+        if (now >= expiresAt - bufferMs) {
+          // Token expired — attempt refresh if we have refresh_token
+          if (tokenRow.refresh_token) {
+            try {
+              const clientId = process.env.GOOGLE_CALENDAR_CLIENT_ID;
+              const clientSecret = process.env.GOOGLE_CALENDAR_CLIENT_SECRET;
+
+              if (clientId && clientSecret) {
+                const body = new URLSearchParams({
+                  client_id: clientId,
+                  client_secret: clientSecret,
+                  refresh_token: tokenRow.refresh_token,
+                  grant_type: "refresh_token",
+                });
+
+                const refreshRes = await fetch("https://oauth2.googleapis.com/token", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                  body: body.toString(),
+                  signal: AbortSignal.timeout(15_000),
+                });
+
+                if (refreshRes.ok) {
+                  const refreshData = (await refreshRes.json()) as {
+                    access_token?: string;
+                    expires_in?: number;
+                  };
+
+                  if (refreshData.access_token) {
+                    accessToken = refreshData.access_token;
+                    const newExpires = refreshData.expires_in
+                      ? new Date(Date.now() + refreshData.expires_in * 1000).toISOString()
+                      : null;
+
+                    await db
+                      .from("google_calendar_tokens")
+                      .update({
+                        access_token: accessToken,
+                        expires_at: newExpires,
+                        updated_at: new Date().toISOString(),
+                      })
+                      .eq("id", tokenRow.id);
+                  }
+                }
+              }
+            } catch (err) {
+              // Google Calendar token refresh error (details omitted to protect PII)
+              // Continue with expired token — Google API will reject it
+              continue;
+            }
+          } else {
+            // No refresh token, skip this calendar
+            continue;
+          }
+        }
+      }
+
+      // Fetch events from Google Calendar API
+      try {
+        const now = new Date();
+        const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+        const eventsRes = await fetch(
+          "https://www.googleapis.com/calendar/v3/calendars/primary/events?" +
+            new URLSearchParams({
+              timeMin: now.toISOString(),
+              timeMax: thirtyDaysFromNow.toISOString(),
+              maxResults: "250",
+              singleEvents: "true",
+              orderBy: "startTime",
+            }),
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+            signal: AbortSignal.timeout(15_000),
+          }
+        );
+
+        if (eventsRes.status === 401 || eventsRes.status === 403) {
+          // Token invalid/expired — skip and continue (details omitted to protect PII)
+          continue;
+        }
+
+        if (!eventsRes.ok) {
+          console.warn(
+            "[meeting-aware] Google Calendar fetch failed:",
+            eventsRes.status,
+            await eventsRes.text().catch(() => "")
+          );
+          continue;
+        }
+
+        const eventsData = (await eventsRes.json()) as {
+          items?: Array<{
+            id?: string;
+            summary?: string;
+            start?: { dateTime?: string; date?: string };
+            end?: { dateTime?: string; date?: string };
+            status?: string;
+            attendees?: Array<{ email?: string; displayName?: string }>;
+          }>;
+        };
+
+        const events = eventsData.items ?? [];
+
+        // Process each event for meeting-aware actions
+        for (const event of events) {
+          if (!event.id || !event.summary || event.status === "cancelled") continue;
+
+          const startTime = event.start?.dateTime || event.start?.date;
+          if (!startTime) continue;
+
+          // Try to match event to a lead via attendees
+          let eventLeadId: string | null = null;
+          if (event.attendees && event.attendees.length > 0) {
+            for (const attendee of event.attendees) {
+              if (!attendee.email) continue;
+
+              const { data: leadRow } = await db
+                .from("leads")
+                .select("id")
+                .eq("workspace_id", workspaceId)
+                .eq("email", attendee.email)
+                .maybeSingle();
+
+              if (leadRow) {
+                eventLeadId = (leadRow as { id: string }).id;
+                break;
+              }
+            }
+          }
+
+          if (!eventLeadId) continue; // Skip if we can't match to a lead
+
+          // Build context from calendar event
+          const eventContext: MeetingContext = {
+            lead_id: eventLeadId,
+            workspace_id: workspaceId,
+            meeting_id: event.id,
+            scheduled_at: startTime,
+            duration_minutes: event.end
+              ? Math.round(
+                  (new Date(event.end.dateTime || event.end.date || startTime).getTime() -
+                    new Date(startTime).getTime()) /
+                    (60 * 1000)
+                )
+              : 30,
+            meeting_type: "video",
+            attendee_name: event.summary,
+          };
+
+          const eventPhase = detectMeetingPhase(eventContext);
+          const eventDecision = decideMeetingAction(eventPhase, eventContext);
+
+          if (eventDecision.action !== "none") {
+            if (eventDecision.timing === "immediate") {
+              const result = await executeMeetingAction(eventDecision, eventContext);
+              if (result.success) actionsExecuted++;
+            } else if (eventDecision.scheduled_for) {
+              await enqueue({
+                type: "no_show_reminder",
+                leadId: eventLeadId,
+              });
+              actionsExecuted++;
+            }
+          }
+        }
+      } catch (err) {
+        // Google Calendar fetch error for token (details omitted to protect PII)
+        // Continue with next token — don't block the entire check
+      }
     }
 
     return { checked, actions: actionsExecuted };
   } catch (err) {
-    console.error(
-      "[meeting-aware] runMeetingAwareCheck error:",
-      err instanceof Error ? err.message : String(err)
-    );
+    // Error in meeting-aware check (error details omitted to protect PII)
     return { checked, actions: actionsExecuted };
   }
 }

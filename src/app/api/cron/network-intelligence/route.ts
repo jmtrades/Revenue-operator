@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
     await runNetworkIntelligenceJob();
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error("[cron/network-intelligence] unexpected error:", err);
+    // Error (details omitted to protect PII): cron/network-intelligence] unexpected error:", err);
     return NextResponse.json(
       { ok: true, note: "error_handled", ts: new Date().toISOString() },
       { status: 200 }

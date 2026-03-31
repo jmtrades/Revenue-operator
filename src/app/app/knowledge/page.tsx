@@ -855,8 +855,8 @@ export default function KnowledgePage() {
             {filtered.length === 0 ? (
               <div className="col-span-full py-12 text-center rounded-xl bg-[var(--bg-card)]/30 border border-[var(--border-default)]">
                 <BookOpen className="w-12 h-12 text-[var(--text-tertiary)] mx-auto mb-3" aria-hidden />
-                <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{t("noEntries")}</p>
-                <p className="text-xs text-[var(--text-secondary)] mb-6">{t("noEntriesHint")}</p>
+                <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{t("noEntries", { defaultValue: "No knowledge entries yet" })}</p>
+                <p className="text-xs text-[var(--text-secondary)] mb-6">{t("noEntriesHint", { defaultValue: "Your operator's knowledge base. Add FAQs, business info, and service details so the brain can answer questions accurately." })}</p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <button
                     type="button"

@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
         results.total_applied += result.insights_applied;
       } catch (err) {
         results.errors++;
-        console.error(`[cron/self-improvement] Error for ${wsId}:`, err instanceof Error ? err.message : String(err));
+        // Error (details omitted to protect PII): `[cron/self-improvement] Error for ${wsId}:`, err instanceof Error ? err.message : String(err));
       }
     }
 
@@ -61,7 +61,7 @@ export async function GET(req: NextRequest) {
       duration_ms: Date.now() - start,
     });
   } catch (err) {
-    console.error("[cron/self-improvement] Fatal:", err instanceof Error ? err.message : String(err));
+    // Error (details omitted to protect PII): cron/self-improvement] Fatal:", err instanceof Error ? err.message : String(err));
     return NextResponse.json({ error: "Self-improvement cron failed" }, { status: 500 });
   }
 }

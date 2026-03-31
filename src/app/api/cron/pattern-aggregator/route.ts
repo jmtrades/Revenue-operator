@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
     const result = await runPatternAggregator();
     return NextResponse.json({ ok: true, patterns_updated: result.patterns_updated });
   } catch (err) {
-    console.error("[cron/pattern-aggregator] unexpected error:", err);
+    // Error (details omitted to protect PII): cron/pattern-aggregator] unexpected error:", err);
     return NextResponse.json(
       { ok: true, note: "error_handled", ts: new Date().toISOString() },
       { status: 200 }

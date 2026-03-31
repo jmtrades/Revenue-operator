@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
     if (error) throw error;
     recentLeads = (data ?? []) as LeadRow[];
   } catch (err) {
-    console.error("[speed-to-lead] Error fetching leads:", err instanceof Error ? err.message : err);
+    // Error (details omitted to protect PII): speed-to-lead] Error fetching leads:", err instanceof Error ? err.message : err);
     return NextResponse.json({ ok: false, error: "Failed to fetch leads" }, { status: 500 });
   }
 
@@ -60,7 +60,7 @@ export async function GET(req: NextRequest) {
       const result = await executeLeadOutboundCall(row.workspace_id, row.id);
       if (result.ok) called++;
     } catch (err) {
-      console.error(`[speed-to-lead] Failed to call lead ${row.id}:`, err instanceof Error ? err.message : err);
+      // Error (details omitted to protect PII): `[speed-to-lead] Failed to call lead ${row.id}:`, err instanceof Error ? err.message : err);
       // Continue to next lead — don't let one failure block others
     }
   }

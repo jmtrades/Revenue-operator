@@ -56,7 +56,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ ok: true, workspaces_checked: workspaceIds.length, digests_sent: sent });
   } catch (err) {
-    console.error("[cron/daily-digest] unexpected error:", err);
+    // Error (details omitted to protect PII): cron/daily-digest] unexpected error:", err);
     return NextResponse.json(
       { ok: true, note: "error_handled", ts: new Date().toISOString() },
       { status: 200 }

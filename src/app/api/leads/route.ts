@@ -241,6 +241,21 @@ export async function POST(req: NextRequest) {
     // non-blocking
   }
 
+  // Autonomous Brain: compute initial intelligence for new lead (non-blocking)
+  try {
+    const { computeLeadIntelligence, persistLeadIntelligence } = await import("@/lib/intelligence/lead-brain");
+    void (async () => {
+      try {
+        const intelligence = await computeLeadIntelligence(workspaceId, createdLead.id);
+        await persistLeadIntelligence(intelligence);
+      } catch {
+        // Non-blocking: brain will catch up via cron
+      }
+    })();
+  } catch {
+    // Non-blocking
+  }
+
   // In-app notification center (Task 31)
   try {
     const { createWorkspaceNotification } = await import("@/lib/notifications");

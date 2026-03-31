@@ -24,14 +24,26 @@ export async function GET(request: NextRequest) {
     const workspaceIds = await getWorkspaceIdsWithInstallationState();
     let run = 0;
     for (const workspaceId of workspaceIds) {
-      await transitionInstallationPhase(workspaceId).catch((err) => { console.error("[cron/installation-transition] error:", err instanceof Error ? err.message : err); });
-      await evaluateEconomicGravity(workspaceId).catch((err) => { console.error("[cron/installation-transition] error:", err instanceof Error ? err.message : err); });
-      await recomputeInstitutionalState(workspaceId).catch((err) => { console.error("[cron/installation-transition] error:", err instanceof Error ? err.message : err); });
-      await detectOperationalSilence(workspaceId).catch((err) => { console.error("[cron/installation-transition] error:", err instanceof Error ? err.message : err); });
+      await transitionInstallationPhase(workspaceId).catch(() => {
+      // cron/installation-transition error (details omitted to protect PII) 
+    });
+      await evaluateEconomicGravity(workspaceId).catch(() => {
+      // cron/installation-transition error (details omitted to protect PII) 
+    });
+      await recomputeInstitutionalState(workspaceId).catch(() => {
+      // cron/installation-transition error (details omitted to protect PII) 
+    });
+      await detectOperationalSilence(workspaceId).catch(() => {
+      // cron/installation-transition error (details omitted to protect PII) 
+    });
       run++;
     }
-    await runStabilizationDetection().catch((err) => { console.error("[cron/installation-transition] error:", err instanceof Error ? err.message : err); });
-    await runDomainStabilization().catch((err) => { console.error("[cron/installation-transition] error:", err instanceof Error ? err.message : err); });
+    await runStabilizationDetection().catch(() => {
+      // cron/installation-transition error (details omitted to protect PII) 
+    });
+    await runDomainStabilization().catch(() => {
+      // cron/installation-transition error (details omitted to protect PII) 
+    });
     return { run };
   });
 

@@ -209,7 +209,7 @@ export async function scoreLeadFull(
       scored_at: new Date().toISOString(),
     };
   } catch (err) {
-    console.error("[lead-scoring]", err instanceof Error ? err.message : String(err));
+    // Error in lead scoring (error details omitted to protect PII)
     return {
       score: 50,
       grade: "C",

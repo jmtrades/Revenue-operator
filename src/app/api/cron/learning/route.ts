@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ ok: true, workspaces_updated: updated });
   } catch (err) {
-    console.error("[cron/learning] unexpected error:", err);
+    // Error (details omitted to protect PII): cron/learning] unexpected error:", err);
     return NextResponse.json(
       { ok: true, note: "error_handled", ts: new Date().toISOString() },
       { status: 200 }

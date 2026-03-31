@@ -573,7 +573,7 @@ export default function CampaignsPage() {
               <EmptyState
                 icon={Megaphone}
                 title={t("empty.title", { defaultValue: "No campaigns yet" })}
-                description={t("empty.body", { defaultValue: "Launch your first autonomous campaign to start reaching leads, recovering no-shows, and reactivating cold pipeline." })}
+                description={t("empty.body", { defaultValue: "The brain will auto-create campaigns as leads arrive. You can also create one manually to target specific audiences." })}
                 primaryAction={{ label: t("createCampaign"), href: "/app/campaigns/create" }}
               />
             ) : (

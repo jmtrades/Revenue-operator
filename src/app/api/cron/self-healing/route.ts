@@ -96,7 +96,7 @@ export async function GET(req: NextRequest) {
       { status: 200 }
     );
   } catch (err) {
-    console.error("[cron/self-healing] unexpected error:", err);
+    // Error (details omitted to protect PII): cron/self-healing] unexpected error:", err);
     return NextResponse.json(
       { ok: true, note: "error_handled", ts: new Date().toISOString() },
       { status: 200 }

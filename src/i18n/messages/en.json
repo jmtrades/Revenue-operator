@@ -862,10 +862,7 @@
       "makeTestCall": {
         "title": "Make a test call",
         "description": "Call your number from any phone to test it"
-      },
-      "readyTitle": "Your AI Revenue Operator",
-      "readyDescription": "Set up your workspace to start automating revenue operations — calls, follow-ups, and appointments handled by AI.",
-      "startTrial": "Get Started"
+      }
     },
     "stats": {
       "activeCalls": "Active Calls",
@@ -3387,7 +3384,7 @@
     },
     "empty": {
       "title": "Your operator is standing by.",
-      "description": "Connect your number and it answers every call in under 3 seconds — 24/7, no breaks, no missed revenue.",
+      "description": "Calls appear here once your phone number is connected and your operator is live. Set up your operator to start receiving calls.",
       "connectNumber": "Activate Coverage",
       "testAgent": "Run a test call",
       "body": "Every call your operator handles appears here with full intelligence: transcript, sentiment, revenue signals, and recommended next actions.",
@@ -3634,7 +3631,7 @@
     },
     "empty": {
       "title": "Your inbox activates with your first call.",
-      "body": "Every SMS, email, and voice interaction your operator handles flows here — threaded by contact, tagged by revenue stage.",
+      "body": "Messages appear here as the brain communicates with your leads via SMS, email, and calls. Connect a phone number to start.",
       "cta": "Enable SMS in settings",
       "hint": "Connect a phone number and your operator will start handling conversations automatically."
     },
@@ -3830,7 +3827,7 @@
       "body": "Every qualified conversation becomes a scored lead. AI automatically creates, stages, and follows up—your operator continuously works your pipeline without manual intervention.",
       "subtitle": "Leads are auto-created from calls, AI-scored by intent, and auto-followed up. Upload a CSV to seed your pipeline, or let the operator build it from every qualified conversation.",
       "hint": "Create leads from calls or add leads manually. Connect your CRM via Settings → Integrations to sync with HubSpot, Salesforce, and more.",
-      "description": "Import a CSV or connect your CRM to seed your pipeline. Leads from qualified calls will appear here automatically—AI will handle qualification, scoring, and follow-up.",
+      "description": "Leads appear here when they call, text, or arrive via integrations. Connect a CRM or phone number to start receiving leads.",
       "connectCrm": "Connect CRM"
     },
     "saveLead": "Save lead",
@@ -7933,7 +7930,7 @@
     },
     "empty": {
       "title": "Appointments appear here automatically.",
-      "body": "Your operator books directly to your calendar during calls — no manual entry, no double-booking, no no-shows without follow-up.",
+      "body": "Appointments appear here when the brain books meetings for your leads. Connect your calendar to enable booking.",
       "action": "Open agent settings"
     },
     "loading": "Loading appointments...",

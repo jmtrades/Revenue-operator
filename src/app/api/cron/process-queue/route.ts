@@ -113,7 +113,9 @@ export async function GET(request: NextRequest) {
   const authErr = assertCronAuthorized(request);
   if (authErr) return authErr;
 
-  await processWebhookDeliveries().catch((err) => { console.error("[cron/process-queue] error:", err instanceof Error ? err.message : err); });
+  await processWebhookDeliveries().catch(() => {
+      // cron/process-queue error (details omitted to protect PII) 
+    });
 
   const { enqueueDecision, enqueue } = await import("@/lib/queue");
   const { getDueActionRetries, claimActionRetry } = await import("@/lib/action-queue/persist");
@@ -244,11 +246,15 @@ export async function GET(request: NextRequest) {
       body.claimed_via_rpc = true;
     }
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-    await recordCronHeartbeat("process-queue").catch((err) => { console.error("[cron/process-queue] error:", err instanceof Error ? err.message : err); });
+    await recordCronHeartbeat("process-queue").catch(() => {
+      // cron/process-queue error (details omitted to protect PII) 
+    });
     return NextResponse.json(body);
   }
 
   const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-  await recordCronHeartbeat("process-queue").catch((err) => { console.error("[cron/process-queue] error:", err instanceof Error ? err.message : err); });
+  await recordCronHeartbeat("process-queue").catch(() => {
+      // cron/process-queue error (details omitted to protect PII) 
+    });
   return NextResponse.json({ ok: true, processed: 0 });
 }

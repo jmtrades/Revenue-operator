@@ -475,8 +475,8 @@ export default function CallsPage() {
         <div className="mt-6 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]">
           <EmptyState
             icon={PhoneCall}
-            title={t("calls.emptyTitle") ?? "Your operator is standing by"}
-            description={t("calls.emptyDescription") ?? "Connect your number and it answers every call in under 3 seconds — 24/7, no breaks, no missed revenue. Every call will appear here with full AI intelligence."}
+            title={t("calls.empty.title") ?? "Your operator is standing by"}
+            description={t("calls.empty.description") ?? "Calls appear here once your phone number is connected and your operator is live. Set up your operator to start receiving calls."}
             primaryAction={{ label: t("calls.testCall") ?? "Test Call", href: "/app/settings/phone" }}
           />
         </div>

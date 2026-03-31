@@ -31,7 +31,9 @@ export async function GET(request: NextRequest) {
     for (const o of list) {
       if (!allowedWorkspaces.has(o.workspace_id)) {
         const { recordObservedRisk } = await import("@/lib/adoption-acceleration/observed-risks");
-        await recordObservedRisk(o.workspace_id, "stalled_opportunity", "opportunity_state", o.id).catch((err) => { console.error("[cron/opportunity-recovery] error:", err instanceof Error ? err.message : err); });
+        await recordObservedRisk(o.workspace_id, "stalled_opportunity", "opportunity_state", o.id).catch(() => {
+      // cron/opportunity-recovery error (details omitted to protect PII) 
+    });
       }
     }
     const { getRecoveryTimingsForWorkspace } = await import("@/lib/recovery-profile");

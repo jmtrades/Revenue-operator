@@ -58,7 +58,9 @@ export async function GET(request: NextRequest) {
   const activatedWorkspaceIds = (activationRows ?? []).map((r: { workspace_id: string }) => r.workspace_id);
   const period = yesterdayPeriod();
   for (const workspaceId of activatedWorkspaceIds) {
-    await aggregateAndAppendUsageForPeriod(workspaceId, period.start, period.end).catch((err) => { console.error("[cron/economic-activation] error:", err instanceof Error ? err.message : err); });
+    await aggregateAndAppendUsageForPeriod(workspaceId, period.start, period.end).catch(() => {
+      // cron/economic-activation error (details omitted to protect PII) 
+    });
   }
 
   return NextResponse.json({

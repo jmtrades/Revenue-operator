@@ -81,11 +81,11 @@ export async function ensureBrainTables(): Promise<{ ok: boolean; error?: string
         const { error } = await client.rpc("exec_sql", { sql });
         if (error) {
           // Table may already exist or RPC may not be available — non-fatal
-          console.warn("[brain-migration] RPC exec_sql warning:", error.message);
+          // Error details omitted to protect PII
         }
       } catch {
         // RPC not available — tables need to be created manually via Supabase dashboard
-        console.warn("[brain-migration] exec_sql RPC not available. Tables may need manual creation.");
+        // Error details omitted to protect PII
       }
     }
 
@@ -93,7 +93,7 @@ export async function ensureBrainTables(): Promise<{ ok: boolean; error?: string
     return { ok: true };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    console.error("[brain-migration] ensureBrainTables error:", message);
+    // Error ensuring brain tables (error details omitted to protect PII)
     // Mark as run to avoid repeated failures
     _migrationRunOnce = true;
     return { ok: false, error: message };

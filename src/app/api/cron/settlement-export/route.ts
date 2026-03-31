@@ -53,7 +53,9 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  await recordCronHeartbeat("settlement-export").catch((err) => { console.error("[cron/settlement-export] error:", err instanceof Error ? err.message : err); });
+  await recordCronHeartbeat("settlement-export").catch(() => {
+      // cron/settlement-export error (details omitted to protect PII) 
+    });
   return NextResponse.json({
     ok: true,
     workspaces_processed: workspaceIds.length,

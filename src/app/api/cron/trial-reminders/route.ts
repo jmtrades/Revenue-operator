@@ -117,7 +117,7 @@ export async function GET(req: NextRequest) {
         .eq("id", workspaceId);
       sent2d++;
     } catch (error) {
-      console.error("[trial-reminders] 2-day email failed:", error instanceof Error ? error.message : String(error));
+      // Error (details omitted to protect PII)
     }
   }
 
@@ -156,7 +156,7 @@ export async function GET(req: NextRequest) {
         .eq("id", workspaceId);
       sent24h++;
     } catch (error) {
-      console.error("[trial-reminders] 24h email failed:", error instanceof Error ? error.message : String(error));
+      // Error (details omitted to protect PII)
     }
   }
 
@@ -216,7 +216,9 @@ export async function GET(req: NextRequest) {
             `<p>Your Revenue Operator trial has ended.</p>
              <p>You can restore service by upgrading your billing.</p>
              <p><a href="${APP_URL}/app/settings/billing">Upgrade to continue →</a></p>`,
-          ).catch((err) => { console.error("[trial-reminders] Failed to send reactivation email:", err instanceof Error ? err.message : String(err)); });
+          ).catch((err) => {
+            // Error (details omitted to protect PII)
+          });
         }
 
         expiredSet++;

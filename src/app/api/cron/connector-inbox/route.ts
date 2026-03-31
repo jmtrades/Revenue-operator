@@ -29,6 +29,8 @@ export async function GET(req: NextRequest) {
     }
   }
   const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-  await recordCronHeartbeat("connector-inbox").catch((err) => { console.error("[cron/connector-inbox] error:", err instanceof Error ? err.message : err); });
+  await recordCronHeartbeat("connector-inbox").catch(() => {
+      // cron/connector-inbox error (details omitted to protect PII) 
+    });
   return NextResponse.json({ ok: true, processed, total: events.length });
 }

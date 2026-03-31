@@ -31,7 +31,9 @@ export async function GET(request: NextRequest) {
     for (const ob of list) {
       if (!allowedWorkspaces.has(ob.workspace_id)) {
         const { recordObservedRisk } = await import("@/lib/adoption-acceleration/observed-risks");
-        await recordObservedRisk(ob.workspace_id, "overdue_payment", "payment_obligation", ob.id).catch((err) => { console.error("[cron/payment-completion] error:", err instanceof Error ? err.message : err); });
+        await recordObservedRisk(ob.workspace_id, "overdue_payment", "payment_obligation", ob.id).catch(() => {
+      // cron/payment-completion error (details omitted to protect PII) 
+    });
       }
     }
     let recovered = 0;

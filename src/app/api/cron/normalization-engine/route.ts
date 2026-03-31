@@ -21,11 +21,17 @@ export async function GET(request: NextRequest) {
     const { data: rows } = await db.from("workspaces").select("id");
     const workspaceIds = (rows ?? []).slice(0, MAX_WORKSPACES).map((r: { id: string }) => r.id);
     for (const workspaceId of workspaceIds) {
-      await runNormalizationDetectors(workspaceId).catch((err) => { console.error("[cron/normalization-engine] error:", err instanceof Error ? err.message : err); });
-      await recordNormalizationOrientationOnce(workspaceId).catch((err) => { console.error("[cron/normalization-engine] error:", err instanceof Error ? err.message : err); });
+      await runNormalizationDetectors(workspaceId).catch(() => {
+      // cron/normalization-engine error (details omitted to protect PII) 
+    });
+      await recordNormalizationOrientationOnce(workspaceId).catch(() => {
+      // cron/normalization-engine error (details omitted to protect PII) 
+    });
     }
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-    await recordCronHeartbeat("normalization-engine").catch((err) => { console.error("[cron/normalization-engine] error:", err instanceof Error ? err.message : err); });
+    await recordCronHeartbeat("normalization-engine").catch(() => {
+      // cron/normalization-engine error (details omitted to protect PII) 
+    });
     return { run: 1, workspaces: workspaceIds.length };
   });
 

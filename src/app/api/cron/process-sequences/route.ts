@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
       .not("status", "eq", "deleted");
 
     if (wsError) {
-      console.error("[Cron] Error fetching workspaces:", wsError);
+      // Error (details omitted to protect PII)
       return NextResponse.json(
         { error: "Failed to fetch workspaces" },
         { status: 500 }
@@ -57,9 +57,7 @@ export async function GET(request: NextRequest) {
         }
       } catch (error) {
         const msg = error instanceof Error ? error.message : String(error);
-        console.error(
-          `[Cron] Error processing workspace ${workspaceId}: ${msg}`
-        );
+        // Error (details omitted to protect PII)
         results.errors = (results.errors as number) + 1;
       }
     }
@@ -93,7 +91,7 @@ export async function GET(request: NextRequest) {
             }
           }
         } catch (err) {
-          console.error(`[cron/callbacks] Error:`, err instanceof Error ? err.message : String(err));
+          // Error (details omitted to protect PII)
         }
       }
       results.callbacks_processed = callbacksProcessed;
@@ -117,7 +115,7 @@ export async function GET(request: NextRequest) {
       ...results,
     });
   } catch (error) {
-    console.error("[Cron] Unexpected error in sequence processor:", error);
+    // Error (details omitted to protect PII)
     return NextResponse.json(
       { error: "Unexpected error processing sequences", duration_ms: Date.now() - start },
       { status: 500 }

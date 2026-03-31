@@ -396,13 +396,10 @@ export async function executeAdaptiveStep(
 
     return { success: false, details: `Unknown channel: ${step.channel}` };
   } catch (err) {
-    console.error(
-      "[adaptive-followup] executeAdaptiveStep error:",
-      err instanceof Error ? err.message : String(err)
-    );
+    // Error in adaptive followup execution (error details omitted to protect PII)
     return {
       success: false,
-      details: err instanceof Error ? err.message : "Unknown error",
+      details: "Adaptive followup execution error",
     };
   }
 }
