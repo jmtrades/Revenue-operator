@@ -12,7 +12,7 @@ import { log } from "@/lib/logger";
 import { triggerBrainAfterSignal } from "@/lib/intelligence/brain-trigger";
 
 export type SyncDirection = "inbound" | "outbound";
-export type SyncStatus = "pending" | "processing" | "completed" | "failed";
+export type SyncStatus = "pending" | "processing" | "completed" | "completed_unverified" | "failed";
 export type SyncLogAction = "created" | "updated" | "failed" | "conflict" | "skipped";
 
 export interface SyncJobRow {
@@ -54,6 +54,7 @@ export function getRetryDelayMs(retryCount: number): number {
 
 /**
  * Enqueue a sync job. Call from lead update/create or from inbound webhook handler.
+ * For outbound syncs, validates that workspace has an active CRM connection.
  */
 export async function enqueueSync(params: {
   workspaceId: string;
@@ -64,6 +65,26 @@ export async function enqueueSync(params: {
   payload?: Record<string, unknown>;
 }): Promise<string | null> {
   const db = getDb();
+
+  // For outbound syncs, validate active CRM connection exists
+  if (params.direction === "outbound") {
+    const { data: connRow } = await db
+      .from("workspace_crm_connections")
+      .select("id")
+      .eq("workspace_id", params.workspaceId)
+      .eq("provider", params.provider)
+      .eq("status", "active")
+      .maybeSingle();
+    if (!connRow) {
+      log("warn", "crm_sync.no_active_connection", {
+        workspaceId: params.workspaceId,
+        provider: params.provider,
+        direction: "outbound",
+      });
+      return null;
+    }
+  }
+
   const { data, error } = await db
     .from("sync_queue")
     .insert({
@@ -226,11 +247,25 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
         throw new Error(result.error ?? `CRM push failed for ${row.provider}`);
       }
 
-      // Success — mark completed and update sync stats
+      // Validate response body contains expected ID field
+      // If externalId is missing, mark as "completed_unverified" with warning
+      let syncStatus: "completed" | "completed_unverified" = "completed";
+      let statusLog = "Pushed to";
+      if (!result.externalId) {
+        syncStatus = "completed_unverified";
+        statusLog = "Pushed to (unverified — no ID returned)";
+        log("warn", "crm_sync.missing_external_id", {
+          provider: row.provider,
+          entityId: row.entity_id,
+          message: "CRM returned success (200) but response body missing ID field",
+        });
+      }
+
+      // Mark completed (or completed_unverified if ID validation failed)
       await db
         .from("sync_queue")
         .update({
-          status: "completed",
+          status: syncStatus,
           updated_at: new Date().toISOString(),
           completed_at: new Date().toISOString(),
         })
@@ -253,6 +288,7 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
         provider: row.provider,
         entityId: row.entity_id,
         externalId: result.externalId,
+        verified: syncStatus === "completed",
         fields: Object.keys(payload).length,
       });
 
@@ -262,7 +298,7 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
         direction: "outbound",
         entityId: row.entity_id,
         action: "created",
-        summary: `Pushed to ${row.provider}${result.externalId ? ` (ID: ${result.externalId})` : ""} — ${Object.keys(payload).length} fields`,
+        summary: `${statusLog} ${row.provider}${result.externalId ? ` (ID: ${result.externalId})` : ""} — ${Object.keys(payload).length} fields`,
         payloadSnapshot: payload,
       });
       return { ok: true };

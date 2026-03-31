@@ -42,7 +42,8 @@ export async function triggerBrainAfterSignal(params: TriggerBrainParams): Promi
     // 2. Persist intelligence
     const persistResult = await persistLeadIntelligence(intelligence);
     if (!persistResult.ok) {
-      // persistLeadIntelligence failed (error omitted to protect PII)
+      const { log } = await import("@/lib/logger");
+      log("warn", "brain_trigger.persist_failed", { lead_id: leadId, workspace_id: workspaceId });
     }
 
     // 3. Execute autonomous action based on timing and confidence gates
@@ -90,9 +91,13 @@ export async function triggerBrainAfterSignal(params: TriggerBrainParams): Promi
         executed_at: new Date().toISOString(),
       });
     } catch (err) {
-      // Silent — failed to log trigger event (error omitted to protect PII)
+      const { log: logFn } = await import("@/lib/logger");
+      logFn("warn", "brain_trigger.audit_log_failed", { error: err instanceof Error ? err.message : String(err) });
     }
   } catch (err) {
-    // Non-blocking — error in brain trigger (error details omitted to protect PII)
+    try {
+      const { log: logFn } = await import("@/lib/logger");
+      logFn("error", "brain_trigger.execution_failed", { error: err instanceof Error ? err.message : String(err) });
+    } catch { /* prevent infinite error loops */ }
   }
 }
