@@ -4,6 +4,7 @@
 
 import { getDb } from "@/lib/db/queries";
 import { appendLedgerEvent } from "@/lib/ops/ledger";
+import { log } from "@/lib/logger";
 import type { ConversationStage } from "./conversation-stage";
 
 const RETRIEVAL_LIMIT = 1;
@@ -55,7 +56,7 @@ export async function buildConversationSnapshot(input: BuildConversationSnapshot
         subjectType: "thread",
         subjectRef: input.threadId.slice(0, 160),
         details: { stage: input.stage, snapshot_id: id },
-      }).catch(() => {});
+      }).catch((err: unknown) => { log("warn", "conversation_snapshot.ledger_append_failed", { error: err instanceof Error ? err.message : String(err) }); });
     }
     return { ok: true, id };
   } catch {

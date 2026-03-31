@@ -5,6 +5,7 @@
  */
 
 import { appendLedgerEvent } from "@/lib/ops/ledger";
+import { log } from "@/lib/logger";
 
 export interface SelfHealingInput {
   workspaceId: string;
@@ -54,7 +55,7 @@ export async function evaluateSelfHealing(input: SelfHealingInput): Promise<Self
       subjectType: "workspace",
       subjectRef: workspaceId,
       details,
-    }).catch(() => {});
+    }).catch((err: unknown) => { log("warn", "self_healing.ledger_append_failed", { error: err instanceof Error ? err.message : String(err) }); });
   }
 
   return action;

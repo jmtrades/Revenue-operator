@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { Volume2, Phone, Check } from "lucide-react";
-import { SOCIAL_PROOF } from "@/lib/constants";
+import { SOCIAL_PROOF, PRICING_TIERS } from "@/lib/constants";
 
 const SCENARIOS = [
   "New Customer Inquiry",
@@ -226,7 +226,7 @@ export default function VoiceDemoPage() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: "var(--accent-primary)" }} />
             <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: "var(--accent-primary)" }} />
           </span>
-          Live AI Voice Demo — No Signup Required
+          Live AI Voice Demo — Try It Free
         </div>
         <h1
           className="text-4xl md:text-5xl lg:text-6xl font-semibold mb-4"
@@ -503,20 +503,12 @@ export default function VoiceDemoPage() {
           </p>
 
           <div className="grid md:grid-cols-4 gap-5 mb-12">
-            {[
-              {
-                name: "Starter", price: "$147", features: ["1 AI operator", "1,000 voice minutes/month", "Appointment booking", "SMS follow-up"], popular: false,
-              },
-              {
-                name: "Growth", price: "$297", features: ["5 AI operators", "3,000 voice minutes/month", "No-show recovery", "Revenue analytics", "Priority support"], popular: true,
-              },
-              {
-                name: "Business", price: "$597", features: ["15 AI operators", "8,000 voice minutes/month", "Outbound campaigns", "Advanced analytics + API", "Phone support"], popular: false,
-              },
-              {
-                name: "Agency", price: "$997", features: ["Unlimited AI operators", "15,000 voice minutes/month", "White-label branding", "Multi-client dashboard", "Dedicated account manager"], popular: false,
-              },
-            ].map((tier) => (
+            {PRICING_TIERS.map((tier) => ({
+              name: tier.name,
+              price: tier.priceMonthly,
+              features: tier.features.slice(0, 5),
+              popular: tier.popular,
+            })).map((tier) => (
               <div
                 key={tier.name}
                 className="rounded-xl p-6 flex flex-col"

@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getSession } from "@/lib/auth/request-session";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   const session = await getSession(req);
@@ -34,7 +35,7 @@ export async function GET(req: NextRequest) {
       .gte("updated_at", since)
       .in("status", ["active", "completed"]);
     sequenceActions = seqCount ?? 0;
-  } catch {}
+  } catch (err) { log("warn", "automation_activity.sequences_failed", { error: err instanceof Error ? err.message : String(err) }); }
 
   // Count SMS follow-ups that were successfully sent
   try {
@@ -45,7 +46,7 @@ export async function GET(req: NextRequest) {
       .gte("sent_at", since)
       .eq("status", "sent");
     smsSent = fuCount ?? 0;
-  } catch {}
+  } catch (err) { log("warn", "automation_activity.sms_followups_failed", { error: err instanceof Error ? err.message : String(err) }); }
 
   // Count outbound calls with verified completion (duration > 0 indicates a connected call)
   try {
@@ -58,7 +59,7 @@ export async function GET(req: NextRequest) {
       .neq("status", "failed")
       .gt("duration", 0);
     callsMade = obCount ?? 0;
-  } catch {}
+  } catch (err) { log("warn", "automation_activity.outbound_calls_failed", { error: err instanceof Error ? err.message : String(err) }); }
 
   // Count appointments created by the AI agent (source filter verifies ai_agent origin)
   try {
@@ -69,7 +70,7 @@ export async function GET(req: NextRequest) {
       .gte("created_at", since)
       .eq("source", "ai_agent");
     appointmentsAutoBooked = apptCount ?? 0;
-  } catch {}
+  } catch (err) { log("warn", "automation_activity.appointments_failed", { error: err instanceof Error ? err.message : String(err) }); }
 
   try {
     const { count: recCount } = await db
@@ -79,7 +80,7 @@ export async function GET(req: NextRequest) {
       .gte("last_activity_at", since)
       .eq("state", "contacted");
     recoveredLeads = recCount ?? 0;
-  } catch {}
+  } catch (err) { log("warn", "automation_activity.recovered_leads_failed", { error: err instanceof Error ? err.message : String(err) }); }
 
   const totalActions = sequenceActions + smsSent + callsMade + appointmentsAutoBooked;
 

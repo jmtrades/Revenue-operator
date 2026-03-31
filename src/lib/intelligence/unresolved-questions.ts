@@ -5,6 +5,7 @@
 
 import { getDb } from "@/lib/db/queries";
 import { appendLedgerEvent } from "@/lib/ops/ledger";
+import { log } from "@/lib/logger";
 import type { QuestionType, QuestionSourceChannel } from "./question-taxonomy";
 import { RESOLUTION_TYPES, type ResolutionType } from "./question-taxonomy";
 
@@ -112,7 +113,7 @@ export async function recordUnresolvedQuestions(
         subjectType: "thread",
         subjectRef: threadId.slice(0, 160),
         details: { question_type: q.question_type },
-      }).catch(() => {});
+      }).catch((err: unknown) => { log("warn", "unresolved_questions.record_failed", { error: err instanceof Error ? err.message : String(err) }); });
     }
     return { ok: true };
   } catch {
@@ -155,7 +156,7 @@ export async function resolveQuestions(
           subjectType: "thread",
           subjectRef: threadId.slice(0, 160),
           details: { question_type: qt, resolution_type: resolutionType },
-        }).catch(() => {});
+        }).catch((err: unknown) => { log("warn", "unresolved_questions.resolve_failed", { error: err instanceof Error ? err.message : String(err) }); });
       }
     }
     return { ok: true };

@@ -5,6 +5,7 @@
 
 import { getDb } from "@/lib/db/queries";
 import { appendLedgerEvent } from "@/lib/ops/ledger";
+import { log } from "@/lib/logger";
 
 const BOUND_LIMIT = 1;
 
@@ -98,7 +99,7 @@ export async function updateStrategicPattern(
       subjectType: "thread",
       subjectRef: tid.slice(0, 160),
       details: { variant_used: variantUsed },
-    }).catch(() => {});
+    }).catch((err: unknown) => { log("warn", "strategic_pattern.ledger_append_failed", { error: err instanceof Error ? err.message : String(err) }); });
     return { ok: true };
   } catch {
     return { ok: false };

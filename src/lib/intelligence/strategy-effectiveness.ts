@@ -4,6 +4,7 @@
 
 import { getDb } from "@/lib/db/queries";
 import { appendLedgerEvent } from "@/lib/ops/ledger";
+import { log } from "@/lib/logger";
 
 const WINDOW_LIMIT = 200;
 const ESCALATION_PENALTY = 20;
@@ -53,7 +54,7 @@ export async function recordStrategyEffectiveness(
       subjectType: "workspace",
       subjectRef: input.workspaceId,
       details: { variant_key: input.variantKey, outcome_type: input.outcomeType },
-    }).catch(() => {});
+    }).catch((err: unknown) => { log("warn", "strategy_effectiveness.ledger_append_failed", { error: err instanceof Error ? err.message : String(err) }); });
     return { ok: true };
   } catch {
     return { ok: false };

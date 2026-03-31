@@ -101,13 +101,30 @@ const AnalyticsCharts = dynamic(
   },
 );
 
+const SNAPSHOT_MAX_AGE_MS = 5 * 60 * 1000; // 5 minutes
+
+interface SnapshotEnvelope<T> {
+  ts: number;
+  data: T;
+}
+
 function readAnalyticsSnapshot<T>(prefix: string, workspaceId: string): T[] {
   if (typeof window === "undefined" || !workspaceId) return [];
   const key = `${prefix}${workspaceId}`;
   try {
     const raw = safeGetItem(key);
-    const parsed = raw ? (JSON.parse(raw) as T[]) : [];
-    return Array.isArray(parsed) ? parsed : [];
+    if (!raw) return [];
+    const envelope = JSON.parse(raw) as SnapshotEnvelope<T[]> | T[];
+    // Handle legacy format (plain array) — treat as expired
+    if (Array.isArray(envelope)) {
+      safeRemoveItem(key);
+      return [];
+    }
+    if (Date.now() - envelope.ts > SNAPSHOT_MAX_AGE_MS) {
+      safeRemoveItem(key);
+      return [];
+    }
+    return Array.isArray(envelope.data) ? envelope.data : [];
   } catch {
     safeRemoveItem(key);
     return [];
@@ -116,7 +133,8 @@ function readAnalyticsSnapshot<T>(prefix: string, workspaceId: string): T[] {
 
 function persistAnalyticsSnapshot<T>(prefix: string, workspaceId: string, data: T[]) {
   if (typeof window === "undefined" || !workspaceId) return;
-  safeSetItem(`${prefix}${workspaceId}`, JSON.stringify(data));
+  const envelope: SnapshotEnvelope<T[]> = { ts: Date.now(), data };
+  safeSetItem(`${prefix}${workspaceId}`, JSON.stringify(envelope));
 }
 
 function getRangeBounds(range: RangeKey, dateFrom?: string, dateTo?: string): { start: Date; end: Date } {

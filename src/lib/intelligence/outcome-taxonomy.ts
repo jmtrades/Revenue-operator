@@ -241,6 +241,7 @@ export interface InsertUniversalOutcomeInput {
 export async function insertUniversalOutcome(input: InsertUniversalOutcomeInput): Promise<{ ok: boolean; id?: string }> {
   const { appendLedgerEvent } = await import("@/lib/ops/ledger");
   const { getDb } = await import("@/lib/db/queries");
+  const { log } = await import("@/lib/logger");
   const db = getDb();
   try {
     const { data } = await db
@@ -267,7 +268,7 @@ export async function insertUniversalOutcome(input: InsertUniversalOutcomeInput)
         subjectType: "thread",
         subjectRef: (input.threadId ?? input.workspaceId).slice(0, 160),
         details: { outcome_type: input.outcome_type, next_required_action: input.next_required_action },
-      }).catch(() => {});
+      }).catch((err: unknown) => { log("warn", "outcome_taxonomy.ledger_append_failed", { error: err instanceof Error ? err.message : String(err) }); });
     }
     return { ok: true, id };
   } catch {
