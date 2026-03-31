@@ -15,12 +15,15 @@ export const maxDuration = 60;
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { assertSameOrigin } from "@/lib/http/csrf";
 import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
 import { computeLeadIntelligence, persistLeadIntelligence } from "@/lib/intelligence/lead-brain";
 import { ensureBrainTables } from "@/lib/intelligence/brain-migration";
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
   try {
     const session = await getSession(req);
     if (!session?.workspaceId) {
