@@ -177,10 +177,7 @@ export async function executeAutonomousAction(
 
     // 4. Map next_best_action to AutonomousActionType and execute
     const result = await executeBasedOnAction(intelligence, executedAt);
-    // Don't log dedup skips — they're noise (every 2min cron cycle)
-    if (result.reason !== "already_enrolled") {
-      await logAutonomousAction(result);
-    }
+    await logAutonomousAction(result);
 
     // 5. Send Slack notification for successful actions (non-blocking, fire-and-forget)
     if (result.success && result.action_type !== "no_action") {
@@ -650,6 +647,30 @@ async function scheduleFollowupAction(
       }
     }
 
+    // Guard: don't enroll in a sequence with zero steps — it creates dead enrollments
+    const { count: finalStepCount } = await db
+      .from("sequence_steps")
+      .select("*", { count: "exact", head: true })
+      .eq("sequence_id", sequenceId);
+
+    if ((finalStepCount ?? 0) === 0) {
+      log("warn", "autonomous.empty_sequence_skipped", {
+        lead_id: intelligence.lead_id,
+        workspace_id: intelligence.workspace_id,
+        sequence_id: sequenceId,
+      });
+      return {
+        action_type: "enroll_sequence",
+        success: false,
+        details: "Sequence has no steps — skipped enrollment to avoid dead sequence",
+        executed_at: executedAt,
+        lead_id: intelligence.lead_id,
+        workspace_id: intelligence.workspace_id,
+        confidence: intelligence.action_confidence,
+        reason: "empty_sequence",
+      };
+    }
+
     const enrollment = await enrollContact(intelligence.workspace_id, sequenceId, intelligence.lead_id);
 
     // Safety net: if enrollment was created but next_step_due_at is null (steps weren't
@@ -684,8 +705,10 @@ async function scheduleFollowupAction(
               business_name: "Our team",
             });
             if (template.sms) {
-              await svc.sendSms({ from: fromNumber, to: lead.phone, text: template.sms });
-              // Immediate SMS sent (adaptive first step) (logging omitted to protect PII)
+              const immSmsResult = await svc.sendSms({ from: fromNumber, to: lead.phone, text: template.sms });
+              if ("error" in immSmsResult) {
+                log("warn", "autonomous.immediate_sms_failed", { lead_id: intelligence.lead_id, error: immSmsResult.error });
+              }
             }
           }
         } else if (firstStep.channel === "email" && lead.email) {
@@ -696,7 +719,7 @@ async function scheduleFollowupAction(
               business_name: "Our team",
             });
             if (template.email_body) {
-              await fetch("https://api.resend.com/emails", {
+              const immEmailRes = await fetch("https://api.resend.com/emails", {
                 method: "POST",
                 headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -706,7 +729,9 @@ async function scheduleFollowupAction(
                   text: template.email_body,
                 }),
               });
-              // Immediate email sent (adaptive first step) (logging omitted to protect PII)
+              if (!immEmailRes.ok) {
+                log("warn", "autonomous.immediate_email_failed", { lead_id: intelligence.lead_id, status: immEmailRes.status });
+              }
             }
           }
         }
