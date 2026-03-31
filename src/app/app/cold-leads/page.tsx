@@ -131,9 +131,7 @@ interface StatsBarProps extends StatsProps {
   t: any;
 }
 
-function StatsBar({ total, pending, inProgress, reengaged, exhausted, t }: StatsBarProps) {
-  // Estimate based on workspace average deal value (fetched) or industry default
-  const avgDealValue = 350; // TODO: fetch from workspace_settings.avg_deal_value
+function StatsBar({ total, pending, inProgress, reengaged, exhausted, t, avgDealValue = 350 }: StatsBarProps & { avgDealValue?: number }) {
   const recoverableRevenue = Math.round((pending + inProgress) * avgDealValue * 0.15); // 15% recovery probability
   const recoveryRate = reengaged + exhausted > 0
     ? Math.round((reengaged / (reengaged + exhausted)) * 100)
@@ -217,6 +215,16 @@ export default function ColdLeadsPage() {
   });
   const [reengageSaving, setReengageSaving] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  // Fetch average deal value from workspace context
+  const [avgDealValue, setAvgDealValue] = useState(350);
+  useEffect(() => {
+    if (!workspaceId) return;
+    fetch(`/api/dashboard/revenue-at-risk?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (d?.avg_deal_value) setAvgDealValue(d.avg_deal_value); })
+      .catch(() => {});
+  }, [workspaceId]);
 
   // Fetch cold leads
   useEffect(() => {
@@ -551,6 +559,7 @@ export default function ColdLeadsPage() {
         reengaged={stats.reengaged}
         exhausted={stats.exhausted}
         t={t}
+        avgDealValue={avgDealValue}
       />
 
       {/* Action Buttons */}
