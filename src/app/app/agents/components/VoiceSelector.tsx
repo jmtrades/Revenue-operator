@@ -136,22 +136,49 @@ export function VoiceSelector({
   onVoicePreview,
 }: Props) {
   const t = useTranslations("agents");
+
+  // Smart voice recommendation: prioritize customer service voices for revenue operators
+  const recommendedKeywords = ["customer service", "reception", "greeting", "professional"];
+  const recommendedVoiceId = voices.find((v) =>
+    recommendedKeywords.some((kw) => v.bestFor.toLowerCase().includes(kw))
+  )?.id;
+
+  // Sort: recommended first, then selected, then rest
+  const sortedVoices = [...voices].sort((a, b) => {
+    if (a.id === recommendedVoiceId) return -1;
+    if (b.id === recommendedVoiceId) return 1;
+    if (a.id === agent.voice) return -1;
+    if (b.id === agent.voice) return 1;
+    return 0;
+  });
+
   return (
     <div>
       <p className="text-[11px] text-[var(--text-secondary)] mb-2">{t("voiceSelector.voiceLabel")}</p>
+      {!agent.voice && recommendedVoiceId && (
+        <div className="mb-3 flex items-center gap-2 rounded-lg border border-violet-500/30 bg-violet-500/5 px-3 py-2">
+          <span className="text-xs text-violet-400">Recommended for your business type — click to select</span>
+        </div>
+      )}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-        {voices.map((voice) => (
-          <VoiceCard
-            key={voice.id}
-            voice={voice}
-            selected={agent.voice === voice.id}
-            previewing={previewingVoiceId === voice.id}
-            selectedLabel={t("voiceSelector.selectedLabel")}
-            selectThisVoiceLabel={t("voiceSelector.selectThisVoiceLabel")}
-            previewAriaLabel={t("voiceSelector.previewVoiceAria", { name: voice.name })}
-            onSelect={() => onChange({ voice: voice.id })}
-            onPreview={() => onVoicePreview(voice.id)}
-          />
+        {sortedVoices.map((voice) => (
+          <div key={voice.id} className="relative">
+            {voice.id === recommendedVoiceId && !agent.voice && (
+              <span className="absolute -top-2 left-2 z-10 rounded-full bg-violet-500 px-2 py-0.5 text-[10px] font-medium text-white">
+                Recommended
+              </span>
+            )}
+            <VoiceCard
+              voice={voice}
+              selected={agent.voice === voice.id}
+              previewing={previewingVoiceId === voice.id}
+              selectedLabel={t("voiceSelector.selectedLabel")}
+              selectThisVoiceLabel={t("voiceSelector.selectThisVoiceLabel")}
+              previewAriaLabel={t("voiceSelector.previewVoiceAria", { name: voice.name })}
+              onSelect={() => onChange({ voice: voice.id })}
+              onPreview={() => onVoicePreview(voice.id)}
+            />
+          </div>
         ))}
       </div>
       <details className="mt-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">

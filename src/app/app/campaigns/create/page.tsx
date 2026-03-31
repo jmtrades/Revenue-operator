@@ -116,7 +116,7 @@ export default function CampaignCreatePage() {
 
   const [step, setStep] = useState<WizardStep>(1);
   const [type, setType] = useState<CampaignType>("speed_to_lead");
-  const [name, setName] = useState("Missed-call recovery");
+  const [name, setName] = useState("Speed-to-Lead");
 
   // Audience filters (stored into target_filter)
   const [statuses, setStatuses] = useState<string[]>(["New", "Contacted"]);
@@ -141,11 +141,40 @@ export default function CampaignCreatePage() {
 
   const campaignTypes = useMemo(() => getCampaignTypes(t), [t]);
 
+  // Smart defaults: auto-populate audience, name, and schedule based on campaign type
   useEffect(() => {
     setSequence(DEFAULT_TEMPLATES[type]);
-    // Smart default: auto-populate "not contacted for 30 days" for reactivation campaigns
-    if (type === "reactivation" && notContactedDays === "") {
-      setNotContactedDays(30);
+    const typeLabels: Record<CampaignType, string> = {
+      speed_to_lead: "Speed-to-Lead",
+      lead_qualification: "Lead Qualification",
+      appointment_setting: "Appointment Setting",
+      appointment_reminder: "Appointment Reminder",
+      no_show_recovery: "No-Show Recovery",
+      reactivation: "Reactivation",
+      quote_chase: "Quote Chase",
+      review_request: "Review Request",
+      cold_outreach: "Cold Outreach",
+      custom: "Custom Campaign",
+    };
+    setName(typeLabels[type] || "Custom Campaign");
+
+    // Smart audience defaults per type
+    const typeDefaults: Record<CampaignType, { statuses: string[]; notContactedDays: number | "" }> = {
+      speed_to_lead: { statuses: ["New"], notContactedDays: "" },
+      lead_qualification: { statuses: ["New", "Contacted"], notContactedDays: "" },
+      appointment_setting: { statuses: ["Contacted", "Engaged", "Qualified"], notContactedDays: "" },
+      appointment_reminder: { statuses: ["Booked"], notContactedDays: "" },
+      no_show_recovery: { statuses: ["Booked", "Showed"], notContactedDays: "" },
+      reactivation: { statuses: ["Contacted", "Engaged"], notContactedDays: 30 },
+      quote_chase: { statuses: ["Qualified"], notContactedDays: 3 },
+      review_request: { statuses: ["Won"], notContactedDays: "" },
+      cold_outreach: { statuses: ["New"], notContactedDays: "" },
+      custom: { statuses: ["New", "Contacted"], notContactedDays: "" },
+    };
+    const defaults = typeDefaults[type];
+    if (defaults) {
+      setStatuses(defaults.statuses);
+      if (defaults.notContactedDays !== "") setNotContactedDays(defaults.notContactedDays);
     }
   }, [type]);
 

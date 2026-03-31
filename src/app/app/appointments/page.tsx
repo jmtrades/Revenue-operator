@@ -120,7 +120,8 @@ export default function AppointmentsPage() {
   const noShowAppointments = appointments.filter(a => a.status === "No-Show").length;
   const confirmedAppointments = appointments.filter(a => a.status === "Confirmed").length;
   const completionRate = totalAppointments > 0 ? Math.round((completedAppointments / totalAppointments) * 100) : 0;
-  const estimatedRevenue = completedAppointments * 150; // $150 average per appointment
+  const avgDealValue = 350; // TODO: fetch from workspace_settings.avg_deal_value
+  const estimatedRevenue = Math.round(completedAppointments * avgDealValue * 0.6); // 60% close rate from completed appointments
   const hasNoShows = noShowAppointments > 0;
 
   // Outcome form state
@@ -984,6 +985,23 @@ export default function AppointmentsPage() {
                 <h3 className="text-xs font-medium text-[var(--text-secondary)] mb-3 uppercase">
                   {t("appointments.outcome.title", { defaultValue: "Record Meeting Outcome" })}
                 </h3>
+                {/* Brain suggestion: auto-infer outcome based on time elapsed */}
+                {!outcomeData.outcome && isPastAppointment(selected) && (() => {
+                  const hoursSince = (Date.now() - new Date(selected.start_time!).getTime()) / (1000 * 60 * 60);
+                  const suggestion = hoursSince > 48 ? "no_show" : "completed";
+                  const suggestionLabel = suggestion === "no_show" ? "No-Show (48+ hours, no update)" : "Completed";
+                  return (
+                    <button
+                      type="button"
+                      onClick={() => setOutcomeData({ ...outcomeData, outcome: suggestion, sentiment: suggestion === "no_show" ? "negative" : "positive" })}
+                      className="mb-3 w-full flex items-center gap-2 rounded-lg border border-violet-500/30 bg-violet-500/5 px-3 py-2 text-left hover:bg-violet-500/10 transition-colors"
+                    >
+                      <span className="text-[10px] font-medium text-violet-400 uppercase">Brain suggests</span>
+                      <span className="text-xs text-[var(--text-primary)]">{suggestionLabel}</span>
+                      <span className="ml-auto text-[10px] text-[var(--text-tertiary)]">Click to apply</span>
+                    </button>
+                  );
+                })()}
                 <div className="space-y-3">
                   {/* Outcome selector */}
                   <div>

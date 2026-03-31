@@ -127,10 +127,10 @@ export default function AppSettingsIntegrationsPage() {
     if (crmParam === "connected") {
       const provider = searchParams.get("provider") ?? "";
       const providerName = provider.charAt(0).toUpperCase() + provider.slice(1).replace(/_/g, " ");
-      setToast(t("toast.crmConnected", { provider: providerName }) + " Syncing your contacts now...");
+      setToast(t("toast.crmConnected", { provider: providerName }) + " Starting background sync...");
       setSyncingProvider(provider as CrmProviderId);
 
-      // Refresh CRM status first
+      // Refresh CRM status first, then trigger sync
       fetch("/api/integrations/crm/status", { credentials: "include" })
         .then((r) => (r.ok ? r.json() : null))
         .then((data: CrmStatusResponse | null) => {
@@ -141,7 +141,16 @@ export default function AppSettingsIntegrationsPage() {
               fetch(`/api/integrations/crm/${provider}/batch-sync`, {
                 method: "POST",
                 credentials: "include",
-              }).catch(() => {});
+              })
+                .then((r) => r.ok ? r.json() : null)
+                .then((result) => {
+                  if (result?.enqueued) {
+                    setToast(`${providerName} sync started — ${result.enqueued} contacts queued.`);
+                  }
+                })
+                .catch(() => {
+                  setToast(`${providerName} connected. Sync will run in the background.`);
+                });
             }
           }
         })

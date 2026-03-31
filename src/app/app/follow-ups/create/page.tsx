@@ -56,10 +56,27 @@ export default function FollowUpCreatePage() {
   const effectiveWorkspaceId = workspaceId || workspaceSnapshot?.id?.trim() || null;
 
   const [name, setName] = useState("");
-  const [trigger, setTrigger] = useState<Trigger>("manual");
+  const [trigger, setTrigger] = useState<Trigger>("call_outcome:lead_captured");
   const [steps, setSteps] = useState<Step[]>([{ ...DEFAULT_STEP }]);
   const [active, setActive] = useState(true);
   const [saving, setSaving] = useState(false);
+
+  // Auto-set name based on trigger selection for faster setup
+  useEffect(() => {
+    if (!name || name === "" || name === "Lead Captured Follow-Up" || name === "Voicemail Follow-Up" || name === "Missed Call Recovery" || name === "Booking Confirmed" || name === "No-Show Recovery" || name === "Post-Appointment" || name === "Manual Sequence") {
+      const triggerNames: Record<Trigger, string> = {
+        "call_outcome:lead_captured": "Lead Captured Follow-Up",
+        "call_outcome:voicemail_left": "Voicemail Follow-Up",
+        "call_outcome:no_answer": "Missed Call Recovery",
+        "call_outcome:booked": "Booking Confirmed",
+        "booking_status:confirmed": "Booking Confirmed",
+        "booking_status:no_show": "No-Show Recovery",
+        "booking_status:completed": "Post-Appointment",
+        "manual": "Manual Sequence",
+      };
+      setName(triggerNames[trigger] || "");
+    }
+  }, [trigger]);
 
   useEffect(() => {
     if (!effectiveWorkspaceId) return;

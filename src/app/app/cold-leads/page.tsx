@@ -132,7 +132,9 @@ interface StatsBarProps extends StatsProps {
 }
 
 function StatsBar({ total, pending, inProgress, reengaged, exhausted, t }: StatsBarProps) {
-  const recoverableRevenue = (pending + inProgress) * 150;
+  // Estimate based on workspace average deal value (fetched) or industry default
+  const avgDealValue = 350; // TODO: fetch from workspace_settings.avg_deal_value
+  const recoverableRevenue = Math.round((pending + inProgress) * avgDealValue * 0.15); // 15% recovery probability
   const recoveryRate = reengaged + exhausted > 0
     ? Math.round((reengaged / (reengaged + exhausted)) * 100)
     : 0;
@@ -156,7 +158,7 @@ function StatsBar({ total, pending, inProgress, reengaged, exhausted, t }: Stats
         <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">{reengaged}</p>
       </div>
       <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-3">
-        <p className="text-xs text-[var(--text-secondary)] font-medium">Recoverable</p>
+        <p className="text-xs text-[var(--text-secondary)] font-medium">Est. Recoverable</p>
         <p className="text-lg font-semibold text-[#10b981] mt-1">~${recoverableRevenue.toLocaleString()}</p>
       </div>
       <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-3">

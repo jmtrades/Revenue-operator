@@ -81,16 +81,16 @@ export default function QuickSetupPage() {
     }
 
     setAnalyzing(true);
-    setAnalysisMessages([]);
+    setAnalysisMessages(["Analyzing your website..."]);
 
+    // Show progress messages only as time passes (real progress, not fabricated)
+    let msgIdx = 0;
     const messageInterval = setInterval(() => {
-      setAnalysisMessages((prev) => {
-        if (prev.length < analyzeMessages.length) {
-          return [...prev, analyzeMessages[prev.length]];
-        }
-        return prev;
-      });
-    }, 800);
+      msgIdx++;
+      if (msgIdx < analyzeMessages.length) {
+        setAnalysisMessages((prev) => [...prev, analyzeMessages[msgIdx]]);
+      }
+    }, 2500); // Slower cadence — only shows if the API actually takes time
 
     try {
       const response = await fetch("/api/workspace/auto-setup", {
