@@ -20,7 +20,7 @@ export default function Error({
       </div>
       <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("heading")}</h2>
       <p className="text-sm text-[var(--text-tertiary)] text-center max-w-sm mb-6">
-        {error?.message || t("defaultMessage")}
+        {t("defaultMessage")}
       </p>
       <button onClick={reset} className="px-5 py-2.5 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-lg text-sm hover:opacity-90">
         {t("tryAgain")}

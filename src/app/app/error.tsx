@@ -19,9 +19,9 @@ export default function Error({
         <p className="text-[var(--text-secondary)] mb-2">
           An error occurred in your workspace. Please try again or return to the dashboard.
         </p>
-        {error.message && (
+        {error.digest && (
           <p className="text-sm text-[var(--text-tertiary)] mb-8 font-mono break-words">
-            {error.message}
+            Error ID: {error.digest}
           </p>
         )}
 

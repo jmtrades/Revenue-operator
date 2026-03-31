@@ -18,11 +18,18 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { createOutboundCall } from "@/lib/telephony/telnyx-voice";
 import { log } from "@/lib/logger";
 import { encodeDemoState, type DemoCallState, getRandomGreeting } from "@/lib/voice/demo-agent";
 import { runWithWriteContextAsync } from "@/lib/safety/unsafe-write-guard";
+
+const demoCallSchema = z.object({
+  phone_number: z.string().min(7).max(20),
+  source: z.string().max(100).optional(),
+  page: z.string().max(500).optional(),
+});
 
 /**
  * Normalize a phone number to E.164 format.
@@ -98,23 +105,21 @@ export async function POST(req: NextRequest) {
   }
 
   /* ── Parse body ──────────────────────────────────────── */
-  let body: { phone_number?: string; source?: string; page?: string };
+  let rawBody: unknown;
   try {
-    body = await req.json();
+    rawBody = await req.json();
   } catch {
     return NextResponse.json({ ok: false, error: "Invalid request." }, { status: 400 });
   }
 
-  const phone = body.phone_number?.trim();
-  const source = body.source ?? "website_hero";
-  const page = body.page ?? "";
-
-  if (!phone) {
-    return NextResponse.json(
-      { ok: false, error: "Please enter your phone number to receive a demo call." },
-      { status: 400 },
-    );
+  const parsed = demoCallSchema.safeParse(rawBody);
+  if (!parsed.success) {
+    return NextResponse.json({ ok: false, error: "Invalid request. phone_number is required." }, { status: 400 });
   }
+
+  const phone = parsed.data.phone_number.trim();
+  const source = parsed.data.source ?? "website_hero";
+  const page = parsed.data.page ?? "";
 
   // Normalize to E.164 format — support any country
   const e164Phone = normalizeToE164(phone);

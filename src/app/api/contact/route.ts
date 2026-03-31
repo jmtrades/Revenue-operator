@@ -1,7 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { getDb } from "@/lib/db/queries";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
+
+const contactSchema = z.object({
+  name: z.string().min(1).max(200).transform((s) => s.trim()),
+  email: z.string().email().max(320).transform((s) => s.trim()),
+  message: z.string().min(1).max(5000).transform((s) => s.trim()),
+  company: z.string().max(200).transform((s) => s.trim()).optional().nullable(),
+});
 
 /**
  * Contact form submission. Accepts POST { name, email, company?, message }.
@@ -19,13 +27,11 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json().catch(() => ({}));
-    const name = typeof body?.name === "string" ? body.name.trim() : null;
-    const email = typeof body?.email === "string" ? body.email.trim() : null;
-    const message = typeof body?.message === "string" ? body.message.trim() : null;
-    if (!name || !email || !message) {
-      return NextResponse.json({ error: "Missing required fields: name, email, message" }, { status: 400 });
+    const parsed = contactSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Missing or invalid fields: name, email, message" }, { status: 400 });
     }
-    const company = typeof body?.company === "string" ? body.company.trim() : null;
+    const { name, email, message, company } = parsed.data;
     try {
       const db = getDb();
       await db.from("contact_submissions").insert({ name, email, company: company ?? null, message });

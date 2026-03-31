@@ -6,11 +6,18 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { runWithWriteContextAsync } from "@/lib/safety/unsafe-write-guard";
+
+const signupSchema = z.object({
+  email: z.string().email().max(320).transform((s) => s.trim()),
+  industry: z.string().min(1).max(100).transform((s) => s.trim()),
+  source: z.string().max(100).transform((s) => s.trim()).optional(),
+});
 
 export async function POST(req: NextRequest) {
   const csrfBlock = assertSameOrigin(req);
@@ -28,7 +35,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    let body: { email?: string; industry?: string; source?: string };
+    let body: unknown;
     try {
       body = await req.json();
     } catch {
@@ -37,31 +44,15 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    const { email, industry, source } = body;
 
-    // Validate input
-    if (!email || !industry) {
+    const parsed = signupSchema.safeParse(body);
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "Email and industry required" },
+        { error: "Email and industry required, must be valid format" },
         { status: 400 }
       );
     }
-
-    // Basic email validation
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return NextResponse.json(
-        { error: "Invalid email format" },
-        { status: 400 }
-      );
-    }
-
-    // Length limits
-    if (email.length > 320 || industry.length > 100 || (source && source.length > 100)) {
-      return NextResponse.json(
-        { error: "Input too long" },
-        { status: 400 }
-      );
-    }
+    const { email, industry, source } = parsed.data;
 
     const db = getDb();
 
