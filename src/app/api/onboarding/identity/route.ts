@@ -3,10 +3,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { randomUUID } from "crypto";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { log } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   const csrfBlock = assertSameOrigin(req);
   if (csrfBlock) return csrfBlock;
+
+  // Rate limit: 5 workspace creations per minute per IP
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  const rl = await checkRateLimit(`onboarding_identity:${ip}`, 5, 60000);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many requests. Please wait a moment." }, { status: 429 });
+  }
 
   let body: { your_name?: string; business_name?: string; industry?: string };
   try {
@@ -37,7 +46,7 @@ export async function POST(req: NextRequest) {
     business_name: business_name.trim(),
   });
   if (wsErr) {
-    console.error("[onboarding/identity] workspace insert failed:", wsErr.message);
+    log("error", "onboarding.identity_workspace_insert_failed", { error: wsErr.message });
     return NextResponse.json({ error: "Failed to create workspace. Please try again." }, { status: 500 });
   }
   // Create workspace member record for the owner
@@ -48,7 +57,7 @@ export async function POST(req: NextRequest) {
   }
   const { error: settingsErr } = await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
   if (settingsErr) {
-    console.error("[onboarding/identity] settings insert failed:", settingsErr.message);
+    log("warn", "onboarding.identity_settings_insert_failed", { error: settingsErr.message });
     // Non-blocking — workspace was created, settings can be retried
   }
   try {
