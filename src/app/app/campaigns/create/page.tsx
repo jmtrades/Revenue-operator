@@ -266,7 +266,7 @@ export default function CampaignCreatePage() {
       }
       setToast(launch ? t("toast.launched") : t("toast.saved"));
       router.push("/app/campaigns");
-    } catch (err) {
+    } catch {
       setToast(t("errors.createFailed", { defaultValue: "Something went wrong. Please try again." }));
     } finally {
       setSaving(false);
