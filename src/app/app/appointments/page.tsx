@@ -114,13 +114,22 @@ export default function AppointmentsPage() {
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [syncLoading, setSyncLoading] = useState(false);
 
+  // Fetch average deal value from workspace context
+  const [avgDealValue, setAvgDealValue] = useState(350);
+  useEffect(() => {
+    if (!workspaceId) return;
+    fetch(`/api/dashboard/revenue-at-risk?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (d?.avg_deal_value) setAvgDealValue(d.avg_deal_value); })
+      .catch(() => {});
+  }, [workspaceId]);
+
   // Compute summary metrics for dashboard cards
   const totalAppointments = appointments.length;
   const completedAppointments = appointments.filter(a => a.status === "Completed").length;
   const noShowAppointments = appointments.filter(a => a.status === "No-Show").length;
   const confirmedAppointments = appointments.filter(a => a.status === "Confirmed").length;
   const completionRate = totalAppointments > 0 ? Math.round((completedAppointments / totalAppointments) * 100) : 0;
-  const avgDealValue = 350; // TODO: fetch from workspace_settings.avg_deal_value
   const estimatedRevenue = Math.round(completedAppointments * avgDealValue * 0.6); // 60% close rate from completed appointments
   const hasNoShows = noShowAppointments > 0;
 
