@@ -255,8 +255,8 @@ export function RecoveryScoreCard({ workspaceId }: RecoveryScoreCardProps) {
                   <span className="text-xs font-medium text-[var(--text-secondary)]">{item.label}</span>
                 </div>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-lg font-bold text-[var(--text-primary)]">{item.value}</span>
-                  <span className="text-xs text-[var(--text-secondary))">/20</span>
+                  <span className="text-lg font-bold text-[var(--text-primary)]">{item.value ?? 0}</span>
+                  <span className="text-xs text-[var(--text-secondary)]">/20</span>
                 </div>
               </motion.div>
             );

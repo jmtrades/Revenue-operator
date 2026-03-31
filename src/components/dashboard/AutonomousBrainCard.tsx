@@ -195,7 +195,7 @@ export function AutonomousBrainCard() {
               <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-emerald-500/[0.06] border border-emerald-500/10">
                 <Zap className="w-4 h-4 text-emerald-400 shrink-0" />
                 <p className="text-xs text-[var(--text-primary)]">
-                  <span className="font-semibold text-emerald-400">{stats.autonomous_actions_24h} actions</span>{" "}
+                  <span className="font-semibold text-emerald-400">{stats.autonomous_actions_24h} {stats.autonomous_actions_24h === 1 ? "action" : "actions"}</span>{" "}
                   executed today across {totalManaged} leads
                 </p>
               </div>

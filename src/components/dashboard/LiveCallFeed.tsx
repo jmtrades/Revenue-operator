@@ -159,11 +159,7 @@ export function LiveCallFeed({ workspaceId }: LiveCallFeedProps) {
         </div>
       </div>
 
-      {error && (
-        <div className="text-xs text-[var(--text-tertiary)] text-center py-2">
-          {error}
-        </div>
-      )}
+      {/* Silently absorb fetch errors — no activity is the honest empty state */}
 
       {!hasActivity ? (
         <div className="py-8 text-center">

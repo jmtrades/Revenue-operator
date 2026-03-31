@@ -1946,7 +1946,8 @@
     "actions": {
       "refresh": "Atualizar",
       "updatedAt": "Atualizado",
-      "upgrade": "Upgrade"
+      "upgrade": "Upgrade",
+      "tryAgain": "Try again"
     },
     "lastUpdated": {
       "never": "Nunca",

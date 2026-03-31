@@ -1043,7 +1043,8 @@
     "actions": {
       "refresh": "Refresh",
       "updatedAt": "Updated",
-      "upgrade": "Upgrade"
+      "upgrade": "Upgrade",
+      "tryAgain": "Try again"
     },
     "lastUpdated": {
       "never": "Never",

@@ -228,7 +228,7 @@ export async function GET(req: NextRequest) {
     category: "Calendar",
     status: outlookConnected ? "ready" : hasMsClientId ? "unconfigured" : "unconfigured",
     detail: outlookConnected ? "Connected via Microsoft 365"
-      : hasMsClientId ? "OAuth configured — not yet connected" : "MICROSOFT_CLIENT_ID not set (coming soon — optional)",
+      : hasMsClientId ? "OAuth configured — not yet connected" : "MICROSOFT_CLIENT_ID not set (optional)",
     impact: "Outlook calendar sync and event management will not work",
     action: outlookConnected ? "Connected" : hasMsClientId ? "Connect Microsoft 365 in Integrations"
       : "Set MICROSOFT_CLIENT_ID and MICROSOFT_CLIENT_SECRET when Outlook integration is desired",
