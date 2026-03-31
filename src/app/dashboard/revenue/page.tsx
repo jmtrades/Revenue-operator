@@ -98,9 +98,9 @@ export default function RevenuePage() {
 
   const rawData = useMemo(() => {
     if (apiData && apiData.length > 0) return apiData;
-    const daysMap: Record<Period, number> = { "7d": 7, "30d": 30, "90d": 90, all: 180 };
-    return generateDemoData(daysMap[period]);
-  }, [period, apiData]);
+    // No real data available — return empty array instead of fake demo data
+    return [];
+  }, [apiData]);
 
   const totals = useMemo(() => {
     let inbound = 0, followUps = 0, outbound = 0, noShowRecovery = 0;
@@ -167,8 +167,8 @@ export default function RevenuePage() {
         </div>
         <div className="flex items-center gap-3">
           {!apiData && (
-            <span className="px-2 py-0.5 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-300 text-xs">
-              Sample data
+            <span className="px-2 py-0.5 rounded-full border border-[var(--border-default)] bg-[var(--bg-inset)] text-[var(--text-tertiary)] text-xs">
+              No revenue data yet
             </span>
           )}
           <div className="relative">

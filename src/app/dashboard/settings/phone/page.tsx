@@ -89,28 +89,40 @@ export default function SettingsPhonePage() {
     setNumbers((prev) => prev.filter((n) => n.id !== id));
   }, []);
 
-  const handleProvision = useCallback(() => {
+  const handleProvision = useCallback(async () => {
     setProvisioning(true);
-    // Simulate provisioning delay
-    const timer = setTimeout(() => {
-      const area = newAreaCode.trim() || "480";
-      const newNum: PhoneNumber = {
-        id: `pn_${Date.now()}`,
-        number: `+1 (${area}) 555-${String(Math.floor(1000 + Math.random() * 9000))}`,
-        label: newLabel.trim() || "New Number",
-        status: "active",
-        isDefault: false,
-        monthlyCost: 5,
-        provisionedAt: new Date().toISOString().split("T")[0],
-        fallbackNumber: "",
-      };
-      setNumbers((prev) => [...prev, newNum]);
+    try {
+      const res = await fetch("/api/phone/provision", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ area_code: newAreaCode.trim() || "480", label: newLabel.trim() || "New Number" }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const newNum: PhoneNumber = {
+          id: data.id ?? `pn_${Date.now()}`,
+          number: data.number ?? "(Provisioning...)",
+          label: newLabel.trim() || "New Number",
+          status: "active",
+          isDefault: false,
+          monthlyCost: data.monthly_cost ?? 5,
+          provisionedAt: new Date().toISOString().split("T")[0],
+          fallbackNumber: "",
+        };
+        setNumbers((prev) => [...prev, newNum]);
+      } else {
+        const err = await res.json().catch(() => ({}));
+        alert(err.error ?? "Could not provision number. Check your phone configuration.");
+      }
+    } catch {
+      alert("Could not connect to provisioning service. Please try again.");
+    } finally {
       setNewLabel("");
       setNewAreaCode("");
       setShowAddModal(false);
       setProvisioning(false);
-    }, 1500);
-    return () => clearTimeout(timer);
+    }
   }, [newLabel, newAreaCode]);
 
   const totalMonthlyCost = numbers
