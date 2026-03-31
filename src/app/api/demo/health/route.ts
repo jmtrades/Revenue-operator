@@ -13,7 +13,10 @@ export async function GET(req: NextRequest) {
   try {
     // Auth check — require admin token or query param
     const authHeader = req.headers.get("authorization");
-    const adminToken = process.env.ADMIN_API_TOKEN || process.env.TELNYX_API_KEY?.slice(-8);
+    const adminToken = process.env.ADMIN_API_TOKEN;
+    if (!adminToken) {
+      return NextResponse.json({ error: "Server misconfiguration: ADMIN_API_TOKEN not set" }, { status: 500 });
+    }
     const isAuthed = authHeader === `Bearer ${adminToken}`;
     const url = new URL(req.url);
     const queryToken = url.searchParams.get("token");

@@ -15,11 +15,12 @@ export async function POST(req: NextRequest) {
   // No CSRF check — this endpoint receives external webhooks.
   // Security is enforced via Bearer token in Authorization header below.
 
-  if (WEBHOOK_SECRET) {
-    const authHeader = req.headers.get("authorization");
-    if (authHeader !== `Bearer ${WEBHOOK_SECRET}`) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  if (!WEBHOOK_SECRET) {
+    return NextResponse.json({ error: "Webhook not configured" }, { status: 503 });
+  }
+  const authHeader = req.headers.get("authorization");
+  if (authHeader !== `Bearer ${WEBHOOK_SECRET}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   let body: {
@@ -71,7 +72,7 @@ export async function POST(req: NextRequest) {
     }
   } catch (err) {
     // Error response below
-    return NextResponse.json({ success: false, error: String(err) }, { status: 500 });
+    return NextResponse.json({ success: false, error: "Internal processing error" }, { status: 500 });
   }
 
   return NextResponse.json({ success: true });

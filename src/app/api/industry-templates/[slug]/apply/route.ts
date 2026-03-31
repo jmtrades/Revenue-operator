@@ -170,13 +170,14 @@ export async function POST(
     }
 
     // Get the active agent for this workspace (or first agent if multiple exist)
-    const { data: agents, error: agentsError } = await db
+    const { data: existingAgentRow, error: agentsError } = await db
       .from("agents")
       .select("*")
       .eq("workspace_id", workspaceId)
       .eq("is_active", true)
       .order("created_at", { ascending: true })
-      .limit(1);
+      .limit(1)
+      .maybeSingle();
 
     if (agentsError) {
       return NextResponse.json(
@@ -196,7 +197,7 @@ export async function POST(
     };
 
     let agentId: string;
-    let existingAgent: Record<string, unknown> | null = agents?.[0] ?? null;
+    let existingAgent: Record<string, unknown> | null = existingAgentRow ?? null;
 
     // If no active agent exists, create one
     if (!existingAgent) {
