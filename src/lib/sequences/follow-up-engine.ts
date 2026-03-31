@@ -39,6 +39,7 @@ export interface SequenceEnrollment {
   run_id?: string;
   status: "active" | "completed" | "cancelled" | "paused";
   current_step: number;
+  retry_count: number;
   enrolled_at: string;
   completed_at?: string;
   unenrolled_at?: string;
@@ -498,7 +499,10 @@ export async function advanceEnrollment(
         .eq("workspace_id", e.workspace_id)
         .maybeSingle();
       const lead = leadRow as { phone?: string; name?: string } | null;
-      if (lead?.phone) {
+      if (!lead?.phone) {
+        console.warn(`[sequence-sms] Lead ${e.lead_id} has no phone number — skipping SMS step for enrollment ${enrollmentId}`);
+        actionSucceeded = true; // Skip gracefully so enrollment advances
+      } else if (lead?.phone) {
         const { data: phoneConfig } = await db
           .from("phone_configs")
           .select("proxy_number")
@@ -531,7 +535,11 @@ export async function advanceEnrollment(
         .eq("workspace_id", e.workspace_id)
         .maybeSingle();
       const lead = leadRow as { email?: string; name?: string } | null;
-      if (lead?.email) {
+      if (!lead?.email) {
+        // Lead has no email — skip this step gracefully instead of failing forever
+        console.warn(`[sequence-email] Lead ${e.lead_id} has no email address — skipping email step for enrollment ${enrollmentId}`);
+        actionSucceeded = true; // Treat as "delivered" so enrollment advances
+      } else if (lead?.email) {
         const { data: wsCtx } = await db
           .from("workspace_business_context")
           .select("business_name")
@@ -549,6 +557,7 @@ export async function advanceEnrollment(
         const fromEmail = process.env.RESEND_FROM_EMAIL ?? `noreply@recall-touch.com`;
         if (!resendKey) {
           console.warn(`[sequence-email] RESEND_API_KEY not configured — email step skipped for enrollment ${enrollmentId}. Set RESEND_API_KEY to enable email delivery.`);
+          actionSucceeded = true; // Skip gracefully — don't loop forever waiting for config
         }
         if (resendKey) {
           const maxEmailRetries = 3;
@@ -569,7 +578,9 @@ export async function advanceEnrollment(
                 console.error(`[sequence-email] Resend API ${emailRes.status}: ${errText}`);
                 break;
               }
-              // Retryable: 429 or 5xx
+              // Retryable: 429 or 5xx — log so we can diagnose
+              const retryErrText = await emailRes.text().catch(() => "unknown");
+              console.warn(`[sequence-email] Resend API ${emailRes.status} (attempt ${emailAttempt + 1}/${maxEmailRetries}): ${retryErrText}`);
               if (emailAttempt < maxEmailRetries - 1) {
                 await new Promise(r => setTimeout(r, (emailAttempt + 1) * 2000));
               }
@@ -606,6 +617,7 @@ export async function advanceEnrollment(
         .from("sequence_enrollments")
         .update({
           next_step_due_at: retryDue.toISOString(),
+          retry_count: retryCount + 1,
           updated_at: new Date().toISOString(),
         })
         .eq("id", enrollmentId);
@@ -620,6 +632,7 @@ export async function advanceEnrollment(
         .update({
           current_step: nextStep.step_order,
           next_step_due_at: nextDueDate.toISOString(),
+          retry_count: 0,
           updated_at: new Date().toISOString(),
         })
         .eq("id", enrollmentId);
@@ -637,6 +650,7 @@ export async function advanceEnrollment(
     .update({
       current_step: nextStep.step_order,
       next_step_due_at: nextDueDate.toISOString(),
+      retry_count: 0,
       updated_at: new Date().toISOString(),
     })
     .eq("id", enrollmentId)
