@@ -250,6 +250,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   const { data: activeLeadIds } = await db
     .from("campaign_leads")
     .select("lead_id")
+    .eq("workspace_id", workspaceId)
     .in("status", ["pending", "sent", "calling"]);
   const excludeLeadIds = new Set(
     (activeLeadIds ?? []).map((r: { lead_id: string }) => r.lead_id)
@@ -471,6 +472,10 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
 
   if (campaignStatus === "failed") {
     return NextResponse.json({ ok: false, error: errorMessage, enqueued }, { status: 500 });
+  }
+
+  if (enqueued === 0) {
+    return NextResponse.json({ ok: false, error: "No leads were successfully enqueued. Check campaign audience filters.", enqueued: 0 }, { status: 422 });
   }
 
   return NextResponse.json({ ok: true, enqueued, dnc_blocked: dncBlocked, launched_at: launchAt });

@@ -125,7 +125,7 @@ export default function TeamPage() {
             name: m.name,
             email: m.email,
             role: m.role as TeamRole,
-            lastActive: now,
+            lastActive: m.created_at ?? now,
             joinedAt: m.created_at ?? now,
           }))
         );
@@ -160,7 +160,7 @@ export default function TeamPage() {
             name: m.name,
             email: m.email,
             role: m.role as TeamRole,
-            lastActive: now,
+            lastActive: m.created_at ?? now,
             joinedAt: m.created_at ?? now,
           }))
         );
@@ -392,7 +392,6 @@ export default function TeamPage() {
                   >
                     {roleLabels[member.role]}
                   </span>
-                  <span className="text-[10px] text-[var(--text-secondary)]">{t("lastActive")} {formatRelative(member.lastActive, t)}</span>
                 </div>
                 <p className="text-[10px] text-[var(--text-tertiary)] mt-1">{t("joined")} {formatDate(member.joinedAt)}</p>
               </div>

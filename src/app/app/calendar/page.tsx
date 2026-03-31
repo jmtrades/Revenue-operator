@@ -7,7 +7,7 @@ import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useWorkspace } from "@/components/WorkspaceContext";
 
-type Status = "confirmed" | "pending";
+type Status = "confirmed" | "pending" | "cancelled";
 
 type Appointment = {
   id: string;
@@ -41,7 +41,7 @@ function apiToAppointment(a: {
     date: start.toISOString().slice(0, 10),
     time: start.toTimeString().slice(0, 5),
     durationMinutes,
-    status: a.status === "cancelled" ? "pending" : "confirmed",
+    status: a.status === "cancelled" ? "cancelled" : (a.status === "pending" ? "pending" : "confirmed"),
     start_time: a.start_time,
     end_time: a.end_time ?? undefined,
     external_calendar_id: a.external_calendar_id,

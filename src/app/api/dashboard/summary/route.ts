@@ -382,7 +382,7 @@ export async function GET(req: NextRequest) {
   const trendPct =
     callsPrev > 0 ? Math.round(((callsAnswered - callsPrev) / callsPrev) * 100) : callsAnswered > 0 ? 100 : 0;
 
-  const conversionRate = callsAnswered > 0 ? Math.round((appointmentsBooked / callsAnswered) * 100) : 0;
+  const conversionRate = callsAnswered > 0 ? Math.min(100, Math.round((appointmentsBooked / callsAnswered) * 100)) : 0;
 
   return NextResponse.json({
     period: "month",

@@ -47,7 +47,9 @@ function useLeadIntelligenceBatch(leadIds: string[]) {
           setData(valid);
         }
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.error("[leads] intelligence batch failed:", err?.message ?? err);
+      });
   }, [leadIds]);
 
   return data;

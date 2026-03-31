@@ -32,12 +32,12 @@ function getDefaultPolicies(): RecordingPolicies {
 
 /* Built-in compliance standards — static display */
 const BUILT_IN_STANDARDS = [
-  { id: "soc2", name: "SOC 2 Type II", status: "compliant" as const, description: "Security, availability, and confidentiality controls independently audited." },
-  { id: "hipaa", name: "HIPAA", status: "compliant" as const, description: "Protected health information handled per HIPAA requirements." },
-  { id: "tcpa", name: "TCPA", status: "compliant" as const, description: "Telephone Consumer Protection Act consent and calling rules enforced." },
-  { id: "gdpr", name: "GDPR", status: "compliant" as const, description: "EU data protection regulation compliance including right to erasure." },
-  { id: "ssl", name: "256-bit SSL", status: "compliant" as const, description: "All data encrypted in transit with TLS 1.3." },
-  { id: "pci", name: "PCI DSS", status: "compliant" as const, description: "Payment card data handled via Stripe — no card data stored on our servers." },
+  { id: "soc2", name: "SOC 2 Type II", status: "in_progress" as const, description: "Infrastructure audit in progress" },
+  { id: "hipaa", name: "HIPAA", status: "planned" as const, description: "Healthcare data handling planned" },
+  { id: "tcpa", name: "TCPA", status: "active" as const, description: "Call consent tracking enabled" },
+  { id: "gdpr", name: "GDPR", status: "active" as const, description: "EU data handling active" },
+  { id: "ssl", name: "256-bit SSL", status: "active" as const, description: "All connections encrypted" },
+  { id: "pci", name: "PCI DSS", status: "active" as const, description: "Stripe handles payment data — PCI compliant" },
 ];
 
 export default function CompliancePage() {
@@ -145,15 +145,29 @@ export default function CompliancePage() {
             {BUILT_IN_STANDARDS.map((std) => (
               <div
                 key={std.id}
-                className="rounded-xl border p-4 flex flex-col bg-[var(--accent-primary)]/5 border-[var(--accent-primary)]/20"
+                className={`rounded-xl border p-4 flex flex-col ${
+                  std.status === "active"
+                    ? "bg-green-500/5 border-green-500/20"
+                    : std.status === "in_progress"
+                      ? "bg-amber-500/5 border-amber-500/20"
+                      : "bg-gray-500/5 border-gray-500/20"
+                }`}
               >
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <span className="font-medium text-[var(--text-primary)]">{std.name}</span>
-                  <ShieldCheck className="w-5 h-5 text-[var(--accent-primary)] shrink-0" />
+                  {std.status === "active" && <ShieldCheck className="w-5 h-5 text-green-500 shrink-0" />}
+                  {std.status === "in_progress" && <ShieldCheck className="w-5 h-5 text-amber-500 shrink-0" />}
+                  {std.status === "planned" && <ShieldCheck className="w-5 h-5 text-gray-500 shrink-0" />}
                 </div>
                 <p className="text-xs text-[var(--text-secondary)] leading-relaxed">{std.description}</p>
-                <span className="inline-flex self-start mt-3 px-2 py-0.5 rounded-full text-xs font-medium bg-[var(--accent-primary)]/20 text-[var(--accent-primary)]">
-                  {t("statusCompliant")}
+                <span className={`inline-flex self-start mt-3 px-2 py-0.5 rounded-full text-xs font-medium ${
+                  std.status === "active"
+                    ? "bg-green-500/20 text-green-600"
+                    : std.status === "in_progress"
+                      ? "bg-amber-500/20 text-amber-600"
+                      : "bg-gray-500/20 text-gray-600"
+                }`}>
+                  {std.status === "active" ? "Active" : std.status === "in_progress" ? "In Progress" : "Planned"}
                 </span>
               </div>
             ))}
