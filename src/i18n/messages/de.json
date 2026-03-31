@@ -1952,7 +1952,8 @@
     "actions": {
       "refresh": "Aktualisieren",
       "updatedAt": "Aktualisiert",
-      "upgrade": "Upgrade"
+      "upgrade": "Upgrade",
+      "tryAgain": "Try again"
     },
     "lastUpdated": {
       "never": "Nie",

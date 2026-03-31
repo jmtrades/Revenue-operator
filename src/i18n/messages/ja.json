@@ -1946,7 +1946,8 @@
     "actions": {
       "refresh": "更新",
       "updatedAt": "更新日時",
-      "upgrade": "Upgrade"
+      "upgrade": "Upgrade",
+      "tryAgain": "Try again"
     },
     "lastUpdated": {
       "never": "なし",

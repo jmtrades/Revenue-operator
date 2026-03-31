@@ -1944,7 +1944,8 @@
     "actions": {
       "refresh": "Actualiser",
       "updatedAt": "Mis à jour",
-      "upgrade": "Upgrade"
+      "upgrade": "Upgrade",
+      "tryAgain": "Try again"
     },
     "lastUpdated": {
       "never": "Jamais",

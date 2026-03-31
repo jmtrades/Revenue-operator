@@ -106,6 +106,8 @@ export function LeadsList({
 }: LeadsListProps) {
   const t = useTranslations();
   const tLeads = useTranslations("leads");
+  const leadIds = (!loading && !error && filteredLeads.length > 0) ? filteredLeads.map((l) => l.id) : [];
+  const intelligence = useLeadIntelligenceBatch(leadIds);
   if (loading) {
     return (
       <div className="mt-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
@@ -175,9 +177,6 @@ export function LeadsList({
       />
     );
   }
-
-  const leadIds = filteredLeads.map((l) => l.id);
-  const intelligence = useLeadIntelligenceBatch(leadIds);
 
   return (
     <>
