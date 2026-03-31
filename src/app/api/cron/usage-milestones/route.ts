@@ -11,8 +11,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { buildMilestoneEmail } from "@/lib/email/templates";
 import { log } from "@/lib/logger";
+import { assertCronAuthorized } from "@/lib/runtime";
 
-const CRON_SECRET = process.env.CRON_SECRET;
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const FROM = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@recall-touch.com>";
 
@@ -22,10 +22,8 @@ const MILESTONES = [1, 10, 50, 100, 500];
 const REVENUE_PER_CALL = 5;
 
 export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get("authorization");
-  if (!CRON_SECRET || authHeader !== `Bearer ${CRON_SECRET}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const authErr = assertCronAuthorized(req);
+  if (authErr) return authErr;
 
   if (!RESEND_API_KEY) {
     return NextResponse.json({ ok: true, skipped: "no_resend_key" });
