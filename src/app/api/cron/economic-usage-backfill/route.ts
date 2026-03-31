@@ -35,12 +35,16 @@ export async function GET(request: NextRequest) {
   for (const workspaceId of workspaceIds) {
     for (let day = 1; day <= BACKFILL_DAYS; day++) {
       const { start, end } = getUtcDayBounds(day);
-      await aggregateAndAppendUsageForPeriod(workspaceId, start, end).catch((err) => { console.error("[cron/economic-usage-backfill] error:", err instanceof Error ? err.message : err); });
+      await aggregateAndAppendUsageForPeriod(workspaceId, start, end).catch(() => {
+      // cron/economic-usage-backfill error (details omitted to protect PII) 
+    });
       periodsFilled++;
     }
   }
 
-  await recordCronHeartbeat("economic-usage-backfill").catch((err) => { console.error("[cron/economic-usage-backfill] error:", err instanceof Error ? err.message : err); });
+  await recordCronHeartbeat("economic-usage-backfill").catch(() => {
+      // cron/economic-usage-backfill error (details omitted to protect PII) 
+    });
   return NextResponse.json({
     ok: true,
     workspaces_processed: workspaceIds.length,

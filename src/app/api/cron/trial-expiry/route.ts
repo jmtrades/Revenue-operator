@@ -100,7 +100,9 @@ export async function GET(req: NextRequest) {
             `<p>Your Revenue Operator trial has ended.</p>
              <p>You can restore service by upgrading your billing.</p>
              <p><a href="${APP_URL}/app/settings/billing">Upgrade to continue →</a></p>`,
-          ).catch((err) => { console.error("[trial-expiry] Failed to send reactivation email:", err instanceof Error ? err.message : String(err)); });
+          ).catch((err) => {
+            // Error (details omitted to protect PII)
+          });
         }
 
         expiredSet++;

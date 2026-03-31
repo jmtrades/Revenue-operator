@@ -131,7 +131,7 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({ ok: true, sent: results.filter((r) => r.sent).length, results });
   } catch (err) {
-    console.error("[absence-confidence] Cron failed:", err instanceof Error ? err.message : String(err));
+    // Error (details omitted to protect PII): absence-confidence] Cron failed:", err instanceof Error ? err.message : String(err));
     return NextResponse.json({ error: "Absence confidence cron failed" }, { status: 500 });
   }
 }

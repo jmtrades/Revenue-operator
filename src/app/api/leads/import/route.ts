@@ -207,6 +207,25 @@ export async function POST(req: NextRequest) {
   if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   const imported = Array.isArray(data) ? data.length : 0;
 
+  // Autonomous Brain: compute initial intelligence for imported leads (non-blocking)
+  if (Array.isArray(data) && data.length > 0) {
+    void (async () => {
+      try {
+        const { computeLeadIntelligence, persistLeadIntelligence } = await import("@/lib/intelligence/lead-brain");
+        for (const row of data.slice(0, 30) as Array<{ id: string }>) {
+          try {
+            const intelligence = await computeLeadIntelligence(workspaceId, row.id);
+            await persistLeadIntelligence(intelligence);
+          } catch {
+            // Non-blocking per lead — cron will catch up
+          }
+        }
+      } catch {
+        // Non-blocking
+      }
+    })();
+  }
+
   return NextResponse.json({
     imported,
     skipped: valid.length - imported,

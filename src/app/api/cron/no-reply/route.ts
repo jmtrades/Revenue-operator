@@ -79,7 +79,9 @@ export async function GET(request: NextRequest) {
 
     const { recordReliefEvent } = await import("@/lib/awareness-timing/relief-events");
     for (const workspaceId of workspacesWithReactivation) {
-      recordReliefEvent(workspaceId, "A delay did not continue.").catch((err) => { console.error("[cron/no-reply] error:", err instanceof Error ? err.message : err); });
+      recordReliefEvent(workspaceId, "A delay did not continue.").catch(() => {
+      // cron/no-reply error (details omitted to protect PII) 
+    });
     }
 
     const scheduled = await scheduleReactivationAttempts();

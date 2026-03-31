@@ -211,7 +211,7 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({ ok: true, intents_issued: issued, delivery_sent: sent, unconfigured_reminder_sent: unconfiguredSent });
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err);
-    console.error("[settlement-authorization] Cron failed:", errMsg);
+    // Error (details omitted to protect PII): settlement-authorization] Cron failed:", errMsg);
     return NextResponse.json({ error: "Settlement authorization failed" }, { status: 500 });
   }
 }

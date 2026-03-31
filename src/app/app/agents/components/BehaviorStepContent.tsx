@@ -3,6 +3,11 @@
 import { useTranslations } from "next-intl";
 import type { Agent } from "../AgentsPageClient";
 import { RulesTab } from "../AgentsPageClient";
+import {
+  detectIndustry,
+  getObjectionTemplates,
+  type IndustryType,
+} from "@/lib/objection-templates";
 
 type BehaviorStepContentProps = {
   agent: Agent;
@@ -82,6 +87,32 @@ export function BehaviorStepContent({
       objectionHandling: {
         ...objections,
         [id]: value,
+      },
+    });
+  };
+
+  // Auto-generate objection responses based on industry
+  const generateObjectionResponse = (objectionType: "price" | "timing" | "competitor" | "notInterested") => {
+    const detectedIndustry = detectIndustry(
+      agent.businessContext,
+      agent.services?.join(", "),
+    ) as IndustryType;
+    const templates = getObjectionTemplates(detectedIndustry);
+    setObjection(objectionType, templates[objectionType]);
+  };
+
+  const autoFillAllObjections = () => {
+    const detectedIndustry = detectIndustry(
+      agent.businessContext,
+      agent.services?.join(", "),
+    ) as IndustryType;
+    const templates = getObjectionTemplates(detectedIndustry);
+    onChange({
+      objectionHandling: {
+        price: templates.price,
+        timing: templates.timing,
+        competitor: templates.competitor,
+        notInterested: templates.notInterested,
       },
     });
   };
@@ -225,12 +256,24 @@ export function BehaviorStepContent({
         )}
       </section>
       <section className="mt-6">
-        <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
-          {t("behavior.objectionTitle")}
-        </h3>
-        <p className="text-xs text-[var(--text-tertiary)] mb-3">
-          {t("behavior.objectionHint")}
-        </p>
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-1">
+              {t("behavior.objectionTitle")}
+            </h3>
+            <p className="text-xs text-[var(--text-tertiary)]">
+              {t("behavior.objectionHint")}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={autoFillAllObjections}
+            className="ml-2 px-3 py-1.5 text-xs font-medium rounded-lg bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/30 hover:bg-[var(--accent-primary)]/20 transition-colors whitespace-nowrap"
+            title="Auto-fill all objection responses based on your business context"
+          >
+            Auto-fill all
+          </button>
+        </div>
 
         <div className="space-y-3">
           {[
@@ -240,9 +283,19 @@ export function BehaviorStepContent({
             { id: "notInterested" as const, labelKey: "objectionNotInterestedLabel" as const, placeholderKey: "objectionNotInterestedPlaceholder" as const },
           ].map((obj) => (
             <div key={obj.id}>
-              <label className="text-xs text-[var(--text-tertiary)] mb-1 block">
-                {t(`behavior.${obj.labelKey}`)}
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs text-[var(--text-tertiary)]">
+                  {t(`behavior.${obj.labelKey}`)}
+                </label>
+                <button
+                  type="button"
+                  onClick={() => generateObjectionResponse(obj.id)}
+                  className="text-[10px] text-[var(--text-tertiary)] hover:text-[var(--accent-primary)] underline transition-colors"
+                  title={`Generate suggested response for ${obj.id} objection`}
+                >
+                  Generate
+                </button>
+              </div>
               <textarea
                 value={(objections as Record<string, string | undefined>)[obj.id] ?? ""}
                 onChange={(e) => setObjection(obj.id, e.target.value)}

@@ -194,7 +194,7 @@ export async function decideSmartReactivation(
       confidence,
     };
   } catch (err) {
-    console.error("[smart-reactivation] decideSmartReactivation error:", err);
+    // Error in smart reactivation decision (error details omitted to protect PII)
     throw err;
   }
 }
@@ -253,10 +253,10 @@ export async function executeSmartReactivation(
       details: `Reactivation queued: angle=${decision.angle}, channel=${decision.channel}, delay=${decision.delay_hours}h`,
     };
   } catch (err) {
-    console.error("[smart-reactivation] executeSmartReactivation error:", err);
+    // Error in executeSmartReactivation (error details omitted to protect PII)
     return {
       success: false,
-      details: `Execution failed: ${err instanceof Error ? err.message : String(err)}`,
+      details: `Execution failed`,
     };
   }
 }
@@ -304,16 +304,13 @@ export async function runSmartReactivationSweep(
           }
         }
       } catch (err) {
-        console.error(
-          `[smart-reactivation] Error processing lead ${l.id}:`,
-          err instanceof Error ? err.message : String(err)
-        );
+        // Error processing lead (error details omitted to protect PII)
       }
     }
 
     return { processed, reactivated };
   } catch (err) {
-    console.error("[smart-reactivation] runSmartReactivationSweep error:", err);
+    // Error in reactivation sweep (error details omitted to protect PII)
     return { processed, reactivated };
   }
 }

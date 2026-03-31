@@ -46,14 +46,18 @@ export async function GET(request: NextRequest) {
           .neq("id", row.id)
           .limit(1);
         if ((awaiting?.length ?? 0) > 0) {
-          await recordOperationalAssumption(workspaceId, "dependency_action_taken", `commitment:${row.id}`).catch((err) => { console.error("[cron/assumption-engine] error:", err instanceof Error ? err.message : err); });
+          await recordOperationalAssumption(workspaceId, "dependency_action_taken", `commitment:${row.id}`).catch(() => {
+      // cron/assumption-engine error (details omitted to protect PII) 
+    });
           run++;
         }
       }
     }
 
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-    await recordCronHeartbeat("assumption-engine").catch((err) => { console.error("[cron/assumption-engine] error:", err instanceof Error ? err.message : err); });
+    await recordCronHeartbeat("assumption-engine").catch(() => {
+      // cron/assumption-engine error (details omitted to protect PII) 
+    });
     return { run, workspaces: workspaceIds.length };
   });
 

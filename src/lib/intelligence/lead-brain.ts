@@ -328,10 +328,7 @@ export async function computeLeadIntelligence(
       version: 1,
     };
   } catch (err) {
-    console.error(
-      "[lead-brain] computeLeadIntelligence error:",
-      err instanceof Error ? err.message : String(err)
-    );
+    // Error computing lead intelligence (error details omitted to protect PII)
     throw err;
   }
 }
@@ -376,11 +373,7 @@ export async function persistLeadIntelligence(
     );
     return { ok: true };
   } catch (err) {
-    // Non-blocking — log but don't throw
-    console.error(
-      "[lead-brain] persistLeadIntelligence error:",
-      err instanceof Error ? err.message : String(err)
-    );
+    // Non-blocking — error persisting intelligence (error details omitted to protect PII)
     return { ok: false };
   }
 }

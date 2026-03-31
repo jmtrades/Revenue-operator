@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
       workspaces_failed: failed,
     });
   } catch (error) {
-    console.error("[cron/daily-metrics]", error);
+    // Error (details omitted to protect PII): cron/daily-metrics]", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

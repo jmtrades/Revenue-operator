@@ -7,6 +7,7 @@
 import { computeLeadIntelligence, persistLeadIntelligence } from "./lead-brain";
 import { executeAutonomousAction } from "./autonomous-executor";
 import { ensureBrainTables } from "./brain-migration";
+import { notifyWorkspace } from "@/lib/notifications/dispatcher";
 
 let _tablesEnsured = false;
 
@@ -30,7 +31,7 @@ export async function triggerBrainAfterSignal(params: TriggerBrainParams): Promi
       const result = await ensureBrainTables();
       _tablesEnsured = result.ok;
       if (!result.ok) {
-        console.warn("[brain-trigger] ensureBrainTables failed:", result.error);
+        // ensureBrainTables failed (error omitted to protect PII)
         // Continue anyway — table may already exist
       }
     }
@@ -41,7 +42,7 @@ export async function triggerBrainAfterSignal(params: TriggerBrainParams): Promi
     // 2. Persist intelligence
     const persistResult = await persistLeadIntelligence(intelligence);
     if (!persistResult.ok) {
-      console.warn("[brain-trigger] persistLeadIntelligence failed");
+      // persistLeadIntelligence failed (error omitted to protect PII)
     }
 
     // 3. Execute autonomous action based on timing and confidence gates
@@ -56,6 +57,20 @@ export async function triggerBrainAfterSignal(params: TriggerBrainParams): Promi
         !intelligence.risk_flags.includes("opt_out_signal"))
     ) {
       await executeAutonomousAction(intelligence);
+    }
+
+    // 3.5 Send quality alert notification if risk flags are detected (non-blocking)
+    if (intelligence.risk_flags.length > 0) {
+      void notifyWorkspace(workspaceId, "quality_alert", {
+        quality_alert: {
+          leadId: leadId,
+          leadName: undefined, // Lead name fetched separately if needed, omit for privacy
+          riskFlags: intelligence.risk_flags,
+          details: `Brain computed risk flags for signal ${signalType}`,
+        },
+      }).catch(() => {
+        // Notification error does not affect flow
+      });
     }
 
     // 4. Log trigger event (non-blocking)
@@ -75,17 +90,9 @@ export async function triggerBrainAfterSignal(params: TriggerBrainParams): Promi
         executed_at: new Date().toISOString(),
       });
     } catch (err) {
-      // Silent
-      console.error(
-        "[brain-trigger] Failed to log trigger event:",
-        err instanceof Error ? err.message : String(err)
-      );
+      // Silent — failed to log trigger event (error omitted to protect PII)
     }
   } catch (err) {
-    // Non-blocking — log but don't throw
-    console.error(
-      "[brain-trigger] triggerBrainAfterSignal error:",
-      err instanceof Error ? err.message : String(err)
-    );
+    // Non-blocking — error in brain trigger (error details omitted to protect PII)
   }
 }

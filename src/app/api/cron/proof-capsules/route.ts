@@ -32,12 +32,16 @@ export async function GET(request: NextRequest) {
       if (lines.length > 0) {
         await saveProofCapsule(workspaceId, periodStart, periodEnd, lines);
       }
-      await recomputeInstitutionalState(workspaceId).catch((err) => { console.error("[cron/proof-capsules] error:", err instanceof Error ? err.message : err); });
+      await recomputeInstitutionalState(workspaceId).catch(() => {
+        // Error in institutional state computation (details omitted to protect PII)
+      });
     } catch {
       // skip
     }
   }
 
-  await recordCronHeartbeat("proof-capsules").catch((err) => { console.error("[cron/proof-capsules] error:", err instanceof Error ? err.message : err); });
+  await recordCronHeartbeat("proof-capsules").catch(() => {
+    // Error recording cron heartbeat (details omitted to protect PII)
+  });
   return NextResponse.json({ ok: true });
 }

@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { notifyWorkspace } from "@/lib/notifications/dispatcher";
 function scoreFromInput(input: { name?: string; phone?: string; email?: string; service_requested?: string; source?: string }): number {
   let score = 0;
   if (input.name?.trim()) score += 10;
@@ -75,5 +76,33 @@ export async function POST(req: NextRequest) {
     .maybeSingle();
 
   if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+
+  // Autonomous Brain: compute initial intelligence for inbound lead (non-blocking)
+  const createdId = (_lead as { id: string } | null)?.id;
+  if (createdId) {
+    void (async () => {
+      try {
+        const { computeLeadIntelligence, persistLeadIntelligence } = await import("@/lib/intelligence/lead-brain");
+        const intelligence = await computeLeadIntelligence(workspaceId, createdId);
+        await persistLeadIntelligence(intelligence);
+      } catch {
+        // Non-blocking: cron will catch up
+      }
+    })();
+
+    // Send new_lead notification to Slack (non-blocking, fire-and-forget)
+    void notifyWorkspace(workspaceId, "new_lead", {
+      new_lead: {
+        leadId: createdId,
+        leadName: name,
+        source,
+        phone,
+        email: email ?? undefined,
+      },
+    }).catch(() => {
+      // Notification error does not affect flow
+    });
+  }
+
   return NextResponse.json({ status: "created" });
 }

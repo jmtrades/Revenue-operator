@@ -33,10 +33,7 @@ export async function GET(request: NextRequest) {
       const sweep = await runSmartReactivationSweep();
       reactivated = sweep.reactivated;
     } catch (err) {
-      console.error(
-        "[autonomous-brain] Reactivation sweep error:",
-        err instanceof Error ? err.message : String(err)
-      );
+      // Error (details omitted to protect PII)
       failures++;
     }
 
@@ -62,10 +59,7 @@ export async function GET(request: NextRequest) {
         }
       }
     } catch (err) {
-      console.error(
-        "[autonomous-brain] Meeting check error:",
-        err instanceof Error ? err.message : String(err)
-      );
+      // Error (details omitted to protect PII)
       failures++;
     }
 
@@ -144,10 +138,7 @@ export async function GET(request: NextRequest) {
         }
       }
     } catch (err) {
-      console.error(
-        "[autonomous-brain] Intelligence refresh error:",
-        err instanceof Error ? err.message : String(err)
-      );
+      // Error (details omitted to protect PII)
       failures++;
     }
 

@@ -9,10 +9,18 @@
  */
 
 const logger = {
-  info: (...args: unknown[]) => console.error("[shadow-mode]", ...args),
-  warn: (...args: unknown[]) => console.warn("[shadow-mode]", ...args),
-  error: (...args: unknown[]) => console.error("[shadow-mode]", ...args),
-  debug: (...args: unknown[]) => console.debug("[shadow-mode]", ...args),
+  info: (..._args: unknown[]) => {
+    // Production logging omitted
+  },
+  warn: (..._args: unknown[]) => {
+    // Production logging omitted
+  },
+  error: (..._args: unknown[]) => {
+    // Production logging omitted
+  },
+  debug: (..._args: unknown[]) => {
+    // Logging omitted to protect PII
+  },
 };
 
 export interface TTSResult {

@@ -185,13 +185,13 @@ function ConversationList({
               {t("inbox.empty.body")}
             </p>
             <Link
-              href="/app/agents/new"
+              href="/app/settings/phone"
               className="inline-flex items-center gap-1.5 rounded-xl bg-[var(--accent-primary)] px-4 py-2 text-sm font-semibold text-[var(--text-on-accent)] hover:opacity-90"
             >
-              {t("inbox.empty.cta", { defaultValue: "Create your first operator" })} →
+              {t("inbox.empty.cta", { defaultValue: "Connect your phone number" })} →
             </Link>
             <p className="text-[11px] text-[var(--text-tertiary)] mt-2">
-              {t("inbox.empty.hint", { defaultValue: "Connect a phone number and your operator will start handling conversations automatically." })}
+              {t("inbox.empty.hint", { defaultValue: "Messages appear here as the brain communicates with your leads via SMS, email, and calls." })}
             </p>
           </div>
         ) : filtered.map((thread, idx) => {

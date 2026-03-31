@@ -104,8 +104,8 @@ export async function triggerAutoFollowUp(params: {
     // Execute the routing
     return await executeFollowUpRouting(params, routing, lead, wsData?.name ?? "Our team");
   } catch (err) {
-    console.error("[auto-followup] Error:", err instanceof Error ? err.message : String(err));
-    return { action_taken: "error", success: false, details: err instanceof Error ? err.message : "Unknown error" };
+    // Error in auto-followup (error details omitted to protect PII)
+    return { action_taken: "error", success: false, details: "Auto-followup error" };
   }
 }
 
@@ -201,7 +201,7 @@ async function executeFollowUpRouting(
         }
       }
     } catch (err) {
-      console.error("[auto-followup] SMS error:", err instanceof Error ? err.message : String(err));
+      // Error sending SMS (error details omitted to protect PII)
     }
     return { action_taken: "send_immediate_sms", success: false, details: "SMS send failed" };
   }
@@ -230,7 +230,7 @@ async function executeFollowUpRouting(
         }
       }
     } catch (err) {
-      console.error("[auto-followup] Email error:", err instanceof Error ? err.message : String(err));
+      // Error sending email (error details omitted to protect PII)
     }
     return { action_taken: "send_follow_up_email", success: false, details: "Email send failed" };
   }
@@ -384,7 +384,7 @@ async function executeFollowUpRouting(
 
       return { action_taken: routing.action, success: false, details: "Could not find or create sequence" };
     } catch (err) {
-      console.error("[auto-followup] Enrollment error:", err instanceof Error ? err.message : String(err));
+      // Error in enrollment (error details omitted to protect PII)
       return { action_taken: routing.action, success: false, details: "Enrollment failed" };
     }
   }

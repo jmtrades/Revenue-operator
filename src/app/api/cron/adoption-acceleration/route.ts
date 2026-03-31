@@ -32,10 +32,14 @@ export async function GET(request: NextRequest) {
     const workspaceIds = await getWorkspaceIdsWithInstallationState();
     for (const workspaceId of workspaceIds) {
       const before = await getInstallationState(workspaceId);
-      await transitionInstallationPhase(workspaceId).catch((err) => { console.error("[cron/adoption-acceleration] error:", err instanceof Error ? err.message : err); });
+      await transitionInstallationPhase(workspaceId).catch(() => {
+      // cron/adoption-acceleration error (details omitted to protect PII) 
+    });
       const after = await getInstallationState(workspaceId);
       if (before?.phase !== "activation_ready" && after?.phase === "activation_ready") {
-        await generateInstallationSnapshot(workspaceId).catch((err) => { console.error("[cron/adoption-acceleration] error:", err instanceof Error ? err.message : err); });
+        await generateInstallationSnapshot(workspaceId).catch(() => {
+      // cron/adoption-acceleration error (details omitted to protect PII) 
+    });
       }
     }
 
@@ -57,10 +61,14 @@ export async function GET(request: NextRequest) {
         payload: {},
       });
       inserted++;
-      await sendEnvironmentInviteWhenReliant(row.workspace_id, row.counterparty_identifier).catch((err) => { console.error("[cron/adoption-acceleration] error:", err instanceof Error ? err.message : err); });
+      await sendEnvironmentInviteWhenReliant(row.workspace_id, row.counterparty_identifier).catch(() => {
+      // cron/adoption-acceleration error (details omitted to protect PII) 
+    });
     }
 
-    await runRareEventDetectors().catch((err) => { console.error("[cron/adoption-acceleration] error:", err instanceof Error ? err.message : err); });
+    await runRareEventDetectors().catch(() => {
+      // cron/adoption-acceleration error (details omitted to protect PII) 
+    });
 
     return { run: 1, environment_required_inserted: inserted };
   });

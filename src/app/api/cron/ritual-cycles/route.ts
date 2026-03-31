@@ -24,8 +24,12 @@ export async function GET(request: NextRequest) {
     const isSunday = now.getUTCDay() === 0;
 
     for (const workspaceId of ids) {
-      await runDailyContinuityCycle(workspaceId).catch((err) => { console.error("[cron/ritual-cycles] error:", err instanceof Error ? err.message : err); });
-      if (isSunday) await runWeeklyClosureCycle(workspaceId).catch((err) => { console.error("[cron/ritual-cycles] error:", err instanceof Error ? err.message : err); });
+      await runDailyContinuityCycle(workspaceId).catch(() => {
+      // cron/ritual-cycles error (details omitted to protect PII) 
+    });
+      if (isSunday) await runWeeklyClosureCycle(workspaceId).catch(() => {
+      // cron/ritual-cycles error (details omitted to protect PII) 
+    });
     }
     return { run: 1 };
   });

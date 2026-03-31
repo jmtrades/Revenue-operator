@@ -32,7 +32,9 @@ export async function GET(request: NextRequest) {
     for (const c of list) {
       if (!allowedWorkspaces.has(c.workspace_id)) {
         const { recordObservedRisk } = await import("@/lib/adoption-acceleration/observed-risks");
-        await recordObservedRisk(c.workspace_id, "stalled_commitment", "commitment", c.id).catch((err) => { console.error("[cron/commitment-recovery] error:", err instanceof Error ? err.message : err); });
+        await recordObservedRisk(c.workspace_id, "stalled_commitment", "commitment", c.id).catch(() => {
+      // cron/commitment-recovery error (details omitted to protect PII) 
+    });
       }
     }
     let recovered = 0;

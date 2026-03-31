@@ -24,7 +24,9 @@ export async function GET(request: NextRequest) {
       if (ok) sent++;
     }
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-    await recordCronHeartbeat("assurance-delivery").catch((err) => { console.error("[cron/assurance-delivery] error:", err instanceof Error ? err.message : err); });
+    await recordCronHeartbeat("assurance-delivery").catch(() => {
+      // Error recording cron heartbeat (details omitted to protect PII)
+    });
     return { run: 1, sent, workspaces: ids.length };
   });
 

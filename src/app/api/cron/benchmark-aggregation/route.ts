@@ -210,7 +210,7 @@ export async function GET(req: NextRequest) {
       snapshot_date: today,
     });
   } catch (err) {
-    console.error("[benchmark-aggregation] error:", err);
+    // Error (details omitted to protect PII): benchmark-aggregation] error:", err);
     return NextResponse.json({ status: "error", message: String(err) }, { status: 500 });
   }
 }

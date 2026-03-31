@@ -26,14 +26,14 @@ export async function GET(req: NextRequest) {
       .select("id");
 
     if (error) {
-      console.error("[approval-expiry] Database error:", error);
+      // Error (details omitted to protect PII): approval-expiry] Database error:", error);
       return NextResponse.json({ ok: false, error: "Database error", expired: 0 }, { status: 200 });
     }
 
     const count = data?.length ?? 0;
     return NextResponse.json({ ok: true, expired: count }, { status: 200 });
   } catch (err) {
-    console.error("[approval-expiry] Cron failed:", err instanceof Error ? err.message : String(err));
+    // Error (details omitted to protect PII): approval-expiry] Cron failed:", err instanceof Error ? err.message : String(err));
     return NextResponse.json({ ok: false, error: "Cron failed", expired: 0 }, { status: 200 });
   }
 }

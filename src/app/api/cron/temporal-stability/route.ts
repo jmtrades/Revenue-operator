@@ -31,7 +31,9 @@ export async function GET(request: NextRequest) {
       }
     }
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-    await recordCronHeartbeat("temporal-stability").catch((err) => { console.error("[cron/temporal-stability] error:", err instanceof Error ? err.message : err); });
+    await recordCronHeartbeat("temporal-stability").catch(() => {
+      // cron/temporal-stability error (details omitted to protect PII) 
+    });
     return { run };
   });
 

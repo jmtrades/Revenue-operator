@@ -188,7 +188,7 @@ export async function GET(req: NextRequest) {
 
       sent++;
     } catch (err) {
-      console.error(`[weekly-digest] Error for workspace ${ws.id}:`, err);
+      // Error (details omitted to protect PII): `[weekly-digest] Error for workspace ${ws.id}:`, err);
       errors++;
     }
   }

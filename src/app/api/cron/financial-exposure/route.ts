@@ -19,8 +19,12 @@ export async function GET(request: NextRequest) {
   const result = await runSafeCron("financial-exposure", async () => {
     await runFinancialExposureDetectors();
     await runFinancialExposureResolvers();
-    await runEscalationMemory().catch((err) => { console.error("[cron/financial-exposure] error:", err instanceof Error ? err.message : err); });
-    await runPreActivationConversion().catch((err) => { console.error("[cron/financial-exposure] error:", err instanceof Error ? err.message : err); });
+    await runEscalationMemory().catch(() => {
+      // cron/financial-exposure error (details omitted to protect PII) 
+    });
+    await runPreActivationConversion().catch(() => {
+      // cron/financial-exposure error (details omitted to protect PII) 
+    });
     return { run: 1 };
   });
 

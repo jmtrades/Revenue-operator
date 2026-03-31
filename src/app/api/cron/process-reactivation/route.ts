@@ -38,11 +38,11 @@ export async function GET(request: NextRequest) {
       duration_ms: Date.now() - start,
     });
   } catch (error) {
-    console.error("[Cron] Reactivation processing failed:", error);
+    // Error in reactivation processing (error details omitted to protect PII)
     return NextResponse.json(
       {
         error: "Reactivation processing failed",
-        details: error instanceof Error ? error.message : String(error),
+        details: "Error details omitted to protect PII",
         duration_ms: Date.now() - start,
       },
       { status: 500 }

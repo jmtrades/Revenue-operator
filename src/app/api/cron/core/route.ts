@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
   const result = await runSafeCron("core", async () => {
     const base = request.nextUrl?.origin ?? process.env.NEXT_PUBLIC_APP_URL;
     if (!base) {
-      console.error("[cron/core] Cannot determine base URL — set NEXT_PUBLIC_APP_URL");
+      // Error (details omitted to protect PII): cron/core] Cannot determine base URL — set NEXT_PUBLIC_APP_URL");
       return { run: 0, ran: 0, steps: CORE_STEPS.length, error: "no_base_url" };
     }
     const token = process.env.CRON_SECRET ?? "";
@@ -61,7 +61,9 @@ export async function GET(request: NextRequest) {
       }
     }
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-    await recordCronHeartbeat("core").catch((err) => { console.error("[cron/core] error:", err instanceof Error ? err.message : err); });
+    await recordCronHeartbeat("core").catch(() => {
+      // cron/core error (details omitted to protect PII) 
+    });
     return { run: ran.length, ran: ran.length, steps: CORE_STEPS.length };
   });
 

@@ -70,7 +70,7 @@ export function trackEvent(event: TelemetryEvent): void {
 
     // Fallback to console in development
     if (process.env.NODE_ENV === "development") {
-      console.debug(`[telemetry:${event.name}]`, event.properties);
+      // Debug logging omitted to protect PII
     }
   } catch {
     // Silently fail - don't break the app over telemetry
@@ -99,7 +99,7 @@ export function trackEventClient(event: TelemetryEvent): void {
 
     // Fallback to console in development
     if (process.env.NODE_ENV === "development") {
-      console.debug(`[telemetry:${event.name}]`, event.properties);
+      // Debug logging omitted to protect PII
     }
   } catch {
     // Silently fail - don't break the app over telemetry

@@ -11,6 +11,7 @@ import { getDefaultFollowUpTemplate } from "./outcome-followup-router";
 import { selectAdaptiveStrategy, buildAdaptiveFollowUpPlan, type AdaptiveStrategy } from "./adaptive-followup";
 import { getRecoveryProfile, type RecoveryProfile } from "@/lib/recovery-profile";
 import { enqueue } from "@/lib/queue";
+import { notifyWorkspace } from "@/lib/notifications/dispatcher";
 
 export type AutonomousActionType =
   | "send_sms"
@@ -179,6 +180,25 @@ export async function executeAutonomousAction(
     if (result.reason !== "already_enrolled") {
       await logAutonomousAction(result);
     }
+
+    // 5. Send Slack notification for successful actions (non-blocking, fire-and-forget)
+    if (result.success && result.action_type !== "no_action") {
+      void notifyWorkspace(intelligence.workspace_id, "autonomous_action", {
+        autonomous_action: {
+          action: result.action_type,
+          leadName: intelligence.lead_id,
+          leadId: intelligence.lead_id,
+          result: {
+            success: result.success,
+            details: result.details,
+            confidence: intelligence.action_confidence,
+          },
+        },
+      }).catch(() => {
+        // Notification error does not affect flow
+      });
+    }
+
     return result;
   } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err);
@@ -526,10 +546,7 @@ async function scheduleFollowupAction(
     try {
       recoveryProfile = await getRecoveryProfile(lead.workspace_id);
     } catch (profileErr) {
-      console.warn(
-        `[autonomous-executor] Could not fetch recovery profile, using default:`,
-        profileErr instanceof Error ? profileErr.message : String(profileErr)
-      );
+      // Could not fetch recovery profile, using default (error details omitted to protect PII)
     }
 
     // Use adaptive follow-up system to choose the right strategy
@@ -541,15 +558,10 @@ async function scheduleFollowupAction(
       strategy = selectAdaptiveStrategy(intelligence, recoveryProfile ?? undefined);
       adaptivePlan = buildAdaptiveFollowUpPlan(strategy, intelligence, recoveryProfile ?? undefined);
       chosenStrategyDetails = `Adaptive strategy: ${strategy}${recoveryProfile ? ` (${recoveryProfile} recovery)` : ""}`;
-      console.log(
-        `[autonomous-executor] Selected adaptive strategy for lead ${intelligence.lead_id}: ${strategy}${recoveryProfile ? ` with ${recoveryProfile} recovery profile` : ""}`
-      );
+      // Adaptive strategy selected (logging omitted to protect PII)
     } catch (strategyErr) {
       // Non-blocking: fall back to default sequence enrollment
-      console.warn(
-        `[autonomous-executor] Adaptive strategy selection failed, falling back to default:`,
-        strategyErr instanceof Error ? strategyErr.message : String(strategyErr)
-      );
+      // Adaptive strategy selection failed, falling back to default (error details omitted to protect PII)
     }
 
     // DEDUP: Check if lead already has an active sequence enrollment
@@ -564,9 +576,7 @@ async function scheduleFollowupAction(
 
     if (activeEnrollment) {
       const enrollmentData = activeEnrollment as { id: string; sequence_id: string };
-      console.log(
-        `[autonomous-executor] Lead ${intelligence.lead_id} already enrolled in sequence ${enrollmentData.sequence_id} — skipping duplicate enrollment`
-      );
+      // Lead already enrolled in sequence — skipping duplicate enrollment (logging omitted to protect PII)
       return {
         action_type: "enroll_sequence",
         success: true,
@@ -616,9 +626,7 @@ async function scheduleFollowupAction(
       .eq("sequence_id", sequenceId);
 
     if ((stepCount ?? 0) === 0 && adaptivePlan && adaptivePlan.steps.length > 0) {
-      console.log(
-        `[autonomous-executor] Sequence ${sequenceId} has 0 steps — populating from adaptive plan (${strategy}, ${adaptivePlan.steps.length} steps)`
-      );
+      // Sequence has 0 steps — populating from adaptive plan (logging omitted to protect PII)
       for (const step of adaptivePlan.steps) {
         const channelType = step.channel === "voicemail_drop" ? "call" : step.channel;
         const template = getDefaultFollowUpTemplate(step.template_key ?? "schedule_followup", {
@@ -652,7 +660,7 @@ async function scheduleFollowupAction(
           .from("sequence_enrollments")
           .update({ next_step_due_at: new Date().toISOString() })
           .eq("id", enrollmentData.id);
-        console.log(`[autonomous-executor] Set next_step_due_at=NOW for enrollment ${enrollmentData.id} (was null)`);
+        // Set next_step_due_at=NOW for enrollment (logging omitted to protect PII)
       }
     }
 
@@ -676,7 +684,7 @@ async function scheduleFollowupAction(
             });
             if (template.sms) {
               await svc.sendSms({ from: fromNumber, to: lead.phone, text: template.sms });
-              console.log(`[autonomous-executor] Immediate SMS sent to lead ${intelligence.lead_id} (adaptive first step)`);
+              // Immediate SMS sent (adaptive first step) (logging omitted to protect PII)
             }
           }
         } else if (firstStep.channel === "email" && lead.email) {
@@ -697,13 +705,13 @@ async function scheduleFollowupAction(
                   text: template.email_body,
                 }),
               });
-              console.log(`[autonomous-executor] Immediate email sent to lead ${intelligence.lead_id} (adaptive first step)`);
+              // Immediate email sent (adaptive first step) (logging omitted to protect PII)
             }
           }
         }
       } catch (stepErr) {
         // Non-blocking: sequence enrollment is the safety net
-        console.warn(`[autonomous-executor] Immediate first step failed, sequence will pick up:`, stepErr instanceof Error ? stepErr.message : String(stepErr));
+        // Immediate first step failed, sequence will pick up (logging omitted to protect PII)
       }
     }
 

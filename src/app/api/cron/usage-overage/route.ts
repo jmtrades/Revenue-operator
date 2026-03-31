@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      console.error(`[usage-overage] Error for workspace ${w.id}:`, msg);
+      // Error (details omitted to protect PII): `[usage-overage] Error for workspace ${w.id}:`, msg);
       errors.push(`${w.id}: ${msg}`);
     }
   }

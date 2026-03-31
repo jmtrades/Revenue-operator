@@ -139,7 +139,7 @@ export async function getOptimalCallTime(
         : "Using industry-standard optimal call times",
     };
   } catch (err) {
-    console.error("[smart-scheduling]", err instanceof Error ? err.message : String(err));
+    // Error in smart scheduling (error details omitted to protect PII)
     const nextBest = getNextWindowTime(DEFAULT_WINDOWS, tz);
     return {
       next_best_time: nextBest,

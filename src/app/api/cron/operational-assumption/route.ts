@@ -122,7 +122,7 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({ ok: true, sent: results.filter((r) => r.sent).length, results });
   } catch (err) {
-    console.error("[operational-assumption] Cron failed:", err instanceof Error ? err.message : String(err));
+    // Error (details omitted to protect PII): operational-assumption] Cron failed:", err instanceof Error ? err.message : String(err));
     return NextResponse.json({ error: "Cron failed" }, { status: 500 });
   }
 }
