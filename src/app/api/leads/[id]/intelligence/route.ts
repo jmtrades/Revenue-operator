@@ -35,7 +35,7 @@ export async function GET(
 
     if (leadError) {
       log("error", "leads.intelligence.lead_lookup_error", { error: leadError.message });
-      return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+      return NextResponse.json({ error: "Could not process lead data" }, { status: 500 });
     }
 
     if (!lead) {

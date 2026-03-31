@@ -86,7 +86,7 @@ export async function PATCH(req: NextRequest) {
   const { error } = await db.from("workspaces").update(updates).eq("id", session.workspaceId);
 
   if (error) {
-    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+    return NextResponse.json({ error: "Could not update workspace settings. Please try again." }, { status: 500 });
   }
 
   return NextResponse.json({ ok: true, communication_mode: updates.communication_mode, agent_mode: updates.agent_mode });

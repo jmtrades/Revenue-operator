@@ -59,7 +59,7 @@ const SAFE_MESSAGES = new Set([
  * Returns a sanitized error message safe for client consumption.
  * Sensitive details (database errors, provider names, stack traces) are stripped.
  */
-export function sanitizeError(error: unknown, fallback = "Something went wrong. Please try again."): string {
+export function sanitizeError(error: unknown, fallback = "An unexpected error occurred. Please try again."): string {
   if (!error) return fallback;
 
   const message = typeof error === "string"

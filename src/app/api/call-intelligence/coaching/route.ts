@@ -274,7 +274,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     log("error", "[coaching] Unexpected error:", { error: err });
     return NextResponse.json(
-      { error: "Something went wrong with this service. Please try again." },
+      { error: "Service temporarily unavailable. Please try again." },
       { status: 502 }
     );
   }

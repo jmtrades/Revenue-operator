@@ -204,7 +204,7 @@ export async function POST(req: NextRequest) {
   }));
 
   const { data, error } = await runWithWriteContextAsync("api", async () => db.from("leads").insert(toInsert).select("id"));
-  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Could not process lead data. Please try again." }, { status: 500 });
   const imported = Array.isArray(data) ? data.length : 0;
 
   // Autonomous Brain: compute initial intelligence for imported leads (non-blocking)

@@ -63,7 +63,7 @@ async function getTimeline(req: NextRequest, id: string) {
     .select("id, workspace_id")
     .eq("id", id)
     .maybeSingle();
-  if (contactError) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  if (contactError) return NextResponse.json({ error: "Could not process contact data. Please try again." }, { status: 500 });
   if (!contact) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const workspaceId = (contact as { workspace_id: string }).workspace_id;

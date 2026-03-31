@@ -220,7 +220,7 @@ export function ActivateWizard() {
 
         if (!res.ok) {
           console.error("[activate] Onboard API returned", res.status);
-          setError(t("errors.setupFailed", { defaultValue: "Something went wrong setting up your workspace. Please try again." }));
+          setError(t("errors.setupFailed", { defaultValue: "Could not complete workspace setup. Please try again." }));
           setFinalizing(false);
           return;
         }

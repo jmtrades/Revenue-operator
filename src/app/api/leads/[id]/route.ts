@@ -30,7 +30,7 @@ export async function GET(
       .maybeSingle();
     if (error) {
       log("error", "leads.get_by_id_error", { error: error.message });
-      return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+      return NextResponse.json({ error: "Could not process lead data" }, { status: 500 });
     }
     if (!lead) return NextResponse.json({ error: "Not found" }, { status: 404 });
     const { data: deals } = await db.from("deals").select("id, value_cents, status").eq("lead_id", id);

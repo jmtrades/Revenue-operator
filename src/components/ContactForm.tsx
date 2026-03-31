@@ -39,7 +39,7 @@ export function ContactForm() {
       if (!res.ok) throw new Error("Request failed");
       setSubmitted(true);
     } catch {
-      setError(t("sendError") ?? "Something went wrong. Please try again.");
+      setError(t("sendError") ?? "Could not send your message. Please try again.");
     } finally {
       setLoading(false);
     }

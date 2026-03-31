@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     { workspace_id, business_name: w.name || "Business", offer_summary: offerSummary, ideal_customer: "", business_hours: businessHours, faq, updated_at: new Date().toISOString() },
     { onConflict: "workspace_id" }
   );
-  if (upsertErr) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  if (upsertErr) return NextResponse.json({ error: "Could not save onboarding data. Please try again." }, { status: 500 });
 
   const brain = {
     services: (services || "").trim() || undefined,

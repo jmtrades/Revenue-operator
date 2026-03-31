@@ -36,7 +36,7 @@ export async function GET(
 
     if (error) {
       return NextResponse.json(
-        { error: "Something went wrong. Please try again." },
+        { error: "Could not apply template. Please try again." },
         { status: 500 }
       );
     }

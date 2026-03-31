@@ -151,7 +151,7 @@
     "loading": "Cargando",
     "loadingEllipsis": "Cargando…",
     "error": {
-      "generic": "Something went wrong. Please try again."
+      "generic": "An unexpected error occurred. Please try again."
     },
     "errorGeneric": "Algo salió mal. Inténtalo de nuevo.",
     "success": "Éxito",
@@ -181,8 +181,8 @@
     "agents": "Agentes",
     "title": "Título",
     "url": "URL",
-    "genericErrorTryAgain": "Something went wrong. Please try again.",
-    "genericErrorRetry": "Something went wrong. Try again.",
+    "genericErrorTryAgain": "An unexpected error occurred. Please try again.",
+    "genericErrorRetry": "An unexpected error occurred. Try again.",
     "calendar": {
       "defaultContact": "Contact",
       "pageTitle": "Calendar",
@@ -394,7 +394,7 @@
         "errors": {
           "previewFailed": "Failed to preview voice",
           "applyFailed": "Failed to apply voice to agent",
-          "generic": "Something went wrong testing the voice. Please try again."
+          "generic": "Could not test the voice. Please try again."
         },
         "noAgent": "Agent not found",
         "backToAgents": "Back to Agents",
@@ -478,7 +478,7 @@
       "signUp": "Sign up",
       "orContinueWith": "Or continue with",
       "errorInvalid": "Invalid email or password",
-      "errorGeneric": "Something went wrong. Please try again."
+      "errorGeneric": "An unexpected error occurred. Please try again."
     },
     "email": {
       "label": "Correo electrónico"
@@ -530,7 +530,7 @@
     },
     "signingIn": "Iniciando sesión…",
     "savePassword": "Guardar contraseña",
-    "genericError": "Something went wrong"
+    "genericError": "An unexpected error occurred"
   },
   "billing": {
     "pageTitle": "Facturación — Revenue Operator",
@@ -3038,7 +3038,7 @@
       "errors": {
         "auth": "Authentication failed. Please sign in again.",
         "connection": "Connection lost. Please try again.",
-        "generic": "Something went wrong. Please try again.",
+        "generic": "An unexpected error occurred. Please try again.",
         "mic": "Microphone access denied. Please allow microphone access.",
         "noResponse": "No response from agent. Please try again.",
         "notConfigured": "Agent is not configured yet. Please complete setup first.",
@@ -4572,7 +4572,7 @@
         "disclaimer": "You are responsible for TCPA compliance and honoring opt-outs."
       },
       "error": {
-        "generic": "Something went wrong saving outbound settings."
+        "generic": "Could not save outbound settings. Please try again."
       }
     },
     "account": "Account",
@@ -4666,7 +4666,7 @@
       "requestFailed": "Could not submit request. Please email support@recall-touch.com directly."
     },
     "error": {
-      "generic": "Something went wrong. Please try again."
+      "generic": "An unexpected error occurred. Please try again."
     }
   },
   "hero": {
@@ -8156,7 +8156,7 @@
     "back": "Back",
     "continue": "Continue",
     "errors": {
-      "setupFailed": "Something went wrong setting up your workspace. Please try again.",
+      "setupFailed": "Could not complete workspace setup. Please try again.",
       "connectionError": "Connection error. Please check your internet and try again.",
       "title": "Setup Error",
       "dismiss": "Dismiss",
@@ -9096,7 +9096,7 @@
       "errors": {
         "createFailed": "Could not create sequence.",
         "stepFailed": "Could not add a step.",
-        "generic": "Something went wrong creating the follow-up. Please try again."
+        "generic": "Could not create the follow-up. Please try again."
       },
       "toast": {
         "saved": "Sequence saved."
@@ -9107,7 +9107,7 @@
     "pauseSequence": "Pause sequence",
     "resumeSequence": "Resume sequence",
     "error": {
-      "generic": "Something went wrong. Please try again."
+      "generic": "An unexpected error occurred. Please try again."
     },
     "sequencePaused": "Sequence paused",
     "pauseFailed": "Failed to pause sequence",

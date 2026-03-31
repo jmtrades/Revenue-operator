@@ -55,7 +55,7 @@ export default function PublicAgentTestPage({
       } catch (e) {
         if (controller.signal.aborted) return;
         const message =
-          e instanceof Error ? e.message : "Something went wrong loading this agent.";
+          e instanceof Error ? e.message : "Could not load this agent. Please refresh and try again.";
         setError(message);
       } finally {
         setLoading(false);

@@ -129,7 +129,7 @@ export async function POST(
       .maybeSingle();
 
     if (wsError) {
-      return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+      return NextResponse.json({ error: "Could not process sequence. Please try again." }, { status: 500 });
     }
 
     if (ws) {

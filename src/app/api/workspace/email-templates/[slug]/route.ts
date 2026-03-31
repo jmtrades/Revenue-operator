@@ -62,7 +62,7 @@ export async function PATCH(
     .select("id, slug, name, subject, html_body, created_at, updated_at")
     .maybeSingle();
 
-  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Could not update workspace settings. Please try again." }, { status: 500 });
   if (!data) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json({ template: data });
 }
@@ -83,6 +83,6 @@ export async function DELETE(
   const { slug } = await params;
   const db = getDb();
   const { error } = await db.from("email_templates").delete().eq("workspace_id", session.workspaceId).eq("slug", slug);
-  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Could not update workspace settings. Please try again." }, { status: 500 });
   return NextResponse.json({ ok: true });
 }

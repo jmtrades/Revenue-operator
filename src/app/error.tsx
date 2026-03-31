@@ -14,7 +14,7 @@ export default function Error({
       <div className="w-full max-w-md text-center">
         <h1 className="text-6xl font-bold text-[var(--text-primary)] mb-4">Oops</h1>
         <h2 className="text-2xl font-semibold text-[var(--text-primary)] mb-4">
-          Something went wrong
+          We hit a temporary issue
         </h2>
         <p className="text-[var(--text-secondary)] mb-2">
           This page ran into an issue. Try refreshing, or return to the homepage.

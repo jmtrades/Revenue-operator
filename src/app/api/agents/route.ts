@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
   if (err) return err;
   const db = getDb();
   const { data, error } = await db.from("agents").select("*").eq("workspace_id", workspaceId).order("created_at", { ascending: false });
-  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Could not process agent configuration. Please try again." }, { status: 500 });
 
   let agents = data ?? [];
   if (agents.length === 0) {
@@ -221,6 +221,6 @@ export async function POST(req: NextRequest) {
     rules: Object.keys(industryRules).length > 0 ? industryRules : {},
     is_active: true,
   }).select().maybeSingle();
-  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Could not process agent configuration. Please try again." }, { status: 500 });
   return NextResponse.json(agent);
 }

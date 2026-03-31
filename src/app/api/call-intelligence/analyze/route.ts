@@ -191,7 +191,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     log("error", "[call-intelligence/analyze] unexpected error:", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
-      { error: "Something went wrong with this service. Please try again." },
+      { error: "Service temporarily unavailable. Please try again." },
       { status: 502 }
     );
   }

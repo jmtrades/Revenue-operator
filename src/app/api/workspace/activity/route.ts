@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
     .order("recorded_at", { ascending: false })
     .limit(limit);
 
-  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Could not update workspace settings. Please try again." }, { status: 500 });
 
   const entries = (rows ?? []).map((r: { id: string; action_type: string; details_json?: unknown; recorded_at: string }) => ({
     id: r.id,

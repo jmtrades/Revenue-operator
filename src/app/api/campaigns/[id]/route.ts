@@ -105,7 +105,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
   if (parsed.data.type !== undefined) updates.type = parsed.data.type;
   if (parsed.data.target_filter !== undefined) updates.target_filter = parsed.data.target_filter;
   const { data: campaign, error } = await db.from(table).update(updates).eq("id", id).select().maybeSingle();
-  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Could not process campaign. Please try again." }, { status: 500 });
   return NextResponse.json(campaign);
 }
 

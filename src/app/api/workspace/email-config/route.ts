@@ -65,7 +65,7 @@ export async function PATCH(req: NextRequest) {
       updates.provider_config = { api_key: encrypted };
     }
     const { error } = await db.from("workspace_email_config").update(updates).eq("workspace_id", session.workspaceId);
-    if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Could not update workspace settings. Please try again." }, { status: 500 });
   } else {
     if (from_email === undefined) return NextResponse.json({ error: "from_email required for new config" }, { status: 400 });
     const apiKeyEnc = typeof body.api_key === "string" && body.api_key.trim() ? await encrypt(body.api_key.trim()) : null;
@@ -78,7 +78,7 @@ export async function PATCH(req: NextRequest) {
       created_at: now,
       updated_at: now,
     });
-    if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Could not update workspace settings. Please try again." }, { status: 500 });
   }
 
   const config = await getWorkspaceEmailConfig(session.workspaceId);

@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
     .order("created_at", { ascending: false })
     .limit(limit);
 
-  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Could not process notification. Please try again." }, { status: 500 });
 
   const unread = (rows ?? []).filter((r: { read: boolean }) => !r.read).length;
   return NextResponse.json({
@@ -60,6 +60,6 @@ export async function PATCH(req: NextRequest) {
     .eq("user_id", session.userId)
     .eq("workspace_id", workspaceId);
 
-  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Could not process notification. Please try again." }, { status: 500 });
   return NextResponse.json({ ok: true });
 }

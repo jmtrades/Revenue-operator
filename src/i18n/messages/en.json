@@ -223,13 +223,13 @@
     "loading": "Loading",
     "loadingEllipsis": "Loading…",
     "error": {
-      "generic": "Something went wrong. Please try again."
+      "generic": "An unexpected error occurred. Please try again."
     },
-    "errorGeneric": "Something went wrong. Please try again.",
+    "errorGeneric": "An unexpected error occurred. Please try again.",
     "success": "Success",
     "retry": "Retry",
-    "genericErrorTryAgain": "Something went wrong. Please try again.",
-    "genericErrorRetry": "Something went wrong. Try again.",
+    "genericErrorTryAgain": "An unexpected error occurred. Please try again.",
+    "genericErrorRetry": "An unexpected error occurred. Try again.",
     "viewAll": "View all",
     "search": "Search",
     "clear": "Clear",
@@ -298,7 +298,7 @@
     "updated": "Changes updated",
     "deleted": "Item deleted",
     "error": {
-      "generic": "Something went wrong. Please try again."
+      "generic": "An unexpected error occurred. Please try again."
     },
     "password": {
       "resetSent": "Check your email for a password reset link."
@@ -465,7 +465,7 @@
         "errors": {
           "previewFailed": "Failed to preview voice",
           "applyFailed": "Failed to apply voice to operator",
-          "generic": "Something went wrong testing the voice. Please try again."
+          "generic": "Could not test the voice. Please try again."
         },
         "noAgent": "Operator not found",
         "backToAgents": "Back to Operators",
@@ -551,7 +551,7 @@
       "signUp": "Sign up",
       "orContinueWith": "Or continue with",
       "errorInvalid": "Invalid email or password",
-      "errorGeneric": "Something went wrong. Please try again."
+      "errorGeneric": "An unexpected error occurred. Please try again."
     },
     "email": {
       "label": "Email address"
@@ -596,7 +596,7 @@
     },
     "noAccount": "Don't have an account?",
     "startFree": "Get started",
-    "genericError": "Something went wrong",
+    "genericError": "An unexpected error occurred",
     "toasts": {
       "noAccount": "No account found. Sign up to create one.",
       "googleComingSoon": "Connecting to Google…",
@@ -1845,7 +1845,7 @@
       },
       "continue": "Continue →",
       "saving": "Saving…",
-      "somethingWentWrong": "Something went wrong",
+      "somethingWentWrong": "An unexpected error occurred",
       "failedToSave": "Failed to save",
       "failedToSaveAgent": "Failed to save operator",
       "myBusiness": "My Business",
@@ -2427,7 +2427,7 @@
       "errors": {
         "auth": "Authentication failed. Please sign in again.",
         "connection": "Connection lost. Please try again.",
-        "generic": "Something went wrong. Please try again.",
+        "generic": "An unexpected error occurred. Please try again.",
         "mic": "Microphone access denied. Please allow microphone access.",
         "noResponse": "No response from agent. Please try again.",
         "notConfigured": "Operator is not configured yet. Please complete setup first.",
@@ -4544,7 +4544,7 @@
         "saved": "Outbound settings saved."
       },
       "error": {
-        "generic": "Something went wrong saving outbound settings."
+        "generic": "Could not save outbound settings. Please try again."
       },
       "callingHours": {
         "heading": "Calling hours",
@@ -4946,7 +4946,7 @@
       "requestFailed": "Could not submit request. Please email support@recall-touch.com directly."
     },
     "error": {
-      "generic": "Something went wrong. Please try again."
+      "generic": "An unexpected error occurred. Please try again."
     }
   },
   "hero": {
@@ -5251,7 +5251,7 @@
     "thanksReply": "Thanks! We'll get back to you within 4 hours.",
     "sending": "Sending…",
     "sendMessage": "Send a message",
-    "sendError": "Something went wrong. Please try again.",
+    "sendError": "An unexpected error occurred. Please try again.",
     "responseTime": "Response within 4 hours",
     "salesEnterprise": "Sales & Enterprise",
     "salesEnterpriseDesc": "Talk to the team about Team plans, custom compliance, and volume pricing.",
@@ -6840,7 +6840,7 @@
       "other": "Other"
     },
     "errorNameRequired": "Your name and business name are required.",
-    "errorSomethingWentWrong": "Something went wrong",
+    "errorSomethingWentWrong": "An unexpected error occurred",
     "creating": "Creating…",
     "step2Heading": "Meet your AI operator.",
     "step2Subtitle": "Choose a name and what they can do.",
@@ -6967,11 +6967,11 @@
     "body": "Use the same fast flow every time: pick mode + industry, create the operator, connect the phone, run a test call."
   },
   "errors": {
-    "heading": "Something went wrong",
+    "heading": "An unexpected error occurred",
     "defaultMessage": "An unexpected error occurred.",
     "tryAgain": "Try again",
     "generic": {
-      "title": "Something went wrong",
+      "title": "An unexpected error occurred",
       "body": "We couldn’t complete that request. Please try again or refresh the page."
     },
     "network": {
@@ -6993,11 +6993,11 @@
     "retry": "Try again",
     "report": "Report issue",
     "data": {
-      "title": "Something went wrong",
+      "title": "An unexpected error occurred",
       "body": "We couldn't load this page. Try again or go back."
     },
     "unknown": {
-      "title": "Something went wrong",
+      "title": "An unexpected error occurred",
       "body": "An unexpected error occurred. You can try again or report the issue."
     },
     "goHome": "Go back home",
@@ -7008,7 +7008,7 @@
     "connectionProblemDesc": "We couldn't reach the server. Check your connection and try again.",
     "sessionExpired": "Session expired",
     "sessionExpiredDesc": "Please sign in again to continue.",
-    "somethingWrong": "Something went wrong",
+    "somethingWrong": "An unexpected error occurred",
     "loadPageError": "We couldn't load this page. Try again or go back.",
     "unexpectedError": "An unexpected error occurred. You can try again or report the issue.",
     "reportIssue": "Report issue",
@@ -7561,7 +7561,7 @@
       "daysAgo": "{count} days ago"
     },
     "avatarFallback": "Y",
-    "acceptInviteError": "Something went wrong. Try again.",
+    "acceptInviteError": "An unexpected error occurred. Try again.",
     "signInFirstToAccept": "Please sign in first to accept this invitation.",
     "acceptInvite": {
       "checkingInvite": "Checking invite…",
@@ -8248,7 +8248,7 @@
     "back": "Back",
     "continue": "Continue",
     "errors": {
-      "setupFailed": "Something went wrong setting up your workspace. Please try again.",
+      "setupFailed": "Could not complete workspace setup. Please try again.",
       "connectionError": "Connection error. Please check your internet and try again.",
       "title": "Setup Error",
       "dismiss": "Dismiss",
@@ -8650,7 +8650,7 @@
       "error": "Something went wrong.",
       "createAgentFirst": "Create an operator first in the Operators section, then try again.",
       "testCallStarted": "Calling you now — answer your phone to hear your agent.",
-      "errorRetry": "Something went wrong. Try again.",
+      "errorRetry": "An unexpected error occurred. Try again.",
       "connectFailed": "Failed to connect number. Please try again.",
       "saveFailed": "Failed to save. Please try again.",
       "testCallFailed": "Failed to start test call. Please try again.",
@@ -8829,7 +8829,7 @@
       "calendarNotConfigured": "Google Calendar is not configured.",
       "whatsappEmailRequired": "Enter your email to join the WhatsApp waitlist.",
       "whatsappWaitlisted": "You're on the list. We'll notify you when WhatsApp is available.",
-      "error": "Something went wrong. Try again.",
+      "error": "An unexpected error occurred. Try again.",
       "syncFailed": "Sync failed",
       "importFailed": "Import failed. Please try again.",
       "disconnectFailed": "Disconnect failed.",
@@ -9094,7 +9094,7 @@
       "errors": {
         "createFailed": "Could not create sequence.",
         "stepFailed": "Could not add a step.",
-        "generic": "Something went wrong creating the follow-up. Please try again."
+        "generic": "Could not create the follow-up. Please try again."
       },
       "toast": {
         "saved": "Sequence saved."
@@ -9104,7 +9104,7 @@
     "pauseSequence": "Pause sequence",
     "resumeSequence": "Resume sequence",
     "error": {
-      "generic": "Something went wrong. Please try again."
+      "generic": "An unexpected error occurred. Please try again."
     },
     "sequencePaused": "Sequence paused",
     "pauseFailed": "Failed to pause sequence",
