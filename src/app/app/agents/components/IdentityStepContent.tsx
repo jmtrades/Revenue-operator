@@ -118,6 +118,7 @@ export function IdentityStepContent({ agent, onChange, onNext }: IdentityStepCon
     try {
       const res = await fetch("/api/agent/extract-business", {
         method: "POST",
+        credentials: "include",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ url }),
       });

@@ -163,6 +163,7 @@ function KnowledgeModal({
     try {
       const res = await fetch("/api/knowledge/scrape", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: url.trim() }),
       });

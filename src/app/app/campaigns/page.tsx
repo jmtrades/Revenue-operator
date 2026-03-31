@@ -856,7 +856,7 @@ export default function CampaignsPage() {
                   value={form.name}
                   onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
                   onBlur={() => setNameBlurred(true)}
-                  placeholder={t("form.campaignNamePlaceholder", { defaultValue: "Missed-call recovery" })}
+                  placeholder={t("form.campaignNamePlaceholder", { defaultValue: "Speed-to-Lead — March 2026" })}
                   className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
                 />
                 {nameBlurred && !form.name.trim() && (

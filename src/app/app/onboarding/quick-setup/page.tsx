@@ -95,6 +95,7 @@ export default function QuickSetupPage() {
     try {
       const response = await fetch("/api/workspace/auto-setup", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ workspace_id: workspaceId, website_url: url.trim() }),
       });
@@ -148,6 +149,7 @@ export default function QuickSetupPage() {
     try {
       const response = await fetch("/api/workspace/one-click-setup", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           workspace_id: workspaceId,

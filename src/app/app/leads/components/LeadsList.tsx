@@ -30,6 +30,7 @@ function useLeadIntelligenceBatch(leadIds: string[]) {
 
     fetch("/api/leads/intelligence/batch", {
       method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ lead_ids: leadIds.slice(0, 50) }),
     })
