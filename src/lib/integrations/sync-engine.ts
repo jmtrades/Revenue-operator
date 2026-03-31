@@ -9,6 +9,7 @@ import type { CrmProviderId } from "./field-mapper";
 import { getValidTokens } from "./token-refresh";
 import { pushContactToCrm } from "./crm-clients";
 import { log } from "@/lib/logger";
+import { triggerBrainAfterSignal } from "@/lib/intelligence/brain-trigger";
 
 export type SyncDirection = "inbound" | "outbound";
 export type SyncStatus = "pending" | "processing" | "completed" | "failed";
@@ -386,6 +387,15 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
           leadId: existingLead.id,
           fields: Object.keys(updateFields).length,
         });
+
+        // Trigger brain computation so CRM data feeds intelligence decisions
+        void triggerBrainAfterSignal({
+          signalId: jobId,
+          leadId: existingLead.id,
+          workspaceId: row.workspace_id,
+          signalType: `crm_inbound_update:${provider}`,
+        }).catch(() => { /* non-blocking */ });
+
         return { ok: true };
       } else {
         // ── CREATE new lead from CRM data ──
@@ -435,6 +445,15 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
           leadId: createdId,
           fields: Object.keys(updateFields).length,
         });
+
+        // Trigger brain computation so new CRM leads get intelligence + auto-enrollment
+        void triggerBrainAfterSignal({
+          signalId: jobId,
+          leadId: createdId,
+          workspaceId: row.workspace_id,
+          signalType: `crm_inbound_create:${provider}`,
+        }).catch(() => { /* non-blocking */ });
+
         return { ok: true };
       }
     }

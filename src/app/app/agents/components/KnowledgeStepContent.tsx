@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import type { Agent } from "../AgentsPageClient";
 import { AgentKnowledgePanel } from "./AgentKnowledgePanel";
@@ -23,6 +23,16 @@ export function KnowledgeStepContent({
   const [importUrl, setImportUrl] = useState("");
   const [importing, setImporting] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
+  const autoSeeded = useRef(false);
+
+  // Auto-seed: if agent has fewer than 3 FAQs and hasn't been auto-seeded yet, trigger it
+  useEffect(() => {
+    if (autoSeeded.current) return;
+    if ((agent.faq?.length ?? 0) < 3 && agent.id && !seeding) {
+      autoSeeded.current = true;
+      void seedFive();
+    }
+  }, [agent.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const seedFive = async () => {
     setSeeding(true);

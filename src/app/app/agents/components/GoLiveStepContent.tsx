@@ -36,17 +36,26 @@ export function GoLiveStepContent({
   const t = useTranslations("agents");
   const r = getReadiness(agent);
   const testCallCompleted = agent.test_call_completed === true;
-  const canActivate =
-    testCallCompleted &&
+  // Core requirements: name, greeting, voice selected, AND at least 1 FAQ (reduced from 3 — brain auto-seeds the rest)
+  const hasMinConfig =
     !!(agent.name?.trim() && agent.greeting?.trim()) &&
     !!agent.voice?.trim() &&
-    (agent.faq?.length ?? 0) >= 3;
+    (agent.faq?.length ?? 0) >= 1;
+  // Test call is recommended but not a hard blocker — operator can skip with reduced readiness
+  const canActivate = hasMinConfig && (testCallCompleted || r.percent >= 60);
   const assignedNumber = workspaceNumbers.find((n) => n.assigned_agent_id === agent.id);
   const hasPhoneOrEnvFallback = !!assignedNumber || workspaceNumbers.length > 0;
   const allowActivate = canActivate && r.percent >= 40 && hasPhoneOrEnvFallback;
   const unassignedNumbers = workspaceNumbers.filter(
     (n) => !n.assigned_agent_id || n.assigned_agent_id === agent.id,
   );
+
+  // Auto-assign: if exactly one number and none assigned, auto-assign it
+  const shouldAutoAssign = !assignedNumber && unassignedNumbers.length === 1;
+  if (shouldAutoAssign && unassignedNumbers[0]) {
+    // Trigger auto-assign on first render
+    void onAssignNumber(unassignedNumbers[0].id, agent.id);
+  }
 
   const handleAssign = async (numberId: string | "") => {
     if (numberId === "") {
