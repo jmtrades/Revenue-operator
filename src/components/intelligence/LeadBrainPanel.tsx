@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertCircle, TrendingUp, Clock, CheckCircle2, AlertTriangle, Brain, Zap, Shield, Activity } from "lucide-react";
+import { AlertCircle, TrendingUp, Clock, CheckCircle2, AlertTriangle, Brain, Zap, Shield, Activity, PauseCircle, Play } from "lucide-react";
 import { Card, CardHeader, CardBody } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -98,24 +98,37 @@ export function LeadBrainPanel({ leadId }: LeadBrainPanelProps) {
   const [actions, setActions] = useState<AutonomousAction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
+  const [pauseToggling, setPauseToggling] = useState(false);
 
   useEffect(() => {
     async function fetchIntelligence() {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch(`/api/leads/${leadId}/intelligence`);
-        if (!response.ok) {
-          if (response.status === 404) {
+        const [intelligenceRes, leadRes] = await Promise.all([
+          fetch(`/api/leads/${leadId}/intelligence`),
+          fetch(`/api/leads/${leadId}`),
+        ]);
+
+        if (!intelligenceRes.ok) {
+          if (intelligenceRes.status === 404) {
             setError("Lead not found");
           } else {
             setError("Failed to load intelligence");
           }
           return;
         }
-        const data = await response.json();
-        setIntelligence(data.intelligence);
-        setActions(data.recent_actions || []);
+
+        const intelligenceData = await intelligenceRes.json();
+        setIntelligence(intelligenceData.intelligence);
+        setActions(intelligenceData.recent_actions || []);
+
+        // Get pause state from lead metadata
+        if (leadRes.ok) {
+          const leadData = await leadRes.json();
+          setIsPaused((leadData.metadata?.paused_for_followup ?? false) as boolean);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load intelligence");
       } finally {
@@ -125,6 +138,28 @@ export function LeadBrainPanel({ leadId }: LeadBrainPanelProps) {
 
     fetchIntelligence();
   }, [leadId]);
+
+  async function togglePauseState() {
+    try {
+      setPauseToggling(true);
+      const newPausedState = !isPaused;
+      const response = await fetch(`/api/leads/${leadId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paused_for_followup: newPausedState }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update pause state");
+      }
+
+      setIsPaused(newPausedState);
+    } catch (err) {
+      console.error("Error toggling pause state:", err);
+    } finally {
+      setPauseToggling(false);
+    }
+  }
 
   if (loading) {
     return (
@@ -180,14 +215,42 @@ export function LeadBrainPanel({ leadId }: LeadBrainPanelProps) {
             Autonomous management
           </h3>
         </div>
-        <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-400">
-          <span className="relative flex h-1.5 w-1.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
-          </span>
-          active
-        </span>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={togglePauseState}
+            disabled={pauseToggling}
+            title={isPaused ? "Resume autonomous actions" : "Pause autonomous actions for this lead"}
+            className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] font-medium transition-colors disabled:opacity-50"
+            style={{
+              background: isPaused ? "rgba(239, 68, 68, 0.1)" : "rgba(34, 197, 94, 0.1)",
+              color: isPaused ? "rgb(252, 165, 165)" : "rgb(134, 239, 172)",
+              borderRadius: "0.375rem",
+            }}
+          >
+            {isPaused ? (
+              <>
+                <PauseCircle className="w-3.5 h-3.5" />
+                Brain paused
+              </>
+            ) : (
+              <>
+                <Play className="w-3.5 h-3.5" />
+                Brain active
+              </>
+            )}
+          </button>
+        </div>
       </div>
+
+      {isPaused && (
+        <div className="rounded-xl bg-orange-500/[0.06] border border-orange-500/10 px-4 py-3 flex items-start gap-2.5">
+          <AlertCircle className="w-4 h-4 text-orange-400 shrink-0 mt-0.5" />
+          <div>
+            <p className="text-xs font-medium text-orange-400">Brain paused</p>
+            <p className="text-[11px] text-[var(--text-tertiary)] mt-0.5">Autonomous actions are paused. Resume to enable the brain to take actions.</p>
+          </div>
+        </div>
+      )}
 
       {/* Active management status */}
       <div className={`rounded-xl ${temp.bgColor} border border-[var(--border-default)] p-4`}>
