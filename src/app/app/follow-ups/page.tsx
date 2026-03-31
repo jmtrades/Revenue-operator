@@ -395,21 +395,21 @@ export default function AppFollowUpsPage() {
           {sequences.length > 0 || brainActivity?.follow_ups_sent ? (
             <>
               <div className="flex items-center gap-2 mb-1">
-                <p className="text-sm text-violet-400 font-semibold">Brain is managing follow-ups</p>
+                <p className="text-sm text-violet-400 font-semibold">Follow-up sequences active</p>
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                   <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
                 </span>
               </div>
               <p className="text-xs text-[var(--text-secondary)]">
-                {sequences.filter(s => s.is_active).length} active sequences running autonomously. The brain decides when, how, and through which channel to follow up with each lead based on their engagement and intent signals.
+                {sequences.filter(s => s.is_active).length} active sequences running. Active sequences are executing scheduled follow-ups. Timing and channels are based on the sequence configuration you set.
               </p>
             </>
           ) : (
             <>
-              <p className="text-sm text-violet-400 font-semibold mb-1">Brain will activate follow-ups when leads arrive</p>
+              <p className="text-sm text-violet-400 font-semibold mb-1">Follow-ups will start when leads arrive</p>
               <p className="text-xs text-[var(--text-secondary)]">
-                When new leads arrive, the brain automatically creates and executes follow-up sequences based on each lead&apos;s intent, urgency, and preferred channel. You can also manually create sequences below.
+                When new leads arrive, follow-up sequences will be created based on your configured templates and rules. You can also manually create sequences below.
               </p>
             </>
           )}
@@ -435,7 +435,7 @@ export default function AppFollowUpsPage() {
           onClick={() => setTab("brain")}
           className={`text-sm font-medium px-3 py-1.5 rounded-lg transition-[background-color,color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] ${tab === "brain" ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]" : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"}`}
         >
-          Brain Activity
+          Activity
         </button>
       </div>
       {tab === "brain" ? (
@@ -447,7 +447,7 @@ export default function AppFollowUpsPage() {
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
               <div className="flex items-center gap-2 mb-6">
                 <Activity className="w-5 h-5 text-[var(--accent-primary)]" />
-                <h2 className="text-lg font-semibold text-[var(--text-primary)]">Autonomous Brain Execution</h2>
+                <h2 className="text-lg font-semibold text-[var(--text-primary)]">Follow-up Activity</h2>
               </div>
 
               {/* Follow-ups Executed */}

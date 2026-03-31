@@ -16,6 +16,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 interface RecoveryScoreResponse {
   score: number;
@@ -117,8 +118,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
           }
         }
       }
-    } catch {
-      // Table may not exist yet
+    } catch (error) {
+      log("error", "dashboard.recovery-score.query", { workspaceId, error });
     }
 
     // ─────────────────────────────────────────────────────────────────────
@@ -147,8 +148,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         else if (rate > 50) followUpExecution = 12;
         else followUpExecution = 6;
       }
-    } catch {
-      // Table may not exist yet
+    } catch (error) {
+      log("error", "dashboard.recovery-score.query", { workspaceId, error });
     }
 
     // ─────────────────────────────────────────────────────────────────────
@@ -196,8 +197,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         else if (recoveryRate > 10) noShowRecovery = 10;
         else noShowRecovery = 5;
       }
-    } catch {
-      // Table may not exist yet
+    } catch (error) {
+      log("error", "dashboard.recovery-score.query", { workspaceId, error });
     }
 
     // ─────────────────────────────────────────────────────────────────────
@@ -237,8 +238,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         else if (reactivationRate > 10) staleReactivation = 10;
         else staleReactivation = 5;
       }
-    } catch {
-      // Table may not exist yet
+    } catch (error) {
+      log("error", "dashboard.recovery-score.query", { workspaceId, error });
     }
 
     // ─────────────────────────────────────────────────────────────────────
@@ -266,8 +267,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         else if (conversionRate > 5) conversionDepth = 12;
         else conversionDepth = 6;
       }
-    } catch {
-      // Table may not exist yet
+    } catch (error) {
+      log("error", "dashboard.recovery-score.query", { workspaceId, error });
     }
 
     // ─────────────────────────────────────────────────────────────────────

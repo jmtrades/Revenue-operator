@@ -15,6 +15,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 interface LeakCategory {
   key: string;
@@ -54,8 +55,8 @@ export async function GET(req: NextRequest) {
         avgDealValue = parseInt(nums[0]);
       }
     }
-  } catch {
-    // Use default
+  } catch (error) {
+    log("error", "dashboard.revenue-at-risk.deal-value", { workspaceId, error });
   }
 
   const leaks: LeakCategory[] = [];

@@ -52,13 +52,20 @@ export async function GET(
   }
 }
 
+// DB enum is UPPERCASE: NEW, CONTACTED, ENGAGED, QUALIFIED, BOOKED, SHOWED, WON, LOST, RETAIN, REACTIVATE, CLOSED
 const STATUS_TO_STATE: Record<string, string> = {
-  new: "new",
-  contacted: "contacted",
-  qualified: "qualified",
-  appointment_set: "appointment_set",
-  won: "won",
-  lost: "lost",
+  new: "NEW",
+  contacted: "CONTACTED",
+  engaged: "ENGAGED",
+  qualified: "QUALIFIED",
+  appointment_set: "BOOKED",
+  booked: "BOOKED",
+  showed: "SHOWED",
+  won: "WON",
+  lost: "LOST",
+  retain: "RETAIN",
+  reactivate: "REACTIVATE",
+  closed: "CLOSED",
 };
 
 export async function PATCH(
@@ -92,7 +99,7 @@ export async function PATCH(
         ? { ...meta, paused_for_followup: body.paused_for_followup }
         : meta;
     const stateInput = body.state != null ? String(body.state).toLowerCase().replace(/\s+/g, "_") : undefined;
-    const dbState = stateInput != null ? STATUS_TO_STATE[stateInput] ?? stateInput : undefined;
+    const dbState = stateInput != null ? STATUS_TO_STATE[stateInput] ?? stateInput.toUpperCase() : undefined;
     const updatePayload: { metadata: Record<string, unknown>; updated_at: string; status?: string } = {
       metadata: nextMeta,
       updated_at: new Date().toISOString(),
