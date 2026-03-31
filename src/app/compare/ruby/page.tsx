@@ -66,7 +66,7 @@ export default function RubyComparisonPage() {
               outbound campaigns, and revenue attribution — so coverage turns into recovered revenue.
             </p>
             <p className="mt-3 text-xs" style={{ color: "var(--text-tertiary)" }}>
-              Pricing as of March 2026. Visit{" "}
+              Pricing as of {new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })}. Visit{" "}
               <a
                 href="https://www.ruby.com/pricing/"
                 target="_blank"

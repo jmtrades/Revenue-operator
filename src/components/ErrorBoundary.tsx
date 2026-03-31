@@ -36,13 +36,13 @@ function getMessage(category: ErrorCategory): { title: string; body: string } {
       };
     case "data":
       return {
-        title: "Something went wrong",
-        body: "We couldn’t load this page. Try again or go back.",
+        title: "Temporary issue",
+        body: "We couldn’t load this section. Try again or go back.",
       };
     default:
       return {
-        title: "Something went wrong",
-        body: "An unexpected error occurred. You can try again or report the issue.",
+        title: "Temporary issue",
+        body: "We hit a snag. You can try again or report the issue.",
       };
   }
 }
