@@ -43,7 +43,7 @@ export const TodaysActivity = ({ workspaceId }: TodaysActivityProps) => {
           callsToday: data.calls_answered || 0,
           followUpsSent: data.follow_ups_sent || 0,
           appointmentsBooked: data.appointments_booked || 0,
-          nextAppointment: null, // No API for this yet
+          nextAppointment: null,
         });
       } catch (error) {
         console.error('Failed to fetch activity stats:', error);

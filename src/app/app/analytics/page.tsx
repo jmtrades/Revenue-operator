@@ -408,7 +408,15 @@ export default function AppAnalyticsPage() {
     (l) => l.state === "appointment_set" || l.state === "won",
   ).length;
 
-  const estRevenueImpact = revenue?.total_recovered ?? appointments * 250;
+  // Compute average deal value from leads with value_cents, fallback to 0
+  const avgDealValue = useMemo(() => {
+    const leadsWithValue = filteredLeads.filter((l) => (l as any).value_cents && (l as any).value_cents > 0);
+    if (leadsWithValue.length === 0) return 0;
+    const sum = leadsWithValue.reduce((acc, l) => acc + ((l as any).value_cents ?? 0), 0);
+    return Math.round(sum / leadsWithValue.length);
+  }, [filteredLeads]);
+
+  const estRevenueImpact = revenue?.total_recovered ?? (appointments * avgDealValue);
 
   const hasData = totalCalls > 0 || filteredLeads.length > 0;
   const leadConversionPct = totalCalls === 0 ? 0 : Math.round((callsWithLead / totalCalls) * 100);
@@ -453,7 +461,7 @@ export default function AppAnalyticsPage() {
       }, 0);
       return sum / prevCalls.length;
     })();
-    const prevRevenue = prevAppointments * 250;
+    const prevRevenue = prevAppointments * avgDealValue;
 
     const pctChange = (curr: number, prev: number): number | undefined => {
       if (curr === 0 && prev === 0) return undefined;

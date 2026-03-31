@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { BILLING_PLANS, normalizeTier } from "@/lib/billing-plans";
+import { log } from "@/lib/logger";
 
 function startOfMonth(d: Date): Date {
   const x = new Date(d);
@@ -55,7 +56,9 @@ export async function GET(req: NextRequest) {
       .eq("workspace_id", workspaceId)
       .maybeSingle();
     minutesLimit += (balance as { bonus_minutes?: number } | null)?.bonus_minutes ?? 0;
-  } catch { /* table missing or other error — use default */ }
+  } catch (error) {
+    log("error", "dashboard.summary.workspace-billing", { workspaceId, error });
+  }
 
   let callsAnswered = 0;
   let callsPrev = 0;
@@ -81,7 +84,9 @@ export async function GET(req: NextRequest) {
       .gte("call_started_at", monthStart)
       .not("call_ended_at", "is", null);
     callsAnswered = c1 ?? 0;
-  } catch { /* table missing */ }
+  } catch (error) {
+    log("error", "dashboard.summary.calls-answered", { workspaceId, error });
+  }
 
   try {
     const { count: c0 } = await db
@@ -92,7 +97,9 @@ export async function GET(req: NextRequest) {
       .lt("call_started_at", prevEnd)
       .not("call_ended_at", "is", null);
     callsPrev = c0 ?? 0;
-  } catch { /* ignore */ }
+  } catch (error) {
+    log("error", "dashboard.summary.calls-prev", { workspaceId, error });
+  }
 
   try {
     const { data: sessions } = await db
@@ -109,7 +116,9 @@ export async function GET(req: NextRequest) {
         if (b > a) minutesUsed += Math.ceil((b - a) / 60000);
       }
     }
-  } catch { /* ignore */ }
+  } catch (error) {
+    log("error", "dashboard.summary.minutes-used", { workspaceId, error });
+  }
 
   try {
     const { count: ap } = await db
@@ -119,7 +128,9 @@ export async function GET(req: NextRequest) {
       .gte("created_at", monthStart)
       .in("status", ["confirmed", "completed"]);
     appointmentsBooked = ap ?? 0;
-  } catch { /* ignore */ }
+  } catch (error) {
+    log("error", "dashboard.summary.appointments-booked", { workspaceId, error });
+  }
 
   try {
     const { count: ap2 } = await db
@@ -130,7 +141,9 @@ export async function GET(req: NextRequest) {
       .lt("created_at", prevEnd)
       .in("status", ["confirmed", "completed"]);
     _appointmentsPrev = ap2 ?? 0;
-  } catch { /* ignore */ }
+  } catch (error) {
+    log("error", "dashboard.summary.query", { workspaceId, error });
+  }
 
   try {
     const { count: msg } = await db
@@ -140,7 +153,9 @@ export async function GET(req: NextRequest) {
       .eq("direction", "outbound")
       .gte("sent_at", monthStart);
     followUpsSent = msg ?? 0;
-  } catch { /* ignore */ }
+  } catch (error) {
+    log("error", "dashboard.summary.query", { workspaceId, error });
+  }
 
   try {
     const { data: daily } = await db
@@ -154,7 +169,9 @@ export async function GET(req: NextRequest) {
         if (!Number.isNaN(v)) revenueCents += v;
       }
     }
-  } catch { /* ignore */ }
+  } catch (error) {
+    log("error", "dashboard.summary.query", { workspaceId, error });
+  }
 
 
   // --- Inbound vs Outbound breakdown ---
@@ -167,7 +184,9 @@ export async function GET(req: NextRequest) {
       .not("call_ended_at", "is", null)
       .eq("direction", "inbound");
     inboundCalls = ic ?? 0;
-  } catch { /* ignore */ }
+  } catch (error) {
+    log("error", "dashboard.summary.query", { workspaceId, error });
+  }
 
   try {
     const { count: oc } = await db
@@ -178,7 +197,9 @@ export async function GET(req: NextRequest) {
       .not("call_ended_at", "is", null)
       .eq("direction", "outbound");
     outboundCalls = oc ?? 0;
-  } catch { /* ignore */ }
+  } catch (error) {
+    log("error", "dashboard.summary.query", { workspaceId, error });
+  }
 
   // --- Unanswered calls recovered (outbound calls from speed-to-lead or no-show recovery) ---
   try {
@@ -190,7 +211,9 @@ export async function GET(req: NextRequest) {
       .eq("direction", "outbound")
       .in("outcome", ["booked", "qualified", "interested", "callback_scheduled"]);
     missedCallsRecovered = mr ?? 0;
-  } catch { /* ignore */ }
+  } catch (error) {
+    log("error", "dashboard.summary.query", { workspaceId, error });
+  }
 
   // --- Qualified leads ---
   try {
@@ -201,7 +224,9 @@ export async function GET(req: NextRequest) {
       .gte("created_at", monthStart)
       .in("status", ["qualified", "appointment_set", "won"]);
     qualifiedLeads = ql ?? 0;
-  } catch { /* ignore */ }
+  } catch (error) {
+    log("error", "dashboard.summary.query", { workspaceId, error });
+  }
 
   // --- Agent configured ---
   let agentConfigured = false;
@@ -211,7 +236,9 @@ export async function GET(req: NextRequest) {
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId);
     agentConfigured = (ac ?? 0) > 0;
-  } catch { /* ignore */ }
+  } catch (error) {
+    log("error", "dashboard.summary.query", { workspaceId, error });
+  }
 
   // --- Phone number configured ---
   try {
@@ -221,7 +248,9 @@ export async function GET(req: NextRequest) {
       .eq("workspace_id", workspaceId)
       .eq("status", "active");
     phoneConfigured = (pn ?? 0) > 0;
-  } catch { /* ignore */ }
+  } catch (error) {
+    log("error", "dashboard.summary.query", { workspaceId, error });
+  }
 
   try {
     const { data: leads } = await db
@@ -241,7 +270,9 @@ export async function GET(req: NextRequest) {
         });
       }
     }
-  } catch { /* ignore */ }
+  } catch (error) {
+    log("error", "dashboard.summary.query", { workspaceId, error });
+  }
 
   try {
     const { data: calls } = await db
@@ -261,7 +292,9 @@ export async function GET(req: NextRequest) {
         });
       }
     }
-  } catch { /* ignore */ }
+  } catch (error) {
+    log("error", "dashboard.summary.query", { workspaceId, error });
+  }
 
   try {
     const { data: camps } = await db
@@ -281,7 +314,9 @@ export async function GET(req: NextRequest) {
         });
       }
     }
-  } catch { /* ignore */ }
+  } catch (error) {
+    log("error", "dashboard.summary.query", { workspaceId, error });
+  }
 
   // --- Revenue leakage signals ---
   let missedCallsToday = 0;
@@ -300,7 +335,9 @@ export async function GET(req: NextRequest) {
       .is("call_ended_at", null)
       .in("outcome", ["missed", "no_answer", "voicemail"]);
     missedCallsToday = mc ?? 0;
-  } catch { /* ignore */ }
+  } catch (error) {
+    log("error", "dashboard.summary.query", { workspaceId, error });
+  }
 
   // No-shows this week
   try {
@@ -312,7 +349,9 @@ export async function GET(req: NextRequest) {
       .eq("status", "no_show")
       .gte("start_time", weekAgo);
     noShowsThisWeek = ns ?? 0;
-  } catch { /* ignore */ }
+  } catch (error) {
+    log("error", "dashboard.summary.query", { workspaceId, error });
+  }
 
   // Stale leads (no activity 7+ days, not won/lost)
   try {
@@ -324,7 +363,9 @@ export async function GET(req: NextRequest) {
       .lte("last_activity_at", staleDate)
       .not("state", "in", '("won","lost","opted_out")');
     staleLeadsCount = sl ?? 0;
-  } catch { /* ignore */ }
+  } catch (error) {
+    log("error", "dashboard.summary.query", { workspaceId, error });
+  }
 
   // Pending follow-ups
   try {
@@ -334,7 +375,9 @@ export async function GET(req: NextRequest) {
       .eq("workspace_id", workspaceId)
       .eq("status", "pending");
     pendingFollowUps = pf ?? 0;
-  } catch { /* ignore */ }
+  } catch (error) {
+    log("error", "dashboard.summary.query", { workspaceId, error });
+  }
 
   const trendPct =
     callsPrev > 0 ? Math.round(((callsAnswered - callsPrev) / callsPrev) * 100) : callsAnswered > 0 ? 100 : 0;

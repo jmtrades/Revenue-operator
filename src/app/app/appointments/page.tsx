@@ -187,7 +187,7 @@ export default function AppointmentsPage() {
               contactName: a.contactName,
               type: a.type,
               status: mapApiStatus(a.status),
-              source: (a.source || "Inbound call") as AppointmentSource,
+              source: (a.source || "Unknown") as AppointmentSource,
               start_time: a.start_time,
               metadata: a.metadata,
             }))

@@ -36,8 +36,8 @@ export async function GET(req: NextRequest) {
       .eq("workspace_id", workspaceId)
       .not("state", "in", '("ARCHIVED","LOST","DISQUALIFIED")');
     active_leads = leadCount ?? 0;
-  } catch {
-    // table may not exist yet
+  } catch (error) {
+    log("error", "dashboard.quick-stats.leads", { workspaceId, error });
   }
 
   try {
@@ -48,8 +48,8 @@ export async function GET(req: NextRequest) {
       .eq("workspace_id", workspaceId)
       .gte("call_started_at", sevenDaysAgo.toISOString());
     recent_calls = callCount ?? 0;
-  } catch {
-    // table may not exist yet
+  } catch (error) {
+    log("error", "dashboard.quick-stats.calls", { workspaceId, error });
   }
 
   try {
@@ -60,8 +60,8 @@ export async function GET(req: NextRequest) {
       .eq("workspace_id", workspaceId)
       .in("state", ["FOLLOW_UP", "REACTIVATE", "NURTURE"]);
     pending_followups = followupCount ?? 0;
-  } catch {
-    // table may not exist yet
+  } catch (error) {
+    log("error", "dashboard.quick-stats.followups", { workspaceId, error });
   }
 
   return NextResponse.json({ active_leads, recent_calls, pending_followups });
