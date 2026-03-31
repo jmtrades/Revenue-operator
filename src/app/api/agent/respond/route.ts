@@ -44,6 +44,11 @@ export async function POST(req: NextRequest) {
 
   const start = Date.now();
 
+  // Auth: voice server must provide a valid internal secret OR a valid call_session_id
+  const VOICE_SERVER_SECRET = process.env.VOICE_SERVER_SECRET;
+  const authHeader = req.headers.get("x-voice-server-key") ?? "";
+  const hasValidSecret = VOICE_SERVER_SECRET && authHeader === VOICE_SERVER_SECRET;
+
   // Rate limit: 60 requests per minute per IP (voice server makes rapid calls during conversations)
   const ip = getClientIp(req);
   const rl = await checkRateLimit(`agent-respond:${ip}`, 60, 60_000);
@@ -77,6 +82,25 @@ export async function POST(req: NextRequest) {
     // Try to load workspace-specific context if we have a conversation/call ID
     let systemPrompt = DEFAULT_SYSTEM;
     const wsId = body?.workspace_id;
+
+    if (wsId) {
+      // Validate: if workspace_id is provided, require either voice server secret OR valid call session
+      if (!hasValidSecret && body?.call_session_id) {
+        const db = getDb();
+        const { data: sessionCheck } = await db
+          .from("call_sessions")
+          .select("id")
+          .eq("id", body.call_session_id)
+          .eq("workspace_id", wsId)
+          .maybeSingle();
+        if (!sessionCheck) {
+          return NextResponse.json({ text: "I'm sorry, something went wrong. Please try calling again." }, { status: 403 });
+        }
+      } else if (!hasValidSecret) {
+        // No secret and no call_session_id — can't verify workspace access
+        // Fall through to default system prompt (no workspace data loaded)
+      }
+    }
 
     if (wsId) {
       try {
