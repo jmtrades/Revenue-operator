@@ -20,6 +20,29 @@ import {
   createSessionCookieAsync,
   isSessionEnabled,
 } from "@/lib/auth/session-edge";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+
+// ——— Upstash rate limiting (edge-compatible) ———
+const ratelimit =
+  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+    ? new Ratelimit({
+        redis: Redis.fromEnv(),
+        limiter: Ratelimit.slidingWindow(60, "60 s"),
+        analytics: true,
+        prefix: "ratelimit:global",
+      })
+    : null;
+
+const authRatelimit =
+  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+    ? new Ratelimit({
+        redis: Redis.fromEnv(),
+        limiter: Ratelimit.slidingWindow(10, "60 s"),
+        analytics: true,
+        prefix: "ratelimit:auth",
+      })
+    : null;
 
 const intlMiddleware = createIntlMiddleware(routing);
 
@@ -185,6 +208,38 @@ export async function proxy(req: NextRequest) {
   // ——— Public/static first: crawlers and bots must never get 401 ———
   if (isPublicOrStaticPath(pathname)) return NextResponse.next();
   if (pathname.startsWith("/api/webhooks/") || pathname.startsWith("/api/cron/")) return NextResponse.next();
+
+  // ——— Rate limiting for API routes (Upstash, edge-compatible) ———
+  if (pathname.startsWith("/api/") && !pathname.startsWith("/api/health") && !pathname.startsWith("/api/system/health")) {
+    const ip =
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      req.headers.get("x-real-ip") ??
+      "anonymous";
+
+    // Stricter limit for auth and trial endpoints (10/min)
+    if (pathname.startsWith("/api/auth/") || pathname.startsWith("/api/trial/")) {
+      if (authRatelimit) {
+        const { success, remaining } = await authRatelimit.limit(ip);
+        if (!success) {
+          return NextResponse.json(
+            { error: "Too many requests. Please try again later." },
+            { status: 429, headers: { "X-RateLimit-Remaining": String(remaining), "Retry-After": "60" } },
+          );
+        }
+      }
+    } else {
+      // General API rate limit (60/min)
+      if (ratelimit) {
+        const { success, remaining } = await ratelimit.limit(ip);
+        if (!success) {
+          return NextResponse.json(
+            { error: "Too many requests. Please try again later." },
+            { status: 429, headers: { "X-RateLimit-Remaining": String(remaining), "Retry-After": "60" } },
+          );
+        }
+      }
+    }
+  }
 
   // ——— API routes: never return HTML, never redirect POST ———
   if (pathname.startsWith("/api/")) {

@@ -1,0 +1,2 @@
+[{"name":"next-build","duration":209491,"timestamp":36977256623,"id":1,"tags":{"buildMode":"default","version":"16.2.1","bundler":"webpack","failed":true},"startTime":1774470879110,"traceId":"664e55c802e9a87e"}]
+[{"name":"next-build","duration":438846,"timestamp":36991481516,"id":1,"tags":{"buildMode":"default","version":"16.2.1","bundler":"webpack","failed":true},"startTime":1774470893335,"traceId":"9e074404fc0f2ebb"}]

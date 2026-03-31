@@ -1,0 +1,218 @@
+================================================================================
+SUPABASE DATABASE SCHEMA AUDIT - FINDINGS SUMMARY
+================================================================================
+
+ANALYSIS DATE: March 23, 2026
+PROJECT: Revenue Operator
+DATABASE: revenue_operator (Supabase)
+ANALYZED CODE PATH: /src/
+
+================================================================================
+CRITICAL FINDINGS
+================================================================================
+
+ISSUE: 131 TABLES REFERENCED IN CODE BUT NOT DEFINED IN DATABASE MIGRATIONS
+
+The application codebase contains 3,000+ database queries referencing 131 tables
+that have NO CREATE TABLE statements in any migration file.
+
+This is a BLOCKING ISSUE for production deployment.
+
+================================================================================
+IMPACT SEVERITY BREAKDOWN
+================================================================================
+
+SEVERITY: CRITICAL
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 3 Tables - Will cause immediate runtime failures                            │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ 1. call_sessions (161 uses)        - Entire call system non-functional      │
+│ 2. action_logs (36 uses)           - Command center & audit non-functional  │
+│ 3. automation_states (10 uses)     - Lead automation non-functional         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+SEVERITY: HIGH
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 18 Tables - Major features will fail                                        │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ • Call analytics & quality metrics (5 uses)
+│ • Campaign system (10 uses)
+│ • Conversation tracking (5 uses)
+│ • Commitment intelligence (8 uses)
+│ • Call outcomes (8 uses)
+└─────────────────────────────────────────────────────────────────────────────┘
+
+SEVERITY: MEDIUM
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 50+ Tables - Supporting features will be degraded                           │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ • Operational tracking (ledger, confidence streak, etc.)
+│ • Billing & payments (events, records, invoices)
+│ • Workspace configuration & state
+│ • Analytics & metrics
+│ • Signal tracking (morning, daily, weekly cycles)
+│ • Staff & team management
+│ • Workflow & sequences
+└─────────────────────────────────────────────────────────────────────────────┘
+
+SEVERITY: LOW
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 60+ Tables - Edge cases and future features                                 │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ • Scenario management
+│ • Voice quality tracking
+│ • Network intelligence
+│ • Advanced analytics
+│ • ML/AI model tracking
+└─────────────────────────────────────────────────────────────────────────────┘
+
+================================================================================
+AFFECTED CODE AREAS
+================================================================================
+
+HIGHEST IMPACT MODULES:
+  • src/app/api/command-center/ - Missing action_logs, automation_states
+  • src/app/app/ - Missing call_sessions (entire layout)
+  • src/lib/conversational-engine/ - Missing commitment_registry
+  • src/lib/intelligence/ - Missing 8+ tables for analytics
+  • src/lib/voice/ - Missing call_* tables
+  • src/lib/campaigns/ - Missing campaign_leads, campaign_enrollments
+  • src/lib/operational-engines/ - Missing operational_ledger
+  • src/lib/signals/ - Missing 20+ signal tracking tables
+
+TOTAL CODE FILES WITH ISSUES: 200+
+
+================================================================================
+FILES TO REVIEW
+================================================================================
+
+Key reports generated:
+  1. SCHEMA_AUDIT_REPORT.md (12 KB)
+     - Comprehensive analysis with tier breakdown
+     - File-by-file impact analysis
+     - Detailed recommendations
+
+  2. MISSING_TABLES.csv (7.7 KB)
+     - All 131 missing tables
+     - Usage counts and severity
+     - Primary file references
+     - Line numbers for quick location
+
+================================================================================
+NEXT STEPS - PRIORITY ORDER
+================================================================================
+
+PHASE 1: IMMEDIATE (Must do before any deployment)
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 1. Do NOT deploy until resolved                                             │
+│ 2. Identify all 131 table schemas from:                                     │
+│    - Code comments and type definitions                                     │
+│    - Supabase documentation                                                 │
+│    - Design specifications                                                  │
+│ 3. Create migration files for all tables                                    │
+│ 4. Run and validate full migration suite                                    │
+│ 5. Test all db.from() calls                                                │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+PHASE 2: PRIORITIZED CREATION (Order matters - dependencies)
+  ✓ Step 1: Core tables (workspaces, users, leads, agents)
+  ✓ Step 2: Critical tables (call_sessions, action_logs, automation_states)
+  ✓ Step 3: Feature tables (campaigns, appointments, conversations)
+  ✓ Step 4: Operational tables (ledger, signals, operational)
+  ✓ Step 5: Analytical tables (metrics, snapshots, aggregates)
+
+PHASE 3: VALIDATION (Quality assurance)
+  ✓ All .from() calls return data
+  ✓ All .select() columns exist
+  ✓ All .insert() operations succeed
+  ✓ Foreign key relationships valid
+  ✓ Indexes created for performance
+  ✓ Zero schema errors on startup
+
+================================================================================
+TECHNICAL DETAILS
+================================================================================
+
+Database: Supabase PostgreSQL
+Schema Name: revenue_operator
+Migration Path: /supabase/migrations/
+
+Statistics:
+  • Total queries analyzed: 3,000+
+  • Tables in migrations: 180+
+  • Tables in code references: 311
+  • Missing tables: 131
+  • Critical tables: 3
+  • High-priority tables: 18
+  • Coverage gap: 42%
+
+Files Analyzed:
+  • TypeScript/TSX files: 400+
+  • Migration files: 180+
+  • Type definition files: 30+
+  • Total lines scanned: 500,000+
+
+================================================================================
+RISK ASSESSMENT
+================================================================================
+
+Production Readiness: ⚠ NOT READY FOR PRODUCTION ⚠
+
+Current State:
+  ✗ Database schema incomplete (131 missing tables)
+  ✗ Code expects tables that don't exist
+  ✗ Queries will fail at runtime
+  ✗ No audit trail (action_logs missing)
+  ✗ No call tracking (call_sessions missing)
+
+Risks:
+  ✗ Data loss - operations not tracked
+  ✗ Application crashes - missing tables
+  ✗ Audit failures - no audit_logs
+  ✗ Call system failure - no call_sessions
+  ✗ Lead automation failure - no automation_states
+
+Deployment Impact:
+  ✗ High - Multiple critical systems will fail
+  ✗ Will require emergency rollback if deployed
+  ✗ Data consistency cannot be guaranteed
+
+================================================================================
+REMEDIATION TIMELINE
+================================================================================
+
+ESTIMATED TIME TO COMPLETION:
+  • Schema extraction: 4-6 hours
+  • Migration creation: 8-12 hours
+  • Testing & validation: 4-6 hours
+  • TOTAL: 16-24 hours
+
+DEPENDENCIES:
+  • Access to table schema specifications
+  • Developer time to create migrations
+  • Test environment for validation
+  • Supabase project with appropriate permissions
+
+================================================================================
+CONTACT & ESCALATION
+================================================================================
+
+This is a CRITICAL infrastructure issue requiring immediate attention.
+
+Key stakeholders:
+  • Database Administrator
+  • Backend Team Lead
+  • Deployment Engineer
+  • Technical Director
+
+DO NOT DEPLOY until fully resolved and tested.
+
+================================================================================
+END OF REPORT
+================================================================================
+
+For detailed analysis, see: SCHEMA_AUDIT_REPORT.md
+For table listing, see: MISSING_TABLES.csv
+
+Generated: March 23, 2026
+Analysis Tool: Claude Code Schema Audit
