@@ -39,15 +39,33 @@ export async function POST(
 
   try {
     const db = getDb();
+
+    // 1. Delete the connection record
     await db
       .from("workspace_crm_connections")
       .delete()
       .eq("workspace_id", session.workspaceId)
       .eq("provider", provider);
 
+    // 2. Clean up orphaned sync queue jobs for this provider
+    await db
+      .from("sync_queue")
+      .delete()
+      .eq("workspace_id", session.workspaceId)
+      .eq("provider", provider)
+      .in("status", ["pending", "processing"]);
+
+    // 3. Clean up stale field mappings
+    await db
+      .from("integration_configs")
+      .delete()
+      .eq("workspace_id", session.workspaceId)
+      .eq("provider", provider)
+      .eq("config_type", "field_mapping");
+
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error(`[CRM Disconnect] Error disconnecting ${provider}:`, err);
+    // Error disconnecting CRM — details omitted to protect PII
     return NextResponse.json(
       { error: "Failed to disconnect" },
       { status: 500 }
