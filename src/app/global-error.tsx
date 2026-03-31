@@ -46,7 +46,7 @@ export default function GlobalError({
               marginBottom: "1rem",
             }}
           >
-            Something went wrong
+            Temporary issue
           </p>
           <h1
             style={{
@@ -57,7 +57,7 @@ export default function GlobalError({
               margin: "0 0 0.75rem",
             }}
           >
-            An unexpected error occurred
+            We hit a snag loading this page
           </h1>
           <p
             style={{

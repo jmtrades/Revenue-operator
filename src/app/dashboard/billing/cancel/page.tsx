@@ -118,7 +118,7 @@ export default function CancelSubscriptionPage() {
 
       setStage("confirm");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(err instanceof Error ? err.message : "Could not process cancellation. Please try again.");
       setCanceling(false);
     }
   };
@@ -149,7 +149,7 @@ export default function CancelSubscriptionPage() {
         window.location.href = data.url;
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(err instanceof Error ? err.message : "Could not open billing portal. Please try again.");
       setCanceling(false);
     }
   };
