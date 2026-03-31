@@ -43,19 +43,23 @@ export function KnowledgeStepContent({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ agent_id: agent.id }),
       });
-      if (res.ok) {
-        const data = (await res.json()) as {
-          knowledge_base?: { faq?: Array<{ q?: string; a?: string }> };
-        };
-        const faq = data.knowledge_base?.faq ?? [];
-        onChange({
-          faq: faq.map((item, i) => ({
-            id: `seed-${Date.now()}-${i}`,
-            question: item.q ?? "",
-            answer: item.a ?? "",
-          })),
-        });
+      if (!res.ok) {
+        setImportError("Could not generate FAQs automatically. Try adding them manually.");
+        return;
       }
+      const data = (await res.json()) as {
+        knowledge_base?: { faq?: Array<{ q?: string; a?: string }> };
+      };
+      const faq = data.knowledge_base?.faq ?? [];
+      onChange({
+        faq: faq.map((item, i) => ({
+          id: `seed-${Date.now()}-${i}`,
+          question: item.q ?? "",
+          answer: item.a ?? "",
+        })),
+      });
+    } catch {
+      setImportError("Could not generate FAQs automatically. Try adding them manually.");
     } finally {
       setSeeding(false);
     }

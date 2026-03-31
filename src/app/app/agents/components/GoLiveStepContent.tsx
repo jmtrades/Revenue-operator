@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { CheckCircle2 } from "lucide-react";
@@ -50,12 +51,15 @@ export function GoLiveStepContent({
     (n) => !n.assigned_agent_id || n.assigned_agent_id === agent.id,
   );
 
-  // Auto-assign: if exactly one number and none assigned, auto-assign it
-  const shouldAutoAssign = !assignedNumber && unassignedNumbers.length === 1;
-  if (shouldAutoAssign && unassignedNumbers[0]) {
-    // Trigger auto-assign on first render
-    void onAssignNumber(unassignedNumbers[0].id, agent.id);
-  }
+  // Auto-assign: if exactly one number and none assigned, auto-assign it on first render only
+  const autoAssignedRef = useRef(false);
+  useEffect(() => {
+    const shouldAutoAssign = !assignedNumber && unassignedNumbers.length === 1;
+    if (shouldAutoAssign && unassignedNumbers[0] && !autoAssignedRef.current) {
+      autoAssignedRef.current = true;
+      void onAssignNumber(unassignedNumbers[0].id, agent.id);
+    }
+  }, [assignedNumber, unassignedNumbers, onAssignNumber, agent.id]);
 
   const handleAssign = async (numberId: string | "") => {
     if (numberId === "") {
