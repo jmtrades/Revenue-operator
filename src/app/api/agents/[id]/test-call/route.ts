@@ -46,7 +46,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   const rawPhone = body.phone_number?.trim() ?? "";
   const digits = rawPhone.replace(/\D/g, "");
   if (!rawPhone || digits.length < 10 || digits.length > 15) {
-    return NextResponse.json({ ok: true, message: "Add a phone number to receive a test call, or call from the Activity feed." });
+    return NextResponse.json({ ok: false, error: "Please enter a valid phone number (10-15 digits) to receive a test call.", code: "invalid_phone" }, { status: 400 });
   }
   // Normalize to E.164: if already has +, trust it; if 10 digits, assume US (+1); otherwise prefix +
   const phone = rawPhone.startsWith("+") ? rawPhone : digits.length === 10 ? `+1${digits}` : `+${digits}`;
