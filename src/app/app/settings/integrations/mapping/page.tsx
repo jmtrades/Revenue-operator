@@ -32,6 +32,28 @@ function isCrmProviderId(s: string): s is CrmProviderId {
   return Object.keys(CRM_FIELDS_BY_PROVIDER).includes(s);
 }
 
+function MappingSuggestion({ provider, rtField, currentCrmField, crmFields, onApply }: {
+  provider: CrmProviderId;
+  rtField: string;
+  currentCrmField: string;
+  crmFields: Array<{ key: string; label: string }>;
+  onApply: (crmField: string) => void;
+}) {
+  const defaults = getDefaultMappings(provider);
+  const suggested = defaults.find((d) => d.rtField === rtField);
+  if (!suggested || suggested.crmField === currentCrmField) return null;
+  const suggestedLabel = crmFields.find((f) => f.key === suggested.crmField)?.label ?? suggested.crmField;
+  return (
+    <button
+      type="button"
+      onClick={() => onApply(suggested.crmField)}
+      className="mt-1 text-[10px] text-violet-400 hover:text-violet-300 transition-colors"
+    >
+      Suggested: {suggestedLabel}
+    </button>
+  );
+}
+
 export default function IntegrationsMappingPage() {
   const tSettings = useTranslations("settings");
   const tToast = useTranslations("toast");
@@ -198,23 +220,7 @@ export default function IntegrationsMappingPage() {
                       <option key={f.key} value={f.key}>{f.label}</option>
                     ))}
                   </select>
-                  {(() => {
-                    const defaults = getDefaultMappings(provider);
-                    const suggested = defaults.find((d) => d.rtField === m.rtField);
-                    if (suggested && suggested.crmField !== m.crmField) {
-                      const suggestedLabel = crmFields.find((f) => f.key === suggested.crmField)?.label ?? suggested.crmField;
-                      return (
-                        <button
-                          type="button"
-                          onClick={() => updateMapping(index, { crmField: suggested.crmField })}
-                          className="mt-1 text-[10px] text-violet-400 hover:text-violet-300 transition-colors"
-                        >
-                          Suggested: {suggestedLabel}
-                        </button>
-                      );
-                    }
-                    return null;
-                  })()}
+                  <MappingSuggestion provider={provider} rtField={m.rtField} currentCrmField={m.crmField} crmFields={crmFields} onApply={(crmField) => updateMapping(index, { crmField })} />
                 </div>
                 <div className="col-span-2">
                   <select
