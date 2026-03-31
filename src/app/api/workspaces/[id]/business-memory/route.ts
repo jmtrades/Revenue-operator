@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getBusinessMemoryWithProvenance } from "@/lib/business-memory";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const MEMORY_TYPES = ["common_objections", "avg_buying_cycle_days", "conversion_triggers", "loss_patterns"] as const;
 
@@ -28,6 +29,8 @@ export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
   const { id } = await params;
   const authErrPut = await requireWorkspaceAccess(req, id);
   if (authErrPut) return authErrPut;

@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const updateContactSchema = z.object({
   name: z.string().min(1).max(255).optional(),
@@ -36,6 +37,8 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
   const { id } = await params;
   const db = getDb();
   const { data: existing } = await db.from("leads").select("workspace_id").eq("id", id).maybeSingle();

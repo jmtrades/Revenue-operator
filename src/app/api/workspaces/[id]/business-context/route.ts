@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function GET(
   req: NextRequest,
@@ -52,6 +53,8 @@ export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
   const { id } = await params;
   const authErr = await requireWorkspaceAccess(req, id);
   if (authErr) return authErr;
@@ -60,6 +63,12 @@ export async function PUT(
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+
+  // Prevent oversized payloads from being stored in JSONB columns
+  const bodySize = JSON.stringify(body).length;
+  if (bodySize > 64_000) {
+    return NextResponse.json({ error: "Payload too large (max 64KB)" }, { status: 413 });
   }
 
   const db = getDb();
