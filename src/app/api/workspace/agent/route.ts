@@ -230,7 +230,7 @@ export async function PATCH(req: NextRequest) {
   try {
     const db = getDb();
     const { error } = await db.from("workspaces").update(update).eq("id", session.workspaceId);
-    if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Could not update workspace settings. Please try again." }, { status: 500 });
 
     // Update workspace_business_context with advanced fields if provided
     const businessContextUpdate: Record<string, unknown> = {};

@@ -140,7 +140,7 @@ export async function POST(req: NextRequest) {
 
         if (claimError) {
           return NextResponse.json(
-            { ok: false, error: "Something went wrong with this service. Please try again." },
+            { ok: false, error: "Service temporarily unavailable. Please try again." },
             { status: 502 },
           );
         }

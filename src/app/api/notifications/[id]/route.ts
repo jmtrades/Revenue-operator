@@ -38,6 +38,6 @@ export async function PATCH(
     .eq("id", id)
     .eq("user_id", session.userId);
 
-  if (updateError) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  if (updateError) return NextResponse.json({ error: "Could not process notification. Please try again." }, { status: 500 });
   return NextResponse.json({ ok: true });
 }

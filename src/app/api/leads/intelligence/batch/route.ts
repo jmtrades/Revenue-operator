@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
 
     if (error) {
       log("error", "leads.intelligence.batch_lookup_error", { error: error.message });
-      return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+      return NextResponse.json({ error: "Could not process lead data" }, { status: 500 });
     }
 
     // Build map of lead_id -> intelligence summary

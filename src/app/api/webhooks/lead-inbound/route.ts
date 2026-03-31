@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
     .select("id")
     .maybeSingle();
 
-  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Could not process webhook data. Please try again." }, { status: 500 });
 
   // Autonomous Brain: compute initial intelligence for inbound lead (non-blocking)
   const createdId = (_lead as { id: string } | null)?.id;

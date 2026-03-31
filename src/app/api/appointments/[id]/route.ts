@@ -134,6 +134,6 @@ export async function DELETE(
   }
 
   const { error: deleteErr } = await db.from("appointments").update({ status: "cancelled", updated_at: new Date().toISOString() }).eq("id", id);
-  if (deleteErr) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  if (deleteErr) return NextResponse.json({ error: "Could not process appointment. Please try again." }, { status: 500 });
   return NextResponse.json({ ok: true });
 }

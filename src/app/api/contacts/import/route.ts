@@ -208,7 +208,7 @@ export async function POST(req: NextRequest) {
   const insertResult = await runWithWriteContextAsync("api", async () =>
     db.from("leads").insert(toInsert).select("id")
   ) as { data?: { id: string }[] | null; error?: unknown };
-  if (insertResult.error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  if (insertResult.error) return NextResponse.json({ error: "Could not process contact data. Please try again." }, { status: 500 });
   const imported = Array.isArray(insertResult.data) ? insertResult.data.length : 0;
 
   return NextResponse.json({

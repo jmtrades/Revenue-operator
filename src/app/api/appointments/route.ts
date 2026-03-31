@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
   }
 
   const { data: rows, error } = await query;
-  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Could not process appointment. Please try again." }, { status: 500 });
 
   const list = (rows ?? []) as { id: string; lead_id: string; title: string; start_time: string; end_time?: string | null; location?: string | null; status: string; notes?: string | null; external_calendar_id?: string | null }[];
   const leadIds = [...new Set(list.map((a) => a.lead_id))];

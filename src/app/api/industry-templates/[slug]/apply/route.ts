@@ -131,7 +131,7 @@ export async function POST(
 
     if (templateError) {
       return NextResponse.json(
-        { error: "Something went wrong. Please try again." },
+        { error: "Could not apply template. Please try again." },
         { status: 500 }
       );
     }
@@ -182,7 +182,7 @@ export async function POST(
 
     if (agentsError) {
       return NextResponse.json(
-        { error: "Something went wrong. Please try again." },
+        { error: "Could not apply template. Please try again." },
         { status: 500 }
       );
     }
@@ -251,7 +251,7 @@ export async function POST(
       if (createError) {
         log("error", "[DB Error] Create agent from template:", { error: createError });
         return NextResponse.json(
-          { error: "Something went wrong. Please try again." },
+          { error: "Could not apply template. Please try again." },
           { status: 500 }
         );
       }
@@ -357,7 +357,7 @@ export async function POST(
     if (updateError) {
       log("error", "[DB Error] Update agent with template:", { error: updateError });
       return NextResponse.json(
-        { error: "Something went wrong. Please try again." },
+        { error: "Could not apply template. Please try again." },
         { status: 500 }
       );
     }

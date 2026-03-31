@@ -39,6 +39,6 @@ export async function POST(req: NextRequest) {
     })
     .select()
     .maybeSingle();
-  if (error) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Could not save onboarding data. Please try again." }, { status: 500 });
   return NextResponse.json(agent);
 }

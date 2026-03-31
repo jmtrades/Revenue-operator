@@ -305,7 +305,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     log("error", "Unexpected error applying playbook:", { error: err });
     return NextResponse.json(
-      { error: "Something went wrong applying the playbook" },
+      { error: "Could not apply the playbook. Please try again" },
       { status: 500 }
     );
   }

@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
   }
   const { data, error: dbErr } = await q;
 
-  if (dbErr) return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
+  if (dbErr) return NextResponse.json({ error: "Could not update workspace settings. Please try again." }, { status: 500 });
   const list = (data ?? []) as {
     id: string;
     to_email: string;

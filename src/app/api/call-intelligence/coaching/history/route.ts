@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
   } catch (err) {
     log("error", "[coaching-history] Unexpected error:", { error: err });
     return NextResponse.json(
-      { error: "Something went wrong with this service. Please try again." },
+      { error: "Service temporarily unavailable. Please try again." },
       { status: 502 }
     );
   }

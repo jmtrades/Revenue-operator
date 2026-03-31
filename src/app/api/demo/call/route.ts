@@ -528,7 +528,7 @@ export async function POST(req: NextRequest) {
       error: err instanceof Error ? err.message : String(err),
     });
     return NextResponse.json(
-      { ok: false, error: "Something went wrong. Please try again in a moment." },
+      { ok: false, error: "Demo service temporarily unavailable. Please try again shortly." },
       { status: 500 },
     );
   }
