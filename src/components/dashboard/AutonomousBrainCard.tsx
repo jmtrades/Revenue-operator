@@ -16,6 +16,30 @@ interface BrainDashboardStats {
   top_actions: Array<{ action_type: string; count: number }>;
 }
 
+interface BrainAction {
+  action_type: string;
+  success: boolean;
+  details: string;
+  executed_at: string;
+  lead_name?: string;
+  confidence: number;
+}
+
+const ACTION_LABELS: Record<string, string> = {
+  send_sms: "SMS sent",
+  send_email: "Email sent",
+  enroll_sequence: "Sequence enrolled",
+  schedule_call: "Call scheduled",
+  schedule_callback: "Callback scheduled",
+  book_appointment: "Appointment booked",
+  escalate_human: "Escalated to team",
+  reactivate: "Lead reactivated",
+  pause: "Lead paused",
+  score_lead: "Lead scored",
+  update_lead_state: "Status updated",
+  no_action: "Evaluated — no action needed",
+};
+
 const EMPTY: BrainDashboardStats = {
   total_leads_with_intelligence: 0,
   autonomous_actions_24h: 0,
@@ -32,6 +56,7 @@ export function AutonomousBrainCard() {
   const ws = useWorkspaceSafe();
   const workspaceId = ws?.workspaceId ?? "";
   const [stats, setStats] = useState<BrainDashboardStats>(EMPTY);
+  const [recentActions, setRecentActions] = useState<BrainAction[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -42,14 +67,18 @@ export function AutonomousBrainCard() {
       return;
     }
     setFetchError(false);
-    fetch(`/api/dashboard/brain-stats?workspace_id=${encodeURIComponent(workspaceId)}`, {
-      credentials: "include",
-    })
-      .then((r) => {
-        if (!r.ok) { setFetchError(true); return null; }
-        return r.json();
+    Promise.all([
+      fetch(`/api/dashboard/brain-stats?workspace_id=${encodeURIComponent(workspaceId)}`, {
+        credentials: "include",
+      }).then((r) => r.ok ? r.json() : null),
+      fetch(`/api/dashboard/brain-activity?workspace_id=${encodeURIComponent(workspaceId)}&limit=5`, {
+        credentials: "include",
+      }).then((r) => r.ok ? r.json() : null).catch(() => null),
+    ])
+      .then(([statsData, activityData]) => {
+        setStats(statsData ?? EMPTY);
+        if (activityData?.actions) setRecentActions(activityData.actions as BrainAction[]);
       })
-      .then((data: BrainDashboardStats | null) => setStats(data ?? EMPTY))
       .catch(() => { setFetchError(true); setStats(EMPTY); })
       .finally(() => setLoading(false));
   }, [workspaceId]);
@@ -242,9 +271,53 @@ export function AutonomousBrainCard() {
                 </div>
               )}
             </div>
+
+            {/* Live activity feed — recent brain actions */}
+            {recentActions.length > 0 && (
+              <div className="pt-3 border-t border-[var(--border-default)]">
+                <div className="flex items-center gap-2 mb-2.5">
+                  <Activity className="w-3.5 h-3.5 text-violet-400" />
+                  <span className="text-[11px] font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Recent actions</span>
+                </div>
+                <div className="space-y-2">
+                  {recentActions.filter(a => a.action_type !== "no_action").slice(0, 5).map((action, i) => {
+                    const ago = getTimeAgo(action.executed_at);
+                    return (
+                      <div key={i} className="flex items-start gap-2.5 px-2.5 py-2 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-default)]">
+                        <div className={`mt-0.5 w-1.5 h-1.5 rounded-full shrink-0 ${action.success ? "bg-emerald-500" : "bg-red-400"}`} />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-2">
+                            <p className="text-xs font-medium text-[var(--text-primary)] truncate">
+                              {ACTION_LABELS[action.action_type] ?? action.action_type}
+                            </p>
+                            <span className="text-[10px] text-[var(--text-tertiary)] shrink-0">{ago}</span>
+                          </div>
+                          {action.lead_name && (
+                            <p className="text-[11px] text-[var(--text-secondary)] truncate mt-0.5">
+                              {action.lead_name}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
     </div>
   );
+}
+
+function getTimeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d ago`;
 }
