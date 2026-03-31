@@ -84,10 +84,16 @@ export default function IntegrationsMappingPage() {
   };
 
   const addMapping = () => {
-    setConfig((prev) => ({
-      ...prev,
-      mappings: [...prev.mappings, { rtField: REVENUE_OPERATOR_FIELDS[0].key, crmField: crmFields[0]?.key ?? "", transformation: "none" }],
-    }));
+    setConfig((prev) => {
+      // Auto-suggest the next unmapped field pair from defaults
+      const defaults = getDefaultMappings(provider);
+      const usedRtFields = new Set(prev.mappings.map((m) => m.rtField));
+      const nextDefault = defaults.find((d) => !usedRtFields.has(d.rtField));
+      const newRow: MapEntry = nextDefault
+        ? { rtField: nextDefault.rtField, crmField: nextDefault.crmField, transformation: nextDefault.transformation ?? "none" }
+        : { rtField: REVENUE_OPERATOR_FIELDS[0].key, crmField: crmFields[0]?.key ?? "", transformation: "none" };
+      return { ...prev, mappings: [...prev.mappings, newRow] };
+    });
     setTestResult(null);
   };
 
@@ -192,6 +198,23 @@ export default function IntegrationsMappingPage() {
                       <option key={f.key} value={f.key}>{f.label}</option>
                     ))}
                   </select>
+                  {(() => {
+                    const defaults = getDefaultMappings(provider);
+                    const suggested = defaults.find((d) => d.rtField === m.rtField);
+                    if (suggested && suggested.crmField !== m.crmField) {
+                      const suggestedLabel = crmFields.find((f) => f.key === suggested.crmField)?.label ?? suggested.crmField;
+                      return (
+                        <button
+                          type="button"
+                          onClick={() => updateMapping(index, { crmField: suggested.crmField })}
+                          className="mt-1 text-[10px] text-violet-400 hover:text-violet-300 transition-colors"
+                        >
+                          Suggested: {suggestedLabel}
+                        </button>
+                      );
+                    }
+                    return null;
+                  })()}
                 </div>
                 <div className="col-span-2">
                   <select

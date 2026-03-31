@@ -81,6 +81,7 @@ export default function SmartSetupPage() {
 
       const response = await fetch("/api/workspace/apply-playbook", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           workspace_id: workspaceId,
@@ -127,6 +128,7 @@ export default function SmartSetupPage() {
 
       const response = await fetch("/api/workspace/auto-setup", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           workspace_id: workspaceId,

@@ -175,6 +175,7 @@ export function LeadsKanban({ groupedByStatus, onMoveLead, onOpenLead }: LeadsKa
 
     fetch("/api/leads/intelligence/batch", {
       method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ lead_ids: allLeadIds.slice(0, 50) }),
     })

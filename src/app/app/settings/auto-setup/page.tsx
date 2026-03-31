@@ -119,6 +119,7 @@ export default function AutoSetupPage() {
     try {
       const response = await fetch("/api/workspace/auto-setup", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           website_url: url.trim() || undefined,
@@ -172,6 +173,7 @@ export default function AutoSetupPage() {
     try {
       const response = await fetch("/api/workspace/one-click-setup", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           website_url: url.trim() || undefined,
