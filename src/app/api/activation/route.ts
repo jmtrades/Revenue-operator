@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
@@ -212,7 +213,7 @@ export async function POST(req: NextRequest) {
     // Synthetic protection bootstrap removed - only show real activity
 
     const { sendActivationConfirmationEmail } = await import("@/lib/email/activation");
-    sendActivationConfirmationEmail(workspaceId).catch((err) => { console.error("[activation] error:", err instanceof Error ? err.message : err); });
+    sendActivationConfirmationEmail(workspaceId).catch((err) => { log("error", "[activation] error:", { error: err instanceof Error ? err.message : err }); });
 
     return NextResponse.json({
       step: "activated",

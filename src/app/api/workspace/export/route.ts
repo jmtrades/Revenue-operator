@@ -12,6 +12,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -56,7 +57,7 @@ export async function GET(req: NextRequest) {
           .limit(10000); // Safety cap
 
         if (error) {
-          console.error(`[export] Error fetching ${table}:`, error.message);
+          log("error", `[export] Error fetching ${table}:`, { error: error.message });
           return { table, data: [], error: error.message };
         }
         return { table, data: data ?? [], error: null };

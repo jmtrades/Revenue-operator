@@ -611,7 +611,7 @@ async function handleStripeWebhookEvent(
           // Non-blocking: email delivery happens via the send queue.
           // Catch any errors and log them
           void sendDunningEmail(workspaceId, customerEmail.trim().toLowerCase(), failureNumber).catch((err) => {
-            console.error("[billing webhook] dunning email failed:", err instanceof Error ? err.message : err);
+            log("error", "[billing webhook] dunning email failed:", { error: err instanceof Error ? err.message : err });
           });
         }
 

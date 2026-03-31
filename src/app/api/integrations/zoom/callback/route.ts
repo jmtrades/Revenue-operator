@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { encrypt } from "@/lib/encryption";
 import { verifyOAuthState } from "@/lib/integrations/oauth-state";
+import { log } from "@/lib/logger";
 
 const ZOOM_TOKEN_URL = "https://zoom.us/oauth/token";
 
@@ -108,7 +109,7 @@ export async function GET(req: NextRequest) {
     // Synthetic protection bootstrap removed - only show real activity
 
     const { sendActivationConfirmationEmail } = await import("@/lib/email/activation");
-    sendActivationConfirmationEmail(workspaceId).catch((err) => { console.error("[integrations/zoom/callback] error:", err instanceof Error ? err.message : err); });
+    sendActivationConfirmationEmail(workspaceId).catch((err) => { log("error", "[integrations/zoom/callback] error:", { error: err instanceof Error ? err.message : err }); });
   } catch (_err) {
     // Store error; redirect below
     return NextResponse.redirect(new URL("/dashboard/activation?error=zoom_store_failed", req.url));

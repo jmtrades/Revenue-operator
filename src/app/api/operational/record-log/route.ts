@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 const LIMIT = 80;
 const MAX_THREADS_CHECK = 100;
@@ -66,10 +67,10 @@ export async function GET(request: NextRequest) {
                 .maybeSingle();
               if (!existing) {
                 const { recordOrientationStatement } = await import("@/lib/orientation/records");
-                await recordOrientationStatement(workspaceId, "Completion was recorded without shared confirmation.").catch((err) => { console.error("[operational/record-log] error:", err instanceof Error ? err.message : err); });
+                await recordOrientationStatement(workspaceId, "Completion was recorded without shared confirmation.").catch((err) => { log("error", "[operational/record-log] error:", { error: err instanceof Error ? err.message : err }); });
               }
             }
-            await detectAndRecordCompletionDecay(threadId, workspaceId).catch((err) => { console.error("[operational/record-log] error:", err instanceof Error ? err.message : err); });
+            await detectAndRecordCompletionDecay(threadId, workspaceId).catch((err) => { log("error", "[operational/record-log] error:", { error: err instanceof Error ? err.message : err }); });
           } catch {
             // Continue to next thread
           }

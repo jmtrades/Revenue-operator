@@ -10,6 +10,7 @@ import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   try {
@@ -101,7 +102,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ threads });
   } catch (error) {
-    console.error("[messages/threads]", error);
+    log("error", "[messages/threads]", { error: error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

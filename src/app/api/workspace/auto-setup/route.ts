@@ -160,7 +160,7 @@ export async function POST(req: NextRequest) {
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("Auto-setup error:", message, err);
+    log("error", "Auto-setup error:", { error: message, err });
 
     if (
       message.includes("Unable to fetch") ||
@@ -194,3 +194,4 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+import { log } from "@/lib/logger";

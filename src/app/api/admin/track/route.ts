@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 // Simple in-memory rate limiter: IP -> timestamp of last request
 const ipLastRequestMap: Map<string, number> = new Map();
@@ -89,7 +90,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (error) {
-      console.error("[admin/track]", error);
+      log("error", "[admin/track]", { error: error });
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 
@@ -98,7 +99,7 @@ export async function POST(req: NextRequest) {
       rate_limit_remaining: rateLimit.remaining,
     });
   } catch (err: any) {
-    console.error("[admin/track catch]", err);
+    log("error", "[admin/track catch]", { error: err });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

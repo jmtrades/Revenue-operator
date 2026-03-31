@@ -11,6 +11,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 function normalizeText(text: string): string {
   return text.replace(/\r\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
@@ -163,7 +164,7 @@ export async function POST(req: NextRequest) {
       message: "File uploaded successfully and chunked for analysis",
     });
   } catch (error) {
-    console.error("Knowledge upload error:", error);
+    log("error", "Knowledge upload error:", { error: error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

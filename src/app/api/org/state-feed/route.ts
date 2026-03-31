@@ -21,7 +21,8 @@ export async function GET(request: NextRequest) {
     const statements = await getOrgStateFeedStatements(workspaceId);
     return NextResponse.json(statements);
   } catch (err) {
-    console.error("[state-feed]", err instanceof Error ? err.message : String(err));
+    log("error", "[state-feed]", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Failed to load state feed" }, { status: 500 });
   }
 }
+import { log } from "@/lib/logger";

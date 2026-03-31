@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { verifyOAuthState } from "@/lib/integrations/oauth-state";
+import { log } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -125,7 +126,7 @@ export async function GET(
 
     if (!tokenRes.ok) {
       const errText = await tokenRes.text();
-      console.error(`[CRM Callback] Token exchange failed for ${provider}: ${tokenRes.status}`, errText);
+      log("error", `[CRM Callback] Token exchange failed for ${provider}: ${tokenRes.status}`, { error: errText });
       return NextResponse.redirect(
         `${returnUrl}?crm=error&provider=${provider}&reason=token_exchange_failed`
       );
@@ -167,7 +168,7 @@ export async function GET(
       );
 
     if (upsertErr) {
-      console.error(`[CRM Callback] Database upsert failed for ${provider}:`, upsertErr);
+      log("error", `[CRM Callback] Database upsert failed for ${provider}:`, { error: upsertErr });
       return NextResponse.redirect(
         `${returnUrl}?crm=error&provider=${provider}&reason=db_error`
       );
@@ -175,7 +176,7 @@ export async function GET(
 
     return NextResponse.redirect(`${returnUrl}?crm=connected&provider=${provider}`);
   } catch (err) {
-    console.error(`[CRM Callback] Unexpected error for ${provider}:`, err);
+    log("error", `[CRM Callback] Unexpected error for ${provider}:`, { error: err });
     return NextResponse.redirect(
       `${returnUrl}?crm=error&provider=${provider}&reason=server_error`
     );

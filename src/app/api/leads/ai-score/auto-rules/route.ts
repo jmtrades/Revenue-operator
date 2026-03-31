@@ -5,6 +5,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getWorkspaceSettings, setWorkspaceSettings } from "@/lib/db/workspace-settings";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export interface AutoScoringRules {
   score_on_call_complete: boolean;
@@ -102,7 +103,7 @@ export async function POST(req: NextRequest) {
       ai_rescore_interval_hours: String(body.rescore_interval_hours ?? DEFAULT_RULES.rescore_interval_hours),
     });
   } catch (upsertError) {
-    console.error("[AI Score Rules] Upsert error:", upsertError);
+    log("error", "[AI Score Rules] Upsert error:", { error: upsertError });
     return NextResponse.json(
       { error: "Failed to save settings" },
       { status: 500 }

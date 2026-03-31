@@ -181,7 +181,7 @@ export async function POST(req: NextRequest) {
     .select()
     .maybeSingle();
   if (aptErr || !appointment) {
-    console.error("[appointments] insert error:", (aptErr as Error)?.message);
+    log("error", "[appointments] insert error:", { error: (aptErr as Error)?.message });
     return NextResponse.json({ error: "Could not create appointment. Please try again." }, { status: 500 });
   }
 
@@ -285,9 +285,10 @@ export async function PATCH(req: NextRequest) {
     .maybeSingle();
 
   if (updateErr || !appointment) {
-    console.error("[appointments] update error:", (updateErr as Error)?.message);
+    log("error", "[appointments] update error:", { error: (updateErr as Error)?.message });
     return NextResponse.json({ error: "Could not update appointment" }, { status: 500 });
   }
 
   return NextResponse.json(appointment);
 }
+import { log } from "@/lib/logger";

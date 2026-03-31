@@ -3,6 +3,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { validateEmail } from "@/lib/auth/validate";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -101,7 +102,7 @@ export async function POST(req: NextRequest) {
 
   if (error) {
     // May not have workspace_invites table — still return success
-    console.error("[workspace/invite] Insert failed:", error);
+    log("error", "[workspace/invite] Insert failed:", { error: error });
     return NextResponse.json({ ok: true, pending: true, note: "Invite recorded" });
   }
 

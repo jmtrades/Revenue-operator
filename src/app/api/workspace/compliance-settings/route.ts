@@ -12,6 +12,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { z } from "zod";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 const POLICIES_SCHEMA = z.object({
   consentMode: z.enum(["one-party", "two-party"]).default("two-party"),
@@ -122,7 +123,7 @@ export async function PATCH(req: NextRequest) {
     .eq("id", workspaceId);
 
   if (error) {
-    console.error("compliance-settings update error:", error.message);
+    log("error", "compliance-settings update error:", { error: error.message });
     // Fallback: try without legacy columns in case they don't exist
     await db
       .from("workspaces")

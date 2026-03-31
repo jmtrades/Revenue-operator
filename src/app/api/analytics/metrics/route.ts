@@ -10,6 +10,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 export type DailyMetricRow = {
   id: string;
@@ -124,7 +125,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error("[analytics/metrics]", error);
+    log("error", "[analytics/metrics]", { error: error });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { isAdmin, forbidden } from "@/lib/admin/auth";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 function convertToCSV(data: any[]): string {
   if (data.length === 0) {
@@ -65,7 +66,7 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("[API] admin export signups error:", error);
+    log("error", "[API] admin export signups error:", { error: error });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
     .order("last_activity_at", { ascending: false })
     .range(offset, offset + limit - 1);
   if (leadsErr) {
-    console.error("[leads] GET query failed:", leadsErr.message);
+    log("error", "[leads] GET query failed:", { error: leadsErr.message });
     return NextResponse.json({ error: "Failed to load leads" }, { status: 500 });
   }
 
@@ -162,7 +162,7 @@ export async function POST(req: NextRequest) {
 
   if (error) {
     const isWriteGuard = error instanceof Error && error.name === "UnsafeWriteError";
-    console.error("[leads] POST insert failed:", isWriteGuard ? `UnsafeWriteError: ${(error as Error).message}` : (error as { message?: string })?.message ?? String(error));
+    log("error", "[leads] POST insert failed:", { error: isWriteGuard ? `UnsafeWriteError: ${(error as Error).message}` : (error as { message?: string })?.message ?? String(error) });
     return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
 
@@ -307,3 +307,4 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json(lead);
 }
+import { log } from "@/lib/logger";

@@ -11,6 +11,7 @@ import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getSession } from "@/lib/auth/request-session";
 import { BILLING_PLANS, type PlanSlug, normalizeTier } from "@/lib/billing-plans";
+import { log } from "@/lib/logger";
 
 function clamp(n: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, n));
@@ -145,7 +146,7 @@ export async function GET(req: NextRequest) {
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error("[customers/health]", msg);
+    log("error", "[customers/health]", { error: msg });
     return NextResponse.json({ error: "Failed to compute customer health", details: msg }, { status: 500 });
   }
 }

@@ -10,6 +10,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 interface SyncRequest {
   workspace_id?: string;
@@ -66,7 +67,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       .lt("last_activity_at", fourteenDaysAgo);
 
     if (queryErr) {
-      console.error("[cold-leads-sync] Query failed:", queryErr.message);
+      log("error", "[cold-leads-sync] Query failed:", { error: queryErr.message });
       return NextResponse.json(
         { synced: 0, total_cold: 0, error: "Failed to query leads" },
         { status: 500 }
@@ -146,7 +147,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       .insert(recordsToInsert);
 
     if (insertErr) {
-      console.error("[cold-leads-sync] Insert failed:", insertErr.message);
+      log("error", "[cold-leads-sync] Insert failed:", { error: insertErr.message });
       return NextResponse.json(
         { synced: 0, total_cold: leadIds.length, error: "Failed to insert leads" },
         { status: 500 }
@@ -158,7 +159,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       total_cold: leadIds.length,
     });
   } catch (error) {
-    console.error("[cold-leads-sync] Unexpected error:", error);
+    log("error", "[cold-leads-sync] Unexpected error:", { error: error });
     return NextResponse.json(
       { synced: 0, total_cold: 0, error: "Internal server error" },
       { status: 500 }

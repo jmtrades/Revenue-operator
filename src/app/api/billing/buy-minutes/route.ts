@@ -14,9 +14,9 @@ import { getMinutePack, MINUTE_PACKS } from "@/lib/voice/billing";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
 
-function log(event: string, data: Record<string, unknown>): void {
+function localLog(event: string, data: Record<string, unknown>): void {
   if (data.reason || data.error) {
-    console.error(`[billing/buy-minutes] ${event}:`, JSON.stringify(data));
+    console.warn(`[billing/buy-minutes] ${event}:`, JSON.stringify(data));
   }
 }
 
@@ -79,13 +79,13 @@ export async function POST(req: NextRequest) {
 
     const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
     if (!stripeSecretKey) {
-      log("buy_minutes_failed", { reason: "missing_stripe_key" });
+      localLog("buy_minutes_failed", { reason: "missing_stripe_key" });
       return NextResponse.json({ ok: false, reason: "missing_env" }, { status: 503 });
     }
 
     const origin = effectiveOrigin(req);
     if (!origin) {
-      log("buy_minutes_failed", { reason: "missing_app_url" });
+      localLog("buy_minutes_failed", { reason: "missing_app_url" });
       return NextResponse.json({ ok: false, reason: "missing_env" }, { status: 503 });
     }
 
@@ -178,7 +178,7 @@ export async function POST(req: NextRequest) {
       cancel_url: cancelUrl,
     });
 
-    log("buy_minutes_checkout_created", {
+    localLog("buy_minutes_checkout_created", {
       workspace_id: workspaceId,
       pack_id: packId,
       minutes: pack.minutes,
@@ -194,7 +194,7 @@ export async function POST(req: NextRequest) {
     });
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : String(err);
-    log("buy_minutes_failed", { reason: "unexpected_error", error: errorMessage });
+    localLog("buy_minutes_failed", { reason: "unexpected_error", error: errorMessage });
     return NextResponse.json({ ok: false, reason: "unexpected_error" }, { status: 500 });
   }
 }

@@ -10,6 +10,7 @@ import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getTelephonyService } from "@/lib/telephony";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   const csrfBlock = assertSameOrigin(req);
@@ -69,7 +70,7 @@ export async function POST(req: NextRequest) {
     }
     return NextResponse.json({ phone_number: num });
   } catch (e) {
-    console.error("[Onboarding] Phone provisioning failed:", e);
+    log("error", "[Onboarding] Phone provisioning failed:", { error: e });
     return NextResponse.json(
       { error: "Phone provisioning is temporarily unavailable. You can add a number later from Settings > Phone." },
       { status: 503 }

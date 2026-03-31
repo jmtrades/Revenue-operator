@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 type TimelineEvent =
   | {
@@ -210,7 +211,7 @@ export async function GET(
     if (!id) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return await getTimeline(req, id);
   } catch (err) {
-    console.error("[API Error] contacts/[id]/timeline GET:", err);
+    log("error", "[API Error] contacts/[id]/timeline GET:", { error: err });
     return NextResponse.json({ error: "An unexpected error occurred" }, { status: 500 });
   }
 }

@@ -13,6 +13,7 @@ import { getDb } from "@/lib/db/queries";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { createUserNotification } from "@/lib/notifications";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 const BODY = z.object({
   needs_attention_id: z.string().min(1),
@@ -90,7 +91,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error("[notifications/needs-attention]", msg);
+    log("error", "[notifications/needs-attention]", { error: msg });
     return NextResponse.json({ error: "Failed to create notification", details: msg }, { status: 500 });
   }
 }

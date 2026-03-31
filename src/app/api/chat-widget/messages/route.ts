@@ -6,6 +6,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 interface ChatMessage {
   id: string;
@@ -74,7 +75,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(data || [], { status: 200 });
   } catch (error) {
-    console.error("[chat-widget/messages GET]", error);
+    log("error", "[chat-widget/messages GET]", { error: error });
     return NextResponse.json(
       { error: "Failed to fetch messages" },
       { status: 500 }
@@ -191,7 +192,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (error) {
-      console.error("[chat-widget/messages POST]", error);
+      log("error", "[chat-widget/messages POST]", { error: error });
       return NextResponse.json(
         { error: "Failed to send message" },
         { status: 500 }
@@ -216,7 +217,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
-    console.error("[chat-widget/messages POST]", error);
+    log("error", "[chat-widget/messages POST]", { error: error });
     return NextResponse.json(
       { error: "Failed to send message" },
       { status: 500 }

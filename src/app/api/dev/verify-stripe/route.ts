@@ -10,6 +10,7 @@ import Stripe from "stripe";
 import { getDb } from "@/lib/db/queries";
 import { getStripe } from "@/lib/billing/stripe-client";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 const DEV_SIM_SECRET = process.env.DEV_SIM_SECRET;
 
@@ -27,7 +28,7 @@ export async function POST(req: NextRequest) {
     try {
       body = await req.json();
     } catch (jsonError) {
-      console.error("[dev/verify-stripe] JSON parse error:", jsonError);
+      log("error", "[dev/verify-stripe] JSON parse error:", { error: jsonError });
       return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
     }
 
@@ -118,7 +119,7 @@ export async function POST(req: NextRequest) {
         renews_at: renewsAt?.toISOString(),
       });
     } catch (error) {
-      console.error("[dev/verify-stripe] Stripe verification error:", error);
+      log("error", "[dev/verify-stripe] Stripe verification error:", { error: error });
       // Error response below
       return NextResponse.json(
         { error: "Stripe verification failed" },
@@ -126,7 +127,7 @@ export async function POST(req: NextRequest) {
       );
     }
   } catch (error) {
-    console.error("[dev/verify-stripe] Unhandled error:", error);
+    log("error", "[dev/verify-stripe] Unhandled error:", { error: error });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

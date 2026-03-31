@@ -118,7 +118,8 @@ export async function POST(request: NextRequest) {
 
   return new NextResponse("OK", { status: 200, headers: { "Content-Type": "text/plain" } });
   } catch (err) {
-    console.error("[twilio-status]", err instanceof Error ? err.message : String(err));
+    log("error", "[twilio-status]", { error: err instanceof Error ? err.message : String(err) });
     return new NextResponse("Error", { status: 500, headers: { "Content-Type": "text/plain" } });
   }
 }
+import { log } from "@/lib/logger";

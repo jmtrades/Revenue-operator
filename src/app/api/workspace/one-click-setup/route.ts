@@ -235,7 +235,7 @@ export async function POST(req: NextRequest) {
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("One-click setup error:", message, err);
+    log("error", "One-click setup error:", { error: message, err });
 
     if (
       message.includes("Unable to fetch") ||
@@ -394,3 +394,4 @@ function generateFollowUpSequences(
     },
   };
 }
+import { log } from "@/lib/logger";

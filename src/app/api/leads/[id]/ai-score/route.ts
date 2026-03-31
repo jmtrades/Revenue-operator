@@ -7,6 +7,7 @@ import { getDb } from "@/lib/db/queries";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { scoreLeadWithAI, saveLeadScore } from "@/lib/lead-scoring/ai-scorer";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function POST(
   req: NextRequest,
@@ -71,7 +72,7 @@ export async function POST(
       ...score,
     });
   } catch (error) {
-    console.error("[API] leads/[id]/ai-score error:", error);
+    log("error", "[API] leads/[id]/ai-score error:", { error: error });
     const message =
       error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(

@@ -21,7 +21,8 @@ export async function GET(request: NextRequest) {
     const overview = await getOrgOperationalOverview(workspaceId);
     return NextResponse.json(overview);
   } catch (err) {
-    console.error("[operational-overview]", err instanceof Error ? err.message : String(err));
+    log("error", "[operational-overview]", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Failed to load overview" }, { status: 500 });
   }
 }
+import { log } from "@/lib/logger";

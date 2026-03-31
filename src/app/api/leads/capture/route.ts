@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   const csrfBlock = assertSameOrigin(req);
@@ -50,7 +51,7 @@ export async function POST(req: NextRequest) {
       { onConflict: "workspace_id,email", ignoreDuplicates: true }
     );
   } catch (err) {
-    console.error("[leads/capture] Failed to store lead:", err);
+    log("error", "[leads/capture] Failed to store lead:", { error: err });
     // Still return ok — we don't want capture failures to block the user
   }
 

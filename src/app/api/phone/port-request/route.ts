@@ -4,6 +4,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { createCipheriv, randomBytes } from "crypto";
+import { log } from "@/lib/logger";
 
 const ENCRYPTION_KEY = process.env.PORT_PIN_ENCRYPTION_KEY || process.env.ENCRYPTION_KEY || "";
 const ENCRYPTION_VERSION = 1;
@@ -88,13 +89,13 @@ export async function POST(req: NextRequest) {
       .maybeSingle();
 
     if (error) {
-      console.error("[port-request] DB error:", error);
+      log("error", "[port-request] DB error:", { error: error });
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 
     return NextResponse.json(data);
   } catch (err) {
-    console.error("[port-request] Unexpected error:", err instanceof Error ? err.message : err);
+    log("error", "[port-request] Unexpected error:", { error: err instanceof Error ? err.message : err });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

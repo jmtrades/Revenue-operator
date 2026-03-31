@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { checkUsageThresholds, getUsageAlertLevel, getDailyUsageBreakdown } from "@/lib/billing/overage";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   try {
@@ -40,7 +41,7 @@ export async function GET(req: NextRequest) {
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error("[billing/usage]", msg);
+    log("error", "[billing/usage]", { error: msg });
     return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

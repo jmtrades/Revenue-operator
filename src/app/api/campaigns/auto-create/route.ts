@@ -139,7 +139,8 @@ export async function POST(req: NextRequest) {
       segment,
     });
   } catch (err) {
-    console.error("[campaigns/auto-create]", err instanceof Error ? err.message : String(err));
+    log("error", "[campaigns/auto-create]", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Failed to create campaign" }, { status: 500 });
   }
 }
+import { log } from "@/lib/logger";

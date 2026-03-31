@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
           );
         }
       } catch (err) {
-        console.error("[provision] Stripe payment method check failed:", err instanceof Error ? err.message : err);
+        log("error", "[provision] Stripe payment method check failed:", { error: err instanceof Error ? err.message : err });
         // If Stripe check fails, allow provisioning to avoid blocking users with valid cards
       }
     }
@@ -173,7 +173,7 @@ export async function POST(req: NextRequest) {
       providerSid = result.providerSid;
       if (!providerSid) {
         const detail = result.error ?? "Unknown";
-        console.error("[provision] Telnyx returned no providerSid:", detail);
+        log("error", "[provision] Telnyx returned no providerSid:", { error: detail });
         // Provide actionable error when connection_id is missing
         const isMissingConfig = detail.includes("connection") || !process.env.TELNYX_CONNECTION_ID;
         return NextResponse.json(
@@ -188,7 +188,7 @@ export async function POST(req: NextRequest) {
         );
       }
     } catch (err) {
-      console.error("[provision] Telnyx purchase exception:", err instanceof Error ? err.message : err);
+      log("error", "[provision] Telnyx purchase exception:", { error: err instanceof Error ? err.message : err });
       return NextResponse.json(
         {
           error: "Phone number purchase failed. This is temporary — try again in a few minutes.",
@@ -223,7 +223,7 @@ export async function POST(req: NextRequest) {
 
       providerSid = purchased.numberId;
     } catch (e) {
-      console.error("Telephony provisioning failed:", e);
+      log("error", "Telephony provisioning failed:", { error: e });
       return NextResponse.json({ error: "Provisioning failed. Try again later." }, { status: 500 });
     }
   }
@@ -291,7 +291,7 @@ export async function POST(req: NextRequest) {
     .maybeSingle();
 
   if (error || !inserted) {
-    console.error("[provision] DB insert failed:", error?.message ?? "inserted is null");
+    log("error", "[provision] DB insert failed:", { error: error?.message ?? "inserted is null" });
     // Rollback: release the purchased number from provider to prevent orphaned charges
     if (providerSid) {
       try {
@@ -299,7 +299,7 @@ export async function POST(req: NextRequest) {
         await telephony.releaseNumber(providerSid);
         console.warn("[provision] Rolled back purchased number from provider after DB failure:", providerSid);
       } catch (rollbackErr) {
-        console.error("[provision] CRITICAL: Failed to rollback purchased number:", providerSid, rollbackErr instanceof Error ? rollbackErr.message : rollbackErr);
+        log("error", "[provision] CRITICAL: Failed to rollback purchased number", { error: providerSid, rollbackError: rollbackErr instanceof Error ? rollbackErr.message : rollbackErr });
       }
     }
     return NextResponse.json({ error: "Failed to save number." }, { status: 500 });
@@ -338,7 +338,7 @@ export async function POST(req: NextRequest) {
         });
       }
     } catch (err) {
-      console.error("[provision] Setup fee billing failed:", err instanceof Error ? err.message : err);
+      log("error", "[provision] Setup fee billing failed:", { error: err instanceof Error ? err.message : err });
       // Non-blocking — number is provisioned even if billing fails
     }
   }
@@ -364,7 +364,7 @@ export async function POST(req: NextRequest) {
       { onConflict: "workspace_id" }
     );
     if (configErr) {
-      console.error("[provision] phone_configs upsert failed:", configErr);
+      log("error", "[provision] phone_configs upsert failed:", { error: configErr });
     }
   }
 
@@ -378,3 +378,4 @@ export async function POST(req: NextRequest) {
     setup_fee_cents: row.setup_fee_cents ?? setupFeeCents,
   });
 }
+import { log } from "@/lib/logger";

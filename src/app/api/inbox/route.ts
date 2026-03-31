@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -100,7 +101,7 @@ export async function GET(req: NextRequest) {
     threads.sort((a, b) => new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime());
     return NextResponse.json({ conversations: threads, page, limit, total: total ?? 0 });
   } catch (error) {
-    console.error("[inbox]", error);
+    log("error", "[inbox]", { error: error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

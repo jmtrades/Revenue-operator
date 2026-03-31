@@ -37,7 +37,7 @@ export async function GET(
     }
     return NextResponse.json({ steps: result.steps });
   } catch (error) {
-    console.error("[Sequences] Error fetching steps:", error);
+    log("error", "[Sequences] Error fetching steps:", { error: error });
     return NextResponse.json(
       { error: "Failed to fetch steps" },
       { status: 500 }
@@ -114,7 +114,7 @@ export async function POST(
 
     return NextResponse.json({ step }, { status: 201 });
   } catch (error) {
-    console.error("[Sequences] Error adding step:", error);
+    log("error", "[Sequences] Error adding step:", { error: error });
     return NextResponse.json(
       { error: "Failed to add step" },
       { status: 500 }
@@ -185,10 +185,11 @@ export async function PUT(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("[Sequences] Error reordering steps:", error);
+    log("error", "[Sequences] Error reordering steps:", { error: error });
     return NextResponse.json(
       { error: "Failed to reorder steps" },
       { status: 500 }
     );
   }
 }
+import { log } from "@/lib/logger";

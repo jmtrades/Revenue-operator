@@ -9,6 +9,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -331,7 +332,7 @@ export async function POST(req: NextRequest) {
       updated: updatedCount,
     });
   } catch (err) {
-    console.error("[outlook-calendar-sync] error:", err);
+    log("error", "[outlook-calendar-sync] error:", { error: err });
     return NextResponse.json({ error: "Sync failed" }, { status: 500 });
   }
 }

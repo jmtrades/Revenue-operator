@@ -169,7 +169,8 @@ export async function POST(req: NextRequest) {
       services: config.key_services.length,
     });
   } catch (err) {
-    console.error("[auto-seed-knowledge]", err instanceof Error ? err.message : String(err));
+    log("error", "[auto-seed-knowledge]", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Failed to seed knowledge" }, { status: 500 });
   }
 }
+import { log } from "@/lib/logger";

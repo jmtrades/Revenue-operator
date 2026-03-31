@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   const csrfBlock = assertSameOrigin(req);
@@ -44,7 +45,7 @@ export async function POST(req: NextRequest) {
       const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
       await stripe.subscriptions.update(subId, { cancel_at_period_end: true });
     } catch (err) {
-      console.error("[pause-coverage] Stripe update failed:", err instanceof Error ? err.message : err);
+      log("error", "[pause-coverage] Stripe update failed:", { error: err instanceof Error ? err.message : err });
       return NextResponse.json(
         { error: "Could not pause subscription with payment provider. Please try again or contact support." },
         { status: 502 }
