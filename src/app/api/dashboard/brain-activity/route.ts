@@ -105,7 +105,7 @@ export async function GET(req: NextRequest) {
     });
   } catch (err) {
     const error = err instanceof Error ? err.message : String(err);
-    log.error("[brain-activity]", error);
+    log("error", "brain_activity.route_error", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
