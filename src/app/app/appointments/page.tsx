@@ -130,7 +130,11 @@ export default function AppointmentsPage() {
   const noShowAppointments = appointments.filter(a => a.status === "No-Show").length;
   const confirmedAppointments = appointments.filter(a => a.status === "Confirmed").length;
   const completionRate = totalAppointments > 0 ? Math.round((completedAppointments / totalAppointments) * 100) : 0;
-  const estimatedRevenue = Math.round(completedAppointments * avgDealValue * 0.6); // 60% close rate from completed appointments
+  // Only show revenue from appointments where the user recorded an actual deal value
+  const actualRecordedRevenue = appointments
+    .filter(a => a.status === "Completed" && a.metadata?.dealValue)
+    .reduce((sum, a) => sum + (Number(a.metadata?.dealValue) || 0), 0);
+  const estimatedRevenue = actualRecordedRevenue; // Show only verified revenue, no invented metrics
   const hasNoShows = noShowAppointments > 0;
 
   // Outcome form state

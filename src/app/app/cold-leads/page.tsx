@@ -148,14 +148,13 @@ interface StatsBarProps extends StatsProps {
   t: any;
 }
 
-function StatsBar({ total, pending, inProgress, reengaged, exhausted, t, avgDealValue = 350 }: StatsBarProps & { avgDealValue?: number }) {
-  const recoverableRevenue = Math.round((pending + inProgress) * avgDealValue * 0.15); // 15% recovery probability
+function StatsBar({ total, pending, inProgress, reengaged, exhausted, t }: StatsBarProps) {
   const recoveryRate = reengaged + exhausted > 0
     ? Math.round((reengaged / (reengaged + exhausted)) * 100)
     : 0;
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-6">
+    <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
       <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-3">
         <p className="text-xs text-[var(--text-secondary)] font-medium">{t("stats.totalColdLeads")}</p>
         <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">{total}</p>
@@ -173,12 +172,8 @@ function StatsBar({ total, pending, inProgress, reengaged, exhausted, t, avgDeal
         <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">{reengaged}</p>
       </div>
       <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-3">
-        <p className="text-xs text-[var(--text-secondary)] font-medium">Est. Recoverable</p>
-        <p className="text-lg font-semibold text-[#10b981] mt-1">~${recoverableRevenue.toLocaleString()}</p>
-      </div>
-      <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-3">
         <p className="text-xs text-[var(--text-secondary)] font-medium">Recovery Rate</p>
-        <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">{recoveryRate}%</p>
+        <p className="text-lg font-semibold text-[var(--text-primary)] mt-1">{recoveryRate > 0 ? `${recoveryRate}%` : "—"}</p>
       </div>
     </div>
   );
@@ -578,7 +573,6 @@ export default function ColdLeadsPage() {
         reengaged={stats.reengaged}
         exhausted={stats.exhausted}
         t={t}
-        avgDealValue={avgDealValue}
       />
 
       {/* Action Buttons */}

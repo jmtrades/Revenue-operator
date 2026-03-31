@@ -461,34 +461,37 @@ export default function AppFollowUpsPage() {
                 </p>
               </div>
 
-              {/* Strategy Breakdown */}
+              {/* Active Sequences — show only real sequences that exist */}
               <div className="mb-6">
-                <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Active Adaptive Strategies</h3>
-                <div className="space-y-2">
-                  {[
-                    { name: "Aggressive Nurture", status: sequences.some(s => s.trigger_type?.includes("nurture")) },
-                    { name: "Gentle Nurture", status: sequences.some(s => s.name?.toLowerCase().includes("nurture")) },
-                    { name: "Value Drip", status: sequences.length > 0 },
-                    { name: "Reactivation Sequence", status: sequences.some(s => s.trigger_type?.includes("reengagement")) },
-                    { name: "Appointment Protect", status: sequences.some(s => s.trigger_type?.includes("booking") || s.trigger_type?.includes("appointment")) },
-                    { name: "Escalation Prep", status: sequences.length > 0 },
-                    { name: "Win Back", status: sequences.some(s => s.name?.toLowerCase().includes("recovery")) },
-                    { name: "Retention Loop", status: sequences.length > 0 },
-                    { name: "Pause", status: sequences.some(s => !s.is_active) },
-                  ].map((strategy) => (
-                    <div key={strategy.name} className="flex items-center justify-between p-3 rounded-lg bg-[var(--bg-hover)] border border-[var(--border-default)]">
-                      <span className="text-sm text-[var(--text-primary)]">{strategy.name}</span>
-                      {strategy.status ? (
-                        <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-100 dark:bg-green-900/30">
-                          <div className="w-1.5 h-1.5 rounded-full bg-green-600 dark:bg-green-500" />
-                          <span className="text-xs font-medium text-green-600 dark:text-green-500">Active</span>
+                <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Your Sequences</h3>
+                {sequences.length > 0 ? (
+                  <div className="space-y-2">
+                    {sequences.map((seq) => (
+                      <div key={seq.id} className="flex items-center justify-between p-3 rounded-lg bg-[var(--bg-hover)] border border-[var(--border-default)]">
+                        <div>
+                          <span className="text-sm text-[var(--text-primary)]">{seq.name}</span>
+                          {seq.trigger_type && (
+                            <span className="ml-2 text-xs text-[var(--text-tertiary)]">
+                              {seq.trigger_type.replace(/_/g, " ")}
+                            </span>
+                          )}
                         </div>
-                      ) : (
-                        <span className="text-xs font-medium text-[var(--text-tertiary)]">Idle</span>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                        {seq.is_active ? (
+                          <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-green-100 dark:bg-green-900/30">
+                            <div className="w-1.5 h-1.5 rounded-full bg-green-600 dark:bg-green-500" />
+                            <span className="text-xs font-medium text-green-600 dark:text-green-500">Active</span>
+                          </div>
+                        ) : (
+                          <span className="text-xs font-medium text-[var(--text-tertiary)]">Paused</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-[var(--text-tertiary)] p-3 rounded-lg bg-[var(--bg-hover)] border border-[var(--border-default)]">
+                    No sequences created yet. The brain will auto-enroll leads when sequences are available.
+                  </p>
+                )}
               </div>
 
               {/* Recent Autonomous Actions */}
