@@ -38,14 +38,30 @@ interface ReengagePayload {
 }
 
 const COLD_LEADS_SNAPSHOT_PREFIX = "rt_cold_leads_snapshot:";
+const SNAPSHOT_MAX_AGE_MS = 5 * 60 * 1000; // 5 minutes
+
+interface SnapshotEnvelope<T> {
+  ts: number;
+  data: T;
+}
 
 function readColdLeadsSnapshot(workspaceId: string): ColdLead[] {
   if (typeof window === "undefined" || !workspaceId) return [];
   const key = `${COLD_LEADS_SNAPSHOT_PREFIX}${workspaceId}`;
   try {
     const raw = safeGetItem(key);
-    const parsed = raw ? (JSON.parse(raw) as ColdLead[]) : [];
-    return Array.isArray(parsed) ? parsed : [];
+    if (!raw) return [];
+    const envelope = JSON.parse(raw) as SnapshotEnvelope<ColdLead[]> | ColdLead[];
+    // Handle legacy format (plain array) — treat as expired
+    if (Array.isArray(envelope)) {
+      safeRemoveItem(key);
+      return [];
+    }
+    if (Date.now() - envelope.ts > SNAPSHOT_MAX_AGE_MS) {
+      safeRemoveItem(key);
+      return [];
+    }
+    return Array.isArray(envelope.data) ? envelope.data : [];
   } catch {
     safeRemoveItem(key);
     return [];
@@ -54,7 +70,8 @@ function readColdLeadsSnapshot(workspaceId: string): ColdLead[] {
 
 function persistColdLeadsSnapshot(workspaceId: string, leads: ColdLead[]) {
   if (typeof window === "undefined" || !workspaceId) return;
-  safeSetItem(`${COLD_LEADS_SNAPSHOT_PREFIX}${workspaceId}`, JSON.stringify(leads));
+  const envelope: SnapshotEnvelope<ColdLead[]> = { ts: Date.now(), data: leads };
+  safeSetItem(`${COLD_LEADS_SNAPSHOT_PREFIX}${workspaceId}`, JSON.stringify(envelope));
 }
 
 function formatRelativeTime(dateStr?: string, t?: any): string {

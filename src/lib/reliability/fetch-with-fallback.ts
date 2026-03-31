@@ -55,10 +55,16 @@ export async function fetchWithFallback<T>(
   try {
     const response = await fetch(url, mergedOptions);
     clearTimeout(timeoutId);
-    
+
     clearTimeout(latencyTimer);
 
     if (!response.ok) {
+      // Handle session expiry - redirect to login
+      if (response.status === 401 && typeof window !== "undefined") {
+        window.location.href = "/login?reason=session_expired";
+        return { data: null, fromCache: false, error: "Session expired. Redirecting to login." };
+      }
+
       // Try cache on failure
       if (cacheKey) {
         const cached = getCachedResponse<T>(cacheKey);

@@ -33,7 +33,7 @@ type CampaignRow = {
   id: string;
   name: string;
   type: string;
-  status: "draft" | "active" | "paused" | "completed";
+  status: "draft" | "active" | "paused" | "completed" | "launching";
   total_contacts: number;
   called: number;
   answered: number;
@@ -299,11 +299,20 @@ export default function CampaignsPage() {
       return;
     }
 
+    // Optimistic: show launching state immediately
+    const prevStatus = campaign.status;
+    setCampaigns((prev) =>
+      prev.map((item) => (item.id === campaign.id ? { ...item, status: "launching" as CampaignRow["status"] } : item)),
+    );
     const res = await fetch(`/api/campaigns/${campaign.id}/launch`, {
       method: "POST",
       credentials: "include",
     });
     if (!res.ok) {
+      // Revert to previous status on failure
+      setCampaigns((prev) =>
+        prev.map((item) => (item.id === campaign.id ? { ...item, status: prevStatus } : item)),
+      );
       setToast(t("toast.launchFailed"));
       return;
     }
@@ -618,13 +627,17 @@ export default function CampaignsPage() {
                             active: "bg-[var(--accent-success,#10b981)]/10 text-[var(--accent-success,#10b981)]",
                             paused: "bg-[var(--accent-warning,#f59e0b)]/10 text-[var(--accent-warning,#f59e0b)]",
                             completed: "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]",
+                            launching: "bg-[var(--accent-warning,#f59e0b)]/10 text-[var(--accent-warning,#f59e0b)]",
                           };
                           return (
-                            <span className={`rounded-full px-2.5 py-1 text-[11px] font-medium capitalize flex items-center gap-1.5 ${statusBadgeClasses[campaign.status]}`}>
+                            <span className={`rounded-full px-2.5 py-1 text-[11px] font-medium capitalize flex items-center gap-1.5 ${statusBadgeClasses[campaign.status as keyof typeof statusBadgeClasses]}`}>
                               {campaign.status === "active" && (
                                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--accent-success,#10b981)] animate-pulse" />
                               )}
-                              {t.has(`statusFilter.${campaign.status}`) ? t(`statusFilter.${campaign.status}` as never) : campaign.status}
+                              {campaign.status === "launching" && (
+                                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--accent-warning,#f59e0b)] animate-pulse" />
+                              )}
+                              {campaign.status === "launching" ? "Launching..." : (t.has(`statusFilter.${campaign.status}`) ? t(`statusFilter.${campaign.status}` as never) : campaign.status)}
                             </span>
                           );
                         })()}

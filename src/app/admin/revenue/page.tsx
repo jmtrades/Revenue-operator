@@ -131,7 +131,7 @@ export default function RevenuePage() {
   const totalWorkspaces = Object.values(billingDist).reduce((a, b) => a + b, 0);
 
   // Calculate MRR from plan distribution × plan prices
-  const planPrices: Record<string, number> = { starter: 97, growth: 297, business: 597, agency: 997 };
+  const planPrices: Record<string, number> = { starter: 147, solo: 147, growth: 297, business: 597, scale: 597, agency: 997, enterprise: 997 };
   const mrr = Object.entries(billingDist).reduce((sum, [plan, count]) => {
     const price = planPrices[plan.toLowerCase()] ?? 0;
     return sum + price * (count as number);

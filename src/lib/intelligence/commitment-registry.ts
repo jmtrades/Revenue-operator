@@ -5,6 +5,7 @@
 
 import { getDb } from "@/lib/db/queries";
 import { appendLedgerEvent } from "@/lib/ops/ledger";
+import { log } from "@/lib/logger";
 
 export type CommitmentType =
   | "call_back"
@@ -69,7 +70,7 @@ export async function recordCommitment(input: RecordCommitmentInput): Promise<{ 
         subjectType: "thread",
         subjectRef: input.threadId.slice(0, 160),
         details: { commitment_id: id, commitment_type: input.commitmentType },
-      }).catch(() => {});
+      }).catch((err: unknown) => { log("warn", "commitment_registry.record_failed", { error: err instanceof Error ? err.message : String(err) }); });
     }
     return { ok: true, commitmentId: id ?? undefined };
   } catch {
@@ -106,7 +107,7 @@ export async function markCommitmentFulfilled(
     subjectType: "thread",
     subjectRef: (row as { thread_id: string }).thread_id?.slice(0, 160) ?? workspaceId,
     details: { commitment_id: commitmentId },
-  }).catch(() => {});
+  }).catch((err: unknown) => { log("warn", "commitment_registry.fulfill_failed", { error: err instanceof Error ? err.message : String(err) }); });
   return { ok: true };
 }
 
@@ -139,7 +140,7 @@ export async function markCommitmentBroken(
     subjectType: "thread",
     subjectRef: (row as { thread_id: string }).thread_id?.slice(0, 160) ?? workspaceId,
     details: { commitment_id: commitmentId },
-  }).catch(() => {});
+  }).catch((err: unknown) => { log("warn", "commitment_registry.broken_failed", { error: err instanceof Error ? err.message : String(err) }); });
   return { ok: true };
 }
 

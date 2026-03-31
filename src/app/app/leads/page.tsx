@@ -169,14 +169,30 @@ function mapApiLeadToView(
 type SortKey = "newest" | "score" | "recent-contact";
 
 const LEADS_SNAPSHOT_PREFIX = "rt_leads_snapshot:";
+const SNAPSHOT_MAX_AGE_MS = 5 * 60 * 1000; // 5 minutes
+
+interface SnapshotEnvelope<T> {
+  ts: number;
+  data: T;
+}
 
 function readLeadsSnapshot(workspaceId: string): LeadView[] {
   if (typeof window === "undefined" || !workspaceId) return [];
   const key = `${LEADS_SNAPSHOT_PREFIX}${workspaceId}`;
   try {
     const raw = safeGetItem(key);
-    const parsed = raw ? (JSON.parse(raw) as LeadView[]) : [];
-    return Array.isArray(parsed) ? parsed : [];
+    if (!raw) return [];
+    const envelope = JSON.parse(raw) as SnapshotEnvelope<LeadView[]> | LeadView[];
+    // Handle legacy format (plain array) — treat as expired
+    if (Array.isArray(envelope)) {
+      safeRemoveItem(key);
+      return [];
+    }
+    if (Date.now() - envelope.ts > SNAPSHOT_MAX_AGE_MS) {
+      safeRemoveItem(key);
+      return [];
+    }
+    return Array.isArray(envelope.data) ? envelope.data : [];
   } catch {
     safeRemoveItem(key);
     return [];
@@ -185,7 +201,8 @@ function readLeadsSnapshot(workspaceId: string): LeadView[] {
 
 function persistLeadsSnapshot(workspaceId: string, leads: LeadView[]) {
   if (typeof window === "undefined" || !workspaceId) return;
-  safeSetItem(`${LEADS_SNAPSHOT_PREFIX}${workspaceId}`, JSON.stringify(leads));
+  const envelope: SnapshotEnvelope<LeadView[]> = { ts: Date.now(), data: leads };
+  safeSetItem(`${LEADS_SNAPSHOT_PREFIX}${workspaceId}`, JSON.stringify(envelope));
 }
 
 export default function LeadsPage() {

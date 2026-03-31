@@ -142,6 +142,14 @@ export const PRICING_TIERS = [
   },
 ] as const;
 
+/** Canonical monthly price in dollars per plan slug. Import this instead of hardcoding. */
+export const PLAN_PRICES: Record<string, number> = {
+  solo: 147,
+  business: 297,
+  scale: 597,
+  enterprise: 997,
+} as const;
+
 export const FOOTER_PRODUCT = [
   { labelKey: "productLinks.bookDemo", href: "/demo" },
   { labelKey: "productLinks.features", href: "/product" },
