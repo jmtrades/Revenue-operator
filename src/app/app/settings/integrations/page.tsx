@@ -846,13 +846,12 @@ export default function AppSettingsIntegrationsPage() {
                   <p className="text-sm font-medium text-[var(--text-primary)]">{t("hub.outlookCalendarLabel")}</p>
                   <p className="text-xs text-[var(--text-secondary)] mt-1">{t("hub.calendarDesc")}</p>
                 </div>
-                <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-[var(--border-default)] text-[var(--text-tertiary)] shrink-0">
-                  {t("outlookComingSoon", { defaultValue: "Coming soon" })}
+                <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-blue-500/20 text-blue-400 bg-blue-500/5 shrink-0">
+                  {t("outlookAvailable", { defaultValue: "Available" })}
                 </span>
               </div>
               <p className="text-[11px] text-[var(--text-tertiary)] mt-3 leading-relaxed">
-                Outlook Calendar integration requires Microsoft OAuth configuration by your workspace administrator.
-                Google Calendar is fully supported — connect above to unlock availability, booking, and sync.
+                Outlook Calendar integration is available. Connect your Microsoft 365 account above under CRM integrations to enable calendar sync, or contact support for Microsoft OAuth setup.
               </p>
             </div>
           </div>

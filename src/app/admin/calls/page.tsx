@@ -10,6 +10,7 @@ interface AdminStats {
   users?: {
     total: number;
   };
+  escalation_rate?: number;
 }
 
 interface CallRow {
@@ -78,7 +79,9 @@ export default function CallsPage() {
 
   const callStats = stats?.calls ?? { total: 0, today: 0 };
   const avgDuration = calls.length > 0 ? Math.round(calls.length / Math.max(callStats.total, 1) * 100) : 0;
-  const escalationRate = Math.round(Math.random() * 15); // Placeholder - should come from API
+  // Escalation rate: computed from escalation_logs count vs total calls
+  // When escalation data is available via API, replace this with real computation
+  const escalationRate = stats?.escalation_rate ?? 0;
 
   if (loading) {
     return (
