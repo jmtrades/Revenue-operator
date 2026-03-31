@@ -11,6 +11,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getSession } from "@/lib/auth/request-session";
 import { getDb } from "@/lib/db/queries";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 type BusinessHours = {
   [day: string]: { open: string; close: string; enabled: boolean };
@@ -118,7 +119,7 @@ export async function PATCH(req: NextRequest) {
     .eq("workspace_id", workspaceId);
 
   if (settingsError) {
-    console.error("[call-rules] Settings update failed:", settingsError);
+    log("error", "[call-rules] Settings update failed:", { error: settingsError });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 
@@ -140,7 +141,7 @@ export async function PATCH(req: NextRequest) {
       .eq("id", workspaceId);
 
     if (workspaceError) {
-      console.error("[call-rules] Business hours update failed:", workspaceError);
+      log("error", "[call-rules] Business hours update failed:", { error: workspaceError });
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
   }

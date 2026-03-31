@@ -12,6 +12,7 @@ import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getPlaybook } from "@/lib/ai/playbooks";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
@@ -38,7 +39,7 @@ async function personalizePlaybook(
   customizations: PlaybookCustomization
 ): Promise<Record<string, unknown> | null> {
   if (!ANTHROPIC_API_KEY) {
-    console.error("ANTHROPIC_API_KEY not set");
+    log("error", "ANTHROPIC_API_KEY not set");
     return null;
   }
 
@@ -88,7 +89,7 @@ Return ONLY valid JSON matching the playbook structure. Do not include markdown 
 
     if (!response.ok) {
       const error = await response.text();
-      console.error("Claude API error:", error);
+      log("error", "Claude API error:", { error: error });
       return null;
     }
 
@@ -102,7 +103,7 @@ Return ONLY valid JSON matching the playbook structure. Do not include markdown 
     const personalized = JSON.parse(textContent.text);
     return personalized;
   } catch (err) {
-    console.error("Error personalizing playbook:", err);
+    log("error", "Error personalizing playbook:", { error: err });
     return null;
   }
 }
@@ -170,7 +171,7 @@ export async function POST(req: NextRequest) {
         appliedConfig = personalized as unknown as typeof playbook;
       }
     } catch (err) {
-      console.error("Personalization failed:", err);
+      log("error", "Personalization failed:", { error: err });
       // Fall back to non-personalized playbook
     }
   }
@@ -187,7 +188,7 @@ export async function POST(req: NextRequest) {
       .eq("id", workspace_id);
 
     if (error) {
-      console.error("Database error:", error);
+      log("error", "Database error:", { error: error });
       return NextResponse.json(
         { error: "Failed to save playbook to workspace" },
         { status: 500 }
@@ -246,7 +247,7 @@ export async function POST(req: NextRequest) {
         .eq("id", agentId);
 
       if (updateError) {
-        console.error("Error updating agent:", updateError);
+        log("error", "Error updating agent:", { error: updateError });
       }
     } else {
       // No agent exists - create one from the playbook
@@ -278,7 +279,7 @@ export async function POST(req: NextRequest) {
         .maybeSingle();
 
       if (insertError || !newAgent) {
-        console.error("Error creating agent:", insertError);
+        log("error", "Error creating agent:", { error: insertError });
         // Don't fail the entire request if agent creation fails - playbook config was still saved
       } else {
         agentId = newAgent.id;
@@ -302,7 +303,7 @@ export async function POST(req: NextRequest) {
       message: `Playbook "${appliedConfig.title}" applied successfully${agentId ? ` and agent "${agentName}" created` : ""}`,
     });
   } catch (err) {
-    console.error("Unexpected error applying playbook:", err);
+    log("error", "Unexpected error applying playbook:", { error: err });
     return NextResponse.json(
       { error: "Something went wrong applying the playbook" },
       { status: 500 }

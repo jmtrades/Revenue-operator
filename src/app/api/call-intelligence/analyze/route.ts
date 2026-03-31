@@ -152,7 +152,7 @@ export async function POST(req: NextRequest) {
       .maybeSingle();
 
     if (insertExampleErr || !example) {
-      console.error("[call-intelligence/analyze] insert call_example failed:", insertExampleErr?.message);
+      log("error", "[call-intelligence/analyze] insert call_example failed:", { error: insertExampleErr?.message });
       return NextResponse.json({ error: "Failed to save." }, { status: 500 });
     }
 
@@ -174,7 +174,7 @@ export async function POST(req: NextRequest) {
         }))
       );
       if (insErr) {
-        console.error("[call-intelligence/analyze] insert call_insights failed:", insErr.message);
+        log("error", "[call-intelligence/analyze] insert call_insights failed:", { error: insErr.message });
       }
     }
 
@@ -189,10 +189,11 @@ export async function POST(req: NextRequest) {
       insights_count: insights.length,
     });
   } catch (err) {
-    console.error("[call-intelligence/analyze] unexpected error:", err instanceof Error ? err.message : String(err));
+    log("error", "[call-intelligence/analyze] unexpected error:", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
       { error: "Something went wrong with this service. Please try again." },
       { status: 502 }
     );
   }
 }
+import { log } from "@/lib/logger";

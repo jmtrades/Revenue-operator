@@ -10,6 +10,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   const session = await getSession(req);
@@ -67,7 +68,7 @@ export async function GET(req: NextRequest) {
     .range(offset, offset + limit - 1);
 
   if (error) {
-    console.error("[cold-leads] GET query failed:", error.message);
+    log("error", "[cold-leads] GET query failed:", { error: error.message });
     return NextResponse.json({ error: "Failed to load cold leads" }, { status: 500 });
   }
 
@@ -147,7 +148,7 @@ export async function POST(req: NextRequest) {
     .maybeSingle();
 
   if (error) {
-    console.error("[cold-leads] POST insert failed:", error.message);
+    log("error", "[cold-leads] POST insert failed:", { error: error.message });
     return NextResponse.json({ error: "Failed to add lead to cold lead queue" }, { status: 500 });
   }
 

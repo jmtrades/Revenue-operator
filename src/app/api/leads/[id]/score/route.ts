@@ -34,7 +34,8 @@ export async function GET(
     const score = await scoreLeadFull(workspaceId, id);
     return NextResponse.json(score);
   } catch (err) {
-    console.error("[lead-score]", err instanceof Error ? err.message : String(err));
+    log("error", "[lead-score]", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Failed to score lead" }, { status: 500 });
   }
 }
+import { log } from "@/lib/logger";

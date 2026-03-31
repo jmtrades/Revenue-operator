@@ -5,6 +5,7 @@ import { getDb } from "@/lib/db/queries";
 import { consumeWrapupToken } from "@/lib/calls/wrapup-token";
 import { enqueue } from "@/lib/queue";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 const OUTCOME_TO_ANALYSIS: Record<string, string> = {
   interested: "hot_delay",
@@ -97,7 +98,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error("[wrapup/submit] Unexpected error:", error);
+    log("error", "[wrapup/submit] Unexpected error:", { error: error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

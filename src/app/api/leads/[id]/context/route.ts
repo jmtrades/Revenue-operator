@@ -5,6 +5,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { assembleLeadContext, type InteractionType } from "@/lib/ai/context-assembler";
+import { log } from "@/lib/logger";
 
 export async function GET(
   req: NextRequest,
@@ -72,7 +73,7 @@ export async function GET(
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("Lead context error:", message, err);
+    log("error", "Lead context error:", { error: message, err });
 
     return NextResponse.json(
       {

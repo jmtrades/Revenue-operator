@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
       .eq("owner_id", session.userId)
       .order("created_at", { ascending: false });
     if (error) {
-      console.error("[workspaces GET session]", error);
+      log("error", "[workspaces GET session]", { error: error });
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
     return NextResponse.json({ workspaces: data ?? [] });
@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
   }
   const { data, error } = await db.from("workspaces").select("id, name, created_at").order("created_at", { ascending: false });
   if (error) {
-    console.error("[workspaces GET dev]", error);
+    log("error", "[workspaces GET dev]", { error: error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
   return NextResponse.json({ workspaces: data ?? [] });

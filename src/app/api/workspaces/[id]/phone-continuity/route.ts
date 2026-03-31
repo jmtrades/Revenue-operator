@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function GET(
   req: NextRequest,
@@ -24,7 +25,7 @@ export async function GET(
     .maybeSingle();
 
   if (error && error.code !== "PGRST116") {
-    console.error("[workspaces/[id]/phone-continuity GET]", error);
+    log("error", "[workspaces/[id]/phone-continuity GET]", { error: error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 
@@ -81,7 +82,7 @@ export async function PUT(
     .maybeSingle();
 
   if (error) {
-    console.error("[workspaces/[id]/phone-continuity PUT]", error);
+    log("error", "[workspaces/[id]/phone-continuity PUT]", { error: error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
   return NextResponse.json(data);

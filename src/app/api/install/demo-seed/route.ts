@@ -12,6 +12,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { createCommitment } from "@/lib/commitment-recovery";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 const DEMO_LEAD_EXTERNAL_ID = "demo-seed-lead";
 const DEMO_THREAD_ID = "demo-seed-thread";
@@ -107,7 +108,7 @@ export async function POST(request: NextRequest) {
 
   const base = request.nextUrl?.origin ?? process.env.NEXT_PUBLIC_APP_URL ?? process.env.APP_URL;
   if (!base) {
-    console.error("[demo-seed] Cannot determine base URL");
+    log("error", "[demo-seed] Cannot determine base URL");
     return NextResponse.json({ error: "Configuration error" }, { status: 500 });
   }
   const token = process.env.CRON_SECRET ?? "";
@@ -117,7 +118,7 @@ export async function POST(request: NextRequest) {
       cache: "no-store",
     });
   } catch (err) {
-    console.error("[demo-seed] cron trigger failed:", err instanceof Error ? err.message : err);
+    log("error", "[demo-seed] cron trigger failed:", { error: err instanceof Error ? err.message : err });
   }
 
   return NextResponse.json({ ok: true });

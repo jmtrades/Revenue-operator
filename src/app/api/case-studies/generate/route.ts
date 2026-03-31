@@ -12,6 +12,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { getRevenueRecovered } from "@/lib/analytics/revenue-recovered";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 const BODY = z.object({
   // Optional override; default uses the active session workspace.
@@ -124,7 +125,7 @@ export async function POST(req: NextRequest) {
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error("[case-studies/generate]", msg);
+    log("error", "[case-studies/generate]", { error: msg });
     return NextResponse.json({ error: "Failed to generate case study", details: msg }, { status: 500 });
   }
 }

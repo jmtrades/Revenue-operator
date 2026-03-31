@@ -14,6 +14,7 @@ import type { BillingTier } from "@/lib/feature-gate/types";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getStripe } from "@/lib/billing/stripe-client";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 const PLAN_TO_TIER: Record<string, BillingTier> = {
   solo: "solo",
@@ -180,7 +181,7 @@ export async function POST(req: NextRequest) {
         message: "Redirect to checkout to start your plan.",
       });
     } catch (err) {
-      console.error("[change-plan] Stripe checkout session creation failed:", err instanceof Error ? err.message : err);
+      log("error", "[change-plan] Stripe checkout session creation failed:", { error: err instanceof Error ? err.message : err });
       return NextResponse.json(
         { ok: false, error: "Could not create checkout session. Please try again or contact support." },
         { status: 502 }
@@ -243,7 +244,7 @@ export async function POST(req: NextRequest) {
       })
       .eq("id", workspace_id);
   } catch (err) {
-    console.error("[change-plan] Stripe subscription update failed:", err instanceof Error ? err.message : err);
+    log("error", "[change-plan] Stripe subscription update failed:", { error: err instanceof Error ? err.message : err });
     return NextResponse.json(
       { ok: false, error: "Could not update subscription. Please try again or contact support." },
       { status: 502 }

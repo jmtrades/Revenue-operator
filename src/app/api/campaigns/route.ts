@@ -187,7 +187,7 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     log("error", "api.campaigns.create_failed", { error: msg });
-    console.error("[campaigns] POST failed:", msg);
+    log("error", "[campaigns] POST failed:", { error: msg });
 
     // Return specific error messages instead of generic 500
     const lower = msg.toLowerCase();

@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   const csrfBlock = assertSameOrigin(req);
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
         metadata: { cancellation_reason: reason },
       });
     } catch (err) {
-      console.error("[cancel-subscription] Stripe error:", err);
+      log("error", "[cancel-subscription] Stripe error:", { error: err });
       // Still proceed — record is saved, Stripe can be reconciled
     }
   }

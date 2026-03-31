@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 type PreviewVoiceBody = {
   voice_id?: string;
@@ -95,7 +96,7 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("[preview-voice] Voice preview error:", error);
+    log("error", "[preview-voice] Voice preview error:", { error: error });
     return NextResponse.json(
       { error: "Voice preview failed" },
       { status: 503 },

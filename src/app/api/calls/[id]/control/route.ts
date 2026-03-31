@@ -9,6 +9,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { getDb } from "@/lib/db/queries";
 import { z } from "zod";
+import { log } from "@/lib/logger";
 
 const ACTION_BODY = z.object({
   action: z.enum(["mute", "unmute", "hold", "unhold", "transfer"]),
@@ -103,13 +104,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
     if (!telnyxRes.ok) {
       const errBody = await telnyxRes.text();
-      console.error(`Telnyx call control error (${body.action}):`, errBody);
+      log("error", `Telnyx call control error (${body.action}):`, { error: errBody });
       return NextResponse.json({ error: `Call control action failed: ${body.action}` }, { status: 502 });
     }
 
     return NextResponse.json({ ok: true, action: body.action });
   } catch (err) {
-    console.error("Call control error:", err);
+    log("error", "Call control error:", { error: err });
     return NextResponse.json({ error: "Failed to execute call control action" }, { status: 500 });
   }
 }

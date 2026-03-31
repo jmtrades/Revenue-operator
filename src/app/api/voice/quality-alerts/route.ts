@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 interface QualityAlert {
   type: "mos_low" | "ttfb_high" | "error_spike" | "sentiment_negative";
@@ -147,7 +148,7 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("[API] voice quality-alerts error:", error);
+    log("error", "[API] voice quality-alerts error:", { error: error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

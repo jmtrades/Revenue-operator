@@ -17,6 +17,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 interface BriefingResponse {
   calls_handled: number;
@@ -142,7 +143,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json(briefing);
   } catch (error) {
-    console.error("[dashboard/briefing] error:", error instanceof Error ? error.message : error);
+    log("error", "[dashboard/briefing] error:", { error: error instanceof Error ? error.message : error });
     return NextResponse.json(
       { error: "Failed to load briefing", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }

@@ -9,6 +9,7 @@ import { createSessionCookie } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/queries";
 import { validateEmail, validatePasswordForSignin, toFriendlySigninError } from "@/lib/auth/validate";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { log } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -42,7 +43,7 @@ export async function POST(req: NextRequest) {
 
   const sessionSecret = (process.env.SESSION_SECRET ?? "").trim();
   if (!sessionSecret) {
-    console.error("[signin] SESSION_SECRET is not configured");
+    log("error", "[signin] SESSION_SECRET is not configured");
     return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
   }
 
@@ -93,7 +94,7 @@ export async function POST(req: NextRequest) {
   if (!cookie) {
     // SESSION_SECRET/ENCRYPTION_KEY not configured. This is a critical security issue.
     // Authentication must fail closed, not open.
-    console.error("[signin] SESSION_SECRET or ENCRYPTION_KEY is not configured");
+    log("error", "[signin] SESSION_SECRET or ENCRYPTION_KEY is not configured");
     return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
   }
   const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/app/dashboard" });

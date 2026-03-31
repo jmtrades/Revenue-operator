@@ -13,6 +13,7 @@ import { ensureWorkspaceInstallationState } from "@/lib/installation";
 import { getWorkspaceReadiness } from "@/lib/runtime/workspace-readiness";
 import { ensureInstallationState } from "@/lib/adoption-acceleration/installation-state";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   const csrfBlock = assertSameOrigin(request);
@@ -37,12 +38,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
   }
 
-  await ensureWorkspaceInstallationState(workspaceId).catch((err) => { console.error("[install/quickstart] error:", err instanceof Error ? err.message : err); });
+  await ensureWorkspaceInstallationState(workspaceId).catch((err) => { log("error", "[install/quickstart] error:", { error: err instanceof Error ? err.message : err }); });
   const readiness = await getWorkspaceReadiness(workspaceId);
   await ensureInstallationState(workspaceId, {
     messagingConnected: readiness.messaging_connected,
     paymentsConnected: readiness.payments_connected,
-  }).catch((err) => { console.error("[install/quickstart] error:", err instanceof Error ? err.message : err); });
+  }).catch((err) => { log("error", "[install/quickstart] error:", { error: err instanceof Error ? err.message : err }); });
 
   return NextResponse.json({ ok: true });
 }

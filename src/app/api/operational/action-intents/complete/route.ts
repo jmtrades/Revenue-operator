@@ -21,6 +21,7 @@ import { appendLedgerEvent } from "@/lib/ops/ledger";
 import type { OperationalAction } from "@/lib/reciprocal-events";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { parseBody, workspaceIdSchema, safeStringSchema } from "@/lib/api/validate";
+import { log } from "@/lib/logger";
 
 const completeIntentSchema = z.object({
   id: z.string().uuid("Invalid intent ID"),
@@ -77,7 +78,7 @@ export async function POST(request: NextRequest) {
     await updateCommitmentFromMessageOutcome(workspaceId, threadId, {
       result_status: resultStatus,
       intent_type: intentType,
-    }).catch((err) => { console.error("[operational/action-intents/complete] error:", err instanceof Error ? err.message : err); });
+    }).catch((err) => { log("error", "[operational/action-intents/complete] error:", { error: err instanceof Error ? err.message : err }); });
 
     const resolved = resolveUniversalOutcome({
       messageResultStatus: resultStatus,
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest) {
       outcome_confidence: resolved.outcome_confidence,
       next_required_action: resolved.next_required_action,
       structured_payload_json: { result_status: resultStatus, intent_type: intentType },
-    }).catch((err) => { console.error("[operational/action-intents/complete] error:", err instanceof Error ? err.message : err); });
+    }).catch((err) => { log("error", "[operational/action-intents/complete] error:", { error: err instanceof Error ? err.message : err }); });
 
     await recordStrategyEffectiveness({
       workspaceId,
@@ -108,11 +109,11 @@ export async function POST(request: NextRequest) {
         resolved.outcome_type === "escalation_required" ||
         resolved.outcome_type === "legal_risk" ||
         resolved.outcome_type === "hostile",
-    }).catch((err) => { console.error("[operational/action-intents/complete] error:", err instanceof Error ? err.message : err); });
+    }).catch((err) => { log("error", "[operational/action-intents/complete] error:", { error: err instanceof Error ? err.message : err }); });
 
     const meta = body.write_back?.payload ?? {};
     const questions = extractQuestionsFromMessageMetadata(meta as Record<string, unknown>);
-    if (questions.length > 0 && threadId) await recordUnresolvedQuestions(workspaceId, threadId, "message", questions).catch((err) => { console.error("[operational/action-intents/complete] error:", err instanceof Error ? err.message : err); });
+    if (questions.length > 0 && threadId) await recordUnresolvedQuestions(workspaceId, threadId, "message", questions).catch((err) => { log("error", "[operational/action-intents/complete] error:", { error: err instanceof Error ? err.message : err }); });
 
     type EmitAction = "schedule_followup" | "request_disclosure_confirmation" | "escalate_to_human" | "pause_execution";
     let nextAction: EmitAction | null = resolved.next_required_action !== "none" && resolved.next_required_action !== "record_commitment"
@@ -130,7 +131,7 @@ export async function POST(request: NextRequest) {
         subjectType: "thread",
         subjectRef: (threadId ?? workspaceId).slice(0, 160),
         details: { last_outcome_type: resolved.outcome_type, forced_next_action: closure.forcedNextAction },
-      }).catch((err) => { console.error("[operational/action-intents/complete] error:", err instanceof Error ? err.message : err); });
+      }).catch((err) => { log("error", "[operational/action-intents/complete] error:", { error: err instanceof Error ? err.message : err }); });
     }
     if (nextAction && EMIT_INTENT_ACTIONS.includes(nextAction as (typeof EMIT_INTENT_ACTIONS)[number])) {
       await createActionIntent(workspaceId, {
@@ -144,7 +145,7 @@ export async function POST(request: NextRequest) {
           source: "message_completion",
         },
         dedupeKey: `msg_complete:${id}:${nextAction}:${Date.now()}`,
-      }).catch((err) => { console.error("[operational/action-intents/complete] error:", err instanceof Error ? err.message : err); });
+      }).catch((err) => { log("error", "[operational/action-intents/complete] error:", { error: err instanceof Error ? err.message : err }); });
     }
   }
 

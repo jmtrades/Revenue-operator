@@ -13,6 +13,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   const session = await getSession(req);
@@ -106,7 +107,7 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (error) {
-    console.error("Failed to create A/B test:", error.message);
+    log("error", "Failed to create A/B test:", { error: error.message });
     return NextResponse.json({ error: "Failed to create test. The feature table may need to be initialized." }, { status: 500 });
   }
 
@@ -152,7 +153,7 @@ export async function PATCH(req: NextRequest) {
     .eq("id", id);
 
   if (error) {
-    console.error("Failed to update A/B test:", error.message);
+    log("error", "Failed to update A/B test:", { error: error.message });
     return NextResponse.json({ error: "Failed to update test" }, { status: 500 });
   }
 

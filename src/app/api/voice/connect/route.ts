@@ -15,6 +15,7 @@ import crypto from "crypto";
 import { getDb } from "@/lib/db/queries";
 import { handleInboundCall } from "@/lib/voice/call-flow";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 const FALLBACK_TWIML = `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">Thanks for calling. Please hold while we connect you.</Say><Pause length="2"/><Say voice="alice">If you need to speak to someone, please leave your name and number after the beep.</Say><Record maxLength="90" transcribe="true"/></Response>`;
 
@@ -125,7 +126,7 @@ export async function POST(req: NextRequest) {
         callSessionId = (existing as { id: string }).id;
       }
     } catch (sessionErr) {
-      console.error("[twilio-pipecat-connect] Call session creation failed:", sessionErr instanceof Error ? sessionErr.message : sessionErr);
+      log("error", "[twilio-pipecat-connect] Call session creation failed:", { error: sessionErr instanceof Error ? sessionErr.message : sessionErr });
     }
   }
 
@@ -138,7 +139,7 @@ export async function POST(req: NextRequest) {
       });
       return new NextResponse(twiml, { headers: { "Content-Type": "text/xml" } });
     } catch (callErr) {
-      console.error("[twilio-pipecat-connect] Voice AI handoff failed, falling back to TwiML:", callErr instanceof Error ? callErr.message : callErr);
+      log("error", "[twilio-pipecat-connect] Voice AI handoff failed, falling back to TwiML:", { error: callErr instanceof Error ? callErr.message : callErr });
     }
   }
 

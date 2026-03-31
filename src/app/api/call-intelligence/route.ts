@@ -15,6 +15,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 type DbExample = {
   id: string;
@@ -54,7 +55,7 @@ export async function GET(req: NextRequest) {
     .limit(100);
 
   if (exErr) {
-    console.error("[call-intelligence] call_examples query failed:", exErr.message);
+    log("error", "[call-intelligence] call_examples query failed:", { error: exErr.message });
     return NextResponse.json({ error: "Failed to load call examples." }, { status: 500 });
   }
 
@@ -66,7 +67,7 @@ export async function GET(req: NextRequest) {
     .limit(200);
 
   if (insErr) {
-    console.error("[call-intelligence] call_insights query failed:", insErr.message);
+    log("error", "[call-intelligence] call_insights query failed:", { error: insErr.message });
   }
 
   // Transform call_examples to frontend shape

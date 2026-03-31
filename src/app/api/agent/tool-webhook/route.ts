@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
     }
   } else if (process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production") {
     // Fail closed in production — webhook secret must be configured
-    console.error("[tool-webhook] TOOL_WEBHOOK_SECRET not configured in production — rejecting request");
+    log("error", "[tool-webhook] TOOL_WEBHOOK_SECRET not configured in production — rejecting request");
     return NextResponse.json({ error: "Unauthorized", result: "Technical issue. Someone will follow up." }, { status: 401 });
   }
 
@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
         }).select("id").maybeSingle();
 
         if (error) {
-          console.error("[tool-webhook] book_appointment error:", error.message);
+          log("error", "[tool-webhook] book_appointment error:", { error: error.message });
           return NextResponse.json({ result: `I've noted your appointment request for ${date} at ${time}. Someone will confirm shortly.` });
         }
 
@@ -468,7 +468,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ result: "Let me note that and have someone follow up with you." });
     }
   } catch (err) {
-    console.error(`[tool-webhook] Error executing ${tool_name}:`, err instanceof Error ? err.message : String(err));
+    log("error", `[tool-webhook] Error executing ${tool_name}:`, { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ result: "I'm having a small technical issue. Let me make a note and someone will follow up with you." });
   }
 }
@@ -547,3 +547,4 @@ async function sendQuickSms(
     return false;
   }
 }
+import { log } from "@/lib/logger";

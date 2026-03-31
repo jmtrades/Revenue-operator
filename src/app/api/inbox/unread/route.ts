@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   try {
@@ -29,7 +30,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ unread: count ?? 0 });
   } catch (error) {
-    console.error("[inbox/unread]", error);
+    log("error", "[inbox/unread]", { error: error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

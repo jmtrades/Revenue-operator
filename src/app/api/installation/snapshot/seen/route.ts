@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { setSnapshotSeen } from "@/lib/installation";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   const csrfErr = assertSameOrigin(request);
@@ -29,6 +30,6 @@ export async function POST(request: NextRequest) {
 
   await setSnapshotSeen(workspaceId);
   const { transitionInstallationPhase } = await import("@/lib/installation");
-  await transitionInstallationPhase(workspaceId).catch((err) => { console.error("[installation/snapshot/seen] error:", err instanceof Error ? err.message : err); });
+  await transitionInstallationPhase(workspaceId).catch((err) => { log("error", "[installation/snapshot/seen] error:", { error: err instanceof Error ? err.message : err }); });
   return NextResponse.json({ ok: true });
 }

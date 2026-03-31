@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { isAdmin, forbidden } from "@/lib/admin/auth";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   if (!(await isAdmin(req))) {
@@ -38,7 +39,7 @@ export async function GET(req: NextRequest) {
     const { data, error } = await query;
 
     if (error) {
-      console.error("[admin/benchmarks]", error);
+      log("error", "[admin/benchmarks]", { error: error });
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 
@@ -52,7 +53,7 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (err: any) {
-    console.error("[admin/benchmarks catch]", err);
+    log("error", "[admin/benchmarks catch]", { error: err });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

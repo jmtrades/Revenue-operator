@@ -7,6 +7,7 @@ import { getDb } from "@/lib/db/queries";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import crypto from "crypto";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 interface ChatSession {
   id: string;
@@ -67,7 +68,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(data || [], { status: 200 });
   } catch (error) {
-    console.error("[chat-widget/sessions GET]", error);
+    log("error", "[chat-widget/sessions GET]", { error: error });
     return NextResponse.json(
       { error: "Failed to fetch sessions" },
       { status: 500 }
@@ -141,7 +142,7 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (error) {
-      console.error("[chat-widget/sessions POST]", error);
+      log("error", "[chat-widget/sessions POST]", { error: error });
       return NextResponse.json(
         { error: "Failed to create session" },
         { status: 500 }
@@ -150,7 +151,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(data, { status: 201 });
   } catch (error) {
-    console.error("[chat-widget/sessions POST]", error);
+    log("error", "[chat-widget/sessions POST]", { error: error });
     return NextResponse.json(
       { error: "Failed to create session" },
       { status: 500 }

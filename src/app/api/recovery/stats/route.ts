@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
@@ -102,7 +103,7 @@ export async function GET(req: NextRequest) {
       recovery_rate: recoveryRate,
     });
   } catch (e) {
-    console.error("[recovery/stats] unexpected error:", e);
+    log("error", "[recovery/stats] unexpected error:", { error: e });
     return NextResponse.json({
       total_missed: 0,
       recovered: 0,

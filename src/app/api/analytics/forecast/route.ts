@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 interface ForecastResponse {
   current_revenue_cents: number;
@@ -154,7 +155,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<ForecastRespon
       confidence,
     });
   } catch (error) {
-    console.error("[forecast] Unexpected error:", error);
+    log("error", "[forecast] Unexpected error:", { error: error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

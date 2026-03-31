@@ -16,6 +16,7 @@ import { processWebhookJob } from "@/lib/pipeline/process-webhook";
 import { enqueue } from "@/lib/queue";
 import { burstDrain } from "@/lib/queue/burst-drain";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   const csrfBlock = assertSameOrigin(req);
@@ -146,7 +147,7 @@ export async function POST(req: NextRequest) {
       phone_number: phoneNumber,
     });
   } catch (error) {
-    console.error("[dev/simulate-inbound] Simulation error:", error);
+    log("error", "[dev/simulate-inbound] Simulation error:", { error: error });
     // Simulate failed; error response below
     return NextResponse.json(
       { error: "Simulation failed" },

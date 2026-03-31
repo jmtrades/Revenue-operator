@@ -219,7 +219,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (!res.ok) {
-      console.error("[coaching] Claude API error:", res.status, await res.text());
+      log("error", "[coaching] Claude API error", { error: res.status });
       return NextResponse.json({ error: "Analysis failed." }, { status: 502 });
     }
 
@@ -272,10 +272,11 @@ export async function POST(req: NextRequest) {
       saved: callId ? true : false,
     });
   } catch (err) {
-    console.error("[coaching] Unexpected error:", err);
+    log("error", "[coaching] Unexpected error:", { error: err });
     return NextResponse.json(
       { error: "Something went wrong with this service. Please try again." },
       { status: 502 }
     );
   }
 }
+import { log } from "@/lib/logger";

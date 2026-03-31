@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   const session = await getSession(req);
@@ -26,7 +27,7 @@ export async function GET(req: NextRequest) {
     .eq("id", workspaceId);
 
   const { checkAndMarkOrientationChecked } = await import("@/lib/orientation/records");
-  await checkAndMarkOrientationChecked(workspaceId).catch((err) => { console.error("[dashboard/ping] error:", err instanceof Error ? err.message : err); });
+  await checkAndMarkOrientationChecked(workspaceId).catch((err) => { log("error", "[dashboard/ping] error:", { error: err instanceof Error ? err.message : err }); });
 
   return NextResponse.json({ ok: true });
 }

@@ -194,7 +194,7 @@ export async function POST(req: NextRequest) {
         analysis_source: "gpt4o_post_call",
       });
     } catch (err) {
-      console.error("[post-call] call_analysis insert (gpt4o) failed:", err instanceof Error ? err.message : String(err));
+      log("error", "[post-call] call_analysis insert (gpt4o) failed:", { error: err instanceof Error ? err.message : String(err) });
     }
   } else if (sessionId && combinedText) {
     try {
@@ -211,7 +211,7 @@ export async function POST(req: NextRequest) {
         analysis_source: "post_call_rules",
       });
     } catch (err) {
-      console.error("[post-call] call_analysis insert (rules) failed:", err instanceof Error ? err.message : String(err));
+      log("error", "[post-call] call_analysis insert (rules) failed:", { error: err instanceof Error ? err.message : String(err) });
     }
   }
 
@@ -303,7 +303,7 @@ export async function POST(req: NextRequest) {
           }
         }
       } catch (err) {
-        console.error("[post-call] analytics/optimization insert failed:", err instanceof Error ? err.message : String(err));
+        log("error", "[post-call] analytics/optimization insert failed:", { error: err instanceof Error ? err.message : String(err) });
       }
     })();
   }
@@ -340,7 +340,7 @@ export async function POST(req: NextRequest) {
         if (body.transcript && body.transcript.length > 200) {
           import("@/lib/lead-scoring/ai-scorer").then(({ scoreLeadWithAI }) => {
             scoreLeadWithAI(workspace_id, leadId!).catch((aiErr) => {
-              console.error("[ai-scorer] async score error:", aiErr instanceof Error ? aiErr.message : String(aiErr));
+              log("error", "[ai-scorer] async score error:", { error: aiErr instanceof Error ? aiErr.message : String(aiErr) });
             });
           }).catch(() => { /* ai-scorer module not available */ });
         }
@@ -355,7 +355,7 @@ export async function POST(req: NextRequest) {
           // Non-blocking: brain will catch up via cron
         }
       } catch (err) {
-        console.error("[auto-followup] trigger error:", err instanceof Error ? err.message : String(err));
+        log("error", "[auto-followup] trigger error:", { error: err instanceof Error ? err.message : String(err) });
       }
     })();
   }
@@ -371,7 +371,7 @@ export async function POST(req: NextRequest) {
         payload: { conversation_id: conversationId, channel: "sms", content: "Thanks for your call. We'll follow up if needed." },
         dedup_key: `post-call-confirm-${sessionId ?? call_sid ?? "unknown"}`,
       };
-      await enqueueAction(cmd).catch((err) => { console.error("[inbound/post-call] error:", err instanceof Error ? err.message : err); });
+      await enqueueAction(cmd).catch((err) => { log("error", "[inbound/post-call] error:", { error: err instanceof Error ? err.message : err }); });
     }
   }
 
@@ -382,7 +382,7 @@ export async function POST(req: NextRequest) {
       outcome: businessOutcome,
       summary: summaryText || transcriptText.slice(0, 220),
       callerPhone: body.caller_phone ?? null,
-    }).catch((err) => { console.error("[inbound/post-call] error:", err instanceof Error ? err.message : err); });
+    }).catch((err) => { log("error", "[inbound/post-call] error:", { error: err instanceof Error ? err.message : err }); });
   }
 
   // Slack/Teams call summary notifications (Task 24)
@@ -414,7 +414,7 @@ export async function POST(req: NextRequest) {
           duration_seconds: durationSeconds,
         });
       } catch (err) {
-        console.error("[post-call] slack/teams notification failed:", err instanceof Error ? err.message : String(err));
+        log("error", "[post-call] slack/teams notification failed:", { error: err instanceof Error ? err.message : String(err) });
       }
     })();
   }
@@ -431,14 +431,15 @@ export async function POST(req: NextRequest) {
       const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
       const email = (user as { email?: string } | null)?.email;
       if (email) {
-        void sendGoLiveEmail(email, (ws as { name?: string | null } | null)?.name ?? null).catch((err) => { console.error("[inbound/post-call] error:", err instanceof Error ? err.message : err); });
+        void sendGoLiveEmail(email, (ws as { name?: string | null } | null)?.name ?? null).catch((err) => { log("error", "[inbound/post-call] error:", { error: err instanceof Error ? err.message : err }); });
       }
     }
   }
 
   return NextResponse.json({ ok: true, call_session_id: sessionId });
   } catch (err) {
-    console.error("[post-call]", err instanceof Error ? err.message : String(err));
+    log("error", "[post-call]", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Post-call processing failed" }, { status: 500 });
   }
 }
+import { log } from "@/lib/logger";

@@ -30,7 +30,8 @@ export async function GET(request: NextRequest) {
     const lines = (row as { lines?: string[] } | null)?.lines ?? [];
     return NextResponse.json({ lines: Array.isArray(lines) ? lines : [] });
   } catch (err) {
-    console.error("[proof-capsule]", err instanceof Error ? err.message : String(err));
+    log("error", "[proof-capsule]", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ lines: [] }, { status: 500 });
   }
 }
+import { log } from "@/lib/logger";

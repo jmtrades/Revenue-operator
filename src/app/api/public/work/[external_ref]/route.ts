@@ -197,10 +197,7 @@ export async function GET(
     if (!workspaceId) {
       await incrementPublicRecordRateLimit(ipHash, external_ref).catch(
         (err: unknown) => {
-        console.error(
-          "[public/work/[external_ref]] error:",
-          err instanceof Error ? err.message : err
-        );
+        log("error", "[public/work/[external_ref]] error:", { error: err instanceof Error ? err.message : err });
         }
       );
       const { overThreshold } = await recordPublicRecord404(ipHash).catch(() => ({
@@ -214,10 +211,7 @@ export async function GET(
 
     await incrementPublicRecordRateLimit(ipHash, external_ref).catch(
       (err: unknown) => {
-      console.error(
-        "[public/work/[external_ref]] error:",
-        err instanceof Error ? err.message : err
-      );
+      log("error", "[public/work/[external_ref]] error:", { error: err instanceof Error ? err.message : err });
       }
     );
 
@@ -243,10 +237,7 @@ export async function GET(
           workspaceId,
           "This record was reopened after completion."
         ).catch((err) => {
-          console.error(
-            "[public/work/[external_ref]] error:",
-            err instanceof Error ? err.message : err
-          );
+          log("error", "[public/work/[external_ref]] error:", { error: err instanceof Error ? err.message : err });
         });
       }
     }
@@ -259,10 +250,7 @@ export async function GET(
       ip,
       workspaceId
     ).catch((err) => {
-      console.error(
-        "[public/work/[external_ref]] error:",
-        err instanceof Error ? err.message : err
-      );
+      log("error", "[public/work/[external_ref]] error:", { error: err instanceof Error ? err.message : err });
     });
     const { detectAndRecordReturnToRecord } = await import(
       "@/lib/operational-ambiguity/return-to-record"
@@ -272,10 +260,7 @@ export async function GET(
       workspaceId,
       ip
     ).catch((err) => {
-      console.error(
-        "[public/work/[external_ref]] error:",
-        err instanceof Error ? err.message : err
-      );
+      log("error", "[public/work/[external_ref]] error:", { error: err instanceof Error ? err.message : err });
     });
 
     const db = getDb();
@@ -408,10 +393,7 @@ export async function GET(
         typeof value === "bigint" ? value.toString() : value
       );
     } catch (err) {
-      console.error(
-        "[public/work/[external_ref]] GET payload serialization error:",
-        err instanceof Error ? err.message : err
-      );
+      log("error", "[public/work/[external_ref]] GET payload serialization error:", { error: err instanceof Error ? err.message : err });
       return neutralResponse();
     }
 
@@ -435,10 +417,8 @@ export async function GET(
 
     return response;
   } catch (err) {
-    console.error(
-      "[public/work/[external_ref]] GET hardening caught error:",
-      err instanceof Error ? err.message : err
-    );
+    log("error", "[public/work/[external_ref]] GET hardening caught error:", { error: err instanceof Error ? err.message : err });
     return neutralResponse();
   }
 }
+import { log } from "@/lib/logger";

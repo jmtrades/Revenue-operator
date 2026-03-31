@@ -13,6 +13,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { sendSms } from "@/lib/telephony/telnyx-sms";
+import { log } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   const csrfBlock = assertSameOrigin(req);
@@ -69,7 +70,7 @@ export async function POST(req: NextRequest) {
   const { data: queueItems, error: queueErr } = await query;
 
   if (queueErr) {
-    console.error("[cold-leads/reengage] query failed:", queueErr.message);
+    log("error", "[cold-leads/reengage] query failed:", { error: queueErr.message });
     return NextResponse.json({ error: "Failed to fetch cold leads" }, { status: 500 });
   }
 
@@ -95,7 +96,7 @@ export async function POST(req: NextRequest) {
     .in("id", leadIds);
 
   if (leadsErr) {
-    console.error("[cold-leads/reengage] leads query failed:", leadsErr.message);
+    log("error", "[cold-leads/reengage] leads query failed:", { error: leadsErr.message });
     return NextResponse.json({ error: "Failed to fetch lead preferences" }, { status: 500 });
   }
 

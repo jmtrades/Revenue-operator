@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function GET(
   req: NextRequest,
@@ -24,7 +25,7 @@ export async function GET(
     .maybeSingle();
 
   if (error && error.code !== "PGRST116") {
-    console.error("[workspaces/[id]/settings GET]", error);
+    log("error", "[workspaces/[id]/settings GET]", { error: error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
   return NextResponse.json(data ?? {
@@ -77,13 +78,13 @@ export async function PATCH(
     .maybeSingle();
 
   if (error) {
-    console.error("[workspaces/[id]/settings PATCH]", error);
+    log("error", "[workspaces/[id]/settings PATCH]", { error: error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 
   if (nextProfile && nextProfile !== prevProfile) {
     const { recordOrientationStatement } = await import("@/lib/orientation/records");
-    recordOrientationStatement(id, "The operating profile was updated.").catch((err) => { console.error("[workspaces/[id]/settings] error:", err instanceof Error ? err.message : err); });
+    recordOrientationStatement(id, "The operating profile was updated.").catch((err) => { log("error", "[workspaces/[id]/settings] error:", { error: err instanceof Error ? err.message : err }); });
   }
 
   return NextResponse.json(data);

@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 type RecoveryStatus = "recovered" | "pending" | "in_progress" | "lost";
 type RecoveryMethod = "ai_callback" | "sms_followup" | "manual";
@@ -73,7 +74,7 @@ export async function GET(req: NextRequest) {
       .limit(50);
 
     if (error) {
-      console.error("[recovery/missed-calls] query error:", error);
+      log("error", "[recovery/missed-calls] query error:", { error: error });
       return NextResponse.json({ calls: [] });
     }
 
@@ -96,7 +97,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ calls });
   } catch (e) {
-    console.error("[recovery/missed-calls] unexpected error:", e);
+    log("error", "[recovery/missed-calls] unexpected error:", { error: e });
     return NextResponse.json({ calls: [] });
   }
 }

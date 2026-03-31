@@ -108,7 +108,7 @@ export async function POST(req: NextRequest) {
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("Auto-learn POST error:", message, err);
+    log("error", "Auto-learn POST error:", { error: message, err });
 
     return NextResponse.json(
       {
@@ -157,7 +157,7 @@ export async function GET(req: NextRequest) {
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("Auto-learn GET error:", message, err);
+    log("error", "Auto-learn GET error:", { error: message, err });
 
     return NextResponse.json(
       {
@@ -167,3 +167,4 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+import { log } from "@/lib/logger";

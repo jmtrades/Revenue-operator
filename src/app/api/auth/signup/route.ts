@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
 
   const sessionSecret = (process.env.SESSION_SECRET ?? "").trim();
   if (!sessionSecret) {
-    console.error("[signup] SESSION_SECRET is not configured");
+    log("error", "[signup] SESSION_SECRET is not configured");
     return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
   }
 
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
 
   const businessName = normalizeBusinessName(body?.businessName);
   const sendWelcome = () => {
-    void sendWelcomeEmail(email, businessName).catch((err) => { console.error("[auth/signup] error:", err instanceof Error ? err.message : err); });
+    void sendWelcomeEmail(email, businessName).catch((err) => { log("error", "[auth/signup] error:", { error: err instanceof Error ? err.message : err }); });
   };
   const serviceRoleKey = (process.env.SUPABASE_SERVICE_ROLE_KEY ?? "").trim();
 

@@ -81,7 +81,8 @@ export async function GET(req: NextRequest) {
       top_actions: [],
     });
   } catch (err) {
-    console.error("[brain-stats]", err instanceof Error ? err.message : String(err));
+    log("error", "[brain-stats]", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+import { log } from "@/lib/logger";

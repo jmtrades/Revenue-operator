@@ -7,6 +7,7 @@ import { getDb } from "@/lib/db/queries";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { scoreLeadWithAI, saveLeadScore } from "@/lib/lead-scoring/ai-scorer";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 const CONCURRENCY_LIMIT = 5;
 const MAX_BATCH_SIZE = 50;
@@ -120,7 +121,7 @@ export async function POST(req: NextRequest) {
       scores,
     });
   } catch (error) {
-    console.error("[API] leads/ai-score/batch error:", error);
+    log("error", "[API] leads/ai-score/batch error:", { error: error });
     return NextResponse.json(
       {
         error: "Failed to process batch scoring",

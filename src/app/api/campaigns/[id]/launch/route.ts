@@ -11,6 +11,7 @@ import { executeLeadOutboundCall } from "@/lib/outbound/execute-lead-call";
 import type { CampaignType } from "@/lib/campaigns/prompt";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { checkDNC } from "@/lib/compliance/dnc-check";
+import { log } from "@/lib/logger";
 
 type TargetFilter = {
   audience_statuses?: string[];
@@ -314,7 +315,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
         .from("campaign_leads")
         .upsert(campaignLeadRows, { onConflict: "campaign_id,lead_id", ignoreDuplicates: true });
       if (junctionErr) {
-        console.error("[campaign/launch] Failed to insert campaign_leads:", junctionErr.message);
+        log("error", "[campaign/launch] Failed to insert campaign_leads:", { error: junctionErr.message });
         throw new Error(`Failed to create campaign_leads: ${junctionErr.message}`);
       }
     }
@@ -456,7 +457,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   } catch (err) {
     campaignStatus = "failed";
     errorMessage = err instanceof Error ? err.message : "Unknown error during campaign launch";
-    console.error("[campaign/launch] Campaign launch failed:", errorMessage);
+    log("error", "[campaign/launch] Campaign launch failed:", { error: errorMessage });
   }
 
   // Update campaign status based on enqueuing outcome

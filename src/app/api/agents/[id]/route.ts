@@ -7,6 +7,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { log } from "@/lib/logger";
 
 const updateAgentSchema = z.object({
   name: z.string().min(1).max(100).optional(),
@@ -41,7 +42,7 @@ export async function GET(req: NextRequest, ctx: { params: Promise<{ id: string 
     .eq("workspace_id", workspaceId)
     .maybeSingle();
   if (error) {
-    console.error("[DB Error] agents GET", error.message);
+    log("error", "[DB Error] agents GET", { error: error.message });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
   if (!agent) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -91,7 +92,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
   }
   const { data: agent, error } = await db.from("agents").update(updates).eq("id", id).select().maybeSingle();
   if (error) {
-    console.error("[DB Error] agents PATCH", error.message);
+    log("error", "[DB Error] agents PATCH", { error: error.message });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
   return NextResponse.json(agent);
@@ -117,7 +118,7 @@ export async function DELETE(req: NextRequest, ctx: { params: Promise<{ id: stri
 
   const { error } = await db.from("agents").delete().eq("id", id);
   if (error) {
-    console.error("[DB Error] agents DELETE", error.message);
+    log("error", "[DB Error] agents DELETE", { error: error.message });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
   return NextResponse.json({ ok: true });

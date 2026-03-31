@@ -22,7 +22,8 @@ export async function GET(request: NextRequest) {
   if (authErr) return authErr;
 
   const lines = await getRecentOrientationStatements(workspaceId, 20);
-  await updateLastOrientationViewedAt(workspaceId).catch((err) => { console.error("[operational/recent] error:", err instanceof Error ? err.message : err); });
+  await updateLastOrientationViewedAt(workspaceId).catch((err) => { log("error", "[operational/recent] error:", { error: err instanceof Error ? err.message : err }); });
 
   return NextResponse.json(lines);
 }
+import { log } from "@/lib/logger";

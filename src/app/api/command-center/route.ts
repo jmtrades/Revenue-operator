@@ -927,7 +927,8 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json(response);
   } catch (err) {
-    console.error("[command-center]", err instanceof Error ? err.message : String(err));
+    log("error", "[command-center]", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Failed to load command center" }, { status: 500 });
   }
 }
+import { log } from "@/lib/logger";

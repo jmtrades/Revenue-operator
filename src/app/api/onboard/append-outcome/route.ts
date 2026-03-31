@@ -14,6 +14,7 @@ import { recordOrientationStatement } from "@/lib/orientation/records";
 import { detectAndAttachReference } from "@/lib/thread-reference-memory";
 import { recordOutcomeDependency } from "@/lib/outcome-dependencies";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   const csrfBlock = assertSameOrigin(request);
@@ -73,7 +74,7 @@ export async function POST(request: NextRequest) {
     subjectType,
     subjectId,
     threadId: existingThreadId,
-  }).catch((err) => { console.error("[onboard/append-outcome] error:", err instanceof Error ? err.message : err); });
+  }).catch((err) => { log("error", "[onboard/append-outcome] error:", { error: err instanceof Error ? err.message : err }); });
 
   await recordOutcomeDependency({
     workspaceId: workspace_id,
@@ -81,10 +82,10 @@ export async function POST(request: NextRequest) {
     dependentContextType: "shared_transaction",
     dependentContextId: newThreadId,
     dependencyType: "prior_outcome_reference",
-  }).catch((err) => { console.error("[onboard/append-outcome] error:", err instanceof Error ? err.message : err); });
+  }).catch((err) => { log("error", "[onboard/append-outcome] error:", { error: err instanceof Error ? err.message : err }); });
 
   if (outcome_text && outcome_text.trim()) {
-    await recordOrientationStatement(workspace_id, outcome_text.trim().slice(0, 90)).catch((err) => { console.error("[onboard/append-outcome] error:", err instanceof Error ? err.message : err); });
+    await recordOrientationStatement(workspace_id, outcome_text.trim().slice(0, 90)).catch((err) => { log("error", "[onboard/append-outcome] error:", { error: err instanceof Error ? err.message : err }); });
   }
 
   const { data: tx } = await db.from("shared_transactions").select("external_ref").eq("id", newThreadId).maybeSingle();

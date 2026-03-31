@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getInstallationState, ensureWorkspaceInstallationState } from "@/lib/installation";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   const workspaceId = request.nextUrl.searchParams.get("workspace_id");
@@ -19,7 +20,7 @@ export async function GET(request: NextRequest) {
 
   let state = await getInstallationState(workspaceId);
   if (!state) {
-    await ensureWorkspaceInstallationState(workspaceId).catch((err) => { console.error("[installation/state] error:", err instanceof Error ? err.message : err); });
+    await ensureWorkspaceInstallationState(workspaceId).catch((err) => { log("error", "[installation/state] error:", { error: err instanceof Error ? err.message : err }); });
     state = await getInstallationState(workspaceId);
   }
   if (!state) {

@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   try {
@@ -86,7 +87,7 @@ export async function GET(req: NextRequest) {
     recoveries_interrupted: recoveriesInterrupted,
   });
   } catch (error) {
-    console.error("[API] continuity/risk error:", error);
+    log("error", "[API] continuity/risk error:", { error: error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

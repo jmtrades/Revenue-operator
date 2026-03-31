@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { createOAuthState } from "@/lib/integrations/oauth-state";
+import { log } from "@/lib/logger";
 
 const ZOOM_AUTH_URL = "https://zoom.us/oauth/authorize";
 
@@ -18,7 +19,7 @@ export async function GET(req: NextRequest) {
   const clientId = process.env.ZOOM_CLIENT_ID;
   const baseUrl = process.env.BASE_URL || req.nextUrl.origin || process.env.NEXT_PUBLIC_APP_URL;
   if (!baseUrl) {
-    console.error("[zoom/connect] Cannot determine base URL");
+    log("error", "[zoom/connect] Cannot determine base URL");
     return NextResponse.json({ error: "Configuration error" }, { status: 500 });
   }
   const redirectUri = `${baseUrl}/api/integrations/zoom/callback`;

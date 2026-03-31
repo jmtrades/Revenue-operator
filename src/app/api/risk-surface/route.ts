@@ -210,7 +210,8 @@ export async function GET(req: NextRequest) {
     risk_incidents_prevented_this_week: preventedCount ?? 0,
   });
   } catch (err) {
-    console.error("[risk-surface]", err instanceof Error ? err.message : String(err));
+    log("error", "[risk-surface]", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Failed to load risk surface" }, { status: 500 });
   }
 }
+import { log } from "@/lib/logger";

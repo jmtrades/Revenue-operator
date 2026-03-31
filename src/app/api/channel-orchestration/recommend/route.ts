@@ -13,6 +13,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { determineOptimalChannel } from "@/lib/channel-orchestration/engine";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   const csrfBlock = assertSameOrigin(req);
@@ -79,7 +80,7 @@ export async function POST(req: NextRequest) {
             error: null,
           };
         } catch (error) {
-          console.error(`[channel-orchestration/recommend] Error for lead ${leadId}:`, error);
+          log("error", `[channel-orchestration/recommend] Error for lead ${leadId}:`, { error: error });
           return {
             lead_id: leadId,
             recommendation: null,
@@ -102,7 +103,7 @@ export async function POST(req: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error("[channel-orchestration/recommend] Error:", error);
+    log("error", "[channel-orchestration/recommend] Error:", { error: error });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

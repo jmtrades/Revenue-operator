@@ -5,6 +5,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 interface WidgetConfig {
   enabled: boolean;
@@ -57,7 +58,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(config, { status: 200 });
   } catch (error) {
-    console.error("[chat-widget/config GET]", error);
+    log("error", "[chat-widget/config GET]", { error: error });
     return NextResponse.json(
       { error: "Failed to fetch widget config" },
       { status: 500 }
@@ -139,7 +140,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(data, { status: 201 });
     }
   } catch (error) {
-    console.error("[chat-widget/config POST]", error);
+    log("error", "[chat-widget/config POST]", { error: error });
     return NextResponse.json(
       { error: "Failed to update widget config" },
       { status: 500 }

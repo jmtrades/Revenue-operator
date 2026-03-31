@@ -46,7 +46,8 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({ members: formatted });
   } catch (err) {
-    console.error("[workspace-members]", err instanceof Error ? err.message : String(err));
+    log("error", "[workspace-members]", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ members: [] }, { status: 500 });
   }
 }
+import { log } from "@/lib/logger";

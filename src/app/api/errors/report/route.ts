@@ -7,6 +7,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -60,7 +61,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (insertErr) {
-      console.error("[errors/report insert]", insertErr);
+      log("error", "[errors/report insert]", { error: insertErr });
       return NextResponse.json(
         { error: "Internal server error" },
         { status: 500 }
@@ -69,7 +70,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch (e) {
-    console.error("[errors/report]", e);
+    log("error", "[errors/report]", { error: e });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

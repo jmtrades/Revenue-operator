@@ -6,6 +6,7 @@ import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { buildVapiSystemPrompt } from "@/lib/agents/build-vapi-system-prompt";
 import { buildAfterHoursInstructions } from "@/lib/voice/after-hours";
+import { log } from "@/lib/logger";
 
 /**
  * POST /api/agent/respond
@@ -291,7 +292,7 @@ export async function POST(req: NextRequest) {
 
     if (!res.ok) {
       const errText = await res.text().catch(() => "");
-      console.error(`Anthropic API error ${res.status}: ${errText.slice(0, 200)}`);
+      log("error", `Anthropic API error ${res.status}: ${errText.slice(0, 200)}`);
       return NextResponse.json({
         text: "I'm sorry, could you repeat that? I missed what you said.",
       });
@@ -310,7 +311,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ text });
   } catch (err) {
-    console.error("[agent/respond] Error:", err);
+    log("error", "[agent/respond] Error:", { error: err });
     return NextResponse.json({
       text: "I'm having trouble hearing you. Let me get your number so someone can call you back.",
     });

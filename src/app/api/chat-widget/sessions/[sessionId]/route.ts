@@ -5,6 +5,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 /**
  * PATCH /api/chat-widget/sessions/[sessionId]
@@ -78,7 +79,7 @@ export async function PATCH(
       .single();
 
     if (error) {
-      console.error("[chat-widget/sessions PATCH]", error);
+      log("error", "[chat-widget/sessions PATCH]", { error: error });
       return NextResponse.json(
         { error: "Failed to update session" },
         { status: 500 }
@@ -87,7 +88,7 @@ export async function PATCH(
 
     return NextResponse.json(data, { status: 200 });
   } catch (error) {
-    console.error("[chat-widget/sessions PATCH]", error);
+    log("error", "[chat-widget/sessions PATCH]", { error: error });
     return NextResponse.json(
       { error: "Failed to update session" },
       { status: 500 }

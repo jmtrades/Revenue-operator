@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   const session = await getSession(req);
@@ -49,7 +50,7 @@ export async function GET(req: NextRequest) {
     const { data: results, error: queryErr } = await query;
 
     if (queryErr) {
-      console.error("[coaching-history] Query failed:", queryErr.message);
+      log("error", "[coaching-history] Query failed:", { error: queryErr.message });
       return NextResponse.json({ error: "Failed to load coaching history" }, { status: 500 });
     }
 
@@ -69,7 +70,7 @@ export async function GET(req: NextRequest) {
       results: history,
     });
   } catch (err) {
-    console.error("[coaching-history] Unexpected error:", err);
+    log("error", "[coaching-history] Unexpected error:", { error: err });
     return NextResponse.json(
       { error: "Something went wrong with this service. Please try again." },
       { status: 502 }

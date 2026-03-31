@@ -9,6 +9,7 @@ import { recordHandoffAcknowledgement } from "@/lib/delivery-assurance/handoff-a
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function POST(
   request: NextRequest,
@@ -40,7 +41,7 @@ export async function POST(
   try {
     await recordHandoffAcknowledgement(escalationId, acknowledgedBy);
   } catch (err) {
-    console.error("[escalations/[id]/ack] recordHandoffAcknowledgement failed:", err instanceof Error ? err.message : err);
+    log("error", "[escalations/[id]/ack] recordHandoffAcknowledgement failed:", { error: err instanceof Error ? err.message : err });
     return NextResponse.json({ error: "Failed to record acknowledgement" }, { status: 500 });
   }
 
@@ -54,17 +55,17 @@ export async function POST(
       .limit(1);
     if ((silenceRows?.length ?? 0) > 0) {
       const { recordOperationalAssumption } = await import("@/lib/assumption-engine");
-      recordOperationalAssumption(workspaceId, "absence_only_attention", `escalation:${escalationId}`).catch((err) => { console.error("[escalations/[id]/ack] error:", err instanceof Error ? err.message : err); });
+      recordOperationalAssumption(workspaceId, "absence_only_attention", `escalation:${escalationId}`).catch((err) => { log("error", "[escalations/[id]/ack] error:", { error: err instanceof Error ? err.message : err }); });
     }
     const { recordProviderInteraction } = await import("@/lib/detachment");
-    recordProviderInteraction(workspaceId, `escalation:${escalationId}`).catch((err) => { console.error("[escalations/[id]/ack] error:", err instanceof Error ? err.message : err); });
+    recordProviderInteraction(workspaceId, `escalation:${escalationId}`).catch((err) => { log("error", "[escalations/[id]/ack] error:", { error: err instanceof Error ? err.message : err }); });
     const { data: escRow } = await db.from("escalation_logs").select("lead_id").eq("id", escalationId).maybeSingle();
     const leadId = (escRow as { lead_id?: string } | null)?.lead_id;
-    if (leadId) recordProviderInteraction(workspaceId, `lead:${leadId}`).catch((err) => { console.error("[escalations/[id]/ack] error:", err instanceof Error ? err.message : err); });
+    if (leadId) recordProviderInteraction(workspaceId, `lead:${leadId}`).catch((err) => { log("error", "[escalations/[id]/ack] error:", { error: err instanceof Error ? err.message : err }); });
     const { recordStaffRelianceEvent } = await import("@/lib/staff-reliance");
-    recordStaffRelianceEvent(workspaceId).catch((err) => { console.error("[escalations/[id]/ack] error:", err instanceof Error ? err.message : err); });
+    recordStaffRelianceEvent(workspaceId).catch((err) => { log("error", "[escalations/[id]/ack] error:", { error: err instanceof Error ? err.message : err }); });
     const { recordOrientationStatement } = await import("@/lib/orientation/records");
-    recordOrientationStatement(workspaceId, "The request was addressed.").catch((err) => { console.error("[escalations/[id]/ack] error:", err instanceof Error ? err.message : err); });
+    recordOrientationStatement(workspaceId, "The request was addressed.").catch((err) => { log("error", "[escalations/[id]/ack] error:", { error: err instanceof Error ? err.message : err }); });
   }
 
   return NextResponse.json({ ok: true, escalation_id: escalationId });

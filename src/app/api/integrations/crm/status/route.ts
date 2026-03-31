@@ -68,7 +68,7 @@ export async function GET(req: NextRequest) {
     .in("provider", [...CRM_PROVIDERS]);
 
   if (error) {
-    console.error("[CRM Status] Failed to query workspace_crm_connections:", error.message, error.code);
+    log("error", "[CRM Status] Failed to query workspace_crm_connections", { error: error.message, code: error.code });
     const integrations = Object.fromEntries(
       CRM_PROVIDERS.map((p) => [p, emptyStatus()])
     ) as Record<CrmProviderId, CrmIntegrationStatus>;
@@ -157,3 +157,4 @@ export async function GET(req: NextRequest) {
     global: { lastSyncAt: globalLastSync, recordsSynced: globalRecords, errors: globalErrors },
   } satisfies CrmStatusResponse);
 }
+import { log } from "@/lib/logger";

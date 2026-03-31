@@ -11,6 +11,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 interface ChannelMetrics {
   channel: string;
@@ -78,7 +79,7 @@ export async function GET(req: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error("[channel-orchestration/insights] Error:", error);
+    log("error", "[channel-orchestration/insights] Error:", { error: error });
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

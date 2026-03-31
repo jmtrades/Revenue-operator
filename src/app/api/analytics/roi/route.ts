@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 type LeadBySource = {
   source: string;
@@ -251,7 +252,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error("[analytics/roi]", error);
+    log("error", "[analytics/roi]", { error: error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

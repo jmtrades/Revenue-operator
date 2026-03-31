@@ -61,9 +61,9 @@ export async function POST(request: NextRequest) {
     const workspaceId = (txRow as { workspace_id: string } | null)?.workspace_id;
     if (workspaceId) {
       const { recordRecordReference } = await import("@/lib/record-reference");
-      recordRecordReference(workspaceId, "counterparty", "ack_flow", result.externalRef).catch((err) => { console.error("[public/shared-transactions/acknowledge] error:", err instanceof Error ? err.message : err); });
+      recordRecordReference(workspaceId, "counterparty", "ack_flow", result.externalRef).catch((err) => { log("error", "[public/shared-transactions/acknowledge] error:", { error: err instanceof Error ? err.message : err }); });
       const { recomputeInstitutionalState } = await import("@/lib/institutional-state");
-      recomputeInstitutionalState(workspaceId).catch((err) => { console.error("[public/shared-transactions/acknowledge] error:", err instanceof Error ? err.message : err); });
+      recomputeInstitutionalState(workspaceId).catch((err) => { log("error", "[public/shared-transactions/acknowledge] error:", { error: err instanceof Error ? err.message : err }); });
     }
   }
 
@@ -92,3 +92,4 @@ export async function POST(request: NextRequest) {
   }
   return NextResponse.json({ ok: true });
 }
+import { log } from "@/lib/logger";

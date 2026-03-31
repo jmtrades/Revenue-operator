@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 async function signPayload(body: string, secret: string): Promise<string> {
   const encoder = new TextEncoder();
@@ -71,7 +72,7 @@ export async function POST(
       response: text.slice(0, 300),
     });
   } catch (error) {
-    console.error("[webhook-config/test] Request failed:", error);
+    log("error", "[webhook-config/test] Request failed:", { error: error });
     return NextResponse.json(
       { error: "Webhook test failed" },
       { status: 502 },

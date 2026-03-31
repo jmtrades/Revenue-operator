@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   try {
@@ -216,7 +217,7 @@ export async function GET(req: NextRequest) {
       improvement_trend: improvementTrend,
     });
   } catch (error) {
-    console.error("[API] dashboard/intelligence error:", error);
+    log("error", "[API] dashboard/intelligence error:", { error: error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

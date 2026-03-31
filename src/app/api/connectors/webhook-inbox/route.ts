@@ -11,6 +11,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { appendConnectorInboxEvent } from "@/lib/connectors/install-pack/webhook-inbox";
 import { createHmac, timingSafeEqual } from "crypto";
+import { log } from "@/lib/logger";
 
 const WEBHOOK_INBOX_SECRET = process.env.WEBHOOK_INBOX_SECRET;
 
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
     }
   } else if (process.env.NODE_ENV === "production") {
     // In production, WEBHOOK_INBOX_SECRET MUST be set
-    console.error("[webhook-inbox] WEBHOOK_INBOX_SECRET not configured in production");
+    log("error", "[webhook-inbox] WEBHOOK_INBOX_SECRET not configured in production");
     return NextResponse.json({ error: "Webhook not configured" }, { status: 500 });
   }
 

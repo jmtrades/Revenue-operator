@@ -139,7 +139,8 @@ export async function GET(req: NextRequest) {
     },
   });
   } catch (err) {
-    console.error("[misses]", err instanceof Error ? err.message : String(err));
+    log("error", "[misses]", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ misses: [], summary: { total_misses: 0, follow_up_missed: 0, conversation_cold: 0, recovery_scheduled: 0 } }, { status: 500 });
   }
 }
+import { log } from "@/lib/logger";

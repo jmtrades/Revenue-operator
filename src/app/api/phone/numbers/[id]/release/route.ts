@@ -9,6 +9,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { getTelephonyService } from "@/lib/telephony";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -98,7 +99,7 @@ export async function POST(
         if (resolved) {
           const retry = await telephony.releaseNumber(resolved);
           if ("error" in retry) {
-            console.error("[release] Retry failed:", retry.error);
+            log("error", "[release] Retry failed:", { error: retry.error });
             return NextResponse.json(
               { error: "Failed to release number from provider. Please try again.", details: retry.error },
               { status: 500 }
@@ -110,7 +111,7 @@ export async function POST(
         }
       }
     } catch (e) {
-      console.error("Failed to release number from provider:", e);
+      log("error", "Failed to release number from provider:", { error: e });
       return NextResponse.json(
         { error: "Failed to release number from provider. Please try again.", details: String(e) },
         { status: 500 }

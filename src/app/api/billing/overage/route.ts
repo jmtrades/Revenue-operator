@@ -13,6 +13,7 @@ import { getDb } from "@/lib/db/queries";
 import { calculateOverageCharges } from "@/lib/billing/overage";
 import { assertCronAuthorized } from "@/lib/runtime";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   const csrfBlock = assertSameOrigin(req);
@@ -158,7 +159,7 @@ export async function POST(req: NextRequest) {
 
     // Always log billing operations for observability — critical for revenue tracking
     if (errors.length > 0) {
-      console.error(`[billing/overage] ${errors.length} errors:`, errors);
+      log("error", `[billing/overage] ${errors.length} errors:`, { error: errors });
     }
 
     return NextResponse.json({
@@ -169,7 +170,7 @@ export async function POST(req: NextRequest) {
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error("[billing/overage] Unexpected error:", msg);
+    log("error", "[billing/overage] Unexpected error:", { error: msg });
     return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

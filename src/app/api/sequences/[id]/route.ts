@@ -44,7 +44,7 @@ export async function GET(
     }
     return NextResponse.json(result);
   } catch (error) {
-    console.error("[Sequences] Error fetching sequence:", error);
+    log("error", "[Sequences] Error fetching sequence:", { error: error });
     return NextResponse.json(
       { error: "Failed to fetch sequence" },
       { status: 500 }
@@ -88,7 +88,7 @@ export async function PATCH(
     }
     return NextResponse.json({ sequence });
   } catch (error) {
-    console.error("[Sequences] Error updating sequence:", error);
+    log("error", "[Sequences] Error updating sequence:", { error: error });
     return NextResponse.json(
       { error: "Failed to update sequence" },
       { status: 500 }
@@ -126,10 +126,11 @@ export async function DELETE(
     }
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("[Sequences] Error deleting sequence:", error);
+    log("error", "[Sequences] Error deleting sequence:", { error: error });
     return NextResponse.json(
       { error: "Failed to delete sequence" },
       { status: 500 }
     );
   }
 }
+import { log } from "@/lib/logger";

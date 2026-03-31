@@ -149,7 +149,7 @@ export async function POST(req: NextRequest) {
 
     if (!eventsRes.ok) {
       const errText = await eventsRes.text();
-      console.error("[google-calendar-sync] fetch failed:", errText);
+      log("error", "[google-calendar-sync] fetch failed:", { error: errText });
       return NextResponse.json(
         { error: "Failed to fetch calendar events" },
         { status: 502 }
@@ -306,10 +306,11 @@ export async function POST(req: NextRequest) {
       updated: updatedCount,
     });
   } catch (err) {
-    console.error("[google-calendar-sync] error:", err);
+    log("error", "[google-calendar-sync] error:", { error: err });
     return NextResponse.json(
       { error: "Sync failed" },
       { status: 500 }
     );
   }
 }
+import { log } from "@/lib/logger";

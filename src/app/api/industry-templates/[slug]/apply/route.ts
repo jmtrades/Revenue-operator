@@ -21,6 +21,7 @@ import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { getSession } from "@/lib/auth/request-session";
+import { log } from "@/lib/logger";
 
 type TemplateSection = "greeting" | "faq" | "scripts" | "cadence";
 
@@ -248,7 +249,7 @@ export async function POST(
         .maybeSingle();
 
       if (createError) {
-        console.error("[DB Error] Create agent from template:", createError);
+        log("error", "[DB Error] Create agent from template:", { error: createError });
         return NextResponse.json(
           { error: "Something went wrong. Please try again." },
           { status: 500 }
@@ -354,7 +355,7 @@ export async function POST(
       .maybeSingle();
 
     if (updateError) {
-      console.error("[DB Error] Update agent with template:", updateError);
+      log("error", "[DB Error] Update agent with template:", { error: updateError });
       return NextResponse.json(
         { error: "Something went wrong. Please try again." },
         { status: 500 }
@@ -371,7 +372,7 @@ export async function POST(
     return NextResponse.json(updatedAgent);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("[Apply template error]:", message);
+    log("error", "[Apply template error]:", { error: message });
     return NextResponse.json(
       { error: message },
       { status: 500 }

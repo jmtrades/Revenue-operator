@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 interface ReadinessCheck {
   key: string;
@@ -240,7 +241,7 @@ export async function GET(req: NextRequest) {
     checks,
   });
   } catch (error) {
-    console.error("[voice/readiness] Unexpected error:", error);
+    log("error", "[voice/readiness] Unexpected error:", { error: error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

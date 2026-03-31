@@ -13,6 +13,7 @@ import { syncPrimaryAgent } from "@/lib/agents/sync-primary-agent";
 import { parseBody, phoneSchema } from "@/lib/api/validate";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -153,7 +154,7 @@ export async function POST(req: NextRequest) {
       knowledgeItems,
     });
 
-    sendAgentLiveEmail(workspaceId).catch((err) => { console.error("[workspace/create] error:", err instanceof Error ? err.message : err); });
+    sendAgentLiveEmail(workspaceId).catch((err) => { log("error", "[workspace/create] error:", { error: err instanceof Error ? err.message : err }); });
 
     return NextResponse.json({ ok: true, workspaceId });
   } catch {
