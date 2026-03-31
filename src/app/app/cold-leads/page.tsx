@@ -223,7 +223,9 @@ export default function ColdLeadsPage() {
     fetch(`/api/dashboard/revenue-at-risk?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => { if (d?.avg_deal_value) setAvgDealValue(d.avg_deal_value); })
-      .catch(() => {});
+      .catch((err) => {
+        console.error("[cold-leads] revenue fetch failed:", err?.message ?? err);
+      });
   }, [workspaceId]);
 
   // Fetch cold leads

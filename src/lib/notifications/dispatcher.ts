@@ -9,6 +9,7 @@ import {
   sendSlackMessage,
   type NotificationType,
 } from "@/lib/integrations/slack";
+import { log } from "@/lib/logger";
 import type { AutonomousActionType } from "@/lib/intelligence/autonomous-executor";
 
 export type WorkspaceEventType = "autonomous_action" | "quality_alert" | "new_lead";
@@ -158,8 +159,8 @@ export async function notifyWorkspace(
   payload: WorkspaceEventPayload
 ): Promise<void> {
   // Fire-and-forget: do not await and do not throw
-  void dispatchNotification(workspaceId, eventType, payload).catch(() => {
-    // Silently swallow all errors (logging would require explicit setup)
+  void dispatchNotification(workspaceId, eventType, payload).catch((err) => {
+    log("error", "notification.dispatch_failed", { workspaceId, eventType, error: err?.message ?? String(err) });
   });
 }
 
@@ -193,17 +194,15 @@ async function dispatchNotification(
     for (const channel of channels) {
       if (channel.provider === "slack" && channel.slack_channel_id) {
         try {
-          await sendSlackMessage(workspaceId, channel.slack_channel_id, message).catch(
-            () => {
-              // Non-blocking: skip this channel on error
-            }
-          );
-        } catch {
-          // Swallow error
+          await sendSlackMessage(workspaceId, channel.slack_channel_id, message).catch((err) => {
+            log("error", "notification.slack_failed", { workspaceId, channelId: channel.slack_channel_id, error: err?.message ?? String(err) });
+          });
+        } catch (err) {
+          log("error", "notification.slack_exception", { workspaceId, channelId: channel.slack_channel_id, error: err instanceof Error ? err.message : String(err) });
         }
       }
     }
-  } catch {
-    // Swallow all errors — notifications should never break the main flow
+  } catch (err) {
+    log("error", "notification.dispatch_exception", { workspaceId, error: err instanceof Error ? err.message : String(err) });
   }
 }

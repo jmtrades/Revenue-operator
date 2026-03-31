@@ -5,6 +5,7 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 import type { LeadIntelligence } from "./lead-brain";
 import { getTelephonyService } from "@/lib/telephony";
 import { getDefaultFollowUpTemplate } from "./outcome-followup-router";
@@ -876,7 +877,7 @@ export async function logAutonomousAction(result: AutonomousActionResult): Promi
       reason: result.reason,
       executed_at: result.executed_at,
     });
-  } catch {
-    // Non-blocking: table may not exist yet
+  } catch (err) {
+    log("error", "autonomous.log_failed", { lead_id: result.lead_id, action_type: result.action_type, error: (err as Error)?.message ?? String(err) });
   }
 }

@@ -5,6 +5,7 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 import { scoreLeadFull } from "./lead-scoring";
 import { getNextBestAction } from "./next-best-action";
 import { getLeadMemory } from "@/lib/lead-memory";
@@ -373,7 +374,7 @@ export async function persistLeadIntelligence(
     );
     return { ok: true };
   } catch (err) {
-    // Non-blocking — error persisting intelligence (error details omitted to protect PII)
+    log("error", "intelligence.persist_failed", { leadId: intelligence.lead_id, error: (err as Error)?.message ?? String(err) });
     return { ok: false };
   }
 }
