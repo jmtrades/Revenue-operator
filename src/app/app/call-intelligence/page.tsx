@@ -67,6 +67,8 @@ function calculateQualityScore(call: {
   duration?: number;
   actionItems?: string[];
 }): { score: number; color: string; bucket: QualityBucket } {
+  // NOTE: This score is a rough composite estimate combining sentiment, outcome, and duration.
+  // It's not based on validated call quality metrics. Use individual signals below instead.
   let score = 50;
 
   if (call.sentiment === "positive") score += 20;

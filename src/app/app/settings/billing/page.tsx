@@ -91,14 +91,17 @@ export default function AppSettingsBillingPage() {
   }, [tBilling]);
 
   // Fetch available minute packs
+  const [minutePackError, setMinutePackError] = useState<string | null>(null);
   useEffect(() => {
+    setMinutePackError(null);
     fetch("/api/billing/buy-minutes")
       .then((res) => res.json())
       .then((data: { ok?: boolean; packs?: MinutePack[] }) => {
         if (data?.packs) setMinutePacks(data.packs);
       })
       .catch((err) => {
-        // silenced
+        setMinutePackError("Unable to load minute packs. Try refreshing.");
+        console.error("[billing] minute packs fetch failed:", err?.message ?? err);
       });
   }, []);
 
@@ -554,6 +557,11 @@ export default function AppSettingsBillingPage() {
         </div>
       )}
       {/* Buy More Minutes Section */}
+      {minutePackError && (
+        <div className="p-4 rounded-xl border border-[var(--accent-danger,#ef4444)]/20 bg-[var(--accent-danger,#ef4444)]/10 text-[var(--accent-danger,#ef4444)] text-sm mb-4">
+          {minutePackError}
+        </div>
+      )}
       {minutePacks.length > 0 && (
         <div id="minute-packs-section" className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4">
           <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">{tBilling("expandAgentCapacity", { defaultValue: "Expand Agent Capacity" })}</h3>

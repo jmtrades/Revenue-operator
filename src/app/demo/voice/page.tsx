@@ -55,6 +55,7 @@ export default function VoiceDemoPage() {
   const [signupEmail, setSignupEmail] = useState("");
   const [signupLoading, setSignupLoading] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const transcriptEndRef = useRef<HTMLDivElement>(null);
   const robotAudioRef = useRef<HTMLAudioElement>(null);
@@ -69,6 +70,7 @@ export default function VoiceDemoPage() {
     setIsPlaying(true);
     setTranscript([]);
     setConversationStep(0);
+    setError(null);
 
     try {
       const greeting = SCENARIO_GREETINGS[selectedScenario];
@@ -97,9 +99,12 @@ export default function VoiceDemoPage() {
             }, 300);
           });
         }
+      } else {
+        setError("Voice preview unavailable right now. Try again in a moment.");
       }
     } catch (error) {
-      // Error silently handled
+      setError("Voice preview unavailable right now. Try again in a moment.");
+      console.error("[voice demo] call failed:", error);
     } finally {
       setIsLoading(false);
     }
@@ -111,6 +116,7 @@ export default function VoiceDemoPage() {
     setTranscript(prev => [...prev, { speaker: "customer", text: prompt }]);
     setConversationStep(prev => prev + 1);
     setIsLoading(true);
+    setError(null);
 
     try {
       const response = await fetch(
@@ -133,9 +139,12 @@ export default function VoiceDemoPage() {
           const aiResponse = generateAIResponse(prompt, selectedScenario);
           setTranscript(prev => [...prev, { speaker: "ai", text: aiResponse }]);
         }
+      } else {
+        setError("Voice preview unavailable right now. Try again in a moment.");
       }
     } catch (error) {
-      // Error silently handled
+      setError("Voice preview unavailable right now. Try again in a moment.");
+      console.error("[voice demo] follow-up failed:", error);
     } finally {
       setIsLoading(false);
     }
@@ -297,6 +306,13 @@ export default function VoiceDemoPage() {
               </button>
             ))}
           </div>
+
+          {/* Error message */}
+          {error && (
+            <div className="max-w-md mx-auto mb-4 p-3 rounded-lg bg-[var(--accent-danger,#ef4444)]/10 border border-[var(--accent-danger,#ef4444)]/30 text-[var(--accent-danger,#ef4444)] text-sm">
+              {error}
+            </div>
+          )}
 
           {/* Mock Phone UI */}
           <div className="max-w-md mx-auto mb-8">

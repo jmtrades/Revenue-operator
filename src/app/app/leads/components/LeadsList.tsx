@@ -28,6 +28,8 @@ function useLeadIntelligenceBatch(leadIds: string[]) {
     if (!key || key === fetchedRef.current) return;
     fetchedRef.current = key;
 
+    // Batch intelligence requests are limited to 50 leads for performance.
+    // Leads beyond 50 will not have intelligence data fetched.
     fetch("/api/leads/intelligence/batch", {
       method: "POST",
       credentials: "include",
@@ -297,9 +299,9 @@ export function LeadsList({
                         </span>
                         Active
                       </span>
-                    ) : (
+                    ) : leadIds.indexOf(lead.id) < 50 ? (
                       <span className="text-[var(--text-tertiary)]">Pending</span>
-                    )}
+                    ) : null}
                   </td>
                 </tr>
               );

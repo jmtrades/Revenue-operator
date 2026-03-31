@@ -25,16 +25,18 @@ export async function GET(req: NextRequest) {
   let callsMade = 0;
   let appointmentsAutoBooked = 0;
 
+  // Count active/completed sequence enrollments (excludes failed, paused, or enrollments that haven't been verified as successful)
   try {
     const { count: seqCount } = await db
       .from("sequence_enrollments")
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
       .gte("updated_at", since)
-      .eq("status", "active");
+      .in("status", ["active", "completed"]);
     sequenceActions = seqCount ?? 0;
   } catch {}
 
+  // Count SMS follow-ups that were successfully sent
   try {
     const { count: fuCount } = await db
       .from("follow_up_queue")
@@ -45,16 +47,20 @@ export async function GET(req: NextRequest) {
     smsSent = fuCount ?? 0;
   } catch {}
 
+  // Count outbound calls with verified completion (duration > 0 indicates a connected call)
   try {
     const { count: obCount } = await db
       .from("call_sessions")
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
       .eq("direction", "outbound")
-      .gte("created_at", since);
+      .gte("created_at", since)
+      .neq("status", "failed")
+      .gt("duration", 0);
     callsMade = obCount ?? 0;
   } catch {}
 
+  // Count appointments created by the AI agent (source filter verifies ai_agent origin)
   try {
     const { count: apptCount } = await db
       .from("appointments")
