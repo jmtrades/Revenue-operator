@@ -3,6 +3,7 @@ export const maxDuration = 120;
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
+import { assertCronAuthorized } from "@/lib/runtime";
 
 /**
  * GET /api/cron/self-improvement
@@ -11,11 +12,8 @@ import { getDb } from "@/lib/db/queries";
  * Analyzes call patterns, generates insights, and auto-applies high-confidence improvements.
  */
 export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get("authorization");
-  const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const authErr = assertCronAuthorized(req);
+  if (authErr) return authErr;
 
   const start = Date.now();
   const results: {

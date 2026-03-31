@@ -7,15 +7,19 @@
  */
 export const dynamic = "force-dynamic";
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { sendEmail } from "@/lib/integrations/email";
 import { log } from "@/lib/logger";
+import { assertCronAuthorized } from "@/lib/runtime";
 
 const ABANDONMENT_THRESHOLD_HOURS = 24;
 const MAX_RECOVERY_EMAILS = 2; // Don't spam — max 2 recovery attempts
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const authErr = assertCronAuthorized(req);
+  if (authErr) return authErr;
+
   const startMs = Date.now();
 
   try {

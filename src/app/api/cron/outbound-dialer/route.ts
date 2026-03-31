@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 import { getNextLead, initiateOutboundCall } from "@/lib/voice/outbound-dialer";
+import { assertCronAuthorized } from "@/lib/runtime";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -10,7 +11,10 @@ export const maxDuration = 30;
  * Cron: Process outbound dialer queues.
  * Runs every 2 minutes. Picks up active campaigns and dials next leads.
  */
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const authErr = assertCronAuthorized(req);
+  if (authErr) return authErr;
+
   const db = getDb();
   let callsInitiated = 0;
 

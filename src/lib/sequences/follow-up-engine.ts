@@ -520,6 +520,9 @@ export async function advanceEnrollment(
             : `Hi ${lead.name ?? "there"}, just following up. Let us know if you have any questions or would like to schedule a time to chat.`;
           await svc.sendSms({ from: fromNumber, to: lead.phone, text: messageText });
           actionSucceeded = true;
+        } else {
+          console.warn(`[sequence-sms] No active phone config for workspace ${e.workspace_id} — skipping SMS step for enrollment ${enrollmentId}`);
+          actionSucceeded = true;
         }
       }
     } else if (stepToExecute.type === "call") {
