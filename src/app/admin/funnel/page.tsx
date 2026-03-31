@@ -296,11 +296,17 @@ export default function FunnelPage() {
               </tr>
             </thead>
             <tbody>
-              {["Jan 2026", "Dec 2025", "Nov 2025"].map((cohort, i) => (
-                <tr key={cohort} className="border-b" style={{ borderColor: "var(--border-default)" }}>
-                  <td className="p-3 font-medium" style={{ color: "var(--text-secondary)" }}>
-                    {cohort}
-                  </td>
+              {(() => {
+                const cohortLabels = Array.from({ length: 3 }, (_, i) => {
+                  const d = new Date();
+                  d.setMonth(d.getMonth() - i);
+                  return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+                });
+                return cohortLabels.map((cohort, i) => (
+                  <tr key={cohort} className="border-b" style={{ borderColor: "var(--border-default)" }}>
+                    <td className="p-3 font-medium" style={{ color: "var(--text-secondary)" }}>
+                      {cohort}
+                    </td>
                   {[100, 87, 71, 56, 42, 28].map((retention, j) => (
                     <td
                       key={j}
@@ -324,7 +330,8 @@ export default function FunnelPage() {
                     </td>
                   ))}
                 </tr>
-              ))}
+                ));
+              })()}
             </tbody>
           </table>
         </div>

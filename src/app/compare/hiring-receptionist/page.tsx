@@ -67,7 +67,7 @@ export default function HiringReceptionistComparisonPage() {
               Revenue Operator costs $147–$997/month and answers every call 24/7/365. You get the reliability of AI without replacing your team.
             </p>
             <p className="mt-3 text-xs" style={{ color: "var(--text-tertiary)" }}>
-              Pricing as of March 2026. Receptionist salary based on U.S. Bureau of Labor Statistics and industry averages.
+              {`Pricing as of ${new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })}`}. Receptionist salary based on U.S. Bureau of Labor Statistics and industry averages.
             </p>
           </div>
 

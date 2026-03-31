@@ -65,7 +65,7 @@ export default function SmithAiComparisonPage() {
               outbound campaigns when the funnel needs it, and dashboards that attribute recovered value.
             </p>
             <p className="mt-3 text-xs" style={{ color: "var(--text-tertiary)" }}>
-              Pricing as of March 2026. Visit{" "}
+              {`Pricing as of ${new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })}`}. Visit{" "}
               <a
                 href="https://smith.ai/pricing"
                 target="_blank"

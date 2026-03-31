@@ -111,7 +111,7 @@ export default function SmartSetupPage() {
         router_internal.push(redirectUrl);
       }, 2000);
     } catch (error) {
-      toast.error("Something went wrong activating your operator. Please try again.");
+      toast.error("Could not activate your operator — check your internet connection and try again.");
       setIsActivating(false);
     }
   };
@@ -144,7 +144,7 @@ export default function SmartSetupPage() {
         router_internal.push("/app/dashboard");
       }, 2000);
     } catch (error) {
-      toast.error("Something went wrong. Please try again.");
+      toast.error("Setup step failed — please try again. If this persists, contact support.");
       setStep("preview-agent");
     }
   };
