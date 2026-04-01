@@ -80,6 +80,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Lead has no phone number" }, { status: 400 });
   }
 
+  // SAFETY: Check opt-out before sending any outbound message
+  try {
+    const { isOptedOut } = await import("@/lib/lead-opt-out");
+    if (await isOptedOut(workspaceId, `lead:${lead_id}`)) {
+      return NextResponse.json({ error: "Lead has opted out of communications" }, { status: 403 });
+    }
+  } catch {
+    // opt-out table may not exist
+  }
+
   // Validate phone number has at least 10 digits
   const phoneDigits = phone.replace(/\D/g, "");
   if (phoneDigits.length < 10) {

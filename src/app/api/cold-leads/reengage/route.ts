@@ -150,6 +150,17 @@ export async function POST(req: NextRequest) {
       continue;
     }
 
+    // SAFETY: Check opt-out before re-engaging cold lead
+    try {
+      const { isOptedOut } = await import("@/lib/lead-opt-out");
+      if (await isOptedOut(session.workspaceId, `lead:${item.lead_id}`)) {
+        skipped.push({ id: item.id, lead_id: item.lead_id, reason: "Lead has opted out" });
+        continue;
+      }
+    } catch {
+      // opt-out table may not exist
+    }
+
     const now = new Date().toISOString();
 
     // Update status to in_progress

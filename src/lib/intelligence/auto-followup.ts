@@ -177,6 +177,19 @@ async function executeFollowUpRouting(
     return { action_taken: "escalate_to_human", success: true, details: "Human escalation triggered" };
   }
 
+  // SAFETY: Check opt-out before any outbound lead communication
+  const outboundActions = ["send_immediate_sms", "send_follow_up_email", "retry_call", "schedule_callback"];
+  if (outboundActions.includes(routing.action) || routing.action.startsWith("enroll_")) {
+    try {
+      const { isOptedOut } = await import("@/lib/lead-opt-out");
+      if (await isOptedOut(params.workspace_id, `lead:${params.lead_id}`)) {
+        return { action_taken: "skipped", success: true, details: "Lead is opted out — outbound action blocked" };
+      }
+    } catch {
+      // opt-out table may not exist — proceed cautiously
+    }
+  }
+
   // Handle immediate SMS
   if (routing.action === "send_immediate_sms" && lead.phone) {
     try {

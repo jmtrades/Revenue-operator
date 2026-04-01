@@ -281,6 +281,24 @@ export async function POST(req: NextRequest) {
         const { to_email, subject, body: emailBody } = tool_args as { to_email?: string; subject?: string; body?: string };
 
         if (to_email && emailBody) {
+          // SAFETY: Check if recipient lead is opted out
+          try {
+            const { data: recipientLead } = await db
+              .from("leads")
+              .select("id")
+              .eq("workspace_id", workspace_id)
+              .eq("email", to_email)
+              .maybeSingle();
+            if (recipientLead) {
+              const { isOptedOut } = await import("@/lib/lead-opt-out");
+              if (await isOptedOut(workspace_id, `lead:${(recipientLead as { id: string }).id}`)) {
+                return NextResponse.json({ result: "That contact has opted out of email communications." });
+              }
+            }
+          } catch {
+            // opt-out table may not exist
+          }
+
           const resendKey = process.env.RESEND_API_KEY;
           if (resendKey) {
             try {
