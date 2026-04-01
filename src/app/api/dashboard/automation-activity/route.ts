@@ -26,14 +26,14 @@ export async function GET(req: NextRequest) {
   let callsMade = 0;
   let appointmentsAutoBooked = 0;
 
-  // Count active/completed sequence enrollments (excludes failed, paused, or enrollments that haven't been verified as successful)
+  // Count ACTIVE sequence enrollments only (completed enrollments are not "active automation")
   try {
     const { count: seqCount } = await db
       .from("sequence_enrollments")
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
       .gte("updated_at", since)
-      .in("status", ["active", "completed"]);
+      .eq("status", "active");
     sequenceActions = seqCount ?? 0;
   } catch (err) { log("warn", "automation_activity.sequences_failed", { error: err instanceof Error ? err.message : String(err) }); }
 
