@@ -9,23 +9,23 @@ export function ResultsStatsSection() {
 
   const stats = [
     {
-      number: "$47M+",
-      label: t("stats.0.label", { default: "Revenue Recovered" }),
+      number: "24/7",
+      label: t("stats.0.label", { default: "Autonomous Coverage" }),
       accentColor: "var(--accent-primary)",
     },
     {
-      number: "2.3M+",
-      label: t("stats.1.label", { default: "Calls Handled" }),
+      number: "< 0.8s",
+      label: t("stats.1.label", { default: "AI Response Time" }),
       accentColor: "var(--accent-secondary)",
     },
     {
-      number: "340%",
-      label: t("stats.2.label", { default: "Average ROI" }),
+      number: "36",
+      label: t("stats.2.label", { default: "Industry-Tuned Voices" }),
       accentColor: "var(--accent-warning)",
     },
     {
-      number: "< 2 sec",
-      label: t("stats.3.label", { default: "Response Time" }),
+      number: "100%",
+      label: t("stats.3.label", { default: "Calls Answered" }),
       accentColor: "var(--accent-success, #10B981)",
     },
   ];

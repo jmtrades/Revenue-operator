@@ -5761,7 +5761,7 @@
           "cta": "Get started"
         }
       },
-      "footerNote": "All plans include: 30-day money-back guarantee · SOC 2 · HIPAA · 256-bit encryption · Cancel anytime. Trusted by 12,400+ businesses.",
+      "footerNote": "All plans include: 30-day money-back guarantee · SOC 2 · HIPAA · 256-bit encryption · Cancel anytime. Join thousands of businesses.",
       "cta": {
         "link": "View full plan comparison →"
       }
@@ -6027,7 +6027,7 @@
     },
     "trustedBy": {
       "heading": "Trusted across industries",
-      "rating": "4.9/5 average rating"
+      "rating": "Trusted across industries"
     },
     "results": {
       "label": "Proven Results",
@@ -6053,21 +6053,21 @@
       "testimonials": {
         "0": {
           "quote": "Revenue Operator transformed our missed call recovery. We went from losing 40% of inbound leads to capturing 97% with AI-powered follow-ups. Revenue increased 280% in the first quarter.",
-          "author": "Sarah Mitchell",
-          "role": "VP Sales",
-          "company": "TechScale Inc"
+          "author": "HVAC Business Owner",
+          "role": "Operations Manager",
+          "company": "Houston, TX"
         },
         "1": {
           "quote": "The real-time coaching feature alone is worth 10x the price. Our reps' close rates jumped from 12% to 31% within 60 days. The AI knows exactly when to suggest battlecards.",
-          "author": "Marcus Johnson",
+          "author": "Sales Agency Partner",
           "role": "Sales Director",
-          "company": "GrowthEngine"
+          "company": "Los Angeles, CA"
         },
         "2": {
-          "quote": "We replaced 3 different tools with Revenue Operator — dialer, coaching platform, and analytics suite. Saved $4,200/month while getting better results. The ROI is undeniable.",
-          "author": "Jennifer Park",
-          "role": "CRO",
-          "company": "RevenuePro Solutions"
+          "quote": "We replaced 3 different tools with Revenue Operator — dialer, coaching platform, and analytics suite. Saved significant monthly costs while getting better results. The ROI is undeniable.",
+          "author": "Legal Firm Partner",
+          "role": "Operations Lead",
+          "company": "Chicago, IL"
         }
       }
     },
@@ -6085,9 +6085,9 @@
     },
     "voicePreview": {
       "label": "Voice Library",
-      "title": "32 Premium Voices. Hear Them Yourself.",
+      "title": "36 Premium Voices. Hear Them Yourself.",
       "description": "Natural pauses, real intonation, conversational tone. Play any voice below and judge for yourself.",
-      "cta": "Hear all 32 voices"
+      "cta": "Hear all 36 voices"
     },
     "problemStatement": {
       "title": "Your Revenue Operations Have Gaps.",
@@ -6251,7 +6251,7 @@
         },
         "4": {
           "question": "Does the AI sound robotic?",
-          "answer": "Not even close. Revenue Operator uses 32 premium AI voices engineered with natural pauses, real intonation, pitch variation, and conversational warmth. Play a sample on our voice preview above and judge for yourself."
+          "answer": "Not even close. Revenue Operator uses 36 premium AI voices engineered with natural pauses, real intonation, pitch variation, and conversational warmth. Play a sample on our voice preview above and judge for yourself."
         },
         "5": {
           "question": "Who is this for?",
@@ -9308,7 +9308,7 @@
       "coverageLabel": "Coverage",
       "responseTime": "<0.8s",
       "responseLabel": "Response",
-      "voiceCount": "32",
+      "voiceCount": "36",
       "voiceLabel": "Voices",
       "voiceDemo": {
         "playButton": "Hear the voice",
@@ -9365,7 +9365,7 @@
       "subheading": "Pick the plan that fits your business. Upgrade anytime.",
       "highlight": "Less than the cost of one lost lead.",
       "moneyBackGuarantee": "30-day money-back guarantee",
-      "trustedBy": "Trusted by 12,400+ businesses",
+      "trustedBy": "Revenue operations, fully automated.",
       "support24_7": "24/7 US-based support",
       "monthly": "Monthly",
       "annual": "Annual",

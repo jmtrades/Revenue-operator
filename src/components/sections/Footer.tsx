@@ -98,7 +98,7 @@ export function Footer() {
               <a href="https://status.recall-touch.com" target="_blank" rel="noopener noreferrer" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{tMarketing("systemStatus")}</a>
             </nav>
             <div className="flex flex-wrap gap-1.5 mt-4">
-              {["SOC 2", "HIPAA", "GDPR", "SSL"].map((badge) => (
+              {["256-bit TLS", "Encrypted at Rest", "GDPR", "SSL"].map((badge) => (
                 <span
                   key={badge}
                   className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium"
