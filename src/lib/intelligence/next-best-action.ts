@@ -32,6 +32,7 @@ export async function getNextBestAction(params: {
   leadId: string;
   state: string;
   intent?: string;
+  intentScore?: number;
   riskFlags?: string[];
   dealId?: string;
   isEnrolledInSequence?: boolean;
@@ -42,6 +43,7 @@ export async function getNextBestAction(params: {
   const {
     state,
     intent,
+    intentScore = 40,
     riskFlags = [],
     dealId,
     isEnrolledInSequence = false,
@@ -85,7 +87,15 @@ export async function getNextBestAction(params: {
     return { action: "monitor_sequence", reasoning: "Booked—monitor for appointment confirmation", confidence: 0.65 };
   }
 
-  // ── INTENT-BASED ACTIONS ──
+  // ── INTENT SCORE ROUTING (quantitative) ──
+  if (intentScore >= 70 && state !== "BOOKED") {
+    return { action: "book_call", reasoning: `High intent score (${intentScore})—advance to booking`, confidence: 0.82 };
+  }
+  if (intentScore <= 15 && hoursSinceLastContact > 72) {
+    return { action: "reactivate_later", reasoning: `Very low intent (${intentScore}) and dormant—defer to reactivation`, confidence: 0.65 };
+  }
+
+  // ── INTENT-BASED ACTIONS (qualitative) ──
   if (intent === "pricing" || intent === "negotiation") {
     return { action: "reframe_value", reasoning: "Price sensitivity detected—reframe value before responding", confidence: 0.8 };
   }
