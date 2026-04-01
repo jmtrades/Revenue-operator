@@ -284,7 +284,7 @@ export async function POST(req: NextRequest) {
                 await db
                   .from("leads")
                   .update({
-                    status: "QUALIFIED",
+                    state: "QUALIFIED",
                     metadata: {
                       appointment_booked_at: new Date().toISOString(),
                       appointment_date: appointmentDate,
