@@ -61,10 +61,12 @@ export async function POST(request: NextRequest) {
   const signature = request.headers.get("x-twilio-signature");
   const formData = await request.formData();
 
-  // Build params object from FormData
+  // Build params object from FormData (skip File entries — Twilio only sends strings)
   const params: Record<string, string | string[]> = {};
   for (const [key, value] of formData.entries()) {
-    params[key] = value;
+    if (typeof value === "string") {
+      params[key] = value;
+    }
   }
 
   if (!verifyTwilioSignature(request.nextUrl.toString(), params, signature ?? "")) {
