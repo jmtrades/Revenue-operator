@@ -684,7 +684,7 @@ export async function advanceEnrollment(
         if (newStatus && newStatus !== currentStatus) {
           await db
             .from("leads")
-            .update({ state: newStatus, updated_at: new Date().toISOString() })
+            .update({ status: newStatus, updated_at: new Date().toISOString() })
             .eq("id", e.lead_id)
             .eq("workspace_id", e.workspace_id);
           console.log(`[sequence-advance] Lead ${e.lead_id}: ${currentStatus} → ${newStatus} (step: ${stepType})`);

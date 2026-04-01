@@ -56,9 +56,9 @@ export async function GET(req: NextRequest) {
     label: "Voice Server (Recall)",
     category: "Voice & Calling",
     status: voiceServerReachable ? "ready" : !voiceServerUrl ? "unconfigured" : "blocked",
-    detail: voiceServerReachable ? "Healthy and reachable" : !voiceServerUrl ? "VOICE_SERVER_URL not set" : "Server unreachable or unhealthy",
+    detail: voiceServerReachable ? "Healthy and reachable" : !voiceServerUrl ? "Not configured" : "Server unreachable or unhealthy",
     impact: "Live calls and test calls will not work",
-    action: !voiceServerUrl ? "Set VOICE_SERVER_URL in Vercel environment variables" : "Check voice server deployment and health endpoint",
+    action: !voiceServerUrl ? "Set Voice Server URL in Vercel environment variables" : "Check voice server deployment and health endpoint",
     dependency_type: "infrastructure",
   });
 
@@ -69,16 +69,16 @@ export async function GET(req: NextRequest) {
   const hasTwilioAuth = !!process.env.TWILIO_AUTH_TOKEN;
   const telephonyReady = (hasTelnyxKey && hasTelnyxConn) || (hasTwilioSid && hasTwilioAuth);
   const telephonyProvider = hasTelnyxKey ? "Telnyx" : hasTwilioSid ? "Twilio" : "None";
-  const telephonyMissing = hasTelnyxKey && !hasTelnyxConn ? "TELNYX_CONNECTION_ID" :
-    hasTwilioSid && !hasTwilioAuth ? "TWILIO_AUTH_TOKEN" : "TELNYX_API_KEY or TWILIO_ACCOUNT_SID";
+  const telephonyMissingLabel = hasTelnyxKey && !hasTelnyxConn ? "Telnyx Connection ID" :
+    hasTwilioSid && !hasTwilioAuth ? "Twilio Auth Token" : "Telephony Provider Credentials";
   checks.push({
     key: "telephony",
     label: "Telephony Provider",
     category: "Voice & Calling",
     status: telephonyReady ? "ready" : "unconfigured",
-    detail: telephonyReady ? `${telephonyProvider} — fully configured` : `Missing: ${telephonyMissing}`,
+    detail: telephonyReady ? `${telephonyProvider} — fully configured` : `Missing: ${telephonyMissingLabel}`,
     impact: "Inbound/outbound calls and SMS will not work",
-    action: `Set ${telephonyMissing} in Vercel environment variables`,
+    action: `Configure ${telephonyMissingLabel} in Vercel environment variables`,
     dependency_type: "env_var",
   });
 
@@ -115,7 +115,7 @@ export async function GET(req: NextRequest) {
     detail: telephonyReady && phoneNum ? `${telephonyProvider} SMS ready` :
       telephonyReady ? "Telephony configured but no phone number" : "Telephony credentials not configured",
     impact: "Follow-up SMS, appointment reminders, and sequence steps using SMS will not send",
-    action: !telephonyReady ? `Set ${telephonyMissing} in environment variables` : "Provision a phone number",
+    action: !telephonyReady ? `Configure telephony provider in environment variables` : "Provision a phone number",
     href: !telephonyReady ? undefined : "/app/settings/phone",
     dependency_type: telephonyReady ? "user_config" : "env_var",
   });
@@ -127,9 +127,9 @@ export async function GET(req: NextRequest) {
     label: "Email Delivery (Resend)",
     category: "Messaging",
     status: hasResendKey ? "ready" : "unconfigured",
-    detail: hasResendKey ? "Resend API configured" : "RESEND_API_KEY not set",
+    detail: hasResendKey ? "Resend API configured" : "Not configured",
     impact: "Follow-up emails, sequence email steps, and notifications will not send",
-    action: "Set RESEND_API_KEY in Vercel environment variables",
+    action: "Set Resend API key in Vercel environment variables",
     dependency_type: "env_var",
   });
 
@@ -163,9 +163,9 @@ export async function GET(req: NextRequest) {
     status: anyOAuthConfigured ? "ready" : "unconfigured",
     detail: anyOAuthConfigured
       ? `${crmProviders.filter((p) => !!process.env[p.envKey]).map((p) => p.name).join(", ")} configured`
-      : "No CRM OAuth client IDs set",
+      : "No CRM OAuth credentials set",
     impact: "Users cannot connect any CRM — Connect buttons will fail",
-    action: "Set CLIENT_ID and CLIENT_SECRET for desired CRM providers in environment variables",
+    action: "Configure OAuth credentials for desired CRM providers in environment variables",
     dependency_type: "env_var",
   });
 
@@ -228,10 +228,10 @@ export async function GET(req: NextRequest) {
     category: "Calendar",
     status: outlookConnected ? "ready" : hasMsClientId ? "unconfigured" : "unconfigured",
     detail: outlookConnected ? "Connected via Microsoft 365"
-      : hasMsClientId ? "OAuth configured — not yet connected" : "MICROSOFT_CLIENT_ID not set (optional)",
+      : hasMsClientId ? "OAuth configured — not yet connected" : "Not configured (optional)",
     impact: "Outlook calendar sync and event management will not work",
     action: outlookConnected ? "Connected" : hasMsClientId ? "Connect Microsoft 365 in Integrations"
-      : "Set MICROSOFT_CLIENT_ID and MICROSOFT_CLIENT_SECRET when Outlook integration is desired",
+      : "Configure Microsoft OAuth when Outlook integration is desired",
     href: hasMsClientId ? "/app/settings/integrations" : undefined,
     dependency_type: outlookConnected ? "oauth" : hasMsClientId ? "user_config" : "env_var",
   });
@@ -246,9 +246,9 @@ export async function GET(req: NextRequest) {
     label: "Cron Authentication",
     category: "Automation",
     status: hasCronSecret ? "ready" : "blocked",
-    detail: hasCronSecret ? "CRON_SECRET configured" : "CRON_SECRET not set",
+    detail: hasCronSecret ? "Cron authentication configured" : "Not configured",
     impact: "ALL background automations are blocked: follow-ups, sequence processing, reactivation campaigns, appointment reminders, sync queue, no-show detection",
-    action: "Set CRON_SECRET in Vercel environment variables and configure Vercel Cron Jobs",
+    action: "Configure cron authentication in Vercel environment variables and set up Vercel Cron Jobs",
     dependency_type: "env_var",
   });
 
@@ -258,9 +258,9 @@ export async function GET(req: NextRequest) {
     label: "Application URL",
     category: "Automation",
     status: hasAppUrl ? "ready" : "degraded",
-    detail: hasAppUrl ? `URL: ${process.env.NEXT_PUBLIC_APP_URL || `https://${process.env.VERCEL_URL}`}` : "NEXT_PUBLIC_APP_URL not set",
+    detail: hasAppUrl ? `URL: ${process.env.NEXT_PUBLIC_APP_URL || `https://${process.env.VERCEL_URL}`}` : "Not configured",
     impact: "Cron core dispatcher cannot fan out to sub-crons; webhook URLs may be incorrect",
-    action: "Set NEXT_PUBLIC_APP_URL to your production domain (e.g. https://www.recall-touch.com)",
+    action: "Configure your application's public domain URL in environment variables",
     dependency_type: "env_var",
   });
 
@@ -274,9 +274,9 @@ export async function GET(req: NextRequest) {
     label: "Database Connection",
     category: "Infrastructure",
     status: hasDbUrl ? "ready" : "blocked",
-    detail: hasDbUrl ? "Supabase connected" : "DATABASE_URL not configured",
+    detail: hasDbUrl ? "Supabase connected" : "Not configured",
     impact: "Nothing will work — all data operations require the database",
-    action: "Set DATABASE_URL and NEXT_PUBLIC_SUPABASE_URL in environment variables",
+    action: "Configure Supabase database connection in environment variables",
     dependency_type: "env_var",
   });
 
@@ -308,9 +308,9 @@ export async function GET(req: NextRequest) {
     label: "Stripe Billing",
     category: "Payments",
     status: hasStripeKey ? "ready" : "unconfigured",
-    detail: hasStripeKey ? "Stripe configured" : "STRIPE_SECRET_KEY not set",
+    detail: hasStripeKey ? "Stripe configured" : "Not configured",
     impact: "Subscription billing, plan upgrades, and usage-based billing will not process",
-    action: "Set STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET in environment variables",
+    action: "Configure Stripe API keys in Vercel environment variables",
     dependency_type: "env_var",
   });
 
@@ -324,9 +324,9 @@ export async function GET(req: NextRequest) {
     label: "Zoom Integration",
     category: "Calendar",
     status: hasZoomClientId ? "ready" : "unconfigured",
-    detail: hasZoomClientId ? "Zoom OAuth configured" : "ZOOM_CLIENT_ID not set (optional)",
+    detail: hasZoomClientId ? "Zoom OAuth configured" : "Not configured (optional)",
     impact: "Zoom meeting links won't be auto-created for appointments",
-    action: "Set ZOOM_CLIENT_ID and ZOOM_CLIENT_SECRET if Zoom integration is desired",
+    action: "Configure Zoom OAuth if Zoom integration is desired",
     dependency_type: "env_var",
   });
 

@@ -1068,7 +1068,7 @@ async function autoAdvanceLeadStatus(
     if (newStatus && newStatus !== currentStatus) {
       await db
         .from("leads")
-        .update({ state: newStatus, updated_at: new Date().toISOString() })
+        .update({ status: newStatus, updated_at: new Date().toISOString() })
         .eq("id", intelligence.lead_id)
         .eq("workspace_id", intelligence.workspace_id);
 

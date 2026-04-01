@@ -55,19 +55,21 @@ export async function GET(req: NextRequest) {
       conversionSum += row.conversion_probability ?? 0;
     }
 
-    // Count autonomous actions in last 24h
+    // Count autonomous actions in last 24h (excluding no_action evaluations)
     const { count: actions24h } = await db
       .from("autonomous_actions")
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
-      .gte("executed_at", oneDayAgo);
+      .gte("executed_at", oneDayAgo)
+      .neq("action_type", "no_action");
 
-    // Count autonomous actions in last 7d
+    // Count autonomous actions in last 7d (excluding no_action evaluations)
     const { count: actions7d } = await db
       .from("autonomous_actions")
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
-      .gte("executed_at", sevenDaysAgo);
+      .gte("executed_at", sevenDaysAgo)
+      .neq("action_type", "no_action");
 
     return NextResponse.json({
       total_leads_with_intelligence: rows.length,
