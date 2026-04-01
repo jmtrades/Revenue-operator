@@ -247,11 +247,13 @@ export async function GET(req: NextRequest) {
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
 
-    // Drop off points (estimate based on sentiment progression)
+    // Drop off points — derived from actual data where possible, clearly labeled as estimates otherwise
+    const initialDropOff = totalConversations > 0 ? sentiments.negative / totalConversations : 0;
+    const closingDropOff = totalConversations > 0 ? 1 - conversionRate : 0;
     const dropOffPoints: DropOffPoint[] = [
-      { stage: "initial_contact", drop_off_rate: sentiments.negative / Math.max(totalConversations, 1) },
-      { stage: "objection_handling", drop_off_rate: topObjections.length > 0 ? 0.3 : 0.1 },
-      { stage: "closing", drop_off_rate: 1 - conversionRate },
+      { stage: "initial_contact", drop_off_rate: parseFloat(initialDropOff.toFixed(3)) },
+      { stage: "objection_handling", drop_off_rate: totalConversations > 0 ? parseFloat((topObjections.length / Math.max(totalConversations, 1)).toFixed(3)) : 0 },
+      { stage: "closing", drop_off_rate: parseFloat(closingDropOff.toFixed(3)) },
     ];
 
     const response: ConversationAnalyticsResponse = {
