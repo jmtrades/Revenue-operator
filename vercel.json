@@ -104,6 +104,38 @@
     {
       "path": "/api/cron/no-show-detection",
       "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/process-sync-queue",
+      "schedule": "*/2 * * * *"
+    },
+    {
+      "path": "/api/cron/process-queue",
+      "schedule": "*/2 * * * *"
+    },
+    {
+      "path": "/api/cron/self-healing",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/campaign-process",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/connector-inbox",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/commitment-recovery",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/reconcile-reality",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/process-reactivation",
+      "schedule": "*/5 * * * *"
     }
   ]
 }
