@@ -226,7 +226,7 @@ export async function GET(req: NextRequest) {
         .select("value_cents")
         .eq("workspace_id", workspaceId)
         .in("status", ["won", "closed"])
-        .gte("created_at", sinceDate);
+        .gte("created_at", startDate.toISOString());
       const dealValues = (dealData ?? []) as { value_cents?: number }[];
       estimatedRevenue = dealValues.reduce((sum, d) => sum + (d.value_cents ?? 0), 0) / 100;
     } catch {
