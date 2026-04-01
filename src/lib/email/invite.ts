@@ -2,8 +2,10 @@
  * Team invite email via Resend.
  */
 
+import { getBaseUrl } from "@/lib/runtime/base-url";
+
 const FROM = process.env.EMAIL_FROM ?? "Revenue Operator <team@recall-touch.com>";
-const _APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
+const _APP_URL = getBaseUrl();
 
 function escapeHtml(value: string): string {
   return value

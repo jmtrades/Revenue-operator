@@ -4,8 +4,10 @@
 
 import { getDb } from "@/lib/db/queries";
 
+import { getBaseUrl } from "@/lib/runtime/base-url";
+
 const FROM = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@recall-touch.com>";
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
+const APP_URL = getBaseUrl();
 
 export async function sendAgentLiveEmail(workspaceId: string): Promise<boolean> {
   const db = getDb();

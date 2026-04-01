@@ -4,7 +4,9 @@
  * All emails use a consistent design language with the Revenue Operator brand.
  */
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
+import { getBaseUrl } from "@/lib/runtime/base-url";
+
+const APP_URL = getBaseUrl();
 
 function escapeHtml(value: string): string {
   return value
