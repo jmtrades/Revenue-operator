@@ -238,6 +238,16 @@ export async function executeMeetingAction(
       return { success: false, details: "Lead not found" };
     }
 
+    // SAFETY: Check opt-out before any outbound communication to lead
+    try {
+      const { isOptedOut } = await import("@/lib/lead-opt-out");
+      if (await isOptedOut(context.workspace_id, `lead:${context.lead_id}`)) {
+        return { success: false, details: "Lead is opted out — meeting action blocked" };
+      }
+    } catch {
+      // opt-out table may not exist — proceed cautiously
+    }
+
     // SMS actions
     if (decision.channel === "sms" && lead.phone) {
       const { data: phoneConfig } = await db

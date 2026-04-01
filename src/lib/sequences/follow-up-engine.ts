@@ -492,14 +492,24 @@ export async function advanceEnrollment(
     const templateContent = stepToExecute.config?.template_content as string | undefined;
 
     if (stepToExecute.type === "sms") {
+      // SAFETY: Check opt-out before sending any SMS
+      const { isOptedOut } = await import("@/lib/lead-opt-out");
+      if (await isOptedOut(e.workspace_id, `lead:${e.lead_id}`)) {
+        console.warn(`[sequence-sms] Lead ${e.lead_id} is opted out — skipping SMS step for enrollment ${enrollmentId}`);
+        actionSucceeded = true; // Respect opt-out, advance enrollment past this step
+      } else {
       const { data: leadRow } = await db
         .from("leads")
-        .select("phone, name")
+        .select("phone, name, metadata")
         .eq("id", e.lead_id)
         .eq("workspace_id", e.workspace_id)
         .maybeSingle();
-      const lead = leadRow as { phone?: string; name?: string } | null;
-      if (!lead?.phone) {
+      const lead = leadRow as { phone?: string; name?: string; metadata?: Record<string, unknown> | null } | null;
+      // Also check metadata.sms_consent === false
+      if (lead?.metadata && (lead.metadata as Record<string, unknown>).sms_consent === false) {
+        console.warn(`[sequence-sms] Lead ${e.lead_id} has sms_consent=false — skipping SMS step for enrollment ${enrollmentId}`);
+        actionSucceeded = true;
+      } else if (!lead?.phone) {
         console.warn(`[sequence-sms] Lead ${e.lead_id} has no phone number — skipping SMS step for enrollment ${enrollmentId}`);
         actionSucceeded = true; // Skip gracefully so enrollment advances
       } else if (lead?.phone) {
@@ -525,20 +535,38 @@ export async function advanceEnrollment(
           actionSucceeded = true;
         }
       }
+      } // end opt-out else
     } else if (stepToExecute.type === "call") {
-      const { executeLeadOutboundCall } = await import("@/lib/outbound/execute-lead-call");
-      const result = await executeLeadOutboundCall(e.workspace_id, e.lead_id, { campaignType: "lead_followup" });
-      actionSucceeded = result.ok;
+      // SAFETY: Check opt-out before placing outbound call
+      const { isOptedOut: isOptedOutCall } = await import("@/lib/lead-opt-out");
+      if (await isOptedOutCall(e.workspace_id, `lead:${e.lead_id}`)) {
+        console.warn(`[sequence-call] Lead ${e.lead_id} is opted out — skipping call step for enrollment ${enrollmentId}`);
+        actionSucceeded = true;
+      } else {
+        const { executeLeadOutboundCall } = await import("@/lib/outbound/execute-lead-call");
+        const result = await executeLeadOutboundCall(e.workspace_id, e.lead_id, { campaignType: "lead_followup" });
+        actionSucceeded = result.ok;
+      }
     } else if (stepToExecute.type === "email") {
+      // SAFETY: Check opt-out before sending any email
+      const { isOptedOut: isOptedOutEmail } = await import("@/lib/lead-opt-out");
+      if (await isOptedOutEmail(e.workspace_id, `lead:${e.lead_id}`)) {
+        console.warn(`[sequence-email] Lead ${e.lead_id} is opted out — skipping email step for enrollment ${enrollmentId}`);
+        actionSucceeded = true; // Respect opt-out, advance enrollment past this step
+      } else {
       // Email delivery through workspace email config (if configured)
       const { data: leadRow } = await db
         .from("leads")
-        .select("email, name")
+        .select("email, name, metadata")
         .eq("id", e.lead_id)
         .eq("workspace_id", e.workspace_id)
         .maybeSingle();
-      const lead = leadRow as { email?: string; name?: string } | null;
-      if (!lead?.email) {
+      const lead = leadRow as { email?: string; name?: string; metadata?: Record<string, unknown> | null } | null;
+      // Check metadata.email_consent === false
+      if (lead?.metadata && (lead.metadata as Record<string, unknown>).email_consent === false) {
+        console.warn(`[sequence-email] Lead ${e.lead_id} has email_consent=false — skipping email step for enrollment ${enrollmentId}`);
+        actionSucceeded = true;
+      } else if (!lead?.email) {
         // Lead has no email — skip this step gracefully instead of failing forever
         console.warn(`[sequence-email] Lead ${e.lead_id} has no email address — skipping email step for enrollment ${enrollmentId}`);
         actionSucceeded = true; // Treat as "delivered" so enrollment advances
@@ -609,6 +637,7 @@ export async function advanceEnrollment(
           }
         }
       }
+      } // end email opt-out else
     }
   } catch (execErr) {
     // Log but don't block enrollment advancement — step delivery failure shouldn't stall the sequence

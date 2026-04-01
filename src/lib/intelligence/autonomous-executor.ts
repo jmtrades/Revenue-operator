@@ -314,6 +314,28 @@ async function executeBasedOnAction(
     };
   }
 
+  // SAFETY: Hard opt-out check before any outbound communication
+  const outboundActions = ["ask_clarification", "send_proof", "reframe_value", "send_email", "send_sms", "change_channel"];
+  if (outboundActions.includes(action)) {
+    try {
+      const { isOptedOut } = await import("@/lib/lead-opt-out");
+      if (await isOptedOut(intelligence.workspace_id, `lead:${intelligence.lead_id}`)) {
+        return {
+          action_type: action as AutonomousActionType,
+          success: false,
+          details: "Lead is opted out — action blocked",
+          executed_at: executedAt,
+          lead_id: intelligence.lead_id,
+          workspace_id: intelligence.workspace_id,
+          confidence: intelligence.action_confidence,
+          reason: "opted_out",
+        };
+      }
+    } catch {
+      // opt-out table may not exist — proceed cautiously
+    }
+  }
+
   // Map action to execution
   if (action === "ask_clarification") {
     return sendSmsAction(intelligence, lead, executedAt, "ask_clarification");

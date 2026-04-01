@@ -48,6 +48,18 @@ export async function POST(req: NextRequest) {
   const leadId = body.leadId ?? null;
   const provider = getTelephonyProvider();
 
+  // SAFETY: Check opt-out if we have a lead reference
+  if (leadId) {
+    try {
+      const { isOptedOut } = await import("@/lib/lead-opt-out");
+      if (await isOptedOut(session.workspaceId, `lead:${leadId}`)) {
+        return NextResponse.json({ error: "Lead has opted out of communications" }, { status: 403 });
+      }
+    } catch {
+      // opt-out table may not exist — proceed
+    }
+  }
+
   try {
     let result: { messageId?: string; sid?: string; error?: string };
 
