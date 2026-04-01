@@ -441,7 +441,7 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
           email: updateFields.email ?? null,
           phone: updateFields.phone ?? null,
           company: updateFields.company ?? null,
-          state: updateFields.status ?? "NEW",
+          status: updateFields.status ?? "NEW",
           metadata: {
             source: `crm_${provider}`,
             imported_at: new Date().toISOString(),

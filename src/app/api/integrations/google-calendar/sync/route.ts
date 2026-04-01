@@ -212,7 +212,7 @@ export async function POST(req: NextRequest) {
               email: attendee.email,
               phone: null,
               company: null,
-              state: "NEW",
+              status: "NEW",
               metadata: { source: "google_calendar_sync" },
             })
             .select("id")
@@ -234,7 +234,7 @@ export async function POST(req: NextRequest) {
             email: null,
             phone: null,
             company: null,
-            state: "NEW",
+            status: "NEW",
             metadata: { source: "google_calendar_sync" },
           })
           .select("id")

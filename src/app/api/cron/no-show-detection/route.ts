@@ -102,7 +102,7 @@ export async function GET(req: NextRequest) {
       if (appt.lead_id) {
         await db
           .from("leads")
-          .update({ state: "REACTIVATE", updated_at: nowIso })
+          .update({ status: "REACTIVATE", updated_at: nowIso })
           .eq("id", appt.lead_id)
           .eq("workspace_id", appt.workspace_id);
       }

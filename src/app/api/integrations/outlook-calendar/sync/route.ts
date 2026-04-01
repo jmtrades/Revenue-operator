@@ -231,7 +231,7 @@ export async function POST(req: NextRequest) {
               email: attendee.emailAddress?.address,
               phone: null,
               company: null,
-              state: "NEW",
+              status: "NEW",
               metadata: { source: "outlook_calendar_sync" },
             })
             .select("id")
@@ -253,7 +253,7 @@ export async function POST(req: NextRequest) {
             email: null,
             phone: null,
             company: null,
-            state: "NEW",
+            status: "NEW",
             metadata: { source: "outlook_calendar_sync" },
           })
           .select("id")
