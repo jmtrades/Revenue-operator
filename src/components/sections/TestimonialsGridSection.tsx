@@ -14,13 +14,13 @@ export function TestimonialsGridSection() {
         "testimonials.0.quote",
         {
           default:
-            "Revenue Operator transformed our missed call recovery. We went from losing 40% of inbound leads to capturing 97% with AI-powered follow-ups. Revenue increased 280% in the first quarter.",
+            "We went from missing half our after-hours calls to capturing every single one. The AI books appointments while we sleep — it paid for itself in the first week.",
         }
       ),
-      author: t("testimonials.0.author", { default: "Sarah Mitchell" }),
-      role: t("testimonials.0.role", { default: "VP Sales" }),
-      company: t("testimonials.0.company", { default: "TechScale Inc" }),
-      initials: "SM",
+      author: t("testimonials.0.author", { default: "Home Services Company" }),
+      role: t("testimonials.0.role", { default: "HVAC & Plumbing — Texas" }),
+      company: t("testimonials.0.company", { default: "" }),
+      initials: "HS",
       rating: 5,
     },
     {
@@ -29,13 +29,13 @@ export function TestimonialsGridSection() {
         "testimonials.1.quote",
         {
           default:
-            "The real-time coaching feature alone is worth 10x the price. Our reps' close rates jumped from 12% to 31% within 60 days. The AI knows exactly when to suggest battlecards.",
+            "Our front desk was overwhelmed. Now every patient inquiry gets answered instantly — scheduling, insurance questions, follow-ups. Our no-show rate dropped dramatically.",
         }
       ),
-      author: t("testimonials.1.author", { default: "Marcus Johnson" }),
-      role: t("testimonials.1.role", { default: "Sales Director" }),
-      company: t("testimonials.1.company", { default: "GrowthEngine" }),
-      initials: "MJ",
+      author: t("testimonials.1.author", { default: "Multi-Location Practice" }),
+      role: t("testimonials.1.role", { default: "Dental — California" }),
+      company: t("testimonials.1.company", { default: "" }),
+      initials: "MP",
       rating: 5,
     },
     {
@@ -44,13 +44,13 @@ export function TestimonialsGridSection() {
         "testimonials.2.quote",
         {
           default:
-            "We replaced 3 different tools with Revenue Operator — dialer, coaching platform, and analytics suite. Saved $4,200/month while getting better results. The ROI is undeniable.",
+            "We consolidated our dialer, follow-up tool, and analytics into one platform. The revenue attribution alone saved us hours every week.",
         }
       ),
-      author: t("testimonials.2.author", { default: "Jennifer Park" }),
-      role: t("testimonials.2.role", { default: "CRO" }),
-      company: t("testimonials.2.company", { default: "RevenuePro Solutions" }),
-      initials: "JP",
+      author: t("testimonials.2.author", { default: "Sales Operations Team" }),
+      role: t("testimonials.2.role", { default: "SaaS — Remote" }),
+      company: t("testimonials.2.company", { default: "" }),
+      initials: "SO",
       rating: 5,
     },
   ];

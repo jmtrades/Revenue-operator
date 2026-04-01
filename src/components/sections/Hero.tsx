@@ -160,7 +160,7 @@ function HeroVoiceDemo() {
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleDemoCall()}
-            placeholder="+44 7911 123456"
+            placeholder="+1 (555) 123-4567"
             className="w-full pl-9 pr-3 py-2.5 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]"
             style={{
               background: "var(--bg-inset)",

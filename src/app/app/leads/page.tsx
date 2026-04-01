@@ -675,7 +675,7 @@ export default function LeadsPage() {
               {t("leads.addLead")}
             </button>
             <span className="inline-flex items-center rounded-full border border-[var(--border-default)] bg-[var(--bg-card)] px-3 py-1 text-xs text-[var(--text-secondary)]">
-              {t("leads.total")} <span className="ml-1 font-semibold text-[var(--text-primary)]">{totalCount}</span>
+              <span className="font-semibold text-[var(--text-primary)]">{t("leads.total", { count: totalCount })}</span>
             </span>
             <button
               type="button"

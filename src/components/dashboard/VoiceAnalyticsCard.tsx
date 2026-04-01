@@ -235,7 +235,7 @@ export function VoiceAnalyticsCard() {
         <p className="text-xs font-medium text-[var(--text-secondary)] mb-3">
           Calls Over Time
         </p>
-        <ResponsiveContainer width="100%" height={150} minWidth={0} minHeight={undefined}>
+        <ResponsiveContainer width="100%" height={150} minWidth={1} minHeight={1}>
           <AreaChart data={data.calls_by_day}>
             <defs>
               <linearGradient id="colorCalls" x1="0" y1="0" x2="0" y2="1">
