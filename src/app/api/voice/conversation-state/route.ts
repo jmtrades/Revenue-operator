@@ -12,11 +12,14 @@
  * The voice server sends the latest turn and receives back real-time guidance
  * for how the agent should behave next. This is what makes the AI adapt
  * its timing, tone, and word choice throughout the call.
+ *
+ * Security: Verifies voice webhook secret in Authorization header.
  */
 
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { createHmac, timingSafeEqual } from "crypto";
 import {
   createConversationState,
   addTurn,
@@ -26,7 +29,43 @@ import {
 } from "@/lib/voice/conversation-state";
 import { FILLER_ROTATION } from "@/lib/voice/human-voice-defaults";
 import { log } from "@/lib/logger";
-import { assertSameOrigin } from "@/lib/http/csrf";
+
+function verifyWebhookSecret(body: string, authHeader: string | null): boolean {
+  const secret = process.env.VOICE_WEBHOOK_SECRET;
+  if (!secret) {
+    const isProduction = process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production";
+    if (isProduction) {
+      log("error", "voice_conversation_state.secret_not_configured", { message: "rejecting webhook — VOICE_WEBHOOK_SECRET must be set in production" });
+      return false;
+    }
+    log("warn", "voice_conversation_state.secret_not_configured", { message: "skipping signature verification in development" });
+    return true;
+  }
+
+  if (!authHeader) {
+    log("error", "voice_conversation_state.missing_auth_header", { message: "Authorization header required" });
+    return false;
+  }
+
+  // Expected format: "Bearer <signature>"
+  const parts = authHeader.split(" ");
+  if (parts.length !== 2 || parts[0] !== "Bearer") {
+    log("error", "voice_conversation_state.invalid_auth_format", { message: "Invalid Authorization header format" });
+    return false;
+  }
+  const signature = parts[1];
+
+  const expected = createHmac("sha256", secret)
+    .update(body, "utf-8")
+    .digest("hex");
+
+  if (expected.length !== signature.length) return false;
+  try {
+    return timingSafeEqual(Buffer.from(expected, "utf-8"), Buffer.from(signature, "utf-8"));
+  } catch {
+    return expected === signature;
+  }
+}
 
 // In-memory state store per call session (voice server holds one call at a time)
 // In production, this would be Redis — but for single-server it's fine.
@@ -58,12 +97,18 @@ interface ConversationStateBody {
 }
 
 export async function POST(req: NextRequest) {
-  const csrfBlock = assertSameOrigin(req);
-  if (csrfBlock) return csrfBlock;
+  // Verify webhook signature
+  const body = await req.text();
+  const authHeader = req.headers.get("Authorization");
+
+  if (!verifyWebhookSecret(body, authHeader)) {
+    log("error", "voice_conversation_state.invalid_signature", { message: "signature verification failed" });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   let payload: ConversationStateBody;
   try {
-    payload = (await req.json()) as ConversationStateBody;
+    payload = JSON.parse(body) as ConversationStateBody;
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }

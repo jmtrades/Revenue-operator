@@ -4,6 +4,8 @@
  *
  * Returns whether the business is currently open, today's hours,
  * and the next time they open if currently closed.
+ *
+ * Security: Verifies voice webhook secret in Authorization header.
  */
 
 export const dynamic = "force-dynamic";
@@ -11,7 +13,44 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
-import { assertSameOrigin } from "@/lib/http/csrf";
+import { createHmac, timingSafeEqual } from "crypto";
+
+function verifyWebhookSecret(body: string, authHeader: string | null): boolean {
+  const secret = process.env.VOICE_WEBHOOK_SECRET;
+  if (!secret) {
+    const isProduction = process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production";
+    if (isProduction) {
+      log("error", "voice_check_hours.secret_not_configured", { message: "rejecting webhook — VOICE_WEBHOOK_SECRET must be set in production" });
+      return false;
+    }
+    log("warn", "voice_check_hours.secret_not_configured", { message: "skipping signature verification in development" });
+    return true;
+  }
+
+  if (!authHeader) {
+    log("error", "voice_check_hours.missing_auth_header", { message: "Authorization header required" });
+    return false;
+  }
+
+  // Expected format: "Bearer <signature>"
+  const parts = authHeader.split(" ");
+  if (parts.length !== 2 || parts[0] !== "Bearer") {
+    log("error", "voice_check_hours.invalid_auth_format", { message: "Invalid Authorization header format" });
+    return false;
+  }
+  const signature = parts[1];
+
+  const expected = createHmac("sha256", secret)
+    .update(body, "utf-8")
+    .digest("hex");
+
+  if (expected.length !== signature.length) return false;
+  try {
+    return timingSafeEqual(Buffer.from(expected, "utf-8"), Buffer.from(signature, "utf-8"));
+  } catch {
+    return expected === signature;
+  }
+}
 
 interface CheckHoursBody {
   workspace_id: string;
@@ -88,12 +127,18 @@ function isCurrentlyOpen(
 }
 
 export async function POST(req: NextRequest) {
-  const csrfBlock = assertSameOrigin(req);
-  if (csrfBlock) return csrfBlock;
+  // Verify webhook signature
+  const body = await req.text();
+  const authHeader = req.headers.get("Authorization");
+
+  if (!verifyWebhookSecret(body, authHeader)) {
+    log("error", "voice_check_hours.invalid_signature", { message: "signature verification failed" });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   let payload: CheckHoursBody;
   try {
-    payload = (await req.json()) as CheckHoursBody;
+    payload = JSON.parse(body) as CheckHoursBody;
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }

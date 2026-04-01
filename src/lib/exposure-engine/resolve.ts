@@ -2,9 +2,14 @@
  * Mark exposures as interrupted from causal chain, continuation, or coordination displacement.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 import { markExposureResolved } from "./record";
 import type { InterruptionSource } from "./types";
+
+const logExposureResolveSideEffect = (context: string) => (e: unknown) => {
+  log("warn", `exposure_engine.resolve.${context}`, { error: e instanceof Error ? e.message : String(e) });
+};
 
 /** Call after recordCausalChain insert (dependency_established). */
 export async function resolveExposureFromCausalChain(
@@ -28,13 +33,13 @@ export async function resolveExposureFromCausalChain(
       .maybeSingle();
     const cid = (comm as { id: string } | null)?.id;
     if (cid) {
-      await markExposureResolved(workspaceId, "attendance_uncertainty_risk", "commitment", cid, "causal_chain").catch(() => {});
-      await markExposureResolved(workspaceId, "commitment_outcome_uncertain", "commitment", cid, "causal_chain").catch(() => {});
+      await markExposureResolved(workspaceId, "attendance_uncertainty_risk", "commitment", cid, "causal_chain").catch(logExposureResolveSideEffect("mark_attendance_causal"));
+      await markExposureResolved(workspaceId, "commitment_outcome_uncertain", "commitment", cid, "causal_chain").catch(logExposureResolveSideEffect("mark_outcome_causal"));
     }
     return;
   }
   if (interventionType === "opportunity_revival") {
-    await markExposureResolved(workspaceId, "reply_delay_risk", "conversation", sid, "causal_chain").catch(() => {});
+    await markExposureResolved(workspaceId, "reply_delay_risk", "conversation", sid, "causal_chain").catch(logExposureResolveSideEffect("mark_reply_delay_causal"));
     return;
   }
   if (interventionType === "payment_recovery") {
@@ -50,11 +55,11 @@ export async function resolveExposureFromCausalChain(
       .limit(1)
       .maybeSingle();
     const oid = (ob as { id: string } | null)?.id;
-    if (oid) await markExposureResolved(workspaceId, "payment_stall_risk", "payment_obligation", oid, "causal_chain").catch(() => {});
+    if (oid) await markExposureResolved(workspaceId, "payment_stall_risk", "payment_obligation", oid, "causal_chain").catch(logExposureResolveSideEffect("mark_payment_stall_causal"));
     return;
   }
   if (interventionType === "shared_transaction_ack") {
-    await markExposureResolved(workspaceId, "counterparty_unconfirmed_risk", "shared_transaction", sid, "causal_chain").catch(() => {});
+    await markExposureResolved(workspaceId, "counterparty_unconfirmed_risk", "shared_transaction", sid, "causal_chain").catch(logExposureResolveSideEffect("mark_counterparty_causal"));
   }
 }
 
@@ -73,7 +78,7 @@ export async function resolveExposureFromContinuation(
     unaligned: { exposureType: "counterparty_unconfirmed_risk", subjectType: "shared_transaction" },
   };
   const m = typeMap[unresolvedState];
-  if (m) await markExposureResolved(workspaceId, m.exposureType, m.subjectType, sid, "continuation_stopped").catch(() => {});
+  if (m) await markExposureResolved(workspaceId, m.exposureType, m.subjectType, sid, "continuation_stopped").catch(logExposureResolveSideEffect("mark_continuation_stopped"));
 }
 
 /** Mark most recent unresolved exposure of given type (for displacement which has no subject_id). */
@@ -97,7 +102,7 @@ export async function markMostRecentExposureResolvedByType(
     .limit(1);
   if (!rows?.length) return;
   const subjectId = (rows[0] as { subject_id: string }).subject_id;
-  await markExposureResolved(workspaceId, exposureType, subjectType, subjectId, source).catch(() => {});
+  await markExposureResolved(workspaceId, exposureType, subjectType, subjectId, source).catch(logExposureResolveSideEffect("mark_most_recent"));
 }
 
 /** Call after recordCoordinationDisplacement insert. decisionType only; marks most recent matching exposure. */
@@ -114,5 +119,5 @@ export async function resolveExposureFromDisplacement(
   };
   const m = map[decisionType];
   if (!m) return;
-  await markMostRecentExposureResolvedByType(workspaceId, m.exposureType, m.subjectType, "coordination_displacement").catch(() => {});
+  await markMostRecentExposureResolvedByType(workspaceId, m.exposureType, m.subjectType, "coordination_displacement").catch(logExposureResolveSideEffect("mark_displacement"));
 }

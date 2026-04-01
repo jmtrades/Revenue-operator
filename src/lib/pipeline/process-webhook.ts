@@ -3,6 +3,7 @@
  * When DOCTRINE_ENFORCED=1 this must not be called; use convertLegacyWebhookToSignalAndEnqueue instead.
  */
 
+import { log } from "@/lib/logger";
 import { assertNotEnforcedOrConvert } from "@/lib/doctrine/enforce";
 import { getDb } from "@/lib/db/queries";
 import { processEvent } from "@/lib/event-engine";
@@ -13,6 +14,10 @@ import { emitOutboundEvent } from "@/lib/outbound-events";
 import { recordCommitmentSignal } from "@/lib/commitment";
 import { recordLeadReaction } from "@/lib/lead-memory";
 import { resolveConversationState, getConversationContext } from "@/lib/conversation-state/resolver";
+
+const logPipelineSideEffect = (context: string) => (e: unknown) => {
+  log("warn", `pipeline.webhook.${context}`, { error: e instanceof Error ? e.message : String(e) });
+};
 
 export interface RawWebhookPayload {
   workspace_id: string;
@@ -119,7 +124,7 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
           // Non-blocking
         }
         const { syncFirstContact } = await import("@/lib/revenue-lifecycle/sync");
-        await syncFirstContact(lead.id, workspace_id).catch(() => {});
+        await syncFirstContact(lead.id, workspace_id).catch(logPipelineSideEffect("sync_first_contact"));
       }
     } catch {
       // Non-blocking
@@ -148,8 +153,8 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
 
     const { stopSequence } = await import("@/lib/sequences/follow-up-engine");
     const { cancelLeadPlan } = await import("@/lib/plans/lead-plan");
-    await stopSequence(workspace_id, lead.id, "user_reply").catch(() => {});
-    await cancelLeadPlan(workspace_id, lead.id, "user_reply").catch(() => {});
+    await stopSequence(workspace_id, lead.id, "user_reply").catch(logPipelineSideEffect("stop_sequence"));
+    await cancelLeadPlan(workspace_id, lead.id, "user_reply").catch(logPipelineSideEffect("cancel_lead_plan"));
 
     const { data: lastAssistant } = await db
       .from("messages")
@@ -161,14 +166,14 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
       .maybeSingle();
     const lastAction = (lastAssistant as { metadata?: { action?: string } })?.metadata?.action ?? "message";
     const outcome = message.length > 50 ? message.slice(0, 50) + "…" : message;
-    recordLeadReaction(lead.id, workspace_id, lastAction, outcome).catch(() => {});
+    recordLeadReaction(lead.id, workspace_id, lastAction, outcome).catch(logPipelineSideEffect("record_lead_reaction"));
 
     const msgLower = message.toLowerCase();
     if (msgLower.includes("confirmed") || msgLower.includes("yes") || msgLower.includes("i'll be there") || msgLower.includes("see you")) {
-      recordCommitmentSignal(lead.id, "confirmation_reply").catch(() => {});
+      recordCommitmentSignal(lead.id, "confirmation_reply").catch(logPipelineSideEffect("record_commitment_confirmation"));
     }
     if (msgLower.includes("reschedule") || msgLower.includes("cancel") || msgLower.includes("can't make it")) {
-      recordCommitmentSignal(lead.id, "reschedule_resistance").catch(() => {});
+      recordCommitmentSignal(lead.id, "reschedule_resistance").catch(logPipelineSideEffect("record_commitment_reschedule"));
     }
 
     const { detectDisinterest, setLowPressureMode } = await import("@/lib/human-safety/disinterest-detector");
@@ -232,14 +237,14 @@ export async function processWebhookJob(webhookId: string): Promise<{ decisionLe
     }).eq("id", lead.id);
 
     const { syncFromLeadState } = await import("@/lib/revenue-lifecycle/sync");
-    await syncFromLeadState(lead.id, workspace_id, decision.newState as import("@/lib/types").LeadState).catch(() => {});
+    await syncFromLeadState(lead.id, workspace_id, decision.newState as import("@/lib/types").LeadState).catch(logPipelineSideEffect("sync_from_lead_state"));
 
     if (decision.transitionOccurred && decision.newState !== currentState) {
       if (decision.newState === "QUALIFIED") {
-        emitOutboundEvent(workspace_id, "lead_qualified", { lead_id: lead.id, from_state: currentState }, lead.id).catch(() => {});
+        emitOutboundEvent(workspace_id, "lead_qualified", { lead_id: lead.id, from_state: currentState }, lead.id).catch(logPipelineSideEffect("emit_lead_qualified"));
       }
       if (decision.newState === "REACTIVATE") {
-        emitOutboundEvent(workspace_id, "lead_reactivated", { lead_id: lead.id, from_state: currentState }, lead.id).catch(() => {});
+        emitOutboundEvent(workspace_id, "lead_reactivated", { lead_id: lead.id, from_state: currentState }, lead.id).catch(logPipelineSideEffect("emit_lead_reactivated"));
       }
     }
 

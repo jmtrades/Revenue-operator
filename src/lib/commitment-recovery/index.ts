@@ -4,10 +4,15 @@
  * No UI; behavior only. Terminal outcomes: completed, rescheduled, cancelled, failed, reassigned.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 import { runWithWriteContextAsync } from "@/lib/safety/unsafe-write-guard";
 import { enqueue } from "@/lib/queue";
 import { persistActionCommand } from "@/lib/action-queue/persist";
+
+const logCommitmentRecoverySideEffect = (context: string) => (e: unknown) => {
+  log("warn", `commitment_recovery.${context}`, { error: e instanceof Error ? e.message : String(e) });
+};
 
 export type CommitmentSubjectType = "lead" | "conversation" | "invoice" | "booking" | "task";
 export type CommitmentState =
@@ -78,10 +83,10 @@ export async function createCommitment(
       });
       if (hadAwaiting) {
         const { recordOperationalAssumption } = await import("@/lib/assumption-engine");
-        recordOperationalAssumption(workspaceId, "dependency_action_taken", `commitment:${id}`).catch(() => {});
+        recordOperationalAssumption(workspaceId, "dependency_action_taken", `commitment:${id}`).catch(logCommitmentRecoverySideEffect("record_operational_assumption_create"));
       }
       const { detectAndRecordParallelReality } = await import("@/lib/operational-ambiguity/parallel-reality");
-      await detectAndRecordParallelReality(workspaceId, subjectType, subjectId, expectedAt).catch(() => {});
+      await detectAndRecordParallelReality(workspaceId, subjectType, subjectId, expectedAt).catch(logCommitmentRecoverySideEffect("detect_parallel_reality"));
     }
     return id ?? "";
   });
@@ -187,7 +192,7 @@ export async function runRecoveryForCommitment(c: CommitmentRow): Promise<{ ok: 
       const dedupKey = `commitment-recovery:${c.id}:${c.recovery_attempts}`;
       const { hasExecutedActionType, setPendingPreview } = await import("@/lib/adoption-acceleration/previews");
       if (!(await hasExecutedActionType(workspaceId, "commitment_recovery"))) {
-        await setPendingPreview(workspaceId, "commitment_recovery", "If no reply occurs, a confirmation message will be sent.").catch(() => {});
+        await setPendingPreview(workspaceId, "commitment_recovery", "If no reply occurs, a confirmation message will be sent.").catch(logCommitmentRecoverySideEffect("set_pending_preview"));
       }
       const { compileMessage } = await import("@/lib/message-compiler");
       const content = compileMessage("follow_up", { channel: (convRow.channel || "sms") as "sms" | "email" | "web" });
@@ -229,7 +234,7 @@ export async function runRecoveryForCommitment(c: CommitmentRow): Promise<{ ok: 
           const dedupKey = `commitment-booking-confirm:${c.id}:${c.recovery_attempts}`;
           const { hasExecutedActionType, setPendingPreview } = await import("@/lib/adoption-acceleration/previews");
           if (!(await hasExecutedActionType(workspaceId, "commitment_recovery"))) {
-            await setPendingPreview(workspaceId, "commitment_recovery", "If no reply occurs, a confirmation message will be sent.").catch(() => {});
+            await setPendingPreview(workspaceId, "commitment_recovery", "If no reply occurs, a confirmation message will be sent.").catch(logCommitmentRecoverySideEffect("set_pending_preview"));
           }
           const { compileMessage } = await import("@/lib/message-compiler");
           const content = compileMessage("confirm_booking", { channel: (convRow.channel || "sms") as "sms" | "email" | "web" });
@@ -271,7 +276,7 @@ export async function runRecoveryForCommitment(c: CommitmentRow): Promise<{ ok: 
             const dedupKey = `commitment-invoice-recovery:${c.id}:${c.recovery_attempts}`;
             const { hasExecutedActionType, setPendingPreview } = await import("@/lib/adoption-acceleration/previews");
             if (!(await hasExecutedActionType(workspaceId, "commitment_recovery"))) {
-              await setPendingPreview(workspaceId, "commitment_recovery", "If no reply occurs, a confirmation message will be sent.").catch(() => {});
+              await setPendingPreview(workspaceId, "commitment_recovery", "If no reply occurs, a confirmation message will be sent.").catch(logCommitmentRecoverySideEffect("set_pending_preview"));
             }
             const { compileMessage } = await import("@/lib/message-compiler");
             const content = compileMessage("payment_reminder", { channel: (convRow.channel || "sms") as "sms" | "email" | "web" });
@@ -414,7 +419,7 @@ export async function resolveCommitment(
   await recordCommitmentEvent(commitmentId, "auto_resolved", { terminal_outcome: terminalOutcome });
   if (prev) {
     const { removeOperationalExpectation } = await import("@/lib/operability-anchor");
-    removeOperationalExpectation(prev.workspace_id, "awaiting_confirmation", commitmentId).catch(() => {});
+    removeOperationalExpectation(prev.workspace_id, "awaiting_confirmation", commitmentId).catch(logCommitmentRecoverySideEffect("remove_operational_expectation"));
   }
   const outcomeFollowedIntervention =
     prev && (prev.state === "overdue" || prev.state === "recovery_required") && (terminalOutcome === "completed" || terminalOutcome === "rescheduled");
@@ -428,16 +433,16 @@ export async function resolveCommitment(
       intervention_type: "commitment_recovery",
       observed_outcome: "confirmed",
       dependency_established: true,
-    }).catch(() => {});
+    }).catch(logCommitmentRecoverySideEffect("record_causal_chain"));
     const { recordOperationalAssumption } = await import("@/lib/assumption-engine");
-    recordOperationalAssumption(prev.workspace_id, "outcome_presumed", `commitment:${commitmentId}`).catch(() => {});
+    recordOperationalAssumption(prev.workspace_id, "outcome_presumed", `commitment:${commitmentId}`).catch(logCommitmentRecoverySideEffect("record_operational_assumption_resolve"));
     const { markExposureResolved } = await import("@/lib/exposure-engine");
-    markExposureResolved(prev.workspace_id, "attendance_uncertainty_risk", "commitment", commitmentId, "resolved_after_intervention").catch(() => {});
-    markExposureResolved(prev.workspace_id, "commitment_outcome_uncertain", "commitment", commitmentId, "resolved_after_intervention").catch(() => {});
+    markExposureResolved(prev.workspace_id, "attendance_uncertainty_risk", "commitment", commitmentId, "resolved_after_intervention").catch(logCommitmentRecoverySideEffect("mark_exposure_attendance"));
+    markExposureResolved(prev.workspace_id, "commitment_outcome_uncertain", "commitment", commitmentId, "resolved_after_intervention").catch(logCommitmentRecoverySideEffect("mark_exposure_outcome"));
     const { recordContinuationStopped } = await import("@/lib/continuation-engine");
-    recordContinuationStopped(prev.workspace_id, prev.subject_type, prev.subject_id, "uncertain_attendance", 0).catch(() => {});
+    recordContinuationStopped(prev.workspace_id, prev.subject_type, prev.subject_id, "uncertain_attendance", 0).catch(logCommitmentRecoverySideEffect("record_continuation_stopped"));
     const { recordCoordinationDisplacement } = await import("@/lib/coordination-displacement");
-    recordCoordinationDisplacement(prev.workspace_id, "staff", "attendance", true).catch(() => {});
+    recordCoordinationDisplacement(prev.workspace_id, "staff", "attendance", true).catch(logCommitmentRecoverySideEffect("record_coordination_displacement_intervention"));
     const { recordResponsibilityMoment } = await import("@/lib/responsibility-moments");
     recordResponsibilityMoment({
       workspaceId: prev.workspace_id,
@@ -445,15 +450,15 @@ export async function resolveCommitment(
       subjectId: commitmentId,
       authorityHolder: "environment",
       determinedFrom: "intervention",
-    }).catch(() => {});
+    }).catch(logCommitmentRecoverySideEffect("record_responsibility_moment"));
     const { recordNonParticipationIfApplicable } = await import("@/lib/detachment");
-    recordNonParticipationIfApplicable(prev.workspace_id, `commitment:${commitmentId}`, "commitment").catch(() => {});
+    recordNonParticipationIfApplicable(prev.workspace_id, `commitment:${commitmentId}`, "commitment").catch(logCommitmentRecoverySideEffect("record_non_participation_intervention"));
   }
   const confirmedWithoutRecovery =
     prev && prev.recovery_attempts === 0 && (terminalOutcome === "completed" || terminalOutcome === "rescheduled");
   if (confirmedWithoutRecovery && prev) {
     const { recordCoordinationDisplacement } = await import("@/lib/coordination-displacement");
-    recordCoordinationDisplacement(prev.workspace_id, "staff", "attendance", false).catch(() => {});
+    recordCoordinationDisplacement(prev.workspace_id, "staff", "attendance", false).catch(logCommitmentRecoverySideEffect("record_coordination_displacement_no_recovery"));
     const { recordResponsibilityMoment } = await import("@/lib/responsibility-moments");
     recordResponsibilityMoment({
       workspaceId: prev.workspace_id,
@@ -461,9 +466,9 @@ export async function resolveCommitment(
       subjectId: commitmentId,
       authorityHolder: "environment",
       determinedFrom: "timeout",
-    }).catch(() => {});
+    }).catch(logCommitmentRecoverySideEffect("record_responsibility_moment_timeout"));
     const { recordNonParticipationIfApplicable } = await import("@/lib/detachment");
-    recordNonParticipationIfApplicable(prev.workspace_id, `commitment:${commitmentId}`, "commitment").catch(() => {});
+    recordNonParticipationIfApplicable(prev.workspace_id, `commitment:${commitmentId}`, "commitment").catch(logCommitmentRecoverySideEffect("record_non_participation_intervention"));
   }
   if (prev) {
     const orientationText: Record<TerminalOutcome, string> = {
@@ -474,18 +479,18 @@ export async function resolveCommitment(
       reassigned: "Responsibility was reassigned.",
     };
     const { recordOrientationStatement } = await import("@/lib/orientation/records");
-    recordOrientationStatement(prev.workspace_id, orientationText[terminalOutcome]).catch(() => {});
+    recordOrientationStatement(prev.workspace_id, orientationText[terminalOutcome]).catch(logCommitmentRecoverySideEffect("record_orientation_statement"));
     const { recordStaffRelianceEvent } = await import("@/lib/staff-reliance");
-    recordStaffRelianceEvent(prev.workspace_id).catch(() => {});
+    recordStaffRelianceEvent(prev.workspace_id).catch(logCommitmentRecoverySideEffect("record_staff_reliance_event"));
   }
   if (prev && (prev.state === "overdue" || prev.state === "recovery_required") && (terminalOutcome === "completed" || terminalOutcome === "rescheduled")) {
     const { recordReliefEvent } = await import("@/lib/awareness-timing/relief-events");
-    recordReliefEvent(prev.workspace_id, "A scheduled interaction reached confirmation after follow-up.").catch(() => {});
+    recordReliefEvent(prev.workspace_id, "A scheduled interaction reached confirmation after follow-up.").catch(logCommitmentRecoverySideEffect("record_relief_event"));
     const { touchDependencyMemory } = await import("@/lib/operational-dependency-memory");
-    touchDependencyMemory(prev.workspace_id, "commitment_resolution").catch(() => {});
+    touchDependencyMemory(prev.workspace_id, "commitment_resolution").catch(logCommitmentRecoverySideEffect("touch_dependency_memory"));
     const { recordMemoryReplacementEvent } = await import("@/lib/memory-replacement");
-    recordMemoryReplacementEvent(prev.workspace_id, "outcome_confirmed").catch(() => {});
-    recordMemoryReplacementEvent(prev.workspace_id, "followup").catch(() => {});
+    recordMemoryReplacementEvent(prev.workspace_id, "outcome_confirmed").catch(logCommitmentRecoverySideEffect("record_memory_replacement_outcome"));
+    recordMemoryReplacementEvent(prev.workspace_id, "followup").catch(logCommitmentRecoverySideEffect("record_memory_replacement_followup"));
   }
   if (prev && prev.recovery_attempts > 0 && (prev.state === "overdue" || prev.state === "recovery_required")) {
     const { recordEconomicEvent } = await import("@/lib/economic-events");
@@ -496,7 +501,7 @@ export async function resolveCommitment(
         subjectType: prev.subject_type,
         subjectId: prev.subject_id,
         valueAmount: 0,
-      }).catch(() => {});
+      }).catch(logCommitmentRecoverySideEffect("record_economic_event_saved"));
     } else if (terminalOutcome === "rescheduled") {
       recordEconomicEvent({
         workspaceId: prev.workspace_id,
@@ -504,11 +509,11 @@ export async function resolveCommitment(
         subjectType: prev.subject_type,
         subjectId: prev.subject_id,
         valueAmount: 0,
-      }).catch(() => {});
+      }).catch(logCommitmentRecoverySideEffect("record_economic_event_prevented"));
       const { recordCommitmentBehavior } = await import("@/lib/operational-memory");
       const { recordResolutionPreference } = await import("@/lib/decision-assumption");
-      await recordCommitmentBehavior(prev.workspace_id, prev.subject_type, prev.subject_id, "repeatedly_reschedules").catch(() => {});
-      await recordResolutionPreference(prev.workspace_id, "commitment", "reschedule").catch(() => {});
+      await recordCommitmentBehavior(prev.workspace_id, prev.subject_type, prev.subject_id, "repeatedly_reschedules").catch(logCommitmentRecoverySideEffect("record_commitment_behavior"));
+      await recordResolutionPreference(prev.workspace_id, "commitment", "reschedule").catch(logCommitmentRecoverySideEffect("record_resolution_preference"));
     }
   }
 }

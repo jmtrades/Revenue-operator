@@ -2,8 +2,13 @@
  * Deterministic exposure detectors. Bounded per workspace. No side effects except upsertExposure.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 import { upsertExposure } from "./record";
+
+const logExposureDetectSideEffect = (context: string) => (e: unknown) => {
+  log("warn", `exposure_engine.detect.${context}`, { error: e instanceof Error ? e.message : String(e) });
+};
 
 const DETECT_LIMIT = 200;
 const REPLY_DELAY_HOURS = 2;
@@ -29,7 +34,7 @@ export async function detectReplyDelayRisk(workspaceId: string, now: Date): Prom
       row.last_business_message_at == null ||
       new Date(row.last_business_message_at) < new Date(row.last_customer_message_at);
     if (!noBusinessReply) continue;
-    await upsertExposure(workspaceId, "reply_delay_risk", "conversation", row.conversation_id, null, now).catch(() => {});
+    await upsertExposure(workspaceId, "reply_delay_risk", "conversation", row.conversation_id, null, now).catch(logExposureDetectSideEffect("upsert_reply_delay"));
   }
 }
 
@@ -47,7 +52,7 @@ export async function detectAttendanceUncertaintyRisk(workspaceId: string, now: 
 
   for (const r of rows ?? []) {
     const row = r as { id: string };
-    await upsertExposure(workspaceId, "attendance_uncertainty_risk", "commitment", row.id, null, now).catch(() => {});
+    await upsertExposure(workspaceId, "attendance_uncertainty_risk", "commitment", row.id, null, now).catch(logExposureDetectSideEffect("upsert_attendance"));
   }
 }
 
@@ -64,7 +69,7 @@ export async function detectPaymentStallRisk(workspaceId: string, now: Date): Pr
 
   for (const r of rows ?? []) {
     const row = r as { id: string };
-    await upsertExposure(workspaceId, "payment_stall_risk", "payment_obligation", row.id, null, now).catch(() => {});
+    await upsertExposure(workspaceId, "payment_stall_risk", "payment_obligation", row.id, null, now).catch(logExposureDetectSideEffect("upsert_payment_stall"));
   }
 }
 
@@ -88,7 +93,7 @@ export async function detectCounterpartyUnconfirmedRisk(workspaceId: string, now
       row.id,
       row.external_ref ?? null,
       now
-    ).catch(() => {});
+    ).catch(logExposureDetectSideEffect("upsert_counterparty"));
   }
 }
 
@@ -107,6 +112,6 @@ export async function detectCommitmentOutcomeUncertain(workspaceId: string, now:
 
   for (const r of rows ?? []) {
     const row = r as { id: string };
-    await upsertExposure(workspaceId, "commitment_outcome_uncertain", "commitment", row.id, null, now).catch(() => {});
+    await upsertExposure(workspaceId, "commitment_outcome_uncertain", "commitment", row.id, null, now).catch(logExposureDetectSideEffect("upsert_outcome_uncertain"));
   }
 }

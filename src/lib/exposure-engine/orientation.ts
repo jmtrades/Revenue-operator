@@ -2,8 +2,13 @@
  * First interruption orientation: record once per workspace. No notifications.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 import { FIRST_INTERRUPTION_ORIENTATION } from "./doctrine";
+
+const logOrientationSideEffect = (context: string) => (e: unknown) => {
+  log("warn", `exposure_engine.orientation.${context}`, { error: e instanceof Error ? e.message : String(e) });
+};
 
 export async function recordFirstInterruptionOrientationOnce(
   workspaceId: string,
@@ -20,7 +25,7 @@ export async function recordFirstInterruptionOrientationOnce(
   if (already != null) return;
 
   const { recordOrientationStatement } = await import("@/lib/orientation/records");
-  await recordOrientationStatement(workspaceId, FIRST_INTERRUPTION_ORIENTATION).catch(() => {});
+  await recordOrientationStatement(workspaceId, FIRST_INTERRUPTION_ORIENTATION).catch(logOrientationSideEffect("record_orientation"));
 
   const t = (now ?? new Date()).toISOString();
   const { data: existing } = await db.from("workspace_orientation_state").select("workspace_id").eq("workspace_id", workspaceId).maybeSingle();
