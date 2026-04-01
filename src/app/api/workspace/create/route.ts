@@ -129,6 +129,42 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Failed to update workspace" }, { status: 500 });
     }
 
+    // Ensure workspace_billing record exists (required for billing queries)
+    try {
+      await db
+        .from("workspace_billing")
+        .upsert(
+          {
+            workspace_id: workspaceId,
+            plan: "trial",
+            status: "trialing",
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "workspace_id" },
+        );
+    } catch {
+      // Non-fatal; billing record can be created later by webhook
+    }
+
+    // Ensure workspace_members record exists (required for authorization)
+    try {
+      const { data: existing } = await db
+        .from("workspace_members")
+        .select("id")
+        .eq("workspace_id", workspaceId)
+        .eq("user_id", session.userId)
+        .maybeSingle();
+      if (!existing) {
+        await db.from("workspace_members").insert({
+          workspace_id: workspaceId,
+          user_id: session.userId,
+          role: "owner",
+        });
+      }
+    } catch {
+      // Non-fatal; member record can be created later
+    }
+
     // Ensure workspace_business_context has the business_name for sidebar and brain.
     try {
       await db

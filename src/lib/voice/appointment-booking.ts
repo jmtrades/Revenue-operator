@@ -252,23 +252,53 @@ export async function getAvailableSlots(
 
 /**
  * Format a slot time for spoken delivery on a phone call.
+ * Uses Intl.DateTimeFormat to properly format in the workspace's timezone.
  */
-function formatSlot(date: Date, _timezone: string): string {
-  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const months = ["January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"];
+function formatSlot(date: Date, timezone: string): string {
+  try {
+    // Use Intl.DateTimeFormat to format date in the correct timezone
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+      timeZone: timezone,
+    });
 
-  const dayName = days[date.getDay()];
-  const monthName = months[date.getMonth()];
-  const dayNum = date.getDate();
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
+    // Format the date: "Tuesday, March 28, 2:00 PM"
+    const formatted = formatter.format(date);
 
-  const ampm = hours >= 12 ? "PM" : "AM";
-  const displayHour = hours % 12 || 12;
-  const displayMin = minutes > 0 ? `:${minutes.toString().padStart(2, "0")}` : "";
+    // Rearrange to match expected format: "Tuesday, March 28 at 2:00 PM"
+    // The Intl output is "Tuesday, March 28, 2:00 PM", we just need to replace the comma before time
+    const parts = formatted.split(", ");
+    if (parts.length >= 2) {
+      // Rejoin: "Tuesday, March 28 at 2:00 PM"
+      return `${parts.slice(0, -1).join(", ")} at ${parts[parts.length - 1]}`;
+    }
 
-  return `${dayName}, ${monthName} ${dayNum} at ${displayHour}${displayMin} ${ampm}`;
+    return formatted;
+  } catch (err) {
+    // Fallback if timezone is invalid - use local time with warning
+    console.warn(`Invalid timezone "${timezone}" in formatSlot, falling back to local time`, err);
+
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const months = ["January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"];
+
+    const dayName = days[date.getDay()];
+    const monthName = months[date.getMonth()];
+    const dayNum = date.getDate();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+
+    const ampm = hours >= 12 ? "PM" : "AM";
+    const displayHour = hours % 12 || 12;
+    const displayMin = minutes > 0 ? `:${minutes.toString().padStart(2, "0")}` : "";
+
+    return `${dayName}, ${monthName} ${dayNum} at ${displayHour}${displayMin} ${ampm}`;
+  }
 }
 
 /* ── Booking ─────────────────────────────────────────────────────── */
