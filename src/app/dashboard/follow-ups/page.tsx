@@ -111,16 +111,24 @@ export default function FollowUpsPage() {
   const q = searchParams.toString() ? `?${searchParams.toString()}` : "";
   const [filter, setFilter] = useState<FilterKey>("all");
   const [liveItems, setLiveItems] = useState<FollowUpItem[] | null>(null);
+  const [loading, setLoading] = useState(true);
 
   // Fetch real enrollment data from /api/sequences/
   useEffect(() => {
-    if (!workspaceId) return;
+    if (!workspaceId) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
     fetchWithFallback<{ id: string; name: string }[]>(
       `/api/sequences?workspace_id=${encodeURIComponent(workspaceId)}`,
       { credentials: "include" },
     ).then(async (seqRes) => {
       const sequences = seqRes.data;
-      if (!sequences?.length) return;
+      if (!sequences?.length) {
+        setLoading(false);
+        return;
+      }
       // For each sequence, get enrollments
       const allItems: FollowUpItem[] = [];
       for (const seq of sequences.slice(0, 5)) {
@@ -161,13 +169,14 @@ export default function FollowUpsPage() {
         }
       }
       if (allItems.length > 0) setLiveItems(allItems);
-    });
+      setLoading(false);
+    }).catch(() => setLoading(false));
   }, [workspaceId]);
 
   const now = useMemo(() => new Date(), []);
 
   const items = useMemo(() => {
-    const source = liveItems ?? DEMO_FOLLOW_UPS;
+    const source = liveItems ?? [];
     if (filter === "due") {
       return source.filter((f) => {
         const due = new Date(f.dueAt);
@@ -184,14 +193,10 @@ export default function FollowUpsPage() {
   }, [filter, now, liveItems]);
 
   const stats = useMemo(() => {
-    const source = liveItems ?? DEMO_FOLLOW_UPS;
+    const source = liveItems ?? [];
     const totalActive = source.filter((f) => f.status === "active").length;
-    const completedThisWeek = liveItems
-      ? source.filter((f) => f.status === "completed").length
-      : 8;
-    const successRate = liveItems
-      ? (source.length > 0 ? Math.round((source.filter((f) => f.status === "completed").length / source.length) * 100) : 0)
-      : 46;
+    const completedThisWeek = source.filter((f) => f.status === "completed").length;
+    const successRate = source.length > 0 ? Math.round((source.filter((f) => f.status === "completed").length / source.length) * 100) : 0;
     const dueToday = source.filter((f) => {
       const due = new Date(f.dueAt);
       return f.status === "active" && due.toDateString() === now.toDateString();
@@ -221,41 +226,44 @@ export default function FollowUpsPage() {
             <StatCard label="Success rate" value={stats.successRate} suffix="%" />
           </div>
 
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2 text-xs text-[var(--text-tertiary)]">
-              {!liveItems && (
-                <>
-                  <span className="px-2 py-0.5 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-300">
-                    Sample data
-                  </span>
-                  <span>Sequences will appear here once live traffic starts.</span>
-                </>
-              )}
+          {loading ? (
+            <div style={{ color: "var(--text-secondary)" }} className="py-8">
+              <p>{t("pages.followUps.loading", { defaultValue: "Loading follow-ups…" })}</p>
             </div>
-            <div className="inline-flex rounded-full border border-[var(--border-default)] bg-[var(--bg-base)] p-1 text-xs">
-              {[
-                { key: "all" as FilterKey, label: "All" },
-                { key: "due" as FilterKey, label: "Due today" },
-                { key: "overdue" as FilterKey, label: "Overdue" },
-                { key: "paused" as FilterKey, label: "Paused" },
-              ].map((f) => (
-                <button
-                  key={f.key}
-                  type="button"
-                  onClick={() => setFilter(f.key)}
-                  className={`px-3 py-1.5 rounded-full transition-[background-color,color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] ${
-                    filter === f.key
-                      ? "bg-emerald-500 text-black"
-                      : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
-                  }`}
-                >
-                  {f.label}
-                </button>
-              ))}
-            </div>
-          </div>
+          ) : !liveItems || liveItems.length === 0 ? (
+            <EmptyState
+              icon="mail"
+              title={t("pages.followUps.noData", { defaultValue: "No follow-ups yet" })}
+              subtitle={t("pages.followUps.noDataDescription", { defaultValue: "Create sequences to start automated follow-ups." })}
+            />
+          ) : (
+            <>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2 text-xs text-[var(--text-tertiary)]" />
+                <div className="inline-flex rounded-full border border-[var(--border-default)] bg-[var(--bg-base)] p-1 text-xs">
+                  {[
+                    { key: "all" as FilterKey, label: "All" },
+                    { key: "due" as FilterKey, label: "Due today" },
+                    { key: "overdue" as FilterKey, label: "Overdue" },
+                    { key: "paused" as FilterKey, label: "Paused" },
+                  ].map((f) => (
+                    <button
+                      key={f.key}
+                      type="button"
+                      onClick={() => setFilter(f.key)}
+                      className={`px-3 py-1.5 rounded-full transition-[background-color,color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] ${
+                        filter === f.key
+                          ? "bg-emerald-500 text-black"
+                          : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
+                      }`}
+                    >
+                      {f.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-          {items.length === 0 ? (
+              {items.length === 0 ? (
             <EmptyState
               icon="calendar"
               title="No pending follow-ups"
@@ -377,13 +385,15 @@ export default function FollowUpsPage() {
                 </tbody>
               </table>
             </div>
-          )}
+              )}
 
-          <p className="mt-4 text-sm text-[var(--text-tertiary)]">
-            <Link href={`/dashboard/record${q}`} className="underline">
-              {t("followUpsPage.viewRecord")}
-            </Link>
-          </p>
+              <p className="mt-4 text-sm text-[var(--text-tertiary)]">
+                <Link href={`/dashboard/record${q}`} className="underline">
+                  {t("followUpsPage.viewRecord")}
+                </Link>
+              </p>
+            </>
+          )}
         </>
       )}
     </div>

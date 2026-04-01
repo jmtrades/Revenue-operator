@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface Benchmark {
   metric: string;
@@ -42,46 +42,103 @@ function BenchmarkComparison({ metric, platformVal, industryVal, percentile }: {
   );
 }
 
+interface BenchmarkData {
+  metric: string;
+  platform: string;
+  industry: string;
+  percentile: string;
+}
+
+interface IndustryBenchmarks {
+  name: string;
+  benchmarks: BenchmarkData[];
+  dataSource?: string;
+}
+
 export default function BenchmarksPage() {
   const [selectedIndustry, setSelectedIndustry] = useState("saas");
+  const [loading, setLoading] = useState(true);
+  const [benchmarks, setBenchmarks] = useState<Record<string, IndustryBenchmarks> | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const industries = {
+  useEffect(() => {
+    fetch("/api/admin/benchmarks", { credentials: "include" })
+      .then((r) => {
+        if (!r.ok) {
+          if (r.status === 404) {
+            setError("Benchmark data endpoint not yet implemented");
+          } else {
+            throw new Error(`HTTP ${r.status}`);
+          }
+        } else {
+          return r.json();
+        }
+      })
+      .then((data) => {
+        if (data) {
+          setBenchmarks(data);
+        }
+      })
+      .catch((err) => {
+        setError(err.message);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  const industries: Record<string, IndustryBenchmarks> = benchmarks || {
     saas: {
       name: "SaaS",
-      benchmarks: [
-        { metric: "Average Contract Value", platform: "$8,920", industry: "$6,200", percentile: "Top 25%" },
-        { metric: "Churn Rate (MRR)", platform: "2.1%", industry: "5.2%", percentile: "Top 10%" },
-        { metric: "NRR (Net Revenue Retention)", platform: "127%", industry: "105%", percentile: "Top 15%" },
-        { metric: "Sales Cycle Days", platform: "18d", industry: "35d", percentile: "Top 20%" },
-        { metric: "Trial to Paid Conversion", platform: "18%", industry: "10%", percentile: "Top 5%" },
-        { metric: "Customer Acquisition Cost", platform: "$1,240", industry: "$2,850", percentile: "Top 12%" },
-        { metric: "LTV:CAC Ratio", platform: "5.8x", industry: "3.2x", percentile: "Top 8%" },
-      ],
+      benchmarks: [],
+      dataSource: "No data available",
     },
     enterprise: {
       name: "Enterprise Software",
-      benchmarks: [
-        { metric: "Implementation Time", platform: "14d", industry: "45d", percentile: "Top 20%" },
-        { metric: "Support Ticket Resolution", platform: "2.4h", industry: "8.1h", percentile: "Top 15%" },
-        { metric: "System Uptime", platform: "99.94%", industry: "99.5%", percentile: "Top 10%" },
-        { metric: "Feature Adoption", platform: "73%", industry: "55%", percentile: "Top 18%" },
-        { metric: "API Response Time", platform: "145ms", industry: "320ms", percentile: "Top 12%" },
-      ],
+      benchmarks: [],
+      dataSource: "No data available",
     },
     comms: {
       name: "Communications Platform",
-      benchmarks: [
-        { metric: "Call Completion Rate", platform: "94.2%", industry: "88.5%", percentile: "Top 15%" },
-        { metric: "Average Call Duration", platform: "6.2m", industry: "5.8m", percentile: "Top 30%" },
-        { metric: "Platform Latency", platform: "78ms", industry: "120ms", percentile: "Top 12%" },
-        { metric: "Audio Quality Score", platform: "4.7/5", industry: "4.2/5", percentile: "Top 20%" },
-        { metric: "Concurrent Call Capacity", platform: "50k+", industry: "15k", percentile: "Top 5%" },
-      ],
+      benchmarks: [],
+      dataSource: "No data available",
     },
   };
 
+  if (loading) {
+    return (
+      <div className="max-w-7xl space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold">Benchmarks</h1>
+          <p style={{ color: "var(--text-secondary)" }} className="text-sm mt-1">
+            Compare your platform metrics against industry averages
+          </p>
+        </div>
+        <p style={{ color: "var(--text-secondary)" }}>Loading benchmarks…</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-7xl space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold">Benchmarks</h1>
+          <p style={{ color: "var(--text-secondary)" }} className="text-sm mt-1">
+            Compare your platform metrics against industry averages
+          </p>
+        </div>
+        <div className="p-4 rounded-lg border" style={{ borderColor: "var(--meaning-red)", background: "var(--bg-surface)" }}>
+          <p style={{ color: "var(--meaning-red)" }}>Unable to load benchmarks: {error}</p>
+          <p style={{ color: "var(--text-tertiary)" }} className="text-sm mt-2">
+            Connect a data source to populate benchmark metrics.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   type IndustryKey = keyof typeof industries;
   const current = industries[selectedIndustry as IndustryKey] || industries.saas;
+  const hasBenchmarkData = current.benchmarks && current.benchmarks.length > 0;
 
   return (
     <div className="max-w-7xl space-y-8">
@@ -111,32 +168,46 @@ export default function BenchmarksPage() {
       </div>
 
       {/* Benchmarks Table */}
-      <div
-        className="rounded-lg border overflow-hidden"
-        style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}
-      >
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b" style={{ borderColor: "var(--border-default)", background: "var(--bg-primary)" }}>
-              <th className="p-3 text-left font-medium">Metric</th>
-              <th className="p-3 text-left font-medium">Your Platform</th>
-              <th className="p-3 text-left font-medium">Industry Avg</th>
-              <th className="p-3 text-left font-medium">Percentile</th>
-            </tr>
-          </thead>
-          <tbody>
-            {current.benchmarks.map((bench, i) => (
-              <BenchmarkComparison
-                key={i}
-                metric={bench.metric}
-                platformVal={bench.platform}
-                industryVal={bench.industry}
-                percentile={bench.percentile}
-              />
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {!hasBenchmarkData ? (
+        <div
+          className="rounded-lg border p-12 text-center"
+          style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}
+        >
+          <p style={{ color: "var(--text-secondary)" }}>
+            No benchmark data available for {current.name}
+          </p>
+          <p style={{ color: "var(--text-tertiary)" }} className="text-sm mt-2">
+            {current.dataSource || "Connect a data source to see benchmarks"}
+          </p>
+        </div>
+      ) : (
+        <div
+          className="rounded-lg border overflow-hidden"
+          style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}
+        >
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b" style={{ borderColor: "var(--border-default)", background: "var(--bg-primary)" }}>
+                <th className="p-3 text-left font-medium">Metric</th>
+                <th className="p-3 text-left font-medium">Your Platform</th>
+                <th className="p-3 text-left font-medium">Industry Avg</th>
+                <th className="p-3 text-left font-medium">Percentile</th>
+              </tr>
+            </thead>
+            <tbody>
+              {current.benchmarks.map((bench, i) => (
+                <BenchmarkComparison
+                  key={i}
+                  metric={bench.metric}
+                  platformVal={bench.platform}
+                  industryVal={bench.industry}
+                  percentile={bench.percentile}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {/* Legend & Notes */}
       <section>

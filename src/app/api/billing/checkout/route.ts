@@ -98,10 +98,13 @@ export async function POST(req: NextRequest) {
       const authErr = await requireWorkspaceAccess(req, workspaceId);
       if (authErr) return authErr;
     } else if (email) {
-      // When only email is provided, require user to be authenticated
+      // When only email is provided, require user to be authenticated and email verified
       const session = await getSession(req);
       if (!session?.userId) {
         return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
+      }
+      if (!session.emailVerified) {
+        return NextResponse.json({ ok: false, reason: "email_not_verified" }, { status: 403 });
       }
     }
 
@@ -153,9 +156,6 @@ export async function POST(req: NextRequest) {
           await db.from("settings").insert({
             workspace_id: wsId,
             risk_level: "balanced",
-            hired_roles: ["full_autopilot"],
-            autonomy_mode: "act",
-            responsibility_level: "guarantee",
           });
           await db.from("workspace_members").insert({ workspace_id: wsId, user_id: userId, role: "owner" });
           await db.from("workspace_billing").insert({ workspace_id: wsId, plan: "trial", status: "trialing" });

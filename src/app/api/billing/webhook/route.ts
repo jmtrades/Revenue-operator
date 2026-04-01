@@ -317,6 +317,16 @@ async function handleStripeWebhookEvent(
           updatePayload.billing_interval = tierInterval.interval;
         }
         await db.from("workspaces").update(updatePayload).eq("id", workspaceId);
+
+        // Also update workspace_billing.status to keep tables in sync
+        try {
+          await db.from("workspace_billing").update({
+            status: isTrialing ? "trialing" : "active",
+            updated_at: new Date().toISOString(),
+          }).eq("workspace_id", workspaceId);
+        } catch (billingErr) {
+          log("warn", "billing_webhook.workspace_billing_update_failed", { workspace_id: workspaceId, error: billingErr instanceof Error ? billingErr.message : String(billingErr) });
+        }
       }
       break;
     }
@@ -351,6 +361,17 @@ async function handleStripeWebhookEvent(
           updatePayload.billing_interval = tierInterval.interval;
         }
         await db.from("workspaces").update(updatePayload).eq("id", workspaceId);
+
+        // Also update workspace_billing.status to keep tables in sync
+        try {
+          await db.from("workspace_billing").update({
+            status: isTrialing ? "trialing" : sub.status === "active" ? "active" : "paused",
+            updated_at: new Date().toISOString(),
+          }).eq("workspace_id", workspaceId);
+        } catch (billingErr) {
+          log("warn", "billing_webhook.workspace_billing_update_failed", { workspace_id: workspaceId, error: billingErr instanceof Error ? billingErr.message : String(billingErr) });
+        }
+
         // If billing returns to active, resume call handling (undo grace/expired).
         if (sub.status === "active") {
           await db
@@ -449,60 +470,66 @@ async function handleStripeWebhookEvent(
         const dueAt = invCreated.due_date
           ? new Date(invCreated.due_date * 1000)
           : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-        createPaymentObligation({
-          workspaceId,
-          subjectType: "invoice",
-          subjectId: invCreated.id,
-          amount: invCreated.amount_due ?? 0,
-          currency: (invCreated.currency ?? "usd").toLowerCase(),
-          dueAt,
-        }).catch((err) => {
+        try {
+          await createPaymentObligation({
+            workspaceId,
+            subjectType: "invoice",
+            subjectId: invCreated.id,
+            amount: invCreated.amount_due ?? 0,
+            currency: (invCreated.currency ?? "usd").toLowerCase(),
+            dueAt,
+          });
+        } catch (err) {
           log("error", "billing_webhook.background_task_failed", { error: err instanceof Error ? err.message : String(err) });
-        });
+        }
         const customerEmail =
           typeof (invCreated as Stripe.Invoice).customer_email === "string"
             ? (invCreated as Stripe.Invoice).customer_email
             : null;
         if (customerEmail) {
-          ensureSharedTransactionForSubject({
-            workspaceId,
-            subjectType: "payment",
-            subjectId: invCreated.id,
-            counterpartyIdentifier: customerEmail.trim().toLowerCase(),
-            deadlineAt: dueAt,
-            initiatedBy: "business",
-          }).then(async (txId) => {
-            if (!txId) return;
-            const { data: lead } = await db
-              .from("leads")
-              .select("id")
-              .eq("workspace_id", workspaceId)
-              .eq("email", customerEmail.trim().toLowerCase())
-              .limit(1)
-              .maybeSingle();
-            const leadId = (lead as { id: string } | null)?.id ?? null;
-            if (!leadId) return;
-            const { data: conv } = await db
-              .from("conversations")
-              .select("id, channel")
-              .eq("lead_id", leadId)
-              .limit(1)
-              .maybeSingle();
-            if (!conv) return;
-            const c = conv as { id: string; channel: string };
-            const { rawToken } = await createAcknowledgementToken(txId);
-            const link = buildPublicAckLink(rawToken);
-            await enqueueSendMessage(
+          try {
+            const txId = await ensureSharedTransactionForSubject({
               workspaceId,
-              leadId,
-              c.id,
-              c.channel || "sms",
-              link,
-              `payment-ack:${workspaceId}:${invCreated.id}`
-            );
-          }).catch((err) => {
+              subjectType: "payment",
+              subjectId: invCreated.id,
+              counterpartyIdentifier: customerEmail.trim().toLowerCase(),
+              deadlineAt: dueAt,
+              initiatedBy: "business",
+            });
+            if (txId) {
+              const { data: lead } = await db
+                .from("leads")
+                .select("id")
+                .eq("workspace_id", workspaceId)
+                .eq("email", customerEmail.trim().toLowerCase())
+                .limit(1)
+                .maybeSingle();
+              const leadId = (lead as { id: string } | null)?.id ?? null;
+              if (leadId) {
+                const { data: conv } = await db
+                  .from("conversations")
+                  .select("id, channel")
+                  .eq("lead_id", leadId)
+                  .limit(1)
+                  .maybeSingle();
+                if (conv) {
+                  const c = conv as { id: string; channel: string };
+                  const { rawToken } = await createAcknowledgementToken(txId);
+                  const link = buildPublicAckLink(rawToken);
+                  await enqueueSendMessage(
+                    workspaceId,
+                    leadId,
+                    c.id,
+                    c.channel || "sms",
+                    link,
+                    `payment-ack:${workspaceId}:${invCreated.id}`
+                  );
+                }
+              }
+            }
+          } catch (err) {
             log("error", "billing_webhook.background_task_failed", { error: err instanceof Error ? err.message : String(err) });
-          });
+          }
         }
       }
       break;
@@ -581,6 +608,16 @@ async function handleStripeWebhookEvent(
               updated_at: new Date().toISOString(),
             })
             .eq("id", workspaceId);
+
+          // Also update workspace_billing.status to keep tables in sync
+          try {
+            await db.from("workspace_billing").update({
+              status: "active",
+              updated_at: new Date().toISOString(),
+            }).eq("workspace_id", workspaceId);
+          } catch (billingErr) {
+            log("warn", "billing_webhook.workspace_billing_update_failed", { workspace_id: workspaceId, error: billingErr instanceof Error ? billingErr.message : String(billingErr) });
+          }
         }
       }
       break;
@@ -645,56 +682,62 @@ async function handleStripeWebhookEvent(
             updated_at: new Date().toISOString(),
           })
           .eq("id", workspaceId);
-        createPaymentObligation({
-          workspaceId,
-          subjectType: "subscription",
-          subjectId: invoice.id,
-          amount: invoice.amount_due ?? 0,
-          currency: (invoice.currency ?? "usd").toLowerCase(),
-          dueAt,
-        }).catch((err) => {
-          log("error", "billing_webhook.background_task_failed", { error: err instanceof Error ? err.message : String(err) });
-        });
-        if (customerEmail) {
-          ensureSharedTransactionForSubject({
+        try {
+          await createPaymentObligation({
             workspaceId,
-            subjectType: "payment",
+            subjectType: "subscription",
             subjectId: invoice.id,
-            counterpartyIdentifier: customerEmail.trim().toLowerCase(),
-            deadlineAt: dueAt,
-            initiatedBy: "business",
-          }).then(async (txId) => {
-            if (!txId) return;
-            const { data: lead } = await db
-              .from("leads")
-              .select("id")
-              .eq("workspace_id", workspaceId)
-              .eq("email", customerEmail.trim().toLowerCase())
-              .limit(1)
-              .maybeSingle();
-            const leadId = (lead as { id: string } | null)?.id ?? null;
-            if (!leadId) return;
-            const { data: conv } = await db
-              .from("conversations")
-              .select("id, channel")
-              .eq("lead_id", leadId)
-              .limit(1)
-              .maybeSingle();
-            if (!conv) return;
-            const c = conv as { id: string; channel: string };
-            const { rawToken } = await createAcknowledgementToken(txId);
-            const link = buildPublicAckLink(rawToken);
-            await enqueueSendMessage(
-              workspaceId,
-              leadId,
-              c.id,
-              c.channel || "sms",
-              link,
-              `payment-ack:${workspaceId}:${invoice.id}`
-            );
-          }).catch((err) => {
-            log("error", "billing_webhook.background_task_failed", { error: err instanceof Error ? err.message : String(err) });
+            amount: invoice.amount_due ?? 0,
+            currency: (invoice.currency ?? "usd").toLowerCase(),
+            dueAt,
           });
+        } catch (err) {
+          log("error", "billing_webhook.background_task_failed", { error: err instanceof Error ? err.message : String(err) });
+        }
+        if (customerEmail) {
+          try {
+            const txId = await ensureSharedTransactionForSubject({
+              workspaceId,
+              subjectType: "payment",
+              subjectId: invoice.id,
+              counterpartyIdentifier: customerEmail.trim().toLowerCase(),
+              deadlineAt: dueAt,
+              initiatedBy: "business",
+            });
+            if (txId) {
+              const { data: lead } = await db
+                .from("leads")
+                .select("id")
+                .eq("workspace_id", workspaceId)
+                .eq("email", customerEmail.trim().toLowerCase())
+                .limit(1)
+                .maybeSingle();
+              const leadId = (lead as { id: string } | null)?.id ?? null;
+              if (leadId) {
+                const { data: conv } = await db
+                  .from("conversations")
+                  .select("id, channel")
+                  .eq("lead_id", leadId)
+                  .limit(1)
+                  .maybeSingle();
+                if (conv) {
+                  const c = conv as { id: string; channel: string };
+                  const { rawToken } = await createAcknowledgementToken(txId);
+                  const link = buildPublicAckLink(rawToken);
+                  await enqueueSendMessage(
+                    workspaceId,
+                    leadId,
+                    c.id,
+                    c.channel || "sms",
+                    link,
+                    `payment-ack:${workspaceId}:${invoice.id}`
+                  );
+                }
+              }
+            }
+          } catch (err) {
+            log("error", "billing_webhook.background_task_failed", { error: err instanceof Error ? err.message : String(err) });
+          }
         }
       }
       break;

@@ -60,26 +60,33 @@ const DEMO_STATS: RecoveryStats = {
 
 export default function MissedCallRecoveryPage() {
   const { workspaceId } = useWorkspace();
-  const [calls, setCalls] = useState<MissedCall[]>(DEMO_CALLS);
-  const [stats, setStats] = useState<RecoveryStats>(DEMO_STATS);
+  const [calls, setCalls] = useState<MissedCall[]>([]);
+  const [stats, setStats] = useState<RecoveryStats | null>(null);
   const [filter, setFilter] = useState<string>("all");
-  const [_isLive, setIsLive] = useState(false);
+  const [isLive, setIsLive] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!workspaceId) return;
+    if (!workspaceId) {
+      setLoading(false);
+      return;
+    }
     Promise.all([
       fetchWithFallback<{ calls: MissedCall[] }>(`/api/recovery/missed-calls?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
       fetchWithFallback<RecoveryStats>(`/api/recovery/stats?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
     ]).then(([callsRes, statsRes]) => {
-      if (callsRes.data?.calls?.length) {
+      const hasCallData = callsRes.data?.calls?.length ?? 0 > 0;
+      const hasStatsData = statsRes.data && statsRes.data.total_missed > 0;
+
+      if (hasCallData) {
         setCalls(callsRes.data.calls);
         setIsLive(true);
       }
-      if (statsRes.data && statsRes.data.total_missed > 0) {
+      if (hasStatsData) {
         setStats(statsRes.data);
         setIsLive(true);
       }
-    });
+    }).finally(() => setLoading(false));
   }, [workspaceId]);
 
   const filteredCalls = filter === "all" ? calls : calls.filter((c) => c.status === filter);
@@ -94,6 +101,8 @@ export default function MissedCallRecoveryPage() {
     if (hrs < 24) return `${hrs}h ago`;
     return `${Math.round(hrs / 24)}d ago`;
   };
+
+  const hasData = isLive || (stats && stats.total_missed > 0);
 
   return (
     <div className="p-8 max-w-5xl">
@@ -114,85 +123,103 @@ export default function MissedCallRecoveryPage() {
         </Link>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="rounded-xl border p-5" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
-          <div className="flex items-center gap-2 mb-2">
-            <DollarSign className="w-4 h-4 text-emerald-400" />
-            <span className="text-xs font-medium uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>Revenue Recovered</span>
-          </div>
-          <p className="text-2xl font-bold text-emerald-400 tabular-nums">${stats.total_revenue_recovered.toLocaleString()}</p>
+      {loading ? (
+        <div style={{ color: "var(--text-secondary)" }}>
+          <p>Loading recovery data…</p>
         </div>
-        <div className="rounded-xl border p-5" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
-          <div className="flex items-center gap-2 mb-2">
-            <TrendingUp className="w-4 h-4 text-emerald-400" />
-            <span className="text-xs font-medium uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>Recovery Rate</span>
-          </div>
-          <p className="text-2xl font-bold tabular-nums" style={{ color: "var(--text-primary)" }}>{stats.recovery_rate}%</p>
+      ) : !hasData ? (
+        <div className="rounded-xl border p-8 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+          <PhoneMissed className="w-12 h-12 mx-auto mb-4 opacity-30" style={{ color: "var(--text-tertiary)" }} />
+          <p style={{ color: "var(--text-primary)" }} className="font-medium mb-2">
+            No recovery data yet
+          </p>
+          <p style={{ color: "var(--text-secondary)" }} className="text-sm">
+            Set up your AI operator to start tracking and recovering revenue from missed calls and no-shows.
+          </p>
         </div>
-        <div className="rounded-xl border p-5" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
-          <div className="flex items-center gap-2 mb-2">
-            <Clock className="w-4 h-4 text-blue-400" />
-            <span className="text-xs font-medium uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>Avg Recovery Time</span>
+      ) : (
+        <>
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div className="rounded-xl border p-5" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+              <div className="flex items-center gap-2 mb-2">
+                <DollarSign className="w-4 h-4 text-emerald-400" />
+                <span className="text-xs font-medium uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>Revenue Recovered</span>
+              </div>
+              <p className="text-2xl font-bold text-emerald-400 tabular-nums">${stats?.total_revenue_recovered.toLocaleString() ?? 0}</p>
+            </div>
+            <div className="rounded-xl border p-5" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+              <div className="flex items-center gap-2 mb-2">
+                <TrendingUp className="w-4 h-4 text-emerald-400" />
+                <span className="text-xs font-medium uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>Recovery Rate</span>
+              </div>
+              <p className="text-2xl font-bold tabular-nums" style={{ color: "var(--text-primary)" }}>{stats?.recovery_rate ?? 0}%</p>
+            </div>
+            <div className="rounded-xl border p-5" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+              <div className="flex items-center gap-2 mb-2">
+                <Clock className="w-4 h-4 text-blue-400" />
+                <span className="text-xs font-medium uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>Avg Recovery Time</span>
+              </div>
+              <p className="text-2xl font-bold tabular-nums" style={{ color: "var(--text-primary)" }}>{stats?.avg_recovery_time_minutes ?? 0}min</p>
+            </div>
+            <div className="rounded-xl border p-5" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+              <div className="flex items-center gap-2 mb-2">
+                <PhoneMissed className="w-4 h-4 text-amber-400" />
+                <span className="text-xs font-medium uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>Pending Recovery</span>
+              </div>
+              <p className="text-2xl font-bold tabular-nums" style={{ color: "var(--text-primary)" }}>{stats?.pending ?? 0}</p>
+            </div>
           </div>
-          <p className="text-2xl font-bold tabular-nums" style={{ color: "var(--text-primary)" }}>{stats.avg_recovery_time_minutes}min</p>
-        </div>
-        <div className="rounded-xl border p-5" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
-          <div className="flex items-center gap-2 mb-2">
-            <PhoneMissed className="w-4 h-4 text-amber-400" />
-            <span className="text-xs font-medium uppercase tracking-wide" style={{ color: "var(--text-muted)" }}>Pending Recovery</span>
-          </div>
-          <p className="text-2xl font-bold tabular-nums" style={{ color: "var(--text-primary)" }}>{stats.pending}</p>
-        </div>
-      </div>
 
-      {/* Recovery Pipeline */}
-      <div className="rounded-xl border p-4 mb-8" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
-        <div className="flex items-center gap-2 mb-4">
-          <h3 className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Recovery Pipeline</h3>
-        </div>
-        <div className="grid grid-cols-4 gap-2">
-          <div className="text-center p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
-            <p className="text-lg font-bold text-amber-400 tabular-nums">{stats.total_missed}</p>
-            <p className="text-xs text-amber-400/70">Total Missed</p>
-          </div>
-          <div className="text-center p-3 rounded-lg bg-[var(--bg-card)]/60 border border-[var(--border-default)]">
-            <p className="text-lg font-bold text-blue-400 tabular-nums">{stats.pending}</p>
-            <p className="text-xs text-blue-400/70">In Progress</p>
-          </div>
-          <div className="text-center p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-            <p className="text-lg font-bold text-emerald-400 tabular-nums">{stats.recovered}</p>
-            <p className="text-xs text-emerald-400/70">Recovered</p>
-          </div>
-          <div className="text-center p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-            <p className="text-lg font-bold text-red-400 tabular-nums">{stats.lost}</p>
-            <p className="text-xs text-red-400/70">Lost</p>
-          </div>
-        </div>
-      </div>
+          {/* Recovery Pipeline */}
+          {stats && (
+            <div className="rounded-xl border p-4 mb-8" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
+              <div className="flex items-center gap-2 mb-4">
+                <h3 className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Recovery Pipeline</h3>
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                <div className="text-center p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                  <p className="text-lg font-bold text-amber-400 tabular-nums">{stats.total_missed}</p>
+                  <p className="text-xs text-amber-400/70">Total Missed</p>
+                </div>
+                <div className="text-center p-3 rounded-lg bg-[var(--bg-card)]/60 border border-[var(--border-default)]">
+                  <p className="text-lg font-bold text-blue-400 tabular-nums">{stats.pending}</p>
+                  <p className="text-xs text-blue-400/70">In Progress</p>
+                </div>
+                <div className="text-center p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                  <p className="text-lg font-bold text-emerald-400 tabular-nums">{stats.recovered}</p>
+                  <p className="text-xs text-emerald-400/70">Recovered</p>
+                </div>
+                <div className="text-center p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                  <p className="text-lg font-bold text-red-400 tabular-nums">{stats.lost}</p>
+                  <p className="text-xs text-red-400/70">Lost</p>
+                </div>
+              </div>
+            </div>
+          )}
 
-      {/* Filters */}
-      <div className="flex items-center gap-2 mb-4">
-        <Filter className="w-4 h-4" style={{ color: "var(--text-tertiary)" }} />
-        {["all", "recovered", "pending", "in_progress", "lost"].map((f) => (
-          <button
-            key={f}
-            type="button"
-            onClick={() => setFilter(f)}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium transition-[background-color,color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
-            style={{
-              background: filter === f ? "var(--accent-primary)" : "rgba(255,255,255,0.05)",
-              color: filter === f ? "#000" : "var(--text-secondary)",
-              border: filter === f ? "1px solid var(--accent-primary)" : "1px solid rgba(255,255,255,0.1)",
-            }}
-          >
-            {f === "all" ? "All" : f === "in_progress" ? "In Progress" : f.charAt(0).toUpperCase() + f.slice(1)}
-          </button>
-        ))}
-      </div>
+          {/* Filters */}
+          <div className="flex items-center gap-2 mb-4">
+            <Filter className="w-4 h-4" style={{ color: "var(--text-tertiary)" }} />
+            {["all", "recovered", "pending", "in_progress", "lost"].map((f) => (
+              <button
+                key={f}
+                type="button"
+                onClick={() => setFilter(f)}
+                className="px-3 py-1.5 rounded-lg text-xs font-medium transition-[background-color,color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
+                style={{
+                  background: filter === f ? "var(--accent-primary)" : "rgba(255,255,255,0.05)",
+                  color: filter === f ? "#000" : "var(--text-secondary)",
+                  border: filter === f ? "1px solid var(--accent-primary)" : "1px solid rgba(255,255,255,0.1)",
+                }}
+              >
+                {f === "all" ? "All" : f === "in_progress" ? "In Progress" : f.charAt(0).toUpperCase() + f.slice(1)}
+              </button>
+            ))}
+          </div>
 
-      {/* Call List */}
-      <div className="space-y-3">
+          {/* Call List */}
+          <div className="space-y-3">
         {filteredCalls.map((call) => {
           const config = STATUS_CONFIG[call.status];
           const StatusIcon = config.icon;
@@ -254,13 +281,15 @@ export default function MissedCallRecoveryPage() {
         })}
       </div>
 
-      {filteredCalls.length === 0 && (
-        <div className="text-center py-12">
-          <PhoneMissed className="w-12 h-12 text-white/20 mx-auto mb-4" />
-          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-            No {filter === "all" ? "" : filter} calls to display.
-          </p>
-        </div>
+          {filteredCalls.length === 0 && (
+            <div className="text-center py-12">
+              <PhoneMissed className="w-12 h-12 text-white/20 mx-auto mb-4" />
+              <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+                No {filter === "all" ? "" : filter} calls to display.
+              </p>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
