@@ -23,7 +23,7 @@ export function ProtectionPausedBanner() {
       .then((d) => {
         if (!d?.error) setBillingStatus(d);
       })
-      .catch((e) => { console.warn("[ProtectionPausedBanner] fetch failed:", e instanceof Error ? e.message : String(e)); });
+      .catch((e: unknown) => { console.warn("[ProtectionPausedBanner] fetch failed:", e instanceof Error ? e.message : String(e)); });
   }, [workspaceId]);
 
   if (dismissed || !billingStatus) return null;

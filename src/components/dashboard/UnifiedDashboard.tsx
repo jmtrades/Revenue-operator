@@ -285,7 +285,7 @@ export function UnifiedDashboard() {
           safeSetItem(trialDay7Key, "1");
         }
       })
-      .catch((e) => { console.warn("[UnifiedDashboard] fetch failed:", e instanceof Error ? e.message : String(e)); });
+      .catch((e: unknown) => { console.warn("[UnifiedDashboard] fetch failed:", e instanceof Error ? e.message : String(e)); });
   }, [workspaceId]);
 
   /* ── Handlers ────────────────────────────────────────────────────────── */

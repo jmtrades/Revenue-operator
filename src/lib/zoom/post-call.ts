@@ -87,7 +87,7 @@ export async function executePostCallPlan(
         leadId,
         workspaceId,
         eventId: callSessionId,
-      }).catch((e) => {
+      }).catch((e: unknown) => {
         log("error", "enqueue post-call plan failed", { error: e instanceof Error ? e.message : String(e) });
       });
     }, Math.min(delayMs, 2 * 60 * 60 * 1000));
@@ -103,7 +103,7 @@ export async function executePostCallPlan(
           leadId,
           workspaceId,
           eventId: callSessionId,
-        }).catch((e) => {
+        }).catch((e: unknown) => {
         log("error", "enqueue post-call plan failed", { error: e instanceof Error ? e.message : String(e) });
       });
       }, Math.min(delayMs, 48 * 60 * 60 * 1000));

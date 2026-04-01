@@ -27,11 +27,11 @@ export async function recordContinuationStopped(
     recorded_at: new Date().toISOString(),
   });
   const { recordContinuityLoad } = await import("@/lib/continuity-load");
-  recordContinuityLoad(workspaceId, "continuation_prevented", `${subjectType}:${subjectId}`).catch((e) => {
+  recordContinuityLoad(workspaceId, "continuation_prevented", `${subjectType}:${subjectId}`).catch((e: unknown) => {
     log("error", "recordContinuityLoad failed", { error: e instanceof Error ? e.message : String(e) });
   });
   const { resolveExposureFromContinuation } = await import("@/lib/exposure-engine");
-  resolveExposureFromContinuation(workspaceId, subjectType, subjectId, unresolvedState).catch((e) => {
+  resolveExposureFromContinuation(workspaceId, subjectType, subjectId, unresolvedState).catch((e: unknown) => {
     log("error", "resolveExposureFromContinuation failed", { error: e instanceof Error ? e.message : String(e) });
   });
 }

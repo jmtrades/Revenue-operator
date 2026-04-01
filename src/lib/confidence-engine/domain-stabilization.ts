@@ -62,7 +62,7 @@ export async function runDomainStabilization(): Promise<void> {
       phases.coordination === "autonomous";
     if (allAutonomous) {
       await setConfidencePhase(workspaceId, "autonomous");
-      await appendNarrative(workspaceId, "stability_established", "Operational stability established.").catch((e) => {
+      await appendNarrative(workspaceId, "stability_established", "Operational stability established.").catch((e: unknown) => {
         log("error", "appendNarrative stability_established failed", { error: e instanceof Error ? e.message : String(e) });
       });
     }

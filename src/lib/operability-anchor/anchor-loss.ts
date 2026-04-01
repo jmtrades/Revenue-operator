@@ -36,7 +36,7 @@ export async function recordAnchorLossOrientationIfDue(workspaceId: string): Pro
   if ((expectations?.length ?? 0) > 0) return;
 
   const { recordOrientationStatement } = await import("@/lib/orientation/records");
-  await recordOrientationStatement(workspaceId, ANCHOR_LOSS_STATEMENT).catch((e) => {
+  await recordOrientationStatement(workspaceId, ANCHOR_LOSS_STATEMENT).catch((e: unknown) => {
     log("error", "recordOrientationStatement failed", { error: e instanceof Error ? e.message : String(e) });
   });
 

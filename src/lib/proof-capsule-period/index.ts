@@ -284,7 +284,7 @@ export async function saveProofCapsule(
     );
   
   const { checkAndConfirmInstallation } = await import("@/lib/installation/confirm");
-  await checkAndConfirmInstallation(workspaceId).catch((e) => {
+  await checkAndConfirmInstallation(workspaceId).catch((e: unknown) => {
     log("error", "checkAndConfirmInstallation failed", { error: e instanceof Error ? e.message : String(e) });
   });
 }

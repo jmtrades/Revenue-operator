@@ -44,7 +44,7 @@ export default function SoloPage() {
         setIdentity((dataId as { label?: string })?.label ?? null);
         setSections(dataSec as SoloSections);
       })
-      .catch((e) => setError(e?.message ?? "Failed to load"))
+      .catch((e: unknown) => setError((e as Error)?.message ?? "Failed to load"))
       .finally(() => setLoading(false));
     return () => clearTimeout(tid);
   }, [workspaceId]);

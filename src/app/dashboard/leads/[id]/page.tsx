@@ -195,7 +195,7 @@ export default function LeadViewPage() {
           setRecordedBanner(true);
         }
       })
-      .catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
+      .catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
   };
 
   return (

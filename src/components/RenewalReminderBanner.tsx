@@ -20,7 +20,7 @@ export function RenewalReminderBanner() {
       .then((d) => {
         if (d.renewal_at) setRenewalAt(d.renewal_at);
       })
-      .catch((e) => { console.warn("[RenewalReminderBanner] fetch failed:", e instanceof Error ? e.message : String(e)); });
+      .catch((e: unknown) => { console.warn("[RenewalReminderBanner] fetch failed:", e instanceof Error ? e.message : String(e)); });
   }, [workspaceId]);
 
   if (dismissed || !renewalAt || now === null) return null;

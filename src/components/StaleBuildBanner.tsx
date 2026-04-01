@@ -27,7 +27,7 @@ export function StaleBuildBanner() {
           // ignore
         }
       })
-      .catch((e) => { console.warn("[StaleBuildBanner] fetch failed:", e instanceof Error ? e.message : String(e)); });
+      .catch((e: unknown) => { console.warn("[StaleBuildBanner] fetch failed:", e instanceof Error ? e.message : String(e)); });
   }, []);
 
   useEffect(() => {

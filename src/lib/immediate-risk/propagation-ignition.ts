@@ -68,7 +68,7 @@ export async function runPropagationIgnition(): Promise<void> {
             subject: "Coordination",
             text: MESSAGE_TEXT,
           }),
-        }).catch((e) => {
+        }).catch((e: unknown) => {
           log("error", "fetch propagation ignition email failed", { error: e instanceof Error ? e.message : String(e) });
         });
       }

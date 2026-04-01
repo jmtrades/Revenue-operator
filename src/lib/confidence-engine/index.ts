@@ -69,7 +69,7 @@ export async function recordSimulatedAction(
     related_external_ref: relatedExternalRef ?? null,
     simulated_text: simulatedText,
   });
-  await appendNarrative(workspaceId, "simulation_created", "An action was simulated and not sent.").catch((e) => {
+  await appendNarrative(workspaceId, "simulation_created", "An action was simulated and not sent.").catch((e: unknown) => {
     log("error", "appendNarrative simulation created failed", { error: e instanceof Error ? e.message : String(e) });
   });
 }

@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  await recordCronHeartbeat("settlement-export").catch((e) => {
+  await recordCronHeartbeat("settlement-export").catch((e: unknown) => {
     console.warn("[cron/settlement-export] recordCronHeartbeat failed:", e instanceof Error ? e.message : String(e));
   });
   return NextResponse.json({

@@ -45,7 +45,7 @@ export async function upsertOperationalExpectation(
   }
   if (maintainedBySystem) {
     const { recordContinuityLoad } = await import("@/lib/continuity-load");
-    recordContinuityLoad(workspaceId, "expectation_maintained", `${expectationType}:${referenceId}`).catch((e) => {
+    recordContinuityLoad(workspaceId, "expectation_maintained", `${expectationType}:${referenceId}`).catch((e: unknown) => {
       log("error", "recordContinuityLoad failed", { error: e instanceof Error ? e.message : String(e) });
     });
   }

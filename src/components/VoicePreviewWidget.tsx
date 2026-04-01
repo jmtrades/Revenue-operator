@@ -243,11 +243,11 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
                 const a = new Audio(url);
                 audioRef.current = a;
                 a.onended = () => URL.revokeObjectURL(url);
-                a.play().catch((e) => { console.warn("[VoicePreviewWidget] audio play failed:", e instanceof Error ? e.message : String(e)); });
+                a.play().catch((e: unknown) => { console.warn("[VoicePreviewWidget] audio play failed:", e instanceof Error ? e.message : String(e)); });
               }
               // No fallback to browser TTS — silence > robot voice
             })
-            .catch((e) => {
+            .catch((e: unknown) => {
               console.warn("[VoicePreviewWidget] fetch failed:", e instanceof Error ? e.message : String(e));
               // Voice API unavailable — do NOT fall back to robot browser TTS
             });

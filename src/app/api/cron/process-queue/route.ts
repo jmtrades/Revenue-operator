@@ -113,7 +113,7 @@ export async function GET(request: NextRequest) {
   const authErr = assertCronAuthorized(request);
   if (authErr) return authErr;
 
-  await processWebhookDeliveries().catch((e) => {
+  await processWebhookDeliveries().catch((e: unknown) => {
       console.warn("[cron/process-queue] webhook deliveries failed:", e instanceof Error ? e.message : String(e));
     });
 
@@ -246,7 +246,7 @@ export async function GET(request: NextRequest) {
       body.claimed_via_rpc = true;
     }
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-    await recordCronHeartbeat("process-queue").catch((e) => {
+    await recordCronHeartbeat("process-queue").catch((e: unknown) => {
       console.warn("[cron/process-queue] heartbeat failed:", e instanceof Error ? e.message : String(e));
     });
     return NextResponse.json(body);

@@ -197,7 +197,7 @@ export async function createStripeCheckoutSessionForSettlement(workspaceId: stri
   const secretKey = process.env.STRIPE_SECRET_KEY;
   const defaultPriceId = process.env.STRIPE_DEFAULT_PRICE_ID;
   if (!secretKey || !defaultPriceId) throw new SettlementNotConfiguredError();
-  await ensureSettlementPriceSeed().catch((e) => {
+  await ensureSettlementPriceSeed().catch((e: unknown) => {
     log("error", "ensureSettlementPriceSeed failed", { error: e instanceof Error ? e.message : String(e) });
   });
 
