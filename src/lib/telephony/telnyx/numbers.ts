@@ -1,3 +1,5 @@
+import { log } from "@/lib/logger";
+
 type TelnyxPhoneNumberType = "local" | "toll_free" | "mobile";
 
 export async function listAvailableTelnyxPhoneNumbers(params: {
@@ -94,7 +96,7 @@ export async function purchaseTelnyxPhoneNumber(params: {
     } catch {
       errorDetail = errText.slice(0, 200) || `HTTP ${res.status}`;
     }
-    console.error("[telnyx] Number order failed:", res.status, errorDetail, "| body sent:", JSON.stringify({ connection_id: connectionId ? "set" : "MISSING", phone: phoneNumberE164 }));
+    log("error", "[telnyx] Number order failed", { status: res.status, errorDetail, connection_id: connectionId ? "set" : "MISSING", phone: phoneNumberE164 });
     return { providerSid: null, error: errorDetail, telnyxStatus: res.status };
   }
 

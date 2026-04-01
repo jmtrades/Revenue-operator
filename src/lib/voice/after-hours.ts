@@ -3,6 +3,8 @@
  * Determines if business is currently open and builds appropriate context.
  */
 
+import { log } from "@/lib/logger";
+
 type BusinessHours = {
   [day: string]: { start: string; end: string } | null;
 };
@@ -57,7 +59,7 @@ export function isCurrentlyOpen(
 
     return currentMinutes >= startMinutes && currentMinutes < endMinutes;
   } catch (err) {
-    console.error("[after-hours] Error checking business hours:", err);
+    log("error", "[after-hours] Error checking business hours", { error: err instanceof Error ? err.message : String(err) });
     return null;
   }
 }

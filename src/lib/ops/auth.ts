@@ -6,6 +6,7 @@
 import { createHash, randomBytes } from "crypto";
 import { cookies } from "next/headers";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 export type StaffRole = "ADMIN" | "STAFF";
 
@@ -54,7 +55,7 @@ export async function createMagicLink(email: string): Promise<{ token: string } 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL
     ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined);
   if (!baseUrl) {
-    console.error("[ops/auth] Cannot determine base URL — set NEXT_PUBLIC_APP_URL or VERCEL_URL");
+    log("error", "[ops/auth] Cannot determine base URL — set NEXT_PUBLIC_APP_URL or VERCEL_URL");
     return { token: "" };
   }
   const verifyUrl = `${baseUrl}/api/ops/auth/verify?token=${token}`;

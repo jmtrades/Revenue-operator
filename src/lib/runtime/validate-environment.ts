@@ -129,7 +129,6 @@ function logStructured(level: string, event: string, data: Record<string, unknow
     ...data,
   });
   if (level === "warning") {
-     
     console.warn(line);
   } else {
     console.error(line);

@@ -106,7 +106,7 @@ export function ActivateForm() {
         industry: payload.businessType || undefined,
         website: payload.website || undefined,
       }),
-    }).catch(() => {});
+    }).catch((e) => { console.warn("[ActivateForm] fetch failed:", e instanceof Error ? e.message : String(e)); });
 
     try {
       const tierRaw = searchParams.get("tier") || "solo";

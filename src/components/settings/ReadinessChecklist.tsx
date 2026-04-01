@@ -27,7 +27,7 @@ export function ReadinessChecklist() {
       .then((data) => {
         if (data?.checks) setItems(data.checks);
       })
-      .catch(() => {})
+      .catch((e) => { console.warn("[ReadinessChecklist] fetch failed:", e instanceof Error ? e.message : String(e)); })
       .finally(() => setLoading(false));
   }, [workspaceId]);
 

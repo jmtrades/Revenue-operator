@@ -6,6 +6,7 @@
 
 import { getDb } from "@/lib/db/queries";
 import OpenAI from "openai";
+import { log } from "@/lib/logger";
 
 export interface ChannelRecommendation {
   recommended_channel: "call" | "sms" | "email";
@@ -486,7 +487,7 @@ Rules:
     const parsed = JSON.parse(jsonMatch[0]) as SequenceStep[];
     return parsed.filter((s) => s.channel && s.delay_hours !== undefined);
   } catch (error) {
-    console.error("Error generating AI sequence:", error);
+    log("error", "Error generating AI sequence", { error: error instanceof Error ? error.message : String(error) });
     const goalKey = goal as "book_appointment" | "reactivate" | "qualify" | "close_deal" | "review_request";
     return getDefaultSequence(goalKey);
   }

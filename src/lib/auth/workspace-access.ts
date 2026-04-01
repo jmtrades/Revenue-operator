@@ -8,6 +8,7 @@ import { NextResponse } from "next/server";
 import { getSession } from "./request-session";
 import { isSessionEnabled } from "./session";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 export type WorkspaceRole = "owner" | "admin" | "operator" | "closer" | "auditor" | "compliance";
 
@@ -21,7 +22,7 @@ export async function requireWorkspaceAccess(
 ): Promise<NextResponse | null> {
   if (!isSessionEnabled()) {
     if (process.env.NODE_ENV === "production") {
-      console.error("[SECURITY] requireWorkspaceAccess called with sessions disabled in production");
+      log("error", "[SECURITY] requireWorkspaceAccess called with sessions disabled in production");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     return null; // Allow in development only

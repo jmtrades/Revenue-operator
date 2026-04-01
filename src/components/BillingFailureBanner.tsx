@@ -22,7 +22,7 @@ export function BillingFailureBanner() {
       .then((d) => {
         if (!d?.error) setBillingStatus(d);
       })
-      .catch(() => {});
+      .catch((e) => { console.warn("[BillingFailureBanner] fetch failed:", e instanceof Error ? e.message : String(e)); });
   }, [workspaceId]);
 
   if (dismissed || !billingStatus || billingStatus.billing_status !== "payment_failed") return null;
