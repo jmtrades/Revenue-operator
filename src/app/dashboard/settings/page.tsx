@@ -95,11 +95,11 @@ export default function SettingsPage() {
           setOperationalProfile(op);
         }
       })
-      .catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
+      .catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
     fetch(`/api/workspaces/${workspaceId}/webhook-config`)
       .then((r) => r.ok ? r.json() : Promise.resolve({ endpoint_url: "" }))
       .then((d: { endpoint_url?: string }) => setWebhookUrl(d?.endpoint_url ?? ""))
-      .catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
+      .catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
     fetch(`/api/workspaces/${workspaceId}/zoom/health`)
       .then((r) => r.ok ? r.json() : Promise.resolve({ connected: false }))
       .then(setZoomHealth)
@@ -140,7 +140,7 @@ export default function SettingsPage() {
           });
         }
       })
-      .catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
+      .catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
     // Fetch active phone number
     fetch("/api/integrations/twilio/auto-provision", { method: "POST" })
       .then((r) => r.ok ? r.json() : Promise.resolve(null))
@@ -149,7 +149,7 @@ export default function SettingsPage() {
           setActivePhone(d.phone_number);
         }
       })
-      .catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
+      .catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
     // Build inbound webhook URL
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
     if (baseUrl && workspaceId) {
@@ -194,7 +194,7 @@ export default function SettingsPage() {
         pricing_range: businessContext.pricing_range || null,
         booking_link: businessContext.booking_link || null,
       }),
-    }).catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
+    }).catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
   };
 
   const settingsLinks = useMemo(
@@ -241,7 +241,7 @@ export default function SettingsPage() {
                   method: "PATCH",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ operational_profile: v }),
-                }).catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
+                }).catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
               }}
               className="w-full max-w-xs text-sm py-2 px-3 border rounded focus-ring"
               style={{ background: "var(--surface)", borderColor: "var(--border)", color: "var(--text-primary)" }}

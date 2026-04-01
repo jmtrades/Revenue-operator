@@ -61,7 +61,7 @@ export async function checkAndConfirmInstallation(workspaceId: string): Promise<
     .update({ installation_confirmed_at: now })
     .eq("id", workspaceId);
   
-  await recordOrientationStatement(workspaceId, "Operational recording is now active.").catch((e) => {
+  await recordOrientationStatement(workspaceId, "Operational recording is now active.").catch((e: unknown) => {
     log("error", "recordOrientationStatement failed", { error: e instanceof Error ? e.message : String(e) });
   });
   

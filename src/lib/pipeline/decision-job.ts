@@ -232,7 +232,7 @@ export async function runDecisionJob(
       if (objectionType) memoryUpdates.previous_objections = [objectionType];
       if (/price|cost|how much|budget/i.test(lastUserMsg)) memoryUpdates.hesitation_reason = "price";
       if (Object.keys(memoryUpdates).length > 0) {
-        upsertConversationMemory(leadId, workspaceId, memoryUpdates).catch((e) => {
+        upsertConversationMemory(leadId, workspaceId, memoryUpdates).catch((e: unknown) => {
           log("error", "upsertConversationMemory failed", { error: e instanceof Error ? e.message : String(e) });
         });
       }
@@ -705,7 +705,7 @@ export async function runDecisionJob(
     await setLeadPlan(workspaceId, leadId, {
       next_action_type: nextActionType,
       next_action_at: nextActionAt.toISOString(),
-    }).catch((e) => {
+    }).catch((e: unknown) => {
       log("error", "setLeadPlan failed", { error: e instanceof Error ? e.message : String(e) });
     });
   }

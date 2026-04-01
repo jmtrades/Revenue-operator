@@ -38,7 +38,7 @@ export async function runSafeCron(
     const ok = failures === 0;
     if (ok) {
       const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-      await recordCronHeartbeat(jobName).catch((e) => {
+      await recordCronHeartbeat(jobName).catch((e: unknown) => {
         log("error", "recordCronHeartbeat failed", { error: e instanceof Error ? e.message : String(e) });
       });
     }

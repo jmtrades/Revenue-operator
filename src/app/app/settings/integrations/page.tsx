@@ -154,7 +154,7 @@ export default function AppSettingsIntegrationsPage() {
             }
           }
         })
-        .catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
+        .catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
 
       // Refresh status again after 3 seconds to show initial sync results
       const statusRefreshId = setTimeout(() => {
@@ -334,7 +334,7 @@ export default function AppSettingsIntegrationsPage() {
             fetch("/api/integrations/crm/status", { credentials: "include" })
               .then((r) => (r.ok ? r.json() : null))
               .then((data: CrmStatusResponse | null) => data && setCrmStatus(data))
-              .catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
+              .catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
             setSyncingProvider(null);
             return;
           }
@@ -406,7 +406,7 @@ export default function AppSettingsIntegrationsPage() {
         fetch("/api/integrations/crm/status", { credentials: "include" })
           .then((r) => (r.ok ? r.json() : null))
           .then((d: CrmStatusResponse | null) => d && setCrmStatus(d))
-          .catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
+          .catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
       }, 1000);
     } catch {
       setToast(t("toast.importFailed"));
@@ -444,7 +444,7 @@ export default function AppSettingsIntegrationsPage() {
       fetch("/api/integrations/crm/status", { credentials: "include" })
         .then((r) => (r.ok ? r.json() : null))
         .then((d: CrmStatusResponse | null) => d && setCrmStatus(d))
-        .catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
+        .catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
     } catch {
       setToast(t("toast.disconnectFailed"));
     } finally {

@@ -37,10 +37,10 @@ export async function runContinuationPreventedCheck(): Promise<void> {
         .lt("detected_at", windowEnd);
 
       if ((count ?? 0) === 0) {
-        await createIncidentStatement(row.workspace_id, "continuation_prevented", null).catch((e) => {
+        await createIncidentStatement(row.workspace_id, "continuation_prevented", null).catch((e: unknown) => {
           log("error", "createIncidentStatement failed", { error: e instanceof Error ? e.message : String(e) });
         });
-        await clearRiskCategoryDuringObserving(row.workspace_id, category).catch((e) => {
+        await clearRiskCategoryDuringObserving(row.workspace_id, category).catch((e: unknown) => {
           log("error", "clearRiskCategoryDuringObserving failed", { error: e instanceof Error ? e.message : String(e) });
         });
       }

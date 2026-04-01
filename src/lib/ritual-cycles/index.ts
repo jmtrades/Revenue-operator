@@ -32,7 +32,7 @@ export async function runDailyContinuityCycle(workspaceId: string): Promise<void
     .from("ritual_cycle_state")
     .update({ daily_continuity_last_at: now, updated_at: now })
     .eq("workspace_id", workspaceId);
-  await appendNarrative(workspaceId, "action_executed", "Daily continuity cycle completed.").catch((e) => {
+  await appendNarrative(workspaceId, "action_executed", "Daily continuity cycle completed.").catch((e: unknown) => {
     log("error", "appendNarrative daily cycle failed", { error: e instanceof Error ? e.message : String(e) });
   });
 }
@@ -46,7 +46,7 @@ export async function runWeeklyClosureCycle(workspaceId: string): Promise<void> 
     .from("ritual_cycle_state")
     .update({ weekly_closure_last_at: now, updated_at: now })
     .eq("workspace_id", workspaceId);
-  await appendNarrative(workspaceId, "outcome_resolved", "Weekly closure cycle completed.").catch((e) => {
+  await appendNarrative(workspaceId, "outcome_resolved", "Weekly closure cycle completed.").catch((e: unknown) => {
     log("error", "appendNarrative weekly cycle failed", { error: e instanceof Error ? e.message : String(e) });
   });
 }

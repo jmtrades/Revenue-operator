@@ -45,7 +45,7 @@ export default function ReportsPage() {
         setRiskSurface(risk?.error ? null : risk);
         setHandledImprints((situations as { imprints?: string[] }).imprints?.slice(0, 5) ?? []);
       })
-      .catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); })
+      .catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); })
       .finally(() => setLoading(false));
   }, [workspaceId]);
 

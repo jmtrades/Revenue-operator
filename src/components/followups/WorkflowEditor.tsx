@@ -104,7 +104,7 @@ export default function WorkflowEditor({
           Email: emailCheck?.status === "ready",
         });
       })
-      .catch((e) => { console.warn("[WorkflowEditor] fetch failed:", e instanceof Error ? e.message : String(e)); })
+      .catch((e: unknown) => { console.warn("[WorkflowEditor] fetch failed:", e instanceof Error ? e.message : String(e)); })
       .finally(() => setChannelCheckDone(true));
   }, []);
 

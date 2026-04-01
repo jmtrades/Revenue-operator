@@ -239,7 +239,7 @@ export default function VoicesSettingsPage() {
         const data = await response.json();
         if (data.audio_url) {
           const audio = new Audio(data.audio_url);
-          audio.play().catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
+          audio.play().catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
         }
       }
     } catch {

@@ -24,7 +24,7 @@ export async function recordCausalChain(input: CausalChainInput): Promise<void> 
       input.workspace_id,
       "outcome_caused",
       `${input.subject_type}:${input.subject_id}`
-    ).catch((e) => {
+    ).catch((e: unknown) => {
       log("error", "recordContinuityLoad failed", { error: e instanceof Error ? e.message : String(e) });
     });
     const { resolveExposureFromCausalChain } = await import("@/lib/exposure-engine");
@@ -33,7 +33,7 @@ export async function recordCausalChain(input: CausalChainInput): Promise<void> 
       input.intervention_type,
       input.subject_type,
       input.subject_id
-    ).catch((e) => {
+    ).catch((e: unknown) => {
       log("error", "resolveExposureFromCausalChain failed", { error: e instanceof Error ? e.message : String(e) });
     });
   }

@@ -27,7 +27,7 @@ export function TrialGraceEndedBanner() {
           setTrialDaysLeft(daysLeft);
         }
       })
-      .catch((e) => { console.warn("[TrialGraceEndedBanner] fetch failed:", e instanceof Error ? e.message : String(e)); });
+      .catch((e: unknown) => { console.warn("[TrialGraceEndedBanner] fetch failed:", e instanceof Error ? e.message : String(e)); });
   }, [workspaceId]);
 
   if (!workspaceId) return null;

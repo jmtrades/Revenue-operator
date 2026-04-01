@@ -122,7 +122,7 @@ export async function refreshResolvedAtForThread(threadId: string): Promise<void
     const { threadIsReliedUpon, recordThreadAmendment } = await import("@/lib/institutional-auditability");
     const relied = await threadIsReliedUpon(threadId).catch(() => false);
     if (relied) {
-      await recordThreadAmendment(threadId, "outcome_change", "Dependency resolved.", null).catch((e) => {
+      await recordThreadAmendment(threadId, "outcome_change", "Dependency resolved.", null).catch((e: unknown) => {
         log("error", "recordThreadAmendment failed", { error: e instanceof Error ? e.message : String(e) });
       });
     }

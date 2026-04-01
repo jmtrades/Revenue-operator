@@ -58,7 +58,7 @@ export async function emitOutboundEvent(
   }).select("id").maybeSingle();
 
   if (inserted) {
-    processWebhookDeliveries().catch((e) => {
+    processWebhookDeliveries().catch((e: unknown) => {
       log("error", "processWebhookDeliveries failed", { error: e instanceof Error ? e.message : String(e) });
     });
   }

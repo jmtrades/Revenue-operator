@@ -39,7 +39,7 @@ export default function LifePage() {
         setIdentity((dataId as { label?: string })?.label ?? null);
         setSections(dataSec as LifeSections);
       })
-      .catch((e) => setError(e?.message ?? "Failed to load"))
+      .catch((e: unknown) => setError((e as Error)?.message ?? "Failed to load"))
       .finally(() => setLoading(false));
   }, [workspaceId]);
 

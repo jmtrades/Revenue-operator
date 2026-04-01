@@ -89,7 +89,7 @@ export default function VoiceDemoPage() {
 
         if (audioRef.current) {
           audioRef.current.src = audioUrl;
-          audioRef.current.play().catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
+          audioRef.current.play().catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
 
           await new Promise(resolve => {
             setTimeout(() => {
@@ -131,7 +131,7 @@ export default function VoiceDemoPage() {
           await new Promise(resolve => {
             setTimeout(() => {
               audioRef.current!.src = audioUrl;
-              audioRef.current!.play().catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
+              audioRef.current!.play().catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
               resolve(null);
             }, 500);
           });

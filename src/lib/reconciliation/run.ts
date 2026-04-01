@@ -35,7 +35,7 @@ export async function runReconciliationForWorkspace(workspaceId: string): Promis
   const errors: string[] = [];
   let emitted = 0;
 
-  const inbound = await detectInboundGaps(workspaceId).catch((e) => {
+  const inbound = await detectInboundGaps(workspaceId).catch((e: unknown) => {
     errors.push(`inbound: ${e instanceof Error ? e.message : String(e)}`);
     return [] as Awaited<ReturnType<typeof detectInboundGaps>>;
   });
@@ -48,7 +48,7 @@ export async function runReconciliationForWorkspace(workspaceId: string): Promis
     }
   }
 
-  const booking = await detectBookingDrift(workspaceId).catch((e) => {
+  const booking = await detectBookingDrift(workspaceId).catch((e: unknown) => {
     errors.push(`booking: ${e instanceof Error ? e.message : String(e)}`);
     return [] as Awaited<ReturnType<typeof detectBookingDrift>>;
   });
@@ -62,7 +62,7 @@ export async function runReconciliationForWorkspace(workspaceId: string): Promis
     }
   }
 
-  const attendance = await detectAttendanceTruth(workspaceId).catch((e) => {
+  const attendance = await detectAttendanceTruth(workspaceId).catch((e: unknown) => {
     errors.push(`attendance: ${e instanceof Error ? e.message : String(e)}`);
     return [] as Awaited<ReturnType<typeof detectAttendanceTruth>>;
   });
@@ -76,7 +76,7 @@ export async function runReconciliationForWorkspace(workspaceId: string): Promis
     }
   }
 
-  const human = await detectHumanOverride(workspaceId).catch((e) => {
+  const human = await detectHumanOverride(workspaceId).catch((e: unknown) => {
     errors.push(`human: ${e instanceof Error ? e.message : String(e)}`);
     return [] as Awaited<ReturnType<typeof detectHumanOverride>>;
   });
@@ -90,7 +90,7 @@ export async function runReconciliationForWorkspace(workspaceId: string): Promis
   }
 
   if (PAYMENTS_GATED) {
-    const payment = await detectPaymentDrift(workspaceId).catch((e) => {
+    const payment = await detectPaymentDrift(workspaceId).catch((e: unknown) => {
       errors.push(`payment: ${e instanceof Error ? e.message : String(e)}`);
       return [] as Awaited<ReturnType<typeof detectPaymentDrift>>;
     });

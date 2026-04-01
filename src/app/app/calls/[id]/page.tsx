@@ -75,7 +75,7 @@ function CallRecordingPlayer({ src }: { src: string }) {
     const el = audioRef.current;
     if (!el) return;
     if (el.paused) {
-      el.play().catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
+      el.play().catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
     } else {
       el.pause();
     }

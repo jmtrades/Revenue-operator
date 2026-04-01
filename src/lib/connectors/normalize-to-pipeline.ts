@@ -120,10 +120,10 @@ export async function processNormalizedInbound(
 
   const { stopSequence } = await import("@/lib/sequences/follow-up-engine");
   const { cancelLeadPlan } = await import("@/lib/plans/lead-plan");
-  await stopSequence(workspace_id, leadId, "user_reply").catch((e) => {
+  await stopSequence(workspace_id, leadId, "user_reply").catch((e: unknown) => {
     log("error", "stopSequence failed", { error: e instanceof Error ? e.message : String(e) });
   });
-  await cancelLeadPlan(workspace_id, leadId, "user_reply").catch((e) => {
+  await cancelLeadPlan(workspace_id, leadId, "user_reply").catch((e: unknown) => {
     log("error", "cancelLeadPlan failed", { error: e instanceof Error ? e.message : String(e) });
   });
 

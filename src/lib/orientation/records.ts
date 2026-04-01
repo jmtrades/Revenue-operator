@@ -40,7 +40,7 @@ export async function recordOrientationStatement(workspaceId: string, text: stri
     created_at: new Date().toISOString(),
   });
   const { recordOperationalDay } = await import("@/lib/operational-timeline-memory");
-  recordOperationalDay(workspaceId).catch((e) => {
+  recordOperationalDay(workspaceId).catch((e: unknown) => {
     log("error", "recordOperationalDay failed", { error: e instanceof Error ? e.message : String(e) });
   });
 }

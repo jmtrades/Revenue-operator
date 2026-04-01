@@ -165,7 +165,7 @@ export async function GET(request: NextRequest) {
       console.warn(`[cron/core] ${failed.length}/${CORE_STEPS.length} sub-crons failed: ${failed.slice(0, 10).join(", ")}`);
     }
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-    await recordCronHeartbeat("core").catch((e) => {
+    await recordCronHeartbeat("core").catch((e: unknown) => {
       console.warn("[cron/core] heartbeat failed:", e instanceof Error ? e.message : String(e));
     });
     return { run: ran.length, ran: ran.length, steps: CORE_STEPS.length, failed: failed.length > 0 ? failed.slice(0, 10) : undefined };

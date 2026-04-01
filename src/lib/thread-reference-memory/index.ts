@@ -207,12 +207,12 @@ export async function detectAndAttachReference(context: ReferenceContext): Promi
         referenceContextType === "shared_transaction" ? "shared_transaction" : referenceContextType,
       dependentContextId: referenceContextId,
       dependencyType: "external_reporting",
-    }).catch((e) => {
+    }).catch((e: unknown) => {
       log("error", "recordOutcomeDependency failed", { error: e instanceof Error ? e.message : String(e) });
     });
     if (referenceContextType === "shared_transaction" && referenceContextId) {
       const { detectAndRecordOffPlatformReference } = await import("@/lib/third-party-reliance/off-platform-reference");
-      await detectAndRecordOffPlatformReference(workspaceId, referenceContextId, chosen.threadId).catch((e) => {
+      await detectAndRecordOffPlatformReference(workspaceId, referenceContextId, chosen.threadId).catch((e: unknown) => {
         log("error", "detectAndRecordOffPlatformReference failed", { error: e instanceof Error ? e.message : String(e) });
       });
     }

@@ -48,7 +48,7 @@ export async function recordReliefEvent(workspaceId: string, text: string): Prom
     created_at: now,
   });
 
-  await deliverReliefEvent(workspaceId, text).catch((e) => {
+  await deliverReliefEvent(workspaceId, text).catch((e: unknown) => {
     log("error", "deliverReliefEvent failed", { error: e instanceof Error ? e.message : String(e) });
   });
 }

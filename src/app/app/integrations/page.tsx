@@ -243,7 +243,7 @@ export default function IntegrationsPage() {
       fetch("/api/integrations/crm/status", { credentials: "include" })
         .then((r) => (r.ok ? r.json() : null))
         .then((data: CrmStatusResponse | null) => data && setCrmStatus(data))
-        .catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); }),
+        .catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); }),
       fetch("/api/integrations/google-calendar/status", { credentials: "include" })
         .then((r) => r.json())
         .then((data: { connected?: boolean }) => setGoogleCalendarConnected(Boolean(data?.connected)))

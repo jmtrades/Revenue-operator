@@ -36,7 +36,7 @@ export async function fetchWithFallback<T>(
             if (!data.error) setCachedResponse(cacheKey, data);
           }
         })
-        .catch((e) => {
+        .catch((e: unknown) => {
           // Background refresh failed, but we already returned cached data
         });
       return { data: cached, fromCache: true };

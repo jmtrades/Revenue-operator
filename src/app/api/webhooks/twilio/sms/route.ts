@@ -276,7 +276,7 @@ export async function POST(request: NextRequest) {
           phone: normalizedPhone,
           score: npsScore,
           classification,
-        }).catch((e) => {
+        }).catch((e: unknown) => {
           log("error", "fireWebhookEvent nps.received failed", {
             error: e instanceof Error ? e.message : String(e),
           });
@@ -353,7 +353,7 @@ export async function POST(request: NextRequest) {
         phone: normalizedPhone,
         body,
         message_sid: messageSid,
-      }).catch((e) => {
+      }).catch((e: unknown) => {
         log("error", "fireWebhookEvent sms.received failed", {
           error: e instanceof Error ? e.message : String(e),
         });

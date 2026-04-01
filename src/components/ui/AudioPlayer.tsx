@@ -57,7 +57,7 @@ export function AudioPlayer({ src, className }: AudioPlayerProps) {
     const el = audioRef.current;
     if (!el) return;
     if (el.paused) {
-      void el.play().catch((e) => { console.warn("[AudioPlayer] failed:", e instanceof Error ? e.message : String(e)); });
+      void el.play().catch((e: unknown) => { console.warn("[AudioPlayer] failed:", e instanceof Error ? e.message : String(e)); });
     } else {
       el.pause();
     }

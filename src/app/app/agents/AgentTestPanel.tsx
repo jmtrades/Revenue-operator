@@ -233,7 +233,7 @@ export function AgentTestPanel({
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ tested_at: new Date().toISOString(), test_call_completed: true }),
-      }).catch((e) => { console.warn("[AgentTestPanel] failed:", e instanceof Error ? e.message : String(e)); });
+      }).catch((e: unknown) => { console.warn("[AgentTestPanel] failed:", e instanceof Error ? e.message : String(e)); });
       onTested?.();
     }
   }, [messages, agent.id, onTested]);

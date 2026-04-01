@@ -124,7 +124,7 @@ export async function runHandoffNotifications(): Promise<
               const { data: settings } = await db.from("settings").select("team_handoff_emails").eq("workspace_id", workspaceId).maybeSingle();
               const raw = (settings as { team_handoff_emails?: unknown } | null)?.team_handoff_emails;
               const team = Array.isArray(raw) ? raw.filter((e): e is string => typeof e === "string" && e.includes("@")) : [];
-              for (const to of team) await sendEmail(to, text, text).catch((e) => {
+              for (const to of team) await sendEmail(to, text, text).catch((e: unknown) => {
                 log("error", "sendEmail team handoff failed", { error: e instanceof Error ? e.message : String(e) });
               });
             }

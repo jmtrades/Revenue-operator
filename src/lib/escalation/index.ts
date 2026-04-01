@@ -175,7 +175,7 @@ export async function logEscalation(
 
   if (id && OPERATIONAL_RISK_REASONS.includes(escalationReason)) {
     const { sendOwnerAssuranceEmail } = await import("@/lib/operational-presence");
-    sendOwnerAssuranceEmail(workspaceId).catch((e) => {
+    sendOwnerAssuranceEmail(workspaceId).catch((e: unknown) => {
       log("error", "sendOwnerAssuranceEmail failed", { error: e instanceof Error ? e.message : String(e) });
     });
   }

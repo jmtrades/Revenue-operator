@@ -121,7 +121,7 @@ export default function AppointmentsPage() {
     fetch(`/api/dashboard/revenue-at-risk?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => { if (d?.avg_deal_value) setAvgDealValue(d.avg_deal_value); })
-      .catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
+      .catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
   }, [workspaceId]);
 
   // Compute summary metrics for dashboard cards

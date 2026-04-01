@@ -51,13 +51,13 @@ export async function recordAssumptionOrientationOnce(workspaceId: string): Prom
 
   const { recordOrientationStatement } = await import("@/lib/orientation/records");
   const { ASSUMPTION_ORIENTATION_STATEMENT } = await import("./doctrine");
-  await recordOrientationStatement(workspaceId, ASSUMPTION_ORIENTATION_STATEMENT).catch((e) => {
+  await recordOrientationStatement(workspaceId, ASSUMPTION_ORIENTATION_STATEMENT).catch((e: unknown) => {
     log("error", "recordOrientationStatement failed", { error: e instanceof Error ? e.message : String(e) });
   });
 
   const now = new Date().toISOString();
   const { recordContinuityLoad } = await import("@/lib/continuity-load");
-  recordContinuityLoad(workspaceId, "assumption_relied", `assumption:${now.slice(0, 10)}`).catch((e) => {
+  recordContinuityLoad(workspaceId, "assumption_relied", `assumption:${now.slice(0, 10)}`).catch((e: unknown) => {
     log("error", "recordContinuityLoad failed", { error: e instanceof Error ? e.message : String(e) });
   });
   const { data: row } = await db.from("workspace_orientation_state").select("workspace_id").eq("workspace_id", workspaceId).maybeSingle();

@@ -85,7 +85,7 @@ export function LeadDetail({
           });
         }
       })
-      .catch((e) => { console.warn("[LeadDetail] failed:", e instanceof Error ? e.message : String(e)); });
+      .catch((e: unknown) => { console.warn("[LeadDetail] failed:", e instanceof Error ? e.message : String(e)); });
   }, [lead.id]);
 
   return (

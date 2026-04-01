@@ -201,7 +201,7 @@ export async function POST(req: NextRequest) {
       chunks.push(value);
       totalBytes += value.length;
     }
-    reader.cancel().catch((e) => {
+    reader.cancel().catch((e: unknown) => {
       log("error", "reader.cancel() failed", {
         error: e instanceof Error ? e.message : String(e),
       });
