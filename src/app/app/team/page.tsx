@@ -61,7 +61,9 @@ function formatRelative(timestamp: string, t: (k: string, p?: Record<string, num
 }
 
 function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString(undefined, {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "Recently";
+  return d.toLocaleDateString(undefined, {
     month: "short",
     year: "numeric",
   });
@@ -125,8 +127,8 @@ export default function TeamPage() {
             name: m.name,
             email: m.email,
             role: m.role as TeamRole,
-            lastActive: m.created_at ?? now,
-            joinedAt: m.created_at ?? now,
+            lastActive: m.created_at || now,
+            joinedAt: m.created_at || now,
           }))
         );
         setPendingInvites(
@@ -160,8 +162,8 @@ export default function TeamPage() {
             name: m.name,
             email: m.email,
             role: m.role as TeamRole,
-            lastActive: m.created_at ?? now,
-            joinedAt: m.created_at ?? now,
+            lastActive: m.created_at || now,
+            joinedAt: m.created_at || now,
           }))
         );
         setPendingInvites(

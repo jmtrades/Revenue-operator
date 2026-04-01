@@ -148,6 +148,9 @@
     "support": "Support"
   },
   "agency": {
+    "common": {
+      "home": "Home"
+    },
     "kicker": "Partner operations",
     "title": "Agency",
     "subtitle": "Set up and manage client workspaces with a repeatable, ROI-first onboarding flow.",
@@ -7185,6 +7188,10 @@
     "days": "days"
   },
   "compliance": {
+    "common": {
+      "home": "Home"
+    },
+    "loading": "Loading compliance data...",
     "title": "Compliance",
     "saveConsent": "Save recording consent",
     "saveChanges": "Save changes",
@@ -7357,6 +7364,9 @@
     }
   },
   "messages": {
+    "common": {
+      "home": "Home"
+    },
     "pageTitle": "Messages — Revenue Operator",
     "title": "Messages",
     "backToActivity": "← Activity",
@@ -9248,6 +9258,17 @@
       "title": "Still stuck?",
       "desc1": "Email",
       "desc2": "and include what you were trying to do. We typically respond within 1 business day."
+    },
+    "troubleshooting": {
+      "title": "Troubleshooting",
+      "noCallsTitle": "Why am I not receiving calls?",
+      "noCallsDesc": "Make sure you have a phone number connected in Settings > Phone Numbers. Your agent must also be configured and your account must be on an active plan.",
+      "noVoiceTitle": "Why can't I hear voice previews?",
+      "noVoiceDesc": "Voice preview requires the voice server to be configured. Contact support if previews are not playing.",
+      "crmSyncTitle": "My CRM shows Connected but contacts aren't syncing",
+      "crmSyncDesc": "CRM sync is currently in beta. Inbound contact syncing works automatically. Two-way sync is rolling out progressively — check Settings > Integrations for your current sync status.",
+      "callsCutOffTitle": "Calls are being cut off",
+      "callsCutOffDesc": "Check your plan's minute allowance in Settings > Billing. Calls are limited to 15 minutes by default."
     }
   },
   "voiceAbTesting": {
