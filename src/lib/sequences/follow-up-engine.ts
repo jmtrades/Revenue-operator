@@ -661,6 +661,40 @@ export async function advanceEnrollment(
     .maybeSingle();
 
   if (!updated) return null;
+
+  // Auto-advance lead status based on sequence step execution
+  try {
+    const stepType = stepToExecute.type;
+    if (["sms", "email", "call"].includes(stepType) && actionSucceeded) {
+      const { data: leadRow } = await db
+        .from("leads")
+        .select("status")
+        .eq("id", e.lead_id)
+        .eq("workspace_id", e.workspace_id)
+        .maybeSingle();
+      const currentStatus = (leadRow as { status?: string } | null)?.status;
+      if (currentStatus) {
+        let newStatus: string | null = null;
+        if (currentStatus === "NEW" && ["sms", "email", "call"].includes(stepType)) {
+          newStatus = "CONTACTED";
+        } else if (currentStatus === "CONTACTED" && stepToExecute.step_order >= 2) {
+          // Multiple touches = engagement
+          newStatus = "ENGAGED";
+        }
+        if (newStatus && newStatus !== currentStatus) {
+          await db
+            .from("leads")
+            .update({ status: newStatus, updated_at: new Date().toISOString() })
+            .eq("id", e.lead_id)
+            .eq("workspace_id", e.workspace_id);
+          console.log(`[sequence-advance] Lead ${e.lead_id}: ${currentStatus} → ${newStatus} (step: ${stepType})`);
+        }
+      }
+    }
+  } catch (advErr) {
+    console.warn(`[sequence-advance] Non-fatal error advancing lead ${e.lead_id}:`, advErr instanceof Error ? advErr.message : advErr);
+  }
+
   return { step: stepToExecute, enrollment: updated as SequenceEnrollment };
 }
 

@@ -140,17 +140,17 @@ export async function GET(req: NextRequest) {
 
           await db.from("action_intents").insert({
             workspace_id: appt.workspace_id,
-            lead_id: appt.lead_id,
-            action_type: "follow_up_no_show",
-            status: "pending",
-            scheduled_for: reEngageDate,
-            metadata: {
+            intent_type: "follow_up_no_show",
+            payload_json: {
+              lead_id: appt.lead_id,
               original_appointment_id: appt.id,
               original_appointment_time: appt.start_time,
               appointment_title: appt.title,
               detection_method: "automatic",
+              scheduled_for: reEngageDate,
               attempt: 1,
             },
+            dedupe_key: `noshow:${appt.workspace_id}:${appt.lead_id}:${appt.id}`,
           });
         } catch {
           // Non-fatal — action_intents table may not exist
