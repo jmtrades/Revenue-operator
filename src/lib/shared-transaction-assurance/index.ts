@@ -10,6 +10,12 @@ import { runWithWriteContextAsync } from "@/lib/safety/unsafe-write-guard";
 import { enqueueSendMessage } from "@/lib/action-queue/send-message";
 import { upsertParticipationFromIncomingEntry, insertOperationalDependency } from "@/lib/counterparty-participation";
 import { upsertParticipation as upsertEconomicParticipation } from "@/lib/economic-participation";
+import { log } from "@/lib/logger";
+
+/** Log non-critical side-effect errors without crashing the transaction flow. */
+const logTxnSideEffect = (context: string) => (e: unknown) => {
+  log("warn", `shared-txn.${context}`, { error: e instanceof Error ? e.message : String(e) });
+};
 
 function hashToken(raw: string): string {
   return createHash("sha256").update(raw, "utf8").digest("hex");
@@ -155,7 +161,7 @@ export async function createSharedTransaction(
       actorRole: "originator",
       operationalAction: "created",
     }).catch(() => null);
-    if (eventId) onReciprocalEvent(id, eventId, "originator", "created").catch(() => {});
+    if (eventId) onReciprocalEvent(id, eventId, "originator", "created").catch(logTxnSideEffect("side-effect"));
     const { detectAndAttachReference } = await import("@/lib/thread-reference-memory");
     await detectAndAttachReference({
       workspaceId: input.workspaceId,
@@ -165,7 +171,7 @@ export async function createSharedTransaction(
       subjectId: input.subjectId,
       leadId: input.leadId ?? null,
       conversationId: input.conversationId ?? null,
-    }).catch(() => {});
+    }).catch(logTxnSideEffect("side-effect"));
     const db = getDb();
     const { data: refCheck } = await db
       .from("thread_reference_memory")
@@ -178,26 +184,26 @@ export async function createSharedTransaction(
     const { hasReturnGravity } = await import("@/lib/reality-signals/return-gravity");
     if (await hasReturnGravity(id)) {
       const { recordOrientationStatement } = await import("@/lib/orientation/records");
-      await recordOrientationStatement(input.workspaceId, "This activity follows a prior confirmed outcome.").catch(() => {});
+      await recordOrientationStatement(input.workspaceId, "This activity follows a prior confirmed outcome.").catch(logTxnSideEffect("side-effect"));
     }
     if (!refCheck) {
       const { hasExternalActivityForSubject } = await import("@/lib/reality-signals/external-activity");
       if (await hasExternalActivityForSubject(input.workspaceId, input.subjectType, input.subjectId, id)) {
         const { recordOrientationStatement } = await import("@/lib/orientation/records");
-        await recordOrientationStatement(input.workspaceId, "Related activity occurred outside this record.").catch(() => {});
+        await recordOrientationStatement(input.workspaceId, "Related activity occurred outside this record.").catch(logTxnSideEffect("side-effect"));
       }
       const { detectAndRecordParallelReality } = await import("@/lib/operational-ambiguity/parallel-reality");
-      await detectAndRecordParallelReality(input.workspaceId, input.subjectType, input.subjectId, input.acknowledgementDeadline).catch(() => {});
+      await detectAndRecordParallelReality(input.workspaceId, input.subjectType, input.subjectId, input.acknowledgementDeadline).catch(logTxnSideEffect("side-effect"));
     }
     await upsertCounterpartyEdge(input.workspaceId, input.counterpartyIdentifier);
-    updateCounterpartyReliance(input.workspaceId, input.counterpartyIdentifier, "shared_entry").catch(() => {});
-    maybeIssueCounterpartyInvite(input.workspaceId, input.counterpartyIdentifier).catch(() => {});
+    updateCounterpartyReliance(input.workspaceId, input.counterpartyIdentifier, "shared_entry").catch(logTxnSideEffect("side-effect"));
+    maybeIssueCounterpartyInvite(input.workspaceId, input.counterpartyIdentifier).catch(logTxnSideEffect("side-effect"));
     const { emitSendPublicRecordLink } = await import("@/lib/action-intents/emit");
     await emitSendPublicRecordLink(input.workspaceId, id, {
       external_ref: externalRef,
       subject_type: input.subjectType,
       subject_id: input.subjectId,
-    }).catch(() => {});
+    }).catch(logTxnSideEffect("side-effect"));
   }
   return id;
 }
@@ -342,7 +348,7 @@ export async function acknowledgeSharedTransaction(
 
   const now = new Date().toISOString();
   const { removeOperationalExpectation } = await import("@/lib/operability-anchor");
-  removeOperationalExpectation(r.workspace_id, "awaiting_counterparty", transactionId).catch(() => {});
+  removeOperationalExpectation(r.workspace_id, "awaiting_counterparty", transactionId).catch(logTxnSideEffect("side-effect"));
   if (action === "confirm") {
     await runWithWriteContextAsync("delivery", async () => {
       const db2 = getDb();
@@ -373,13 +379,13 @@ export async function acknowledgeSharedTransaction(
       operationalAction: "acknowledged",
       authorityTransfer: true,
     }).catch(() => null);
-    if (eventId) onReciprocalEvent(transactionId, eventId, "counterparty", "acknowledged").catch(() => {});
+    if (eventId) onReciprocalEvent(transactionId, eventId, "counterparty", "acknowledged").catch(logTxnSideEffect("side-effect"));
     const { refreshTemporalStabilityForWorkspace } = await import("@/lib/temporal-stability");
-    refreshTemporalStabilityForWorkspace(r.workspace_id).catch(() => {});
+    refreshTemporalStabilityForWorkspace(r.workspace_id).catch(logTxnSideEffect("side-effect"));
     const { recordCompletionResolution } = await import("@/lib/operational-ambiguity/completion-decay");
-    await recordCompletionResolution(transactionId, r.workspace_id).catch(() => {});
+    await recordCompletionResolution(transactionId, r.workspace_id).catch(logTxnSideEffect("side-effect"));
     const { checkAndConfirmInstallation } = await import("@/lib/installation/confirm");
-    await checkAndConfirmInstallation(r.workspace_id).catch(() => {});
+    await checkAndConfirmInstallation(r.workspace_id).catch(logTxnSideEffect("side-effect"));
     const { data: onboardingCheck } = await db
       .from("orientation_records")
       .select("id")
@@ -412,14 +418,14 @@ export async function acknowledgeSharedTransaction(
       .maybeSingle();
     if (wasDisputed) {
       const { recordOrientationStatement } = await import("@/lib/orientation/records");
-      await recordOrientationStatement(r.workspace_id, "Agreement restored the shared record.").catch(() => {});
+      await recordOrientationStatement(r.workspace_id, "Agreement restored the shared record.").catch(logTxnSideEffect("side-effect"));
     }
-    updateCounterpartyReliance(r.workspace_id, r.counterparty_identifier, "acknowledgement", { acknowledged: true }).catch(() => {});
+    updateCounterpartyReliance(r.workspace_id, r.counterparty_identifier, "acknowledgement", { acknowledged: true }).catch(logTxnSideEffect("side-effect"));
     const { upsertRelationshipState } = await import("@/lib/relationship-continuity");
     await upsertRelationshipState(r.workspace_id, r.counterparty_identifier, {
       completion_reliability: "high",
       response_reciprocity: "high",
-    }).catch(() => {});
+    }).catch(logTxnSideEffect("side-effect"));
     const { recordEconomicEvent } = await import("@/lib/economic-events");
     recordEconomicEvent({
       workspaceId: r.workspace_id,
@@ -427,7 +433,7 @@ export async function acknowledgeSharedTransaction(
       subjectType: "shared_transaction",
       subjectId: transactionId,
       valueAmount: 0,
-    }).catch(() => {});
+    }).catch(logTxnSideEffect("side-effect"));
     const reminderCount = r.reminder_sent_count ?? 0;
     if (reminderCount > 0) {
       const { recordCausalChain } = await import("@/lib/causality-engine");
@@ -439,15 +445,15 @@ export async function acknowledgeSharedTransaction(
         intervention_type: "shared_transaction_ack",
         observed_outcome: "acknowledged",
         dependency_established: true,
-      }).catch(() => {});
+      }).catch(logTxnSideEffect("side-effect"));
       const { recordOperationalAssumption } = await import("@/lib/assumption-engine");
-      recordOperationalAssumption(r.workspace_id, "outcome_presumed", `shared:${transactionId}`).catch(() => {});
+      recordOperationalAssumption(r.workspace_id, "outcome_presumed", `shared:${transactionId}`).catch(logTxnSideEffect("side-effect"));
       const { markExposureResolved } = await import("@/lib/exposure-engine");
-      markExposureResolved(r.workspace_id, "counterparty_unconfirmed_risk", "shared_transaction", transactionId, "resolved_after_intervention").catch(() => {});
+      markExposureResolved(r.workspace_id, "counterparty_unconfirmed_risk", "shared_transaction", transactionId, "resolved_after_intervention").catch(logTxnSideEffect("side-effect"));
       const { recordContinuationStopped } = await import("@/lib/continuation-engine");
-      recordContinuationStopped(r.workspace_id, "shared_transaction", transactionId, "unaligned", 0).catch(() => {});
+      recordContinuationStopped(r.workspace_id, "shared_transaction", transactionId, "unaligned", 0).catch(logTxnSideEffect("side-effect"));
       const { recordCoordinationDisplacement } = await import("@/lib/coordination-displacement");
-      recordCoordinationDisplacement(r.workspace_id, "counterparty", "responsibility", true).catch(() => {});
+      recordCoordinationDisplacement(r.workspace_id, "counterparty", "responsibility", true).catch(logTxnSideEffect("side-effect"));
       const { recordResponsibilityMoment } = await import("@/lib/responsibility-moments");
       recordResponsibilityMoment({
         workspaceId: r.workspace_id,
@@ -455,16 +461,16 @@ export async function acknowledgeSharedTransaction(
         subjectId: transactionId,
         authorityHolder: "environment",
         determinedFrom: "intervention",
-      }).catch(() => {});
+      }).catch(logTxnSideEffect("side-effect"));
       const { recordNonParticipationIfApplicable } = await import("@/lib/detachment");
       recordNonParticipationIfApplicable(
         r.workspace_id,
         `shared_transaction:${transactionId}`,
         "shared_transaction"
-      ).catch(() => {});
+      ).catch(logTxnSideEffect("side-effect"));
     } else {
       const { recordCoordinationDisplacement } = await import("@/lib/coordination-displacement");
-      recordCoordinationDisplacement(r.workspace_id, "counterparty", "confirmation", false).catch(() => {});
+      recordCoordinationDisplacement(r.workspace_id, "counterparty", "confirmation", false).catch(logTxnSideEffect("side-effect"));
       const { recordResponsibilityMoment } = await import("@/lib/responsibility-moments");
       recordResponsibilityMoment({
         workspaceId: r.workspace_id,
@@ -472,30 +478,30 @@ export async function acknowledgeSharedTransaction(
         subjectId: transactionId,
         authorityHolder: "environment",
         determinedFrom: "acknowledgement",
-      }).catch(() => {});
+      }).catch(logTxnSideEffect("side-effect"));
       const { recordNonParticipationIfApplicable } = await import("@/lib/detachment");
       recordNonParticipationIfApplicable(
         r.workspace_id,
         `shared_transaction:${transactionId}`,
         "shared_transaction"
-      ).catch(() => {});
+      ).catch(logTxnSideEffect("side-effect"));
     }
     const { recordReliefEvent } = await import("@/lib/awareness-timing/relief-events");
-    recordReliefEvent(r.workspace_id, "The agreement did not remain unconfirmed.").catch(() => {});
+    recordReliefEvent(r.workspace_id, "The agreement did not remain unconfirmed.").catch(logTxnSideEffect("side-effect"));
     const { recordOrientationStatement } = await import("@/lib/orientation/records");
-    recordOrientationStatement(r.workspace_id, "The agreement was acknowledged after request.").catch(() => {});
+    recordOrientationStatement(r.workspace_id, "The agreement was acknowledged after request.").catch(logTxnSideEffect("side-effect"));
     const counterpartyWorkspaceId = await resolveWorkspaceByCounterparty(r.counterparty_identifier);
     if (counterpartyWorkspaceId) {
-      recordOrientationStatement(counterpartyWorkspaceId, "The record was confirmed by another party.").catch(() => {});
+      recordOrientationStatement(counterpartyWorkspaceId, "The record was confirmed by another party.").catch(logTxnSideEffect("side-effect"));
     }
     const { touchDependencyMemory } = await import("@/lib/operational-dependency-memory");
-    touchDependencyMemory(r.workspace_id, "shared_confirmation").catch(() => {});
+    touchDependencyMemory(r.workspace_id, "shared_confirmation").catch(logTxnSideEffect("side-effect"));
     const { refreshSharedEnvironmentDensity } = await import("@/lib/shared-environment-density");
-    refreshSharedEnvironmentDensity(r.workspace_id).catch(() => {});
+    refreshSharedEnvironmentDensity(r.workspace_id).catch(logTxnSideEffect("side-effect"));
     const { refreshEnvironmentRecognition } = await import("@/lib/environment-recognition");
-    refreshEnvironmentRecognition(r.workspace_id).catch(() => {});
+    refreshEnvironmentRecognition(r.workspace_id).catch(logTxnSideEffect("side-effect"));
     const { recordStaffRelianceEvent } = await import("@/lib/staff-reliance");
-    recordStaffRelianceEvent(r.workspace_id).catch(() => {});
+    recordStaffRelianceEvent(r.workspace_id).catch(logTxnSideEffect("side-effect"));
     return { ok: true, externalRef: r.external_ref, counterpartyIdentifier: r.counterparty_identifier };
   }
   const newDeadline = payload?.newDeadline;
@@ -519,9 +525,9 @@ export async function acknowledgeSharedTransaction(
       operationalAction: "rescheduled",
       dependencyCreated: "confirmation_required",
     }).catch(() => null);
-    if (reschedEventId) onReciprocalEvent(transactionId, reschedEventId, "counterparty", "rescheduled").catch(() => {});
-    await insertOperationalDependency(r.workspace_id, r.external_ref, "confirmation_required").catch(() => {});
-    updateCounterpartyReliance(r.workspace_id, r.counterparty_identifier, "acknowledgement", { acknowledged: false }).catch(() => {});
+    if (reschedEventId) onReciprocalEvent(transactionId, reschedEventId, "counterparty", "rescheduled").catch(logTxnSideEffect("side-effect"));
+    await insertOperationalDependency(r.workspace_id, r.external_ref, "confirmation_required").catch(logTxnSideEffect("side-effect"));
+    updateCounterpartyReliance(r.workspace_id, r.counterparty_identifier, "acknowledgement", { acknowledged: false }).catch(logTxnSideEffect("side-effect"));
     const { recordResponsibilityMoment } = await import("@/lib/responsibility-moments");
     recordResponsibilityMoment({
       workspaceId: r.workspace_id,
@@ -529,7 +535,7 @@ export async function acknowledgeSharedTransaction(
       subjectId: transactionId,
       authorityHolder: "shared",
       determinedFrom: "acknowledgement",
-    }).catch(() => {});
+    }).catch(logTxnSideEffect("side-effect"));
     return { ok: true, externalRef: r.external_ref, counterpartyIdentifier: r.counterparty_identifier };
   }
   if (action === "dispute") {
@@ -556,9 +562,9 @@ export async function acknowledgeSharedTransaction(
       operationalAction: "disputed",
       dependencyCreated: "coordination_required",
     }).catch(() => null);
-    if (disputeEventId) onReciprocalEvent(transactionId, disputeEventId, "counterparty", "disputed").catch(() => {});
+    if (disputeEventId) onReciprocalEvent(transactionId, disputeEventId, "counterparty", "disputed").catch(logTxnSideEffect("side-effect"));
     if (reliedBefore && disputeEventId) {
-      recordThreadAmendment(transactionId, "state_change", "State changed.", disputeEventId).catch(() => {});
+      recordThreadAmendment(transactionId, "state_change", "State changed.", disputeEventId).catch(logTxnSideEffect("side-effect"));
     }
     const { detectAndAttachReference } = await import("@/lib/thread-reference-memory");
     detectAndAttachReference({
@@ -567,9 +573,9 @@ export async function acknowledgeSharedTransaction(
       referenceContextId: transactionId,
       threadId: transactionId,
       state: "disputed",
-    }).catch(() => {});
-    await insertOperationalDependency(r.workspace_id, r.external_ref, "coordination_required").catch(() => {});
-    updateCounterpartyReliance(r.workspace_id, r.counterparty_identifier, "acknowledgement", { acknowledged: false }).catch(() => {});
+    }).catch(logTxnSideEffect("side-effect"));
+    await insertOperationalDependency(r.workspace_id, r.external_ref, "coordination_required").catch(logTxnSideEffect("side-effect"));
+    updateCounterpartyReliance(r.workspace_id, r.counterparty_identifier, "acknowledgement", { acknowledged: false }).catch(logTxnSideEffect("side-effect"));
     const { recordResponsibilityMoment } = await import("@/lib/responsibility-moments");
     recordResponsibilityMoment({
       workspaceId: r.workspace_id,
@@ -577,11 +583,11 @@ export async function acknowledgeSharedTransaction(
       subjectId: transactionId,
       authorityHolder: "shared",
       determinedFrom: "dispute",
-    }).catch(() => {});
+    }).catch(logTxnSideEffect("side-effect"));
     const { recordOrientationStatement } = await import("@/lib/orientation/records");
-    recordOrientationStatement(r.workspace_id, "The agreement was disputed.").catch(() => {});
+    recordOrientationStatement(r.workspace_id, "The agreement was disputed.").catch(logTxnSideEffect("side-effect"));
     const { detectAndRecordConflictedMemory } = await import("@/lib/operational-ambiguity/conflicted-memory");
-    await detectAndRecordConflictedMemory(transactionId, r.workspace_id).catch(() => {});
+    await detectAndRecordConflictedMemory(transactionId, r.workspace_id).catch(logTxnSideEffect("side-effect"));
     return { ok: true, externalRef: r.external_ref, counterpartyIdentifier: r.counterparty_identifier };
   }
   return { ok: false, error: "Invalid action or payload" };
@@ -845,8 +851,8 @@ export async function mirrorProtocolEventToCounterpartyWorkspace(
 
   if (originWorkspaceId) {
     const originId = String(originWorkspaceId);
-    await upsertParticipationFromIncomingEntry(counterpartyWorkspaceId, `workspace:${originId}`, now).catch(() => {});
-    await upsertEconomicParticipation(counterpartyWorkspaceId, "coordination_dependency", now).catch(() => {});
+    await upsertParticipationFromIncomingEntry(counterpartyWorkspaceId, `workspace:${originId}`, now).catch(logTxnSideEffect("side-effect"));
+    await upsertEconomicParticipation(counterpartyWorkspaceId, "coordination_dependency", now).catch(logTxnSideEffect("side-effect"));
     await updateCounterpartyReliance(counterpartyWorkspaceId, `workspace:${originId}`, "interaction");
     const { data: rel } = await db
       .from("counterparty_reliance")
@@ -859,7 +865,7 @@ export async function mirrorProtocolEventToCounterpartyWorkspace(
     }
   }
   if (incomingState === "exposure") {
-    await insertOperationalDependency(counterpartyWorkspaceId, externalRef, "outcome_required").catch(() => {});
+    await insertOperationalDependency(counterpartyWorkspaceId, externalRef, "outcome_required").catch(logTxnSideEffect("side-effect"));
   }
 }
 

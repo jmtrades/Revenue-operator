@@ -628,7 +628,7 @@ export async function advanceEnrollment(
                     status: "sent",
                     external_id: emailJson.id ?? null,
                     sent_at: new Date().toISOString(),
-                  }).then(() => {}).catch(() => {});
+                  });
                 } catch { /* non-fatal logging */ }
                 break;
               }

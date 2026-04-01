@@ -5,12 +5,16 @@
 
 export const dynamic = "force-dynamic";
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { assertCronAuthorized } from "@/lib/runtime";
 import { getDb } from "@/lib/db/queries";
 
 const RECENT_MINUTES = 15;
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const authErr = assertCronAuthorized(request);
+  if (authErr) return authErr;
+
   const cronSecretSet = !!process.env.CRON_SECRET;
   const out: Record<string, unknown> = {
     cron_secret_set: cronSecretSet,
