@@ -11,6 +11,7 @@ import "@/lib/runtime";
 import { assertCronAuthorized, recordCronHeartbeat } from "@/lib/runtime";
 import { getDb } from "@/lib/db/queries";
 import { aggregateAndAppendUsageForPeriod } from "@/lib/economic-participation";
+import { log } from "@/lib/logger";
 
 const BACKFILL_DAYS = 7;
 
@@ -35,16 +36,12 @@ export async function GET(request: NextRequest) {
   for (const workspaceId of workspaceIds) {
     for (let day = 1; day <= BACKFILL_DAYS; day++) {
       const { start, end } = getUtcDayBounds(day);
-      await aggregateAndAppendUsageForPeriod(workspaceId, start, end).catch(() => {
-      // cron/economic-usage-backfill error (details omitted to protect PII) 
-    });
+      await aggregateAndAppendUsageForPeriod(workspaceId, start, end).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
       periodsFilled++;
     }
   }
 
-  await recordCronHeartbeat("economic-usage-backfill").catch(() => {
-      // cron/economic-usage-backfill error (details omitted to protect PII) 
-    });
+  await recordCronHeartbeat("economic-usage-backfill").catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
   return NextResponse.json({
     ok: true,
     workspaces_processed: workspaceIds.length,

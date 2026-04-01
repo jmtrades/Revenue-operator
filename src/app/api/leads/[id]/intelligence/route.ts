@@ -51,9 +51,7 @@ export async function GET(
       intelligence = await computeLeadIntelligence(session.workspaceId, id);
       computedFresh = true;
       // Persist non-blocking
-      persistLeadIntelligence(intelligence).catch(() => {
-        // Non-blocking
-      });
+      persistLeadIntelligence(intelligence).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
     } else {
       // Check if stale
       const computedAt = new Date(intelligence.computed_at).getTime();
@@ -61,9 +59,7 @@ export async function GET(
       if (hoursSinceComputed > 6) {
         intelligence = await computeLeadIntelligence(session.workspaceId, id);
         computedFresh = true;
-        persistLeadIntelligence(intelligence).catch(() => {
-          // Non-blocking
-        });
+        persistLeadIntelligence(intelligence).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
       }
     }
 

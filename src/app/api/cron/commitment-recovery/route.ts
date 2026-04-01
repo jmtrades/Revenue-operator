@@ -16,6 +16,7 @@ import {
   runRecoveryForCommitment,
   escalateCommitmentToAuthority,
 } from "@/lib/commitment-recovery";
+import { log } from "@/lib/logger";
 
 const MAX_RECOVERY_PER_RUN = 30;
 
@@ -32,9 +33,7 @@ export async function GET(request: NextRequest) {
     for (const c of list) {
       if (!allowedWorkspaces.has(c.workspace_id)) {
         const { recordObservedRisk } = await import("@/lib/adoption-acceleration/observed-risks");
-        await recordObservedRisk(c.workspace_id, "stalled_commitment", "commitment", c.id).catch(() => {
-      // cron/commitment-recovery error (details omitted to protect PII) 
-    });
+        await recordObservedRisk(c.workspace_id, "stalled_commitment", "commitment", c.id).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
       }
     }
     let recovered = 0;

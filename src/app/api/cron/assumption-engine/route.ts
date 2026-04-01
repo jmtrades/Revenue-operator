@@ -9,6 +9,7 @@ import { assertCronAuthorized } from "@/lib/runtime";
 import { runSafeCron } from "@/lib/cron/run-safe";
 import { getDb } from "@/lib/db/queries";
 import { recordOperationalAssumption } from "@/lib/assumption-engine";
+import { log } from "@/lib/logger";
 
 const SCAN_MINUTES = 30;
 const MAX_WORKSPACES = 200;
@@ -46,18 +47,14 @@ export async function GET(request: NextRequest) {
           .neq("id", row.id)
           .limit(1);
         if ((awaiting?.length ?? 0) > 0) {
-          await recordOperationalAssumption(workspaceId, "dependency_action_taken", `commitment:${row.id}`).catch(() => {
-      // cron/assumption-engine error (details omitted to protect PII) 
-    });
+          await recordOperationalAssumption(workspaceId, "dependency_action_taken", `commitment:${row.id}`).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
           run++;
         }
       }
     }
 
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-    await recordCronHeartbeat("assumption-engine").catch(() => {
-      // cron/assumption-engine error (details omitted to protect PII) 
-    });
+    await recordCronHeartbeat("assumption-engine").catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
     return { run, workspaces: workspaceIds.length };
   });
 

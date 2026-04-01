@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
     const authHeader = req.headers.get("authorization");
     const adminToken = process.env.ADMIN_API_TOKEN;
     if (!adminToken) {
-      return NextResponse.json({ error: "Server misconfiguration: ADMIN_API_TOKEN not set" }, { status: 500 });
+      return NextResponse.json({ error: "Admin endpoint — ADMIN_API_TOKEN not configured" }, { status: 401 });
     }
     const isAuthed = authHeader === `Bearer ${adminToken}`;
     const url = new URL(req.url);

@@ -9,6 +9,7 @@ import { assertCronAuthorized } from "@/lib/runtime";
 import { runSafeCron } from "@/lib/cron/run-safe";
 import { getDb } from "@/lib/db/queries";
 import { runNormalizationDetectors, recordNormalizationOrientationOnce } from "@/lib/normalization-engine";
+import { log } from "@/lib/logger";
 
 const MAX_WORKSPACES = 200;
 
@@ -21,17 +22,11 @@ export async function GET(request: NextRequest) {
     const { data: rows } = await db.from("workspaces").select("id");
     const workspaceIds = (rows ?? []).slice(0, MAX_WORKSPACES).map((r: { id: string }) => r.id);
     for (const workspaceId of workspaceIds) {
-      await runNormalizationDetectors(workspaceId).catch(() => {
-      // cron/normalization-engine error (details omitted to protect PII) 
-    });
-      await recordNormalizationOrientationOnce(workspaceId).catch(() => {
-      // cron/normalization-engine error (details omitted to protect PII) 
-    });
+      await runNormalizationDetectors(workspaceId).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
+      await recordNormalizationOrientationOnce(workspaceId).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
     }
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-    await recordCronHeartbeat("normalization-engine").catch(() => {
-      // cron/normalization-engine error (details omitted to protect PII) 
-    });
+    await recordCronHeartbeat("normalization-engine").catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
     return { run: 1, workspaces: workspaceIds.length };
   });
 

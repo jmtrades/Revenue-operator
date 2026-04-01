@@ -10,6 +10,7 @@ import { scheduleReactivationAttempts } from "@/lib/reactivation/engine";
 import { enqueue } from "@/lib/queue";
 import "@/lib/runtime";
 import { assertCronAuthorized } from "@/lib/runtime";
+import { log } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -79,9 +80,7 @@ export async function GET(request: NextRequest) {
 
     const { recordReliefEvent } = await import("@/lib/awareness-timing/relief-events");
     for (const workspaceId of workspacesWithReactivation) {
-      recordReliefEvent(workspaceId, "A delay did not continue.").catch(() => {
-      // cron/no-reply error (details omitted to protect PII) 
-    });
+      recordReliefEvent(workspaceId, "A delay did not continue.").catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
     }
 
     const scheduled = await scheduleReactivationAttempts();

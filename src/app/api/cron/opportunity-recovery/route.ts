@@ -15,6 +15,7 @@ import {
   runRevivalForOpportunity,
   escalateOpportunityToAuthority,
 } from "@/lib/opportunity-recovery";
+import { log } from "@/lib/logger";
 
 const MAX_REVIVAL_PER_RUN = 20;
 
@@ -31,9 +32,7 @@ export async function GET(request: NextRequest) {
     for (const o of list) {
       if (!allowedWorkspaces.has(o.workspace_id)) {
         const { recordObservedRisk } = await import("@/lib/adoption-acceleration/observed-risks");
-        await recordObservedRisk(o.workspace_id, "stalled_opportunity", "opportunity_state", o.id).catch(() => {
-      // cron/opportunity-recovery error (details omitted to protect PII) 
-    });
+        await recordObservedRisk(o.workspace_id, "stalled_opportunity", "opportunity_state", o.id).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
       }
     }
     const { getRecoveryTimingsForWorkspace } = await import("@/lib/recovery-profile");

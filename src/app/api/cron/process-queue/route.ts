@@ -19,6 +19,7 @@ import { runCalendarCallEndedJob } from "@/lib/calls/calendar-call-ended-job";
 import { runPostCallUnknownCheckin } from "@/lib/calls/post-call-unknown-checkin";
 import "@/lib/runtime";
 import { assertCronAuthorized } from "@/lib/runtime";
+import { log } from "@/lib/logger";
 
 async function processPayload(payload: {
   type?: string;
@@ -253,8 +254,6 @@ export async function GET(request: NextRequest) {
   }
 
   const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-  await recordCronHeartbeat("process-queue").catch(() => {
-      // cron/process-queue error (details omitted to protect PII) 
-    });
+  await recordCronHeartbeat("process-queue").catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
   return NextResponse.json({ ok: true, processed: 0 });
 }

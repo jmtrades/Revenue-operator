@@ -236,7 +236,7 @@ export async function POST(req: NextRequest) {
       name: createdLead.name,
       phone: createdLead.phone,
       email: createdLead.email,
-    }).catch(() => { /* non-blocking */ });
+    }).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
   } catch {
     // non-blocking
   }
@@ -264,7 +264,7 @@ export async function POST(req: NextRequest) {
       title: "New lead",
       body: [createdLead.name, createdLead.phone].filter(Boolean).join(" · ") || "New lead captured",
       metadata: { lead_id: createdLead.id },
-    }).catch(() => { /* non-blocking */ });
+    }).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
   } catch {
     // non-blocking
   }

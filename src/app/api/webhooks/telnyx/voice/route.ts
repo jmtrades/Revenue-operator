@@ -675,7 +675,7 @@ export async function POST(req: NextRequest) {
               hangupMemState.callerPhone,
               hangupMemState.turn,
               callDurationSecs,
-            ).catch(() => {/* non-blocking */});
+            ).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
 
             log("info", "telnyx_voice.demo_call_completed", {
               callControlId: callInfo.callControlId,
@@ -691,7 +691,7 @@ export async function POST(req: NextRequest) {
         if (isDemoCall && callInfo.to) {
           const gatherTurn = demoState?.turn ?? 0;
           if (gatherTurn > 0) {
-            updateDemoLeadOnHangup(callInfo.to, gatherTurn, 0).catch(() => {/* non-blocking */});
+            updateDemoLeadOnHangup(callInfo.to, gatherTurn, 0).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
           }
         }
 

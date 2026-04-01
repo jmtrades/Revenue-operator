@@ -11,6 +11,7 @@ import { runSafeCron } from "@/lib/cron/run-safe";
 import { runFinancialExposureDetectors, runFinancialExposureResolvers } from "@/lib/financial-exposure/detectors";
 import { runEscalationMemory } from "@/lib/financial-exposure/escalation-memory";
 import { runPreActivationConversion } from "@/lib/financial-exposure/pre-activation-conversion";
+import { log } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   const authErr = assertCronAuthorized(request);
@@ -19,12 +20,8 @@ export async function GET(request: NextRequest) {
   const result = await runSafeCron("financial-exposure", async () => {
     await runFinancialExposureDetectors();
     await runFinancialExposureResolvers();
-    await runEscalationMemory().catch(() => {
-      // cron/financial-exposure error (details omitted to protect PII) 
-    });
-    await runPreActivationConversion().catch(() => {
-      // cron/financial-exposure error (details omitted to protect PII) 
-    });
+    await runEscalationMemory().catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
+    await runPreActivationConversion().catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
     return { run: 1 };
   });
 

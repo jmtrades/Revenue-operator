@@ -15,6 +15,7 @@ import {
   detectCounterpartyUnconfirmedRisk,
   detectCommitmentOutcomeUncertain,
 } from "@/lib/exposure-engine";
+import { log } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   const authErr = assertCronAuthorized(request);
@@ -26,26 +27,14 @@ export async function GET(request: NextRequest) {
     const workspaceIds = (rows ?? []).map((r: { id: string }) => r.id);
     const now = new Date();
     for (const workspaceId of workspaceIds) {
-      await detectReplyDelayRisk(workspaceId, now).catch(() => {
-      // cron/exposure-engine error (details omitted to protect PII) 
-    });
-      await detectAttendanceUncertaintyRisk(workspaceId, now).catch(() => {
-      // cron/exposure-engine error (details omitted to protect PII) 
-    });
-      await detectPaymentStallRisk(workspaceId, now).catch(() => {
-      // cron/exposure-engine error (details omitted to protect PII) 
-    });
-      await detectCounterpartyUnconfirmedRisk(workspaceId, now).catch(() => {
-      // cron/exposure-engine error (details omitted to protect PII) 
-    });
-      await detectCommitmentOutcomeUncertain(workspaceId, now).catch(() => {
-      // cron/exposure-engine error (details omitted to protect PII) 
-    });
+      await detectReplyDelayRisk(workspaceId, now).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
+      await detectAttendanceUncertaintyRisk(workspaceId, now).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
+      await detectPaymentStallRisk(workspaceId, now).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
+      await detectCounterpartyUnconfirmedRisk(workspaceId, now).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
+      await detectCommitmentOutcomeUncertain(workspaceId, now).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
     }
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-    await recordCronHeartbeat("exposure-engine").catch(() => {
-      // cron/exposure-engine error (details omitted to protect PII) 
-    });
+    await recordCronHeartbeat("exposure-engine").catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
     return { run: 1, workspaces: workspaceIds.length };
   });
 

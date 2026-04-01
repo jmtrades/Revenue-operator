@@ -11,6 +11,8 @@ import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { notifyWorkspace } from "@/lib/notifications/dispatcher";
+import { log } from "@/lib/logger";
+
 function scoreFromInput(input: { name?: string; phone?: string; email?: string; service_requested?: string; source?: string }): number {
   let score = 0;
   if (input.name?.trim()) score += 10;
@@ -99,9 +101,7 @@ export async function POST(req: NextRequest) {
         phone,
         email: email ?? undefined,
       },
-    }).catch(() => {
-      // Notification error does not affect flow
-    });
+    }).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
   }
 
   return NextResponse.json({ status: "created" });
