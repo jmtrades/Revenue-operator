@@ -31,9 +31,9 @@ const TRUST_ITEMS = [
   { icon: Shield, title: "TCPA Compliant", desc: "Consent tracking, per-contact suppression, and DNC registry support built into every call." },
   { icon: Lock, title: "256-bit Encryption", desc: "All data encrypted in transit and at rest. HMAC-SHA256 authentication on every request." },
   { icon: Server, title: "Workspace Isolation", desc: "Row-level security ensures your data is never accessible to other accounts." },
-  { icon: CheckCircle, title: "SOC 2 Type II", desc: "Security audit in progress. Enterprise-grade access controls and monitoring." },
-  { icon: Phone, title: "HIPAA Ready", desc: "Business Associate Agreements available for healthcare customers." },
-  { icon: Zap, title: "99.9% Uptime Target", desc: "Redundant infrastructure with real-time monitoring and alerting." },
+  { icon: CheckCircle, title: "Enterprise Controls", desc: "Role-based access, audit logging, and enterprise-grade monitoring across every workspace." },
+  { icon: Phone, title: "Healthcare Friendly", desc: "Business Associate Agreements available on request for healthcare customers." },
+  { icon: Zap, title: "High Availability", desc: "Redundant infrastructure with real-time monitoring and alerting." },
 ];
 
 export default function AboutPage() {

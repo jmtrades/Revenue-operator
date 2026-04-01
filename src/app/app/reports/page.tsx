@@ -143,10 +143,10 @@ function getRecoveryVerdict(score: number, atRiskCents?: number): string {
   if (score > 80)
     return "Your autonomous revenue operator is performing in the top tier. Revenue recovery is on track and your pipeline is actively managed.";
   if (score >= 60) {
-    const atRiskAmount = atRiskCents ? (atRiskCents / 100).toLocaleString("en-US", { maximumFractionDigits: 0 }) : "X,XXX";
+    const atRiskAmount = atRiskCents ? (atRiskCents / 100).toLocaleString("en-US", { maximumFractionDigits: 0 }) : "—";
     return `Solid operational performance with identified optimization opportunities. Addressing the risks below could unlock an additional $${atRiskAmount}/month.`;
   }
-  const atRiskAmount = atRiskCents ? (atRiskCents / 100).toLocaleString("en-US", { maximumFractionDigits: 0 }) : "X,XXX";
+  const atRiskAmount = atRiskCents ? (atRiskCents / 100).toLocaleString("en-US", { maximumFractionDigits: 0 }) : "—";
   return `Revenue recovery requires immediate attention. $${atRiskAmount} in pipeline value is at risk without action.`;
 }
 

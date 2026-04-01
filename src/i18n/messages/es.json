@@ -6078,7 +6078,7 @@
     "legalSecurity": "Legal y Seguridad",
     "privacyPolicy": "Política de Privacidad",
     "termsOfService": "Términos de Servicio",
-    "securityBadges": "SOC 2 en progreso · Cifrado 256 bits",
+    "securityBadges": "Cifrado 256-bit · Cifrado en reposo · Conforme RGPD",
     "copyright": "© {year} Revenue Operator. Todos los derechos reservados.",
     "cta": {
       "bookDemo": "Reservar demo",
@@ -9154,8 +9154,9 @@
         "disclaimer": "Gratis. Sin registro. Te llamamos en menos de 10 segundos."
       },
       "compliance": [
-        "SOC 2 Type II",
-        "HIPAA",
+        "Cifrado TLS 256-bit",
+        "Cifrado en reposo",
+        "Enfocado en privacidad",
         "TCPA",
         "GDPR",
         "SSL 256-bit"
@@ -9226,7 +9227,7 @@
       "description": "Activa Revenue Operator en menos de 5 minutos. Cancela cuando quieras. Sin contratos. Sin riesgo.",
       "noCreditCard": "Cancela cuando quieras",
       "moneyBackGuarantee": "Garantía de devolución de 30 días",
-      "compliance": "SOC 2 + HIPAA compatible",
+      "compliance": "Cifrado TLS 256-bit + cifrado en reposo",
       "emailPlaceholder": "tu@empresa.com",
       "startFreeTrial": "Comenzar ahora",
       "getStarted": "Comenzar ahora",

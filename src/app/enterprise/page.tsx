@@ -118,9 +118,9 @@ export default function EnterprisePage() {
             </div>
             <div className="max-w-5xl mx-auto grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {[
-                { label: "SOC 2 Type II", desc: "Annual security audit with continuous monitoring. Enterprise-grade access controls, encryption, and incident response." },
-                { label: "HIPAA Ready", desc: "Business Associate Agreements available for healthcare customers. PHI handling with encryption at rest and in transit." },
-                { label: "99.97% Uptime SLA", desc: "Guaranteed availability backed by redundant infrastructure, automated failover, and 24/7 operational monitoring." },
+                { label: "Enterprise Security", desc: "Enterprise-grade access controls, encryption, incident response, and continuous monitoring." },
+                { label: "Healthcare Friendly", desc: "Business Associate Agreements available on request for healthcare customers. PHI handling with encryption at rest and in transit." },
+                { label: "High Availability", desc: "Redundant infrastructure, automated failover, and 24/7 operational monitoring for maximum uptime." },
                 { label: "256-bit Encryption", desc: "All data encrypted in transit (TLS 1.3) and at rest (AES-256). HMAC-SHA256 authentication on every API request." },
                 { label: "TCPA & GDPR Compliant", desc: "Consent tracking, per-contact suppression, DNC registry support, and data subject rights built into every workflow." },
                 { label: "Workspace Isolation", desc: "Row-level security ensures your data is never accessible to other accounts. Full audit trail on every action." },

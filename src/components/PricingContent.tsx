@@ -524,7 +524,7 @@ export function PricingContent() {
             { icon: Check, text: "TCPA/GDPR compliant" },
             { icon: Clock, text: "Full access included" },
             { icon: Star, text: "Cancel anytime" },
-            { icon: TrendingUp, text: "99.97% uptime SLA" },
+            { icon: TrendingUp, text: "High availability" },
             { icon: Zap, text: "Sub-second response" },
           ].map(({ icon: Icon, text }) => (
             <div

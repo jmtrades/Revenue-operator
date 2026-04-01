@@ -6080,7 +6080,7 @@
     "legalSecurity": "法務・セキュリティ",
     "privacyPolicy": "プライバシーポリシー",
     "termsOfService": "利用規約",
-    "securityBadges": "SOC 2 in progress · 256ビット暗号化",
+    "securityBadges": "256ビット暗号化 · 保存時暗号化 · GDPR準拠",
     "copyright": "© {year} Revenue Operator. All rights reserved.",
     "cta": {
       "bookDemo": "デモを予約",
@@ -9151,8 +9151,9 @@
         "disclaimer": "無料。登録不要。10秒以内にお電話します。"
       },
       "compliance": [
-        "SOC 2 Type II",
-        "HIPAA",
+        "256ビットTLS暗号化",
+        "保存時暗号化",
+        "プライバシー重視",
         "TCPA",
         "GDPR",
         "256ビットSSL"
@@ -9223,7 +9224,7 @@
       "description": "5分以内にRevenue Operatorをライブ化。いつでもキャンセル可能。契約不要。リスクなし。",
       "noCreditCard": "いつでもキャンセル可能",
       "moneyBackGuarantee": "30日間返金保証",
-      "compliance": "SOC 2 + HIPAA準拠",
+      "compliance": "256ビットTLS + 保存時暗号化",
       "emailPlaceholder": "you@company.com",
       "startFreeTrial": "今すぐ始める",
       "getStarted": "今すぐ始める",
