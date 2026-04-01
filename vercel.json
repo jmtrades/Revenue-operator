@@ -136,6 +136,38 @@
     {
       "path": "/api/cron/process-reactivation",
       "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/action-intent-watchdog",
+      "schedule": "*/2 * * * *"
+    },
+    {
+      "path": "/api/cron/approval-expiry",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/hosted-executor",
+      "schedule": "*/2 * * * *"
+    },
+    {
+      "path": "/api/cron/calendar-ended",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/settlement-export",
+      "schedule": "0 5 * * *"
+    },
+    {
+      "path": "/api/cron/data-retention",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/payment-completion",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/opportunity-recovery",
+      "schedule": "*/15 * * * *"
     }
   ]
 }
