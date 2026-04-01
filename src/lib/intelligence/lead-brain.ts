@@ -263,16 +263,34 @@ export async function computeLeadIntelligence(
       riskFlags.push("stale");
     }
 
-    // 15. Determine next best action
+    // 15. Check if lead is enrolled in an active sequence
+    let isEnrolledInSequence = false;
+    try {
+      const { count: enrollCount } = await db
+        .from("sequence_enrollments")
+        .select("id", { count: "exact", head: true })
+        .eq("lead_id", leadId)
+        .eq("workspace_id", workspaceId)
+        .eq("status", "active");
+      isEnrolledInSequence = (enrollCount ?? 0) > 0;
+    } catch {
+      // sequence_enrollments may not exist
+    }
+
+    // 16. Determine next best action
     const nbaResult = await getNextBestAction({
       leadId,
       state: lead.state,
       intent: positiveOutcomeCount > 0 ? "interested" : "exploring",
       riskFlags,
       dealId: undefined,
+      isEnrolledInSequence,
+      hoursSinceLastContact,
+      engagementScore,
+      touchpointCount: calls.length + (signalCount ?? 0),
     });
 
-    // 16. Map action to channel
+    // 17. Map action to channel
     const channelMap: Record<string, string> = {
       ask_clarification: "multi",
       send_proof: "email",
@@ -281,6 +299,10 @@ export async function computeLeadIntelligence(
       schedule_followup: "sms",
       reactivate_later: "email",
       escalate_human: "multi",
+      monitor_sequence: "none",
+      change_channel: "multi",
+      send_email: "email",
+      send_sms: "sms",
     };
 
     const actionChannel = channelMap[nbaResult.action] || "multi";
