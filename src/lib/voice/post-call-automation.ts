@@ -390,7 +390,7 @@ async function updateLeadStatus(
     await db
       .from("leads")
       .update({
-        state: newStatus,
+        status: newStatus,
         score: newScore,
         last_contacted_at: new Date().toISOString(),
       })

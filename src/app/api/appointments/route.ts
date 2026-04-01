@@ -155,7 +155,7 @@ export async function POST(req: NextRequest) {
         phone: contactPhone.trim(),
         email: null,
         company: null,
-        state: "NEW",
+        status: "NEW",
         metadata: { source: "calendar_manual" },
       })
       .select("id")

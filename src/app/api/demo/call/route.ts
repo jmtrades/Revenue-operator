@@ -230,7 +230,7 @@ export async function POST(req: NextRequest) {
       await db
         .from("leads")
         .update({
-          state: "NEW",
+          status: "NEW",
           channel: "demo_call",
           metadata: {
             ...existingMeta,
@@ -249,7 +249,7 @@ export async function POST(req: NextRequest) {
         db.from("leads").insert({
           workspace_id: DEMO_WORKSPACE,
           phone: e164Phone,
-          state: "NEW",
+          status: "NEW",
           channel: "demo_call",
           metadata: {
             source,
@@ -496,7 +496,7 @@ export async function POST(req: NextRequest) {
         const db = (await import("@/lib/db/queries")).getDb();
         const DEMO_WORKSPACE = process.env.DEMO_WORKSPACE_ID ?? "";
         await db.from("leads").update({
-          state: "CALLBACK_REQUESTED",
+          status: "CALLBACK_REQUESTED",
           metadata: {
             source,
             captured_at: new Date().toISOString(),
