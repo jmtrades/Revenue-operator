@@ -20,6 +20,7 @@
  */
 
 import { telnyxRequest } from "./telnyx-client";
+import { log } from "@/lib/logger";
 
 export interface SearchAvailableNumbersParams {
   countryCode?: string;
@@ -192,7 +193,7 @@ export async function searchAvailableNumbers(
         Array.isArray(json.errors) && json.errors[0]?.detail
           ? json.errors[0].detail
           : `Telnyx API error (${response.status})`;
-      console.error("[telnyx-numbers] search error:", errMsg);
+      log("error", "[telnyx-numbers] search error", { error: errMsg });
       return { error: errMsg };
     }
 
@@ -215,7 +216,7 @@ export async function searchAvailableNumbers(
     return numbers;
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : String(err);
-    console.error("[telnyx-numbers] search exception:", errorMessage);
+    log("error", "[telnyx-numbers] search exception", { error: errorMessage });
     return { error: errorMessage };
   }
 }
@@ -272,7 +273,7 @@ export async function purchaseNumber(
     return { numberId, phoneNumber, status };
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : String(err);
-    console.error("[telnyx-numbers] purchase error:", errorMessage);
+    log("error", "[telnyx-numbers] purchase error", { error: errorMessage });
     return { error: errorMessage };
   }
 }
@@ -292,6 +293,7 @@ export async function releaseNumber(
     return { success: true };
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : String(err);
+    log("error", "[telnyx-numbers] release error", { error: errorMessage });
     return { error: errorMessage };
   }
 }
@@ -329,6 +331,7 @@ export async function getPhoneNumberDetails(
     };
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : String(err);
+    log("error", "[telnyx-numbers] get details error", { error: errorMessage });
     return { error: errorMessage };
   }
 }

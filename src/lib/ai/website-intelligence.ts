@@ -3,6 +3,8 @@
  * Supports: websites, descriptions, agencies, solo closers, appointment setters, etc.
  */
 
+import { log } from "@/lib/logger";
+
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
 
@@ -74,7 +76,7 @@ async function fetchUrl(url: string): Promise<string> {
 
     return await response.text();
   } catch (err) {
-    console.error(`Failed to fetch ${url}:`, err);
+    log("error", `Failed to fetch ${url}`, { error: err instanceof Error ? err.message : String(err) });
     return "";
   }
 }
@@ -274,7 +276,7 @@ Be SPECIFIC to their business type. Not generic. Generate realistic scripts from
         : [],
     };
   } catch (err) {
-    console.error("Failed to parse Claude response as JSON:", err);
+    log("error", "Failed to parse Claude response as JSON", { error: err instanceof Error ? err.message : String(err) });
     throw new Error("Failed to generate valid agent scripts");
   }
 }
@@ -352,7 +354,7 @@ Be concise and factual. Extract only information clearly stated on the website.`
         : [],
     };
   } catch (err) {
-    console.error("Failed to parse business info response:", err);
+    log("error", "Failed to parse business info response", { error: err instanceof Error ? err.message : String(err) });
     throw new Error("Failed to extract business information");
   }
 }
@@ -432,7 +434,7 @@ Be realistic and specific to the business described.`;
         : [],
     };
   } catch (err) {
-    console.error("Failed to generate business info:", err);
+    log("error", "Failed to generate business info", { error: err instanceof Error ? err.message : String(err) });
     throw new Error("Failed to generate business information");
   }
 }
@@ -467,7 +469,7 @@ export async function generateBusinessIntelligence(
         throw new Error("No content extracted");
       }
     } catch (err) {
-      console.warn("Failed to fetch website, using description instead:", err);
+      log("warn", "Failed to fetch website, using description instead", { error: err instanceof Error ? err.message : String(err) });
       businessInfo = await generateBusinessInfoFromDescription(input);
       contentContext = `${input.business_description || ""} ${input.product_or_service || ""}`.trim();
     }

@@ -3,6 +3,7 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 export interface CallQualityMetrics {
   call_session_id: string;
@@ -98,9 +99,7 @@ export async function recordCallQuality(
 
   // Log quality score for analytics
   if (quality.score < 50) {
-    console.error(
-      `[voice/quality] Low quality call ${metrics.call_session_id}: score=${quality.score}, flags=${quality.flags.join(",")}`,
-    );
+    log("error", `[voice/quality] Low quality call ${metrics.call_session_id}`, { score: quality.score, flags: quality.flags.join(",") });
   }
 }
 

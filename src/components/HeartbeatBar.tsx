@@ -35,7 +35,7 @@ export function HeartbeatBar() {
           (ap ? ap.conversations_being_warmed + ap.followups_scheduled_24h + ap.attendance_protections + ap.recoveries_running : 0);
         setMaintained(isPaused ? 0 : Math.max(count || 0, 0));
       })
-      .catch(() => {});
+      .catch((e) => { console.warn("[HeartbeatBar] fetch failed:", e instanceof Error ? e.message : String(e)); });
   }, [workspaceId]);
 
   const statusMessage =

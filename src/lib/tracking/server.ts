@@ -2,6 +2,7 @@
 // Directly inserts into Supabase
 
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 export async function trackServerEvent(params: {
   event_name: string;
@@ -20,7 +21,7 @@ export async function trackServerEvent(params: {
       properties: params.properties || {},
     });
   } catch (err) {
-    console.error("[tracking] server event failed:", err);
+    log("error", "[tracking] server event failed", { error: err instanceof Error ? err.message : String(err) });
   }
 }
 

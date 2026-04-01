@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { log } from "@/lib/logger";
 
 type Handler = (
   req: NextRequest,
@@ -14,7 +15,7 @@ export function withErrorHandling(handler: Handler): Handler {
     try {
       return await handler(req, ctx);
     } catch (err) {
-      console.error(`[API Error] ${req.method} ${req.url}:`, err);
+      log("error", `[API Error] ${req.method} ${req.url}`, { error: err instanceof Error ? err.message : String(err) });
       return NextResponse.json(
         { error: "Internal server error" },
         { status: 500 }

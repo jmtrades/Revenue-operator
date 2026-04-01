@@ -4,6 +4,7 @@
  */
 
 import { setWorkspaceSetting, getWorkspaceSettingsByPrefix } from "@/lib/db/workspace-settings";
+import { log } from "@/lib/logger";
 
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
@@ -160,7 +161,7 @@ Be specific and extract EXACT phrases from the transcript when possible.`;
 
     return learning;
   } catch (err) {
-    console.error("Failed to parse learning response:", err);
+    log("error", "Failed to parse learning response", { error: err instanceof Error ? err.message : String(err) });
     throw new Error("Failed to analyze call for learning");
   }
 }

@@ -4,6 +4,7 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 export type DailyMetrics = {
   total_calls: number;
@@ -171,7 +172,7 @@ export async function upsertDailyMetrics(
     .maybeSingle();
 
   if (error) {
-    console.error(`Failed to upsert daily metrics for ${workspaceId} on ${date}:`, error);
+    log("error", `Failed to upsert daily metrics for ${workspaceId} on ${date}`, { error: error?.message });
     return null;
   }
 
@@ -191,7 +192,7 @@ export async function rollupAllWorkspaces(date: string): Promise<{ processed: nu
     .eq("status", "active");
 
   if (wsError || !workspaces || workspaces.length === 0) {
-    console.error("Failed to fetch workspaces for rollup:", wsError);
+    log("error", "Failed to fetch workspaces for rollup", { error: wsError?.message });
     return { processed: 0, failed: 0 };
   }
 
@@ -208,7 +209,7 @@ export async function rollupAllWorkspaces(date: string): Promise<{ processed: nu
         failed++;
       }
     } catch (error) {
-      console.error(`Error processing metrics for workspace ${ws.id}:`, error);
+      log("error", `Error processing metrics for workspace ${ws.id}`, { error: error instanceof Error ? error.message : String(error) });
       failed++;
     }
   }

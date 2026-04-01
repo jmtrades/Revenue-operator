@@ -54,7 +54,7 @@ export function DailySummaryBanner() {
         const list = d.imprints ?? [];
         setImprints(list.slice(0, 3)); // Show at most 3, sparingly
       })
-      .catch(() => {});
+      .catch((e) => { console.warn("[DailySummaryBanner] fetch failed:", e instanceof Error ? e.message : String(e)); });
   }, [show, workspaceId]);
 
   if (!show) return null;

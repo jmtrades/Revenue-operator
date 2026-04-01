@@ -6,6 +6,7 @@
 import { getDb } from "@/lib/db/queries";
 import { resolveBillingTier } from "@/lib/feature-gate/resolver";
 import type { BillingTier } from "@/lib/feature-gate/types";
+import { log } from "@/lib/logger";
 
 /** Voice tier limits — included in base plan (aligned with billing-plans.ts) */
 export const VOICE_TIER_LIMITS = {
@@ -288,7 +289,7 @@ export async function recordVoiceUsage(workspaceId: string, data: VoiceUsageReco
   ]);
 
   if (error) {
-    console.error("[voice/billing] Failed to record usage:", error);
+    log("error", "[voice/billing] Failed to record usage", { error: error?.message });
     throw new Error(`Failed to record voice usage: ${error.message}`);
   }
 }

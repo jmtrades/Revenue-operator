@@ -12,6 +12,7 @@ import { getVoiceProvider } from "@/lib/voice";
 import { resolveVoiceForCall } from "@/lib/voice/resolve-voice";
 import { DEFAULT_RECALL_VOICE_ID as DEFAULT_VOICE_ID } from "@/lib/constants/recall-voices";
 import { normalizePhoneE164 } from "@/lib/phone/normalize";
+import { log } from "@/lib/logger";
 
 export async function executeLeadOutboundCall(
   workspaceId: string,
@@ -78,13 +79,13 @@ export async function executeLeadOutboundCall(
 
   // Enforce contact frequency caps
   if (callCount >= 4) {
-    console.warn("[outbound-safety] Lead reached call frequency cap", { callCount, cap: 4 });
+    log("warn", "[outbound-safety] Lead reached call frequency cap", { callCount, cap: 4 });
     return { ok: false, error: "Lead has reached maximum call frequency for 24-hour period" };
   }
 
   const totalTouches = callCount + smsCount;
   if (totalTouches > 6) {
-    console.warn("[outbound-safety] Lead exceeded total contact limit", { callCount, smsCount, total: totalTouches, cap: 6 });
+    log("warn", "[outbound-safety] Lead exceeded total contact limit", { callCount, smsCount, total: totalTouches, cap: 6 });
     return { ok: false, error: "Lead has exceeded maximum contact frequency for 24-hour period" };
   }
 
@@ -100,17 +101,17 @@ export async function executeLeadOutboundCall(
       .eq("id", leadId)
       .maybeSingle();
     if (optedOut || (leadOptData as { opt_out?: boolean } | null)?.opt_out === true) {
-      console.warn("[outbound-compliance] Lead is opted out — blocking call");
+      log("warn", "[outbound-compliance] Lead is opted out — blocking call");
       return { ok: false, error: "Lead has opted out of contact" };
     }
   } catch (optErr) {
     const errMsg = optErr instanceof Error ? optErr.message : String(optErr);
     // Only fail open if the table doesn't exist yet (e.g. new workspace)
     if (errMsg.includes("does not exist") || errMsg.includes("relation") || errMsg.includes("42P01")) {
-      console.warn("[outbound-compliance] Opt-out table not found — skipping check:", errMsg);
+      log("warn", "[outbound-compliance] Opt-out table not found — skipping check", { error: errMsg });
     } else {
       // Real error (DB down, network issue, etc.) — fail closed for compliance safety
-      console.error("[outbound-compliance] Opt-out check failed — blocking call for safety:", errMsg);
+      log("error", "[outbound-compliance] Opt-out check failed — blocking call for safety", { error: errMsg });
       return { ok: false, error: "Unable to verify opt-out status — call blocked for compliance" };
     }
   }
@@ -140,19 +141,19 @@ export async function executeLeadOutboundCall(
         const startMinutes = startH * 60 + startM;
         const endMinutes = endH * 60 + endM;
         if (currentMinutes < startMinutes || currentMinutes > endMinutes) {
-          console.warn(`[outbound-hours] Outside business hours (${todayHours.start}-${todayHours.end} ${tz})`);
+          log("warn", `[outbound-hours] Outside business hours (${todayHours.start}-${todayHours.end} ${tz})`);
           return { ok: false, error: "Outside business hours — call will be scheduled for next available window" };
         }
       } else {
         // No hours configured for today = closed day
-        console.warn(`[outbound-hours] No business hours configured for ${today}`);
+        log("warn", `[outbound-hours] No business hours configured for ${today}`);
         return { ok: false, error: "Business is closed today — call will be scheduled for next business day" };
       }
     }
     // If no business hours configured at all, allow calls (user hasn't set hours yet)
   } catch (bizErr) {
     // If business context doesn't exist, continue but log
-    console.warn("[outbound-hours] Business context check failed:", bizErr instanceof Error ? bizErr.message : bizErr);
+    log("warn", "[outbound-hours] Business context check failed", { error: bizErr instanceof Error ? bizErr.message : String(bizErr) });
   }
 
   // Outbound calling config differs by orchestration provider.
@@ -359,7 +360,7 @@ YOUR GOAL:
     }
   } catch (err) {
     // Log but don't block on minute check errors
-    console.warn("[outbound-minute-check] Error checking minute limit:", err instanceof Error ? err.message : err);
+    log("warn", "[outbound-minute-check] Error checking minute limit", { error: err instanceof Error ? err.message : String(err) });
   }
 
   const voice = getVoiceProvider();
@@ -369,7 +370,7 @@ YOUR GOAL:
   try {
     resolvedVoice = await resolveVoiceForCall(workspaceId);
   } catch (resolveErr) {
-    console.warn("[outbound] Voice resolution failed, using default:", resolveErr instanceof Error ? resolveErr.message : resolveErr);
+    log("warn", "[outbound] Voice resolution failed, using default", { error: resolveErr instanceof Error ? resolveErr.message : String(resolveErr) });
     resolvedVoice = { voiceId: DEFAULT_VOICE_ID };
   }
 
@@ -396,7 +397,7 @@ YOUR GOAL:
     });
     assistantId = createdId;
   } catch (assistantErr) {
-    console.error("[outbound] Failed to create voice assistant:", assistantErr instanceof Error ? assistantErr.message : assistantErr);
+    log("error", "[outbound] Failed to create voice assistant", { error: assistantErr instanceof Error ? assistantErr.message : String(assistantErr) });
     return { ok: false, error: "Failed to create voice assistant for outbound call" };
   }
 
@@ -423,7 +424,7 @@ YOUR GOAL:
       break; // Success
     } catch (err) {
       lastErr = err instanceof Error ? err : new Error(String(err));
-      console.warn(`[outbound] Attempt ${attempt + 1}/3 failed:`, lastErr.message);
+      log("warn", `[outbound] Attempt ${attempt + 1}/3 failed`, { error: lastErr.message });
       if (attempt < 2) {
         // Sleep before retry
         await new Promise(resolve => setTimeout(resolve, retryDelays[attempt]));
@@ -432,7 +433,7 @@ YOUR GOAL:
   }
 
   if (!callResult) {
-    console.error("[outbound] All 3 retry attempts exhausted for creating outbound call:", lastErr?.message);
+    log("error", "[outbound] All 3 retry attempts exhausted for creating outbound call", { error: lastErr?.message });
     return { ok: false, error: "Outbound call failed after retries" };
   }
 
@@ -440,7 +441,7 @@ YOUR GOAL:
   // This prevents orphaned call_sessions that can never be matched to status webhooks.
   const externalMeetingId = callResult.callId && callResult.callId.trim().length > 0 ? callResult.callId.trim() : null;
   if (!externalMeetingId) {
-    console.error("[outbound] Voice provider returned no callId — skipping call_session insert to prevent orphan");
+    log("error", "[outbound] Voice provider returned no callId — skipping call_session insert to prevent orphan");
     return { ok: false, error: "Voice provider returned no call identifier" };
   }
 
@@ -458,7 +459,7 @@ YOUR GOAL:
     .maybeSingle();
 
   if (insertErr || !sessionRow) {
-    console.error("[outbound] Failed to create call session after voice call initiated:", insertErr?.message);
+    log("error", "[outbound] Failed to create call session after voice call initiated", { error: insertErr?.message });
     return { ok: false, error: "Failed to create call session" };
   }
 

@@ -7,6 +7,7 @@ import { getDb } from "@/lib/db/queries";
 import type { DealStateVector } from "@/lib/engines/perception";
 import { setLeadPlan } from "@/lib/plans/lead-plan";
 import { getSequenceDelayMultiplier, type WorkspaceStrategyState } from "@/lib/strategy/planner";
+import { log } from "@/lib/logger";
 
 /* ─── Safety Limits ─── */
 /** Maximum steps any single sequence can have. Prevents runaway automation. */
@@ -363,7 +364,7 @@ export async function enrollContact(
       console.warn(`[sequence-safety] Concurrent enrollment race caught for lead ${contactId} in sequence ${sequenceId}`);
       return null;
     }
-    console.error(`[sequence-safety] Enrollment insert failed:`, error.message);
+    log("error", `[sequence-safety] Enrollment insert failed`, { error: error.message });
     return null;
   }
   if (!enrollment) return null;
@@ -635,7 +636,7 @@ export async function advanceEnrollment(
               // Non-retryable client errors (4xx except 429)
               if (emailRes.status >= 400 && emailRes.status < 500 && emailRes.status !== 429) {
                 const errText = await emailRes.text().catch(() => "unknown");
-                console.error(`[sequence-email] Resend API ${emailRes.status}: ${errText}`);
+                log("error", `[sequence-email] Resend API ${emailRes.status}`, { error: errText });
                 break;
               }
               // Retryable: 429 or 5xx — log so we can diagnose
@@ -645,7 +646,7 @@ export async function advanceEnrollment(
                 await new Promise(r => setTimeout(r, (emailAttempt + 1) * 2000));
               }
             } catch (fetchErr) {
-              console.error("[sequence-email] Email fetch failed:", fetchErr instanceof Error ? fetchErr.message : String(fetchErr));
+              log("error", "[sequence-email] Email fetch failed", { error: fetchErr instanceof Error ? fetchErr.message : String(fetchErr) });
               if (emailAttempt < maxEmailRetries - 1) {
                 await new Promise(r => setTimeout(r, (emailAttempt + 1) * 2000));
               }
@@ -685,7 +686,7 @@ export async function advanceEnrollment(
       console.warn(`[sequence] Step ${nextStep.step_order} (${stepToExecute.type}) failed for enrollment ${enrollmentId} — retry ${retryCount + 1}/3 scheduled`);
     } else {
       // Max retries exceeded: skip this step and advance
-      console.error(`[sequence] Step ${nextStep.step_order} (${stepToExecute.type}) failed 3 times for enrollment ${enrollmentId} — skipping step`);
+      log("error", `[sequence] Step ${nextStep.step_order} (${stepToExecute.type}) failed 3 times for enrollment ${enrollmentId} — skipping step`);
       const nextDueDate = new Date();
       nextDueDate.setMinutes(nextDueDate.getMinutes() + nextStep.delay_minutes);
       await db
@@ -998,7 +999,7 @@ export async function processWorkspaceDueEnrollments(
         processedCount++;
       }
     } catch (err) {
-      console.error(`[Sequence] Error advancing enrollment ${enrollment.id}:`, err);
+      log("error", `[Sequence] Error advancing enrollment ${enrollment.id}`, { error: err instanceof Error ? err.message : String(err) });
     }
   }
 

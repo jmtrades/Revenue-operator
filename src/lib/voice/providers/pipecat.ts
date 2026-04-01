@@ -6,6 +6,7 @@ import type {
   WebhookEvent,
 } from "../types";
 import crypto from "node:crypto";
+import { log } from "@/lib/logger";
 
 type PipecatAssistantConfig = {
   assistantId: string;
@@ -144,7 +145,7 @@ export class PipecatVoiceProvider implements VoiceProvider {
 
       return { callId: result.callId ?? callId, status: "queued", provider: "pipecat" };
     } catch (err) {
-      console.error("Outbound call failed:", err instanceof Error ? err.message : err);
+      log("error", "Outbound call failed", { error: err instanceof Error ? err.message : String(err) });
       return { callId, status: "failed", provider: "pipecat" };
     }
   }
