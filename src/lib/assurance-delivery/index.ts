@@ -51,11 +51,11 @@ export async function getAssuranceLineForAudience(
   return line;
 }
 
-function recordAssuranceAttemptMarker(workspaceId: string): void {
-  const db = getDb();
-  void Promise.resolve(
-    db.from("assurance_attempt_marker").insert({ workspace_id: workspaceId })
-  ).catch(() => {});
+async function recordAssuranceAttemptMarker(workspaceId: string): Promise<void> {
+  try {
+    const db = getDb();
+    await db.from("assurance_attempt_marker").insert({ workspace_id: workspaceId });
+  } catch { /* non-critical marker */ }
 }
 
 /** Send single line as subject and body (Resend). */
