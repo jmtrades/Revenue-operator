@@ -6,8 +6,15 @@
 import { getDb } from "@/lib/db/queries";
 import { enqueueDecision } from "@/lib/queue";
 import { upsertRevenueLifecycle } from "@/lib/revenue-lifecycle";
+import { log } from "@/lib/logger";
 
 export const ATTENDANCE_OPERATOR = "AttendanceOperator";
+
+const logAttendanceOperatorSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `attendance-operator.${ctx}`, {
+    error: e instanceof Error ? e.message : String(e),
+  });
+};
 
 /** Find leads with upcoming appointments (scheduled / secured); enqueue decision for reminder/confirmation */
 export async function runAttendanceOperator(workspaceId: string): Promise<{ scheduled: number }> {
@@ -28,7 +35,7 @@ export async function runAttendanceOperator(workspaceId: string): Promise<{ sche
 
   let scheduled = 0;
   for (const row of rows as { lead_id: string }[]) {
-    await enqueueDecision(row.lead_id, workspaceId, row.lead_id).catch(() => {});
+    await enqueueDecision(row.lead_id, workspaceId, row.lead_id).catch(logAttendanceOperatorSideEffect("enqueue-decision"));
     scheduled += 1;
   }
   return { scheduled };

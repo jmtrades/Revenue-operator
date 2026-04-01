@@ -3,6 +3,7 @@
  * Signed webhooks, retry with exponential backoff, DLQ for failed events.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 
 export type OutboundEventType =
@@ -57,7 +58,9 @@ export async function emitOutboundEvent(
   }).select("id").maybeSingle();
 
   if (inserted) {
-    processWebhookDeliveries().catch(() => {});
+    processWebhookDeliveries().catch((e) => {
+      log("error", "processWebhookDeliveries failed", { error: e instanceof Error ? e.message : String(e) });
+    });
   }
 }
 

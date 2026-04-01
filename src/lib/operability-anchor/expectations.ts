@@ -3,6 +3,7 @@
  * Present-state only. No prediction.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 import type { ExpectationType } from "./types";
 
@@ -44,7 +45,9 @@ export async function upsertOperationalExpectation(
   }
   if (maintainedBySystem) {
     const { recordContinuityLoad } = await import("@/lib/continuity-load");
-    recordContinuityLoad(workspaceId, "expectation_maintained", `${expectationType}:${referenceId}`).catch(() => {});
+    recordContinuityLoad(workspaceId, "expectation_maintained", `${expectationType}:${referenceId}`).catch((e) => {
+      log("error", "recordContinuityLoad failed", { error: e instanceof Error ? e.message : String(e) });
+    });
   }
 }
 

@@ -4,6 +4,7 @@
  * Sanitizer: one sentence, past tense, max 80 chars.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 
 const MAX_ORIENTATION_CHARS = 80;
@@ -39,7 +40,9 @@ export async function recordOrientationStatement(workspaceId: string, text: stri
     created_at: new Date().toISOString(),
   });
   const { recordOperationalDay } = await import("@/lib/operational-timeline-memory");
-  recordOperationalDay(workspaceId).catch(() => {});
+  recordOperationalDay(workspaceId).catch((e) => {
+    log("error", "recordOperationalDay failed", { error: e instanceof Error ? e.message : String(e) });
+  });
 }
 
 export async function getRecentOrientationStatements(

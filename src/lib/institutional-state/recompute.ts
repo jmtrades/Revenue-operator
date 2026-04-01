@@ -15,8 +15,15 @@ import {
 import { hasCounterpartyConfirmationDisplacementInLastDays } from "@/lib/coordination-displacement";
 import { hasReferenceAcrossDays } from "@/lib/record-reference";
 import { authorityExternalized } from "@/lib/responsibility-moments";
+import { log } from "@/lib/logger";
 
 export type InstitutionalState = "none" | "embedded" | "reliant" | "assumed" | "institutional";
+
+const logInstitutionalStateSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `institutional-state.${ctx}`, {
+    error: e instanceof Error ? e.message : String(e),
+  });
+};
 
 const DAYS = 7;
 
@@ -98,7 +105,7 @@ export async function recomputeInstitutionalState(workspaceId: string): Promise<
 
   if (next === "assumed" && prevState !== "assumed" && !existing.assumed_orientation_recorded_at) {
     const { recordOrientationStatement } = await import("@/lib/orientation/records");
-    await recordOrientationStatement(workspaceId, "The operating standard became assumed.").catch(() => {});
+    await recordOrientationStatement(workspaceId, "The operating standard became assumed.").catch(logInstitutionalStateSideEffect("record-assumed"));
     const now = new Date().toISOString();
     await db
       .from("workspace_orientation_state")
@@ -108,7 +115,7 @@ export async function recomputeInstitutionalState(workspaceId: string): Promise<
 
   if (next === "institutional" && prevState !== "institutional" && !existing.institutional_orientation_recorded_at) {
     const { recordOrientationStatement } = await import("@/lib/orientation/records");
-    await recordOrientationStatement(workspaceId, "The operating responsibility transferred to the process.").catch(() => {});
+    await recordOrientationStatement(workspaceId, "The operating responsibility transferred to the process.").catch(logInstitutionalStateSideEffect("record-institutional"));
     const now = new Date().toISOString();
     await db
       .from("workspace_orientation_state")

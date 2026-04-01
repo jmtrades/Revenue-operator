@@ -4,6 +4,7 @@
  * System remains autonomous for normal leads.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 
 export type EscalationTrigger =
@@ -174,7 +175,9 @@ export async function logEscalation(
 
   if (id && OPERATIONAL_RISK_REASONS.includes(escalationReason)) {
     const { sendOwnerAssuranceEmail } = await import("@/lib/operational-presence");
-    sendOwnerAssuranceEmail(workspaceId).catch(() => {});
+    sendOwnerAssuranceEmail(workspaceId).catch((e) => {
+      log("error", "sendOwnerAssuranceEmail failed", { error: e instanceof Error ? e.message : String(e) });
+    });
   }
 
   const { breakOperationalConfidenceStreak } = await import("@/lib/operational-confidence-streak");

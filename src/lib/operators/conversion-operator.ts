@@ -5,6 +5,14 @@
 
 import { getDb } from "@/lib/db/queries";
 import { enqueueDecision } from "@/lib/queue";
+import { log } from "@/lib/logger";
+
+const logConversionOperatorSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `conversion-operator.${ctx}`, {
+    error: e instanceof Error ? e.message : String(e),
+  });
+};
+
 export const CONVERSION_OPERATOR = "ConversionOperator";
 
 /** Find leads in active_prospect/potential with recent activity and no booking; enqueue decision to drive booking */
@@ -34,7 +42,7 @@ export async function runConversionOperator(workspaceId: string): Promise<{ sche
   for (const lead of leads ?? []) {
     const l = lead as { id: string; state: string };
     if (["BOOKED", "SHOWED", "WON", "LOST", "CLOSED"].includes(l.state)) continue;
-    await enqueueDecision(l.id, workspaceId, l.id).catch(() => {});
+    await enqueueDecision(l.id, workspaceId, l.id).catch(logConversionOperatorSideEffect("enqueue-decision"));
     scheduled += 1;
   }
   return { scheduled };

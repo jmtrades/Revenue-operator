@@ -3,10 +3,17 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 const WINDOW_DAYS = 7;
 const MIN_EVENTS = 3;
 const MIN_DISTINCT_DAYS = 2;
+
+const logNormalizationSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `normalization-recognition.${ctx}`, {
+    error: e instanceof Error ? e.message : String(e),
+  });
+};
 
 export async function normalizationEstablished(workspaceId: string): Promise<boolean> {
   const db = getDb();
@@ -49,11 +56,11 @@ export async function recordNormalizationOrientationOnce(workspaceId: string): P
 
   const { recordOrientationStatement } = await import("@/lib/orientation/records");
   const { NORMALIZATION_ORIENTATION_STATEMENT } = await import("./doctrine");
-  await recordOrientationStatement(workspaceId, NORMALIZATION_ORIENTATION_STATEMENT).catch(() => {});
+  await recordOrientationStatement(workspaceId, NORMALIZATION_ORIENTATION_STATEMENT).catch(logNormalizationSideEffect("record-statement"));
 
   const now = new Date().toISOString();
   const { recordContinuityLoad } = await import("@/lib/continuity-load");
-  recordContinuityLoad(workspaceId, "normalized_operation", `normalization:${now.slice(0, 10)}`).catch(() => {});
+  recordContinuityLoad(workspaceId, "normalized_operation", `normalization:${now.slice(0, 10)}`).catch(logNormalizationSideEffect("record-continuity-load"));
   const { data: row } = await db.from("workspace_orientation_state").select("workspace_id").eq("workspace_id", workspaceId).maybeSingle();
   if (row) {
     await db

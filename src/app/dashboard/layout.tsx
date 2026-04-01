@@ -199,7 +199,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   // Record dashboard open for absence-confidence (do not send reassurance if opened in last 72h)
   useEffect(() => {
     if (!workspaceId) return;
-    fetch(`/api/dashboard/ping?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }).catch(() => {});
+    fetch(`/api/dashboard/ping?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }).catch((e) => { console.warn("[layout] failed:", e instanceof Error ? e.message : String(e)); });
   }, [workspaceId]);
 
   useEffect(() => {

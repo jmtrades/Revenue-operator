@@ -81,7 +81,7 @@ export default function PublicWorkPage() {
   const copyRecordLink = useCallback(() => {
     if (typeof window === "undefined" || !externalRef) return;
     const url = `${window.location.origin}/public/work/${encodeURIComponent(externalRef)}`;
-    navigator.clipboard.writeText(url).catch(() => {});
+    navigator.clipboard.writeText(url).catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
   }, [externalRef]);
 
   if (!externalRef || notFound) {

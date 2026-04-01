@@ -2,6 +2,7 @@
  * Post-call follow-up execution: safe, policy-respecting, commitment-aware
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 import { enqueue } from "@/lib/queue";
 import { evaluateState } from "@/lib/state-machine";
@@ -70,8 +71,8 @@ export async function executePostCallPlan(
   try {
     const { recalculateLeadScoreFromDb } = await import("@/lib/lead-scoring");
     void recalculateLeadScoreFromDb(leadId);
-  } catch {
-    // non-blocking
+  } catch (e) {
+    log("error", "recalculateLeadScoreFromDb failed", { error: e instanceof Error ? e.message : String(e) });
   }
 
   const commitmentScore = await getCommitmentScore(leadId);
@@ -86,7 +87,9 @@ export async function executePostCallPlan(
         leadId,
         workspaceId,
         eventId: callSessionId,
-      }).catch(() => {});
+      }).catch((e) => {
+        log("error", "enqueue post-call plan failed", { error: e instanceof Error ? e.message : String(e) });
+      });
     }, Math.min(delayMs, 2 * 60 * 60 * 1000));
   }
 
@@ -100,7 +103,9 @@ export async function executePostCallPlan(
           leadId,
           workspaceId,
           eventId: callSessionId,
-        }).catch(() => {});
+        }).catch((e) => {
+        log("error", "enqueue post-call plan failed", { error: e instanceof Error ? e.message : String(e) });
+      });
       }, Math.min(delayMs, 48 * 60 * 60 * 1000));
     }
   }

@@ -6,6 +6,7 @@
 
 export const dynamic = "force-dynamic";
 
+import { log } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { checkRateLimit } from "@/lib/rate-limit";
@@ -200,7 +201,11 @@ export async function POST(req: NextRequest) {
       chunks.push(value);
       totalBytes += value.length;
     }
-    reader.cancel().catch(() => {});
+    reader.cancel().catch((e) => {
+      log("error", "reader.cancel() failed", {
+        error: e instanceof Error ? e.message : String(e),
+      });
+    });
 
     const html = new TextDecoder("utf-8", { fatal: false }).decode(
       chunks.length === 1 ? chunks[0] : Buffer.concat(chunks),

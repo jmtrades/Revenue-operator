@@ -2,6 +2,7 @@
  * Record a causal chain. Deterministic: only state transitions and timing.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 import type { CausalChainInput } from "./types";
 
@@ -23,14 +24,18 @@ export async function recordCausalChain(input: CausalChainInput): Promise<void> 
       input.workspace_id,
       "outcome_caused",
       `${input.subject_type}:${input.subject_id}`
-    ).catch(() => {});
+    ).catch((e) => {
+      log("error", "recordContinuityLoad failed", { error: e instanceof Error ? e.message : String(e) });
+    });
     const { resolveExposureFromCausalChain } = await import("@/lib/exposure-engine");
     resolveExposureFromCausalChain(
       input.workspace_id,
       input.intervention_type,
       input.subject_type,
       input.subject_id
-    ).catch(() => {});
+    ).catch((e) => {
+      log("error", "resolveExposureFromCausalChain failed", { error: e instanceof Error ? e.message : String(e) });
+    });
   }
 }
 

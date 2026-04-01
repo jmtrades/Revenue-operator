@@ -4,6 +4,13 @@
 
 import { getDb } from "@/lib/db/queries";
 import { recordOrientationStatement } from "@/lib/orientation/records";
+import { log } from "@/lib/logger";
+
+const logAuthorityTransferSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `authority-transfer.${ctx}`, {
+    error: e instanceof Error ? e.message : String(e),
+  });
+};
 
 /**
  * Detect and record authority transfer when downstream resolves originator/counterparty responsibility.
@@ -50,7 +57,7 @@ export async function detectAndRecordAuthorityTransfer(
       .maybeSingle();
     
     if (!existing) {
-      await recordOrientationStatement(workspaceId, "Authority shifted beyond the original participants.").catch(() => {});
+      await recordOrientationStatement(workspaceId, "Authority shifted beyond the original participants.").catch(logAuthorityTransferSideEffect("record-statement"));
     }
   }
 }

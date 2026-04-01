@@ -6,10 +6,15 @@
 
 import { getDb } from "@/lib/db/queries";
 import { createIncidentStatement } from "@/lib/incidents";
+import { log } from "@/lib/logger";
 import type { IncidentCategory } from "@/lib/incidents";
 import { getWorkspaceIdsWithAutomationAllowed } from "./installation-state";
 import { getInstallationState } from "@/lib/installation";
 import { recordObservedRiskEvent } from "@/lib/installation";
+
+const logRareSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `rare-events.${ctx}`, { error: e instanceof Error ? e.message : String(e) });
+};
 
 const DEDUPE_DAYS = 7;
 const LONG_GAP_HOURS = 48;
@@ -67,7 +72,7 @@ async function detectLongGapFollowUp(): Promise<void> {
       if (!isBusiness) continue;
       if (msg.created_at >= cutoff) continue;
       if (await alreadyReported(workspaceId, "long_gap_followup", cid)) continue;
-      await createIncidentStatement(workspaceId, "long_gap_followup", cid).catch(() => {});
+      await createIncidentStatement(workspaceId, "long_gap_followup", cid).catch(logRareSideEffect("long_gap_followup"));
     }
   }
 }
@@ -112,7 +117,7 @@ async function detectHighValueInquiryDelay(): Promise<void> {
       const hasReplyAfter = list.some((m, i) => i > 0 && (m.role === "assistant" || m.role === "business"));
       if (hasReplyAfter) continue;
       if (await alreadyReported(workspaceId, "high_value_inquiry_delay", cid)) continue;
-      await createIncidentStatement(workspaceId, "high_value_inquiry_delay", cid).catch(() => {});
+      await createIncidentStatement(workspaceId, "high_value_inquiry_delay", cid).catch(logRareSideEffect("high_value_inquiry_delay"));
     }
   }
 }
@@ -135,7 +140,7 @@ async function detectCompletedWorkUnpaid(): Promise<void> {
   for (const row of (obligations ?? []) as { workspace_id: string; id: string; subject_type: string; subject_id: string }[]) {
     const ref = `${row.subject_type}:${row.subject_id}`;
     if (await alreadyReported(row.workspace_id, "completed_work_unpaid", ref)) continue;
-    await createIncidentStatement(row.workspace_id, "completed_work_unpaid", ref).catch(() => {});
+    await createIncidentStatement(row.workspace_id, "completed_work_unpaid", ref).catch(logRareSideEffect("completed_work_unpaid"));
   }
 }
 
@@ -172,7 +177,7 @@ async function detectReturningCustomerDrop(): Promise<void> {
       const leadId = (conv as { lead_id?: string } | null)?.lead_id;
       if (!leadId || !repeatLeadIds.includes(leadId)) continue;
       if (await alreadyReported(workspaceId, "returning_customer_drop", opp.conversation_id)) continue;
-      await createIncidentStatement(workspaceId, "returning_customer_drop", opp.conversation_id).catch(() => {});
+      await createIncidentStatement(workspaceId, "returning_customer_drop", opp.conversation_id).catch(logRareSideEffect("returning_customer_drop"));
     }
   }
 }
@@ -210,9 +215,9 @@ async function detectSilenceRiskUrgentIntent(): Promise<void> {
       if (await alreadyReported(workspaceId, "silence_risk_urgent_intent", cid)) continue;
       const state = await getInstallationState(workspaceId);
       if (state && state.phase !== "active") {
-        await recordObservedRiskEvent(workspaceId, "unresponded_conversation", "conversation", cid, cid).catch(() => {});
+        await recordObservedRiskEvent(workspaceId, "unresponded_conversation", "conversation", cid, cid).catch(logRareSideEffect("record_observed_risk"));
       }
-      await createIncidentStatement(workspaceId, "silence_risk_urgent_intent", cid).catch(() => {});
+      await createIncidentStatement(workspaceId, "silence_risk_urgent_intent", cid).catch(logRareSideEffect("silence_risk_urgent_intent"));
     }
   }
 }
@@ -251,9 +256,9 @@ async function detectPromiseFollowthroughGap(): Promise<void> {
       if (await alreadyReported(workspaceId, "promise_followthrough_gap", cid)) continue;
       const state = await getInstallationState(workspaceId);
       if (state && state.phase !== "active") {
-        await recordObservedRiskEvent(workspaceId, "unresponded_conversation", "conversation", cid, cid).catch(() => {});
+        await recordObservedRiskEvent(workspaceId, "unresponded_conversation", "conversation", cid, cid).catch(logRareSideEffect("record_observed_risk_promise"));
       }
-      await createIncidentStatement(workspaceId, "promise_followthrough_gap", cid).catch(() => {});
+      await createIncidentStatement(workspaceId, "promise_followthrough_gap", cid).catch(logRareSideEffect("promise_followthrough_gap"));
     }
   }
 }
@@ -285,9 +290,9 @@ async function detectDepositGapAfterBooking(): Promise<void> {
     if (await alreadyReported(row.workspace_id, "deposit_gap_after_booking", ref)) continue;
     const state = await getInstallationState(row.workspace_id);
     if (state && state.phase !== "active") {
-      await recordObservedRiskEvent(row.workspace_id, "missed_confirmation", "booking", row.subject_id, ref).catch(() => {});
+      await recordObservedRiskEvent(row.workspace_id, "missed_confirmation", "booking", row.subject_id, ref).catch(logRareSideEffect("record_observed_risk_deposit"));
     }
-    await createIncidentStatement(row.workspace_id, "deposit_gap_after_booking", ref).catch(() => {});
+    await createIncidentStatement(row.workspace_id, "deposit_gap_after_booking", ref).catch(logRareSideEffect("deposit_gap_after_booking"));
   }
 }
 

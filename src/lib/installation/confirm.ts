@@ -3,6 +3,7 @@
  * One-time state: first acknowledged thread, proof capsule, absence moment all exist.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 import { recordOrientationStatement } from "@/lib/orientation/records";
 
@@ -60,7 +61,9 @@ export async function checkAndConfirmInstallation(workspaceId: string): Promise<
     .update({ installation_confirmed_at: now })
     .eq("id", workspaceId);
   
-  await recordOrientationStatement(workspaceId, "Operational recording is now active.").catch(() => {});
+  await recordOrientationStatement(workspaceId, "Operational recording is now active.").catch((e) => {
+    log("error", "recordOrientationStatement failed", { error: e instanceof Error ? e.message : String(e) });
+  });
   
   return true;
 }

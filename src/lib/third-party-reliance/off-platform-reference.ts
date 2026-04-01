@@ -4,6 +4,13 @@
 
 import { getDb } from "@/lib/db/queries";
 import { recordOrientationStatement } from "@/lib/orientation/records";
+import { log } from "@/lib/logger";
+
+const logOffPlatformReferenceSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `off-platform-reference.${ctx}`, {
+    error: e instanceof Error ? e.message : String(e),
+  });
+};
 
 /**
  * Detect and record when a new thread references a past thread within 48h by different participant.
@@ -60,6 +67,6 @@ export async function detectAndRecordOffPlatformReference(
     .maybeSingle();
   
   if (!existing) {
-    await recordOrientationStatement(workspaceId, "This record informed subsequent work.").catch(() => {});
+    await recordOrientationStatement(workspaceId, "This record informed subsequent work.").catch(logOffPlatformReferenceSideEffect("record-statement"));
   }
 }

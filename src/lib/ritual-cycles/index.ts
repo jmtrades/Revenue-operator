@@ -3,6 +3,7 @@
  * Engines enforce timing. Removal feels disorienting.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 import { appendNarrative } from "@/lib/confidence-engine";
 
@@ -31,7 +32,9 @@ export async function runDailyContinuityCycle(workspaceId: string): Promise<void
     .from("ritual_cycle_state")
     .update({ daily_continuity_last_at: now, updated_at: now })
     .eq("workspace_id", workspaceId);
-  await appendNarrative(workspaceId, "action_executed", "Daily continuity cycle completed.").catch(() => {});
+  await appendNarrative(workspaceId, "action_executed", "Daily continuity cycle completed.").catch((e) => {
+    log("error", "appendNarrative daily cycle failed", { error: e instanceof Error ? e.message : String(e) });
+  });
 }
 
 /** Run weekly closure cycle. */
@@ -43,7 +46,9 @@ export async function runWeeklyClosureCycle(workspaceId: string): Promise<void> 
     .from("ritual_cycle_state")
     .update({ weekly_closure_last_at: now, updated_at: now })
     .eq("workspace_id", workspaceId);
-  await appendNarrative(workspaceId, "outcome_resolved", "Weekly closure cycle completed.").catch(() => {});
+  await appendNarrative(workspaceId, "outcome_resolved", "Weekly closure cycle completed.").catch((e) => {
+    log("error", "appendNarrative weekly cycle failed", { error: e instanceof Error ? e.message : String(e) });
+  });
 }
 
 /** Run post-outcome stabilization (after recovery or resolution). */

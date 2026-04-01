@@ -165,7 +165,7 @@ export default function AppSettingsPage() {
           setSystemHealthData({ passed, total });
         }
       })
-      .catch(() => {});
+      .catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
   }, [workspaceId]);
 
   const handleSaveProfile = async () => {

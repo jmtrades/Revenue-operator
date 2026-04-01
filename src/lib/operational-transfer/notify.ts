@@ -6,6 +6,11 @@
 
 import { getDb } from "@/lib/db/queries";
 import { emitOutboundEvent } from "@/lib/outbound-events";
+import { log } from "@/lib/logger";
+
+const logNotifySideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `notify.${ctx}`, { error: e instanceof Error ? e.message : String(e) });
+};
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const EMAIL_FROM = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@recall-touch.com>";
@@ -63,10 +68,10 @@ export async function notifyHandoff(
 
   const { maybeSendEscalationContrast, maybeSendRemovalSensitivity } = await import("@/lib/awareness-timing/relief-events");
   if (await maybeSendEscalationContrast(workspaceId)) return;
-  await maybeSendRemovalSensitivity(workspaceId).catch(() => {});
+  await maybeSendRemovalSensitivity(workspaceId).catch((e: unknown) => { log("warn", "notify.removal-sensitivity", { error: e instanceof Error ? e.message : String(e) }); });
 
   const { maybeSendOrientationPending } = await import("@/lib/orientation/removal-shock");
-  await maybeSendOrientationPending(workspaceId).catch(() => {});
+  await maybeSendOrientationPending(workspaceId).catch((e: unknown) => { log("warn", "notify.orientation-pending", { error: e instanceof Error ? e.message : String(e) }); });
 
   const db = getDb();
   let itemName = params.who;
@@ -96,8 +101,8 @@ export async function notifyHandoff(
   // Outbound webhook (handoff event type — we need to support it in outbound-events)
   try {
     await emitHandoffEvent(workspaceId, payload, leadId);
-  } catch {
-    // non-blocking
+  } catch (webhookErr) {
+    logNotifySideEffect("emit_handoff_event")(webhookErr);
   }
 
   let beyondScopeLine = "";
@@ -105,8 +110,8 @@ export async function notifyHandoff(
     const { isEngineAllowedForWorkspace } = await import("@/lib/operational-engines");
     const allowed = await isEngineAllowedForWorkspace(workspaceId, "commitment_reliability");
     if (!allowed) beyondScopeLine = "\nBeyond scope.\nAn entry exists for record.\nUnrecorded outcomes create exposure.\n";
-  } catch {
-    // default: within scope
+  } catch (engineErr) {
+    logNotifySideEffect("check_engine_allowed")(engineErr);
   }
 
   const subject = "Outside authority.";
@@ -122,13 +127,13 @@ Entry restores reliance.
 Entry is the operational boundary.`;
   const recipients = [...(owner ? [owner] : []), ...team].filter((e, i, a) => a.indexOf(e) === i);
   for (const to of recipients) {
-    await sendEmail(to, subject, text).catch(() => {});
+    await sendEmail(to, subject, text).catch(logNotifySideEffect("send_email"));
   }
 
   await db.from("escalation_logs").update({ notified_at: new Date().toISOString() }).eq("id", escalationId);
 
   const { recordOrientationStatement } = await import("@/lib/orientation/records");
-  recordOrientationStatement(workspaceId, "Responsibility transferred to the provider.").catch(() => {});
+  recordOrientationStatement(workspaceId, "Responsibility transferred to the provider.").catch(logNotifySideEffect("record_orientation_statement"));
 
   const { logPresenceSent } = await import("@/lib/operational-presence");
   await logPresenceSent(workspaceId, "decision_required");
@@ -162,7 +167,7 @@ async function emitHandoffEvent(
     max_attempts: maxAttempts,
   });
   const { processWebhookDeliveries } = await import("@/lib/outbound-events");
-  processWebhookDeliveries().catch(() => {});
+  processWebhookDeliveries().catch(logNotifySideEffect("process_webhook_deliveries"));
 }
 
 /** Booking confirmed: time reserved, decision owner is you. */
@@ -181,15 +186,15 @@ export async function notifyBookingOwnership(
   };
   try {
     await emitOutboundEvent(workspaceId, "call_booked", payload, leadId);
-  } catch {
-    // non-blocking
+  } catch (emitErr) {
+    logNotifySideEffect("emit_outbound_event")(emitErr);
   }
   const subject = "Time reserved — decision owner: you";
   const detail = [params.leadName && `Lead: ${params.leadName}`, params.slotAt && `Slot: ${params.slotAt}`].filter(Boolean).join("\n");
   const text = `${message}\n\n${detail || "Open Work for details."}`;
   const recipients = [...(owner ? [owner] : []), ...team].filter((e, i, a) => a.indexOf(e) === i);
   for (const to of recipients) {
-    await sendEmail(to, subject, text).catch(() => {});
+    await sendEmail(to, subject, text).catch(logNotifySideEffect("send_email"));
   }
 }
 
@@ -212,8 +217,8 @@ export async function notifyBookingShortly(workspaceId: string): Promise<void> {
         sent_local_date: localDate,
         sent_at: new Date().toISOString(),
       });
-    } catch {
-      // non-blocking
+    } catch (dbErr) {
+      logNotifySideEffect("insert_booking_shortly_sent")(dbErr);
     }
   }
 }

@@ -535,7 +535,7 @@ export default function LeadsPage() {
         setLeads(mapped);
         persistLeadsSnapshot(workspaceId, mapped);
       })
-      .catch(() => {});
+      .catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
   };
 
   const persistLeadStatus = (leadId: string, status: LeadStatus) => {

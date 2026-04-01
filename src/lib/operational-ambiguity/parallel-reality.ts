@@ -4,6 +4,13 @@
 
 import { getDb } from "@/lib/db/queries";
 import { recordOrientationStatement } from "@/lib/orientation/records";
+import { log } from "@/lib/logger";
+
+const logParallelRealitySideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `parallel-reality.${ctx}`, {
+    error: e instanceof Error ? e.message : String(e),
+  });
+};
 
 /**
  * Detect and record parallel reality when activity occurs about same subject within 24h without thread reference.
@@ -65,7 +72,7 @@ export async function detectAndRecordParallelReality(
           .limit(1)
           .maybeSingle();
         if (!ref) {
-          await recordOrientationStatement(workspaceId, "Related activity occurred without reference to this record.").catch(() => {});
+          await recordOrientationStatement(workspaceId, "Related activity occurred without reference to this record.").catch(logParallelRealitySideEffect("record-statement"));
           return true;
         }
       }
@@ -92,7 +99,7 @@ export async function detectAndRecordParallelReality(
           .limit(1)
           .maybeSingle();
         if (!ref) {
-          await recordOrientationStatement(workspaceId, "Related activity occurred without reference to this record.").catch(() => {});
+          await recordOrientationStatement(workspaceId, "Related activity occurred without reference to this record.").catch(logParallelRealitySideEffect("record-statement"));
           return true;
         }
       }
@@ -132,7 +139,7 @@ export async function detectAndRecordParallelReality(
               .eq("id", threadId)
               .maybeSingle();
             if (threadWithLead) {
-              await recordOrientationStatement(workspaceId, "Related activity occurred without reference to this record.").catch(() => {});
+              await recordOrientationStatement(workspaceId, "Related activity occurred without reference to this record.").catch(logParallelRealitySideEffect("record-statement"));
               return true;
             }
           }
@@ -162,7 +169,7 @@ export async function detectAndRecordParallelReality(
           .limit(1)
           .maybeSingle();
         if (!ref) {
-          await recordOrientationStatement(workspaceId, "Related activity occurred without reference to this record.").catch(() => {});
+          await recordOrientationStatement(workspaceId, "Related activity occurred without reference to this record.").catch(logParallelRealitySideEffect("record-statement"));
           return true;
         }
       }

@@ -7,6 +7,7 @@ import { getDb } from "@/lib/db/queries";
 import { providerDetachmentEstablished } from "@/lib/detachment";
 import { normalizationEstablished } from "@/lib/normalization-engine";
 import { recordOrientationStatement } from "@/lib/orientation/records";
+import { log } from "@/lib/logger";
 
 export type RealizationType =
   | "first_prevented_failure"
@@ -35,6 +36,12 @@ async function hasRecorded(workspaceId: string, realizationType: RealizationType
   return !!data;
 }
 
+const logOperationalRealizationSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `operational-realization.${ctx}`, {
+    error: e instanceof Error ? e.message : String(e),
+  });
+};
+
 async function recordRealization(
   workspaceId: string,
   realizationType: RealizationType
@@ -46,7 +53,7 @@ async function recordRealization(
     recorded_at: new Date().toISOString(),
   });
   await recordOrientationStatement(workspaceId, ORIENTATION_STATEMENT[realizationType]).catch(
-    () => {}
+    logOperationalRealizationSideEffect("record-realization")
   );
 }
 
@@ -67,7 +74,7 @@ export async function detectOperationalRealizations(workspaceId: string): Promis
         .limit(1)
         .maybeSingle();
       if (exp) {
-        await recordRealization(workspaceId, "first_prevented_failure").catch(() => {});
+        await recordRealization(workspaceId, "first_prevented_failure").catch(logOperationalRealizationSideEffect("prevented-failure"));
       }
     }
 
@@ -80,7 +87,7 @@ export async function detectOperationalRealizations(workspaceId: string): Promis
         .limit(1)
         .maybeSingle();
       if (cont) {
-        await recordRealization(workspaceId, "first_continuation_stopped").catch(() => {});
+        await recordRealization(workspaceId, "first_continuation_stopped").catch(logOperationalRealizationSideEffect("continuation-stopped"));
       }
     }
 
@@ -93,19 +100,19 @@ export async function detectOperationalRealizations(workspaceId: string): Promis
         .limit(1)
         .maybeSingle();
       if (ack) {
-        await recordRealization(workspaceId, "first_external_acknowledgement").catch(() => {});
+        await recordRealization(workspaceId, "first_external_acknowledgement").catch(logOperationalRealizationSideEffect("external-acknowledgement"));
       }
     }
 
     if (!(await hasRecorded(workspaceId, "first_detachment_detected"))) {
       if (await providerDetachmentEstablished(workspaceId)) {
-        await recordRealization(workspaceId, "first_detachment_detected").catch(() => {});
+        await recordRealization(workspaceId, "first_detachment_detected").catch(logOperationalRealizationSideEffect("detachment-detected"));
       }
     }
 
     if (!(await hasRecorded(workspaceId, "first_normalized_operation"))) {
       if (await normalizationEstablished(workspaceId)) {
-        await recordRealization(workspaceId, "first_normalized_operation").catch(() => {});
+        await recordRealization(workspaceId, "first_normalized_operation").catch(logOperationalRealizationSideEffect("normalized-operation"));
       }
     }
   } catch {

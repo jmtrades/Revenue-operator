@@ -8,8 +8,15 @@ import { createSharedTransaction } from "@/lib/shared-transaction-assurance";
 import { recordOrientationStatement } from "@/lib/orientation/records";
 import { detectAndAttachReference } from "@/lib/thread-reference-memory";
 import { recordOutcomeDependency } from "@/lib/outcome-dependencies";
+import { log } from "@/lib/logger";
 
 const SPAWN_ACTIONS = ["schedule_follow_up", "request_adjustment", "assign_third_party", "transfer_responsibility"] as const;
+
+const logRecursiveThreadSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `recursive-thread.${ctx}`, {
+    error: e instanceof Error ? e.message : String(e),
+  });
+};
 
 /**
  * Spawn recursive thread if action requires new work and current thread is acknowledged.
@@ -91,7 +98,7 @@ export async function spawnRecursiveThreadIfNeeded(
     subjectType,
     subjectId,
     threadId: currentThreadId,
-  }).catch(() => {});
+  }).catch(logRecursiveThreadSideEffect("detect-attach-reference"));
   
   await recordOutcomeDependency({
     workspaceId,
@@ -99,8 +106,8 @@ export async function spawnRecursiveThreadIfNeeded(
     dependentContextType: "shared_transaction",
     dependentContextId: newThreadId,
     dependencyType: "prior_outcome_reference",
-  }).catch(() => {});
+  }).catch(logRecursiveThreadSideEffect("detect-attach-reference"));
   
-  await recordOrientationStatement(workspaceId, "Follow-up work was initiated from a prior record.").catch(() => {});
-  await recordOrientationStatement(workspaceId, "This record depends on an earlier confirmed outcome.").catch(() => {});
+  await recordOrientationStatement(workspaceId, "Follow-up work was initiated from a prior record.").catch(logRecursiveThreadSideEffect("record-followup-statement"));
+  await recordOrientationStatement(workspaceId, "This record depends on an earlier confirmed outcome.").catch(logRecursiveThreadSideEffect("record-dependency-statement"));
 }

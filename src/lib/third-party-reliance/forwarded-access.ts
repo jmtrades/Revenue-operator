@@ -7,6 +7,13 @@ import { getDb } from "@/lib/db/queries";
 import { hashIpForPublicRecord } from "@/lib/security/rate-limit";
 import { recordReciprocalEvent } from "@/lib/reciprocal-events";
 import { recordOrientationStatement } from "@/lib/orientation/records";
+import { log } from "@/lib/logger";
+
+const logForwardedAccessSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `forwarded-access.${ctx}`, {
+    error: e instanceof Error ? e.message : String(e),
+  });
+};
 
 /**
  * Detect and record forwarded access when a public work link is viewed by a new party.
@@ -86,7 +93,7 @@ export async function detectAndRecordForwardedAccess(
     });
     
     if (eventId) {
-      await recordOrientationStatement(workspaceId, "An additional party viewed this record.").catch(() => {});
+      await recordOrientationStatement(workspaceId, "An additional party viewed this record.").catch(logForwardedAccessSideEffect("record-statement"));
       return true;
     }
   }

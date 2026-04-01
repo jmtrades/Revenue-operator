@@ -4,6 +4,7 @@
  * Dependencies recorded only when dependent context exists in DB. Never delete rows.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 
 export type OutcomeDependencyType =
@@ -121,7 +122,9 @@ export async function refreshResolvedAtForThread(threadId: string): Promise<void
     const { threadIsReliedUpon, recordThreadAmendment } = await import("@/lib/institutional-auditability");
     const relied = await threadIsReliedUpon(threadId).catch(() => false);
     if (relied) {
-      await recordThreadAmendment(threadId, "outcome_change", "Dependency resolved.", null).catch(() => {});
+      await recordThreadAmendment(threadId, "outcome_change", "Dependency resolved.", null).catch((e) => {
+        log("error", "recordThreadAmendment failed", { error: e instanceof Error ? e.message : String(e) });
+      });
     }
   }
 }

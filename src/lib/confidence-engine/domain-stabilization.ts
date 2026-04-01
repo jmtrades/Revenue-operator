@@ -3,6 +3,7 @@
  * Only when all domains autonomous, set workspace phase autonomous.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 import { getConfidencePhase, setConfidencePhase, appendNarrative, isStabilityEstablished } from "./index";
 import { getDomainPhase, setDomainPhase, getDomainPhases } from "./domain";
@@ -61,7 +62,9 @@ export async function runDomainStabilization(): Promise<void> {
       phases.coordination === "autonomous";
     if (allAutonomous) {
       await setConfidencePhase(workspaceId, "autonomous");
-      await appendNarrative(workspaceId, "stability_established", "Operational stability established.").catch(() => {});
+      await appendNarrative(workspaceId, "stability_established", "Operational stability established.").catch((e) => {
+        log("error", "appendNarrative stability_established failed", { error: e instanceof Error ? e.message : String(e) });
+      });
     }
   }
 }

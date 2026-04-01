@@ -2,6 +2,7 @@
  * Record continuation exposure when intervention stops it. Deterministic: state A persisted, system acted, state B.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 import type { UnresolvedState } from "./types";
 
@@ -26,9 +27,13 @@ export async function recordContinuationStopped(
     recorded_at: new Date().toISOString(),
   });
   const { recordContinuityLoad } = await import("@/lib/continuity-load");
-  recordContinuityLoad(workspaceId, "continuation_prevented", `${subjectType}:${subjectId}`).catch(() => {});
+  recordContinuityLoad(workspaceId, "continuation_prevented", `${subjectType}:${subjectId}`).catch((e) => {
+    log("error", "recordContinuityLoad failed", { error: e instanceof Error ? e.message : String(e) });
+  });
   const { resolveExposureFromContinuation } = await import("@/lib/exposure-engine");
-  resolveExposureFromContinuation(workspaceId, subjectType, subjectId, unresolvedState).catch(() => {});
+  resolveExposureFromContinuation(workspaceId, subjectType, subjectId, unresolvedState).catch((e) => {
+    log("error", "resolveExposureFromContinuation failed", { error: e instanceof Error ? e.message : String(e) });
+  });
 }
 
 export async function countStoppedInLastDays(workspaceId: string, days: number): Promise<number> {

@@ -4,6 +4,7 @@
  * No user controls. No configuration. Only consequence surfaces.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 import { recordReciprocalEvent } from "@/lib/reciprocal-events";
 import { recordOutcomeDependency } from "@/lib/outcome-dependencies";
@@ -206,10 +207,14 @@ export async function detectAndAttachReference(context: ReferenceContext): Promi
         referenceContextType === "shared_transaction" ? "shared_transaction" : referenceContextType,
       dependentContextId: referenceContextId,
       dependencyType: "external_reporting",
-    }).catch(() => {});
+    }).catch((e) => {
+      log("error", "recordOutcomeDependency failed", { error: e instanceof Error ? e.message : String(e) });
+    });
     if (referenceContextType === "shared_transaction" && referenceContextId) {
       const { detectAndRecordOffPlatformReference } = await import("@/lib/third-party-reliance/off-platform-reference");
-      await detectAndRecordOffPlatformReference(workspaceId, referenceContextId, chosen.threadId).catch(() => {});
+      await detectAndRecordOffPlatformReference(workspaceId, referenceContextId, chosen.threadId).catch((e) => {
+        log("error", "detectAndRecordOffPlatformReference failed", { error: e instanceof Error ? e.message : String(e) });
+      });
     }
   }
 }

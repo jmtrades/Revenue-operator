@@ -3,6 +3,8 @@
  * All cron routes should call runSafeCron with their job name and handler.
  */
 
+import { log } from "@/lib/logger";
+
 export interface SafeCronResult {
   ok: boolean;
   jobs_run: number;
@@ -36,7 +38,9 @@ export async function runSafeCron(
     const ok = failures === 0;
     if (ok) {
       const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-      await recordCronHeartbeat(jobName).catch(() => {});
+      await recordCronHeartbeat(jobName).catch((e) => {
+        log("error", "recordCronHeartbeat failed", { error: e instanceof Error ? e.message : String(e) });
+      });
     }
     return {
       ok,

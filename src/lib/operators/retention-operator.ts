@@ -7,8 +7,15 @@ import { getDb } from "@/lib/db/queries";
 import { enqueueDecision } from "@/lib/queue";
 import { setLeadPlan } from "@/lib/plans/lead-plan";
 import { upsertRevenueLifecycle } from "@/lib/revenue-lifecycle";
+import { log } from "@/lib/logger";
 
 export const RETENTION_OPERATOR = "RetentionOperator";
+
+const logRetentionOperatorSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `retention-operator.${ctx}`, {
+    error: e instanceof Error ? e.message : String(e),
+  });
+};
 
 /** Expected return window passed → schedule check-in */
 export async function runRetentionCheckIns(workspaceId: string): Promise<{ scheduled: number }> {
@@ -27,7 +34,7 @@ export async function runRetentionCheckIns(workspaceId: string): Promise<{ sched
 
   let scheduled = 0;
   for (const row of rows as { lead_id: string }[]) {
-    await enqueueDecision(row.lead_id, workspaceId, row.lead_id).catch(() => {});
+    await enqueueDecision(row.lead_id, workspaceId, row.lead_id).catch(logRetentionOperatorSideEffect("enqueue-decision"));
     scheduled += 1;
   }
   return { scheduled };
@@ -63,8 +70,8 @@ export async function runRetentionReactivation(workspaceId: string): Promise<{ s
     await setLeadPlan(workspaceId, l.id, {
       next_action_type: "reactivation",
       next_action_at: nextAt.toISOString(),
-    }).catch(() => {});
-    await enqueueDecision(l.id, workspaceId, l.id).catch(() => {});
+    }).catch(logRetentionOperatorSideEffect("set-lead-plan"));
+    await enqueueDecision(l.id, workspaceId, l.id).catch(logRetentionOperatorSideEffect("enqueue-reactivation"));
     scheduled += 1;
   }
   return { scheduled };
@@ -77,5 +84,5 @@ export async function runRetentionNoShowRecovery(leadId: string, workspaceId: st
     revenue_state: "at_risk",
     dropoff_risk: 0.7,
   });
-  await enqueueDecision(leadId, workspaceId, leadId).catch(() => {});
+  await enqueueDecision(leadId, workspaceId, leadId).catch(logRetentionOperatorSideEffect("enqueue-recovery"));
 }

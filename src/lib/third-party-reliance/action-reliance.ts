@@ -5,6 +5,7 @@
 
 import { getDb } from "@/lib/db/queries";
 import { recordOrientationStatement } from "@/lib/orientation/records";
+import { log } from "@/lib/logger";
 
 const THIRD_PARTY_ACTIONS = [
   "approve_next_step",
@@ -12,6 +13,12 @@ const THIRD_PARTY_ACTIONS = [
   "attach_outcome_evidence",
   "assign_third_party",
 ] as const;
+
+const logActionRelianceSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `action-reliance.${ctx}`, {
+    error: e instanceof Error ? e.message : String(e),
+  });
+};
 
 /**
  * Check if a third-party action occurred and record reliance statement.
@@ -37,6 +44,6 @@ export async function detectAndRecordActionReliance(
 
   if (existing) return false;
 
-  await recordOrientationStatement(workspaceId, "Another party acted based on this record.").catch(() => {});
+  await recordOrientationStatement(workspaceId, "Another party acted based on this record.").catch(logActionRelianceSideEffect("record-statement"));
   return true;
 }

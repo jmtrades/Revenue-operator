@@ -3,6 +3,7 @@
  * Emit coordination_reliance_established and send one message per workspace. Only once per workspace.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 
 const MESSAGE_TEXT = "Coordination now relies on shared records.";
@@ -67,7 +68,9 @@ export async function runPropagationIgnition(): Promise<void> {
             subject: "Coordination",
             text: MESSAGE_TEXT,
           }),
-        }).catch(() => {});
+        }).catch((e) => {
+          log("error", "fetch propagation ignition email failed", { error: e instanceof Error ? e.message : String(e) });
+        });
       }
     }
   }

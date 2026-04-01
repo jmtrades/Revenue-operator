@@ -6,8 +6,13 @@
 import { buildExecutionPlan } from "./build";
 import { emitExecutionPlanIntent, type EmitRecipient } from "./emit";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 import type { NormalizedInboundEvent, ConversationContext, DomainHints } from "./build";
 import type { ExecutionPlan } from "./types";
+
+const logRunSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `run.${ctx}`, { error: e instanceof Error ? e.message : String(e) });
+};
 
 export interface RunGovernedExecutionInput {
   workspaceId: string;
@@ -50,7 +55,7 @@ export async function runGovernedExecution(
         .update({ approval_mode: "preview_required", updated_at: new Date().toISOString() })
         .eq("workspace_id", input.workspaceId);
       const { ensureWorkspaceScenarioBaseline } = await import("@/lib/scenarios/seed");
-      await ensureWorkspaceScenarioBaseline(input.workspaceId).catch(() => {});
+      await ensureWorkspaceScenarioBaseline(input.workspaceId).catch(logRunSideEffect("ensure_scenario_baseline"));
     } catch {
       // Best-effort autostart; execution plan builder still enforces UNSPECIFIED safety.
     }
@@ -79,7 +84,7 @@ export async function runGovernedExecution(
           ? "clarify"
           : "direct";
     const { updateStrategicPattern } = await import("@/lib/intelligence/strategic-pattern");
-    await updateStrategicPattern(input.workspaceId, threadId, variantUsed).catch(() => {});
+    await updateStrategicPattern(input.workspaceId, threadId, variantUsed).catch(logRunSideEffect("update_strategic_pattern"));
   }
 
   return plan;

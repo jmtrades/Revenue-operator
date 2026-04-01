@@ -1092,7 +1092,7 @@ export default function AppAnalyticsPage() {
                       onClick={() => {
                         fetch(`/api/analytics/suggestions/${s.id}`, { method: "PATCH", credentials: "include" })
                           .then((r) => r.ok && setSuggestions((prev) => prev.filter((x) => x.id !== s.id)))
-                          .catch(() => {});
+                          .catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
                       }}
                       className="text-xs text-[var(--text-secondary)] hover:text-[var(--text-tertiary)] shrink-0"
                     >
