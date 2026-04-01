@@ -573,6 +573,19 @@ export async function advanceEnrollment(
               });
               if (emailRes.ok) {
                 actionSucceeded = true;
+                // Log to email_send_queue for audit trail
+                try {
+                  const emailJson = await emailRes.clone().json().catch(() => ({})) as { id?: string };
+                  await db.from("email_send_queue").insert({
+                    workspace_id: e.workspace_id,
+                    to_email: lead.email,
+                    subject,
+                    body_html: body,
+                    status: "sent",
+                    external_id: emailJson.id ?? null,
+                    sent_at: new Date().toISOString(),
+                  }).then(() => {}).catch(() => {});
+                } catch { /* non-fatal logging */ }
                 break;
               }
               // Non-retryable client errors (4xx except 429)
