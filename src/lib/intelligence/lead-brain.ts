@@ -277,13 +277,32 @@ export async function computeLeadIntelligence(
       // sequence_enrollments may not exist
     }
 
-    // 16. Determine next best action
+    // 16. Look up active deal for this lead (if any)
+    let activeDealId: string | undefined;
+    try {
+      const { data: dealRow } = await db
+        .from("deals")
+        .select("id")
+        .eq("workspace_id", workspaceId)
+        .eq("lead_id", leadId)
+        .neq("status", "closed_lost")
+        .neq("status", "closed_won")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      activeDealId = (dealRow as { id?: string } | null)?.id ?? undefined;
+    } catch {
+      // deals table may not exist — continue without deal context
+    }
+
+    // 17. Determine next best action (with intent_score and real dealId)
     const nbaResult = await getNextBestAction({
       leadId,
       state: lead.state,
       intent: positiveOutcomeCount > 0 ? "interested" : "exploring",
+      intentScore,
       riskFlags,
-      dealId: undefined,
+      dealId: activeDealId,
       isEnrolledInSequence,
       hoursSinceLastContact,
       engagementScore,

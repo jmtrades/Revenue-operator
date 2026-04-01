@@ -54,8 +54,8 @@ export async function GET(request: NextRequest) {
         try {
           const check = await runMeetingAwareCheck(ws.id);
           meetingActions += check.actions;
-        } catch {
-          // Non-blocking per workspace
+        } catch (e) {
+          console.warn(`[autonomous-brain] meeting-aware check failed for workspace ${ws.id}:`, e instanceof Error ? e.message : String(e));
         }
       }
     } catch (err) {
@@ -78,13 +78,33 @@ export async function GET(request: NextRequest) {
         Date.now() - 6 * 60 * 60 * 1000
       ).toISOString();
 
-      // Find leads with recent activity but stale intelligence
-      const { data: staleLeads } = await db
+      // Find leads with recent activity but stale intelligence (30-day window, 100 batch)
+      const { data: activeLeads } = await db
         .from("leads")
         .select("id, workspace_id")
-        .gte("updated_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+        .gte("updated_at", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
         .not("status", "in", '("CLOSED","WON","LOST")')
-        .limit(30);
+        .order("updated_at", { ascending: false })
+        .limit(100);
+
+      // Also find leads with NO intelligence at all (never computed) — prevent permanent neglect
+      const { data: unintelligentLeads } = await db
+        .from("leads")
+        .select("id, workspace_id")
+        .not("status", "in", '("CLOSED","WON","LOST")')
+        .not("id", "in", `(${(activeLeads ?? []).map((l: { id: string }) => `"${l.id}"`).join(",") || '"__none__"'})`)
+        .is("last_activity_at", null)
+        .limit(20);
+
+      // Merge both sets, deduped
+      const seenIds = new Set<string>();
+      const staleLeads: Array<{ id: string; workspace_id: string }> = [];
+      for (const lead of [...(activeLeads ?? []), ...(unintelligentLeads ?? [])] as Array<{ id: string; workspace_id: string }>) {
+        if (!seenIds.has(lead.id)) {
+          seenIds.add(lead.id);
+          staleLeads.push(lead);
+        }
+      }
 
       for (const lead of (staleLeads ?? []) as Array<{
         id: string;
@@ -129,17 +149,54 @@ export async function GET(request: NextRequest) {
               if (result.success && result.action_type !== "no_action") {
                 actionsExecuted++;
               }
-            } catch {
-              // Non-blocking per lead execution
+            } catch (e) {
+              console.warn(`[autonomous-brain] action execution failed for lead ${lead.id}:`, e instanceof Error ? e.message : String(e));
             }
           }
-        } catch {
-          // Non-blocking per lead
+        } catch (e) {
+          console.warn(`[autonomous-brain] intelligence cycle failed for lead ${lead.id}:`, e instanceof Error ? e.message : String(e));
         }
       }
     } catch (err) {
       // Error (details omitted to protect PII)
       failures++;
+    }
+
+    // 4. Detect no_action churn — leads stuck getting repeated no_action decisions
+    let noActionChurnDetected = 0;
+    try {
+      const { getDb: getDb2 } = await import("@/lib/db/queries");
+      const db2 = getDb2();
+      // Find leads whose last 5+ intelligence computations all returned no_action
+      const { data: churnCandidates } = await db2
+        .from("lead_intelligence")
+        .select("lead_id, workspace_id")
+        .eq("next_best_action", "no_action")
+        .gte("computed_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+        .limit(50);
+
+      for (const candidate of (churnCandidates ?? []) as Array<{ lead_id: string; workspace_id: string }>) {
+        // Count consecutive no_action — if stuck, force a reactivation touch
+        const { count } = await db2
+          .from("lead_intelligence")
+          .select("id", { count: "exact", head: true })
+          .eq("lead_id", candidate.lead_id)
+          .eq("workspace_id", candidate.workspace_id)
+          .eq("next_best_action", "no_action");
+
+        if ((count ?? 0) >= 3) {
+          // Force update to schedule_followup to break the loop
+          await db2.from("lead_intelligence").update({
+            next_best_action: "schedule_followup",
+            action_reason: "Breaking no_action churn — lead stuck with no decisions",
+            action_confidence: 0.4,
+            updated_at: new Date().toISOString(),
+          }).eq("lead_id", candidate.lead_id).eq("workspace_id", candidate.workspace_id);
+          noActionChurnDetected++;
+        }
+      }
+    } catch (e) {
+      console.warn("[autonomous-brain] no_action churn detection failed:", e instanceof Error ? e.message : String(e));
     }
 
     return {
@@ -149,6 +206,7 @@ export async function GET(request: NextRequest) {
       meetingActions,
       intelligenceRefreshed,
       actionsExecuted,
+      noActionChurnDetected,
     };
   });
 
