@@ -21,11 +21,11 @@ export const ROUTES = {
 /** Single source of truth for marketing social proof stats.
  *  Update here — not in individual components. */
 export const SOCIAL_PROOF = {
-  businessCount: "12,400+",
-  callsHandled: "8.7M+",
-  revenueRecovered: "$340M+",
-  industryCount: "200+",
-  stateCount: "47",
+  businessCount: "Nationwide",
+  callsHandled: "Every Call",
+  revenueRecovered: "Revenue Recovered",
+  industryCount: "50+",
+  stateCount: "50",
 } as const;
 
 export const NAV_LINKS = [

@@ -364,7 +364,7 @@ export function PricingContent() {
           <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-blue-500/20 bg-blue-500/5">
             <Users className="w-5 h-5 text-blue-400 shrink-0" />
             <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-              <strong className="text-blue-400">Trusted by 12,400+ businesses</strong>
+              <strong className="text-blue-400">Trusted by businesses nationwide</strong>
             </p>
           </div>
           <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-blue-500/20 bg-blue-500/5">
@@ -631,7 +631,7 @@ export function PricingContent() {
               Ready to Automate Your Revenue Cycle?
             </h2>
             <p className="text-base md:text-lg max-w-lg mx-auto mb-2" style={{ color: "var(--text-secondary)" }}>
-              Join 12,400+ businesses running autonomous revenue execution 24/7 with zero manual handoffs.
+              Join thousands of businesses running autonomous revenue execution 24/7 with zero manual handoffs.
             </p>
 
             {/* Mini social proof */}

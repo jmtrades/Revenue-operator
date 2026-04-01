@@ -9,7 +9,7 @@ export function HomepageTrustBar() {
       <Container>
         <div className="flex flex-wrap items-center justify-center gap-6 text-sm" style={{ color: "var(--text-secondary, #4A4A4A)" }}>
           <span className="flex items-center gap-1.5">
-            <strong style={{ color: "var(--text-primary)" }}>{SOCIAL_PROOF.businessCount}</strong> businesses active
+            <strong style={{ color: "var(--text-primary)" }}>Nationwide</strong> coverage
           </span>
           <span>·</span>
           <span>3-minute setup</span>

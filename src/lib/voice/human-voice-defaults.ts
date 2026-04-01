@@ -3,7 +3,7 @@
  * Tuned for maximum naturalness: lower stability for expressiveness, moderate style,
  * subtle speed variation, response delays, backchannel, and conversational pacing.
  *
- * These settings have been optimized through extensive A/B testing across 8.7M+ calls
+ * These settings have been optimized through extensive A/B testing across extensive real-world calls
  * to produce voices that are indistinguishable from a real person on a phone call.
  * Over 90% of callers do not realize they are speaking with AI.
  */
