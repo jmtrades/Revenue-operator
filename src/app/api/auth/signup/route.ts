@@ -32,7 +32,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Too many attempts" }, { status: 429 });
   }
 
-  const origin = process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin;
+  const origin = req.nextUrl.origin.includes("localhost")
+    ? (process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin)
+    : req.nextUrl.origin;
   const emailRedirectTo = `${origin}/activate`;
 
   let body: { email?: string; password?: string; businessName?: string };

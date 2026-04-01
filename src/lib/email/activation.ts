@@ -25,7 +25,7 @@ export async function sendActivationConfirmationEmail(workspaceId: string): Prom
   const subject = "Your phone flow is ready";
   const body = `Your Revenue Operator phone flow is ready.
 
-Open: ${(process.env.NEXT_PUBLIC_APP_URL || process.env.BASE_URL || "https://www.recall-touch.com")}/app/dashboard`;
+Open: https://www.recall-touch.com/app/dashboard`;
 
   try {
     if (process.env.RESEND_API_KEY) {
