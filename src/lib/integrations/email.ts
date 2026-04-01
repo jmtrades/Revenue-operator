@@ -135,9 +135,9 @@ export async function sendEmail(
       workspace_id: workspaceId,
       to_email: to,
       subject,
-      html_body: bodyHtml,
+      body_html: bodyHtml,
       status: "pending",
-      metadata: options?.template_slug ? { template_slug: options.template_slug } : {},
+      template_slug: options?.template_slug ?? null,
     })
     .select("id")
     .maybeSingle();
@@ -163,21 +163,21 @@ export async function sendEmail(
     if (res.ok && json.id) {
       await db
         .from("email_send_queue")
-        .update({ status: "sent", metadata: { external_id: json.id }, sent_at: new Date().toISOString() })
+        .update({ status: "sent", external_id: json.id, sent_at: new Date().toISOString() })
         .eq("id", queueId);
       return { ok: true, id: queueId, externalId: json.id };
     }
     const errMsg = (json as { message?: string }).message ?? res.statusText ?? "Send failed";
     await db
       .from("email_send_queue")
-      .update({ status: "failed", error: errMsg })
+      .update({ status: "failed", error_message: errMsg })
       .eq("id", queueId);
     return { ok: false, id: queueId, error: errMsg };
   } catch (e) {
     const errMsg = e instanceof Error ? e.message : String(e);
     await db
       .from("email_send_queue")
-      .update({ status: "failed", error: errMsg })
+      .update({ status: "failed", error_message: errMsg })
       .eq("id", queueId);
     return { ok: false, id: queueId, error: errMsg };
   }

@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
   const db = getDb();
   let q = db
     .from("email_send_queue")
-    .select("id, to_email, subject, status, metadata, error, sent_at, created_at")
+    .select("id, to_email, subject, status, external_id, template_slug, error_message, sent_at, created_at")
     .eq("workspace_id", session.workspaceId)
     .order("created_at", { ascending: false })
     .limit(limit);
@@ -40,22 +40,22 @@ export async function GET(req: NextRequest) {
     to_email: string;
     subject: string;
     status: string;
-    metadata: { external_id?: string; template_slug?: string } | null;
-    error: string | null;
+    external_id: string | null;
+    template_slug: string | null;
+    error_message: string | null;
     sent_at: string | null;
     created_at: string;
   }[];
-  // Map to the shape the frontend expects
   const deliveries = list.map((d) => ({
     id: d.id,
     to_email: d.to_email,
     subject: d.subject,
     status: d.status,
-    external_id: d.metadata?.external_id ?? null,
-    error_message: d.error,
+    external_id: d.external_id,
+    error_message: d.error_message,
     sent_at: d.sent_at,
     created_at: d.created_at,
-    template_slug: d.metadata?.template_slug ?? null,
+    template_slug: d.template_slug,
   }));
   return NextResponse.json({ deliveries });
 }
