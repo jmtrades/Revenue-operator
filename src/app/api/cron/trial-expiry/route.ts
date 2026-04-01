@@ -93,6 +93,11 @@ export async function GET(req: NextRequest) {
           .update({ status: "expired", billing_status: "trial_ended", updated_at: now.toISOString() })
           .eq("id", ws.id);
 
+        await db
+          .from("workspace_billing")
+          .update({ plan: "trial_ended", status: "trial_ended" })
+          .eq("workspace_id", ws.id);
+
         if (email) {
           void sendEmail(
             email,
