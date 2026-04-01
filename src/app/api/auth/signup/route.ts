@@ -102,6 +102,8 @@ export async function POST(req: NextRequest) {
         if (!insertErr && created) {
           workspaceId = (created as { id: string }).id;
           await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
+          await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
+          await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing" });
         }
       } catch {
         // continue
@@ -168,6 +170,8 @@ export async function POST(req: NextRequest) {
         if (!createErr && created) {
           workspaceId = (created as { id: string }).id;
           await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
+          await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
+          await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing" });
         }
       } catch {
         // continue
@@ -204,6 +208,8 @@ export async function POST(req: NextRequest) {
     if (!createErr && created) {
       workspaceId = (created as { id: string }).id;
       await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
+      await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
+      await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing" });
     }
   } catch {
     // continue without workspace

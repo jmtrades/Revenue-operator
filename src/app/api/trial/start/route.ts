@@ -138,6 +138,8 @@ export async function POST(req: NextRequest) {
         if (settingsResult.error) {
           // Non-critical, continue
         }
+        await db.from("workspace_members").insert({ workspace_id: wsId, user_id: uid, role: "owner" });
+        await db.from("workspace_billing").insert({ workspace_id: wsId, plan: "trial", status: "trialing" });
         try {
           const { applyPresetToWorkspace } = await import("@/lib/presets/apply");
           await applyPresetToWorkspace(wsId, businessType);
@@ -250,6 +252,9 @@ export async function POST(req: NextRequest) {
       responsibility_level: "guarantee",
     });
     // Non-critical if settings insert fails
+
+    await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
+    await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing" });
 
     try {
       const { applyPresetToWorkspace } = await import("@/lib/presets/apply");

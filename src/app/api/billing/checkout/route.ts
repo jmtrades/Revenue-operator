@@ -157,6 +157,8 @@ export async function POST(req: NextRequest) {
             autonomy_mode: "act",
             responsibility_level: "guarantee",
           });
+          await db.from("workspace_members").insert({ workspace_id: wsId, user_id: userId, role: "owner" });
+          await db.from("workspace_billing").insert({ workspace_id: wsId, plan: "trial", status: "trialing" });
 
           finalWorkspaceId = wsId;
           finalEmail = email;

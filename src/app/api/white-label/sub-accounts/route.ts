@@ -97,6 +97,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to create child workspace" }, { status: 500 });
   }
 
+  await db.from("settings").insert({ workspace_id: childWorkspaceId, risk_level: "balanced" });
+  await db.from("workspace_billing").insert({ workspace_id: childWorkspaceId, plan: "standard", status: "active" });
+
   const { data: relationship, error: relError } = await db
     .from("reseller_relationships")
     .insert({
