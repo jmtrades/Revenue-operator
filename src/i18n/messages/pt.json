@@ -5362,49 +5362,49 @@
       "items": {
         "0": {
           "quote": "We were losing 40% of after-hours calls — that's $23K in missed revenue every month. Within a week of going live, Revenue Operator was booking appointments at 2 AM, recovering storm damage leads at midnight, and following up with quotes before my crew even woke up. First month: $23K in recovered revenue. It paid for the entire year in 12 days.",
-          "name": "Marcus Johnson",
+          "name": "",
           "role": "Owner",
-          "company": "Premier Plumbing & HVAC — Houston, TX",
+          "company": "Empresa de encanamento e HVAC",
           "metric": "+$23K/mo recovered"
         },
         "1": {
           "quote": "We have 4 locations and our front desk was drowning — 200+ calls a day, half going to voicemail. Revenue Operator handles every single one now. No-shows dropped 52% because the AI actually follows up with reminders and reschedules cancellations automatically. We've added $180K in annual revenue without hiring a single person.",
-          "name": "Dr. Lisa Chen",
+          "name": "",
           "role": "Practice Owner",
           "company": "Bright Smile Dental Group — Miami, FL",
           "metric": "+$180K/year"
         },
         "2": {
           "quote": "I was dead skeptical about AI handling our legal intake. Then it booked 3 consultations its first night — at 2 AM — from people who'd been in car accidents and were searching for a lawyer. Those turned into $45K in retained cases. The voice quality is so natural that clients thank 'Alex' by name. I'm a full believer now.",
-          "name": "David Roth",
+          "name": "",
           "role": "Managing Partner",
           "company": "Roth & Associates Law — Chicago, IL",
           "metric": "68% intake conversion"
         },
         "3": {
           "quote": "We manage 14 crews across 3 states. Storm season used to mean 60% of calls went to voicemail — those are $5K-$15K jobs just evaporating. Revenue Operator answers every call in under a second, qualifies the lead, books the inspection, and routes it to the right crew. Revenue is up 34% year-over-year and we process 500+ calls a day without breaking a sweat.",
-          "name": "Mike Torres",
+          "name": "",
           "role": "CEO",
           "company": "Apex Roofing Group — Dallas, TX",
           "metric": "500+ calls/day"
         },
         "4": {
           "quote": "I tested 6 AI phone products before finding Revenue Operator. The difference is night and day — this one actually books appointments, follows up on quotes, and routes urgent calls to my cell. Connected my existing number and it was handling the full workflow within an hour. First week ROI was 11x.",
-          "name": "Sarah Kim",
+          "name": "",
           "role": "Owner",
           "company": "AutoCare Express — Atlanta, GA",
           "metric": "11x ROI in week one"
         },
         "5": {
           "quote": "I white-label Revenue Operator for 12 clients and make $4K/mo in pure margin. My clients think the AI is a real person on their team. Zero complaints in 8 months. When I showed my agency partner the demo, he signed up the same day and put 6 of his clients on it. This is the best agency tool nobody's talking about yet.",
-          "name": "Chris Martinez",
+          "name": "",
           "role": "Founder",
           "company": "Scale Digital Agency — Los Angeles, CA",
           "metric": "$4K/mo agency profit"
         },
         "6": {
           "quote": "As a solo practitioner, I was losing patients to the big clinics because I couldn't answer during appointments. Revenue Operator runs my entire patient communication — scheduling, follow-ups, no-show recovery, reactivation campaigns for lapsed patients. My patient volume increased 40% in the first quarter without adding any staff. It's a full operations layer, not just a phone tool.",
-          "name": "Dr. James Park",
+          "name": "",
           "role": "Chiropractor",
           "company": "Park Wellness Center — Denver, CO",
           "metric": "+40% patient volume"
@@ -6038,7 +6038,7 @@
         },
         "1": {
           "quote": "The real-time coaching feature alone is worth 10x the price. Our reps' close rates jumped from 12% to 31% within 60 days. The AI knows exactly when to suggest battlecards.",
-          "author": "Marcus Johnson",
+          "author": "",
           "role": "Sales Director",
           "company": "GrowthEngine"
         },

@@ -8,7 +8,7 @@
  * The Recall voice server runs the SAME Orpheus TTS engine used on live calls,
  * so visitors hear the exact voice quality they'll experience in production.
  * 20x faster than Deepgram (150ms vs 3s) with emotion tags, style tuning,
- * and human voice defaults tuned across 8.7M+ calls.
+ * and human voice defaults tuned across extensive real-world calls.
  *
  * Human voice defaults (from real call data):
  *   - Speed: 0.93 (deliberate, not rushed)
