@@ -4,6 +4,8 @@
  * Called by Twilio when an inbound call arrives. Uses the call routing engine
  * to determine where to send the call (AI agent, human agent, voicemail, etc.)
  * and returns a TwiML response.
+ *
+ * Security: Validates Twilio request signature using account auth token.
  */
 
 export const dynamic = "force-dynamic";
@@ -12,10 +14,74 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
 import { routeInboundCall, buildRoutingTwiml } from "@/lib/voice/call-routing-engine";
+import { createHmac, timingSafeEqual } from "crypto";
+
+/**
+ * Verify Twilio request signature using the auth token.
+ * Twilio signs requests with HMAC-SHA1 of the full request URL and POST data.
+ */
+function verifyTwilioSignature(
+  url: string,
+  params: Record<string, string | string[]>,
+  signature: string
+): boolean {
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
+  if (!authToken) {
+    const isProduction = process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production";
+    if (isProduction) {
+      log("error", "voice_routing.twilio_auth_token_missing", { message: "rejecting request — TWILIO_AUTH_TOKEN must be set in production" });
+      return false;
+    }
+    log("warn", "voice_routing.twilio_auth_token_missing", { message: "skipping signature verification in development" });
+    return true;
+  }
+
+  // Build data string: URL + sorted POST params
+  let data = url;
+  const sorted = Object.keys(params).sort();
+  for (const key of sorted) {
+    const val = params[key];
+    data += key + (Array.isArray(val) ? val[0] : val);
+  }
+
+  const expected = createHmac("sha1", authToken)
+    .update(data, "utf-8")
+    .digest("base64");
+
+  if (expected.length !== signature.length) return false;
+  try {
+    return timingSafeEqual(Buffer.from(expected, "utf-8"), Buffer.from(signature, "utf-8"));
+  } catch {
+    return expected === signature;
+  }
+}
 
 export async function POST(request: NextRequest) {
+  // Verify Twilio signature
+  const signature = request.headers.get("x-twilio-signature");
+  const formData = await request.formData();
+
+  // Build params object from FormData
+  const params: Record<string, string | string[]> = {};
+  for (const [key, value] of formData.entries()) {
+    params[key] = value;
+  }
+
+  if (!verifyTwilioSignature(request.nextUrl.toString(), params, signature ?? "")) {
+    log("error", "voice_routing.invalid_signature", { message: "Twilio signature verification failed" });
+    return new NextResponse(
+      `<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Say>Unauthorized request. Please try again.</Say>
+</Response>`,
+      {
+        status: 401,
+        headers: { "Content-Type": "application/xml" },
+      }
+    );
+  }
+
   try {
-    const formData = await request.formData();
     const twilio = {
       from: formData.get("From") as string,
       to: formData.get("To") as string,

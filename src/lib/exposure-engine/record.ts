@@ -2,9 +2,14 @@
  * Record and query operational exposures. Daily dedupe; resolution marking.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 import type { ExposureType, SubjectType, InterruptionSource } from "./types";
 import { EXPOSURE_LINES, sanitizeLine } from "./doctrine";
+
+const logExposureSideEffect = (context: string) => (e: unknown) => {
+  log("warn", `exposure_engine.record.${context}`, { error: e instanceof Error ? e.message : String(e) });
+};
 
 export async function upsertExposure(
   workspaceId: string,
@@ -106,9 +111,9 @@ export async function markExposureResolved(
     workspaceId,
     "protection_interrupted",
     `${exposureType}:${subjectType}:${subjectId}`
-  ).catch(() => {});
+  ).catch(logExposureSideEffect("record_continuity_load"));
   const { recordFirstInterruptionOrientationOnce } = await import("./orientation");
-  await recordFirstInterruptionOrientationOnce(workspaceId, new Date(t)).catch(() => {});
+  await recordFirstInterruptionOrientationOnce(workspaceId, new Date(t)).catch(logExposureSideEffect("record_first_interruption"));
 
   const authorityWindowMs = 30 * 60 * 1000;
   const authoritySince = new Date(Date.now() - authorityWindowMs).toISOString();
@@ -120,7 +125,7 @@ export async function markExposureResolved(
     .limit(1);
   if ((escRows?.length ?? 0) > 0) {
     const { createIncidentStatement } = await import("@/lib/incidents");
-    await createIncidentStatement(workspaceId, "protection_required_authority", row.related_external_ref ?? undefined).catch(() => {});
+    await createIncidentStatement(workspaceId, "protection_required_authority", row.related_external_ref ?? undefined).catch(logExposureSideEffect("create_incident_statement"));
   }
 }
 

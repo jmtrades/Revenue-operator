@@ -5,9 +5,14 @@
  * Revival: contextual message; after 3 failed attempts → authority_required.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 import { runWithWriteContextAsync } from "@/lib/safety/unsafe-write-guard";
 import { enqueueSendMessage } from "@/lib/action-queue/send-message";
+
+const logOppRecoverySideEffect = (context: string) => (e: unknown) => {
+  log("warn", `opportunity_recovery.${context}`, { error: e instanceof Error ? e.message : String(e) });
+};
 
 const SLOWING_HOURS = 2;
 const REVIVAL_COOLDOWN_MINUTES = 60;
@@ -234,7 +239,7 @@ export async function runRevivalForOpportunity(opp: OpportunityStateRow): Promis
     }
     const { hasExecutedActionType, setPendingPreview } = await import("@/lib/adoption-acceleration/previews");
     if (!(await hasExecutedActionType(opp.workspace_id, "opportunity_revival"))) {
-      await setPendingPreview(opp.workspace_id, "opportunity_revival", "If no reply occurs, a response will be sent.").catch(() => {});
+      await setPendingPreview(opp.workspace_id, "opportunity_revival", "If no reply occurs, a response will be sent.").catch(logOppRecoverySideEffect("set_pending_preview"));
     }
     await enqueueSendMessage(
       opp.workspace_id,
@@ -309,7 +314,7 @@ export async function onCustomerReply(workspaceId: string, conversationId: strin
   const now = new Date().toISOString();
   if (wasActive) {
     const { recordCoordinationDisplacement } = await import("@/lib/coordination-displacement");
-    recordCoordinationDisplacement(workspaceId, "staff", "continuation", false).catch(() => {});
+    recordCoordinationDisplacement(workspaceId, "staff", "continuation", false).catch(logOppRecoverySideEffect("record_coordination_displacement_active"));
     const { recordResponsibilityMoment } = await import("@/lib/responsibility-moments");
     recordResponsibilityMoment({
       workspaceId,
@@ -317,13 +322,13 @@ export async function onCustomerReply(workspaceId: string, conversationId: strin
       subjectId: conversationId,
       authorityHolder: "environment",
       determinedFrom: "timeout",
-    }).catch(() => {});
+    }).catch(logOppRecoverySideEffect("record_responsibility_moment_active"));
     const { recordNonParticipationIfApplicable } = await import("@/lib/detachment");
-    recordNonParticipationIfApplicable(workspaceId, `opportunity:${conversationId}`, "opportunity").catch(() => {});
+    recordNonParticipationIfApplicable(workspaceId, `opportunity:${conversationId}`, "opportunity").catch(logOppRecoverySideEffect("record_non_participation"));
   }
   if (wasDecayed) {
     const { removeOperationalExpectation } = await import("@/lib/operability-anchor");
-    removeOperationalExpectation(workspaceId, "awaiting_reply", conversationId).catch(() => {});
+    removeOperationalExpectation(workspaceId, "awaiting_reply", conversationId).catch(logOppRecoverySideEffect("remove_operational_expectation"));
     await runWithWriteContextAsync("delivery", async () => {
       const db2 = getDb();
       await db2
@@ -341,11 +346,11 @@ export async function onCustomerReply(workspaceId: string, conversationId: strin
         intervention_type: "opportunity_revival",
         observed_outcome: "reply_received",
         dependency_established: true,
-      }).catch(() => {});
+      }).catch(logOppRecoverySideEffect("record_causal_chain"));
       const { recordContinuationStopped } = await import("@/lib/continuation-engine");
-      recordContinuationStopped(workspaceId, "conversation", conversationId, "waiting", 0).catch(() => {});
+      recordContinuationStopped(workspaceId, "conversation", conversationId, "waiting", 0).catch(logOppRecoverySideEffect("record_continuation_stopped"));
       const { recordCoordinationDisplacement } = await import("@/lib/coordination-displacement");
-      recordCoordinationDisplacement(workspaceId, "staff", "continuation").catch(() => {});
+      recordCoordinationDisplacement(workspaceId, "staff", "continuation").catch(logOppRecoverySideEffect("record_coordination_displacement_stalled"));
       const { recordResponsibilityMoment } = await import("@/lib/responsibility-moments");
       recordResponsibilityMoment({
         workspaceId,
@@ -353,9 +358,9 @@ export async function onCustomerReply(workspaceId: string, conversationId: strin
         subjectId: conversationId,
         authorityHolder: "environment",
         determinedFrom: "intervention",
-      }).catch(() => {});
+      }).catch(logOppRecoverySideEffect("record_responsibility_moment_intervention"));
       const { recordNonParticipationIfApplicable } = await import("@/lib/detachment");
-      recordNonParticipationIfApplicable(workspaceId, `opportunity:${conversationId}`, "opportunity").catch(() => {});
+      recordNonParticipationIfApplicable(workspaceId, `opportunity:${conversationId}`, "opportunity").catch(logOppRecoverySideEffect("record_non_participation"));
       const { recordEconomicEvent } = await import("@/lib/economic-events");
       recordEconomicEvent({
         workspaceId,
@@ -363,17 +368,17 @@ export async function onCustomerReply(workspaceId: string, conversationId: strin
         subjectType: "conversation",
         subjectId: conversationId,
         valueAmount: 0,
-      }).catch(() => {});
+      }).catch(logOppRecoverySideEffect("record_economic_event"));
       const { recordReliefEvent } = await import("@/lib/awareness-timing/relief-events");
-      recordReliefEvent(workspaceId, "A delay did not continue.").catch(() => {});
+      recordReliefEvent(workspaceId, "A delay did not continue.").catch(logOppRecoverySideEffect("record_relief_event"));
       const { recordOrientationStatement } = await import("@/lib/orientation/records");
-      recordOrientationStatement(workspaceId, "The conversation resumed after outreach.").catch(() => {});
+      recordOrientationStatement(workspaceId, "The conversation resumed after outreach.").catch(logOppRecoverySideEffect("record_orientation_statement"));
       const { recordStaffRelianceEvent } = await import("@/lib/staff-reliance");
-      recordStaffRelianceEvent(workspaceId).catch(() => {});
+      recordStaffRelianceEvent(workspaceId).catch(logOppRecoverySideEffect("record_staff_reliance_event"));
       const { touchDependencyMemory } = await import("@/lib/operational-dependency-memory");
-      touchDependencyMemory(workspaceId, "followup_tracking").catch(() => {});
+      touchDependencyMemory(workspaceId, "followup_tracking").catch(logOppRecoverySideEffect("touch_dependency_memory"));
       const { recordMemoryReplacementEvent } = await import("@/lib/memory-replacement");
-      recordMemoryReplacementEvent(workspaceId, "conversation_revived").catch(() => {});
+      recordMemoryReplacementEvent(workspaceId, "conversation_revived").catch(logOppRecoverySideEffect("record_memory_replacement_event"));
     }
     const { data: conv } = await db.from("conversations").select("lead_id").eq("id", conversationId).maybeSingle();
     const leadId = (conv as { lead_id?: string })?.lead_id;
