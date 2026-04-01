@@ -9,13 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { assertCronAuthorized } from "@/lib/runtime";
 import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
-
-const DAILY_OUTBOUND_LIMITS: Record<string, number> = {
-  solo: 100,
-  business: 300,
-  scale: 1000,
-  enterprise: 2500,
-};
+import { BILLING_PLANS, normalizeTier } from "@/lib/billing-plans";
 
 /** Max calls to trigger per cron tick per campaign (keep bounded) */
 const MAX_PER_TICK = 5;
@@ -78,7 +72,7 @@ export async function GET(req: NextRequest) {
     const tierByWorkspace = new Map(
       ((workspaces ?? []) as Array<{ id: string; billing_tier?: string | null }>).map((w) => [
         w.id,
-        (w.billing_tier ?? "solo").toLowerCase(),
+        normalizeTier(w.billing_tier),
       ]),
     );
 
@@ -101,7 +95,8 @@ export async function GET(req: NextRequest) {
 
     for (const row of activeRows) {
       const tier = tierByWorkspace.get(row.workspace_id) ?? "solo";
-      const dailyCap = DAILY_OUTBOUND_LIMITS[tier] ?? DAILY_OUTBOUND_LIMITS.solo;
+      const plan = BILLING_PLANS[tier];
+      const dailyCap = plan.outboundDailyLimit === -1 ? Infinity : plan.outboundDailyLimit;
       const used = processedByWorkspace.get(row.workspace_id) ?? 0;
       const workspaceRemaining = Math.max(0, dailyCap - used);
       if (workspaceRemaining <= 0) {

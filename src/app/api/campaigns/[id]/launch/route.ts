@@ -11,6 +11,7 @@ import { executeLeadOutboundCall } from "@/lib/outbound/execute-lead-call";
 import type { CampaignType } from "@/lib/campaigns/prompt";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { checkDNC } from "@/lib/compliance/dnc-check";
+import { canUseFeature } from "@/lib/billing/plan-enforcement";
 import { log } from "@/lib/logger";
 
 type TargetFilter = {
@@ -47,6 +48,15 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   const workspaceId = (row as { workspace_id: string }).workspace_id;
   const err = await requireWorkspaceAccess(req, workspaceId);
   if (err) return err;
+
+  // Feature gate: outbound campaigns require scale+ plan
+  const featureCheck = await canUseFeature(workspaceId, "outboundCampaigns");
+  if (!featureCheck.allowed) {
+    return NextResponse.json(
+      { error: featureCheck.message ?? "Outbound campaigns require a higher plan.", upgrade_to: featureCheck.upgradeTo },
+      { status: 403 },
+    );
+  }
 
   const campaign = row as {
     id: string;
