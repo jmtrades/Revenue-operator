@@ -16,7 +16,12 @@ import { recordProof } from "@/lib/proof/record";
 import { createCommitment, resolveCommitmentsBySubject } from "@/lib/commitment-recovery";
 import { updateOnCustomerMessage, onCustomerReply } from "@/lib/opportunity-recovery";
 import { ensureSharedTransactionForSubject, updateCounterpartyReliance } from "@/lib/shared-transaction-assurance";
+import { log } from "@/lib/logger";
 import type { CanonicalSignalType } from "./types";
+
+const logConsumerSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `consumer.${ctx}`, { error: e instanceof Error ? e.message : String(e) });
+};
 
 /** Thrown when lead lock cannot be acquired; signal remains unprocessed and job should fail so retry runs. */
 export class LeadLockedRetryError extends Error {
@@ -84,8 +89,8 @@ export async function processCanonicalSignal(signalId: string): Promise<{ ok: bo
           errorMessage: "lead_not_found",
           stage: "signal",
         });
-      } catch {
-        // non-blocking
+      } catch (dlqErr) {
+        logConsumerSideEffect("dlq_escalate")(dlqErr);
       }
       return { ok: false, reason: "lead_not_found" };
     }
@@ -180,8 +185,8 @@ export async function processCanonicalSignal(signalId: string): Promise<{ ok: bo
   try {
     const { syncFromLeadState } = await import("@/lib/revenue-lifecycle/sync");
     await syncFromLeadState(lead_id, workspace_id, leadStatePersisted as import("@/lib/types").LeadState);
-  } catch {
-    // Non-blocking
+  } catch (syncErr) {
+    logConsumerSideEffect("sync_from_lead_state")(syncErr);
   }
 
   if (signal_type === "InboundMessageReceived" || signal_type === "CustomerReplied" || signal_type === "InboundMessageDiscovered") {
@@ -200,14 +205,14 @@ export async function processCanonicalSignal(signalId: string): Promise<{ ok: bo
     const counterpartyId = (leadContact as { email?: string | null; phone?: string | null } | null)?.email
       ?? (leadContact as { phone?: string | null } | null)?.phone;
     if (counterpartyId) {
-      updateCounterpartyReliance(workspace_id, counterpartyId, "interaction").catch(() => {});
+      updateCounterpartyReliance(workspace_id, counterpartyId, "interaction").catch(logConsumerSideEffect("update_counterparty_reliance"));
     }
     const { data: convRow } = await db.from("conversations").select("id").eq("lead_id", lead_id).limit(1).maybeSingle();
     if (convRow) {
       const convId = (convRow as { id: string }).id;
       await resolveCommitmentsBySubject(workspace_id, "conversation", convId, "completed");
-      updateOnCustomerMessage(workspace_id, convId).catch(() => {});
-      onCustomerReply(workspace_id, convId).catch(() => {});
+      updateOnCustomerMessage(workspace_id, convId).catch(logConsumerSideEffect("update_on_customer_message"));
+      onCustomerReply(workspace_id, convId).catch(logConsumerSideEffect("on_customer_reply"));
     }
     const allowed = getOperatorsForState(leadStatePersisted as import("@/lib/types").LeadState);
     if (allowed.length > 0) {
@@ -228,14 +233,14 @@ export async function processCanonicalSignal(signalId: string): Promise<{ ok: bo
     const { data: leadRow } = await db.from("leads").select("name, email, phone").eq("id", lead_id).maybeSingle();
     const leadName = (leadRow as { name?: string } | null)?.name ?? undefined;
     const slotAt = (payload as { slot_at?: string; start_at?: string } | undefined)?.slot_at ?? (payload as { start_at?: string })?.start_at;
-    notifyBookingOwnership(workspace_id, lead_id, { leadName, slotAt }).catch(() => {});
+    notifyBookingOwnership(workspace_id, lead_id, { leadName, slotAt }).catch(logConsumerSideEffect("notify_booking_ownership"));
     if (slotAt) {
       const slotTime = new Date(slotAt).getTime();
       const twoHoursFromNow = Date.now() + 2 * 60 * 60 * 1000;
       if (slotTime <= twoHoursFromNow && slotTime >= Date.now()) {
-        notifyBookingShortly(workspace_id).catch(() => {});
+        notifyBookingShortly(workspace_id).catch(logConsumerSideEffect("notify_booking_shortly"));
       }
-      createCommitment(workspace_id, "booking", lead_id, new Date(slotAt)).catch(() => {});
+      createCommitment(workspace_id, "booking", lead_id, new Date(slotAt)).catch(logConsumerSideEffect("create_booking_commitment"));
       const counterparty = (leadRow as { email?: string | null; phone?: string | null } | null)?.email
         ?? (leadRow as { phone?: string | null } | null)?.phone
         ?? "";
@@ -250,7 +255,7 @@ export async function processCanonicalSignal(signalId: string): Promise<{ ok: bo
           initiatedBy: "business",
           leadId: lead_id,
           conversationId: (convRow as { id: string } | null)?.id ?? undefined,
-        }).catch(() => {});
+        }).catch(logConsumerSideEffect("ensure_shared_transaction"));
       }
     }
   }
@@ -282,9 +287,9 @@ export async function processCanonicalSignal(signalId: string): Promise<{ ok: bo
   // Trigger Autonomous Revenue Brain — non-blocking
   try {
     const { triggerBrainAfterSignal } = await import("@/lib/intelligence/brain-trigger");
-    triggerBrainAfterSignal({ signalId, leadId: lead_id, workspaceId: workspace_id, signalType: signal_type }).catch(() => {});
-  } catch {
-    // Non-blocking: brain trigger failure does not affect signal processing
+    triggerBrainAfterSignal({ signalId, leadId: lead_id, workspaceId: workspace_id, signalType: signal_type }).catch(logConsumerSideEffect("trigger_brain_after_signal"));
+  } catch (brainErr) {
+    logConsumerSideEffect("brain_trigger_import")(brainErr);
   }
 
   return { ok: true };

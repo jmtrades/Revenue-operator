@@ -4,6 +4,13 @@
 
 import { getDb } from "@/lib/db/queries";
 import { recordOrientationStatement } from "@/lib/orientation/records";
+import { log } from "@/lib/logger";
+
+const logCompletionDecaySideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `completion-decay.${ctx}`, {
+    error: e instanceof Error ? e.message : String(e),
+  });
+};
 
 /**
  * Detect and record unconfirmed completion decay.
@@ -53,7 +60,7 @@ export async function detectAndRecordCompletionDecay(
       .maybeSingle();
     
     if (!existing) {
-      await recordOrientationStatement(workspaceId, "Completion existed only internally.").catch(() => {});
+      await recordOrientationStatement(workspaceId, "Completion existed only internally.").catch(logCompletionDecaySideEffect("record-decay"));
       return true;
     }
   }
@@ -89,6 +96,6 @@ export async function recordCompletionResolution(
     .maybeSingle();
   
   if (!existingResolution) {
-    await recordOrientationStatement(workspaceId, "Shared confirmation resolved the prior uncertainty.").catch(() => {});
+    await recordOrientationStatement(workspaceId, "Shared confirmation resolved the prior uncertainty.").catch(logCompletionDecaySideEffect("record-resolution"));
   }
 }

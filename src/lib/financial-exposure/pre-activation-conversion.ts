@@ -6,6 +6,13 @@
 import { getInstallationState } from "@/lib/installation";
 import { hadExposureOnTwoConsecutiveDays } from "./index";
 import { createIncidentStatement } from "@/lib/incidents";
+import { log } from "@/lib/logger";
+
+const logPreActivationConversionSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `pre-activation-conversion.${ctx}`, {
+    error: e instanceof Error ? e.message : String(e),
+  });
+};
 
 export async function runPreActivationConversion(): Promise<void> {
   const { getDb } = await import("@/lib/db/queries");
@@ -21,6 +28,6 @@ export async function runPreActivationConversion(): Promise<void> {
     if (state?.phase !== "observing") continue;
     const twoDays = await hadExposureOnTwoConsecutiveDays(workspaceId);
     if (!twoDays) continue;
-    await createIncidentStatement(workspaceId, "avoidable_loss_observed").catch(() => {});
+    await createIncidentStatement(workspaceId, "avoidable_loss_observed").catch(logPreActivationConversionSideEffect("create-incident"));
   }
 }

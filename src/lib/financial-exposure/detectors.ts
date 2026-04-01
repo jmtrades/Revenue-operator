@@ -8,10 +8,17 @@ import {
   upsertFinancialExposure,
   resolveFinancialExposure,
 } from "./index";
+import { log } from "@/lib/logger";
 
 const FOUR_HOURS_MS = 4 * 60 * 60 * 1000;
 const TWELVE_HOURS_MS = 12 * 60 * 60 * 1000;
 const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+
+const logFinancialExposureSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `financial-exposure.${ctx}`, {
+    error: e instanceof Error ? e.message : String(e),
+  });
+};
 
 function isWithinBusinessHours(_workspaceId: string): Promise<boolean> {
   return Promise.resolve(true);
@@ -38,7 +45,7 @@ async function detectRevenueAtRisk(): Promise<void> {
     if (customerAt > new Date(cutoff).getTime()) continue;
     const inHours = await isWithinBusinessHours(r.workspace_id);
     if (!inHours) continue;
-    await upsertFinancialExposure(r.workspace_id, "revenue_at_risk", r.conversation_id).catch(() => {});
+    await upsertFinancialExposure(r.workspace_id, "revenue_at_risk", r.conversation_id).catch(logFinancialExposureSideEffect("revenue-at-risk"));
   }
 }
 
@@ -74,7 +81,7 @@ async function detectPaymentDelay(): Promise<void> {
     .in("state", ["overdue", "recovering"])
     .lt("due_at", cutoff);
   for (const row of (list ?? []) as { id: string; workspace_id: string }[]) {
-    await upsertFinancialExposure(row.workspace_id, "payment_delay", row.id).catch(() => {});
+    await upsertFinancialExposure(row.workspace_id, "payment_delay", row.id).catch(logFinancialExposureSideEffect("payment-delay"));
   }
 }
 
@@ -143,7 +150,7 @@ async function detectCustomerLossRisk(): Promise<void> {
       const lastBusiness = list.find((m) => m.role === "assistant" || m.role === "business");
       if (!lastBusiness?.content || !PROMISE_WORDS.test(lastBusiness.content)) continue;
 
-      await upsertFinancialExposure(workspaceId, "customer_loss_risk", cid).catch(() => {});
+      await upsertFinancialExposure(workspaceId, "customer_loss_risk", cid).catch(logFinancialExposureSideEffect("customer-loss-risk"));
     }
   }
 }
@@ -189,7 +196,7 @@ async function detectIdleCapacity(): Promise<void> {
       .eq("workspace_id", ev.workspace_id)
       .gte("last_customer_message_at", past24h);
     if (!convs?.length) continue;
-    await upsertFinancialExposure(ev.workspace_id, "idle_capacity", ev.id).catch(() => {});
+    await upsertFinancialExposure(ev.workspace_id, "idle_capacity", ev.id).catch(logFinancialExposureSideEffect("idle-capacity"));
   }
 }
 

@@ -36,7 +36,12 @@ import { applyCommitmentDecay } from "@/lib/intelligence/commitment-decay";
 import { buildStrategicHorizon } from "@/lib/intelligence/strategic-horizon";
 import { evaluateVariantEffectiveness } from "@/lib/intelligence/strategy-effectiveness";
 import { getOpenCommitments } from "@/lib/intelligence/commitment-registry";
+import { log } from "@/lib/logger";
 import type { ExecutionPlan, ExecutionTrace, ExecutionDecision, ActionIntentToEmit } from "./types";
+
+const logBuildSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `build.${ctx}`, { error: e instanceof Error ? e.message : String(e) });
+};
 
 export interface NormalizedInboundEvent {
   workspace_id: string;
@@ -268,7 +273,7 @@ export async function buildExecutionPlan(
       subjectType: "workspace",
       subjectRef: workspaceId,
       details: { cadence_result: cadenceResult, conversation_id: conversationId },
-    }).catch(() => {});
+    }).catch(logBuildSideEffect("ledger_event"));
   }
 
   const legalKeywordsPresent = risk_flags.some((f) => /legal|lawyer|sue|complaint|gdpr|data_request|opt_out/i.test(f));
@@ -287,7 +292,7 @@ export async function buildExecutionPlan(
       subjectType: "workspace",
       subjectRef: workspaceId,
       details: { override: temporary_mode_override, conversation_id: conversationId },
-    }).catch(() => {});
+    }).catch(logBuildSideEffect("ledger_event"));
   }
   const effectiveModeKey = temporary_mode_override ?? useModeKey;
 
@@ -307,7 +312,7 @@ export async function buildExecutionPlan(
       subjectType: "workspace",
       subjectRef: workspaceId,
       details: { stop_reason: stopReason, conversation_id: conversationId },
-    }).catch(() => {});
+    }).catch(logBuildSideEffect("ledger_event"));
   } else if (riskOutput.requiresPause) {
     decision = "emit_preview";
     action_intent_to_emit = "request_disclosure_confirmation";
@@ -386,7 +391,7 @@ export async function buildExecutionPlan(
         subjectType: "thread",
         subjectRef: threadId.slice(0, 160),
         details: { goodwill_delta: decayResult.goodwillDelta, friction_delta: decayResult.frictionDelta },
-      }).catch(() => {});
+      }).catch(logBuildSideEffect("ledger_event"));
     }
     if (decayAdjustedGoodwill < 10) {
       decision = "emit_approval";
@@ -436,7 +441,7 @@ export async function buildExecutionPlan(
         subjectType: "thread",
         subjectRef: threadId.slice(0, 160),
         details: { reason: "strategic_guard_block", variant_score: variantScore, goodwill: blockByGoodwill ? goodwill : undefined },
-      }).catch(() => {});
+      }).catch(logBuildSideEffect("ledger_event"));
     } else if (
       escalationSeverity >= 4 ||
       contradictionScore >= 60 ||
@@ -453,7 +458,7 @@ export async function buildExecutionPlan(
         subjectType: "workspace",
         subjectRef: workspaceId,
         details: { reason: "decision_guard", conversation_id: conversationId },
-      }).catch(() => {});
+      }).catch(logBuildSideEffect("ledger_event"));
     }
   }
 
@@ -481,7 +486,7 @@ export async function buildExecutionPlan(
         subjectType: "thread",
         subjectRef: threadId.slice(0, 160),
         details: { reason: "force_escalation" },
-      }).catch(() => {});
+      }).catch(logBuildSideEffect("ledger_event"));
     } else if (guardResult.forcePause) {
       decision = "emit_preview";
       action_intent_to_emit = "request_disclosure_confirmation";
@@ -492,7 +497,7 @@ export async function buildExecutionPlan(
         subjectType: "thread",
         subjectRef: threadId.slice(0, 160),
         details: { reason: "force_pause" },
-      }).catch(() => {});
+      }).catch(logBuildSideEffect("ledger_event"));
     } else if (guardResult.blockVariant) {
       strategicBlockVariant = guardResult.blockVariant;
       await appendLedgerEvent({
@@ -502,7 +507,7 @@ export async function buildExecutionPlan(
         subjectType: "thread",
         subjectRef: threadId.slice(0, 160),
         details: { reason: "block_variant", block_variant: guardResult.blockVariant },
-      }).catch(() => {});
+      }).catch(logBuildSideEffect("ledger_event"));
     }
   }
 

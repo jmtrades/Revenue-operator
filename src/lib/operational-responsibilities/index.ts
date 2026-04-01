@@ -8,8 +8,15 @@ import { getDb } from "@/lib/db/queries";
 import { getReciprocalEventById } from "@/lib/reciprocal-events";
 import { recordOutcomeDependency, refreshResolvedAtForThread } from "@/lib/outcome-dependencies";
 import { createAssignment } from "@/lib/thread-assignments";
+import { log } from "@/lib/logger";
 
 export type AssignedRole = "originator" | "counterparty" | "downstream" | "observer";
+
+const logOperationalResponsibilitiesSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `operational-responsibilities.${ctx}`, {
+    error: e instanceof Error ? e.message : String(e),
+  });
+};
 
 /** Canonical required_action values. One open per (thread_id, required_action). */
 export type RequiredAction =
@@ -71,7 +78,7 @@ export async function createResponsibilityForEvent(
     await emitRequestCounterpartyAction((tx as { workspace_id: string }).workspace_id, threadId, {
       required_action: requiredAction,
       assigned_role: assignedRole,
-    }).catch(() => {});
+    }).catch(logOperationalResponsibilitiesSideEffect("emit-request-counterparty-action"));
   }
 }
 
@@ -124,7 +131,7 @@ export async function resolveResponsibilityByEvent(
       if (tx) {
         const workspaceId = (tx as { workspace_id: string }).workspace_id;
         const { detectAndRecordAuthorityTransfer } = await import("@/lib/third-party-reliance/authority-transfer");
-        await detectAndRecordAuthorityTransfer(threadId, workspaceId, operationalAction, eventId).catch(() => {});
+        await detectAndRecordAuthorityTransfer(threadId, workspaceId, operationalAction, eventId).catch(logOperationalResponsibilitiesSideEffect("detect-authority-transfer"));
       }
     }
   }
@@ -143,7 +150,7 @@ export async function onReciprocalEvent(
     const { data: tx } = await getDb().from("shared_transactions").select("workspace_id").eq("id", threadId).maybeSingle();
     if (tx) {
       const { emitCreateFollowupCommitment } = await import("@/lib/action-intents/emit");
-      await emitCreateFollowupCommitment((tx as { workspace_id: string }).workspace_id, threadId, { event_id: eventId }).catch(() => {});
+      await emitCreateFollowupCommitment((tx as { workspace_id: string }).workspace_id, threadId, { event_id: eventId }).catch(logOperationalResponsibilitiesSideEffect("emit-followup-commitment"));
     }
   }
 
@@ -191,7 +198,7 @@ export async function onReciprocalEvent(
   }
 
   // Refresh outcome_dependencies.resolved_at when thread may now be fully resolved
-  await refreshResolvedAtForThread(threadId).catch(() => {});
+  await refreshResolvedAtForThread(threadId).catch(logOperationalResponsibilitiesSideEffect("refresh-resolved-at"));
 
   // Record outcome dependency when event carries a created dependency (e.g. follow-up thread)
   const event = await getReciprocalEventById(eventId);
@@ -209,7 +216,7 @@ export async function onReciprocalEvent(
         dependentContextType: "shared_transaction",
         dependentContextId: event.dependency_created,
         dependencyType: "downstream_commitment",
-      }).catch(() => {});
+      }).catch(logOperationalResponsibilitiesSideEffect("record-outcome-dependency"));
     }
   }
 }

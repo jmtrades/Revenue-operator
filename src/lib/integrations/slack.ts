@@ -4,6 +4,11 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
+
+const logSlackSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `slack.${ctx}`, { error: e instanceof Error ? e.message : String(e) });
+};
 
 export type NotificationType =
   | "new_lead"
@@ -235,7 +240,7 @@ export async function notifyNewLead(
         slackBlockSection(text),
         ...(leadUrl ? [slackBlockActions([{ text: "View lead", url: leadUrl }])] : []),
       ];
-      await sendSlackMessage(workspaceId, ch.slack_channel_id, { text, blocks }).catch(() => {});
+      await sendSlackMessage(workspaceId, ch.slack_channel_id, { text, blocks }).catch(logSlackSideEffect("send_slack_new_lead"));
     } else if (ch.provider === "teams") {
       const url = await getTeamsWebhookForNotification(workspaceId, "new_lead");
       if (url)
@@ -243,7 +248,7 @@ export async function notifyNewLead(
           title: "New lead",
           text: `${(payload.name || "Unknown").toString().trim()}${payload.phone ? ` • ${payload.phone}` : ""}${payload.email ? ` • ${payload.email}` : ""}`,
           sections: leadUrl ? [{ title: "Quick action", facts: [{ name: "Link", value: leadUrl }] }] : undefined,
-        }).catch(() => {});
+        }).catch(logSlackSideEffect("send_teams_new_lead"));
     }
   }
 }
@@ -270,7 +275,7 @@ export async function notifyCallSummary(
         slackBlockSection(`*Call completed*\n• *Contact*: ${(payload.lead_name || payload.caller_phone || "Unknown").toString().trim()}\n• *Outcome*: ${(payload.outcome || "—").toString()}\n• *Duration*: ${duration}\n• *Summary*: ${summaryLine}`),
         ...(callUrl ? [slackBlockActions([{ text: "View call", url: callUrl }])] : []),
       ];
-      await sendSlackMessage(workspaceId, ch.slack_channel_id, { text: `Call: ${payload.lead_name || payload.caller_phone}`, blocks }).catch(() => {});
+      await sendSlackMessage(workspaceId, ch.slack_channel_id, { text: `Call: ${payload.lead_name || payload.caller_phone}`, blocks }).catch(logSlackSideEffect("send_slack_call_summary"));
     } else if (ch.provider === "teams") {
       const url = await getTeamsWebhookForNotification(workspaceId, "call_summary");
       if (url)
@@ -285,7 +290,7 @@ export async function notifyCallSummary(
               ...(callUrl ? [{ name: "Link", value: callUrl }] : []),
             ] },
           ],
-        }).catch(() => {});
+        }).catch(logSlackSideEffect("send_teams_call_summary"));
     }
   }
 }
@@ -299,7 +304,7 @@ export async function notifyDailyDigest(
   const text = `*Daily digest*\n${payload.message}\n• Calls: ${payload.calls_today}\n• New leads: ${payload.leads_today}\n• Appointments: ${payload.appointments_today}`;
   for (const ch of channels) {
     if (ch.provider === "slack" && ch.slack_channel_id) {
-      await sendSlackMessage(workspaceId, ch.slack_channel_id, { text, blocks: [slackBlockSection(text)] }).catch(() => {});
+      await sendSlackMessage(workspaceId, ch.slack_channel_id, { text, blocks: [slackBlockSection(text)] }).catch(logSlackSideEffect("send_slack_daily_digest"));
     } else if (ch.provider === "teams") {
       const url = await getTeamsWebhookForNotification(workspaceId, "daily_digest");
       if (url)
@@ -311,7 +316,7 @@ export async function notifyDailyDigest(
             { name: "New leads", value: String(payload.leads_today) },
             { name: "Appointments", value: String(payload.appointments_today) },
           ] }],
-        }).catch(() => {});
+        }).catch(logSlackSideEffect("send_teams_daily_digest"));
     }
   }
 }
@@ -329,7 +334,7 @@ export async function notifyQualityAlert(
         slackBlockSection(`*Quality alert*\n• *Reason*: ${payload.reason}\n${payload.summary ? `• *Summary*: ${payload.summary.slice(0, 200)}` : ""}`),
         ...(callUrl ? [slackBlockActions([{ text: "Review call", url: callUrl }])] : []),
       ];
-      await sendSlackMessage(workspaceId, ch.slack_channel_id, { text: `Quality alert: ${payload.reason}`, blocks }).catch(() => {});
+      await sendSlackMessage(workspaceId, ch.slack_channel_id, { text: `Quality alert: ${payload.reason}`, blocks }).catch(logSlackSideEffect("send_slack_quality_alert"));
     } else if (ch.provider === "teams") {
       const url = await getTeamsWebhookForNotification(workspaceId, "quality_alert");
       if (url)
@@ -337,7 +342,7 @@ export async function notifyQualityAlert(
           title: "Quality alert",
           text: payload.reason,
           sections: [{ title: "Details", facts: [{ name: "Summary", value: (payload.summary || "").slice(0, 200) }, ...(callUrl ? [{ name: "Link", value: callUrl }] : [])] }],
-        }).catch(() => {});
+        }).catch(logSlackSideEffect("send_teams_quality_alert"));
     }
   }
 }
@@ -356,7 +361,7 @@ export async function notifyAppointmentReminder(
         slackBlockSection(`*Appointment reminder*\n• *With*: ${(payload.lead_name || "Contact").toString()}\n• *When*: ${time}\n• *Title*: ${payload.title}`),
         ...(apptUrl ? [slackBlockActions([{ text: "View calendar", url: apptUrl }])] : []),
       ];
-      await sendSlackMessage(workspaceId, ch.slack_channel_id, { text: `Appointment: ${payload.title} at ${time}`, blocks }).catch(() => {});
+      await sendSlackMessage(workspaceId, ch.slack_channel_id, { text: `Appointment: ${payload.title} at ${time}`, blocks }).catch(logSlackSideEffect("send_slack_appointment_reminder"));
     } else if (ch.provider === "teams") {
       const url = await getTeamsWebhookForNotification(workspaceId, "appointment_reminder");
       if (url)
@@ -364,7 +369,7 @@ export async function notifyAppointmentReminder(
           title: "Appointment reminder",
           text: `${payload.title} — ${(payload.lead_name || "Contact").toString()} at ${time}`,
           sections: apptUrl ? [{ title: "Link", facts: [{ name: "Calendar", value: apptUrl }] }] : undefined,
-        }).catch(() => {});
+        }).catch(logSlackSideEffect("send_teams_appointment_reminder"));
     }
   }
 }

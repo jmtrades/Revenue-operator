@@ -5,6 +5,13 @@
 
 import { getDb } from "@/lib/db/queries";
 import type { ActorType, DecisionType } from "./types";
+import { log } from "@/lib/logger";
+
+const logCoordinationDisplacementSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `coordination-displacement.${ctx}`, {
+    error: e instanceof Error ? e.message : String(e),
+  });
+};
 
 /**
  * Record that a decision was made using the environment (relied_on_environment = true only).
@@ -30,9 +37,9 @@ export async function recordCoordinationDisplacement(
     workspaceId,
     "coordination_displaced",
     `${actorType}:${decisionType}:${recordedAt.slice(0, 19)}`
-  ).catch(() => {});
+  ).catch(logCoordinationDisplacementSideEffect("record-continuity-load"));
   const { resolveExposureFromDisplacement } = await import("@/lib/exposure-engine");
-  resolveExposureFromDisplacement(workspaceId, decisionType).catch(() => {});
+  resolveExposureFromDisplacement(workspaceId, decisionType).catch(logCoordinationDisplacementSideEffect("resolve-exposure"));
 }
 
 export async function countDisplacementInLastDays(workspaceId: string, days: number): Promise<number> {

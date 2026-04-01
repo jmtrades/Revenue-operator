@@ -3,6 +3,7 @@
  * One message per qualifying moment. Silence when no relief.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 import { getConfidencePhase } from "@/lib/confidence-engine";
 import { getInstallationState } from "@/lib/installation";
@@ -47,7 +48,9 @@ export async function recordReliefEvent(workspaceId: string, text: string): Prom
     created_at: now,
   });
 
-  await deliverReliefEvent(workspaceId, text).catch(() => {});
+  await deliverReliefEvent(workspaceId, text).catch((e) => {
+    log("error", "deliverReliefEvent failed", { error: e instanceof Error ? e.message : String(e) });
+  });
 }
 
 /**

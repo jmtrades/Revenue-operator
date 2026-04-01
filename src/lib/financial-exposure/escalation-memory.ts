@@ -6,6 +6,13 @@
 import { createIncidentStatement } from "@/lib/incidents";
 import { countExposuresByCategoryInLast7Days } from "./index";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
+
+const logEscalationMemorySideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `escalation-memory.${ctx}`, {
+    error: e instanceof Error ? e.message : String(e),
+  });
+};
 
 export async function runEscalationMemory(): Promise<void> {
   const db = getDb();
@@ -16,7 +23,7 @@ export async function runEscalationMemory(): Promise<void> {
     const counts = await countExposuresByCategoryInLast7Days(workspaceId);
     for (const [category, count] of Object.entries(counts)) {
       if (count >= 3) {
-        await createIncidentStatement(workspaceId, "repeated_financial_exposure", category).catch(() => {});
+        await createIncidentStatement(workspaceId, "repeated_financial_exposure", category).catch(logEscalationMemorySideEffect("create-incident"));
       }
     }
   }

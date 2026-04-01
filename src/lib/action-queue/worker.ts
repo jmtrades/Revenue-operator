@@ -12,7 +12,12 @@
 import { getDb } from "@/lib/db/queries";
 import { sendOutbound } from "@/lib/delivery/provider";
 import { mergeSettings, isWithinBusinessHours } from "@/lib/autopilot";
+import { log } from "@/lib/logger";
 import type { ActionCommand } from "./types";
+
+const logWorkerSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `worker.${ctx}`, { error: e instanceof Error ? e.message : String(e) });
+};
 
 /** When inner skips send because an outbound already exists for this dedup_key, it marks processed and returns this. */
 const SKIPPED_DUPLICATE_SEND = { alreadyMarkedProcessed: true } as const;
@@ -37,8 +42,8 @@ export async function runActionJob(
         try {
           const { toDLQ } = await import("@/lib/queue");
           toDLQ(`action:${actionCommandId}`, errMsg);
-        } catch {
-          // Non-blocking
+        } catch (dlqErr) {
+          logWorkerSideEffect("dlq_send")(dlqErr);
         }
       }
       throw err;
@@ -179,20 +184,20 @@ async function runActionJobInner(
       const actionType = (p as { action_type?: string }).action_type;
       if (actionType) {
         const { removePreview, markExecutedActionType } = await import("@/lib/adoption-acceleration/previews");
-        await removePreview(workspace_id, actionType).catch(() => {});
-        await markExecutedActionType(workspace_id, actionType).catch(() => {});
+        await removePreview(workspace_id, actionType).catch(logWorkerSideEffect("remove_preview"));
+        await markExecutedActionType(workspace_id, actionType).catch(logWorkerSideEffect("mark_executed_action_type"));
       }
       const { appendNarrative } = await import("@/lib/confidence-engine");
-      await appendNarrative(workspace_id, "action_executed", "An outbound action was sent.").catch(() => {});
+      await appendNarrative(workspace_id, "action_executed", "An outbound action was sent.").catch(logWorkerSideEffect("append_narrative"));
       const delaySeconds = (p as { delay_seconds?: number }).delay_seconds;
       if (delaySeconds != null) {
         const { recordResponseDelay } = await import("@/lib/human-presence");
         await recordResponseDelay(lead_id, delaySeconds);
       }
       const { createCommitment } = await import("@/lib/commitment-recovery");
-      createCommitment(workspace_id, "conversation", p.conversation_id, new Date(Date.now() + 24 * 60 * 60 * 1000)).catch(() => {});
+      createCommitment(workspace_id, "conversation", p.conversation_id, new Date(Date.now() + 24 * 60 * 60 * 1000)).catch(logWorkerSideEffect("create_commitment"));
       const { updateOnBusinessMessage } = await import("@/lib/opportunity-recovery");
-      updateOnBusinessMessage(workspace_id, p.conversation_id).catch(() => {});
+      updateOnBusinessMessage(workspace_id, p.conversation_id).catch(logWorkerSideEffect("update_on_business_message"));
       return DELIVERY_PENDING;
     }
 
@@ -252,20 +257,20 @@ async function runActionJobInner(
       const actionType = (p as { action_type?: string }).action_type;
       if (actionType) {
         const { removePreview, markExecutedActionType } = await import("@/lib/adoption-acceleration/previews");
-        await removePreview(workspace_id, actionType).catch(() => {});
-        await markExecutedActionType(workspace_id, actionType).catch(() => {});
+        await removePreview(workspace_id, actionType).catch(logWorkerSideEffect("remove_preview"));
+        await markExecutedActionType(workspace_id, actionType).catch(logWorkerSideEffect("mark_executed_action_type"));
       }
       const { appendNarrative } = await import("@/lib/confidence-engine");
-      await appendNarrative(workspace_id, "action_executed", "An outbound action was sent.").catch(() => {});
+      await appendNarrative(workspace_id, "action_executed", "An outbound action was sent.").catch(logWorkerSideEffect("append_narrative"));
       const delaySeconds = (p as { delay_seconds?: number }).delay_seconds;
       if (delaySeconds != null) {
         const { recordResponseDelay } = await import("@/lib/human-presence");
         await recordResponseDelay(lead_id, delaySeconds);
       }
       const { createCommitment } = await import("@/lib/commitment-recovery");
-      createCommitment(workspace_id, "conversation", p.conversation_id, new Date(Date.now() + 24 * 60 * 60 * 1000)).catch(() => {});
+      createCommitment(workspace_id, "conversation", p.conversation_id, new Date(Date.now() + 24 * 60 * 60 * 1000)).catch(logWorkerSideEffect("create_commitment"));
       const { updateOnBusinessMessage } = await import("@/lib/opportunity-recovery");
-      updateOnBusinessMessage(workspace_id, p.conversation_id).catch(() => {});
+      updateOnBusinessMessage(workspace_id, p.conversation_id).catch(logWorkerSideEffect("update_on_business_message"));
     }
     return;
   }

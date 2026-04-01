@@ -3,6 +3,7 @@
  * Silent. No emails or notifications.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 import { processMaintainsOperation } from "./expectations";
 import { hasAnchoredAcrossDays } from "./anchor-days";
@@ -35,7 +36,9 @@ export async function recordAnchorLossOrientationIfDue(workspaceId: string): Pro
   if ((expectations?.length ?? 0) > 0) return;
 
   const { recordOrientationStatement } = await import("@/lib/orientation/records");
-  await recordOrientationStatement(workspaceId, ANCHOR_LOSS_STATEMENT).catch(() => {});
+  await recordOrientationStatement(workspaceId, ANCHOR_LOSS_STATEMENT).catch((e) => {
+    log("error", "recordOrientationStatement failed", { error: e instanceof Error ? e.message : String(e) });
+  });
 
   const now = new Date().toISOString();
   const { data: row } = await db.from("workspace_orientation_state").select("workspace_id").eq("workspace_id", workspaceId).maybeSingle();

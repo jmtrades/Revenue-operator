@@ -263,7 +263,7 @@ export default function AppShellClient({
         if (cancelled) return;
         setWorkspaceMeta(data as AppShellWorkspaceMeta);
       })
-      .catch(() => {})
+      .catch((e) => { console.warn("[AppShellClient] failed:", e instanceof Error ? e.message : String(e)); })
       .finally(() => {
         if (!cancelled) {
           setWorkspaceMetaLoaded(true);
@@ -298,7 +298,7 @@ export default function AppShellClient({
         .then((res: { count: number | null }) => {
           setActiveCalls(res.count ?? 0);
         })
-        .catch(() => {});
+        .catch((e) => { console.warn("[AppShellClient] failed:", e instanceof Error ? e.message : String(e)); });
 
     void fetchActive();
 
@@ -333,16 +333,16 @@ export default function AppShellClient({
               setBillingInfo({ billing_status: billing.billing_status, billing_tier: billing.billing_tier, renewal_at: billing.renewal_at });
             }
           })
-          .catch(() => {});
+          .catch((e) => { console.warn("[AppShellClient] failed:", e instanceof Error ? e.message : String(e)); });
         // Fetch unread inbox count
         fetch(`/api/inbox/unread?workspace_id=${encodeURIComponent(wid)}`, { credentials: "include" })
           .then((res) => (res.ok ? res.json() : null))
           .then((data: { count?: number } | null) => {
             if (data && typeof data.count === "number") setInboxUnread(data.count);
           })
-          .catch(() => {});
+          .catch((e) => { console.warn("[AppShellClient] failed:", e instanceof Error ? e.message : String(e)); });
       })
-      .catch(() => {});
+      .catch((e) => { console.warn("[AppShellClient] failed:", e instanceof Error ? e.message : String(e)); });
   }, []);
 
   useEffect(() => {

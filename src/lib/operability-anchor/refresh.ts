@@ -5,11 +5,16 @@
 
 import { getDb } from "@/lib/db/queries";
 import { getConfidencePhase } from "@/lib/confidence-engine";
+import { log } from "@/lib/logger";
 import {
   upsertOperationalExpectation,
   removeOperationalExpectation,
 } from "./expectations";
 import type { ExpectationType } from "./types";
+
+const logRefreshSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `refresh.${ctx}`, { error: e instanceof Error ? e.message : String(e) });
+};
 
 const RECENT_HOURS = 24;
 const NEXT_ACTION_WINDOW_MINUTES = 60;
@@ -63,7 +68,7 @@ export async function refreshOperabilityAnchor(workspaceId: string): Promise<voi
       "awaiting_reply",
       r.conversation_id,
       maintained
-    ).catch(() => {});
+    ).catch(logRefreshSideEffect("upsert_expectation"));
   }
 
   // B) awaiting_confirmation: commitments state in (overdue, recovery_required, awaiting_response), authority_required=false, recovery_attempts<2
@@ -112,7 +117,7 @@ export async function refreshOperabilityAnchor(workspaceId: string): Promise<voi
       "awaiting_confirmation",
       r.id,
       maintained
-    ).catch(() => {});
+    ).catch(logRefreshSideEffect("upsert_expectation"));
   }
 
   // C) awaiting_payment: payment_obligations state in (overdue, recovering), authority_required=false, recovery_attempts<3
@@ -146,7 +151,7 @@ export async function refreshOperabilityAnchor(workspaceId: string): Promise<voi
       "awaiting_payment",
       r.id,
       maintained
-    ).catch(() => {});
+    ).catch(logRefreshSideEffect("upsert_expectation"));
   }
 
   // D) awaiting_counterparty: shared_transactions state=pending_acknowledgement, authority_required=false
@@ -178,7 +183,7 @@ export async function refreshOperabilityAnchor(workspaceId: string): Promise<voi
       "awaiting_counterparty",
       r.id,
       maintained
-    ).catch(() => {});
+    ).catch(logRefreshSideEffect("upsert_expectation"));
   }
 
   // Remove expectations no longer in source sets
@@ -192,7 +197,7 @@ export async function refreshOperabilityAnchor(workspaceId: string): Promise<voi
     const set = currentIds[r.expectation_type];
     if (!set.has(r.reference_id)) {
       await removeOperationalExpectation(workspaceId, r.expectation_type, r.reference_id).catch(
-        () => {}
+        logRefreshSideEffect("remove_expectation")
       );
     }
   }
@@ -201,7 +206,7 @@ export async function refreshOperabilityAnchor(workspaceId: string): Promise<voi
   const { recordContinuityLoad } = await import("@/lib/continuity-load");
   if (await processMaintainsOperation(workspaceId)) {
     const hourBucket = new Date().toISOString().slice(0, 13);
-    recordContinuityLoad(workspaceId, "operation_sustained", `anchor:${hourBucket}`).catch(() => {});
+    recordContinuityLoad(workspaceId, "operation_sustained", `anchor:${hourBucket}`).catch(logRefreshSideEffect("record_continuity_load"));
   }
 }
 
@@ -216,7 +221,7 @@ export async function refreshCommitmentExpectations(
       "awaiting_confirmation",
       id,
       maintainedBySystem
-    ).catch(() => {});
+    ).catch(logRefreshSideEffect("upsert_expectation"));
   }
 }
 
@@ -231,7 +236,7 @@ export async function refreshOpportunityExpectations(
       "awaiting_reply",
       id,
       maintainedBySystem
-    ).catch(() => {});
+    ).catch(logRefreshSideEffect("upsert_expectation"));
   }
 }
 
@@ -246,7 +251,7 @@ export async function refreshPaymentExpectations(
       "awaiting_payment",
       id,
       maintainedBySystem
-    ).catch(() => {});
+    ).catch(logRefreshSideEffect("upsert_expectation"));
   }
 }
 
@@ -261,6 +266,6 @@ export async function refreshSharedTransactionExpectations(
       "awaiting_counterparty",
       id,
       maintainedBySystem
-    ).catch(() => {});
+    ).catch(logRefreshSideEffect("upsert_expectation"));
   }
 }

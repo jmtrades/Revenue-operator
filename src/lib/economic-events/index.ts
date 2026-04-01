@@ -4,6 +4,7 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 export type EconomicEventType =
   | "opportunity_recovered"
@@ -21,6 +22,12 @@ export interface RecordEconomicEventInput {
   valueCurrency?: string | null;
 }
 
+const logEconomicEventsSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `economic-events.${ctx}`, {
+    error: e instanceof Error ? e.message : String(e),
+  });
+};
+
 /**
  * Append an economic event. Call from engines only after the outcome has occurred; does not alter engine behavior.
  */
@@ -36,9 +43,9 @@ export async function recordEconomicEvent(input: RecordEconomicEventInput): Prom
     value_currency: input.valueCurrency ?? null,
   });
   const { upsertParticipation } = await import("@/lib/economic-participation");
-  await upsertParticipation(input.workspaceId, "value_generated", now).catch(() => {});
+  await upsertParticipation(input.workspaceId, "value_generated", now).catch(logEconomicEventsSideEffect("upsert-value-generated"));
   if (input.eventType === "payment_recovered" || input.eventType === "commitment_saved") {
-    await upsertParticipation(input.workspaceId, "value_protected", now).catch(() => {});
+    await upsertParticipation(input.workspaceId, "value_protected", now).catch(logEconomicEventsSideEffect("upsert-value-protected"));
   }
   const categoryMap: Record<EconomicEventType, "commitment_saved" | "payment_recovered" | "opportunity_revived" | "dispute_prevented" | "no_show_prevented"> = {
     commitment_saved: "commitment_saved",
@@ -52,11 +59,11 @@ export async function recordEconomicEvent(input: RecordEconomicEventInput): Prom
     input.workspaceId,
     categoryMap[input.eventType],
     input.subjectId ?? undefined
-  ).catch(() => {});
+  ).catch(logEconomicEventsSideEffect("create-incident-statement"));
   const { appendNarrative } = await import("@/lib/confidence-engine");
-  await appendNarrative(input.workspaceId, "outcome_resolved", "An outcome was restored.").catch(() => {});
+  await appendNarrative(input.workspaceId, "outcome_resolved", "An outcome was restored.").catch(logEconomicEventsSideEffect("append-narrative"));
   const { runPostOutcomeStabilization } = await import("@/lib/ritual-cycles");
-  await runPostOutcomeStabilization(input.workspaceId).catch(() => {});
+  await runPostOutcomeStabilization(input.workspaceId).catch(logEconomicEventsSideEffect("post-outcome-stabilization"));
 }
 
 /**

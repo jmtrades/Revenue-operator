@@ -80,7 +80,7 @@ export default function RecordLeadPage() {
     if (!openEscalationId) return;
     fetch(`/api/escalations/${openEscalationId}/ack`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" })
       .then((r) => { if (r.ok) { setOpenEscalationId(null); setRecorded(true); } })
-      .catch(() => {});
+      .catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
   };
 
   const doRecordAuthorityNote = () => {

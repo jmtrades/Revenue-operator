@@ -2,6 +2,7 @@
  * Counterfactual proof: when risk existed during observing and does not reoccur for 48h after active.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 import { createIncidentStatement } from "@/lib/incidents";
 import { getRiskCategoriesDuringObserving, clearRiskCategoryDuringObserving } from "./index";
@@ -36,8 +37,12 @@ export async function runContinuationPreventedCheck(): Promise<void> {
         .lt("detected_at", windowEnd);
 
       if ((count ?? 0) === 0) {
-        await createIncidentStatement(row.workspace_id, "continuation_prevented", null).catch(() => {});
-        await clearRiskCategoryDuringObserving(row.workspace_id, category).catch(() => {});
+        await createIncidentStatement(row.workspace_id, "continuation_prevented", null).catch((e) => {
+          log("error", "createIncidentStatement failed", { error: e instanceof Error ? e.message : String(e) });
+        });
+        await clearRiskCategoryDuringObserving(row.workspace_id, category).catch((e) => {
+          log("error", "clearRiskCategoryDuringObserving failed", { error: e instanceof Error ? e.message : String(e) });
+        });
       }
     }
   }

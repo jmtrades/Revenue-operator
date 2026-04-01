@@ -4,6 +4,7 @@
  * Gate outbound execution without modifying engine internals.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 
 export type ConfidencePhase = "observing" | "simulating" | "assisted" | "autonomous";
@@ -68,7 +69,9 @@ export async function recordSimulatedAction(
     related_external_ref: relatedExternalRef ?? null,
     simulated_text: simulatedText,
   });
-  await appendNarrative(workspaceId, "simulation_created", "An action was simulated and not sent.").catch(() => {});
+  await appendNarrative(workspaceId, "simulation_created", "An action was simulated and not sent.").catch((e) => {
+    log("error", "appendNarrative simulation created failed", { error: e instanceof Error ? e.message : String(e) });
+  });
 }
 
 /** Whether action_type is trusted for workspace (assisted phase). */

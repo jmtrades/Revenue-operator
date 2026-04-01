@@ -2,6 +2,7 @@
  * Thread evidence: proof artifacts without accounts. No payload returned publicly.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 
 const MAX_TEXT_LEN = 140;
@@ -44,7 +45,9 @@ export async function recordEvidence(
   
   const { threadIsReliedUpon, recordThreadAmendment } = await import("@/lib/institutional-auditability");
   if (await threadIsReliedUpon(threadId)) {
-    await recordThreadAmendment(threadId, "evidence_change", "Outcome evidence was added after reliance.", null).catch(() => {});
+    await recordThreadAmendment(threadId, "evidence_change", "Outcome evidence was added after reliance.", null).catch((e) => {
+      log("error", "recordThreadAmendment failed", { error: e instanceof Error ? e.message : String(e) });
+    });
   }
 }
 

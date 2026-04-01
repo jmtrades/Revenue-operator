@@ -4,6 +4,13 @@
 
 import { getDb } from "@/lib/db/queries";
 import { recordOrientationStatement } from "@/lib/orientation/records";
+import { log } from "@/lib/logger";
+
+const logConflictedMemorySideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `conflicted-memory.${ctx}`, {
+    error: e instanceof Error ? e.message : String(e),
+  });
+};
 
 /**
  * Detect and record conflicted memory when dispute occurs after downstream action or third-party reliance.
@@ -56,6 +63,6 @@ export async function detectAndRecordConflictedMemory(
     .maybeSingle();
   
   if (!existing) {
-    await recordOrientationStatement(workspaceId, "Later activity required reconciling prior understanding.").catch(() => {});
+    await recordOrientationStatement(workspaceId, "Later activity required reconciling prior understanding.").catch(logConflictedMemorySideEffect("record-conflict"));
   }
 }

@@ -3,6 +3,7 @@
  * Conditions: ≥3 prevented failures, ≥1 economic event, ≥1 resolved commitment, ≥1 resolved opportunity.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 import { getConfidencePhase, setConfidencePhase, appendNarrative, isStabilityEstablished } from "./index";
 
@@ -51,7 +52,9 @@ export async function runStabilizationDetection(): Promise<void> {
 
     if (preventedCount >= 3 && hasEconomic && hasResolvedCommitment && hasResolvedOpportunity) {
       await setConfidencePhase(workspaceId, "autonomous");
-      await appendNarrative(workspaceId, "stability_established", "Operational stability established.").catch(() => {});
+      await appendNarrative(workspaceId, "stability_established", "Operational stability established.").catch((e) => {
+        log("error", "appendNarrative stability_established failed", { error: e instanceof Error ? e.message : String(e) });
+      });
     }
   }
 }

@@ -191,7 +191,7 @@ export function LeadsKanban({ groupedByStatus, onMoveLead, onOpenLead }: LeadsKa
           setIntelligence(valid);
         }
       })
-      .catch(() => {});
+      .catch((e) => { console.warn("[LeadsKanban] failed:", e instanceof Error ? e.message : String(e)); });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allLeadIds.length]);
 

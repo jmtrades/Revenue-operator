@@ -2,6 +2,7 @@
  * Proof capsule: ladder order — 1 causality, 2 continuation, 3 displacement. Max 8 lines. No economic or relief lines.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 
 const MAX_LINE_LEN = 90;
@@ -283,5 +284,7 @@ export async function saveProofCapsule(
     );
   
   const { checkAndConfirmInstallation } = await import("@/lib/installation/confirm");
-  await checkAndConfirmInstallation(workspaceId).catch(() => {});
+  await checkAndConfirmInstallation(workspaceId).catch((e) => {
+    log("error", "checkAndConfirmInstallation failed", { error: e instanceof Error ? e.message : String(e) });
+  });
 }

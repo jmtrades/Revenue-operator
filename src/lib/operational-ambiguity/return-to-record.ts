@@ -4,6 +4,13 @@
 
 import { getDb } from "@/lib/db/queries";
 import { recordOrientationStatement } from "@/lib/orientation/records";
+import { log } from "@/lib/logger";
+
+const logReturnToRecordSideEffect = (ctx: string) => (e: unknown) => {
+  log("warn", `return-to-record.${ctx}`, {
+    error: e instanceof Error ? e.message : String(e),
+  });
+};
 
 /**
  * Detect and record return to record when counterparty accesses public link after external interaction.
@@ -65,6 +72,6 @@ export async function detectAndRecordReturnToRecord(
     .maybeSingle();
   
   if (!existing) {
-    await recordOrientationStatement(workspaceId, "Work returned to the existing record.").catch(() => {});
+    await recordOrientationStatement(workspaceId, "Work returned to the existing record.").catch(logReturnToRecordSideEffect("record-return"));
   }
 }

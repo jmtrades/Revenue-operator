@@ -3,6 +3,7 @@
  * No pricing UI. No charge without explicit authorization.
  */
 
+import { log } from "@/lib/logger";
 import { createHash, randomBytes } from "crypto";
 import { getDb } from "@/lib/db/queries";
 import { isSettlementReady } from "@/lib/operational-perception/settlement-readiness";
@@ -196,7 +197,9 @@ export async function createStripeCheckoutSessionForSettlement(workspaceId: stri
   const secretKey = process.env.STRIPE_SECRET_KEY;
   const defaultPriceId = process.env.STRIPE_DEFAULT_PRICE_ID;
   if (!secretKey || !defaultPriceId) throw new SettlementNotConfiguredError();
-  await ensureSettlementPriceSeed().catch(() => {});
+  await ensureSettlementPriceSeed().catch((e) => {
+    log("error", "ensureSettlementPriceSeed failed", { error: e instanceof Error ? e.message : String(e) });
+  });
 
   const Stripe = (await import("stripe")).default;
   const stripe = new Stripe(secretKey);

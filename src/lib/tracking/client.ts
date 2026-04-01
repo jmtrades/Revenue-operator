@@ -51,7 +51,9 @@ export function track(eventName: string, properties?: Record<string, unknown>, c
   if (navigator.sendBeacon) {
     navigator.sendBeacon(TRACK_ENDPOINT, blob);
   } else {
-    fetch(TRACK_ENDPOINT, { method: "POST", body: blob, keepalive: true }).catch(() => {});
+    fetch(TRACK_ENDPOINT, { method: "POST", body: blob, keepalive: true }).catch((e) => {
+      console.warn("[Analytics] fetch failed:", e instanceof Error ? e.message : String(e));
+    });
   }
 }
 

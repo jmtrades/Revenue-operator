@@ -4,6 +4,7 @@
  * Single entry point for all connectors.
  */
 
+import { log } from "@/lib/logger";
 import type { NormalizedInboundEvent } from "@/lib/universal-model";
 import { getDb } from "@/lib/db/queries";
 import { processEvent } from "@/lib/event-engine";
@@ -119,8 +120,12 @@ export async function processNormalizedInbound(
 
   const { stopSequence } = await import("@/lib/sequences/follow-up-engine");
   const { cancelLeadPlan } = await import("@/lib/plans/lead-plan");
-  await stopSequence(workspace_id, leadId, "user_reply").catch(() => {});
-  await cancelLeadPlan(workspace_id, leadId, "user_reply").catch(() => {});
+  await stopSequence(workspace_id, leadId, "user_reply").catch((e) => {
+    log("error", "stopSequence failed", { error: e instanceof Error ? e.message : String(e) });
+  });
+  await cancelLeadPlan(workspace_id, leadId, "user_reply").catch((e) => {
+    log("error", "cancelLeadPlan failed", { error: e instanceof Error ? e.message : String(e) });
+  });
 
   const { data: settingsRow } = await db.from("settings").select("*").eq("workspace_id", workspace_id).maybeSingle();
   const settings = mergeSettings(settingsRow as Parameters<typeof mergeSettings>[0]);

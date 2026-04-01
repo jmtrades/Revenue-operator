@@ -3,6 +3,7 @@
  * -> safety check -> execute send (or safe fallback) -> log. NEVER block on approval.
  */
 
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 import { fillSlots } from "@/lib/ai/templates";
 import {
@@ -231,7 +232,9 @@ export async function runDecisionJob(
       if (objectionType) memoryUpdates.previous_objections = [objectionType];
       if (/price|cost|how much|budget/i.test(lastUserMsg)) memoryUpdates.hesitation_reason = "price";
       if (Object.keys(memoryUpdates).length > 0) {
-        upsertConversationMemory(leadId, workspaceId, memoryUpdates).catch(() => {});
+        upsertConversationMemory(leadId, workspaceId, memoryUpdates).catch((e) => {
+          log("error", "upsertConversationMemory failed", { error: e instanceof Error ? e.message : String(e) });
+        });
       }
 
       // Message Compiler: structured plan + deterministic render (no templates, no raw LLM text)
@@ -702,7 +705,9 @@ export async function runDecisionJob(
     await setLeadPlan(workspaceId, leadId, {
       next_action_type: nextActionType,
       next_action_at: nextActionAt.toISOString(),
-    }).catch(() => {});
+    }).catch((e) => {
+      log("error", "setLeadPlan failed", { error: e instanceof Error ? e.message : String(e) });
+    });
   }
 
   await incrementMetric(workspaceId, policy.allowed ? METRIC_KEYS.REPLIES_SENT : METRIC_KEYS.FALLBACK_USED);

@@ -136,7 +136,7 @@ export default function DashboardStartPage() {
           type="button"
           onClick={() => {
             const url = typeof window !== "undefined" ? window.location.origin + "/dashboard/start" : "";
-            if (url) navigator.clipboard.writeText(url).catch(() => {});
+            if (url) navigator.clipboard.writeText(url).catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
           }}
           className="btn-secondary"
         >
@@ -219,7 +219,7 @@ export default function DashboardStartPage() {
             <section className="rounded-[12px] border p-6" style={{ borderColor: "var(--border)" }}>
               <button
                 type="button"
-                onClick={() => { if (canonicalRecordUrl) navigator.clipboard.writeText(canonicalRecordUrl).catch(() => {}); }}
+                onClick={() => { if (canonicalRecordUrl) navigator.clipboard.writeText(canonicalRecordUrl).catch((e) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); }); }}
                 className="btn-primary w-full max-w-[320px] block mx-auto"
               >
                 {nextAction?.label ?? ts("copyRecordFallback")}
