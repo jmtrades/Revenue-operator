@@ -49,22 +49,31 @@ export async function GET(request: NextRequest) {
     }
     const token = process.env.CRON_SECRET ?? "";
     const ran: string[] = [];
+    const failed: string[] = [];
     for (const path of CORE_STEPS) {
       try {
         const res = await fetch(`${base.replace(/\/$/, "")}${path}`, {
           headers: { Authorization: `Bearer ${token}` },
           cache: "no-store",
         });
-        if (res.ok) ran.push(path);
-      } catch (_err) {
-        // Sub-cron failed; continue
+        if (res.ok) {
+          ran.push(path);
+        } else {
+          failed.push(`${path}:${res.status}`);
+          console.warn(`[cron/core] Sub-cron ${path} returned ${res.status}`);
+        }
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        failed.push(`${path}:ERR`);
+        console.error(`[cron/core] Sub-cron ${path} fetch failed: ${msg}`);
       }
     }
+    if (failed.length > 0) {
+      console.warn(`[cron/core] ${failed.length}/${CORE_STEPS.length} sub-crons failed: ${failed.slice(0, 10).join(", ")}`);
+    }
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-    await recordCronHeartbeat("core").catch(() => {
-      // cron/core error (details omitted to protect PII) 
-    });
-    return { run: ran.length, ran: ran.length, steps: CORE_STEPS.length };
+    await recordCronHeartbeat("core").catch(() => {});
+    return { run: ran.length, ran: ran.length, steps: CORE_STEPS.length, failed: failed.length > 0 ? failed.slice(0, 10) : undefined };
   });
 
   return NextResponse.json({
