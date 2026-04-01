@@ -486,6 +486,22 @@ export async function advanceEnrollment(
     }
   }
 
+  // IDEMPOTENCY GUARD: Check if this step was already executed for this enrollment
+  // Prevents duplicate sends on cron retry or concurrent execution
+  try {
+    const { count: alreadyExecuted } = await db
+      .from("sequence_step_log")
+      .select("id", { count: "exact", head: true })
+      .eq("enrollment_id", enrollmentId)
+      .eq("step_order", stepToExecute.step_order);
+    if ((alreadyExecuted ?? 0) > 0) {
+      console.warn(`[sequence-dedup] Step ${stepToExecute.step_order} already executed for enrollment ${enrollmentId} — skipping`);
+      return null;
+    }
+  } catch {
+    // sequence_step_log table may not exist — proceed without dedup guard
+  }
+
   // Execute the action: send SMS, email, or trigger outbound call
   let actionSucceeded = false;
   try {
@@ -683,6 +699,20 @@ export async function advanceEnrollment(
         .eq("id", enrollmentId);
     }
     return null;
+  }
+
+  // Log step execution for idempotency tracking
+  try {
+    await db.from("sequence_step_log").insert({
+      enrollment_id: enrollmentId,
+      step_order: stepToExecute.step_order,
+      step_type: stepToExecute.type,
+      executed_at: new Date().toISOString(),
+      workspace_id: e.workspace_id,
+      lead_id: e.lead_id,
+    });
+  } catch {
+    // sequence_step_log table may not exist — non-fatal
   }
 
   // Action succeeded — advance to next step
