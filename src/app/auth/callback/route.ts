@@ -48,6 +48,8 @@ export async function GET(request: Request) {
           ws = created as { id: string };
           isNewUser = true;
           await db.from("settings").insert({ workspace_id: (created as { id: string }).id, risk_level: "balanced" });
+          await db.from("workspace_members").insert({ workspace_id: (created as { id: string }).id, user_id: userId, role: "owner" });
+          await db.from("workspace_billing").insert({ workspace_id: (created as { id: string }).id, plan: "trial", status: "trialing" });
         }
       }
       workspaceId = (ws as { id?: string } | null)?.id ?? undefined;

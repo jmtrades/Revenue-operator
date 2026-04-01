@@ -55,6 +55,11 @@ export async function POST(req: NextRequest) {
   } catch {
     // Non-blocking — membership can be retried
   }
+  try {
+    await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing" });
+  } catch {
+    // Non-blocking — billing can be retried
+  }
   const { error: settingsErr } = await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
   if (settingsErr) {
     log("warn", "onboarding.identity_settings_insert_failed", { error: settingsErr.message });

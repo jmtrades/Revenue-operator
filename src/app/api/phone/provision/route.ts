@@ -13,6 +13,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { getTelephonyProvider } from "@/lib/telephony/get-telephony-provider";
 import { getTelephonyService } from "@/lib/telephony";
 import { purchaseTelnyxPhoneNumber } from "@/lib/telephony/telnyx/numbers";
+import { log } from "@/lib/logger";
 import { canProvisionNumber } from "@/lib/billing/plan-enforcement";
 import { USAGE_RATES } from "@/lib/billing-plans";
 import { assertSameOrigin } from "@/lib/http/csrf";
@@ -378,4 +379,3 @@ export async function POST(req: NextRequest) {
     setup_fee_cents: row.setup_fee_cents ?? setupFeeCents,
   });
 }
-import { log } from "@/lib/logger";
