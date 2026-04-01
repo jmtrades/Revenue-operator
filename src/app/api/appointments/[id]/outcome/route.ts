@@ -176,16 +176,16 @@ export async function POST(
       try {
         await db.from("action_intents").insert({
           workspace_id: session.workspaceId,
-          lead_id: apt.lead_id,
-          action_type: "follow_up_no_show",
-          status: "pending",
-          scheduled_for: reEngageDate,
-          metadata: {
+          intent_type: "follow_up_no_show",
+          payload_json: {
+            lead_id: apt.lead_id,
             original_appointment_id: id,
             original_appointment_time: apt.start_time,
             appointment_title: apt.title,
+            scheduled_for: reEngageDate,
             attempt: 1,
           },
+          dedupe_key: `noshow:${session.workspaceId}:${apt.lead_id}:${id}`,
         });
         log("info", `Post-appointment: no-show follow-up scheduled for lead=${apt.lead_id} appointment=${id}`);
       } catch {

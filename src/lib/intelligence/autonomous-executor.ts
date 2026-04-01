@@ -203,15 +203,15 @@ export async function executeAutonomousAction(
       try {
         await db.from("action_intents").insert({
           workspace_id: intelligence.workspace_id,
-          lead_id: intelligence.lead_id,
-          action_type: intelligence.next_best_action,
-          status: "pending_approval",
-          metadata: {
+          intent_type: intelligence.next_best_action,
+          payload_json: {
+            lead_id: intelligence.lead_id,
             confidence: intelligence.action_confidence,
             reason: intelligence.action_reason,
             risk_flags: intelligence.risk_flags,
             requires_approval: true,
           },
+          dedupe_key: `approval:${intelligence.workspace_id}:${intelligence.lead_id}:${intelligence.next_best_action}`,
         });
       } catch {
         // action_intents table may not exist
