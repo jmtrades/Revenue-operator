@@ -38,26 +38,6 @@ const STATUS_CONFIG = {
   lost: { label: "Lost", color: "text-red-400", bg: "bg-red-500/10", border: "border-red-500/20", icon: AlertTriangle },
 } as const;
 
-// Demo data for when API returns empty
-const DEMO_CALLS: MissedCall[] = [
-  { id: "1", caller_name: "John Martinez", caller_phone: "(555) 123-4567", called_at: new Date(Date.now() - 3600000).toISOString(), status: "recovered", estimated_value: 450, recovery_method: "ai_callback", recovery_time_minutes: 3 },
-  { id: "2", caller_name: "Sarah Johnson", caller_phone: "(555) 234-5678", called_at: new Date(Date.now() - 7200000).toISOString(), status: "recovered", estimated_value: 1200, recovery_method: "sms_followup", recovery_time_minutes: 12 },
-  { id: "3", caller_name: "Mike Chen", caller_phone: "(555) 345-6789", called_at: new Date(Date.now() - 10800000).toISOString(), status: "pending", estimated_value: 350, recovery_method: undefined, recovery_time_minutes: undefined },
-  { id: "4", caller_name: "Emily Davis", caller_phone: "(555) 456-7890", called_at: new Date(Date.now() - 14400000).toISOString(), status: "in_progress", estimated_value: 800, recovery_method: "ai_callback", recovery_time_minutes: undefined },
-  { id: "5", caller_name: "Robert Williams", caller_phone: "(555) 567-8901", called_at: new Date(Date.now() - 86400000).toISOString(), status: "recovered", estimated_value: 600, recovery_method: "ai_callback", recovery_time_minutes: 5 },
-  { id: "6", caller_name: "Unknown Caller", caller_phone: "(555) 678-9012", called_at: new Date(Date.now() - 172800000).toISOString(), status: "lost", estimated_value: 300, recovery_method: undefined, recovery_time_minutes: undefined },
-];
-
-const DEMO_STATS: RecoveryStats = {
-  total_missed: 24,
-  recovered: 18,
-  pending: 3,
-  lost: 3,
-  total_revenue_recovered: 14200,
-  avg_recovery_time_minutes: 6,
-  recovery_rate: 75,
-};
-
 export default function MissedCallRecoveryPage() {
   const { workspaceId } = useWorkspace();
   const [calls, setCalls] = useState<MissedCall[]>([]);
@@ -75,15 +55,15 @@ export default function MissedCallRecoveryPage() {
       fetchWithFallback<{ calls: MissedCall[] }>(`/api/recovery/missed-calls?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
       fetchWithFallback<RecoveryStats>(`/api/recovery/stats?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
     ]).then(([callsRes, statsRes]) => {
-      const hasCallData = callsRes.data?.calls?.length ?? 0 > 0;
-      const hasStatsData = statsRes.data && statsRes.data.total_missed > 0;
+      const callData = callsRes.data;
+      const statsData = statsRes.data;
 
-      if (hasCallData) {
-        setCalls(callsRes.data.calls);
+      if (callData?.calls?.length) {
+        setCalls(callData.calls);
         setIsLive(true);
       }
-      if (hasStatsData) {
-        setStats(statsRes.data);
+      if (statsData && statsData.total_missed > 0) {
+        setStats(statsData);
         setIsLive(true);
       }
     }).finally(() => setLoading(false));
