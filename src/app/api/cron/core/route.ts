@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { assertCronAuthorized } from "@/lib/runtime";
 import { runSafeCron } from "@/lib/cron/run-safe";
+import { log } from "@/lib/logger";
 
 /** Order: connector-inbox, hosted-executor, watchdog, self-healing, approval-expiry, data-retention, appointment-reminders, then queue/recoveries/engines. */
 const CORE_STEPS = [
@@ -65,7 +66,7 @@ export async function GET(request: NextRequest) {
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
         failed.push(`${path}:ERR`);
-        console.error(`[cron/core] Sub-cron ${path} fetch failed: ${msg}`);
+        log("error", "cron.core.sub-cron-failed", { path, error: msg });
       }
     }
     if (failed.length > 0) {

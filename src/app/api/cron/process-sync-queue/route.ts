@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { assertCronAuthorized } from "@/lib/runtime";
 import { getPendingSyncJobs, processSyncJob } from "@/lib/integrations/sync-engine";
+import { log } from "@/lib/logger";
 
 const BATCH_SIZE = 20;
 
@@ -20,7 +21,7 @@ export async function GET(request: NextRequest) {
     jobs = await getPendingSyncJobs(BATCH_SIZE);
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error(`[process-sync-queue] getPendingSyncJobs failed: ${msg}`);
+    log("error", "cron.process-sync-queue.fetch-failed", { error: msg });
     return NextResponse.json({ ok: false, error: msg, processed: 0, total: 0 });
   }
 
@@ -36,7 +37,7 @@ export async function GET(request: NextRequest) {
       processed += 1;
     } else {
       errors.push(`${job.id}: ${result.error}`);
-      console.error(`[process-sync-queue] Job ${job.id} failed: ${result.error}`);
+      log("error", "cron.process-sync-queue.job-failed", { jobId: job.id, error: result.error });
     }
   }
 
