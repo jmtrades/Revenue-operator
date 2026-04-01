@@ -41,10 +41,10 @@ export function GoalStep({
           </div>
           <div className="flex-1">
             <p className="text-base font-bold text-[var(--text-primary)] group-hover:text-[var(--accent-primary)] transition-colors">
-              Quick AI Setup — Pick your role, agent is ready in 2 taps
+              Quick AI Setup — Pick your role and go live fast
             </p>
             <p className="text-sm text-[var(--text-secondary)] mt-0.5">
-              32 pre-built playbooks for sales, real estate, insurance, home services, and more. No setup required.
+              Pre-built playbooks for sales, real estate, insurance, home services, and more. Minimal setup needed.
             </p>
           </div>
           <span className="text-[var(--accent-primary)] font-semibold text-sm shrink-0">Start →</span>

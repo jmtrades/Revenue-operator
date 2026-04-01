@@ -14,7 +14,7 @@
  * Cost breakdown per average demo call (~3 min, ~6 turns):
  *  - Haiku: ~6 API calls × ~500 tokens each × $0.25/1M = ~$0.0008/call
  *  - With Telnyx per-min costs: total ~$0.02-0.04/call
- *  - That's 50-100 demo calls per dollar. Extremely cheap.
+ *  - Very cost-effective for demo calls.
  *
  * Designed to:
  *  - Sound indistinguishable from a top human sales rep
@@ -169,7 +169,7 @@ Ninety-nine point nine seven percent uptime over the last twelve months. Enterpr
 Scale and Enterprise plans include full REST API. Create agents, manage leads, pull call data, trigger outbound calls, set up webhooks, and more. Complete API docs at recall dash touch dot com slash docs. SDKs available for Python, Node.js, and Ruby.
 
 ### Data Privacy & Security
-SOC 2 Type II certified. All calls encrypted in transit (TLS 1.3) and at rest (AES-256). Data stored in US-based data centers. GDPR compliant for EU customers. We never share your data with third parties. Full data export available anytime. HIPAA compliance available on Enterprise plans with signed BAA. Regular third-party security audits.
+Enterprise-grade security. All calls encrypted in transit (TLS 1.3) and at rest (AES-256). Data stored in US-based data centers. GDPR compliant for EU customers. We never share your data with third parties. Full data export available anytime. HIPAA-ready configuration available on Enterprise plans with signed BAA. Regular security reviews.
 
 ### Multi-Language Support
 English, Spanish, French, German, Portuguese, Italian, Japanese, Korean, Mandarin, Arabic, Hindi, and more. Auto-language detection available — agent switches to caller's language automatically. Accent handling is best-in-class.
@@ -263,7 +263,7 @@ Complementary positioning: "That's awesome! We actually work great alongside you
 Confidence with guardrails: "Really fair concern. Your agent only knows what YOU tell it — no making stuff up. And for anything it's not sure about, it does a smooth warm handoff to your team. Most businesses have it dialed in perfectly within a week."
 
 ### "Is my data secure? What about privacy?"
-Authoritative reassurance: "We're SOC 2 Type II certified, everything encrypted in transit and at rest, and we never share your data with anyone. For healthcare, we offer full HIPAA compliance. Your data is yours, always."
+Authoritative reassurance: "We use enterprise-grade security — everything encrypted in transit and at rest, and we never share your data with anyone. For healthcare, we offer HIPAA-ready configuration on Enterprise plans. Your data is yours, always."
 
 ### "How long does setup take?"
 Enthusiastic brevity: "Most businesses are live in fifteen minutes or less. Our wizard walks you through everything. No coding, no technical skills, no IT department needed. You could literally have your agent answering calls before your next coffee break."
@@ -275,7 +275,7 @@ Bridge to their world: "We work with over fifty industries out of the box, and e
 Empathetic differentiation: "Oh man, I'm sorry about that. The technology has leaped forward in the last year — you're literally hearing the difference right now. The best way to see it is the free trial."
 
 ### "Can it really book appointments?"
-Enthusiastic demonstration: "Absolutely! Your agent connects to your calendar, books in real-time, checks availability, sends confirmation — all during the call. Some businesses tell us this alone pays for the subscription."
+Enthusiastic demonstration: "Absolutely! Your agent connects to your calendar, books in real-time, checks availability, sends confirmation — all during the call. It's one of the most popular features."
 
 ### "What happens if you go out of business?"
 Honest and reassuring: "Fair question. We're well-funded, growing fast, and profitable. Your data is always exportable, and our forwarding setup means calls just go back to your line if you ever stop using us. No lock-in."
@@ -671,7 +671,7 @@ function getStaticFallbackResponse(history: ConversationMessage[]): string {
 
   // Security / privacy / HIPAA
   if (/\b(secur|privacy|hipaa|data|encrypt|safe|protect|comply|complian)\b/.test(lastUser)) {
-    return "We take security incredibly seriously. SOC 2 Type II certified, all calls encrypted in transit and at rest, we never share your data with anyone. For healthcare, we offer full HIPAA compliance on our Enterprise plan. Your data is yours, always.";
+    return "We take security incredibly seriously. Enterprise-grade encryption on all calls, in transit and at rest, we never share your data with anyone. For healthcare, we offer HIPAA-ready configuration on our Enterprise plan. Your data is yours, always.";
   }
 
   // Phone numbers / porting
@@ -711,7 +711,7 @@ function getStaticFallbackResponse(history: ConversationMessage[]): string {
 
   // Outbound / follow up
   if (/\b(outbound|follow.?up|missed call|callback|no.?show)\b/.test(lastUser)) {
-    return "Yes! On Scale and Enterprise plans, we do outbound calling too — follow-ups on missed calls, appointment reminders, no-show callbacks. It's amazing for revenue recovery. Some businesses tell us this feature alone doubles their ROI.";
+    return "Yes! On Scale and Enterprise plans, we do outbound calling too — follow-ups on missed calls, appointment reminders, no-show callbacks. It's a powerful tool for revenue recovery.";
   }
 
   // Refund / money back

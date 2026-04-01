@@ -190,7 +190,7 @@ export const INDUSTRY_CONFIGS: Record<string, IndustryConfig> = {
       { trigger: "we already use something", response: "Great that you have a solution! What we hear from companies that switch is usually around one or two pain points their current tool doesn't solve well. Is there anything like that for you? Even if you stay with your current tool, I might have some useful insights.", category: "competition" },
       { trigger: "need to get buy-in", response: "Totally understand — these decisions involve the whole team. Would it help if I put together a brief one-pager showing the ROI and key benefits? That usually makes internal conversations much easier.", category: "authority" },
       { trigger: "we're too small", response: "Our platform actually scales with you — many of our biggest customers started with small teams. We have plans designed for teams your size. Want me to show you how it works at your scale?", category: "need" },
-      { trigger: "what about data security", response: "Great question — security is our top priority. We're SOC 2 compliant, use end-to-end encryption, and your data is always yours. Would you like me to send over our security documentation?", category: "trust" },
+      { trigger: "what about data security", response: "Great question — security is our top priority. We use enterprise-grade encryption end-to-end, and your data is always yours. Would you like me to send over our security documentation?", category: "trust" },
       { trigger: "I need a demo first", response: "Absolutely! Let me get you set up with a personalized demo. What time works best this week? I'll make sure we focus on the features most relevant to you.", category: "general" },
     ],
   },

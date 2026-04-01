@@ -6080,7 +6080,7 @@
     "legalSecurity": "Legal e Segurança",
     "privacyPolicy": "Política de Privacidade",
     "termsOfService": "Termos de Serviço",
-    "securityBadges": "SOC 2 em progresso · Criptografia 256 bits",
+    "securityBadges": "Criptografia 256-bit · Criptografado em repouso · Conforme LGPD",
     "copyright": "© {year} Revenue Operator. Todos os direitos reservados.",
     "cta": {
       "bookDemo": "Agendar demo",
@@ -9151,8 +9151,9 @@
         "disclaimer": "Grátis. Sem cadastro. Ligamos em menos de 10 segundos."
       },
       "compliance": [
-        "SOC 2 Type II",
-        "HIPAA",
+        "Criptografia TLS 256-bit",
+        "Criptografado em repouso",
+        "Focado em privacidade",
         "TCPA",
         "LGPD",
         "SSL 256 bits"
@@ -9223,7 +9224,7 @@
       "description": "Coloque o Revenue Operator ao vivo em menos de 5 minutos. Cancele quando quiser. Sem contratos. Sem risco.",
       "noCreditCard": "Cancele quando quiser",
       "moneyBackGuarantee": "Garantia de reembolso de 30 dias",
-      "compliance": "Conforme SOC 2 + HIPAA",
+      "compliance": "Criptografia TLS 256-bit + criptografado em repouso",
       "emailPlaceholder": "voce@empresa.com.br",
       "startFreeTrial": "Começar agora",
       "getStarted": "Começar agora",

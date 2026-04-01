@@ -5485,7 +5485,7 @@
           "cta": "Parler aux ventes"
         }
       },
-      "footerNote": "Tous les plans incluent : garantie de remboursement 30 jours · annulez à tout moment · SOC 2 · HIPAA · chiffrement 256-bit. De confiance pour plus de 12 400 entreprises.",
+      "footerNote": "Tous les plans incluent : garantie de remboursement 30 jours · annulez à tout moment · chiffrement 256-bit · chiffré au repos · conforme RGPD. De confiance pour des milliers d'entreprises.",
       "cta": {
         "link": "Voir la comparaison des plans →"
       }
@@ -6078,7 +6078,7 @@
     "legalSecurity": "Mentions légales et sécurité",
     "privacyPolicy": "Politique de confidentialité",
     "termsOfService": "Conditions d'utilisation",
-    "securityBadges": "SOC 2 en cours · Chiffrement 256 bits",
+    "securityBadges": "Chiffrement 256-bit · Chiffré au repos · Conforme RGPD",
     "copyright": "© {year} Revenue Operator. Tous droits réservés.",
     "cta": {
       "bookDemo": "Réserver une démo",
@@ -9149,8 +9149,9 @@
         "disclaimer": "Gratuit. Sans inscription. Nous vous appelons en moins de 10 secondes."
       },
       "compliance": [
-        "SOC 2 Type II",
-        "HIPAA",
+        "Chiffrement TLS 256-bit",
+        "Chiffré au repos",
+        "Axé sur la confidentialité",
         "TCPA",
         "RGPD",
         "SSL 256 bits"
@@ -9221,7 +9222,7 @@
       "description": "Mettez Revenue Operator en direct en moins de 5 minutes. Annulez à tout moment. Sans engagement. Sans risque.",
       "noCreditCard": "Annulez à tout moment",
       "moneyBackGuarantee": "Garantie satisfait ou remboursé 30 jours",
-      "compliance": "Conforme SOC 2 + HIPAA",
+      "compliance": "Chiffrement TLS 256-bit + chiffré au repos",
       "emailPlaceholder": "vous@entreprise.fr",
       "startFreeTrial": "Commencer",
       "getStarted": "Commencer",

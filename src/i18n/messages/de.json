@@ -6086,7 +6086,7 @@
     "legalSecurity": "Rechtliches & Sicherheit",
     "privacyPolicy": "Datenschutz",
     "termsOfService": "Nutzungsbedingungen",
-    "securityBadges": "SOC 2 in progress · 256-Bit-Verschlüsselung",
+    "securityBadges": "256-Bit-Verschlüsselung · Verschlüsselt im Ruhezustand · DSGVO-konform",
     "copyright": "© {year} Revenue Operator. Alle Rechte vorbehalten.",
     "cta": {
       "bookDemo": "Demo buchen",
@@ -9157,8 +9157,9 @@
         "disclaimer": "Kostenlos. Keine Anmeldung. Wir rufen in unter 10 Sekunden an."
       },
       "compliance": [
-        "SOC 2 Type II",
-        "HIPAA",
+        "256-bit TLS-Verschlüsselung",
+        "Verschlüsselt im Ruhezustand",
+        "Datenschutzorientiert",
         "TCPA",
         "DSGVO",
         "256-Bit SSL"
@@ -9229,7 +9230,7 @@
       "description": "Revenue Operator in unter 5 Minuten live schalten. Jederzeit kündbar. Keine Verträge. Kein Risiko.",
       "noCreditCard": "Jederzeit kündbar erforderlich",
       "moneyBackGuarantee": "30-Tage-Geld-zurück-Garantie",
-      "compliance": "SOC 2 + HIPAA konform",
+      "compliance": "256-bit TLS + verschlüsselt im Ruhezustand",
       "emailPlaceholder": "sie@firma.de",
       "startFreeTrial": "Jetzt starten",
       "getStarted": "Jetzt starten",

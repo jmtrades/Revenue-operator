@@ -238,7 +238,7 @@ export default function VoiceDemoPage() {
           Hear how AI handles every common call scenario. No robotic voices. No awkward pauses. Just natural, revenue-generating conversations — 24/7.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-4 mb-8 text-sm" style={{ color: "var(--text-tertiary)" }}>
-          {["Nationwide coverage", "Every call answered", "99.97% uptime SLA"].map((text) => (
+          {["Nationwide coverage", "Every call answered", "High availability"].map((text) => (
             <span key={text} className="flex items-center gap-1.5">
               <svg className="w-4 h-4" style={{ color: "var(--accent-secondary)" }} viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd"/>
@@ -555,14 +555,14 @@ export default function VoiceDemoPage() {
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-semibold mb-4" style={{ letterSpacing: "-0.025em" }}>The Industry&apos;s Leading AI Phone Platform</h2>
           <p className="mb-8 max-w-2xl mx-auto" style={{ color: "var(--text-secondary)" }}>
-            Trusted by {SOCIAL_PROOF.businessCount} businesses across {SOCIAL_PROOF.industryCount} industries in {SOCIAL_PROOF.stateCount} states and 12 countries.
+            Trusted by businesses across {SOCIAL_PROOF.industryCount} industries in all {SOCIAL_PROOF.stateCount} states.
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             {[
               { stat: "<0.8s", label: "Answer Time" },
               { stat: "24/7", label: "Always On" },
-              { stat: "99.97%", label: "Uptime SLA" },
-              { stat: "40+", label: "AI Voices" },
+              { stat: "99.9%", label: "Uptime Target" },
+              { stat: "36", label: "AI Voices" },
             ].map((item) => (
               <div
                 key={item.label}
