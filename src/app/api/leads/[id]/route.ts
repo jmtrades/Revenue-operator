@@ -118,7 +118,7 @@ export async function PATCH(
     const leadWorkspaceId = (updated as { workspace_id?: string })?.workspace_id;
     if (leadWorkspaceId) {
       const { recordProviderInteraction } = await import("@/lib/detachment");
-      recordProviderInteraction(leadWorkspaceId, `lead:${id}`).catch(() => { /* non-blocking */ });
+      recordProviderInteraction(leadWorkspaceId, `lead:${id}`).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
       // Enqueue outbound CRM sync for connected providers (Task 19)
       try {
         const { getConnectedCrmProviders, enqueueSync } = await import("@/lib/integrations/sync-engine");

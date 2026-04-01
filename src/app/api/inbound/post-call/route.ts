@@ -388,7 +388,7 @@ export async function POST(req: NextRequest) {
             scoreLeadWithAI(workspace_id, leadId!).catch((aiErr) => {
               log("error", "[ai-scorer] async score error:", { error: aiErr instanceof Error ? aiErr.message : String(aiErr) });
             });
-          }).catch(() => { /* ai-scorer module not available */ });
+          }).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
         }
 
         // Autonomous Brain: recompute intelligence after call (non-blocking)

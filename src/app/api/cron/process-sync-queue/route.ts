@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
   }
 
   if (jobs.length > 0) {
-    console.log(`[process-sync-queue] Found ${jobs.length} pending jobs`);
+    log("info", "cron/process-sync-queue.pending", { count: jobs.length });
   }
 
   let processed = 0;

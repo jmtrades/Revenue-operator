@@ -13,6 +13,7 @@ import {
   getOverduePendingAcknowledgements,
   runRecoveryForSharedTransaction,
 } from "@/lib/shared-transaction-assurance";
+import { log } from "@/lib/logger";
 
 const MAX_PER_RUN = 20;
 
@@ -28,9 +29,7 @@ export async function GET(request: NextRequest) {
     for (const tx of list) {
       if (!allowedWorkspaces.has(tx.workspace_id)) {
         const { recordObservedRisk } = await import("@/lib/adoption-acceleration/observed-risks");
-        await recordObservedRisk(tx.workspace_id, "missed_confirmation", "shared_transaction", tx.id).catch(() => {
-      // cron/shared-transaction-recovery error (details omitted to protect PII) 
-    });
+        await recordObservedRisk(tx.workspace_id, "missed_confirmation", "shared_transaction", tx.id).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
       }
     }
     let reminders = 0;

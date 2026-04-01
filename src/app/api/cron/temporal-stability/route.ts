@@ -10,6 +10,7 @@ import { assertCronAuthorized } from "@/lib/runtime";
 import { runSafeCron } from "@/lib/cron/run-safe";
 import { getDb } from "@/lib/db/queries";
 import { runTemporalStabilityDetectors } from "@/lib/temporal-stability";
+import { log } from "@/lib/logger";
 
 const MAX_WORKSPACES = 500;
 
@@ -31,9 +32,7 @@ export async function GET(request: NextRequest) {
       }
     }
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-    await recordCronHeartbeat("temporal-stability").catch(() => {
-      // cron/temporal-stability error (details omitted to protect PII) 
-    });
+    await recordCronHeartbeat("temporal-stability").catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
     return { run };
   });
 

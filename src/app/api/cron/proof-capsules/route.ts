@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { buildProofCapsuleForPeriod, saveProofCapsule } from "@/lib/proof-capsule-period";
 import { recordCronHeartbeat, assertCronAuthorized } from "@/lib/runtime";
+import { log } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   const authErr = assertCronAuthorized(request);
@@ -32,16 +33,12 @@ export async function GET(request: NextRequest) {
       if (lines.length > 0) {
         await saveProofCapsule(workspaceId, periodStart, periodEnd, lines);
       }
-      await recomputeInstitutionalState(workspaceId).catch(() => {
-        // Error in institutional state computation (details omitted to protect PII)
-      });
+      await recomputeInstitutionalState(workspaceId).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
     } catch {
       // skip
     }
   }
 
-  await recordCronHeartbeat("proof-capsules").catch(() => {
-    // Error recording cron heartbeat (details omitted to protect PII)
-  });
+  await recordCronHeartbeat("proof-capsules").catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
   return NextResponse.json({ ok: true });
 }

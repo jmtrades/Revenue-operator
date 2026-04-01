@@ -10,6 +10,7 @@ import "@/lib/runtime";
 import { assertCronAuthorized } from "@/lib/runtime";
 import { getUnprocessedInboxEvents, markInboxEventProcessed } from "@/lib/connectors/install-pack/webhook-inbox";
 import { mapInboxEventToSignal } from "@/lib/connectors/install-pack/inbox-mapper";
+import { log } from "@/lib/logger";
 
 const BATCH_SIZE = 50;
 
@@ -29,8 +30,6 @@ export async function GET(req: NextRequest) {
     }
   }
   const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-  await recordCronHeartbeat("connector-inbox").catch(() => {
-      // cron/connector-inbox error (details omitted to protect PII) 
-    });
+  await recordCronHeartbeat("connector-inbox").catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
   return NextResponse.json({ ok: true, processed, total: events.length });
 }

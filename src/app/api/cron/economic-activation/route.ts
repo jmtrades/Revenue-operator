@@ -17,6 +17,7 @@ import {
   ensureActivation,
   aggregateAndAppendUsageForPeriod,
 } from "@/lib/economic-participation";
+import { log } from "@/lib/logger";
 
 function yesterdayPeriod(): { start: string; end: string } {
   const now = new Date();
@@ -58,9 +59,7 @@ export async function GET(request: NextRequest) {
   const activatedWorkspaceIds = (activationRows ?? []).map((r: { workspace_id: string }) => r.workspace_id);
   const period = yesterdayPeriod();
   for (const workspaceId of activatedWorkspaceIds) {
-    await aggregateAndAppendUsageForPeriod(workspaceId, period.start, period.end).catch(() => {
-      // cron/economic-activation error (details omitted to protect PII) 
-    });
+    await aggregateAndAppendUsageForPeriod(workspaceId, period.start, period.end).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
   }
 
   return NextResponse.json({

@@ -11,6 +11,7 @@ import { assertCronAuthorized } from "@/lib/runtime";
 import { runSafeCron } from "@/lib/cron/run-safe";
 import { runDailyContinuityCycle, runWeeklyClosureCycle } from "@/lib/ritual-cycles";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   const authErr = assertCronAuthorized(request);
@@ -24,12 +25,8 @@ export async function GET(request: NextRequest) {
     const isSunday = now.getUTCDay() === 0;
 
     for (const workspaceId of ids) {
-      await runDailyContinuityCycle(workspaceId).catch(() => {
-      // cron/ritual-cycles error (details omitted to protect PII) 
-    });
-      if (isSunday) await runWeeklyClosureCycle(workspaceId).catch(() => {
-      // cron/ritual-cycles error (details omitted to protect PII) 
-    });
+      await runDailyContinuityCycle(workspaceId).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
+      if (isSunday) await runWeeklyClosureCycle(workspaceId).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
     }
     return { run: 1 };
   });

@@ -23,6 +23,7 @@ import {
 } from "@/lib/installation";
 import { runRareEventDetectors } from "@/lib/adoption-acceleration/rare-event-detectors";
 import { sendEnvironmentInviteWhenReliant } from "@/lib/shared-transaction-assurance";
+import { log } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   const authErr = assertCronAuthorized(request);
@@ -32,14 +33,10 @@ export async function GET(request: NextRequest) {
     const workspaceIds = await getWorkspaceIdsWithInstallationState();
     for (const workspaceId of workspaceIds) {
       const before = await getInstallationState(workspaceId);
-      await transitionInstallationPhase(workspaceId).catch(() => {
-      // cron/adoption-acceleration error (details omitted to protect PII) 
-    });
+      await transitionInstallationPhase(workspaceId).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
       const after = await getInstallationState(workspaceId);
       if (before?.phase !== "activation_ready" && after?.phase === "activation_ready") {
-        await generateInstallationSnapshot(workspaceId).catch(() => {
-      // cron/adoption-acceleration error (details omitted to protect PII) 
-    });
+        await generateInstallationSnapshot(workspaceId).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
       }
     }
 
@@ -61,14 +58,10 @@ export async function GET(request: NextRequest) {
         payload: {},
       });
       inserted++;
-      await sendEnvironmentInviteWhenReliant(row.workspace_id, row.counterparty_identifier).catch(() => {
-      // cron/adoption-acceleration error (details omitted to protect PII) 
-    });
+      await sendEnvironmentInviteWhenReliant(row.workspace_id, row.counterparty_identifier).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
     }
 
-    await runRareEventDetectors().catch(() => {
-      // cron/adoption-acceleration error (details omitted to protect PII) 
-    });
+    await runRareEventDetectors().catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
 
     return { run: 1, environment_required_inserted: inserted };
   });

@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { assertCronAuthorized } from "@/lib/runtime";
 import { runSafeCron } from "@/lib/cron/run-safe";
+import { log } from "@/lib/logger";
 
 const GUARANTEE_STEPS = [
   "/api/cron/progress-watchdog",
@@ -42,9 +43,7 @@ export async function GET(request: NextRequest) {
       }
     }
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-    await recordCronHeartbeat("guarantees").catch(() => {
-      // cron/guarantees error (details omitted to protect PII) 
-    });
+    await recordCronHeartbeat("guarantees").catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
     return { run: ran.length, steps: GUARANTEE_STEPS.length };
   });
 

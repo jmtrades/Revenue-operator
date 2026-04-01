@@ -9,6 +9,7 @@ import { assertCronAuthorized } from "@/lib/runtime";
 import { runSafeCron } from "@/lib/cron/run-safe";
 import { getDb } from "@/lib/db/queries";
 import { deliverDailyAssuranceIfDue } from "@/lib/assurance-delivery";
+import { log } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   const authErr = assertCronAuthorized(request);
@@ -24,9 +25,7 @@ export async function GET(request: NextRequest) {
       if (ok) sent++;
     }
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
-    await recordCronHeartbeat("assurance-delivery").catch(() => {
-      // Error recording cron heartbeat (details omitted to protect PII)
-    });
+    await recordCronHeartbeat("assurance-delivery").catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
     return { run: 1, sent, workspaces: ids.length };
   });
 

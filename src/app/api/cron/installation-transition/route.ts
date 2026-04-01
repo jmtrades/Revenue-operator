@@ -15,6 +15,7 @@ import { runDomainStabilization } from "@/lib/confidence-engine/domain-stabiliza
 import { evaluateEconomicGravity } from "@/lib/economic-gravity";
 import { recomputeInstitutionalState } from "@/lib/institutional-state";
 import { detectOperationalSilence } from "@/lib/detachment";
+import { log } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   const authErr = assertCronAuthorized(request);
@@ -24,26 +25,14 @@ export async function GET(request: NextRequest) {
     const workspaceIds = await getWorkspaceIdsWithInstallationState();
     let run = 0;
     for (const workspaceId of workspaceIds) {
-      await transitionInstallationPhase(workspaceId).catch(() => {
-      // cron/installation-transition error (details omitted to protect PII) 
-    });
-      await evaluateEconomicGravity(workspaceId).catch(() => {
-      // cron/installation-transition error (details omitted to protect PII) 
-    });
-      await recomputeInstitutionalState(workspaceId).catch(() => {
-      // cron/installation-transition error (details omitted to protect PII) 
-    });
-      await detectOperationalSilence(workspaceId).catch(() => {
-      // cron/installation-transition error (details omitted to protect PII) 
-    });
+      await transitionInstallationPhase(workspaceId).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
+      await evaluateEconomicGravity(workspaceId).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
+      await recomputeInstitutionalState(workspaceId).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
+      await detectOperationalSilence(workspaceId).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
       run++;
     }
-    await runStabilizationDetection().catch(() => {
-      // cron/installation-transition error (details omitted to protect PII) 
-    });
-    await runDomainStabilization().catch(() => {
-      // cron/installation-transition error (details omitted to protect PII) 
-    });
+    await runStabilizationDetection().catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
+    await runDomainStabilization().catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
     return { run };
   });
 
