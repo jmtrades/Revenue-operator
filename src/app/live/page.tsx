@@ -40,7 +40,7 @@ function LivePageContent() {
 
   // Show prompt if no activity after 45s (production only - no auto-simulate)
   const [showPrompt, setShowPrompt] = useState(false);
-  const isProduction = typeof window !== "undefined" && window.location.hostname !== "localhost";
+  const isProduction = process.env.NODE_ENV === "production";
 
   useEffect(() => {
     if (!workspaceId || autoSimulated || !isProduction) return;

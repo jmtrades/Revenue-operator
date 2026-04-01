@@ -22,7 +22,7 @@ function ConnectPageContent() {
   const [copySuccess, setCopySuccess] = useState(false);
   const [showFallback, setShowFallback] = useState(false);
   const [showCopyConfirmation, setShowCopyConfirmation] = useState(false);
-  const isProduction = typeof window !== "undefined" && window.location.hostname !== "localhost";
+  const isProduction = process.env.NODE_ENV === "production";
 
   useEffect(() => {
     loadWorkspaces();

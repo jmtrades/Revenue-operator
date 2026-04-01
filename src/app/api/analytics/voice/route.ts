@@ -212,13 +212,26 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // ROI metrics (estimates based on industry averages)
-    const avgRevenuePerRecoveredCall = 125; // Conservative estimate
-    const costPerMinute = 0.02; // Blended cost
+    // ROI metrics — use actual data where available, clearly flag estimates
+    const costPerMinute = 0.02; // Platform blended cost
     const totalMinutes = durations.reduce((a, b) => a + b, 0) / 60;
-    const estimatedRecovered = Math.round(totalCalls * 0.47); // 47% would have been missed
-    const estimatedRevenue = estimatedRecovered * avgRevenuePerRecoveredCall;
     const totalCost = totalMinutes * costPerMinute;
+    // Use actual completed/converted calls instead of fake 47% recovery rate
+    const estimatedRecovered = completedCalls; // Calls actually handled by AI
+    // Revenue: use actual deal data if available, otherwise conservative $0 (no fake estimates)
+    let estimatedRevenue = 0;
+    try {
+      const { data: dealData } = await db
+        .from("deals")
+        .select("value_cents")
+        .eq("workspace_id", workspaceId)
+        .in("status", ["won", "closed"])
+        .gte("created_at", sinceDate);
+      const dealValues = (dealData ?? []) as { value_cents?: number }[];
+      estimatedRevenue = dealValues.reduce((sum, d) => sum + (d.value_cents ?? 0), 0) / 100;
+    } catch {
+      // deals table may not exist — revenue stays 0 (honest, not fabricated)
+    }
 
     const analytics: VoiceAnalytics = {
       period,
