@@ -156,7 +156,7 @@ export async function processNormalizedInbound(
   });
 
   await db.from("leads").update({
-    status: decision.newState,
+    state: decision.newState,
     updated_at: new Date().toISOString(),
     last_activity_at: new Date().toISOString(),
   }).eq("id", leadId);

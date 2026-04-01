@@ -140,7 +140,7 @@ export async function POST(
       await db
         .from("leads")
         .update({
-          status: newLeadStatus,
+          state: newLeadStatus,
           updated_at: now,
         })
         .eq("id", apt.lead_id)
