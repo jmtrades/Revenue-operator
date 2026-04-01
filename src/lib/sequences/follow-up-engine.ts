@@ -668,11 +668,11 @@ export async function advanceEnrollment(
     if (["sms", "email", "call"].includes(stepType) && actionSucceeded) {
       const { data: leadRow } = await db
         .from("leads")
-        .select("status")
+        .select("state")
         .eq("id", e.lead_id)
         .eq("workspace_id", e.workspace_id)
         .maybeSingle();
-      const currentStatus = (leadRow as { status?: string } | null)?.status;
+      const currentStatus = (leadRow as { state?: string } | null)?.state;
       if (currentStatus) {
         let newStatus: string | null = null;
         if (currentStatus === "NEW" && ["sms", "email", "call"].includes(stepType)) {
@@ -684,7 +684,7 @@ export async function advanceEnrollment(
         if (newStatus && newStatus !== currentStatus) {
           await db
             .from("leads")
-            .update({ status: newStatus, updated_at: new Date().toISOString() })
+            .update({ state: newStatus, updated_at: new Date().toISOString() })
             .eq("id", e.lead_id)
             .eq("workspace_id", e.workspace_id);
           console.log(`[sequence-advance] Lead ${e.lead_id}: ${currentStatus} → ${newStatus} (step: ${stepType})`);

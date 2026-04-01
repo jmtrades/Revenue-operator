@@ -27,6 +27,8 @@ export type AutonomousActionType =
   | "pause"
   | "update_lead_state"
   | "score_lead"
+  | "monitor_sequence"
+  | "change_channel"
   | "no_action";
 
 export interface AutonomousActionResult {
@@ -339,6 +341,48 @@ async function executeBasedOnAction(
 
   if (action === "escalate_human") {
     return escalateHumanAction(intelligence, lead, executedAt);
+  }
+
+  if (action === "send_email") {
+    return sendEmailAction(intelligence, lead, executedAt, "outreach");
+  }
+
+  if (action === "send_sms") {
+    return sendSmsAction(intelligence, lead, executedAt, "outreach");
+  }
+
+  if (action === "monitor_sequence") {
+    // Brain decided to let the sequence continue — this is a deliberate decision, not "no_action"
+    return {
+      action_type: "monitor_sequence",
+      success: true,
+      details: `Monitoring active sequence — ${intelligence.action_reason}`,
+      executed_at: executedAt,
+      lead_id: intelligence.lead_id,
+      workspace_id: intelligence.workspace_id,
+      confidence: intelligence.action_confidence,
+      reason: "sequence_active",
+    };
+  }
+
+  if (action === "change_channel") {
+    // Lead isn't responding on current channel — try a different one
+    if (lead.phone) {
+      return sendSmsAction(intelligence, lead, executedAt, "channel_switch");
+    }
+    if (lead.email) {
+      return sendEmailAction(intelligence, lead, executedAt, "channel_switch");
+    }
+    return {
+      action_type: "change_channel",
+      success: false,
+      details: "No alternative channel available (no phone or email)",
+      executed_at: executedAt,
+      lead_id: intelligence.lead_id,
+      workspace_id: intelligence.workspace_id,
+      confidence: intelligence.action_confidence,
+      reason: "no_channel",
+    };
   }
 
   // Default: no action
@@ -965,15 +1009,15 @@ async function autoAdvanceLeadStatus(
   try {
     const db = getDb();
 
-    // Fetch current lead status
+    // Fetch current lead state
     const { data: leadRow } = await db
       .from("leads")
-      .select("status")
+      .select("state")
       .eq("id", intelligence.lead_id)
       .eq("workspace_id", intelligence.workspace_id)
       .maybeSingle();
 
-    const currentStatus = (leadRow as { status?: string } | null)?.status;
+    const currentStatus = (leadRow as { state?: string } | null)?.state;
     if (!currentStatus) return;
 
     // Define status hierarchy (higher index = more advanced)
@@ -1024,7 +1068,7 @@ async function autoAdvanceLeadStatus(
     if (newStatus && newStatus !== currentStatus) {
       await db
         .from("leads")
-        .update({ status: newStatus, updated_at: new Date().toISOString() })
+        .update({ state: newStatus, updated_at: new Date().toISOString() })
         .eq("id", intelligence.lead_id)
         .eq("workspace_id", intelligence.workspace_id);
 
