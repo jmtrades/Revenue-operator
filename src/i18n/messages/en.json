@@ -8856,6 +8856,7 @@
       "oauthPending": "Authorization in progress — complete it in the popup window."
     },
     "connectOutlook": "Connect Outlook",
+    "outlookAvailable": "Available",
     "dialog": {
       "disconnectTitle": "Disconnect integration?",
       "disconnectDesc": "This will stop syncing data. You can reconnect anytime.",
