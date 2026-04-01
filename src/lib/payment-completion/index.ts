@@ -9,6 +9,12 @@ import { runWithWriteContextAsync } from "@/lib/safety/unsafe-write-guard";
 import { enqueueSendMessage } from "@/lib/action-queue/send-message";
 import { updateCounterpartyReliance } from "@/lib/shared-transaction-assurance";
 import { insertOperationalDependency } from "@/lib/counterparty-participation";
+import { log } from "@/lib/logger";
+
+/** Log non-critical side-effect errors without crashing the payment flow. */
+const logSideEffect = (context: string) => (e: unknown) => {
+  log("warn", `payment-completion.${context}`, { error: e instanceof Error ? e.message : String(e) });
+};
 
 export type PaymentSubjectType = "invoice" | "booking" | "subscription" | "custom";
 export type PaymentState = "pending" | "overdue" | "recovering" | "resolved";
@@ -91,7 +97,7 @@ export async function createPaymentObligation(input: CreateObligationInput): Pro
     const identifier = (lead as { email?: string | null; phone?: string | null } | null)?.email
       ?? (lead as { phone?: string | null } | null)?.phone;
     if (identifier) {
-      updateCounterpartyReliance(input.workspaceId, identifier, "interaction").catch(() => {});
+      updateCounterpartyReliance(input.workspaceId, identifier, "interaction").catch(logSideEffect("counterparty-reliance"));
     }
   }
   return id;
@@ -119,7 +125,7 @@ export async function transitionPaymentObligations(): Promise<number> {
         .update({ state: "overdue", updated_at: now })
         .eq("id", row.id);
     });
-    await insertOperationalDependency(row.workspace_id, `payment:${row.id}`, "payment_required").catch(() => {});
+    await insertOperationalDependency(row.workspace_id, `payment:${row.id}`, "payment_required").catch(logSideEffect("operational-dependency"));
     updated++;
   }
   const { data: overdue } = await db
@@ -186,7 +192,7 @@ export async function runRecoveryForObligation(obligation: PaymentObligationRow)
         }
         const { hasExecutedActionType, setPendingPreview } = await import("@/lib/adoption-acceleration/previews");
         if (!(await hasExecutedActionType(obligation.workspace_id, "payment_recovery"))) {
-          await setPendingPreview(obligation.workspace_id, "payment_recovery", "If no reply occurs, a payment reminder will be sent.").catch(() => {});
+          await setPendingPreview(obligation.workspace_id, "payment_recovery", "If no reply occurs, a payment reminder will be sent.").catch(logSideEffect("pending-preview"));
         }
         await enqueueSendMessage(
           obligation.workspace_id,
@@ -278,7 +284,7 @@ export async function resolvePaymentObligation(
       subjectId: obligationSnapshot.subject_id,
       valueAmount: obligationSnapshot.amount,
       valueCurrency: obligationSnapshot.currency,
-    }).catch(() => {});
+    }).catch(logSideEffect("economic-event"));
     if (before?.state === "overdue") {
       const { recordCausalChain } = await import("@/lib/causality-engine");
       recordCausalChain({
@@ -289,11 +295,11 @@ export async function resolvePaymentObligation(
         intervention_type: "payment_recovery",
         observed_outcome: "paid",
         dependency_established: true,
-      }).catch(() => {});
+      }).catch(logSideEffect("causal-chain"));
       const { recordOperationalAssumption } = await import("@/lib/assumption-engine");
-      recordOperationalAssumption(obligationSnapshot.workspace_id, "outcome_presumed", `payment:${obligationId}`).catch(() => {});
+      recordOperationalAssumption(obligationSnapshot.workspace_id, "outcome_presumed", `payment:${obligationId}`).catch(logSideEffect("operational-assumption"));
       const { markExposureResolved } = await import("@/lib/exposure-engine");
-      markExposureResolved(obligationSnapshot.workspace_id, "payment_stall_risk", "payment_obligation", obligationId, "resolved_after_intervention").catch(() => {});
+      markExposureResolved(obligationSnapshot.workspace_id, "payment_stall_risk", "payment_obligation", obligationId, "resolved_after_intervention").catch(logSideEffect("exposure-resolved"));
       const { recordContinuationStopped } = await import("@/lib/continuation-engine");
       recordContinuationStopped(
         obligationSnapshot.workspace_id,
@@ -301,9 +307,9 @@ export async function resolvePaymentObligation(
         obligationSnapshot.subject_id,
         "unpaid",
         0
-      ).catch(() => {});
+      ).catch(logSideEffect("continuation-stopped"));
       const { recordCoordinationDisplacement } = await import("@/lib/coordination-displacement");
-      recordCoordinationDisplacement(obligationSnapshot.workspace_id, "staff", "payment", true).catch(() => {});
+      recordCoordinationDisplacement(obligationSnapshot.workspace_id, "staff", "payment", true).catch(logSideEffect("coordination-displacement"));
       const { recordResponsibilityMoment } = await import("@/lib/responsibility-moments");
       recordResponsibilityMoment({
         workspaceId: obligationSnapshot.workspace_id,
@@ -311,25 +317,25 @@ export async function resolvePaymentObligation(
         subjectId: obligationId,
         authorityHolder: "environment",
         determinedFrom: "intervention",
-      }).catch(() => {});
+      }).catch(logSideEffect("responsibility-moment"));
       const { recordNonParticipationIfApplicable } = await import("@/lib/detachment");
       recordNonParticipationIfApplicable(
         obligationSnapshot.workspace_id,
         `payment:${obligationId}`,
         "payment"
-      ).catch(() => {});
+      ).catch(logSideEffect("non-participation"));
       const { recordReliefEvent } = await import("@/lib/awareness-timing/relief-events");
-      recordReliefEvent(obligationSnapshot.workspace_id, "The payment did not remain outstanding.").catch(() => {});
+      recordReliefEvent(obligationSnapshot.workspace_id, "The payment did not remain outstanding.").catch(logSideEffect("relief-event"));
       const { touchDependencyMemory } = await import("@/lib/operational-dependency-memory");
-      touchDependencyMemory(obligationSnapshot.workspace_id, "payment_followthrough").catch(() => {});
+      touchDependencyMemory(obligationSnapshot.workspace_id, "payment_followthrough").catch(logSideEffect("dependency-memory"));
       const { recordMemoryReplacementEvent } = await import("@/lib/memory-replacement");
-      recordMemoryReplacementEvent(obligationSnapshot.workspace_id, "payment_recovered").catch(() => {});
+      recordMemoryReplacementEvent(obligationSnapshot.workspace_id, "payment_recovered").catch(logSideEffect("memory-replacement"));
     }
     const paidWithoutRecovery =
       before && terminalOutcome === "paid" && (before.state === "pending" || (before.recovery_attempts ?? 0) === 0);
     if (paidWithoutRecovery && obligationSnapshot) {
       const { recordCoordinationDisplacement } = await import("@/lib/coordination-displacement");
-      recordCoordinationDisplacement(obligationSnapshot.workspace_id, "staff", "payment", false).catch(() => {});
+      recordCoordinationDisplacement(obligationSnapshot.workspace_id, "staff", "payment", false).catch(logSideEffect("coordination-displacement"));
       const { recordResponsibilityMoment } = await import("@/lib/responsibility-moments");
       recordResponsibilityMoment({
         workspaceId: obligationSnapshot.workspace_id,
@@ -337,19 +343,19 @@ export async function resolvePaymentObligation(
         subjectId: obligationId,
         authorityHolder: "environment",
         determinedFrom: "timeout",
-      }).catch(() => {});
+      }).catch(logSideEffect("responsibility-moment"));
       const { recordNonParticipationIfApplicable } = await import("@/lib/detachment");
       recordNonParticipationIfApplicable(
         obligationSnapshot.workspace_id,
         `payment:${obligationId}`,
         "payment"
-      ).catch(() => {});
+      ).catch(logSideEffect("non-participation"));
     }
   }
   const paymentFollowedReminder = before?.state === "overdue" && terminalOutcome === "paid";
   if (before) {
     const { removeOperationalExpectation } = await import("@/lib/operability-anchor");
-    removeOperationalExpectation(before.workspace_id, "awaiting_payment", obligationId).catch(() => {});
+    removeOperationalExpectation(before.workspace_id, "awaiting_payment", obligationId).catch(logSideEffect("remove-expectation"));
     const orientationText: Record<PaymentTerminalOutcome, string> = {
       paid: paymentFollowedReminder ? "The payment completed after reminder." : "The payment was completed.",
       confirmed_pending: "The payment was confirmed pending.",
@@ -357,12 +363,12 @@ export async function resolvePaymentObligation(
       written_off: "The obligation was written off.",
     };
     const { recordOrientationStatement } = await import("@/lib/orientation/records");
-    recordOrientationStatement(before.workspace_id, orientationText[terminalOutcome]).catch(() => {});
+    recordOrientationStatement(before.workspace_id, orientationText[terminalOutcome]).catch(logSideEffect("orientation-statement"));
     const { recordStaffRelianceEvent } = await import("@/lib/staff-reliance");
-    recordStaffRelianceEvent(before.workspace_id).catch(() => {});
+    recordStaffRelianceEvent(before.workspace_id).catch(logSideEffect("staff-reliance"));
     if (terminalOutcome === "paid" || terminalOutcome === "confirmed_pending") {
       const { touchDependencyMemory } = await import("@/lib/operational-dependency-memory");
-      touchDependencyMemory(before.workspace_id, "payment_followthrough").catch(() => {});
+      touchDependencyMemory(before.workspace_id, "payment_followthrough").catch(logSideEffect("dependency-memory"));
     }
   }
 }
