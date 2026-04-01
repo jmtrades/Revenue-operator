@@ -488,4 +488,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Post-call processing failed" }, { status: 500 });
   }
 }
-import { log } from "@/lib/logger";
