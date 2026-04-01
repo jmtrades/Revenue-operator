@@ -15,12 +15,35 @@ export async function GET(request: NextRequest) {
   const authErr = assertCronAuthorized(request);
   if (authErr) return authErr;
 
-  const jobs = await getPendingSyncJobs(BATCH_SIZE);
-  let processed = 0;
-  for (const job of jobs) {
-    const result = await processSyncJob(job.id);
-    if (result.ok) processed += 1;
+  let jobs: Awaited<ReturnType<typeof getPendingSyncJobs>> = [];
+  try {
+    jobs = await getPendingSyncJobs(BATCH_SIZE);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error(`[process-sync-queue] getPendingSyncJobs failed: ${msg}`);
+    return NextResponse.json({ ok: false, error: msg, processed: 0, total: 0 });
   }
 
-  return NextResponse.json({ ok: true, processed, total: jobs.length });
+  if (jobs.length > 0) {
+    console.log(`[process-sync-queue] Found ${jobs.length} pending jobs`);
+  }
+
+  let processed = 0;
+  const errors: string[] = [];
+  for (const job of jobs) {
+    const result = await processSyncJob(job.id);
+    if (result.ok) {
+      processed += 1;
+    } else {
+      errors.push(`${job.id}: ${result.error}`);
+      console.error(`[process-sync-queue] Job ${job.id} failed: ${result.error}`);
+    }
+  }
+
+  return NextResponse.json({
+    ok: errors.length === 0,
+    processed,
+    total: jobs.length,
+    ...(errors.length > 0 && { errors: errors.slice(0, 5) }),
+  });
 }
