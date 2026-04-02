@@ -715,7 +715,7 @@ async function scheduleFollowupAction(
 
     // Find or create a default followup sequence
     const { data: existingSeq } = await db
-      .from("sequences")
+      .from("follow_up_sequences")
       .select("id")
       .eq("workspace_id", intelligence.workspace_id)
       .eq("trigger_type", "manual")

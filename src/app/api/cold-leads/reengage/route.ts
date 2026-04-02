@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
 
   // Find default reactivation sequence for the workspace (or use first available)
   const { data: sequences } = await db
-    .from("sequences")
+    .from("follow_up_sequences")
     .select("id")
     .eq("workspace_id", session.workspaceId)
     .eq("type", "reactivation")

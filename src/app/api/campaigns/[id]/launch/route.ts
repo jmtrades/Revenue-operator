@@ -338,7 +338,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     if (hasSequenceSteps) {
       // Try to find or create a sequence for this campaign
       const { data: existingSeq } = await db
-        .from("sequences")
+        .from("follow_up_sequences")
         .select("id")
         .eq("workspace_id", workspaceId)
         .eq("trigger_type", "campaign_" + id)
@@ -352,7 +352,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
         const sequenceStepsData = steps
           .map((step, idx) => ({
             step_order: idx + 1,
-            type: step.channel as "sms" | "email" | "call",
+            channel: step.channel as "sms" | "email" | "call",
             delay_minutes: idx === 0 ? 0 : 60, // First step immediately, subsequent steps 1h apart
             config: {
               template_content: step.message || step.subject || "",
@@ -361,7 +361,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
           }));
 
         const { data: newSeq, error: seqErr } = await db
-          .from("sequences")
+          .from("follow_up_sequences")
           .insert({
             workspace_id: workspaceId,
             name: `Campaign ${id.slice(0, 8)}`,

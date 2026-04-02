@@ -347,7 +347,7 @@ async function executeFollowUpRouting(
 
       // Find or create appropriate sequence
       const { data: existingSeq } = await db
-        .from("sequences")
+        .from("follow_up_sequences")
         .select("id")
         .eq("workspace_id", params.workspace_id)
         .eq("trigger_type", triggerType)

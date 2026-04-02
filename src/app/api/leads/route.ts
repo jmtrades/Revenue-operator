@@ -315,7 +315,7 @@ export async function POST(req: NextRequest) {
 
     // Find an active new_lead nurture sequence for this workspace
     const { data: existingSeq } = await db
-      .from("sequences")
+      .from("follow_up_sequences")
       .select("id")
       .eq("workspace_id", workspaceId)
       .eq("trigger_type", "new_lead")

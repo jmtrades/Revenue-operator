@@ -31,7 +31,7 @@ const mockStateVector: import("@/lib/engines/perception").DealStateVector = {
 vi.mock("@/lib/db/queries", () => ({
   getDb: () => ({
     from: (table: string) => {
-      if (table === "sequences") {
+      if (table === "follow_up_sequences") {
         return {
           select: () => ({
             eq: () => ({

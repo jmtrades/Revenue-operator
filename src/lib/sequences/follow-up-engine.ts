@@ -113,7 +113,7 @@ export async function chooseSequence(
 
   // Map legacy purpose to trigger_type; store steps in trigger_config
   const { data: seq } = await db
-    .from("sequences")
+    .from("follow_up_sequences")
     .select("*")
     .eq("workspace_id", stateVector.workspace_id)
     .eq("trigger_type", purpose)
@@ -141,7 +141,7 @@ export async function chooseSequence(
         : LEGACY_DEFAULT_FOLLOWUP_STEPS;
 
   const { data: created } = await db
-    .from("sequences")
+    .from("follow_up_sequences")
     .insert({
       workspace_id: stateVector.workspace_id,
       name: `Default ${purpose}`,
@@ -165,7 +165,7 @@ export async function chooseSequence(
   }
 
   const { data: fallback } = await db
-    .from("sequences")
+    .from("follow_up_sequences")
     .select("*")
     .eq("workspace_id", stateVector.workspace_id)
     .eq("trigger_type", purpose)
@@ -211,7 +211,7 @@ export async function advanceSequence(
   if (!run) return { advanced: false };
 
   const r = run as { sequence_id: string; current_step: number };
-  const { data: seq } = await db.from("sequences").select("trigger_config").eq("id", r.sequence_id).maybeSingle();
+  const { data: seq } = await db.from("follow_up_sequences").select("trigger_config").eq("id", r.sequence_id).maybeSingle();
   const steps = (((seq as { trigger_config?: { steps?: LegacySequenceStep[] } })?.trigger_config?.steps) ?? []) as LegacySequenceStep[];
   const nextStepIndex = steps.findIndex((s) => s.step === r.current_step + 1);
   if (nextStepIndex < 0) {
@@ -292,7 +292,7 @@ export async function enrollContact(
 
   // Verify the sequence exists and belongs to this workspace
   const { data: seq } = await db
-    .from("sequences")
+    .from("follow_up_sequences")
     .select("id, workspace_id")
     .eq("id", sequenceId)
     .eq("workspace_id", workspaceId)
@@ -308,7 +308,7 @@ export async function enrollContact(
   const { count: activeCount } = await db
     .from("sequence_enrollments")
     .select("id", { count: "exact", head: true })
-    .eq("lead_id", contactId)
+    .eq("contact_id", contactId)
     .eq("workspace_id", workspaceId)
     .eq("status", "active");
   if ((activeCount ?? 0) >= MAX_CONCURRENT_ENROLLMENTS_PER_CONTACT) {
@@ -321,7 +321,7 @@ export async function enrollContact(
     .from("sequence_enrollments")
     .select("id")
     .eq("sequence_id", sequenceId)
-    .eq("lead_id", contactId)
+    .eq("contact_id", contactId)
     .eq("status", "active")
     .maybeSingle();
   if (existing) {
@@ -352,7 +352,7 @@ export async function enrollContact(
     .from("sequence_enrollments")
     .insert({
       sequence_id: sequenceId,
-      lead_id: contactId,
+      contact_id: contactId,
       workspace_id: workspaceId,
       status: "active",
       current_step: 0,
@@ -914,7 +914,7 @@ export async function getContactEnrollments(
       .from("sequence_enrollments")
       .select("*")
       .eq("workspace_id", workspaceId)
-      .eq("lead_id", contactId)
+      .eq("contact_id", contactId)
       .order("enrolled_at", { ascending: false });
 
     if (error) return [];
@@ -947,7 +947,7 @@ export async function getEnrollmentWithDetails(
   const e = enrollment as SequenceEnrollment;
 
   const { data: sequence } = await db
-    .from("sequences")
+    .from("follow_up_sequences")
     .select("*")
     .eq("id", e.sequence_id)
     .maybeSingle();
@@ -1020,7 +1020,7 @@ export async function getWorkspaceSequences(
 
   try {
     const { data: sequences, error } = await db
-      .from("sequences")
+      .from("follow_up_sequences")
       .select("*")
       .eq("workspace_id", workspaceId)
       .eq("is_active", true)
@@ -1043,7 +1043,7 @@ export async function getSequenceWithSteps(
   const db = getDb();
 
   const { data: sequence } = await db
-    .from("sequences")
+    .from("follow_up_sequences")
     .select("*")
     .eq("id", sequenceId)
     .eq("workspace_id", workspaceId)
@@ -1084,7 +1084,7 @@ export async function createSequence(
   const trigger = validTriggers.includes(triggerType) ? triggerType : "manual";
 
   const { data: sequence, error } = await db
-    .from("sequences")
+    .from("follow_up_sequences")
     .insert({
       workspace_id: workspaceId,
       name: name.trim(),
@@ -1120,7 +1120,7 @@ export async function addSequenceStep(
     .insert({
       sequence_id: sequenceId,
       step_order: stepOrder,
-      type,
+      channel: type,
       delay_minutes: delayMinutes,
       config: Object.keys(config).length > 0 ? config : null,
     })
@@ -1142,7 +1142,7 @@ export async function updateSequence(
   const db = getDb();
 
   const { data: sequence, error } = await db
-    .from("sequences")
+    .from("follow_up_sequences")
     .update({
       ...updates,
       updated_at: new Date().toISOString(),
@@ -1166,7 +1166,7 @@ export async function deleteSequence(
   const db = getDb();
 
   const { error } = await db
-    .from("sequences")
+    .from("follow_up_sequences")
     .delete()
     .eq("id", sequenceId)
     .eq("workspace_id", workspaceId);

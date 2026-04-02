@@ -605,7 +605,7 @@ async function autoEnrollInSequence(
 
     // Find the best matching active sequence for this workspace
     const { data: sequences } = await db
-      .from("sequences")
+      .from("follow_up_sequences")
       .select("id, name, trigger_type")
       .eq("workspace_id", workspaceId)
       .eq("is_active", true)
@@ -677,7 +677,7 @@ async function ensureDemoNurtureSequence(workspaceId: string): Promise<string | 
   try {
     // Check if demo nurture sequence already exists
     const { data: existing } = await db
-      .from("sequences")
+      .from("follow_up_sequences")
       .select("id")
       .eq("workspace_id", workspaceId)
       .eq("name", "Demo Lead Nurture")
@@ -688,7 +688,7 @@ async function ensureDemoNurtureSequence(workspaceId: string): Promise<string | 
 
     // Create the sequence
     const { data: seq } = await db
-      .from("sequences")
+      .from("follow_up_sequences")
       .insert({
         workspace_id: workspaceId,
         name: "Demo Lead Nurture",
@@ -706,7 +706,7 @@ async function ensureDemoNurtureSequence(workspaceId: string): Promise<string | 
       {
         sequence_id: seqId,
         step_order: 1,
-        type: "email",
+        channel: "email",
         delay_minutes: 120, // 2 hours after call
         config: {
           template_content: "follow_up_value",
@@ -717,7 +717,7 @@ async function ensureDemoNurtureSequence(workspaceId: string): Promise<string | 
       {
         sequence_id: seqId,
         step_order: 2,
-        type: "email",
+        channel: "email",
         delay_minutes: 2880, // 48 hours after step 1
         config: {
           template_content: "follow_up_social_proof",
@@ -728,7 +728,7 @@ async function ensureDemoNurtureSequence(workspaceId: string): Promise<string | 
       {
         sequence_id: seqId,
         step_order: 3,
-        type: "email",
+        channel: "email",
         delay_minutes: 7200, // 5 days after step 2
         config: {
           template_content: "follow_up_last_chance",

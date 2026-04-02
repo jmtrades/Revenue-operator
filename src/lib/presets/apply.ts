@@ -41,7 +41,7 @@ async function ensureDefaultSequences(workspaceId: string, preset: RevenuePreset
   const purposes = ["followup", "revival", "attendance"] as const;
   for (const purpose of purposes) {
     const { data: existing } = await db
-      .from("sequences")
+      .from("follow_up_sequences")
       .select("id")
       .eq("workspace_id", workspaceId)
       .eq("purpose", purpose)
@@ -69,7 +69,7 @@ async function ensureDefaultSequences(workspaceId: string, preset: RevenuePreset
               { step: 2, delay_hours: preset.reminder_before_hours[1] ?? 3, intervention_type: "prep_info", template_key: "prep_1", stop_on_reply: true },
             ];
 
-    await db.from("sequences").insert({
+    await db.from("follow_up_sequences").insert({
       workspace_id: workspaceId,
       name: `Default ${purpose}`,
       purpose,
