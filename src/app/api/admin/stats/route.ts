@@ -106,7 +106,7 @@ export async function GET(req: NextRequest) {
   // Call sessions stats
   try {
     const { count: totalCallSessions } = await db.from("call_sessions").select("id", { count: "exact", head: true });
-    const { count: callSessionsToday } = await db.from("call_sessions").select("id", { count: "exact", head: true }).gte("started_at", todayIso);
+    const { count: callSessionsToday } = await db.from("call_sessions").select("id", { count: "exact", head: true }).gte("call_started_at", todayIso);
     result.calls = {
       total: totalCallSessions ?? 0,
       today: callSessionsToday ?? 0,

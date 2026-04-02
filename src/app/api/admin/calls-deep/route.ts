@@ -24,8 +24,8 @@ export async function GET(req: NextRequest) {
   // Total calls, calls today, calls this week
   try {
     const { count: totalCalls } = await db.from("call_sessions").select("id", { count: "exact", head: true });
-    const { count: callsToday } = await db.from("call_sessions").select("id", { count: "exact", head: true }).gte("started_at", todayIso);
-    const { count: callsWeek } = await db.from("call_sessions").select("id", { count: "exact", head: true }).gte("started_at", weekAgoIso);
+    const { count: callsToday } = await db.from("call_sessions").select("id", { count: "exact", head: true }).gte("call_started_at", todayIso);
+    const { count: callsWeek } = await db.from("call_sessions").select("id", { count: "exact", head: true }).gte("call_started_at", weekAgoIso);
 
     result.calls_summary = {
       total: totalCalls ?? 0,
@@ -59,16 +59,16 @@ export async function GET(req: NextRequest) {
     result.calls_by_direction = { error: "Failed to fetch call directions" };
   }
 
-  // Average call duration (calculate from started_at and ended_at)
+  // Average call duration (calculate from call_started_at and call_ended_at)
   try {
-    const { data: calls } = await db.from("call_sessions").select("started_at, ended_at");
+    const { data: calls } = await db.from("call_sessions").select("call_started_at, call_ended_at");
     if (calls && calls.length > 0) {
       let totalDuration = 0;
       let completedCalls = 0;
       calls.forEach((c: any) => {
-        if (c.started_at && c.ended_at) {
-          const start = new Date(c.started_at).getTime();
-          const end = new Date(c.ended_at).getTime();
+        if (c.call_started_at && c.call_ended_at) {
+          const start = new Date(c.call_started_at).getTime();
+          const end = new Date(c.call_ended_at).getTime();
           totalDuration += (end - start) / 1000; // Convert to seconds
           completedCalls += 1;
         }
@@ -97,7 +97,7 @@ export async function GET(req: NextRequest) {
 
   // Calls by workspace (top 10)
   try {
-    const { data: calls } = await db.from("call_sessions").select("workspace_id, id").order("started_at", { ascending: false });
+    const { data: calls } = await db.from("call_sessions").select("workspace_id, id").order("call_started_at", { ascending: false });
     const callsByWorkspace: Record<string, number> = {};
     (calls ?? []).forEach((c: any) => {
       const wsId = c.workspace_id || "unknown";
@@ -151,7 +151,7 @@ export async function GET(req: NextRequest) {
 
   // Agent performance: calls per workspace, avg duration per workspace
   try {
-    const { data: calls } = await db.from("call_sessions").select("workspace_id, started_at, ended_at");
+    const { data: calls } = await db.from("call_sessions").select("workspace_id, call_started_at, call_ended_at");
     const wsStats: Record<string, { calls: number; total_duration: number; avg_duration: number }> = {};
 
     (calls ?? []).forEach((c: any) => {
@@ -161,10 +161,10 @@ export async function GET(req: NextRequest) {
       }
       wsStats[wsId].calls += 1;
 
-      // Calculate duration from started_at and ended_at
-      if (c.started_at && c.ended_at) {
-        const start = new Date(c.started_at).getTime();
-        const end = new Date(c.ended_at).getTime();
+      // Calculate duration from call_started_at and call_ended_at
+      if (c.call_started_at && c.call_ended_at) {
+        const start = new Date(c.call_started_at).getTime();
+        const end = new Date(c.call_ended_at).getTime();
         wsStats[wsId].total_duration += (end - start) / 1000; // Convert to seconds
       }
     });
