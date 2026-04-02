@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
         .from("leads")
         .select("id, workspace_id")
         .gte("updated_at", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
-        .not("status", "in", '("CLOSED","WON","LOST")')
+        .not("state", "in", '("CLOSED","WON","LOST")')
         .order("updated_at", { ascending: false })
         .limit(100);
 
@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
       const { data: unintelligentLeads } = await db
         .from("leads")
         .select("id, workspace_id")
-        .not("status", "in", '("CLOSED","WON","LOST")')
+        .not("state", "in", '("CLOSED","WON","LOST")')
         .not("id", "in", `(${(activeLeads ?? []).map((l: { id: string }) => `"${l.id}"`).join(",") || '"__none__"'})`)
         .is("last_activity_at", null)
         .limit(20);

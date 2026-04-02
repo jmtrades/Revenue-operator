@@ -60,7 +60,7 @@ export async function GET(req: NextRequest) {
         .in("status", ["confirmed", "completed", "no_show"]),
       db
         .from("leads")
-        .select("id, last_activity_at, created_at, status")
+        .select("id, last_activity_at, created_at, state")
         .eq("workspace_id", workspaceId)
         .gte("created_at", start.toISOString()),
       db
