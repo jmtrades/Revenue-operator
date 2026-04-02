@@ -435,6 +435,9 @@ export default function AppContactsPage() {
     if (!formFirstName.trim()) errors.firstName = t("errors.firstNameRequired");
     if (!formLastName.trim()) errors.lastName = t("errors.lastNameRequired");
     if (!formPhone.trim()) errors.phone = t("errors.phoneRequired");
+    if (formEmail.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formEmail.trim())) {
+      errors.email = t("errors.invalidEmail", { defaultValue: "Please enter a valid email address" });
+    }
     setFormErrors(errors);
     if (Object.keys(errors).length > 0) return;
 
@@ -913,6 +916,9 @@ export default function AppContactsPage() {
                   placeholder={t("form.emailPlaceholder")}
                   disabled={creating}
                 />
+                {formErrors.email && (
+                  <p className="mt-1 text-[11px] text-[var(--accent-red)]" role="alert">{formErrors.email}</p>
+                )}
               </div>
               <div>
                 <label className="block text-[11px] text-[var(--text-secondary)] mb-1">{t("form.typeLabel")}</label>

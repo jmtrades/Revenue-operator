@@ -470,7 +470,16 @@ export default function CallsPage() {
           </button>
         </div>
       ) : error ? (
-        <div className="mt-6 text-sm text-[var(--accent-red)]" role="alert">{error}</div>
+        <div className="mt-6 flex items-center gap-3 text-sm text-[var(--accent-red)]" role="alert">
+          <span>{error}</span>
+          <button
+            type="button"
+            onClick={() => { setError(null); setLoading(true); setRetryTrigger((c) => c + 1); }}
+            className="shrink-0 px-3 py-1 rounded-lg bg-[var(--accent-red)]/10 text-[var(--accent-red)] text-xs font-medium hover:bg-[var(--accent-red)]/20 transition-colors"
+          >
+            {t("common.retry")}
+          </button>
+        </div>
       ) : filtered.length === 0 ? (
         <div className="mt-6 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)]">
           <EmptyState
