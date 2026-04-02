@@ -23,14 +23,15 @@ export async function GET(
 
     const { data: session } = await db
       .from("call_sessions")
-      .select("id, lead_id, workspace_id, transcript, outcome, summary, duration_seconds, sentiment")
+      .select("id, lead_id, workspace_id, outcome, summary, call_started_at, call_ended_at, metadata")
       .eq("id", callId)
       .maybeSingle();
 
     if (!session) return NextResponse.json({ error: "Call not found" }, { status: 404 });
     const s = session as {
-      workspace_id?: string; transcript?: string | null; outcome?: string | null;
-      summary?: string | null; duration_seconds?: number | null; sentiment?: string | null;
+      workspace_id?: string; outcome?: string | null;
+      summary?: string | null; call_started_at?: string | null; call_ended_at?: string | null;
+      metadata?: Record<string, unknown> | null;
     };
     if (s.workspace_id) {
       const accessErr = await requireWorkspaceAccess(req, s.workspace_id);
@@ -76,7 +77,10 @@ export async function GET(
     }
 
     // Generate lightweight coaching from call data if we have a transcript
-    const transcript = s.transcript ?? "";
+    const meta = s.metadata ?? {};
+    const transcript = typeof (meta as Record<string, unknown>).transcript === "string"
+      ? (meta as Record<string, unknown>).transcript as string
+      : JSON.stringify((meta as Record<string, unknown>).transcript ?? "");
     if (transcript.length < 50) {
       return NextResponse.json({
         coaching: null,
@@ -86,8 +90,11 @@ export async function GET(
     }
 
     const outcome = s.outcome ?? "unknown";
-    const sentiment = s.sentiment ?? "neutral";
-    const duration = s.duration_seconds ?? 0;
+    const sentiment = typeof (meta as Record<string, unknown>).sentiment === "string"
+      ? (meta as Record<string, unknown>).sentiment as string : "neutral";
+    const duration = s.call_started_at && s.call_ended_at
+      ? Math.max(0, (new Date(s.call_ended_at).getTime() - new Date(s.call_started_at).getTime()) / 1000)
+      : 0;
 
     // Lightweight rule-based coaching (no LLM call required)
     const whatWorked: string[] = [];

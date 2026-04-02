@@ -351,14 +351,14 @@ async function updateLeadStatus(
 
     // Map call outcome to lead status
     const statusMap: Record<string, string> = {
-      signup_initiated: "HOT",
-      demo_completed: "WARM",
-      callback_requested: "WARM",
-      objection_unresolved: "WARM",
-      information_gathered: "NEW",
-      hung_up_early: "COLD",
+      signup_initiated: "QUALIFIED",
+      demo_completed: "ENGAGED",
+      callback_requested: "ENGAGED",
+      objection_unresolved: "CONTACTED",
+      information_gathered: "CONTACTED",
+      hung_up_early: "NEW",
       voicemail: "NEW",
-      transferred: "WARM",
+      transferred: "ENGAGED",
     };
 
     const newStatus = statusMap[summary.outcome] || "NEW";
@@ -390,9 +390,9 @@ async function updateLeadStatus(
     await db
       .from("leads")
       .update({
-        status: newStatus,
-        score: newScore,
-        last_contacted_at: new Date().toISOString(),
+        state: newStatus,
+        qualification_score: newScore,
+        last_activity_at: new Date().toISOString(),
       })
       .eq("id", leadId);
 
