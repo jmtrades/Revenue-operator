@@ -347,6 +347,14 @@ export async function POST(request: NextRequest) {
         phone: normalizedPhone,
       });
 
+      // Pause any active follow-up sequences — lead has replied
+      try {
+        const { pauseOnLeadReply } = await import("@/lib/sequences/follow-up-engine");
+        await pauseOnLeadReply(leadData.workspace_id, leadData.id, "inbound_sms");
+      } catch {
+        // Non-blocking: sequence engine may not be available
+      }
+
       // Fire webhook for inbound SMS
       await fireWebhookEvent(leadData.workspace_id, "sms.received", {
         lead_id: leadData.id,

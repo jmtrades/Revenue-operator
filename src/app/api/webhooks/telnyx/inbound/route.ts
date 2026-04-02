@@ -141,6 +141,24 @@ export async function POST(req: NextRequest) {
             } catch (err) {
               log("error", "telnyx_sms.inbound_store_failed", { error: err instanceof Error ? err.message : String(err) });
             }
+
+            // Pause any active follow-up sequences — lead has replied
+            try {
+              const normalizedPhone = fromPhone.replace(/[^\d+]/g, "");
+              const { data: lead } = await db
+                .from("leads")
+                .select("id")
+                .eq("workspace_id", workspaceId)
+                .or(`phone.eq.${normalizedPhone},phone.eq.${fromPhone}`)
+                .limit(1)
+                .maybeSingle();
+              if (lead) {
+                const { pauseOnLeadReply } = await import("@/lib/sequences/follow-up-engine");
+                await pauseOnLeadReply(workspaceId, (lead as { id: string }).id, "inbound_sms");
+              }
+            } catch {
+              // Non-blocking: sequence engine may not be available
+            }
           }
         } else {
           log("info", "telnyx_sms.unhandled_event", { eventType });
