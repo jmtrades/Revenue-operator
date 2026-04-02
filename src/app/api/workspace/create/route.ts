@@ -75,7 +75,10 @@ export async function POST(req: NextRequest) {
   const preferredLanguage = (body.preferredLanguage ?? "").trim() || null;
   // Accept both voiceId and elevenlabsVoiceId for backwards compatibility
   const voiceId = ((body.voiceId ?? body.elevenlabsVoiceId) ?? "").trim() || null;
-  const billingTier = (body.billingTier ?? "").trim() || null;
+  const rawTier = (body.billingTier ?? "").trim() || null;
+  // Convert app plan slugs to DB-compatible values (DB CHECK: solo, growth, team, enterprise)
+  const tierToDb: Record<string, string> = { solo: "solo", business: "growth", scale: "team", enterprise: "enterprise" };
+  const billingTier = rawTier ? (tierToDb[rawTier] ?? rawTier) : null;
 
   try {
     const db = getDb();
