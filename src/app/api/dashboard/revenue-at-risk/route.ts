@@ -71,8 +71,7 @@ export async function GET(req: NextRequest) {
       .from("call_sessions")
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
-      .eq("direction", "inbound")
-      .in("status", ["missed", "no_answer", "abandoned"])
+      .in("outcome", ["missed", "no_answer", "abandoned"])
       .gte("call_started_at", sevenDaysAgo.toISOString());
 
     const missedCount = count ?? 0;

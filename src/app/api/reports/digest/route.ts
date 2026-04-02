@@ -257,7 +257,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<DigestResponse
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
       .lte("last_activity_at", staleDate)
-      .not("state", "in", '("won","lost","opted_out")');
+      .not("state", "in", '("WON","LOST","CLOSED")');
     staleLeadsCount = sl ?? 0;
   } catch {
     /* ignore */

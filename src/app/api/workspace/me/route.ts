@@ -9,6 +9,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { buildWorkspaceReadiness } from "@/lib/workspace/readiness";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { BILLING_PLANS, normalizeTier } from "@/lib/billing-plans";
 
 export const dynamic = "force-dynamic";
 
@@ -187,14 +188,63 @@ export async function GET(req: NextRequest) {
         items: readiness.items,
         nextStep: readiness.nextStep,
       },
-      stats: {
-        calls: callCount ?? 0,
-        leads: leadCount ?? 0,
-        estRevenue: (leadCount ?? 0) * 800,
-        minutesUsed: (callCount ?? 0) * 6,
-        minutesLimit: 400,
-        lastCallAt: (lastCall as { call_started_at?: string | null } | null)?.call_started_at ?? null,
-      },
+      stats: await (async () => {
+        // Calculate real minutes from call duration data
+        let minutesUsed = 0;
+        try {
+          const { data: sessions } = await db
+            .from("call_sessions")
+            .select("call_started_at, call_ended_at")
+            .eq("workspace_id", workspaceId)
+            .not("call_ended_at", "is", null)
+            .limit(5000);
+          if (sessions?.length) {
+            for (const s of sessions) {
+              const a = s.call_started_at ? new Date(s.call_started_at).getTime() : 0;
+              const b = s.call_ended_at ? new Date(s.call_ended_at).getTime() : 0;
+              if (b > a) minutesUsed += Math.ceil((b - a) / 60000);
+            }
+          }
+        } catch { /* fallback to 0 */ }
+
+        // Get real revenue from deals table
+        let estRevenue = 0;
+        try {
+          const { data: deals } = await db
+            .from("deals")
+            .select("value_cents")
+            .eq("workspace_id", workspaceId)
+            .in("stage", ["won", "closed_won", "WON"]);
+          if (deals?.length) {
+            for (const d of deals) {
+              const v = Number((d as { value_cents?: number }).value_cents);
+              if (!Number.isNaN(v)) estRevenue += v;
+            }
+            estRevenue = Math.round(estRevenue / 100); // cents → dollars
+          }
+        } catch { /* fallback to 0 */ }
+
+        // Get minutes limit from billing plan
+        let minutesLimit = 1000;
+        try {
+          const { data: ws2 } = await db
+            .from("workspaces")
+            .select("billing_tier")
+            .eq("id", workspaceId)
+            .maybeSingle();
+          const tier = normalizeTier((ws2 as { billing_tier?: string } | null)?.billing_tier);
+          minutesLimit = BILLING_PLANS[tier]?.includedMinutes ?? 1000;
+        } catch { /* fallback */ }
+
+        return {
+          calls: callCount ?? 0,
+          leads: leadCount ?? 0,
+          estRevenue,
+          minutesUsed,
+          minutesLimit,
+          lastCallAt: (lastCall as { call_started_at?: string | null } | null)?.call_started_at ?? null,
+        };
+      })(),
       systemEvents: readiness.systemEvents,
       workspaceReady: !readiness.showBanner,
       notification_preferences: (row.notification_preferences as Record<string, string[]> | null) ?? null,

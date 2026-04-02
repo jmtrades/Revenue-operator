@@ -73,8 +73,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         .from("call_sessions")
         .select("id, call_started_at")
         .eq("workspace_id", workspaceId)
-        .eq("direction", "inbound")
-        .in("status", ["missed", "no_answer", "abandoned"])
+        .in("outcome", ["missed", "no_answer", "abandoned"])
         .gte("call_started_at", sevenDaysAgo.toISOString());
 
       if (missedCalls && missedCalls.length > 0) {
@@ -250,7 +249,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         .from("call_sessions")
         .select("id", { count: "exact", head: true })
         .eq("workspace_id", workspaceId)
-        .in("status", ["completed", "transferred", "recorded"]);
+        .in("outcome", ["completed", "transferred", "recorded"]);
 
       const { count: appointmentsBooked } = await db
         .from("appointments")
@@ -336,8 +335,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       .from("call_sessions")
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
-      .eq("direction", "inbound")
-      .in("status", ["missed", "no_answer", "abandoned"])
+      .in("outcome", ["missed", "no_answer", "abandoned"])
       .gte("call_started_at", sevenDaysAgo.toISOString());
 
     const fourteenDaysAgo = new Date(now);
