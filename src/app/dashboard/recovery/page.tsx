@@ -205,7 +205,7 @@ export default function MissedCallRecoveryPage() {
             Set up your AI operator to start tracking and recovering revenue from missed calls and no-shows.
           </p>
           <a
-            href="/app/settings/phone"
+            href="/dashboard/settings/phone"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500 text-black text-sm font-semibold hover:bg-emerald-400 transition-colors"
           >
             <Phone className="w-4 h-4" />

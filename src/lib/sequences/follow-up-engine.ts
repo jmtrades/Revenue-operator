@@ -545,8 +545,8 @@ export async function advanceEnrollment(
                 .replace(/\{\{name\}\}/gi, lead.name ?? "there")
                 .replace(/\{\{phone\}\}/gi, lead.phone)
             : `Hi ${lead.name ?? "there"}, just following up. Let us know if you have any questions or would like to schedule a time to chat.`;
-          await svc.sendSms({ from: fromNumber, to: lead.phone, text: messageText });
-          actionSucceeded = true;
+          const smsResult = await svc.sendSms({ from: fromNumber, to: lead.phone, text: messageText });
+          actionSucceeded = !("error" in smsResult);
         } else {
           console.warn(`[sequence-sms] No active phone config for workspace ${e.workspace_id} — skipping SMS step for enrollment ${enrollmentId}`);
           actionSucceeded = true;
@@ -757,7 +757,7 @@ export async function advanceEnrollment(
         if (newStatus && newStatus !== currentStatus) {
           await db
             .from("leads")
-            .update({ status: newStatus, updated_at: new Date().toISOString() })
+            .update({ state: newStatus, updated_at: new Date().toISOString() })
             .eq("id", e.lead_id)
             .eq("workspace_id", e.workspace_id);
           console.log(`[sequence-advance] Lead ${e.lead_id}: ${currentStatus} → ${newStatus} (step: ${stepType})`);

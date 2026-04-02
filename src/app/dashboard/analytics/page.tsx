@@ -227,7 +227,7 @@ export default function AnalyticsPage() {
                 <p className="text-sm mt-2" style={{ color: "var(--text-secondary)" }}>
                   {metrics?.hasJobValue
                     ? `Based on ${metrics.appointmentsBooked} appointments × $${avgJobValue.toLocaleString()} avg job value`
-                    : <>Set your average job value in <a href="/app/settings/business" className="underline text-emerald-400">Business Settings</a> to see revenue estimates</>}
+                    : <>Set your average job value in <a href="/dashboard/settings" className="underline text-emerald-400">Business Settings</a> to see revenue estimates</>}
                 </p>
               </div>
               <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">

@@ -179,6 +179,18 @@ export default function RevenuePage() {
           <button
             type="button"
             className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-default)] px-3 py-2 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors"
+            onClick={() => {
+              if (!rawData.length) return;
+              const header = "Date,Inbound,Follow-ups,Outbound,No-Show Recovery\n";
+              const rows = rawData.map((r) => `${r.date},${r.inbound},${r.followUps},${r.outbound},${r.noShowRecovery}`).join("\n");
+              const blob = new Blob([header + rows], { type: "text/csv" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `revenue-${period}.csv`;
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
           >
             <Download className="w-4 h-4" />
             Export

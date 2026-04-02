@@ -163,7 +163,7 @@ export default function SettingsBillingPage() {
           Upgrade, downgrade, or cancel your subscription at any time from the main billing page.
         </p>
         <Link
-          href="/app/settings/billing"
+          href="/dashboard/settings/billing"
           className="text-sm text-[var(--accent-primary)] hover:underline"
         >
           Go to billing settings →
