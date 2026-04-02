@@ -44,7 +44,7 @@ function getActionLabel(action: string): string {
 }
 
 function hasRiskFlag(flags: string[]): { hasCritical: boolean; hasWarning: boolean } {
-  const critical = flags.some((f) => f === "anger" || f === "opt_out");
+  const critical = flags.some((f) => f === "anger" || f === "opt_out_signal");
   const warning = flags.some((f) => f === "going_cold" || f === "no_show_risk");
   return { hasCritical: critical, hasWarning: warning };
 }

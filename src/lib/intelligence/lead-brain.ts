@@ -116,6 +116,7 @@ export async function computeLeadIntelligence(
       .from("universal_outcomes")
       .select("outcome_type, created_at")
       .eq("workspace_id", workspaceId)
+      .eq("lead_id", leadId)
       .order("created_at", { ascending: false })
       .limit(10);
 
