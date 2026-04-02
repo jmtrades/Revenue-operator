@@ -127,8 +127,9 @@ async function fetchCrmContacts(
         .eq("provider", "airtable")
         .maybeSingle();
       const meta = (cfg as { metadata?: { base_id?: string; table_name?: string } | null; instance_url?: string | null } | null);
-      const baseId = meta?.metadata?.base_id ?? meta?.instance_url;
+      const rawBaseId = meta?.metadata?.base_id ?? (meta?.instance_url?.startsWith("app") ? meta.instance_url : null);
       const tableName = meta?.metadata?.table_name ?? "Contacts";
+      const baseId = rawBaseId;
       if (!baseId) throw new Error("Airtable base ID not configured. Please set your base ID in integration settings.");
 
       const res = await fetch(
