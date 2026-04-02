@@ -289,10 +289,12 @@ export default function RevenuePage() {
             );
           })}
         </div>
+        {chartData.length > 0 && (
         <div className="flex items-center justify-between mt-3 text-[10px]" style={{ color: "var(--text-tertiary)" }}>
           <span>{formatShortDate(chartData[0]?.date ?? "")}</span>
           <span>{formatShortDate(chartData[chartData.length - 1]?.date ?? "")}</span>
         </div>
+        )}
       </div>
 
       {/* Top performing days + source table */}
