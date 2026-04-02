@@ -203,8 +203,8 @@ export async function POST(req: NextRequest) {
             source: metadata.source,
           },
         }),
-      }).catch((_err) => {
-        // Webhook delivery failed; non-fatal
+      }).catch((err) => {
+        log("warn", "[leads] Webhook delivery failed:", { detail: err instanceof Error ? err.message : String(err) });
       });
     }
   } catch {

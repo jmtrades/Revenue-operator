@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  await db
+  const { error: pauseErr } = await db
     .from("workspaces")
     .update({
       status: "paused",
@@ -63,6 +63,10 @@ export async function POST(req: NextRequest) {
       updated_at: new Date().toISOString(),
     })
     .eq("id", workspaceId);
+  if (pauseErr) {
+    log("error", "[pause-coverage] DB update failed:", { error: pauseErr.message });
+    return NextResponse.json({ error: "Failed to pause coverage. Please try again." }, { status: 500 });
+  }
 
   // Absence moment: return factual statements only (no persuasion)
   let absence_statements: {
