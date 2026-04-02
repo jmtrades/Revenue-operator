@@ -156,6 +156,21 @@ export default function RevenuePage() {
     );
   }
 
+  if (apiData !== null && rawData.length === 0) {
+    return (
+      <div className="p-8 max-w-6xl mx-auto">
+        <PageHeader title="Revenue" subtitle="Revenue breakdown and analysis" />
+        <EmptyState
+          icon="pulse"
+          title="No revenue tracked yet"
+          subtitle="Revenue appears here as your AI operator handles calls, books appointments, and recovers missed opportunities. Import leads and connect your phone to get started."
+          primaryAction={{ label: "Import Leads", href: "/app/leads?import=1" }}
+          secondaryAction={{ label: "View Dashboard", href: "/app" }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="p-8 max-w-6xl mx-auto">
       <div className="flex items-center justify-between mb-6">

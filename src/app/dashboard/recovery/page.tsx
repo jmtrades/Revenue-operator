@@ -201,9 +201,16 @@ export default function MissedCallRecoveryPage() {
           <p style={{ color: "var(--text-primary)" }} className="font-medium mb-2">
             No recovery data yet
           </p>
-          <p style={{ color: "var(--text-secondary)" }} className="text-sm">
+          <p style={{ color: "var(--text-secondary)" }} className="text-sm mb-4">
             Set up your AI operator to start tracking and recovering revenue from missed calls and no-shows.
           </p>
+          <a
+            href="/app/settings/phone"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500 text-black text-sm font-semibold hover:bg-emerald-400 transition-colors"
+          >
+            <Phone className="w-4 h-4" />
+            Set Up Phone Number
+          </a>
         </div>
       ) : (
         <>
