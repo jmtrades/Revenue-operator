@@ -48,8 +48,8 @@ export default function ConversationsPage() {
     setLoading(true);
     setError(false);
     Promise.all([
-      fetchWithFallback<{ conversations?: Conversation[] }>(`/api/conversations?workspace_id=${encodeURIComponent(workspaceId)}`, { cacheKey: `conversations-${workspaceId}` }),
-      fetchWithFallback<CommandCenter>(`/api/command-center?workspace_id=${encodeURIComponent(workspaceId)}`, { cacheKey: `command-center-${workspaceId}` }),
+      fetchWithFallback<{ conversations?: Conversation[] }>(`/api/conversations?workspace_id=${encodeURIComponent(workspaceId)}`, { cacheKey: `conversations-${workspaceId}`, credentials: "include" }),
+      fetchWithFallback<CommandCenter>(`/api/command-center?workspace_id=${encodeURIComponent(workspaceId)}`, { cacheKey: `command-center-${workspaceId}`, credentials: "include" }),
     ])
       .then(([convRes, ccRes]) => {
         if (convRes.data?.conversations) setConversations(convRes.data.conversations);

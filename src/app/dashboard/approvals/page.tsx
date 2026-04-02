@@ -40,7 +40,7 @@ export default function ApprovalsPage() {
       return;
     }
     setLoading(true);
-    fetchWithFallback<{ pending: PendingItem[] }>(`/api/enterprise/approvals?workspace_id=${encodeURIComponent(workspaceId)}`)
+    fetchWithFallback<{ pending: PendingItem[] }>(`/api/enterprise/approvals?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
       .then((res) => {
         if (res.data?.pending) setPending(res.data.pending);
       })

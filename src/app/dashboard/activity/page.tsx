@@ -87,8 +87,8 @@ export default function ActivityPage() {
     if (!workspaceId) return;
     if (!silent) setLoading(true);
     Promise.all([
-      fetchWithFallback<{ calls: CallRow[] }>(`/api/calls?workspace_id=${encodeURIComponent(workspaceId)}`),
-      fetchWithFallback<{ handoffs: Handoff[] }>(`/api/handoffs?workspace_id=${encodeURIComponent(workspaceId)}`),
+      fetchWithFallback<{ calls: CallRow[] }>(`/api/calls?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
+      fetchWithFallback<{ handoffs: Handoff[] }>(`/api/handoffs?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
       fetchWithFallback<SummaryMetrics>(`/api/analytics/summary?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
     ])
       .then(([cRes, hRes, sRes]) => {

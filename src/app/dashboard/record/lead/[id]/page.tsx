@@ -53,9 +53,9 @@ export default function RecordLeadPage() {
   useEffect(() => {
     if (!id) return;
     Promise.all([
-      fetchWithFallback<Lead>(`/api/leads/${id}`),
-      fetchWithFallback<{ messages: Message[] }>(`/api/leads/${id}/messages`),
-      fetchWithFallback<{ escalation_id?: string; beyond_scope?: boolean }>(`/api/leads/${id}/open-handoff`),
+      fetchWithFallback<Lead>(`/api/leads/${id}`, { credentials: "include" }),
+      fetchWithFallback<{ messages: Message[] }>(`/api/leads/${id}/messages`, { credentials: "include" }),
+      fetchWithFallback<{ escalation_id?: string; beyond_scope?: boolean }>(`/api/leads/${id}/open-handoff`, { credentials: "include" }),
       fetchWithFallback<{ calls: CallRow[] }>(`/api/leads/${id}/calls`, { credentials: "include" }),
     ]).then(([lRes, mRes, hRes, cRes]) => {
       if (lRes.data && !(lRes.data as { error?: unknown }).error) setLead(lRes.data as Lead);

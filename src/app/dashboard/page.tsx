@@ -87,12 +87,12 @@ export default function SituationPage() {
     }
     setLoading(true);
     Promise.all([
-      fetchWithFallback<Capsule>(`/api/operational/operator-capsule?workspace_id=${encodeURIComponent(workspaceId)}`),
-      fetchWithFallback<RetentionPayload>(`/api/operational/retention-intercept?workspace_id=${encodeURIComponent(workspaceId)}`),
-      fetchWithFallback<{ handoffs: Handoff[]; beyond_scope?: boolean }>(`/api/handoffs?workspace_id=${encodeURIComponent(workspaceId)}`),
-      fetchWithFallback<QuickStats>(`/api/dashboard/quick-stats?workspace_id=${encodeURIComponent(workspaceId)}`),
-      fetchWithFallback<RevenueAtRisk>(`/api/dashboard/revenue-at-risk?workspace_id=${encodeURIComponent(workspaceId)}`),
-      fetchWithFallback<{ gaps: KnowledgeGap[]; total: number }>(`/api/dashboard/knowledge-gaps?workspace_id=${encodeURIComponent(workspaceId)}`),
+      fetchWithFallback<Capsule>(`/api/operational/operator-capsule?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
+      fetchWithFallback<RetentionPayload>(`/api/operational/retention-intercept?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
+      fetchWithFallback<{ handoffs: Handoff[]; beyond_scope?: boolean }>(`/api/handoffs?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
+      fetchWithFallback<QuickStats>(`/api/dashboard/quick-stats?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
+      fetchWithFallback<RevenueAtRisk>(`/api/dashboard/revenue-at-risk?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
+      fetchWithFallback<{ gaps: KnowledgeGap[]; total: number }>(`/api/dashboard/knowledge-gaps?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
     ]).then(([capRes, retRes, handRes, statsRes, riskRes, gapsRes]) => {
       if (capRes.data) setCapsule(capRes.data);
       if (retRes.data) setRetention(retRes.data);

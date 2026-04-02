@@ -40,10 +40,10 @@ export default function CalendarPage() {
     setLoading(true);
     Promise.all([
       fetchWithFallback(`/api/calendar-risk?workspace_id=${encodeURIComponent(workspaceId)}`, {
-        cacheKey: `calendar-risk-${workspaceId}`,
+        cacheKey: `calendar-risk-${workspaceId}`, credentials: "include",
       }),
       fetchWithFallback(`/api/risk-surface?workspace_id=${encodeURIComponent(workspaceId)}`, {
-        cacheKey: `risk-surface-${workspaceId}`,
+        cacheKey: `risk-surface-${workspaceId}`, credentials: "include",
       }),
     ])
       .then(([dResult, riskResult]) => {
