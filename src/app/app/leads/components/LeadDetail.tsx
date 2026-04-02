@@ -74,7 +74,7 @@ export function LeadDetail({
   const [brainHint, setBrainHint] = useState<BrainHint | null>(null);
 
   useEffect(() => {
-    fetch(`/api/leads/${lead.id}/intelligence`)
+    fetch(`/api/leads/${lead.id}/intelligence`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (data?.intelligence) {

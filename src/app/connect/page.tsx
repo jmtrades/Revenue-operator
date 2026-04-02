@@ -44,7 +44,7 @@ function ConnectPageContent() {
     const provision = async () => {
       setActivating(true);
       try {
-        const res = await fetch("/api/integrations/twilio/auto-provision", {
+        const res = await fetch("/api/integrations/twilio/auto-provision", { credentials: "include",
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ workspace_id: workspaceId }),
@@ -59,6 +59,7 @@ function ConnectPageContent() {
           clearTimeout(timeoutId);
           await fetch(`/api/activation?workspace_id=${encodeURIComponent(workspaceId)}`, {
             method: "POST",
+            credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ action: "activate" }),
           });
@@ -99,7 +100,7 @@ function ConnectPageContent() {
 
     const checkForMessages = async () => {
       try {
-        const res = await fetch(`/api/command-center?workspace_id=${encodeURIComponent(workspaceId)}`);
+        const res = await fetch(`/api/command-center?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" });
         const data = await res.json();
         
         // If we have real conversations, redirect to live page with conversation_id
@@ -130,7 +131,7 @@ function ConnectPageContent() {
     setTesting(true);
 
     try {
-      const res = await fetch("/api/dev/simulate-inbound", {
+      const res = await fetch("/api/dev/simulate-inbound", { credentials: "include",
         method: "POST",
       });
       const data = await res.json();
@@ -157,7 +158,7 @@ function ConnectPageContent() {
       // Log activation event
       if (workspaceId) {
         try {
-          await fetch("/api/activation-events", {
+          await fetch("/api/activation-events", { credentials: "include",
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ step: "connected_number", workspace_id: workspaceId }),

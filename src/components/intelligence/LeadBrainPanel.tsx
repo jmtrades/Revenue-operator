@@ -107,8 +107,8 @@ export function LeadBrainPanel({ leadId }: LeadBrainPanelProps) {
         setLoading(true);
         setError(null);
         const [intelligenceRes, leadRes] = await Promise.all([
-          fetch(`/api/leads/${leadId}/intelligence`),
-          fetch(`/api/leads/${leadId}`),
+          fetch(`/api/leads/${leadId}/intelligence`, { credentials: "include" }),
+          fetch(`/api/leads/${leadId}`, { credentials: "include" }),
         ]);
 
         if (!intelligenceRes.ok) {
@@ -145,6 +145,7 @@ export function LeadBrainPanel({ leadId }: LeadBrainPanelProps) {
       const newPausedState = !isPaused;
       const response = await fetch(`/api/leads/${leadId}`, {
         method: "PATCH",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ paused_for_followup: newPausedState }),
       });

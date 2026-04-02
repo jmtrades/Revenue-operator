@@ -15,7 +15,7 @@ export function RenewalReminderBanner() {
 
   useEffect(() => {
     if (!workspaceId) return;
-    fetch(`/api/billing/renewal?workspace_id=${encodeURIComponent(workspaceId)}`)
+    fetch(`/api/billing/renewal?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
       .then((r) => r.json())
       .then((d) => {
         if (d.renewal_at) setRenewalAt(d.renewal_at);

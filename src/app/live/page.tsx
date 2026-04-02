@@ -60,13 +60,13 @@ function LivePageContent() {
 
     const timer = setTimeout(async () => {
       // Check if we have any conversations
-      const checkRes = await fetch(`/api/command-center?workspace_id=${encodeURIComponent(workspaceId)}`);
+      const checkRes = await fetch(`/api/command-center?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" });
       const checkData = await checkRes.json();
       
       if (!checkData.activity || checkData.activity.length === 0) {
         // Auto-simulate in dev only
         try {
-          await fetch("/api/dev/simulate-inbound", { method: "POST" });
+          await fetch("/api/dev/simulate-inbound", { credentials: "include", method: "POST" });
           setAutoSimulated(true);
         } catch {
           // Non-blocking
@@ -89,7 +89,7 @@ function LivePageContent() {
     if (!workspaceId) return;
 
     const fetchConversationEvents = async () => {
-      const result = await fetch(`/api/command-center?workspace_id=${encodeURIComponent(workspaceId)}`);
+      const result = await fetch(`/api/command-center?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" });
       const data = await result.json();
 
       if (data.recent_conversations && Array.isArray(data.recent_conversations) && data.recent_conversations.length > 0) {
@@ -102,7 +102,7 @@ function LivePageContent() {
         
         if (convId) {
           try {
-            const msgRes = await fetch(`/api/conversations/${convId}/messages`);
+            const msgRes = await fetch(`/api/conversations/${convId}/messages`, { credentials: "include" });
             const msgData = await msgRes.json();
 
             if (msgData.messages && Array.isArray(msgData.messages)) {

@@ -339,7 +339,7 @@ export default function TemplatesPage() {
     setActivatingId(templateId);
 
     try {
-      const response = await fetch('/api/templates/activate', {
+      const response = await fetch('/api/templates/activate', { credentials: "include",
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

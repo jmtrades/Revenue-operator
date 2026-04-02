@@ -242,6 +242,7 @@ export default function SettingsPage() {
                 setOperationalProfile(v);
                 fetch(`/api/workspaces/${workspaceId}/settings`, {
                   method: "PATCH",
+                  credentials: "include",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ operational_profile: v }),
                 }).catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
@@ -741,7 +742,7 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
           variant="default"
           onConfirm={async () => {
             if (!workspaceId) return;
-            const res = await fetch("/api/billing/pause-coverage", {
+            const res = await fetch("/api/billing/pause-coverage", { credentials: "include",
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ workspace_id: workspaceId }),

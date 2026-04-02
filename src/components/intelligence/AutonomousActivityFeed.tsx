@@ -83,7 +83,7 @@ export function AutonomousActivityFeed({ leadId }: AutonomousActivityFeedProps) 
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch(`/api/leads/${leadId}/intelligence`);
+        const response = await fetch(`/api/leads/${leadId}/intelligence`, { credentials: "include" });
         if (!response.ok) {
           if (response.status === 404) {
             setError("Lead not found");

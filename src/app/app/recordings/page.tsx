@@ -240,7 +240,7 @@ export default function RecordingsPage() {
         params.append("to", dateRangeObj.to);
       }
 
-      const response = await fetch(`/api/recordings/search?${params.toString()}`);
+      const response = await fetch(`/api/recordings/search?${params.toString()}`, { credentials: "include" });
 
       if (!response.ok) {
         throw new Error("Failed to fetch recordings");

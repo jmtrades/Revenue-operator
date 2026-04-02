@@ -225,6 +225,7 @@ function OnboardingWizard() {
       if (typeof localStorage !== "undefined") localStorage.setItem("rt_onboarded", "1");
       await fetch(`/api/activation?workspace_id=${encodeURIComponent(wid)}`, {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "activate" }),
       });

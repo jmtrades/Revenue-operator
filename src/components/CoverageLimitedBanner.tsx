@@ -13,7 +13,7 @@ export function CoverageLimitedBanner() {
 
   useEffect(() => {
     if (!workspaceId) return;
-    fetch(`/api/workspaces/${workspaceId}/phone-continuity`)
+    fetch(`/api/workspaces/${workspaceId}/phone-continuity`, { credentials: "include" })
       .then((r) => r.json())
       .then((d: { coverage?: string }) => setCoverage((d?.coverage as "full" | "limited") ?? "limited"))
       .catch(() => setCoverage("limited"));

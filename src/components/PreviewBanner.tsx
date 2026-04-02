@@ -12,7 +12,7 @@ export function PreviewBanner({ workspaceId }: { workspaceId: string }) {
       setPreviewMode(false);
       return;
     }
-    fetch(`/api/workspaces/${workspaceId}/settings`)
+    fetch(`/api/workspaces/${workspaceId}/settings`, { credentials: "include" })
       .then((r) => r.json())
       .then((d) => setPreviewMode(d.preview_mode ?? false))
       .catch(() => setPreviewMode(false));

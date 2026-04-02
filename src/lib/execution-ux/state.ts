@@ -36,10 +36,10 @@ export function useExecutionUxState(workspaceId: string | null | undefined): Exe
       try {
         const wid = workspaceId ?? "";
         const [policiesRes, approvalsRes, billingRes] = await Promise.all([
-          fetch(`/api/enterprise/policies?workspace_id=${encodeURIComponent(wid)}`)
+          fetch(`/api/enterprise/policies?workspace_id=${encodeURIComponent(wid)}`, { credentials: "include" })
             .then((r) => (r.ok ? r.json() : null))
             .catch(() => null),
-          fetch(`/api/enterprise/approvals?workspace_id=${encodeURIComponent(wid)}`)
+          fetch(`/api/enterprise/approvals?workspace_id=${encodeURIComponent(wid)}`, { credentials: "include" })
             .then((r) => (r.ok ? r.json() : null))
             .catch(() => null),
           fetch(`/api/dashboard/billing?workspace_id=${encodeURIComponent(wid)}`, {
