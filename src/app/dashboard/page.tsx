@@ -215,16 +215,16 @@ export default function SituationPage() {
               <TrendingUp size={20} color="white" />
             </div>
           </div>
-          {(stats?.recent_calls ?? 0) > 0 ? (
+          {(stats?.active_leads ?? 0) > 0 ? (
             <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
-              ${((stats?.recent_calls ?? 0) * 47).toLocaleString()}
+              {stats?.active_leads ?? 0}
             </p>
           ) : (
             <p className="text-xl font-semibold mb-1" style={{ color: "var(--text-tertiary)" }}>
               {t("stats.startsAfterFirstCall")}
             </p>
           )}
-          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("stats.estRevenueRecovered")}</p>
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("stats.activeLeads")}</p>
         </div>
 
         <div className="rounded-lg border p-6" style={{ borderColor: "var(--border-default)", background: "var(--card)", borderWidth: "1px" }}>

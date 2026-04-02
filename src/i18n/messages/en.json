@@ -870,7 +870,8 @@
     "stats": {
       "activeCalls": "Active Calls",
       "startsAfterFirstCall": "Activates on first interaction",
-      "estRevenueRecovered": "Est. Revenue Recovered"
+      "estRevenueRecovered": "Est. Revenue Recovered",
+      "activeLeads": "Active Leads"
     },
     "gettingStarted": {
       "title": "Getting Started",

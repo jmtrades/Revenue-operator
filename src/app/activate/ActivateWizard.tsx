@@ -166,12 +166,6 @@ export function ActivateWizard() {
     e?.preventDefault();
     if (finalizing) return;
 
-    // Block finalization if email not verified — catch early instead of getting a 403
-    if (emailVerified === false) {
-      setError(t("errors.emailNotVerified", { defaultValue: "Please verify your email before going live. Check your inbox for a verification link." }));
-      return;
-    }
-
     setFinalizing(true);
     setError(null);
 
@@ -295,6 +289,38 @@ export function ActivateWizard() {
             </div>
           </div>
         )}
+        {/* Block progression if email not verified — show at top before any steps */}
+        {emailVerified === false && step === 1 && (
+          <div className="mb-6 rounded-2xl border-2 border-amber-500/40 bg-amber-500/10 px-5 py-4">
+            <p className="text-sm font-semibold text-amber-300">Verify your email to continue</p>
+            <p className="mt-1 text-sm text-amber-200/80">
+              You need to verify your email before setting up your workspace. Check your inbox for a verification link.
+            </p>
+            <div className="mt-3">
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!accountEmail || resending) return;
+                  setResending(true);
+                  try {
+                    await fetch("/api/auth/resend-verification", {
+                      method: "POST",
+                      credentials: "include",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ email: accountEmail }),
+                    });
+                  } catch { /* best-effort */ }
+                  finally { setTimeout(() => setResending(false), 3000); }
+                }}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 text-black font-semibold px-6 py-2 text-sm hover:bg-amber-400 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                disabled={!accountEmail || resending}
+              >
+                {resending ? "Verification email sent! Check your inbox." : "Resend Verification Email"}
+              </button>
+            </div>
+          </div>
+        )}
+
         <header className="mb-10">
           <p className="text-xs font-semibold tracking-[0.18em] uppercase text-sky-400">
             {t("wizardHeading")}
@@ -368,8 +394,11 @@ export function ActivateWizard() {
             />
           )}
           {step === 4 && (
-            <>
+            <div className="space-y-8">
               <PackBusinessStep state={state} setState={setState} goNext={goNext} canGoNext={canGoNext} />
+              <div className="border-t border-[var(--border-default)] pt-8">
+                <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--text-tertiary)] mb-4">Step 2 — Customize Your Agent</p>
+              </div>
               <CustomizeStep
                 state={state}
                 setState={setState}
@@ -381,6 +410,9 @@ export function ActivateWizard() {
                 goNext={goNext}
                 canGoNext={canGoNext}
               />
+              <div className="border-t border-[var(--border-default)] pt-8">
+                <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--text-tertiary)] mb-4">Step 3 — Go Live</p>
+              </div>
               <ActivateStep
                 onFinalize={handleFinalize}
                 goBack={goBack}
@@ -390,7 +422,7 @@ export function ActivateWizard() {
                 voiceId={state.voiceId}
                 greeting={state.greeting}
               />
-            </>
+            </div>
           )}
         </section>
       </div>
