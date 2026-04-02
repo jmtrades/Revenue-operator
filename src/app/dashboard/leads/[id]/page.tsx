@@ -109,7 +109,7 @@ export default function LeadViewPage() {
     if (!id || !lead) return;
     const dealId = deals?.length && deals[0] ? (deals[0] as Deal).id : undefined;
     fetchWithFallback<PreCallBrief>(`/api/leads/${id}/pre-call-brief${dealId ? `?deal_id=${dealId}` : ""}`, {
-      cacheKey: `pre-call-brief-${id}-${dealId ?? "none"}`,
+      cacheKey: `pre-call-brief-${id}-${dealId ?? "none"}`, credentials: "include",
     }).then((result) => {
       if (result.data && !(result.data as { error?: unknown }).error) {
         setPreCallBrief(result.data);

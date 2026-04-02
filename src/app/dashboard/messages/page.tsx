@@ -52,7 +52,7 @@ export default function MessagesPage() {
     setLoading(true);
     setListError(null);
     fetchWithFallback<{ conversations: Conversation[] }>(
-      `/api/conversations?workspace_id=${encodeURIComponent(workspaceId)}`
+      `/api/conversations?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }
     )
       .then((res) => {
         if (res.data?.conversations) setConversations(res.data.conversations);

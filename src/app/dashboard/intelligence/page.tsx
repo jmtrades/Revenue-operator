@@ -35,10 +35,10 @@ export default function IntelligencePage() {
     setLoading(true);
     Promise.all([
       fetchWithFallback<{ gaps: KnowledgeGap[]; total: number }>(
-        `/api/dashboard/knowledge-gaps?workspace_id=${encodeURIComponent(workspaceId)}`
+        `/api/dashboard/knowledge-gaps?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }
       ),
       fetchWithFallback<QuickStats>(
-        `/api/dashboard/quick-stats?workspace_id=${encodeURIComponent(workspaceId)}`
+        `/api/dashboard/quick-stats?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }
       ),
     ]).then(([gapsRes, statsRes]) => {
       if (gapsRes.data?.gaps) setGaps(gapsRes.data.gaps);
