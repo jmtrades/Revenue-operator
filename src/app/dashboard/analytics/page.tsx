@@ -111,27 +111,36 @@ export default function AnalyticsPage() {
     }).finally(() => setLoading(false));
   }, [workspaceId]);
 
+  // Fetch workspace average job value (set in business settings)
+  const [avgJobValue, setAvgJobValue] = useState<number>(0);
+  useEffect(() => {
+    if (!workspaceId) return;
+    fetch(`/api/workspace/me?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        const val = data?.average_job_value ?? data?.metadata?.average_job_value;
+        if (typeof val === "number" && val > 0) setAvgJobValue(val);
+      })
+      .catch(() => { /* use 0 — don't estimate */ });
+  }, [workspaceId]);
+
   // Calculate revenue metrics from available data
   const metrics = useMemo(() => {
     if (!summary || !usage) return null;
-    const avgJobValue = 450; // Industry average, would come from workspace settings
     const callsAnswered = usage.calls;
     const appointmentsBooked = summary.appointments_total;
-    const estimatedRevenue = appointmentsBooked * avgJobValue;
+    const estimatedRevenue = avgJobValue > 0 ? appointmentsBooked * avgJobValue : 0;
     const conversionRate = callsAnswered > 0 ? Math.round((appointmentsBooked / callsAnswered) * 100) : 0;
-    const avgResponseTime = 2.8; // seconds
-    const callsHandled = Math.round(callsAnswered * 0.35); // 35% were after-hours calls
 
     return {
       estimatedRevenue,
       callsAnswered,
       appointmentsBooked,
       conversionRate,
-      avgResponseTime,
-      callsHandled,
-      weeklyRevenue: Math.round(estimatedRevenue / 4),
+      hasJobValue: avgJobValue > 0,
+      weeklyRevenue: avgJobValue > 0 ? Math.round(estimatedRevenue / 4) : 0,
     };
-  }, [summary, usage]);
+  }, [summary, usage, avgJobValue]);
 
   if (!workspaceId) {
     return (
@@ -191,13 +200,15 @@ export default function AnalyticsPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-xs font-medium uppercase tracking-wide text-emerald-400 mb-2">
-                  {t("analytics.totalRevenueRecovered")}
+                  {metrics?.hasJobValue ? t("analytics.totalRevenueRecovered") : "Estimated Revenue Impact"}
                 </p>
                 <p className="text-4xl md:text-5xl font-bold tabular-nums text-white">
-                  ${metrics?.estimatedRevenue.toLocaleString() || "0"}
+                  {metrics?.hasJobValue ? `$${metrics.estimatedRevenue.toLocaleString()}` : `${metrics?.appointmentsBooked || 0} booked`}
                 </p>
                 <p className="text-sm mt-2" style={{ color: "var(--text-secondary)" }}>
-                  Based on {metrics?.appointmentsBooked || 0} appointments × industry average job value
+                  {metrics?.hasJobValue
+                    ? `Based on ${metrics.appointmentsBooked} appointments × $${avgJobValue.toLocaleString()} avg job value`
+                    : <>Set your average job value in <a href="/app/settings/business" className="underline text-emerald-400">Business Settings</a> to see revenue estimates</>}
                 </p>
               </div>
               <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
@@ -232,9 +243,8 @@ export default function AnalyticsPage() {
               trend={{ value: 3, positive: true }}
             />
             <RevenueKPI
-              label="Avg Response Time"
-              value={metrics?.avgResponseTime || 0}
-              suffix="s"
+              label="Appointments Booked"
+              value={metrics?.appointmentsBooked || 0}
               icon={Clock}
             />
           </div>
@@ -249,10 +259,10 @@ export default function AnalyticsPage() {
                 </p>
               </div>
               <p className="text-2xl font-bold tabular-nums" style={{ color: "var(--text-primary)" }}>
-                {metrics?.callsHandled || 0}
+                {metrics?.callsAnswered || 0}
               </p>
               <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>
-                Calls answered outside business hours
+                Total calls handled by AI operator
               </p>
             </div>
             <div className="rounded-xl border p-5" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
@@ -311,27 +321,21 @@ export default function AnalyticsPage() {
             <h3 className="text-sm font-medium mb-4" style={{ color: "var(--text-primary)" }}>
               Your ROI Summary
             </h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-center">
               <div>
-                <p className="text-xs text-[var(--text-tertiary)] mb-1">Plan Cost</p>
-                <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>$297/mo</p>
+                <p className="text-xs text-[var(--text-tertiary)] mb-1">Calls Answered</p>
+                <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>{metrics?.callsAnswered.toLocaleString() || "0"}</p>
               </div>
               <div>
-                <p className="text-xs text-[var(--text-tertiary)] mb-1">Revenue Recovered</p>
-                <p className="text-lg font-semibold text-emerald-400">${metrics?.estimatedRevenue.toLocaleString() || "0"}</p>
+                <p className="text-xs text-[var(--text-tertiary)] mb-1">Appointments Booked</p>
+                <p className="text-lg font-semibold text-emerald-400">{metrics?.appointmentsBooked.toLocaleString() || "0"}</p>
               </div>
               <div>
-                <p className="text-xs text-[var(--text-tertiary)] mb-1">Net Gain</p>
+                <p className="text-xs text-[var(--text-tertiary)] mb-1">{metrics?.hasJobValue ? "Est. Revenue" : "Conversion"}</p>
                 <p className="text-lg font-semibold text-emerald-400">
-                  ${((metrics?.estimatedRevenue || 0) - 297).toLocaleString()}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs text-[var(--text-tertiary)] mb-1">ROI</p>
-                <p className="text-lg font-semibold text-emerald-400">
-                  {metrics && metrics.estimatedRevenue > 0
-                    ? `${Math.round(((metrics.estimatedRevenue - 297) / 297) * 100)}%`
-                    : "—"}
+                  {metrics?.hasJobValue
+                    ? `$${metrics.estimatedRevenue.toLocaleString()}`
+                    : `${metrics?.conversionRate || 0}%`}
                 </p>
               </div>
             </div>
