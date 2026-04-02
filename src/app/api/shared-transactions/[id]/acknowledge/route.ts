@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { acknowledgeSharedTransaction } from "@/lib/shared-transaction-assurance";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { getSession } from "@/lib/auth/request-session";
 
 export async function POST(
   request: NextRequest,
@@ -15,6 +16,11 @@ export async function POST(
 ) {
   const csrfBlock = assertSameOrigin(request);
   if (csrfBlock) return csrfBlock;
+
+  const session = await getSession(request);
+  if (!session?.userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   const { id } = await params;
   let body: { action?: string; new_deadline?: string; dispute_reason?: string } = {};

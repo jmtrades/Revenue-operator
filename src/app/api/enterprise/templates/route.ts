@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
   const { data: rows } = await db
     .from("speech_templates")
     .select("id, workspace_id, domain_type, jurisdiction, channel, intent_type, clause_type, template_key, template_body, version, status, created_at")
-    .or(`workspace_id.eq.${workspaceId},workspace_id.is.null`)
+    .or(`workspace_id.eq."${workspaceId.replace(/"/g, "")}",workspace_id.is.null`)
     .order("created_at", { ascending: false })
     .limit(200);
 
