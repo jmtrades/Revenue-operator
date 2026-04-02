@@ -37,6 +37,11 @@ export async function POST(req: NextRequest) {
     const db = (await import("@/lib/db/queries")).getDb();
     const DEMO_WORKSPACE = process.env.DEMO_WORKSPACE_ID ?? "";
 
+    if (!DEMO_WORKSPACE) {
+      log("error", "[leads/capture] DEMO_WORKSPACE_ID env var not set — cannot store captured lead");
+      return NextResponse.json({ ok: true }); // Don't fail the user's experience
+    }
+
     await db.from("leads").upsert(
       {
         workspace_id: DEMO_WORKSPACE,

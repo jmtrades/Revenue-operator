@@ -282,10 +282,10 @@ export async function POST(req: NextRequest) {
       // Speed-to-lead available on Business ($597) and above
       const eligiblePlans = ["business", "agency", "enterprise", "scale"];
       if (wsRow?.plan_id && eligiblePlans.includes(wsRow.plan_id)) {
-        // Check if workspace has speed-to-lead enabled
+        // Speed-to-lead is enabled by default — only skip if explicitly disabled
         const stlValue = await getWorkspaceSetting(workspaceId, "speed_to_lead_enabled");
-        const enabled = stlValue === "true";
-        if (enabled) {
+        const disabled = stlValue === "false";
+        if (!disabled) {
           // Enqueue outbound call with 60-second delay
           await db.from("action_queue").insert({
             workspace_id: workspaceId,
@@ -303,6 +303,49 @@ export async function POST(req: NextRequest) {
     } catch {
       // Non-blocking: don't fail lead creation if speed-to-lead fails
     }
+  }
+
+  // Auto-enroll new leads in a nurture sequence so no lead sits idle.
+  // Speed-to-lead handles the immediate call, but if that doesn't fire
+  // (wrong plan, no phone config, non-phone source), the nurture sequence
+  // ensures the lead still gets multi-touch engagement.
+  try {
+    const { enrollContact, createSequence, addSequenceStep } = await import("@/lib/sequences/follow-up-engine");
+    const { getDefaultFollowUpTemplate } = await import("@/lib/intelligence/outcome-followup-router");
+
+    // Find an active new_lead nurture sequence for this workspace
+    const { data: existingSeq } = await db
+      .from("sequences")
+      .select("id")
+      .eq("workspace_id", workspaceId)
+      .eq("trigger_type", "new_lead")
+      .eq("is_active", true)
+      .limit(1)
+      .maybeSingle();
+
+    let sequenceId = (existingSeq as { id: string } | null)?.id;
+
+    if (!sequenceId) {
+      // Auto-create a default welcome sequence
+      const newSeq = await createSequence(workspaceId, "Auto: welcome nurture", "new_lead");
+      if (newSeq) {
+        sequenceId = newSeq.id;
+        const bizName = String(metadata.businessName || "our team");
+        const leadName = (createdLead.name ?? "").toString().trim() || "there";
+        const tpl = getDefaultFollowUpTemplate("generic_followup_new", {
+          business_name: bizName,
+          contact_name: leadName,
+        });
+        if (tpl.sms) await addSequenceStep(sequenceId, 1, "sms", 30, tpl.sms);
+        if (tpl.email_body) await addSequenceStep(sequenceId, 2, "email", 1440, tpl.email_body);
+      }
+    }
+
+    if (sequenceId) {
+      await enrollContact(workspaceId, sequenceId, createdLead.id);
+    }
+  } catch {
+    // Non-blocking: don't fail lead creation if nurture enrollment fails
   }
 
   return NextResponse.json(lead);
