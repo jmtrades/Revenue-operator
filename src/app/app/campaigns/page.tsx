@@ -34,9 +34,9 @@ type CampaignRow = {
   name: string;
   type: string;
   status: "draft" | "active" | "paused" | "completed" | "launching";
-  total_contacts: number;
-  called: number;
-  answered: number;
+  total_leads: number;
+  leads_called: number;
+  connects: number;
   appointments_booked: number;
   created_at: string;
   target_filter?: TargetFilter | null;
@@ -393,16 +393,16 @@ export default function CampaignsPage() {
       // CSV rows from campaigns data
       const rows = campaigns.map((campaign) => {
         const conversionRate =
-          campaign.answered > 0
-            ? Math.round((campaign.appointments_booked / campaign.answered) * 100)
+          campaign.connects > 0
+            ? Math.round((campaign.appointments_booked / campaign.connects) * 100)
             : 0;
         const createdAt = new Date(campaign.created_at).toLocaleDateString();
 
         return [
           `"${(campaign.name ?? "").replace(/"/g, '""')}"`, // Escape quotes in name
           campaign.status,
-          campaign.called,
-          campaign.answered,
+          campaign.leads_called,
+          campaign.connects,
           campaign.appointments_booked,
           `${conversionRate}%`,
           createdAt,
@@ -557,13 +557,13 @@ export default function CampaignsPage() {
         <div className="mb-6 grid grid-cols-2 md:grid-cols-5 gap-4 drop-shadow-sm">
           <StatCard label={t("statTotal")} value={campaigns.length} color="blue" />
           <StatCard label={t("statActive")} value={campaigns.filter((c) => c.status === "active").length} color="emerald" />
-          <StatCard label={t("statContacted")} value={campaigns.reduce((sum, c) => sum + (c.called ?? 0), 0)} color="cyan" />
+          <StatCard label={t("statContacted")} value={campaigns.reduce((sum, c) => sum + (c.leads_called ?? 0), 0)} color="cyan" />
           <StatCard label={t("statConverted")} value={campaigns.reduce((sum, c) => sum + (c.appointments_booked ?? 0), 0)} color="amber" />
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-4">
             <p className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide">{t("overallConversion", { defaultValue: "Overall conversion" })}</p>
             <p className="mt-1 text-sm font-semibold text-[var(--text-primary)]">
               {(() => {
-                const totalAnswered = campaigns.reduce((s, c) => s + (c.answered ?? 0), 0);
+                const totalAnswered = campaigns.reduce((s, c) => s + (c.connects ?? 0), 0);
                 const totalBooked = campaigns.reduce((s, c) => s + (c.appointments_booked ?? 0), 0);
                 const rate = totalAnswered > 0 ? Math.round((totalBooked / totalAnswered) * 100) : 0;
                 return `${rate}% · ${totalBooked} ${t("appointmentsBooked", { defaultValue: "booked" })}`;
@@ -693,15 +693,15 @@ export default function CampaignsPage() {
                   </div>
                   </div>
                   <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <Metric label={t("metricContacts")} value={campaign.total_contacts ?? 0} />
-                    <Metric label={t("metricContacted")} value={campaign.called ?? 0} />
-                    <Metric label={t("metricReached")} value={campaign.answered ?? 0} />
+                    <Metric label={t("metricContacts")} value={campaign.total_leads ?? 0} />
+                    <Metric label={t("metricContacted")} value={campaign.leads_called ?? 0} />
+                    <Metric label={t("metricReached")} value={campaign.connects ?? 0} />
                     <Metric label={t("metricConverted")} value={campaign.appointments_booked ?? 0} />
                   </div>
                   <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-[var(--text-secondary)]">
-                    <span>{t("remaining")}: {Math.max(0, (campaign.total_contacts ?? 0) - (campaign.called ?? 0))}</span>
+                    <span>{t("remaining")}: {Math.max(0, (campaign.total_leads ?? 0) - (campaign.leads_called ?? 0))}</span>
                     <span>·</span>
-                    <span>{t("failed")}: {Math.max(0, (campaign.called ?? 0) - (campaign.answered ?? 0))}</span>
+                    <span>{t("failed")}: {Math.max(0, (campaign.leads_called ?? 0) - (campaign.connects ?? 0))}</span>
                     <span>·</span>
                     <span className={dailyUsed >= dailyLimit ? "text-[var(--accent-warning,#f59e0b)] font-medium" : ""}>{t("dailyUsage", { defaultValue: "Daily" })}: {dailyUsed}/{dailyLimit}</span>
                     {dailyUsed >= dailyLimit && (
@@ -712,24 +712,24 @@ export default function CampaignsPage() {
                     <div className="flex items-center justify-between text-[11px] text-[var(--text-secondary)] mb-1">
                       <span>{t("progress")}</span>
                       <span>
-                        {campaign.called}/{campaign.total_contacts} {t("contacted")}
+                        {campaign.leads_called}/{campaign.total_leads} {t("contacted")}
                       </span>
                     </div>
                     <div className="h-1.5 w-full rounded-full bg-[var(--bg-surface)] overflow-hidden">
                       <div
                         className="h-full rounded-full bg-[var(--accent-primary)] transition-all duration-300"
                         style={{
-                          width: `${campaign.total_contacts > 0 ? Math.min(
+                          width: `${campaign.total_leads > 0 ? Math.min(
                             100,
                             Math.round(
-                              (campaign.called / campaign.total_contacts) * 100,
+                              (campaign.leads_called / campaign.total_leads) * 100,
                             ),
                           ) : 0}%`,
                         }}
                       />
                     </div>
                   </div>
-                  {campaign.called > 0 && campaign.appointments_booked > 0 && (
+                  {campaign.leads_called > 0 && campaign.appointments_booked > 0 && (
                     <div className="mt-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-3">
                       <div className="flex items-center gap-1.5">
                         <p className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide">{t("campaignRoi", { defaultValue: "Performance" })}</p>
@@ -737,13 +737,13 @@ export default function CampaignsPage() {
                       <div className="mt-1 grid grid-cols-3 gap-2 text-center">
                         <div>
                           <p className="text-sm font-semibold text-[var(--text-primary)]">
-                            {campaign.answered > 0 ? `${Math.round((campaign.appointments_booked / campaign.answered) * 100)}%` : "0%"}
+                            {campaign.connects > 0 ? `${Math.round((campaign.appointments_booked / campaign.connects) * 100)}%` : "0%"}
                           </p>
                           <p className="text-[10px] text-[var(--text-tertiary)]">{t("conversionRate", { defaultValue: "Conversion" })}</p>
                         </div>
                         <div>
                           <p className="text-sm font-semibold text-[var(--text-primary)]">
-                            {campaign.called > 0 ? `${Math.round((campaign.answered / campaign.called) * 100)}%` : "0%"}
+                            {campaign.leads_called > 0 ? `${Math.round((campaign.connects / campaign.leads_called) * 100)}%` : "0%"}
                           </p>
                           <p className="text-[10px] text-[var(--text-tertiary)]">{t("answerRate", { defaultValue: "Answer rate" })}</p>
                         </div>

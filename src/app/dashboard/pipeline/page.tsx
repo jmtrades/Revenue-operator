@@ -74,10 +74,10 @@ export default function PipelinePage() {
     fetch(`/api/leads?workspace_id=${encodeURIComponent(workspaceId)}&limit=200`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
-        if (!data?.items) { setLoading(false); return; }
-        const mapped: PipelineCard[] = (data.items as Array<Record<string, unknown>>).map((lead) => {
+        if (!data?.leads) { setLoading(false); return; }
+        const mapped: PipelineCard[] = (data.leads as Array<Record<string, unknown>>).map((lead) => {
           const meta = (lead.metadata ?? {}) as Record<string, unknown>;
-          const dealValue = typeof lead.deal_value === "number" ? lead.deal_value : 0;
+          const dealValue = typeof lead.value_cents === "number" ? lead.value_cents : 0;
           const createdAt = lead.created_at ? new Date(lead.created_at as string) : new Date();
           const daysInStage = Math.max(0, Math.round((Date.now() - createdAt.getTime()) / 86_400_000));
           const source: PipelineCard["source"] =
