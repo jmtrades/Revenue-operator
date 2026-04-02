@@ -6,6 +6,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { getDb } from "@/lib/db/queries";
 import { z } from "zod";
@@ -37,15 +38,31 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: "Call control not configured" }, { status: 503 });
   }
 
-  // Get call_control_id from DB if available
+  // Get call_control_id from DB — stored in call_sessions.metadata.call_control_id
+  // or in call_sessions.external_meeting_id (the Telnyx call session ID)
   const db = getDb();
   const { data: callData } = await db
-    .from("calls")
-    .select("telnyx_call_control_id, workspace_id")
+    .from("call_sessions")
+    .select("id, workspace_id, metadata, external_meeting_id")
     .eq("id", callId)
     .maybeSingle();
 
-  const callControlId = (callData as { telnyx_call_control_id?: string } | null)?.telnyx_call_control_id;
+  if (!callData) {
+    return NextResponse.json({ error: "Call not found" }, { status: 404 });
+  }
+
+  // Check workspace access for this call
+  const callWorkspaceId = (callData as { workspace_id?: string }).workspace_id;
+  if (callWorkspaceId) {
+    const wsErr = await requireWorkspaceAccess(req, callWorkspaceId);
+    if (wsErr) return wsErr;
+  }
+
+  // Extract call_control_id from metadata (stored during test-call creation or webhook)
+  const meta = (callData as { metadata?: Record<string, unknown> | null }).metadata;
+  const callControlId = (meta?.call_control_id as string | undefined)
+    ?? (callData as { external_meeting_id?: string }).external_meeting_id
+    ?? null;
 
   if (!callControlId) {
     // If no call control ID, acknowledge the action (for calls not yet connected to Telnyx)

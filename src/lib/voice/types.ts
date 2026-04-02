@@ -97,6 +97,7 @@ export interface CreateCallParams {
 
 export interface CallResult {
   callId: string;
+  callSessionId?: string;
   status: "queued" | "ringing" | "in-progress" | "completed" | "failed";
   provider: string;
 }

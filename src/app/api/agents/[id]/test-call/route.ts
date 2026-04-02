@@ -211,11 +211,28 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   const callSessionId = (sessionRow as { id: string }).id;
 
   try {
-    await voice.createOutboundCall({
+    const callResult = await voice.createOutboundCall({
       assistantId,
       phoneNumber: phone,
       metadata: { workspace_id: workspaceId, call_session_id: callSessionId, lead_id: leadId },
     });
+
+    // The voice provider may return a failed status instead of throwing
+    if (callResult.status === "failed") {
+      await db.from("call_sessions").update({ call_ended_at: new Date().toISOString() }).eq("id", callSessionId);
+      return NextResponse.json({
+        error: "We couldn't connect your test call. The telephony provider rejected the request. Please verify your phone number and try again.",
+        code: "call_initiation_failed",
+        detail: `Call returned status: ${callResult.status}`,
+      }, { status: 502 });
+    }
+
+    // Store the Telnyx call control ID on the session for live call control
+    if (callResult.callId) {
+      await db.from("call_sessions").update({
+        metadata: { test_call: true, agent_id: id, call_control_id: callResult.callId },
+      }).eq("id", callSessionId);
+    }
   } catch (e) {
     await db.from("call_sessions").update({ call_ended_at: new Date().toISOString() }).eq("id", callSessionId);
     const rawMsg = e instanceof Error ? e.message : "Test call failed";

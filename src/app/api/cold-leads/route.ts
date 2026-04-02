@@ -72,8 +72,50 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Failed to load cold leads" }, { status: 500 });
   }
 
+  // Join with leads table to get name, email, phone for display
+  const queueItems = (data ?? []) as Array<{
+    id: string;
+    lead_id: string;
+    workspace_id: string;
+    status: string;
+    reason: string;
+    priority: string;
+    reengagement_strategy?: string;
+    next_attempt_at?: string;
+    attempts: number;
+    last_attempt_at?: string;
+    max_attempts: number;
+    created_at: string;
+    updated_at: string;
+  }>;
+
+  const leadIds = queueItems.map((item) => item.lead_id).filter(Boolean);
+  let leadLookup: Record<string, { name?: string; email?: string; phone?: string }> = {};
+
+  if (leadIds.length > 0) {
+    const { data: leads, error: leadsErr } = await db
+      .from("leads")
+      .select("id, name, email, phone")
+      .in("id", leadIds);
+
+    if (!leadsErr && leads) {
+      leadLookup = (leads as Array<{ id: string; name?: string; email?: string; phone?: string }>)
+        .reduce((acc, lead) => {
+          acc[lead.id] = { name: lead.name, email: lead.email, phone: lead.phone };
+          return acc;
+        }, {} as Record<string, { name?: string; email?: string; phone?: string }>);
+    }
+  }
+
+  const enrichedItems = queueItems.map((item) => ({
+    ...item,
+    name: leadLookup[item.lead_id]?.name ?? "Unknown",
+    email: leadLookup[item.lead_id]?.email ?? undefined,
+    phone: leadLookup[item.lead_id]?.phone ?? undefined,
+  }));
+
   return NextResponse.json({
-    items: data ?? [],
+    items: enrichedItems,
     total: count ?? 0,
     limit,
     offset,

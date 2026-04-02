@@ -280,7 +280,7 @@ export default function AppOnboardingPage() {
     const merged = mergeKnowledgeItems(knowledgeItems, starter);
 
     try {
-      await fetch("/api/workspace/create", {
+      const createRes = await fetch("/api/workspace/create", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -300,6 +300,11 @@ export default function AppOnboardingPage() {
           industry: industrySlug ?? undefined,
         }),
       });
+      if (!createRes.ok) {
+        console.error("[onboarding] Workspace create failed:", createRes.status);
+      }
+      // Mark onboarding complete -- workspace/create now also sets this,
+      // but PATCH ensures it works for existing workspaces too
       await fetch("/api/workspace/me", {
         method: "PATCH",
         credentials: "include",
@@ -309,8 +314,9 @@ export default function AppOnboardingPage() {
         }),
       });
       invalidateWorkspaceMeCache();
-    } catch {
-      // ignore and continue to local fallbacks
+    } catch (err) {
+      console.error("[onboarding] Error completing onboarding:", err instanceof Error ? err.message : err);
+      // Continue to dashboard anyway — local state is set below
     }
     safeSetItem("rt_onboarded", "true");
     safeSetItem("rt_onboarding_checklist", JSON.stringify(["business", "agent", "services", "phone", "test_call"]));

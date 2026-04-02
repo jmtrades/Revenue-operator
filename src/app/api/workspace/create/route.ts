@@ -111,7 +111,11 @@ export async function POST(req: NextRequest) {
       starterKnowledge,
     );
 
-    const update: Record<string, unknown> = { name, updated_at: new Date().toISOString() };
+    const update: Record<string, unknown> = {
+      name,
+      updated_at: new Date().toISOString(),
+      onboarding_completed_at: new Date().toISOString(),
+    };
     if (phone !== null) update.phone = phone;
     if (website !== null) update.website = website;
     if (address !== null) update.address = address;

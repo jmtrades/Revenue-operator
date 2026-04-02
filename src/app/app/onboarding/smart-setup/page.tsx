@@ -102,6 +102,20 @@ export default function SmartSetupPage() {
       setStep("loading");
       toast.success(`Your operator "${result.agent_name}" is live and ready to take calls!`);
 
+      // Mark onboarding complete in the database
+      try {
+        await fetch("/api/workspace/me", {
+          method: "PATCH",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            onboardingCompletedAt: new Date().toISOString(),
+          }),
+        });
+      } catch {
+        // Non-fatal
+      }
+
       // Redirect to agent page if agent was created, otherwise to dashboard
       const redirectUrl = result.agent_id
         ? `/app/agents/${result.agent_id}`

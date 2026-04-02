@@ -303,6 +303,40 @@ export default function AppSettingsBillingPage() {
           <div>
             <p className="font-semibold text-[var(--accent-primary)]">{tBilling("trial.title", { defaultValue: "You're on a free trial" })}</p>
             <p className="mt-1 text-[var(--accent-primary)]/80">{tBilling("trial.description", { defaultValue: "Subscribe to a plan to keep your operators running after the trial ends. Your data and configuration will be preserved." })}</p>
+            <button
+              type="button"
+              onClick={async () => {
+                if (!workspaceId) return;
+                try {
+                  const res = await fetch("/api/billing/checkout", {
+                    method: "POST",
+                    credentials: "include",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      workspace_id: workspaceId,
+                      tier: String(currentPlanId) === "starter" ? "solo" : String(currentPlanId),
+                      interval: "month",
+                      success_url: `${window.location.origin}/app/settings/billing?plan_changed=1`,
+                      cancel_url: `${window.location.origin}/app/settings/billing?canceled=1`,
+                    }),
+                  });
+                  const data = (await res.json().catch(() => null)) as { ok?: boolean; url?: string; checkout_url?: string; reason?: string } | null;
+                  if (data?.url || data?.checkout_url) {
+                    window.location.href = data.url ?? data.checkout_url ?? "";
+                  } else if (data?.reason === "already_active") {
+                    setToast(tBilling("toast.alreadyActive", { defaultValue: "You already have an active subscription." }));
+                    loadBillingData();
+                  } else {
+                    setToast(tBilling("toast.checkoutFailed", { defaultValue: "Could not start checkout. Please try again." }));
+                  }
+                } catch {
+                  setToast(tBilling("toast.checkoutFailed", { defaultValue: "Could not start checkout. Please try again." }));
+                }
+              }}
+              className="mt-3 px-5 py-2 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold hover:opacity-90 transition-opacity"
+            >
+              {tBilling("subscribeCta", { defaultValue: "Subscribe Now" })}
+            </button>
           </div>
         </div>
       )}

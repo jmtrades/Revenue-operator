@@ -167,6 +167,20 @@ export default function QuickSetupPage() {
         throw new Error("Failed to activate setup");
       }
 
+      // Mark onboarding complete in the database
+      try {
+        await fetch("/api/workspace/me", {
+          method: "PATCH",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            onboardingCompletedAt: new Date().toISOString(),
+          }),
+        });
+      } catch {
+        // Non-fatal
+      }
+
       setStep(3);
     } catch (error) {
       toast.error("Failed to activate setup. Please try again.");

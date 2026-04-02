@@ -4,17 +4,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
-import { previewVoiceViaApi } from "@/lib/voice-preview";
-import { RECALL_VOICES, DEFAULT_RECALL_VOICE_ID } from "@/lib/constants/recall-voices";
-import { getServicesForIndustry } from "@/lib/constants/industries";
-import type { ActivationState, VoiceOption, StepId } from "./steps/types";
+import { DEFAULT_RECALL_VOICE_ID } from "@/lib/constants/recall-voices";
+import type { ActivationState, StepId } from "./steps/types";
 import { DEFAULT_HOURS, STEPS } from "./steps/types";
 import type { PlanSlug } from "@/lib/billing-plans";
 import { PlanStep } from "./steps/PlanStep";
 import { GoalStep } from "./steps/GoalStep";
-import { PackBusinessStep } from "./steps/PackBusinessStep";
 import { PhoneOnlyStep } from "./steps/PhoneOnlyStep";
-import { CustomizeStep } from "./steps/CustomizeStep";
 import { ActivateStep } from "./steps/ActivateStep";
 import { track } from "@/lib/analytics/posthog";
 
@@ -99,8 +95,10 @@ export function ActivateWizard() {
       return state.goals.length > 0;
     }
     if (step === 3) {
-      const digits = state.businessPhone.replace(/\D/g, "");
-      // Require 10-15 digits and not all zeros
+      // Phone is optional -- allow skipping, but validate if provided
+      const phone = state.businessPhone.trim();
+      if (!phone) return true; // allow skip
+      const digits = phone.replace(/\D/g, "");
       return digits.length >= 10 && digits.length <= 15 && !/^0+$/.test(digits);
     }
     return true;
@@ -139,29 +137,6 @@ export function ActivateWizard() {
     goNext();
   };
 
-  const industryServices =
-    getServicesForIndustry(state.industry);
-
-  const effectiveServices =
-    state.services.length > 0 ? state.services : industryServices;
-
-  const recallVoiceList = useMemo(
-    () => RECALL_VOICES.map((v) => ({ id: v.id, name: v.name, labels: {} as Record<string, string>, category: v.accent })),
-    []
-  );
-  const [voices, _setVoices] = useState<VoiceOption[]>(() => recallVoiceList);
-
-  const handlePlayTestGreeting = () => {
-    const voiceText =
-      state.greeting.trim().length > 0
-        ? state.greeting.trim()
-        : t("greetingWithBusiness", { business: state.businessName || t("yourBusiness") });
-    previewVoiceViaApi(voiceText, {
-      voiceId: state.voiceId || undefined,
-      gender: "female",
-    });
-  };
-
   const handleFinalize = useCallback(async (e?: React.MouseEvent) => {
     e?.preventDefault();
     if (finalizing) return;
@@ -176,7 +151,7 @@ export function ActivateWizard() {
     setError(null);
 
     try {
-      track("onboarding_step_completed", { step: 3, name: "go_live" });
+      track("onboarding_step_completed", { step: 4, name: "go_live" });
       if (state.businessName.trim()) {
         localStorage.setItem("rt_business_name", state.businessName.trim());
       }
@@ -234,6 +209,20 @@ export function ActivateWizard() {
         }
         setFinalizing(false);
         return;
+      }
+
+      // Mark onboarding complete in the database
+      try {
+        await fetch("/api/workspace/me", {
+          method: "PATCH",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            onboardingCompletedAt: new Date().toISOString(),
+          }),
+        });
+      } catch {
+        // Non-fatal: onboarding can still proceed even if this fails
       }
     } catch (err) {
       console.error("[activate] Onboard failed:", err instanceof Error ? err.message : err);
@@ -368,29 +357,15 @@ export function ActivateWizard() {
             />
           )}
           {step === 4 && (
-            <>
-              <PackBusinessStep state={state} setState={setState} goNext={goNext} canGoNext={canGoNext} />
-              <CustomizeStep
-                state={state}
-                setState={setState}
-                voices={voices}
-                industryServices={industryServices}
-                effectiveServices={effectiveServices}
-                onPlayGreeting={handlePlayTestGreeting}
-                goBack={goBack}
-                goNext={goNext}
-                canGoNext={canGoNext}
-              />
-              <ActivateStep
-                onFinalize={handleFinalize}
-                goBack={goBack}
-                finalizing={finalizing}
-                phoneNumber={state.businessPhone}
-                agentName={state.agentName}
-                voiceId={state.voiceId}
-                greeting={state.greeting}
-              />
-            </>
+            <ActivateStep
+              onFinalize={handleFinalize}
+              goBack={goBack}
+              finalizing={finalizing}
+              phoneNumber={state.businessPhone}
+              agentName={state.agentName}
+              voiceId={state.voiceId}
+              greeting={state.greeting}
+            />
           )}
         </section>
       </div>

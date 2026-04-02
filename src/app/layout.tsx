@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { isRTL } from "@/lib/rtl";
-import { DM_Sans, Playfair_Display, Geist_Mono, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
 // NOTE: validateEnv() is called in instrumentation.ts at server startup, NOT here.
@@ -19,28 +18,11 @@ import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 import { CookieConsent } from "@/components/shared/CookieConsent";
 import SkipToContent from "@/components/ui/SkipToContent";
 
-const dmSans = DM_Sans({
-  variable: "--font-body-sans",
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-});
-
-const playfair = Playfair_Display({
-  variable: "--font-serif",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
-  subsets: ["latin"],
-  weight: ["400", "500"],
-});
+/*
+ * Fonts are defined in globals.css via @import (Google Fonts) with system fallbacks.
+ * This is more resilient than next/font/google — the build never fails due to CDN issues
+ * while production still loads the correct typefaces.
+ */
 
 export const viewport = {
   width: "device-width",
@@ -149,7 +131,7 @@ export default async function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className={`${dmSans.variable} ${playfair.variable} ${geistMono.variable} ${jetbrainsMono.variable} antialiased`}
+        className="antialiased"
       >
         <script
           type="application/ld+json"

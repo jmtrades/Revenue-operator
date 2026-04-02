@@ -304,6 +304,23 @@ export async function POST(req: NextRequest) {
           });
         }
 
+        // 3b. Store call_control_id in the session metadata for live call control
+        if (callSessionId && callInfo.callControlId) {
+          try {
+            const { data: existingSessionData } = await db
+              .from("call_sessions")
+              .select("metadata")
+              .eq("id", callSessionId)
+              .maybeSingle();
+            const existingMeta = ((existingSessionData as { metadata?: Record<string, unknown> } | null)?.metadata ?? {}) as Record<string, unknown>;
+            await db.from("call_sessions").update({
+              metadata: { ...existingMeta, call_control_id: callInfo.callControlId },
+            }).eq("id", callSessionId);
+          } catch (metaErr) {
+            log("warn", "telnyx_voice.metadata_update_failed", { error: metaErr instanceof Error ? metaErr.message : String(metaErr) });
+          }
+        }
+
         // 4. Answer the call
         if (callInfo.callControlId) {
           const answerResult = await answerCall(callInfo.callControlId);
@@ -783,9 +800,46 @@ export async function POST(req: NextRequest) {
       }
 
       case "call.recording.saved": {
-        // Call recording saved — store the recording URL
-        log("info", "telnyx_voice.recording_saved", { sessionId: callInfo.callSessionId, workspaceId: resolvedWorkspaceId });
-        // Future: save recording_url to call_sessions for playback
+        // Call recording saved — store the recording URL in the call session.
+        // Telnyx sends recording URLs in various fields depending on version:
+        //   data.payload.recording_urls.mp3  (preferred)
+        //   data.payload.public_recording_urls.mp3
+        //   data.record.recording_urls.mp3
+        const payloadAny = (payload.data?.payload ?? {}) as Record<string, unknown>;
+        const recordAny = (payload.data?.record ?? {}) as Record<string, unknown>;
+
+        const recordingUrls = (payloadAny.recording_urls ?? recordAny.recording_urls ?? {}) as Record<string, string>;
+        const publicRecordingUrls = (payloadAny.public_recording_urls ?? recordAny.public_recording_urls ?? {}) as Record<string, string>;
+
+        const recordingUrl: string | undefined =
+          recordingUrls.mp3 ??
+          recordingUrls.wav ??
+          publicRecordingUrls.mp3 ??
+          publicRecordingUrls.wav ??
+          (payloadAny.recording_url as string | undefined) ??
+          (recordAny.recording_url as string | undefined) ??
+          undefined;
+
+        log("info", "telnyx_voice.recording_saved", {
+          sessionId: callInfo.callSessionId,
+          workspaceId: resolvedWorkspaceId,
+          hasUrl: !!recordingUrl,
+        });
+
+        if (callInfo.callSessionId && resolvedWorkspaceId && recordingUrl) {
+          try {
+            await db
+              .from("call_sessions")
+              .update({ recording_url: recordingUrl })
+              .eq("external_meeting_id", callInfo.callSessionId)
+              .eq("workspace_id", resolvedWorkspaceId);
+          } catch (recErr) {
+            log("error", "telnyx_voice.recording_url_save_failed", {
+              error: recErr instanceof Error ? recErr.message : String(recErr),
+              sessionId: callInfo.callSessionId,
+            });
+          }
+        }
         break;
       }
 

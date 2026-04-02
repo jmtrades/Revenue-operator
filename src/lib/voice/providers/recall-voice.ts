@@ -324,14 +324,15 @@ export class RecallVoiceProvider implements VoiceProvider {
       log("info", "recall_voice.outbound_call_placed", { callId: result.callId });
       return {
         callId: result.callId || callId,
+        callSessionId: result.callSessionId,
         status: "queued",
         provider: "recall",
       };
     } catch (error) {
-      log("error", "recall_voice.outbound_call_failed", {
-        error: error instanceof Error ? error.message : String(error),
-      });
-      return { callId, status: "failed", provider: "recall" };
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      log("error", "recall_voice.outbound_call_failed", { error: errorMsg });
+      // Throw so the caller can handle the error with context, rather than silently returning failed
+      throw new Error(`Outbound call failed: ${errorMsg}`);
     }
   }
 

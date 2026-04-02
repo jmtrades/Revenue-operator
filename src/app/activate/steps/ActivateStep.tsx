@@ -170,10 +170,10 @@ export function ActivateStep({
           type="button"
           onClick={(e) => void onFinalize(e)}
           disabled={finalizing}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 py-2.5 text-xs md:text-sm font-semibold text-[var(--text-on-accent)] hover:bg-emerald-400 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:bg-emerald-500 transition-opacity"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-6 py-3 text-sm font-semibold text-[var(--text-on-accent)] hover:bg-emerald-400 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:bg-emerald-500 transition-opacity shadow-lg shadow-emerald-500/20"
         >
           {finalizing && <Loader className="w-4 h-4 animate-spin" />}
-          {finalizing ? t("activating", { defaultValue: "Activating..." }) : t("activateCta")}
+          {finalizing ? t("activating", { defaultValue: "Setting up your workspace..." }) : t("activateCta")}
         </button>
       </div>
     </div>

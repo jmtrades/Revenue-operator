@@ -11,7 +11,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 type ColdLeadStatus = "pending" | "in_progress" | "completed" | "exhausted";
-type ColdLeadReason = "no_activity_30d" | "no_reply_14d" | "lost_deal" | "manual";
+type ColdLeadReason = "no_activity_30d" | "no_reply_14d" | "lost_deal" | "inbound_no_convert" | "manual";
 type ColdLeadPriority = "high" | "medium" | "low";
 type ReengageStrategy = "auto" | "value_first" | "clarification" | "social_proof" | "urgency" | "direct_close";
 type ChannelPreference = "default" | "call_first" | "text_first" | "email_first";
@@ -103,6 +103,7 @@ function getReasonLabel(reason: ColdLeadReason, t: any): string {
     no_activity_30d: t("reason.noActivity30d"),
     no_reply_14d: t("reason.noReply14d"),
     lost_deal: t("reason.lostDeal"),
+    inbound_no_convert: t("reason.inboundNoConvert", { defaultValue: "Inbound — no conversion" }),
     manual: t("reason.manual"),
   };
   return map[reason] ?? reason;
@@ -637,6 +638,7 @@ export default function ColdLeadsPage() {
           <option value="no_activity_30d">{t("reason.noActivity30d")}</option>
           <option value="no_reply_14d">{t("reason.noReply14d")}</option>
           <option value="lost_deal">{t("reason.lostDeal")}</option>
+          <option value="inbound_no_convert">{t("reason.inboundNoConvert", { defaultValue: "Inbound — no conversion" })}</option>
           <option value="manual">{t("reason.manual")}</option>
         </select>
 

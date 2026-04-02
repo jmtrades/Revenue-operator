@@ -43,9 +43,9 @@ export async function POST(req: NextRequest) {
     }
 
     const origin = process.env.NEXT_PUBLIC_APP_URL ?? new URL(req.url).origin;
-    const candidateUrl = body.return_url?.trim() || `${origin}/dashboard/billing`;
+    const candidateUrl = body.return_url?.trim() || `${origin}/app/settings/billing`;
     // Prevent open redirect — only allow return URLs on our own origin
-    const returnUrl = candidateUrl.startsWith(origin) ? candidateUrl : `${origin}/dashboard/billing`;
+    const returnUrl = candidateUrl.startsWith(origin) ? candidateUrl : `${origin}/app/settings/billing`;
 
     const db = getDb();
     const { data: row } = await db

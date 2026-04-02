@@ -55,9 +55,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const db = getDb();
 
   try {
-    // 1. Find leads in REACTIVATE, LOST, or CONTACTED state that haven't been contacted in 14+ days
+    const now = new Date().toISOString();
     const fourteenDaysAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
+    // Collect all candidate leads from multiple sources
+    type CandidateLead = { id: string; reason: string; priority: string };
+    const candidates: CandidateLead[] = [];
+
+    // 1. Leads in REACTIVATE, LOST, or CONTACTED state inactive 14+ days
     const { data: coldLeads, error: queryErr } = await db
       .from("leads")
       .select("id, state, last_activity_at")
@@ -74,43 +81,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
-    const leadIds = (coldLeads ?? []).map((l: { id: string }) => l.id);
-    const stateMap = (coldLeads ?? []).reduce(
-      (acc: Record<string, string>, l: { id: string; state: string }) => {
-        acc[l.id] = l.state;
-        return acc;
-      },
-      {}
-    );
-
-    if (leadIds.length === 0) {
-      return NextResponse.json({ synced: 0, total_cold: 0 });
-    }
-
-    // 2. Check which leads are already in cold_lead_queue
-    const { data: existingQueue } = await db
-      .from("cold_lead_queue")
-      .select("lead_id")
-      .eq("workspace_id", workspaceId)
-      .in("lead_id", leadIds);
-
-    const existingLeadIds = new Set((existingQueue ?? []).map((q: { lead_id: string }) => q.lead_id));
-
-    // 3. Filter out leads already in queue
-    const leadsToAdd = leadIds.filter((id: string) => !existingLeadIds.has(id));
-
-    if (leadsToAdd.length === 0) {
-      return NextResponse.json({ synced: 0, total_cold: leadIds.length });
-    }
-
-    // 4. Build insert records with reason and priority based on lead state
-    const now = new Date().toISOString();
-    const recordsToInsert = leadsToAdd.map((leadId: string) => {
-      const state = stateMap[leadId];
+    for (const lead of (coldLeads ?? []) as Array<{ id: string; state: string }>) {
       let reason: string;
       let priority: string;
-
-      switch (state) {
+      switch (lead.state) {
         case "REACTIVATE":
           reason = "no_activity_30d";
           priority = "high";
@@ -127,21 +101,98 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           reason = "no_activity_30d";
           priority = "medium";
       }
+      candidates.push({ id: lead.id, reason, priority });
+    }
 
-      return {
-        lead_id: leadId,
-        workspace_id: workspaceId,
-        status: "pending",
-        reason,
-        priority,
-        attempts: 0,
-        max_attempts: 6,
-        created_at: now,
-        updated_at: now,
-      };
+    // 2. Leads with no activity in 30+ days (NEW, ENGAGED, QUALIFIED states)
+    const { data: staleLeads } = await db
+      .from("leads")
+      .select("id")
+      .eq("workspace_id", workspaceId)
+      .in("state", ["NEW", "ENGAGED", "QUALIFIED"])
+      .eq("opt_out", false)
+      .lt("last_activity_at", thirtyDaysAgo)
+      .limit(200);
+
+    for (const lead of (staleLeads ?? []) as Array<{ id: string }>) {
+      candidates.push({ id: lead.id, reason: "no_activity_30d", priority: "high" });
+    }
+
+    // 3. Lost deals
+    const { data: lostDeals } = await db
+      .from("deals")
+      .select("lead_id")
+      .eq("workspace_id", workspaceId)
+      .eq("status", "lost")
+      .limit(200);
+
+    for (const deal of (lostDeals ?? []) as Array<{ lead_id: string }>) {
+      if (deal.lead_id) {
+        candidates.push({ id: deal.lead_id, reason: "lost_deal", priority: "medium" });
+      }
+    }
+
+    // 4. Inbound calls that didn't convert (NEW state, 7+ days old, inbound source)
+    const { data: inboundLeads } = await db
+      .from("leads")
+      .select("id, metadata")
+      .eq("workspace_id", workspaceId)
+      .in("state", ["NEW"])
+      .eq("opt_out", false)
+      .lt("created_at", sevenDaysAgo)
+      .limit(200);
+
+    for (const lead of (inboundLeads ?? []) as Array<{ id: string; metadata?: { source?: string } | null }>) {
+      const source = lead.metadata?.source ?? "";
+      if (["inbound_call", "missed_call", "voicemail", "website", "form", "landing_page"].includes(source)) {
+        candidates.push({ id: lead.id, reason: "no_reply_14d", priority: "high" });
+      }
+    }
+
+    // De-duplicate by lead id (first match wins)
+    const seen = new Set<string>();
+    const uniqueCandidates = candidates.filter((c) => {
+      if (seen.has(c.id)) return false;
+      seen.add(c.id);
+      return true;
     });
 
-    // 5. Insert records into cold_lead_queue
+    if (uniqueCandidates.length === 0) {
+      return NextResponse.json({ synced: 0, total_cold: 0 });
+    }
+
+    const leadIds = uniqueCandidates.map((c) => c.id);
+
+    // Check which leads are already in cold_lead_queue
+    const { data: existingQueue } = await db
+      .from("cold_lead_queue")
+      .select("lead_id")
+      .eq("workspace_id", workspaceId)
+      .in("lead_id", leadIds);
+
+    const existingLeadIds = new Set((existingQueue ?? []).map((q: { lead_id: string }) => q.lead_id));
+
+    // Filter out leads already in queue
+    const leadsToAdd = uniqueCandidates.filter((c) => !existingLeadIds.has(c.id));
+
+    if (leadsToAdd.length === 0) {
+      return NextResponse.json({ synced: 0, total_cold: leadIds.length });
+    }
+
+    // Build insert records
+    const recordsToInsert = leadsToAdd.map((c) => ({
+      lead_id: c.id,
+      workspace_id: workspaceId,
+      status: "pending",
+      reason: c.reason,
+      priority: c.priority,
+      attempts: 0,
+      max_attempts: 6,
+      created_at: now,
+      updated_at: now,
+    }));
+
+    // Insert records into cold_lead_queue
     const { error: insertErr } = await db
       .from("cold_lead_queue")
       .insert(recordsToInsert);

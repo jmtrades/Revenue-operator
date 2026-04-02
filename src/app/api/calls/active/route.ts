@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
     .select(`
       id, lead_id, matched_lead_id, workspace_id,
       call_started_at, call_ended_at, transcript_text, summary,
-      external_meeting_id, provider
+      external_meeting_id, provider, metadata
     `)
     .eq("workspace_id", workspaceId)
     .not("call_started_at", "is", null)
@@ -42,6 +42,7 @@ export async function GET(req: NextRequest) {
     summary?: string | null;
     external_meeting_id?: string | null;
     provider?: string | null;
+    metadata?: Record<string, unknown> | null;
   }>;
   const leadIds = [...new Set(list.map((s) => s.lead_id ?? s.matched_lead_id).filter(Boolean))] as string[];
   const { data: leads } = leadIds.length
@@ -66,6 +67,7 @@ export async function GET(req: NextRequest) {
   const active = list.map((s) => {
     const lid = s.lead_id ?? s.matched_lead_id ?? null;
     const lead = lid ? leadMap[lid] : null;
+    const meta = s.metadata ?? {};
     return {
       id: s.id,
       call_started_at: s.call_started_at,
@@ -74,6 +76,7 @@ export async function GET(req: NextRequest) {
       caller_number: lead?.phone ?? null,
       caller_name: lead?.name ?? null,
       agent_name: primaryAgent?.name ?? "AI Agent",
+      call_control_id: (meta.call_control_id as string | undefined) ?? null,
     };
   });
 
