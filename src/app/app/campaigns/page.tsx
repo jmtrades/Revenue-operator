@@ -1,9 +1,24 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Megaphone, Plus, Copy, Trash2, Play, Pause, Pencil, ArrowRight, Download } from "lucide-react";
+import {
+  Megaphone,
+  Plus,
+  Copy,
+  Trash2,
+  Play,
+  Pause,
+  ArrowRight,
+  Download,
+  Search,
+  MoreHorizontal,
+  TrendingUp,
+  Users,
+  Phone,
+  CalendarCheck,
+} from "lucide-react";
 import { Pagination } from "@/components/ui/Pagination";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useWorkspace } from "@/components/WorkspaceContext";
@@ -11,71 +26,21 @@ import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { CampaignTemplates } from "@/components/campaigns/CampaignTemplates";
-import { CampaignStrategyAdvisor } from "@/components/campaigns/CampaignStrategyAdvisor";
 import { toast as sonnerToast } from "sonner";
-
-type TouchpointType = "call" | "sms" | "email" | "wait";
-
-type TargetFilter = {
-  audience?: string;
-  message_template?: string;
-  schedule?: string | null;
-  schedule_type?: "manual" | "once" | "recurring" | "trigger";
-  audience_statuses?: string[];
-  audience_source?: string;
-  audience_min_score?: number | null;
-  audience_not_contacted_days?: number | null;
-  sequence?: Array<{ type: TouchpointType; wait_days?: number }>;
-};
 
 type CampaignRow = {
   id: string;
   name: string;
   type: string;
   status: "draft" | "active" | "paused" | "completed" | "launching";
-  total_contacts: number;
-  called: number;
-  answered: number;
+  total_leads: number;
+  leads_called: number;
+  connects: number;
   appointments_booked: number;
   created_at: string;
-  target_filter?: TargetFilter | null;
+  started_at?: string | null;
+  target_filter?: Record<string, unknown> | null;
 };
-
-const TYPE_OPTIONS = [
-  { id: "lead_followup", labelKey: "type.leadFollowup" },
-  { id: "appointment_reminder", labelKey: "type.appointmentReminder" },
-  { id: "reactivation", labelKey: "type.reactivation" },
-  { id: "cold_outreach", labelKey: "type.coldOutreach" },
-  { id: "review_request", labelKey: "type.reviewRequest" },
-  { id: "custom", labelKey: "type.custom" },
-];
-
-const LEAD_STATUS_OPTIONS = [
-  "New",
-  "Contacted",
-  "Qualified",
-  "Appointment Set",
-  "Won",
-  "Lost",
-] as const;
-
-const LEAD_STATUS_KEY: Record<(typeof LEAD_STATUS_OPTIONS)[number], string> = {
-  "New": "new",
-  "Contacted": "contacted",
-  "Qualified": "qualified",
-  "Appointment Set": "appointmentSet",
-  "Won": "won",
-  "Lost": "lost",
-};
-
-const SOURCE_OPTIONS = [
-  { id: "", labelKey: "source.any" },
-  { id: "inbound_call", labelKey: "source.inboundCall" },
-  { id: "outbound", labelKey: "source.outbound" },
-  { id: "website", labelKey: "source.website" },
-  { id: "referral", labelKey: "source.referral" },
-];
 
 const CAMPAIGNS_SNAPSHOT_PREFIX = "rt_campaigns_snapshot:";
 
@@ -97,56 +62,42 @@ function persistCampaignsSnapshot(workspaceId: string, campaigns: CampaignRow[])
   safeSetItem(`${CAMPAIGNS_SNAPSHOT_PREFIX}${workspaceId}`, JSON.stringify(campaigns));
 }
 
+const STATUS_COLORS: Record<string, string> = {
+  draft: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
+  active: "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
+  paused: "bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+  completed: "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+  launching: "bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+};
+
+const CAMPAIGN_PAGE_SIZE = 12;
+
 export default function CampaignsPage() {
   const t = useTranslations("campaigns");
   const { workspaceId } = useWorkspace();
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
   const snapshotWorkspaceId = workspaceId || workspaceSnapshot?.id?.trim() || "default";
   const initialCampaigns = readCampaignsSnapshot(snapshotWorkspaceId);
+
   const [campaigns, setCampaigns] = useState<CampaignRow[]>(initialCampaigns);
-  const [dailyLimit, setDailyLimit] = useState<number>(100);
-  const [dailyUsed, setDailyUsed] = useState<number>(0);
   const [loading, setLoading] = useState(initialCampaigns.length === 0);
-  const [saving, setSaving] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<"all" | CampaignRow["status"]>("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [campaignPage, setCampaignPage] = useState(1);
+
+  // Action states
   const [pauseConfirm, setPauseConfirm] = useState<CampaignRow | null>(null);
-  const [campaignType, setCampaignType] = useState<string>("followup");
-  const [nameBlurred, setNameBlurred] = useState(false);
-  const [form, setForm] = useState<{
-    name: string;
-    type: string;
-    audience: string;
-    template: string;
-    schedule: string;
-    scheduleType: "manual" | "once" | "recurring" | "trigger";
-    audienceStatuses: string[];
-    audienceSource: string;
-    audienceMinScore: number | "";
-    audienceNotContactedDays: number | "";
-    sequence: Array<{ type: TouchpointType; wait_days?: number }>;
-  }>({
-    name: t("defaults.campaignName"),
-    type: "lead_followup",
-    audience: "",
-    template: t("defaults.smsTemplate"),
-    schedule: "",
-    scheduleType: "trigger" as "manual" | "once" | "recurring" | "trigger",
-    audienceStatuses: ["New", "Contacted"] as string[],
-    audienceSource: "",
-    audienceMinScore: "" as number | "",
-    audienceNotContactedDays: "" as number | "",
-    sequence: [{ type: "call" as TouchpointType }, { type: "wait" as TouchpointType, wait_days: 1 }, { type: "sms" as TouchpointType }] as Array<{ type: TouchpointType; wait_days?: number }>,
-  });
+  const [deleteConfirm, setDeleteConfirm] = useState<CampaignRow | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [duplicating, setDuplicating] = useState<string | null>(null);
+  const [actionMenuOpen, setActionMenuOpen] = useState<string | null>(null);
 
   useEffect(() => {
     document.title = t("pageTitle");
-    return () => {
-      document.title = "";
-    };
+    return () => { document.title = ""; };
   }, [t]);
 
+  // Fetch campaigns from API
   useEffect(() => {
     if (!workspaceId) {
       setLoading(false);
@@ -161,15 +112,16 @@ export default function CampaignsPage() {
       signal: controller.signal,
     })
       .then((res) => {
-        if (!res.ok) { sonnerToast.error("Could not load campaigns"); return { campaigns: [] }; }
+        if (!res.ok) {
+          sonnerToast.error("Could not load campaigns");
+          return { campaigns: [] };
+        }
         return res.json();
       })
-      .then((data: { campaigns?: CampaignRow[]; daily_limit?: number; daily_used?: number }) => {
+      .then((data: { campaigns?: CampaignRow[] }) => {
         if (cancelled) return;
         const next = data.campaigns ?? [];
         setCampaigns(next);
-        if (typeof data.daily_limit === "number") setDailyLimit(data.daily_limit);
-        if (typeof data.daily_used === "number") setDailyUsed(data.daily_used);
         persistCampaignsSnapshot(workspaceId, next);
       })
       .catch(() => {
@@ -190,97 +142,43 @@ export default function CampaignsPage() {
     };
   }, [workspaceId]);
 
-  useEffect(() => {
-    if (!toast) return;
-    const timeout = window.setTimeout(() => setToast(null), 3000);
-    return () => window.clearTimeout(timeout);
-  }, [toast]);
-
-  const [campaignPage, setCampaignPage] = useState(1);
-  const CAMPAIGN_PAGE_SIZE = 10;
-
+  // Filter + search
   const filtered = useMemo(() => {
-    if (statusFilter === "all") return campaigns;
-    return campaigns.filter((campaign) => campaign.status === statusFilter);
-  }, [campaigns, statusFilter]);
-
-  // Reset page when filter changes
-  useEffect(() => { setCampaignPage(1); }, [statusFilter]);
-
-  const totalCampaignPages = Math.ceil(filtered.length / CAMPAIGN_PAGE_SIZE);
-  const campaignPageSafe = Math.max(1, Math.min(campaignPage, totalCampaignPages || 1));
-  const pagedCampaigns = filtered.slice((campaignPageSafe - 1) * CAMPAIGN_PAGE_SIZE, campaignPageSafe * CAMPAIGN_PAGE_SIZE);
-
-  // Campaign edits are persisted to backend via API calls (POST for create, PATCH for update)
-  const createCampaign = async () => {
-    if (!form.name.trim()) return;
-    setSaving(true);
-    try {
-      const target_filter: TargetFilter = {
-        audience: form.audience,
-        message_template: form.template,
-        schedule: form.schedule || null,
-        schedule_type: form.scheduleType,
-        sequence: form.sequence.length > 0 ? form.sequence : undefined,
-        ...(form.audienceStatuses.length > 0 && { audience_statuses: form.audienceStatuses }),
-        ...(form.audienceSource && { audience_source: form.audienceSource }),
-        ...(typeof form.audienceMinScore === "number" && form.audienceMinScore >= 0 && { audience_min_score: form.audienceMinScore }),
-        ...(typeof form.audienceNotContactedDays === "number" && form.audienceNotContactedDays > 0 && { audience_not_contacted_days: form.audienceNotContactedDays }),
-      };
-      const payload = {
-        name: form.name.trim(),
-        type: form.type,
-        target_filter,
-      };
-      // Persist changes to backend: POST /api/campaigns for new, PATCH /api/campaigns/{id} for updates
-      const res = await fetch(editingId ? `/api/campaigns/${editingId}` : "/api/campaigns", {
-        method: editingId ? "PATCH" : "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const created = (await res.json().catch(() => null)) as CampaignRow | { error?: string } | null;
-      if (!res.ok || !created || !("id" in created)) {
-        const errorMessage =
-          created && "error" in created && typeof created.error === "string"
-            ? created.error
-            : editingId
-              ? t("errors.updateFailed")
-              : t("errors.createFailed");
-        throw new Error(errorMessage);
-      }
-      setCampaigns((prev) =>
-        editingId
-          ? prev.map((item) => (item.id === created.id ? { ...item, ...created } : item))
-          : [created, ...prev],
-      );
-      setEditingId(null);
-      setForm({
-        name: t("defaults.campaignName"),
-        type: "lead_followup",
-        audience: t("defaults.audience"),
-        template: t("defaults.smsTemplate"),
-        schedule: "",
-        scheduleType: "trigger",
-        audienceStatuses: ["New", "Contacted"],
-        audienceSource: "",
-        audienceMinScore: "",
-        audienceNotContactedDays: "",
-        sequence: [{ type: "call" }, { type: "wait", wait_days: 1 }, { type: "sms" }],
-      });
-      setToast(editingId ? t("toast.updated") : t("toast.created"));
-    } catch (_error) {
-      setToast(
-        editingId
-          ? t("toast.updateFailed")
-          : t("toast.createFailed")
-      );
-    } finally {
-      setSaving(false);
+    let list = campaigns;
+    if (statusFilter !== "all") {
+      list = list.filter((c) => c.status === statusFilter);
     }
-  };
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter(
+        (c) =>
+          c.name.toLowerCase().includes(q) ||
+          c.type.toLowerCase().includes(q),
+      );
+    }
+    return list;
+  }, [campaigns, statusFilter, searchQuery]);
 
-  const toggleCampaign = async (campaign: CampaignRow) => {
+  // Pagination
+  useEffect(() => { setCampaignPage(1); }, [statusFilter, searchQuery]);
+  const totalPages = Math.ceil(filtered.length / CAMPAIGN_PAGE_SIZE);
+  const pageSafe = Math.max(1, Math.min(campaignPage, totalPages || 1));
+  const pagedCampaigns = filtered.slice(
+    (pageSafe - 1) * CAMPAIGN_PAGE_SIZE,
+    pageSafe * CAMPAIGN_PAGE_SIZE,
+  );
+
+  // Summary stats
+  const stats = useMemo(() => {
+    const total = campaigns.length;
+    const active = campaigns.filter((c) => c.status === "active").length;
+    const totalContacted = campaigns.reduce((s, c) => s + (c.leads_called ?? 0), 0);
+    const totalConverted = campaigns.reduce((s, c) => s + (c.appointments_booked ?? 0), 0);
+    return { total, active, totalContacted, totalConverted };
+  }, [campaigns]);
+
+  // Actions
+  const toggleCampaign = useCallback(async (campaign: CampaignRow) => {
     if (campaign.status === "active") {
       const res = await fetch(`/api/campaigns/${campaign.id}`, {
         method: "PATCH",
@@ -289,72 +187,51 @@ export default function CampaignsPage() {
         body: JSON.stringify({ status: "paused" }),
       });
       if (!res.ok) {
-        setToast(t("toast.updateFailed"));
+        sonnerToast.error(t("toast.updateFailed"));
         return;
       }
       setCampaigns((prev) =>
         prev.map((item) => (item.id === campaign.id ? { ...item, status: "paused" } : item)),
       );
-      setToast(t("toast.paused"));
+      sonnerToast.success(t("toast.paused"));
       return;
     }
 
-    // Optimistic: show launching state immediately
+    // Launch
     const prevStatus = campaign.status;
     setCampaigns((prev) =>
-      prev.map((item) => (item.id === campaign.id ? { ...item, status: "launching" as CampaignRow["status"] } : item)),
+      prev.map((item) =>
+        item.id === campaign.id ? { ...item, status: "launching" as CampaignRow["status"] } : item,
+      ),
     );
     const res = await fetch(`/api/campaigns/${campaign.id}/launch`, {
       method: "POST",
       credentials: "include",
     });
     if (!res.ok) {
-      // Revert to previous status on failure
       setCampaigns((prev) =>
-        prev.map((item) => (item.id === campaign.id ? { ...item, status: prevStatus } : item)),
+        prev.map((item) =>
+          item.id === campaign.id ? { ...item, status: prevStatus } : item,
+        ),
       );
-      setToast(t("toast.launchFailed"));
+      const errorData = await res.json().catch(() => null) as { error?: string } | null;
+      sonnerToast.error(errorData?.error ?? t("toast.launchFailed"));
       return;
     }
     const data = (await res.json().catch(() => null)) as { enqueued?: number } | null;
     setCampaigns((prev) =>
-      prev.map((item) => (item.id === campaign.id ? { ...item, status: "active" } : item)),
+      prev.map((item) =>
+        item.id === campaign.id ? { ...item, status: "active" } : item,
+      ),
     );
-    setToast(
+    sonnerToast.success(
       data?.enqueued != null
         ? t("toast.launchedWithCount", { count: String(data.enqueued) })
         : t("toast.launched"),
     );
-  };
+  }, [t]);
 
-  const loadCampaignIntoForm = (campaign: CampaignRow) => {
-    setEditingId(campaign.id);
-    const tf = campaign.target_filter;
-    const rawSeq = Array.isArray(tf?.sequence) ? tf.sequence : [];
-    const seq: Array<{ type: TouchpointType; wait_days?: number }> = rawSeq.map((s: { type?: string; wait_days?: number }) => ({
-      type: (s?.type === "call" || s?.type === "sms" || s?.type === "email" || s?.type === "wait" ? s.type : "call") as TouchpointType,
-      ...(s?.type === "wait" && typeof s.wait_days === "number" && { wait_days: s.wait_days }),
-    }));
-    if (seq.length === 0) seq.push({ type: "call" }, { type: "wait", wait_days: 1 }, { type: "sms" });
-    setForm({
-      name: campaign.name,
-      type: campaign.type,
-      audience: tf?.audience ?? "",
-      template: tf?.message_template ?? "",
-      schedule: tf?.schedule ?? "",
-      scheduleType: (tf?.schedule_type as "manual" | "once" | "recurring" | "trigger") ?? "trigger",
-      audienceStatuses: Array.isArray(tf?.audience_statuses) ? tf.audience_statuses : [],
-      audienceSource: tf?.audience_source ?? "",
-      audienceMinScore: typeof tf?.audience_min_score === "number" ? tf.audience_min_score : "",
-      audienceNotContactedDays: typeof tf?.audience_not_contacted_days === "number" ? tf.audience_not_contacted_days : "",
-      sequence: seq,
-    });
-  };
-
-  const [deleteConfirm, setDeleteConfirm] = useState<CampaignRow | null>(null);
-  const [deleting, setDeleting] = useState(false);
-
-  const deleteCampaign = async (campaign: CampaignRow) => {
+  const deleteCampaign = useCallback(async (campaign: CampaignRow) => {
     setDeleting(true);
     try {
       const res = await fetch(`/api/campaigns/${campaign.id}`, {
@@ -363,78 +240,23 @@ export default function CampaignsPage() {
       });
       if (!res.ok) {
         const data = await res.json().catch(() => null);
-        setToast((data as { error?: string } | null)?.error ?? t("toast.deleteFailed"));
+        sonnerToast.error((data as { error?: string } | null)?.error ?? t("toast.deleteFailed"));
         return;
       }
       setCampaigns((prev) => prev.filter((c) => c.id !== campaign.id));
-      setToast(t("toast.deleted"));
+      sonnerToast.success(t("toast.deleted"));
     } catch {
-      setToast(t("toast.deleteFailed"));
+      sonnerToast.error(t("toast.deleteFailed"));
     } finally {
       setDeleting(false);
     }
-  };
+  }, [t]);
 
-  const [duplicating, setDuplicating] = useState(false);
-
-  const exportCampaignsToCSV = () => {
-    try {
-      // CSV headers
-      const headers = [
-        t("export.column.name", { defaultValue: "Name" }),
-        t("export.column.status", { defaultValue: "Status" }),
-        t("export.column.called", { defaultValue: "Called" }),
-        t("export.column.answered", { defaultValue: "Answered" }),
-        t("export.column.booked", { defaultValue: "Appointments Booked" }),
-        t("export.column.conversionRate", { defaultValue: "Conversion Rate" }),
-        t("export.column.createdAt", { defaultValue: "Created At" }),
-      ];
-
-      // CSV rows from campaigns data
-      const rows = campaigns.map((campaign) => {
-        const conversionRate =
-          campaign.answered > 0
-            ? Math.round((campaign.appointments_booked / campaign.answered) * 100)
-            : 0;
-        const createdAt = new Date(campaign.created_at).toLocaleDateString();
-
-        return [
-          `"${(campaign.name ?? "").replace(/"/g, '""')}"`, // Escape quotes in name
-          campaign.status,
-          campaign.called,
-          campaign.answered,
-          campaign.appointments_booked,
-          `${conversionRate}%`,
-          createdAt,
-        ];
-      });
-
-      // Create CSV string
-      const csvContent = [headers, ...rows].map((row) => row.join(",")).join("\n");
-
-      // Create Blob and download
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-      const link = document.createElement("a");
-      const url = URL.createObjectURL(blob);
-      const now = new Date();
-      const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-      link.setAttribute("href", url);
-      link.setAttribute("download", `campaigns-export-${dateStr}.csv`);
-      link.style.visibility = "hidden";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      setToast(t("toast.exported", { defaultValue: "Campaigns exported successfully" }));
-    } catch {
-      setToast(t("toast.exportFailed", { defaultValue: "Failed to export campaigns" }));
-    }
-  };
-
-  const duplicateCampaign = async (campaign: CampaignRow) => {
-    setDuplicating(true);
+  const duplicateCampaign = useCallback(async (campaign: CampaignRow) => {
+    setDuplicating(campaign.id);
     try {
       const payload = {
+        workspace_id: workspaceId,
         name: `${campaign.name} (${t("copySuffix")})`,
         type: campaign.type,
         target_filter: campaign.target_filter,
@@ -445,23 +267,64 @@ export default function CampaignsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const created = (await res.json().catch(() => null)) as CampaignRow | { error?: string } | null;
-      if (!res.ok || !created || !("id" in created)) {
-        setToast(t("toast.createFailed"));
+      const json = (await res.json().catch(() => null)) as {
+        campaign?: CampaignRow;
+        error?: string;
+      } | null;
+      const created = json?.campaign;
+      if (!res.ok || !created) {
+        sonnerToast.error(json?.error ?? t("toast.createFailed"));
         return;
       }
       setCampaigns((prev) => [created, ...prev]);
-      setToast(t("toast.duplicated"));
+      sonnerToast.success(t("toast.duplicated"));
     } catch {
-      setToast(t("toast.createFailed"));
+      sonnerToast.error(t("toast.createFailed"));
     } finally {
-      setDuplicating(false);
+      setDuplicating(null);
     }
-  };
+  }, [t, workspaceId]);
+
+  const exportCampaignsToCSV = useCallback(() => {
+    try {
+      const headers = ["Name", "Status", "Contacts", "Called", "Reached", "Booked", "Created"];
+      const rows = campaigns.map((c) => [
+        `"${(c.name ?? "").replace(/"/g, '""')}"`,
+        c.status,
+        c.total_leads ?? 0,
+        c.leads_called ?? 0,
+        c.connects ?? 0,
+        c.appointments_booked ?? 0,
+        new Date(c.created_at).toLocaleDateString(),
+      ]);
+      const csvContent = [headers, ...rows].map((row) => row.join(",")).join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      const dateStr = new Date().toISOString().slice(0, 10);
+      link.setAttribute("href", url);
+      link.setAttribute("download", `campaigns-${dateStr}.csv`);
+      link.style.visibility = "hidden";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      sonnerToast.success("Campaigns exported");
+    } catch {
+      sonnerToast.error("Failed to export campaigns");
+    }
+  }, [campaigns]);
+
+  // Close action menu on outside click
+  useEffect(() => {
+    if (!actionMenuOpen) return;
+    const handler = () => setActionMenuOpen(null);
+    window.addEventListener("click", handler);
+    return () => window.removeEventListener("click", handler);
+  }, [actionMenuOpen]);
 
   if (!workspaceId) {
     return (
-      <div className="p-4 md:p-6 max-w-4xl mx-auto">
+      <div className="p-4 md:p-6 max-w-5xl mx-auto">
         <EmptyState
           title={t("noWorkspace.title", { defaultValue: "No workspace" })}
           description={t("noWorkspace.description", { defaultValue: "Select or create a workspace to view campaigns." })}
@@ -472,642 +335,307 @@ export default function CampaignsPage() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
-      <style>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(16px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .campaign-card {
-          animation: fadeInUp 300ms cubic-bezier(0.23, 1, 0.32, 1) both;
-        }
-      `}</style>
-      <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto">
+      <div className="p-4 md:p-6 lg:p-8 max-w-6xl mx-auto">
         <Breadcrumbs items={[{ label: "Dashboard", href: "/app" }, { label: "Campaigns" }]} />
-        <div className="flex items-center justify-between gap-4 mb-8">
+
+        {/* Header */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
           <div>
-            <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("heading")}</h1>
-            <p className="text-[13px] text-[var(--text-secondary)] mt-1.5 leading-relaxed">
+            <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">
+              {t("heading")}
+            </h1>
+            <p className="text-sm text-[var(--text-secondary)] mt-1">
               {t("description")}
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
-              className="px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-secondary)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/30"
-            >
-              <option value="all">{t("statusFilter.all")}</option>
-              <option value="draft">{t("statusFilter.draft")}</option>
-              <option value="active">{t("statusFilter.active")}</option>
-              <option value="paused">{t("statusFilter.paused")}</option>
-              <option value="completed">{t("statusFilter.completed")}</option>
-            </select>
+          <Link
+            href="/app/campaigns/create"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold hover:opacity-90 transition-opacity shrink-0"
+          >
+            <Plus className="w-4 h-4" />
+            {t("createCampaign")}
+          </Link>
+        </div>
+
+        {/* Summary stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+          <SummaryCard
+            icon={Megaphone}
+            label={t("statTotal")}
+            value={stats.total}
+            color="blue"
+          />
+          <SummaryCard
+            icon={TrendingUp}
+            label={t("statActive")}
+            value={stats.active}
+            color="emerald"
+          />
+          <SummaryCard
+            icon={Phone}
+            label={t("statContacted")}
+            value={stats.totalContacted}
+            color="cyan"
+          />
+          <SummaryCard
+            icon={CalendarCheck}
+            label={t("statConverted")}
+            value={stats.totalConverted}
+            color="amber"
+          />
+        </div>
+
+        {/* Filters bar */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
+          <div className="flex items-center gap-2 flex-wrap">
+            {(["all", "active", "draft", "paused", "completed"] as const).map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => setStatusFilter(s)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                  statusFilter === s
+                    ? "bg-[var(--accent-primary)] text-[var(--text-on-accent)]"
+                    : "bg-[var(--bg-surface)] text-[var(--text-secondary)] border border-[var(--border-default)] hover:bg-[var(--bg-hover)]"
+                }`}
+              >
+                {s === "all" ? t("statusFilter.all") : t(`statusFilter.${s}`)}
+              </button>
+            ))}
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search campaigns..."
+                className="pl-9 pr-4 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] w-full sm:w-56 focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/20"
+              />
+            </div>
             <button
               onClick={exportCampaignsToCSV}
               disabled={campaigns.length === 0}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-secondary)] text-sm font-semibold hover:bg-[var(--bg-hover)] transition-[background-color,opacity] duration-160 active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed"
-              title={t("exportTooltip", { defaultValue: "Export campaigns to CSV" })}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-default)] text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              title="Export CSV"
             >
               <Download className="w-4 h-4" />
-              {t("export", { defaultValue: "Export" })}
+              <span className="hidden sm:inline">Export</span>
             </button>
-            <a
-              href="/app/campaigns/create"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold hover:opacity-90 transition-[opacity,transform] active:scale-[0.97]"
-            >
-              <Plus className="w-4 h-4" />
-              {t("createCampaign")}
-            </a>
           </div>
         </div>
 
-        {/* Brain-managed campaigns status */}
-        <div className="mb-6 rounded-xl border border-violet-500/15 bg-violet-500/[0.04] p-4 flex items-start gap-3">
-          <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center shrink-0 mt-0.5">
-            <Megaphone className="w-4 h-4 text-violet-400" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <p className="text-sm text-violet-400 font-semibold">Brain-optimized campaigns</p>
-              {campaigns.filter(c => c.status === "active").length > 0 && (
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
-                </span>
-              )}
-            </div>
-            <p className="text-xs text-[var(--text-secondary)]">
-              The brain automatically segments leads by temperature (hot/warm/cold) and assigns them to the right campaign. Active campaigns execute touches autonomously — you supervise results.
-            </p>
-          </div>
-        </div>
-
-        {/* Campaign Strategy Advisor */}
-        <CampaignStrategyAdvisor workspaceId={snapshotWorkspaceId} />
-
-        {/* Campaign Templates Section */}
-        <CampaignTemplates />
-
-        <div className="mb-6 grid grid-cols-2 md:grid-cols-5 gap-4 drop-shadow-sm">
-          <StatCard label={t("statTotal")} value={campaigns.length} color="blue" />
-          <StatCard label={t("statActive")} value={campaigns.filter((c) => c.status === "active").length} color="emerald" />
-          <StatCard label={t("statContacted")} value={campaigns.reduce((sum, c) => sum + (c.called ?? 0), 0)} color="cyan" />
-          <StatCard label={t("statConverted")} value={campaigns.reduce((sum, c) => sum + (c.appointments_booked ?? 0), 0)} color="amber" />
-          <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-4">
-            <p className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide">{t("overallConversion", { defaultValue: "Overall conversion" })}</p>
-            <p className="mt-1 text-sm font-semibold text-[var(--text-primary)]">
-              {(() => {
-                const totalAnswered = campaigns.reduce((s, c) => s + (c.answered ?? 0), 0);
-                const totalBooked = campaigns.reduce((s, c) => s + (c.appointments_booked ?? 0), 0);
-                const rate = totalAnswered > 0 ? Math.round((totalBooked / totalAnswered) * 100) : 0;
-                return `${rate}% · ${totalBooked} ${t("appointmentsBooked", { defaultValue: "booked" })}`;
-              })()}
-            </p>
-          </div>
-        </div>
-
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-          <div className="grid gap-4 md:grid-cols-2">
-            {loading ? (
-              <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 text-sm text-[var(--text-secondary)]">
-                {t("loading")}
-              </div>
-            ) : filtered.length === 0 ? (
-              <EmptyState
-                icon={Megaphone}
-                title={t("empty.title", { defaultValue: "No campaigns yet" })}
-                description={t("empty.body", { defaultValue: "The brain auto-creates follow-up sequences for every lead. Campaigns let you target specific audiences at scale — choose a type and the brain pre-fills the rest." })}
-                primaryAction={{ label: t("createCampaign"), href: "/app/campaigns/create" }}
-              />
-            ) : (
-              pagedCampaigns.map((campaign, idx) => (
-                <div key={campaign.id} className="campaign-card rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4" style={{ animationDelay: `${idx * 30}ms` }}>
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <Link
-                        href={`/app/campaigns/${campaign.id}`}
-                        className="text-sm font-semibold text-[var(--accent-primary)] hover:text-[var(--accent-primary)]/80 transition-colors"
-                      >
-                        {campaign.name}
-                      </Link>
-                      <p className="mt-2 text-xs text-[var(--text-secondary)]">
-                        {campaign.target_filter?.audience ?? t("outcomeAudience")}
-                        {(() => {
-                          const tf = campaign.target_filter;
-                          const parts: string[] = [];
-                          if (Array.isArray(tf?.audience_statuses) && tf.audience_statuses.length > 0) {
-                            parts.push(tf.audience_statuses.map((s) => t(`leadStatuses.${LEAD_STATUS_KEY[s as (typeof LEAD_STATUS_OPTIONS)[number]] ?? s}`)).join(", "));
-                          }
-                          if (tf?.audience_source) {
-                            const src = SOURCE_OPTIONS.find((o) => o.id === tf.audience_source);
-                            if (src) parts.push(t(src.labelKey));
-                          }
-                          if (typeof tf?.audience_min_score === "number") {
-                            parts.push(t("scoreGte", { score: tf.audience_min_score }));
-                          }
-                          if (typeof tf?.audience_not_contacted_days === "number") {
-                            parts.push(t("notContactedIn", { days: tf.audience_not_contacted_days }));
-                          }
-                          return parts.length > 0 ? ` · ${parts.join(" · ")}` : "";
-                        })()}
-                      </p>
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        <span className="rounded-full border border-[var(--border-medium)] px-2.5 py-1 text-[11px] text-[var(--text-secondary)] capitalize">
-                          {campaign.type ? (t.has(`campaignType.${campaign.type}`) ? t(`campaignType.${campaign.type}` as never) : campaign.type.replace(/_/g, " ")) : "custom"}
-                        </span>
-                        {(() => {
-                          const statusBadgeClasses = {
-                            draft: "bg-[var(--text-disabled,#6b7280)]/10 text-[var(--text-disabled,#6b7280)]",
-                            active: "bg-[var(--accent-success,#10b981)]/10 text-[var(--accent-success,#10b981)]",
-                            paused: "bg-[var(--accent-warning,#f59e0b)]/10 text-[var(--accent-warning,#f59e0b)]",
-                            completed: "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]",
-                            launching: "bg-[var(--accent-warning,#f59e0b)]/10 text-[var(--accent-warning,#f59e0b)]",
-                          };
-                          return (
-                            <span className={`rounded-full px-2.5 py-1 text-[11px] font-medium capitalize flex items-center gap-1.5 ${statusBadgeClasses[campaign.status as keyof typeof statusBadgeClasses]}`}>
-                              {campaign.status === "active" && (
-                                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--accent-success,#10b981)] animate-pulse" />
-                              )}
-                              {campaign.status === "launching" && (
-                                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--accent-warning,#f59e0b)] animate-pulse" />
-                              )}
-                              {campaign.status === "launching" ? "Launching..." : (t.has(`statusFilter.${campaign.status}`) ? t(`statusFilter.${campaign.status}` as never) : campaign.status)}
-                            </span>
-                          );
-                        })()}
-                      </div>
-                    </div>
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => loadCampaignIntoForm(campaign)}
-                      className="p-2 rounded-lg border border-[var(--border-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-[color,background-color,transform] duration-160 active:scale-[0.95]"
-                      title={t("edit")}
-                    >
-                      <Pencil className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => void duplicateCampaign(campaign)}
-                      disabled={duplicating}
-                      className="p-2 rounded-lg border border-[var(--border-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-[color,background-color,transform] duration-160 active:scale-[0.95] disabled:opacity-50"
-                      title={t("duplicate")}
-                      aria-label={t("copy")}
-                    >
-                      <Copy className="w-3.5 h-3.5" />
-                    </button>
-                    {campaign.status !== "active" && (
-                      <button
-                        type="button"
-                        onClick={() => setDeleteConfirm(campaign)}
-                        disabled={deleting}
-                        className="p-2 rounded-lg border border-[var(--accent-danger,#ef4444)]/20 text-[var(--accent-danger,#ef4444)] hover:opacity-80 hover:bg-[var(--accent-danger,#ef4444)]/10 transition-[color,background-color,transform] duration-160 active:scale-[0.95] disabled:opacity-50"
-                        title={t("delete")}
-                        aria-label={t("delete")}
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() =>
-                        campaign.status === "active"
-                          ? setPauseConfirm(campaign)
-                          : void toggleCampaign(campaign)
-                      }
-                      className="ml-1 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[var(--border-medium)] text-xs font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-[background-color,transform] duration-160 active:scale-[0.95]"
-                      aria-label={campaign.status === "active" ? t("pause") : t("launch")}
-                    >
-                      {campaign.status === "active" ? (
-                        <><Pause className="w-3.5 h-3.5" /> {t("pause")}</>
-                      ) : (
-                        <><Play className="w-3.5 h-3.5" /> {t("launchCampaign")}</>
-                      )}
-                    </button>
-                  </div>
-                  </div>
-                  <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <Metric label={t("metricContacts")} value={campaign.total_contacts ?? 0} />
-                    <Metric label={t("metricContacted")} value={campaign.called ?? 0} />
-                    <Metric label={t("metricReached")} value={campaign.answered ?? 0} />
-                    <Metric label={t("metricConverted")} value={campaign.appointments_booked ?? 0} />
-                  </div>
-                  <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-[var(--text-secondary)]">
-                    <span>{t("remaining")}: {Math.max(0, (campaign.total_contacts ?? 0) - (campaign.called ?? 0))}</span>
-                    <span>·</span>
-                    <span>{t("failed")}: {Math.max(0, (campaign.called ?? 0) - (campaign.answered ?? 0))}</span>
-                    <span>·</span>
-                    <span className={dailyUsed >= dailyLimit ? "text-[var(--accent-warning,#f59e0b)] font-medium" : ""}>{t("dailyUsage", { defaultValue: "Daily" })}: {dailyUsed}/{dailyLimit}</span>
-                    {dailyUsed >= dailyLimit && (
-                      <span className="text-[var(--accent-warning,#f59e0b)] font-medium">{t("dailyLimitReached", { defaultValue: "— limit reached, resumes tomorrow" })}</span>
-                    )}
-                  </div>
-                  <div className="mt-3">
-                    <div className="flex items-center justify-between text-[11px] text-[var(--text-secondary)] mb-1">
-                      <span>{t("progress")}</span>
-                      <span>
-                        {campaign.called}/{campaign.total_contacts} {t("contacted")}
-                      </span>
-                    </div>
-                    <div className="h-1.5 w-full rounded-full bg-[var(--bg-surface)] overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-[var(--accent-primary)] transition-all duration-300"
-                        style={{
-                          width: `${campaign.total_contacts > 0 ? Math.min(
-                            100,
-                            Math.round(
-                              (campaign.called / campaign.total_contacts) * 100,
-                            ),
-                          ) : 0}%`,
-                        }}
-                      />
-                    </div>
-                  </div>
-                  {campaign.called > 0 && campaign.appointments_booked > 0 && (
-                    <div className="mt-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-3">
-                      <div className="flex items-center gap-1.5">
-                        <p className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide">{t("campaignRoi", { defaultValue: "Performance" })}</p>
-                      </div>
-                      <div className="mt-1 grid grid-cols-3 gap-2 text-center">
-                        <div>
-                          <p className="text-sm font-semibold text-[var(--text-primary)]">
-                            {campaign.answered > 0 ? `${Math.round((campaign.appointments_booked / campaign.answered) * 100)}%` : "0%"}
-                          </p>
-                          <p className="text-[10px] text-[var(--text-tertiary)]">{t("conversionRate", { defaultValue: "Conversion" })}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-[var(--text-primary)]">
-                            {campaign.called > 0 ? `${Math.round((campaign.answered / campaign.called) * 100)}%` : "0%"}
-                          </p>
-                          <p className="text-[10px] text-[var(--text-tertiary)]">{t("answerRate", { defaultValue: "Answer rate" })}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-[var(--accent-primary)]">{campaign.appointments_booked}</p>
-                          <p className="text-[10px] text-[var(--text-tertiary)]">{t("booked", { defaultValue: "Booked" })}</p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  <p className="mt-3 text-[11px] text-[var(--text-secondary)]">
-                    {t("createdDate", { date: new Date(campaign.created_at).toLocaleDateString() })}
-                  </p>
-                  {campaign.target_filter?.schedule_type && campaign.target_filter.schedule_type !== "manual" && (
-                    <p className="mt-1 text-[11px] text-[var(--text-secondary)]">
-                      {campaign.target_filter.schedule_type === "once" || campaign.target_filter.schedule_type === "recurring"
-                        ? campaign.target_filter.schedule
-                          ? t("scheduledAt", { date: new Date(campaign.target_filter.schedule).toLocaleString() })
-                          : t("scheduleDisplay", { type: t.has(`scheduleTypes.${campaign.target_filter.schedule_type}`) ? t(`scheduleTypes.${campaign.target_filter.schedule_type}` as never) : campaign.target_filter.schedule_type })
-                        : t("triggerDisplay", { type: campaign.target_filter.schedule_type })}
-                    </p>
-                  )}
-                  {Array.isArray(campaign.target_filter?.sequence) && campaign.target_filter.sequence.length > 0 && (
-                    <p className="mt-1 text-[11px] text-[var(--text-secondary)]">
-                      {t("sequenceDisplay", { steps: campaign.target_filter.sequence.map((s: { type: string; wait_days?: number }) => s.type === "wait" ? t("waitStep", { days: s.wait_days ?? 1 }) : (t.has(`touchpointTypes.${s.type}`) ? t(`touchpointTypes.${s.type}` as never) : s.type)).join(" → ") })}
-                    </p>
-                  )}
-                </div>
-              ))
-            )}
-            <Pagination
-              currentPage={campaignPageSafe}
-              totalPages={totalCampaignPages}
-              onPageChange={setCampaignPage}
-              label={t("pageOf")}
-              prevLabel={t("prevPage")}
-              nextLabel={t("nextPage")}
-            />
-          </div>
-
-          <div
-            id="create-campaign"
-            className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 h-fit scroll-mt-4"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-sm font-semibold text-[var(--text-primary)]">
-                  {editingId ? t("form.titleEdit") : t("form.titleCreate")}
-                </p>
-                <p className="text-xs text-[var(--text-secondary)] mt-1">
-                  {t("form.subtitle")}
-                </p>
-              </div>
-              {editingId ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEditingId(null);
-                    setCampaignType("followup");
-                    setForm({
-                      name: "Missed-call recovery",
-                      type: "lead_followup",
-                      audience: t("defaults.audience"),
-                      template: "Hi {firstName}, this is {businessName}. We noticed you recently reached out — I'd love to help you get started. Would you have a few minutes to chat?",
-                      schedule: "",
-                      scheduleType: "trigger",
-                      audienceStatuses: ["New", "Contacted"],
-                      audienceSource: "",
-                      audienceMinScore: "",
-                      audienceNotContactedDays: "",
-                      sequence: [{ type: "call" }, { type: "wait", wait_days: 1 }, { type: "sms" }],
-                    });
-                  }}
-                  className="text-xs text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
-                >
-                  {t("form.cancelEdit")}
-                </button>
-              ) : null}
-            </div>
-            <div className="mt-4 space-y-4">
-              <div className="mb-4">
-                <label className="text-xs text-[var(--text-tertiary)] mb-2 block">{t("form.campaignTypeLabel")}</label>
+        {/* Campaign list */}
+        {loading ? (
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5 animate-pulse"
+              >
+                <div className="h-4 w-3/4 bg-[var(--bg-inset)] rounded mb-3" />
+                <div className="h-3 w-1/2 bg-[var(--bg-inset)] rounded mb-4" />
                 <div className="grid grid-cols-2 gap-2">
-                  {[
-                    { id: "followup", labelKey: "form.quickTypes.followup.label", descKey: "form.quickTypes.followup.desc" },
-                    { id: "reactivation", labelKey: "form.quickTypes.reactivation.label", descKey: "form.quickTypes.reactivation.desc" },
-                    { id: "reminder", labelKey: "form.quickTypes.reminder.label", descKey: "form.quickTypes.reminder.desc" },
-                    { id: "qualification", labelKey: "form.quickTypes.qualification.label", descKey: "form.quickTypes.qualification.desc" },
-                  ].map((typeOption) => {
-                    const typeId = typeOption.id === "followup" ? "lead_followup" : typeOption.id === "reminder" ? "appointment_reminder" : typeOption.id === "qualification" ? "lead_followup" : typeOption.id;
-                    const selected = campaignType === typeOption.id;
-                    return (
-                      <button
-                        key={typeOption.id}
-                        type="button"
-                        onClick={() => {
-                          setCampaignType(typeOption.id);
-                          setForm((prev) => ({
-                            ...prev,
-                            type: typeId,
-                            name: prev.name.trim() ? prev.name : t(typeOption.labelKey),
-                            audience: typeOption.id === "followup" ? t("defaults.followupAudience") : typeOption.id === "reactivation" ? t("defaults.reactivationAudience") : typeOption.id === "reminder" ? t("defaults.reminderAudience") : t("defaults.qualifyAudience"),
-                            template: typeOption.id === "followup" ? t("defaults.followupTemplate") : typeOption.id === "reactivation" ? t("defaults.reactivationTemplate") : typeOption.id === "reminder" ? t("defaults.reminderTemplate") : t("defaults.qualifyTemplate"),
-                          }));
-                        }}
-                        className={`p-3 rounded-lg border text-left text-xs transition-colors ${
-                          selected ? "border-[var(--border-default)]/50 bg-[var(--bg-inset)]/50" : "border-[var(--border-default)] hover:bg-[var(--bg-inset)]"
-                        }`}
-                      >
-                        <p className="font-medium text-[var(--text-primary)]">{t(typeOption.labelKey)}</p>
-                        <p className="text-[var(--text-tertiary)] mt-0.5">{t(typeOption.descKey)}</p>
-                      </button>
-                    );
-                  })}
+                  <div className="h-12 bg-[var(--bg-inset)] rounded-lg" />
+                  <div className="h-12 bg-[var(--bg-inset)] rounded-lg" />
                 </div>
               </div>
-              <div>
-                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">
-                  {t("form.campaignNameLabel")} <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={form.name}
-                  onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
-                  onBlur={() => setNameBlurred(true)}
-                  placeholder={t("form.campaignNamePlaceholder", {
-                    defaultValue: `Speed-to-Lead — ${new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })}`
-                  })}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
-                />
-                {nameBlurred && !form.name.trim() && (
-                  <p className="text-xs text-red-500 mt-1">{t("form.nameRequired", { defaultValue: "Campaign name is required" })}</p>
-                )}
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">
-                  {t("form.typeLabel")}
-                </label>
-                <select
-                  value={form.type}
-                  onChange={(e) => setForm((prev) => ({ ...prev, type: e.target.value }))}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
-                >
-                  {TYPE_OPTIONS.map((option) => (
-                    <option key={option.id} value={option.id}>
-                      {t(option.labelKey)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{t("form.audienceLabel")}</label>
-                <input
-                  type="text"
-                  value={form.audience}
-                  onChange={(e) => setForm((prev) => ({ ...prev, audience: e.target.value }))}
-                  placeholder={t("form.audiencePlaceholder")}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{t("form.leadStatusOptionalLabel")}</label>
-                <div className="flex flex-wrap gap-2 mt-1">
-                  {LEAD_STATUS_OPTIONS.map((status) => {
-                    const checked = form.audienceStatuses.includes(status);
-                    return (
-                      <label key={status} className="flex items-center gap-1.5 text-xs text-[var(--text-secondary)]">
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          onChange={() => {
-                            setForm((prev) => ({
-                              ...prev,
-                              audienceStatuses: checked
-                                ? prev.audienceStatuses.filter((s) => s !== status)
-                                : [...prev.audienceStatuses, status],
-                            }));
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
+          <EmptyState
+            icon={Megaphone}
+            title={
+              searchQuery || statusFilter !== "all"
+                ? "No campaigns match your filters"
+                : t("empty.title", { defaultValue: "No campaigns yet" })
+            }
+            description={
+              searchQuery || statusFilter !== "all"
+                ? "Try adjusting your search or filter criteria."
+                : t("empty.body", { defaultValue: "Create your first campaign to start reaching leads at scale." })
+            }
+            primaryAction={
+              searchQuery || statusFilter !== "all"
+                ? undefined
+                : { label: t("createCampaign"), href: "/app/campaigns/create" }
+            }
+          />
+        ) : (
+          <>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {pagedCampaigns.map((campaign) => {
+                const totalLeads = campaign.total_leads ?? 0;
+                const called = campaign.leads_called ?? 0;
+                const reached = campaign.connects ?? 0;
+                const booked = campaign.appointments_booked ?? 0;
+                const progressPct = totalLeads > 0 ? Math.round((called / totalLeads) * 100) : 0;
+                const conversionPct = reached > 0 ? Math.round((booked / reached) * 100) : 0;
+
+                return (
+                  <div
+                    key={campaign.id}
+                    className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5 hover:border-[var(--border-hover,var(--border-default))] transition-colors group"
+                  >
+                    {/* Top row: name + actions */}
+                    <div className="flex items-start justify-between gap-2 mb-3">
+                      <div className="min-w-0 flex-1">
+                        <Link
+                          href={`/app/campaigns/${campaign.id}`}
+                          className="text-sm font-semibold text-[var(--text-primary)] hover:text-[var(--accent-primary)] transition-colors line-clamp-1"
+                        >
+                          {campaign.name}
+                        </Link>
+                        <div className="flex items-center gap-2 mt-1.5">
+                          <span
+                            className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium ${STATUS_COLORS[campaign.status] ?? STATUS_COLORS.draft}`}
+                          >
+                            {campaign.status === "active" && (
+                              <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            )}
+                            {campaign.status === "launching" && (
+                              <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                            )}
+                            {campaign.status === "launching"
+                              ? "Launching..."
+                              : t.has(`statusFilter.${campaign.status}`)
+                                ? t(`statusFilter.${campaign.status}` as never)
+                                : campaign.status}
+                          </span>
+                          <span className="text-[11px] text-[var(--text-tertiary)] capitalize">
+                            {(campaign.type ?? "custom").replace(/_/g, " ")}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Action menu */}
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActionMenuOpen(
+                              actionMenuOpen === campaign.id ? null : campaign.id,
+                            );
                           }}
-                          className="rounded border-[var(--border-default)] bg-[var(--bg-input)] text-[var(--text-primary)]"
+                          className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+                        >
+                          <MoreHorizontal className="w-4 h-4" />
+                        </button>
+                        {actionMenuOpen === campaign.id && (
+                          <div
+                            className="absolute right-0 top-full mt-1 z-20 w-44 rounded-lg border border-[var(--border-default)] bg-[var(--bg-card)] shadow-lg py-1"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Link
+                              href={`/app/campaigns/${campaign.id}`}
+                              className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
+                            >
+                              <ArrowRight className="w-3.5 h-3.5" /> View details
+                            </Link>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                void duplicateCampaign(campaign);
+                                setActionMenuOpen(null);
+                              }}
+                              disabled={duplicating === campaign.id}
+                              className="w-full flex items-center gap-2 px-3 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-hover)] disabled:opacity-50"
+                            >
+                              <Copy className="w-3.5 h-3.5" /> Duplicate
+                            </button>
+                            {campaign.status !== "active" && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setDeleteConfirm(campaign);
+                                  setActionMenuOpen(null);
+                                }}
+                                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" /> Delete
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Metrics grid */}
+                    <div className="grid grid-cols-2 gap-2 mb-3">
+                      <MetricCell label="Contacts" value={totalLeads} />
+                      <MetricCell label="Called" value={called} />
+                      <MetricCell label="Reached" value={reached} />
+                      <MetricCell label="Booked" value={booked} />
+                    </div>
+
+                    {/* Progress bar */}
+                    <div className="mb-3">
+                      <div className="flex items-center justify-between text-[11px] text-[var(--text-tertiary)] mb-1">
+                        <span>Progress</span>
+                        <span>{progressPct}%</span>
+                      </div>
+                      <div className="h-1.5 w-full rounded-full bg-[var(--bg-inset)] overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-[var(--accent-primary)] transition-all duration-300"
+                          style={{ width: `${Math.min(100, progressPct)}%` }}
                         />
-                        {t(`leadStatuses.${LEAD_STATUS_KEY[status as (typeof LEAD_STATUS_OPTIONS)[number]] ?? status}`)}
-                      </label>
-                    );
-                  })}
-                </div>
-                <p className="text-[11px] text-[var(--text-secondary)] mt-1">{t("form.leaveEmptyForAllStatuses")}</p>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">
-                  {t("form.sourceLabel")}
-                </label>
-                <select
-                  value={form.audienceSource}
-                  onChange={(e) => setForm((prev) => ({ ...prev, audienceSource: e.target.value }))}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
-                >
-                  {SOURCE_OPTIONS.map((opt) => (
-                    <option key={opt.id || "any"} value={opt.id}>
-                      {t(opt.labelKey)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{t("minScore")}</label>
-                  <input
-                    type="number"
-                    min={0}
-                    max={100}
-                    value={form.audienceMinScore === "" ? "" : form.audienceMinScore}
-                    onChange={(e) => {
-                      const v = e.target.value;
-                      setForm((prev) => ({ ...prev, audienceMinScore: v === "" ? "" : Number(v) }));
-                    }}
-                    placeholder={t("filterAny")}
-                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{t("notContactedInDays")}</label>
-                  <input
-                    type="number"
-                    min={1}
-                    value={form.audienceNotContactedDays === "" ? "" : form.audienceNotContactedDays}
-                    onChange={(e) => {
-                      const v = e.target.value;
-                      setForm((prev) => ({ ...prev, audienceNotContactedDays: v === "" ? "" : Number(v) }));
-                    }}
-                    placeholder={t("filterAny")}
-                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{t("messageTemplate")}</label>
-                <textarea
-                  rows={4}
-                  value={form.template}
-                  onChange={(e) => setForm((prev) => ({ ...prev, template: e.target.value }))}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm resize-none"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{t("scheduleTypeLabel")}</label>
-                <select
-                  value={form.scheduleType}
-                  onChange={(e) => setForm((prev) => ({ ...prev, scheduleType: e.target.value as typeof form.scheduleType }))}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
-                >
-                  <option value="manual">{t("scheduleTypes.manual")}</option>
-                  <option value="once">{t("scheduleTypes.once")}</option>
-                  <option value="recurring">{t("scheduleTypes.recurring")}</option>
-                  <option value="trigger">{t("scheduleTypes.trigger")}</option>
-                </select>
-              </div>
-              {(form.scheduleType === "once" || form.scheduleType === "recurring") && (
-                <div>
-                  <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">
-                    {form.scheduleType === "once" ? t("scheduleLabel.once") : t("scheduleLabel.recurring")}
-                  </label>
-                  <input
-                    type="datetime-local"
-                    value={form.schedule}
-                    onChange={(e) => setForm((prev) => ({ ...prev, schedule: e.target.value }))}
-                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
-                  />
-                </div>
-              )}
-              <div>
-                <label className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{t("sequenceLabel")}</label>
-                <p className="text-[11px] text-[var(--text-secondary)] mb-2">{t("sequenceHint")}</p>
-                <div className="space-y-2">
-                  {form.sequence.map((step, idx) => (
-                    <div key={idx} className="flex items-center gap-2">
-                      <span className="text-[11px] text-[var(--text-secondary)] w-6">{idx + 1}.</span>
-                      <select
-                        value={step.type}
-                        onChange={(e) => {
-                          const type = e.target.value as TouchpointType;
-                          setForm((prev) => ({
-                            ...prev,
-                            sequence: prev.sequence.map((s, i) =>
-                              i === idx ? { ...s, type, wait_days: type === "wait" ? (s.wait_days ?? 1) : undefined } : s,
-                            ),
-                          }));
-                        }}
-                        className="flex-1 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
-                      >
-                        <option value="call">{t("touchpointTypes.call")}</option>
-                        <option value="sms">{t("touchpointTypes.sms")}</option>
-                        <option value="email">{t("touchpointTypes.email")}</option>
-                        <option value="wait">{t("touchpointTypes.wait")}</option>
-                      </select>
-                      {step.type === "wait" && (
-                        <input
-                          type="number"
-                          min={1}
-                          max={30}
-                          value={step.wait_days ?? 1}
-                          onChange={(e) =>
-                            setForm((prev) => ({
-                              ...prev,
-                              sequence: prev.sequence.map((s, i) =>
-                                i === idx ? { ...s, wait_days: Math.max(1, Number(e.target.value) || 1) } : s,
-                              ),
-                            }))
-                          }
-                          className="w-16 px-2 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm"
-                        />
-                      )}
-                      {step.type === "wait" && <span className="text-[11px] text-[var(--text-secondary)]">{t("daysLabel")}</span>}
+                      </div>
+                    </div>
+
+                    {/* Conversion + action */}
+                    <div className="flex items-center justify-between">
+                      <div className="text-[11px] text-[var(--text-secondary)]">
+                        {conversionPct > 0 && (
+                          <span className="font-medium text-emerald-600">{conversionPct}% conversion</span>
+                        )}
+                        {conversionPct === 0 && (
+                          <span>{new Date(campaign.created_at).toLocaleDateString()}</span>
+                        )}
+                      </div>
                       <button
                         type="button"
                         onClick={() =>
-                          setForm((prev) => ({
-                            ...prev,
-                            sequence: prev.sequence.filter((_, i) => i !== idx),
-                          }))
+                          campaign.status === "active"
+                            ? setPauseConfirm(campaign)
+                            : void toggleCampaign(campaign)
                         }
-                        className="p-2 rounded-lg border border-[var(--border-default)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] text-xs"
-                        aria-label={t("form.removeStep", { defaultValue: "Remove step" })}
+                        disabled={campaign.status === "launching" || campaign.status === "completed"}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+                          campaign.status === "active"
+                            ? "bg-amber-50 text-amber-700 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:hover:bg-amber-900/30"
+                            : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:hover:bg-emerald-900/30"
+                        }`}
                       >
-                        {t("form.removeStep", { defaultValue: "Remove" })}
+                        {campaign.status === "active" ? (
+                          <><Pause className="w-3 h-3" /> {t("pause")}</>
+                        ) : campaign.status === "launching" ? (
+                          "Launching..."
+                        ) : (
+                          <><Play className="w-3 h-3" /> {t("launchCampaign")}</>
+                        )}
                       </button>
                     </div>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setForm((prev) => ({
-                        ...prev,
-                        sequence: [...prev.sequence, { type: "call" }],
-                      }))
-                    }
-                    className="mt-1 px-3 py-2 rounded-xl border border-[var(--border-default)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] text-xs"
-                  >
-                    {t("form.addStep", { defaultValue: "Add step" })}
-                  </button>
-                </div>
-              </div>
-              <div>
-                <button
-                  type="button"
-                  onClick={() => { void createCampaign(); }}
-                  disabled={saving || !form.name.trim()}
-                  className="w-full px-4 py-3 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold hover:opacity-90 disabled:opacity-60"
-                >
-                  {saving
-                    ? editingId
-                      ? t("saving")
-                      : t("creating")
-                    : editingId
-                      ? t("saveChanges")
-                      : t("createCampaign")}
-                </button>
-                {!form.name.trim() && (
-                  <p className="text-xs text-[var(--text-tertiary)] text-center mt-2">{t("form.nameRequiredHint", { defaultValue: "Enter a campaign name to continue" })}</p>
-                )}
-              </div>
+                  </div>
+                );
+              })}
             </div>
-          </div>
-        </div>
 
+            <div className="mt-6">
+              <Pagination
+                currentPage={pageSafe}
+                totalPages={totalPages}
+                onPageChange={setCampaignPage}
+                label={t("pageOf")}
+                prevLabel={t("prevPage")}
+                nextLabel={t("nextPage")}
+              />
+            </div>
+          </>
+        )}
+
+        {/* Confirm dialogs */}
         {pauseConfirm && (
           <ConfirmDialog
             open
@@ -1134,54 +662,55 @@ export default function CampaignsPage() {
             onClose={() => setDeleteConfirm(null)}
           />
         )}
-        {toast && (
-          <div className="fixed bottom-4 right-4 z-50 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-4 py-2 text-sm text-[var(--text-primary)] shadow-xl">
-            {toast}
-          </div>
-        )}
       </div>
     </div>
   );
 }
 
-function StatCard({
+function SummaryCard({
+  icon: Icon,
   label,
   value,
   color,
 }: {
+  icon: React.ComponentType<{ className?: string }>;
   label: string;
   value: number;
   color: "blue" | "emerald" | "cyan" | "amber";
 }) {
-  const border =
-    color === "blue"
-      ? "border-[var(--accent-primary)]/30"
-      : color === "emerald"
-        ? "border-[var(--accent-primary)]/30"
-        : color === "cyan"
-          ? "border-[var(--accent-primary)]/30"
-          : "border-[var(--accent-warning,#f59e0b)]/30";
-  const text =
-    color === "blue"
-      ? "text-[var(--accent-primary)]"
-      : color === "emerald"
-        ? "text-[var(--accent-primary)]"
-        : color === "cyan"
-          ? "text-[var(--accent-primary)]"
-          : "text-[var(--accent-warning,#f59e0b)]";
+  const colorMap = {
+    blue: "text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20",
+    emerald: "text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-900/20",
+    cyan: "text-cyan-600 bg-cyan-50 dark:text-cyan-400 dark:bg-cyan-900/20",
+    amber: "text-amber-600 bg-amber-50 dark:text-amber-400 dark:bg-amber-900/20",
+  };
+  const textMap = {
+    blue: "text-blue-700 dark:text-blue-300",
+    emerald: "text-emerald-700 dark:text-emerald-300",
+    cyan: "text-cyan-700 dark:text-cyan-300",
+    amber: "text-amber-700 dark:text-amber-300",
+  };
+
   return (
-    <div className={`rounded-xl border bg-[var(--bg-surface)] p-4 ${border}`}>
-      <p className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide">{label}</p>
-      <p className={`mt-1 text-xl font-bold ${text}`}>{value}</p>
+    <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+      <div className="flex items-center gap-2 mb-2">
+        <div className={`p-1.5 rounded-lg ${colorMap[color]}`}>
+          <Icon className="w-3.5 h-3.5" />
+        </div>
+        <span className="text-[11px] text-[var(--text-tertiary)] uppercase tracking-wider font-medium">
+          {label}
+        </span>
+      </div>
+      <p className={`text-xl font-bold ${textMap[color]}`}>{value.toLocaleString()}</p>
     </div>
   );
 }
 
-function Metric({ label, value }: { label: string; value: number }) {
+function MetricCell({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-3">
-      <p className="text-[10px] text-[var(--text-secondary)]">{label}</p>
-      <p className="mt-1 text-sm font-semibold text-[var(--text-primary)]">{value}</p>
+    <div className="rounded-lg bg-[var(--bg-surface)] p-2.5">
+      <p className="text-[10px] text-[var(--text-tertiary)] uppercase tracking-wider">{label}</p>
+      <p className="text-sm font-semibold text-[var(--text-primary)] mt-0.5">{value.toLocaleString()}</p>
     </div>
   );
 }
