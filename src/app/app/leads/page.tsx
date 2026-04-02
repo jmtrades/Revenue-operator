@@ -486,6 +486,15 @@ export default function LeadsPage() {
     setLeads((prev) =>
       prev.map((l) => (selectedIds.has(l.id) ? { ...l, assignedAgent: agent } : l))
     );
+    // Persist agent assignment to backend for each selected lead
+    selectedIds.forEach((leadId) => {
+      fetch(`/api/leads/${leadId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ assigned_agent: agent }),
+      }).catch(() => { /* non-blocking */ });
+    });
   };
 
   const moveLeadStatus = (leadId: string, newStatus: LeadStatus) => {
