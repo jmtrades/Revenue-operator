@@ -781,7 +781,7 @@ export function UnifiedDashboard() {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {data.missed_calls_today > 0 && (
-              <Link href="/app/calls" className="group flex items-start gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] hover:border-amber-500/40 p-4 transition-colors">
+              <Link href="/dashboard/recovery" className="group flex items-start gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] hover:border-amber-500/40 p-4 transition-colors">
                 <div className="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0">
                   <Phone className="w-4 h-4 text-red-500" />
                 </div>
@@ -793,7 +793,7 @@ export function UnifiedDashboard() {
               </Link>
             )}
             {data.no_shows_this_week > 0 && (
-              <Link href="/app/contacts" className="group flex items-start gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] hover:border-amber-500/40 p-4 transition-colors">
+              <Link href="/app/cold-leads" className="group flex items-start gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] hover:border-amber-500/40 p-4 transition-colors">
                 <div className="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
                   <CalendarCheck className="w-4 h-4 text-amber-500" />
                 </div>
@@ -805,7 +805,7 @@ export function UnifiedDashboard() {
               </Link>
             )}
             {data.stale_leads > 0 && (
-              <Link href="/app/contacts?filter=stale" className="group flex items-start gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] hover:border-amber-500/40 p-4 transition-colors">
+              <Link href="/app/cold-leads" className="group flex items-start gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] hover:border-amber-500/40 p-4 transition-colors">
                 <div className="w-9 h-9 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0">
                   <Clock className="w-4 h-4 text-orange-500" />
                 </div>

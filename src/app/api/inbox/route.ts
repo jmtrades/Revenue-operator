@@ -99,7 +99,7 @@ export async function GET(req: NextRequest) {
     });
 
     threads.sort((a, b) => new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime());
-    return NextResponse.json({ conversations: threads, page, limit, total: total ?? 0 });
+    return NextResponse.json({ threads, page, limit, total: total ?? 0 });
   } catch (error) {
     log("error", "[inbox]", { error: error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

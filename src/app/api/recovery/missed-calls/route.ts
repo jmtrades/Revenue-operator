@@ -85,6 +85,7 @@ export async function GET(req: NextRequest) {
       const meta = r.metadata as Record<string, unknown> | null;
       return {
         id: r.id,
+        lead_id: r.lead_id,
         caller_name: lead?.name ?? "Unknown Caller",
         caller_phone: lead?.phone ?? "",
         called_at: r.call_started_at,

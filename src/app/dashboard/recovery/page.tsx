@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { fetchWithFallback } from "@/lib/reliability/fetch-with-fallback";
 import Link from "next/link";
+import { toast } from "sonner";
 import {
   PhoneMissed, Clock, DollarSign, CheckCircle2,
   AlertTriangle, Phone, MessageSquare, Calendar, TrendingUp,
@@ -12,6 +13,7 @@ import {
 
 interface MissedCall {
   id: string;
+  lead_id?: string | null;
   caller_name: string;
   caller_phone: string;
   called_at: string;
@@ -45,6 +47,7 @@ export default function MissedCallRecoveryPage() {
   const [filter, setFilter] = useState<string>("all");
   const [isLive, setIsLive] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [recoveringId, setRecoveringId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!workspaceId) {
@@ -83,6 +86,91 @@ export default function MissedCallRecoveryPage() {
   };
 
   const hasData = isLive || (stats && stats.total_missed > 0);
+
+  const handleRecover = async (call: MissedCall) => {
+    if (!workspaceId || recoveringId) return;
+    setRecoveringId(call.id);
+    try {
+      // Must have a lead_id to initiate recovery call
+      if (!call.lead_id) {
+        // No lead associated - fall through to SMS
+        if (call.caller_phone) {
+          const smsRes = await fetch("/api/sms/send", {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              to: call.caller_phone,
+              body: `Hi ${call.caller_name}, we noticed we missed your call. We'd love to help — please call us back or reply to schedule a time.`,
+            }),
+          });
+          if (smsRes.ok) {
+            toast.success(`Recovery SMS sent to ${call.caller_name}`);
+            setCalls((prev) =>
+              prev.map((c) =>
+                c.id === call.id ? { ...c, status: "in_progress" as const, recovery_method: "sms_followup" as const } : c
+              )
+            );
+          } else {
+            toast.error("Failed to send recovery SMS");
+          }
+        } else {
+          toast.error("No phone number or lead record available for recovery");
+        }
+        return;
+      }
+
+      // First try outbound call via the AI operator
+      const callRes = await fetch("/api/outbound/call", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lead_id: call.lead_id, campaign_type: "lead_followup" }),
+      });
+
+      if (callRes.ok) {
+        toast.success(`Recovery call initiated to ${call.caller_name}`);
+        // Update local state to reflect recovery in progress
+        setCalls((prev) =>
+          prev.map((c) =>
+            c.id === call.id ? { ...c, status: "in_progress" as const, recovery_method: "ai_callback" as const } : c
+          )
+        );
+        return;
+      }
+
+      // If call fails (no phone config, etc.), try SMS follow-up instead
+      if (call.caller_phone) {
+        const smsRes = await fetch("/api/sms/send", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            to: call.caller_phone,
+            body: `Hi ${call.caller_name}, we noticed we missed your call. We'd love to help — please call us back or reply to schedule a time.`,
+            leadId: call.lead_id ?? undefined,
+          }),
+        });
+
+        if (smsRes.ok) {
+          toast.success(`Recovery SMS sent to ${call.caller_name}`);
+          setCalls((prev) =>
+            prev.map((c) =>
+              c.id === call.id ? { ...c, status: "in_progress" as const, recovery_method: "sms_followup" as const } : c
+            )
+          );
+          return;
+        }
+      }
+
+      const errorData = await callRes.json().catch(() => ({ error: "Recovery failed" }));
+      toast.error(errorData.error || "Failed to initiate recovery");
+    } catch {
+      toast.error("Failed to initiate recovery. Please try again.");
+    } finally {
+      setRecoveringId(null);
+    }
+  };
 
   return (
     <div className="p-8 max-w-5xl">
@@ -248,12 +336,14 @@ export default function MissedCallRecoveryPage() {
                 </p>
                 <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>est. value</p>
               </div>
-              {call.status === "pending" && (
+              {(call.status === "pending" || call.status === "lost") && (
                 <button
                   type="button"
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition-[background-color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] shrink-0"
+                  disabled={recoveringId === call.id}
+                  onClick={() => handleRecover(call)}
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition-[background-color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] shrink-0 disabled:opacity-50 disabled:cursor-wait"
                 >
-                  Recover Now
+                  {recoveringId === call.id ? "Recovering…" : "Recover Now"}
                 </button>
               )}
             </div>
