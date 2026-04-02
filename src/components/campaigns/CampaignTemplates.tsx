@@ -110,7 +110,7 @@ export function CampaignTemplates() {
           const Icon = template.icon;
           return (
             <motion.div key={template.id} variants={itemVariants}>
-              <Link href={`/app/campaigns/new?template=${template.slug}`}>
+              <Link href={`/app/campaigns/create?template=${template.slug}`}>
                 <div className="group relative p-5 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] hover:border-[var(--border-hover)] hover:shadow-md transition-all duration-200 cursor-pointer h-full">
                   {/* Icon and badge container */}
                   <div className="flex items-start justify-between mb-4">

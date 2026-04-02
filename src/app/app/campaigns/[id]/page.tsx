@@ -248,22 +248,22 @@ export default function CampaignDetailPage() {
 
   if (loading) {
     return (
-      <div className="p-6 md:p-8 max-w-4xl mx-auto space-y-6">
-        <div className="h-4 w-32 bg-[var(--bg-inset)] rounded skeleton-shimmer" />
-        <div className="h-8 w-64 bg-[var(--bg-inset)] rounded skeleton-shimmer" />
-        <div className="grid grid-cols-4 gap-4">
+      <div className="p-4 md:p-6 lg:p-8 max-w-4xl mx-auto space-y-6">
+        <div className="h-4 w-32 bg-[var(--bg-inset)] rounded animate-pulse" />
+        <div className="h-8 w-64 bg-[var(--bg-inset)] rounded animate-pulse" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-24 bg-[var(--bg-inset)] rounded-xl skeleton-shimmer" />
+            <div key={i} className="h-24 bg-[var(--bg-inset)] rounded-xl animate-pulse" />
           ))}
         </div>
-        <div className="h-40 bg-[var(--bg-inset)] rounded-xl skeleton-shimmer" />
+        <div className="h-40 bg-[var(--bg-inset)] rounded-xl animate-pulse" />
       </div>
     );
   }
 
   if (error || !campaign) {
     return (
-      <div className="p-6 md:p-8 max-w-4xl mx-auto">
+      <div className="p-4 md:p-6 lg:p-8 max-w-4xl mx-auto">
         <button
           type="button"
           onClick={() => router.back()}
@@ -305,7 +305,7 @@ export default function CampaignDetailPage() {
     Array.isArray(tf?.sequence) && tf.sequence.length > 0;
 
   return (
-    <div className="p-6 md:p-8 max-w-4xl mx-auto">
+    <div className="p-4 md:p-6 lg:p-8 max-w-4xl mx-auto">
       <Breadcrumbs
         items={[
           { label: "Campaigns", href: "/app/campaigns" },
@@ -313,24 +313,24 @@ export default function CampaignDetailPage() {
         ]}
       />
 
-      <header className="mb-8">
+      <header className="mb-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <Megaphone className="w-5 h-5 text-[var(--text-secondary)]" />
+              <Megaphone className="w-5 h-5 text-[var(--text-secondary)] shrink-0" />
               {isEditing ? (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-1 min-w-0">
                   <input
                     type="text"
                     value={editingName}
                     onChange={(e) => setEditingName(e.target.value)}
-                    className="flex-1 px-3 py-2 text-xl font-bold rounded-lg bg-[var(--bg-input)] border border-[var(--border-primary)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/30"
+                    className="flex-1 min-w-0 px-3 py-2 text-lg font-bold rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/30"
                     autoFocus
                   />
                   <button
                     onClick={handleSaveName}
                     disabled={saving}
-                    className="p-2 rounded-lg hover:bg-[var(--bg-hover)] text-[var(--accent-primary)]"
+                    className="p-2 rounded-lg hover:bg-[var(--bg-hover)] text-[var(--accent-primary)] shrink-0"
                   >
                     <Check className="w-5 h-5" />
                   </button>
@@ -339,13 +339,13 @@ export default function CampaignDetailPage() {
                       setIsEditing(false);
                       setEditingName(campaign.name);
                     }}
-                    className="p-2 rounded-lg hover:bg-[var(--bg-hover)] text-[var(--text-tertiary)]"
+                    className="p-2 rounded-lg hover:bg-[var(--bg-hover)] text-[var(--text-tertiary)] shrink-0"
                   >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
               ) : (
-                <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)] truncate">
+                <h1 className="text-lg md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)] truncate">
                   {campaign.name}
                 </h1>
               )}
@@ -353,18 +353,13 @@ export default function CampaignDetailPage() {
 
             <div className="mt-2 flex items-center gap-3 flex-wrap">
               <span
-                className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium ${STATUS_COLORS[campaign.status]}`}
+                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${STATUS_COLORS[campaign.status]}`}
               >
                 {campaign.status === "active" && (
-                  <span className="inline-flex items-center gap-1.5">
-                    <span className="relative inline-block">
-                      <span className="absolute inline-flex h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-                      <span className="inline-flex h-2 w-2 rounded-full bg-green-500" />
-                    </span>
-                  </span>
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                 )}
                 {getStatusLabel(campaign.status)}
-                {campaign.status === "active" && <span className="text-xs ml-1">Executing...</span>}
+                {campaign.status === "active" && <span className="text-[10px] ml-1 opacity-75">Running</span>}
               </span>
               <span className="text-xs text-[var(--text-secondary)]">
                 Created {createdDate}
@@ -376,53 +371,51 @@ export default function CampaignDetailPage() {
             <button
               onClick={() => setIsEditing(true)}
               disabled={isEditing}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-default)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] transition-colors disabled:opacity-50"
               title="Edit campaign name"
             >
               <Edit3 className="w-4 h-4" />
-              Edit
+              <span className="hidden sm:inline">Edit</span>
             </button>
 
-            {campaign.status !== "active" && (
+            {campaign.status !== "active" ? (
               <button
                 onClick={handleToggleStatus}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-50 border border-emerald-200 text-sm font-medium text-emerald-700 hover:bg-emerald-100 transition-colors"
                 title="Resume campaign"
               >
                 <Play className="w-4 h-4" />
-                Resume
+                <span className="hidden sm:inline">Resume</span>
               </button>
-            )}
-
-            {campaign.status === "active" && (
+            ) : (
               <button
                 onClick={handleToggleStatus}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-sm font-medium text-amber-700 hover:bg-amber-100 transition-colors"
                 title="Pause campaign"
               >
                 <Pause className="w-4 h-4" />
-                Pause
+                <span className="hidden sm:inline">Pause</span>
               </button>
             )}
 
             <button
               onClick={handleDuplicate}
               disabled={duplicating}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-default)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] transition-colors disabled:opacity-50"
               title="Duplicate campaign"
             >
               <Copy className="w-4 h-4" />
-              Duplicate
+              <span className="hidden sm:inline">Duplicate</span>
             </button>
 
             <button
               onClick={() => setDeleteConfirm(true)}
               disabled={deleting}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-sm font-medium text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[var(--bg-surface)] border border-red-200 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
               title="Delete campaign"
             >
               <Trash2 className="w-4 h-4" />
-              Delete
+              <span className="hidden sm:inline">Delete</span>
             </button>
           </div>
         </div>
@@ -436,7 +429,7 @@ export default function CampaignDetailPage() {
           <StatCard label="Converted" value={converted} percentage={convertedPct} color="emerald" />
         </div>
 
-        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5 md:p-6">
           <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-4">
             Execution Progress
           </h3>
@@ -454,47 +447,34 @@ export default function CampaignDetailPage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-5">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5 md:p-6">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-4">
             Conversion Funnel
           </h3>
-          <div className="space-y-3">
-            <div className="flex items-end gap-3">
-              <div className="flex-1">
-                <div className="bg-blue-500 rounded-lg p-3 text-white">
-                  <p className="text-xs font-medium opacity-90">Total Contacts</p>
-                  <p className="text-lg font-bold">{total}</p>
-                </div>
-              </div>
-              <span className="text-[var(--text-tertiary)] font-semibold">→</span>
-              <div className="flex-1" style={{ opacity: called > 0 ? 1 : 0.5 }}>
-                <div className="bg-cyan-500 rounded-lg p-3 text-white">
-                  <p className="text-xs font-medium opacity-90">Called</p>
-                  <p className="text-lg font-bold">{called}</p>
-                  <p className="text-xs opacity-75 mt-1">{calledPct}%</p>
-                </div>
-              </div>
-              <span className="text-[var(--text-tertiary)] font-semibold">→</span>
-              <div className="flex-1" style={{ opacity: reached > 0 ? 1 : 0.5 }}>
-                <div className="bg-amber-500 rounded-lg p-3 text-white">
-                  <p className="text-xs font-medium opacity-90">Reached</p>
-                  <p className="text-lg font-bold">{reached}</p>
-                  <p className="text-xs opacity-75 mt-1">{reachedPct}%</p>
-                </div>
-              </div>
-              <span className="text-[var(--text-tertiary)] font-semibold">→</span>
-              <div className="flex-1" style={{ opacity: converted > 0 ? 1 : 0.5 }}>
-                <div className="bg-emerald-500 rounded-lg p-3 text-white">
-                  <p className="text-xs font-medium opacity-90">Converted</p>
-                  <p className="text-lg font-bold">{converted}</p>
-                  <p className="text-xs opacity-75 mt-1">{convertedPct}%</p>
-                </div>
-              </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="bg-blue-500 rounded-xl p-3 text-white">
+              <p className="text-[11px] font-medium opacity-80">Total Contacts</p>
+              <p className="text-xl font-bold mt-1">{total}</p>
+            </div>
+            <div className={`bg-cyan-500 rounded-xl p-3 text-white ${called === 0 ? "opacity-50" : ""}`}>
+              <p className="text-[11px] font-medium opacity-80">Called</p>
+              <p className="text-xl font-bold mt-1">{called}</p>
+              <p className="text-[11px] opacity-70 mt-0.5">{calledPct}% of total</p>
+            </div>
+            <div className={`bg-amber-500 rounded-xl p-3 text-white ${reached === 0 ? "opacity-50" : ""}`}>
+              <p className="text-[11px] font-medium opacity-80">Reached</p>
+              <p className="text-xl font-bold mt-1">{reached}</p>
+              <p className="text-[11px] opacity-70 mt-0.5">{reachedPct}% of called</p>
+            </div>
+            <div className={`bg-emerald-500 rounded-xl p-3 text-white ${converted === 0 ? "opacity-50" : ""}`}>
+              <p className="text-[11px] font-medium opacity-80">Converted</p>
+              <p className="text-xl font-bold mt-1">{converted}</p>
+              <p className="text-[11px] opacity-70 mt-0.5">{convertedPct}% of reached</p>
             </div>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 space-y-5">
+        <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-5 md:p-6 space-y-5">
           <section>
             <h2 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)] mb-3">
               Campaign Details
@@ -611,7 +591,7 @@ export default function CampaignDetailPage() {
         </div>
 
         {converted > 0 && (
-          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6">
+          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 md:p-6">
             <div className="flex items-start gap-3">
               <div className="flex-1">
                 <h3 className="text-xs font-semibold uppercase tracking-wide text-emerald-900 mb-2">
