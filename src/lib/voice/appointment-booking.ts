@@ -34,7 +34,7 @@ export interface AppointmentSlot {
 export interface BookingRequest {
   workspace_id: string;
   lead_id: string;
-  call_session_id?: string;
+  call_id?: string;
   title: string;
   preferred_date?: string; // "tomorrow", "next tuesday", "march 28"
   preferred_time?: string; // "2pm", "morning", "afternoon"
@@ -340,13 +340,11 @@ export async function bookAppointment(
       .insert({
         workspace_id: request.workspace_id,
         lead_id: request.lead_id,
-        call_session_id: request.call_session_id,
+        call_id: request.call_id,
         title: request.title,
-        description: request.notes,
+        notes: request.notes,
         start_time: slot.start.toISOString(),
         end_time: slot.end.toISOString(),
-        duration_minutes: duration,
-        timezone: request.timezone ?? "America/New_York",
         status: "confirmed",
       })
       .select("id")
@@ -489,7 +487,7 @@ export async function rescheduleAppointment(
     // Get original appointment details
     const { data: original } = await db
       .from("appointments")
-      .select("lead_id, call_session_id, title, description, duration_minutes, timezone")
+      .select("lead_id, call_id, title, notes, start_time, end_time")
       .eq("id", appointmentId)
       .maybeSingle();
 
@@ -499,22 +497,26 @@ export async function rescheduleAppointment(
 
     const orig = original as {
       lead_id: string;
-      call_session_id?: string;
+      call_id?: string;
       title: string;
-      description?: string;
-      duration_minutes: number;
-      timezone: string;
+      notes?: string;
+      start_time: string;
+      end_time?: string;
     };
+
+    // Calculate duration from original appointment
+    const origDuration = orig.end_time && orig.start_time
+      ? Math.round((new Date(orig.end_time).getTime() - new Date(orig.start_time).getTime()) / 60000)
+      : 30;
 
     // Book the new slot
     return await bookAppointment({
       workspace_id: workspaceId,
       lead_id: orig.lead_id,
-      call_session_id: orig.call_session_id,
+      call_id: orig.call_id,
       title: orig.title,
-      duration_minutes: orig.duration_minutes,
-      timezone: orig.timezone,
-      notes: orig.description,
+      duration_minutes: origDuration,
+      notes: orig.notes,
     }, newSlot);
   } catch (err) {
     log("error", "appointment_booking.reschedule_failed", {
