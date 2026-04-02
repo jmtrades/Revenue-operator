@@ -316,7 +316,10 @@ async function handleStripeWebhookEvent(
           updatePayload.billing_tier = tierInterval.tier;
           updatePayload.billing_interval = tierInterval.interval;
         }
-        await db.from("workspaces").update(updatePayload).eq("id", workspaceId);
+        const { error: wsUpdateErr } = await db.from("workspaces").update(updatePayload).eq("id", workspaceId);
+        if (wsUpdateErr) {
+          log("error", "billing_webhook.workspace_update_failed", { workspace_id: workspaceId, error: wsUpdateErr.message });
+        }
 
         // Also update workspace_billing.status to keep tables in sync
         try {
@@ -360,7 +363,10 @@ async function handleStripeWebhookEvent(
           updatePayload.billing_tier = tierInterval.tier;
           updatePayload.billing_interval = tierInterval.interval;
         }
-        await db.from("workspaces").update(updatePayload).eq("id", workspaceId);
+        const { error: wsUpdateErr2 } = await db.from("workspaces").update(updatePayload).eq("id", workspaceId);
+        if (wsUpdateErr2) {
+          log("error", "billing_webhook.workspace_update_failed", { workspace_id: workspaceId, error: wsUpdateErr2.message });
+        }
 
         // Also update workspace_billing.status to keep tables in sync
         try {

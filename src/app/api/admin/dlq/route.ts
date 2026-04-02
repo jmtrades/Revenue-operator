@@ -60,6 +60,7 @@ export async function POST(req: NextRequest) {
   } else {
     return NextResponse.json({ error: "Unknown job type" }, { status: 400 });
   }
-  await db.from("job_queue").update({ status: "pending", error: null }).eq("id", body.job_id);
+  const { error: updateErr } = await db.from("job_queue").update({ status: "pending", error: null }).eq("id", body.job_id);
+  if (updateErr) return NextResponse.json({ error: "Failed to update job status" }, { status: 500 });
   return NextResponse.json({ ok: true, job_id: body.job_id });
 }

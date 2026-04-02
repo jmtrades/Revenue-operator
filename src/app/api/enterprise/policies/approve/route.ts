@@ -27,16 +27,20 @@ export async function POST(req: NextRequest) {
   if (!p) return NextResponse.json({ ok: false, reason: "not_found" }, { status: 404 });
   const version = (p as { version: number }).version;
 
-  await db.from("speech_policies").update({ status: "approved" }).eq("id", objectId);
+  const { error: updateErr } = await db.from("speech_policies").update({ status: "approved" }).eq("id", objectId);
+  if (updateErr) return NextResponse.json({ ok: false, reason: "update_failed" }, { status: 500 });
+
   const session = await (await import("@/lib/auth/request-session")).getSession(req);
   const userId = session?.userId ?? null;
-  await db.from("speech_approvals").insert({
+  const { error: approvalErr } = await db.from("speech_approvals").insert({
     workspace_id: workspaceId,
     object_type: "policy",
     object_id: objectId,
     approved_version: version,
     approved_by_user_id: userId,
   });
+  if (approvalErr) return NextResponse.json({ ok: false, reason: "approval_record_failed" }, { status: 500 });
+
   await db.from("audit_log").insert({
     workspace_id: workspaceId,
     actor_user_id: userId,
