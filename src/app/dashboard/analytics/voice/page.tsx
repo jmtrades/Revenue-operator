@@ -38,34 +38,11 @@ interface QualityIssue {
   value: string;
 }
 
-const FALLBACK_DATA = {
-  kpi: {
-    avgTTFB: 245,
-    ttfbTrend: -12,
-    avgMOS: 4.2,
-    errorRate: 0.8,
-    totalMinutes: 12450,
-  },
-  voices: [
-    { name: 'Orpheus', calls: 1240, avgDuration: 85, avgTTFB: 220, mosScore: 4.3, cost: 245.50, isActive: true },
-    { name: 'Kokoro', calls: 890, avgDuration: 92, avgTTFB: 260, mosScore: 4.1, cost: 178.90 },
-    { name: 'Fish Speech', calls: 650, avgDuration: 78, avgTTFB: 255, mosScore: 3.9, cost: 130.20 },
-  ],
-  models: [
-    { model: 'Orpheus', calls: 1240, latency: 220, quality: 4.3, costPerMin: 0.12 },
-    { model: 'Kokoro', calls: 890, latency: 260, quality: 4.1, costPerMin: 0.14 },
-    { model: 'Fish Speech', calls: 650, latency: 255, quality: 3.9, costPerMin: 0.16 },
-  ],
-  issues: (() => {
-    const today = new Date();
-    const daysAgo = (n: number) => new Date(today.getTime() - n * 86400000).toISOString().split("T")[0];
-    return [
-      { timestamp: `${daysAgo(1)} 14:32:00`, voice: 'Kokoro', callId: 'call_892831', type: 'mos' as const, value: '2.8' },
-      { timestamp: `${daysAgo(3)} 13:15:00`, voice: 'Fish Speech', callId: 'call_892710', type: 'glitch' as const, value: '245ms gap' },
-      { timestamp: `${daysAgo(5)} 12:04:00`, voice: 'Orpheus', callId: 'call_892601', type: 'latency' as const, value: '580ms' },
-      { timestamp: `${daysAgo(7)} 10:52:00`, voice: 'Kokoro', callId: 'call_892445', type: 'mos' as const, value: '2.4' },
-    ];
-  })(),
+const EMPTY_DATA = {
+  kpi: { avgTTFB: 0, ttfbTrend: 0, avgMOS: 0, errorRate: 0, totalMinutes: 0 },
+  voices: [] as VoiceMetrics[],
+  models: [] as ModelComparison[],
+  issues: [] as QualityIssue[],
 };
 
 function getMOSColor(score: number): string {
@@ -95,10 +72,10 @@ function KPICard({ label, value, unit, trend }: { label: string; value: number; 
 
 export default function VoiceAnalyticsDashboard() {
   const { workspaceId } = useWorkspace();
-  const [kpi, setKpi] = useState<KPIData>(FALLBACK_DATA.kpi);
-  const [voices, setVoices] = useState<VoiceMetrics[]>(FALLBACK_DATA.voices);
-  const [models, setModels] = useState<ModelComparison[]>(FALLBACK_DATA.models);
-  const [issues, setIssues] = useState<QualityIssue[]>(FALLBACK_DATA.issues);
+  const [kpi, setKpi] = useState<KPIData>(EMPTY_DATA.kpi);
+  const [voices, setVoices] = useState<VoiceMetrics[]>(EMPTY_DATA.voices);
+  const [models, setModels] = useState<ModelComparison[]>(EMPTY_DATA.models);
+  const [issues, setIssues] = useState<QualityIssue[]>(EMPTY_DATA.issues);
   const [timeRange, setTimeRange] = useState<'7d' | '30d'>('7d');
   const [sortBy, setSortBy] = useState<keyof VoiceMetrics>('calls');
   const [sortAsc, setSortAsc] = useState(false);
@@ -111,13 +88,13 @@ export default function VoiceAnalyticsDashboard() {
         });
         if (response.ok) {
           const data = await response.json();
-          setKpi(data.kpi || FALLBACK_DATA.kpi);
-          setVoices(data.voices || FALLBACK_DATA.voices);
-          setModels(data.models || FALLBACK_DATA.models);
-          setIssues(data.issues || FALLBACK_DATA.issues);
+          setKpi(data.kpi || EMPTY_DATA.kpi);
+          setVoices(data.voices || EMPTY_DATA.voices);
+          setModels(data.models || EMPTY_DATA.models);
+          setIssues(data.issues || EMPTY_DATA.issues);
         }
-      } catch (error) {
-        console.error('Failed to fetch voice analytics:', error);
+      } catch {
+        // Voice analytics API unavailable — empty state shown
       }
     };
 
