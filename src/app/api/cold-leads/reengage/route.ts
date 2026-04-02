@@ -256,7 +256,7 @@ export async function POST(req: NextRequest) {
         await db.from("sequence_enrollments").insert({
           workspace_id: session.workspaceId,
           sequence_id: defaultSequenceId,
-          lead_id: item.lead_id,
+          contact_id: item.lead_id,
           status: "active",
           enrolled_at: now,
           started_at: now,
