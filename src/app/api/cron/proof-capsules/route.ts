@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
   if (authErr) return authErr;
 
   const db = getDb();
-  const { data: workspaces } = await db.from("workspaces").select("id");
+  const { data: workspaces } = await db.from("workspaces").select("id").limit(100);
   const ids = (workspaces ?? []).map((r: { id: string }) => r.id);
 
   const yesterday = new Date();

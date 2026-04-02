@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
 
   const result = await runSafeCron("temporal-stability", async () => {
     const db = getDb();
-    const { data: workspaceRows } = await db.from("workspaces").select("id");
+    const { data: workspaceRows } = await db.from("workspaces").select("id").limit(100);
     const workspaceIds = (workspaceRows ?? []).slice(0, MAX_WORKSPACES).map((r: { id: string }) => r.id);
     let run = 0;
     for (const workspaceId of workspaceIds) {

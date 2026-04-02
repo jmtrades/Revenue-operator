@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
 
   const result = await runSafeCron("assurance-delivery", async () => {
     const db = getDb();
-    const { data: rows } = await db.from("workspaces").select("id");
+    const { data: rows } = await db.from("workspaces").select("id").limit(100);
     const ids = (rows ?? []).map((r: { id: string }) => r.id);
     let sent = 0;
     for (const workspaceId of ids) {

@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     const periodStart = startOfMonth(lastMonth);
     const periodEnd = endOfMonth(lastMonth);
 
-    const { data: workspaces } = await db.from("workspaces").select("id");
+    const { data: workspaces } = await db.from("workspaces").select("id").limit(100);
 
     for (const ws of workspaces ?? []) {
       const workspaceId = ws.id;

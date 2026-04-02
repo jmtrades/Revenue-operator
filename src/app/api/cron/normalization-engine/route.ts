@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 
   const result = await runSafeCron("normalization-engine", async () => {
     const db = getDb();
-    const { data: rows } = await db.from("workspaces").select("id");
+    const { data: rows } = await db.from("workspaces").select("id").limit(100);
     const workspaceIds = (rows ?? []).slice(0, MAX_WORKSPACES).map((r: { id: string }) => r.id);
     for (const workspaceId of workspaceIds) {
       await runNormalizationDetectors(workspaceId).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
