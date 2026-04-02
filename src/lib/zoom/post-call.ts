@@ -43,7 +43,7 @@ export async function executePostCallPlan(
   );
 
   await db.from("leads").update({
-    status: newState,
+    state: newState,
     updated_at: new Date().toISOString(),
     last_activity_at: new Date().toISOString(),
   }).eq("id", leadId);
