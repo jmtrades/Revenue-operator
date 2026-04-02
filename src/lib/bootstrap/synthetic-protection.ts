@@ -45,7 +45,7 @@ export async function runSyntheticProtectionBootstrap(workspaceId: string): Prom
       .insert({
         workspace_id: workspaceId,
         name: "Inbound enquiry",
-        status: "CONTACTED",
+        state: "CONTACTED",
         last_activity_at: now.toISOString(),
         metadata: { synthetic_bootstrap: true },
       })

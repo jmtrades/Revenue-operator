@@ -128,7 +128,7 @@ async function executeFollowUpRouting(
   if (routing.action === "do_not_contact") {
     await db
       .from("leads")
-      .update({ status: "CLOSED", updated_at: new Date().toISOString() })
+      .update({ state: "CLOSED", updated_at: new Date().toISOString() })
       .eq("id", params.lead_id);
     // Cancel all active enrollments
     const { pauseOnLeadReply } = await import("@/lib/sequences/follow-up-engine");

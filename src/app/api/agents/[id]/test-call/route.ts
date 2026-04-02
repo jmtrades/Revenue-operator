@@ -186,7 +186,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       workspace_id: workspaceId,
       name: "Test contact",
       phone,
-      status: "NEW",
+      state: "NEW",
       external_id: `test-${Date.now()}`,
     })
     .select("id")

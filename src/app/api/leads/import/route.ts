@@ -199,7 +199,7 @@ export async function POST(req: NextRequest) {
     phone: normalizePhoneE164(r.phone),
     email: r.email,
     company: r.service_requested,
-    status: "NEW",
+    state: "NEW",
     metadata: { source: "csv_import", service_requested: r.service_requested, notes: r.notes, score: 40 },
   }));
 
