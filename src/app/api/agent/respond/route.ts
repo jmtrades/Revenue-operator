@@ -306,7 +306,7 @@ export async function POST(req: NextRequest) {
 
     const latency = Date.now() - start;
     if (latency > 3000) {
-      console.warn(`[agent/respond] Slow response: ${latency}ms`);
+      log("warn", `[agent/respond] Slow response: ${latency}ms`);
     }
 
     return NextResponse.json({ text });

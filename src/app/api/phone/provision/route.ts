@@ -298,7 +298,7 @@ export async function POST(req: NextRequest) {
       try {
         const telephony = getTelephonyService();
         await telephony.releaseNumber(providerSid);
-        console.warn("[provision] Rolled back purchased number from provider after DB failure:", providerSid);
+        log("warn", "[provision] Rolled back purchased number from provider after DB failure:", { detail: providerSid });
       } catch (rollbackErr) {
         log("error", "[provision] CRITICAL: Failed to rollback purchased number", { error: providerSid, rollbackError: rollbackErr instanceof Error ? rollbackErr.message : rollbackErr });
       }

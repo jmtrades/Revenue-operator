@@ -151,7 +151,7 @@ export async function POST(req: NextRequest) {
         event_id: eventId,
         error: errMsg,
       });
-    } catch (trackErr) { console.warn("[billing-webhook] Failure tracking insert failed:", trackErr instanceof Error ? trackErr.message : trackErr); }
+    } catch (trackErr) { log("warn", "[billing-webhook] Failure tracking insert failed:", { detail: trackErr instanceof Error ? trackErr.message : String(trackErr) }); }
     // Return 500 so Stripe retries the webhook
     return NextResponse.json({ error: "Processing failed" }, { status: 500 });
   }
@@ -557,7 +557,7 @@ async function handleStripeWebhookEvent(
                   const sub = await stripe.subscriptions.retrieve(subscriptionId);
                   return sub.status === "active" || sub.status === "trialing";
                 } catch (subErr) {
-                  console.warn("[billing-webhook] Subscription retrieval failed:", subErr instanceof Error ? subErr.message : subErr);
+                  log("warn", "[billing-webhook] Subscription retrieval failed:", { detail: subErr instanceof Error ? subErr.message : String(subErr) });
                   return false;
                 }
               })()
@@ -801,8 +801,9 @@ async function handleStripeWebhookEvent(
           const stripe = getStripe();
           const ch = await stripe.charges.retrieve(chargeId);
           resolvedWorkspaceId = ch.metadata?.workspace_id ?? null;
-        } catch (lookupErr) { console.warn("[billing-webhook] Dispute charge lookup failed:", lookupErr instanceof Error ? lookupErr.message : lookupErr); }
+        } catch (lookupErr) { log("warn", "[billing-webhook] Dispute charge lookup failed:", { detail: lookupErr instanceof Error ? lookupErr.message : String(lookupErr) }); }
       }
+
       log("error", "billing_webhook.dispute_created", {
         workspace_id: resolvedWorkspaceId,
         dispute_id: dispute.id,

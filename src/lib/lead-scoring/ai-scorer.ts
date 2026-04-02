@@ -5,6 +5,7 @@
 
 import OpenAI from "openai";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 export interface AILeadScoreSignal {
   factor: string;
@@ -352,7 +353,7 @@ export async function scoreLeadWithAI(
 
   const jsonMatch = responseText.match(/\{[\s\S]*\}/);
   if (!jsonMatch) {
-    console.warn(
+    log("warn", 
       `[AI Scorer] Failed to parse response for lead ${leadId}, using fallback`
     );
     return fallbackScore();

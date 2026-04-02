@@ -274,11 +274,11 @@ export async function POST(req: NextRequest) {
       },
     });
     if (auditInsertErr) {
-      console.warn("[change-plan] Failed to log billing event:", auditInsertErr.message);
+      log("warn", "[change-plan] Failed to log billing event:", { detail: auditInsertErr.message });
     }
   } catch (auditErr) {
     // Non-blocking: audit log error should not fail the plan change
-    console.warn("[change-plan] Audit log error:", auditErr instanceof Error ? auditErr.message : auditErr);
+    log("warn", "[change-plan] Audit log error:", { detail: auditErr instanceof Error ? auditErr.message : auditErr });
   }
 
   return NextResponse.json({

@@ -3,6 +3,7 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 export type EmailProvider = "resend" | "sendgrid";
 
@@ -123,7 +124,7 @@ export async function sendEmail(
   const db = getDb();
   const creds = await getSendApiKey(workspaceId);
   if (!creds) {
-    console.warn("[email] RESEND_API_KEY not configured — email not sent");
+    log("warn", "[email] RESEND_API_KEY not configured — email not sent");
     return { ok: false, error: "email_not_configured" };
   }
 

@@ -281,7 +281,7 @@ function formatSlot(date: Date, timezone: string): string {
     return formatted;
   } catch (err) {
     // Fallback if timezone is invalid - use local time with warning
-    console.warn(`Invalid timezone "${timezone}" in formatSlot, falling back to local time`, err);
+    log("warn", `Invalid timezone "${timezone}" in formatSlot, falling back to local time`, { detail: err });
 
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const months = ["January", "February", "March", "April", "May", "June",

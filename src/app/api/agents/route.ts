@@ -8,6 +8,7 @@ import { DEFAULT_VOICE_ID } from "@/lib/constants/curated-voices";
 import { canCreateAgent } from "@/lib/billing/plan-enforcement";
 import { VOICE_TIER_LIMITS } from "@/lib/voice/billing";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
@@ -134,7 +135,7 @@ export async function POST(req: NextRequest) {
       }
     } catch (err) {
       // If voice list can't be loaded, allow any voice_id (graceful degradation)
-      console.warn("[agents POST] Could not validate voice_id:", err);
+      log("warn", "[agents POST] Could not validate voice_id:", { detail: err });
     }
   }
 

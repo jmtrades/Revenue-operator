@@ -9,6 +9,7 @@ import { enqueue } from "@/lib/queue";
 import { triggerAutoFollowUp } from "@/lib/intelligence/auto-followup";
 import type { LeadIntelligence } from "@/lib/intelligence/lead-brain";
 import { computeLeadIntelligence } from "@/lib/intelligence/lead-brain";
+import { log } from "@/lib/logger";
 
 export type MeetingPhase =
   | "pre_meeting"
@@ -534,10 +535,9 @@ export async function runMeetingAwareCheck(workspaceId: string): Promise<{ check
         }
 
         if (!eventsRes.ok) {
-          console.warn(
-            "[meeting-aware] Google Calendar fetch failed:",
-            eventsRes.status,
-            await eventsRes.text().catch(() => "")
+          log("warn",
+            `[meeting-aware] Google Calendar fetch failed: ${eventsRes.status}`,
+            { detail: await eventsRes.text().catch(() => "") }
           );
           continue;
         }

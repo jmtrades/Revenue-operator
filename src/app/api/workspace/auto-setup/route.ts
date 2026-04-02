@@ -147,7 +147,7 @@ export async function POST(req: NextRequest) {
         { onConflict: "workspace_id" }
       );
     } catch (ctxErr) {
-      console.warn("[auto-setup] workspace_business_context upsert failed:", ctxErr instanceof Error ? ctxErr.message : ctxErr);
+      log("warn", "[auto-setup] workspace_business_context upsert failed:", { detail: ctxErr instanceof Error ? ctxErr.message : ctxErr });
     }
 
     return NextResponse.json(
