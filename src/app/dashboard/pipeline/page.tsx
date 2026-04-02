@@ -91,7 +91,7 @@ export default function PipelinePage() {
             estimatedValue: dealValue,
             daysInStage,
             source,
-            stage: statusToStage(lead.status as string),
+            stage: statusToStage(lead.state as string),
           };
         });
         setCards(mapped);

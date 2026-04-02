@@ -54,6 +54,7 @@ export default function ApprovalsPage() {
       const path = decision === "approved" ? "/api/enterprise/approvals/approve" : "/api/enterprise/approvals/reject";
       const r = await fetch(path, {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ workspace_id: workspaceId, approval_id: approvalId }),
       });
