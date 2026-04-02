@@ -70,12 +70,12 @@ export async function POST(req: NextRequest) {
         break;
       case "no_answer":
         // Leads with recent no-answer outcomes
-        leadQuery = leadQuery.eq("status", "NEW").gte("updated_at", sevenDaysAgo);
+        leadQuery = leadQuery.eq("state", "NEW").gte("updated_at", sevenDaysAgo);
         campaignName = `No-Answer Retry — ${now.toLocaleDateString()}`;
         campaignDescription = "Leads we couldn't reach. Trying at different times.";
         break;
       case "appointment_follow_up":
-        leadQuery = leadQuery.eq("status", "APPOINTMENT_SET").gte("updated_at", sevenDaysAgo);
+        leadQuery = leadQuery.eq("state", "BOOKED").gte("updated_at", sevenDaysAgo);
         campaignName = `Appointment Follow-up — ${now.toLocaleDateString()}`;
         campaignDescription = "Leads with upcoming appointments. Reminder and preparation outreach.";
         break;
@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
         campaignDescription = "Dormant leads from 30-90 days ago. Re-engagement campaign.";
         break;
       case "all_new":
-        leadQuery = leadQuery.eq("status", "NEW").gte("created_at", sevenDaysAgo);
+        leadQuery = leadQuery.eq("state", "NEW").gte("created_at", sevenDaysAgo);
         campaignName = `New Leads — ${now.toLocaleDateString()}`;
         campaignDescription = "All new leads from the past 7 days.";
         break;
