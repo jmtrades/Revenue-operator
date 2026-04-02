@@ -7,14 +7,13 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { isAdmin, forbidden } from "@/lib/admin/auth";
 import { getDb } from "@/lib/db/queries";
+import { BILLING_PLANS, normalizeTier } from "@/lib/billing-plans";
 
-// Billing tier pricing map
-const TIER_PRICING: Record<string, number> = {
-  solo: 147, starter: 147,
-  business: 297, growth: 297,
-  scale: 597,
-  enterprise: 997, agency: 997,
-};
+// Derive pricing from the canonical billing plans (cents → dollars)
+function getTierMonthlyPrice(dbTier: string | null | undefined): number {
+  const plan = BILLING_PLANS[normalizeTier(dbTier)];
+  return Math.round((plan?.monthlyPrice ?? 0) / 100);
+}
 
 export async function GET(req: NextRequest) {
   if (!(await isAdmin(req))) {
@@ -41,7 +40,7 @@ export async function GET(req: NextRequest) {
 
     workspaces.forEach((ws: any) => {
       const tier = ws.billing_tier?.toLowerCase() || "solo";
-      const price = TIER_PRICING[tier] || 0;
+      const price = getTierMonthlyPrice(tier);
 
       if (ws.status !== "paused" && ws.stripe_subscription_id) {
         if (ws.billing_interval === "annual") {
@@ -129,7 +128,7 @@ export async function GET(req: NextRequest) {
       let totalRevenue = 0;
       workspaces.forEach((ws: any) => {
         const tier = ws.billing_tier?.toLowerCase() || "solo";
-        const price = TIER_PRICING[tier] || 0;
+        const price = getTierMonthlyPrice(tier);
         if (ws.billing_interval === "annual") {
           totalRevenue += price * 12;
         } else {
@@ -150,7 +149,7 @@ export async function GET(req: NextRequest) {
       let totalRevenue = 0;
       workspaces.forEach((ws: any) => {
         const tier = ws.billing_tier?.toLowerCase() || "solo";
-        const price = TIER_PRICING[tier] || 0;
+        const price = getTierMonthlyPrice(tier);
         totalRevenue += price;
       });
       const avgMonthlyRevenue = totalRevenue / workspaces.length;
