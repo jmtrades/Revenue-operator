@@ -26,7 +26,8 @@ export async function GET(req: NextRequest) {
     const { data: workspaces } = await db
       .from("workspaces")
       .select("id, name, billing_tier, billing_status, owner_id")
-      .eq("billing_status", "active");
+      .eq("billing_status", "active")
+      .limit(500);
 
     if (!workspaces || workspaces.length === 0) {
       return NextResponse.json({ ok: true, checked: 0 });

@@ -37,7 +37,7 @@ interface DailyMetricRow {
   no_shows_recovered: number;
   follow_ups_sent: number;
   leads_captured: number;
-  total_revenue_cents: number;
+  revenue_estimated_cents: number;
 }
 
 export default function RevenuePage() {
@@ -61,10 +61,10 @@ export default function RevenuePage() {
       if (res.data?.data?.length) {
         const mapped: DailyRevenue[] = res.data.data.map((m) => ({
           date: m.date,
-          inbound: Math.round((m.total_revenue_cents || 0) / 100 * 0.5),
-          followUps: Math.round((m.total_revenue_cents || 0) / 100 * 0.2),
-          outbound: Math.round((m.total_revenue_cents || 0) / 100 * 0.15),
-          noShowRecovery: Math.round((m.total_revenue_cents || 0) / 100 * 0.15),
+          inbound: Math.round((m.revenue_estimated_cents || 0) / 100 * 0.5),
+          followUps: Math.round((m.revenue_estimated_cents || 0) / 100 * 0.2),
+          outbound: Math.round((m.revenue_estimated_cents || 0) / 100 * 0.15),
+          noShowRecovery: Math.round((m.revenue_estimated_cents || 0) / 100 * 0.15),
         }));
         setApiData(mapped);
       } else {

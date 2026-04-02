@@ -160,12 +160,12 @@ export async function GET(req: NextRequest) {
   try {
     const { data: daily } = await db
       .from("daily_metrics")
-      .select("total_revenue_cents, date")
+      .select("revenue_estimated_cents, date")
       .eq("workspace_id", workspaceId)
       .gte("date", monthStart.slice(0, 10));
     if (daily?.length) {
       for (const row of daily) {
-        const v = Number((row as { total_revenue_cents?: number }).total_revenue_cents);
+        const v = Number((row as { revenue_estimated_cents?: number }).revenue_estimated_cents);
         if (!Number.isNaN(v)) revenueCents += v;
       }
     }
