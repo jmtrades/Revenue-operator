@@ -47,7 +47,6 @@ export const TodaysActivity = ({ workspaceId }: TodaysActivityProps) => {
         });
       } catch (error) {
         console.error('Failed to fetch activity stats:', error);
-        // Keep default empty state on error
       } finally {
         setLoading(false);
       }
@@ -69,17 +68,17 @@ export const TodaysActivity = ({ workspaceId }: TodaysActivityProps) => {
       label: 'Follow-ups sent',
       value: stats.followUpsSent,
       icon: Calendar,
-      color: 'text-[var(--text-tertiary)]',
+      color: 'text-[var(--text-secondary)]',
     },
     {
-      label: 'Appointments booked',
+      label: 'Appointments',
       value: stats.appointmentsBooked,
       icon: CheckCircle2,
-      color: 'text-emerald-400',
+      color: 'text-emerald-500',
     },
     {
       label: 'Next appointment',
-      value: stats.nextAppointment || '—',
+      value: stats.nextAppointment || '\u2014',
       icon: Clock,
       color: 'text-[var(--text-secondary)]',
     },
@@ -87,13 +86,13 @@ export const TodaysActivity = ({ workspaceId }: TodaysActivityProps) => {
 
   if (loading) {
     return (
-      <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-default)] p-6">
-        <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-6">Today&apos;s Activity</h2>
-        <div className="grid grid-cols-2 gap-6">
+      <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-5">
+        <div className="h-4 w-28 bg-[var(--bg-hover)] rounded skeleton-shimmer mb-4" />
+        <div className="grid grid-cols-2 gap-4">
           {[...Array(4)].map((_, idx) => (
-            <div key={idx} className="flex flex-col gap-2">
-              <div className="h-4 w-20 bg-[var(--bg-surface)] rounded skeleton-shimmer" />
-              <div className="h-8 w-12 bg-[var(--bg-surface)] rounded skeleton-shimmer" />
+            <div key={idx} className="space-y-2">
+              <div className="h-3 w-20 bg-[var(--bg-hover)] rounded skeleton-shimmer" />
+              <div className="h-7 w-12 bg-[var(--bg-hover)] rounded skeleton-shimmer" />
             </div>
           ))}
         </div>
@@ -102,25 +101,29 @@ export const TodaysActivity = ({ workspaceId }: TodaysActivityProps) => {
   }
 
   return (
-    <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border-default)] p-6">
-      <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-6">Today&apos;s Activity</h2>
+    <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-5">
+      <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-4">Today&apos;s Activity</h2>
 
       {!hasData && !stats.nextAppointment ? (
-        <div className="text-center py-8">
-          <p className="text-[var(--text-secondary)] text-sm mb-2">No activity yet today.</p>
-          <p className="text-[var(--text-secondary)] text-sm">Start taking calls to see your activity here.</p>
+        <div className="text-center py-6">
+          <p className="text-sm text-[var(--text-secondary)]">No activity yet today.</p>
+          <p className="text-xs text-[var(--text-tertiary)] mt-1">
+            Start taking calls to see your activity here.
+          </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-4">
           {activityItems.map((item, idx) => {
             const Icon = item.icon;
             return (
-              <div key={idx} className="flex flex-col gap-2">
-                <div className="flex items-center gap-2">
-                  <Icon className={`w-4 h-4 ${item.color}`} />
-                  <p className="text-sm text-[var(--text-secondary)]">{item.label}</p>
+              <div key={idx}>
+                <div className="flex items-center gap-1.5 mb-1">
+                  <Icon className={`w-3.5 h-3.5 ${item.color}`} />
+                  <p className="text-xs text-[var(--text-tertiary)]">{item.label}</p>
                 </div>
-                <p className="text-2xl font-bold text-[var(--text-primary)]">{item.value}</p>
+                <p className="text-xl font-semibold text-[var(--text-primary)] tabular-nums">
+                  {item.value}
+                </p>
               </div>
             );
           })}
@@ -129,3 +132,5 @@ export const TodaysActivity = ({ workspaceId }: TodaysActivityProps) => {
     </div>
   );
 };
+
+export default TodaysActivity;

@@ -15,7 +15,7 @@ import {
   Search,
   MoreHorizontal,
   TrendingUp,
-  Users,
+
   Phone,
   CalendarCheck,
 } from "lucide-react";

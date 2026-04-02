@@ -145,7 +145,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     for (const lead of (inboundLeads ?? []) as Array<{ id: string; metadata?: { source?: string } | null }>) {
       const source = lead.metadata?.source ?? "";
       if (["inbound_call", "missed_call", "voicemail", "website", "form", "landing_page"].includes(source)) {
-        candidates.push({ id: lead.id, reason: "no_reply_14d", priority: "high" });
+        candidates.push({ id: lead.id, reason: "inbound_no_convert", priority: "high" });
       }
     }
 

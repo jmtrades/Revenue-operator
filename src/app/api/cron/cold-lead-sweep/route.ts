@@ -245,7 +245,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         lead_id: lead.id,
         workspace_id: lead.workspace_id,
         status: "pending",
-        reason: "no_reply_14d",
+        reason: "inbound_no_convert",
         priority: "high",
         attempts: 0,
         max_attempts: 6,
