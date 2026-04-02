@@ -57,6 +57,17 @@ export async function GET(req: NextRequest) {
   let enqueued24h = 0;
   let enqueued2h = 0;
 
+  // Batch-fetch lead names to avoid N+1 per appointment
+  const allLeadIds = [...appointments24h, ...appointments2h].map((a) => a.lead_id);
+  const uniqueLeadIds = [...new Set(allLeadIds)];
+  const leadNameMap = new Map<string, string>();
+  if (uniqueLeadIds.length) {
+    const { data: leadRows } = await db.from("leads").select("id, name").in("id", uniqueLeadIds);
+    for (const l of (leadRows ?? []) as { id: string; name?: string | null }[]) {
+      if (l.name) leadNameMap.set(l.id, l.name);
+    }
+  }
+
   for (const appt of appointments24h) {
     const conv = await getOrCreateConversation(db, appt.lead_id);
     if (!conv) continue;
@@ -78,8 +89,7 @@ export async function GET(req: NextRequest) {
       }
       try {
         const { notifyAppointmentReminder } = await import("@/lib/integrations/slack");
-        const { data: leadRow } = await db.from("leads").select("name").eq("id", appt.lead_id).maybeSingle();
-        const leadName = (leadRow as { name?: string | null } | null)?.name ?? null;
+        const leadName = leadNameMap.get(appt.lead_id) ?? null;
         await notifyAppointmentReminder(appt.workspace_id, {
           appointment_id: appt.id,
           lead_name: leadName,

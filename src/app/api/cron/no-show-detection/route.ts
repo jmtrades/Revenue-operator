@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
 
     if (error) {
       log("error", "no_show_detection.query_failed", { error: error.message });
-      return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
+      return NextResponse.json({ ok: false, error: "Query failed" }, { status: 500 });
     }
     appointments = (data ?? []) as ApptRow[];
   } catch (err) {

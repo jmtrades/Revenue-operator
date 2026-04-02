@@ -144,6 +144,6 @@ export async function GET(req: NextRequest) {
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     log("error", "cron.usage_alerts.unexpected_error", { error: msg });
-    return NextResponse.json({ error: msg }, { status: 500 });
+    return NextResponse.json({ error: "Usage alerts check failed" }, { status: 500 });
   }
 }

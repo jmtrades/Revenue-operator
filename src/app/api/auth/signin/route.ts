@@ -9,11 +9,15 @@ import { createSessionCookie } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/queries";
 import { validateEmail, validatePasswordForSignin, toFriendlySigninError } from "@/lib/auth/validate";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { assertSameOrigin } from "@/lib/http/csrf";
 import { log } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const ip = getClientIp(req);
   const rl = await checkRateLimit(`signin:${ip}`, 10, 60_000);
   if (!rl.allowed) {
