@@ -56,13 +56,13 @@ export async function PATCH(req: NextRequest) {
   const from_name = body.from_name === null || (typeof body.from_name === "string" && body.from_name.trim() === "") ? null : (typeof body.from_name === "string" ? body.from_name.trim() : undefined);
 
   if (existing) {
-    const updates: { provider?: string; from_email?: string; from_name?: string | null; provider_config?: { api_key: string }; updated_at: string } = { updated_at: now };
+    const updates: { provider?: string; from_email?: string; from_name?: string | null; api_key_encrypted?: string; updated_at: string } = { updated_at: now };
     if (body.provider !== undefined) updates.provider = provider;
     if (from_email !== undefined) updates.from_email = from_email;
     if (from_name !== undefined) updates.from_name = from_name;
     if (typeof body.api_key === "string" && body.api_key.trim()) {
       const encrypted = await encrypt(body.api_key.trim());
-      updates.provider_config = { api_key: encrypted };
+      updates.api_key_encrypted = encrypted;
     }
     const { error } = await db.from("workspace_email_config").update(updates).eq("workspace_id", session.workspaceId);
     if (error) return NextResponse.json({ error: "Could not update workspace settings. Please try again." }, { status: 500 });
@@ -72,7 +72,7 @@ export async function PATCH(req: NextRequest) {
     const { error } = await db.from("workspace_email_config").insert({
       workspace_id: session.workspaceId,
       provider,
-      provider_config: apiKeyEnc ? { api_key: apiKeyEnc } : {},
+      api_key_encrypted: apiKeyEnc,
       from_email: from_email,
       from_name: from_name ?? null,
       created_at: now,
