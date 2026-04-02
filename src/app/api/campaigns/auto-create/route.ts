@@ -49,9 +49,10 @@ export async function POST(req: NextRequest) {
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
-    let leadQuery = db.from("leads").select("id, name, phone, email, qualification_score, status")
+    let leadQuery = db.from("leads").select("id, name, phone, email, qualification_score, state")
       .eq("workspace_id", workspace_id)
-      .not("status", "in", "(OPTED_OUT,DO_NOT_CONTACT)")
+      .not("state", "in", '("CLOSED","LOST")')
+      .eq("opt_out", false)
       .not("phone", "is", null);
 
     let campaignName = "";

@@ -18,11 +18,16 @@ import type {
   EventType,
 } from './types';
 
-// Initialize Supabase client
-const supabase = createClient(
-  process.env.SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-);
+// Initialize Supabase client — fail explicitly if credentials are missing
+function getSchedulerDb() {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) {
+    throw new Error("Workflow scheduler requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY");
+  }
+  return createClient(url, key);
+}
+const supabase = getSchedulerDb();
 
 // ============================================================================
 // TEMPLATE RENDERING

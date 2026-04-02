@@ -301,6 +301,10 @@ export async function enrollContact(
   if (!seq) return null;
 
   // Safety: Check if lead already has too many active enrollments
+  // Note: DB-level unique partial index (uq_sequence_enrollments_active) handles duplicate
+  // sequence enrollment races. The count check here is best-effort; under rare concurrent
+  // load a lead may briefly exceed MAX_CONCURRENT_ENROLLMENTS_PER_CONTACT by 1, which is
+  // acceptable since the cron processor re-checks before executing steps.
   const { count: activeCount } = await db
     .from("sequence_enrollments")
     .select("id", { count: "exact", head: true })
@@ -308,7 +312,7 @@ export async function enrollContact(
     .eq("workspace_id", workspaceId)
     .eq("status", "active");
   if ((activeCount ?? 0) >= MAX_CONCURRENT_ENROLLMENTS_PER_CONTACT) {
-    console.warn(`[sequence-safety] Lead ${contactId} already has ${activeCount} active enrollments — skipping new enrollment`);
+    log("warn", `[sequence-safety] Lead ${contactId} already has ${activeCount} active enrollments — skipping new enrollment`);
     return null;
   }
 
@@ -321,7 +325,7 @@ export async function enrollContact(
     .eq("status", "active")
     .maybeSingle();
   if (existing) {
-    console.warn(`[sequence-safety] Lead ${contactId} already enrolled in sequence ${sequenceId} — skipping duplicate`);
+    log("warn", `[sequence-safety] Lead ${contactId} already enrolled in sequence ${sequenceId} — skipping duplicate`);
     return null;
   }
 
@@ -361,7 +365,7 @@ export async function enrollContact(
     // Handle unique constraint violation gracefully (23505 = unique_violation)
     const pgCode = (error as { code?: string }).code;
     if (pgCode === "23505") {
-      console.warn(`[sequence-safety] Concurrent enrollment race caught for lead ${contactId} in sequence ${sequenceId}`);
+      log("warn", `[sequence-safety] Concurrent enrollment race caught for lead ${contactId} in sequence ${sequenceId}`);
       return null;
     }
     log("error", `[sequence-safety] Enrollment insert failed`, { error: error.message });

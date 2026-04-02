@@ -32,42 +32,54 @@ export async function POST(req: NextRequest) {
 
   const db = getDb();
 
-  /* ── Save cancellation reason ────────────────────────── */
-  const reason = body.reason ?? "unspecified";
-  await db.from("cancellation_reasons").insert({
-    workspace_id: workspaceId,
-    reason,
-    created_at: new Date().toISOString(),
-  }).then(() => {});
-
-  /* ── Cancel via Stripe if subscription exists ────────── */
-  const { data: ws } = await db
-    .from("workspaces")
-    .select("stripe_subscription_id, billing_status")
-    .eq("id", workspaceId)
-    .maybeSingle();
-
-  const subId = (ws as { stripe_subscription_id?: string } | null)?.stripe_subscription_id;
-
-  if (subId && process.env.STRIPE_SECRET_KEY) {
-    try {
-      const stripe = (await import("stripe")).default;
-      const stripeClient = new stripe(process.env.STRIPE_SECRET_KEY);
-      await stripeClient.subscriptions.update(subId, {
-        cancel_at_period_end: true,
-        metadata: { cancellation_reason: reason },
-      });
-    } catch (err) {
-      log("error", "[cancel-subscription] Stripe error:", { error: err });
-      // Still proceed — record is saved, Stripe can be reconciled
+  try {
+    /* ── Save cancellation reason ────────────────────────── */
+    const reason = body.reason ?? "unspecified";
+    const { error: insertErr } = await db.from("cancellation_reasons").insert({
+      workspace_id: workspaceId,
+      reason,
+      created_at: new Date().toISOString(),
+    });
+    if (insertErr) {
+      log("error", "[cancel-subscription] Failed to save cancellation reason:", { error: insertErr.message });
     }
+
+    /* ── Cancel via Stripe if subscription exists ────────── */
+    const { data: ws } = await db
+      .from("workspaces")
+      .select("stripe_subscription_id, billing_status")
+      .eq("id", workspaceId)
+      .maybeSingle();
+
+    const subId = (ws as { stripe_subscription_id?: string } | null)?.stripe_subscription_id;
+
+    if (subId && process.env.STRIPE_SECRET_KEY) {
+      try {
+        const stripe = (await import("stripe")).default;
+        const stripeClient = new stripe(process.env.STRIPE_SECRET_KEY);
+        await stripeClient.subscriptions.update(subId, {
+          cancel_at_period_end: true,
+          metadata: { cancellation_reason: reason },
+        });
+      } catch (err) {
+        log("error", "[cancel-subscription] Stripe error:", { error: err });
+        // Still proceed — record is saved, Stripe can be reconciled
+      }
+    }
+
+    /* ── Update workspace status ─────────────────────────── */
+    const { error: updateErr } = await db
+      .from("workspaces")
+      .update({ billing_status: "canceling" })
+      .eq("id", workspaceId);
+    if (updateErr) {
+      log("error", "[cancel-subscription] Failed to update workspace status:", { error: updateErr.message });
+      return NextResponse.json({ error: "Failed to update subscription status" }, { status: 500 });
+    }
+
+    return NextResponse.json({ ok: true, message: "Subscription will cancel at end of billing period." });
+  } catch (err) {
+    log("error", "[cancel-subscription] Unexpected error:", { error: err instanceof Error ? err.message : err });
+    return NextResponse.json({ error: "Cancellation failed" }, { status: 500 });
   }
-
-  /* ── Update workspace status ─────────────────────────── */
-  await db
-    .from("workspaces")
-    .update({ billing_status: "canceling" })
-    .eq("id", workspaceId);
-
-  return NextResponse.json({ ok: true, message: "Subscription will cancel at end of billing period." });
 }
