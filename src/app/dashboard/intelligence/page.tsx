@@ -54,6 +54,7 @@ export default function IntelligencePage() {
       await fetch("/api/dashboard/knowledge-gaps", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ workspace_id: workspaceId, gap_id: gapId, action: "add_answer", answer }),
       });
       setGaps((prev) => prev.filter((g) => g.id !== gapId));
@@ -70,6 +71,7 @@ export default function IntelligencePage() {
     await fetch("/api/dashboard/knowledge-gaps", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ workspace_id: workspaceId, gap_id: gapId, action: "dismiss" }),
     });
     setGaps((prev) => prev.filter((g) => g.id !== gapId));

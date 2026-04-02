@@ -78,7 +78,7 @@ export default function RecordLeadPage() {
 
   const doRecordOutcome = () => {
     if (!openEscalationId) return;
-    fetch(`/api/escalations/${openEscalationId}/ack`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" })
+    fetch(`/api/escalations/${openEscalationId}/ack`, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: "{}" })
       .then((r) => { if (r.ok) { setOpenEscalationId(null); setRecorded(true); } })
       .catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
   };
@@ -90,6 +90,7 @@ export default function RecordLeadPage() {
     fetch("/api/operational/authority-note", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ workspace_id: wid, subject_ref: id, text: authorityNote.trim() }),
     })
       .then((r) => {

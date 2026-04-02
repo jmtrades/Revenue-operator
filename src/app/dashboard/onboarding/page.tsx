@@ -110,6 +110,7 @@ function OnboardingWizard() {
       const ctxRes = await fetch(`/api/workspaces/${wid}/business-context`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           business_name: businessName || t("myBusiness"),
           offer_summary: industry ? `${industry.replace(/_/g, " ")} services` : "",
@@ -133,6 +134,7 @@ function OnboardingWizard() {
       const res = await fetch("/api/onboarding/agent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           workspace_id: wid,
           agent_name: agentName,
@@ -161,6 +163,7 @@ function OnboardingWizard() {
       const res = await fetch("/api/onboarding/teach", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           workspace_id: wid,
           services: services.trim() || undefined,
@@ -186,6 +189,7 @@ function OnboardingWizard() {
       const res = await fetch("/api/integrations/twilio/auto-provision", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ workspace_id: wid }),
       });
       const data = (await res.json().catch(() => ({}))) as { phone_number?: string; error?: string };
@@ -197,6 +201,7 @@ function OnboardingWizard() {
         const fallback = await fetch("/api/onboarding/number", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({ workspace_id: wid }),
         });
         const fallbackData = (await fallback.json().catch(() => ({}))) as { phone_number?: string; stub?: boolean };

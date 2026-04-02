@@ -169,6 +169,7 @@ export default function SettingsPage() {
     const _res = await fetch(`/api/workspaces/${workspaceId}/settings`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({
         preview_mode: previewMode,
         escalation_rules: { enabled: escalationEnabled },
@@ -182,6 +183,7 @@ export default function SettingsPage() {
       await fetch(`/api/workspaces/${workspaceId}/webhook-config`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ endpoint_url: webhookUrl }),
       });
     }
@@ -189,6 +191,7 @@ export default function SettingsPage() {
     await fetch(`/api/workspaces/${workspaceId}/business-context`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({
         ...businessContext,
         pricing_range: businessContext.pricing_range || null,

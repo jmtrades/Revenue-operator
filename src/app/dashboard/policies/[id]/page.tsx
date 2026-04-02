@@ -74,6 +74,7 @@ export default function PolicyEditPage({ params }: { params: Promise<{ id: strin
       const r = await fetch(`/api/enterprise/policies/${policyId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           workspace_id: workspaceId,
           template_id: form.template_id || null,

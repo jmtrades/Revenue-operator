@@ -160,6 +160,7 @@ export default function ContinueProtectionPage() {
               const res = await fetch("/api/billing/checkout", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
+                credentials: "include",
                 body: JSON.stringify({
                   workspace_id: workspaceId,
                   success_url: `${typeof window !== "undefined" ? window.location.origin : ""}/dashboard?checkout=success`,
