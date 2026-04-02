@@ -48,6 +48,7 @@ export async function GET(req: NextRequest) {
         .from("call_sessions")
         .select("id, lead_id, current_node, outcome, workspace_id, external_meeting_id, external_meeting_uuid, provider, matched_lead_id, matched_confidence, call_started_at, call_ended_at, consent_granted, consent_mode, transcript_text, summary, show_status, show_confidence, show_reason")
         .in("lead_id", leadIds)
+        .eq("workspace_id", workspaceId)
         .order("call_started_at", { ascending: false })
         .limit(50);
       sessionsList = byLead ?? [];
