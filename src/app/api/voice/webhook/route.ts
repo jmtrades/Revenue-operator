@@ -145,7 +145,6 @@ export async function POST(req: NextRequest) {
       // Update call_sessions with duration, outcome, and transcript metadata
       const updateData: Record<string, unknown> = {
         call_ended_at: new Date().toISOString(),
-        duration_seconds: payload.duration_seconds,
         outcome: payload.outcome,
         // Quality metrics (best-effort from voice webhook payload)
         answer_latency_ms: null,
@@ -193,21 +192,22 @@ export async function POST(req: NextRequest) {
     // 2. Insert voice_usage record (only if we found a valid call session)
     if (!callSessionId) {
       log("warn", "voice_webhook.skipping_usage_insert", { reason: "no call_session found", call_sid: payload.call_sid });
-    }
-    const { error: usageError } = await db.from("voice_usage").insert({
-      workspace_id: payload.workspace_id,
-      call_session_id: callSessionId,
-      voice_id: payload.voice_id,
-      tts_model: payload.tts_model,
-      input_chars: payload.usage.total_tts_chars,
-      audio_duration_ms: payload.usage.total_tts_duration_ms,
-      ttfb_ms: payload.quality_metrics.avg_ttfb_ms,
-      total_latency_ms: payload.quality_metrics.max_ttfb_ms,
-      was_streaming: true,
-    });
+    } else {
+      const { error: usageError } = await db.from("voice_usage").insert({
+        workspace_id: payload.workspace_id,
+        call_session_id: callSessionId,
+        voice_id: payload.voice_id,
+        tts_model: payload.tts_model,
+        input_chars: payload.usage.total_tts_chars,
+        audio_duration_ms: payload.usage.total_tts_duration_ms,
+        ttfb_ms: payload.quality_metrics.avg_ttfb_ms,
+        total_latency_ms: payload.quality_metrics.max_ttfb_ms,
+        was_streaming: true,
+      });
 
-    if (usageError) {
-      log("error", "voice_webhook.voice_usage_insert_failed", { error: String(usageError) });
+      if (usageError) {
+        log("error", "voice_webhook.voice_usage_insert_failed", { error: String(usageError) });
+      }
     }
   } catch (err) {
     log("error", "voice_webhook.voice_usage_insert_error", { error: err instanceof Error ? err.message : String(err) });

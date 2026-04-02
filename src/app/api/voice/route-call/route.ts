@@ -171,13 +171,16 @@ export async function POST(request: NextRequest) {
     try {
       await db.from("call_sessions").insert({
         workspace_id: workspaceId,
-        twilio_call_sid: twilio.callSid,
-        twilio_from: twilio.from,
-        twilio_to: twilio.to,
-        routing_decision: decision.action,
-        routing_agent_id: decision.agent_id || null,
-        routing_reason: decision.reason,
-        started_at: new Date().toISOString(),
+        external_meeting_id: twilio.callSid,
+        call_started_at: new Date().toISOString(),
+        metadata: {
+          twilio_call_sid: twilio.callSid,
+          twilio_from: twilio.from,
+          twilio_to: twilio.to,
+          routing_decision: decision.action,
+          routing_agent_id: decision.agent_id || null,
+          routing_reason: decision.reason,
+        },
       });
     } catch (err) {
       log("warn", "voice_routing.failed_to_store_event", {

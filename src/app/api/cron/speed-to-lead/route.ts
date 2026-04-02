@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
     .from("phone_configs")
     .select("workspace_id")
     .in("workspace_id", workspaceIds)
-    .eq("active", true);
+    .eq("status", "active");
 
   const activeWorkspaces = new Set((phoneConfigs ?? []).map((p: { workspace_id: string }) => p.workspace_id));
   const toCall = candidates.filter((l) => activeWorkspaces.has(l.workspace_id));
