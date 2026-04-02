@@ -9,6 +9,21 @@ import { useSearchParams } from "next/navigation";
 import { fetchWorkspaceMeCached, getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { PlanChangeModal, type PlanId } from "@/components/PlanChangeModal";
 
+/** Only allow redirects to trusted Stripe domains to prevent open-redirect attacks. */
+function isSafeRedirectUrl(url: string | undefined | null): url is string {
+  if (!url) return false;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "https:" && (
+      parsed.hostname.endsWith(".stripe.com") ||
+      parsed.hostname === "checkout.stripe.com" ||
+      parsed.hostname === "billing.stripe.com"
+    );
+  } catch {
+    return false;
+  }
+}
+
 interface MinutePack {
   id: string;
   minutes: number;
@@ -117,8 +132,11 @@ export default function AppSettingsBillingPage() {
         body: JSON.stringify({ workspace_id: workspaceId, pack_id: packId }),
       });
       const data = (await res.json().catch(() => null)) as { ok?: boolean; url?: string; checkout_url?: string; reason?: string } | null;
-      if (data?.url || data?.checkout_url) {
-        window.location.href = data.url ?? data.checkout_url ?? "";
+      const redirectUrl = data?.url ?? data?.checkout_url;
+      if (isSafeRedirectUrl(redirectUrl)) {
+        window.location.href = redirectUrl;
+      } else if (redirectUrl) {
+        setToast("Invalid checkout URL. Please try again.");
       } else if (data?.reason === "subscription_required") {
         setToast("An active subscription is required to purchase minutes.");
       } else if (data?.reason === "missing_env" || res.status === 503) {
@@ -321,8 +339,11 @@ export default function AppSettingsBillingPage() {
                     }),
                   });
                   const data = (await res.json().catch(() => null)) as { ok?: boolean; url?: string; checkout_url?: string; reason?: string } | null;
-                  if (data?.url || data?.checkout_url) {
-                    window.location.href = data.url ?? data.checkout_url ?? "";
+                  const planRedirectUrl = data?.url ?? data?.checkout_url;
+                  if (isSafeRedirectUrl(planRedirectUrl)) {
+                    window.location.href = planRedirectUrl;
+                  } else if (planRedirectUrl) {
+                    setToast("Invalid checkout URL. Please try again.");
                   } else if (data?.reason === "already_active") {
                     setToast(tBilling("toast.alreadyActive", { defaultValue: "You already have an active subscription." }));
                     loadBillingData();
@@ -385,7 +406,7 @@ export default function AppSettingsBillingPage() {
                 });
                 if (!res.ok) { setToast(tBilling("toast.paymentFailed")); return; }
                 const data = (await res.json().catch(() => null)) as { url?: string } | null;
-                if (data?.url) window.location.href = data.url;
+                if (isSafeRedirectUrl(data?.url)) window.location.href = data.url;
                 else setToast(tBilling("toast.paymentFailed"));
               } catch {
                 setToast(tBilling("toast.paymentFailed"));
@@ -685,7 +706,7 @@ export default function AppSettingsBillingPage() {
                 });
                 if (!res.ok) { setToast(tBilling("toast.paymentFailed")); return; }
                 const data = (await res.json().catch(() => null)) as { url?: string } | null;
-                if (data?.url) window.location.href = data.url;
+                if (isSafeRedirectUrl(data?.url)) window.location.href = data.url;
                 else setToast(tBilling("toast.paymentFailed"));
               } catch { setToast(tBilling("toast.paymentFailed")); }
             }}
@@ -710,7 +731,7 @@ export default function AppSettingsBillingPage() {
               });
               if (!res.ok) { setToast(tBilling("toast.portalFailed")); return; }
               const data = (await res.json().catch(() => null)) as { url?: string } | null;
-              if (data?.url) window.location.href = data.url;
+              if (isSafeRedirectUrl(data?.url)) window.location.href = data.url;
               else setToast(tBilling("toast.portalFailed"));
             } catch { setToast(tBilling("toast.portalFailed")); }
           }}
