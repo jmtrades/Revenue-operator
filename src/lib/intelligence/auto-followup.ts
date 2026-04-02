@@ -51,15 +51,15 @@ export async function triggerAutoFollowUp(params: {
     // Check if lead has opted out
     const { data: leadRow } = await db
       .from("leads")
-      .select("status, phone, email, name, metadata")
+      .select("state, phone, email, name, metadata")
       .eq("id", params.lead_id)
       .maybeSingle();
 
-    const lead = leadRow as { status?: string; phone?: string; email?: string; name?: string; metadata?: Record<string, unknown> } | null;
+    const lead = leadRow as { state?: string; phone?: string; email?: string; name?: string; metadata?: Record<string, unknown> } | null;
     if (!lead) {
       return { action_taken: "skipped", success: false, details: "Lead not found" };
     }
-    if (lead.status === "CLOSED" || lead.status === "LOST") {
+    if (lead.state === "CLOSED" || lead.state === "LOST") {
       return { action_taken: "skipped", success: true, details: "Lead opted out — no follow-up" };
     }
 
