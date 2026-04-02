@@ -99,15 +99,16 @@ export async function PATCH(
       nextMeta = { ...nextMeta, paused_for_followup: body.paused_for_followup };
     }
     if (body.assigned_agent !== undefined) {
-      nextMeta = { ...nextMeta, assigned_agent: body.assigned_agent };
+      const agent = typeof body.assigned_agent === "string" ? body.assigned_agent.slice(0, 100) : body.assigned_agent;
+      nextMeta = { ...nextMeta, assigned_agent: agent };
     }
     const stateInput = body.state != null ? String(body.state).toLowerCase().replace(/\s+/g, "_") : undefined;
     const dbState = stateInput != null ? STATUS_TO_STATE[stateInput] ?? stateInput.toUpperCase() : undefined;
-    const updatePayload: { metadata: Record<string, unknown>; updated_at: string; status?: string } = {
+    const updatePayload: { metadata: Record<string, unknown>; updated_at: string; state?: string } = {
       metadata: nextMeta,
       updated_at: new Date().toISOString(),
     };
-    if (dbState != null) updatePayload.status = dbState;
+    if (dbState != null) updatePayload.state = dbState;
     const { data: updated, error } = await db
       .from("leads")
       .update(updatePayload)

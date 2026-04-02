@@ -147,6 +147,8 @@ export async function POST(req: NextRequest) {
   }
   const { workspace_id, call_sid, call_session_id, recording_url, transcript, summary, send_confirmation_sms } = body;
   if (!workspace_id) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!UUID_RE.test(workspace_id)) return NextResponse.json({ error: "Invalid workspace_id format" }, { status: 400 });
 
   try {
   const db = getDb();

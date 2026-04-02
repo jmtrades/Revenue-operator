@@ -144,8 +144,12 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   const db = getDb();
   let leadId = body.lead_id?.trim() || null;
+  if (leadId && !UUID_RE.test(leadId)) {
+    return NextResponse.json({ error: "Invalid lead_id format" }, { status: 400 });
+  }
   if (!leadId && contactName?.trim() && contactPhone?.trim()) {
     const { data: newLead, error: leadErr } = await db
       .from("leads")
@@ -155,7 +159,7 @@ export async function POST(req: NextRequest) {
         phone: contactPhone.trim(),
         email: null,
         company: null,
-        status: "NEW",
+        state: "NEW",
         metadata: { source: "calendar_manual" },
       })
       .select("id")

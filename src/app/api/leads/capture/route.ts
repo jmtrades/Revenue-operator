@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
 
-  const email = body.email?.trim().toLowerCase();
+  const email = typeof body.email === "string" ? body.email.trim().toLowerCase().slice(0, 254) : "";
   if (!email || !email.includes("@")) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
