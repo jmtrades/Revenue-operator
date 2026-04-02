@@ -117,16 +117,17 @@ export function OperationsSummary({
         const response = await apiFetch<{
           metrics: Array<{
             response_time_avg_seconds: number | null;
-            no_shows: number;
+            calls_missed: number;
             no_shows_recovered: number;
-            follow_ups_sent: number;
           }>;
           totals: {
             response_time_avg_seconds: number | null;
-            no_shows: number;
-            no_shows_recovered: number;
-            follow_ups_sent: number;
             calls_answered: number;
+            calls_missed: number;
+            no_shows_recovered: number;
+            appointments_booked: number;
+            leads_captured: number;
+            revenue_estimated_cents: number;
           };
         }>(`/api/analytics/metrics?${params}`);
 
@@ -137,17 +138,17 @@ export function OperationsSummary({
 
         const noShowRate =
           totals.calls_answered > 0
-            ? (totals.no_shows / totals.calls_answered) * 100
+            ? (totals.calls_missed / totals.calls_answered) * 100
             : 0;
 
         const reactivationRate =
-          totals.no_shows > 0
-            ? (totals.no_shows_recovered / totals.no_shows) * 100
+          totals.calls_missed > 0
+            ? (totals.no_shows_recovered / totals.calls_missed) * 100
             : 0;
 
         const followUpRate =
           totals.calls_answered > 0
-            ? (totals.follow_ups_sent / totals.calls_answered) * 100
+            ? (totals.appointments_booked / totals.calls_answered) * 100
             : 0;
 
         setMetrics({
