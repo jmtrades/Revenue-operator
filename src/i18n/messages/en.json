@@ -921,6 +921,7 @@
     },
     "kpis": {
       "callsHandled": "Calls executed",
+      "pendingFollowups": "Pending Follow-ups",
       "answerRate": "Answer rate",
       "leadsCreated": "Leads created",
       "appointmentsBooked": "Revenue opportunities created",

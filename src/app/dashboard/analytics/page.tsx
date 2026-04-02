@@ -173,7 +173,26 @@ export default function AnalyticsPage() {
         </div>
         <button
           type="button"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border transition-colors hover:bg-[var(--bg-hover)]"
+          onClick={() => {
+            if (!metrics) return;
+            const csv = [
+              "Metric,Value",
+              `Calls Answered,${metrics.callsAnswered}`,
+              `Appointments Booked,${metrics.appointmentsBooked}`,
+              `Conversion Rate,${metrics.conversionRate}%`,
+              metrics.hasJobValue ? `Estimated Revenue,$${metrics.estimatedRevenue}` : "",
+              metrics.hasJobValue ? `Weekly Revenue,$${metrics.weeklyRevenue}` : "",
+            ].filter(Boolean).join("\n");
+            const blob = new Blob([csv], { type: "text/csv" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `analytics-${new Date().toISOString().split("T")[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+          }}
+          disabled={!metrics}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border transition-colors hover:bg-[var(--bg-hover)] disabled:opacity-50"
           style={{ borderColor: "var(--border-default)", color: "var(--text-secondary)" }}
         >
           <Download className="w-4 h-4" />
@@ -227,26 +246,33 @@ export default function AnalyticsPage() {
               label="Calls Answered"
               value={metrics?.callsAnswered || 0}
               icon={Phone}
-              trend={{ value: 12, positive: true }}
             />
             <RevenueKPI
               label="Appointments Booked"
               value={metrics?.appointmentsBooked || 0}
               icon={Calendar}
-              trend={{ value: 8, positive: true }}
             />
             <RevenueKPI
               label="Conversion Rate"
               value={metrics?.conversionRate || 0}
               suffix="%"
               icon={TrendingUp}
-              trend={{ value: 3, positive: true }}
             />
-            <RevenueKPI
-              label="Appointments Booked"
-              value={metrics?.appointmentsBooked || 0}
-              icon={Clock}
-            />
+            {metrics?.hasJobValue ? (
+              <RevenueKPI
+                label="Weekly Revenue"
+                value={metrics.weeklyRevenue}
+                prefix="$"
+                icon={Clock}
+              />
+            ) : (
+              <RevenueKPI
+                label="Booking Rate"
+                value={metrics?.conversionRate || 0}
+                suffix="%"
+                icon={Clock}
+              />
+            )}
           </div>
 
           {/* Secondary metrics */}

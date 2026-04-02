@@ -130,6 +130,13 @@ export default function PipelinePage() {
     setCards((prev) =>
       prev.map((c) => (c.id === dragging ? { ...c, stage, daysInStage: 0 } : c))
     );
+    // Persist the stage change to the backend
+    fetch(`/api/leads/${dragging}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ state: stage }),
+    }).catch(() => { /* non-blocking */ });
     setDragging(null);
     setDragOver(null);
   }, [dragging]);
@@ -139,21 +146,38 @@ export default function PipelinePage() {
     setDragOver(null);
   }, []);
 
-  const handleAddLead = useCallback(() => {
-    if (!newLead.name.trim()) return;
-    const card: PipelineCard = {
-      id: `new-${Date.now()}`,
-      name: newLead.name.trim(),
-      company: newLead.company.trim() || null,
-      estimatedValue: parseInt(newLead.value) || 0,
-      daysInStage: 0,
-      source: "phone",
-      stage: "NEW",
-    };
-    setCards((prev) => [card, ...prev]);
+  const handleAddLead = useCallback(async () => {
+    if (!newLead.name.trim() || !workspaceId) return;
+    try {
+      const res = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          workspace_id: workspaceId,
+          name: newLead.name.trim(),
+          phone: "—",
+          company: newLead.company.trim() || undefined,
+          metadata: { estimated_value: parseInt(newLead.value) || 0 },
+        }),
+      });
+      if (res.ok) {
+        const created = await res.json();
+        const card: PipelineCard = {
+          id: created.id ?? `new-${Date.now()}`,
+          name: newLead.name.trim(),
+          company: newLead.company.trim() || null,
+          estimatedValue: parseInt(newLead.value) || 0,
+          daysInStage: 0,
+          source: "phone",
+          stage: "NEW",
+        };
+        setCards((prev) => [card, ...prev]);
+      }
+    } catch { /* non-blocking */ }
     setNewLead({ name: "", company: "", value: "" });
     setShowAddModal(false);
-  }, [newLead]);
+  }, [newLead, workspaceId]);
 
   if (!workspaceId) {
     return (
@@ -172,7 +196,7 @@ export default function PipelinePage() {
           icon="pulse"
           title="Your pipeline is empty"
           subtitle="Import leads or add them manually to see your deals flow through each stage. Leads automatically move through the pipeline as your AI operator qualifies and books them."
-          primaryAction={{ label: "Import Leads", href: "/app/leads?import=1" }}
+          primaryAction={{ label: "Import Leads", href: "/dashboard/import" }}
           secondaryAction={{ label: "Add Lead", onClick: () => setShowAddModal(true) }}
         />
         {/* Add lead modal still accessible from empty state */}

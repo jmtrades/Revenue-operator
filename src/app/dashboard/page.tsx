@@ -227,17 +227,17 @@ export default function SituationPage() {
           <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("stats.activeLeads")}</p>
         </div>
 
-        <div className="rounded-lg border p-6" style={{ borderColor: "var(--border-default)", background: "var(--card)", borderWidth: "1px" }}>
+        <Link href={`/dashboard/follow-ups${searchParams.get("workspace_id") ? `?workspace_id=${searchParams.get("workspace_id")}` : ""}`} className="rounded-lg border p-6 transition-[box-shadow,border-opacity] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] hover:shadow-md hover:border-opacity-50 active:scale-[0.97]" style={{ borderColor: "var(--border-default)", background: "var(--card)", borderWidth: "1px" }}>
           <div className="flex items-start justify-between mb-3">
             <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: "var(--meaning-blue)" }}>
               <CheckCircle2 size={20} color="white" />
             </div>
           </div>
           <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
-            {stats?.recent_calls ?? "0"}
+            {stats?.pending_followups ?? "0"}
           </p>
-          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("kpis.callsHandled")}</p>
-        </div>
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("kpis.pendingFollowups")}</p>
+        </Link>
 
         <Link href={`/dashboard/leads?filter=followup${searchParams.get("workspace_id") ? `&workspace_id=${searchParams.get("workspace_id")}` : ""}`} className="rounded-lg border p-6 transition-[box-shadow,border-opacity] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] hover:shadow-md hover:border-opacity-50 active:scale-[0.97]" style={{ borderColor: "var(--border-default)", background: "var(--card)", borderWidth: "1px" }}>
           <div className="flex items-start justify-between mb-3">
