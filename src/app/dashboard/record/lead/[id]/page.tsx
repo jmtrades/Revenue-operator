@@ -70,7 +70,7 @@ export default function RecordLeadPage() {
 
   useEffect(() => {
     if (!lead?.workspace_id) return;
-    fetch(`/api/operational/public-work-ref?workspace_id=${encodeURIComponent(lead.workspace_id)}`)
+    fetch(`/api/operational/public-work-ref?workspace_id=${encodeURIComponent(lead.workspace_id)}`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : null))
       .then((d: { path?: string } | null) => (d?.path ? setPublicRecordPath(d.path) : setPublicRecordPath(null)))
       .catch(() => setPublicRecordPath(null));
@@ -110,7 +110,7 @@ export default function RecordLeadPage() {
     }
     const wid = lead?.workspace_id;
     if (!wid) return;
-    fetch(`/api/operational/absence-impact?workspace_id=${encodeURIComponent(wid)}`)
+    fetch(`/api/operational/absence-impact?workspace_id=${encodeURIComponent(wid)}`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : []))
       .then((lines: string[]) => {
         setAbsenceModal({ lines: Array.isArray(lines) ? lines : [], onRecord: doRecordOutcome });
@@ -125,7 +125,7 @@ export default function RecordLeadPage() {
       doRecordAuthorityNote();
       return;
     }
-    fetch(`/api/operational/absence-impact?workspace_id=${encodeURIComponent(wid)}`)
+    fetch(`/api/operational/absence-impact?workspace_id=${encodeURIComponent(wid)}`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : []))
       .then((lines: string[]) => {
         setAbsenceModal({ lines: Array.isArray(lines) ? lines : [], onRecord: doRecordAuthorityNote });

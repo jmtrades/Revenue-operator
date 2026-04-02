@@ -188,7 +188,7 @@ export default function LeadViewPage() {
 
   const recordDecision = () => {
     if (!openEscalationId) return;
-    fetch(`/api/escalations/${openEscalationId}/ack`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" })
+    fetch(`/api/escalations/${openEscalationId}/ack`, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: "{}" })
       .then((r) => {
         if (r.ok) {
           setOpenEscalationId(null);

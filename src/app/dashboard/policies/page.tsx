@@ -27,7 +27,7 @@ export default function PoliciesPage() {
       return;
     }
     setLoading(true);
-    fetch(`/api/enterprise/policies?workspace_id=${encodeURIComponent(workspaceId)}`)
+    fetch(`/api/enterprise/policies?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
       .then((r) => r.json())
       .then((d) => (d.ok && Array.isArray(d.policies) ? setPolicies(d.policies) : []))
       .finally(() => setLoading(false));

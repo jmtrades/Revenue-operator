@@ -396,7 +396,7 @@ function TopBar() {
       setAmbient(null);
       return;
     }
-    fetch(`/api/operational/ambient-state?workspace_id=${encodeURIComponent(workspaceId)}`)
+    fetch(`/api/operational/ambient-state?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => (d?.line != null ? setAmbient({ line: d.line, institutional_state: d.institutional_state ?? "none" }) : setAmbient(null)))
       .catch(() => setAmbient(null));

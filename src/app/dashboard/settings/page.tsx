@@ -70,7 +70,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     if (!workspaceId) return;
-    fetch(`/api/workspaces/${workspaceId}/settings`)
+    fetch(`/api/workspaces/${workspaceId}/settings`, { credentials: "include" })
       .then((r) => r.json())
       .then((d) => {
         setPreviewMode(d.preview_mode ?? false);
@@ -96,21 +96,21 @@ export default function SettingsPage() {
         }
       })
       .catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
-    fetch(`/api/workspaces/${workspaceId}/webhook-config`)
+    fetch(`/api/workspaces/${workspaceId}/webhook-config`, { credentials: "include" })
       .then((r) => r.ok ? r.json() : Promise.resolve({ endpoint_url: "" }))
       .then((d: { endpoint_url?: string }) => setWebhookUrl(d?.endpoint_url ?? ""))
       .catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
-    fetch(`/api/workspaces/${workspaceId}/zoom/health`)
+    fetch(`/api/workspaces/${workspaceId}/zoom/health`, { credentials: "include" })
       .then((r) => r.ok ? r.json() : Promise.resolve({ connected: false }))
       .then(setZoomHealth)
       .catch(() => setZoomHealth({ connected: false }));
-    fetch(`/api/billing/status?workspace_id=${encodeURIComponent(workspaceId)}`)
+    fetch(`/api/billing/status?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
       .then((r) => r.ok ? r.json() : Promise.resolve(null))
       .then((d: { error?: string; renewal_at?: string | null; billing_status?: string } | null) =>
         d?.error ? null : setBillingStatus(d)
       )
       .catch(() => setBillingStatus(null));
-    fetch(`/api/workspaces/${workspaceId}/business-context`)
+    fetch(`/api/workspaces/${workspaceId}/business-context`, { credentials: "include" })
       .then((r) => r.ok ? r.json() : Promise.resolve(null))
       .then((d) => {
         if (d && !d.error) {
@@ -142,7 +142,7 @@ export default function SettingsPage() {
       })
       .catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
     // Fetch active phone number
-    fetch("/api/integrations/twilio/auto-provision", { method: "POST" })
+    fetch("/api/integrations/twilio/auto-provision", { method: "POST", credentials: "include" })
       .then((r) => r.ok ? r.json() : Promise.resolve(null))
       .then((d: { phone_number?: string } | null) => {
         if (d?.phone_number) {
@@ -158,7 +158,7 @@ export default function SettingsPage() {
   }, [workspaceId]);
 
   useEffect(() => {
-    fetch("/api/auth/session")
+    fetch("/api/auth/session", { credentials: "include" })
       .then((r) => r.json())
       .then((d: { session?: { email?: string } | null }) => setSessionEmail(d?.session?.email ?? null))
       .catch(() => setSessionEmail(null));
@@ -567,7 +567,7 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
                     type="button"
                     onClick={async () => {
                       if (!workspaceId) return;
-                      const r = await fetch(`/api/system/absence-statements?workspace_id=${encodeURIComponent(workspaceId)}`);
+                      const r = await fetch(`/api/system/absence-statements?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" });
                       const d = (await (r.ok ? r.json() : Promise.resolve(null))) as {
                         what_would_fail?: string[];
                         recent_operation?: string[];
@@ -584,7 +584,7 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
                         setDisconnectStatements(lines);
                       } else {
                         setZoomDisconnecting(true);
-                        await fetch(`/api/workspaces/${workspaceId}/zoom/disconnect`, { method: "POST" });
+                        await fetch(`/api/workspaces/${workspaceId}/zoom/disconnect`, { method: "POST", credentials: "include" });
                         setZoomHealth({ connected: false });
                         setZoomDisconnecting(false);
                       }
@@ -614,7 +614,7 @@ Authorization: Bearer <INBOUND_WEBHOOK_SECRET>
                         onClick={async () => {
                           if (!workspaceId) return;
                           setZoomDisconnecting(true);
-                          await fetch(`/api/workspaces/${workspaceId}/zoom/disconnect`, { method: "POST" });
+                          await fetch(`/api/workspaces/${workspaceId}/zoom/disconnect`, { method: "POST", credentials: "include" });
                           setZoomHealth({ connected: false });
                           setZoomDisconnecting(false);
                           setDisconnectStatements(null);

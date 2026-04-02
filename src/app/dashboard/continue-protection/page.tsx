@@ -28,8 +28,8 @@ export default function ContinueProtectionPage() {
     if (!workspaceId) return;
     setLoading(true);
     Promise.all([
-      fetch(`/api/billing/continuation-context?workspace_id=${encodeURIComponent(workspaceId)}`).then((r) => r.json()),
-      fetch(`/api/billing/status?workspace_id=${encodeURIComponent(workspaceId)}`).then((r) => r.json()),
+      fetch(`/api/billing/continuation-context?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }).then((r) => r.json()),
+      fetch(`/api/billing/status?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }).then((r) => r.json()),
     ])
       .then(([ctx, status]) => {
         setContext(ctx?.error ? null : ctx);

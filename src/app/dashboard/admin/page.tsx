@@ -15,7 +15,7 @@ export default function AdminDLQPage() {
   const [loading, setLoading] = useState(true);
 
   const fetchJobs = async () => {
-    const res = await fetch("/api/admin/dlq");
+    const res = await fetch("/api/admin/dlq", { credentials: "include" });
     const data = await res.json();
     setJobs(data.jobs ?? []);
     setLoading(false);
@@ -29,6 +29,7 @@ export default function AdminDLQPage() {
     await fetch("/api/admin/dlq", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ job_id: jobId }),
     });
     fetchJobs();

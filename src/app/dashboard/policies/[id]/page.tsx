@@ -49,7 +49,7 @@ export default function PolicyEditPage({ params }: { params: Promise<{ id: strin
       return;
     }
     setLoading(true);
-    fetch(`/api/enterprise/policies/${policyId}?workspace_id=${encodeURIComponent(workspaceId)}`)
+    fetch(`/api/enterprise/policies/${policyId}?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
       .then((r) => r.json())
       .then((d) => {
         if (d.ok && d.policy) {

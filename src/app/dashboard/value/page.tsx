@@ -32,7 +32,7 @@ function ValuePageContent() {
 
   useEffect(() => {
     if (!workspaceId) return;
-    fetch(`/api/value-reconstruction?workspace_id=${encodeURIComponent(workspaceId)}`)
+    fetch(`/api/value-reconstruction?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
       .then((r) => r.json())
       .then((d) => {
         setData(d);
