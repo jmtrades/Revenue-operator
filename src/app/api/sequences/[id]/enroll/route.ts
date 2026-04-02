@@ -168,7 +168,7 @@ export async function POST(
       .from("sequence_enrollments")
       .select("id")
       .eq("sequence_id", id)
-      .eq("lead_id", contact_id)
+      .eq("contact_id", contact_id)
       .in("status", ["active", "paused"])
       .maybeSingle();
 

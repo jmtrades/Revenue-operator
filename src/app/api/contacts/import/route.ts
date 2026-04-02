@@ -136,7 +136,7 @@ export async function POST(req: NextRequest) {
       }));
     } catch (e) {
       if (e instanceof Error && e.message.includes("exceeds maximum")) {
-        return NextResponse.json({ error: e.message }, { status: 400 });
+        return NextResponse.json({ error: "File exceeds maximum allowed size" }, { status: 400 });
       }
       return NextResponse.json({ error: "Invalid CSV format" }, { status: 400 });
     }
