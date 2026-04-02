@@ -290,10 +290,7 @@ export default function LeadsPage() {
 
       {!liveLeads && (
         <div className="flex items-center gap-2 mb-3 text-xs text-[var(--text-tertiary)]">
-          <span className="px-2 py-0.5 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-300">
-            Sample data
-          </span>
-          <span>Leads from your AI operator and forms will appear here automatically.</span>
+          <span>Loading leads...</span>
         </div>
       )}
 

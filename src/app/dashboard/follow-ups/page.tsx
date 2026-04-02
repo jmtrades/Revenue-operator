@@ -32,53 +32,6 @@ interface FollowUpItem {
   channel: "sms" | "email" | "call";
 }
 
-const DEMO_FOLLOW_UPS: FollowUpItem[] = [
-  {
-    id: "1",
-    contactName: "Sarah Martinez",
-    phone: "+1 (480) 555-0198",
-    sequenceName: "Inbound call → booking",
-    currentStep: 2,
-    totalSteps: 3,
-    dueAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
-    status: "active",
-    channel: "sms",
-  },
-  {
-    id: "2",
-    contactName: "James Lee",
-    phone: "+1 (602) 555-0142",
-    sequenceName: "Reactivation — 90 days",
-    currentStep: 1,
-    totalSteps: 2,
-    dueAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-    status: "overdue",
-    channel: "sms",
-  },
-  {
-    id: "3",
-    contactName: "Dr. Megan Price",
-    phone: "+1 (512) 555-0110",
-    sequenceName: "No-show recovery",
-    currentStep: 3,
-    totalSteps: 3,
-    dueAt: new Date(Date.now() - 20 * 60 * 1000).toISOString(),
-    status: "completed",
-    channel: "email",
-  },
-  {
-    id: "4",
-    contactName: "Carlos Rivera",
-    phone: "+1 (214) 555-0177",
-    sequenceName: "New lead follow-up",
-    currentStep: 1,
-    totalSteps: 3,
-    dueAt: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-    status: "paused",
-    channel: "call",
-  },
-];
-
 type FilterKey = "all" | "due" | "overdue" | "paused";
 
 function statusConfig(status: FollowUpStatus): { label: string; color: string } {

@@ -25,29 +25,6 @@ interface DailyRevenue {
   noShowRecovery: number;
 }
 
-function generateDemoData(days: number): DailyRevenue[] {
-  const data: DailyRevenue[] = [];
-  const now = new Date();
-  for (let i = days - 1; i >= 0; i--) {
-    const d = new Date(now);
-    d.setDate(d.getDate() - i);
-    const dayOfWeek = d.getDay();
-    const weekdayMultiplier = dayOfWeek === 0 || dayOfWeek === 6 ? 0.4 : 1;
-    const baseInbound = Math.floor((180 + Math.random() * 280) * weekdayMultiplier);
-    const baseFollowUp = Math.floor((60 + Math.random() * 140) * weekdayMultiplier);
-    const baseOutbound = Math.floor((30 + Math.random() * 90) * weekdayMultiplier);
-    const baseNoShow = Math.floor((20 + Math.random() * 60) * weekdayMultiplier);
-    data.push({
-      date: d.toISOString().split("T")[0],
-      inbound: baseInbound,
-      followUps: baseFollowUp,
-      outbound: baseOutbound,
-      noShowRecovery: baseNoShow,
-    });
-  }
-  return data;
-}
-
 function formatShortDate(dateStr: string): string {
   const d = new Date(dateStr + "T00:00:00");
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
