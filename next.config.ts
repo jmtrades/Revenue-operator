@@ -139,7 +139,9 @@ const nextConfig: NextConfig = {
             value: "camera=(), microphone=(self), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()",
           },
           // Preconnect to external services for faster first-byte
-          { key: "Link", value: `<${process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://db.ucjbsftixnnbmuodholg.supabase.co"}>; rel=preconnect` },
+          ...(process.env.NEXT_PUBLIC_SUPABASE_URL
+            ? [{ key: "Link", value: `<${process.env.NEXT_PUBLIC_SUPABASE_URL}>; rel=preconnect` }]
+            : []),
           { key: "Link", value: "<https://js.stripe.com>; rel=preconnect" },
         ],
       },
