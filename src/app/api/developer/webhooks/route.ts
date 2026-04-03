@@ -72,7 +72,14 @@ export async function POST(req: NextRequest) {
   const url = typeof body.url === "string" ? body.url.trim() : "";
   if (!url) return NextResponse.json({ error: "url required" }, { status: 400 });
   try {
-    new URL(url);
+    const parsed = new URL(url);
+    if (!["http:", "https:"].includes(parsed.protocol)) {
+      return NextResponse.json({ error: "Only http/https URLs are allowed" }, { status: 400 });
+    }
+    const host = parsed.hostname;
+    if (/^(localhost|127\.\d|10\.\d|192\.168\.\d|172\.(1[6-9]|2\d|3[01])\.)/.test(host) || host === "[::1]") {
+      return NextResponse.json({ error: "Private/internal URLs are not allowed" }, { status: 400 });
+    }
   } catch {
     return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
   }

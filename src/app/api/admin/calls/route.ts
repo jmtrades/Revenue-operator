@@ -42,8 +42,8 @@ export async function GET(req: NextRequest) {
       summary: r.summary ?? null,
       created_at: r.created_at ?? "",
     }));
-  } catch {
-    // table may not exist
+  } catch (err) {
+    console.error("[admin/calls] Query failed:", err);
   }
   return NextResponse.json({ calls: list });
 }

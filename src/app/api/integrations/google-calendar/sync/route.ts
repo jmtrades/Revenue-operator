@@ -12,6 +12,7 @@ import {
   getGoogleCalendarClientSecret,
 } from "@/lib/integrations/google-calendar-env";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { decrypt, encrypt } from "@/lib/encryption";
 
 export const dynamic = "force-dynamic";
 
@@ -33,18 +34,21 @@ async function getAccessToken(workspaceId: string): Promise<string | null> {
   } | null;
   if (!row?.access_token) return null;
 
+  const accessToken = await decrypt(row.access_token);
+  const refreshToken = row.refresh_token ? await decrypt(row.refresh_token) : null;
+
   const expiresAt = row.expires_at ? new Date(row.expires_at).getTime() : 0;
-  if (Date.now() < expiresAt - 60_000) return row.access_token;
+  if (Date.now() < expiresAt - 60_000) return accessToken;
 
   // Token expired, refresh it
   const clientId = getGoogleCalendarClientId();
   const clientSecret = getGoogleCalendarClientSecret();
-  if (!clientId || !clientSecret || !row.refresh_token) return null;
+  if (!clientId || !clientSecret || !refreshToken) return null;
 
   const body = new URLSearchParams({
     client_id: clientId,
     client_secret: clientSecret,
-    refresh_token: row.refresh_token,
+    refresh_token: refreshToken,
     grant_type: "refresh_token",
   });
 
@@ -65,10 +69,11 @@ async function getAccessToken(workspaceId: string): Promise<string | null> {
     ? new Date(Date.now() + json.expires_in * 1000).toISOString()
     : null;
 
+  const newAccessEnc = json.access_token ? await encrypt(json.access_token) : null;
   await db
     .from("google_calendar_tokens")
     .update({
-      access_token: json.access_token,
+      access_token: newAccessEnc,
       expires_at: newExpires,
       updated_at: new Date().toISOString(),
     })

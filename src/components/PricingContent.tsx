@@ -179,7 +179,7 @@ const FAQS = [
   { q: "Can I cancel anytime?", a: "Yes. No long-term contracts. Cancel in your dashboard or pause for 30 days. We'll ask why — your feedback matters." },
   { q: "Does Revenue Operator integrate with my calendar/CRM?", a: "Yes. Growth and Business tiers get CRM webhook and integrations with Google Calendar, Cal.com, Zapier, and Make.com. Business adds API access for custom integrations." },
   { q: "What's included in your support?", a: "Starter: Email support. Growth: Priority email support. Business: Priority email + phone support + dedicated account manager." },
-  { q: "Can I test Revenue Operator free first?", a: "Absolutely. Full access to all features. Cancel anytime. Your AI operator will be answering calls in under 3 minutes." },
+  { q: "Can I test Revenue Operator free first?", a: "Yes — start a 14-day free trial with full access to every feature. A card is required to start, but you won't be charged until day 15. Cancel anytime before then and pay nothing." },
   { q: "How does Revenue Operator work?", a: "Revenue Operator answers all your incoming calls with an AI phone agent, qualifies leads in real-time, books appointments directly into your calendar, and automatically follows up with contacts to move them through your pipeline." },
   { q: "Can I white-label this for my clients?", a: "Yes, white-label and agency features are available. Contact our sales team to discuss custom white-label, multi-client, and reseller options." },
 ];
@@ -658,7 +658,7 @@ export function PricingContent() {
                 <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
               ))}
               <span className="text-xs ml-2" style={{ color: "var(--text-secondary)" }}>
-                4.9/5 from 3,200+ reviews
+                Loved by businesses nationwide
               </span>
             </div>
 

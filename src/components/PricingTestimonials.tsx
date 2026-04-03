@@ -6,7 +6,7 @@ import { SOCIAL_PROOF } from "@/lib/constants";
 const TESTIMONIALS = [
   {
     quote: "We went from missing after-hours calls to answering every single one overnight. The AI books appointments, follows up on quotes, and routes urgent calls — all automatically.",
-    name: "",
+    name: "Home Services Owner",
     role: "Owner",
     company: "Home Services Company — Texas",
     metric: "24/7",
@@ -16,7 +16,7 @@ const TESTIMONIALS = [
   },
   {
     quote: "Our front desk was drowning in calls. Revenue Operator handles the full volume for us now. No-shows dropped significantly because the AI actually follows up with reminders and reschedules cancellations.",
-    name: "",
+    name: "Dental Practice Owner",
     role: "Practice Owner",
     company: "Multi-Location Dental — Florida",
     metric: "100%",
@@ -26,7 +26,7 @@ const TESTIMONIALS = [
   },
   {
     quote: "I was skeptical about AI handling legal intake calls. Then it booked consultations its first night — at 2 AM. The voice quality is so natural that callers don't realize it's AI.",
-    name: "",
+    name: "Law Firm Partner",
     role: "Managing Partner",
     company: "Personal Injury Firm — Illinois",
     metric: "24/7",
@@ -36,7 +36,7 @@ const TESTIMONIALS = [
   },
   {
     quote: "We manage crews across multiple states. Storm season used to mean most calls went to voicemail — those are high-value jobs just evaporating. Now every call gets answered and scheduled instantly.",
-    name: "",
+    name: "Roofing Company CEO",
     role: "CEO",
     company: "Roofing & Restoration — Texas",
     metric: "100%",
@@ -46,7 +46,7 @@ const TESTIMONIALS = [
   },
   {
     quote: "Setup literally took minutes. That's not marketing speak — I timed it. Our AI operator was taking calls before I finished my coffee. It handled the full workflow from day one.",
-    name: "",
+    name: "Auto Service Owner",
     role: "Owner",
     company: "Auto Service Center — Georgia",
     metric: "< 5 min",
@@ -56,7 +56,7 @@ const TESTIMONIALS = [
   },
   {
     quote: "I run a white-label agency. My clients think the AI is a real receptionist on their team. Multiple clients, zero complaints, and consistent margin on the resell.",
-    name: "",
+    name: "Agency Founder",
     role: "Founder",
     company: "Digital Marketing Agency — Remote",
     metric: "White-label",

@@ -8,6 +8,7 @@ import {
   getGoogleCalendarClientId,
   getGoogleCalendarClientSecret,
 } from "@/lib/integrations/google-calendar-env";
+import { encrypt } from "@/lib/encryption";
 import { verifyOAuthState } from "@/lib/integrations/oauth-state";
 
 export const dynamic = "force-dynamic";
@@ -66,12 +67,15 @@ export async function GET(req: NextRequest) {
     : null;
 
   try {
+    const accessEnc = tokens.access_token ? await encrypt(tokens.access_token) : null;
+    const refreshEnc = tokens.refresh_token ? await encrypt(tokens.refresh_token) : null;
+
     const db = getDb();
     const { error: upsertErr } = await db.from("google_calendar_tokens").upsert(
       {
         workspace_id: workspaceId,
-        access_token: tokens.access_token ?? null,
-        refresh_token: tokens.refresh_token ?? null,
+        access_token: accessEnc,
+        refresh_token: refreshEnc,
         expires_at: expiresAt,
         updated_at: new Date().toISOString(),
       },

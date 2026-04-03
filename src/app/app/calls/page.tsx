@@ -548,7 +548,7 @@ export default function CallsPage() {
                     {c.matched_lead?.name ? t("calls.table.agent") : "—"}
                   </td>
                   <td className="py-3 px-4 text-right">
-                    <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center justify-end gap-1 opacity-40 group-hover:opacity-100 focus-within:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
                       <button
                         type="button"
                         aria-label={t("calls.playRecording")}

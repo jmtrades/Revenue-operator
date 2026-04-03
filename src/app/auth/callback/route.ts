@@ -4,10 +4,24 @@ import { createSessionCookie } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/queries";
 import { getBaseUrl } from "@/lib/runtime/base-url";
 
+/** Only allow relative paths that start with / and stay on the same origin. */
+function sanitizeRedirectPath(raw: string): string {
+  const fallback = "/app/dashboard";
+  if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return fallback;
+  try {
+    const parsed = new URL(raw, "http://localhost");
+    // Block protocol-relative, external hosts, or non-path redirects
+    if (parsed.hostname !== "localhost") return fallback;
+    return parsed.pathname + parsed.search + parsed.hash;
+  } catch {
+    return fallback;
+  }
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/app/dashboard";
+  const next = sanitizeRedirectPath(searchParams.get("next") ?? "/app/dashboard");
   const origin = getBaseUrl(new URL(request.url).origin);
 
   if (!code) {

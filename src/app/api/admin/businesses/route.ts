@@ -37,8 +37,8 @@ export async function GET(req: NextRequest) {
       owner_id: r.owner_id ?? null,
       created_at: r.created_at ?? "",
     }));
-  } catch {
-    // table may not exist
+  } catch (err) {
+    console.error("[admin/businesses] Query failed:", err);
   }
   return NextResponse.json({ businesses: list });
 }
