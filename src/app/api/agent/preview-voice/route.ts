@@ -81,6 +81,7 @@ export async function POST(req: NextRequest) {
           style: clamp(defaults.style, 0, 1),
           use_speaker_boost: defaults.useSpeakerBoost,
         }),
+        signal: AbortSignal.timeout(15_000),
       },
     );
 

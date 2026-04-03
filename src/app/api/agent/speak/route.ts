@@ -111,6 +111,7 @@ export async function POST(req: NextRequest) {
           style: voiceConfig.style,
           use_speaker_boost: voiceConfig.useSpeakerBoost,
         }),
+        signal: AbortSignal.timeout(15_000),
       }
     );
 

@@ -41,6 +41,7 @@ async function getAccessToken(workspaceId: string): Promise<string | null> {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: body.toString(),
+    signal: AbortSignal.timeout(15_000),
   });
   if (!res.ok) return null;
   const json = (await res.json()) as { access_token?: string; expires_in?: number };
@@ -84,6 +85,7 @@ export async function GET(req: NextRequest) {
         timeMax,
         items: [{ id: "primary" }],
       }),
+      signal: AbortSignal.timeout(15_000),
     }
   );
 

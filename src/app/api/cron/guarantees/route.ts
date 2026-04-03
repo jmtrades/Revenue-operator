@@ -36,6 +36,7 @@ export async function GET(request: NextRequest) {
         const res = await fetch(`${base.replace(/\/$/, "")}${path}`, {
           headers: { Authorization: `Bearer ${token}` },
           cache: "no-store",
+          signal: AbortSignal.timeout(30_000),
         });
         if (res.ok) ran.push(path);
       } catch (err) {

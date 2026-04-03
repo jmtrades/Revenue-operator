@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const pageRes = await fetch(url);
+    const pageRes = await fetch(url, { signal: AbortSignal.timeout(10_000) });
     if (!pageRes.ok) {
       return NextResponse.json(
         { error: "Failed to fetch the URL. Please check the link and try again." },
@@ -73,6 +73,7 @@ export async function POST(req: NextRequest) {
           },
         ],
       }),
+      signal: AbortSignal.timeout(30_000),
     });
 
     if (!claudeRes.ok) {

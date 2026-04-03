@@ -101,6 +101,7 @@ export async function GET(req: NextRequest) {
                 "X-Internal-Request": "true",
               },
               body: JSON.stringify({ lead_id: lead.id, workspace_id }),
+              signal: AbortSignal.timeout(15_000),
             });
 
             if (!callResponse.ok) {
