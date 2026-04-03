@@ -58,8 +58,8 @@ const INTEGRATIONS: IntegrationItem[] = [
   { id: "webhooks", name: "Webhooks", description: "Send custom data to your systems", icon: "W", category: "automation", actionLabel: "Configure", href: "/app/developer/webhooks" },
 
   // Coming Soon
-  { id: "whatsapp", name: "WhatsApp", description: "Send and receive WhatsApp messages", icon: "W", category: "communication", actionLabel: "Notify Me", comingSoon: true },
-  { id: "outlook-calendar", name: "Outlook Calendar", description: "Sync Outlook calendar", icon: "O", category: "calendar", actionLabel: "Notify Me", comingSoon: true },
+  { id: "whatsapp", name: "WhatsApp", description: "Send and receive WhatsApp messages", icon: "W", category: "communication", actionLabel: "Join Waitlist", comingSoon: true },
+  { id: "outlook-calendar", name: "Outlook Calendar", description: "Sync Outlook calendar", icon: "O", category: "calendar", actionLabel: "Join Waitlist", comingSoon: true },
 ];
 
 function IntegrationCard({
