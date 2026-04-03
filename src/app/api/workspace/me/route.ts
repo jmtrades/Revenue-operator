@@ -190,9 +190,9 @@ export async function GET(req: NextRequest) {
       stats: {
         calls: callCount ?? 0,
         leads: leadCount ?? 0,
-        estRevenue: (leadCount ?? 0) * 800,
-        minutesUsed: (callCount ?? 0) * 6,
-        minutesLimit: 400,
+        estRevenue: 0, // Populated from real deal data on dashboard
+        minutesUsed: 0, // Populated from call_sessions on dashboard
+        minutesLimit: 0, // Populated from billing plan on dashboard
         lastCallAt: (lastCall as { call_started_at?: string | null } | null)?.call_started_at ?? null,
       },
       systemEvents: readiness.systemEvents,
