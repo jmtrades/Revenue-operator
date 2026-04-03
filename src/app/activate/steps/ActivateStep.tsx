@@ -134,24 +134,13 @@ export function ActivateStep({
         <div className="w-16 h-16 mx-auto rounded-2xl bg-emerald-500/10 flex items-center justify-center">
           <PhoneCall className="w-8 h-8 text-emerald-500" />
         </div>
-        <h3 className="text-xl font-bold text-[var(--text-primary)]">Your agent is live</h3>
+        <h3 className="text-xl font-bold text-[var(--text-primary)]">Ready to go live</h3>
         <p className="text-sm text-[var(--text-secondary)] max-w-md mx-auto">
-          Call your new number now to hear your AI operator in action. It uses your business details to greet callers and can be further customized in settings.
+          Hit the button below and your AI operator will be live in seconds. We&apos;ll assign you a dedicated phone number and set everything up automatically.
         </p>
-        {phoneNumber && (
-          <div className="flex items-center justify-center gap-3">
-            <a
-              href={`tel:${phoneNumber}`}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 text-white font-semibold hover:bg-emerald-600 transition-colors active:scale-95"
-            >
-              <Phone className="w-5 h-5" />
-              Call {phoneNumber}
-            </a>
-          </div>
-        )}
-        <p className="text-xs text-[var(--text-tertiary)]">Free test call — no minutes deducted</p>
         {voiceId && voiceId !== "default" && greeting && (
           <div className="mt-4">
+            <p className="text-xs text-[var(--text-tertiary)] mb-2">Preview how {agentName} will sound:</p>
             <VoicePreviewPlayer
               voiceId={voiceId}
               greeting={greeting}

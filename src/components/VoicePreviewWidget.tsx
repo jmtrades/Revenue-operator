@@ -1,10 +1,68 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Play, Pause, Phone, Mic, Volume2, Sparkles, Wrench, HeartPulse, Scale, Home, UtensilsCrossed, Building2, Scissors, Car } from "lucide-react";
+import { Play, Pause, Phone, Mic, Volume2, Sparkles, Wrench, HeartPulse, Scale, Home, UtensilsCrossed, Building2, Scissors, Car, Briefcase, Users, Calendar } from "lucide-react";
 
 /* ─── Conversation Scripts ─── */
 const SCENARIOS = [
+  {
+    id: "consulting",
+    industry: "Any Business",
+    label: "New Client Inquiry",
+    icon: Briefcase,
+    greeting: "Hi, thanks for calling! This is Sarah. How can I help you today?",
+    conversation: [
+      { role: "ai" as const, text: "Hi, thanks for calling! This is Sarah. How can I help you today?", delay: 0 },
+      { role: "caller" as const, text: "Hi, I found you online and I'm interested in your services. Can you tell me more about what you offer?", delay: 3500 },
+      { role: "ai" as const, text: "Absolutely, I'd love to help! We work with businesses of all sizes. The best way to get started is a quick fifteen-minute consultation so we can understand exactly what you need. It's completely free, no obligation. Would you like me to set that up for you?", delay: 5500 },
+      { role: "caller" as const, text: "Sure, that sounds great. What do you have available?", delay: 2500 },
+      { role: "ai" as const, text: "Perfect! I have openings tomorrow at 10 AM or Thursday at 2 PM. Which works better for you? And can I grab your name and email so we can send you a confirmation?", delay: 4800 },
+    ],
+  },
+  {
+    id: "scheduling",
+    industry: "Any Business",
+    label: "Appointment Booking",
+    icon: Calendar,
+    greeting: "Good morning, thanks for calling! This is Alex. What can I do for you?",
+    conversation: [
+      { role: "ai" as const, text: "Good morning, thanks for calling! This is Alex. What can I do for you?", delay: 0 },
+      { role: "caller" as const, text: "I need to reschedule my appointment. I had something come up for Thursday.", delay: 3000 },
+      { role: "ai" as const, text: "No problem at all — life happens! Let me pull up your appointment. Looks like you were booked for Thursday at 3 PM. Would you like to move it to this week or next?", delay: 5000 },
+      { role: "caller" as const, text: "Next week would be better. Do you have anything Monday or Tuesday?", delay: 2800 },
+      { role: "ai" as const, text: "I have Monday at 11 AM or Tuesday at 2:30 PM — both are wide open. Which one works for you?", delay: 4000 },
+      { role: "caller" as const, text: "Tuesday at 2:30 is perfect.", delay: 1800 },
+      { role: "ai" as const, text: "Done! You're all set for Tuesday at 2:30. I'll send you a text confirmation right now. Is there anything else I can help with?", delay: 4200 },
+    ],
+  },
+  {
+    id: "afterhours",
+    industry: "Any Business",
+    label: "After-Hours Call",
+    icon: Phone,
+    greeting: "Thanks for calling. Our office is currently closed, but I can still help you. This is Sarah.",
+    conversation: [
+      { role: "ai" as const, text: "Thanks for calling. Our office is currently closed, but I can still help you. This is Sarah.", delay: 0 },
+      { role: "caller" as const, text: "Oh, I didn't realize it was after hours. I really need to speak with someone about a project.", delay: 3200 },
+      { role: "ai" as const, text: "No worries at all — I'm here to help! I can take down the details of what you need and make sure the right person calls you back first thing tomorrow morning. Or if it's urgent, I can connect you right now. What would you prefer?", delay: 5500 },
+      { role: "caller" as const, text: "A callback tomorrow morning would be great.", delay: 2200 },
+      { role: "ai" as const, text: "Perfect. Let me grab your name and number, and a quick summary of what you need. I'll make sure it's the very first thing on their desk tomorrow. They'll call you by 9 AM.", delay: 5000 },
+    ],
+  },
+  {
+    id: "sales",
+    industry: "Any Business",
+    label: "Inbound Sales Lead",
+    icon: Users,
+    greeting: "Hi there, thanks for reaching out! This is Emma. I'd love to help you find what you're looking for.",
+    conversation: [
+      { role: "ai" as const, text: "Hi there, thanks for reaching out! This is Emma. I'd love to help you find what you're looking for.", delay: 0 },
+      { role: "caller" as const, text: "Yeah, I've been looking at a few options and I wanted to understand your pricing.", delay: 3000 },
+      { role: "ai" as const, text: "Great question! Our pricing depends on what you need, so the best way is a quick chat with one of our specialists who can put together a custom quote. Most of our clients save thirty to forty percent compared to their previous solution. Can I set up a quick call for you?", delay: 6000 },
+      { role: "caller" as const, text: "That sounds good. How soon can I talk to someone?", delay: 2500 },
+      { role: "ai" as const, text: "I can get you on a call as soon as this afternoon if you'd like, or tomorrow works too. Our team is really responsive. What time works best?", delay: 4500 },
+    ],
+  },
   {
     id: "hvac",
     industry: "HVAC",
@@ -190,14 +248,20 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
 
     // Map scenario voice names to real Recall voice IDs for maximum human realism
     const voiceIdMap: Record<string, string> = {
-      hvac: "us-female-warm-receptionist",       // Sarah — warm, empathetic
-      dental: "us-female-casual",                 // Emma — casual, friendly
-      legal: "us-male-professional",              // Alex — professional, authoritative
-      roofing: "us-female-warm-receptionist",     // Sarah — warm, reassuring
-      restaurant: "us-female-casual",             // Emma — casual, friendly
-      realestate: "us-female-warm-receptionist",  // Sarah — warm, knowledgeable
-      medspa: "us-female-casual",                 // Emma — friendly, informative
-      auto: "us-male-professional",               // Alex — confident, technical
+      // Universal scenarios — match the persona name used in the script
+      consulting: "us-female-warm-receptionist",  // Sarah — warm, empathetic
+      scheduling: "us-male-professional",          // Alex — professional, clear
+      afterhours: "us-female-warm-receptionist",   // Sarah — warm, reassuring
+      sales: "us-female-casual",                   // Emma — friendly, persuasive
+      // Industry-specific scenarios
+      hvac: "us-female-warm-receptionist",         // Sarah — warm, empathetic
+      dental: "us-female-casual",                  // Emma — casual, friendly
+      legal: "us-male-professional",               // Alex — professional, authoritative
+      roofing: "us-female-warm-receptionist",      // Sarah — warm, reassuring
+      restaurant: "us-female-casual",              // Emma — casual, friendly
+      realestate: "us-female-warm-receptionist",   // Sarah — warm, knowledgeable
+      medspa: "us-female-casual",                  // Emma — friendly, informative
+      auto: "us-male-professional",                // Alex — confident, technical
     };
     const voiceId = voiceIdMap[scenario.id] || "us-female-warm-receptionist";
 

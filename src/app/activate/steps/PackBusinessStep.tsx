@@ -4,7 +4,12 @@ import { useTranslations } from "next-intl";
 import { INDUSTRY_PACKS } from "@/lib/industry-packs";
 import type { ActivationState } from "./types";
 
-const PACK_ORDER = ["dental", "hvac", "legal", "medspa", "roofing", "general"] as const;
+const PACK_ORDER = Object.keys(INDUSTRY_PACKS).sort((a, b) => {
+  // "general" always last
+  if (a === "general") return 1;
+  if (b === "general") return -1;
+  return (INDUSTRY_PACKS[a]?.name ?? a).localeCompare(INDUSTRY_PACKS[b]?.name ?? b);
+});
 
 export function PackBusinessStep({
   state,

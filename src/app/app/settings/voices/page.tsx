@@ -152,83 +152,55 @@ export default function VoicesSettingsPage() {
     setPlayingVoiceId(voiceId === playingVoiceId ? null : voiceId);
     if (voiceId !== playingVoiceId) {
       const previewText = t("previewText");
-      let audioUrl: string | null = null;
-      let previewMethod = "none";
 
       try {
-        // Method 1: Try voice server /tts/preview endpoint
-        if (process.env.NEXT_PUBLIC_VOICE_SERVER_URL) {
-          try {
-            const response = await fetch(`${VOICE_SERVER_URL}/tts/preview`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              credentials: "include",
-              body: JSON.stringify({
-                voice_id: voiceId,
-                text: previewText,
-              }),
-            });
-            if (response.ok) {
-              const data = await response.json();
-              if (data.audio_url) {
-                audioUrl = data.audio_url;
-                previewMethod = "voice-server";
-              }
-            }
-          } catch {
-            // Fall through to next method
+        // Method 1: Try internal preview-voice endpoint (proxies to voice server)
+        let audioBlob: Blob | null = null;
+        try {
+          const response = await fetch("/api/agent/preview-voice", {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ voice_id: voiceId, text: previewText }),
+          });
+          if (response.ok && response.headers.get("content-type")?.startsWith("audio/")) {
+            audioBlob = await response.blob();
+            if (audioBlob.size === 0) audioBlob = null;
           }
+        } catch {
+          // Fall through to demo endpoint
         }
 
-        // Method 2: Try /api/demo/voice-preview endpoint
-        if (!audioUrl) {
+        // Method 2: Try /api/demo/voice-preview (public, returns raw audio)
+        if (!audioBlob) {
           try {
             const demoResponse = await fetch(
               `/api/demo/voice-preview?voice_id=${encodeURIComponent(voiceId)}&text=${encodeURIComponent(previewText)}`
             );
-            if (demoResponse.ok) {
-              const demoData = await demoResponse.json();
-              if (demoData.audio_url) {
-                audioUrl = demoData.audio_url;
-                previewMethod = "demo-api";
-              }
+            if (demoResponse.ok && demoResponse.headers.get("content-type")?.startsWith("audio/")) {
+              audioBlob = await demoResponse.blob();
+              if (audioBlob.size === 0) audioBlob = null;
             }
           } catch {
-            // Fall through to next method
+            // Voice preview unavailable
           }
         }
 
-        // Method 3: Fall back to browser Web Speech API
-        if (!audioUrl) {
-          previewMethod = "web-speech";
-          if ("speechSynthesis" in window) {
-            const utterance = new SpeechSynthesisUtterance(previewText);
-            utterance.onend = () => setPlayingVoiceId(null);
-            utterance.onerror = () => {
-              toast.error(t("toast.previewUnavailable"));
-              setPlayingVoiceId(null);
-            };
-            window.speechSynthesis.speak(utterance);
-            toast.info(t("toast.browserSpeech"));
-            return;
-          }
-        }
-
-        // Play audio if we have a URL
-        if (audioUrl) {
-          const audio = new Audio(audioUrl);
-          audio.play().catch(() => {
+        // Play audio blob if we got one
+        if (audioBlob) {
+          const url = URL.createObjectURL(audioBlob);
+          const audio = new Audio(url);
+          audio.onended = () => {
             setPlayingVoiceId(null);
-          });
-          audio.onended = () => setPlayingVoiceId(null);
-
-          // Show which method was used
-          if (previewMethod === "demo-api") {
-            toast.info(t("toast.demoApi"));
-          } else if (previewMethod === "voice-server") {
-            toast.info(t("toast.voiceServer"));
-          }
+            URL.revokeObjectURL(url);
+          };
+          audio.onerror = () => {
+            setPlayingVoiceId(null);
+            URL.revokeObjectURL(url);
+          };
+          await audio.play();
         } else {
+          // No browser TTS fallback — better silent than robotic
           toast.error(t("toast.previewUnavailable"));
           setPlayingVoiceId(null);
         }

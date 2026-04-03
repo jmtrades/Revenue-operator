@@ -40,7 +40,6 @@ export default function VoiceSelector({ value, onChange, planTier = 'enterprise'
   const [genderFilter, setGenderFilter] = useState<string>('All');
   const [toneFilter, setToneFilter] = useState<string>('All');
   const [showFilters, setShowFilters] = useState(false);
-  const synthRef = useRef<SpeechSynthesisUtterance | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Voice limits per plan
@@ -83,9 +82,6 @@ export default function VoiceSelector({ value, onChange, planTier = 'enterprise'
       audioRef.current.pause();
       audioRef.current = null;
     }
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-    }
     setPlayingVoice(null);
   }, []);
 
@@ -98,47 +94,73 @@ export default function VoiceSelector({ value, onChange, planTier = 'enterprise'
     stopPlayback();
     setPlayingVoice(voice.id);
 
-    // Try API-backed voice preview first
+    const sampleText = `Hi there! Thanks for calling. My name is ${voice.name} and I'm here to help you today. How can I assist you?`;
+
+    // Try API-backed voice preview first (POST endpoint)
     try {
-      const res = await fetch(
-        `/api/agent/preview-voice?voice_id=${encodeURIComponent(voice.id)}`,
-        { credentials: "include" }
-      );
+      const res = await fetch("/api/agent/preview-voice", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ voice_id: voice.id, text: sampleText }),
+      });
       if (res.ok && res.headers.get("content-type")?.startsWith("audio/")) {
         const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
-        const audio = new Audio(url);
-        audioRef.current = audio;
-        audio.playbackRate = speed;
-        audio.onended = () => {
-          setPlayingVoice(null);
-          URL.revokeObjectURL(url);
-          audioRef.current = null;
-        };
-        audio.onerror = () => {
-          setPlayingVoice(null);
-          URL.revokeObjectURL(url);
-          audioRef.current = null;
-        };
-        await audio.play();
-        return;
+        if (blob.size > 0) {
+          const url = URL.createObjectURL(blob);
+          const audio = new Audio(url);
+          audioRef.current = audio;
+          audio.playbackRate = speed;
+          audio.onended = () => {
+            setPlayingVoice(null);
+            URL.revokeObjectURL(url);
+            audioRef.current = null;
+          };
+          audio.onerror = () => {
+            setPlayingVoice(null);
+            URL.revokeObjectURL(url);
+            audioRef.current = null;
+          };
+          await audio.play();
+          return;
+        }
       }
     } catch {
-      // Fall through to browser TTS
+      // Fall through to demo endpoint
     }
 
-    // Fallback: browser SpeechSynthesis
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
-      const utterance = new SpeechSynthesisUtterance(
-        `Hi there! Thanks for calling. My name is ${voice.name} and I'm here to help you today. How can I assist you?`
+    // Fallback: demo voice preview endpoint (public, uses Deepgram)
+    try {
+      const res = await fetch(
+        `/api/demo/voice-preview?voice_id=${encodeURIComponent(voice.id)}&text=${encodeURIComponent(sampleText)}`
       );
-      utterance.rate = speed;
-      utterance.pitch = 1.0 + (warmth - 0.5) * 0.3;
-      utterance.onend = () => setPlayingVoice(null);
-      utterance.onerror = () => setPlayingVoice(null);
-      synthRef.current = utterance;
-      window.speechSynthesis.speak(utterance);
-    } else {
+      if (res.ok) {
+        const blob = await res.blob();
+        if (blob.size > 0) {
+          const url = URL.createObjectURL(blob);
+          const audio = new Audio(url);
+          audioRef.current = audio;
+          audio.playbackRate = speed;
+          audio.onended = () => {
+            setPlayingVoice(null);
+            URL.revokeObjectURL(url);
+            audioRef.current = null;
+          };
+          audio.onerror = () => {
+            setPlayingVoice(null);
+            URL.revokeObjectURL(url);
+            audioRef.current = null;
+          };
+          await audio.play();
+          return;
+        }
+      }
+    } catch {
+      // Voice preview unavailable
+    }
+
+    // No browser TTS fallback — better silent than robotic
+    {
       setPlayingVoice(null);
     }
   }, [playingVoice, stopPlayback, speed, warmth]);
@@ -152,9 +174,6 @@ export default function VoiceSelector({ value, onChange, planTier = 'enterprise'
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current = null;
-      }
-      if (typeof window !== 'undefined' && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
       }
     };
   }, []);

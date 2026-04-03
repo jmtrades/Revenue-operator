@@ -53,10 +53,11 @@ export async function speakTextViaApi(
     }
   } catch (err) {
     if (typeof console !== "undefined") {
-      console.warn("[voice-preview] API TTS failed, falling back to browser TTS:", err instanceof Error ? err.message : String(err));
+      console.warn("[voice-preview] API TTS unavailable:", err instanceof Error ? err.message : String(err));
     }
   }
-  speakText(text, options);
+  // Do NOT fall back to browser TTS — robotic browser voices are worse than silence
+  options?.onEnd?.();
   return { usedFallback: true };
 }
 
