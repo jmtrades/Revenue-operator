@@ -195,7 +195,7 @@ function calculateChannelScores(
   leadStats: LeadChannelStats,
   workspaceMode: string
 ): Record<string, number> {
-  let scores: Record<string, number> = {
+  const scores: Record<string, number> = {
     call: 0.5,
     sms: 0.5,
     email: 0.5,
