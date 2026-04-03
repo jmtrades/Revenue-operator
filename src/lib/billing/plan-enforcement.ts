@@ -163,7 +163,7 @@ export async function canMakeOutboundCall(workspaceId: string): Promise<Enforcem
     .from("call_sessions")
     .select("id", { count: "exact", head: true })
     .eq("workspace_id", workspaceId)
-    .gte("started_at", todayStart.toISOString())
+    .gte("call_started_at", todayStart.toISOString())
     .not("outcome", "is", null); // Only count actual calls, not pending
 
   const todayCount = count ?? 0;
