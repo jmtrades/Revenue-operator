@@ -355,7 +355,7 @@ export default function AppSettingsIntegrationsPage() {
     };
 
     // Start polling every 3 seconds
-    syncPollingRef.current[provider] = setInterval(poll, 3000) as any as NodeJS.Timeout;
+    syncPollingRef.current[provider] = setInterval(poll, 3000) as unknown as NodeJS.Timeout;
   };
 
   const handleSyncNow = async (provider: CrmProviderId) => {

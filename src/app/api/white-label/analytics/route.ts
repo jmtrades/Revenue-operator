@@ -65,8 +65,8 @@ export async function GET(req: NextRequest) {
   let totalLeads = 0;
   let totalRevenue = 0;
 
-  const usageByAccount = subAccounts.map((r: any) => {
-    const wsAnalytics = analyticsMap[r.child_workspace_id] || { total_calls: 0, total_leads: 0, total_revenue: 0 };
+  const usageByAccount = subAccounts.map((r: Record<string, unknown>) => {
+    const wsAnalytics = analyticsMap[r.child_workspace_id as string] || { total_calls: 0, total_leads: 0, total_revenue: 0 };
     totalCalls += wsAnalytics.total_calls;
     totalLeads += wsAnalytics.total_leads;
     totalRevenue += wsAnalytics.total_revenue;

@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
     let extractedText = "";
     if (file.type === "application/pdf") {
       const pdfParseMod = await import("pdf-parse");
-      const pdfParse = (pdfParseMod as any).default ?? pdfParseMod;
+      const pdfParse = ((pdfParseMod as Record<string, unknown>).default ?? pdfParseMod) as (buf: Buffer) => Promise<{ text: string }>;
       const data = await pdfParse(buffer);
       extractedText = (data?.text as string) ?? "";
     } else if (
@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
       file.type === "application/msword"
     ) {
       const mammothMod = await import("mammoth");
-      const result = await (mammothMod as any).extractRawText({ buffer });
+      const result = await (mammothMod as unknown as { extractRawText: (opts: { buffer: Buffer }) => Promise<{ value: string }> }).extractRawText({ buffer });
       extractedText = (result?.value as string) ?? "";
     } else if (file.type === "text/plain") {
       extractedText = buffer.toString("utf8");

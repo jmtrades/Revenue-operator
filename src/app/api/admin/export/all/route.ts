@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- Admin-only routes with Supabase dynamic queries */
 /**
  * Admin export route: full data export as JSON (users, workspaces, agents, calls, leads).
  */
@@ -22,7 +23,7 @@ export async function GET(req: NextRequest) {
   // Export all users (mask sensitive fields)
   try {
     const { data: users } = await db.from("users").select("id, full_name, created_at, email_verified, last_sign_in_at");
-    result.data.users = (users ?? []).map((u: any) => ({
+    result.data.users = (users ?? []).map((u: Record<string, any>) => ({
       ...u,
       email_masked: u.email ? u.email.replace(/(.{2}).*(@.*)/, "$1***$2") : null,
     }));

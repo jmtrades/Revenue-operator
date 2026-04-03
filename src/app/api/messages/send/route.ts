@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
 
   // Validate channel - strict validation, no silent defaults
   const supportedChannels = ["sms", "whatsapp", "email"] as const;
-  if (!supportedChannels.includes(channelParam as any)) {
+  if (!supportedChannels.includes(channelParam as typeof supportedChannels[number])) {
     return NextResponse.json(
       { error: `Invalid channel. Supported channels: ${supportedChannels.join(", ")}` },
       { status: 400 }

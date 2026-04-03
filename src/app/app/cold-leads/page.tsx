@@ -74,7 +74,7 @@ function persistColdLeadsSnapshot(workspaceId: string, leads: ColdLead[]) {
   safeSetItem(`${COLD_LEADS_SNAPSHOT_PREFIX}${workspaceId}`, JSON.stringify(envelope));
 }
 
-function formatRelativeTime(dateStr?: string, t?: any): string {
+function formatRelativeTime(dateStr?: string, t?: (key: string, values?: Record<string, string | number | Date>) => string): string {
   if (!dateStr) return t ? t("formatTime.never") : "Never";
   const now = new Date();
   const past = new Date(dateStr);
@@ -98,7 +98,7 @@ function formatRelativeTime(dateStr?: string, t?: any): string {
   return past.toLocaleDateString();
 }
 
-function getReasonLabel(reason: ColdLeadReason, t: any): string {
+function getReasonLabel(reason: ColdLeadReason, t: (key: string) => string): string {
   const map: Record<ColdLeadReason, string> = {
     no_activity_30d: t("reason.noActivity30d"),
     no_reply_14d: t("reason.noReply14d"),
@@ -145,7 +145,7 @@ interface StatsProps {
 }
 
 interface StatsBarProps extends StatsProps {
-  t: any;
+  t: (key: string, values?: Record<string, string | number | Date>) => string;
 }
 
 function StatsBar({ total, pending, inProgress, reengaged, exhausted, t }: StatsBarProps) {

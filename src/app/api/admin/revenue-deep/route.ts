@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- Admin-only routes with Supabase dynamic queries */
 /**
  * Admin revenue deep analytics: MRR, ARR, expansion, contraction, churn.
  */

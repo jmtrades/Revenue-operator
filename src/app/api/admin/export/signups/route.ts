@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- Admin-only routes with Supabase dynamic queries */
 /**
  * Admin export route for users/signups
  * GET route requiring admin authentication
@@ -11,7 +12,7 @@ import { isAdmin, forbidden } from "@/lib/admin/auth";
 import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
 
-function convertToCSV(data: any[]): string {
+function convertToCSV(data: Record<string, any>[]): string {
   if (data.length === 0) {
     return "id,email,created_at\n";
   }
