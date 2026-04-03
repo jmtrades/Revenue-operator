@@ -10,7 +10,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { executeLeadOutboundCall } from "@/lib/outbound/execute-lead-call";
 import type { CampaignType } from "@/lib/campaigns/prompt";
 import { assertSameOrigin } from "@/lib/http/csrf";
-import { checkDNC } from "@/lib/compliance/dnc-check";
+// batchCheckDNC is dynamically imported in the launch loop below
 import { canUseFeature } from "@/lib/billing/plan-enforcement";
 import { log } from "@/lib/logger";
 
@@ -163,6 +163,18 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
 
   const filter = (campaign.target_filter ?? {}) as TargetFilter;
 
+  // Load workspace timezone for date calculations (default to UTC)
+  let wsTimezone = "UTC";
+  try {
+    const { data: wsTimezoneRow } = await db
+      .from("workspaces")
+      .select("timezone")
+      .eq("id", workspaceId)
+      .maybeSingle();
+    const tz = (wsTimezoneRow as { timezone?: string | null } | null)?.timezone;
+    if (tz) wsTimezone = tz;
+  } catch { /* default to UTC */ }
+
   // Safeguard: require at least one step template on the campaign sequence.
   // Also check target_filter.sequence as fallback (campaign wizard stores there too)
   let sequenceSteps = Array.isArray(campaign.sequence_steps) ? campaign.sequence_steps : [];
@@ -206,7 +218,9 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       q = q.gte("qualification_score", filter.audience_min_score);
     }
     if (typeof filter.audience_not_contacted_days === "number" && filter.audience_not_contacted_days > 0) {
-      const cutoff = new Date(Date.now() - filter.audience_not_contacted_days * 24 * 60 * 60 * 1000).toISOString();
+      // Use workspace timezone for "start of today" then subtract days
+      const nowInTz = new Date(new Date().toLocaleString("en-US", { timeZone: wsTimezone }));
+      const cutoff = new Date(nowInTz.getTime() - filter.audience_not_contacted_days * 24 * 60 * 60 * 1000).toISOString();
       q = q.or(`last_activity_at.is.null,last_activity_at.lt.${cutoff}`);
     }
 
@@ -237,7 +251,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   // Build lead query for enqueuing.
   let leadQuery = db
     .from("leads")
-    .select("id, state, source, qualification_score, last_activity_at")
+    .select("id, phone, state, source, qualification_score, last_activity_at")
     .eq("workspace_id", workspaceId)
     .limit(1000);
 
@@ -387,27 +401,39 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       }
     }
 
+    // Batch DNC check — pre-check all leads in one pass instead of N+1 per-lead queries
+    const allPhones = eligibleLeads
+      .map((l) => (l as { phone?: string | null }).phone)
+      .filter((p): p is string => !!p);
+    let dncMap = new Map<string, { blocked: boolean }>();
+    if (allPhones.length > 0) {
+      try {
+        const { batchCheckDNC } = await import("@/lib/compliance/dnc-check");
+        dncMap = await batchCheckDNC(workspaceId, allPhones);
+      } catch (dncErr) {
+        log("warn", "[campaign/launch] Batch DNC check failed", { error: dncErr instanceof Error ? dncErr.message : String(dncErr) });
+      }
+    }
+
+    // Collect batch updates to reduce per-lead DB writes
+    const dncBlockedLeadIds: string[] = [];
+    const sentLeadIds: string[] = [];
+
     // Enqueue leads for outbound execution
+    const firstStep = steps[0];
+    const shouldExecuteCall = !hasSequenceSteps || (firstStep && firstStep.channel === "call");
+
     for (const lead of eligibleLeads) {
       const leadId = (lead as { id: string }).id;
       const leadPhone = (lead as { phone?: string | null }).phone;
 
-      // DNC compliance check — skip leads on Do Not Call list
+      // DNC compliance check — skip leads on Do Not Call list (uses pre-fetched batch result)
       if (leadPhone) {
-        try {
-          const dncResult = await checkDNC(workspaceId, leadPhone);
-          if (dncResult.blocked) {
-            dncBlocked += 1;
-            await db
-              .from("campaign_leads")
-              .update({ status: "dnc_blocked", sent_at: new Date().toISOString() })
-              .eq("campaign_id", id)
-              .eq("lead_id", leadId);
-            continue; // Skip this lead entirely
-          }
-        } catch (dncErr) {
-          log("warn", "[campaign/launch] DNC check failed", { leadId, error: dncErr instanceof Error ? dncErr.message : String(dncErr) });
-          // Non-blocking: if DNC check fails, proceed with caution (don't skip the lead)
+        const dncResult = dncMap.get(leadPhone);
+        if (dncResult?.blocked) {
+          dncBlocked += 1;
+          dncBlockedLeadIds.push(leadId);
+          continue;
         }
       }
 
@@ -418,13 +444,8 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
           await enrollContact(workspaceId, sequenceId, leadId);
         } catch (enrollErr) {
           log("warn", "[campaign/launch] Failed to enroll lead in sequence", { leadId, error: enrollErr instanceof Error ? enrollErr.message : String(enrollErr) });
-          // Non-blocking: if enrollment fails, continue with call execution
         }
       }
-
-      // Only execute call step if the first step is a call (or if no sequence)
-      const firstStep = steps[0];
-      const shouldExecuteCall = !hasSequenceSteps || (firstStep && firstStep.channel === "call");
 
       if (shouldExecuteCall) {
         const result = await executeLeadOutboundCall(
@@ -439,22 +460,29 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
         );
         if (result.ok) {
           enqueued += 1;
-          // Mark as sent in campaign_leads
-          await db
-            .from("campaign_leads")
-            .update({ status: "sent", sent_at: new Date().toISOString() })
-            .eq("campaign_id", id)
-            .eq("lead_id", leadId);
+          sentLeadIds.push(leadId);
         }
       } else {
-        // Sequence-first campaign: mark as sent when sequence is enrolled
         enqueued += 1;
-        await db
-          .from("campaign_leads")
-          .update({ status: "sent", sent_at: new Date().toISOString() })
-          .eq("campaign_id", id)
-          .eq("lead_id", leadId);
+        sentLeadIds.push(leadId);
       }
+    }
+
+    // Batch update campaign_leads status — reduces N individual writes to 2 batch writes
+    const now = new Date().toISOString();
+    if (dncBlockedLeadIds.length > 0) {
+      await db
+        .from("campaign_leads")
+        .update({ status: "dnc_blocked", sent_at: now })
+        .eq("campaign_id", id)
+        .in("lead_id", dncBlockedLeadIds);
+    }
+    if (sentLeadIds.length > 0) {
+      await db
+        .from("campaign_leads")
+        .update({ status: "sent", sent_at: now })
+        .eq("campaign_id", id)
+        .in("lead_id", sentLeadIds);
     }
 
     // Only update to active if enqueuing succeeded
