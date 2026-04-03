@@ -96,8 +96,8 @@ export async function GET(req: NextRequest) {
             to: email,
             subject,
             text: body,
-      signal: AbortSignal.timeout(10_000),
           }),
+          signal: AbortSignal.timeout(10_000),
         });
         if (res.ok) {
           await db

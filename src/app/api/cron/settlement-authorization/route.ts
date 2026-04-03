@@ -43,8 +43,8 @@ async function sendSettlementOwnerMessage(workspaceId: string, bodyText: string)
       to: email,
       subject: "Settlement",
       text: bodyText,
-      signal: AbortSignal.timeout(10_000),
     }),
+    signal: AbortSignal.timeout(10_000),
   });
   return res.ok;
 }
