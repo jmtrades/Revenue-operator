@@ -41,7 +41,7 @@ export const GET = withWorkspace(async (_req: NextRequest, ctx: WorkspaceContext
   };
 
   const trialEndIso = row.trial_ends_at ?? null;
-  const trialEnd = trialEndIso ? new Date(trialEndIso) : null;
+  const _trialEnd = trialEndIso ? new Date(trialEndIso) : null;
 
   const isPaused = row.billing_status === "trial_ended" || row.billing_status === "cancelled" || row.billing_status === "payment_failed" || row.pause_reason;
   let has_upcoming_booking_24h = false;

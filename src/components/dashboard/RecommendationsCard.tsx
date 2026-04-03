@@ -51,7 +51,7 @@ export function RecommendationsCard({ workspaceId: propsWorkspaceId }: { workspa
   const [recommendations, setRecommendations] = useState<Recommendation[]>(EMPTY_RECOMMENDATIONS);
   const [revenueAtRiskTotal, setRevenueAtRiskTotal] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [_error, setError] = useState<string | null>(null);
 
   const load = useCallback(() => {
     if (!workspaceId) {

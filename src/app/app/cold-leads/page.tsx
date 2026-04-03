@@ -226,10 +226,10 @@ export default function ColdLeadsPage() {
     channel: "default",
   });
   const [reengageSaving, setReengageSaving] = useState(false);
-  const [selectedIds, _setSelectedIds] = useState<Set<string>>(new Set());
+  const [_selectedIds, _setSelectedIds] = useState<Set<string>>(new Set());
 
   // Fetch average deal value from workspace context
-  const [avgDealValue, setAvgDealValue] = useState(350);
+  const [_avgDealValue, setAvgDealValue] = useState(350);
   useEffect(() => {
     if (!workspaceId) return;
     fetch(`/api/dashboard/revenue-at-risk?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
