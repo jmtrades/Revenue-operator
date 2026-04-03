@@ -240,16 +240,38 @@ export async function POST(req: NextRequest) {
         });
         const createdId = customer.id;
 
-        // Persist Stripe customer ID — critical for billing reconciliation.
+        // Persist Stripe customer ID — conditional update to prevent race condition.
+        // Only set if still null (another request may have won the race).
         try {
-          await db
+          const { data: updatedRow } = await db
             .from("workspaces")
             .update({ stripe_customer_id: createdId, updated_at: new Date().toISOString() })
-            .eq("id", finalWorkspaceId);
+            .eq("id", finalWorkspaceId)
+            .is("stripe_customer_id", null)
+            .select("stripe_customer_id")
+            .maybeSingle();
+
+          if (!updatedRow) {
+            // Another request won the race — use their customer ID instead
+            const { data: raceWinner } = await db
+              .from("workspaces")
+              .select("stripe_customer_id")
+              .eq("id", finalWorkspaceId)
+              .maybeSingle();
+            const existingCustId = (raceWinner as { stripe_customer_id?: string } | null)?.stripe_customer_id;
+            if (existingCustId) {
+              customerId = existingCustId;
+              log("info", "billing.customer_race_resolved", { workspace_id: finalWorkspaceId, used: existingCustId, orphaned: createdId });
+            } else {
+              customerId = createdId;
+            }
+          } else {
+            customerId = createdId;
+          }
         } catch (persistErr) {
           log("error", "billing.persist_stripe_customer_id_failed", { workspace_id: finalWorkspaceId, stripe_customer_id: createdId, error: persistErr instanceof Error ? persistErr.message : String(persistErr) });
+          customerId = createdId;
         }
-        customerId = createdId;
       } catch (err) {
         const message = err instanceof Error ? err.message : "unknown_error";
         log("error", "billing.customer_create_failed", { workspace_id: finalWorkspaceId, reason: "customer_create_failed", error: message });

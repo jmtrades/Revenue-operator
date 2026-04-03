@@ -323,7 +323,9 @@ export async function POST(req: NextRequest) {
                     const { computeLeadIntelligence, persistLeadIntelligence } = await import("@/lib/intelligence/lead-brain");
                     const intelligence = await computeLeadIntelligence(payload.workspace_id, leadId);
                     await persistLeadIntelligence(intelligence);
-                  } catch { /* Non-blocking */ }
+                  } catch (brainErr) {
+                    log("warn", "voice_webhook.lead_brain_failed", { leadId, error: brainErr instanceof Error ? brainErr.message : String(brainErr) });
+                  }
                 })();
 
                 // Create appointment record — with idempotency check to prevent duplicate bookings
