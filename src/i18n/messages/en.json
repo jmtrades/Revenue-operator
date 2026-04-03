@@ -744,10 +744,10 @@
     "securityNote": "Payments secured with 256-bit encryption via Stripe. We never store your card details.",
     "roiTitle": "Platform Return on Investment",
     "trial": {
-      "title": "You're on a free trial",
-      "description": "Subscribe to a plan to keep your operators running after the trial ends. Your data and configuration will be preserved."
+      "title": "Activate your account",
+      "description": "Choose a plan to activate your revenue operators. Your data and configuration are ready to go."
     },
-    "description": "Subscribe to a plan to keep your operators running after the trial ends. Your data and configuration will be preserved.",
+    "description": "Choose a plan to activate your revenue operators. Your data and configuration are ready to go.",
     "chooseVoice": "Choose Operator Voice"
   },
   "planChange": {

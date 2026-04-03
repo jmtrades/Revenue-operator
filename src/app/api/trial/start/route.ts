@@ -111,17 +111,17 @@ export async function POST(req: NextRequest) {
           }
         }
         const wsId = randomUUID();
-        const trialEnd = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+        // No free trial — immediate activation, card charged at checkout
         const { error: wsInsertErr } = await db.from("workspaces").insert({
           id: wsId,
           name: "My workspace",
           owner_id: uid,
           autonomy_level: "assisted",
           kill_switch: false,
-          billing_status: "trial",
-          protection_renewal_at: trialEnd.toISOString(),
-          trial_ends_at: trialEnd.toISOString(),
-          trial_end_at: trialEnd.toISOString(),
+          billing_status: "pending",
+          protection_renewal_at: null,
+          trial_ends_at: null,
+          trial_end_at: null,
         });
         if (wsInsertErr) {
           log("trial_start_failed", { workspace_id: wsId, reason: "workspace_creation_failed", db_error: wsInsertErr.message ?? String(wsInsertErr) });
@@ -139,7 +139,7 @@ export async function POST(req: NextRequest) {
           // Non-critical, continue
         }
         await db.from("workspace_members").insert({ workspace_id: wsId, user_id: uid, role: "owner" });
-        await db.from("workspace_billing").insert({ workspace_id: wsId, plan: "trial", status: "trialing" });
+        await db.from("workspace_billing").insert({ workspace_id: wsId, plan: "pending", status: "pending" });
         try {
           const { applyPresetToWorkspace } = await import("@/lib/presets/apply");
           await applyPresetToWorkspace(wsId, businessType);
@@ -186,7 +186,7 @@ export async function POST(req: NextRequest) {
             payment_method_collection: "always",
             payment_method_types: ["card"],
             line_items: [{ price: stripePriceId, quantity: 1 }],
-            subscription_data: { trial_period_days: 14, metadata: { workspace_id: wsIdForCheckout } },
+            subscription_data: { metadata: { workspace_id: wsIdForCheckout } },
             success_url: `${origin}/connect?workspace_id=${encodeURIComponent(wsIdForCheckout)}&session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${origin}/activate?canceled=1`,
           });
@@ -254,7 +254,7 @@ export async function POST(req: NextRequest) {
     // Non-critical if settings insert fails
 
     await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
-    await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing" });
+    await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "pending", status: "pending" });
 
     try {
       const { applyPresetToWorkspace } = await import("@/lib/presets/apply");
@@ -301,7 +301,7 @@ export async function POST(req: NextRequest) {
         payment_method_collection: "always",
         payment_method_types: ["card"],
         line_items: [{ price: stripePriceId, quantity: 1 }],
-        subscription_data: { trial_period_days: 14, metadata: { workspace_id: workspaceId } },
+        subscription_data: { metadata: { workspace_id: workspaceId } },
         success_url: `${origin}/connect?workspace_id=${encodeURIComponent(workspaceId)}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/activate?canceled=1`,
       });
