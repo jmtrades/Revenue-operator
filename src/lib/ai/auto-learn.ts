@@ -67,7 +67,7 @@ async function callClaudeApi(prompt: string): Promise<string> {
       "anthropic-version": "2023-06-01",
     },
     body: JSON.stringify({
-      model: "claude-opus-4-1",
+      model: "claude-sonnet-4-20250514",
       max_tokens: 2048,
       messages: [
         {
