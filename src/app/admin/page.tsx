@@ -271,8 +271,8 @@ export default function AdminDashboardPage() {
                         <span
                           className="px-2 py-1 rounded text-xs font-medium"
                           style={{
-                            background: ws.billing_tier === "professional" ? "var(--accent-primary-subtle)" : "transparent",
-                            color: ws.billing_tier === "professional" ? "var(--accent-primary)" : "var(--text-secondary)",
+                            background: ws.billing_tier === "enterprise" ? "var(--accent-primary-subtle)" : "transparent",
+                            color: ws.billing_tier === "enterprise" ? "var(--accent-primary)" : "var(--text-secondary)",
                           }}
                         >
                           {ws.billing_tier}
