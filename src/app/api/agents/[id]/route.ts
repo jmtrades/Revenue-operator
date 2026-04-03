@@ -100,7 +100,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
     );
   }
 
-  const { data: agent, error } = await db.from("agents").update(updates).eq("id", id).select().maybeSingle();
+  const { data: agent, error } = await db.from("agents").update(updates).eq("id", id).eq("workspace_id", (existing as { workspace_id: string }).workspace_id).select().maybeSingle();
   if (error) {
     log("error", "[DB Error] agents PATCH", { error: error.message });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -132,7 +132,7 @@ export async function DELETE(req: NextRequest, ctx: { params: Promise<{ id: stri
     db.from("agent_objections").delete().eq("agent_id", id),
   ]);
 
-  const { error } = await db.from("agents").delete().eq("id", id);
+  const { error } = await db.from("agents").delete().eq("id", id).eq("workspace_id", wsId);
   if (error) {
     log("error", "[DB Error] agents DELETE", { error: error.message });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

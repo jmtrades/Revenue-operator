@@ -17,12 +17,15 @@ async function getContacts(req: NextRequest) {
   if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
   const err = await requireWorkspaceAccess(req, workspaceId);
   if (err) return err;
+  const limit = Math.min(Number(req.nextUrl.searchParams.get("limit")) || 500, 1000);
+  const offset = Math.max(Number(req.nextUrl.searchParams.get("offset")) || 0, 0);
   const db = getDb();
   const { data, error } = await db
     .from("leads")
     .select("id, workspace_id, name, phone, email, company, state, last_activity_at, created_at, source, channel, metadata")
     .eq("workspace_id", workspaceId)
-    .order("last_activity_at", { ascending: false, nullsFirst: false });
+    .order("last_activity_at", { ascending: false, nullsFirst: false })
+    .range(offset, offset + limit - 1);
   if (error) {
     log("error", "contacts.get_error", { error: error.message || String(error) });
     return NextResponse.json({ error: GENERIC_ERROR }, { status: 500 });

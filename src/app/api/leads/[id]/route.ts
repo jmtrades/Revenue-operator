@@ -119,6 +119,7 @@ export async function PATCH(
       .from("leads")
       .update(updatePayload)
       .eq("id", id)
+      .eq("workspace_id", workspaceId)
       .select()
       .maybeSingle();
     if (error) {

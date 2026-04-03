@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function PATCH(req: NextRequest) {
   const csrfBlock = assertSameOrigin(req);
@@ -63,6 +64,12 @@ export async function DELETE(req: NextRequest) {
 
   const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;
+
+  // Rate limit: 10 member removals per minute per workspace
+  const rl = await checkRateLimit(`team_remove:${workspaceId}`, 10, 60000);
+  if (!rl.allowed) {
+    return NextResponse.json({ error: "Too many requests. Please slow down." }, { status: 429 });
+  }
 
   const db = getDb();
 
