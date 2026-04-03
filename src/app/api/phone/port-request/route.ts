@@ -12,8 +12,7 @@ const ENCRYPTION_VERSION = 1;
 /** Encrypt a PIN using AES-256-GCM. Returns base64 string of iv:authTag:ciphertext. */
 function encryptPin(pin: string): string {
   if (!ENCRYPTION_KEY || ENCRYPTION_KEY.length < 16) {
-    // Fallback: base64 encode if no key configured (still better than plaintext)
-    return Buffer.from(pin, "utf-8").toString("base64");
+    throw new Error("PIN encryption key not configured");
   }
   const key = Buffer.from(ENCRYPTION_KEY.padEnd(32, "0").slice(0, 32), "utf-8");
   const iv = randomBytes(12);
@@ -89,7 +88,7 @@ export async function POST(req: NextRequest) {
       .maybeSingle();
 
     if (error) {
-      log("error", "[port-request] DB error:", { error: error });
+      log("error", "[port-request] DB error:", { error: error instanceof Error ? error.message : String(error) });
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 

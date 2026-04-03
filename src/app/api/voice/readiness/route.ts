@@ -241,7 +241,7 @@ export async function GET(req: NextRequest) {
     checks,
   });
   } catch (error) {
-    log("error", "[voice/readiness] Unexpected error:", { error: error });
+    log("error", "[voice/readiness] Unexpected error:", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
