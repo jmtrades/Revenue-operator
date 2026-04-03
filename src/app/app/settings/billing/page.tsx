@@ -72,7 +72,7 @@ export default function AppSettingsBillingPage() {
     next_retry_at: string | null;
     failure_count: number;
   } | null>(null);
-  const [currentPlanId, setCurrentPlanId] = useState<PlanId>(&quot;starter&quot;);
+  const [currentPlanId, setCurrentPlanId] = useState<PlanId>("starter");
   const [planChangeOpen, setPlanChangeOpen] = useState(false);
   const [pausing, setPausing] = useState(false);
   const [pauseStep, setPauseStep] = useState<PauseStep>(0);
@@ -177,7 +177,7 @@ export default function AppSettingsBillingPage() {
         data.dunning
           ? {
               amount_due_cents: (data.dunning as Record<string, unknown>).amount_due_cents as number ?? 0,
-              currency: ((data.dunning as Record<string, unknown>).currency as string ?? &quot;usd&quot;).toLowerCase(),
+              currency: ((data.dunning as Record<string, unknown>).currency as string ?? "usd").toLowerCase(),
               next_retry_at: (data.dunning as Record<string, unknown>).next_retry_at as string ?? null,
               failure_count: (data.dunning as Record<string, unknown>).failure_count as number ?? 0,
             }

@@ -52,17 +52,17 @@ function OnboardingWizard() {
   const [agentName, setAgentName] = useState("Sarah");
   const [voiceId, setVoiceId] = useState("warm");
   const [greeting, setGreeting] = useState("");
-  const [capabilities, _setCapabilities] = useState<string[]>([&quot;answer_questions&quot;, &quot;capture_leads&quot;, &quot;book_appointments&quot;, &quot;handle_emergencies&quot;, &quot;send_texts&quot;, &quot;block_spam&quot;]);
+  const [capabilities, _setCapabilities] = useState<string[]>(["answer_questions", "capture_leads", "book_appointments", "handle_emergencies", "send_texts", "block_spam"]);
 
   // Step 3
-  const [services, setServices] = useState(&quot;&quot;);
-  const [emergenciesAfterHours, setEmergenciesAfterHours] = useState<"call_me" | "message" | "next_day">(&quot;call_me&quot;);
-  const [appointmentHandling, setAppointmentHandling] = useState<"calendar" | "capture">(&quot;calendar&quot;);
-  const [faqExtra, setFaqExtra] = useState(&quot;&quot;);
+  const [services, setServices] = useState("");
+  const [emergenciesAfterHours, setEmergenciesAfterHours] = useState<"call_me" | "message" | "next_day">("call_me");
+  const [appointmentHandling, setAppointmentHandling] = useState<"calendar" | "capture">("calendar");
+  const [faqExtra, setFaqExtra] = useState("");
 
   // Step 4
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
-  const [numberOption, setNumberOption] = useState<"forward" | "main" | "later">(&quot;main&quot;);
+  const [numberOption, setNumberOption] = useState<"forward" | "main" | "later">("main");
   const [provisioning, setProvisioning] = useState(false);
   const [playingVoice, setPlayingVoice] = useState<string | null>(null);
 

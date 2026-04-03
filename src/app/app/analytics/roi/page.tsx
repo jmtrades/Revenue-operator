@@ -447,7 +447,7 @@ function PredictionsSection({ data }: { data: PredictionData | null }) {
 
 export default function ROIPage() {
   const { workspaceId } = useWorkspace();
-  const [dateRange, setDateRange] = useState<DateRange>(&quot;30d&quot;);
+  const [dateRange, setDateRange] = useState<DateRange>("30d");
   const [roiData, setROIData] = useState<ROIData | null>(null);
   const [predictionData, setPredictionData] = useState<PredictionData | null>(null);
   const [loading, setLoading] = useState(true);

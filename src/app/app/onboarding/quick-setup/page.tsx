@@ -48,11 +48,11 @@ export default function QuickSetupPage() {
   const router = useRouter();
   const { workspaceId } = useWorkspace();
   const [step, setStep] = useState<1 | 2 | 3>(1);
-  const [url, setUrl] = useState(&quot;&quot;);
+  const [url, setUrl] = useState("");
   const [analyzing, setAnalyzing] = useState(false);
   const [analysisMessages, setAnalysisMessages] = useState<string[]>([]);
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
-  const [industry, setIndustry] = useState(&quot;&quot;);
+  const [industry, setIndustry] = useState("");
   const [expandedSections, setExpandedSections] = useState<ExpandedSections>({
     greeting: false,
     faqs: false,

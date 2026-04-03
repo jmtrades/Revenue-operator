@@ -18,9 +18,9 @@ interface ChatMessage {
 export default function SmartSetupPage() {
   const router = useRouter();
   const { workspaceId } = useWorkspace();
-  const [step, setStep] = useState<SetupStep>(&quot;select-playbook&quot;);
+  const [step, setStep] = useState<SetupStep>("select-playbook");
   const [selectedPlaybook, setSelectedPlaybook] = useState<Playbook | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string>(&quot;All&quot;);
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isActivating, setIsActivating] = useState(false);
   const [agentName, setAgentName] = useState("");
