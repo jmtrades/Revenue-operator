@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { HeroRevenueWidget } from "@/components/sections/HeroRevenueWidget";
 import { ROUTES, SOCIAL_PROOF } from "@/lib/constants";
-import { ArrowRight, Play, Pause, Phone, PhoneCall } from "lucide-react";
+import { ArrowRight, Play, Pause, Phone, PhoneCall, CheckCircle2 } from "lucide-react";
 
 
 const HERO_DEMO_SAMPLES = [
@@ -44,8 +45,7 @@ function HeroVoiceDemo() {
         await audio.play();
         return true;
       }
-    } catch { /* API unavailable — do NOT fall back to robot browser TTS */ }
-    // No fallback to speechSynthesis — better to show nothing than a robot voice
+    } catch { /* API unavailable */ }
     setPlaying(false);
     return false;
   }, []);
@@ -111,8 +111,8 @@ function HeroVoiceDemo() {
   };
 
   return (
-    <div className="mt-8 space-y-3">
-      {/* Voice preview + phone input row */}
+    <div className="space-y-3">
+      {/* Voice preview + phone input */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 max-w-md">
         <button
           type="button"
@@ -194,8 +194,46 @@ function HeroVoiceDemo() {
       <p className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>
         {t("disclaimer")}
       </p>
-
     </div>
+  );
+}
+
+/* ── Animated counter for hero stats ── */
+function AnimatedNumber({ target, suffix = "" }: { target: number; suffix?: string }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const started = useRef(false);
+
+  useEffect(() => {
+    if (started.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !started.current) {
+          started.current = true;
+          const duration = 1800;
+          const start = performance.now();
+          const step = (now: number) => {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            // Ease-out cubic
+            const eased = 1 - Math.pow(1 - progress, 3);
+            setCount(Math.round(eased * target));
+            if (progress < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 },
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [target]);
+
+  return (
+    <span ref={ref} className="tabular-nums">
+      {count}{suffix}
+    </span>
   );
 }
 
@@ -204,13 +242,45 @@ export function Hero() {
 
   return (
     <section
-      className="hero-atmosphere relative pt-28 pb-16 md:pt-36 md:pb-24"
+      className="hero-atmosphere relative pt-28 pb-12 md:pt-40 md:pb-20"
       style={{ background: "var(--bg-primary)" }}
     >
+      {/* Subtle radial accent */}
+      <div
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse 60% 50% at 50% 0%, rgba(37,99,235,0.06), transparent 70%)",
+        }}
+      />
+
       <Container className="relative z-10">
+        {/* Two-column layout */}
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Left: Copy */}
-          <div>
+
+          {/* Left: Copy + CTAs */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+          >
+            {/* Eyebrow */}
+            <div className="flex items-center gap-2 mb-5">
+              <span
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider"
+                style={{
+                  background: "var(--bg-hover)",
+                  color: "var(--accent-primary)",
+                  border: "1px solid var(--border-default)",
+                }}
+              >
+                <span
+                  className="w-1.5 h-1.5 rounded-full"
+                  style={{ background: "var(--accent-secondary)" }}
+                />
+                Autonomous Revenue Platform
+              </span>
+            </div>
+
             <h1
               className="font-semibold max-w-xl mb-5"
               style={{
@@ -224,56 +294,108 @@ export function Hero() {
               <br className="hidden sm:block" />
               {t("heading2")}{" "}
               <br className="hidden sm:block" />
-              {t("heading3")}
+              <span style={{ color: "var(--accent-primary)" }}>{t("heading3")}</span>
             </h1>
 
             <p
-              className="text-base md:text-[1.125rem] max-w-lg mb-5 leading-relaxed"
+              className="text-base md:text-[1.125rem] max-w-lg mb-6 leading-relaxed"
               style={{ color: "var(--text-secondary)" }}
             >
               {t("description")}
             </p>
 
-            {/* Social proof ABOVE CTAs — builds trust before the ask */}
-            <div
-              className="flex flex-wrap items-center gap-3 mb-6"
-            >
-              <span className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
-                {SOCIAL_PROOF.revenueRecovered}
-              </span>
-              <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-                {t("socialProofRecovered")}
-              </span>
+            {/* Trust checkmarks */}
+            <div className="flex flex-col sm:flex-row flex-wrap gap-x-5 gap-y-1.5 mb-6">
+              {[
+                "Answers every call in < 1 second",
+                "Books appointments autonomously",
+                "Recovers missed revenue 24/7",
+              ].map((item) => (
+                <span
+                  key={item}
+                  className="flex items-center gap-1.5 text-[13px]"
+                  style={{ color: "var(--text-secondary)" }}
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5 shrink-0" style={{ color: "var(--accent-secondary)" }} />
+                  {item}
+                </span>
+              ))}
             </div>
 
-            {/* CTAs — primary is blue (highest contrast, highest conversion) */}
-            <div
-              className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center mb-2"
-            >
+            {/* Primary CTA */}
+            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center mb-2">
               <Link
                 href={ROUTES.START}
                 className="btn-marketing-blue btn-lg group no-underline flex items-center justify-center gap-2 w-full sm:w-auto active:scale-[0.97]"
               >
                 {t("getStarted")}
-                <ArrowRight className="w-4 h-4" style={{ transition: "transform 200ms cubic-bezier(0.23, 1, 0.32, 1)" }} />
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+              <Link
+                href="/demo"
+                className="btn-marketing-ghost btn-lg no-underline flex items-center justify-center gap-2 w-full sm:w-auto"
+              >
+                Watch Demo
+                <Play className="w-3.5 h-3.5" />
               </Link>
             </div>
-            <p
-              className="text-xs mb-5"
-              style={{ color: "var(--text-tertiary)" }}
-            >
+            <p className="text-xs mb-6" style={{ color: "var(--text-tertiary)" }}>
               {t("creditCard")}
             </p>
 
-            <div>
-              <HeroVoiceDemo />
-            </div>
-          </div>
+            {/* Voice demo */}
+            <HeroVoiceDemo />
+          </motion.div>
 
-          {/* Right: Dashboard preview card */}
-          <div
-            className="max-w-md lg:ml-auto w-full"
+          {/* Right: Dashboard card + floating metrics */}
+          <motion.div
+            className="max-w-md lg:ml-auto w-full relative"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.15, ease: [0.23, 1, 0.32, 1] }}
           >
+            {/* Floating metric — top right */}
+            <motion.div
+              className="absolute -top-4 -right-2 z-20 hidden lg:flex items-center gap-2 px-3.5 py-2 rounded-xl"
+              style={{
+                background: "var(--bg-surface)",
+                border: "1px solid var(--border-default)",
+                boxShadow: "var(--shadow-lg)",
+              }}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.8, duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+            >
+              <span
+                className="w-2 h-2 rounded-full"
+                style={{ background: "var(--accent-secondary)", animation: "breathing 2s ease-in-out infinite" }}
+              />
+              <span className="text-xs font-medium" style={{ color: "var(--text-primary)" }}>
+                <AnimatedNumber target={127} /> calls handled today
+              </span>
+            </motion.div>
+
+            {/* Floating metric — bottom left */}
+            <motion.div
+              className="absolute -bottom-3 -left-4 z-20 hidden lg:flex items-center gap-2 px-3.5 py-2 rounded-xl"
+              style={{
+                background: "var(--bg-surface)",
+                border: "1px solid var(--border-default)",
+                boxShadow: "var(--shadow-lg)",
+              }}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 1.0, duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+            >
+              <span className="text-xs font-semibold" style={{ color: "var(--accent-secondary)" }}>
+                +$<AnimatedNumber target={4820} />
+              </span>
+              <span className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>
+                revenue recovered this week
+              </span>
+            </motion.div>
+
+            {/* Main dashboard card */}
             <div
               className="rounded-2xl p-6 hover:-translate-y-1 transition-transform duration-300"
               style={{
@@ -309,9 +431,35 @@ export function Hero() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
 
+        {/* Hero stats bar */}
+        <motion.div
+          className="max-w-4xl mx-auto mt-16 md:mt-20 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+        >
+          {[
+            { value: 24, suffix: "/7", label: "Autonomous coverage" },
+            { value: 36, suffix: "+", label: "Industry voices" },
+            { value: 94, suffix: "%", label: "Appointment conversion" },
+            { value: 50, suffix: "+", label: "States compliant" },
+          ].map((stat) => (
+            <div key={stat.label} className="text-center">
+              <p
+                className="text-2xl md:text-3xl font-semibold"
+                style={{ color: "var(--text-primary)", letterSpacing: "-0.02em" }}
+              >
+                <AnimatedNumber target={stat.value} suffix={stat.suffix} />
+              </p>
+              <p className="text-[12px] mt-1" style={{ color: "var(--text-tertiary)" }}>
+                {stat.label}
+              </p>
+            </div>
+          ))}
+        </motion.div>
       </Container>
     </section>
   );

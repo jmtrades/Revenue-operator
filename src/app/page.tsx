@@ -2,7 +2,10 @@ import { cookies } from "next/headers";
 import dynamic from "next/dynamic";
 import { Navbar } from "@/components/sections/Navbar";
 import { Hero } from "@/components/sections/Hero";
-// V9: Homepage streamlined to 10 high-impact sections.
+// V10: Homepage with cinematic product demo video + streamlined 10 high-impact sections.
+const ProductDemoVideo = dynamic(
+  () => import("@/components/sections/ProductDemoVideo").then((m) => m.ProductDemoVideo),
+);
 const HomepageFAQ = dynamic(
   () => import("@/components/sections/HomepageFAQ").then((m) => m.HomepageFAQ),
 );
@@ -133,6 +136,7 @@ export default async function HomePage() {
       <main id="main">
         <Hero />
         <TrustedByBar />
+        <ProductDemoVideo />
         <ResultsStatsSection />
         <HomepageRoiCalculator />
         <HowItWorks />
