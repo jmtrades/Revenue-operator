@@ -21,8 +21,13 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
-  const displayName = (body.displayName ?? "").trim() || null;
-  const timezone = (body.timezone ?? "").trim() || null;
+  const displayName = (body.displayName ?? "").trim().slice(0, 100) || null;
+  const timezone = (body.timezone ?? "").trim().slice(0, 80) || null;
+
+  // Reject obviously invalid timezone strings (must be IANA-like: Region/City)
+  if (timezone && !/^[A-Za-z_]+\/[A-Za-z_\-\/]+$/.test(timezone)) {
+    return NextResponse.json({ error: "Invalid timezone format" }, { status: 400 });
+  }
 
   const db = getDb();
 

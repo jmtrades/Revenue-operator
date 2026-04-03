@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
 
   // Export workspaces
   try {
-    const { data: workspaces } = await db.from("workspaces").select("*").limit(EXPORT_LIMIT);
+    const { data: workspaces } = await db.from("workspaces").select("id, name, slug, plan, industry, created_at, updated_at, owner_id, trial_ends_at, is_active").limit(EXPORT_LIMIT);
     result.data.workspaces = workspaces ?? [];
   } catch (err) {
     log("error", "[admin/export] Failed to export workspaces", { error: String(err) });
@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
 
   // Export agents
   try {
-    const { data: agents } = await db.from("agents").select("*").limit(EXPORT_LIMIT);
+    const { data: agents } = await db.from("agents").select("id, workspace_id, name, voice_id, personality, purpose, is_active, template, created_at, updated_at").limit(EXPORT_LIMIT);
     result.data.agents = agents ?? [];
   } catch (err) {
     log("error", "[admin/export] Failed to export agents", { error: String(err) });
@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
 
   // Export call sessions
   try {
-    const { data: calls } = await db.from("call_sessions").select("*").limit(EXPORT_LIMIT);
+    const { data: calls } = await db.from("call_sessions").select("id, workspace_id, agent_id, lead_id, direction, status, duration_seconds, started_at, ended_at, created_at").limit(EXPORT_LIMIT);
     result.data.call_sessions = calls ?? [];
   } catch (err) {
     log("error", "[admin/export] Failed to export call_sessions", { error: String(err) });
@@ -64,7 +64,7 @@ export async function GET(req: NextRequest) {
 
   // Export leads
   try {
-    const { data: leads } = await db.from("leads").select("*").limit(EXPORT_LIMIT);
+    const { data: leads } = await db.from("leads").select("id, workspace_id, status, source, created_at, updated_at").limit(EXPORT_LIMIT);
     result.data.leads = leads ?? [];
   } catch (err) {
     log("error", "[admin/export] Failed to export leads", { error: String(err) });
@@ -73,7 +73,7 @@ export async function GET(req: NextRequest) {
 
   // Export conversations
   try {
-    const { data: conversations } = await db.from("conversations").select("*").limit(EXPORT_LIMIT);
+    const { data: conversations } = await db.from("conversations").select("id, workspace_id, lead_id, agent_id, channel, status, created_at, updated_at").limit(EXPORT_LIMIT);
     result.data.conversations = conversations ?? [];
   } catch (err) {
     log("error", "[admin/export] Failed to export conversations", { error: String(err) });
@@ -82,7 +82,7 @@ export async function GET(req: NextRequest) {
 
   // Export activation events
   try {
-    const { data: activations } = await db.from("activation_events").select("*").limit(EXPORT_LIMIT);
+    const { data: activations } = await db.from("activation_events").select("id, workspace_id, event_type, created_at").limit(EXPORT_LIMIT);
     result.data.activation_events = activations ?? [];
   } catch (err) {
     log("error", "[admin/export] Failed to export activation_events", { error: String(err) });
