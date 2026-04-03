@@ -100,16 +100,18 @@ export async function POST(req: NextRequest) {
       try {
         const db = getDb();
         await db.from("users").upsert({ id: userId, email }, { onConflict: "id" });
+        const trialEnd = new Date();
+        trialEnd.setDate(trialEnd.getDate() + 14);
         const { data: created, error: insertErr } = await db
           .from("workspaces")
-          .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false })
+          .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false, billing_status: "trial", trial_ends_at: trialEnd.toISOString() })
           .select("id")
           .maybeSingle();
         if (!insertErr && created) {
           workspaceId = (created as { id: string }).id;
           await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
           await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
-          await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing" });
+          await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing", trial_ends_at: trialEnd.toISOString() });
         }
       } catch {
         // continue
@@ -168,16 +170,18 @@ export async function POST(req: NextRequest) {
       try {
         const db = getDb();
         await db.from("users").upsert({ id: userId, email }, { onConflict: "id" });
+        const trialEnd = new Date();
+        trialEnd.setDate(trialEnd.getDate() + 14);
         const { data: created, error: createErr } = await db
           .from("workspaces")
-          .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false })
+          .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false, billing_status: "trial", trial_ends_at: trialEnd.toISOString() })
           .select("id")
           .maybeSingle();
         if (!createErr && created) {
           workspaceId = (created as { id: string }).id;
           await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
           await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
-          await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing" });
+          await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing", trial_ends_at: trialEnd.toISOString() });
         }
       } catch {
         // continue
@@ -206,16 +210,18 @@ export async function POST(req: NextRequest) {
   try {
     const db = getDb();
     await db.from("users").upsert({ id: userId, email }, { onConflict: "id" });
+    const trialEnd = new Date();
+    trialEnd.setDate(trialEnd.getDate() + 14);
     const { data: created, error: createErr } = await db
       .from("workspaces")
-      .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false })
+      .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false, billing_status: "trial", trial_ends_at: trialEnd.toISOString() })
       .select("id")
       .maybeSingle();
     if (!createErr && created) {
       workspaceId = (created as { id: string }).id;
       await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
       await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
-      await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing" });
+      await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing", trial_ends_at: trialEnd.toISOString() });
     }
   } catch {
     // continue without workspace

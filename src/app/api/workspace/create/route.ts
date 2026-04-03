@@ -134,6 +134,8 @@ export async function POST(req: NextRequest) {
 
     // Ensure workspace_billing record exists (required for billing queries)
     try {
+      const trialEnd = new Date();
+      trialEnd.setDate(trialEnd.getDate() + 14);
       await db
         .from("workspace_billing")
         .upsert(
@@ -141,10 +143,17 @@ export async function POST(req: NextRequest) {
             workspace_id: workspaceId,
             plan: "trial",
             status: "trialing",
+            trial_ends_at: trialEnd.toISOString(),
             updated_at: new Date().toISOString(),
           },
           { onConflict: "workspace_id" },
         );
+      // Also set trial_ends_at on the workspace itself if not already set
+      await db
+        .from("workspaces")
+        .update({ billing_status: "trial", trial_ends_at: trialEnd.toISOString() })
+        .eq("id", workspaceId)
+        .is("trial_ends_at", null);
     } catch {
       // Non-fatal; billing record can be created later by webhook
     }
@@ -164,8 +173,13 @@ export async function POST(req: NextRequest) {
           role: "owner",
         });
       }
-    } catch {
-      // Non-fatal; member record can be created later
+    } catch (memberErr) {
+      // This is critical: without a workspace_members record the user has no role-based access.
+      log("error", "[workspace/create] workspace_members insert failed — user may lack workspace access", {
+        workspaceId,
+        userId: session.userId,
+        error: memberErr instanceof Error ? memberErr.message : String(memberErr),
+      });
     }
 
     // Ensure workspace_business_context has the business_name for sidebar and brain.
