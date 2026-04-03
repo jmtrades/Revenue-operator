@@ -55,7 +55,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
 
   const { id } = await ctx.params;
   const db = getDb();
-  const { data: existing } = await db.from("agents").select("workspace_id").eq("id", id).maybeSingle();
+  const { data: existing } = await db.from("agents").select("workspace_id, updated_at").eq("id", id).maybeSingle();
   if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
   const err = await requireWorkspaceAccess(req, (existing as { workspace_id: string }).workspace_id);
   if (err) return err;
@@ -90,6 +90,16 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
       updates[k] = v;
     }
   }
+  // Optimistic locking: if client sends _updatedAt, reject stale writes
+  const clientUpdatedAt = (parsed.data as Record<string, unknown>)._updatedAt as string | undefined;
+  const existingUpdatedAt = (existing as { updated_at?: string }).updated_at;
+  if (clientUpdatedAt && existingUpdatedAt && clientUpdatedAt !== existingUpdatedAt) {
+    return NextResponse.json(
+      { error: "This agent was modified by another user. Please refresh and try again.", code: "conflict" },
+      { status: 409 }
+    );
+  }
+
   const { data: agent, error } = await db.from("agents").update(updates).eq("id", id).select().maybeSingle();
   if (error) {
     log("error", "[DB Error] agents PATCH", { error: error.message });
@@ -115,6 +125,12 @@ export async function DELETE(req: NextRequest, ctx: { params: Promise<{ id: stri
   if (!rl.allowed) {
     return NextResponse.json({ error: "Too many delete requests. Please slow down." }, { status: 429 });
   }
+
+  // Cascade: clean up agent-related records
+  await Promise.allSettled([
+    db.from("conversation_flows").delete().eq("agent_id", id),
+    db.from("agent_objections").delete().eq("agent_id", id),
+  ]);
 
   const { error } = await db.from("agents").delete().eq("id", id);
   if (error) {

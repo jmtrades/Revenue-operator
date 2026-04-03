@@ -4,7 +4,9 @@
  * All requests are capped by DEFAULT_TIMEOUT_MS so they cannot hang indefinitely.
  */
 
-import { getCachedResponse, setCachedResponse } from "./cache";
+import { getCachedResponse, setCachedResponse, invalidateCache } from "./cache";
+
+export { invalidateCache };
 
 const DEFAULT_TIMEOUT_MS = 15_000;
 
