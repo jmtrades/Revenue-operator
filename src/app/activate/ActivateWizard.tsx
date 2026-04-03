@@ -427,6 +427,12 @@ export function ActivateWizard() {
           )}
         </section>
       </div>
+      <p className="text-center text-[var(--text-tertiary)] text-[11px] mt-6">
+        By continuing, you agree to our{" "}
+        <a href="/terms" className="underline hover:text-[var(--text-secondary)] transition">Terms of Service</a>
+        {" and "}
+        <a href="/privacy" className="underline hover:text-[var(--text-secondary)] transition">Privacy Policy</a>
+      </p>
     </Container>
   );
 }

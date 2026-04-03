@@ -1040,7 +1040,7 @@ function buildDefaultFollowUpEmail(
   <p>Talk soon,<br><strong>Sarah</strong><br><span style="color:#6b7280;font-size:14px;">AI Sales Agent, Revenue Operator</span></p>
   <hr style="border:none;border-top:1px solid #e5e7eb;margin:32px 0 16px;">
   <p style="font-size:12px;color:#9ca3af;">This email was sent by Revenue Operator AI. <a href="https://www.recall-touch.com" style="color:#2563EB;">recall-touch.com</a></p>
-  <p style="font-size:11px;color:#9ca3af;">Revenue Operator Inc. | <a href="https://www.recall-touch.com/unsubscribe" style="color:#9ca3af;">Unsubscribe</a> | <a href="https://www.recall-touch.com/privacy" style="color:#9ca3af;">Privacy Policy</a></p>
+  <p style="font-size:11px;color:#9ca3af;">Revenue Operator Inc. | <a href="https://www.recall-touch.com/app/settings/notifications" style="color:#9ca3af;">Manage email preferences</a> | <a href="https://www.recall-touch.com/privacy" style="color:#9ca3af;">Privacy Policy</a></p>
 </body>
 </html>`;
 }
@@ -1071,7 +1071,7 @@ function buildReassuranceEmail(
   <p>Best,<br><strong>Sarah</strong><br><span style="color:#6b7280;font-size:14px;">AI Sales Agent, Revenue Operator</span></p>
   <hr style="border:none;border-top:1px solid #e5e7eb;margin:32px 0 16px;">
   <p style="font-size:12px;color:#9ca3af;">This email was sent by Revenue Operator AI. <a href="https://www.recall-touch.com" style="color:#2563EB;">recall-touch.com</a></p>
-  <p style="font-size:11px;color:#9ca3af;">Revenue Operator Inc. | <a href="https://www.recall-touch.com/unsubscribe" style="color:#9ca3af;">Unsubscribe</a> | <a href="https://www.recall-touch.com/privacy" style="color:#9ca3af;">Privacy Policy</a></p>
+  <p style="font-size:11px;color:#9ca3af;">Revenue Operator Inc. | <a href="https://www.recall-touch.com/app/settings/notifications" style="color:#9ca3af;">Manage email preferences</a> | <a href="https://www.recall-touch.com/privacy" style="color:#9ca3af;">Privacy Policy</a></p>
 </body>
 </html>`;
 }

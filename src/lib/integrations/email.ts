@@ -146,6 +146,9 @@ export async function sendEmail(
   if (!queueId) return { ok: false, error: "Failed to create queue entry" };
 
   try {
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com";
+    const unsubscribeUrl = `${appUrl}/app/settings/notifications`;
+    const htmlWithFooter = `${bodyHtml}<p style="margin-top:24px;font-size:11px;color:#999;text-align:center;"><a href="${unsubscribeUrl}" style="color:#999;">Manage email preferences</a></p>`;
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -156,7 +159,11 @@ export async function sendEmail(
         from,
         to: [to],
         subject,
-        html: bodyHtml,
+        html: htmlWithFooter,
+        headers: {
+          "List-Unsubscribe": `<${unsubscribeUrl}>`,
+          "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        },
       }),
       signal: AbortSignal.timeout(10_000),
     });

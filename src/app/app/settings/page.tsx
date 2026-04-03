@@ -477,6 +477,41 @@ export default function AppSettingsPage() {
             {tSettings("openSetup")}
           </Link>
         </div>
+        {/* Change Password */}
+        <div className="mt-6 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
+          <p className="text-sm font-medium text-[var(--text-primary)] mb-3">Change Password</p>
+          <form
+            className="space-y-3"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const form = e.currentTarget;
+              const fd = new FormData(form);
+              const currentPassword = fd.get("currentPassword") as string;
+              const newPassword = fd.get("newPassword") as string;
+              const confirmPassword = fd.get("confirmPassword") as string;
+              if (newPassword !== confirmPassword) { toast.error("Passwords do not match"); return; }
+              try {
+                const res = await fetch("/api/auth/change-password", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  credentials: "include",
+                  body: JSON.stringify({ currentPassword, newPassword }),
+                });
+                const d = await res.json().catch(() => ({}));
+                if (res.ok) { toast.success("Password updated"); form.reset(); }
+                else toast.error((d as { error?: string }).error || "Failed to update password");
+              } catch { toast.error("Failed to update password"); }
+            }}
+          >
+            <input name="currentPassword" type="password" required placeholder="Current password" autoComplete="current-password" className="w-full px-3 py-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-inset)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)]" />
+            <input name="newPassword" type="password" required minLength={8} placeholder="New password" autoComplete="new-password" className="w-full px-3 py-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-inset)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)]" />
+            <input name="confirmPassword" type="password" required minLength={8} placeholder="Confirm new password" autoComplete="new-password" className="w-full px-3 py-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-inset)] text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)]" />
+            <button type="submit" className="px-4 py-2 bg-[var(--accent-primary)] text-[var(--text-on-accent)] font-semibold rounded-xl text-xs hover:opacity-90 transition-[background-color,opacity,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]">
+              Update Password
+            </button>
+          </form>
+        </div>
+
         <div className="mt-8 pt-6 border-t border-[var(--border-default)]">
           <p className="text-xs font-semibold uppercase tracking-wider text-[var(--accent-danger,#ef4444)]/90 mb-3">{tSettings("dangerZone")}</p>
           <div className="rounded-xl border border-[var(--accent-danger,#ef4444)]/30 bg-[var(--accent-danger,#ef4444)]/10 p-4 space-y-3">

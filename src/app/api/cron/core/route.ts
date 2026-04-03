@@ -55,6 +55,7 @@ const CORE_STEPS = [
   // ── Billing & Financial ──
   "/api/cron/billing",
   "/api/cron/phone-billing",
+  "/api/cron/enforce-downgrades",
   "/api/cron/economic-value",
   "/api/cron/financial-exposure",
   "/api/cron/settlement-authorization",
