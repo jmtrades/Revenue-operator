@@ -100,6 +100,11 @@ export async function POST(req: NextRequest) {
       try {
         const db = getDb();
         await db.from("users").upsert({ id: userId, email }, { onConflict: "id" });
+        // Check if workspace already exists (prevents duplicate on double-click / retry)
+        const { data: existingWs } = await db.from("workspaces").select("id").eq("owner_id", userId).limit(1).maybeSingle();
+        if (existingWs) {
+          workspaceId = (existingWs as { id: string }).id;
+        } else {
         const trialEnd = new Date();
         trialEnd.setDate(trialEnd.getDate() + 14);
         const { data: created, error: insertErr } = await db
@@ -107,7 +112,11 @@ export async function POST(req: NextRequest) {
           .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false, billing_status: "trial", trial_ends_at: trialEnd.toISOString() })
           .select("id")
           .maybeSingle();
-        if (!insertErr && created) {
+        if (insertErr) {
+          // Race condition: re-fetch
+          const { data: raceWs } = await db.from("workspaces").select("id").eq("owner_id", userId).limit(1).maybeSingle();
+          if (raceWs) workspaceId = (raceWs as { id: string }).id;
+        } else if (created) {
           workspaceId = (created as { id: string }).id;
           await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
           const { error: memberErr } = await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
@@ -120,6 +129,7 @@ export async function POST(req: NextRequest) {
           try { await db.from("workspace_business_context").insert({ workspace_id: workspaceId, business_name: businessName || "My Business" }); } catch { /* non-fatal */ }
           try { await db.from("notifications").insert({ workspace_id: workspaceId, user_id: userId, type: "system_update", title: "Welcome to Revenue Operator", body: "Your 14-day trial is active. Set up your AI agent to start taking calls.", read: false, metadata: {} }); } catch { /* non-fatal */ }
         }
+        } // close else (workspace didn't exist yet)
       } catch {
         // continue
       }
@@ -177,25 +187,30 @@ export async function POST(req: NextRequest) {
       try {
         const db = getDb();
         await db.from("users").upsert({ id: userId, email }, { onConflict: "id" });
-        const trialEnd = new Date();
-        trialEnd.setDate(trialEnd.getDate() + 14);
-        const { data: created, error: createErr } = await db
-          .from("workspaces")
-          .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false, billing_status: "trial", trial_ends_at: trialEnd.toISOString() })
-          .select("id")
-          .maybeSingle();
-        if (!createErr && created) {
-          workspaceId = (created as { id: string }).id;
-          await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
-          const { error: memberErr } = await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
-          if (memberErr) {
-            log("error", "[signup] workspace_members insert failed — user may be locked out", { workspaceId, userId, error: memberErr.message });
-            // Retry once
-            await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
+        // Check if workspace already exists (prevents duplicate on retry)
+        const { data: existWs } = await db.from("workspaces").select("id").eq("owner_id", userId).limit(1).maybeSingle();
+        if (existWs) {
+          workspaceId = (existWs as { id: string }).id;
+        } else {
+          const trialEnd = new Date();
+          trialEnd.setDate(trialEnd.getDate() + 14);
+          const { data: created, error: createErr } = await db
+            .from("workspaces")
+            .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false, billing_status: "trial", trial_ends_at: trialEnd.toISOString() })
+            .select("id")
+            .maybeSingle();
+          if (!createErr && created) {
+            workspaceId = (created as { id: string }).id;
+            await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
+            const { error: memberErr } = await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
+            if (memberErr) {
+              log("error", "[signup] workspace_members insert failed — user may be locked out", { workspaceId, userId, error: memberErr.message });
+              await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
+            }
+            await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing", trial_ends_at: trialEnd.toISOString() });
+            try { await db.from("workspace_business_context").insert({ workspace_id: workspaceId, business_name: businessName || "My Business" }); } catch { /* non-fatal */ }
+            try { await db.from("notifications").insert({ workspace_id: workspaceId, user_id: userId, type: "system_update", title: "Welcome to Revenue Operator", body: "Your 14-day trial is active. Set up your AI agent to start taking calls.", read: false, metadata: {} }); } catch { /* non-fatal */ }
           }
-          await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing", trial_ends_at: trialEnd.toISOString() });
-          try { await db.from("workspace_business_context").insert({ workspace_id: workspaceId, business_name: businessName || "My Business" }); } catch { /* non-fatal */ }
-          try { await db.from("notifications").insert({ workspace_id: workspaceId, user_id: userId, type: "system_update", title: "Welcome to Revenue Operator", body: "Your 14-day trial is active. Set up your AI agent to start taking calls.", read: false, metadata: {} }); } catch { /* non-fatal */ }
         }
       } catch {
         // continue
@@ -224,19 +239,25 @@ export async function POST(req: NextRequest) {
   try {
     const db = getDb();
     await db.from("users").upsert({ id: userId, email }, { onConflict: "id" });
-    const trialEnd = new Date();
-    trialEnd.setDate(trialEnd.getDate() + 14);
-    const { data: created, error: createErr } = await db
-      .from("workspaces")
-      .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false, billing_status: "trial", trial_ends_at: trialEnd.toISOString() })
-      .select("id")
-      .maybeSingle();
-    if (!createErr && created) {
-      workspaceId = (created as { id: string }).id;
-      await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
-      await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
-      await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing", trial_ends_at: trialEnd.toISOString() });
-      try { await db.from("workspace_business_context").insert({ workspace_id: workspaceId, business_name: businessName || "My Business" }); } catch { /* non-fatal */ }
+    // Check if workspace already exists (prevents duplicate on retry)
+    const { data: existWs3 } = await db.from("workspaces").select("id").eq("owner_id", userId).limit(1).maybeSingle();
+    if (existWs3) {
+      workspaceId = (existWs3 as { id: string }).id;
+    } else {
+      const trialEnd = new Date();
+      trialEnd.setDate(trialEnd.getDate() + 14);
+      const { data: created, error: createErr } = await db
+        .from("workspaces")
+        .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false, billing_status: "trial", trial_ends_at: trialEnd.toISOString() })
+        .select("id")
+        .maybeSingle();
+      if (!createErr && created) {
+        workspaceId = (created as { id: string }).id;
+        await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
+        await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
+        await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing", trial_ends_at: trialEnd.toISOString() });
+        try { await db.from("workspace_business_context").insert({ workspace_id: workspaceId, business_name: businessName || "My Business" }); } catch { /* non-fatal */ }
+      }
     }
   } catch {
     // continue without workspace

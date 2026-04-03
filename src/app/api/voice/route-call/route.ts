@@ -185,21 +185,28 @@ export async function POST(request: NextRequest) {
       priority: decision.priority,
     });
 
-    // Store call routing event
+    // Store call routing event (deduplicate by external_meeting_id to handle Twilio retries)
     try {
-      await db.from("call_sessions").insert({
-        workspace_id: workspaceId,
-        external_meeting_id: twilio.callSid,
-        call_started_at: new Date().toISOString(),
-        metadata: {
-          twilio_call_sid: twilio.callSid,
-          twilio_from: twilio.from,
-          twilio_to: twilio.to,
-          routing_decision: decision.action,
-          routing_agent_id: decision.agent_id || null,
-          routing_reason: decision.reason,
-        },
-      });
+      const { data: existingSession } = await db
+        .from("call_sessions")
+        .select("id")
+        .eq("external_meeting_id", twilio.callSid)
+        .maybeSingle();
+      if (!existingSession) {
+        await db.from("call_sessions").insert({
+          workspace_id: workspaceId,
+          external_meeting_id: twilio.callSid,
+          call_started_at: new Date().toISOString(),
+          metadata: {
+            twilio_call_sid: twilio.callSid,
+            twilio_from: twilio.from,
+            twilio_to: twilio.to,
+            routing_decision: decision.action,
+            routing_agent_id: decision.agent_id || null,
+            routing_reason: decision.reason,
+          },
+        });
+      }
     } catch (err) {
       log("warn", "voice_routing.failed_to_store_event", {
         error: err instanceof Error ? err.message : String(err),

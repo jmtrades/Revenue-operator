@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
 
   // Export all workspaces
   try {
-    const { data: workspaces } = await db.from("workspaces").select("*");
+    const { data: workspaces } = await db.from("workspaces").select("*").limit(10000);
     result.data.workspaces = workspaces ?? [];
   } catch (err) {
     result.data.workspaces = [];
@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
 
   // Export all agents
   try {
-    const { data: agents } = await db.from("agents").select("*");
+    const { data: agents } = await db.from("agents").select("*").limit(10000);
     result.data.agents = agents ?? [];
   } catch (err) {
     result.data.agents = [];
@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
 
   // Export all call sessions
   try {
-    const { data: calls } = await db.from("call_sessions").select("*");
+    const { data: calls } = await db.from("call_sessions").select("*").order("call_started_at", { ascending: false }).limit(10000);
     result.data.call_sessions = calls ?? [];
   } catch (err) {
     result.data.call_sessions = [];
@@ -56,7 +56,7 @@ export async function GET(req: NextRequest) {
 
   // Export all leads
   try {
-    const { data: leads } = await db.from("leads").select("*");
+    const { data: leads } = await db.from("leads").select("*").limit(10000);
     result.data.leads = leads ?? [];
   } catch (err) {
     result.data.leads = [];
@@ -64,7 +64,7 @@ export async function GET(req: NextRequest) {
 
   // Export all conversations
   try {
-    const { data: conversations } = await db.from("conversations").select("*");
+    const { data: conversations } = await db.from("conversations").select("*").limit(10000);
     result.data.conversations = conversations ?? [];
   } catch (err) {
     result.data.conversations = [];
@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
 
   // Export all activation events
   try {
-    const { data: activations } = await db.from("activation_events").select("*");
+    const { data: activations } = await db.from("activation_events").select("*").limit(10000);
     result.data.activation_events = activations ?? [];
   } catch (err) {
     result.data.activation_events = [];
