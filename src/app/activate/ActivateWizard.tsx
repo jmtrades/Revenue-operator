@@ -241,6 +241,17 @@ export function ActivateWizard() {
       setFinalizing(false);
       return;
     }
+    // Mark onboarding as completed in the database
+    try {
+      await fetch("/api/workspace/me", {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ onboardingCompletedAt: new Date().toISOString() }),
+      });
+    } catch {
+      // Non-blocking — workspace was created, onboarding flag can be retried
+    }
     if (typeof localStorage !== "undefined") {
       localStorage.setItem("rt_onboarded", "true");
       localStorage.removeItem(STORAGE_KEY); // Clear saved progress after successful setup
