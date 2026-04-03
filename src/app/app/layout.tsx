@@ -165,7 +165,7 @@ async function getInitialShellData(defaultWorkspaceName: string): Promise<{
         calls: callCount ?? 0,
       },
       billing: {
-        billing_status: row.billing_status ?? "trial",
+        billing_status: row.billing_status ?? "pending",
         billing_tier: row.billing_tier ?? "solo",
         renewal_at: row.trial_ends_at ?? null,
       },

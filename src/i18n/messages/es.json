@@ -63,8 +63,8 @@
       "coverageRunning": "Cobertura en curso",
       "nothingRequiresSupervision": "Nada requiere supervisión. Te avisaremos cuando haga falta.",
       "remindBeforeCharge": "Nada requiere supervisión. Te avisaremos cuando haga falta. Te recordaremos antes de cualquier cargo.",
-      "trialGraceEnded": "Your trial has ended.",
-      "trialUpgradeToContinue": "Upgrade to continue →"
+      "trialGraceEnded": "Tu acceso ha sido pausado.",
+      "trialUpgradeToContinue": "Activar para continuar →"
     }
   },
   "siteNav": {
@@ -1399,7 +1399,7 @@
       "renewal": "Renovación",
       "manageBilling": "Gestionar facturación",
       "opening": "Abriendo…",
-      "statusTrial": "Prueba",
+      "statusTrial": "Comenzando",
       "statusActive": "Activo",
       "statusPastDue": "Vencido",
       "statusPaused": "Pausado",
@@ -6360,8 +6360,8 @@
     },
     "faq": {
       "title": "Preguntas sobre precios",
-      "trial": "¿Ofrecen prueba gratuita?",
-      "trialAnswer": "Sí — todos los planes que no son Enterprise incluyen una prueba gratuita de 14 días.",
+      "trial": "¿Cómo empiezo?",
+      "trialAnswer": "Regístrate y empieza en menos de 3 minutos. Todos los planes incluyen garantía de devolución de 30 días.",
       "overage": "¿Qué pasa si supero mis minutos incluidos?",
       "overageAnswer": "Solo cobramos el excedente a la tarifa por minuto de tu plan, sin penalizaciones.",
       "cancel": "¿Puedo cancelar en cualquier momento?",
@@ -9481,7 +9481,7 @@
   },
   "sidebar": {
     "tier": "Starter",
-    "trial": " · Trial",
+    "trial": " · Pending",
     "activeSubscription": "Active subscription",
     "callsAnswered": "calls answered",
     "minUsed": "min used",

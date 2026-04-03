@@ -168,7 +168,7 @@ export default function AppSettingsBillingPage() {
       if (!res.ok) { setBillingError(true); return; }
       const data = await res.json() as Record<string, unknown>;
       if (!data) { setBillingError(true); return; }
-      setBillingStatus((data.billing_status as string) ?? "trial");
+      setBillingStatus((data.billing_status as string) ?? "pending");
       setRenewalAt((data.renewal_at as string) ?? null);
       setPendingTier((data.pending_billing_tier as string) ?? null);
       setPendingEffectiveAt((data.pending_billing_effective_at as string) ?? null);

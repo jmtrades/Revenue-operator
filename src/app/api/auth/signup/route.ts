@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
           workspaceId = (created as { id: string }).id;
           await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
           await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
-          await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing" });
+          await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "pending", status: "pending" });
         }
       } catch (err) {
         log("warn", "[signup] workspace setup failed for user", { userId, error: err instanceof Error ? err.message : String(err) });
@@ -173,7 +173,7 @@ export async function POST(req: NextRequest) {
           workspaceId = (created as { id: string }).id;
           await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
           await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
-          await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing" });
+          await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "pending", status: "pending" });
         }
       } catch (err) {
         log("warn", "[signup] workspace setup failed for user", { userId, error: err instanceof Error ? err.message : String(err) });
@@ -211,7 +211,7 @@ export async function POST(req: NextRequest) {
       workspaceId = (created as { id: string }).id;
       await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
       await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
-      await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing" });
+      await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "pending", status: "pending" });
     }
   } catch {
     // continue without workspace

@@ -71,8 +71,8 @@
       "coverageRunning": "Coverage running",
       "nothingRequiresSupervision": "Nothing requires supervision. We'll notify you when your input is needed.",
       "remindBeforeCharge": "Nothing requires supervision. We'll notify you when your input is needed. We'll remind you before any charge.",
-      "trialGraceEnded": "Your trial has ended.",
-      "trialUpgradeToContinue": "Upgrade to continue →"
+      "trialGraceEnded": "Your access has been paused.",
+      "trialUpgradeToContinue": "Activate to continue →"
     }
   },
   "siteNav": {
@@ -9398,16 +9398,16 @@
     "workspaceNote": "Workspace",
     "fixPayment": "Fix payment →",
     "upgradeCta": "Upgrade now →",
-    "statusTrial": "Trial",
+    "statusTrial": "Getting Started",
     "statusActive": "Active",
     "statusCancelled": "Cancelled",
     "statusPaymentFailed": "Payment Failed",
-    "statusTrialEnded": "Trial Ended",
+    "statusTrialEnded": "Pending Activation",
     "statusPaused": "Paused",
-    "trialDaysLeft": "{days} days left",
+    "trialDaysLeft": "Activate your account",
     "subscriptionCancelled": "Subscription cancelled",
     "paymentIssue": "Payment issue — update card",
-    "trialEnded": "Trial ended — upgrade now"
+    "trialEnded": "Pending activation"
   },
   "help": {
     "breadcrumbs": {

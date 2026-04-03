@@ -63,8 +63,8 @@
       "coverageRunning": "Couverture en cours",
       "nothingRequiresSupervision": "Rien ne requiert de supervision. Nous vous préviendrons si besoin.",
       "remindBeforeCharge": "Rien ne requiert de supervision. Nous vous préviendrons si besoin. Rappel avant tout prélèvement.",
-      "trialGraceEnded": "Your trial has ended.",
-      "trialUpgradeToContinue": "Upgrade to continue →"
+      "trialGraceEnded": "Votre accès a été suspendu.",
+      "trialUpgradeToContinue": "Activer pour continuer →"
     }
   },
   "siteNav": {
@@ -1399,7 +1399,7 @@
       "renewal": "Renouvellement",
       "manageBilling": "Gérer la facturation",
       "opening": "Ouverture…",
-      "statusTrial": "Essai",
+      "statusTrial": "Démarrage",
       "statusActive": "Actif",
       "statusPastDue": "En retard",
       "statusPaused": "En pause",
@@ -9476,7 +9476,7 @@
   },
   "sidebar": {
     "tier": "Starter",
-    "trial": " · Trial",
+    "trial": " · Pending",
     "activeSubscription": "Active subscription",
     "callsAnswered": "calls answered",
     "minUsed": "min used",

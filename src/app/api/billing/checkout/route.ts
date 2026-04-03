@@ -1,6 +1,6 @@
 /**
  * Stripe checkout: create session for activation
- * 14-day trial, payment method upfront, USD only
+ * Card charged immediately, 30-day money-back guarantee, USD only
  * Economic framing: use BILLING_EMAIL_SUBJECT and INVOICE_DESCRIPTION in Stripe Product/email settings.
  */
 
@@ -158,7 +158,7 @@ export async function POST(req: NextRequest) {
             risk_level: "balanced",
           });
           await db.from("workspace_members").insert({ workspace_id: wsId, user_id: userId, role: "owner" });
-          await db.from("workspace_billing").insert({ workspace_id: wsId, plan: "trial", status: "trialing" });
+          await db.from("workspace_billing").insert({ workspace_id: wsId, plan: "pending", status: "pending" });
 
           finalWorkspaceId = wsId;
           finalEmail = email;

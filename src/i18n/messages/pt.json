@@ -63,8 +63,8 @@
       "coverageRunning": "Cobertura em curso",
       "nothingRequiresSupervision": "Nada requer supervisão. Avisaremos quando for preciso.",
       "remindBeforeCharge": "Nada requer supervisão. Avisaremos quando for preciso. Lembramos antes de qualquer cobrança.",
-      "trialGraceEnded": "Your trial has ended.",
-      "trialUpgradeToContinue": "Upgrade to continue →"
+      "trialGraceEnded": "Seu acesso foi pausado.",
+      "trialUpgradeToContinue": "Ativar para continuar →"
     }
   },
   "siteNav": {
@@ -1401,7 +1401,7 @@
       "renewal": "Renovação",
       "manageBilling": "Gerenciar cobrança",
       "opening": "Abrindo…",
-      "statusTrial": "Teste",
+      "statusTrial": "Começando",
       "statusActive": "Ativo",
       "statusPastDue": "Vencido",
       "statusPaused": "Pausado",
@@ -6248,7 +6248,7 @@
     },
     "cta": "Começar agora",
     "contactSales": "Falar com vendas",
-    "allPlansInclude": "Todos os planos incluem: gravações encriptadas · quadro de conformidade · registo de auditoria · 14 dias de trial.",
+    "allPlansInclude": "Todos os planos incluem: gravações encriptadas · quadro de conformidade · registo de auditoria · garantia de reembolso de 30 dias.",
     "roiCalculator": "Calculadora de ROI",
     "featureComparison": "Comparação de funcionalidades",
     "feature": "Funcionalidade",
@@ -9478,7 +9478,7 @@
   },
   "sidebar": {
     "tier": "Starter",
-    "trial": " · Trial",
+    "trial": " · Pending",
     "activeSubscription": "Active subscription",
     "callsAnswered": "calls answered",
     "minUsed": "min used",

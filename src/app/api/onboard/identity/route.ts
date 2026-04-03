@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
         risk_level: "balanced",
       });
       await db.from("workspace_members").insert({ workspace_id: wsId, user_id: uid, role: "owner" });
-      await db.from("workspace_billing").insert({ workspace_id: wsId, plan: "trial", status: "trialing" });
+      await db.from("workspace_billing").insert({ workspace_id: wsId, plan: "pending", status: "pending" });
       return NextResponse.json({ workspace_id: wsId });
     }
     return NextResponse.json({ error: "Failed to create user" }, { status: 500 });
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
     risk_level: "balanced",
   });
   await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
-  await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing" });
+  await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "pending", status: "pending" });
 
   return NextResponse.json({ workspace_id: workspaceId });
 }
