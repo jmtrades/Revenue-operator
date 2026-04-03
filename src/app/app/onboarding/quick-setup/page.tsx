@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ChevronDown, Check, Sparkles, ArrowRight } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
+import { useTranslations } from "next-intl";
 
 interface AnalysisResult {
   businessName: string;
@@ -75,6 +76,7 @@ const INDUSTRIES = [
 export default function QuickSetupPage() {
   const router = useRouter();
   const { workspaceId } = useWorkspace();
+  const t = useTranslations("onboarding.quickSetup");
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [url, setUrl] = useState("");
   const [analyzing, setAnalyzing] = useState(false);
@@ -91,25 +93,25 @@ export default function QuickSetupPage() {
   const progressRef = useRef<HTMLDivElement>(null);
 
   const analyzeMessages = [
-    "Reading your website...",
-    "Understanding your business...",
-    "Building your operator's knowledge...",
-    "Creating scripts and responses...",
+    t("progressReading"),
+    t("progressUnderstanding"),
+    t("progressBuilding"),
+    t("progressCreating"),
   ];
 
   const handleAnalyze = async () => {
     if (!url.trim()) {
-      toast.error("Please enter a website URL");
+      toast.error(t("errorEnterUrl"));
       return;
     }
 
     if (!workspaceId) {
-      toast.error("Workspace not found. Please complete setup first.");
+      toast.error(t("errorWorkspaceNotFound"));
       return;
     }
 
     setAnalyzing(true);
-    setAnalysisMessages(["Analyzing your website..."]);
+    setAnalysisMessages([t("statusAnalyzing")]);
 
     // Show progress messages only as time passes (real progress, not fabricated)
     let msgIdx = 0;
@@ -137,8 +139,8 @@ export default function QuickSetupPage() {
       setAnalysisMessages(analyzeMessages);
 
       setAnalysis({
-        businessName: data.businessName || "Your Business",
-        industry: data.industry || "General",
+        businessName: data.businessName || t("defaultBusinessName"),
+        industry: data.industry || t("defaultIndustry"),
         services: data.services || [],
         greeting: data.greeting || "Hello, this is your AI assistant speaking.",
         faqCount: data.faqCount || 0,
@@ -152,7 +154,7 @@ export default function QuickSetupPage() {
       setStep(2);
     } catch (error) {
       clearInterval(messageInterval);
-      toast.error("Failed to analyze website. Please try again.");
+      toast.error(t("errorAnalyzeFailed"));
     } finally {
       setAnalyzing(false);
     }
@@ -169,7 +171,7 @@ export default function QuickSetupPage() {
     if (!analysis) return;
 
     if (!workspaceId) {
-      toast.error("Workspace not found. Please complete setup first.");
+      toast.error(t("errorWorkspaceNotFound"));
       return;
     }
 
@@ -197,7 +199,7 @@ export default function QuickSetupPage() {
 
       setStep(3);
     } catch (error) {
-      toast.error("Failed to activate setup. Please try again.");
+      toast.error(t("errorActivateFailed"));
     } finally {
       setActivating(false);
     }
@@ -237,13 +239,13 @@ export default function QuickSetupPage() {
               <Sparkles size={32} style={{ color: "var(--accent-primary)" }} />
             </div>
             <h1 className="text-4xl font-bold mb-3" style={{ color: "var(--text-primary)" }}>
-              Set Up Your AI Operator in Seconds
+              {t("heading")}
             </h1>
             <p style={{ color: "var(--text-secondary)", fontSize: "1.125rem" }} className="mb-2">
-              We&apos;ll analyze your business and configure everything automatically.
+              {t("subheading")}
             </p>
             <p style={{ color: "var(--text-tertiary)" }} className="text-sm">
-              No manual scripts or setup required — just share your website.
+              {t("subheadingNoSetup")}
             </p>
           </div>
 
@@ -251,13 +253,13 @@ export default function QuickSetupPage() {
           <div className="space-y-4">
             <div>
               <label htmlFor="website-url" className="block text-sm font-medium mb-3" style={{ color: "var(--text-primary)" }}>
-                Website URL
+                {t("labelWebsiteUrl")}
               </label>
               <div className="flex gap-2">
                 <input
                   id="website-url"
                   type="url"
-                  placeholder="https://yourcompany.com"
+                  placeholder={t("placeholderUrl")}
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   onKeyPress={(e) => {
@@ -288,11 +290,11 @@ export default function QuickSetupPage() {
                   {analyzing ? (
                     <>
                       <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
-                      Analyzing
+                      {t("buttonAnalyzing")}
                     </>
                   ) : (
                     <>
-                      Analyze
+                      {t("buttonAnalyze")}
                       <ArrowRight size={18} />
                     </>
                   )}
@@ -376,9 +378,9 @@ export default function QuickSetupPage() {
           {/* Header */}
           <div className="mb-8 animate-fade-in-up">
             <h1 className="text-3xl font-bold mb-2" style={{ color: "var(--text-primary)" }}>
-              We Found Your Business
+              {t("reviewHeading")}
             </h1>
-            <p style={{ color: "var(--text-secondary)" }}>Review what we learned and customize if needed.</p>
+            <p style={{ color: "var(--text-secondary)" }}>{t("reviewSubheading")}</p>
           </div>
 
           {/* Summary Card */}
@@ -386,7 +388,7 @@ export default function QuickSetupPage() {
             <div className="grid grid-cols-2 gap-6 mb-6">
               <div>
                 <p style={{ color: "var(--text-tertiary)" }} className="text-xs font-medium uppercase tracking-wide mb-2">
-                  Business Name
+                  {t("labelBusinessName")}
                 </p>
                 <h2 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>
                   {analysis.businessName}
@@ -394,7 +396,7 @@ export default function QuickSetupPage() {
               </div>
               <div>
                 <p style={{ color: "var(--text-tertiary)" }} className="text-xs font-medium uppercase tracking-wide mb-2">
-                  Industry
+                  {t("labelIndustry")}
                 </p>
                 <div className="flex gap-2">
                   <select
@@ -417,7 +419,7 @@ export default function QuickSetupPage() {
             {analysis.services.length > 0 && (
               <div>
                 <p style={{ color: "var(--text-tertiary)" }} className="text-xs font-medium uppercase tracking-wide mb-3">
-                  Services Found
+                  {t("labelServicesFound")}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {analysis.services.slice(0, 5).map((service, idx) => (
@@ -434,7 +436,7 @@ export default function QuickSetupPage() {
                       className="px-3 py-1 rounded-full text-sm font-medium"
                       style={{ backgroundColor: "var(--accent-primary-subtle)", color: "var(--accent-primary)" }}
                     >
-                      +{analysis.services.length - 5} more
+                      {t("moreServices", { count: analysis.services.length - 5 })}
                     </span>
                   )}
                 </div>
@@ -444,7 +446,7 @@ export default function QuickSetupPage() {
             {/* AI Greeting Preview */}
             <div className="mt-6 pt-6 border-t" style={{ borderColor: "var(--border-default)" }}>
               <p style={{ color: "var(--text-tertiary)" }} className="text-xs font-medium uppercase tracking-wide mb-3">
-                AI Greeting
+                {t("labelAiGreeting")}
               </p>
               <p className="italic text-lg" style={{ color: "var(--text-primary)" }}>
                 &ldquo;{analysis.greeting}&rdquo;
@@ -459,7 +461,7 @@ export default function QuickSetupPage() {
                 {analysis.faqCount}
               </div>
               <p style={{ color: "var(--text-secondary)" }} className="text-sm">
-                FAQs Generated
+                {t("statFaqsGenerated")}
               </p>
             </div>
             <div className="p-4 rounded-lg border" style={{ backgroundColor: "var(--bg-inset)", borderColor: "var(--border-default)" }}>
@@ -467,7 +469,7 @@ export default function QuickSetupPage() {
                 {analysis.objectionCount}
               </div>
               <p style={{ color: "var(--text-secondary)" }} className="text-sm">
-                Objection Handlers
+                {t("statObjectionHandlers")}
               </p>
             </div>
             <div className="p-4 rounded-lg border" style={{ backgroundColor: "var(--bg-inset)", borderColor: "var(--border-default)" }}>
@@ -475,7 +477,7 @@ export default function QuickSetupPage() {
                 {analysis.templates.length}
               </div>
               <p style={{ color: "var(--text-secondary)" }} className="text-sm">
-                Text Templates
+                {t("statTextTemplates")}
               </p>
             </div>
             <div className="p-4 rounded-lg border" style={{ backgroundColor: "var(--bg-inset)", borderColor: "var(--border-default)" }}>
@@ -483,7 +485,7 @@ export default function QuickSetupPage() {
                 100%
               </div>
               <p style={{ color: "var(--text-secondary)" }} className="text-sm">
-                Ready to Go
+                {t("statReadyToGo")}
               </p>
             </div>
           </div>
@@ -497,7 +499,7 @@ export default function QuickSetupPage() {
                 className="w-full p-4 flex items-center justify-between text-left transition-[opacity,background-color] duration-160 active:scale-[0.98] hover:opacity-80"
               >
                 <span className="font-medium" style={{ color: "var(--text-primary)" }}>
-                  Generated Greeting Script
+                  {t("sectionGreeting")}
                 </span>
                 <ChevronDown
                   size={20}
@@ -522,7 +524,7 @@ export default function QuickSetupPage() {
                   className="w-full p-4 flex items-center justify-between text-left hover:opacity-80 transition-opacity"
                 >
                   <span className="font-medium" style={{ color: "var(--text-primary)" }}>
-                    Sample FAQs ({analysis.faqs.length} total)
+                    {t("sectionFaqs", { count: analysis.faqs.length })}
                   </span>
                   <ChevronDown
                     size={20}
@@ -535,16 +537,16 @@ export default function QuickSetupPage() {
                     {analysis.faqs.slice(0, 5).map((faq, idx) => (
                       <div key={idx}>
                         <p className="font-medium text-sm mb-2" style={{ color: "var(--text-primary)" }}>
-                          Q: {faq.question}
+                          {t("labelQuestion")}{faq.question}
                         </p>
                         <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                          A: {faq.answer}
+                          {t("labelAnswer")}{faq.answer}
                         </p>
                       </div>
                     ))}
                     {analysis.faqs.length > 5 && (
                       <p style={{ color: "var(--text-tertiary)" }} className="text-sm italic">
-                        ...and {analysis.faqs.length - 5} more FAQs
+                        {t("moreFaqs", { count: analysis.faqs.length - 5 })}
                       </p>
                     )}
                   </div>
@@ -560,7 +562,7 @@ export default function QuickSetupPage() {
                   className="w-full p-4 flex items-center justify-between text-left hover:opacity-80 transition-opacity"
                 >
                   <span className="font-medium" style={{ color: "var(--text-primary)" }}>
-                    Objection Handlers ({analysis.objections.length} total)
+                    {t("sectionObjections", { count: analysis.objections.length })}
                   </span>
                   <ChevronDown
                     size={20}
@@ -573,16 +575,16 @@ export default function QuickSetupPage() {
                     {analysis.objections.slice(0, 3).map((obj, idx) => (
                       <div key={idx}>
                         <p className="font-medium text-sm mb-2" style={{ color: "var(--accent-warning)" }}>
-                          Objection: {obj.objection}
+                          {t("labelObjection")}{obj.objection}
                         </p>
                         <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                          Response: {obj.response}
+                          {t("labelResponse")}{obj.response}
                         </p>
                       </div>
                     ))}
                     {analysis.objections.length > 3 && (
                       <p style={{ color: "var(--text-tertiary)" }} className="text-sm italic">
-                        ...and {analysis.objections.length - 3} more handlers
+                        {t("moreHandlers", { count: analysis.objections.length - 3 })}
                       </p>
                     )}
                   </div>
@@ -598,7 +600,7 @@ export default function QuickSetupPage() {
                   className="w-full p-4 flex items-center justify-between text-left hover:opacity-80 transition-opacity"
                 >
                   <span className="font-medium" style={{ color: "var(--text-primary)" }}>
-                    Follow-up Text Templates ({analysis.templates.length})
+                    {t("sectionTemplates", { count: analysis.templates.length })}
                   </span>
                   <ChevronDown
                     size={20}
@@ -615,7 +617,7 @@ export default function QuickSetupPage() {
                     ))}
                     {analysis.templates.length > 3 && (
                       <p style={{ color: "var(--text-tertiary)" }} className="text-sm italic">
-                        ...and {analysis.templates.length - 3} more templates
+                        {t("moreTemplates", { count: analysis.templates.length - 3 })}
                       </p>
                     )}
                   </div>
@@ -631,7 +633,7 @@ export default function QuickSetupPage() {
               className="px-6 py-3 rounded-lg font-medium border transition-[background-color,border-color] duration-160 active:scale-[0.97]"
               style={{ borderColor: "var(--border-default)", color: "var(--text-primary)", backgroundColor: "var(--bg-surface)" }}
             >
-              Back
+              {t("buttonBack")}
             </button>
             <button
               onClick={handleActivate}
@@ -647,11 +649,11 @@ export default function QuickSetupPage() {
               {activating ? (
                 <>
                   <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
-                  Activating...
+                  {t("buttonActivating")}
                 </>
               ) : (
                 <>
-                  Looks Good, Activate!
+                  {t("buttonActivate")}
                   <Sparkles size={18} />
                 </>
               )}
@@ -745,23 +747,23 @@ export default function QuickSetupPage() {
 
           {/* Heading */}
           <h1 className="text-4xl font-bold mb-3" style={{ color: "var(--text-primary)" }}>
-            You&apos;re Live!
+            {t("successHeading")}
           </h1>
           <p className="text-lg mb-12" style={{ color: "var(--text-secondary)" }}>
-            Your AI operator is ready to handle calls and automate your revenue operations.
+            {t("successSubheading")}
           </p>
 
           {/* Capabilities */}
           <div className="space-y-3 mb-12">
             <h3 className="font-semibold text-lg mb-6" style={{ color: "var(--text-primary)" }}>
-              Your AI operator can now:
+              {t("successCapabilitiesTitle")}
             </h3>
             {[
-              "Answer calls with your custom greeting",
-              `Handle ${analysis?.faqCount || 0} common questions automatically`,
-              `Overcome ${analysis?.objectionCount || 0} sales objections`,
-              "Send follow-up texts automatically",
-              "Book appointments on your calendar",
+              t("capabilityGreeting"),
+              t("capabilityFaqs", { count: analysis?.faqCount || 0 }),
+              t("capabilityObjections", { count: analysis?.objectionCount || 0 }),
+              t("capabilityFollowUp"),
+              t("capabilityAppointments"),
             ].map((capability, idx) => (
               <div key={idx} className="flex items-start gap-3 p-4 rounded-lg text-left" style={{ backgroundColor: "var(--bg-inset)" }}>
                 <Check size={20} style={{ color: "var(--accent-secondary)", flexShrink: 0, marginTop: "2px" }} />
@@ -781,7 +783,7 @@ export default function QuickSetupPage() {
                 cursor: "pointer",
               }}
             >
-              Go to Dashboard
+              {t("buttonDashboard")}
             </button>
             <button
               onClick={handleTestCall}
@@ -793,7 +795,7 @@ export default function QuickSetupPage() {
                 cursor: "pointer",
               }}
             >
-              Make a Test Call
+              {t("buttonTestCall")}
             </button>
           </div>
         </div>

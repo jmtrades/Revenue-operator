@@ -41,83 +41,40 @@ const STEP_KEYS: { id: number; titleKey: string; subtitleKey: string }[] = [
 
 const ONBOARDING_SCENARIO_IDS = ["normal", "angry", "booking", "afterhours", "unknown"] as const;
 
-const ONBOARDING_TEMPLATE_IDS = [
-  {
-    id: "inbound-closer",
-    icon: PhoneIncoming,
-    name: "Inbound Closer",
-    tagline: "Answers every call, qualifies leads, books appointments instantly",
-    features: [
-      "Intelligent call routing and screening",
-      "Real-time lead qualification",
-      "Automated appointment booking"
-    ],
-    recommendedFor: "Any business with inbound call volume"
-  },
-  {
-    id: "outbound-setter",
-    icon: PhoneOutgoing,
-    name: "Outbound Setter",
-    tagline: "Runs campaigns on autopilot, fills your calendar with qualified meetings",
-    features: [
-      "Automated outbound call campaigns",
-      "Lead list management",
-      "Calendar integration & booking"
-    ],
-    recommendedFor: "Sales teams running outbound campaigns"
-  },
-  {
-    id: "office-agent",
-    icon: Headphones,
-    name: "Office Agent",
-    tagline: "24/7 front-desk coverage that never calls in sick",
-    features: [
-      "Complete call routing and forwarding",
-      "FAQ answering and knowledgebase",
-      "Message taking & callback scheduling"
-    ],
-    recommendedFor: "Any business needing 24/7 phone coverage"
-  },
-  {
-    id: "follow-up-engine",
-    icon: RefreshCcw,
-    name: "Follow-Up Engine",
-    tagline: "Turns no-shows into booked appointments, dead leads into revenue",
-    features: [
-      "Automated follow-up call sequences",
-      "No-show and reminder calling",
-      "Campaign performance tracking"
-    ],
-    recommendedFor: "Businesses with high volume follow-ups"
-  },
-  {
-    id: "support-agent",
-    icon: LifeBuoy,
-    name: "Support Agent",
-    tagline: "Handles support calls with patience and precision, escalates when needed",
-    features: [
-      "Multi-channel customer support",
-      "Ticket creation and tracking",
-      "Smart escalation to your team"
-    ],
-    recommendedFor: "Companies with customer support teams"
-  },
-  {
-    id: "full-operator",
-    icon: Zap,
-    name: "Full Revenue Operator",
-    tagline: "Your entire phone operation in one AI — inbound, outbound, follow-up, everything",
-    features: [
-      "Complete revenue pipeline automation",
-      "Inbound, outbound, follow-up, and booking",
-      "Advanced analytics and reporting"
-    ],
-    recommendedFor: "Growing companies needing end-to-end automation"
-  },
+const ONBOARDING_TEMPLATE_ICONS = [
+  { id: "inbound-closer", icon: PhoneIncoming },
+  { id: "outbound-setter", icon: PhoneOutgoing },
+  { id: "office-agent", icon: Headphones },
+  { id: "follow-up-engine", icon: RefreshCcw },
+  { id: "support-agent", icon: LifeBuoy },
+  { id: "full-operator", icon: Zap },
+] as const;
+
+const TEMPLATE_KEYS = [
+  "inboundCloser",
+  "outboundSetter",
+  "officeAgent",
+  "followUpEngine",
+  "supportAgent",
+  "fullOperator",
 ] as const;
 
 export default function AppOnboardingPage() {
   const t = useTranslations("onboarding");
+  const tTemplates = useTranslations("onboarding.agentTemplates");
+
+  const ONBOARDING_TEMPLATE_IDS = ONBOARDING_TEMPLATE_ICONS.map(({ id, icon }, idx) => ({
+    id,
+    icon,
+    name: tTemplates(`${TEMPLATE_KEYS[idx]}.name`),
+    tagline: tTemplates(`${TEMPLATE_KEYS[idx]}.tagline`),
+    features: [
+      tTemplates(`${TEMPLATE_KEYS[idx]}.feature1`),
+      tTemplates(`${TEMPLATE_KEYS[idx]}.feature2`),
+      tTemplates(`${TEMPLATE_KEYS[idx]}.feature3`),
+    ],
+    recommendedFor: tTemplates(`${TEMPLATE_KEYS[idx]}.recommendedFor`),
+  }));
   const router = useRouter();
 
   // Redirect to main activation flow if user reaches orphaned onboarding page
@@ -137,7 +94,7 @@ export default function AppOnboardingPage() {
         agentName: name,
         greeting: `Hello, this is ${name} speaking.`,
       })),
-    [],
+    [ONBOARDING_TEMPLATE_IDS],
   );
   const onboardingScenarios = (ONBOARDING_SCENARIO_IDS as readonly string[]).map((id) => ({
     id,
@@ -446,7 +403,7 @@ export default function AppOnboardingPage() {
             {/* Template Selection */}
             <div className="space-y-4">
               <p className="text-xs font-medium text-[var(--text-tertiary)]">
-                Select Your AI Operator Template
+                {tTemplates("sectionTitle")}
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {onboardingTemplates.map((template) => {
@@ -486,7 +443,7 @@ export default function AppOnboardingPage() {
                         ))}
                       </ul>
                       <p className="text-[11px] text-[var(--text-secondary)] border-t border-[var(--border-default)] pt-2.5">
-                        <span className="font-medium text-[var(--text-tertiary)]">Best for:</span> {template.recommendedFor}
+                        <span className="font-medium text-[var(--text-tertiary)]">{tTemplates("bestForLabel")}</span> {template.recommendedFor}
                       </p>
                     </button>
                   );

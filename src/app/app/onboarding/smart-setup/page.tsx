@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { PLAYBOOKS, getPlaybooksByCategory, type Playbook } from "@/lib/ai/playbooks";
 import { useWorkspace } from "@/components/WorkspaceContext";
@@ -17,6 +18,7 @@ interface ChatMessage {
 
 export default function SmartSetupPage() {
   const router = useRouter();
+  const t = useTranslations("onboarding.smartSetup");
   const { workspaceId } = useWorkspace();
   const [step, setStep] = useState<SetupStep>("select-playbook");
   const [selectedPlaybook, setSelectedPlaybook] = useState<Playbook | null>(null);
@@ -76,7 +78,7 @@ export default function SmartSetupPage() {
     setIsActivating(true);
     try {
       if (!workspaceId) {
-        throw new Error("Workspace not found. Please complete setup first.");
+        throw new Error(t("workspaceNotFound"));
       }
 
       const response = await fetch("/api/workspace/apply-playbook", {
@@ -100,7 +102,7 @@ export default function SmartSetupPage() {
 
       const result = await response.json();
       setStep("loading");
-      toast.success(`Your operator "${result.agent_name}" is live and ready to take calls!`);
+      toast.success(t("operatorLive", { agentName: result.agent_name }));
 
       // Redirect to agent page if agent was created, otherwise to dashboard
       const redirectUrl = result.agent_id
@@ -111,7 +113,7 @@ export default function SmartSetupPage() {
         router_internal.push(redirectUrl);
       }, 2000);
     } catch (error) {
-      toast.error("Could not activate your operator — check your internet connection and try again.");
+      toast.error(t("activationFailed"));
       setIsActivating(false);
     }
   };
@@ -120,11 +122,11 @@ export default function SmartSetupPage() {
   const handleCustomDescription = async (description: string) => {
     try {
       if (!workspaceId) {
-        throw new Error("Workspace not found. Please complete setup first.");
+        throw new Error(t("workspaceNotFound"));
       }
 
       setStep("loading");
-      toast.success("Building your operator...");
+      toast.success(t("buildingOperator"));
 
       const response = await fetch("/api/workspace/auto-setup", {
         method: "POST",
@@ -137,14 +139,14 @@ export default function SmartSetupPage() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to process custom description");
+        throw new Error(t("customDescriptionFailed"));
       }
 
       setTimeout(() => {
         router_internal.push("/app/dashboard");
       }, 2000);
     } catch (error) {
-      toast.error("Setup step failed — please try again. If this persists, contact support.");
+      toast.error(t("setupStepFailed"));
       setStep("preview-agent");
     }
   };
@@ -289,13 +291,13 @@ export default function SmartSetupPage() {
                 className="text-4xl lg:text-5xl font-bold mb-3"
                 style={{ color: "var(--text-primary)" }}
               >
-                What do you do?
+                {t("heading")}
               </h1>
               <p
                 style={{ color: "var(--text-secondary)" }}
                 className="text-lg"
               >
-                Pick your role and we&apos;ll show you your operator in action
+                {t("subheading")}
               </p>
             </div>
 
@@ -351,11 +353,11 @@ export default function SmartSetupPage() {
             {/* Fallback to Custom Description */}
             <div className="text-center animate-fade-in-up">
               <p style={{ color: "var(--text-secondary)" }} className="text-sm mb-3">
-                Don&apos;t see your role?{" "}
+                {t("dontSeeRole")}{" "}
                 <button
                   onClick={() => {
                     const description = prompt(
-                      "Describe what you do and who you're selling to:"
+                      t("describePrompt")
                     );
                     if (description) {
                       handleCustomDescription(description);
@@ -364,7 +366,7 @@ export default function SmartSetupPage() {
                   className="underline hover:opacity-80 transition-opacity font-medium"
                   style={{ color: "var(--accent-primary)" }}
                 >
-                  Describe it instead
+                  {t("describeInstead")}
                 </button>
               </p>
             </div>
@@ -383,16 +385,16 @@ export default function SmartSetupPage() {
                 className="text-sm font-medium mb-4"
                 style={{ color: "var(--accent-primary)" }}
               >
-                ← Back to selection
+                {t("backToSelection")}
               </button>
               <h1
                 className="text-4xl font-bold mb-2"
                 style={{ color: "var(--text-primary)" }}
               >
-                Meet your operator
+                {t("meetOperator")}
               </h1>
               <p style={{ color: "var(--text-secondary)" }}>
-                Here&apos;s how {selectedPlaybook.title} handles real situations
+                {t("handlesSituations", { playbook: selectedPlaybook.title })}
               </p>
             </div>
 
@@ -416,7 +418,7 @@ export default function SmartSetupPage() {
                           style={{ color: "var(--text-tertiary)" }}
                           className="text-sm"
                         >
-                          Loading scenarios...
+                          {t("loadingScenarios")}
                         </p>
                       </div>
                     ) : (
@@ -428,7 +430,7 @@ export default function SmartSetupPage() {
                             animationDelay: `${idx * 0.1}s`,
                           }}
                         >
-                          {msg.type === "lead" ? "Lead: " : "Agent: "}
+                          {msg.type === "lead" ? `${t("leadLabel")}: ` : `${t("agentLabel")}: `}
                           {msg.text}
                         </div>
                       ))
@@ -447,15 +449,15 @@ export default function SmartSetupPage() {
                       className="text-sm"
                       style={{ color: "var(--text-secondary)" }}
                     >
-                      Your operator knows:
+                      {t("operatorKnows")}
                     </p>
                     <ul
                       className="text-xs mt-3 space-y-1"
                       style={{ color: "var(--text-tertiary)" }}
                     >
-                      <li>✓ {selectedPlaybook.objection_handlers.length} objection handlers</li>
-                      <li>✓ {selectedPlaybook.faqs.length} FAQs</li>
-                      <li>✓ {selectedPlaybook.follow_up_sms_templates.length} follow-up templates</li>
+                      <li>{t("objectionHandlers", { count: selectedPlaybook.objection_handlers.length })}</li>
+                      <li>{t("faqCount", { count: selectedPlaybook.faqs.length })}</li>
+                      <li>{t("followUpTemplates", { count: selectedPlaybook.follow_up_sms_templates.length })}</li>
                     </ul>
                   </div>
                 </div>
@@ -494,7 +496,7 @@ export default function SmartSetupPage() {
                       className="block text-sm font-medium mb-2"
                       style={{ color: "var(--text-primary)" }}
                     >
-                      Agent Name
+                      {t("agentNameLabel")}
                     </label>
                     <input
                       id="agent-name"
@@ -513,7 +515,7 @@ export default function SmartSetupPage() {
                       className="block text-sm font-medium mb-2"
                       style={{ color: "var(--text-primary)" }}
                     >
-                      Business Name (Optional)
+                      {t("businessNameLabel")}
                     </label>
                     <input
                       id="business-name"
@@ -521,7 +523,7 @@ export default function SmartSetupPage() {
                       value={businessName}
                       onChange={(e) => setBusinessName(e.target.value)}
                       className="input-field"
-                      placeholder="Your company name"
+                      placeholder={t("companyPlaceholder")}
                     />
                   </div>
 
@@ -531,7 +533,7 @@ export default function SmartSetupPage() {
                     disabled={isActivating}
                     className="btn-primary w-full mb-4"
                   >
-                    {isActivating ? "Activating..." : "Activate Agent"}
+                    {isActivating ? t("activating") : t("activateAgent")}
                   </button>
 
                   {/* Customization Link */}
@@ -541,7 +543,7 @@ export default function SmartSetupPage() {
                       className="text-sm font-medium w-full text-left"
                       style={{ color: "var(--accent-primary)" }}
                     >
-                      {showCustomization ? "Hide customization →" : "Show customization →"}
+                      {showCustomization ? t("hideCustomization") : t("showCustomization")}
                     </button>
 
                     {/* Expandable Customization Section */}
@@ -553,7 +555,7 @@ export default function SmartSetupPage() {
                             className="text-sm font-medium mb-2"
                             style={{ color: "var(--text-primary)" }}
                           >
-                            Greeting Script
+                            {t("greetingScript")}
                           </h4>
                           <textarea
                             value={selectedPlaybook.greeting_script}
@@ -568,7 +570,7 @@ export default function SmartSetupPage() {
                             className="text-sm font-medium mb-2"
                             style={{ color: "var(--text-primary)" }}
                           >
-                            Sample FAQs
+                            {t("sampleFaqs")}
                           </h4>
                           <div className="space-y-3">
                             {selectedPlaybook.faqs.slice(0, 2).map((faq, idx) => (
@@ -612,10 +614,10 @@ export default function SmartSetupPage() {
               className="text-2xl font-bold mb-2"
               style={{ color: "var(--text-primary)" }}
             >
-              Activating your operator...
+              {t("activatingOperator")}
             </h2>
             <p style={{ color: "var(--text-secondary)" }}>
-              This usually takes a few seconds
+              {t("fewSeconds")}
             </p>
           </div>
         </div>
