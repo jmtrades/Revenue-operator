@@ -11310,6 +11310,12 @@
     "declareWinner": "Declare Winner"
   },
   "autoSetup": {
+    "progress": {
+      "reading": "ウェブサイトを読み込んでいます...",
+      "understanding": "ビジネスを分析しています...",
+      "building": "ナレッジベースを構築しています...",
+      "creating": "スクリプトと応答を作成しています..."
+    },
     "toast": {
       "enterUrlOrIndustry": "ウェブサイトURLを入力するか、業種を選択してください",
       "analyzeFailed": "ウェブサイトの分析に失敗しました。もう一度お試しください。",

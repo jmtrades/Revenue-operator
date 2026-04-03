@@ -11310,6 +11310,12 @@
     "declareWinner": "Declare Winner"
   },
   "autoSetup": {
+    "progress": {
+      "reading": "Lendo seu site...",
+      "understanding": "Analisando seu negócio...",
+      "building": "Construindo a base de conhecimento...",
+      "creating": "Criando scripts e respostas..."
+    },
     "toast": {
       "enterUrlOrIndustry": "Insira uma URL de site ou selecione um setor",
       "analyzeFailed": "Falha ao analisar o site. Tente novamente.",

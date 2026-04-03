@@ -4,6 +4,7 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { decrypt, encrypt } from "@/lib/encryption";
 import { log } from "@/lib/logger";
 import type { CrmProviderId } from "./field-mapper";
 
@@ -58,8 +59,8 @@ export async function getValidTokens(
 
   const row = conn as { access_token: string; refresh_token: string | null; token_expires_at: string | null; instance_url: string | null; metadata?: Record<string, string> | null };
   const tokens: CrmTokens = {
-    access_token: row.access_token,
-    refresh_token: row.refresh_token,
+    access_token: await decrypt(row.access_token),
+    refresh_token: row.refresh_token ? await decrypt(row.refresh_token) : null,
     expires_at: row.token_expires_at,
     instance_url: row.instance_url,
     metadata: row.metadata ?? null,
@@ -191,13 +192,16 @@ async function refreshTokens(
       ? new Date(Date.now() + data.expires_in * 1000).toISOString()
       : null;
 
-    // Update tokens in database
+    // Update tokens in database (encrypted)
+    const newAccessEnc = await encrypt(data.access_token);
+    const newRefreshEnc = await encrypt(data.refresh_token ?? refreshToken);
+
     const db = getDb();
     await db
       .from("workspace_crm_connections")
       .update({
-        access_token: data.access_token,
-        refresh_token: data.refresh_token ?? refreshToken, // Some providers rotate refresh tokens
+        access_token: newAccessEnc,
+        refresh_token: newRefreshEnc,
         token_expires_at: expiresAt,
         instance_url: data.instance_url ?? undefined,
         token_error: null, // Clear any previous errors on successful refresh

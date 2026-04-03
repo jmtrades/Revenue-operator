@@ -11316,6 +11316,12 @@
     "declareWinner": "Declare Winner"
   },
   "autoSetup": {
+    "progress": {
+      "reading": "Ihre Website wird gelesen...",
+      "understanding": "Ihr Unternehmen wird analysiert...",
+      "building": "Wissensdatenbank wird aufgebaut...",
+      "creating": "Skripte und Antworten werden erstellt..."
+    },
     "toast": {
       "enterUrlOrIndustry": "Bitte geben Sie eine Website-URL ein oder wählen Sie eine Branche",
       "analyzeFailed": "Fehler bei der Website-Analyse. Bitte versuchen Sie es erneut.",

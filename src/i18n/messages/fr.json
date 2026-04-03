@@ -11308,6 +11308,12 @@
     "declareWinner": "Declare Winner"
   },
   "autoSetup": {
+    "progress": {
+      "reading": "Lecture de votre site web...",
+      "understanding": "Analyse de votre entreprise...",
+      "building": "Construction de la base de connaissances...",
+      "creating": "Création des scripts et réponses..."
+    },
     "toast": {
       "enterUrlOrIndustry": "Veuillez entrer une URL de site web ou sélectionner un secteur",
       "analyzeFailed": "Échec de l'analyse du site web. Veuillez réessayer.",

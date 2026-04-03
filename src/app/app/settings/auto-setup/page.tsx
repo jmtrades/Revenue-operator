@@ -98,10 +98,10 @@ export default function AutoSetupPage() {
   const [confirmed, setConfirmed] = useState(false);
 
   const analyzeMessages = [
-    "Reading your website...",
-    "Understanding your business...",
-    "Building your operator's knowledge...",
-    "Creating scripts and responses...",
+    t("progress.reading"),
+    t("progress.understanding"),
+    t("progress.building"),
+    t("progress.creating"),
   ];
 
   // Load current stats on mount
