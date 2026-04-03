@@ -198,7 +198,7 @@ export async function POST(
     };
 
     let agentId: string;
-    let existingAgent: Record<string, unknown> | null = existingAgentRow ?? null;
+    const existingAgent: Record<string, unknown> | null = existingAgentRow ?? null;
 
     // If no active agent exists, create one
     if (!existingAgent) {

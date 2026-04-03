@@ -425,7 +425,7 @@ export default function ConversationalAnalyticsPage() {
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex-1">
                       <p className="text-sm font-medium text-[var(--text-primary)] line-clamp-3">
-                        "{track.phrase}"
+                        &ldquo;{track.phrase}&rdquo;
                       </p>
                     </div>
                     <ThumbsUp className="h-5 w-5 text-[var(--accent-primary)] flex-shrink-0" />
@@ -460,7 +460,7 @@ export default function ConversationalAnalyticsPage() {
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex-1">
                       <p className="text-sm font-medium text-[var(--text-primary)] line-clamp-2">
-                        ❌ "{track.phrase}"
+                        ❌ &ldquo;{track.phrase}&rdquo;
                       </p>
                     </div>
                     <ThumbsDown className="h-5 w-5 text-[var(--accent-danger,#ef4444)] flex-shrink-0" />
@@ -474,7 +474,7 @@ export default function ConversationalAnalyticsPage() {
                     </div>
                     <div className="pt-2 border-t border-[var(--accent-danger,#ef4444)]/30">
                       <p className="text-xs text-[var(--text-secondary)]">
-                        Try instead: <span className="font-medium">"{track.suggested_alternative}"</span>
+                        Try instead: <span className="font-medium">&ldquo;{track.suggested_alternative}&rdquo;</span>
                       </p>
                     </div>
                   </div>

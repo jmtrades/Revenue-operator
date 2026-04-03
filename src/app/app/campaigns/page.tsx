@@ -517,13 +517,13 @@ export default function CampaignsPage() {
               <Download className="w-4 h-4" />
               {t("export", { defaultValue: "Export" })}
             </button>
-            <a
+            <Link
               href="/app/campaigns/create"
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold hover:opacity-90 transition-[opacity,transform] active:scale-[0.97]"
             >
               <Plus className="w-4 h-4" />
               {t("createCampaign")}
-            </a>
+            </Link>
           </div>
         </div>
 

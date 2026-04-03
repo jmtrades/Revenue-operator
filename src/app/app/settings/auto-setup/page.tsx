@@ -470,7 +470,7 @@ export default function AutoSetupPage() {
                     AI Greeting
                   </p>
                   <p className="italic" style={{ color: "var(--text-primary)" }}>
-                    "{analysis.greeting}"
+                    &ldquo;{analysis.greeting}&rdquo;
                   </p>
                 </div>
               </div>

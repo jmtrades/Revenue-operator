@@ -351,7 +351,7 @@ export default function SmartSetupPage() {
             {/* Fallback to Custom Description */}
             <div className="text-center animate-fade-in-up">
               <p style={{ color: "var(--text-secondary)" }} className="text-sm mb-3">
-                Don't see your role?{" "}
+                Don&apos;t see your role?{" "}
                 <button
                   onClick={() => {
                     const description = prompt(
@@ -392,7 +392,7 @@ export default function SmartSetupPage() {
                 Meet your operator
               </h1>
               <p style={{ color: "var(--text-secondary)" }}>
-                Here's how {selectedPlaybook.title} handles real situations
+                Here&apos;s how {selectedPlaybook.title} handles real situations
               </p>
             </div>
 

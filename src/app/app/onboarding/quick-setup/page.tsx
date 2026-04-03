@@ -419,7 +419,7 @@ export default function QuickSetupPage() {
                 AI Greeting
               </p>
               <p className="italic text-lg" style={{ color: "var(--text-primary)" }}>
-                "{analysis.greeting}"
+                &ldquo;{analysis.greeting}&rdquo;
               </p>
             </div>
           </div>

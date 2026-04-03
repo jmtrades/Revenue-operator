@@ -156,7 +156,7 @@ export async function POST(req: NextRequest) {
           .filter(Boolean),
       );
 
-      let docNameMap: Record<string, string> = {};
+      const docNameMap: Record<string, string> = {};
       if (docIds.size > 0) {
         const { data: docs } = await db
           .from("knowledge_documents")

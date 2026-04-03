@@ -249,7 +249,7 @@ export default function RecordingsPage() {
       const data: SearchResponse = await response.json();
 
       // Sort client-side
-      let sorted = [...data.recordings];
+      const sorted = [...data.recordings];
       if (sortBy === "oldest") {
         sorted.reverse();
       } else if (sortBy === "duration_long") {
