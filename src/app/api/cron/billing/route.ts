@@ -94,8 +94,8 @@ export async function GET(request: NextRequest) {
   } catch (err) {
     log("error", "cron.billing_unexpected_error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
-      { ok: true, note: "error_handled", ts: new Date().toISOString() },
-      { status: 200 }
+      { ok: false, error: "billing_failed", ts: new Date().toISOString() },
+      { status: 500 }
     );
   }
 }
