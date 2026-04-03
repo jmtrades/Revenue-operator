@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { PhoneForwarded, Zap, MessageSquareText } from "lucide-react";
+import { motion } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
 
@@ -16,6 +17,7 @@ export function HowItWorks() {
         title: t("steps.0.title"),
         subtitle: t("steps.0.subtitle"),
         desc: t("steps.0.description"),
+        accent: "var(--accent-primary)",
       },
       {
         num: 2,
@@ -23,6 +25,7 @@ export function HowItWorks() {
         title: t("steps.1.title"),
         subtitle: t("steps.1.subtitle"),
         desc: t("steps.1.description"),
+        accent: "var(--accent-secondary)",
       },
       {
         num: 3,
@@ -30,22 +33,32 @@ export function HowItWorks() {
         title: t("steps.2.title"),
         subtitle: t("steps.2.subtitle"),
         desc: t("steps.2.description"),
+        accent: "#7C3AED",
       },
     ],
-    [t]
+    [t],
   );
 
   return (
     <section
       id="how-it-works"
-      className="marketing-section py-20 md:py-28"
+      className="marketing-section py-20 md:py-28 relative overflow-hidden"
       style={{ background: "var(--bg-surface)" }}
     >
-      <Container>
+      {/* Subtle grid pattern */}
+      <div
+        className="absolute inset-0 opacity-[0.02] pointer-events-none"
+        style={{
+          backgroundImage: `linear-gradient(var(--text-primary) 1px, transparent 1px), linear-gradient(90deg, var(--text-primary) 1px, transparent 1px)`,
+          backgroundSize: "60px 60px",
+        }}
+      />
+
+      <Container className="relative z-10">
         <AnimateOnScroll className="text-center mb-16 md:mb-20">
           <p
             className="text-[11px] font-semibold uppercase tracking-wider mb-4"
-            style={{ color: "var(--accent-primary)" }}
+            style={{ color: "var(--accent-primary)", letterSpacing: "0.1em" }}
           >
             {t("label")}
           </p>
@@ -61,41 +74,66 @@ export function HowItWorks() {
             {t("title")}
           </h2>
           <p
-            className="text-base mt-4 max-w-xl mx-auto"
+            className="text-base mt-4 max-w-xl mx-auto leading-relaxed"
             style={{ color: "var(--text-secondary)" }}
           >
             {t("description")}
           </p>
         </AnimateOnScroll>
 
-        <div className="max-w-[900px] mx-auto">
-          <div
-            className="grid grid-cols-1 md:grid-cols-3 gap-6"
-          >
-            {steps.map((step) => (
-              <div
+        <div className="max-w-[960px] mx-auto">
+          {/* Connecting line (desktop only) */}
+          <div className="hidden md:block absolute left-1/2 -translate-x-1/2 top-[280px]" style={{ width: "480px", height: "2px" }}>
+            <div
+              className="w-full h-full"
+              style={{
+                background: "linear-gradient(90deg, transparent 0%, var(--border-default) 20%, var(--border-default) 80%, transparent 100%)",
+              }}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+            {steps.map((step, i) => (
+              <motion.div
                 key={step.num}
-                className="rounded-xl p-8 text-center"
+                className="relative rounded-2xl p-8 text-center group"
                 style={{
                   background: "var(--bg-primary)",
                   border: "1px solid var(--border-default)",
+                  boxShadow: "var(--shadow-sm)",
+                }}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ delay: i * 0.12, duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+                whileHover={{
+                  y: -4,
+                  boxShadow: "0 12px 40px -12px rgba(0,0,0,0.08)",
+                  transition: { duration: 0.3 },
                 }}
               >
-                <p
-                  className="text-xs font-semibold mb-3"
-                  style={{ color: "var(--text-tertiary)" }}
-                >
-                  {t("stepLabel", { num: step.num })}
-                </p>
+                {/* Step number badge */}
                 <div
-                  className="w-10 h-10 rounded-lg flex items-center justify-center mb-4 mx-auto"
+                  className="absolute -top-3 left-1/2 -translate-x-1/2 w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold"
                   style={{
-                    background: "var(--bg-hover)",
-                    color: "var(--text-secondary)",
+                    background: step.accent,
+                    color: "#fff",
+                    boxShadow: `0 2px 8px ${step.accent}33`,
+                  }}
+                >
+                  {step.num}
+                </div>
+
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 mx-auto transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    background: `${step.accent}0D`,
+                    color: step.accent,
                   }}
                 >
                   <step.icon className="w-5 h-5" />
                 </div>
+
                 <h3
                   className="font-semibold text-base mb-3"
                   style={{ color: "var(--text-primary)" }}
@@ -108,15 +146,19 @@ export function HowItWorks() {
                 >
                   {step.desc}
                 </p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
 
         {/* Setup timeline */}
-        <div
-          className="mt-12 flex flex-wrap justify-center gap-6 text-sm"
+        <motion.div
+          className="mt-14 flex flex-wrap justify-center gap-x-8 gap-y-3 text-sm"
           style={{ color: "var(--text-tertiary)" }}
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3, duration: 0.5 }}
         >
           {[
             { label: t("timeline.0.label"), value: t("timeline.0.value") },
@@ -125,7 +167,7 @@ export function HowItWorks() {
           ].map(({ label, value }) => (
             <div key={label} className="flex items-center gap-2">
               <svg
-                className="w-4 h-4"
+                className="w-4 h-4 shrink-0"
                 style={{ color: "var(--accent-secondary)" }}
                 viewBox="0 0 20 20"
                 fill="currentColor"
@@ -142,7 +184,7 @@ export function HowItWorks() {
               </span>
             </div>
           ))}
-        </div>
+        </motion.div>
       </Container>
     </section>
   );
