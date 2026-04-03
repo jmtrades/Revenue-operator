@@ -206,11 +206,17 @@ export async function POST(req: NextRequest) {
         const telephony = getTelephonyService();
         const searchResult = await telephony.searchAvailableNumbers({ areaCode: "US", limit: 3 });
 
-        if (!("error" in searchResult) && searchResult.length > 0) {
+        if ("error" in searchResult) {
+          log("warn", "workspace.phone_search_failed", { workspaceId, error: searchResult.error });
+        } else if (searchResult.length === 0) {
+          log("warn", "workspace.phone_no_numbers_available", { workspaceId });
+        } else {
           const num = searchResult[0].phone_number;
           const purchaseResult = await telephony.purchaseNumber(num);
 
-          if (!("error" in purchaseResult)) {
+          if ("error" in purchaseResult) {
+            log("warn", "workspace.phone_purchase_failed", { workspaceId, phone: num, error: purchaseResult.error });
+          } else {
             await db.from("phone_configs").insert({
               workspace_id: workspaceId,
               proxy_number: num,
