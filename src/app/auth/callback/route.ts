@@ -47,9 +47,14 @@ export async function GET(request: Request) {
         if (!createErr && created) {
           ws = created as { id: string };
           isNewUser = true;
-          await db.from("settings").insert({ workspace_id: (created as { id: string }).id, risk_level: "balanced" });
-          await db.from("workspace_members").insert({ workspace_id: (created as { id: string }).id, user_id: userId, role: "owner" });
-          await db.from("workspace_billing").insert({ workspace_id: (created as { id: string }).id, plan: "trial", status: "trialing" });
+          const newWsId = (created as { id: string }).id;
+          const trialEnd = new Date();
+          trialEnd.setDate(trialEnd.getDate() + 14);
+          await db.from("settings").insert({ workspace_id: newWsId, risk_level: "balanced" });
+          await db.from("workspace_members").insert({ workspace_id: newWsId, user_id: userId, role: "owner" });
+          await db.from("workspace_billing").insert({ workspace_id: newWsId, plan: "trial", status: "trialing", trial_ends_at: trialEnd.toISOString() });
+          await db.from("workspaces").update({ billing_status: "trial", trial_ends_at: trialEnd.toISOString() }).eq("id", newWsId);
+          try { await db.from("workspace_business_context").insert({ workspace_id: newWsId, business_name: "My workspace" }); } catch { /* non-fatal */ }
         }
       }
       workspaceId = (ws as { id?: string } | null)?.id ?? undefined;

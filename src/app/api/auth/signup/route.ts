@@ -112,6 +112,7 @@ export async function POST(req: NextRequest) {
           await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
           await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
           await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing", trial_ends_at: trialEnd.toISOString() });
+          try { await db.from("workspace_business_context").insert({ workspace_id: workspaceId, business_name: businessName || "My Business" }); } catch { /* non-fatal */ }
         }
       } catch {
         // continue
@@ -182,6 +183,7 @@ export async function POST(req: NextRequest) {
           await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
           await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
           await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing", trial_ends_at: trialEnd.toISOString() });
+          try { await db.from("workspace_business_context").insert({ workspace_id: workspaceId, business_name: businessName || "My Business" }); } catch { /* non-fatal */ }
         }
       } catch {
         // continue
@@ -222,6 +224,7 @@ export async function POST(req: NextRequest) {
       await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
       await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
       await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing", trial_ends_at: trialEnd.toISOString() });
+      try { await db.from("workspace_business_context").insert({ workspace_id: workspaceId, business_name: businessName || "My Business" }); } catch { /* non-fatal */ }
     }
   } catch {
     // continue without workspace

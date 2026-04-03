@@ -166,6 +166,11 @@ export function ActivateWizard() {
     e?.preventDefault();
     if (finalizing) return;
 
+    if (emailVerified === false) {
+      setError(t("errors.emailRequired", { defaultValue: "Please verify your email before going live." }));
+      return;
+    }
+
     setFinalizing(true);
     setError(null);
 
