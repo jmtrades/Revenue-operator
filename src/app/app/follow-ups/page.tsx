@@ -317,7 +317,7 @@ export default function AppFollowUpsPage() {
     }
   }, [tab, workspaceId, refetchBrainActivity]);
 
-  const useTemplate = async (template: BuiltInTemplate) => {
+  const applyTemplate = async (template: BuiltInTemplate) => {
     setTemplateInProgress(template.id);
     try {
       const res = await fetch("/api/sequences", {
@@ -561,7 +561,7 @@ export default function AppFollowUpsPage() {
                     <Button
                       variant="primary"
                       size="sm"
-                      onClick={() => void useTemplate(template)}
+                      onClick={() => void applyTemplate(template)}
                       disabled={templateInProgress !== null}
                       className="gap-1 whitespace-nowrap"
                     >
@@ -604,7 +604,7 @@ export default function AppFollowUpsPage() {
                     className="gap-2 justify-start text-sm"
                     onClick={() => {
                       const noShowTemplate = BUILT_IN_TEMPLATES.find(t => t.id === "no-show-recovery");
-                      if (noShowTemplate) useTemplate(noShowTemplate);
+                      if (noShowTemplate) applyTemplate(noShowTemplate);
                     }}
                     disabled={templateInProgress !== null}
                   >
@@ -617,7 +617,7 @@ export default function AppFollowUpsPage() {
                     className="gap-2 justify-start text-sm"
                     onClick={() => {
                       const stalePipelineTemplate = BUILT_IN_TEMPLATES.find(t => t.id === "stale-pipeline-recovery");
-                      if (stalePipelineTemplate) useTemplate(stalePipelineTemplate);
+                      if (stalePipelineTemplate) applyTemplate(stalePipelineTemplate);
                     }}
                     disabled={templateInProgress !== null}
                   >

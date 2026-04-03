@@ -52,17 +52,17 @@ function OnboardingWizard() {
   const [agentName, setAgentName] = useState("Sarah");
   const [voiceId, setVoiceId] = useState("warm");
   const [greeting, setGreeting] = useState("");
-  const [capabilities, _setCapabilities] = useState<string[]>(["answer_questions", "capture_leads", "book_appointments", "handle_emergencies", "send_texts", "block_spam"]);
+  const [capabilities, _setCapabilities] = useState<string[]>([&quot;answer_questions&quot;, &quot;capture_leads&quot;, &quot;book_appointments&quot;, &quot;handle_emergencies&quot;, &quot;send_texts&quot;, &quot;block_spam&quot;]);
 
   // Step 3
-  const [services, setServices] = useState("");
-  const [emergenciesAfterHours, setEmergenciesAfterHours] = useState<"call_me" | "message" | "next_day">("call_me");
-  const [appointmentHandling, setAppointmentHandling] = useState<"calendar" | "capture">("calendar");
-  const [faqExtra, setFaqExtra] = useState("");
+  const [services, setServices] = useState(&quot;&quot;);
+  const [emergenciesAfterHours, setEmergenciesAfterHours] = useState<"call_me" | "message" | "next_day">(&quot;call_me&quot;);
+  const [appointmentHandling, setAppointmentHandling] = useState<"calendar" | "capture">(&quot;calendar&quot;);
+  const [faqExtra, setFaqExtra] = useState(&quot;&quot;);
 
   // Step 4
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
-  const [numberOption, setNumberOption] = useState<"forward" | "main" | "later">("main");
+  const [numberOption, setNumberOption] = useState<"forward" | "main" | "later">(&quot;main&quot;);
   const [provisioning, setProvisioning] = useState(false);
   const [playingVoice, setPlayingVoice] = useState<string | null>(null);
 
@@ -634,7 +634,7 @@ function OnboardingWizard() {
                 <p className="text-4xl font-bold mb-4" style={{ color: "var(--accent-primary)" }}>{phoneNumber}</p>
                 <div className="bg-[var(--bg-surface)] bg-opacity-50 rounded-lg p-3 mb-4">
                   <p className="text-xs font-medium mb-2" style={{ color: "var(--text-primary)" }}>{t("tryPhrase")}</p>
-                  <p className="text-sm italic" style={{ color: "var(--text-secondary)" }}>"What services do you offer?"</p>
+                  <p className="text-sm italic" style={{ color: "var(--text-secondary)" }}>&quot;What services do you offer?&quot;</p>
                 </div>
                 <p className="text-xs" style={{ color: "var(--text-secondary)" }}>{t("whenYouCallAppear")}</p>
               </div>

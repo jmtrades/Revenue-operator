@@ -32,7 +32,7 @@ export function TestStepContent({
   const t = useTranslations("agents");
   const testScenarios = getTestScenarios(t);
   const [showGoLiveCta, setShowGoLiveCta] = useState(false);
-  const [scenarioId, setScenarioId] = useState<string>("general");
+  const [scenarioId, setScenarioId] = useState<string>(&quot;general");
   const scenarioPrompt =
     testScenarios.find((s) => s.id === scenarioId)?.prompt ?? testScenarios[0].prompt;
   const scorecardItems = [
@@ -57,7 +57,7 @@ export function TestStepContent({
             Test Your Agent
           </h4>
           <p className="text-xs text-[var(--text-secondary)] mb-3">
-            We'll call you and your agent will answer. Test its greeting, knowledge, and call handling in real time.
+            We&apos;ll call you and your agent will answer. Test its greeting, knowledge, and call handling in real time.
           </p>
         </div>
 

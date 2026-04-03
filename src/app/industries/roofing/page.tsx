@@ -60,7 +60,7 @@ export default function RoofingIndustryPage() {
             <p className="text-base md:text-lg mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
               Roofing is a call-driven business with sudden volume spikes. When a hailstorm hits, your phones can light up within minutes.
               If your team can&apos;t answer fast enough (or the caller reaches voicemail), the lead often calls another contractor right away and
-              stops shopping after the "next available" appointment is booked.
+              stops shopping after the &quot;next available&quot; appointment is booked.
               <br />
               <br />
               Revenue Operator is the AI phone system built for roofing execution: it answers calls 24/7, qualifies storm damage intent, books
@@ -72,7 +72,7 @@ export default function RoofingIndustryPage() {
               <h2 className="text-lg font-semibold mb-3">Where roofing revenue leaks</h2>
               <div className="space-y-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
                 <p>
-                  <strong>Missed storm calls.</strong> Storms create "right now" urgency. Many customers will call multiple contractors
+                  <strong>Missed storm calls.</strong> Storms create &quot;right now&quot; urgency. Many customers will call multiple contractors
                   in the first hour, then commit when someone answers and schedules quickly. If your missed-call response is delayed by
                   voicemail, call-back gaps, or weekend coverage, your competition becomes the default.
                 </p>
@@ -83,7 +83,7 @@ export default function RoofingIndustryPage() {
                 </p>
                 <p>
                   <strong>Estimate follow-up that never compounds.</strong> After the inspection, many teams are swamped and the next step
-                  gets pushed to "we’ll call tomorrow." Tomorrow often turns into three days, then a week. The quote isn&apos;t just delayed —
+                  gets pushed to &quot;we’ll call tomorrow.&quot; Tomorrow often turns into three days, then a week. The quote isn&apos;t just delayed —
                   it becomes negotiable and competitors get another window to reach out first.
                 </p>
                 <p>
@@ -114,10 +114,10 @@ export default function RoofingIndustryPage() {
               <p>
                 <strong>Recover no-shows and bring leads back.</strong> If the inspection is missed, the system triggers a respectful reschedule
                 flow: confirmation reminders, a clear rescheduling path, and (when needed) an escalation call. If the caller goes quiet, Revenue Operator
-                reactivates the lead with a new "next step" so revenue doesn&apos;t wait for your next office-hour slot.
+                reactivates the lead with a new &quot;next step&quot; so revenue doesn&apos;t wait for your next office-hour slot.
               </p>
               <p>
-                <strong>Show proof inside your dashboard.</strong> You don&apos;t just see "calls received." You see calls answered, inspection appointments booked,
+                <strong>Show proof inside your dashboard.</strong> You don&apos;t just see &quot;calls received.&quot; You see calls answered, inspection appointments booked,
                 no-shows recovered, estimate follow-ups executed, and revenue attribution from the entire pipeline. That means your team can tune scripts
                 and scheduling rules based on outcomes, not assumptions.
               </p>
@@ -130,9 +130,9 @@ export default function RoofingIndustryPage() {
                   <li>Storm damage intake: symptoms + address + preferred window</li>
                   <li>Inspection booking with confirmations and schedule reminders</li>
                   <li>No-show prevention: proactive reminders and easy reschedule instructions</li>
-                  <li>No-show recovery: "want to rebook?" outreach sequence + call follow-up</li>
+                  <li>No-show recovery: &quot;want to rebook?&quot; outreach sequence + call follow-up</li>
                   <li>Estimate follow-up: quote chase flow for pending decisions</li>
-                  <li>Reactivation for stalled leads: "we can help when you&apos;re ready" cadence</li>
+                  <li>Reactivation for stalled leads: &quot;we can help when you&apos;re ready&quot; cadence</li>
                 </ul>
               </div>
               <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
@@ -162,8 +162,8 @@ export default function RoofingIndustryPage() {
                 incremental profit from one storm window. Your subscription is usually covered quickly when your calendar churn is improved.
               </p>
               <p>
-                The bigger advantage is compounding follow-through. When estimate follow-up is automatic, you&apos;re not waiting for "tomorrow’s
-                coordinator" to call. Quote chase keeps momentum and reduces the time your competitors spend winning the next touch.
+                The bigger advantage is compounding follow-through. When estimate follow-up is automatic, you&apos;re not waiting for &quot;tomorrow’s
+                coordinator&quot; to call. Quote chase keeps momentum and reduces the time your competitors spend winning the next touch.
               </p>
               <p>
                 Revenue Operator makes the process predictable. Storm demand becomes booked work, not voicemail triage — and the revenue recovery system

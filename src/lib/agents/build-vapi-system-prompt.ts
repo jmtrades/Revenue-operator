@@ -271,6 +271,7 @@ export function buildVapiSystemPrompt(input: AgentPromptInput): string {
   );
   if (input.industry) {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { getIndustryConfig, mergeIndustryObjections } = require("@/lib/data/industry-objections");
       const industryConfig = getIndustryConfig(input.industry);
       if (industryConfig) {

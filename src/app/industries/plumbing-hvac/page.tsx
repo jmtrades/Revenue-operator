@@ -54,20 +54,20 @@ export default function PlumbingHvacIndustryPage() {
               Answer 24/7 emergency calls. Dispatch faster. Dominate seasonal spikes.
             </h1>
             <p className="text-base md:text-lg mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-              Emergency plumbing and HVAC calls don't wait. A customer with a burst pipe or a dead AC doesn't care if it's midnight or lunch—they need help now. Your dispatch team is stretched. Calls come in during peak hours, nights, and weekends. Miss one, and the customer calls your competitor. Revenue Operator answers every call 24/7, captures location and urgency, books emergency slots, and keeps your dispatch running smoothly—even when you're slammed.
+              Emergency plumbing and HVAC calls don&apos;t wait. A customer with a burst pipe or a dead AC doesn&apos;t care if it&apos;s midnight or lunch—they need help now. Your dispatch team is stretched. Calls come in during peak hours, nights, and weekends. Miss one, and the customer calls your competitor. Revenue Operator answers every call 24/7, captures location and urgency, books emergency slots, and keeps your dispatch running smoothly—even when you&apos;re slammed.
             </p>
 
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 md:p-8 mb-8">
               <h2 className="text-lg font-semibold mb-3">Why emergency service revenue leaks</h2>
               <div className="space-y-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
                 <p>
-                  In plumbing and HVAC, lost calls are lost jobs. A furnace dies at 9 PM. The homeowner calls your number. If they hit voicemail or a busy signal, they Google "emergency heating near me" and call someone who answers. You just lost a $450+ HVAC call. The same happens with plumbing emergencies—a single missed after-hours call could be $350–500+ in revenue plus a one-star review.
+                  In plumbing and HVAC, lost calls are lost jobs. A furnace dies at 9 PM. The homeowner calls your number. If they hit voicemail or a busy signal, they Google &quot;emergency heating near me&quot; and call someone who answers. You just lost a $450+ HVAC call. The same happens with plumbing emergencies—a single missed after-hours call could be $350–500+ in revenue plus a one-star review.
                 </p>
                 <p>
                   The second leak is dispatcher overload during peak season. Summer AC calls. Winter heating emergencies. Spring flooding. Your team is taking calls, managing schedules, and fielding questions all at once. Calls get dropped or delayed. Customers wait longer. Satisfaction drops.
                 </p>
                 <p>
-                  The third leak is seasonal volatility. You staff for average. Then a cold snap hits and you're triple-booked. Or summer is slow and you're overstaffed. Your revenue swings because demand-capture isn't smooth.
+                  The third leak is seasonal volatility. You staff for average. Then a cold snap hits and you&apos;re triple-booked. Or summer is slow and you&apos;re overstaffed. Your revenue swings because demand-capture isn&apos;t smooth.
                 </p>
               </div>
             </div>
@@ -75,7 +75,7 @@ export default function PlumbingHvacIndustryPage() {
             <h2 className="text-lg font-semibold mb-3">How Revenue Operator works for plumbing & HVAC</h2>
             <div className="space-y-4 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
               <p>
-                Revenue Operator answers every inbound call, whether it's 2 AM or 2 PM. It greets the customer, asks for location and urgency, and captures what's wrong (heating, cooling, plumbing, electrical). It checks your technician availability in real-time and either books the emergency slot directly or queues the job for dispatch review.
+                Revenue Operator answers every inbound call, whether it&apos;s 2 AM or 2 PM. It greets the customer, asks for location and urgency, and captures what&apos;s wrong (heating, cooling, plumbing, electrical). It checks your technician availability in real-time and either books the emergency slot directly or queues the job for dispatch review.
               </p>
               <p>
                 For after-hours calls, Revenue Operator can confirm a callback window or immediately notify your on-call dispatcher via SMS/alert. For seasonal campaigns, you can set up automated outreach: spring AC tune-ups, winter heating checks, or post-emergency follow-up.
@@ -111,7 +111,7 @@ export default function PlumbingHvacIndustryPage() {
             <h2 className="text-lg font-semibold mb-3">ROI (why this is fast and measurable)</h2>
             <div className="space-y-4 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
               <p>
-                The math is direct: capture one additional $450 HVAC call or $350 plumbing emergency per month and the system pays for itself. Most teams see recovery of 2–5 calls per month that would otherwise have gone to voicemail. In peak season, that's 2–5 jobs × $400+ = $800–2,000 in recovered monthly revenue.
+                The math is direct: capture one additional $450 HVAC call or $350 plumbing emergency per month and the system pays for itself. Most teams see recovery of 2–5 calls per month that would otherwise have gone to voicemail. In peak season, that&apos;s 2–5 jobs × $400+ = $800–2,000 in recovered monthly revenue.
               </p>
               <p>
                 Beyond emergency captures, seasonal automation reduces labor: your marketing team sends one campaign brief; Revenue Operator runs the follow-up calls, texts, and scheduling. Spring tune-ups and winter preventive calls drive steady, predictable revenue.

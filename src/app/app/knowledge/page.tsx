@@ -148,7 +148,7 @@ function KnowledgeModal({
       setUploadState("done");
       setFileName(data?.fileName ?? "uploaded-document.pdf");
       toast.success(t("toast.uploadSuccess"));
-    } catch (error) {
+    } catch {
       setUploadState("idle");
       toast.error(t("toast.uploadError"));
     }
@@ -168,7 +168,7 @@ function KnowledgeModal({
         body: JSON.stringify({ url: url.trim() }),
       });
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
+        await res.json().catch(() => ({}));
         toast.error(t("toast.fetchFailed"));
         setWebsiteFetchState("idle");
         return;

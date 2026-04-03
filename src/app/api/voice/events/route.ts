@@ -39,7 +39,7 @@ function verifyWebhookSignature(rawBody: string, signature: string | null): bool
   const a = Buffer.from(expected, "utf-8");
   const b = Buffer.from(signature, "utf-8");
   try {
-    const { timingSafeEqual } = require("crypto");
+    const { timingSafeEqual } = await import("crypto");
     return timingSafeEqual(a, b);
   } catch {
     return expected === signature;

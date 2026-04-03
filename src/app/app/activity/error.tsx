@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 
 export default function Error({
-  error,
+  error: _error,
   reset,
 }: {
   error: Error & { digest?: string };

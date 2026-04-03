@@ -190,7 +190,7 @@ export default function ExportPage() {
           >
             <p style={{ color: "var(--text-secondary)" }}>No exports yet</p>
             <p style={{ color: "var(--text-tertiary)" }} className="text-sm mt-1">
-              Start an export from the "Export Data" section above to see your history here.
+              Start an export from the &quot;Export Data&quot; section above to see your history here.
             </p>
           </div>
         ) : (

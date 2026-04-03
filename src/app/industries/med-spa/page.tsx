@@ -65,7 +65,7 @@ export default function MedSpaIndustryPage() {
               <br />
               Revenue Operator is an AI phone system that handles the entire revenue loop for med spas: it answers inbound questions, captures the right
               details (service interest, timeline, goals), books consultations or treatments, and follows up with reminders that reduce no-shows.
-              Then it adds the "next best touch" for package upsells — without spamming clients or breaking your cancellation policy.
+              Then it adds the &quot;next best touch&quot; for package upsells — without spamming clients or breaking your cancellation policy.
             </p>
 
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 md:p-8 mb-8">
@@ -80,7 +80,7 @@ export default function MedSpaIndustryPage() {
                   the clinic loses scheduled revenue and has to chase fills on a shorter timeline.
                 </p>
                 <p>
-                  <strong>Follow-up that never compounds.</strong> If someone requests an estimate, asks for pricing, or wants a "maybe" date,
+                  <strong>Follow-up that never compounds.</strong> If someone requests an estimate, asks for pricing, or wants a &quot;maybe&quot; date,
                   the clinic&apos;s manual follow-up can get delayed. The lead doesn&apos;t stop being interested — it just becomes harder to convert.
                 </p>
                 <p>
@@ -99,7 +99,7 @@ export default function MedSpaIndustryPage() {
               </p>
               <p>
                 <strong>Treatment reminders that reduce no-shows.</strong> After booking, Revenue Operator triggers reminders for upcoming appointments.
-                The goal isn&apos;t "generic messages." It&apos;s clear confirmations plus an easy reschedule path. When someone doesn&apos;t respond,
+                The goal isn&apos;t &quot;generic messages.&quot; It&apos;s clear confirmations plus an easy reschedule path. When someone doesn&apos;t respond,
                 the agent can follow up again so the clinic has a better chance to recover the slot.
               </p>
               <p>
@@ -108,7 +108,7 @@ export default function MedSpaIndustryPage() {
                 can fill gaps faster and reduce revenue volatility.
               </p>
               <p>
-                <strong>Package upsell follow-up (the "right next step" engine).</strong> Med spas earn more when packages and treatment plans convert.
+                <strong>Package upsell follow-up (the &quot;right next step&quot; engine).</strong> Med spas earn more when packages and treatment plans convert.
                 Revenue Operator uses follow-up sequences to promote packages after key milestones: completion signals, a time-based cadence,
                 and a gated offer so only interested clients see the upsell. The client feels cared for, not pushed.
               </p>
@@ -126,7 +126,7 @@ export default function MedSpaIndustryPage() {
                   <li>Treatment reminder sequences: confirmations + reschedule prompts</li>
                   <li>No-show reduction: multiple touches aligned to your availability</li>
                   <li>Cancellation recovery: rebook outreach and appointment window offers</li>
-                  <li>Package upsell follow-up: guided "next step" offers post-visit</li>
+                  <li>Package upsell follow-up: guided &quot;next step&quot; offers post-visit</li>
                   <li>Reactivation for inactive leads: keep interest alive between sessions</li>
                 </ul>
               </div>

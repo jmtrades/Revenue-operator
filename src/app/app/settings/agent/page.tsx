@@ -27,12 +27,12 @@ type AgentConfig = {
   primaryGoal: string;
   uniqueSellingPoints: string;
   targetAudience: string;
-  qualificationMethod: "None" | "BANT" | "Custom Questions";
+  qualificationMethod: &quot;None&quot; | &quot;BANT&quot; | &quot;Custom Questions&quot;;
   customQualificationQuestions: Array<{ q?: string; a?: string }>;
-  tonePreset: "Professional" | "Casual & Friendly" | "Concise & Direct" | "Empathetic & Warm";
-  transferPolicy: "Never" | "If caller requests" | "On escalation trigger" | "Always";
+  tonePreset: &quot;Professional&quot; | &quot;Casual & Friendly&quot; | &quot;Concise & Direct&quot; | &quot;Empathetic & Warm&quot;;
+  transferPolicy: &quot;Never&quot; | &quot;If caller requests&quot; | &quot;On escalation trigger&quot; | &quot;Always&quot;;
   transferNumber: string;
-  escalationThreshold: "Conservative — transfer often" | "Balanced" | "Aggressive — AI handles most";
+  escalationThreshold: &quot;Conservative — transfer often&quot; | &quot;Balanced&quot; | &quot;Aggressive — AI handles most&quot;;
   escalationTriggers: string;
   allowedActions: string[];
   forbiddenActions: string[];
@@ -134,7 +134,7 @@ export default function AppSettingsAgentPage() {
         persistAgentSettingsSnapshot(snapshotWorkspaceId, nextConfig);
         lastSavedRef.current = JSON.stringify(nextConfig);
       }
-    } catch (error) {
+    } catch {
       const message = tSettings("agent.loadFailed");
       setInlineToast(message);
       toast.error(message);

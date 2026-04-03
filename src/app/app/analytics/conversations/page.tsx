@@ -83,7 +83,7 @@ const SENTIMENT_COLORS = {
 };
 
 export default function ConversationalAnalyticsPage() {
-  const [dateRange, setDateRange] = useState<DateRange>("7d");
+  const [dateRange, setDateRange] = useState<DateRange>(&quot;7d&quot;);
   const [metrics, setMetrics] = useState<ConversationMetrics | null>(null);
   const [sentimentData, setSentimentData] = useState<SentimentData[]>([]);
   const [objections, setObjections] = useState<Objection[]>([]);

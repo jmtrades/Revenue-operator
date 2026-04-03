@@ -102,7 +102,7 @@ export default function VoiceDemoPage() {
       } else {
         setError("Voice preview unavailable right now. Try again in a moment.");
       }
-    } catch (error) {
+    } catch {
       setError("Voice preview unavailable right now. Try again in a moment.");
       console.error("[voice demo] call failed:", error);
     } finally {
@@ -142,7 +142,7 @@ export default function VoiceDemoPage() {
       } else {
         setError("Voice preview unavailable right now. Try again in a moment.");
       }
-    } catch (error) {
+    } catch {
       setError("Voice preview unavailable right now. Try again in a moment.");
       console.error("[voice demo] follow-up failed:", error);
     } finally {
@@ -199,7 +199,7 @@ export default function VoiceDemoPage() {
         setSignupEmail("");
         setTimeout(() => setSignupSuccess(false), 5000);
       }
-    } catch (error) {
+    } catch {
       // Error silently handled
     } finally {
       setSignupLoading(false);

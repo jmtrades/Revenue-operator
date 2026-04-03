@@ -18,9 +18,9 @@ interface ChatMessage {
 export default function SmartSetupPage() {
   const router = useRouter();
   const { workspaceId } = useWorkspace();
-  const [step, setStep] = useState<SetupStep>("select-playbook");
+  const [step, setStep] = useState<SetupStep>(&quot;select-playbook&quot;);
   const [selectedPlaybook, setSelectedPlaybook] = useState<Playbook | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [selectedCategory, setSelectedCategory] = useState<string>(&quot;All&quot;);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isActivating, setIsActivating] = useState(false);
   const [agentName, setAgentName] = useState("");
@@ -295,7 +295,7 @@ export default function SmartSetupPage() {
                 style={{ color: "var(--text-secondary)" }}
                 className="text-lg"
               >
-                Pick your role and we'll show you your operator in action
+                Pick your role and we&apos;ll show you your operator in action
               </p>
             </div>
 

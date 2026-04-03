@@ -48,11 +48,11 @@ export default function QuickSetupPage() {
   const router = useRouter();
   const { workspaceId } = useWorkspace();
   const [step, setStep] = useState<1 | 2 | 3>(1);
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState(&quot;&quot;);
   const [analyzing, setAnalyzing] = useState(false);
   const [analysisMessages, setAnalysisMessages] = useState<string[]>([]);
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
-  const [industry, setIndustry] = useState("");
+  const [industry, setIndustry] = useState(&quot;&quot;);
   const [expandedSections, setExpandedSections] = useState<ExpandedSections>({
     greeting: false,
     faqs: false,
@@ -212,7 +212,7 @@ export default function QuickSetupPage() {
               Set Up Your AI Operator in Seconds
             </h1>
             <p style={{ color: "var(--text-secondary)", fontSize: "1.125rem" }} className="mb-2">
-              We'll analyze your business and configure everything automatically.
+              We&apos;ll analyze your business and configure everything automatically.
             </p>
             <p style={{ color: "var(--text-tertiary)" }} className="text-sm">
               No manual scripts or setup required — just share your website.
@@ -717,7 +717,7 @@ export default function QuickSetupPage() {
 
           {/* Heading */}
           <h1 className="text-4xl font-bold mb-3" style={{ color: "var(--text-primary)" }}>
-            You're Live!
+            You&apos;re Live!
           </h1>
           <p className="text-lg mb-12" style={{ color: "var(--text-secondary)" }}>
             Your AI operator is ready to handle calls and automate your revenue operations.

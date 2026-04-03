@@ -54,17 +54,17 @@ export default function InsuranceIndustryPage() {
               Capture every quote. Automate renewals. Close more policies. 24/7 claims support.
             </h1>
             <p className="text-base md:text-lg mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-              Insurance agencies live and die by lead speed and policy retention. A prospect calls for a quote. If you answer immediately and provide a quote fast, they move forward with you. If they get voicemail or a slow callback, they've already called two competitors and picked one. Renewals are just as critical: a policy comes due, and if you don't follow up consistently, the customer renews with someone else or doesn't renew at all. Revenue Operator answers every call, captures quote requests, runs quote flows, automates renewal outreach, and routes claims—all while your agents focus on relationship-building and complex sales.
+              Insurance agencies live and die by lead speed and policy retention. A prospect calls for a quote. If you answer immediately and provide a quote fast, they move forward with you. If they get voicemail or a slow callback, they&apos;ve already called two competitors and picked one. Renewals are just as critical: a policy comes due, and if you don&apos;t follow up consistently, the customer renews with someone else or doesn&apos;t renew at all. Revenue Operator answers every call, captures quote requests, runs quote flows, automates renewal outreach, and routes claims—all while your agents focus on relationship-building and complex sales.
             </p>
 
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 md:p-8 mb-8">
               <h2 className="text-lg font-semibold mb-3">Why insurance agencies lose quotes and renewals</h2>
               <div className="space-y-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
                 <p>
-                  Quote requests are time-sensitive. A customer is shopping for car insurance, and they're calling 4–5 agencies simultaneously. The agency that delivers a quote first usually wins. If you're on the phone with another customer or in a meeting when they call, they've moved on. Your callback at 4 PM is too late—they signed with someone else at 2 PM.
+                  Quote requests are time-sensitive. A customer is shopping for car insurance, and they&apos;re calling 4–5 agencies simultaneously. The agency that delivers a quote first usually wins. If you&apos;re on the phone with another customer or in a meeting when they call, they&apos;ve moved on. Your callback at 4 PM is too late—they signed with someone else at 2 PM.
                 </p>
                 <p>
-                  The second leak is renewal decay. Your policy renews in 60 days. You send an email. Then a letter. Then you intend to call but you're busy with new sales. The customer hasn't heard from you, so they assume you don't care. They renew with another carrier or a competitor agent. Consistent, automated outreach closes that gap.
+                  The second leak is renewal decay. Your policy renews in 60 days. You send an email. Then a letter. Then you intend to call but you&apos;re busy with new sales. The customer hasn&apos;t heard from you, so they assume you don&apos;t care. They renew with another carrier or a competitor agent. Consistent, automated outreach closes that gap.
                 </p>
                 <p>
                   The third opportunity is cross-sell. A customer has auto and home. Do they have umbrella, life, or disability? Your team should ask, but in the chaos of daily calls, that message gets lost. Systematic follow-up identifies and closes those gaps.
@@ -78,7 +78,7 @@ export default function InsuranceIndustryPage() {
                 Revenue Operator answers quote requests 24/7. It asks what type of insurance (auto, home, life, commercial) and collects basic info: driver record, home value, business size, etc. It can provide a rough quote based on your rates or route the prospect to an agent for a detailed quote. Either way, the call is captured and prioritized.
               </p>
               <p>
-                For renewals, you set up automated outreach triggered by policy expiration dates. Revenue Operator sends a message: "Hi [name], your [policy type] renews in 30 days. Let's review your coverage and make sure you have the best rate." If the customer responds with questions, Revenue Operator answers or routes to an agent. If they want to renew, it guides them through the process or schedules a call with you.
+                For renewals, you set up automated outreach triggered by policy expiration dates. Revenue Operator sends a message: &quot;Hi [name], your [policy type] renews in 30 days. Let&apos;s review your coverage and make sure you have the best rate.&quot; If the customer responds with questions, Revenue Operator answers or routes to an agent. If they want to renew, it guides them through the process or schedules a call with you.
               </p>
               <p>
                 For claims, Revenue Operator can triage: capture claim type, date, initial details, and route to the right adjuster or insurance company. This speeds up claims processing and improves customer satisfaction during a stressful moment.
@@ -111,10 +111,10 @@ export default function InsuranceIndustryPage() {
             <h2 className="text-lg font-semibold mb-3">ROI (lifetime value is enormous)</h2>
             <div className="space-y-4 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
               <p>
-                Insurance economics are lifetime-value driven. An average policy is $1,200/year, and a customer stays 5+ years if you service them well. That's $6,000+ in lifetime revenue per policy. Capture one additional quote per week that converts (52 policies/year × $1,200 × 5 years = $312,000 lifetime value), and the system pays for itself in days.
+                Insurance economics are lifetime-value driven. An average policy is $1,200/year, and a customer stays 5+ years if you service them well. That&apos;s $6,000+ in lifetime revenue per policy. Capture one additional quote per week that converts (52 policies/year × $1,200 × 5 years = $312,000 lifetime value), and the system pays for itself in days.
               </p>
               <p>
-                Even stronger: improve renewal rates by just 5%. If you're an agency with 500 policies, a 5% renewal lift is 25 policies retained per year. At $1,200 each, that's $30,000 in annual revenue protected. Add cross-sell—umbrella policies, life insurance, disability—and the leverage multiplies.
+                Even stronger: improve renewal rates by just 5%. If you&apos;re an agency with 500 policies, a 5% renewal lift is 25 policies retained per year. At $1,200 each, that&apos;s $30,000 in annual revenue protected. Add cross-sell—umbrella policies, life insurance, disability—and the leverage multiplies.
               </p>
               <p>
                 The practical outcome: your agents spend time selling and servicing, not fielding routine calls and chasing renewals. Your quote-to-close velocity improves. Your renewals happen automatically. Your growth becomes predictable and scalable.

@@ -232,7 +232,7 @@ export default function VoicesSettingsPage() {
           toast.error(t("toast.previewUnavailable"));
           setPlayingVoiceId(null);
         }
-      } catch (error) {
+      } catch {
         toast.error(t("toast.previewUnavailable"));
         setPlayingVoiceId(null);
       }
@@ -249,7 +249,7 @@ export default function VoicesSettingsPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ voiceId: voiceId }),
       credentials: "include",
-    }).catch((error) => {
+    }).catch(() => {
       // silenced
     });
   }, []);
