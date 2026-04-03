@@ -78,7 +78,7 @@ export function ProtectionPausedBanner() {
             <Link
               href="/app/settings/billing"
               className="inline-block px-5 py-2 rounded-lg text-sm font-medium transition-colors"
-              style={{ background: urgencyColor, color: "#fff" }}
+              style={{ background: urgencyColor, color: "var(--text-on-accent, #fff)" }}
             >
               Upgrade now
             </Link>
@@ -116,7 +116,7 @@ export function ProtectionPausedBanner() {
         <Link
           href="/dashboard/continue-protection"
           className="inline-block px-6 py-2.5 rounded-lg font-medium"
-          style={{ background: "var(--meaning-green)", color: "#0E1116" }}
+          style={{ background: "var(--meaning-green)", color: "var(--text-on-accent, #0E1116)" }}
         >
           {t("resumeHandling")}
         </Link>
