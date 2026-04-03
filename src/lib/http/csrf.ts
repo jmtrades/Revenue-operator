@@ -59,7 +59,5 @@ export function assertSameOrigin(req: NextRequest): NextResponse | null {
       { status: 400 },
     );
   }
-
-  return null;
 }
 

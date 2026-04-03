@@ -7,6 +7,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { log } from "@/lib/logger";
 import { getWorkspaceIdByExternalRef } from "@/lib/shared-transaction-assurance";
 import {
   hashIpForPublicRecord,
@@ -69,10 +70,9 @@ export async function GET(
     if (Array.isArray(lines)) {
       proof = lines.slice(0, CAP_PROOF).map(trim).filter(Boolean);
     }
-  } catch {
-    // leave empty
+  } catch (err) {
+    log("warn", "[public/record/capsule] proof lookup failed", { error: err instanceof Error ? err.message : String(err) });
   }
 
   return NextResponse.json({ proof });
 }
-import { log } from "@/lib/logger";

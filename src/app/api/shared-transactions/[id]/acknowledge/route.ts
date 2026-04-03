@@ -17,6 +17,10 @@ export async function POST(
   if (csrfBlock) return csrfBlock;
 
   const { id } = await params;
+  // Validate that id is a valid UUID to prevent enumeration
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+    return NextResponse.json({ error: "Invalid transaction ID" }, { status: 400 });
+  }
   let body: { action?: string; new_deadline?: string; dispute_reason?: string } = {};
   try {
     body = await request.json();

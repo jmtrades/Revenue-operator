@@ -107,8 +107,8 @@ export async function POST(req: NextRequest) {
           await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
           await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing" });
         }
-      } catch {
-        // continue
+      } catch (err) {
+        log("warn", "[signup] workspace setup failed for user", { userId, error: err instanceof Error ? err.message : String(err) });
       }
       const cookie = createSessionCookie({ userId, workspaceId });
       if (cookie) {
@@ -175,8 +175,8 @@ export async function POST(req: NextRequest) {
           await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
           await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing" });
         }
-      } catch {
-        // continue
+      } catch (err) {
+        log("warn", "[signup] workspace setup failed for user", { userId, error: err instanceof Error ? err.message : String(err) });
       }
       const cookie = createSessionCookie({ userId, workspaceId });
       if (cookie) {
