@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 
-const industries = ["Home Services", "Healthcare", "Legal", "Insurance", "Real Estate", "Automotive"];
+const industries = ["Professional Services", "Healthcare", "Home Services", "Retail & E-Commerce", "Consulting", "Real Estate", "Legal", "Any Business"];
 
 export function TrustedByBar() {
   const t = useTranslations("homepage.trustedBy");
