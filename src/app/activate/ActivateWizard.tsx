@@ -93,7 +93,7 @@ export function ActivateWizard() {
 
   const canGoNext = useMemo(() => {
     if (step === 1) {
-      return selectedPlan !== null;
+      return selectedPlan !== null && emailVerified !== false;
     }
     if (step === 2) {
       return state.goals.length > 0;
@@ -104,7 +104,7 @@ export function ActivateWizard() {
       return digits.length >= 10 && digits.length <= 15 && !/^0+$/.test(digits);
     }
     return true;
-  }, [step, state, selectedPlan]);
+  }, [step, state, selectedPlan, emailVerified]);
 
   const goNext = useCallback(() => {
     if (!canGoNext) return;
@@ -358,7 +358,8 @@ export function ActivateWizard() {
                           : "border-[var(--border-default)]"
                     }`}
                     aria-label={s.label}
-                    onClick={() => setStep(s.id)}
+                    onClick={() => { if (idx <= currentIndex) setStep(s.id); }}
+                    style={{ cursor: idx <= currentIndex ? "pointer" : "default" }}
                   />
                   <span className="hidden md:inline text-[11px] text-[var(--text-tertiary)]">
                     {s.label}
