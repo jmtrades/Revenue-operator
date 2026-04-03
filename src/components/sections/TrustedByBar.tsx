@@ -1,51 +1,65 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { motion } from "framer-motion";
 import { Container } from "@/components/ui/Container";
-import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
+
+const industries = ["Home Services", "Healthcare", "Legal", "Insurance", "Real Estate", "Automotive"];
 
 export function TrustedByBar() {
   const t = useTranslations("homepage.trustedBy");
 
-  const industries = ["Home Services", "Healthcare", "Legal", "Insurance", "Real Estate", "Automotive"];
-
   return (
     <section
-      className="marketing-section py-12 md:py-16"
+      className="marketing-section py-10 md:py-14 relative"
       style={{ background: "var(--bg-primary)" }}
     >
-      <Container>
-        <AnimateOnScroll className="text-center">
-          {/* Main trust statement */}
-          <div className="mb-8 md:mb-10">
-            <p
-              className="text-base md:text-lg font-semibold"
-              style={{ color: "var(--text-primary)" }}
-            >
-              {t("heading", { default: "Trusted across industries" })}
-            </p>
-          </div>
+      {/* Top/bottom borders */}
+      <div
+        className="absolute top-0 left-0 right-0 h-px"
+        style={{ background: "linear-gradient(90deg, transparent, var(--border-default) 20%, var(--border-default) 80%, transparent)" }}
+      />
 
-          {/* Industry categories in pills */}
-          <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
-            {industries.map((industry) => (
-              <div
+      <Container>
+        <motion.div
+          className="text-center"
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          {/* Label */}
+          <p
+            className="text-[11px] font-semibold uppercase tracking-wider mb-6"
+            style={{ color: "var(--text-disabled)", letterSpacing: "0.15em" }}
+          >
+            {t("heading", { default: "Trusted across industries" })}
+          </p>
+
+          {/* Industry pills — smooth infinite scroll on mobile, static on desktop */}
+          <div className="flex flex-wrap items-center justify-center gap-2.5 mb-6">
+            {industries.map((industry, i) => (
+              <motion.div
                 key={industry}
-                className="px-3 py-2 rounded-full text-sm font-medium"
+                className="px-4 py-2 rounded-full text-[13px] font-medium"
                 style={{
                   background: "var(--bg-surface)",
                   color: "var(--text-tertiary)",
-                  border: "1px solid var(--border-subtle)",
+                  border: "1px solid var(--border-default)",
                 }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05, duration: 0.3 }}
               >
                 {industry}
-              </div>
+              </motion.div>
             ))}
           </div>
 
-          {/* Rating display */}
-          <div className="flex items-center justify-center gap-3">
-            <div className="flex items-center gap-1">
+          {/* Rating */}
+          <div className="flex items-center justify-center gap-2.5">
+            <div className="flex items-center gap-0.5">
               {Array.from({ length: 5 }).map((_, i) => (
                 <svg
                   key={i}
@@ -58,14 +72,11 @@ export function TrustedByBar() {
                 </svg>
               ))}
             </div>
-            <p
-              className="text-sm font-semibold"
-              style={{ color: "var(--text-secondary)" }}
-            >
+            <p className="text-sm font-medium" style={{ color: "var(--text-secondary)" }}>
               {t("rating", { default: "4.9/5 average rating" })}
             </p>
           </div>
-        </AnimateOnScroll>
+        </motion.div>
       </Container>
     </section>
   );

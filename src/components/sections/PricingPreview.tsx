@@ -32,14 +32,14 @@ export function PricingPreview() {
   return (
     <section
       id="pricing"
-      className="marketing-section"
+      className="marketing-section py-20 md:py-28 relative overflow-hidden"
       style={{ background: "var(--bg-primary)" }}
     >
       <Container>
         <AnimateOnScroll className="text-center mb-16">
           <p
             className="text-[11px] font-semibold uppercase tracking-wider mb-4"
-            style={{ color: "var(--accent-primary)" }}
+            style={{ color: "var(--accent-primary)", letterSpacing: "0.1em" }}
           >
             {t("label")}
           </p>
@@ -139,7 +139,7 @@ export function PricingPreview() {
               <motion.div
                 key={tier.name}
                 variants={fadeUpVariants}
-                className="rounded-xl p-7 relative flex flex-col card-lift"
+                className="rounded-2xl p-7 relative flex flex-col card-lift"
                 style={{
                   background: "var(--bg-surface)",
                   border: tier.popular
@@ -147,7 +147,7 @@ export function PricingPreview() {
                     : "1px solid var(--border-default)",
                   boxShadow: tier.popular
                     ? "var(--shadow-glow-primary)"
-                    : undefined,
+                    : "var(--shadow-xs)",
                 }}
               >
                 {tier.popular && (
