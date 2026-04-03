@@ -78,7 +78,7 @@ async function getLeadProfile(
   const db = getDb();
   const { data } = await db
     .from("leads")
-    .select("id, name, company, email, phone, source, qualification_score, stage")
+    .select("id, name, company, email, phone, source, qualification_score, state")
     .eq("id", leadId)
     .eq("workspace_id", workspaceId)
     .maybeSingle();

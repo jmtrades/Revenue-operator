@@ -98,7 +98,7 @@ export async function GET(req: NextRequest) {
       .from("leads")
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
-      .not("state", "in", '("ARCHIVED","LOST","DISQUALIFIED","WON")')
+      .not("state", "in", '("CLOSED","LOST","WON")')
       .lt("updated_at", thirtyDaysAgo.toISOString());
 
     const coldCount = count ?? 0;

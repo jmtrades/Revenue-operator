@@ -142,8 +142,8 @@ export async function GET(req: NextRequest) {
         .from("leads")
         .select("id", { count: "exact", head: true })
         .eq("workspace_id", workspaceId)
-        .not("state", "in", '("ARCHIVED","LOST","DISQUALIFIED")')
-        .lt("last_contacted_at", sevenDaysAgo.toISOString());
+        .not("state", "in", '("CLOSED","LOST","WON")')
+        .lt("last_activity_at", sevenDaysAgo.toISOString());
       staleLeadsCount = sl ?? 0;
     } catch {
       // table missing
