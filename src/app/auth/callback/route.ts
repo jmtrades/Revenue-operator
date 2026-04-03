@@ -44,7 +44,11 @@ export async function GET(request: Request) {
       let { data: ws } = await db.from("workspaces").select("id").eq("owner_id", userId).limit(1).maybeSingle();
       if (!ws) {
         const { data: created, error: createErr } = await db.from("workspaces").insert({ name: "My workspace", owner_id: userId, autonomy_level: "assisted", kill_switch: false }).select("id").maybeSingle();
-        if (!createErr && created) {
+        if (createErr) {
+          // Race condition: another request created the workspace — re-fetch
+          const { data: existing } = await db.from("workspaces").select("id").eq("owner_id", userId).limit(1).maybeSingle();
+          if (existing) { ws = existing as { id: string }; }
+        } else if (created) {
           ws = created as { id: string };
           isNewUser = true;
           const newWsId = (created as { id: string }).id;

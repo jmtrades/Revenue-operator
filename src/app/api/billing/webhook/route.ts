@@ -223,6 +223,8 @@ async function handleStripeWebhookEvent(
                     });
 
                     const emailFrom = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@recall-touch.com>";
+                    const emailCtrl = new AbortController();
+                    const emailTimeout = setTimeout(() => emailCtrl.abort(), 10000);
                     await fetch("https://api.resend.com/emails", {
                       method: "POST",
                       headers: {
@@ -230,7 +232,9 @@ async function handleStripeWebhookEvent(
                         Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
                       },
                       body: JSON.stringify({ from: emailFrom, to: ownerEmail, subject, html }),
+                      signal: emailCtrl.signal,
                     });
+                    clearTimeout(emailTimeout);
                   }
                 }
               } catch (emailErr) {

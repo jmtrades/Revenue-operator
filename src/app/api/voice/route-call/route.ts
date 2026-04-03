@@ -137,6 +137,24 @@ export async function POST(request: NextRequest) {
 
     const workspaceId = (phoneConfig as { workspace_id: string }).workspace_id;
 
+    // Check billing status — block calls for expired/paused workspaces
+    const { data: wsRow } = await db
+      .from("workspaces")
+      .select("billing_status")
+      .eq("id", workspaceId)
+      .maybeSingle();
+    const billingStatus = (wsRow as { billing_status?: string } | null)?.billing_status;
+    if (billingStatus === "expired" || billingStatus === "trial_ended" || billingStatus === "paused") {
+      log("warn", "voice_routing.billing_blocked", { workspace_id: workspaceId, billing_status: billingStatus, callSid: twilio.callSid });
+      return new NextResponse(
+        `<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Say>This service is currently inactive. Please contact the business directly.</Say>
+</Response>`,
+        { status: 402, headers: { "Content-Type": "application/xml" } }
+      );
+    }
+
     // Route the call using the routing engine
     const decision = await routeInboundCall(
       workspaceId,

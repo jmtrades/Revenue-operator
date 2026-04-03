@@ -203,9 +203,15 @@ export default function SituationPage() {
               <Phone size={20} style={{ color: "var(--accent-primary)" }} />
             </div>
           </div>
-          <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
-            {stats?.recent_calls ?? "0"}
-          </p>
+          {(stats?.recent_calls ?? 0) > 0 ? (
+            <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
+              {stats?.recent_calls}
+            </p>
+          ) : (
+            <p className="text-xl font-semibold mb-1" style={{ color: "var(--text-tertiary)" }}>
+              {t("stats.startsAfterFirstCall")}
+            </p>
+          )}
           <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("stats.activeCalls")}</p>
         </Link>
 
@@ -233,9 +239,15 @@ export default function SituationPage() {
               <CheckCircle2 size={20} color="white" />
             </div>
           </div>
-          <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
-            {stats?.pending_followups ?? "0"}
-          </p>
+          {(stats?.pending_followups ?? 0) > 0 ? (
+            <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
+              {stats?.pending_followups}
+            </p>
+          ) : (
+            <p className="text-xl font-semibold mb-1" style={{ color: "var(--text-tertiary)" }}>
+              {t("stats.startsAfterFirstCall")}
+            </p>
+          )}
           <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("kpis.pendingFollowups")}</p>
         </Link>
 
@@ -245,9 +257,15 @@ export default function SituationPage() {
               <Calendar size={20} color="white" />
             </div>
           </div>
-          <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
-            {stats?.pending_followups ?? "0"}
-          </p>
+          {(stats?.pending_followups ?? 0) > 0 ? (
+            <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
+              {stats?.pending_followups}
+            </p>
+          ) : (
+            <p className="text-xl font-semibold mb-1" style={{ color: "var(--text-tertiary)" }}>
+              {t("stats.startsAfterFirstCall")}
+            </p>
+          )}
           <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("kpis.appointmentsBooked")}</p>
         </Link>
       </div>
