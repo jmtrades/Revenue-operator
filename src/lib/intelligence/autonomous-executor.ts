@@ -855,6 +855,7 @@ async function scheduleFollowupAction(
                   subject: template.email_subject ?? "Following up",
                   text: template.email_body,
                 }),
+                signal: AbortSignal.timeout(10_000),
               });
               if (!immEmailRes.ok) {
                 log("warn", "autonomous.immediate_email_failed", { lead_id: intelligence.lead_id, status: immEmailRes.status });
@@ -981,6 +982,7 @@ async function escalateHumanAction(
                 subject: `[Escalation] ${lead.name ?? "Unknown"} requires attention`,
                 text: `Lead: ${lead.name ?? "Unknown"}\nPhone: ${lead.phone ?? "N/A"}\nEmail: ${lead.email ?? "N/A"}\nReason: ${intelligence.action_reason}`,
               }),
+              signal: AbortSignal.timeout(10_000),
             });
           }
         }

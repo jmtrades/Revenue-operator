@@ -238,6 +238,7 @@ async function executeFollowUpRouting(
             subject: template.email_subject ?? `Following up — ${businessName}`,
             text: template.email_body,
           }),
+          signal: AbortSignal.timeout(10_000),
         });
         if (res.ok) {
           return { action_taken: "send_follow_up_email", success: true, details: `Email sent to ${lead.email}` };

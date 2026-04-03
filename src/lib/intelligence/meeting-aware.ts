@@ -302,6 +302,7 @@ export async function executeMeetingAction(
           subject: buildEmailSubject(decision.template_key),
           text: emailBody,
         }),
+        signal: AbortSignal.timeout(10_000),
       });
 
       if (!res.ok) {
