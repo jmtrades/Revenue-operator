@@ -96,13 +96,25 @@ export async function GET(req: NextRequest) {
         estimatedRevenueSaved: callCount * REVENUE_PER_CALL,
       });
 
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com";
+      const unsubscribeUrl = `${appUrl}/app/settings/notifications`;
+      const htmlWithFooter = `${html}<p style="margin-top:24px;font-size:12px;color:#999;text-align:center;"><a href="${unsubscribeUrl}" style="color:#999;">Manage email preferences</a></p>`;
       const res = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${RESEND_API_KEY}`,
         },
-        body: JSON.stringify({ from: FROM, to: email, subject, html }),
+        body: JSON.stringify({
+          from: FROM,
+          to: email,
+          subject,
+          html: htmlWithFooter,
+          headers: {
+            "List-Unsubscribe": `<${unsubscribeUrl}>`,
+            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+          },
+        }),
       signal: AbortSignal.timeout(10_000),
       });
 

@@ -20,6 +20,9 @@ async function sendEmail(to: string, subject: string, html: string): Promise<voi
     return;
   }
 
+  const unsubscribeUrl = `${APP_URL}/app/settings/notifications`;
+  const htmlWithFooter = `${html}<p style="margin-top:24px;font-size:12px;color:#999;text-align:center;"><a href="${unsubscribeUrl}" style="color:#999;">Manage email preferences</a></p>`;
+
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
@@ -30,7 +33,11 @@ async function sendEmail(to: string, subject: string, html: string): Promise<voi
       from: EMAIL_FROM,
       to,
       subject,
-      html,
+      html: htmlWithFooter,
+      headers: {
+        "List-Unsubscribe": `<${unsubscribeUrl}>`,
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+      },
     }),
     signal: AbortSignal.timeout(10_000),
   });

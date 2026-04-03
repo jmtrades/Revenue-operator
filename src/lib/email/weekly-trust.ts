@@ -115,7 +115,11 @@ export async function sendWeeklyTrustEmails(): Promise<Array<{ workspaceId: stri
             from: process.env.EMAIL_FROM || "Revenue Operator <noreply@recall-touch.com>",
             to: email,
             subject,
-            text: body,
+            text: body + "\n\nManage email preferences: https://www.recall-touch.com/app/settings/notifications",
+            headers: {
+              "List-Unsubscribe": "<https://www.recall-touch.com/app/settings/notifications>",
+              "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+            },
           }),
           signal: AbortSignal.timeout(10_000),
         });

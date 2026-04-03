@@ -88,7 +88,11 @@ export async function sendCallOutcomeEmail(input: {
         from: FROM,
         to: email,
         subject,
-        html,
+        html: html + `<p style="margin-top:24px;font-size:12px;color:#999;text-align:center;"><a href="${APP_URL}/app/settings/notifications" style="color:#999;">Manage email preferences</a></p>`,
+        headers: {
+          "List-Unsubscribe": `<${APP_URL}/app/settings/notifications>`,
+          "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        },
       }),
       signal: AbortSignal.timeout(10_000),
     });

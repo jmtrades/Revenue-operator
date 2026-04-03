@@ -92,6 +92,9 @@ export async function GET(req: NextRequest) {
     const msgIndex = deterministicIndex(`${workspaceId}:${daySeed}`, ABSENCE_MESSAGES.length);
     const message = ABSENCE_MESSAGES[msgIndex]!;
 
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com";
+    const unsubscribeUrl = `${appUrl}/app/settings/notifications`;
+
     try {
       if (RESEND_API_KEY) {
         const res = await fetch("https://api.resend.com/emails", {
@@ -105,6 +108,10 @@ export async function GET(req: NextRequest) {
             to: email,
             subject: message,
             text: message,
+            headers: {
+              "List-Unsubscribe": `<${unsubscribeUrl}>`,
+              "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+            },
           }),
           signal: AbortSignal.timeout(10_000),
         });

@@ -75,6 +75,9 @@ Your number, call handling, and follow-up coverage will stay active with no inte
 
 If you need to pause instead, open billing in the app today.`;
 
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com";
+    const unsubscribeUrl = `${appUrl}/app/settings/notifications`;
+
     try {
       if (process.env.RESEND_API_KEY) {
         const res = await fetch("https://api.resend.com/emails", {
@@ -88,6 +91,10 @@ If you need to pause instead, open billing in the app today.`;
             to: ownerEmail,
             subject,
             text: body,
+            headers: {
+              "List-Unsubscribe": `<${unsubscribeUrl}>`,
+              "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+            },
           }),
           signal: AbortSignal.timeout(10_000),
         });
