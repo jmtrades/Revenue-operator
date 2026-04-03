@@ -254,7 +254,7 @@ export async function POST(req: NextRequest) {
       number_type: existing.number_type,
       status: existing.status,
       monthly_cost_cents: existing.monthly_cost_cents,
-      setup_fee_cents: existing.setup_fee_cents ?? 100,
+      setup_fee_cents: existing.setup_fee_cents ?? 200,
       idempotent: true,
     });
   }

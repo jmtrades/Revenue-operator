@@ -193,10 +193,59 @@ export async function POST(req: NextRequest) {
   }
 
   const db = getDb();
-  const toInsert = valid.map((r) => ({
+  const normalizedRows = valid.map((r) => ({
+    ...r,
+    normalizedPhone: normalizePhoneE164(r.phone),
+  }));
+
+  // Deduplicate within the import batch (by normalized phone)
+  const seenPhones = new Set<string>();
+  const dedupedRows = normalizedRows.filter((r) => {
+    if (!r.normalizedPhone) return true; // no phone to dedup on
+    if (seenPhones.has(r.normalizedPhone)) {
+      errors.push({ row: r.index + 1, reason: "Duplicate phone in batch" });
+      return false;
+    }
+    seenPhones.add(r.normalizedPhone);
+    return true;
+  });
+
+  // Check for existing leads with same phone numbers in this workspace
+  const phonesToCheck = dedupedRows.map((r) => r.normalizedPhone).filter(Boolean) as string[];
+  let existingPhones = new Set<string>();
+  if (phonesToCheck.length > 0) {
+    const { data: existing } = await db
+      .from("leads")
+      .select("phone")
+      .eq("workspace_id", workspaceId)
+      .in("phone", phonesToCheck);
+    if (existing?.length) {
+      existingPhones = new Set(existing.map((e: { phone: string }) => e.phone));
+    }
+  }
+
+  const newRows = dedupedRows.filter((r) => {
+    if (r.normalizedPhone && existingPhones.has(r.normalizedPhone)) {
+      errors.push({ row: r.index + 1, reason: "Lead with this phone already exists" });
+      return false;
+    }
+    return true;
+  });
+
+  if (newRows.length === 0) {
+    return NextResponse.json({
+      imported: 0,
+      skipped: rows.length,
+      duplicates: existingPhones.size + (normalizedRows.length - dedupedRows.length),
+      errors: errors.slice(0, 10),
+      total_processed: rows.length,
+    });
+  }
+
+  const toInsert = newRows.map((r) => ({
     workspace_id: workspaceId,
     name: r.name,
-    phone: normalizePhoneE164(r.phone),
+    phone: r.normalizedPhone,
     email: r.email,
     company: r.service_requested,
     status: "NEW",
@@ -226,9 +275,11 @@ export async function POST(req: NextRequest) {
     })();
   }
 
+  const duplicatesSkipped = (normalizedRows.length - dedupedRows.length) + (dedupedRows.length - newRows.length);
   return NextResponse.json({
     imported,
-    skipped: valid.length - imported,
+    skipped: rows.length - imported,
+    duplicates: duplicatesSkipped,
     errors: errors.slice(0, 10), // Return first 10 errors for feedback
     total_processed: rows.length,
   });
