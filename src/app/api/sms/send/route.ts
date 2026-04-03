@@ -8,6 +8,7 @@ import { z } from "zod";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 import { parseBody, phoneSchema } from "@/lib/api/validate";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getTelephonyProvider } from "@/lib/telephony/get-telephony-provider";
@@ -129,7 +130,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: true, sid: messageId });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    return NextResponse.json({ error: msg }, { status: 500 });
+    log("error", "sms.send_failed", { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: "Failed to send SMS" }, { status: 500 });
   }
 }

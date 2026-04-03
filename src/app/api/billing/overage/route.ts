@@ -166,11 +166,11 @@ export async function POST(req: NextRequest) {
       ok: true,
       processed,
       phones_billed: phonesBilled,
-      errors,
+      error_count: errors.length,
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     log("error", "[billing/overage] Unexpected error:", { error: msg });
-    return NextResponse.json({ error: msg }, { status: 500 });
+    return NextResponse.json({ error: "Failed to process overage data" }, { status: 500 });
   }
 }

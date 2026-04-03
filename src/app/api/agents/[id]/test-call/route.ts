@@ -172,8 +172,8 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     });
     assistantId = aid;
   } catch (err) {
-    const msg = err instanceof Error ? err.message : "Failed to create voice assistant";
-    return NextResponse.json({ error: msg }, { status: 500 });
+    log("error", "test_call.create_assistant_failed", { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: "Failed to create voice assistant" }, { status: 500 });
   }
 
   if (!assistantId) {

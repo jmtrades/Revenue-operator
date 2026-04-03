@@ -126,7 +126,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     log("error", "[case-studies/generate]", { error: msg });
-    return NextResponse.json({ error: "Failed to generate case study", details: msg }, { status: 500 });
+    return NextResponse.json({ error: "Failed to generate case study" }, { status: 500 });
   }
 }
 
