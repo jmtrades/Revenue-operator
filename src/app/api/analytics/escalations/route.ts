@@ -23,7 +23,8 @@ export async function GET(req: NextRequest) {
 
   // Parse query parameters
   const limit = Math.min(parseInt(req.nextUrl.searchParams.get("limit") ?? "50"), 100);
-  const fromDate = req.nextUrl.searchParams.get("from_date");
+  const rawFromDate = req.nextUrl.searchParams.get("from_date");
+  const fromDate = rawFromDate && /^\d{4}-\d{2}-\d{2}/.test(rawFromDate) ? rawFromDate : null;
   const statusFilter = req.nextUrl.searchParams.get("status");
 
   // Build query for conversation_analytics with escalation data

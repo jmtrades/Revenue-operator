@@ -69,6 +69,7 @@ export async function GET(req: NextRequest) {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: tokenBody.toString(),
+      signal: AbortSignal.timeout(15_000),
     });
 
     if (!tokenRes.ok) {
@@ -82,6 +83,7 @@ export async function GET(req: NextRequest) {
 
     const userRes = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
       headers: { Authorization: `Bearer ${tokenJson.access_token}` },
+      signal: AbortSignal.timeout(15_000),
     });
     if (!userRes.ok) {
       return fail("google_profile");

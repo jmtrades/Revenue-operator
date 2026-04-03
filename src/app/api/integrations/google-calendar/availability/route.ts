@@ -70,7 +70,8 @@ export async function GET(req: NextRequest) {
   }
 
   const db = getDb();
-  const date = dateStr ?? new Date().toISOString().slice(0, 10);
+  const rawDate = dateStr ?? new Date().toISOString().slice(0, 10);
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(rawDate) ? rawDate : new Date().toISOString().slice(0, 10);
   const timeMin = `${date}T09:00:00Z`;
   const timeMax = `${date}T17:00:00Z`;
 

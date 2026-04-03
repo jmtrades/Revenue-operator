@@ -64,7 +64,7 @@ export async function POST(
   }
 
   try {
-    const res = await fetch(row.endpoint_url, { method: "POST", headers, body });
+    const res = await fetch(row.endpoint_url, { method: "POST", headers, body, signal: AbortSignal.timeout(10_000) });
     const text = await res.text().catch(() => "");
     return NextResponse.json({
       ok: res.ok,

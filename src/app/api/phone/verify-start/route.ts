@@ -37,6 +37,7 @@ async function startTelnyxVerification(phone: string): Promise<{ sent: boolean; 
         type: "sms",
         ...(telnyxVerifyProfileId ? { verify_profile_id: telnyxVerifyProfileId } : {}),
       }),
+      signal: AbortSignal.timeout(10_000),
     });
 
     if (!res.ok) {
@@ -77,6 +78,7 @@ async function startTwilioVerification(phone: string): Promise<{ sent: boolean; 
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: params.toString(),
+      signal: AbortSignal.timeout(10_000),
     });
 
     const data = (await res.json().catch(() => ({}))) as { status?: string; error_message?: string; code?: number } & Record<string, unknown>;

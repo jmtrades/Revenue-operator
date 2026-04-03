@@ -57,6 +57,7 @@ export async function GET(req: NextRequest) {
       Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString("base64")}`,
     },
     body: body.toString(),
+    signal: AbortSignal.timeout(15_000),
   });
 
   if (!res.ok) {
