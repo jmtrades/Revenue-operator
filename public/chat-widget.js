@@ -8,12 +8,12 @@
  */
 
 (function() {
-  "use strict";
+  &quot;use strict&quot;;
 
   // Configuration
   const config = {
-    workspaceId: document.currentScript?.getAttribute("data-workspace-id"),
-    origin: document.currentScript?.getAttribute("data-origin") || "https://app.recalltouch.com",
+    workspaceId: document.currentScript?.getAttribute(&quot;data-workspace-id&quot;),
+    origin: document.currentScript?.getAttribute(&quot;data-origin&quot;) || &quot;https://app.recalltouch.com&quot;,
     containerUrl: null,
     widgetConfig: null,
     sessionId: null,
@@ -35,12 +35,12 @@
     }
 
     // Create new session
-    const visitorName = prompt("Your name:") || `Visitor ${Math.random().toString(36).substring(7)}`;
-    const visitorEmail = prompt("Your email (optional):") || undefined;
+    const visitorName = prompt(&quot;Your name:&quot;) || `Visitor ${Math.random().toString(36).substring(7)}`;
+    const visitorEmail = prompt(&quot;Your email (optional):&quot;) || undefined;
 
     try {
       const response = await fetch(`${config.origin}/api/chat-widget/sessions`, {
-        method: "POST",
+        method: &quot;POST&quot;,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           workspace_id: config.workspaceId,
@@ -62,7 +62,7 @@
         );
       }
     } catch (error) {
-      console.error("[Recall Chat Widget] Failed to create session:", error);
+      console.error(&quot;[Recall Chat Widget] Failed to create session:&quot;, error);
     }
   }
 
@@ -77,7 +77,7 @@
         return true;
       }
     } catch (error) {
-      console.error("[Recall Chat Widget] Failed to load config:", error);
+      console.error(&quot;[Recall Chat Widget] Failed to load config:&quot;, error);
     }
     return false;
   }
@@ -96,7 +96,7 @@
         return await response.json();
       }
     } catch (error) {
-      console.error("[Recall Chat Widget] Failed to load messages:", error);
+      console.error(&quot;[Recall Chat Widget] Failed to load messages:&quot;, error);
     }
     return [];
   }
@@ -107,14 +107,14 @@
 
     try {
       const response = await fetch(`${config.origin}/api/chat-widget/messages`, {
-        method: "POST",
+        method: &quot;POST&quot;,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           session_id: config.sessionId,
           session_token: config.sessionToken,
           message_text: messageText,
-          sender_type: "visitor",
-          sender_name: "Visitor",
+          sender_type: &quot;visitor&quot;,
+          sender_name: &quot;Visitor&quot;,
         }),
       });
 
@@ -122,7 +122,7 @@
         return await response.json();
       }
     } catch (error) {
-      console.error("[Recall Chat Widget] Failed to send message:", error);
+      console.error(&quot;[Recall Chat Widget] Failed to send message:&quot;, error);
     }
     return null;
   }
@@ -130,28 +130,28 @@
   // Create and manage the widget UI
   function createWidget() {
     const cfg = config.widgetConfig || {};
-    const accentColor = cfg.accent_color || "#3b82f6";
-    const position = cfg.position || "bottom-right";
-    const greetingMessage = cfg.greeting_message || "Hi! How can we help you today?";
-    const agentName = cfg.agent_name || "Support Agent";
+    const accentColor = cfg.accent_color || &quot;#3b82f6&quot;;
+    const position = cfg.position || &quot;bottom-right&quot;;
+    const greetingMessage = cfg.greeting_message || &quot;Hi! How can we help you today?&quot;;
+    const agentName = cfg.agent_name || &quot;Support Agent&quot;;
     const avatarUrl = cfg.avatar_url || null;
 
     // Create container
-    const container = document.createElement("div");
-    container.id = "recall-chat-widget";
+    const container = document.createElement(&quot;div&quot;);
+    container.id = &quot;recall-chat-widget&quot;;
     container.style.cssText = `
       position: fixed;
       ${position === "bottom-left" ? "left: 20px;" : "right: 20px;"}
       bottom: 20px;
       z-index: 999999;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      font-family: -apple-system, BlinkMacSystemFont, &apos;Segoe UI&apos;, &apos;Roboto&apos;, &apos;Oxygen&apos;,
+        &apos;Ubuntu&apos;, &apos;Cantarell&apos;, &apos;Fira Sans&apos;, &apos;Droid Sans&apos;, &apos;Helvetica Neue&apos;,
         sans-serif;
     `;
 
     // Create button
-    const button = document.createElement("button");
-    button.id = "recall-chat-button";
+    const button = document.createElement(&quot;button&quot;);
+    button.id = &quot;recall-chat-button&quot;;
     button.style.cssText = `
       width: 56px;
       height: 56px;
@@ -167,12 +167,12 @@
       font-size: 24px;
       transition: transform 0.2s, box-shadow 0.2s;
     `;
-    button.innerHTML = "💬";
-    button.title = "Open chat";
+    button.innerHTML = &quot;💬&quot;;
+    button.title = &quot;Open chat&quot;;
 
     // Create chat window
-    const chatWindow = document.createElement("div");
-    chatWindow.id = "recall-chat-window";
+    const chatWindow = document.createElement(&quot;div&quot;);
+    chatWindow.id = &quot;recall-chat-window&quot;;
     chatWindow.style.cssText = `
       position: absolute;
       ${position === "bottom-left" ? "left: 0;" : "right: 0;"}
@@ -189,7 +189,7 @@
     `;
 
     // Header
-    const header = document.createElement("div");
+    const header = document.createElement(&quot;div&quot;);
     header.style.cssText = `
       background-color: ${accentColor};
       color: white;
@@ -200,21 +200,21 @@
       flex-shrink: 0;
     `;
 
-    const headerContent = document.createElement("div");
-    headerContent.style.cssText = "flex: 1;";
-    const headerTitle = document.createElement("div");
+    const headerContent = document.createElement(&quot;div&quot;);
+    headerContent.style.cssText = &quot;flex: 1;&quot;;
+    const headerTitle = document.createElement(&quot;div&quot;);
     headerTitle.style.cssText =
-      "font-weight: 600; font-size: 16px; margin-bottom: 4px;";
+      &quot;font-weight: 600; font-size: 16px; margin-bottom: 4px;&quot;;
     headerTitle.textContent = agentName;
-    const headerSubtitle = document.createElement("div");
-    headerSubtitle.style.cssText = "font-size: 12px; opacity: 0.9;";
-    headerSubtitle.textContent = "Online";
+    const headerSubtitle = document.createElement(&quot;div&quot;);
+    headerSubtitle.style.cssText = &quot;font-size: 12px; opacity: 0.9;&quot;;
+    headerSubtitle.textContent = &quot;Online&quot;;
     headerContent.appendChild(headerTitle);
     headerContent.appendChild(headerSubtitle);
     header.appendChild(headerContent);
 
-    const closeBtn = document.createElement("button");
-    closeBtn.innerHTML = "✕";
+    const closeBtn = document.createElement(&quot;button&quot;);
+    closeBtn.innerHTML = &quot;✕&quot;;
     closeBtn.style.cssText = `
       background: none;
       border: none;
@@ -232,8 +232,8 @@
     header.appendChild(closeBtn);
 
     // Messages container
-    const messagesContainer = document.createElement("div");
-    messagesContainer.id = "recall-chat-messages";
+    const messagesContainer = document.createElement(&quot;div&quot;);
+    messagesContainer.id = &quot;recall-chat-messages&quot;;
     messagesContainer.style.cssText = `
       flex: 1;
       overflow-y: auto;
@@ -245,7 +245,7 @@
     `;
 
     // Initial greeting
-    const greeting = document.createElement("div");
+    const greeting = document.createElement(&quot;div&quot;);
     greeting.style.cssText = `
       background-color: white;
       padding: 12px 16px;
@@ -258,7 +258,7 @@
     messagesContainer.appendChild(greeting);
 
     // Input area
-    const inputArea = document.createElement("div");
+    const inputArea = document.createElement(&quot;div&quot;);
     inputArea.style.cssText = `
       padding: 12px 16px;
       border-top: 1px solid #e5e7eb;
@@ -268,9 +268,9 @@
       flex-shrink: 0;
     `;
 
-    const input = document.createElement("input");
-    input.type = "text";
-    input.placeholder = "Type a message...";
+    const input = document.createElement(&quot;input&quot;);
+    input.type = &quot;text&quot;;
+    input.placeholder = &quot;Type a message...&quot;;
     input.style.cssText = `
       flex: 1;
       border: 1px solid #d1d5db;
@@ -282,13 +282,13 @@
       transition: border-color 0.2s;
     `;
     input.onkeypress = (e) => {
-      if (e.key === "Enter" && input.value.trim()) {
+      if (e.key === &quot;Enter&quot; && input.value.trim()) {
         sendMessageHandler();
       }
     };
 
-    const sendBtn = document.createElement("button");
-    sendBtn.innerHTML = "→";
+    const sendBtn = document.createElement(&quot;button&quot;);
+    sendBtn.innerHTML = &quot;→&quot;;
     sendBtn.style.cssText = `
       background-color: ${accentColor};
       color: white;
@@ -311,7 +311,7 @@
     chatWindow.appendChild(inputArea);
 
     // Add CSS animation
-    const style = document.createElement("style");
+    const style = document.createElement(&quot;style&quot;);
     style.textContent = `
       @keyframes slideIn {
         from {
@@ -343,10 +343,10 @@
     // Toggle chat visibility
     function toggleChat(show) {
       if (show === undefined) {
-        show = chatWindow.style.display === "none";
+        show = chatWindow.style.display === &quot;none&quot;;
       }
-      chatWindow.style.display = show ? "flex" : "none";
-      button.style.transform = show ? "scale(1)" : "scale(1)";
+      chatWindow.style.display = show ? &quot;flex&quot; : &quot;none&quot;;
+      button.style.transform = show ? &quot;scale(1)&quot; : &quot;scale(1)&quot;;
     }
 
     // Send message handler
@@ -354,12 +354,12 @@
       const messageText = input.value.trim();
       if (!messageText) return;
 
-      input.value = "";
+      input.value = &quot;&quot;;
       input.disabled = true;
       sendBtn.disabled = true;
 
       // Add user message to UI
-      const userMessageEl = document.createElement("div");
+      const userMessageEl = document.createElement(&quot;div&quot;);
       userMessageEl.style.cssText = `
         align-self: flex-end;
         background-color: ${accentColor};
@@ -389,8 +389,8 @@
     // Update messages UI
     function updateMessagesUI(messages) {
       // Clear and rebuild
-      messagesContainer.innerHTML = "";
-      const greeting2 = document.createElement("div");
+      messagesContainer.innerHTML = &quot;&quot;;
+      const greeting2 = document.createElement(&quot;div&quot;);
       greeting2.style.cssText = `
         background-color: white;
         padding: 12px 16px;
@@ -403,7 +403,7 @@
       messagesContainer.appendChild(greeting2);
 
       messages.forEach((msg) => {
-        const msgEl = document.createElement("div");
+        const msgEl = document.createElement(&quot;div&quot;);
         msgEl.style.cssText = `
           ${msg.sender_type === "agent" ? "align-self: flex-start;" : "align-self: flex-end;"}
           background-color: ${msg.sender_type === "agent" ? "white" : accentColor};
@@ -423,13 +423,13 @@
     }
 
     // Toggle on button click
-    button.addEventListener("mouseenter", function() {
-      this.style.transform = "scale(1.1)";
+    button.addEventListener(&quot;mouseenter&quot;, function() {
+      this.style.transform = &quot;scale(1.1)&quot;;
     });
-    button.addEventListener("mouseleave", function() {
-      this.style.transform = "scale(1)";
+    button.addEventListener(&quot;mouseleave&quot;, function() {
+      this.style.transform = &quot;scale(1)&quot;;
     });
-    button.addEventListener("click", () => toggleChat());
+    button.addEventListener(&quot;click&quot;, () => toggleChat());
 
     // Assemble and add to DOM
     container.appendChild(button);
@@ -438,7 +438,7 @@
 
     // Start polling for new messages
     setInterval(async () => {
-      if (chatWindow.style.display !== "none") {
+      if (chatWindow.style.display !== &quot;none&quot;) {
         const messages = await loadMessages();
         updateMessagesUI(messages);
       }
@@ -458,14 +458,14 @@
       }
 
       if (!config.workspaceId) {
-        console.error("[Recall Chat Widget] workspace_id is required");
+        console.error(&quot;[Recall Chat Widget] workspace_id is required&quot;);
         return;
       }
 
       // Load configuration
       const configLoaded = await loadWidgetConfig();
       if (!configLoaded || !config.widgetConfig?.enabled) {
-        console.warn("[Recall Chat Widget] Widget is not enabled");
+        console.warn(&quot;[Recall Chat Widget] Widget is not enabled&quot;);
         return;
       }
 
@@ -485,10 +485,10 @@
   };
 
   // Auto-init if data attribute is present
-  if (document.currentScript?.hasAttribute("data-workspace-id")) {
-    document.addEventListener("DOMContentLoaded", () => {
+  if (document.currentScript?.hasAttribute(&quot;data-workspace-id&quot;)) {
+    document.addEventListener(&quot;DOMContentLoaded&quot;, () => {
       window.RecallChatWidget.init({
-        workspaceId: document.currentScript?.getAttribute("data-workspace-id"),
+        workspaceId: document.currentScript?.getAttribute(&quot;data-workspace-id&quot;),
       });
     });
   }
