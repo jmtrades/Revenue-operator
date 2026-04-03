@@ -4,18 +4,15 @@
 
 export const dynamic = "force-dynamic";
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { getDb } from "@/lib/db/queries";
-import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
-import { BILLING_PLANS, normalizeTier, type PlanSlug } from "@/lib/billing-plans";
+import { BILLING_PLANS, normalizeTier } from "@/lib/billing-plans";
 import { evaluateUsageAlert, type VoiceUsageMetrics } from "@/lib/voice/billing";
+import { withWorkspace, type WorkspaceContext } from "@/lib/api/with-workspace";
+import { apiOk, apiNotFound } from "@/lib/api/errors";
 
-export async function GET(req: NextRequest) {
-  const workspaceId = req.nextUrl.searchParams.get("workspace_id");
-  if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
-  const authErr = await requireWorkspaceAccess(req, workspaceId);
-  if (authErr) return authErr;
-
+export const GET = withWorkspace(async (_req: NextRequest, ctx: WorkspaceContext) => {
+  const { workspaceId } = ctx;
   const db = getDb();
   const { data: ws } = await db
     .from("workspaces")
@@ -23,7 +20,7 @@ export async function GET(req: NextRequest) {
     .eq("id", workspaceId)
     .maybeSingle();
 
-  if (!ws) return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
+  if (!ws) return apiNotFound("Workspace");
 
   const row = ws as {
     billing_status?: string | null;
@@ -43,7 +40,6 @@ export async function GET(req: NextRequest) {
     dunning_failure_count?: number | null;
   };
 
-  // Trial window is stored in the workspace row so checkout + trial start + billing status agree.
   const trialEndIso = row.trial_ends_at ?? null;
   const trialEnd = trialEndIso ? new Date(trialEndIso) : null;
 
@@ -61,7 +57,6 @@ export async function GET(req: NextRequest) {
     has_upcoming_booking_24h = (count ?? 0) > 0;
   }
 
-  // Calculate minutes used this month
   const tier = normalizeTier(row.billing_tier);
   const planMinutes = BILLING_PLANS[tier]?.includedMinutes ?? 1000;
 
@@ -78,7 +73,7 @@ export async function GET(req: NextRequest) {
       const start = new Date(s.call_started_at).getTime();
       const end = s.call_ended_at ? new Date(s.call_ended_at).getTime() : start;
       return sum + (end - start) / 60000;
-    }, 0)
+    }, 0),
   );
 
   const pendingTier = row.pending_billing_tier ? normalizeTier(row.pending_billing_tier) : null;
@@ -97,7 +92,6 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // Get bonus minutes from minute pack purchases
   let bonusMinutes = 0;
   try {
     const { data: balance } = await db
@@ -110,10 +104,8 @@ export async function GET(req: NextRequest) {
     // Table may not exist yet
   }
 
-  // Effective limit = plan included + purchased bonus minutes
   const effectiveMinutesLimit = planMinutes + bonusMinutes;
 
-  // Build usage metrics for the alert engine
   const usageMetrics: VoiceUsageMetrics = {
     workspace_id: workspaceId,
     billing_period_start: startOfMonth.toISOString(),
@@ -134,12 +126,12 @@ export async function GET(req: NextRequest) {
 
   const usageAlert = evaluateUsageAlert(usageMetrics, tier);
 
-  return NextResponse.json({
+  return apiOk({
     billing_status: row.billing_status ?? "trial",
     renewal_at: row.protection_renewal_at ?? row.trial_ends_at ?? trialEndIso ?? null,
     stripe_customer_id: row.stripe_customer_id,
     has_subscription: Boolean(row.stripe_subscription_id),
-    has_upcoming_booking_24h: has_upcoming_booking_24h,
+    has_upcoming_booking_24h,
     billing_tier: row.billing_tier ?? "solo",
     minutes_used: minutesUsed,
     minutes_limit: planMinutes,
@@ -176,4 +168,4 @@ export async function GET(req: NextRequest) {
         }
       : null,
   });
-}
+});
