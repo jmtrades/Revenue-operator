@@ -5356,7 +5356,7 @@ const SAAS_DEMO_SETTER: Playbook = {
     },
     {
       q: "Can we use it before buying?",
-      a: "Yes, 14-day free trial. Full access, no credit card needed.",
+      a: "Yes, 14-day free trial. Full access, card on file but not charged until day 15.",
     },
     {
       q: "What if we don't like it?",

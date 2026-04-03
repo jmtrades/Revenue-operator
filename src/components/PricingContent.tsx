@@ -637,7 +637,7 @@ export function PricingContent() {
             {/* Mini social proof */}
             <div className="flex items-center justify-center gap-4 mb-6 text-xs" style={{ color: "var(--text-tertiary)" }}>
               <span className="flex items-center gap-1"><Check className="w-3 h-3 text-emerald-400" /> 3-minute setup</span>
-              <span className="flex items-center gap-1"><Check className="w-3 h-3 text-emerald-400" /> No credit card</span>
+              <span className="flex items-center gap-1"><Check className="w-3 h-3 text-emerald-400" /> 14-day free trial</span>
               <span className="flex items-center gap-1"><Check className="w-3 h-3 text-emerald-400" /> Cancel anytime</span>
             </div>
 

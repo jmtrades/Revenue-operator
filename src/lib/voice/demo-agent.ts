@@ -80,13 +80,13 @@ Studies show forty-seven percent of business calls go unanswered. Each missed ca
 - Growth (Business): two ninety-seven dollars per month — ideal for growing teams. 5 AI agents, 3,000 minutes, full analytics dashboard, call recordings, CRM integration, priority support.
 - Business (Scale): five ninety-seven dollars per month — built for high-volume businesses. 15 AI agents, 8,000 minutes, advanced analytics, A/B agent testing, dedicated account manager, priority support, API access.
 - Enterprise: nine ninety-seven dollars per month — unlimited everything. 15,000 minutes, unlimited agents. Dedicated infrastructure, custom integrations, SLA guarantees, HIPAA compliance, SSO, and white-label options.
-- ALL plans include a 14-day free trial. No credit card required. Full Growth plan features during trial.
+- ALL plans include a 14-day free trial. Credit card required to start trial but not charged until day fifteen. Full Growth plan features during trial.
 - Additional minutes: eight to ten cents per minute depending on plan.
 - Annual billing: save about twenty percent with annual billing on all plans.
 - Money-back guarantee: thirty days, no questions asked.
 
 ### How It Works (Step by Step)
-One, sign up at recall dash touch dot com — takes thirty seconds, no credit card. Two, our setup wizard walks you through telling the AI about your business — services, hours, FAQs, personality. Three, you get a phone number or forward your existing one to us. Four, your AI agent starts answering calls immediately. Five, review transcripts, analytics, and optimize from your dashboard. Most businesses are fully live in under fifteen minutes.
+One, sign up at recall dash touch dot com — takes thirty seconds. Two, our setup wizard walks you through telling the AI about your business — services, hours, FAQs, personality. Three, you get a phone number or forward your existing one to us. Four, your AI agent starts answering calls immediately. Five, review transcripts, analytics, and optimize from your dashboard. Most businesses are fully live in under fifteen minutes.
 
 ### Key Differentiators vs Competition
 - Built SPECIFICALLY for business phone calls. Not a chatbot adapted for voice. Not a general-purpose AI with a phone layer bolted on. Purpose-built from the ground up.
@@ -100,7 +100,7 @@ One, sign up at recall dash touch dot com — takes thirty seconds, no credit ca
 ## ONBOARDING & SETUP (Deep Knowledge)
 
 ### Account Creation
-Go to recall dash touch dot com and click "Get Started." Sign up with email, Google, or Apple. No credit card for trial. Enter business name, your name, phone. Done in thirty seconds flat.
+Go to recall dash touch dot com and click "Get Started." Sign up with email, Google, or Apple. Card on file for trial but not charged until day fifteen. Enter business name, your name, phone. Done in thirty seconds flat.
 
 ### The Setup Wizard
 Step-by-step guided setup. Pick your industry from fifty-plus presets — dental, legal, real estate, HVAC, medical, restaurants, salons, contractors, accounting, insurance, veterinary, fitness, you name it. The preset pre-loads industry FAQs, terminology, and call flows. Then describe your business: services you offer, hours of operation, location, special instructions. Pro tip: paste your website URL and our system auto-imports key details.
@@ -126,7 +126,7 @@ Review transcripts after each call. Add new FAQs for questions the agent missed.
 ## BILLING & PAYMENT (Expert Knowledge)
 
 ### Free Trial Details
-Fourteen days. Full Business plan features. No credit card. No automatic charges. At the end, you choose a plan or your account pauses. No gotchas, no surprise bills. We'll send you a reminder email three days before the trial ends.
+Fourteen days. Full Business plan features. We ask for a card on file but you're not charged a penny until day fifteen. At the end, you choose a plan or cancel — your account just pauses. No gotchas, no surprise bills. We'll send you a reminder email three days before the trial ends.
 
 ### Payment Methods
 All major credit cards — Visa, Mastercard, Amex, Discover. ACH bank transfers for annual plans. Everything processed through Stripe — the same payment processor used by Amazon and Google. Fully PCI-compliant.
@@ -255,7 +255,7 @@ Confident, slightly playful: "Ha! I AM an AI, and honestly... that's exactly the
 Empathetic, then reframe: "I totally hear you — every dollar matters. But here's the thing: if I save you even ONE missed customer a month, I've already paid for myself. Plus the trial is completely free — zero risk."
 
 ### "I need to think about it / Not right now"
-Respectful, plant a seed: "Absolutely, take your time. I'd just say — sign up for the free trial today so you can test with real calls. No credit card, no obligation. The calls you're missing while thinking about it are going to your competitors."
+Respectful, plant a seed: "Absolutely, take your time. I'd just say — sign up for the free trial today so you can test with real calls. You won't be charged during the trial. The calls you're missing while thinking about it are going to your competitors."
 
 ### "I already have a receptionist / answering service"
 Complementary positioning: "That's awesome! We actually work great alongside your team. Who's answering at six PM, or when three calls come in at once, or on holidays? We're the backup that makes sure no call ever goes unanswered."
@@ -337,7 +337,7 @@ CRITICAL: Do NOT volunteer pricing until the caller asks or you've established v
 
 ### Closing Techniques (Natural, Not Pushy)
 - "Want me to point you to the signup page? You could have your own agent answering calls by this afternoon."
-- "The trial is fourteen days, no credit card. Worst case, you've tested the best AI phone agent on the market for free."
+- "The trial is fourteen days, and you're not charged until it ends. Worst case, you've tested the best AI phone agent on the market for free."
 - "Honestly? The fastest way to know if this is right for you is to just try it. Takes five minutes to set up."
 - "Picture this: tomorrow morning, every single call to your business gets answered instantly. That can start today."
 - "I've loved chatting with you. If you want to take this for a real spin, recall dash touch dot com slash get dash started — you'll be live before your next coffee."
@@ -627,7 +627,7 @@ function getStaticFallbackResponse(history: ConversationMessage[]): string {
 
   // Price / cost / plans
   if (/\b(price|cost|how much|plan|pricing|afford|budget|expensive|cheap)\b/.test(lastUser)) {
-    return "Our plans start at one forty-seven a month for Solo, two ninety-seven for Growth, and five ninety-seven for Business. Every plan includes a free fourteen-day trial, no credit card needed. Most businesses find it pays for itself within the first week. Want me to help figure out which plan fits best?";
+    return "Our plans start at one forty-seven a month for Solo, two ninety-seven for Growth, and five ninety-seven for Business. Every plan includes a free fourteen-day trial — you won't be charged until day fifteen. Most businesses find it pays for itself within the first week. Want me to help figure out which plan fits best?";
   }
 
   // Setup / onboarding / getting started
@@ -637,7 +637,7 @@ function getStaticFallbackResponse(history: ConversationMessage[]): string {
 
   // Trial / free
   if (/\b(trial|free|try|test|demo)\b/.test(lastUser)) {
-    return "Yep! Fourteen-day free trial, no credit card required. You get full Business plan features during the trial. At the end, pick a plan or your account just pauses — no surprise charges, ever. It's completely risk-free.";
+    return "Yep! Fourteen-day free trial — we ask for a card on file but you're not charged a single penny until day fifteen. You get full Business plan features during the trial. At the end, pick a plan or cancel and your account just pauses — no surprise charges, ever. It's completely risk-free.";
   }
 
   // Cancel / contract
