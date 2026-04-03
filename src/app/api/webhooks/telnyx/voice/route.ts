@@ -715,6 +715,7 @@ export async function POST(req: NextRequest) {
                 workspace_id: resolvedWorkspaceId,
                 source: "telnyx_hangup",
               }),
+              signal: AbortSignal.timeout(15_000),
             }).catch((err) => {
               log("error", "telnyx_voice.post_call_trigger_failed", {
                 error: err instanceof Error ? err.message : String(err),
