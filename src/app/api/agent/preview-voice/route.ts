@@ -91,8 +91,10 @@ export async function POST(req: NextRequest) {
 
     return new Response(response.body, {
       headers: {
-        "Content-Type": "audio/mpeg",
+        "Content-Type": response.headers.get("Content-Type") || "audio/mpeg",
         "Cache-Control": "public, max-age=3600",
+        "Access-Control-Allow-Origin": process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com",
+        "Access-Control-Allow-Credentials": "true",
       },
     });
   } catch (error) {
