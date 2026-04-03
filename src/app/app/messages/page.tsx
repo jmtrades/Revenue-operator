@@ -198,7 +198,7 @@ export default function AppMessagesPage() {
         body: JSON.stringify({ lead_id: active.lead_id, content: text }),
       });
       if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
+        const _err = await res.json().catch(() => ({}));
         toast.error(t("failedToSend"));
         return;
       }

@@ -182,7 +182,7 @@ export default function AppSettingsAgentPage() {
         }),
       });
       if (!patchRes.ok) {
-        const err = await patchRes.json().catch(() => ({}));
+        const _err = await patchRes.json().catch(() => ({}));
         const message = tSettings("agent.saveFailed");
         setInlineToast(message);
         toast.error(message);

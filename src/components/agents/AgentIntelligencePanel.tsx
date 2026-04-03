@@ -43,7 +43,7 @@ const EMPTY_METRICS: IntelligenceMetrics = {
 
 export function AgentIntelligencePanel({
   workspaceId,
-  agentId,
+  agentId: _agentId,
 }: AgentIntelligencePanelProps) {
   const [metrics, setMetrics] = useState<IntelligenceMetrics>(EMPTY_METRICS);
   const [loading, setLoading] = useState(true);

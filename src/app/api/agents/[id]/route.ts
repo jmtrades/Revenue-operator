@@ -4,7 +4,7 @@ import { NextRequest } from "next/server";
 import { z } from "zod";
 import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
-import { withWorkspace, withAuth, type WorkspaceContext, type AuthContext } from "@/lib/api/with-workspace";
+import { withAuth, type AuthContext } from "@/lib/api/with-workspace";
 import { apiOk, apiBadRequest, apiNotFound, apiConflict, apiInternalError, apiValidationError } from "@/lib/api/errors";
 
 const updateAgentSchema = z.object({

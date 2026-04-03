@@ -1,7 +1,6 @@
 "use client";
 
 import { Container } from "@/components/ui/Container";
-import { SOCIAL_PROOF } from "@/lib/constants";
 
 export function HomepageTrustBar() {
   return (

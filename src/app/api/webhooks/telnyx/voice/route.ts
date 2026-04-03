@@ -336,7 +336,7 @@ export async function POST(req: NextRequest) {
       }
 
       case "call.answered": {
-        const isOutbound = direction === "outgoing";
+        const _isOutbound = direction === "outgoing";
         log("info", "telnyx_voice.call_answered", { sessionId: callInfo.callSessionId, workspaceId: resolvedWorkspaceId, direction, isDemoCall });
 
         // ── Demo outbound call: start AI conversation ──

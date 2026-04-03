@@ -189,7 +189,7 @@ export async function generateImprovementInsights(
     }
 
     return insights;
-  } catch (err) {
+  } catch (_err) {
     // Error in self-improvement analysis (error details omitted to protect PII)
     return insights;
   }

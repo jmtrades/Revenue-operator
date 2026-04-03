@@ -62,7 +62,7 @@ export async function executeLeadOutboundCall(
   const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
 
   // Check outbound calls in last 24 hours
-  const { data: callData, error: callError } = await db
+  const { data: callData, error: _callError } = await db
     .from("call_sessions")
     .select("id")
     .eq("lead_id", leadId)
@@ -70,7 +70,7 @@ export async function executeLeadOutboundCall(
   const callCount = (callData?.length ?? 0);
 
   // Check outbound SMS messages in last 24 hours
-  const { data: smsData, error: smsError } = await db
+  const { data: smsData, error: _smsError } = await db
     .from("outbound_messages")
     .select("id")
     .eq("lead_id", leadId)

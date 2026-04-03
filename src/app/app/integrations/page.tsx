@@ -17,7 +17,7 @@ import { cn } from "@/lib/cn";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import type { CrmProviderId, CrmStatusResponse } from "@/app/api/integrations/crm/status/route";
 
-interface IntegrationCategory {
+interface _IntegrationCategory {
   name: string;
   description: string;
   integrations: IntegrationItem[];
@@ -71,7 +71,7 @@ function IntegrationCard({
   status?: { connected: boolean; lastSyncAt?: string | null; recordsSynced?: number } | undefined;
   isLoading?: boolean | string;
 }) {
-  const t = useTranslations();
+  const _t = useTranslations();
 
   const getIconColor = (letter: string) => {
     const colors: Record<string, string> = {

@@ -174,7 +174,7 @@ function deriveSentiment(outcome: string | undefined): "positive" | "neutral" | 
   return "neutral";
 }
 
-function extractSnippet(text: string | null, query: string): string {
+function _extractSnippet(text: string | null, query: string): string {
   if (!text) return "";
   const idx = text.toLowerCase().indexOf(query.toLowerCase());
   if (idx < 0) return text.slice(0, 150);

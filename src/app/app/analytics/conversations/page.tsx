@@ -24,7 +24,7 @@ import {
   AlertCircle,
   Sparkles,
 } from "lucide-react";
-import { apiFetch, ApiError } from "@/lib/api";
+import { apiFetch } from "@/lib/api";
 
 type DateRange = "7d" | "30d" | "90d";
 
@@ -182,7 +182,7 @@ export default function ConversationalAnalyticsPage() {
         } catch {
           // Funnel endpoint optional
         }
-      } catch (err) {
+      } catch (_err) {
         setError("Failed to load analytics data. Please try again.");
       } finally {
         setLoading(false);

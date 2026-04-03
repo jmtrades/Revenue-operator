@@ -579,7 +579,7 @@ export async function handleInboundCall(
   let workspaceBizMeta: { business_name?: string; industry?: string; services?: string; address?: string } = {};
   try {
     // Load primary agent, workspace context, and caller context in parallel
-    const [agentResult, businessCtxResult, leadResult, historyResult] = await Promise.all([
+    const [agentResult, businessCtxResult, leadResult, _historyResult] = await Promise.all([
       // Try primary agent first; fall back to most recently created agent if is_primary column missing
       db.from("agents").select("*").eq("workspace_id", params.workspaceId).eq("is_primary", true).maybeSingle()
         .then(res => {

@@ -466,7 +466,7 @@ export async function getLeadIntelligence(
       signal_count: (data as Record<string, unknown>).signal_count as number,
       version: (data as Record<string, unknown>).version as number,
     };
-  } catch (err) {
+  } catch (_err) {
     // Table may not exist yet — return null gracefully
     return null;
   }

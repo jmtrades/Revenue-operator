@@ -9,7 +9,7 @@ import { NextRequest } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
 import { withWorkspace, type WorkspaceContext } from "@/lib/api/with-workspace";
-import { apiOk, apiBadRequest, apiNotFound, apiError } from "@/lib/api/errors";
+import { apiOk, apiNotFound, apiError } from "@/lib/api/errors";
 
 export const POST = withWorkspace(
   async (req: NextRequest, ctx: WorkspaceContext) => {

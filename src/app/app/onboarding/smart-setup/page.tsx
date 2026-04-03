@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -17,7 +17,7 @@ interface ChatMessage {
 }
 
 export default function SmartSetupPage() {
-  const router = useRouter();
+  const _router = useRouter();
   const t = useTranslations("onboarding.smartSetup");
   const { workspaceId } = useWorkspace();
   const [step, setStep] = useState<SetupStep>("select-playbook");
@@ -112,7 +112,7 @@ export default function SmartSetupPage() {
       setTimeout(() => {
         router_internal.push(redirectUrl);
       }, 2000);
-    } catch (error) {
+    } catch (_error) {
       toast.error(t("activationFailed"));
       setIsActivating(false);
     }
@@ -145,7 +145,7 @@ export default function SmartSetupPage() {
       setTimeout(() => {
         router_internal.push("/app/dashboard");
       }, 2000);
-    } catch (error) {
+    } catch (_error) {
       toast.error(t("setupStepFailed"));
       setStep("preview-agent");
     }

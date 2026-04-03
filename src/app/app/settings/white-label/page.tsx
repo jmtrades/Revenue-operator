@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
 import { toast } from "sonner";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
@@ -57,7 +56,7 @@ export default function WhiteLabelSettingsPage() {
           setConfig(data.config);
           lastSavedRef.current = data.config;
         }
-      } catch (err) {
+      } catch (_err) {
         toast.error(t("toast.loadFailed"));
       } finally {
         setLoading(false);
@@ -81,7 +80,7 @@ export default function WhiteLabelSettingsPage() {
       lastSavedRef.current = data.config;
       setConfig(data.config);
       toast.success(t("toast.saved"));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t("toast.saveFailed"));
     } finally {
       setSaving(false);

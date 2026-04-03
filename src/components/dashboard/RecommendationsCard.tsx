@@ -208,7 +208,7 @@ export function RecommendationsCard({ workspaceId: propsWorkspaceId }: { workspa
           const borderColor = getBorderColor(rec.type);
           const iconColor = getIconColor(rec.type);
           const bgColor = getBgColor(rec.type);
-          const hoverBorderColor = getBorderHoverColor(rec.type);
+          const _hoverBorderColor = getBorderHoverColor(rec.type);
           const impactDisplay = rec.estimated_impact_cents > 0 ? `$${(rec.estimated_impact_cents / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })}` : null;
 
           return (

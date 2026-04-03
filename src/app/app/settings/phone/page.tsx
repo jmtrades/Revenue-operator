@@ -203,7 +203,7 @@ export default function AppSettingsPhonePage() {
       .then((data: { agents?: Array<{ id?: string }> } | null) => {
         setPrimaryAgentId(data?.agents?.[0]?.id ?? null);
       })
-      .catch((err) => {
+      .catch((_err) => {
         setPrimaryAgentId(null);
       });
   }, []);
@@ -338,7 +338,7 @@ export default function AppSettingsPhonePage() {
     navigator.clipboard.writeText(toCopy).then(() => {
       setCopySuccess(true);
       setTimeout(() => setCopySuccess(false), 2000);
-    }).catch((err) => {
+    }).catch((_err) => {
       setToast(tPhone("toast.copyFailed", { defaultValue: "Failed to copy phone number" }));
     });
   };

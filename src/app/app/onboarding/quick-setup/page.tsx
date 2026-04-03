@@ -90,7 +90,7 @@ export default function QuickSetupPage() {
     templates: false,
   });
   const [activating, setActivating] = useState(false);
-  const progressRef = useRef<HTMLDivElement>(null);
+  const _progressRef = useRef<HTMLDivElement>(null);
 
   const analyzeMessages = [
     t("progressReading"),
@@ -152,7 +152,7 @@ export default function QuickSetupPage() {
 
       setIndustry(data.industry || "");
       setStep(2);
-    } catch (error) {
+    } catch (_error) {
       clearInterval(messageInterval);
       toast.error(t("errorAnalyzeFailed"));
     } finally {
@@ -198,7 +198,7 @@ export default function QuickSetupPage() {
       }
 
       setStep(3);
-    } catch (error) {
+    } catch (_error) {
       toast.error(t("errorActivateFailed"));
     } finally {
       setActivating(false);

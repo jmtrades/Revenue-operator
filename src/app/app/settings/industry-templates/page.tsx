@@ -68,7 +68,7 @@ export default function IndustryTemplatesPage() {
         } else {
           toast.error(tTemplates("toast.loadFailed"));
         }
-      } catch (err) {
+      } catch (_err) {
         toast.error(tTemplates("toast.loadError"));
       } finally {
         setLoading(false);
@@ -126,7 +126,7 @@ export default function IndustryTemplatesPage() {
             "Failed to apply template"
         );
       }
-    } catch (err) {
+    } catch (_err) {
       toast.error(
         tTemplates("toast.applyError") || "An error occurred while applying the template"
       );

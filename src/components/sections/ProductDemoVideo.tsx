@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 import { VideoPlayer } from "@/components/ui/VideoPlayer";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
-import { Play, X } from "lucide-react";
+import { X } from "lucide-react";
 
 /**
  * ProductDemoVideo — Cinematic product showcase section.

@@ -91,7 +91,7 @@ export async function runDecisionJob(
         // If brain action failed, fall through to legacy path
       }
     }
-  } catch (brainErr) {
+  } catch (_brainErr) {
     // Non-blocking — fall through to legacy decision
     // Brain intelligence unavailable — falling through to legacy decision path
   }

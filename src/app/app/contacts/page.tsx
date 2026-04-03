@@ -52,7 +52,7 @@ function loadContacts(): Contact[] {
     if (!raw) return [];
     const parsed = JSON.parse(raw) as Contact[];
     return Array.isArray(parsed) ? parsed : [];
-  } catch (e) {
+  } catch (_e) {
     toast.error("Failed to load saved contacts");
     safeRemoveItem(STORAGE_KEY);
     return [];
@@ -298,7 +298,7 @@ export default function AppContactsPage() {
 
         setContacts(mapped);
         saveContacts(mapped);
-      } catch (err) {
+      } catch (_err) {
         setApiError(t("connectionError"));
       } finally {
         setLoading(false);
@@ -493,7 +493,7 @@ export default function AppContactsPage() {
       setToast(t("toast.added"));
       setShowAdd(false);
       resetForm();
-    } catch (err) {
+    } catch (_err) {
       setToast(t("toast.networkError"));
     } finally {
       setCreating(false);

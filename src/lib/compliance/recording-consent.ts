@@ -86,7 +86,7 @@ export function validateConsentInTranscript(
     return { valid: true };
   }
 
-  const announcement = (settings.announcementText ?? "").trim() || getDefaultTwoPartyAnnouncement();
+  const _announcement = (settings.announcementText ?? "").trim() || getDefaultTwoPartyAnnouncement();
   // Check first 3 assistant turns for consent keywords
   const assistantTurns = transcript
     .filter((t) => t.speaker === "assistant")

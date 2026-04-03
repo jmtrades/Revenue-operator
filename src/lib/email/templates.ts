@@ -196,7 +196,7 @@ export function buildMilestoneEmail(params: {
   estimatedRevenueSaved: number;
 }): { subject: string; html: string } {
   const { name, milestone, totalCalls, estimatedRevenueSaved } = params;
-  const safeName = name?.trim() || "there";
+  const _safeName = name?.trim() || "there";
 
   const milestoneMessages: Record<number, { headline: string; body: string }> = {
     1: { headline: "Your AI operator just handled its first call", body: "Your phone line is now live with AI coverage. Every call from here is one less you have to worry about." },

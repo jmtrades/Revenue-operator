@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Plus, RotateCcw, MoreHorizontal, Zap, Clock, AlertCircle } from "lucide-react";
+import { Plus, Zap, Clock, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
@@ -108,7 +108,7 @@ function getReasonLabel(reason: ColdLeadReason, t: (key: string) => string): str
   return map[reason] ?? reason;
 }
 
-function getStatusBadgeVariant(status: ColdLeadStatus): "neutral" | "info" | "success" | "warning" | "error" {
+function _getStatusBadgeVariant(status: ColdLeadStatus): "neutral" | "info" | "success" | "warning" | "error" {
   switch (status) {
     case "pending":
       return "neutral";
@@ -226,7 +226,7 @@ export default function ColdLeadsPage() {
     channel: "default",
   });
   const [reengageSaving, setReengageSaving] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [selectedIds, _setSelectedIds] = useState<Set<string>>(new Set());
 
   // Fetch average deal value from workspace context
   const [avgDealValue, setAvgDealValue] = useState(350);
@@ -429,7 +429,7 @@ export default function ColdLeadsPage() {
       });
       setAddLeadOpen(false);
       toast.success(t("toast.success.addedLead"));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t("toast.error.addFailed"));
     } finally {
       setAddLeadSaving(false);
@@ -480,7 +480,7 @@ export default function ColdLeadsPage() {
       persistColdLeadsSnapshot(workspaceId, updatedLeads);
       setReengageDialog({ open: false, isBulk: false, strategy: "auto", channel: "default" });
       toast.success(t("toast.success.reengagedLeads", { count: leadIds.length }));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t("toast.error.reengageFailed"));
     } finally {
       setReengageSaving(false);
@@ -508,7 +508,7 @@ export default function ColdLeadsPage() {
       setLeads(updated);
       persistColdLeadsSnapshot(workspaceId, updated);
       toast.success(t("toast.success.markedExhausted"));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t("toast.error.skipFailed"));
     }
   };
@@ -532,7 +532,7 @@ export default function ColdLeadsPage() {
       setLeads(updated);
       persistColdLeadsSnapshot(workspaceId, updated);
       toast.success(t("toast.success.removed"));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t("toast.error.removeFailed"));
     }
   };

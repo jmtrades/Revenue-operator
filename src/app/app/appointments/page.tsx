@@ -128,7 +128,7 @@ export default function AppointmentsPage() {
   const totalAppointments = appointments.length;
   const completedAppointments = appointments.filter(a => a.status === "Completed").length;
   const noShowAppointments = appointments.filter(a => a.status === "No-Show").length;
-  const confirmedAppointments = appointments.filter(a => a.status === "Confirmed").length;
+  const _confirmedAppointments = appointments.filter(a => a.status === "Confirmed").length;
   const completionRate = totalAppointments > 0 ? Math.round((completedAppointments / totalAppointments) * 100) : 0;
   // Only show revenue from appointments where the user recorded an actual deal value
   const actualRecordedRevenue = appointments

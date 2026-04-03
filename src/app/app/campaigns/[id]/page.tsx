@@ -112,7 +112,7 @@ export default function CampaignDetailPage() {
   const { workspaceId } = useWorkspace();
   const id = typeof params.id === "string" ? params.id : "";
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
-  const snapshotWorkspaceId = workspaceId || workspaceSnapshot?.id?.trim() || "default";
+  const _snapshotWorkspaceId = workspaceId || workspaceSnapshot?.id?.trim() || "default";
 
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [loading, setLoading] = useState(true);

@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { workspace_id, query, category, limit: rawLimit } = payload;
+  const { workspace_id, query, category: _category, limit: rawLimit } = payload;
 
   if (!workspace_id || typeof workspace_id !== "string" || !query || typeof query !== "string") {
     return NextResponse.json(

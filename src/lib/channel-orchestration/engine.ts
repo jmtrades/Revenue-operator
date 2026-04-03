@@ -286,7 +286,7 @@ async function getOptimalContactTime(workspaceId: string, leadId: string): Promi
 function buildChannelReasoning(
   leadStats: LeadChannelStats,
   recommended: string,
-  scores: Record<string, number>
+  _scores: Record<string, number>
 ): string {
   const reasons: string[] = [];
 

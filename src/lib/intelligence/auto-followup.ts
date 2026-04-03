@@ -103,7 +103,7 @@ export async function triggerAutoFollowUp(params: {
 
     // Execute the routing
     return await executeFollowUpRouting(params, routing, lead, wsData?.name ?? "Our team");
-  } catch (err) {
+  } catch (_err) {
     // Error in auto-followup (error details omitted to protect PII)
     return { action_taken: "error", success: false, details: "Auto-followup error" };
   }
@@ -213,7 +213,7 @@ async function executeFollowUpRouting(
           return { action_taken: "send_immediate_sms", success: true, details: `SMS sent to ${lead.phone}` };
         }
       }
-    } catch (err) {
+    } catch (_err) {
       // Error sending SMS (error details omitted to protect PII)
     }
     return { action_taken: "send_immediate_sms", success: false, details: "SMS send failed" };
@@ -242,7 +242,7 @@ async function executeFollowUpRouting(
           return { action_taken: "send_follow_up_email", success: true, details: `Email sent to ${lead.email}` };
         }
       }
-    } catch (err) {
+    } catch (_err) {
       // Error sending email (error details omitted to protect PII)
     }
     return { action_taken: "send_follow_up_email", success: false, details: "Email send failed" };
@@ -396,7 +396,7 @@ async function executeFollowUpRouting(
       }
 
       return { action_taken: routing.action, success: false, details: "Could not find or create sequence" };
-    } catch (err) {
+    } catch (_err) {
       // Error in enrollment (error details omitted to protect PII)
       return { action_taken: routing.action, success: false, details: "Enrollment failed" };
     }

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Megaphone, Plus, Copy, Trash2, Play, Pause, Pencil, ArrowRight, Download } from "lucide-react";
+import { Megaphone, Plus, Copy, Trash2, Play, Pause, Pencil, Download } from "lucide-react";
 import { Pagination } from "@/components/ui/Pagination";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useWorkspace } from "@/components/WorkspaceContext";

@@ -5,7 +5,6 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { toast } from "sonner";
 import { motion } from "framer-motion";
 
 export default function SignInForm() {

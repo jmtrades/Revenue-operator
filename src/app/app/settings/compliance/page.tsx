@@ -99,7 +99,7 @@ export default function AppSettingsCompliancePage() {
         body: JSON.stringify({ recording, hipaa, retention }),
       });
       if (!res.ok) {
-        const err = (await res.json()).error ?? tSettings("compliance.saveFailed");
+        const _err = (await res.json()).error ?? tSettings("compliance.saveFailed");
         toast.error(tSettings("compliance.saveFailed"));
         return;
       }
@@ -114,7 +114,7 @@ export default function AppSettingsCompliancePage() {
   const handleExport = async () => {
     try {
       const res = await fetch("/api/workspace/recording-consent", { credentials: "include" });
-      const data = res.ok ? await res.json() : {};
+      const _data = res.ok ? await res.json() : {};
       const rows = [
         [tSettings("compliance.csvExport.setting"), tSettings("compliance.csvExport.value")],
         [tSettings("compliance.csvExport.callRecording"), recording ? tSettings("compliance.csvExport.enabled") : tSettings("compliance.csvExport.disabled")],

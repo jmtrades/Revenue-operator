@@ -72,7 +72,7 @@ export default function AgencyPage() {
 
         setAnalytics(analyticsData.analytics);
         setSubAccounts(subAccountsData.sub_accounts);
-      } catch (err) {
+      } catch (_err) {
         toast.error("Failed to load agency dashboard");
       } finally {
         setLoading(false);
@@ -108,7 +108,7 @@ export default function AgencyPage() {
       setFormData({ name: "", owner_email: "", plan: "standard" });
       setShowCreateModal(false);
       toast.success("Sub-account created successfully");
-    } catch (err) {
+    } catch (_err) {
       toast.error("Failed to create sub-account");
     } finally {
       setCreating(false);
@@ -129,7 +129,7 @@ export default function AgencyPage() {
 
       setSubAccounts(subAccounts.filter((s) => s.id !== subAccountId));
       toast.success("Sub-account deactivated");
-    } catch (err) {
+    } catch (_err) {
       toast.error("Failed to deactivate sub-account");
     } finally {
       setDeleting(null);

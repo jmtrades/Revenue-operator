@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
-import { assertSameOrigin } from "@/lib/http/csrf";
 import { log } from "@/lib/logger";
 import { computeLeadIntelligence, getLeadIntelligence, persistLeadIntelligence } from "@/lib/intelligence/lead-brain";
 

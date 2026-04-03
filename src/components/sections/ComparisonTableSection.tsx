@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { motion } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
-import { CheckCircle2, XCircle, Minus } from "lucide-react";
+import { CheckCircle2, Minus } from "lucide-react";
 
 export function ComparisonTableSection() {
   const t = useTranslations("homepage.comparisonTable");

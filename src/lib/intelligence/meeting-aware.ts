@@ -6,9 +6,7 @@
 
 import { getDb } from "@/lib/db/queries";
 import { enqueue } from "@/lib/queue";
-import { triggerAutoFollowUp } from "@/lib/intelligence/auto-followup";
 import type { LeadIntelligence } from "@/lib/intelligence/lead-brain";
-import { computeLeadIntelligence } from "@/lib/intelligence/lead-brain";
 
 export type MeetingPhase =
   | "pre_meeting"
@@ -89,7 +87,7 @@ export function detectMeetingPhase(context: MeetingContext): MeetingPhase {
 export function decideMeetingAction(
   phase: MeetingPhase,
   context: MeetingContext,
-  intelligence?: LeadIntelligence | null
+  _intelligence?: LeadIntelligence | null
 ): MeetingDecision {
   const now = new Date();
   const scheduledAt = new Date(context.scheduled_at);
@@ -494,7 +492,7 @@ export async function runMeetingAwareCheck(workspaceId: string): Promise<{ check
                   }
                 }
               }
-            } catch (err) {
+            } catch (_err) {
               // Google Calendar token refresh error (details omitted to protect PII)
               // Continue with expired token — Google API will reject it
               continue;
@@ -617,14 +615,14 @@ export async function runMeetingAwareCheck(workspaceId: string): Promise<{ check
             }
           }
         }
-      } catch (err) {
+      } catch (_err) {
         // Google Calendar fetch error for token (details omitted to protect PII)
         // Continue with next token — don't block the entire check
       }
     }
 
     return { checked, actions: actionsExecuted };
-  } catch (err) {
+  } catch (_err) {
     // Error in meeting-aware check (error details omitted to protect PII)
     return { checked, actions: actionsExecuted };
   }

@@ -232,7 +232,7 @@ export default function AppSettingsBillingPage() {
       if (!res.ok) {
         let errorMessage = tBilling("toast.pauseFailed");
         try {
-          const data = await res.json() as { message?: string; error?: string } | null;
+          const _data = await res.json() as { message?: string; error?: string } | null;
         } catch {
           // If JSON parsing fails, use a generic message including status code
           if (res.status === 502) {

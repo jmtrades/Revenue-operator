@@ -523,7 +523,7 @@ ${contentContext ? `Website/Content Summary: ${contentContext}` : ""}
 
 export async function scrapeAndAnalyze(
   url: string,
-  workspaceId: string
+  _workspaceId: string
 ): Promise<WebsiteIntelligence> {
   const pages = await fetchAndParsePages(url);
 

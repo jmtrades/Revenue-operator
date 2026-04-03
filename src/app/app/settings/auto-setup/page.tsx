@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { ChevronDown, RefreshCw, Check, AlertCircle } from "lucide-react";
-import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 interface KnowledgeStats {
@@ -117,7 +116,7 @@ export default function AutoSetupPage() {
             objectionCount: data.objectionCount || 0,
           });
         }
-      } catch (error) {
+      } catch (_error) {
         // silenced
       }
     };
@@ -178,7 +177,7 @@ export default function AutoSetupPage() {
       if (!industry && data.industry) {
         setIndustry(data.industry);
       }
-    } catch (error) {
+    } catch (_error) {
       clearInterval(messageInterval);
       toast.error(t("toast.analyzeFailed"));
       setShowPreview(false);
@@ -228,7 +227,7 @@ export default function AutoSetupPage() {
           });
         }
       }, 1000);
-    } catch (error) {
+    } catch (_error) {
       toast.error(t("toast.updateFailed"));
     } finally {
       setConfirming(false);

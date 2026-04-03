@@ -140,7 +140,7 @@ export default function TeamPage() {
           }))
         );
       })
-      .catch((err) => {
+      .catch((_err) => {
         toast.error(t("errors.fetchTeamFailed"));
       })
       .finally(() => setLoading(false));
@@ -175,7 +175,7 @@ export default function TeamPage() {
           }))
         );
       })
-      .catch((err) => {
+      .catch((_err) => {
         if (!cancelled) toast.error(t("errors.fetchTeamFailed"));
       })
       .finally(() => { if (!cancelled) setLoading(false); });
@@ -225,7 +225,7 @@ export default function TeamPage() {
         prev.map((m) => (m.id === memberId ? { ...m, role: newRole } : m))
       );
       toast.success(t("toast.roleUpdated"));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t("errors.changeRoleFailed"));
     }
     setRoleModalMember(null);
@@ -243,7 +243,7 @@ export default function TeamPage() {
       if (!res.ok) throw new Error("Failed to remove member");
       setMembers((prev) => prev.filter((m) => m.id !== memberId));
       toast.success(t("toast.memberRemoved"));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t("errors.removeMemberFailed"));
     }
     setRemoveConfirmMember(null);

@@ -13,7 +13,7 @@ import { NextRequest } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
 import { withWorkspace, type WorkspaceContext } from "@/lib/api/with-workspace";
-import { apiOk, apiInternalError } from "@/lib/api/errors";
+import { apiOk } from "@/lib/api/errors";
 import { backgroundTask } from "@/lib/async/safe-background";
 
 export const POST = withWorkspace(
@@ -35,7 +35,7 @@ export const POST = withWorkspace(
     if (!confirmed) {
       const now = new Date();
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-      const ninetyDaysAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+      const _ninetyDaysAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
 
       // Gather lifetime stats to show impact of leaving
       const [callsResult, appointmentsResult, dealsResult, leadsResult] = await Promise.all([

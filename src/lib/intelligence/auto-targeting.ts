@@ -13,7 +13,6 @@
  */
 
 import { getDb } from "@/lib/db/queries";
-import { log } from "@/lib/logger";
 
 export type ContactChannel = "call" | "sms" | "email";
 export type TargetPriority = "immediate" | "high" | "medium" | "low" | "nurture";

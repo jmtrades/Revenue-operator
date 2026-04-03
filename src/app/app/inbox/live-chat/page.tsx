@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useWorkspace } from "@/components/WorkspaceContext";
-import { ArrowLeft, Send, CheckCircle, Clock } from "lucide-react";
+import { ArrowLeft, Send, CheckCircle } from "lucide-react";
 
 interface ChatSession {
   id: string;
@@ -32,7 +32,7 @@ export default function LiveChatInboxPage() {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, _setLoading] = useState(true);
   const [messageText, setMessageText] = useState("");
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -55,7 +55,7 @@ export default function LiveChatInboxPage() {
             setSelectedSessionId(data[0].id);
           }
         }
-      } catch (error) {
+      } catch (_error) {
         // silenced
       }
     };
@@ -85,7 +85,7 @@ export default function LiveChatInboxPage() {
           const data = (await res.json()) as ChatMessage[];
           setMessages(data);
         }
-      } catch (error) {
+      } catch (_error) {
         // silenced
       }
     };
@@ -123,7 +123,7 @@ export default function LiveChatInboxPage() {
       });
 
       if (!res.ok) {
-        const errorData = (await res.json().catch(() => ({
+        const _errorData = (await res.json().catch(() => ({
           error: "Failed to send message",
         }))) as { error?: string };
         toast.error("Failed to send message");
@@ -140,7 +140,7 @@ export default function LiveChatInboxPage() {
         const data = (await messagesRes.json()) as ChatMessage[];
         setMessages(data);
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to send message");
       setMessageText(text);
     } finally {
@@ -169,7 +169,7 @@ export default function LiveChatInboxPage() {
         setSelectedSessionId(null);
         setMessages([]);
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to resolve session");
     }
   };

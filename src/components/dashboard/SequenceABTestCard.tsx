@@ -104,7 +104,7 @@ export function SequenceABTestCard() {
       <div className="space-y-3">
         {tests.slice(0, 3).map((test) => {
           const leader = test.variants.find((v) => v.sequence_id === test.leader);
-          const challenger = test.variants.find((v) => v.sequence_id !== test.leader);
+          const _challenger = test.variants.find((v) => v.sequence_id !== test.leader);
 
           return (
             <div

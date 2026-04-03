@@ -10,7 +10,6 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
-import { cn } from "@/lib/cn";
 
 interface ContextData {
   lead: {

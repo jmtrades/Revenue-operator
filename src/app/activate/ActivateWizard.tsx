@@ -20,7 +20,7 @@ import { track } from "@/lib/analytics/posthog";
 
 export function ActivateWizard() {
   const t = useTranslations("activate");
-  const tTeam = useTranslations("team");
+  const _tTeam = useTranslations("team");
   const searchParams = useSearchParams();
   const prefillEmail = searchParams.get("email") ?? null;
   const prefillPlan = searchParams.get("plan") ?? null;

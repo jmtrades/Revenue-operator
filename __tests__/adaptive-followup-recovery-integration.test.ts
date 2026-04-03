@@ -14,7 +14,6 @@ import {
   type AdaptiveStrategy,
 } from "@/lib/intelligence/adaptive-followup";
 import type { LeadIntelligence } from "@/lib/intelligence/lead-brain";
-import type { RecoveryProfile } from "@/lib/recovery-profile";
 
 const createMockIntelligence = (overrides: Partial<LeadIntelligence> = {}): LeadIntelligence => ({
   lead_id: "lead-123",

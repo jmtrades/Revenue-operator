@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { HeroRevenueWidget } from "@/components/sections/HeroRevenueWidget";
-import { ROUTES, SOCIAL_PROOF } from "@/lib/constants";
+import { ROUTES } from "@/lib/constants";
 import { ArrowRight, Play, Pause, Phone, PhoneCall, CheckCircle2 } from "lucide-react";
 
 

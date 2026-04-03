@@ -131,7 +131,7 @@ export default function CallsPage() {
   const [notesStatus, setNotesStatus] = useState<Record<string, "saving" | "saved" | null>>({});
   const outcomeLabels = useMemo(() => getOutcomeLabels(t), [t]);
   const sentimentLabels = useMemo(() => getSentimentLabels(t), [t]);
-  const typeLabels = useMemo(() => getTypeLabels(t), [t]);
+  const _typeLabels = useMemo(() => getTypeLabels(t), [t]);
 
   useEffect(() => {
     if (!selectedCall?.id) return;
@@ -294,7 +294,7 @@ export default function CallsPage() {
       if (!res.ok) throw new Error(t("calls.errors.noteSaveFailed"));
       setNotesStatus((prev) => ({ ...prev, [callId]: "saved" }));
       setTimeout(() => setNotesStatus((prev) => ({ ...prev, [callId]: null })), 2000);
-    } catch (err) {
+    } catch (_err) {
       safeSetItem(`rt_call_notes_${callId}`, notes);
       setNotesStatus((prev) => ({ ...prev, [callId]: null }));
     }

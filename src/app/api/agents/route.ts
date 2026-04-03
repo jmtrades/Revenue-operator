@@ -7,7 +7,7 @@ import { canCreateAgent } from "@/lib/billing/plan-enforcement";
 import { VOICE_TIER_LIMITS } from "@/lib/voice/billing";
 import { log } from "@/lib/logger";
 import { withWorkspace, type WorkspaceContext } from "@/lib/api/with-workspace";
-import { apiOk, apiBadRequest, apiForbidden, apiInternalError, apiRateLimited, apiValidationError } from "@/lib/api/errors";
+import { apiOk, apiBadRequest, apiForbidden, apiInternalError, apiValidationError } from "@/lib/api/errors";
 
 export const GET = withWorkspace(async (_req: NextRequest, ctx: WorkspaceContext) => {
   const { workspaceId } = ctx;

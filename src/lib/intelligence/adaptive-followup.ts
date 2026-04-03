@@ -543,7 +543,7 @@ export async function executeAdaptiveStep(
     }
 
     return { success: false, details: `Unknown channel: ${step.channel}` };
-  } catch (err) {
+  } catch (_err) {
     // Error in adaptive followup execution (error details omitted to protect PII)
     return {
       success: false,

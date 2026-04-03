@@ -53,7 +53,7 @@ export default function AppSettingsTeamPage() {
   ]);
 
   // Show "You (Owner)" label in empty state
-  const emptyStateName = displayMembers.length === 1 && !displayMembers[0].email ? t("team.memberYouOwner") : null;
+  const _emptyStateName = displayMembers.length === 1 && !displayMembers[0].email ? t("team.memberYouOwner") : null;
 
   const handleRoleChange = async (email: string, newRole: string) => {
     if (!workspaceId) return;
