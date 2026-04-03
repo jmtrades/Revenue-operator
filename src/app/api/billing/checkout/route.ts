@@ -264,8 +264,8 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-      // No free trial — users pay from day one after experiencing the demo call
-      const trialPeriodDays: number | undefined = undefined;
+      // 14-day free trial — card required upfront, auto-charged on day 15
+      const trialPeriodDays: number = 14;
 
       const session = await stripe.checkout.sessions.create({
         customer: customerId,

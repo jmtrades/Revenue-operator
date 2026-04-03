@@ -301,7 +301,7 @@ export async function POST(req: NextRequest) {
         payment_method_collection: "always",
         payment_method_types: ["card"],
         line_items: [{ price: stripePriceId, quantity: 1 }],
-        subscription_data: { metadata: { workspace_id: workspaceId } },
+        subscription_data: { trial_period_days: 14, metadata: { workspace_id: workspaceId } },
         success_url: `${origin}/connect?workspace_id=${encodeURIComponent(workspaceId)}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/activate?canceled=1`,
       });
