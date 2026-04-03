@@ -45,8 +45,8 @@ export async function speakTextViaApi(
       };
       audio.onerror = () => {
         URL.revokeObjectURL(url);
-        // Fall back to browser TTS — let speakText handle onEnd via its own utterance events
-        speakText(text, options);
+        // Do NOT fall back to browser TTS — robotic voices are worse than silence
+        options?.onEnd?.();
       };
       await audio.play();
       return { usedFallback: false };
