@@ -211,7 +211,7 @@ export default function GoHighLevelComparisonPage() {
                 </Link>
               </div>
               <p className="mt-4 text-xs" style={{ color: "var(--text-tertiary)" }}>
-                Tip: 14-day free trial — not charged until day 15. Connect your number and take your first AI-handled call in under 5 minutes.
+                Tip: 30-day money-back guarantee on all plans. Connect your number and take your first AI-handled call in under 5 minutes.
               </p>
             </div>
           </section>

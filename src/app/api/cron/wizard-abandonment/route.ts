@@ -150,7 +150,7 @@ function buildRecoveryEmail(
 
   const urgencyNote = attempt === 0
     ? `<p>Every missed call is a potential customer calling your competitor instead. Let's fix that today.</p>`
-    : `<p>Your free trial clock is ticking — make the most of it by getting your AI agent live.</p>`;
+    : `<p>Your AI agent is ready and waiting — get it live and start recovering revenue today.</p>`;
 
   return `<!DOCTYPE html>
 <html>

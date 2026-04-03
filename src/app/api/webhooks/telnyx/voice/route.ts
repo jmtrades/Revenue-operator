@@ -84,7 +84,7 @@ const SILENCE_PROMPTS_INITIAL = [
 const SILENCE_PROMPTS_ONGOING = [
   "I'm still here! Got any questions about Revenue Operator? I could tell you about pricing, how setup works, or anything else.",
   "Take your time! If you're curious about anything — pricing, how it works, what industries we serve — just ask.",
-  "Still here whenever you're ready! I could tell you about our free trial if you're interested.",
+  "Still here whenever you're ready! I could tell you about our money-back guarantee if you're interested.",
 ];
 
 function pickRandom(arr: string[]): string {

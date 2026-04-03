@@ -321,7 +321,7 @@ function buildSmsMessage(outcome: string, signupLink: string): string {
       return `Thanks for chatting with Sarah from Revenue Operator! Ready to get started? Complete your signup here: ${signupLink} — 30-day money-back guarantee. Reply STOP to opt out.`;
 
     case "demo_completed":
-      return `Great talking with you! Sarah here from Revenue Operator. If you're ready to stop missing calls and start closing more deals, start your free 14-day trial: ${signupLink} — Not charged until day 15. Reply STOP to opt out.`;
+      return `Great talking with you! Sarah here from Revenue Operator. If you're ready to stop missing calls and start closing more deals, get started here: ${signupLink} — 30-day money-back guarantee. Reply STOP to opt out.`;
 
     case "callback_requested":
       return `Thanks for your interest in Revenue Operator! We'll follow up with you shortly. In the meantime, check out what we can do: ${signupLink} — Reply STOP to opt out.`;
@@ -330,7 +330,7 @@ function buildSmsMessage(outcome: string, signupLink: string): string {
       return `Thanks for taking the time to chat with us at Revenue Operator. We'd love to answer any remaining questions — feel free to call back anytime or get started here: ${signupLink} Reply STOP to opt out.`;
 
     default:
-      return `Thanks for trying the Revenue Operator demo! Start your free 14-day trial — not charged until day 15: ${signupLink} Reply STOP to opt out.`;
+      return `Thanks for trying the Revenue Operator demo! Get started risk-free: ${signupLink} — 30-day money-back guarantee. Reply STOP to opt out.`;
   }
 }
 
@@ -1065,7 +1065,7 @@ function buildReassuranceEmail(
 <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1a1a1a;max-width:560px;margin:0 auto;padding:24px;">
   <p>Hey ${name},</p>
   <p>Thanks for taking the time to chat earlier. I know choosing the right tool for your business is a big decision, and I wanted to follow up on a couple of things we discussed.</p>
-  ${objections ? `<p>You raised some really good points:</p><ul style="color:#374151;padding-left:20px;">${objections}</ul><p>These are concerns we hear from a lot of businesses initially — and they're exactly why we offer a completely free 14-day trial (you won't be charged until day 15). You can test everything with real calls and see the results for yourself.</p>` : "<p>I understand you might want to take some time to think things through. That's totally fine — we're not going anywhere.</p>"}
+  ${objections ? `<p>You raised some really good points:</p><ul style="color:#374151;padding-left:20px;">${objections}</ul><p>These are concerns we hear from a lot of businesses initially — and they're exactly why every plan comes with a 30-day money-back guarantee. You can test everything with real calls and if you're not completely satisfied, you get a full refund.</p>` : "<p>I understand you might want to take some time to think things through. That's totally fine — we're not going anywhere.</p>"}
   <p>If you'd like to give it a try (zero risk, zero commitment):</p>
   <p><a href="${signupLink}" style="display:inline-block;padding:12px 24px;background:#2563EB;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;">Get Started Now</a></p>
   <p style="margin-top:24px;">And if you have any other questions, just reply to this email or call back anytime. I'm always here.</p>

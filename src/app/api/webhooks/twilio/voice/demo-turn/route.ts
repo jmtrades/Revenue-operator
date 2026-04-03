@@ -402,7 +402,7 @@ export async function POST(request: NextRequest) {
         // Inject a natural wrap-up hint into the system context
         history.push({
           role: "user",
-          content: "[System note: This call has been going for a while. Naturally wrap up and guide toward the free trial in your next response.]",
+          content: "[System note: This call has been going for a while. Naturally wrap up and guide toward signing up in your next response.]",
         });
       }
       aiResponse = await generateDemoResponse(history);
@@ -490,7 +490,7 @@ export async function POST(request: NextRequest) {
     });
     return twimlResponse(
       buildGoodbyeTwiml(
-        "I hit a small snag, but don't let that stop you! Head to recall dash touch dot com for a free trial. Thanks for calling!",
+        "I hit a small snag, but don't let that stop you! Head to recall dash touch dot com to get started. Thanks for calling!",
       ),
     );
   }

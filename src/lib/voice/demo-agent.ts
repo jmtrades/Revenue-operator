@@ -627,7 +627,7 @@ function getStaticFallbackResponse(history: ConversationMessage[]): string {
 
   // Price / cost / plans
   if (/\b(price|cost|how much|plan|pricing|afford|budget|expensive|cheap)\b/.test(lastUser)) {
-    return "Our plans start at one forty-seven a month for Solo, two ninety-seven for Growth, and five ninety-seven for Business. Every plan includes a free fourteen-day trial — you won't be charged until day fifteen. Most businesses find it pays for itself within the first week. Want me to help figure out which plan fits best?";
+    return "Our plans start at one forty-seven a month for Solo, two ninety-seven for Growth, and five ninety-seven for Business. Every plan includes a thirty-day money-back guarantee — so you can try it completely risk-free. Most businesses find it pays for itself within the first week. Want me to help figure out which plan fits best?";
   }
 
   // Setup / onboarding / getting started
