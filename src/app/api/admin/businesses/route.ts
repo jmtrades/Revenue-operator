@@ -6,6 +6,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL?.trim().toLowerCase();
 
@@ -38,7 +39,7 @@ export async function GET(req: NextRequest) {
       created_at: r.created_at ?? "",
     }));
   } catch (err) {
-    console.error("[admin/businesses] Query failed:", err);
+    log("error", "[admin/businesses] Query failed", { error: err instanceof Error ? err.message : String(err) });
   }
   return NextResponse.json({ businesses: list });
 }

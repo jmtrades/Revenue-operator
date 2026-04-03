@@ -196,10 +196,7 @@ export async function POST(req: NextRequest) {
         executed_at: now,
       });
     } catch (err) {
-      console.warn(
-        `[cold-leads/reengage] Failed to log autonomous action for lead ${item.lead_id}:`,
-        err instanceof Error ? err.message : String(err)
-      );
+      log("warn", "[cold-leads/reengage] Failed to log autonomous action", { leadId: item.lead_id, error: err instanceof Error ? err.message : String(err) });
     }
 
     // Try to send initial SMS if lead has phone and accepts SMS
@@ -237,16 +234,10 @@ export async function POST(req: NextRequest) {
             // ignore message store failure
           }
         } else {
-          console.warn(
-            `[cold-leads/reengage] SMS send failed for lead ${item.lead_id}:`,
-            smsResult.error
-          );
+          log("warn", "[cold-leads/reengage] SMS send failed", { leadId: item.lead_id, error: String(smsResult.error) });
         }
       } catch (err) {
-        console.warn(
-          `[cold-leads/reengage] Exception sending SMS for lead ${item.lead_id}:`,
-          err instanceof Error ? err.message : String(err)
-        );
+        log("warn", "[cold-leads/reengage] Exception sending SMS", { leadId: item.lead_id, error: err instanceof Error ? err.message : String(err) });
       }
     }
 
@@ -263,10 +254,7 @@ export async function POST(req: NextRequest) {
         });
       } catch (err) {
         // Sequence enrollment may fail if already enrolled - log but don't block
-        console.warn(
-          `[cold-leads/reengage] Sequence enrollment failed for lead ${item.lead_id}:`,
-          err instanceof Error ? err.message : String(err)
-        );
+        log("warn", "[cold-leads/reengage] Sequence enrollment failed", { leadId: item.lead_id, error: err instanceof Error ? err.message : String(err) });
       }
     }
 

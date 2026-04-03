@@ -63,12 +63,12 @@ export async function GET(req: NextRequest): Promise<NextResponse<ForecastRespon
         .order("date", { ascending: false });
 
       if (recentErr) {
-        console.warn("[forecast] Could not fetch recent metrics (may be empty):", recentErr.message);
+        log("warn", "[forecast] Could not fetch recent metrics", { error: recentErr.message });
       } else {
         recentMetrics = data ?? [];
       }
     } catch (fetchErr) {
-      console.warn("[forecast] Exception fetching recent metrics:", fetchErr);
+      log("warn", "[forecast] Exception fetching recent metrics", { error: fetchErr instanceof Error ? fetchErr.message : String(fetchErr) });
     }
 
     if (recentMetrics.length === 0) {
@@ -106,12 +106,12 @@ export async function GET(req: NextRequest): Promise<NextResponse<ForecastRespon
         .lte("date", priorMonthEndStr);
 
       if (priorErr) {
-        console.warn("[forecast] Could not fetch prior month metrics:", priorErr.message);
+        log("warn", "[forecast] Could not fetch prior month metrics", { error: priorErr.message });
       } else {
         priorMetrics = data ?? [];
       }
     } catch (fetchErr) {
-      console.warn("[forecast] Exception fetching prior month metrics:", fetchErr);
+      log("warn", "[forecast] Exception fetching prior month metrics", { error: fetchErr instanceof Error ? fetchErr.message : String(fetchErr) });
     }
 
     const priorMonthRevenue = priorMetrics.reduce(

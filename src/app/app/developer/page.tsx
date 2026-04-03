@@ -123,7 +123,7 @@ function ApiKeysTab({
 }: {
   keys: ApiKeyRow[];
   onRevoke: (id: string) => void;
-  onCreate: (label: string, permission: ApiKeyPermission) => void;
+  onCreate: (label: string, permission: ApiKeyPermission) => Promise<string | null>;
   onCopyKey: (fullKey: string) => void;
 }) {
   const t = useTranslations("developer");
@@ -134,14 +134,16 @@ function ApiKeysTab({
   const [newKeyModal, setNewKeyModal] = useState<{ label: string; fullKey: string } | null>(null);
   const [createLabel, setCreateLabel] = useState("");
   const [createPermission, setCreatePermission] = useState<ApiKeyPermission>("read_write");
+  const [creating, setCreating] = useState(false);
 
-  const handleCreateSubmit = () => {
-    if (!createLabel.trim()) return;
-    const buf = new Uint8Array(24);
-    crypto.getRandomValues(buf);
-    const fullKey = `sk_live_${Array.from(buf, (b) => b.toString(16).padStart(2, "0")).join("")}`;
-    onCreate(createLabel.trim(), createPermission);
-    setNewKeyModal({ label: createLabel.trim(), fullKey });
+  const handleCreateSubmit = async () => {
+    if (!createLabel.trim() || creating) return;
+    setCreating(true);
+    const fullKey = await onCreate(createLabel.trim(), createPermission);
+    setCreating(false);
+    if (fullKey) {
+      setNewKeyModal({ label: createLabel.trim(), fullKey });
+    }
     setCreateModal(false);
     setCreateLabel("");
     setCreatePermission("read_write");
@@ -654,8 +656,27 @@ export default function DeveloperPage() {
   const [eventKindFilter, setEventKindFilter] = useState<EventLogKind | "all">("all");
   const [eventStatusFilter, setEventStatusFilter] = useState<EventLogStatus | "all">("all");
 
+  // Load persisted API keys on mount
   useEffect(() => {
     document.title = t("pageTitle");
+    fetch("/api/developer/keys")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((rows: Array<{ id: string; label: string; key_prefix: string; key_suffix: string; permission: ApiKeyPermission; status: string; created_at: string; last_used_at: string | null }>) => {
+        setKeys(
+          rows.map((r) => ({
+            id: r.id,
+            label: r.label,
+            keyPrefix: r.key_prefix,
+            keySuffix: r.key_suffix,
+            fullKey: "", // Full key is only available at creation time
+            permission: r.permission,
+            createdAt: r.created_at,
+            lastUsedAt: r.last_used_at ?? r.created_at,
+            status: (r.status === "revoked" ? "revoked" : "active") as "active" | "revoked",
+          }))
+        );
+      })
+      .catch(() => { /* Gracefully handle fetch failure */ });
   }, [t]);
 
   const showToast = useCallback((msg: string) => {
@@ -669,25 +690,41 @@ export default function DeveloperPage() {
   }, [showToast, t]);
 
   const handleRevokeKey = useCallback((id: string) => {
+    // Optimistically update UI, then persist to server
     setKeys((prev) => prev.map((k) => (k.id === id ? { ...k, status: "revoked" as const } : k)));
+    fetch(`/api/developer/keys/${id}`, { method: "DELETE" }).catch(() => {
+      // Revert on failure
+      setKeys((prev) => prev.map((k) => (k.id === id ? { ...k, status: "active" as const } : k)));
+    });
   }, []);
 
-  const handleCreateKey = useCallback((label: string, permission: ApiKeyPermission) => {
-    const suffix = Math.random().toString(36).slice(2, 6);
-    setKeys((prev) => [
-      ...prev,
-      {
-        id: `key-${Date.now()}`,
-        label,
-        keyPrefix: "sk_live_",
-        keySuffix: suffix,
-        fullKey: (() => { const b = new Uint8Array(24); crypto.getRandomValues(b); return `sk_live_${Array.from(b, (x) => x.toString(16).padStart(2, "0")).join("")}`; })(),
-        permission,
-        createdAt: new Date().toISOString(),
-        lastUsedAt: new Date().toISOString(),
-        status: "active",
-      },
-    ]);
+  const handleCreateKey = useCallback(async (label: string, permission: ApiKeyPermission): Promise<string | null> => {
+    try {
+      const r = await fetch("/api/developer/keys", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ label, permission }),
+      });
+      if (!r.ok) return null;
+      const row: { id: string; label: string; key_prefix: string; key_suffix: string; permission: ApiKeyPermission; status: string; created_at: string; last_used_at: string | null; full_key: string } = await r.json();
+      setKeys((prev) => [
+        ...prev,
+        {
+          id: row.id,
+          label: row.label,
+          keyPrefix: row.key_prefix,
+          keySuffix: row.key_suffix,
+          fullKey: row.full_key,
+          permission: row.permission,
+          createdAt: row.created_at,
+          lastUsedAt: row.last_used_at ?? row.created_at,
+          status: "active",
+        },
+      ]);
+      return row.full_key;
+    } catch {
+      return null;
+    }
   }, []);
 
   const handleAddWebhook = useCallback((url: string, events: WebhookEvent[]) => {

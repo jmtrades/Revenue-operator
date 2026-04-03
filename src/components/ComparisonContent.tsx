@@ -42,7 +42,7 @@ const COMPARISONS: Record<string, ComparisonData> = {
       "Fully automated follow-ups",
       "Revenue attribution built in",
       "24/7 without human staffing limits",
-      "Costs $297-$497/mo vs $300-$1,125/mo",
+      "Costs $147-$597/mo vs $300-$1,125/mo",
     ],
   },
   ruby: {
@@ -130,7 +130,7 @@ const COMPARISONS: Record<string, ComparisonData> = {
       "Answers unlimited calls simultaneously 24/7",
       "Never calls in sick or takes vacation",
       "No training needed, ready in minutes",
-      "Costs $297-$497/mo vs $4,000+/mo",
+      "Costs $147-$597/mo vs $4,000+/mo",
       "Complete analytics and call recordings",
       "Scales with your business, no hiring needed",
     ],
@@ -162,7 +162,7 @@ export function ComparisonContent({ competitor }: ComparisonContentProps) {
       <section className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
         <div className="rounded-xl bg-[var(--bg-card)]/50 border border-[var(--border-default)] p-6">
           <div className="text-sm text-[var(--text-tertiary)] mb-2">Revenue Operator Cost</div>
-          <div className="text-2xl font-bold text-white">$297-$497/mo</div>
+          <div className="text-2xl font-bold text-white">$147-$597/mo</div>
           <div className="text-xs text-[var(--text-tertiary)] mt-2">No setup, instant activation</div>
         </div>
         <div className="rounded-xl bg-[var(--bg-card)]/50 border border-[var(--border-default)] p-6">
@@ -390,7 +390,7 @@ function getFAQs(
       },
       {
         q: "How is Revenue Operator different from Smith.ai?",
-        a: "Smith.ai relies on humans, which limits capacity and costs $300-$1,125/mo. Revenue Operator uses AI to answer unlimited concurrent calls 24/7 for $297-$497/mo, plus automated follow-ups and revenue tracking.",
+        a: "Smith.ai relies on humans, which limits capacity and costs $300-$1,125/mo. Revenue Operator uses AI to answer unlimited concurrent calls 24/7 for $147-$597/mo, plus automated follow-ups and revenue tracking.",
       },
       {
         q: "Will switching affect my current calls?",

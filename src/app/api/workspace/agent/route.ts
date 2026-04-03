@@ -9,6 +9,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { syncPrimaryAgent } from "@/lib/agents/sync-primary-agent";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -76,7 +77,7 @@ export async function GET(req: NextRequest) {
       }
     } catch (bc_err) {
       // If table doesn't exist or query fails, just continue without business context
-      console.warn("[GET /api/workspace/agent] business context query failed");
+      log("warn", "[workspace/agent] business context query failed");
     }
 
     // For backwards compatibility, return elevenlabsVoiceId if it exists, otherwise empty string
@@ -267,8 +268,7 @@ export async function PATCH(req: NextRequest) {
           );
       } catch (ctx_err) {
         // If table doesn't exist or upsert fails, log but don't fail the request
-        console.warn("[workspace/agent] workspace_business_context update failed:",
-          ctx_err instanceof Error ? ctx_err.message : ctx_err);
+        log("warn", "[workspace/agent] workspace_business_context update failed", { error: ctx_err instanceof Error ? ctx_err.message : String(ctx_err) });
       }
     }
 

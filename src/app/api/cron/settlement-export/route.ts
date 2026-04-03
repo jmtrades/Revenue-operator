@@ -15,6 +15,7 @@ import {
   tryAcquireSettlementExportLease,
   releaseSettlementExportLease,
 } from "@/lib/settlement";
+import { log } from "@/lib/logger";
 
 const MAX_PERIODS_PER_RUN = 7;
 const MAX_WORKSPACES_PER_RUN = 50;
@@ -54,7 +55,7 @@ export async function GET(request: NextRequest) {
   }
 
   await recordCronHeartbeat("settlement-export").catch((e: unknown) => {
-    console.warn("[cron/settlement-export] recordCronHeartbeat failed:", e instanceof Error ? e.message : String(e));
+    log("warn", "[cron/settlement-export] heartbeat failed", { error: e instanceof Error ? e.message : String(e) });
   });
   return NextResponse.json({
     ok: true,

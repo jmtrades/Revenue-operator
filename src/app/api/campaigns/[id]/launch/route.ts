@@ -406,7 +406,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
             continue; // Skip this lead entirely
           }
         } catch (dncErr) {
-          console.warn(`[campaign/launch] DNC check failed for lead ${leadId}: ${dncErr instanceof Error ? dncErr.message : String(dncErr)}`);
+          log("warn", "[campaign/launch] DNC check failed", { leadId, error: dncErr instanceof Error ? dncErr.message : String(dncErr) });
           // Non-blocking: if DNC check fails, proceed with caution (don't skip the lead)
         }
       }
@@ -417,9 +417,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
           const { enrollContact } = await import("@/lib/sequences/follow-up-engine");
           await enrollContact(workspaceId, sequenceId, leadId);
         } catch (enrollErr) {
-          console.warn(
-            `[campaign/launch] Failed to enroll lead ${leadId} in sequence: ${enrollErr instanceof Error ? enrollErr.message : String(enrollErr)}`
-          );
+          log("warn", "[campaign/launch] Failed to enroll lead in sequence", { leadId, error: enrollErr instanceof Error ? enrollErr.message : String(enrollErr) });
           // Non-blocking: if enrollment fails, continue with call execution
         }
       }
