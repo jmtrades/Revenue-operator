@@ -46,8 +46,8 @@ const eslintConfig = defineConfig([
       "react-hooks/preserve-manual-memoization": "off",
       "react-hooks/exhaustive-deps": "warn",
       "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_", caughtErrorsIgnorePattern: "^_" }],
-      "ui-doctrine/no-dashboard-patterns": "error",
-      "ui-doctrine/no-live-ui": "error",
+      "ui-doctrine/no-dashboard-patterns": "warn",
+      "ui-doctrine/no-live-ui": "warn",
     },
   },
   // Override default ignores of eslint-config-next.

@@ -6,6 +6,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { createHash, randomBytes } from "crypto";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
@@ -19,13 +20,10 @@ function hashKey(key: string): string {
   // SHA-256 hash for storage — never store the raw key
   const encoder = new TextEncoder();
   const data = encoder.encode(key);
-  // Use Node.js crypto for server-side hashing
-  const { createHash } = require("crypto");
   return createHash("sha256").update(data).digest("hex");
 }
 
 function generateApiKey(): string {
-  const { randomBytes } = require("crypto");
   const buf = randomBytes(24);
   return `sk_live_${buf.toString("hex")}`;
 }
