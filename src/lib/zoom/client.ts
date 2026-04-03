@@ -77,6 +77,7 @@ export async function zoomFetch(
       "Content-Type": "application/json",
       ...opts?.headers,
     },
+    signal: opts?.signal ?? AbortSignal.timeout(15_000),
   });
 }
 
