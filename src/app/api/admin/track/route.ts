@@ -11,30 +11,25 @@ import { getDb } from "@/lib/db/queries";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { log } from "@/lib/logger";
 
-// Simple in-memory rate limiter: IP -> timestamp of last request
-const ipLastRequestMap: Map<string, number> = new Map();
+// Simple in-memory rate limiter: IP -> { windowStart, count }
+const ipRateMap: Map<string, { windowStart: number; count: number }> = new Map();
 const RATE_LIMIT_WINDOW_MS = 1000; // 1 second
 const MAX_REQUESTS_PER_WINDOW = 10;
 
 function getRateLimit(ip: string): { allowed: boolean; remaining: number } {
   const now = Date.now();
-  const lastTime = ipLastRequestMap.get(ip) || 0;
+  const entry = ipRateMap.get(ip);
 
-  if (now - lastTime > RATE_LIMIT_WINDOW_MS) {
-    ipLastRequestMap.set(ip, now);
+  if (!entry || now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+    ipRateMap.set(ip, { windowStart: now, count: 1 });
     return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW - 1 };
   }
 
-  if (ipLastRequestMap.has(ip)) {
-    const count = (ipLastRequestMap.get(ip) as unknown as number) + 1;
-    if (count >= MAX_REQUESTS_PER_WINDOW) {
-      return { allowed: false, remaining: 0 };
-    }
-    ipLastRequestMap.set(ip, count as any);
-    return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW - count };
+  entry.count += 1;
+  if (entry.count > MAX_REQUESTS_PER_WINDOW) {
+    return { allowed: false, remaining: 0 };
   }
-
-  return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW - 1 };
+  return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW - entry.count };
 }
 
 export async function POST(req: NextRequest) {
@@ -50,9 +45,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
 
-  let body: any;
+  let body: Record<string, unknown>;
   try {
-    body = await req.json();
+    body = await req.json() as Record<string, unknown>;
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
@@ -98,7 +93,7 @@ export async function POST(req: NextRequest) {
       success: true,
       rate_limit_remaining: rateLimit.remaining,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     log("error", "[admin/track catch]", { error: err });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
