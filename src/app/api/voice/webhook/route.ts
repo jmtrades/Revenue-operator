@@ -142,6 +142,30 @@ export async function POST(req: NextRequest) {
         existingMetadata.test_call === true || existingMetadata.is_test_call === true;
       const testAgentId = typeof existingMetadata.agent_id === "string" ? existingMetadata.agent_id : null;
 
+      // Enforce call duration limits — flag calls that exceeded workspace max
+      if (payload.duration_seconds > 0) {
+        try {
+          const { data: wsSettings } = await db
+            .from("workspaces")
+            .select("max_call_duration")
+            .eq("id", payload.workspace_id)
+            .maybeSingle();
+          const maxMinutes = (wsSettings as { max_call_duration?: number } | null)?.max_call_duration ?? 15;
+          const maxSeconds = maxMinutes * 60;
+          if (payload.duration_seconds > maxSeconds) {
+            log("warn", "voice_webhook.call_exceeded_max_duration", {
+              call_sid: payload.call_sid,
+              workspace_id: payload.workspace_id,
+              duration_seconds: payload.duration_seconds,
+              max_seconds: maxSeconds,
+              overage_seconds: payload.duration_seconds - maxSeconds,
+            });
+          }
+        } catch {
+          // Non-blocking — don't fail webhook processing on duration check
+        }
+      }
+
       // Update call_sessions with duration, outcome, and transcript metadata
       const updateData: Record<string, unknown> = {
         call_ended_at: new Date().toISOString(),
@@ -392,7 +416,47 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // 5. Stop-on-reply: pause active follow-up sequences when a lead engages via call
+  // 5. Validate recording consent compliance (two-party states)
+  if (payload.transcript && payload.transcript.length > 0) {
+    try {
+      const { data: wsConsent } = await db
+        .from("workspaces")
+        .select("recording_consent_mode, recording_consent_text")
+        .eq("id", payload.workspace_id)
+        .maybeSingle();
+      const consentRow = wsConsent as { recording_consent_mode?: string; recording_consent_text?: string | null } | null;
+      if (consentRow?.recording_consent_mode === "two_party") {
+        const { validateConsentInTranscript } = await import("@/lib/compliance/recording-consent");
+        const result = validateConsentInTranscript(
+          { mode: "two_party", announcementText: consentRow.recording_consent_text ?? null, pauseOnSensitive: false },
+          payload.transcript,
+        );
+        if (!result.valid) {
+          log("warn", "voice_webhook.recording_consent_missing", {
+            call_sid: payload.call_sid,
+            workspace_id: payload.workspace_id,
+            reason: result.reason,
+          });
+        }
+      }
+    } catch {
+      // Non-blocking — consent validation is best-effort post-call
+    }
+  }
+
+  // 6. Clean up in-memory conversation state for ended calls
+  try {
+    const { archiveConversationState, cleanupStaleStates } = await import("@/lib/voice/conversation-state");
+    if (callSessionId) {
+      archiveConversationState(callSessionId);
+    }
+    // Opportunistically clean up any stale states from abandoned calls
+    cleanupStaleStates();
+  } catch {
+    // Non-blocking — state cleanup is best-effort
+  }
+
+  // 6. Stop-on-reply: pause active follow-up sequences when a lead engages via call
   if (callSessionId && payload.outcome === "completed" && payload.duration_seconds > 10) {
     try {
       const { data: callSessionForLead } = await db

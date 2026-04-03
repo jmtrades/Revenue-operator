@@ -111,6 +111,47 @@ export function createConversationState(callSessionId: string): ConversationStat
   };
 }
 
+// ── In-memory state registry (for server-side per-call tracking) ──
+const activeStates = new Map<string, ConversationState>();
+
+/**
+ * Get or create a conversation state for a call session.
+ */
+export function getOrCreateState(callSessionId: string): ConversationState {
+  const existing = activeStates.get(callSessionId);
+  if (existing) return existing;
+  const state = createConversationState(callSessionId);
+  activeStates.set(callSessionId, state);
+  return state;
+}
+
+/**
+ * Archive and remove a conversation state after call ends.
+ * Returns the final state for persistence if needed.
+ */
+export function archiveConversationState(callSessionId: string): ConversationState | null {
+  const state = activeStates.get(callSessionId);
+  if (!state) return null;
+  activeStates.delete(callSessionId);
+  return state;
+}
+
+/**
+ * Clean up stale conversation states older than maxAgeMs (default 30 minutes).
+ * Call periodically to prevent memory leaks from abandoned calls.
+ */
+export function cleanupStaleStates(maxAgeMs: number = 30 * 60 * 1000): number {
+  const now = Date.now();
+  let cleaned = 0;
+  for (const [id, state] of activeStates) {
+    if (now - state.startedAt > maxAgeMs) {
+      activeStates.delete(id);
+      cleaned++;
+    }
+  }
+  return cleaned;
+}
+
 /**
  * Add a new turn and update all derived state.
  */
