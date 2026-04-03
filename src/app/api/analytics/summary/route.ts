@@ -14,29 +14,33 @@ export async function GET(req: NextRequest) {
   const err = await requireWorkspaceAccess(req, workspaceId);
   if (err) return err;
 
-  const db = getDb();
-  let calls = 0;
-  let appointments = 0;
-  let upcoming = 0;
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
   try {
-    const { count: c } = await db
-      .from("call_sessions")
-      .select("id", { count: "exact", head: true })
-      .eq("workspace_id", workspaceId)
-      .gte("call_started_at", sevenDaysAgo.toISOString());
-    calls = c ?? 0;
+    const db = getDb();
+    let calls = 0;
+    let appointments = 0;
+    let upcoming = 0;
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    try {
+      const { count: c } = await db
+        .from("call_sessions")
+        .select("id", { count: "exact", head: true })
+        .eq("workspace_id", workspaceId)
+        .gte("call_started_at", sevenDaysAgo.toISOString());
+      calls = c ?? 0;
+    } catch {
+      // Table may not exist yet
+    }
+    try {
+      const { count: a } = await db.from("appointments").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId).in("status", ["confirmed"]);
+      appointments = a ?? 0;
+      const { count: u } = await db.from("appointments").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId).gte("start_time", new Date().toISOString());
+      upcoming = u ?? 0;
+    } catch {
+      // Table may not exist yet
+    }
+    return NextResponse.json({ calls_last_7_days: calls, appointments_total: appointments, appointments_upcoming: upcoming });
   } catch {
-    // ignore
+    return NextResponse.json({ error: "Failed to load analytics" }, { status: 500 });
   }
-  try {
-    const { count: a } = await db.from("appointments").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId).in("status", ["confirmed"]);
-    appointments = a ?? 0;
-    const { count: u } = await db.from("appointments").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId).gte("start_time", new Date().toISOString());
-    upcoming = u ?? 0;
-  } catch {
-    // ignore
-  }
-  return NextResponse.json({ calls_last_7_days: calls, appointments_total: appointments, appointments_upcoming: upcoming });
 }

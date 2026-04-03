@@ -45,7 +45,7 @@ export async function sendDailyTrustEmails(): Promise<Array<{ workspaceId: strin
     const subject = "Today's activity snapshot";
     const body = `${replies} conversations moved forward today.
 
-Open: https://www.recall-touch.com/app/dashboard`;
+Open: ${process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com"}/app/dashboard`;
 
     try {
       if (process.env.RESEND_API_KEY) {
