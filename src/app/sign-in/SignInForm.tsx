@@ -20,8 +20,6 @@ export default function SignInForm() {
   const [googleBusy, setGoogleBusy] = useState(false);
   const [showPw, setShowPw] = useState(false);
   const [checking, setChecking] = useState(true);
-  const _tToast = useTranslations("toast");
-
   // Check if user already has a valid session
   useEffect(() => {
     const checkSession = async () => {

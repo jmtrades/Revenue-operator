@@ -296,7 +296,11 @@ export async function proxy(req: NextRequest) {
   const session = await getSessionFromCookieAsync(cookieHeader);
 
   if (!session) {
-    if (isApp) return NextResponse.redirect(new URL("/sign-in", req.url));
+    if (isApp) {
+      const signInUrl = new URL("/sign-in", req.url);
+      signInUrl.searchParams.set("next", pathname);
+      return NextResponse.redirect(signInUrl);
+    }
     if (pathname.startsWith("/dashboard")) return NextResponse.redirect(new URL("/activate", req.url));
     if (pathname.startsWith("/admin")) return NextResponse.redirect(new URL("/activate", req.url));
     if (pathname.startsWith("/api/")) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
