@@ -5204,7 +5204,7 @@
       "pricing": {
         "heading": "Einfache Preise, die zu Ihren Umsätzen passen",
         "subheading": "Keine Pro-Sitz-Lizenzen. Sie zahlen für beantwortete Anrufe, nicht für Log-ins.",
-        "trialNote": "Alle Pläne mit 14 Tagen kostenlos. Ohne Karte."
+        "trialNote": "30-Tage-Geld-zurück-Garantie. In unter 3 Minuten starten."
       },
       "pricingTiers": {
         "starter": {
@@ -5530,7 +5530,7 @@
           "cta": "Verkauf kontaktieren"
         }
       },
-      "footerNote": "Alle Pläne inkl.: verschlüsselte Aufzeichnungen · Compliance-Rahmen · Prüfpfad · 14 Tage kostenlos.",
+      "footerNote": "Alle Pläne inkl.: verschlüsselte Aufzeichnungen · Compliance-Rahmen · Prüfpfad · 30-Tage-Geld-zurück-Garantie.",
       "cta": {
         "link": "Vollständigen Planvergleich ansehen →"
       }
@@ -6369,7 +6369,7 @@
     "faq": {
       "title": "Fragen zu Preisen",
       "trial": "Gibt es eine kostenlose Testphase?",
-      "trialAnswer": "Ja — alle Nicht-Enterprise-Pläne beinhalten eine 14-tägige kostenlose Testphase.",
+      "trialAnswer": "Alle Pläne beinhalten eine 30-Tage-Geld-zurück-Garantie. Registrieren Sie sich, testen Sie mit echten Anrufen, und wenn Sie nicht zufrieden sind, erstatten wir Ihnen alles zurück.",
       "overage": "Was passiert, wenn ich meine Minuten überschreite?",
       "overageAnswer": "Wir berechnen den Überschuss einfach zum Minutenpreis deines Tarifs, ohne Strafgebühren.",
       "cancel": "Kann ich jederzeit kündigen?",
@@ -8281,7 +8281,7 @@
     "welcomeAboard": "Willkommen an Bord!",
     "aiReady": "Ihr KI-Telefonsystem ist bereit.",
     "setUpAgent": "Meinen KI-Agenten einrichten →",
-    "takes2Min": "Dauert 2 Minuten · Die ersten 14 Tage sind kostenlos",
+    "takes2Min": "Dauert 2 Minuten · 30-Tage-Geld-zurück-Garantie",
     "emailRequired": "E-Mail ist erforderlich.",
     "creatingAccount": "Ihr Konto wird erstellt…",
     "almostThere": "Fast geschafft…",

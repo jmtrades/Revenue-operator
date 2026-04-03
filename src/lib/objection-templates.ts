@@ -133,7 +133,7 @@ const INDUSTRY_TEMPLATES: Record<IndustryType, ObjectionTemplates> = {
     competitor:
       "We're not just a gym—we're a community committed to your success. Our team of coaches, the environment, and our proven programs set us apart. Why not try us out?",
     notInterested:
-      "I get it. Fitness takes commitment. But think of us as your partner in health. A free trial lets you experience our approach with no obligation. Would that work?",
+      "I get it. Fitness takes commitment. But think of us as your partner in health. Come in for a consultation and see our approach firsthand — no obligation. Would that work?",
   },
 
   default: {

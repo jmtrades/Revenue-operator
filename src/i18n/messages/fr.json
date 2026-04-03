@@ -5196,7 +5196,7 @@
       "pricing": {
         "heading": "Tarification simple qui suit vos revenus",
         "subheading": "Pas de licence par poste. Vous payez la fiabilité des appels répondus, pas le nombre de connexions.",
-        "trialNote": "Tous les plans commencent par 14 jours d'essai. Sans carte."
+        "trialNote": "Garantie de remboursement de 30 jours. Démarrez en moins de 3 minutes."
       },
       "pricingTiers": {
         "starter": {
@@ -6336,7 +6336,7 @@
       },
       {
         "q": "Puis-je essayer avant d'acheter ?",
-        "a": "Essai 14 jours ou démo interactive tout de suite."
+        "a": "Garantie de remboursement de 30 jours sur tous les plans. Inscrivez-vous et testez sans risque."
       },
       {
         "q": "Comment annuler ?",
@@ -8177,12 +8177,12 @@
     "welcomeAboard": "Bienvenue !",
     "aiReady": "Votre système vocal IA est prêt.",
     "setUpAgent": "Configurer mon agent IA →",
-    "takes2Min": "2 minutes · 14 jours gratuits",
+    "takes2Min": "2 minutes · Garantie 30 jours satisfait ou remboursé",
     "emailRequired": "L'e-mail est requis.",
     "creatingAccount": "Création de votre compte…",
     "almostThere": "Presque terminé…",
     "getStartedFree": "Commencer →",
-    "noCardRequired": "Sans carte · 14 jours gratuits · Annulez à tout moment",
+    "noCardRequired": "Garantie 30 jours · Annulez à tout moment",
     "alreadyHaveAccount": "Déjà un compte ?",
     "signInLink": "Se connecter →",
     "tryAgain": "Réessayer",
