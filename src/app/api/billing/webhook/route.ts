@@ -19,6 +19,7 @@ import {
 import { activateSettlementFromStripe } from "@/lib/settlement";
 import { enqueueSendMessage } from "@/lib/action-queue/send-message";
 import { priceIdToTierAndInterval } from "@/lib/stripe-prices";
+import { tierToDbValue } from "@/lib/billing-plans";
 import Stripe from "stripe";
 import { sendDunningEmail } from "@/lib/email/dunning";
 import { getTelephonyService } from "@/lib/telephony";
@@ -313,7 +314,7 @@ async function handleStripeWebhookEvent(
           updated_at: new Date().toISOString(),
         };
         if (tierInterval) {
-          updatePayload.billing_tier = tierInterval.tier;
+          updatePayload.billing_tier = tierToDbValue(tierInterval.tier);
           updatePayload.billing_interval = tierInterval.interval;
         }
         const { error: wsUpdateErr } = await db.from("workspaces").update(updatePayload).eq("id", workspaceId);
@@ -360,7 +361,7 @@ async function handleStripeWebhookEvent(
           updated_at: new Date().toISOString(),
         };
         if (tierInterval) {
-          updatePayload.billing_tier = tierInterval.tier;
+          updatePayload.billing_tier = tierToDbValue(tierInterval.tier);
           updatePayload.billing_interval = tierInterval.interval;
         }
         const { error: wsUpdateErr2 } = await db.from("workspaces").update(updatePayload).eq("id", workspaceId);

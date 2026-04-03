@@ -304,8 +304,10 @@ YOUR GOAL:
       .eq("id", workspaceId)
       .maybeSingle();
 
-    const billingTier = (wsBilling as { billing_tier?: string | null } | null)?.billing_tier as keyof typeof BILLING_PLANS | null;
-    if (billingTier && billingTier in BILLING_PLANS) {
+    const { normalizeTier } = await import("@/lib/billing-plans");
+    const rawTier = (wsBilling as { billing_tier?: string | null } | null)?.billing_tier;
+    const billingTier = normalizeTier(rawTier);
+    if (billingTier in BILLING_PLANS) {
       const plan = BILLING_PLANS[billingTier];
       const includedMinutes = plan.includedMinutes;
 

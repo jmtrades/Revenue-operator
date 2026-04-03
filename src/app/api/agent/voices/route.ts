@@ -10,16 +10,17 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { RECALL_VOICES } from "@/lib/constants/recall-voices";
+import { normalizeTier, type PlanSlug } from "@/lib/billing-plans";
 
-const PLAN_LIMITS: Record<string, number> = {
-  starter: 8,
-  growth: 12,
+const PLAN_LIMITS: Record<PlanSlug, number> = {
+  solo: 8,
+  business: 12,
   scale: 16,
   enterprise: 41,
 };
 
 export async function GET(req: NextRequest) {
-  let plan = "starter";
+  let plan: PlanSlug = "solo";
 
   const session = await getSession(req);
   if (session?.workspaceId) {
@@ -32,16 +33,14 @@ export async function GET(req: NextRequest) {
         .select("billing_tier")
         .eq("id", session.workspaceId)
         .maybeSingle();
-      const tier = (data as { billing_tier?: string | null } | null)?.billing_tier?.trim().toLowerCase();
-      if (tier && PLAN_LIMITS[tier]) {
-        plan = tier;
-      }
+      const rawTier = (data as { billing_tier?: string | null } | null)?.billing_tier;
+      plan = normalizeTier(rawTier);
     } catch {
-      plan = "starter";
+      plan = "solo";
     }
   }
 
-  const limit = PLAN_LIMITS[plan] ?? PLAN_LIMITS.starter;
+  const limit = PLAN_LIMITS[plan] ?? PLAN_LIMITS.solo;
   const voices = RECALL_VOICES.slice(0, limit).map((voice) => ({
     id: voice.id,
     name: voice.name,
