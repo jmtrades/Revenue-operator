@@ -328,7 +328,7 @@ function generateStrategyHints(
       break;
     case "closing":
       hints.push("They're ready! Be direct and helpful. Guide them to recall-touch.com/signup.");
-      hints.push("Make it feel easy and low-risk: 'takes thirty seconds, free for fourteen days.'");
+      hints.push("Make it feel easy and low-risk: 'takes thirty seconds, and there's a thirty day money back guarantee.'");
       break;
   }
 

@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
     const stripeCustomerId = ws?.stripe_customer_id;
 
     // Must be in an allowed billing state
-    const allowedStatus = bStatus === "trial" || bStatus === "active" || bStatus === "trial_ended";
+    const allowedStatus = bStatus === "pending" || bStatus === "active" || bStatus === "trial" || bStatus === "trial_ended";
     if (!bStatus || !allowedStatus) {
       return NextResponse.json(
         {

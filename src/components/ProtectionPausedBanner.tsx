@@ -39,7 +39,7 @@ export function ProtectionPausedBanner() {
     ? Math.ceil((trialEndDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
     : null;
 
-  const isTrial = billingStatus.billing_status === "trial";
+  const isTrial = billingStatus.billing_status === "trial" || billingStatus.billing_status === "pending";
   const trialEndingSoon = isTrial && daysLeft !== null && daysLeft > 0 && daysLeft <= 7;
 
   // Show banner if trial ended, cancelled, or payment failed

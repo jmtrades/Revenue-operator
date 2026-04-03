@@ -111,7 +111,7 @@ export async function POST(req: NextRequest) {
 
     // Must have an active subscription or a Stripe customer ID to buy minute packs
     const hasStripeCustomer = wsData.stripe_customer_id !== null && wsData.stripe_customer_id !== undefined;
-    const allowedStatus = wsData.billing_status === "active" || wsData.billing_status === "trial" || wsData.billing_status === "trial_ended";
+    const allowedStatus = wsData.billing_status === "active" || wsData.billing_status === "pending" || wsData.billing_status === "trial" || wsData.billing_status === "trial_ended";
     if (!allowedStatus || !hasStripeCustomer) {
       return NextResponse.json(
         { ok: false, reason: "subscription_required", message: "An active subscription is required to purchase minute packs." },

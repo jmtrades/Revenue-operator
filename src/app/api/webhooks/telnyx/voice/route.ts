@@ -747,7 +747,7 @@ export async function POST(req: NextRequest) {
             callInfo.callControlId,
             "Hey there! This is Sarah from Revenue Operator. We got your demo request, but it looks like I got your voicemail. " +
             "Revenue Operator is an AI phone agent that answers your business calls twenty-four seven, books appointments, and makes sure you never miss a customer again. " +
-            "Head to recall dash touch dot com to try it free for fourteen days. Talk soon!",
+            "Head to recall dash touch dot com to get started. There's a thirty day money back guarantee, so zero risk. Talk soon!",
             "female",
           );
         }

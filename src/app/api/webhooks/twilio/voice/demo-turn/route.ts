@@ -186,7 +186,7 @@ function detectPhase(turnCount: number, lastUserMsg: string): string {
 
 /** Detect if the AI response contained a CTA (call-to-action) */
 function hasCTA(text: string): boolean {
-  return /\b(recall dash touch dot com|sign up|free trial|get started|fourteen.?day)\b/i.test(text);
+  return /\b(recall dash touch dot com|sign up|free trial|get started|money.?back|thirty.?day)\b/i.test(text);
 }
 
 /* ── Main handler ───────────────────────────────────────────────────────── */
