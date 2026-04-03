@@ -127,7 +127,7 @@ export const GET = withWorkspace(async (_req: NextRequest, ctx: WorkspaceContext
   const usageAlert = evaluateUsageAlert(usageMetrics, tier);
 
   return apiOk({
-    billing_status: row.billing_status ?? "trial",
+    billing_status: row.billing_status ?? "pending",
     renewal_at: row.protection_renewal_at ?? row.trial_ends_at ?? trialEndIso ?? null,
     stripe_customer_id: row.stripe_customer_id,
     has_subscription: Boolean(row.stripe_subscription_id),

@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
 
     const planName = PLAN_NAMES[r.billing_tier ?? "solo"] ?? r.billing_tier ?? "Starter";
     const interval = r.billing_interval === "year" ? "year" : "month";
-    const status = r.billing_status ?? "trial";
+    const status = r.billing_status ?? "pending";
 
     return NextResponse.json({
       plan_name: planName,

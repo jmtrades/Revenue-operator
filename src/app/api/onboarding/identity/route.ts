@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     autonomy_level: "assisted",
     kill_switch: false,
     status: "active",
-    billing_status: "trial",
+    billing_status: "pending",
     billing_tier: "solo",
     trial_ends_at: trialEnd.toISOString(),
     industry: industry?.trim() || null,
