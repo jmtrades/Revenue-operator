@@ -24,6 +24,7 @@ async function sendEmail(to: string, subject: string, html: string): Promise<boo
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ from: EMAIL_FROM, to, subject, html }),
+      signal: AbortSignal.timeout(10_000),
     });
     return res.ok;
   } catch {

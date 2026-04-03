@@ -343,6 +343,7 @@ export async function executeAdaptiveStep(
             to: lead.email,
             subject: `[Adaptive] ${step.template_key.replace(/_/g, " ")}`,
             text: `Hi ${lead.name || "there"},\n\nThis is an adaptive follow-up email (${step.template_key}).\n\nBest regards`,
+      signal: AbortSignal.timeout(10_000),
           }),
         });
 

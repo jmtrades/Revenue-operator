@@ -23,7 +23,7 @@ const EXPORT_TABLES = [
   { table: "appointments", select: "id, lead_id, title, start_time, end_time, location, notes, status, created_at" },
   { table: "agents", select: "id, name, voice_id, greeting, personality, system_prompt, created_at" },
   { table: "follow_ups", select: "id, lead_id, channel, status, scheduled_at, completed_at, content, created_at" },
-  { table: "sequences", select: "id, name, steps, status, created_at" },
+  { table: "follow_up_sequences", select: "id, name, steps, status, created_at" },
   { table: "sms_logs", select: "id, lead_id, direction, from_number, to_number, body, status, created_at" },
 ] as const;
 

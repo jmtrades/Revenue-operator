@@ -310,6 +310,7 @@ export async function POST(req: NextRequest) {
                   to: to_email,
                   subject: subject ?? "Following up",
                   text: emailBody,
+      signal: AbortSignal.timeout(10_000),
                 }),
               });
               return NextResponse.json({ result: `I've sent that email to ${to_email}. You should see it in your inbox shortly.` });

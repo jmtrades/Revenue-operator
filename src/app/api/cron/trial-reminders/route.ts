@@ -31,6 +31,7 @@ async function sendEmail(to: string, subject: string, html: string): Promise<voi
       to,
       subject,
       html,
+      signal: AbortSignal.timeout(10_000),
     }),
   });
 

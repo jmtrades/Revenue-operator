@@ -88,6 +88,7 @@ If you need to pause instead, open billing in the app today.`;
             to: ownerEmail,
             subject,
             text: body,
+      signal: AbortSignal.timeout(10_000),
           }),
         });
         if (res.ok) {

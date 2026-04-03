@@ -619,6 +619,7 @@ export async function advanceEnrollment(
                 method: "POST",
                 headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
                 body: JSON.stringify({ from: fromEmail, to: lead.email, subject, text: body }),
+      signal: AbortSignal.timeout(10_000),
               });
               if (emailRes.ok) {
                 actionSucceeded = true;

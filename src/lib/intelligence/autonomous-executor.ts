@@ -581,6 +581,7 @@ async function sendEmailAction(
         to: lead.email,
         subject: template.email_subject ?? "Following up",
         text: template.email_body,
+      signal: AbortSignal.timeout(10_000),
       }),
     });
 

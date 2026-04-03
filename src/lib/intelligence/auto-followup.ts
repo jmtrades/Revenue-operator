@@ -166,6 +166,7 @@ async function executeFollowUpRouting(
                 to: ownerEmail,
                 subject: `[Action Required] ${routing.message_template_key.replace(/_/g, " ")} — ${lead.name ?? lead.phone ?? "Unknown"}`,
                 text: `A call requires your attention.\n\nCaller: ${lead.name ?? "Unknown"} (${lead.phone ?? "no phone"})\nOutcome: ${params.outcome}\nPriority: ${routing.priority}\n\nNotes: ${routing.notes}`,
+      signal: AbortSignal.timeout(10_000),
               }),
             });
           }

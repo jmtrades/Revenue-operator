@@ -283,6 +283,7 @@ async function executeWorkflowStep(
                 to: [contact.email],
                 subject: step.emailSubject || "Follow-up from " + (workspace.name || "Revenue Operator"),
                 html: emailBody,
+      signal: AbortSignal.timeout(10_000),
               }),
             });
             if (!res.ok) {

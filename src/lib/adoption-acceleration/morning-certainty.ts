@@ -48,6 +48,7 @@ export async function sendDailyCertaintyStatus(workspaceId: string): Promise<{ s
         to: email,
         subject: "Daily status",
         text: message,
+      signal: AbortSignal.timeout(10_000),
       }),
     });
   }

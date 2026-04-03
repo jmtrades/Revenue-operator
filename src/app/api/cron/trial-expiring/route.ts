@@ -116,6 +116,7 @@ export async function GET(req: NextRequest) {
           Authorization: `Bearer ${RESEND_API_KEY}`,
         },
         body: JSON.stringify({ from: FROM, to: email, subject, html }),
+      signal: AbortSignal.timeout(10_000),
       });
 
       if (res.ok) {
