@@ -330,6 +330,7 @@ async function handleStripeWebhookEvent(
       }
       break;
     }
+    case "customer.subscription.created":
     case "customer.subscription.updated": {
       const sub = event.data.object as Stripe.Subscription & { current_period_end?: number; trial_end?: number; status?: string };
       const rawSubWsId = sub.metadata?.workspace_id;
@@ -763,6 +764,46 @@ async function handleStripeWebhookEvent(
             refunded_at: new Date().toISOString(),
           },
         });
+
+        // Credit-back: if this was a minute pack purchase, restore the minutes
+        const chargeType = charge.metadata?.type;
+        const packMinutes = charge.metadata?.minutes;
+        if (chargeType === "minute_pack" && packMinutes) {
+          try {
+            const minutesToReverse = parseInt(packMinutes, 10);
+            if (minutesToReverse > 0) {
+              // Deduct the previously credited minutes
+              const { data: currentBalance } = await db
+                .from("workspace_minute_balance")
+                .select("bonus_minutes")
+                .eq("workspace_id", workspaceId)
+                .maybeSingle();
+              const currentBonus = (currentBalance as { bonus_minutes?: number } | null)?.bonus_minutes ?? 0;
+              const newBonus = Math.max(0, currentBonus - minutesToReverse);
+              await db
+                .from("workspace_minute_balance")
+                .update({ bonus_minutes: newBonus, updated_at: new Date().toISOString() })
+                .eq("workspace_id", workspaceId);
+              log("info", "billing_webhook.refund_minutes_reversed", {
+                workspace_id: workspaceId,
+                minutes_reversed: minutesToReverse,
+                new_balance: newBonus,
+              });
+            }
+          } catch (refundErr) {
+            log("error", "billing_webhook.refund_minute_reversal_failed", {
+              workspace_id: workspaceId,
+              error: refundErr instanceof Error ? refundErr.message : String(refundErr),
+            });
+          }
+        }
+
+        // Clear dunning state if the refund resolves the outstanding amount
+        try {
+          await resolvePaymentObligationsBySubject(workspaceId, "charge", charge.id, "written_off");
+        } catch {
+          // Non-blocking
+        }
       }
       break;
     }
