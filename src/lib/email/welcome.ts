@@ -24,6 +24,7 @@ export async function sendWelcomeEmail(email: string, nameOrBusiness?: string | 
         Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
       },
       body: JSON.stringify({ from: FROM, to: email, subject, html }),
+      signal: AbortSignal.timeout(10_000),
     });
     return res.ok;
   } catch {
@@ -75,6 +76,7 @@ export async function sendGoLiveEmail(email: string, workspaceName?: string | nu
         Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
       },
       body: JSON.stringify({ from: FROM, to: email, subject, html }),
+      signal: AbortSignal.timeout(10_000),
     });
     return res.ok;
   } catch {

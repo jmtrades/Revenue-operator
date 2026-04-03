@@ -158,6 +158,7 @@ export async function sendEmail(
         subject,
         html: bodyHtml,
       }),
+      signal: AbortSignal.timeout(10_000),
     });
 
     const json = (await res.json()) as { id?: string; message?: string };

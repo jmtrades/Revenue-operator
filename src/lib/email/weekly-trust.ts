@@ -61,7 +61,7 @@ export async function sendWeeklyTrustEmails(): Promise<Array<{ workspaceId: stri
           .from("call_sessions")
           .select("id", { count: "exact", head: true })
           .eq("workspace_id", workspaceId)
-          .gte("started_at", weekStart.toISOString()),
+          .gte("call_started_at", weekStart.toISOString()),
         db
           .from("leads")
           .select("id", { count: "exact", head: true })
@@ -117,6 +117,7 @@ export async function sendWeeklyTrustEmails(): Promise<Array<{ workspaceId: stri
             subject,
             text: body,
           }),
+          signal: AbortSignal.timeout(10_000),
         });
         results.push({ workspaceId, email, sent: res.ok });
       } else {

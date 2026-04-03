@@ -110,7 +110,12 @@ export async function POST(req: NextRequest) {
         if (!insertErr && created) {
           workspaceId = (created as { id: string }).id;
           await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
-          await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
+          const { error: memberErr } = await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
+          if (memberErr) {
+            log("error", "[signup] workspace_members insert failed — user may be locked out", { workspaceId, userId, error: memberErr.message });
+            // Retry once
+            await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
+          }
           await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing", trial_ends_at: trialEnd.toISOString() });
           try { await db.from("workspace_business_context").insert({ workspace_id: workspaceId, business_name: businessName || "My Business" }); } catch { /* non-fatal */ }
         }
@@ -181,7 +186,12 @@ export async function POST(req: NextRequest) {
         if (!createErr && created) {
           workspaceId = (created as { id: string }).id;
           await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
-          await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
+          const { error: memberErr } = await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
+          if (memberErr) {
+            log("error", "[signup] workspace_members insert failed — user may be locked out", { workspaceId, userId, error: memberErr.message });
+            // Retry once
+            await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
+          }
           await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing", trial_ends_at: trialEnd.toISOString() });
           try { await db.from("workspace_business_context").insert({ workspace_id: workspaceId, business_name: businessName || "My Business" }); } catch { /* non-fatal */ }
         }

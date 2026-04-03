@@ -61,6 +61,7 @@ Open: https://www.recall-touch.com/app/dashboard`;
             subject,
             text: body,
           }),
+          signal: AbortSignal.timeout(10_000),
         });
         results.push({ workspaceId, email, sent: res.ok });
       } else {

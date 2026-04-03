@@ -71,6 +71,7 @@ export async function sendAgentLiveEmail(workspaceId: string): Promise<boolean> 
           Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
         },
         body: JSON.stringify({ from: FROM, to: email, subject, html }),
+        signal: AbortSignal.timeout(10_000),
       });
       return res.ok;
     }

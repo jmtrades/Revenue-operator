@@ -55,7 +55,11 @@ export async function GET(request: Request) {
           const trialEnd = new Date();
           trialEnd.setDate(trialEnd.getDate() + 14);
           await db.from("settings").insert({ workspace_id: newWsId, risk_level: "balanced" });
-          await db.from("workspace_members").insert({ workspace_id: newWsId, user_id: userId, role: "owner" });
+          const { error: memberErr } = await db.from("workspace_members").insert({ workspace_id: newWsId, user_id: userId, role: "owner" });
+          if (memberErr) {
+            // Retry once — if this fails, user is locked out of their workspace
+            await db.from("workspace_members").insert({ workspace_id: newWsId, user_id: userId, role: "owner" });
+          }
           await db.from("workspace_billing").insert({ workspace_id: newWsId, plan: "trial", status: "trialing", trial_ends_at: trialEnd.toISOString() });
           await db.from("workspaces").update({ billing_status: "trial", trial_ends_at: trialEnd.toISOString() }).eq("id", newWsId);
           try { await db.from("workspace_business_context").insert({ workspace_id: newWsId, business_name: "My workspace" }); } catch { /* non-fatal */ }

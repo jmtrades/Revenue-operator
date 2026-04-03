@@ -41,6 +41,7 @@ Open: https://www.recall-touch.com/app/dashboard`;
           subject,
           text: body,
         }),
+        signal: AbortSignal.timeout(10_000),
       });
       return res.ok;
     }

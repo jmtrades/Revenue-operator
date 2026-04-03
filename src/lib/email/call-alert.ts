@@ -90,6 +90,7 @@ export async function sendCallOutcomeEmail(input: {
         subject,
         html,
       }),
+      signal: AbortSignal.timeout(10_000),
     });
     return res.ok;
   } catch {
