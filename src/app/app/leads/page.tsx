@@ -940,6 +940,9 @@ export default function LeadsPage() {
         )}
 
         {/* Table + mobile list */}
+        <div aria-live="polite" aria-atomic="true" className="sr-only">
+          {loading ? "Loading leads..." : error ? error : `${filteredLeads.length} leads loaded`}
+        </div>
         <div className={view === "board" ? "hidden md:block" : ""}>
           <LeadsList
             loading={loading}

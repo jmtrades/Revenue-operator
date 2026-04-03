@@ -417,6 +417,9 @@ export default function CallsPage() {
         </div>
       </div>
 
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {loading ? "Loading calls..." : error ? error : `${records.length} calls loaded`}
+      </div>
       {loading ? (
         <div className="mt-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
           <div className="flex items-center justify-between gap-4 mb-4">
@@ -485,14 +488,14 @@ export default function CallsPage() {
         <table className="w-full text-sm">
           <thead className="border-b border-[var(--border-default)] bg-[var(--bg-surface)]">
             <tr>
-              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.dateTime", { defaultValue: "Date / time" })}</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.caller", { defaultValue: "Caller" })}</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.phone", { defaultValue: "Phone" })}</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.duration", { defaultValue: "Duration" })}</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.outcome", { defaultValue: "Outcome" })}</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.sentiment", { defaultValue: "Sentiment" })}</th>
-              <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.agent", { defaultValue: "Agent" })}</th>
-              <th className="py-3 px-4 text-right text-xs font-medium text-[var(--text-secondary)] w-20" aria-label={t("calls.table.actions", { defaultValue: "Actions" })} />
+              <th scope="col" className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.dateTime", { defaultValue: "Date / time" })}</th>
+              <th scope="col" className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.caller", { defaultValue: "Caller" })}</th>
+              <th scope="col" className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.phone", { defaultValue: "Phone" })}</th>
+              <th scope="col" className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.duration", { defaultValue: "Duration" })}</th>
+              <th scope="col" className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.outcome", { defaultValue: "Outcome" })}</th>
+              <th scope="col" className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.sentiment", { defaultValue: "Sentiment" })}</th>
+              <th scope="col" className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">{t("calls.table.agent", { defaultValue: "Agent" })}</th>
+              <th scope="col" className="py-3 px-4 text-right text-xs font-medium text-[var(--text-secondary)] w-20" aria-label={t("calls.table.actions", { defaultValue: "Actions" })} />
             </tr>
           </thead>
           <tbody>
@@ -552,18 +555,18 @@ export default function CallsPage() {
                       <button
                         type="button"
                         aria-label={t("calls.playRecording")}
-                        className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
+                        className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
                         onClick={() => handleRowClick(c.id)}
                       >
-                        <Play className="h-3.5 w-3.5" />
+                        <Play className="h-4 w-4" />
                       </button>
                       <button
                         type="button"
                         aria-label={t("calls.viewTranscript")}
-                        className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
+                        className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
                         onClick={() => handleRowClick(c.id)}
                       >
-                        <FileText className="h-3.5 w-3.5" />
+                        <FileText className="h-4 w-4" />
                       </button>
                     </div>
                   </td>

@@ -167,13 +167,13 @@ function ApiKeysTab({
         <table className="w-full text-left text-sm">
           <thead className="bg-[var(--bg-card)]/80 border-b border-[var(--border-default)]">
             <tr>
-              <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tableLabel")}</th>
-              <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tableKey")}</th>
-              <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tablePermissions")}</th>
-              <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tableCreated")}</th>
-              <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tableLastUsed")}</th>
-              <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tableStatus")}</th>
-              <th className="w-10" />
+              <th scope="col" className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tableLabel")}</th>
+              <th scope="col" className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tableKey")}</th>
+              <th scope="col" className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tablePermissions")}</th>
+              <th scope="col" className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tableCreated")}</th>
+              <th scope="col" className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tableLastUsed")}</th>
+              <th scope="col" className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tableStatus")}</th>
+              <th scope="col" className="w-10" />
             </tr>
           </thead>
           <tbody>
@@ -275,8 +275,8 @@ function ApiKeysTab({
 
       {/* Create key modal */}
       {createModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)]" onClick={(e) => e.target === e.currentTarget && setCreateModal(false)}>
-          <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)]" onClick={(e) => e.target === e.currentTarget && setCreateModal(false)} onKeyDown={(e) => e.key === "Escape" && setCreateModal(false)}>
+          <div role="dialog" aria-modal="true" aria-label={t("createApiKey")} className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">{t("createApiKey")}</h3>
             <div className="space-y-4">
               <div>
@@ -323,8 +323,8 @@ function ApiKeysTab({
 
       {/* New key shown once */}
       {newKeyModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)]" onClick={(e) => e.target === e.currentTarget && setNewKeyModal(null)}>
-          <div className="bg-[var(--bg-card)] border border-[var(--accent-warning,#f59e0b)]/30 rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)]" onClick={(e) => e.target === e.currentTarget && setNewKeyModal(null)} onKeyDown={(e) => e.key === "Escape" && setNewKeyModal(null)}>
+          <div role="dialog" aria-modal="true" aria-label={t("apiKeyCreatedTitle", { label: newKeyModal.label })} className="bg-[var(--bg-card)] border border-[var(--accent-warning,#f59e0b)]/30 rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-[var(--accent-warning,#f59e0b)]/80 mb-2">{t("apiKeyCreatedTitle", { label: newKeyModal.label })}</h3>
             <p className="text-sm text-[var(--accent-warning,#f59e0b)]/80/80 mb-4">{t("saveKeyWarning")}</p>
             <div className="p-3 rounded-xl bg-[var(--bg-inset)] border border-[var(--border-medium)] mb-4">
@@ -483,8 +483,8 @@ function WebhooksTab({
       </div>
 
       {addModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)] overflow-y-auto" onClick={(e) => e.target === e.currentTarget && setAddModal(false)}>
-          <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-md p-6 my-8" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)] overflow-y-auto" onClick={(e) => e.target === e.currentTarget && setAddModal(false)} onKeyDown={(e) => e.key === "Escape" && setAddModal(false)}>
+          <div role="dialog" aria-modal="true" aria-label={t("addWebhookTitle")} className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-md p-6 my-8" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">{t("addWebhookTitle")}</h3>
             <div className="space-y-4">
               <div>
@@ -525,8 +525,8 @@ function WebhooksTab({
       )}
 
       {payloadModal !== null && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)]" onClick={(e) => e.target === e.currentTarget && setPayloadModal(null)}>
-          <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)]" onClick={(e) => e.target === e.currentTarget && setPayloadModal(null)} onKeyDown={(e) => e.key === "Escape" && setPayloadModal(null)}>
+          <div role="dialog" aria-modal="true" aria-label={t("payload")} className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between p-4 border-b border-[var(--border-default)]">
               <h3 className="text-sm font-semibold text-[var(--text-primary)]">{t("payload")}</h3>
               <button type="button" onClick={() => setPayloadModal(null)} className="p-2 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:outline-none transition" aria-label={t("close")}><X className="w-4 h-4" /></button>
@@ -597,11 +597,11 @@ function EventLogTab({ events, kindFilter, statusFilter, onKindFilter, onStatusF
         <table className="w-full text-left text-sm">
           <thead className="bg-[var(--bg-card)]/80 border-b border-[var(--border-default)]">
             <tr>
-              <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("time")}</th>
-              <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("event")}</th>
-              <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("endpointUrl")}</th>
-              <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("status")}</th>
-              <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("responseTime")}</th>
+              <th scope="col" className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("time")}</th>
+              <th scope="col" className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("event")}</th>
+              <th scope="col" className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("endpointUrl")}</th>
+              <th scope="col" className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("status")}</th>
+              <th scope="col" className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("responseTime")}</th>
             </tr>
           </thead>
           <tbody>
