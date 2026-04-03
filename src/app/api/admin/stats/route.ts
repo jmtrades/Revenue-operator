@@ -183,7 +183,7 @@ export async function GET(req: NextRequest) {
         voiceServerLatencyMs = Date.now() - start;
         voiceServerHealth = (await resp.json().catch(() => null)) as Record<string, unknown> | null;
 
-        const statusResp = await fetch(`${voiceUrl}/status`, { method: "GET", cache: "no-store" }).catch(() => null);
+        const statusResp = await fetch(`${voiceUrl}/status`, { method: "GET", cache: "no-store", signal: AbortSignal.timeout(10_000) }).catch(() => null);
         if (statusResp?.ok) voiceServerStatus = (await statusResp.json().catch(() => null)) as Record<string, unknown> | null;
       }
     }

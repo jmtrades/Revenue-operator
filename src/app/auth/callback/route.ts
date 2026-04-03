@@ -7,7 +7,9 @@ import { getBaseUrl } from "@/lib/runtime/base-url";
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/app/dashboard";
+  const rawNext = searchParams.get("next") ?? "/app/dashboard";
+  // Sanitize: only allow relative paths starting with / to prevent open redirects
+  const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/app/dashboard";
   const origin = getBaseUrl(new URL(request.url).origin);
 
   if (!code) {

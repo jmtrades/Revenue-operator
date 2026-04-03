@@ -97,6 +97,7 @@ export async function POST(req: NextRequest) {
         cookie: req.headers.get("cookie") ?? "",
       },
       body: JSON.stringify({ phone_number: phone }),
+      signal: AbortSignal.timeout(15_000),
     });
     const data = await delegated.json().catch(() => ({}));
     return NextResponse.json(data, { status: delegated.status });
