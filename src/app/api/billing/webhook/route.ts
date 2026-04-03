@@ -888,6 +888,50 @@ async function handleStripeWebhookEvent(
       break;
     }
 
+    case "customer.subscription.created": {
+      // Subscription creation is primarily handled by checkout.session.completed.
+      // This handler exists as defense-in-depth for subscriptions created outside
+      // the checkout flow (e.g., Stripe dashboard, API). We delegate to the same
+      // logic as subscription.updated to keep workspace billing state in sync.
+      const createdSub = event.data.object as Stripe.Subscription & { current_period_end?: number; trial_end?: number; status?: string };
+      const createdWsId = createdSub.metadata?.workspace_id;
+      const createdWorkspaceId = createdWsId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(createdWsId) ? createdWsId : undefined;
+      if (createdWorkspaceId) {
+        const isTrialing = createdSub.status === "trialing";
+        const periodEnd = createdSub.current_period_end;
+        const trialEnd = createdSub.trial_end;
+        const trialEndAt = trialEnd ? new Date(trialEnd * 1000) : null;
+        const renewsAt = isTrialing && trialEnd
+          ? new Date(trialEnd * 1000)
+          : periodEnd
+            ? new Date(periodEnd * 1000)
+            : null;
+        const firstPriceId = createdSub.items?.data?.[0]?.price
+          ? (typeof createdSub.items.data[0].price === "string" ? createdSub.items.data[0].price : createdSub.items.data[0].price?.id)
+          : null;
+        const tierInterval = priceIdToTierAndInterval(firstPriceId);
+        const updatePayload: Record<string, unknown> = {
+          billing_status: isTrialing ? "trial" : createdSub.status === "active" ? "active" : "paused",
+          stripe_subscription_id: createdSub.id,
+          protection_renewal_at: renewsAt?.toISOString() ?? null,
+          trial_ends_at: trialEndAt?.toISOString() ?? null,
+          trial_end_at: trialEndAt?.toISOString() ?? null,
+          renews_at: renewsAt?.toISOString() ?? null,
+          updated_at: new Date().toISOString(),
+        };
+        if (tierInterval) {
+          updatePayload.billing_tier = tierToDbValue(tierInterval.tier);
+          updatePayload.billing_interval = tierInterval.interval;
+        }
+        const { error: wsErr } = await db.from("workspaces").update(updatePayload).eq("id", createdWorkspaceId);
+        if (wsErr) {
+          log("error", "billing_webhook.subscription_created_update_failed", { workspace_id: createdWorkspaceId, error: wsErr.message });
+        }
+        log("info", "billing_webhook.subscription_created", { workspace_id: createdWorkspaceId, status: createdSub.status });
+      }
+      break;
+    }
+
     default:
       break;
   }
