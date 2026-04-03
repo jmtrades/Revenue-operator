@@ -20,6 +20,16 @@ export async function GET(req: NextRequest) {
   const authErr = await requireWorkspaceAccess(req, session.workspaceId);
   if (authErr) return authErr;
 
+  // API access is a premium feature
+  const { canUseFeature } = await import("@/lib/billing/plan-enforcement");
+  const gate = await canUseFeature(session.workspaceId, "apiAccess");
+  if (!gate.allowed) {
+    return NextResponse.json({
+      error: gate.message ?? "API integrations require a higher plan.",
+      upgradeTo: gate.upgradeTo,
+    }, { status: 403 });
+  }
+
   const redirectUri = req.nextUrl.searchParams.get("redirect_uri");
   const state = req.nextUrl.searchParams.get("state");
   if (!redirectUri) return NextResponse.json({ error: "redirect_uri required" }, { status: 400 });

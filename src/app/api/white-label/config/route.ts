@@ -61,6 +61,15 @@ export async function PATCH(req: NextRequest) {
   const err = await requireWorkspaceAccess(req, session.workspaceId);
   if (err) return err;
 
+  const { canUseFeature } = await import("@/lib/billing/plan-enforcement");
+  const gate = await canUseFeature(session.workspaceId, "whiteLabel");
+  if (!gate.allowed) {
+    return NextResponse.json({
+      error: gate.message ?? "White-label customization requires the Enterprise plan.",
+      upgradeTo: gate.upgradeTo,
+    }, { status: 403 });
+  }
+
   let body: WhiteLabelConfig;
   try {
     body = (await req.json()) as WhiteLabelConfig;

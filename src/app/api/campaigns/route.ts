@@ -131,6 +131,16 @@ export async function POST(request: NextRequest) {
     const authErr = await requireWorkspaceAccess(request, body.workspace_id);
     if (authErr) return authErr;
 
+    // Outbound campaigns require a plan that includes them
+    const { canUseFeature } = await import("@/lib/billing/plan-enforcement");
+    const gate = await canUseFeature(body.workspace_id, "outboundCampaigns");
+    if (!gate.allowed) {
+      return NextResponse.json({
+        error: gate.message ?? "Outbound campaigns require a higher plan.",
+        upgradeTo: gate.upgradeTo,
+      }, { status: 403 });
+    }
+
     const db = getDb();
 
     // Resolve from_number: if "workspace_default" or missing, look up workspace phone config
