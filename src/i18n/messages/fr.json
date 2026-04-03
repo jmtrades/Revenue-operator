@@ -530,7 +530,8 @@
     },
     "signingIn": "Connexion…",
     "savePassword": "Enregistrer le mot de passe",
-    "genericError": "An unexpected error occurred"
+    "genericError": "An unexpected error occurred",
+    "checkingSession": "Vérification de la session..."
   },
   "billing": {
     "pageTitle": "Facturation — Revenue Operator",
@@ -6900,7 +6901,15 @@
     "title": "Errors",
     "unauthorized": "Unauthorized",
     "updateFailed": "Update failed",
-    "emptyTemplate": "At least one message template is required."
+    "emptyTemplate": "At least one message template is required.",
+    "oops": "Oups",
+    "temporaryIssue": "Problème temporaire",
+    "errorDescription": "Cette page a rencontré un problème de chargement. Vos données sont en sécurité — essayez de rafraîchir ou retournez au tableau de bord.",
+    "errorId": "ID d'erreur",
+    "backToDashboard": "Retour au tableau de bord",
+    "notFoundTitle": "Page introuvable",
+    "notFoundHeading": "Cette page n'existe pas",
+    "notFoundDescription": "La page que vous cherchez n'a pas été trouvée dans votre espace de travail."
   },
   "forms": {
     "validation": {

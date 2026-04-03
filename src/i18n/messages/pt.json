@@ -532,7 +532,8 @@
     },
     "signingIn": "Entrando…",
     "savePassword": "Salvar senha",
-    "genericError": "An unexpected error occurred"
+    "genericError": "An unexpected error occurred",
+    "checkingSession": "Verificando sessão..."
   },
   "billing": {
     "pageTitle": "Faturamento — Revenue Operator",
@@ -6902,7 +6903,15 @@
     "title": "Errors",
     "unauthorized": "Unauthorized",
     "updateFailed": "Update failed",
-    "emptyTemplate": "At least one message template is required."
+    "emptyTemplate": "At least one message template is required.",
+    "oops": "Ops",
+    "temporaryIssue": "Problema temporário",
+    "errorDescription": "Esta página teve um problema ao carregar. Seus dados estão seguros — tente atualizar ou volte ao painel.",
+    "errorId": "ID do erro",
+    "backToDashboard": "Voltar ao painel",
+    "notFoundTitle": "Página não encontrada",
+    "notFoundHeading": "Esta página não existe",
+    "notFoundDescription": "A página que você procura não foi encontrada no seu espaço de trabalho."
   },
   "forms": {
     "validation": {

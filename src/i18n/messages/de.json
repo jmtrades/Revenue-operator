@@ -532,7 +532,8 @@
     },
     "signingIn": "Anmeldung…",
     "savePassword": "Passwort speichern",
-    "genericError": "An unexpected error occurred"
+    "genericError": "An unexpected error occurred",
+    "checkingSession": "Sitzung wird überprüft..."
   },
   "billing": {
     "pageTitle": "Abrechnung — Revenue Operator",
@@ -6908,7 +6909,15 @@
     "title": "Errors",
     "unauthorized": "Unauthorized",
     "updateFailed": "Update failed",
-    "emptyTemplate": "At least one message template is required."
+    "emptyTemplate": "At least one message template is required.",
+    "oops": "Hoppla",
+    "temporaryIssue": "Vorübergehendes Problem",
+    "errorDescription": "Diese Seite hatte ein Problem beim Laden. Ihre Daten sind sicher — versuchen Sie zu aktualisieren oder gehen Sie zum Dashboard zurück.",
+    "errorId": "Fehler-ID",
+    "backToDashboard": "Zurück zum Dashboard",
+    "notFoundTitle": "Seite nicht gefunden",
+    "notFoundHeading": "Diese Seite existiert nicht",
+    "notFoundDescription": "Die gesuchte Seite wurde in Ihrem Arbeitsbereich nicht gefunden."
   },
   "forms": {
     "validation": {

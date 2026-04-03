@@ -606,7 +606,8 @@
       "signInFailed": "Sign-in could not be completed. Please try again."
     },
     "signingIn": "Signing in…",
-    "savePassword": "Save password"
+    "savePassword": "Save password",
+    "checkingSession": "Checking session..."
   },
   "signUp": {
     "title": "Create your account",
@@ -7076,7 +7077,15 @@
     "updateFailed": "Update failed",
     "emptyTemplate": "At least one message template is required.",
     "loadAgentsError": "Could not load operators.",
-    "agentsAppearHere": "Operators appear here."
+    "agentsAppearHere": "Operators appear here.",
+    "oops": "Oops",
+    "temporaryIssue": "Temporary issue",
+    "errorDescription": "This page ran into an issue loading. Your data is safe — try refreshing, or go back to the dashboard.",
+    "errorId": "Error ID",
+    "backToDashboard": "Back to dashboard",
+    "notFoundTitle": "Page not found",
+    "notFoundHeading": "This page doesn't exist",
+    "notFoundDescription": "The page you're looking for couldn't be found in your workspace."
   },
   "forms": {
     "validation": {

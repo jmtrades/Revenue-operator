@@ -117,7 +117,7 @@ export default function SignInForm() {
           <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl p-8 shadow-[var(--shadow-xl)] flex items-center justify-center min-h-[400px]">
             <div className="flex flex-col items-center gap-3">
               <Loader2 className="w-6 h-6 animate-spin text-[var(--accent-primary)]" />
-              <p className="text-sm text-[var(--text-secondary)]">Checking session...</p>
+              <p className="text-sm text-[var(--text-secondary)]">{t("checkingSession")}</p>
             </div>
           </div>
         </div>
