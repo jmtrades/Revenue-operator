@@ -1,4 +1,4 @@
-export type StepId = 1 | 2 | 3 | 4;
+export type StepId = 1 | 2 | 3 | 4 | 5 | 6;
 
 export type AgentTemplateId = string;
 
@@ -72,9 +72,11 @@ export const GOAL_OPTIONS = [
 
 export const STEPS: { id: StepId; label: string }[] = [
   { id: 1, label: "Choose your plan" },
-  { id: 2, label: "Your Business" },
+  { id: 2, label: "Your Goals" },
   { id: 3, label: "Connect Phone" },
-  { id: 4, label: "Go Live" },
+  { id: 4, label: "Your Business" },
+  { id: 5, label: "Customize Agent" },
+  { id: 6, label: "Go Live" },
 ];
 
 export const DAYS: DayId[] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];

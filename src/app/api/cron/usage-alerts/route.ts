@@ -12,6 +12,7 @@ import { getDb } from "@/lib/db/queries";
 import { assertCronAuthorized } from "@/lib/runtime";
 import { checkUsageThresholds, getUsageAlertLevel } from "@/lib/billing/overage";
 import { sendEmail } from "@/lib/integrations/email";
+import { createWorkspaceNotification } from "@/lib/notifications";
 import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
@@ -117,6 +118,20 @@ export async function GET(req: NextRequest) {
                     ? `<p>You’ve used <strong>${usage.minutes_used}/${usage.minutes_limit}</strong> minutes this month (80%).</p><p>Consider upgrading before you hit your limit.</p><p><a href="${appUrl}/app/settings/billing">View billing</a></p>`
                     : `<p>You’ve used <strong>${usage.minutes_used}/${usage.minutes_limit}</strong> minutes this month (50%).</p><p>You’re on pace — just a heads-up so there are no surprises.</p><p><a href="${appUrl}/app/settings/billing">View usage</a></p>`;
                 await sendEmail(wsData.id, email, subject, body, { template_slug: "usage_alert" }).catch(() => ({ ok: false }));
+                // In-app notification so users see alerts even without email
+                const notifTitle =
+                  threshold === "100"
+                    ? "Minutes limit exceeded"
+                    : threshold === "80"
+                    ? "80% of monthly minutes used"
+                    : "50% of monthly minutes used";
+                const notifBody = `You've used ${usage.minutes_used} of ${usage.minutes_limit} included minutes this month.`;
+                await createWorkspaceNotification(wsData.id, {
+                  type: "billing_event",
+                  title: notifTitle,
+                  body: notifBody,
+                  metadata: { threshold, minutes_used: usage.minutes_used, minutes_limit: usage.minutes_limit },
+                }).catch(() => {});
                 const nextState: Record<string, string> = { ...state, [sentKey]: new Date().toISOString() };
                 await db
                   .from("settings")

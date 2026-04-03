@@ -109,13 +109,12 @@ export function ActivateWizard() {
   const goNext = useCallback(() => {
     if (!canGoNext) return;
     const current = step;
-    if (current >= 1 && current <= 4) {
-      const name =
-        current === 1 ? "plan" : current === 2 ? "goals" : current === 3 ? "phone" : "activate";
-      track("onboarding_step_completed", { step: current, name });
+    const stepNames: Record<number, string> = { 1: "plan", 2: "goals", 3: "phone", 4: "business", 5: "customize", 6: "activate" };
+    if (stepNames[current]) {
+      track("onboarding_step_completed", { step: current, name: stepNames[current] });
     }
     setStep((prev) => {
-      const next = prev < 4 ? ((prev + 1) as StepId) : prev;
+      const next = prev < 6 ? ((prev + 1) as StepId) : prev;
       if (prev === 2) {
         try {
           const bn = state.businessName.trim();
@@ -377,7 +376,7 @@ export function ActivateWizard() {
 
         <section
           className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-inset)] px-5 py-6 md:px-7 md:py-7 shadow-[0_18px_50px_rgba(15,23,42,0.7)] transition-[opacity,transform] duration-200"
-          onKeyDown={step <= 3 ? handleKeyDownAdvance : undefined}
+          onKeyDown={step <= 5 ? handleKeyDownAdvance : undefined}
         >
           {step === 1 && (
             <PlanStep
@@ -400,35 +399,31 @@ export function ActivateWizard() {
             />
           )}
           {step === 4 && (
-            <div className="space-y-8">
-              <PackBusinessStep state={state} setState={setState} goNext={goNext} canGoNext={canGoNext} />
-              <div className="border-t border-[var(--border-default)] pt-8">
-                <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--text-tertiary)] mb-4">Step 2 — Customize Your Agent</p>
-              </div>
-              <CustomizeStep
-                state={state}
-                setState={setState}
-                voices={voices}
-                industryServices={industryServices}
-                effectiveServices={effectiveServices}
-                onPlayGreeting={handlePlayTestGreeting}
-                goBack={goBack}
-                goNext={goNext}
-                canGoNext={canGoNext}
-              />
-              <div className="border-t border-[var(--border-default)] pt-8">
-                <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--text-tertiary)] mb-4">Step 3 — Go Live</p>
-              </div>
-              <ActivateStep
-                onFinalize={handleFinalize}
-                goBack={goBack}
-                finalizing={finalizing}
-                phoneNumber={state.businessPhone}
-                agentName={state.agentName}
-                voiceId={state.voiceId}
-                greeting={state.greeting}
-              />
-            </div>
+            <PackBusinessStep state={state} setState={setState} goNext={goNext} canGoNext={canGoNext} />
+          )}
+          {step === 5 && (
+            <CustomizeStep
+              state={state}
+              setState={setState}
+              voices={voices}
+              industryServices={industryServices}
+              effectiveServices={effectiveServices}
+              onPlayGreeting={handlePlayTestGreeting}
+              goBack={goBack}
+              goNext={goNext}
+              canGoNext={canGoNext}
+            />
+          )}
+          {step === 6 && (
+            <ActivateStep
+              onFinalize={handleFinalize}
+              goBack={goBack}
+              finalizing={finalizing}
+              phoneNumber={state.businessPhone}
+              agentName={state.agentName}
+              voiceId={state.voiceId}
+              greeting={state.greeting}
+            />
           )}
         </section>
       </div>

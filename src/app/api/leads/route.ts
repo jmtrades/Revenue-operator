@@ -185,27 +185,56 @@ export async function POST(req: NextRequest) {
       (ws as { webhook_url?: string | null } | null)?.webhook_url?.toString().trim() ??
       "";
     if (webhookUrl && isSafeExternalUrl(webhookUrl)) {
-      // Fire-and-forget CRM webhook for lead capture (SSRF-safe)
-      void fetch(webhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          event: "lead.created",
-          timestamp: new Date().toISOString(),
-          data: {
-            lead: {
-              id: createdLead.id,
-              name: (createdLead.name ?? "").toString().trim() || null,
-              phone: (createdLead.phone ?? "").toString().trim() || null,
-              email: (createdLead.email ?? "").toString().trim() || null,
-              score,
-            },
-            source: metadata.source,
+      // Fire-and-forget CRM webhook with retry (3 attempts, exponential backoff)
+      const payload = JSON.stringify({
+        event: "lead.created",
+        timestamp: new Date().toISOString(),
+        data: {
+          lead: {
+            id: createdLead.id,
+            name: (createdLead.name ?? "").toString().trim() || null,
+            phone: (createdLead.phone ?? "").toString().trim() || null,
+            email: (createdLead.email ?? "").toString().trim() || null,
+            score,
           },
-        }),
-      }).catch((err) => {
-        log("warn", "[leads] Webhook delivery failed:", { detail: err instanceof Error ? err.message : String(err) });
+          source: metadata.source,
+        },
       });
+      void (async () => {
+        const maxAttempts = 3;
+        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+          try {
+            const res = await fetch(webhookUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: payload,
+              signal: AbortSignal.timeout(10_000),
+            });
+            if (res.ok) return;
+            if (res.status >= 400 && res.status < 500) {
+              log("warn", "[leads] Webhook rejected (4xx, no retry)", { status: res.status, lead_id: createdLead.id });
+              return;
+            }
+            log("warn", "[leads] Webhook attempt failed", { attempt, status: res.status, lead_id: createdLead.id });
+          } catch (err) {
+            log("warn", "[leads] Webhook attempt error", { attempt, detail: err instanceof Error ? err.message : String(err), lead_id: createdLead.id });
+          }
+          if (attempt < maxAttempts) await new Promise((r) => setTimeout(r, attempt * 2000));
+        }
+        // Store failed delivery for manual retry via dead-letter
+        try {
+          await db.from("webhook_deliveries").insert({
+            workspace_id: workspaceId,
+            url: webhookUrl,
+            payload,
+            status: "failed",
+            attempts: maxAttempts,
+            last_error: "Exhausted retries",
+          });
+        } catch {
+          log("error", "[leads] Failed to store webhook dead-letter", { lead_id: createdLead.id, workspace_id: workspaceId });
+        }
+      })();
     }
   } catch {
     // Do not block lead creation on webhook issues
