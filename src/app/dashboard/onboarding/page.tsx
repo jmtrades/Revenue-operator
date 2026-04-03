@@ -18,7 +18,16 @@ import {
 } from "lucide-react";
 
 const STEPS = 5;
-const INDUSTRY_VALUES = ["home_services", "healthcare", "legal", "real_estate", "insurance", "b2b_sales", "local_business", "contractors"] as const;
+const INDUSTRY_VALUES = [
+  "home_services", "healthcare", "dental", "medical", "legal", "real_estate", "insurance",
+  "b2b_sales", "contractors", "plumbing", "hvac", "electrical", "roofing", "landscaping",
+  "cleaning", "veterinary", "mental_health", "accounting", "financial_services",
+  "salon", "spa", "fitness", "restaurant", "catering", "retail", "auto",
+  "property_mgmt", "construction", "education", "nonprofit", "tech", "marketing",
+  "events", "travel", "logistics", "manufacturing", "photography", "pet_services",
+  "childcare", "senior_care", "moving", "security", "solar", "consulting",
+  "professional_services", "other",
+] as const;
 const AGENT_NAMES = ["Sarah", "Alex", "Emma", "James", "Rachel", "Charlotte"];
 const VOICE_IDS = [
   "us-female-warm-receptionist",   // Sarah — warm & welcoming

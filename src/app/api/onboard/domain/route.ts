@@ -10,7 +10,40 @@ import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
 
-const ALLOWED_DOMAINS = ["real_estate", "clinic", "finance", "recruiting", "home_services", "generic"] as const;
+/** Map any industry to the closest domain pack for compliance/strategy config. */
+const DOMAIN_MAPPING: Record<string, string> = {
+  real_estate: "real_estate",
+  property_mgmt: "real_estate",
+  clinic: "clinic",
+  healthcare: "clinic",
+  dental: "clinic",
+  medical: "clinic",
+  veterinary: "clinic",
+  mental_health: "clinic",
+  spa: "clinic",
+  fitness: "clinic",
+  senior_care: "clinic",
+  finance: "finance",
+  financial_services: "finance",
+  insurance: "finance",
+  accounting: "finance",
+  recruiting: "recruiting",
+  home_services: "home_services",
+  plumbing: "home_services",
+  hvac: "home_services",
+  electrical: "home_services",
+  roofing: "home_services",
+  landscaping: "home_services",
+  cleaning: "home_services",
+  construction: "home_services",
+  contractors: "home_services",
+  solar: "home_services",
+  moving: "home_services",
+  security: "home_services",
+  legal: "home_services",
+  auto: "home_services",
+  generic: "general",
+};
 
 export async function POST(req: NextRequest) {
   const csrfBlock = assertSameOrigin(req);
@@ -29,10 +62,8 @@ export async function POST(req: NextRequest) {
   }
   const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;
-  const domain = domainType && ALLOWED_DOMAINS.includes(domainType as (typeof ALLOWED_DOMAINS)[number])
-    ? domainType === "generic"
-      ? "general"
-      : domainType
+  const domain = domainType
+    ? DOMAIN_MAPPING[domainType] ?? "general"
     : "general";
 
   const db = getDb();
