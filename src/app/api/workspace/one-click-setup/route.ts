@@ -5,7 +5,6 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getDb } from "@/lib/db/queries";
 import {
-  scrapeAndAnalyze,
   generateBusinessIntelligence,
   type SetupInput,
 } from "@/lib/ai/website-intelligence";

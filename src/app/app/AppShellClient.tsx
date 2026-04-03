@@ -13,7 +13,6 @@ import { safeGetItem, safeSetItem } from "@/lib/client/safe-storage";
 import {
   LayoutList,
   PhoneCall,
-  Users,
   Megaphone,
   MessageSquare,
   BarChart3,
@@ -24,15 +23,11 @@ import {
   PanelLeftOpen,
   Command as CommandIcon,
   Check,
-  BookOpen,
   Clock,
-  CreditCard,
   LogOut,
   Bot,
   CalendarCheck,
   UserPlus,
-  Plug,
-  FileText,
   RotateCcw,
 } from "lucide-react";
 import { cn } from "@/lib/cn";

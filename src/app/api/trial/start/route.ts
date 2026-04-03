@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
         if (ws) {
           const wid = (ws as { id: string }).id;
           const wsData = ws as { billing_status?: string; stripe_subscription_id?: string | null };
-          const hasActiveSubscription = wsData.billing_status === "trial" || wsData.billing_status === "active" || wsData.stripe_subscription_id;
+          const hasActiveSubscription = wsData.billing_status === "pending" || wsData.billing_status === "trial" || wsData.billing_status === "active" || wsData.stripe_subscription_id;
           if (hasActiveSubscription) {
             log("trial_start_succeeded", { workspace_id: wid, reason: "already_active" });
             return jsonWithSession({ ok: true, reason: "already_active", workspace_id: wid }, uid, wid);

@@ -10,7 +10,6 @@ import {
   Check,
   Bell,
   Plug,
-  AlertCircle,
   Loader,
 } from "lucide-react";
 import { cn } from "@/lib/cn";

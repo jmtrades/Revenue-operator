@@ -3,12 +3,10 @@
 import { useEffect, useState, useCallback } from "react";
 import {
   Brain,
-  TrendingUp,
   Zap,
   MessageSquare,
   Target,
   ArrowUpRight,
-  ArrowDownRight,
 } from "lucide-react";
 import { motion } from "framer-motion";
 

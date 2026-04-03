@@ -6,18 +6,12 @@ import {
   Pie,
   Cell,
   ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
   Tooltip,
-  Legend,
 } from "recharts";
 import {
   TrendingUp,
   MessageSquare,
   Clock,
-  BarChart3,
   Zap,
   ThumbsUp,
   ThumbsDown,

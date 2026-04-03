@@ -36,7 +36,6 @@ import {
 import {
   generateDemoResponse,
   getRandomGreeting,
-  DEMO_GREETING,
   encodeDemoState,
   decodeDemoState,
   type DemoCallState,
@@ -261,7 +260,7 @@ export async function POST(req: NextRequest) {
         }
 
         // 3. Create a call_sessions row
-        let callSessionId: string | null = null;
+        let _callSessionId: string | null = null;
         try {
           const { data: existingSession } = await db
             .from("call_sessions")
@@ -290,12 +289,12 @@ export async function POST(req: NextRequest) {
                 .select("id")
                 .eq("external_meeting_id", callInfo.callSessionId)
                 .maybeSingle();
-              callSessionId = (retryLookup as { id: string } | null)?.id ?? null;
+              _callSessionId = (retryLookup as { id: string } | null)?.id ?? null;
             } else {
-              callSessionId = (inserted as { id: string } | null)?.id ?? null;
+              _callSessionId = (inserted as { id: string } | null)?.id ?? null;
             }
           } else {
-            callSessionId = (existingSession as { id: string }).id;
+            _callSessionId = (existingSession as { id: string }).id;
           }
         } catch (sessionErr) {
           log("error", "telnyx_voice.call_session_creation_failed", {

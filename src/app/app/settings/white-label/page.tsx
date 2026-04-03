@@ -337,6 +337,7 @@ export default function WhiteLabelSettingsPage() {
               {/* Logo Preview */}
               <div className="bg-[var(--bg-inset)] rounded-lg p-4 h-24 flex items-center justify-center border border-[var(--border-default)]">
                 {config.logo_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={config.logo_url}
                     alt="Logo"

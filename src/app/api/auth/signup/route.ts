@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
         await db.from("users").upsert({ id: userId, email }, { onConflict: "id" });
         const { data: created, error: insertErr } = await db
           .from("workspaces")
-          .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false })
+          .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false, billing_status: "pending" })
           .select("id")
           .maybeSingle();
         if (!insertErr && created) {
@@ -166,7 +166,7 @@ export async function POST(req: NextRequest) {
         await db.from("users").upsert({ id: userId, email }, { onConflict: "id" });
         const { data: created, error: createErr } = await db
           .from("workspaces")
-          .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false })
+          .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false, billing_status: "pending" })
           .select("id")
           .maybeSingle();
         if (!createErr && created) {
@@ -204,7 +204,7 @@ export async function POST(req: NextRequest) {
     await db.from("users").upsert({ id: userId, email }, { onConflict: "id" });
     const { data: created, error: createErr } = await db
       .from("workspaces")
-      .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false })
+      .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false, billing_status: "pending" })
       .select("id")
       .maybeSingle();
     if (!createErr && created) {

@@ -535,6 +535,7 @@ export async function handleInboundCall(
   const workspaceStatus = ws?.status ?? "active";
   const billingAllowed =
     billingStatus === "active" ||
+    billingStatus === "pending" ||
     billingStatus === "trial" ||
     billingStatus === "trial_expired";
   const statusAllowed = workspaceStatus !== "paused" && workspaceStatus !== "payment_failed";

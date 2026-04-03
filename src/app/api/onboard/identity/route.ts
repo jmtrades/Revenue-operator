@@ -92,6 +92,7 @@ export async function POST(request: NextRequest) {
         owner_id: uid,
         autonomy_level: "assisted",
         kill_switch: false,
+        billing_status: "pending",
       });
       await db.from("settings").insert({
         workspace_id: wsId,
@@ -110,6 +111,7 @@ export async function POST(request: NextRequest) {
     owner_id: userId,
     autonomy_level: "assisted",
     kill_switch: false,
+    billing_status: "pending",
   });
 
   await db.from("settings").insert({

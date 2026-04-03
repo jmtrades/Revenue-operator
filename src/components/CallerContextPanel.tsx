@@ -7,7 +7,6 @@ import {
   MessageSquare,
   Calendar,
   AlertCircle,
-  TrendingUp,
   Zap,
 } from "lucide-react";
 

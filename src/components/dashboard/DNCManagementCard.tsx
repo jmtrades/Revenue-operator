@@ -10,7 +10,6 @@ import {
   Phone,
   ChevronLeft,
   ChevronRight,
-  AlertTriangle,
   Loader2,
 } from "lucide-react";
 
