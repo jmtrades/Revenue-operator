@@ -433,6 +433,26 @@ export async function POST(req: NextRequest) {
     }).catch((err) => { log("error", "[inbound/post-call] error:", { error: err instanceof Error ? err.message : err }); });
   }
 
+  // In-app notification for call completion
+  if (sessionId) {
+    void (async () => {
+      try {
+        const { createWorkspaceNotification } = await import("@/lib/notifications");
+        const outcomeLabel = businessOutcome.replace(/_/g, " ");
+        const notifType = businessOutcome === "appointment_booked" ? "appointment_booked" as const : "call_completed" as const;
+        const title = businessOutcome === "appointment_booked"
+          ? "Appointment booked from call"
+          : `Call completed: ${outcomeLabel}`;
+        await createWorkspaceNotification(workspace_id, {
+          type: notifType,
+          title,
+          body: summaryText || `Call ${outcomeLabel}${body.caller_phone ? ` from ${body.caller_phone}` : ""}`,
+          metadata: { call_session_id: sessionId, outcome: businessOutcome },
+        });
+      } catch { /* non-fatal */ }
+    })();
+  }
+
   // Slack/Teams call summary notifications (Task 24)
   if (sessionId) {
     void (async () => {

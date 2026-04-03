@@ -24,7 +24,8 @@ const ACTIVITIES = [
 ];
 
 const BUSINESS_NAMES = [
-  "A business", "A company", "A local business", "A team",
+  "Bright Smile Dental", "Premier Plumbing Co", "Summit HVAC", "Atlas Legal Group",
+  "Peak Roofing", "Coastal Auto Repair", "Garden State Electric", "Precision Contracting",
 ];
 
 const TIME_AGO = [
@@ -98,7 +99,7 @@ export function LiveActivityFeed() {
     <div className="rounded-2xl border border-[var(--border-default)] bg-black/30 p-5 max-w-sm w-full">
       <div className="flex items-center gap-2 mb-4">
         <span className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
-          What businesses are doing with Revenue Operator
+          Example operator activity
         </span>
       </div>
 

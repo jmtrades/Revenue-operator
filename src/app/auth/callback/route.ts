@@ -63,6 +63,7 @@ export async function GET(request: Request) {
           await db.from("workspace_billing").insert({ workspace_id: newWsId, plan: "trial", status: "trialing", trial_ends_at: trialEnd.toISOString() });
           await db.from("workspaces").update({ billing_status: "trial", trial_ends_at: trialEnd.toISOString() }).eq("id", newWsId);
           try { await db.from("workspace_business_context").insert({ workspace_id: newWsId, business_name: "My workspace" }); } catch { /* non-fatal */ }
+          try { await db.from("notifications").insert({ workspace_id: newWsId, user_id: userId, type: "system_update", title: "Welcome to Revenue Operator", body: "Your 14-day trial is active. Set up your AI agent to start taking calls.", read: false, metadata: {} }); } catch { /* non-fatal */ }
         }
       }
       workspaceId = (ws as { id?: string } | null)?.id ?? undefined;

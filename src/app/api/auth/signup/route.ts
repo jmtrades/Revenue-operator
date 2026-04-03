@@ -118,6 +118,7 @@ export async function POST(req: NextRequest) {
           }
           await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing", trial_ends_at: trialEnd.toISOString() });
           try { await db.from("workspace_business_context").insert({ workspace_id: workspaceId, business_name: businessName || "My Business" }); } catch { /* non-fatal */ }
+          try { await db.from("notifications").insert({ workspace_id: workspaceId, user_id: userId, type: "system_update", title: "Welcome to Revenue Operator", body: "Your 14-day trial is active. Set up your AI agent to start taking calls.", read: false, metadata: {} }); } catch { /* non-fatal */ }
         }
       } catch {
         // continue
@@ -194,6 +195,7 @@ export async function POST(req: NextRequest) {
           }
           await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing", trial_ends_at: trialEnd.toISOString() });
           try { await db.from("workspace_business_context").insert({ workspace_id: workspaceId, business_name: businessName || "My Business" }); } catch { /* non-fatal */ }
+          try { await db.from("notifications").insert({ workspace_id: workspaceId, user_id: userId, type: "system_update", title: "Welcome to Revenue Operator", body: "Your 14-day trial is active. Set up your AI agent to start taking calls.", read: false, metadata: {} }); } catch { /* non-fatal */ }
         }
       } catch {
         // continue
