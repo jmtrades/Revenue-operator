@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { getSession } from "@/lib/auth/request-session";
+import { log } from "@/lib/logger";
 
 /**
  * POST /api/workspace/auto-seed-knowledge
@@ -173,4 +174,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to seed knowledge" }, { status: 500 });
   }
 }
-import { log } from "@/lib/logger";

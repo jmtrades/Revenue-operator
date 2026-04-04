@@ -9,6 +9,7 @@ import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function GET(req: NextRequest) {
   const workspaceId = req.nextUrl.searchParams.get("workspace_id");
@@ -291,4 +292,3 @@ export async function PATCH(req: NextRequest) {
 
   return NextResponse.json(appointment);
 }
-import { log } from "@/lib/logger";

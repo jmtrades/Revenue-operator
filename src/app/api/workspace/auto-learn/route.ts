@@ -10,6 +10,7 @@ import {
   type CallOutcome,
 } from "@/lib/ai/auto-learn";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   const csrfBlock = assertSameOrigin(req);
@@ -167,4 +168,3 @@ export async function GET(req: NextRequest) {
     );
   }
 }
-import { log } from "@/lib/logger";

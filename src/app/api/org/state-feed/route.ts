@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getOrgStateFeedStatements } from "@/lib/surfaces/state-feed";
+import { log } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   const workspaceId = request.nextUrl.searchParams.get("workspace_id");
@@ -25,4 +26,3 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Failed to load state feed" }, { status: 500 });
   }
 }
-import { log } from "@/lib/logger";

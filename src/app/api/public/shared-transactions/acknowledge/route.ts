@@ -14,6 +14,7 @@ import {
   mirrorProtocolEventToCounterpartyWorkspace,
 } from "@/lib/shared-transaction-assurance";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   let body: { token?: string; action?: string; new_deadline?: string; dispute_reason?: string } = {};
@@ -92,4 +93,3 @@ export async function POST(request: NextRequest) {
   }
   return NextResponse.json({ ok: true });
 }
-import { log } from "@/lib/logger";

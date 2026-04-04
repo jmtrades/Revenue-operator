@@ -16,6 +16,7 @@ import { normalizePhoneE164 } from "@/lib/phone/normalize";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { isSafeExternalUrl } from "@/lib/http/url-safety";
 import { runWithWriteContextAsync } from "@/lib/safety/unsafe-write-guard";
+import { log } from "@/lib/logger";
 
 const createLeadSchema = z.object({
   name: z.string().min(1, "Name is required").max(255),
@@ -348,4 +349,3 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json(lead);
 }
-import { log } from "@/lib/logger";

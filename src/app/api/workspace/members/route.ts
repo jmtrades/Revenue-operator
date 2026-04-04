@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getSession } from "@/lib/auth/request-session";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -50,4 +51,3 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ members: [] }, { status: 500 });
   }
 }
-import { log } from "@/lib/logger";

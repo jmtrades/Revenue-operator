@@ -15,6 +15,7 @@ import {
   recordPublicRecord404,
 } from "@/lib/security/rate-limit";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 const CAP_PROOF = 8;
 const MAX_LEN = 90;
@@ -75,4 +76,3 @@ export async function GET(
 
   return NextResponse.json({ proof });
 }
-import { log } from "@/lib/logger";

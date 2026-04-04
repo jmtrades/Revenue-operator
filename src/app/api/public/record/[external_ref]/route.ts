@@ -10,6 +10,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getPublicEntryByExternalRef } from "@/lib/shared-transaction-assurance";
 import {
+import { log } from "@/lib/logger";
   hashIpForPublicRecord,
   checkPublicRecordRateLimit,
   incrementPublicRecordRateLimit,
@@ -79,4 +80,3 @@ export async function GET(
     last_event_at: entry.last_event_at,
   });
 }
-import { log } from "@/lib/logger";

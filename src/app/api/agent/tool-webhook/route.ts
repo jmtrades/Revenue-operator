@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { runWithWriteContextAsync } from "@/lib/safety/unsafe-write-guard";
+import { log } from "@/lib/logger";
 
 /**
  * POST /api/agent/tool-webhook
@@ -565,4 +566,3 @@ async function sendQuickSms(
     return false;
   }
 }
-import { log } from "@/lib/logger";

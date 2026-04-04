@@ -7,6 +7,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { log } from "@/lib/logger";
 
 const CAP_WHAT = 10;
 const CAP_IF_REMOVED = 6;
@@ -421,4 +422,3 @@ export async function GET(
     return neutralResponse();
   }
 }
-import { log } from "@/lib/logger";

@@ -13,6 +13,7 @@ import {
   getLatestSnapshotText,
 } from "@/lib/installation";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   const workspaceId = request.nextUrl.searchParams.get("workspace_id");
@@ -49,4 +50,3 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json({ snapshot_text });
 }
-import { log } from "@/lib/logger";
