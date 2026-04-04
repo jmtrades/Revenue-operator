@@ -230,7 +230,7 @@ export function SetupHealthCard({ workspaceId }: SetupHealthCardProps) {
       {completedCount > 0 && (
         <div className="mt-4 p-3 rounded-lg bg-violet-500/5 border border-violet-500/20">
           <p className="text-xs text-[var(--text-secondary)]">
-            <span className="font-medium text-violet-400">Almost there.</span> Complete the remaining steps to activate your autonomous brain. It will field calls 24/7, qualify leads, book appointments, and grow smarter with every interaction.
+            <span className="font-medium text-violet-400">Almost there.</span> Complete the remaining steps to activate your autonomous AI operator. It will field calls 24/7, qualify leads, book appointments, and grow smarter with every interaction.
           </p>
         </div>
       )}

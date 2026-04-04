@@ -41,7 +41,7 @@ const ACTION_LABELS: Record<string, string> = {
   escalation: "Escalated to Sales",
   task: "Task Created",
   note: "Note Added",
-  "brain-computed": "Brain Computed",
+  "brain-computed": "AI Computed",
 };
 
 function formatRelativeTime(isoDate: string): string {
@@ -88,7 +88,7 @@ export function AutonomousActivityFeed({ leadId }: AutonomousActivityFeedProps) 
           if (response.status === 404) {
             setError("Lead not found");
           } else {
-            setError("Temporarily unable to load brain activity — actions are still running");
+            setError("Temporarily unable to load activity — actions are still running");
           }
           return;
         }
@@ -140,10 +140,10 @@ export function AutonomousActivityFeed({ leadId }: AutonomousActivityFeedProps) 
   if (actions.length === 0) {
     return (
       <Card>
-        <CardHeader>Brain Activity</CardHeader>
+        <CardHeader>AI Activity</CardHeader>
         <CardBody>
           <p className="text-sm text-[var(--text-secondary)] text-center py-4">
-            Brain is standing by — actions will appear here as it manages this lead
+            AI is standing by — actions will appear here as it manages this lead
           </p>
         </CardBody>
       </Card>

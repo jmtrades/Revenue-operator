@@ -3635,7 +3635,7 @@
     },
     "empty": {
       "title": "Your inbox activates with your first call.",
-      "body": "Messages appear here as the brain communicates with your leads via SMS, email, and calls. Connect a phone number to start.",
+      "body": "Messages appear here as your AI operator communicates with your leads via SMS, email, and calls. Connect a phone number to start.",
       "cta": "Enable SMS in settings",
       "hint": "Connect a phone number and your operator will start handling conversations automatically."
     },
@@ -7429,8 +7429,8 @@
       "sent": "Message sent."
     },
     "empty": {
-      "title": "Brain is listening",
-      "body": "Your autonomous brain handles messaging automatically. When it follows up with leads via SMS or email, conversations will appear here. No manual compose needed.",
+      "title": "AI is listening",
+      "body": "Your AI operator handles messaging automatically. When it follows up with leads via SMS or email, conversations will appear here. No manual compose needed.",
       "action": "Review recent activity",
       "viewContacts": "View Contacts"
     },
@@ -7941,7 +7941,7 @@
     },
     "empty": {
       "title": "Appointments appear here automatically.",
-      "body": "Appointments appear here when the brain books meetings for your leads. Connect your calendar to enable booking.",
+      "body": "Appointments appear here when your AI operator books meetings for your leads. Connect your calendar to enable booking.",
       "action": "Open agent settings"
     },
     "loading": "Loading appointments...",

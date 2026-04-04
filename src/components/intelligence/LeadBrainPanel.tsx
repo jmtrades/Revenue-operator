@@ -166,7 +166,7 @@ export function LeadBrainPanel({ leadId }: LeadBrainPanelProps) {
       <section className="space-y-3">
         <div className="flex items-center gap-2 mb-2">
           <Brain className="w-4 h-4 text-violet-400" />
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">Brain Status</h3>
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-secondary)]">AI Status</h3>
         </div>
         <Skeleton variant="text" className="h-16 w-full rounded-xl" />
       </section>
@@ -183,7 +183,7 @@ export function LeadBrainPanel({ leadId }: LeadBrainPanelProps) {
         <div className="flex items-center gap-2.5 rounded-xl bg-orange-500/[0.06] border border-orange-500/10 px-4 py-3">
           <AlertCircle className="w-4 h-4 text-orange-400 shrink-0" />
           <div>
-            <p className="text-xs font-medium text-orange-400">Brain temporarily unavailable</p>
+            <p className="text-xs font-medium text-orange-400">AI temporarily unavailable</p>
             <p className="text-[11px] text-[var(--text-tertiary)] mt-0.5">Intelligence will resume automatically — lead is still being tracked</p>
           </div>
         </div>
@@ -230,12 +230,12 @@ export function LeadBrainPanel({ leadId }: LeadBrainPanelProps) {
             {isPaused ? (
               <>
                 <PauseCircle className="w-3.5 h-3.5" />
-                Brain paused
+                AI paused
               </>
             ) : (
               <>
                 <Play className="w-3.5 h-3.5" />
-                Brain active
+                AI active
               </>
             )}
           </button>
@@ -246,8 +246,8 @@ export function LeadBrainPanel({ leadId }: LeadBrainPanelProps) {
         <div className="rounded-xl bg-orange-500/[0.06] border border-orange-500/10 px-4 py-3 flex items-start gap-2.5">
           <AlertCircle className="w-4 h-4 text-orange-400 shrink-0 mt-0.5" />
           <div>
-            <p className="text-xs font-medium text-orange-400">Brain paused</p>
-            <p className="text-[11px] text-[var(--text-tertiary)] mt-0.5">Autonomous actions are paused. Resume to enable the brain to take actions.</p>
+            <p className="text-xs font-medium text-orange-400">AI paused</p>
+            <p className="text-[11px] text-[var(--text-tertiary)] mt-0.5">Autonomous actions are paused. Resume to enable AI to take actions.</p>
           </div>
         </div>
       )}
@@ -352,7 +352,7 @@ export function LeadBrainPanel({ leadId }: LeadBrainPanelProps) {
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <Activity className="w-3 h-3 text-violet-400" />
-            <p className="text-[11px] font-medium uppercase tracking-wide text-[var(--text-tertiary)]">What the brain did</p>
+            <p className="text-[11px] font-medium uppercase tracking-wide text-[var(--text-tertiary)]">Recent AI actions</p>
           </div>
           <div className="rounded-lg bg-[var(--bg-surface)] border border-[var(--border-default)] divide-y divide-[var(--border-default)]">
             {recentBrainActions.map((action) => {

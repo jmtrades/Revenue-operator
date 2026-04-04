@@ -275,7 +275,7 @@ export function IndustryPageTemplate({ industry }: IndustryPageTemplateProps) {
                   step.title === "Connect"
                     ? "Link2"
                     : step.title === "Teach"
-                      ? "Brain"
+                      ? "AI"
                       : "Sparkles"
                 ];
               return (

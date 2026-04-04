@@ -118,7 +118,7 @@ export function ActivityLog({ workspaceId }: ActivityLogProps) {
     return (
       <div className="rounded-lg bg-[var(--bg-hover)] border border-[var(--border-default)] p-6 text-center">
         <p className="text-sm text-[var(--text-secondary)]">No activity in the last 7 days</p>
-        <p className="text-xs text-[var(--text-tertiary)] mt-1">When the brain takes actions or you make changes, they&apos;ll appear here</p>
+        <p className="text-xs text-[var(--text-tertiary)] mt-1">When your AI operator takes actions or you make changes, they&apos;ll appear here</p>
       </div>
     );
   }
@@ -165,7 +165,7 @@ export function ActivityLog({ workspaceId }: ActivityLogProps) {
                           ? "bg-violet-500/10 text-violet-400"
                           : "bg-[var(--bg-hover)] text-[var(--text-secondary)]"
                       }`}>
-                        {entry.actor === "brain" || entry.actor === "autonomous" ? "🧠 Brain" : entry.actor === "system" ? "⚙️ System" : entry.actor}
+                        {entry.actor === "brain" || entry.actor === "autonomous" ? "🧠 AI" : entry.actor === "system" ? "⚙️ System" : entry.actor}
                       </span>
                     </>
                   )}
