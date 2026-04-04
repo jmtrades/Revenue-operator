@@ -28,7 +28,7 @@ const templates: Template[] = [
     bestFor: 'high-intent leads',
     timing: 'immediate',
     icon: Zap,
-    slug: 'speed-to-lead-recovery',
+    slug: 'speed_to_lead',
   },
   {
     id: '2',
@@ -37,7 +37,7 @@ const templates: Template[] = [
     bestFor: 'service businesses',
     timing: '30 min after missed appointment',
     icon: UserX,
-    slug: 'no-show-followup',
+    slug: 'no_show_recovery',
   },
   {
     id: '3',
@@ -46,7 +46,7 @@ const templates: Template[] = [
     bestFor: 'databases with 100+ leads',
     timing: '7-day cadence',
     icon: RefreshCw,
-    slug: 'stale-lead-reactivation',
+    slug: 'reactivation',
   },
   {
     id: '4',
@@ -55,7 +55,7 @@ const templates: Template[] = [
     bestFor: 'local businesses',
     timing: '24h after completion',
     icon: Star,
-    slug: 'post-service-review',
+    slug: 'review_request',
   },
   {
     id: '5',
@@ -64,7 +64,7 @@ const templates: Template[] = [
     bestFor: 'any business with bookings',
     timing: '24h before appointment',
     icon: CalendarCheck,
-    slug: 'appointment-confirmation',
+    slug: 'appointment_reminder',
   },
 ];
 
@@ -110,7 +110,7 @@ export function CampaignTemplates() {
           const Icon = template.icon;
           return (
             <motion.div key={template.id} variants={itemVariants}>
-              <Link href={`/app/campaigns/new?template=${template.slug}`}>
+              <Link href={`/app/campaigns/create?template=${template.slug}`}>
                 <div className="group relative p-5 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] hover:border-[var(--border-hover)] hover:shadow-md transition-all duration-200 cursor-pointer h-full">
                   {/* Icon and badge container */}
                   <div className="flex items-start justify-between mb-4">
