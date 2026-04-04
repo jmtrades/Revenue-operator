@@ -104,10 +104,18 @@ export async function GET(req: NextRequest) {
         continue;
       }
 
-      const campaignRemaining = Math.max(0, Number(row.total_leads || 0) - Number(row.leads_called || 0));
-      if (campaignRemaining <= 0) {
+      // Only complete if total_leads > 0 and all have been called. Don't auto-complete new campaigns with 0 leads.
+      const totalLeads = Number(row.total_leads || 0);
+      const leadsCalled = Number(row.leads_called || 0);
+      if (totalLeads > 0 && leadsCalled >= totalLeads) {
         // Campaign exhausted — mark as completed
         await db.from("outbound_campaigns").update({ status: "completed", updated_at: new Date().toISOString() }).eq("id", row.id);
+        continue;
+      }
+
+      const campaignRemaining = Math.max(0, totalLeads - leadsCalled);
+      if (campaignRemaining <= 0) {
+        // No leads to process this tick — continue to next campaign
         continue;
       }
 

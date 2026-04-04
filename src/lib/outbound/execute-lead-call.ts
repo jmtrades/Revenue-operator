@@ -153,11 +153,8 @@ export async function executeLeadOutboundCall(
           log("warn", `[outbound-hours] Outside business hours (${todayHours.start}-${todayHours.end} ${tz})`);
           return { ok: false, error: "Outside business hours — call will be scheduled for next available window" };
         }
-      } else {
-        // No hours configured for today = closed day
-        log("warn", `[outbound-hours] No business hours configured for ${today}`);
-        return { ok: false, error: "Business is closed today — call will be scheduled for next business day" };
       }
+      // If no hours configured for today (e.g. weekend), allow the call — only enforce when hours ARE set
     }
     // If no business hours configured at all, allow calls (user hasn't set hours yet)
   } catch (bizErr) {

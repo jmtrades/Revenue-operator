@@ -90,8 +90,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   const isActive =
     (billing.billing_status === "active" || billing.billing_status === "trial") &&
     !blockedBillingStatuses.has(billing.billing_status ?? "") &&
-    !billing.pause_reason &&
-    Boolean(billing.stripe_subscription_id);
+    !billing.pause_reason;
   if (!isActive) {
     return NextResponse.json(
       { error: "Workspace subscription inactive. Update billing to launch campaigns." },

@@ -294,12 +294,16 @@ export function UnifiedDashboard() {
   const onCall = async (leadId: string) => {
     setCallingId(leadId);
     try {
-      await fetch("/api/outbound/call", {
+      const res = await fetch("/api/outbound/call", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ lead_id: leadId, campaign_type: "lead_followup" }),
       });
+      const data = (await res.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
+      if (!res.ok || !data?.ok) {
+        console.error("[outbound-call]", data?.error ?? `HTTP ${res.status}`);
+      }
     } finally {
       setCallingId(null);
     }

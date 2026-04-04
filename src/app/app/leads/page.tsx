@@ -625,7 +625,8 @@ export default function LeadsPage() {
         toast.success(t("leads.toast.callStarted"));
         closeDrawer();
       } else {
-        toast.error(t("leads.toast.callFailed"));
+        const apiMsg = data?.error;
+        toast.error(apiMsg || t("leads.toast.callFailed"));
       }
     } catch {
       toast.error(t("leads.toast.callFailed"));
