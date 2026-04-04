@@ -101,7 +101,7 @@ export async function GET(req: NextRequest) {
         )
         .eq("campaign_id", campaign.id)
         .eq("status", "pending")
-        .order("leads.score", { ascending: false, nullsLast: true })
+        .order("leads.score", { ascending: false, nullsFirst: false })
         .order("created_at", { ascending: true })
         .limit(maxConcurrent);
 
