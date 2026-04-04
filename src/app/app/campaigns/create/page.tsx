@@ -59,7 +59,7 @@ const getCampaignTypes = (t: any): Array<{
   { id: "quote_chase", icon: FileText, label: t("types.quoteChase.label", { defaultValue: "Quote Chase" }), description: t("types.quoteChase.desc", { defaultValue: "Follow up on pending quotes." }) },
   { id: "review_request", icon: Star, label: t("types.reviewRequest.label", { defaultValue: "Review Request" }), description: t("types.reviewRequest.desc", { defaultValue: "Request a review after completion." }) },
   { id: "cold_outreach", icon: Megaphone, label: t("types.coldOutreach.label", { defaultValue: "Cold Outreach" }), description: t("types.coldOutreach.desc", { defaultValue: "Reach a list with a controlled cadence." }) },
-  { id: "custom", icon: SlidersHorizontal, label: t("types.custom.label", { defaultValue: "Custom" }), description: t("types.custom.desc", { defaultValue: "Build your own sequence." }) },
+  { id: "custom", icon: SlidersHorizontal, label: t("types.custom.label", { defaultValue: "Custom" }), description: t("types.custom.desc", { defaultValue: "Build your own outreach flow." }) },
 ];
 
 const DEFAULT_TEMPLATES: Record<CampaignType, SequenceStep[]> = {

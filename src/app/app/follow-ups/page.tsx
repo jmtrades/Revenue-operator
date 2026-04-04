@@ -696,9 +696,9 @@ export default function AppFollowUpsPage() {
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ status: "paused" }),
                       }).then((res) => {
-                        if (res.ok) { toast.success(t("sequencePaused", { defaultValue: "Sequence paused" })); refetchSequences(); }
-                        else toast.error(t("pauseFailed", { defaultValue: "Failed to pause sequence" }));
-                      }).catch(() => toast.error(t("pauseFailed", { defaultValue: "Failed to pause sequence" })));
+                        if (res.ok) { toast.success(t("sequencePaused", { defaultValue: "Follow-up paused" })); refetchSequences(); }
+                        else toast.error(t("pauseFailed", { defaultValue: "Failed to pause follow-up" }));
+                      }).catch(() => toast.error(t("pauseFailed", { defaultValue: "Failed to pause follow-up" })));
                     }}
                   >
                     <Pause className="w-4 h-4" />
@@ -714,9 +714,9 @@ export default function AppFollowUpsPage() {
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ status: "active" }),
                       }).then((res) => {
-                        if (res.ok) { toast.success(t("sequenceResumed", { defaultValue: "Sequence resumed" })); refetchSequences(); }
-                        else toast.error(t("resumeFailed", { defaultValue: "Failed to resume sequence" }));
-                      }).catch(() => toast.error(t("resumeFailed", { defaultValue: "Failed to resume sequence" })));
+                        if (res.ok) { toast.success(t("sequenceResumed", { defaultValue: "Follow-up resumed" })); refetchSequences(); }
+                        else toast.error(t("resumeFailed", { defaultValue: "Failed to resume follow-up" }));
+                      }).catch(() => toast.error(t("resumeFailed", { defaultValue: "Failed to resume follow-up" })));
                     }}
                   >
                     <Play className="w-4 h-4" />
@@ -736,8 +736,8 @@ export default function AppFollowUpsPage() {
 
       <ConfirmDialog
         open={confirmPauseAll}
-        title={t("pauseAllTitle", { defaultValue: "Pause all sequences?" })}
-        message={t("pauseAllMessage", { defaultValue: "This will pause all active follow-up sequences. No automated follow-ups will run until you resume them." })}
+        title={t("pauseAllTitle", { defaultValue: "Pause all follow-ups?" })}
+        message={t("pauseAllMessage", { defaultValue: "This will pause all active follow-ups. No automated follow-ups will run until you resume them." })}
         confirmLabel={t("pauseAll", { defaultValue: "Pause all" })}
         onConfirm={async () => {
           try {
@@ -751,10 +751,10 @@ export default function AppFollowUpsPage() {
                 })
               )
             );
-            toast.success(t("allPaused", { defaultValue: "All sequences paused" }));
+            toast.success(t("allPaused", { defaultValue: "All follow-ups paused" }));
             refetchSequences();
           } catch {
-            toast.error(t("pauseFailed", { defaultValue: "Failed to pause sequences" }));
+            toast.error(t("pauseFailed", { defaultValue: "Failed to pause follow-ups" }));
           } finally {
             setConfirmPauseAll(false);
           }
@@ -764,8 +764,8 @@ export default function AppFollowUpsPage() {
 
       <ConfirmDialog
         open={confirmResumeAll}
-        title={t("resumeAllTitle", { defaultValue: "Resume all sequences?" })}
-        message={t("resumeAllMessage", { defaultValue: "This will resume all paused follow-up sequences. Automated follow-ups will begin running again." })}
+        title={t("resumeAllTitle", { defaultValue: "Resume all follow-ups?" })}
+        message={t("resumeAllMessage", { defaultValue: "This will resume all paused follow-ups. Automated follow-ups will begin running again." })}
         confirmLabel={t("resumeAll", { defaultValue: "Resume all" })}
         onConfirm={async () => {
           try {
@@ -779,10 +779,10 @@ export default function AppFollowUpsPage() {
                 })
               )
             );
-            toast.success(t("allResumed", { defaultValue: "All sequences resumed" }));
+            toast.success(t("allResumed", { defaultValue: "All follow-ups resumed" }));
             refetchSequences();
           } catch {
-            toast.error(t("resumeFailed", { defaultValue: "Failed to resume sequences" }));
+            toast.error(t("resumeFailed", { defaultValue: "Failed to resume follow-ups" }));
           } finally {
             setConfirmResumeAll(false);
           }

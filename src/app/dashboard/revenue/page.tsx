@@ -101,7 +101,7 @@ export default function RevenuePage() {
   const sourceBreakdown = useMemo(() => {
     const sources = [
       { name: "Inbound Calls", value: totals.inbound, icon: Phone, color: "text-blue-400", bg: "bg-[var(--bg-card)]/60" },
-      { name: "Follow-Up Sequences", value: totals.followUps, icon: MessageSquare, color: "text-purple-400", bg: "bg-[var(--bg-card)]/60" },
+      { name: "Automated Follow-Ups", value: totals.followUps, icon: MessageSquare, color: "text-purple-400", bg: "bg-[var(--bg-card)]/60" },
       { name: "Outbound Campaigns", value: totals.outbound, icon: Megaphone, color: "text-amber-400", bg: "bg-amber-500/10" },
       { name: "No-Show Recovery", value: totals.noShowRecovery, icon: Calendar, color: "text-emerald-400", bg: "bg-emerald-500/10" },
     ];

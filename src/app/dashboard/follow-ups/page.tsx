@@ -187,7 +187,7 @@ export default function FollowUpsPage() {
             <EmptyState
               icon="mail"
               title={t("pages.followUps.noData", { defaultValue: "No follow-ups yet" })}
-              subtitle={t("pages.followUps.noDataDescription", { defaultValue: "Create sequences to start automated follow-ups." })}
+              subtitle={t("pages.followUps.noDataDescription", { defaultValue: "Create follow-ups to start automating outreach." })}
             />
           ) : (
             <>
@@ -220,7 +220,7 @@ export default function FollowUpsPage() {
             <EmptyState
               icon="calendar"
               title="No pending follow-ups"
-              subtitle="Create a sequence or campaign to start filling this queue."
+              subtitle="Create a follow-up or campaign to start filling this queue."
             />
           ) : (
             <div
@@ -231,7 +231,7 @@ export default function FollowUpsPage() {
                 <thead>
                   <tr className="border-b border-[var(--border-default)]/80">
                     <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">Contact</th>
-                    <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">Sequence</th>
+                    <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">Follow-up</th>
                     <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">Step</th>
                     <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">Due</th>
                     <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">Status</th>
