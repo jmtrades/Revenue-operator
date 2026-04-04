@@ -24,6 +24,7 @@ import { recordReciprocalEvent } from "@/lib/reciprocal-events";
 import { onReciprocalEvent } from "@/lib/operational-responsibilities";
 import { upsertParticipant } from "@/lib/thread-participants";
 import { recordEvidence } from "@/lib/thread-evidence";
+import { log } from "@/lib/logger";
 
 function neutralResponse(): NextResponse {
   return NextResponse.json({ ok: false });
@@ -207,4 +208,3 @@ export async function POST(
   }
   return NextResponse.json({ ok: true });
 }
-import { log } from "@/lib/logger";

@@ -28,6 +28,7 @@ import { getDomainPhasesAsBooleans } from "@/lib/confidence-engine/domain";
 import { isOperationalMemoryActive } from "@/lib/operational-memory";
 import { isBehavioralAssumptionActive } from "@/lib/decision-assumption";
 import { hasRelationshipDependence } from "@/lib/relationship-continuity";
+import { log } from "@/lib/logger";
 import { hasStructuralRulesEnforced } from "@/lib/economic-gravity";
 import { isRitualCycleActive } from "@/lib/ritual-cycles";
 import { getDependenceBooleans } from "@/lib/operational-dependency-memory";
@@ -398,4 +399,3 @@ export async function GET(request: NextRequest) {
     operational_position,
   });
 }
-import { log } from "@/lib/logger";

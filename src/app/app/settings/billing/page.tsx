@@ -8,6 +8,7 @@ import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useSearchParams } from "next/navigation";
 import { fetchWorkspaceMeCached, getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { PlanChangeModal, type PlanId } from "@/components/PlanChangeModal";
+import { BILLING_PLANS, type PlanSlug } from "@/lib/billing-plans";
 
 interface MinutePack {
   id: string;
@@ -461,15 +462,20 @@ export default function AppSettingsBillingPage() {
             <div className="bg-[var(--accent-primary)]/5 rounded-lg p-3 border border-[var(--accent-primary)]/20">
               <p className="text-[11px] font-medium text-[var(--accent-primary)]/80 uppercase tracking-wide">Platform ROI</p>
               <p className="text-xs text-[var(--accent-primary)] mt-1.5">
-                {usage.estRevenue > 0 ? (
-                  <>
-                    <span className="font-semibold text-[var(--accent-primary)]">
-                      {(usage.estRevenue / (String(currentPlanId) === "starter" ? 147 : String(currentPlanId) === "growth" ? 297 : String(currentPlanId) === "scale" ? 597 : 147)).toFixed(1)}x
-                    </span>
-                    {" return on your platform investment"}
-                  </>
-                ) : (
-                  "Operators typically see 3-5x ROI within the first 30 days"
+                {usage.estRevenue > 0 ? (() => {
+                  const planSlug = (String(currentPlanId) === "starter" ? "solo" : String(currentPlanId) === "growth" ? "business" : String(currentPlanId) === "scale" ? "scale" : "solo") as PlanSlug;
+                  const monthlyPrice = BILLING_PLANS[planSlug]?.monthlyPrice ?? 14700;
+                  const roi = usage.estRevenue / (monthlyPrice / 100);
+                  return (
+                    <>
+                      <span className="font-semibold text-[var(--accent-primary)]">
+                        {roi.toFixed(1)}x
+                      </span>
+                      {" return on your platform investment"}
+                    </>
+                  );
+                })() : (
+                  "Start making calls to see your return on investment"
                 )}
               </p>
             </div>

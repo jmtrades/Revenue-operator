@@ -127,20 +127,20 @@ export async function POST(
       .eq("id", id);
 
     // 2. Update lead status based on outcome
-    const leadStatusMap: Record<string, string> = {
+    const leadStateMap: Record<string, string> = {
       completed: "QUALIFIED",
       no_show: "REACTIVATE",
-      rescheduled: "FOLLOW_UP",
-      cancelled: "FOLLOW_UP",
-      partial: "FOLLOW_UP",
+      rescheduled: "CONTACTED",
+      cancelled: "LOST",
+      partial: "ENGAGED",
     };
 
-    const newLeadStatus = leadStatusMap[outcome];
-    if (newLeadStatus && apt.lead_id) {
+    const newLeadState = leadStateMap[outcome];
+    if (newLeadState && apt.lead_id) {
       await db
         .from("leads")
         .update({
-          status: newLeadStatus,
+          state: newLeadState,
           updated_at: now,
         })
         .eq("id", apt.lead_id)

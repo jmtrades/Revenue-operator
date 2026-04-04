@@ -22,6 +22,7 @@ import {
   getDailyOperationalCycles,
 } from "@/lib/operational/presence";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 // Performance guard: cache slow responses
 const CACHE_TTL_MS = 30_000; // 30 seconds
@@ -931,4 +932,3 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Failed to load command center" }, { status: 500 });
   }
 }
-import { log } from "@/lib/logger";

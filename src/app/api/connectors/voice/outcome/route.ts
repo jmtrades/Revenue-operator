@@ -12,6 +12,7 @@ import { completeActionIntent } from "@/lib/action-intents";
 import { createActionIntent } from "@/lib/action-intents";
 import { upsertStrategyState } from "@/lib/strategy-state/store";
 import { updateCommitmentFromVoiceOutcome } from "@/lib/intelligence/commitment-score";
+import { log } from "@/lib/logger";
 import {
   resolveUniversalOutcome,
   insertUniversalOutcome,
@@ -325,4 +326,3 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({ ok: true }, { status: 200 });
 }
-import { log } from "@/lib/logger";

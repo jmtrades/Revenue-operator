@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 /**
  * GET /api/leads/[id]/score
@@ -38,4 +39,3 @@ export async function GET(
     return NextResponse.json({ error: "Failed to score lead" }, { status: 500 });
   }
 }
-import { log } from "@/lib/logger";

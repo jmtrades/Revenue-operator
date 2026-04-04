@@ -855,13 +855,22 @@ export default function CallsPage() {
             </div>
 
             <div className="flex flex-wrap gap-2 pt-2 border-t border-[var(--border-default)]">
-              <a
-                href={(selectedCall.matched_lead as { phone?: string } | undefined)?.phone ? `tel:${(selectedCall.matched_lead as { phone: string }).phone}` : undefined}
-                className="inline-flex items-center justify-center gap-2 rounded-lg border border-[var(--border-hover)] px-3 py-1.5 text-xs font-medium text-[var(--text-primary)] bg-transparent hover:bg-[var(--bg-hover)]"
-              >
-                <PhoneCall className="h-3.5 w-3.5" />
-                {t("calls.detail.callBack")}
-              </a>
+              {(selectedCall.matched_lead as { phone?: string } | undefined)?.phone ? (
+                <a
+                  href={`tel:${(selectedCall.matched_lead as { phone: string }).phone}`}
+                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-[var(--border-hover)] px-3 py-1.5 text-xs font-medium text-[var(--text-primary)] bg-transparent hover:bg-[var(--bg-hover)]"
+                >
+                  <PhoneCall className="h-3.5 w-3.5" />
+                  {t("calls.detail.callBack")}
+                </a>
+              ) : (
+                <span
+                  className="inline-flex items-center justify-center gap-2 rounded-lg border border-[var(--border-default)] px-3 py-1.5 text-xs font-medium text-[var(--text-disabled)] bg-transparent cursor-not-allowed opacity-50"
+                >
+                  <PhoneCall className="h-3.5 w-3.5" />
+                  {t("calls.detail.callBack")}
+                </span>
+              )}
               <Button
                 variant="secondary"
                 size="sm"

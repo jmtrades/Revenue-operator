@@ -12,6 +12,7 @@ import {
 } from "@/lib/ai/website-intelligence";
 import { setWorkspaceSettings } from "@/lib/db/workspace-settings";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 interface SetupResult {
   success: boolean;
@@ -394,4 +395,3 @@ function generateFollowUpSequences(
     },
   };
 }
-import { log } from "@/lib/logger";

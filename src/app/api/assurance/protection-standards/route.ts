@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 const STANDARDS = [
   { id: "uninterested", label: "Will not message uninterested leads", description: "We respect opt-out and low-interest signals." },
@@ -102,4 +103,3 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Failed to load protection standards" }, { status: 500 });
   }
 }
-import { log } from "@/lib/logger";

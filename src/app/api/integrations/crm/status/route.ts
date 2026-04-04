@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -157,4 +158,3 @@ export async function GET(req: NextRequest) {
     global: { lastSyncAt: globalLastSync, recordsSynced: globalRecords, errors: globalErrors },
   } satisfies CrmStatusResponse);
 }
-import { log } from "@/lib/logger";

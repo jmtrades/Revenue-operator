@@ -16,6 +16,7 @@ import {
   reorderSequenceSteps,
 } from "@/lib/sequences/follow-up-engine";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function GET(
   req: NextRequest,
@@ -192,4 +193,3 @@ export async function PUT(
     );
   }
 }
-import { log } from "@/lib/logger";

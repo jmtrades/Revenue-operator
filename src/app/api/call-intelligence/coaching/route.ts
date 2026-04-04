@@ -12,6 +12,7 @@ import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 const COACHING_PROMPT = `You are an expert sales coaching system. Analyze this call transcript and provide actionable coaching feedback across these key dimensions:
 
@@ -279,4 +280,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-import { log } from "@/lib/logger";

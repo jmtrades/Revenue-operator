@@ -51,13 +51,13 @@ export const VOICE_TIER_LIMITS = {
 export type VoiceTierLimits = (typeof VOICE_TIER_LIMITS)[BillingTier];
 
 /**
- * Voice overage rates — tiered per billing-plans.ts:
- * Starter: $0.10/min, Growth: $0.10/min, Business: $0.08/min, Agency: $0.07/min
+ * Voice overage rates — aligned with billing-plans.ts overageRateCents:
+ * Starter: $0.08/min, Growth: $0.08/min, Business: $0.08/min, Agency: $0.07/min
  */
 export const VOICE_OVERAGE_RATES = {
-  solo_per_minute_cents: 10, // $0.10/min (Starter)
-  business_per_minute_cents: 10, // $0.10/min (Growth)
-  scale_per_minute_cents: 8, // $0.08/min (Business)
+  solo_per_minute_cents: 8, // $0.08/min (Starter) — matches billing-plans.ts
+  business_per_minute_cents: 8, // $0.08/min (Growth) — matches billing-plans.ts
+  scale_per_minute_cents: 8, // $0.08/min (Business) — matches billing-plans.ts
   enterprise_per_minute_cents: 7, // $0.07/min (Agency)
   voice_clone_monthly: 1500, // $15/mo per extra clone slot
   ab_test_monthly: 500, // $5/mo per extra A/B test

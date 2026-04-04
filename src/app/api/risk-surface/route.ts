@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { log } from "@/lib/logger";
 
 const _RISK_TYPES = [
   "reply_window_expiring",
@@ -214,4 +215,3 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Failed to load risk surface" }, { status: 500 });
   }
 }
-import { log } from "@/lib/logger";

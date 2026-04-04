@@ -17,6 +17,7 @@ import {
 } from "@/lib/sequences/follow-up-engine";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { log } from "@/lib/logger";
 
 const updateSequenceSchema = z.object({
   name: z.string().min(1).max(255).optional(),
@@ -133,4 +134,3 @@ export async function DELETE(
     );
   }
 }
-import { log } from "@/lib/logger";
