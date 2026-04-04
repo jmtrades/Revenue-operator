@@ -527,7 +527,7 @@ export default function CampaignsPage() {
           </div>
         </div>
 
-        {/* Brain-managed campaigns status */}
+        {/* AI-managed campaigns status */}
         <div className="mb-6 rounded-xl border border-violet-500/15 bg-violet-500/[0.04] p-4 flex items-start gap-3">
           <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center shrink-0 mt-0.5">
             <Megaphone className="w-4 h-4 text-violet-400" />

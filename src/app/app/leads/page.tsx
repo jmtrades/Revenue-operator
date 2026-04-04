@@ -224,7 +224,7 @@ export default function LeadsPage() {
   const [statusFilter, setStatusFilter] = useState<LeadStatus[]>([]);
   const [sourceFilter, setSourceFilter] = useState<LeadSource[]>([]);
   const [scoreFilter, setScoreFilter] = useState<ScoreBucket>("all");
-  const [sort, setSort] = useState<SortKey>("score"); // Default to brain priority
+  const [sort, setSort] = useState<SortKey>("score"); // Default to AI priority
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [drawerLead, setDrawerLead] = useState<LeadView | null>(null);
   const [drawerCalls, setDrawerCalls] = useState<Array<{ id: string; call_started_at?: string; outcome?: string }>>([]);

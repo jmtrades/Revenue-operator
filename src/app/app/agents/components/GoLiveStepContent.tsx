@@ -37,7 +37,7 @@ export function GoLiveStepContent({
   const t = useTranslations("agents");
   const r = getReadiness(agent);
   const testCallCompleted = agent.test_call_completed === true;
-  // Core requirements: name, greeting, voice selected, AND at least 1 FAQ (reduced from 3 — brain auto-seeds the rest)
+  // Core requirements: name, greeting, voice selected, AND at least 1 FAQ (reduced from 3 — AI auto-seeds the rest)
   const hasMinConfig =
     !!(agent.name?.trim() && agent.greeting?.trim()) &&
     !!agent.voice?.trim() &&

@@ -23,12 +23,12 @@ const STATUS_ORDER: LeadStatus[] = [
 ];
 
 const STATUS_HINTS: Record<LeadStatus, string> = {
-  New: "Lead just arrived — brain is evaluating",
+  New: "Lead just arrived — AI is evaluating",
   Contacted: "First outreach sent — awaiting response",
-  Qualified: "Interest confirmed — brain is nurturing",
-  "Appointment Set": "Meeting booked — brain will send reminders",
-  Won: "Deal closed — brain may offer retention outreach",
-  Lost: "Did not convert — brain may attempt reactivation",
+  Qualified: "Interest confirmed — AI is nurturing",
+  "Appointment Set": "Meeting booked — AI will send reminders",
+  Won: "Deal closed — AI may offer retention outreach",
+  Lost: "Did not convert — AI may attempt reactivation",
 };
 
 function formatDate(iso: string): string {
@@ -123,7 +123,7 @@ export function LeadDetail({
         </section>
       )}
 
-      {/* Brain active management — replaces manual stage control */}
+      {/* AI active management — replaces manual stage control */}
       {brainHint ? (
         <section className="rounded-xl bg-violet-500/[0.06] border border-violet-500/10 px-3.5 py-3 space-y-3">
           <div className="flex items-center justify-between">
@@ -151,13 +151,13 @@ export function LeadDetail({
           </div>
           <p className="text-[11px] text-[var(--text-secondary)] ml-8">
             Phase: <span className="font-medium text-[var(--text-primary)]">{brainHint.lifecycle_phase}</span>
-            {brainHint.action_timing === "immediate" ? " · Brain is handling this autonomously" : " · Queued for optimal timing"}
+            {brainHint.action_timing === "immediate" ? " · AI is handling this automatically" : " · Queued for optimal timing"}
           </p>
 
-          {/* Stage — brain-managed with manual override */}
+          {/* Stage — AI-managed with manual override */}
           <div className="pt-2 border-t border-violet-500/10">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] font-medium">{t("detail.stage")} · brain-managed</span>
+              <span className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] font-medium">{t("detail.stage")} · AI-managed</span>
               <button
                 type="button"
                 onClick={() => {
@@ -240,7 +240,7 @@ export function LeadDetail({
         {callsLoading && <p className="text-xs text-[var(--text-secondary)]">{t("loadingCalls")}</p>}
       </section>
 
-      {/* Autonomous Revenue Brain — Intelligence Panel */}
+      {/* AI Intelligence Panel */}
       <LeadBrainPanel leadId={lead.id} />
 
       <section className="pt-2 border-t border-[var(--border-default)]">
@@ -271,7 +271,7 @@ export function LeadDetail({
         </Button>
         {lead.phone ? (
           <>
-            {/* Brain auto-selects call type based on lifecycle phase */}
+            {/* AI auto-selects call type based on lifecycle phase */}
             {brainHint && (
               <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-violet-500/[0.06] border border-violet-500/10 text-[10px] text-violet-400 font-medium">
                 <Brain className="w-3 h-3" />

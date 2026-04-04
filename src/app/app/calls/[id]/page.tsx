@@ -459,7 +459,7 @@ export default function AppCallDetailPage() {
           )}
         </div>
 
-        {/* Brain Intelligence for this call's lead */}
+        {/* AI Intelligence for this call's lead */}
         {(call.lead_id || call.matched_lead_id || call.matched_lead?.id) && (
           <LeadBrainPanel leadId={(call.lead_id || call.matched_lead_id || call.matched_lead?.id)!} />
         )}

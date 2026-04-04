@@ -386,7 +386,7 @@ export default function AppFollowUpsPage() {
       <div className="mb-8 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
         <RecoveryProfileSelector />
       </div>
-      {/* Brain-managed follow-ups status */}
+      {/* AI-managed follow-ups status */}
       <div className="mb-6 rounded-xl border border-violet-500/15 bg-violet-500/[0.04] p-4 flex items-start gap-3">
         <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center shrink-0 mt-0.5">
           <Zap className="w-4 h-4 text-violet-400" />
@@ -443,7 +443,7 @@ export default function AppFollowUpsPage() {
           <div className="skeleton-shimmer h-40 rounded-2xl border border-[var(--border-default)]" />
         ) : (
           <div className="space-y-4">
-            {/* Brain Activity Dashboard */}
+            {/* Activity Dashboard */}
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
               <div className="flex items-center gap-2 mb-6">
                 <Activity className="w-5 h-5 text-[var(--accent-primary)]" />

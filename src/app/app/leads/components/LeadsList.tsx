@@ -216,7 +216,7 @@ export function LeadsList({
               <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">
                 <span className="flex items-center gap-1">
                   <span className="h-1.5 w-1.5 rounded-full bg-violet-400 animate-pulse" />
-                  Brain
+                  AI
                 </span>
               </th>
             </tr>

@@ -3392,11 +3392,12 @@
       "title": "Your operator is standing by.",
       "description": "Calls appear here once your phone number is connected and your operator is live. Set up your operator to start receiving calls.",
       "connectNumber": "Activate Coverage",
-      "testAgent": "Run a test call",
+      "testAgent": "Try your operator",
       "body": "Every call your operator handles appears here with full intelligence: transcript, sentiment, revenue signals, and recommended next actions.",
-      "emptyTitle": "Place your first test call",
-      "emptyDescription": "One call unlocks the full intelligence layer — transcripts, sentiment, objections, and revenue attribution.",
-      "testCall": "Test Call"
+      "emptyTitle": "No calls yet",
+      "emptyDescription": "Calls will appear here once your phone number is connected and your AI operator is live.",
+      "testCall": "Make a call",
+      "connectPhone": "Connect phone number"
     },
     "table": {
       "dateTime": "Date / time",
@@ -5140,8 +5141,8 @@
       "attempts": "Attempt Count"
     },
     "empty": {
-      "title": "No cold leads in the queue",
-      "description": "Leads are automatically added when they go dormant for 30+ days, or you can manually add leads that need re-engagement."
+      "title": "No cold leads yet",
+      "description": "Cold leads are automatically synced from your CRM when contacts go dormant. Connect your CRM in Settings → Integrations to get started, or add leads manually."
     },
     "modal": {
       "addLeadTitle": "Add Cold Lead",
