@@ -29,9 +29,10 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   const db = getDb();
 
   // Try outbound_campaigns first (campaign wizard stores here), fall back to campaigns
+  // Note: outbound_campaigns does NOT have sequence_steps column — sequence data lives in target_filter.sequence
   let { data: row, error } = await db
     .from("outbound_campaigns")
-    .select("id, workspace_id, status, type, target_filter, sequence_steps")
+    .select("id, workspace_id, status, type, target_filter")
     .eq("id", id)
     .maybeSingle();
   if (!row && !error) {
@@ -196,10 +197,13 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
       .eq("workspace_id", workspaceId);
 
     if (Array.isArray(filter.audience_statuses) && filter.audience_statuses.length > 0) {
-      q = q.in("state", filter.audience_statuses);
+      // Normalize to uppercase for case-insensitive matching (DB stores UPPERCASE states)
+      const normalizedStatuses = filter.audience_statuses.map((s: string) => s.toUpperCase());
+      q = q.in("state", normalizedStatuses);
     }
     if (filter.audience_source) {
-      q = q.eq("source", filter.audience_source);
+      // Only filter by source if leads actually have source data — allow nulls through
+      q = q.or(`source.eq.${filter.audience_source},source.is.null`);
     }
     if (typeof filter.audience_min_score === "number" && filter.audience_min_score >= 0) {
       q = q.gte("qualification_score", filter.audience_min_score);
@@ -241,10 +245,11 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
     .limit(1000);
 
   if (Array.isArray(filter.audience_statuses) && filter.audience_statuses.length > 0) {
-    leadQuery = leadQuery.in("state", filter.audience_statuses);
+    const normalizedStatuses = filter.audience_statuses.map((s: string) => s.toUpperCase());
+    leadQuery = leadQuery.in("state", normalizedStatuses);
   }
   if (filter.audience_source) {
-    leadQuery = leadQuery.eq("source", filter.audience_source);
+    leadQuery = leadQuery.or(`source.eq.${filter.audience_source},source.is.null`);
   }
   if (typeof filter.audience_min_score === "number" && filter.audience_min_score >= 0) {
     leadQuery = leadQuery.gte("qualification_score", filter.audience_min_score);
@@ -257,11 +262,20 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   leadQuery = leadQuery.neq("opt_out", true);
 
   // Exclude leads already in an active campaign to prevent double-enrollment
-  const { data: activeLeadIds } = await db
-    .from("campaign_leads")
-    .select("lead_id")
+  // campaign_leads has no workspace_id — join through outbound_campaigns instead
+  const { data: activeCampaignIds } = await db
+    .from("outbound_campaigns")
+    .select("id")
     .eq("workspace_id", workspaceId)
-    .in("status", ["pending", "sent", "calling"]);
+    .eq("status", "active");
+  const activeCmpIds = (activeCampaignIds ?? []).map((r: { id: string }) => r.id);
+  const { data: activeLeadIds } = activeCmpIds.length > 0
+    ? await db
+        .from("campaign_leads")
+        .select("lead_id")
+        .in("campaign_id", activeCmpIds)
+        .in("status", ["pending", "sent", "calling"])
+    : { data: [] };
   const excludeLeadIds = new Set(
     (activeLeadIds ?? []).map((r: { lead_id: string }) => r.lead_id)
   );
