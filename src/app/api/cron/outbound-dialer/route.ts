@@ -53,7 +53,7 @@ export async function GET(req: NextRequest) {
 
       // Check business hours for this campaign/workspace
       if (!isWithinCallWindow(callWindowStart, callWindowEnd, tz)) {
-        log("debug", "cron.outbound_dialer.outside_call_window", {
+        log("info", "cron.outbound_dialer.outside_call_window", {
           campaign_id: campaign.id,
           timezone: tz,
         });
