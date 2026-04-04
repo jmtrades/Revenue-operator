@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
 
     if (error) {
       log("error", "no_show_detection.query_failed", { error: error.message });
-      return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
+      return NextResponse.json({ ok: false, error: "Query failed" }, { status: 500 });
     }
     appointments = (data ?? []) as ApptRow[];
   } catch (err) {
@@ -102,7 +102,7 @@ export async function GET(req: NextRequest) {
       if (appt.lead_id) {
         await db
           .from("leads")
-          .update({ status: "REACTIVATE", updated_at: nowIso })
+          .update({ state: "REACTIVATE", updated_at: nowIso })
           .eq("id", appt.lead_id)
           .eq("workspace_id", appt.workspace_id);
       }

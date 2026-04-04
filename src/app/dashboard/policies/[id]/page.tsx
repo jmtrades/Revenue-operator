@@ -49,7 +49,7 @@ export default function PolicyEditPage({ params }: { params: Promise<{ id: strin
       return;
     }
     setLoading(true);
-    fetch(`/api/enterprise/policies/${policyId}?workspace_id=${encodeURIComponent(workspaceId)}`)
+    fetch(`/api/enterprise/policies/${policyId}?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
       .then((r) => r.json())
       .then((d) => {
         if (d.ok && d.policy) {
@@ -74,6 +74,7 @@ export default function PolicyEditPage({ params }: { params: Promise<{ id: strin
       const r = await fetch(`/api/enterprise/policies/${policyId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           workspace_id: workspaceId,
           template_id: form.template_id || null,

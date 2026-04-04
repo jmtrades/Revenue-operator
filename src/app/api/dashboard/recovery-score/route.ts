@@ -73,8 +73,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         .from("call_sessions")
         .select("id, call_started_at")
         .eq("workspace_id", workspaceId)
-        .eq("direction", "inbound")
-        .in("status", ["missed", "no_answer", "abandoned"])
+        .in("outcome", ["missed", "no_answer", "abandoned"])
         .gte("call_started_at", sevenDaysAgo.toISOString());
 
       if (missedCalls && missedCalls.length > 0) {
@@ -86,7 +85,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         );
 
         const { data: followUps } = await db
-          .from("followup_sequences")
+          .from("follow_up_sequences")
           .select("id, call_session_id, created_at")
           .eq("workspace_id", workspaceId)
           .in("call_session_id", callIds);
@@ -131,10 +130,10 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         .from("leads")
         .select("id", { count: "exact", head: true })
         .eq("workspace_id", workspaceId)
-        .not("state", "in", '("ARCHIVED","LOST","DISQUALIFIED","WON")');
+        .not("state", "in", '("CLOSED","LOST","WON")');
 
       const { count: followUpsSent } = await db
-        .from("followup_sequences")
+        .from("follow_up_sequences")
         .select("id", { count: "exact", head: true })
         .eq("workspace_id", workspaceId)
         .gte("created_at", new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString()); // Last 30 days
@@ -213,7 +212,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         .from("leads")
         .select("id, updated_at")
         .eq("workspace_id", workspaceId)
-        .not("state", "in", '("ARCHIVED","LOST","DISQUALIFIED","WON")')
+        .not("state", "in", '("CLOSED","LOST","WON")')
         .lt("updated_at", sevenDaysAgo.toISOString());
 
       if (staleLeads && staleLeads.length > 0) {
@@ -225,7 +224,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
         // Check if any of these leads were contacted after being marked stale
         const { count: reactivated } = await db
-          .from("followup_sequences")
+          .from("follow_up_sequences")
           .select("id", { count: "exact", head: true })
           .eq("workspace_id", workspaceId)
           .in("lead_id", staleLeadIds)
@@ -250,7 +249,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         .from("call_sessions")
         .select("id", { count: "exact", head: true })
         .eq("workspace_id", workspaceId)
-        .in("status", ["completed", "transferred", "recorded"]);
+        .in("outcome", ["completed", "transferred", "recorded"]);
 
       const { count: appointmentsBooked } = await db
         .from("appointments")
@@ -336,8 +335,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       .from("call_sessions")
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
-      .eq("direction", "inbound")
-      .in("status", ["missed", "no_answer", "abandoned"])
+      .in("outcome", ["missed", "no_answer", "abandoned"])
       .gte("call_started_at", sevenDaysAgo.toISOString());
 
     const fourteenDaysAgo = new Date(now);
@@ -356,7 +354,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         .from("leads")
         .select("id")
         .eq("workspace_id", workspaceId)
-        .not("state", "in", '("ARCHIVED","LOST","DISQUALIFIED","WON")')
+        .not("state", "in", '("CLOSED","LOST","WON")')
         .lt("updated_at", sevenDaysAgo.toISOString());
       if (staleLeads) {
         staleLeadIds2.push(...(staleLeads as Array<{ id: string }>).map((l) => l.id));

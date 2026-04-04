@@ -80,6 +80,7 @@ export async function sendAssuranceLine(workspaceId: string, line: string): Prom
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },
     body: JSON.stringify({ from: EMAIL_FROM, to, subject: line, text: line }),
+      signal: AbortSignal.timeout(10_000),
   });
   return res.ok;
 }

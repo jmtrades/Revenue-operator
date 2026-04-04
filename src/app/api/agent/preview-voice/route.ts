@@ -20,11 +20,11 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
-function getVoiceServerUrl(): string {
+function getVoiceServerUrl(): string | null {
   const url = process.env.VOICE_SERVER_URL;
   if (!url) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error("VOICE_SERVER_URL is required in production");
+    if (process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production") {
+      return null; // Caller handles missing URL gracefully
     }
     return "http://localhost:8100";
   }
@@ -60,6 +60,9 @@ export async function POST(req: NextRequest) {
   const defaults = { ...HUMAN_VOICE_DEFAULTS, ...settings };
 
   const voiceServerUrl = getVoiceServerUrl();
+  if (!voiceServerUrl) {
+    return NextResponse.json({ error: "Voice preview is not configured" }, { status: 503 });
+  }
 
   try {
     const response = await fetch(
@@ -78,6 +81,7 @@ export async function POST(req: NextRequest) {
           style: clamp(defaults.style, 0, 1),
           use_speaker_boost: defaults.useSpeakerBoost,
         }),
+        signal: AbortSignal.timeout(15_000),
       },
     );
 

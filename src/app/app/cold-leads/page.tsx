@@ -550,14 +550,14 @@ export default function ColdLeadsPage() {
         </p>
       </div>
 
-      {/* Brain-managed reactivation banner */}
+      {/* AI-managed reactivation banner */}
       <div className="mb-6 rounded-xl border border-violet-500/15 bg-violet-500/[0.04] px-4 py-3 flex items-center gap-3">
         <span className="relative flex h-2 w-2 shrink-0">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
           <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
         </span>
         <p className="text-sm text-[var(--text-primary)]">
-          <span className="font-semibold text-violet-400">Brain reactivation active</span>
+          <span className="font-semibold text-violet-400">AI reactivation active</span>
           {' · '}
           <span>{stats.pending} leads queued</span>
           {' · '}
@@ -668,15 +668,23 @@ export default function ColdLeadsPage() {
       ) : filtered.length === 0 ? (
         <div className="text-center py-12">
           <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">{t("empty.title")}</h3>
-          <p className="text-sm text-[var(--text-secondary)] mb-4">
+          <p className="text-sm text-[var(--text-secondary)] mb-4 max-w-md mx-auto">
             {t("empty.description")}
           </p>
-          <button
-            onClick={() => setAddLeadOpen(true)}
-            className="px-4 py-2 rounded-lg bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-medium hover:opacity-90"
-          >
-            {t("addButton")}
-          </button>
+          <div className="flex items-center justify-center gap-3">
+            <a
+              href="/app/settings/integrations"
+              className="px-4 py-2 rounded-lg bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-medium hover:opacity-90"
+            >
+              Connect CRM
+            </a>
+            <button
+              onClick={() => setAddLeadOpen(true)}
+              className="px-4 py-2 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm font-medium hover:bg-[var(--bg-hover)]"
+            >
+              {t("addButton")}
+            </button>
+          </div>
         </div>
       ) : (
         <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] overflow-hidden">

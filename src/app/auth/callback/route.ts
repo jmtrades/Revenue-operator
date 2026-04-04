@@ -7,7 +7,9 @@ import { getBaseUrl } from "@/lib/runtime/base-url";
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/app/dashboard";
+  const rawNext = searchParams.get("next") ?? "/app/dashboard";
+  // Sanitize: only allow relative paths starting with / to prevent open redirects
+  const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/app/dashboard";
   const origin = getBaseUrl(new URL(request.url).origin);
 
   if (!code) {
@@ -44,12 +46,26 @@ export async function GET(request: Request) {
       let { data: ws } = await db.from("workspaces").select("id").eq("owner_id", userId).limit(1).maybeSingle();
       if (!ws) {
         const { data: created, error: createErr } = await db.from("workspaces").insert({ name: "My workspace", owner_id: userId, autonomy_level: "assisted", kill_switch: false }).select("id").maybeSingle();
-        if (!createErr && created) {
+        if (createErr) {
+          // Race condition: another request created the workspace — re-fetch
+          const { data: existing } = await db.from("workspaces").select("id").eq("owner_id", userId).limit(1).maybeSingle();
+          if (existing) { ws = existing as { id: string }; }
+        } else if (created) {
           ws = created as { id: string };
           isNewUser = true;
-          await db.from("settings").insert({ workspace_id: (created as { id: string }).id, risk_level: "balanced" });
-          await db.from("workspace_members").insert({ workspace_id: (created as { id: string }).id, user_id: userId, role: "owner" });
-          await db.from("workspace_billing").insert({ workspace_id: (created as { id: string }).id, plan: "trial", status: "trialing" });
+          const newWsId = (created as { id: string }).id;
+          const trialEnd = new Date();
+          trialEnd.setDate(trialEnd.getDate() + 14);
+          await db.from("settings").insert({ workspace_id: newWsId, risk_level: "balanced" });
+          const { error: memberErr } = await db.from("workspace_members").insert({ workspace_id: newWsId, user_id: userId, role: "owner" });
+          if (memberErr) {
+            // Retry once — if this fails, user is locked out of their workspace
+            await db.from("workspace_members").insert({ workspace_id: newWsId, user_id: userId, role: "owner" });
+          }
+          await db.from("workspace_billing").insert({ workspace_id: newWsId, plan: "trial", status: "trialing", trial_ends_at: trialEnd.toISOString() });
+          await db.from("workspaces").update({ billing_status: "trial", trial_ends_at: trialEnd.toISOString() }).eq("id", newWsId);
+          try { await db.from("workspace_business_context").insert({ workspace_id: newWsId, business_name: "My workspace" }); } catch { /* non-fatal */ }
+          try { await db.from("notifications").insert({ workspace_id: newWsId, user_id: userId, type: "system_update", title: "Welcome to Revenue Operator", body: "Your 14-day trial is active. Set up your AI agent to start taking calls.", read: false, metadata: {} }); } catch { /* non-fatal */ }
         }
       }
       workspaceId = (ws as { id?: string } | null)?.id ?? undefined;

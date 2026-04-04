@@ -11,6 +11,7 @@ import { getDb } from "@/lib/db/queries";
 import { getPriceId } from "@/lib/stripe-prices";
 import { RECEIPT_FOOTER } from "@/lib/billing-copy";
 import type { BillingTier } from "@/lib/feature-gate/types";
+import { tierToDbValue } from "@/lib/billing-plans";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getStripe } from "@/lib/billing/stripe-client";
 import { assertSameOrigin } from "@/lib/http/csrf";
@@ -217,7 +218,7 @@ export async function POST(req: NextRequest) {
       await db
         .from("workspaces")
         .update({
-          pending_billing_tier: tier,
+          pending_billing_tier: tierToDbValue(tier),
           pending_billing_effective_at: effectiveAt,
           updated_at: new Date().toISOString(),
         })
@@ -237,7 +238,7 @@ export async function POST(req: NextRequest) {
     await db
       .from("workspaces")
       .update({
-        billing_tier: tier,
+        billing_tier: tierToDbValue(tier),
         pending_billing_tier: null,
         pending_billing_effective_at: null,
         updated_at: new Date().toISOString(),
@@ -265,7 +266,7 @@ export async function POST(req: NextRequest) {
       workspace_id,
       event_type: "plan_change",
       old_tier: oldTier,
-      new_tier: tier,
+      new_tier: tierToDbValue(tier),
       changed_by: userId,
       timestamp: new Date().toISOString(),
       metadata: {
@@ -274,11 +275,11 @@ export async function POST(req: NextRequest) {
       },
     });
     if (auditInsertErr) {
-      console.warn("[change-plan] Failed to log billing event:", auditInsertErr.message);
+      log("warn", "[change-plan] Failed to log billing event:", { detail: auditInsertErr.message });
     }
   } catch (auditErr) {
     // Non-blocking: audit log error should not fail the plan change
-    console.warn("[change-plan] Audit log error:", auditErr instanceof Error ? auditErr.message : auditErr);
+    log("warn", "[change-plan] Audit log error:", { detail: auditErr instanceof Error ? auditErr.message : auditErr });
   }
 
   return NextResponse.json({

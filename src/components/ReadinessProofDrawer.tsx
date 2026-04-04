@@ -36,7 +36,7 @@ export function ReadinessProofDrawer({ leadId, workspaceId, isOpen, onClose }: R
   useEffect(() => {
     if (!isOpen || !leadId || !workspaceId) return;
     setLoading(true);
-    fetch(`/api/leads/${leadId}/readiness?workspace_id=${workspaceId}`)
+    fetch(`/api/leads/${leadId}/readiness?workspace_id=${workspaceId}`, { credentials: "include" })
       .then((r) => r.json())
       .then(setData)
       .catch(() => setData(null))

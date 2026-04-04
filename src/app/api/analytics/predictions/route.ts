@@ -99,9 +99,9 @@ export async function GET(req: NextRequest) {
     // Fetch all active leads
     const { data: leads } = await db
       .from("leads")
-      .select("id, name, last_activity_at, status")
+      .select("id, name, last_activity_at, state")
       .eq("workspace_id", workspaceId)
-      .in("status", ["active", "engaged", "nurturing"]);
+      .in("state", ["ENGAGED", "QUALIFIED", "CONTACTED"]);
 
     // Fetch deals for conversion history and revenue
     const { data: deals } = await db
@@ -151,7 +151,7 @@ export async function GET(req: NextRequest) {
 
       const recentConversions = (dealMap[lead.id] ?? []).filter((d) => d.status === "won").length;
 
-      const riskScore = calculateRiskScore(daysSinceActivity, lead.status as string | null, recentConversions);
+      const riskScore = calculateRiskScore(daysSinceActivity, lead.state as string | null, recentConversions);
 
       if (riskScore >= 60) {
         churnRiskLeads.push({

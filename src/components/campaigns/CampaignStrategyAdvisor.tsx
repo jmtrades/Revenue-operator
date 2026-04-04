@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Brain, Zap, DollarSign, Clock, Target, AlertTriangle, ChevronRight } from "lucide-react";
+import { Zap, Clock, Target, AlertTriangle, ChevronRight, Users } from "lucide-react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api";
 
@@ -22,9 +22,8 @@ interface Recommendation {
   description: string;
   metric: number;
   impact: {
-    recoveryAmount: number;
     estimatedContacts: number;
-    riskPerWeek: number;
+    urgency: string;
   };
   settings: {
     profile: "Conservative" | "Standard" | "Assertive";
@@ -99,7 +98,7 @@ export function CampaignStrategyAdvisor({
             className="p-2.5 rounded-lg"
             style={{ backgroundColor: "var(--accent-primary)" }}
           >
-            <Brain className="w-5 h-5 text-white" />
+            <Target className="w-5 h-5 text-white" />
           </div>
           <div>
             <h2
@@ -184,29 +183,7 @@ export function CampaignStrategyAdvisor({
             </h3>
           </div>
 
-          <div className="grid grid-cols-3 gap-3">
-            {/* Recovery Amount */}
-            <div
-              className="rounded-lg p-3 border"
-              style={{
-                backgroundColor: "var(--bg-hover)",
-                borderColor: "var(--border-default)",
-              }}
-            >
-              <div className="flex items-center gap-1.5 mb-1">
-                <DollarSign className="w-3.5 h-3.5" style={{ color: "var(--accent-primary)" }} />
-                <span className="text-xs" style={{ color: "var(--text-secondary)" }}>
-                  Recovery Potential
-                </span>
-              </div>
-              <p
-                className="text-sm font-semibold"
-                style={{ color: "var(--text-primary)" }}
-              >
-                ~${recommendation.impact.recoveryAmount.toLocaleString()}
-              </p>
-            </div>
-
+          <div className="grid grid-cols-2 gap-3">
             {/* Estimated Contacts */}
             <div
               className="rounded-lg p-3 border"
@@ -216,9 +193,9 @@ export function CampaignStrategyAdvisor({
               }}
             >
               <div className="flex items-center gap-1.5 mb-1">
-                <Target className="w-3.5 h-3.5" style={{ color: "var(--accent-primary)" }} />
+                <Users className="w-3.5 h-3.5" style={{ color: "var(--accent-primary)" }} />
                 <span className="text-xs" style={{ color: "var(--text-secondary)" }}>
-                  Contacts Available
+                  Contacts to Reach
                 </span>
               </div>
               <p
@@ -229,7 +206,7 @@ export function CampaignStrategyAdvisor({
               </p>
             </div>
 
-            {/* Risk of Inaction */}
+            {/* Urgency */}
             <div
               className="rounded-lg p-3 border"
               style={{
@@ -238,16 +215,16 @@ export function CampaignStrategyAdvisor({
               }}
             >
               <div className="flex items-center gap-1.5 mb-1">
-                <Clock className="w-3.5 h-3.5" style={{ color: "var(--accent-danger, #ef4444)" }} />
+                <Clock className="w-3.5 h-3.5" style={{ color: recommendation.priority === "critical" ? "var(--accent-danger, #ef4444)" : "var(--accent-primary)" }} />
                 <span className="text-xs" style={{ color: "var(--text-secondary)" }}>
-                  Risk/Week
+                  Urgency
                 </span>
               </div>
               <p
                 className="text-sm font-semibold"
-                style={{ color: "var(--accent-danger, #ef4444)" }}
+                style={{ color: recommendation.priority === "critical" ? "var(--accent-danger, #ef4444)" : "var(--text-primary)" }}
               >
-                ~${recommendation.impact.riskPerWeek.toLocaleString()}
+                {recommendation.impact.urgency}
               </p>
             </div>
           </div>
@@ -296,14 +273,14 @@ export function CampaignStrategyAdvisor({
 
         {/* Quick Launch Button */}
         <Link
-          href={`/app/follow-ups/create?template=${recommendation.templateSlug}`}
+          href={`/app/campaigns/create?template=${recommendation.templateSlug}`}
           className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold transition-all duration-200 text-white"
           style={{
             backgroundColor: "var(--accent-primary)",
           }}
         >
           <Zap className="w-4 h-4" />
-          Create sequence
+          Create campaign
           <ChevronRight className="w-4 h-4" />
         </Link>
       </div>
@@ -333,13 +310,12 @@ function generateRecommendation(data: DashboardSummary): Recommendation {
     return {
       type: "speed-to-lead-recovery",
       priority: "critical",
-      title: `PRIORITY: Speed-to-Lead Recovery`,
-      description: `You have ${data.missed_calls_today} unanswered opportunities today. Every minute of delay reduces conversion by 10%.`,
+      title: `Speed-to-Lead Recovery`,
+      description: `You have ${data.missed_calls_today} unanswered calls today. Quick follow-up dramatically improves conversion.`,
       metric: data.missed_calls_today,
       impact: {
-        recoveryAmount: data.missed_calls_today * 150,
         estimatedContacts: data.missed_calls_today,
-        riskPerWeek: data.missed_calls_today * 7 * 50,
+        urgency: "Act now",
       },
       settings: {
         profile: "Assertive",
@@ -348,7 +324,7 @@ function generateRecommendation(data: DashboardSummary): Recommendation {
         rationale:
           "High-intent prospects need immediate follow-up. Fast turnaround prevents call abandonment.",
       },
-      templateSlug: "speed-to-lead-recovery",
+      templateSlug: "speed_to_lead",
     };
   }
 
@@ -357,13 +333,12 @@ function generateRecommendation(data: DashboardSummary): Recommendation {
     return {
       type: "no-show-followup",
       priority: "high",
-      title: `PRIORITY: No-Show Recovery`,
-      description: `${data.no_shows_this_week} no-shows this week represent ~$${(data.no_shows_this_week * 50).toLocaleString()} in at-risk revenue.`,
+      title: `No-Show Recovery`,
+      description: `${data.no_shows_this_week} no-shows this week — re-engage them before they go elsewhere.`,
       metric: data.no_shows_this_week,
       impact: {
-        recoveryAmount: data.no_shows_this_week * 75,
         estimatedContacts: data.no_shows_this_week,
-        riskPerWeek: data.no_shows_this_week * 50,
+        urgency: "Within 24h",
       },
       settings: {
         profile: "Standard",
@@ -372,7 +347,7 @@ function generateRecommendation(data: DashboardSummary): Recommendation {
         rationale:
           "No-shows signal intent mismatch. Re-engagement typically recovers 15-25% of failed appointments.",
       },
-      templateSlug: "no-show-followup",
+      templateSlug: "no_show_recovery",
     };
   }
 
@@ -381,13 +356,12 @@ function generateRecommendation(data: DashboardSummary): Recommendation {
     return {
       type: "stale-lead-reactivation",
       priority: "high",
-      title: `PRIORITY: Stale Lead Reactivation`,
-      description: `${data.stale_leads} cold leads sitting in your pipeline represent ~$${(data.stale_leads * 40).toLocaleString()} in dormant opportunity.`,
+      title: `Stale Lead Reactivation`,
+      description: `${data.stale_leads} leads in your pipeline haven't been contacted recently. A reactivation campaign can bring them back.`,
       metric: data.stale_leads,
       impact: {
-        recoveryAmount: data.stale_leads * 40,
         estimatedContacts: data.stale_leads,
-        riskPerWeek: 0,
+        urgency: "This week",
       },
       settings: {
         profile: "Conservative",
@@ -396,7 +370,7 @@ function generateRecommendation(data: DashboardSummary): Recommendation {
         rationale:
           "Stale leads need re-engagement but with lower intensity. Value is in reminder + discount incentive.",
       },
-      templateSlug: "stale-lead-reactivation",
+      templateSlug: "reactivation",
     };
   }
 
@@ -404,13 +378,12 @@ function generateRecommendation(data: DashboardSummary): Recommendation {
   return {
     type: "referral-generation",
     priority: "info",
-    title: "Your Pipeline is Performing Well",
+    title: "Your Pipeline is Looking Good",
     description: `Consider launching a post-service review campaign to generate referrals from recent conversions.`,
     metric: data.qualified_leads,
     impact: {
-      recoveryAmount: Math.max(1000, data.qualified_leads * 100),
       estimatedContacts: Math.max(20, data.qualified_leads),
-      riskPerWeek: 0,
+      urgency: "Ongoing",
     },
     settings: {
       profile: "Standard",
@@ -419,6 +392,6 @@ function generateRecommendation(data: DashboardSummary): Recommendation {
       rationale:
         "Referral campaigns leverage your best customers. Lower cost-per-acquisition with higher-quality leads.",
     },
-    templateSlug: "post-service-review",
+    templateSlug: "review_request",
   };
 }

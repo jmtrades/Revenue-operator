@@ -3,6 +3,7 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 export type EmailProvider = "resend" | "sendgrid";
 
@@ -56,17 +57,17 @@ export async function getWorkspaceEmailConfig(workspaceId: string): Promise<Work
   const db = getDb();
   const { data } = await db
     .from("workspace_email_config")
-    .select("workspace_id, provider, from_email, from_name, provider_config")
+    .select("workspace_id, provider, from_email, from_name, api_key_encrypted")
     .eq("workspace_id", workspaceId)
     .maybeSingle();
   if (!data) return null;
-  const r = data as { workspace_id: string; provider: string; from_email: string; from_name?: string | null; provider_config?: { api_key?: string } | null };
+  const r = data as { workspace_id: string; provider: string; from_email: string; from_name?: string | null; api_key_encrypted?: string | null };
   return {
     workspace_id: r.workspace_id,
     provider: r.provider as EmailProvider,
     from_email: r.from_email,
     from_name: r.from_name ?? null,
-    has_api_key: Boolean(r.provider_config?.api_key),
+    has_api_key: Boolean(r.api_key_encrypted),
   };
 }
 
@@ -75,13 +76,13 @@ async function getSendApiKey(workspaceId: string): Promise<{ key: string; from: 
   const db = getDb();
   const { data } = await db
     .from("workspace_email_config")
-    .select("provider, provider_config, from_email, from_name")
+    .select("provider, api_key_encrypted, from_email, from_name")
     .eq("workspace_id", workspaceId)
     .maybeSingle();
   if (data) {
-    const r = data as { provider: string; provider_config?: { api_key?: string } | null; from_email: string; from_name?: string | null };
+    const r = data as { provider: string; api_key_encrypted?: string | null; from_email: string; from_name?: string | null };
     let key: string | null = null;
-    const storedKey = r.provider_config?.api_key?.trim();
+    const storedKey = r.api_key_encrypted?.trim();
     if (storedKey) {
       try {
         const { decrypt } = await import("@/lib/encryption");
@@ -123,7 +124,7 @@ export async function sendEmail(
   const db = getDb();
   const creds = await getSendApiKey(workspaceId);
   if (!creds) {
-    console.warn("[email] RESEND_API_KEY not configured — email not sent");
+    log("warn", "[email] RESEND_API_KEY not configured — email not sent");
     return { ok: false, error: "email_not_configured" };
   }
 
@@ -145,6 +146,9 @@ export async function sendEmail(
   if (!queueId) return { ok: false, error: "Failed to create queue entry" };
 
   try {
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com";
+    const unsubscribeUrl = `${appUrl}/app/settings/notifications`;
+    const htmlWithFooter = `${bodyHtml}<p style="margin-top:24px;font-size:11px;color:#999;text-align:center;"><a href="${unsubscribeUrl}" style="color:#999;">Manage email preferences</a></p>`;
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -155,8 +159,13 @@ export async function sendEmail(
         from,
         to: [to],
         subject,
-        html: bodyHtml,
+        html: htmlWithFooter,
+        headers: {
+          "List-Unsubscribe": `<${unsubscribeUrl}>`,
+          "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        },
       }),
+      signal: AbortSignal.timeout(10_000),
     });
 
     const json = (await res.json()) as { id?: string; message?: string };

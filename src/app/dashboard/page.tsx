@@ -87,12 +87,12 @@ export default function SituationPage() {
     }
     setLoading(true);
     Promise.all([
-      fetchWithFallback<Capsule>(`/api/operational/operator-capsule?workspace_id=${encodeURIComponent(workspaceId)}`),
-      fetchWithFallback<RetentionPayload>(`/api/operational/retention-intercept?workspace_id=${encodeURIComponent(workspaceId)}`),
-      fetchWithFallback<{ handoffs: Handoff[]; beyond_scope?: boolean }>(`/api/handoffs?workspace_id=${encodeURIComponent(workspaceId)}`),
-      fetchWithFallback<QuickStats>(`/api/dashboard/quick-stats?workspace_id=${encodeURIComponent(workspaceId)}`),
-      fetchWithFallback<RevenueAtRisk>(`/api/dashboard/revenue-at-risk?workspace_id=${encodeURIComponent(workspaceId)}`),
-      fetchWithFallback<{ gaps: KnowledgeGap[]; total: number }>(`/api/dashboard/knowledge-gaps?workspace_id=${encodeURIComponent(workspaceId)}`),
+      fetchWithFallback<Capsule>(`/api/operational/operator-capsule?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
+      fetchWithFallback<RetentionPayload>(`/api/operational/retention-intercept?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
+      fetchWithFallback<{ handoffs: Handoff[]; beyond_scope?: boolean }>(`/api/handoffs?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
+      fetchWithFallback<QuickStats>(`/api/dashboard/quick-stats?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
+      fetchWithFallback<RevenueAtRisk>(`/api/dashboard/revenue-at-risk?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
+      fetchWithFallback<{ gaps: KnowledgeGap[]; total: number }>(`/api/dashboard/knowledge-gaps?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
     ]).then(([capRes, retRes, handRes, statsRes, riskRes, gapsRes]) => {
       if (capRes.data) setCapsule(capRes.data);
       if (retRes.data) setRetention(retRes.data);
@@ -203,9 +203,15 @@ export default function SituationPage() {
               <Phone size={20} style={{ color: "var(--accent-primary)" }} />
             </div>
           </div>
-          <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
-            {stats?.recent_calls ?? "0"}
-          </p>
+          {(stats?.recent_calls ?? 0) > 0 ? (
+            <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
+              {stats?.recent_calls}
+            </p>
+          ) : (
+            <p className="text-xl font-semibold mb-1" style={{ color: "var(--text-tertiary)" }}>
+              {t("stats.startsAfterFirstCall")}
+            </p>
+          )}
           <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("stats.activeCalls")}</p>
         </Link>
 
@@ -215,29 +221,35 @@ export default function SituationPage() {
               <TrendingUp size={20} color="white" />
             </div>
           </div>
-          {(stats?.recent_calls ?? 0) > 0 ? (
+          {(stats?.active_leads ?? 0) > 0 ? (
             <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
-              ${((stats?.recent_calls ?? 0) * 47).toLocaleString()}
+              {stats?.active_leads ?? 0}
             </p>
           ) : (
             <p className="text-xl font-semibold mb-1" style={{ color: "var(--text-tertiary)" }}>
               {t("stats.startsAfterFirstCall")}
             </p>
           )}
-          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("stats.estRevenueRecovered")}</p>
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("stats.activeLeads")}</p>
         </div>
 
-        <div className="rounded-lg border p-6" style={{ borderColor: "var(--border-default)", background: "var(--card)", borderWidth: "1px" }}>
+        <Link href={`/dashboard/follow-ups${searchParams.get("workspace_id") ? `?workspace_id=${searchParams.get("workspace_id")}` : ""}`} className="rounded-lg border p-6 transition-[box-shadow,border-opacity] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] hover:shadow-md hover:border-opacity-50 active:scale-[0.97]" style={{ borderColor: "var(--border-default)", background: "var(--card)", borderWidth: "1px" }}>
           <div className="flex items-start justify-between mb-3">
             <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: "var(--meaning-blue)" }}>
               <CheckCircle2 size={20} color="white" />
             </div>
           </div>
-          <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
-            {stats?.recent_calls ?? "0"}
-          </p>
-          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("kpis.callsHandled")}</p>
-        </div>
+          {(stats?.pending_followups ?? 0) > 0 ? (
+            <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
+              {stats?.pending_followups}
+            </p>
+          ) : (
+            <p className="text-xl font-semibold mb-1" style={{ color: "var(--text-tertiary)" }}>
+              {t("stats.startsAfterFirstCall")}
+            </p>
+          )}
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("kpis.pendingFollowups")}</p>
+        </Link>
 
         <Link href={`/dashboard/leads?filter=followup${searchParams.get("workspace_id") ? `&workspace_id=${searchParams.get("workspace_id")}` : ""}`} className="rounded-lg border p-6 transition-[box-shadow,border-opacity] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] hover:shadow-md hover:border-opacity-50 active:scale-[0.97]" style={{ borderColor: "var(--border-default)", background: "var(--card)", borderWidth: "1px" }}>
           <div className="flex items-start justify-between mb-3">
@@ -245,9 +257,15 @@ export default function SituationPage() {
               <Calendar size={20} color="white" />
             </div>
           </div>
-          <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
-            {stats?.pending_followups ?? "0"}
-          </p>
+          {(stats?.pending_followups ?? 0) > 0 ? (
+            <p className="text-3xl font-bold mb-1" style={{ color: "var(--text-primary)" }}>
+              {stats?.pending_followups}
+            </p>
+          ) : (
+            <p className="text-xl font-semibold mb-1" style={{ color: "var(--text-tertiary)" }}>
+              {t("stats.startsAfterFirstCall")}
+            </p>
+          )}
           <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{t("kpis.appointmentsBooked")}</p>
         </Link>
       </div>

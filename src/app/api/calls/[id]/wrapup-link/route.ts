@@ -54,6 +54,7 @@ export async function POST(
           wrapup_url: url,
           message: "Call wrap-up: " + url,
         }),
+        signal: AbortSignal.timeout(10_000),
       });
     } catch {
       // non-blocking

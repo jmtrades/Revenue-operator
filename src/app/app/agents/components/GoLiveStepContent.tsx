@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, PhoneOutgoing, Users, Megaphone } from "lucide-react";
 import { AccordionItem } from "@/components/ui/Accordion";
 import { VoicePreviewPlayer } from "@/components/agents/VoicePreviewPlayer";
 import { CURATED_VOICES } from "@/lib/constants/curated-voices";
@@ -37,7 +37,7 @@ export function GoLiveStepContent({
   const t = useTranslations("agents");
   const r = getReadiness(agent);
   const testCallCompleted = agent.test_call_completed === true;
-  // Core requirements: name, greeting, voice selected, AND at least 1 FAQ (reduced from 3 — brain auto-seeds the rest)
+  // Core requirements: name, greeting, voice selected, AND at least 1 FAQ (reduced from 3 — AI auto-seeds the rest)
   const hasMinConfig =
     !!(agent.name?.trim() && agent.greeting?.trim()) &&
     !!agent.voice?.trim() &&
@@ -314,6 +314,47 @@ export function GoLiveStepContent({
           })()}
         </div>
       </section>
+      {/* Post-activation: What's Next guidance */}
+      {agent.active && (
+        <section className="rounded-2xl border-2 border-[var(--accent-primary)] bg-[var(--accent-primary)]/5 p-5 space-y-4">
+          <div className="flex items-center gap-3">
+            <CheckCircle2 className="w-6 h-6 text-[var(--accent-primary)]" />
+            <div>
+              <p className="text-sm font-semibold text-[var(--text-primary)]">Your agent is live!</p>
+              <p className="text-xs text-[var(--text-secondary)]">Choose how you want to start reaching your leads:</p>
+            </div>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <Link
+              href="/app/campaigns/create?template=speed_to_lead"
+              className="flex flex-col items-center gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 text-center transition-colors hover:border-[var(--accent-primary)] hover:bg-[var(--bg-input)]"
+            >
+              <Megaphone className="w-6 h-6 text-[var(--accent-primary)]" />
+              <span className="text-sm font-medium text-[var(--text-primary)]">Launch a Campaign</span>
+              <span className="text-[11px] text-[var(--text-secondary)]">Auto-call a list of leads with one click</span>
+            </Link>
+            <Link
+              href="/app/leads"
+              className="flex flex-col items-center gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 text-center transition-colors hover:border-[var(--accent-primary)] hover:bg-[var(--bg-input)]"
+            >
+              <Users className="w-6 h-6 text-[var(--accent-primary)]" />
+              <span className="text-sm font-medium text-[var(--text-primary)]">Call a Lead</span>
+              <span className="text-[11px] text-[var(--text-secondary)]">Open any lead and have AI call them instantly</span>
+            </Link>
+            <Link
+              href="/app/settings/phone"
+              className="flex flex-col items-center gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4 text-center transition-colors hover:border-[var(--accent-primary)] hover:bg-[var(--bg-input)]"
+            >
+              <PhoneOutgoing className="w-6 h-6 text-[var(--accent-primary)]" />
+              <span className="text-sm font-medium text-[var(--text-primary)]">Forward Your Phone</span>
+              <span className="text-[11px] text-[var(--text-secondary)]">Route inbound calls to your AI agent</span>
+            </Link>
+          </div>
+        </section>
+      )}
+
+      {!agent.active && (
+        <>
       <p className="text-xs text-[var(--text-tertiary)]">{t("goLive.connectPhoneHint")}</p>
       <div className="grid gap-3 sm:grid-cols-2" role="list">
         <Link
@@ -335,8 +376,11 @@ export function GoLiveStepContent({
           <span className="mt-3 text-xs font-medium text-[var(--text-secondary)]">{t("goLive.getNewNumberCta")}</span>
         </Link>
       </div>
+        </>
+      )}
       <div className="flex justify-between pt-4">
         <button type="button" onClick={onBack} aria-label={t("goLive.backToTestAria")} className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-input)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-black">{t("goLive.backButton")}</button>
+        {!agent.active && (
         <button
           type="button"
           onClick={() => void onActivate()}
@@ -347,6 +391,7 @@ export function GoLiveStepContent({
         >
           {activating ? t("goLive.activating") : t("goLive.activateAgent")}
         </button>
+        )}
       </div>
     </div>
   );

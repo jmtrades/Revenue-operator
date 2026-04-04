@@ -84,7 +84,7 @@ const ONBOARDING_TEMPLATE_IDS = [
     name: "Follow-Up Engine",
     tagline: "Turns no-shows into booked appointments, dead leads into revenue",
     features: [
-      "Automated follow-up call sequences",
+      "Automated follow-up calls",
       "No-show and reminder calling",
       "Campaign performance tracking"
     ],

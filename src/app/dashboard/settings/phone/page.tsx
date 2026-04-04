@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import {
@@ -29,43 +29,27 @@ interface PhoneNumber {
   fallbackNumber: string;
 }
 
-const DEMO_NUMBERS: PhoneNumber[] = [
-  {
-    id: "pn_1",
-    number: "+1 (480) 555-0100",
-    label: "Main Business Line",
-    status: "active",
-    isDefault: true,
-    monthlyCost: 5,
-    provisionedAt: "2026-01-15",
-    fallbackNumber: "+1 (480) 555-9999",
-  },
-  {
-    id: "pn_2",
-    number: "+1 (602) 555-0200",
-    label: "After Hours",
-    status: "active",
-    isDefault: false,
-    monthlyCost: 5,
-    provisionedAt: "2026-02-01",
-    fallbackNumber: "",
-  },
-  {
-    id: "pn_3",
-    number: "+1 (512) 555-0300",
-    label: "Marketing Campaign",
-    status: "inactive",
-    isDefault: false,
-    monthlyCost: 5,
-    provisionedAt: "2026-02-20",
-    fallbackNumber: "",
-  },
-];
-
 export default function SettingsPhonePage() {
   const _t = useTranslations("dashboard");
   const { workspaceId } = useWorkspace();
-  const [numbers, setNumbers] = useState<PhoneNumber[]>(DEMO_NUMBERS);
+  const [numbers, setNumbers] = useState<PhoneNumber[]>([]);
+  const [loadingNumbers, setLoadingNumbers] = useState(true);
+
+  // Fetch real phone configs from API
+  useEffect(() => {
+    if (!workspaceId) { setLoadingNumbers(false); return; }
+    setLoadingNumbers(true);
+    fetch(`/api/phone/numbers?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
+      .then((res) => res.ok ? res.json() : Promise.reject(res))
+      .then((data: { numbers?: PhoneNumber[] }) => {
+        setNumbers(data.numbers ?? []);
+      })
+      .catch(() => {
+        // API may not exist yet — show empty state
+        setNumbers([]);
+      })
+      .finally(() => setLoadingNumbers(false));
+  }, [workspaceId]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newLabel, setNewLabel] = useState("");
   const [newAreaCode, setNewAreaCode] = useState("");
@@ -149,9 +133,6 @@ export default function SettingsPhonePage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <span className="px-2 py-0.5 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-300 text-xs">
-            Sample data
-          </span>
           <button
             type="button"
             onClick={() => setShowAddModal(true)}

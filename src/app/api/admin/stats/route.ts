@@ -106,7 +106,7 @@ export async function GET(req: NextRequest) {
   // Call sessions stats
   try {
     const { count: totalCallSessions } = await db.from("call_sessions").select("id", { count: "exact", head: true });
-    const { count: callSessionsToday } = await db.from("call_sessions").select("id", { count: "exact", head: true }).gte("started_at", todayIso);
+    const { count: callSessionsToday } = await db.from("call_sessions").select("id", { count: "exact", head: true }).gte("call_started_at", todayIso);
     result.calls = {
       total: totalCallSessions ?? 0,
       today: callSessionsToday ?? 0,
@@ -183,7 +183,7 @@ export async function GET(req: NextRequest) {
         voiceServerLatencyMs = Date.now() - start;
         voiceServerHealth = (await resp.json().catch(() => null)) as Record<string, unknown> | null;
 
-        const statusResp = await fetch(`${voiceUrl}/status`, { method: "GET", cache: "no-store" }).catch(() => null);
+        const statusResp = await fetch(`${voiceUrl}/status`, { method: "GET", cache: "no-store", signal: AbortSignal.timeout(10_000) }).catch(() => null);
         if (statusResp?.ok) voiceServerStatus = (await statusResp.json().catch(() => null)) as Record<string, unknown> | null;
       }
     }

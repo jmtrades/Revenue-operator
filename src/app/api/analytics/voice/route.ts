@@ -197,14 +197,14 @@ export async function GET(req: NextRequest) {
       try {
         const { data: leads } = await db
           .from("leads")
-          .select("status")
+          .select("state")
           .eq("workspace_id", workspaceId)
           .in("id", leadIds as string[]);
 
-        for (const lead of (leads ?? []) as Array<{ status?: string }>) {
-          const status = (lead.status ?? "NEW").toUpperCase();
-          if (status === "HOT") leadScores.hot++;
-          else if (status === "WARM") leadScores.warm++;
+        for (const lead of (leads ?? []) as Array<{ state?: string }>) {
+          const state = (lead.state ?? "NEW").toUpperCase();
+          if (["WON", "QUALIFIED", "BOOKED"].includes(state)) leadScores.hot++;
+          else if (["ENGAGED", "CONTACTED", "SHOWED"].includes(state)) leadScores.warm++;
           else leadScores.cold++;
         }
       } catch {

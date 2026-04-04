@@ -90,7 +90,8 @@ export async function GET(req: NextRequest) {
           }
 
           const workspace_id = lead.workspace_id;
-          const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+          const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined);
+          if (!baseUrl) { skipped++; continue; }
 
           try {
             const callResponse = await fetch(`${baseUrl}/api/outbound/call`, {
@@ -100,6 +101,7 @@ export async function GET(req: NextRequest) {
                 "X-Internal-Request": "true",
               },
               body: JSON.stringify({ lead_id: lead.id, workspace_id }),
+              signal: AbortSignal.timeout(15_000),
             });
 
             if (!callResponse.ok) {

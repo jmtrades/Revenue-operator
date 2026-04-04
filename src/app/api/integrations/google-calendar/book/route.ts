@@ -42,6 +42,7 @@ async function getAccessToken(workspaceId: string): Promise<string | null> {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: body.toString(),
+    signal: AbortSignal.timeout(15_000),
   });
   if (!res.ok) {
     return null;
@@ -120,6 +121,7 @@ export async function POST(req: NextRequest) {
       start: { dateTime: start, timeZone: "UTC" },
       end: { dateTime: end, timeZone: "UTC" },
     }),
+    signal: AbortSignal.timeout(15_000),
   });
 
   if (eventRes.status === 401 || eventRes.status === 403) {

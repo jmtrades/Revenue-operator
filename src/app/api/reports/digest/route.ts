@@ -145,12 +145,12 @@ export async function GET(req: NextRequest): Promise<NextResponse<DigestResponse
   try {
     const { data: daily } = await db
       .from("daily_metrics")
-      .select("total_revenue_cents, date")
+      .select("revenue_estimated_cents, date")
       .eq("workspace_id", workspaceId)
       .gte("date", monthStartDate);
     if (daily?.length) {
       for (const row of daily) {
-        const v = Number((row as { total_revenue_cents?: number }).total_revenue_cents);
+        const v = Number((row as { revenue_estimated_cents?: number }).revenue_estimated_cents);
         if (!Number.isNaN(v)) revenueCents += v;
       }
     }
@@ -206,13 +206,13 @@ export async function GET(req: NextRequest): Promise<NextResponse<DigestResponse
   try {
     const { data: daily } = await db
       .from("daily_metrics")
-      .select("total_revenue_cents, date")
+      .select("revenue_estimated_cents, date")
       .eq("workspace_id", workspaceId)
       .gte("date", prevStartDate)
       .lt("date", prevEndDate);
     if (daily?.length) {
       for (const row of daily) {
-        const v = Number((row as { total_revenue_cents?: number }).total_revenue_cents);
+        const v = Number((row as { revenue_estimated_cents?: number }).revenue_estimated_cents);
         if (!Number.isNaN(v)) revenuecentsPrev += v;
       }
     }
@@ -257,7 +257,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<DigestResponse
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
       .lte("last_activity_at", staleDate)
-      .not("state", "in", '("won","lost","opted_out")');
+      .not("state", "in", '("WON","LOST","CLOSED")');
     staleLeadsCount = sl ?? 0;
   } catch {
     /* ignore */

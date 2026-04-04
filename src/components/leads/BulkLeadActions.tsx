@@ -60,7 +60,7 @@ export function BulkLeadActions({
         }
 
         try {
-          const response = await fetch("/api/dnc", {
+          const response = await fetch("/api/dnc", { credentials: "include",
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

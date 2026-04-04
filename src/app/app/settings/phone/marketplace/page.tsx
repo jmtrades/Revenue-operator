@@ -19,14 +19,31 @@ type AvailableNumber = {
 };
 
 function formatPhoneDisplay(num: string): string {
-  const d = num.replace(/\D/g, "");
+  if (!num) return "";
+  // Handle E.164 format: +1XXXXXXXXXX
+  const cleaned = num.startsWith("+") ? num : `+${num.replace(/\D/g, "")}`;
+  const d = cleaned.replace(/\D/g, "");
+  // US/CA: +1 (XXX) XXX-XXXX
   if (d.length === 11 && d.startsWith("1")) {
-    return `(${d.slice(1, 4)}) ${d.slice(4, 7)}-${d.slice(7)}`;
+    return `+1 (${d.slice(1, 4)}) ${d.slice(4, 7)}-${d.slice(7)}`;
   }
+  // 10-digit US without country code
   if (d.length === 10) {
-    return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
+    return `+1 (${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
   }
-  return num;
+  // UK: +44 XXXX XXXXXX
+  if (d.startsWith("44") && d.length >= 11) {
+    return `+44 ${d.slice(2, 6)} ${d.slice(6)}`;
+  }
+  // AU: +61 X XXXX XXXX
+  if (d.startsWith("61") && d.length >= 11) {
+    return `+61 ${d.slice(2, 3)} ${d.slice(3, 7)} ${d.slice(7)}`;
+  }
+  // Default: show full number with + prefix and spacing every 4 digits
+  if (d.length > 4) {
+    return `+${d.slice(0, d.length % 4 || 4)} ${d.slice(d.length % 4 || 4).match(/.{1,4}/g)?.join(" ") ?? ""}`.trim();
+  }
+  return cleaned;
 }
 
 export default function PhoneMarketplacePage() {
@@ -326,7 +343,7 @@ export default function PhoneMarketplacePage() {
               </div>
               <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--accent-primary)]/5 border border-[var(--accent-primary)]/10">
                 <span className="text-[var(--accent-primary)] text-xs">✓</span>
-                <p className="text-xs text-[var(--text-tertiary)]">{tPhone("marketplace.poweredByTelnyx")}</p>
+                <p className="text-xs text-[var(--text-tertiary)]">{tPhone("marketplace.verifiedNumbers", { defaultValue: "Verified business numbers" })}</p>
               </div>
             </div>
           )}

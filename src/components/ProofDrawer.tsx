@@ -36,7 +36,7 @@ export function ProofDrawer({ leadId, isOpen, onClose }: ProofDrawerProps) {
   useEffect(() => {
     if (!isOpen || !leadId) return;
     setLoading(true);
-    fetch(`/api/leads/${leadId}/proof`)
+    fetch(`/api/leads/${leadId}/proof`, { credentials: "include" })
       .then((r) => r.json())
       .then((d) => {
         setData(d);

@@ -79,9 +79,9 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     // Fetch sessions with ab_variant metadata
     const { data: sessions, error: sessErr } = await db
       .from("call_sessions")
-      .select("id, metadata, duration_seconds, outcome, lead_id, created_at")
+      .select("id, metadata, call_started_at, call_ended_at, outcome, lead_id")
       .eq("workspace_id", workspaceId)
-      .gte("created_at", startDate.toISOString());
+      .gte("call_started_at", startDate.toISOString());
 
     if (sessErr) {
       log("error", "analytics.ab_comparison.query_failed", {

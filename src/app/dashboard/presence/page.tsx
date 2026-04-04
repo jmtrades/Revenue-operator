@@ -80,9 +80,9 @@ export default function PresencePage() {
     }
     setLoading(true);
     Promise.all([
-      fetch(`/api/operational/operator-capsule?workspace_id=${encodeURIComponent(workspaceId)}`).then((r) => (r.ok ? r.json() : null)),
-      fetch(`/api/operational/absence-impact?workspace_id=${encodeURIComponent(workspaceId)}`).then((r) => (r.ok ? r.json() : [])).then((arr) => (Array.isArray(arr) ? arr : [])),
-      fetch(`/api/system/core-status?workspace_id=${encodeURIComponent(workspaceId)}`).then((r) => (r.ok ? r.json() : null)).catch(() => null),
+      fetch(`/api/operational/operator-capsule?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : null)),
+      fetch(`/api/operational/absence-impact?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : [])).then((arr) => (Array.isArray(arr) ? arr : [])),
+      fetch(`/api/system/core-status?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }).then((r) => (r.ok ? r.json() : null)).catch(() => null),
     ]).then(([cap, silence, core]) => {
       setCapsule(cap ?? null);
       setSilenceLines(Array.isArray(silence) ? silence : []);

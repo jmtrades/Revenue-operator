@@ -87,6 +87,7 @@ export async function POST(req: NextRequest) {
         method: "POST",
         headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({ from, to: email, subject: "Welcome to Revenue Operator — set up in 5 minutes", html: welcomeHtml }),
+      signal: AbortSignal.timeout(10_000),
       }).catch((err) => { log("error", "signup.email_send_error", { error: err instanceof Error ? err.message : String(err) }); });
     }
 

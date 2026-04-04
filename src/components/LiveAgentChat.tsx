@@ -132,7 +132,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
       const businessPayload = businessName
         ? { name: businessName, services: "", hours: "", area: "", pricing: "Free estimates" }
         : undefined;
-      const r = await fetch("/api/agent/chat", {
+      const r = await fetch("/api/agent/chat", { credentials: "include",
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

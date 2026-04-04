@@ -230,7 +230,7 @@ export async function POST(req: NextRequest) {
       await db
         .from("leads")
         .update({
-          status: "NEW",
+          state: "NEW",
           channel: "demo_call",
           metadata: {
             ...existingMeta,
@@ -249,7 +249,7 @@ export async function POST(req: NextRequest) {
         db.from("leads").insert({
           workspace_id: DEMO_WORKSPACE,
           phone: e164Phone,
-          status: "NEW",
+          state: "NEW",
           channel: "demo_call",
           metadata: {
             source,

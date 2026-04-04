@@ -493,19 +493,17 @@ export default function AppSettingsIntegrationsPage() {
                 {t("hub.manageLink")}
               </Link>
             </div>
-            <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5">
+            <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl p-5 opacity-75">
               <div className="flex items-center justify-between gap-3 mb-2">
                 <div className="flex items-center gap-3">
-                  <MessageCircle className="w-5 h-5 text-[var(--accent-green)]" aria-hidden />
+                  <MessageCircle className="w-5 h-5 text-[var(--text-tertiary)]" aria-hidden />
                   <p className="text-sm font-medium text-[var(--text-primary)]">{t("hub.whatsappLabel")}</p>
                 </div>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--bg-inset)] text-[var(--text-tertiary)] font-medium">Coming Soon</span>
               </div>
-              <p className="text-xs text-[var(--text-secondary)] mb-3">
-                {t("whatsappComingSoon", { defaultValue: "Send and receive WhatsApp messages through your autonomous operator. Connect your WhatsApp Business account to get started." })}
+              <p className="text-xs text-[var(--text-secondary)]">
+                WhatsApp Business integration is coming soon. You&apos;ll be able to send and receive messages through your AI operator.
               </p>
-              <a href="https://business.whatsapp.com/" target="_blank" rel="noopener noreferrer" className="text-xs text-[var(--accent-primary)] hover:underline">
-                Learn about WhatsApp Business API →
-              </a>
             </div>
           </div>
         </section>
@@ -691,7 +689,7 @@ export default function AppSettingsIntegrationsPage() {
 
                   {!connected && !crm.comingSoon && !expandedSyncInfo[crm.id] && (
                     <p className="text-[10px] text-[var(--text-tertiary)] mt-2 italic">
-                      Connects in 30 seconds · Data stays encrypted · Disconnect anytime
+                      You&apos;ll authorize on {crm.name}&apos;s site, then return here automatically · Data stays encrypted · Disconnect anytime
                     </p>
                   )}
                   <div className="mt-4 flex flex-wrap gap-2">

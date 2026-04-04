@@ -13,10 +13,11 @@ import { getDb } from "@/lib/db/queries";
 import { getMinutePack, MINUTE_PACKS } from "@/lib/voice/billing";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 function localLog(event: string, data: Record<string, unknown>): void {
   if (data.reason || data.error) {
-    console.warn(`[billing/buy-minutes] ${event}:`, JSON.stringify(data));
+    log("warn", `[billing/buy-minutes] ${event}:`, { detail: JSON.stringify(data) });
   }
 }
 

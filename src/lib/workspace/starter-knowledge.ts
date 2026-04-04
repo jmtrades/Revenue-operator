@@ -19,6 +19,20 @@ function titleCaseDay(value: string): string {
   return value[0]!.toUpperCase() + value.slice(1).toLowerCase();
 }
 
+/**
+ * Abbreviation-to-full-day lookup used when the activation wizard sends
+ * businessHours in the `{ days: ["Mon","Tue",…], start, end }` format.
+ */
+const ABBREV_TO_FULL: Record<string, string> = {
+  mon: "monday",
+  tue: "tuesday",
+  wed: "wednesday",
+  thu: "thursday",
+  fri: "friday",
+  sat: "saturday",
+  sun: "sunday",
+};
+
 export function formatBusinessHours(
   businessHours?: Record<string, unknown> | null,
 ): string {
@@ -26,6 +40,24 @@ export function formatBusinessHours(
     return "We're open Monday through Friday from 9:00 AM to 5:00 PM.";
   }
 
+  // Handle the activation-wizard format:
+  // { days: ["Mon","Tue",...], start: "09:00", end: "17:00", timezone?: string }
+  if (Array.isArray(businessHours.days)) {
+    const days = businessHours.days as string[];
+    const start = typeof businessHours.start === "string" ? businessHours.start : "09:00";
+    const end = typeof businessHours.end === "string" ? businessHours.end : "17:00";
+    if (days.length === 0) {
+      return "We're open Monday through Friday from 9:00 AM to 5:00 PM.";
+    }
+    const fullDays = days.map((d) => titleCaseDay(ABBREV_TO_FULL[d.toLowerCase()] ?? d));
+    if (fullDays.length <= 2) {
+      return `We're open ${fullDays.join(" and ")} from ${start} to ${end}.`;
+    }
+    return `We're open ${fullDays.slice(0, -1).join(", ")} and ${fullDays[fullDays.length - 1]} from ${start} to ${end}.`;
+  }
+
+  // Handle the settings/call-rules format:
+  // { monday: { start, end }, tuesday: { start, end }, … }
   const dayOrder = [
     "monday",
     "tuesday",

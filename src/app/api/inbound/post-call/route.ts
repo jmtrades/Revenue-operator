@@ -102,7 +102,7 @@ async function ensureLeadForCaller(input: {
         workspace_id: input.workspaceId,
         phone,
         name: "Inbound caller",
-        status: "NEW",
+        state: "NEW",
       })
       .select("id")
       .maybeSingle();
@@ -147,6 +147,8 @@ export async function POST(req: NextRequest) {
   }
   const { workspace_id, call_sid, call_session_id, recording_url, transcript, summary, send_confirmation_sms } = body;
   if (!workspace_id) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!UUID_RE.test(workspace_id)) return NextResponse.json({ error: "Invalid workspace_id format" }, { status: 400 });
 
   try {
   const db = getDb();
@@ -429,6 +431,26 @@ export async function POST(req: NextRequest) {
       summary: summaryText || transcriptText.slice(0, 220),
       callerPhone: body.caller_phone ?? null,
     }).catch((err) => { log("error", "[inbound/post-call] error:", { error: err instanceof Error ? err.message : err }); });
+  }
+
+  // In-app notification for call completion
+  if (sessionId) {
+    void (async () => {
+      try {
+        const { createWorkspaceNotification } = await import("@/lib/notifications");
+        const outcomeLabel = businessOutcome.replace(/_/g, " ");
+        const notifType = businessOutcome === "appointment_booked" ? "appointment_booked" as const : "call_completed" as const;
+        const title = businessOutcome === "appointment_booked"
+          ? "Appointment booked from call"
+          : `Call completed: ${outcomeLabel}`;
+        await createWorkspaceNotification(workspace_id, {
+          type: notifType,
+          title,
+          body: summaryText || `Call ${outcomeLabel}${body.caller_phone ? ` from ${body.caller_phone}` : ""}`,
+          metadata: { call_session_id: sessionId, outcome: businessOutcome },
+        });
+      } catch { /* non-fatal */ }
+    })();
   }
 
   // Slack/Teams call summary notifications (Task 24)

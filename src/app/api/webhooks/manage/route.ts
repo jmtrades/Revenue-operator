@@ -181,7 +181,8 @@ export async function PATCH(request: NextRequest) {
     if (body.events) updates.events = body.events;
     if (body.description !== undefined) updates.description = body.description;
 
-    await db.from("webhook_endpoints").update(updates).eq("id", body.endpoint_id);
+    const { error: updateErr } = await db.from("webhook_endpoints").update(updates).eq("id", body.endpoint_id);
+    if (updateErr) return NextResponse.json({ error: "Failed to update endpoint" }, { status: 500 });
 
     return NextResponse.json({ ok: true });
   } catch (err) {
@@ -208,7 +209,8 @@ export async function DELETE(request: NextRequest) {
     const authErr = await requireWorkspaceAccess(request, resolvedWorkspaceId);
     if (authErr) return authErr;
 
-    await db.from("webhook_endpoints").delete().eq("id", endpointId);
+    const { error: deleteErr } = await db.from("webhook_endpoints").delete().eq("id", endpointId);
+    if (deleteErr) return NextResponse.json({ error: "Failed to delete endpoint" }, { status: 500 });
     return NextResponse.json({ ok: true });
   } catch (err) {
     log("error", "api.webhooks.delete_failed", { error: err instanceof Error ? err.message : String(err) });

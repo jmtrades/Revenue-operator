@@ -72,7 +72,7 @@ export async function executeAutonomousAction(
       // Pause all automation for this lead
       await db
         .from("leads")
-        .update({ status: "CLOSED", updated_at: executedAt })
+        .update({ state: "CLOSED", updated_at: executedAt })
         .eq("id", intelligence.lead_id);
 
       return {
@@ -581,6 +581,7 @@ async function sendEmailAction(
         to: lead.email,
         subject: template.email_subject ?? "Following up",
         text: template.email_body,
+      signal: AbortSignal.timeout(10_000),
       }),
     });
 
@@ -715,7 +716,7 @@ async function scheduleFollowupAction(
 
     // Find or create a default followup sequence
     const { data: existingSeq } = await db
-      .from("sequences")
+      .from("follow_up_sequences")
       .select("id")
       .eq("workspace_id", intelligence.workspace_id)
       .eq("trigger_type", "manual")
@@ -854,6 +855,7 @@ async function scheduleFollowupAction(
                   subject: template.email_subject ?? "Following up",
                   text: template.email_body,
                 }),
+                signal: AbortSignal.timeout(10_000),
               });
               if (!immEmailRes.ok) {
                 log("warn", "autonomous.immediate_email_failed", { lead_id: intelligence.lead_id, status: immEmailRes.status });
@@ -980,6 +982,7 @@ async function escalateHumanAction(
                 subject: `[Escalation] ${lead.name ?? "Unknown"} requires attention`,
                 text: `Lead: ${lead.name ?? "Unknown"}\nPhone: ${lead.phone ?? "N/A"}\nEmail: ${lead.email ?? "N/A"}\nReason: ${intelligence.action_reason}`,
               }),
+              signal: AbortSignal.timeout(10_000),
             });
           }
         }

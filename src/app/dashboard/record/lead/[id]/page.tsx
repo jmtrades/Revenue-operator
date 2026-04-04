@@ -53,9 +53,9 @@ export default function RecordLeadPage() {
   useEffect(() => {
     if (!id) return;
     Promise.all([
-      fetchWithFallback<Lead>(`/api/leads/${id}`),
-      fetchWithFallback<{ messages: Message[] }>(`/api/leads/${id}/messages`),
-      fetchWithFallback<{ escalation_id?: string; beyond_scope?: boolean }>(`/api/leads/${id}/open-handoff`),
+      fetchWithFallback<Lead>(`/api/leads/${id}`, { credentials: "include" }),
+      fetchWithFallback<{ messages: Message[] }>(`/api/leads/${id}/messages`, { credentials: "include" }),
+      fetchWithFallback<{ escalation_id?: string; beyond_scope?: boolean }>(`/api/leads/${id}/open-handoff`, { credentials: "include" }),
       fetchWithFallback<{ calls: CallRow[] }>(`/api/leads/${id}/calls`, { credentials: "include" }),
     ]).then(([lRes, mRes, hRes, cRes]) => {
       if (lRes.data && !(lRes.data as { error?: unknown }).error) setLead(lRes.data as Lead);
@@ -70,7 +70,7 @@ export default function RecordLeadPage() {
 
   useEffect(() => {
     if (!lead?.workspace_id) return;
-    fetch(`/api/operational/public-work-ref?workspace_id=${encodeURIComponent(lead.workspace_id)}`)
+    fetch(`/api/operational/public-work-ref?workspace_id=${encodeURIComponent(lead.workspace_id)}`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : null))
       .then((d: { path?: string } | null) => (d?.path ? setPublicRecordPath(d.path) : setPublicRecordPath(null)))
       .catch(() => setPublicRecordPath(null));
@@ -78,7 +78,7 @@ export default function RecordLeadPage() {
 
   const doRecordOutcome = () => {
     if (!openEscalationId) return;
-    fetch(`/api/escalations/${openEscalationId}/ack`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" })
+    fetch(`/api/escalations/${openEscalationId}/ack`, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: "{}" })
       .then((r) => { if (r.ok) { setOpenEscalationId(null); setRecorded(true); } })
       .catch((e: unknown) => { console.warn("[page] failed:", e instanceof Error ? e.message : String(e)); });
   };
@@ -90,6 +90,7 @@ export default function RecordLeadPage() {
     fetch("/api/operational/authority-note", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ workspace_id: wid, subject_ref: id, text: authorityNote.trim() }),
     })
       .then((r) => {
@@ -109,7 +110,7 @@ export default function RecordLeadPage() {
     }
     const wid = lead?.workspace_id;
     if (!wid) return;
-    fetch(`/api/operational/absence-impact?workspace_id=${encodeURIComponent(wid)}`)
+    fetch(`/api/operational/absence-impact?workspace_id=${encodeURIComponent(wid)}`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : []))
       .then((lines: string[]) => {
         setAbsenceModal({ lines: Array.isArray(lines) ? lines : [], onRecord: doRecordOutcome });
@@ -124,7 +125,7 @@ export default function RecordLeadPage() {
       doRecordAuthorityNote();
       return;
     }
-    fetch(`/api/operational/absence-impact?workspace_id=${encodeURIComponent(wid)}`)
+    fetch(`/api/operational/absence-impact?workspace_id=${encodeURIComponent(wid)}`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : []))
       .then((lines: string[]) => {
         setAbsenceModal({ lines: Array.isArray(lines) ? lines : [], onRecord: doRecordAuthorityNote });

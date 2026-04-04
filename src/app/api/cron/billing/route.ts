@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     const periodStart = startOfMonth(lastMonth);
     const periodEnd = endOfMonth(lastMonth);
 
-    const { data: workspaces } = await db.from("workspaces").select("id");
+    const { data: workspaces } = await db.from("workspaces").select("id").limit(100);
 
     for (const ws of workspaces ?? []) {
       const workspaceId = ws.id;
@@ -49,6 +49,15 @@ export async function GET(request: NextRequest) {
       const feeCents = Math.round(attributableCents * (feePercent / 100));
 
       if (feeCents <= 0) continue;
+
+      // Idempotency: skip if invoice already exists for this workspace and period
+      const { data: existingInvoice } = await db.from("invoices").select("id")
+        .eq("workspace_id", workspaceId)
+        .eq("period_start", periodStart.toISOString().slice(0, 10))
+        .eq("period_end", periodEnd.toISOString().slice(0, 10))
+        .limit(1)
+        .maybeSingle();
+      if (existingInvoice) continue;
 
       const { data: invoice } = await db.from("invoices").insert({
         workspace_id: workspaceId,
@@ -85,8 +94,8 @@ export async function GET(request: NextRequest) {
   } catch (err) {
     log("error", "cron.billing_unexpected_error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
-      { ok: true, note: "error_handled", ts: new Date().toISOString() },
-      { status: 200 }
+      { ok: false, error: "billing_failed", ts: new Date().toISOString() },
+      { status: 500 }
     );
   }
 }

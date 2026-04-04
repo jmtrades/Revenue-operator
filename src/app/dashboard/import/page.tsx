@@ -81,6 +81,7 @@ export default function ImportPage() {
         const r = await fetch("/api/connectors/events/ingest", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({
             workspace_id: workspaceId,
             channel: "csv_import",

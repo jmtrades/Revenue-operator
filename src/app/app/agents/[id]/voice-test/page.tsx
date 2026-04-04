@@ -45,7 +45,7 @@ export default function AgentVoiceTestPage() {
   const [selectedVoiceId, setSelectedVoiceId] = useState<string | null>(null);
   const [customScript, setCustomScript] = useState("");
   const [playingId, setPlayingId] = useState<string | null>(null);
-  const [_generating, _setGenerating] = useState(false);
+
   const [abVoiceA, setAbVoiceA] = useState<string>(CURATED_VOICES[0]?.id ?? "");
   const [abVoiceB, setAbVoiceB] = useState<string>(CURATED_VOICES[1]?.id ?? "");
   const [abWinner, setAbWinner] = useState<string | null>(null);

@@ -54,7 +54,7 @@ export async function PATCH(
 
   if (typeof body.status === "string") {
     const status = body.status.trim().toLowerCase();
-    const validStatuses = ["pending", "in_progress", "completed", "skipped"];
+    const validStatuses = ["pending", "in_progress", "completed", "skipped", "exhausted"];
     if (!validStatuses.includes(status)) {
       return NextResponse.json(
         { error: `Invalid status. Allowed values: ${validStatuses.join(", ")}` },

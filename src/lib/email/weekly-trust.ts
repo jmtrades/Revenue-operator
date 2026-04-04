@@ -61,7 +61,7 @@ export async function sendWeeklyTrustEmails(): Promise<Array<{ workspaceId: stri
           .from("call_sessions")
           .select("id", { count: "exact", head: true })
           .eq("workspace_id", workspaceId)
-          .gte("started_at", weekStart.toISOString()),
+          .gte("call_started_at", weekStart.toISOString()),
         db
           .from("leads")
           .select("id", { count: "exact", head: true })
@@ -115,8 +115,13 @@ export async function sendWeeklyTrustEmails(): Promise<Array<{ workspaceId: stri
             from: process.env.EMAIL_FROM || "Revenue Operator <noreply@recall-touch.com>",
             to: email,
             subject,
-            text: body,
+            text: body + "\n\nManage email preferences: https://www.recall-touch.com/app/settings/notifications",
+            headers: {
+              "List-Unsubscribe": "<https://www.recall-touch.com/app/settings/notifications>",
+              "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+            },
           }),
+          signal: AbortSignal.timeout(10_000),
         });
         results.push({ workspaceId, email, sent: res.ok });
       } else {

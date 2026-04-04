@@ -50,8 +50,8 @@ export async function POST(req: NextRequest) {
       await enqueue({ type: "reactivation", leadId: p.leadId as string });
     } else continue;
 
-    await db.from("job_queue").update({ status: "pending", error: null }).eq("id", r.id);
-    redriven++;
+    const { error: updateErr } = await db.from("job_queue").update({ status: "pending", error: null }).eq("id", r.id);
+    if (!updateErr) redriven++;
   }
 
   await logStaffAction(

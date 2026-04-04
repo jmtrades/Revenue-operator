@@ -20,6 +20,7 @@ async function sendEmail(to: string, subject: string, text: string): Promise<boo
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },
     body: JSON.stringify({ from: EMAIL_FROM, to, subject, text }),
+      signal: AbortSignal.timeout(10_000),
   });
   return res.ok;
 }

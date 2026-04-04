@@ -40,13 +40,18 @@ export async function GET(request: NextRequest) {
 
       const { data: calls } = await db
         .from("call_sessions")
-        .select("duration_seconds, started_at")
+        .select("call_started_at, call_ended_at")
         .eq("workspace_id", w.id)
-        .gte("started_at", periodStart.toISOString());
+        .gte("call_started_at", periodStart.toISOString());
 
       const totalMinutes = Math.ceil(
         (calls || []).reduce(
-          (sum, c) => sum + ((c as { duration_seconds?: number }).duration_seconds || 0),
+          (sum, c) => {
+            const row = c as { call_started_at?: string; call_ended_at?: string };
+            if (!row.call_started_at || !row.call_ended_at) return sum;
+            const durationSec = (new Date(row.call_ended_at).getTime() - new Date(row.call_started_at).getTime()) / 1000;
+            return sum + Math.max(0, durationSec);
+          },
           0
         ) / 60
       );

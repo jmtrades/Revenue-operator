@@ -95,7 +95,7 @@ export default function AppShellClient({
           { href: "/app/follow-ups", label: t("nav.followUps", { defaultValue: "Follow-ups" }), icon: Clock },
           { href: "/app/appointments", label: t("nav.appointments"), icon: CalendarCheck },
           { href: "/app/calls", label: t("nav.calls"), icon: PhoneCall },
-          { href: "/app/cold-leads", label: t("nav.coldLeads", { defaultValue: "Reactivation" }), icon: RotateCcw },
+          { href: "/app/cold-leads", label: t("nav.coldLeads", { defaultValue: "Cold Leads" }), icon: RotateCcw },
         ],
       },
       {
@@ -125,8 +125,10 @@ export default function AppShellClient({
   const mobileMoreLinks = useMemo(
     () => [
       { href: "/app/agents", label: t("nav.agents"), icon: Bot },
+      { href: "/app/follow-ups", label: t("nav.followUps", { defaultValue: "Follow-ups" }), icon: Clock },
       { href: "/app/appointments", label: t("nav.appointments"), icon: CalendarCheck },
       { href: "/app/calls", label: t("nav.calls"), icon: PhoneCall },
+      { href: "/app/cold-leads", label: t("nav.coldLeads", { defaultValue: "Cold Leads" }), icon: RotateCcw },
       { href: "/app/analytics", label: t("nav.analytics"), icon: BarChart3 },
       { href: "/app/inbox", label: t("nav.inbox"), icon: MessageSquare },
       { href: "/app/settings", label: t("nav.settings"), icon: Settings },

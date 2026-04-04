@@ -477,7 +477,7 @@ export default function CallsPage() {
             icon={PhoneCall}
             title={t("calls.empty.title") ?? "Your operator is standing by"}
             description={t("calls.empty.description") ?? "Calls appear here once your phone number is connected and your operator is live. Set up your operator to start receiving calls."}
-            primaryAction={{ label: t("calls.testCall") ?? "Test Call", href: "/app/settings/phone" }}
+            primaryAction={{ label: t("calls.empty.connectPhone") ?? "Connect phone number", href: "/app/settings/phone" }}
           />
         </div>
       ) : (

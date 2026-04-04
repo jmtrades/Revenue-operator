@@ -36,6 +36,9 @@ export function PhoneOnlyStep({
           placeholder="+1 (555) 000-0000"
           className="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2.5 text-sm text-slate-50 placeholder:text-slate-500 focus:border-[var(--border-default)] focus:outline-none focus:ring-1 focus:ring-[var(--border-default)]"
         />
+        <p className="text-xs text-slate-400 mt-1.5">
+          Enter your current business phone number. We&apos;ll assign you a new AI-powered number and show you how to forward calls to it.
+        </p>
       </div>
       <div className="flex items-center justify-between gap-3 pt-2">
         <button type="button" onClick={goBack} className="text-sm text-slate-400 hover:text-[var(--text-primary)]">

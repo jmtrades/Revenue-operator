@@ -26,6 +26,8 @@ export async function GET(request: NextRequest) {
 
   const toNotify: Array<{ workspaceId: string; ownerEmail: string; renewalAt: string }> = [];
 
+  // Pre-filter eligible workspaces, then batch-fetch owner emails
+  const eligible: Array<{ id: string; owner_id: string; renewalAt: Date }> = [];
   for (const ws of workspaces ?? []) {
     const row = ws as { id: string; owner_id: string; protection_renewal_at?: string | null; created_at?: string; renewal_reminder_sent_at?: string | null };
     let renewalAt: Date;
@@ -40,15 +42,26 @@ export async function GET(request: NextRequest) {
     const hoursUntil = ms / (60 * 60 * 1000);
     if (hoursUntil > 25 || hoursUntil < 23) continue;
     if (row.renewal_reminder_sent_at) continue;
+    eligible.push({ id: row.id, owner_id: row.owner_id, renewalAt });
+  }
 
-    const { data: user } = await db.from("users").select("email").eq("id", row.owner_id).maybeSingle();
-    const email = (user as { email?: string } | null)?.email;
+  // Batch-fetch owner emails to avoid N+1
+  const ownerIds = [...new Set(eligible.map((e) => e.owner_id))];
+  const ownerEmailMap = new Map<string, string>();
+  if (ownerIds.length) {
+    const { data: ownerRows } = await db.from("users").select("id, email").in("id", ownerIds);
+    for (const u of (ownerRows ?? []) as { id: string; email?: string }[]) {
+      if (u.email) ownerEmailMap.set(u.id, u.email);
+    }
+  }
+
+  for (const e of eligible) {
+    const email = ownerEmailMap.get(e.owner_id);
     if (!email) continue;
-
     toNotify.push({
-      workspaceId: row.id,
+      workspaceId: e.id,
       ownerEmail: email,
-      renewalAt: renewalAt.toISOString(),
+      renewalAt: e.renewalAt.toISOString(),
     });
   }
 
@@ -61,6 +74,9 @@ export async function GET(request: NextRequest) {
 Your number, call handling, and follow-up coverage will stay active with no interruption.
 
 If you need to pause instead, open billing in the app today.`;
+
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com";
+    const unsubscribeUrl = `${appUrl}/app/settings/notifications`;
 
     try {
       if (process.env.RESEND_API_KEY) {
@@ -75,7 +91,12 @@ If you need to pause instead, open billing in the app today.`;
             to: ownerEmail,
             subject,
             text: body,
+            headers: {
+              "List-Unsubscribe": `<${unsubscribeUrl}>`,
+              "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+            },
           }),
+          signal: AbortSignal.timeout(10_000),
         });
         if (res.ok) {
           await db.from("workspaces").update({ renewal_reminder_sent_at: new Date().toISOString() }).eq("id", workspaceId);

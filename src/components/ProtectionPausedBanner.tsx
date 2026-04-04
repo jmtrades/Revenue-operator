@@ -18,7 +18,7 @@ export function ProtectionPausedBanner() {
 
   useEffect(() => {
     if (!workspaceId) return;
-    fetch(`/api/billing/status?workspace_id=${encodeURIComponent(workspaceId)}`)
+    fetch(`/api/billing/status?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
       .then((r) => { if (!r.ok) throw new Error("status_failed"); return r.json(); })
       .then((d) => {
         if (!d?.error) setBillingStatus(d);

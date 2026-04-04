@@ -10,12 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 
-const PLAN_NAMES: Record<string, string> = {
-  solo: "Starter",
-  business: "Growth",
-  scale: "Business",
-  enterprise: "Agency",
-};
+import { normalizeTier, PLAN_DISPLAY_NAMES } from "@/lib/billing-plans";
 
 export async function GET(req: NextRequest) {
   try {
@@ -45,7 +40,7 @@ export async function GET(req: NextRequest) {
       stripe_customer_id?: string | null;
     };
 
-    const planName = PLAN_NAMES[r.billing_tier ?? "solo"] ?? r.billing_tier ?? "Starter";
+    const planName = PLAN_DISPLAY_NAMES[normalizeTier(r.billing_tier)] ?? "Starter";
     const interval = r.billing_interval === "year" ? "year" : "month";
     const status = r.billing_status ?? "trial";
 
@@ -58,6 +53,6 @@ export async function GET(req: NextRequest) {
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    return NextResponse.json({ error: msg }, { status: 500 });
+    return NextResponse.json({ error: "Failed to load billing data" }, { status: 500 });
   }
 }

@@ -100,7 +100,7 @@ export class PipecatVoiceProvider implements VoiceProvider {
     const twilioPhone = process.env.TWILIO_PHONE_NUMBER;
 
     if (!twilioPhone) {
-      console.warn("Twilio phone number not configured — outbound call queued but not placed");
+      log("warn", "Twilio phone number not configured — outbound call queued but not placed");
       return {
         callId: `call_${Date.now()}_${crypto.randomUUID().slice(0, 9)}`,
         status: "queued",

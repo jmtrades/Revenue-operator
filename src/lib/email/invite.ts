@@ -61,6 +61,7 @@ export async function sendInviteEmail(to: string, params: InviteEmailParams): Pr
         subject,
         html,
       }),
+      signal: AbortSignal.timeout(10_000),
     });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));

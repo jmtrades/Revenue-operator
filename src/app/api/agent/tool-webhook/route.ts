@@ -229,7 +229,7 @@ export async function POST(req: NextRequest) {
         const normalized = lookupPhone.replace(/\D/g, "");
         const { data: lead } = await db
           .from("leads")
-          .select("name, email, status, metadata, created_at")
+          .select("name, email, state, metadata, created_at")
           .eq("workspace_id", workspace_id)
           .or(`phone.eq.${lookupPhone},phone.eq.${normalized}`)
           .limit(1)
@@ -239,11 +239,11 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ result: "I don't see an existing account with that number. Are you a new customer?", found: false });
         }
 
-        const l = lead as { name?: string; email?: string; status?: string; created_at?: string };
+        const l = lead as { name?: string; email?: string; state?: string; created_at?: string };
         return NextResponse.json({
           result: `I found your account${l.name ? `, ${l.name}` : ""}! How can I help you today?`,
           found: true,
-          customer: { name: l.name, email: l.email, status: l.status },
+          customer: { name: l.name, email: l.email, state: l.state },
         });
       }
 
@@ -310,6 +310,7 @@ export async function POST(req: NextRequest) {
                   to: to_email,
                   subject: subject ?? "Following up",
                   text: emailBody,
+      signal: AbortSignal.timeout(10_000),
                 }),
               });
               return NextResponse.json({ result: `I've sent that email to ${to_email}. You should see it in your inbox shortly.` });
@@ -527,7 +528,7 @@ async function upsertLead(
         name: data.name || "New Lead",
         phone: data.phone,
         email: data.email,
-        status: "NEW",
+        state: "NEW",
         notes: data.notes,
         source: "ai_agent",
       }).select("id").maybeSingle()

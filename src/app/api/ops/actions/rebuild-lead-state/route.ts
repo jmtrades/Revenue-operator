@@ -6,6 +6,7 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { requireStaffWriteAccess, logStaffAction } from "@/lib/ops/auth";
+import { log } from "@/lib/logger";
 import { rebuildAndPersistLeadState } from "@/lib/state/rebuild";
 import { assertSameOrigin } from "@/lib/http/csrf";
 
@@ -40,6 +41,7 @@ export async function POST(req: NextRequest) {
     });
   } catch (err) {
     // Error response below
-    return NextResponse.json({ error: String(err) }, { status: 500 });
+    log("error", "[rebuild-lead-state] error", { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ error: "Lead state rebuild failed" }, { status: 500 });
   }
 }

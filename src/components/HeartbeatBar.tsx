@@ -16,7 +16,7 @@ export function HeartbeatBar() {
       setStatusLevel("healthy");
       return;
     }
-    fetch(`/api/command-center?workspace_id=${encodeURIComponent(workspaceId)}`)
+    fetch(`/api/command-center?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
       .then((r) => r.json())
       .then((d: { error?: string; operator_status?: string; at_risk?: unknown[]; hot_leads?: unknown[]; recovered?: unknown[]; active_protections?: { conversations_being_warmed: number; followups_scheduled_24h: number; attendance_protections: number; recoveries_running: number }; performance_status?: { status: string }; revenue_trajectory?: string }) => {
         if (d.error) return;

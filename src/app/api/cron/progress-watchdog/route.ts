@@ -91,15 +91,17 @@ export async function GET(request: NextRequest) {
         payload: unknown;
         dedup_key: string;
       }>;
+      // Batch-fetch existing attempts to avoid N+1 per command
+      const commandIds = commandList.map((c) => c.id);
+      const { data: existingAttempts } = commandIds.length
+        ? await db.from("action_attempts").select("action_command_id").in("action_command_id", commandIds)
+        : { data: [] };
+      const attemptedCommandIds = new Set(
+        ((existingAttempts ?? []) as { action_command_id: string }[]).map((a) => a.action_command_id)
+      );
       for (const cmd of commandList) {
         if (workspaceEnqueues >= MAX_ENQUEUES_PER_WORKSPACE) break;
-        const { data: attempt } = await db
-          .from("action_attempts")
-          .select("id")
-          .eq("action_command_id", cmd.id)
-          .limit(1)
-          .maybeSingle();
-        if (!attempt) {
+        if (!attemptedCommandIds.has(cmd.id)) {
           await enqueue({
             type: "action",
             action: {

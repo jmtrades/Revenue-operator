@@ -153,7 +153,7 @@ export async function POST(req: NextRequest) {
         phone: phoneStr,
         email: (email ?? "").trim() || null,
         company: (company ?? service_requested ?? "").trim() || null,
-        status: dbState,
+        state: dbState,
         metadata,
       })
       .select()
@@ -185,27 +185,56 @@ export async function POST(req: NextRequest) {
       (ws as { webhook_url?: string | null } | null)?.webhook_url?.toString().trim() ??
       "";
     if (webhookUrl && isSafeExternalUrl(webhookUrl)) {
-      // Fire-and-forget CRM webhook for lead capture (SSRF-safe)
-      void fetch(webhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          event: "lead.created",
-          timestamp: new Date().toISOString(),
-          data: {
-            lead: {
-              id: createdLead.id,
-              name: (createdLead.name ?? "").toString().trim() || null,
-              phone: (createdLead.phone ?? "").toString().trim() || null,
-              email: (createdLead.email ?? "").toString().trim() || null,
-              score,
-            },
-            source: metadata.source,
+      // Fire-and-forget CRM webhook with retry (3 attempts, exponential backoff)
+      const payload = JSON.stringify({
+        event: "lead.created",
+        timestamp: new Date().toISOString(),
+        data: {
+          lead: {
+            id: createdLead.id,
+            name: (createdLead.name ?? "").toString().trim() || null,
+            phone: (createdLead.phone ?? "").toString().trim() || null,
+            email: (createdLead.email ?? "").toString().trim() || null,
+            score,
           },
-        }),
-      }).catch((_err) => {
-        // Webhook delivery failed; non-fatal
+          source: metadata.source,
+        },
       });
+      void (async () => {
+        const maxAttempts = 3;
+        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+          try {
+            const res = await fetch(webhookUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: payload,
+              signal: AbortSignal.timeout(10_000),
+            });
+            if (res.ok) return;
+            if (res.status >= 400 && res.status < 500) {
+              log("warn", "[leads] Webhook rejected (4xx, no retry)", { status: res.status, lead_id: createdLead.id });
+              return;
+            }
+            log("warn", "[leads] Webhook attempt failed", { attempt, status: res.status, lead_id: createdLead.id });
+          } catch (err) {
+            log("warn", "[leads] Webhook attempt error", { attempt, detail: err instanceof Error ? err.message : String(err), lead_id: createdLead.id });
+          }
+          if (attempt < maxAttempts) await new Promise((r) => setTimeout(r, attempt * 2000));
+        }
+        // Store failed delivery for manual retry via dead-letter
+        try {
+          await db.from("webhook_deliveries").insert({
+            workspace_id: workspaceId,
+            url: webhookUrl,
+            payload,
+            status: "failed",
+            attempts: maxAttempts,
+            last_error: "Exhausted retries",
+          });
+        } catch {
+          log("error", "[leads] Failed to store webhook dead-letter", { lead_id: createdLead.id, workspace_id: workspaceId });
+        }
+      })();
     }
   } catch {
     // Do not block lead creation on webhook issues
@@ -282,10 +311,10 @@ export async function POST(req: NextRequest) {
       // Speed-to-lead available on Business ($597) and above
       const eligiblePlans = ["business", "agency", "enterprise", "scale"];
       if (wsRow?.plan_id && eligiblePlans.includes(wsRow.plan_id)) {
-        // Check if workspace has speed-to-lead enabled
+        // Speed-to-lead is enabled by default — only skip if explicitly disabled
         const stlValue = await getWorkspaceSetting(workspaceId, "speed_to_lead_enabled");
-        const enabled = stlValue === "true";
-        if (enabled) {
+        const disabled = stlValue === "false";
+        if (!disabled) {
           // Enqueue outbound call with 60-second delay
           await db.from("action_queue").insert({
             workspace_id: workspaceId,
@@ -303,6 +332,49 @@ export async function POST(req: NextRequest) {
     } catch {
       // Non-blocking: don't fail lead creation if speed-to-lead fails
     }
+  }
+
+  // Auto-enroll new leads in a nurture sequence so no lead sits idle.
+  // Speed-to-lead handles the immediate call, but if that doesn't fire
+  // (wrong plan, no phone config, non-phone source), the nurture sequence
+  // ensures the lead still gets multi-touch engagement.
+  try {
+    const { enrollContact, createSequence, addSequenceStep } = await import("@/lib/sequences/follow-up-engine");
+    const { getDefaultFollowUpTemplate } = await import("@/lib/intelligence/outcome-followup-router");
+
+    // Find an active new_lead nurture sequence for this workspace
+    const { data: existingSeq } = await db
+      .from("follow_up_sequences")
+      .select("id")
+      .eq("workspace_id", workspaceId)
+      .eq("trigger_type", "new_lead")
+      .eq("is_active", true)
+      .limit(1)
+      .maybeSingle();
+
+    let sequenceId = (existingSeq as { id: string } | null)?.id;
+
+    if (!sequenceId) {
+      // Auto-create a default welcome sequence
+      const newSeq = await createSequence(workspaceId, "Auto: welcome nurture", "new_lead");
+      if (newSeq) {
+        sequenceId = newSeq.id;
+        const bizName = String(metadata.businessName || "our team");
+        const leadName = (createdLead.name ?? "").toString().trim() || "there";
+        const tpl = getDefaultFollowUpTemplate("generic_followup_new", {
+          business_name: bizName,
+          contact_name: leadName,
+        });
+        if (tpl.sms) await addSequenceStep(sequenceId, 1, "sms", 30, tpl.sms);
+        if (tpl.email_body) await addSequenceStep(sequenceId, 2, "email", 1440, tpl.email_body);
+      }
+    }
+
+    if (sequenceId) {
+      await enrollContact(workspaceId, sequenceId, createdLead.id);
+    }
+  } catch {
+    // Non-blocking: don't fail lead creation if nurture enrollment fails
   }
 
   return NextResponse.json(lead);

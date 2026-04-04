@@ -2001,7 +2001,8 @@
     "stats": {
       "activeCalls": "Active Calls",
       "startsAfterFirstCall": "Starts after first call",
-      "estRevenueRecovered": "Est. Revenue Recovered"
+      "estRevenueRecovered": "Est. Revenue Recovered",
+      "activeLeads": "アクティブリード"
     },
     "gettingStarted": {
       "title": "Getting Started",

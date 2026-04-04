@@ -49,7 +49,7 @@ export async function GET(
     .maybeSingle();
   if (run) {
     const r = run as { sequence_id: string; current_step: number; status: string };
-    const { data: seq } = await db.from("sequences").select("name").eq("id", r.sequence_id).maybeSingle();
+    const { data: seq } = await db.from("follow_up_sequences").select("name").eq("id", r.sequence_id).maybeSingle();
     sequenceRun = {
       ...r,
       sequence_name: (seq as { name?: string })?.name,

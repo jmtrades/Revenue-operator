@@ -319,29 +319,29 @@ export async function initiateCall(
     if (params.metadata?.lead_id) {
       const leadId = String(params.metadata.lead_id);
       const [leadRes, historyRes] = await Promise.all([
-        db.from("leads").select("name, phone, email, state, score, tags, notes, last_contacted_at").eq("id", leadId).maybeSingle(),
-        db.from("call_sessions").select("call_started_at, summary, outcome, topics").eq("lead_id", leadId).not("call_ended_at", "is", null).order("call_started_at", { ascending: false }).limit(5),
+        db.from("leads").select("name, phone, email, state, qualification_score, last_activity_at").eq("id", leadId).maybeSingle(),
+        db.from("call_sessions").select("call_started_at, outcome, metadata").eq("lead_id", leadId).not("call_ended_at", "is", null).order("call_started_at", { ascending: false }).limit(5),
       ]);
-      const lead = leadRes.data as { name?: string; phone?: string; email?: string; state?: string; score?: number; tags?: string[]; notes?: string; last_contacted_at?: string } | null;
+      const lead = leadRes.data as { name?: string; phone?: string; email?: string; state?: string; qualification_score?: number; last_activity_at?: string } | null;
       if (lead) {
         leadContext = {
           name: lead.name,
           phone: lead.phone,
           email: lead.email,
           state: lead.state,
-          score: lead.score ?? undefined,
-          tags: lead.tags ?? undefined,
-          notes: lead.notes ?? undefined,
-          last_contacted: lead.last_contacted_at ?? undefined,
+          score: lead.qualification_score ?? undefined,
+          tags: undefined,
+          notes: undefined,
+          last_contacted: lead.last_activity_at ?? undefined,
         };
       }
-      const history = (historyRes.data ?? []) as Array<{ call_started_at?: string; summary?: string; outcome?: string; topics?: string[] }>;
+      const history = (historyRes.data ?? []) as Array<{ call_started_at?: string; metadata?: Record<string, unknown> | null; outcome?: string }>;
       if (history.length > 0) {
         callHistory = history.map((h) => ({
           date: h.call_started_at ?? "",
-          summary: h.summary,
+          summary: typeof h.metadata?.summary === "string" ? h.metadata.summary : undefined,
           outcome: h.outcome,
-          topics: h.topics,
+          topics: Array.isArray(h.metadata?.topics) ? h.metadata.topics as string[] : undefined,
         }));
       }
     }
@@ -594,7 +594,7 @@ export async function handleInboundCall(
           return res;
         }),
       db.from("workspace_business_context").select("*").eq("workspace_id", params.workspaceId).maybeSingle(),
-      db.from("leads").select("id, name, phone, email, state, score, tags, notes, last_contacted_at").eq("workspace_id", params.workspaceId).eq("phone", params.callerPhone).maybeSingle(),
+      db.from("leads").select("id, name, phone, email, state, qualification_score, last_activity_at").eq("workspace_id", params.workspaceId).eq("phone", params.callerPhone).maybeSingle(),
       // Placeholder — real lead-specific history loaded below after lead ID is known
       Promise.resolve({ data: null }),
     ]);

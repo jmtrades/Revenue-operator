@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { assertCronAuthorized } from "@/lib/runtime";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 const EXPIRY_HOURS = 48;
 
@@ -26,14 +27,14 @@ export async function GET(req: NextRequest) {
       .select("id");
 
     if (error) {
-      // Error (details omitted to protect PII): approval-expiry] Database error:", error);
-      return NextResponse.json({ ok: false, error: "Database error", expired: 0 }, { status: 200 });
+      log("error", "approval_expiry.db_error", { error: error.message });
+      return NextResponse.json({ ok: false, error: "Database error", expired: 0 }, { status: 500 });
     }
 
     const count = data?.length ?? 0;
     return NextResponse.json({ ok: true, expired: count }, { status: 200 });
   } catch (err) {
-    // Error (details omitted to protect PII): approval-expiry] Cron failed:", err instanceof Error ? err.message : String(err));
-    return NextResponse.json({ ok: false, error: "Cron failed", expired: 0 }, { status: 200 });
+    log("error", "approval_expiry.cron_failed", { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ ok: false, error: "Cron failed", expired: 0 }, { status: 500 });
   }
 }

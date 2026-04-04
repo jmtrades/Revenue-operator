@@ -29,11 +29,15 @@ export async function GET(req: NextRequest) {
   try {
     const { data: callData, count: c } = await db
       .from("call_sessions")
-      .select("id, duration_seconds, started_at", { count: "exact" })
+      .select("id, call_started_at, call_ended_at", { count: "exact" })
       .eq("workspace_id", workspaceId);
     calls = c ?? 0;
     totalMinutes = Math.ceil(
-      (callData || []).reduce((sum, cRow) => sum + ((cRow as { duration_seconds?: number }).duration_seconds || 0), 0) / 60
+      (callData || []).reduce((sum, cRow) => {
+        const r = cRow as { call_started_at?: string; call_ended_at?: string };
+        if (!r.call_started_at || !r.call_ended_at) return sum;
+        return sum + Math.max(0, (new Date(r.call_ended_at).getTime() - new Date(r.call_started_at).getTime()) / 1000);
+      }, 0) / 60
     );
   } catch {
     // ignore

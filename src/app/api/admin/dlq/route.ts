@@ -18,14 +18,18 @@ function auth(req: NextRequest): boolean {
 
 export async function GET(req: NextRequest) {
   if (!auth(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const db = getDb();
-  const { data } = await db
-    .from("job_queue")
-    .select("id, job_type, payload, error, created_at")
-    .in("status", ["failed", "dlq"])
-    .order("created_at", { ascending: false })
-    .limit(50);
-  return NextResponse.json({ jobs: data ?? [] });
+  try {
+    const db = getDb();
+    const { data } = await db
+      .from("job_queue")
+      .select("id, job_type, payload, error, created_at")
+      .in("status", ["failed", "dlq"])
+      .order("created_at", { ascending: false })
+      .limit(50);
+    return NextResponse.json({ jobs: data ?? [] });
+  } catch {
+    return NextResponse.json({ error: "Failed to fetch DLQ" }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -56,6 +60,7 @@ export async function POST(req: NextRequest) {
   } else {
     return NextResponse.json({ error: "Unknown job type" }, { status: 400 });
   }
-  await db.from("job_queue").update({ status: "pending", error: null }).eq("id", body.job_id);
+  const { error: updateErr } = await db.from("job_queue").update({ status: "pending", error: null }).eq("id", body.job_id);
+  if (updateErr) return NextResponse.json({ error: "Failed to update job status" }, { status: 500 });
   return NextResponse.json({ ok: true, job_id: body.job_id });
 }

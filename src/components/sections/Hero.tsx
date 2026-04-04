@@ -91,6 +91,7 @@ function HeroVoiceDemo() {
       const res = await fetch("/api/demo/call", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ phone_number: value }),
       });
       const data = (await res.json().catch(() => ({}))) as {

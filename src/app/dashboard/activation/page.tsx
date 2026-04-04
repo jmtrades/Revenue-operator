@@ -24,7 +24,7 @@ export default function ActivationPage() {
     setLoading(true);
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 12_000);
-    fetch(`/api/activation?workspace_id=${encodeURIComponent(workspaceId)}`, { signal: controller.signal })
+    fetch(`/api/activation?workspace_id=${encodeURIComponent(workspaceId)}`, { signal: controller.signal, credentials: "include" })
       .then((r) => r.json())
       .then((d) => {
         setState(d);
@@ -121,6 +121,7 @@ export default function ActivationPage() {
                     await fetch(`/api/activation?workspace_id=${encodeURIComponent(workspaceId)}`, {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
+                      credentials: "include",
                       body: JSON.stringify({ action: "set_target", weekly_call_target: n }),
                     });
                     load();

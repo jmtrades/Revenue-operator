@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import {
@@ -694,9 +694,16 @@ export default function AppAgentsPageClient({
   }, [initialAgentsRows, initialFallbackAgent, _t]);
   const hasInitialPayload = initialAgents.length > 0;
 
+  const searchParams = useSearchParams();
+  const selectedParam = searchParams.get("selected");
   const [agents, setAgents] = useState<Agent[]>(() => initialAgents);
   const [selectedId, setSelectedId] = useState<string | null>(
-    () => initialAgents[0]?.id ?? null,
+    () => {
+      if (selectedParam && initialAgents.some((a) => a.id === selectedParam)) {
+        return selectedParam;
+      }
+      return initialAgents[0]?.id ?? null;
+    },
   );
   const [activeStep, setActiveStep] = useState<StepId>("identity");
   const [showTemplateModal, setShowTemplateModal] = useState(false);

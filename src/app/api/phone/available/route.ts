@@ -78,7 +78,7 @@ export async function GET(req: NextRequest) {
   } catch {
     return NextResponse.json({
       numbers: [],
-      message: "Phone provider not configured. Contact support to enable number purchasing.",
+      message: "Phone service is not configured yet. Go to Settings → Integrations to connect your phone provider, or contact support for help.",
     });
   }
 }

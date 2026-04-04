@@ -8,6 +8,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
 import { assertCronAuthorized } from "@/lib/runtime";
 
@@ -207,6 +208,7 @@ export async function GET(req: NextRequest) {
     });
   } catch (err) {
     // Error (details omitted to protect PII): benchmark-aggregation] error:", err);
-    return NextResponse.json({ status: "error", message: String(err) }, { status: 500 });
+    log("error", "[benchmark-aggregation] error", { error: err instanceof Error ? err.message : String(err) });
+    return NextResponse.json({ status: "error", message: "Benchmark aggregation failed" }, { status: 500 });
   }
 }

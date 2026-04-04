@@ -136,7 +136,7 @@ export async function POST(req: NextRequest) {
       }));
     } catch (e) {
       if (e instanceof Error && e.message.includes("exceeds maximum")) {
-        return NextResponse.json({ error: e.message }, { status: 400 });
+        return NextResponse.json({ error: "File exceeds maximum allowed size" }, { status: 400 });
       }
       return NextResponse.json({ error: "Invalid CSV format" }, { status: 400 });
     }
@@ -201,7 +201,7 @@ export async function POST(req: NextRequest) {
     phone: normalizePhoneE164(r.phone),
     email: r.email,
     company: r.company,
-    status: "NEW",
+    state: "NEW",
     metadata: { source: "csv_import", notes: r.notes, score: 40 },
   }));
 

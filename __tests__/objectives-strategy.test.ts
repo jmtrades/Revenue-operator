@@ -165,7 +165,7 @@ vi.mock("@/lib/db/queries", () => ({
           }),
         };
       }
-      if (table === "sequences") {
+      if (table === "follow_up_sequences") {
         return {
           select: () => ({
             eq: () => ({

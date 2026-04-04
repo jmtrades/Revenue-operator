@@ -194,7 +194,6 @@ export async function scoreLeadFull(
     try {
       await db.from("leads").update({
         qualification_score: score,
-        scored_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       }).eq("id", leadId);
     } catch {
@@ -271,7 +270,6 @@ export async function scoreLeadPostCall(
   try {
     await db.from("leads").update({
       qualification_score: score,
-      scored_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     }).eq("id", leadId).eq("workspace_id", workspaceId);
   } catch {

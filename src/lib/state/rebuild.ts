@@ -64,7 +64,7 @@ export async function rebuildAndPersistLeadState(
   const db = (await import("@/lib/db/queries")).getDb();
   await db
     .from("leads")
-    .update({ status: result.lead_state_persisted, updated_at: new Date().toISOString() })
+    .update({ state: result.lead_state_persisted, updated_at: new Date().toISOString() })
     .eq("id", leadId)
     .eq("workspace_id", workspaceId);
   return result;

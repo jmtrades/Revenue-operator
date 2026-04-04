@@ -87,8 +87,8 @@ export default function ActivityPage() {
     if (!workspaceId) return;
     if (!silent) setLoading(true);
     Promise.all([
-      fetchWithFallback<{ calls: CallRow[] }>(`/api/calls?workspace_id=${encodeURIComponent(workspaceId)}`),
-      fetchWithFallback<{ handoffs: Handoff[] }>(`/api/handoffs?workspace_id=${encodeURIComponent(workspaceId)}`),
+      fetchWithFallback<{ calls: CallRow[] }>(`/api/calls?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
+      fetchWithFallback<{ handoffs: Handoff[] }>(`/api/handoffs?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
       fetchWithFallback<SummaryMetrics>(`/api/analytics/summary?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }),
     ])
       .then(([cRes, hRes, sRes]) => {
@@ -192,11 +192,11 @@ export default function ActivityPage() {
 
       <div className="grid grid-cols-4 gap-2 mb-6 overflow-x-auto scrollbar-hide">
         <div className="min-w-[72px] rounded-lg border p-2.5 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
-          <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>{summary?.calls_last_7_days ?? dash}</p>
+          <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>{summary?.calls_last_7_days ?? 0}</p>
           <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>{ta("statCalls7d")}</p>
         </div>
         <div className="min-w-[72px] rounded-lg border p-2.5 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
-          <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>100%</p>
+          <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>{summary?.calls_last_7_days ? "100%" : dash}</p>
           <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>{ta("statAnswered")}</p>
         </div>
         <div className="min-w-[72px] rounded-lg border p-2.5 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
@@ -204,7 +204,7 @@ export default function ActivityPage() {
           <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>{ta("statNewLeads")}</p>
         </div>
         <div className="min-w-[72px] rounded-lg border p-2.5 text-center" style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}>
-          <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>{summary?.appointments_upcoming ?? dash}</p>
+          <p className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>{summary?.appointments_upcoming ?? 0}</p>
           <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>{ta("statAppts")}</p>
         </div>
       </div>

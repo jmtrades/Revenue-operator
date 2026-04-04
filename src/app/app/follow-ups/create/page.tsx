@@ -63,7 +63,7 @@ export default function FollowUpCreatePage() {
 
   // Auto-set name based on trigger selection for faster setup
   useEffect(() => {
-    if (!name || name === "" || name === "Lead Captured Follow-Up" || name === "Voicemail Follow-Up" || name === "Missed Call Recovery" || name === "Booking Confirmed" || name === "No-Show Recovery" || name === "Post-Appointment" || name === "Manual Sequence") {
+    if (!name || name === "" || name === "Lead Captured Follow-Up" || name === "Voicemail Follow-Up" || name === "Missed Call Recovery" || name === "Booking Confirmed" || name === "No-Show Recovery" || name === "Post-Appointment" || name === "Manual Follow-Up") {
       const triggerNames: Record<Trigger, string> = {
         "call_outcome:lead_captured": "Lead Captured Follow-Up",
         "call_outcome:voicemail_left": "Voicemail Follow-Up",
@@ -72,7 +72,7 @@ export default function FollowUpCreatePage() {
         "booking_status:confirmed": "Booking Confirmed",
         "booking_status:no_show": "No-Show Recovery",
         "booking_status:completed": "Post-Appointment",
-        "manual": "Manual Sequence",
+        "manual": "Manual Follow-Up",
       };
       setName(triggerNames[trigger] || "");
     }

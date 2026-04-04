@@ -440,6 +440,7 @@ export async function exportUsageToStripe(
         timestamp: String(timestamp),
         action: "set",
       }).toString(),
+      signal: AbortSignal.timeout(15_000),
     });
     if (!res.ok) {
       const errText = await res.text();

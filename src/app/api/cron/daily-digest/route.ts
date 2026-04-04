@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
     const startIso = todayStart.toISOString();
     const endIso = todayEnd.toISOString();
 
-    const { data: workspaces } = await db.from("workspaces").select("id");
+    const { data: workspaces } = await db.from("workspaces").select("id").limit(100);
     const workspaceIds = (workspaces ?? []) as { id: string }[];
     let sent = 0;
 

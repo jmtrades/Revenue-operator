@@ -351,14 +351,14 @@ async function updateLeadStatus(
 
     // Map call outcome to lead status
     const statusMap: Record<string, string> = {
-      signup_initiated: "HOT",
-      demo_completed: "WARM",
-      callback_requested: "WARM",
-      objection_unresolved: "WARM",
-      information_gathered: "NEW",
-      hung_up_early: "COLD",
+      signup_initiated: "QUALIFIED",
+      demo_completed: "ENGAGED",
+      callback_requested: "ENGAGED",
+      objection_unresolved: "CONTACTED",
+      information_gathered: "CONTACTED",
+      hung_up_early: "NEW",
       voicemail: "NEW",
-      transferred: "WARM",
+      transferred: "ENGAGED",
     };
 
     const newStatus = statusMap[summary.outcome] || "NEW";
@@ -390,9 +390,9 @@ async function updateLeadStatus(
     await db
       .from("leads")
       .update({
-        status: newStatus,
-        score: newScore,
-        last_contacted_at: new Date().toISOString(),
+        state: newStatus,
+        qualification_score: newScore,
+        last_activity_at: new Date().toISOString(),
       })
       .eq("id", leadId);
 
@@ -605,7 +605,7 @@ async function autoEnrollInSequence(
 
     // Find the best matching active sequence for this workspace
     const { data: sequences } = await db
-      .from("sequences")
+      .from("follow_up_sequences")
       .select("id, name, trigger_type")
       .eq("workspace_id", workspaceId)
       .eq("is_active", true)
@@ -677,7 +677,7 @@ async function ensureDemoNurtureSequence(workspaceId: string): Promise<string | 
   try {
     // Check if demo nurture sequence already exists
     const { data: existing } = await db
-      .from("sequences")
+      .from("follow_up_sequences")
       .select("id")
       .eq("workspace_id", workspaceId)
       .eq("name", "Demo Lead Nurture")
@@ -688,7 +688,7 @@ async function ensureDemoNurtureSequence(workspaceId: string): Promise<string | 
 
     // Create the sequence
     const { data: seq } = await db
-      .from("sequences")
+      .from("follow_up_sequences")
       .insert({
         workspace_id: workspaceId,
         name: "Demo Lead Nurture",
@@ -706,7 +706,7 @@ async function ensureDemoNurtureSequence(workspaceId: string): Promise<string | 
       {
         sequence_id: seqId,
         step_order: 1,
-        type: "email",
+        channel: "email",
         delay_minutes: 120, // 2 hours after call
         config: {
           template_content: "follow_up_value",
@@ -717,7 +717,7 @@ async function ensureDemoNurtureSequence(workspaceId: string): Promise<string | 
       {
         sequence_id: seqId,
         step_order: 2,
-        type: "email",
+        channel: "email",
         delay_minutes: 2880, // 48 hours after step 1
         config: {
           template_content: "follow_up_social_proof",
@@ -728,7 +728,7 @@ async function ensureDemoNurtureSequence(workspaceId: string): Promise<string | 
       {
         sequence_id: seqId,
         step_order: 3,
-        type: "email",
+        channel: "email",
         delay_minutes: 7200, // 5 days after step 2
         config: {
           template_content: "follow_up_last_chance",
@@ -1040,7 +1040,7 @@ function buildDefaultFollowUpEmail(
   <p>Talk soon,<br><strong>Sarah</strong><br><span style="color:#6b7280;font-size:14px;">AI Sales Agent, Revenue Operator</span></p>
   <hr style="border:none;border-top:1px solid #e5e7eb;margin:32px 0 16px;">
   <p style="font-size:12px;color:#9ca3af;">This email was sent by Revenue Operator AI. <a href="https://www.recall-touch.com" style="color:#2563EB;">recall-touch.com</a></p>
-  <p style="font-size:11px;color:#9ca3af;">Revenue Operator Inc. | <a href="https://www.recall-touch.com/unsubscribe" style="color:#9ca3af;">Unsubscribe</a> | <a href="https://www.recall-touch.com/privacy" style="color:#9ca3af;">Privacy Policy</a></p>
+  <p style="font-size:11px;color:#9ca3af;">Revenue Operator Inc. | <a href="https://www.recall-touch.com/app/settings/notifications" style="color:#9ca3af;">Manage email preferences</a> | <a href="https://www.recall-touch.com/privacy" style="color:#9ca3af;">Privacy Policy</a></p>
 </body>
 </html>`;
 }
@@ -1071,7 +1071,7 @@ function buildReassuranceEmail(
   <p>Best,<br><strong>Sarah</strong><br><span style="color:#6b7280;font-size:14px;">AI Sales Agent, Revenue Operator</span></p>
   <hr style="border:none;border-top:1px solid #e5e7eb;margin:32px 0 16px;">
   <p style="font-size:12px;color:#9ca3af;">This email was sent by Revenue Operator AI. <a href="https://www.recall-touch.com" style="color:#2563EB;">recall-touch.com</a></p>
-  <p style="font-size:11px;color:#9ca3af;">Revenue Operator Inc. | <a href="https://www.recall-touch.com/unsubscribe" style="color:#9ca3af;">Unsubscribe</a> | <a href="https://www.recall-touch.com/privacy" style="color:#9ca3af;">Privacy Policy</a></p>
+  <p style="font-size:11px;color:#9ca3af;">Revenue Operator Inc. | <a href="https://www.recall-touch.com/app/settings/notifications" style="color:#9ca3af;">Manage email preferences</a> | <a href="https://www.recall-touch.com/privacy" style="color:#9ca3af;">Privacy Policy</a></p>
 </body>
 </html>`;
 }

@@ -20,6 +20,9 @@ async function sendEmail(to: string, subject: string, html: string): Promise<voi
     return;
   }
 
+  const unsubscribeUrl = `${APP_URL}/app/settings/notifications`;
+  const htmlWithFooter = `${html}<p style="margin-top:24px;font-size:12px;color:#999;text-align:center;"><a href="${unsubscribeUrl}" style="color:#999;">Manage email preferences</a></p>`;
+
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
@@ -30,8 +33,13 @@ async function sendEmail(to: string, subject: string, html: string): Promise<voi
       from: EMAIL_FROM,
       to,
       subject,
-      html,
+      html: htmlWithFooter,
+      headers: {
+        "List-Unsubscribe": `<${unsubscribeUrl}>`,
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+      },
     }),
+    signal: AbortSignal.timeout(10_000),
   });
 
   if (!res.ok) {
@@ -82,6 +90,20 @@ export async function GET(req: NextRequest) {
   let sent2d = 0;
   let sent24h = 0;
 
+  // Batch-fetch owner emails to avoid N+1 per workspace
+  const allOwnerIds = [
+    ...((workspaces2d ?? []) as { owner_id?: string }[]).map((w) => w.owner_id),
+    ...((workspaces24h ?? []) as { owner_id?: string }[]).map((w) => w.owner_id),
+  ].filter((id): id is string => !!id);
+  const uniqueOwnerIds = [...new Set(allOwnerIds)];
+  const ownerEmailMap = new Map<string, string>();
+  if (uniqueOwnerIds.length) {
+    const { data: ownerRows } = await db.from("users").select("id, email").in("id", uniqueOwnerIds);
+    for (const u of (ownerRows ?? []) as { id: string; email?: string }[]) {
+      if (u.email) ownerEmailMap.set(u.id, u.email);
+    }
+  }
+
   // Send 2-day reminders
   for (const ws of workspaces2d ?? []) {
     const workspaceId = (ws as { id: string }).id;
@@ -90,8 +112,7 @@ export async function GET(req: NextRequest) {
 
     if (!ownerId || !renewsAt) continue;
 
-    const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
-    const email = (user as { email?: string })?.email;
+    const email = ownerEmailMap.get(ownerId);
     if (!email) continue;
 
     const renewalDate = new Date(renewsAt).toLocaleDateString("en-US", {
@@ -129,8 +150,7 @@ export async function GET(req: NextRequest) {
 
     if (!ownerId || !renewsAt) continue;
 
-    const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
-    const email = (user as { email?: string })?.email;
+    const email = ownerEmailMap.get(ownerId);
     if (!email) continue;
 
     const renewalDate = new Date(renewsAt).toLocaleDateString("en-US", {
@@ -174,6 +194,18 @@ export async function GET(req: NextRequest) {
   let graceStarted = 0;
   let expiredSet = 0;
 
+  // Batch-fetch owner emails for grace period candidates
+  const graceOwnerIds = ((trialStateCandidates ?? []) as { owner_id?: string }[])
+    .map((w) => w.owner_id)
+    .filter((id): id is string => !!id);
+  const uniqueGraceOwnerIds = [...new Set(graceOwnerIds)].filter((id) => !ownerEmailMap.has(id));
+  if (uniqueGraceOwnerIds.length) {
+    const { data: graceOwnerRows } = await db.from("users").select("id, email").in("id", uniqueGraceOwnerIds);
+    for (const u of (graceOwnerRows ?? []) as { id: string; email?: string }[]) {
+      if (u.email) ownerEmailMap.set(u.id, u.email);
+    }
+  }
+
   for (const row of trialStateCandidates ?? []) {
     const ws = row as {
       id: string;
@@ -199,9 +231,7 @@ export async function GET(req: NextRequest) {
 
     if (ws.status === "trial_expired") {
       if (pastGraceWindow && !isActiveBilling) {
-        const ownerId = ws.owner_id;
-        const { data: user } = await db.from("users").select("email").eq("id", ownerId).maybeSingle();
-        const email = (user as { email?: string } | null)?.email;
+        const email = ownerEmailMap.get(ws.owner_id);
 
         await db
           .from("workspaces")

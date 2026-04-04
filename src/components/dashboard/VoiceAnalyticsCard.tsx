@@ -96,7 +96,7 @@ export function VoiceAnalyticsCard() {
     }
     Promise.all([
       fetch(
-        `/api/analytics/voice?workspace_id=${encodeURIComponent(workspaceId)}&period=7d&demo_only=true`,
+        `/api/analytics/voice?workspace_id=${encodeURIComponent(workspaceId)}&period=7d`,
         { credentials: "include" }
       )
         .then((r) => (r.ok ? r.json() : null))

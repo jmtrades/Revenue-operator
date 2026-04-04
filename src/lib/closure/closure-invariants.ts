@@ -100,14 +100,14 @@ export async function getCommitmentStartAt(workspaceId: string, leadId: string):
   }
   const { data: session } = await db
     .from("call_sessions")
-    .select("call_started_at, started_at")
+    .select("call_started_at")
     .eq("workspace_id", workspaceId)
     .eq("lead_id", leadId)
-    .order("started_at", { ascending: false })
+    .order("call_started_at", { ascending: false })
     .limit(1)
     .maybeSingle();
   if (session) {
-    const at = (session as { call_started_at?: string; started_at?: string }).call_started_at ?? (session as { started_at?: string }).started_at;
+    const at = (session as { call_started_at?: string }).call_started_at;
     if (at) return at;
   }
   return null;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
   GripVertical,
@@ -36,19 +36,18 @@ const STAGES: { key: StageKey; label: string; dotColor: string }[] = [
   { key: "LOST", label: "Lost", dotColor: "bg-red-400" },
 ];
 
-const DEMO_CARDS: PipelineCard[] = [
-  { id: "1", name: "Sarah Johnson", company: "Johnson HVAC", estimatedValue: 4500, daysInStage: 1, source: "phone", stage: "NEW" },
-  { id: "2", name: "Marcus Williams", company: "Williams Plumbing", estimatedValue: 2800, daysInStage: 0, source: "phone", stage: "NEW" },
-  { id: "3", name: "Dr. Maria Gomez", company: "Smiles Dental", estimatedValue: 8200, daysInStage: 3, source: "web", stage: "CONTACTED" },
-  { id: "4", name: "Tom Reynolds", company: "Reynolds Roofing", estimatedValue: 12000, daysInStage: 2, source: "referral", stage: "CONTACTED" },
-  { id: "5", name: "Contact A", company: "Organization A", estimatedValue: 15000, daysInStage: 5, source: "phone", stage: "QUALIFIED" },
-  { id: "6", name: "Carlos Rivera", company: "RoofGuard Pro", estimatedValue: 6500, daysInStage: 1, source: "campaign", stage: "QUALIFIED" },
-  { id: "7", name: "Contact B", company: "Organization B", estimatedValue: 3200, daysInStage: 4, source: "phone", stage: "BOOKED" },
-  { id: "8", name: "Contact C", company: "Organization C", estimatedValue: 22000, daysInStage: 7, source: "web", stage: "BOOKED" },
-  { id: "9", name: "Kevin Park", company: "Park Dental", estimatedValue: 5400, daysInStage: 12, source: "referral", stage: "WON" },
-  { id: "10", name: "Amy Chen", company: "Modern HVAC", estimatedValue: 7800, daysInStage: 3, source: "phone", stage: "WON" },
-  { id: "11", name: "Robert Kim", company: null, estimatedValue: 1200, daysInStage: 14, source: "campaign", stage: "LOST" },
-];
+/** Map DB lead status to pipeline stage */
+function statusToStage(status?: string): StageKey {
+  switch (status?.toUpperCase()) {
+    case "NEW": return "NEW";
+    case "CONTACTED": return "CONTACTED";
+    case "ENGAGED": case "QUALIFIED": return "QUALIFIED";
+    case "BOOKED": case "SHOWED": return "BOOKED";
+    case "WON": case "CLOSED": case "RETAIN": return "WON";
+    case "LOST": case "DISQUALIFIED": return "LOST";
+    default: return "NEW";
+  }
+}
 
 function sourceIcon(source: PipelineCard["source"]) {
   switch (source) {
@@ -62,11 +61,44 @@ function sourceIcon(source: PipelineCard["source"]) {
 export default function PipelinePage() {
   const _t = useTranslations("dashboard");
   const { workspaceId } = useWorkspace();
-  const [cards, setCards] = useState<PipelineCard[]>(DEMO_CARDS);
+  const [cards, setCards] = useState<PipelineCard[]>([]);
+  const [loading, setLoading] = useState(true);
   const [dragging, setDragging] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState<StageKey | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newLead, setNewLead] = useState({ name: "", company: "", value: "" });
+
+  useEffect(() => {
+    if (!workspaceId) return;
+    setLoading(true);
+    fetch(`/api/leads?workspace_id=${encodeURIComponent(workspaceId)}&limit=200`, { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!data?.leads) { setLoading(false); return; }
+        const mapped: PipelineCard[] = (data.leads as Array<Record<string, unknown>>).map((lead) => {
+          const meta = (lead.metadata ?? {}) as Record<string, unknown>;
+          const dealValue = typeof lead.value_cents === "number" ? lead.value_cents : 0;
+          const createdAt = lead.created_at ? new Date(lead.created_at as string) : new Date();
+          const daysInStage = Math.max(0, Math.round((Date.now() - createdAt.getTime()) / 86_400_000));
+          const source: PipelineCard["source"] =
+            meta.source === "web" || meta.source === "website" ? "web" :
+            meta.source === "referral" ? "referral" :
+            meta.source === "campaign" ? "campaign" : "phone";
+          return {
+            id: lead.id as string,
+            name: (lead.name as string) || "Unknown",
+            company: (lead.company as string) || null,
+            estimatedValue: dealValue,
+            daysInStage,
+            source,
+            stage: statusToStage(lead.state as string),
+          };
+        });
+        setCards(mapped);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [workspaceId]);
 
   const stageData = useMemo(() => {
     const grouped: Record<StageKey, PipelineCard[]> = {
@@ -98,6 +130,13 @@ export default function PipelinePage() {
     setCards((prev) =>
       prev.map((c) => (c.id === dragging ? { ...c, stage, daysInStage: 0 } : c))
     );
+    // Persist the stage change to the backend
+    fetch(`/api/leads/${dragging}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ state: stage }),
+    }).catch(() => { /* non-blocking */ });
     setDragging(null);
     setDragOver(null);
   }, [dragging]);
@@ -107,27 +146,61 @@ export default function PipelinePage() {
     setDragOver(null);
   }, []);
 
-  const handleAddLead = useCallback(() => {
-    if (!newLead.name.trim()) return;
-    const card: PipelineCard = {
-      id: `new-${Date.now()}`,
-      name: newLead.name.trim(),
-      company: newLead.company.trim() || null,
-      estimatedValue: parseInt(newLead.value) || 0,
-      daysInStage: 0,
-      source: "phone",
-      stage: "NEW",
-    };
-    setCards((prev) => [card, ...prev]);
+  const handleAddLead = useCallback(async () => {
+    if (!newLead.name.trim() || !workspaceId) return;
+    try {
+      const res = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          workspace_id: workspaceId,
+          name: newLead.name.trim(),
+          phone: "—",
+          company: newLead.company.trim() || undefined,
+          metadata: { estimated_value: parseInt(newLead.value) || 0 },
+        }),
+      });
+      if (res.ok) {
+        const created = await res.json();
+        const card: PipelineCard = {
+          id: created.id ?? `new-${Date.now()}`,
+          name: newLead.name.trim(),
+          company: newLead.company.trim() || null,
+          estimatedValue: parseInt(newLead.value) || 0,
+          daysInStage: 0,
+          source: "phone",
+          stage: "NEW",
+        };
+        setCards((prev) => [card, ...prev]);
+      }
+    } catch { /* non-blocking */ }
     setNewLead({ name: "", company: "", value: "" });
     setShowAddModal(false);
-  }, [newLead]);
+  }, [newLead, workspaceId]);
 
   if (!workspaceId) {
     return (
       <div className="p-8 max-w-6xl mx-auto">
         <PageHeader title="Pipeline" subtitle="Visual deal pipeline" />
         <EmptyState icon="pulse" title="Select a workspace" subtitle="Your deal pipeline will appear here." />
+      </div>
+    );
+  }
+
+  if (!loading && cards.length === 0) {
+    return (
+      <div className="p-8 max-w-6xl mx-auto">
+        <PageHeader title="Pipeline" subtitle="Visual deal pipeline" />
+        <EmptyState
+          icon="pulse"
+          title="Your pipeline is empty"
+          subtitle="Import leads or add them manually to see your deals flow through each stage. Leads automatically move through the pipeline as your AI operator qualifies and books them."
+          primaryAction={{ label: "Import Leads", href: "/dashboard/import" }}
+          secondaryAction={{ label: "Add Lead", onClick: () => setShowAddModal(true) }}
+        />
+        {/* Add lead modal still accessible from empty state */}
+        {showAddModal && renderAddModal()}
       </div>
     );
   }
@@ -143,9 +216,6 @@ export default function PipelinePage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <span className="px-2 py-0.5 rounded-full border border-amber-500/40 bg-amber-500/10 text-amber-300 text-xs">
-            Sample data
-          </span>
           <button
             type="button"
             onClick={() => setShowAddModal(true)}
@@ -253,73 +323,76 @@ export default function PipelinePage() {
         })}
       </div>
 
-      {/* Add lead modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div
-            className="w-full max-w-md rounded-2xl border p-6"
-            style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}
-          >
-            <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>
-                Add Lead to Pipeline
-              </h3>
-              <button type="button" onClick={() => setShowAddModal(false)} className="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="space-y-4">
-              <label className="block">
-                <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Name *</span>
-                <input
-                  type="text"
-                  value={newLead.name}
-                  onChange={(e) => setNewLead((p) => ({ ...p, name: e.target.value }))}
-                  className="mt-1.5 w-full rounded-lg border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                  placeholder="Contact name"
-                />
-              </label>
-              <label className="block">
-                <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Company</span>
-                <input
-                  type="text"
-                  value={newLead.company}
-                  onChange={(e) => setNewLead((p) => ({ ...p, company: e.target.value }))}
-                  className="mt-1.5 w-full rounded-lg border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                  placeholder="Company name"
-                />
-              </label>
-              <label className="block">
-                <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Estimated Value ($)</span>
-                <input
-                  type="number"
-                  value={newLead.value}
-                  onChange={(e) => setNewLead((p) => ({ ...p, value: e.target.value }))}
-                  className="mt-1.5 w-full rounded-lg border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-1 focus:ring-emerald-500"
-                  placeholder="5000"
-                />
-              </label>
-            </div>
-            <div className="flex items-center gap-3 mt-6">
-              <button
-                type="button"
-                onClick={handleAddLead}
-                disabled={!newLead.name.trim()}
-                className="flex-1 rounded-xl bg-emerald-500 text-black font-semibold py-2.5 text-sm hover:bg-emerald-400 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                Add to Pipeline
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowAddModal(false)}
-                className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {showAddModal && renderAddModal()}
     </div>
   );
+
+  function renderAddModal() {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+        <div
+          className="w-full max-w-md rounded-2xl border p-6"
+          style={{ borderColor: "var(--border-default)", background: "var(--bg-surface)" }}
+        >
+          <div className="flex items-center justify-between mb-5">
+            <h3 className="text-lg font-semibold" style={{ color: "var(--text-primary)" }}>
+              Add Lead to Pipeline
+            </h3>
+            <button type="button" onClick={() => setShowAddModal(false)} className="text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="space-y-4">
+            <label className="block">
+              <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Name *</span>
+              <input
+                type="text"
+                value={newLead.name}
+                onChange={(e) => setNewLead((p) => ({ ...p, name: e.target.value }))}
+                className="mt-1.5 w-full rounded-lg border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                placeholder="Contact name"
+              />
+            </label>
+            <label className="block">
+              <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Company</span>
+              <input
+                type="text"
+                value={newLead.company}
+                onChange={(e) => setNewLead((p) => ({ ...p, company: e.target.value }))}
+                className="mt-1.5 w-full rounded-lg border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                placeholder="Company name"
+              />
+            </label>
+            <label className="block">
+              <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Estimated Value ($)</span>
+              <input
+                type="number"
+                value={newLead.value}
+                onChange={(e) => setNewLead((p) => ({ ...p, value: e.target.value }))}
+                className="mt-1.5 w-full rounded-lg border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                placeholder="5000"
+              />
+            </label>
+          </div>
+          <div className="flex items-center gap-3 mt-6">
+            <button
+              type="button"
+              onClick={handleAddLead}
+              disabled={!newLead.name.trim()}
+              className="flex-1 rounded-xl bg-emerald-500 text-black font-semibold py-2.5 text-sm hover:bg-emerald-400 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Add to Pipeline
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowAddModal(false)}
+              className="rounded-xl border border-[var(--border-default)] px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 }

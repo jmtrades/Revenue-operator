@@ -101,6 +101,7 @@ export async function POST(req: NextRequest) {
           : `You are ${a.name} for ${name}. Style: ${a.style}. This is a phone call. Keep replies to 1-2 sentences. Talk like a human on the phone. Ask one question at a time. No bullet points, no lists, no markdown. Business: ${name}. Services: ${services}. Hours: ${hours}. Area: ${area}. Pricing: ${pricing}.`,
         messages,
       }),
+      signal: AbortSignal.timeout(30_000),
     });
 
     if (!res.ok) throw new Error("Anthropic API error");

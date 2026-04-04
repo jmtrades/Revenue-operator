@@ -61,8 +61,8 @@ export default function LeadViewPage() {
   useEffect(() => {
     if (!id) return;
     Promise.all([
-      fetchWithFallback(`/api/leads/${id}`, { cacheKey: `lead-${id}` }),
-      fetchWithFallback(`/api/leads/${id}/messages`, { cacheKey: `lead-messages-${id}` }),
+      fetchWithFallback(`/api/leads/${id}`, { cacheKey: `lead-${id}`, credentials: "include" }),
+      fetchWithFallback(`/api/leads/${id}/messages`, { cacheKey: `lead-messages-${id}`, credentials: "include" }),
     ])
       .then(([lResult, mResult]) => {
         if (lResult.data && !(lResult.data as { error?: unknown }).error) {
@@ -85,7 +85,7 @@ export default function LeadViewPage() {
   useEffect(() => {
     if (!lead?.workspace_id) return;
     fetchWithFallback(`/api/overview?workspace_id=${encodeURIComponent(lead.workspace_id)}`, {
-      cacheKey: `overview-${lead.workspace_id}`,
+      cacheKey: `overview-${lead.workspace_id}`, credentials: "include",
     }).then((result) => {
       if (result.data) {
         setWorkspacePaused((result.data as { workspace_status?: string }).workspace_status === "paused");
@@ -96,7 +96,7 @@ export default function LeadViewPage() {
   useEffect(() => {
     if (!id || !lead?.workspace_id) return;
     fetchWithFallback<{ status: "Prepared" | "Waiting" | "Recovering" }>(`/api/leads/${id}/call-continuity?workspace_id=${encodeURIComponent(lead.workspace_id)}`, {
-      cacheKey: `call-continuity-${id}`,
+      cacheKey: `call-continuity-${id}`, credentials: "include",
     }).then((result) => {
       if (result.data && !(result.data as { error?: unknown }).error) {
         setCallContinuity(result.data as { status: "Prepared" | "Waiting" | "Recovering" });
@@ -109,7 +109,7 @@ export default function LeadViewPage() {
     if (!id || !lead) return;
     const dealId = deals?.length && deals[0] ? (deals[0] as Deal).id : undefined;
     fetchWithFallback<PreCallBrief>(`/api/leads/${id}/pre-call-brief${dealId ? `?deal_id=${dealId}` : ""}`, {
-      cacheKey: `pre-call-brief-${id}-${dealId ?? "none"}`,
+      cacheKey: `pre-call-brief-${id}-${dealId ?? "none"}`, credentials: "include",
     }).then((result) => {
       if (result.data && !(result.data as { error?: unknown }).error) {
         setPreCallBrief(result.data);
@@ -120,7 +120,7 @@ export default function LeadViewPage() {
 
   useEffect(() => {
     if (!id) return;
-    fetchWithFallback<{ escalation_id?: string; beyond_scope?: boolean }>(`/api/leads/${id}/open-handoff`, { cacheKey: `open-handoff-${id}` }).then(
+    fetchWithFallback<{ escalation_id?: string; beyond_scope?: boolean }>(`/api/leads/${id}/open-handoff`, { cacheKey: `open-handoff-${id}`, credentials: "include" }).then(
       (result) => {
         if (result.data) {
           const d = result.data as { escalation_id?: string; beyond_scope?: boolean };
@@ -188,7 +188,7 @@ export default function LeadViewPage() {
 
   const recordDecision = () => {
     if (!openEscalationId) return;
-    fetch(`/api/escalations/${openEscalationId}/ack`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" })
+    fetch(`/api/escalations/${openEscalationId}/ack`, { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "include", body: "{}" })
       .then((r) => {
         if (r.ok) {
           setOpenEscalationId(null);

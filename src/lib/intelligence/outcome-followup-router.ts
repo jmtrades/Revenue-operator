@@ -477,6 +477,14 @@ export function getDefaultFollowUpTemplate(
     technical_retry: {
       sms: `Hi ${name}, sorry about that! We got disconnected. I'll call you back shortly. — ${biz}`,
     },
+    legal_review_required: {
+      email_subject: `Action required: Legal review — ${biz}`,
+      email_body: `Hi ${name},\n\nA matter requiring legal review has been flagged on your account. A senior team member will be in touch shortly to assist.\n\nBest,\n${biz}`,
+    },
+    escalation_notification: {
+      email_subject: `Your request has been escalated — ${biz}`,
+      email_body: `Hi ${name},\n\nYour request has been escalated to a senior team member who will follow up with you directly.\n\nBest,\n${biz}`,
+    },
   };
 
   return templates[templateKey] ?? {

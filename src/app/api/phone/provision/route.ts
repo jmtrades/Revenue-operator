@@ -180,10 +180,9 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(
           {
             error: isMissingConfig
-              ? "Phone provisioning requires Telnyx connection configuration. Please verify TELNYX_CONNECTION_ID is set."
-              : `Phone number purchase failed: ${detail}`,
+              ? "Phone number purchase requires additional configuration. Please contact support or check your phone provider settings."
+              : "Phone number purchase failed. This number may no longer be available — please try a different number.",
             code: "TELNYX_TEMPORARY_FAILURE",
-            detail,
           },
           { status: 502 },
         );
@@ -298,7 +297,7 @@ export async function POST(req: NextRequest) {
       try {
         const telephony = getTelephonyService();
         await telephony.releaseNumber(providerSid);
-        console.warn("[provision] Rolled back purchased number from provider after DB failure:", providerSid);
+        log("warn", "[provision] Rolled back purchased number from provider after DB failure:", { detail: providerSid });
       } catch (rollbackErr) {
         log("error", "[provision] CRITICAL: Failed to rollback purchased number", { error: providerSid, rollbackError: rollbackErr instanceof Error ? rollbackErr.message : rollbackErr });
       }

@@ -6,6 +6,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { log } from "@/lib/logger";
 import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
@@ -37,6 +38,7 @@ async function checkTelnyxVerification(phone: string, code: string): Promise<{ v
         phone_number: phone,
         code,
       }),
+      signal: AbortSignal.timeout(10_000),
     });
 
     const data = (await res.json().catch(() => ({}))) as { data?: { response_code?: string }; errors?: Array<{ detail?: string }> };
@@ -72,6 +74,7 @@ async function checkTwilioVerification(phone: string, code: string): Promise<{ v
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: params.toString(),
+      signal: AbortSignal.timeout(10_000),
     });
 
     const data = (await res.json().catch(() => ({}))) as { status?: string; valid?: boolean; error_message?: string };
@@ -123,33 +126,38 @@ export async function POST(req: NextRequest) {
   }
 
   const db = getDb();
-  await db
-    .from("workspaces")
-    .update({ verified_phone: phone })
-    .eq("id", session.workspaceId);
+  try {
+    await db
+      .from("workspaces")
+      .update({ verified_phone: phone })
+      .eq("id", session.workspaceId);
 
-  // Also set as primary workspace number in phone_configs so it appears in Settings > Phone
-  // and can be used for call forwarding, outbound caller ID, etc.
-  const { data: existingConfig } = await db
-    .from("phone_configs")
-    .select("id, proxy_number")
-    .eq("workspace_id", session.workspaceId)
-    .maybeSingle();
+    // Also set as primary workspace number in phone_configs so it appears in Settings > Phone
+    // and can be used for call forwarding, outbound caller ID, etc.
+    const { data: existingConfig } = await db
+      .from("phone_configs")
+      .select("id, proxy_number")
+      .eq("workspace_id", session.workspaceId)
+      .maybeSingle();
 
-  const cfg = existingConfig as { proxy_number?: string | null } | null;
-  if (!cfg?.proxy_number) {
-    // No existing primary number — set the verified personal number as primary
-    await db.from("phone_configs").upsert(
-      {
-        workspace_id: session.workspaceId,
-        mode: "proxy",
-        proxy_number: phone,
-        forwarding_number: phone,
-        status: "active",
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: "workspace_id" }
-    );
+    const cfg = existingConfig as { proxy_number?: string | null } | null;
+    if (!cfg?.proxy_number) {
+      // No existing primary number — set the verified personal number as primary
+      await db.from("phone_configs").upsert(
+        {
+          workspace_id: session.workspaceId,
+          mode: "proxy",
+          proxy_number: phone,
+          forwarding_number: phone,
+          status: "active",
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "workspace_id" }
+      );
+    }
+  } catch (dbErr) {
+    log("error", "[verify-check] DB update failed", { error: dbErr instanceof Error ? dbErr.message : String(dbErr) });
+    return NextResponse.json({ error: "Verification succeeded but failed to save. Please try again." }, { status: 500 });
   }
 
   return NextResponse.json({ verified: true, phone_number: phone });

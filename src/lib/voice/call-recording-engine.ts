@@ -465,7 +465,7 @@ export async function searchRecordings(
   try {
     let dbQuery = db
       .from("call_sessions")
-      .select("id, lead_id, metadata, call_started_at, duration_seconds, outcome, summary")
+      .select("id, lead_id, metadata, call_started_at, call_ended_at, outcome, summary")
       .eq("workspace_id", workspaceId)
       .not("metadata->>recording", "is", null)
       .order("call_started_at", { ascending: false })

@@ -160,12 +160,12 @@ export async function GET(req: NextRequest) {
   try {
     const { data: daily } = await db
       .from("daily_metrics")
-      .select("total_revenue_cents, date")
+      .select("revenue_estimated_cents, date")
       .eq("workspace_id", workspaceId)
       .gte("date", monthStart.slice(0, 10));
     if (daily?.length) {
       for (const row of daily) {
-        const v = Number((row as { total_revenue_cents?: number }).total_revenue_cents);
+        const v = Number((row as { revenue_estimated_cents?: number }).revenue_estimated_cents);
         if (!Number.isNaN(v)) revenueCents += v;
       }
     }
@@ -181,21 +181,22 @@ export async function GET(req: NextRequest) {
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
       .gte("call_started_at", monthStart)
-      .not("call_ended_at", "is", null)
-      .eq("direction", "inbound");
+      .not("call_ended_at", "is", null);
+    // No direction column on call_sessions — count all completed calls as inbound
     inboundCalls = ic ?? 0;
   } catch (error) {
     log("error", "dashboard.summary.query", { workspaceId, error });
   }
 
   try {
+    // Outbound calls: those triggered by speed-to-lead or campaigns (have a matching action_queue entry)
     const { count: oc } = await db
       .from("call_sessions")
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
       .gte("call_started_at", monthStart)
       .not("call_ended_at", "is", null)
-      .eq("direction", "outbound");
+      .in("outcome", ["callback_completed", "outbound_completed"]);
     outboundCalls = oc ?? 0;
   } catch (error) {
     log("error", "dashboard.summary.query", { workspaceId, error });
@@ -208,7 +209,6 @@ export async function GET(req: NextRequest) {
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
       .gte("call_started_at", monthStart)
-      .eq("direction", "outbound")
       .in("outcome", ["booked", "qualified", "interested", "callback_scheduled"]);
     missedCallsRecovered = mr ?? 0;
   } catch (error) {
@@ -222,7 +222,7 @@ export async function GET(req: NextRequest) {
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
       .gte("created_at", monthStart)
-      .in("status", ["qualified", "appointment_set", "won"]);
+      .in("state", ["QUALIFIED", "BOOKED", "WON"]);
     qualifiedLeads = ql ?? 0;
   } catch (error) {
     log("error", "dashboard.summary.query", { workspaceId, error });
@@ -255,9 +255,9 @@ export async function GET(req: NextRequest) {
   try {
     const { data: leads } = await db
       .from("leads")
-      .select("id, name, phone, status, created_at")
+      .select("id, name, phone, state, created_at")
       .eq("workspace_id", workspaceId)
-      .eq("status", "NEW")
+      .eq("state", "NEW")
       .order("created_at", { ascending: false })
       .limit(7);
     if (leads?.length) {
@@ -277,14 +277,14 @@ export async function GET(req: NextRequest) {
   try {
     const { data: calls } = await db
       .from("call_sessions")
-      .select("id, call_started_at, outcome, direction")
+      .select("id, call_started_at, outcome")
       .eq("workspace_id", workspaceId)
       .order("call_started_at", { ascending: false })
       .limit(12);
     if (calls?.length) {
       for (const c of calls) {
-        const dir = (c.direction as string) === "outbound" ? "Outbound" : "Inbound";
         const out = (c.outcome as string) || "handled";
+        const dir = ["callback_completed", "outbound_completed"].includes(out) ? "Outbound" : "Inbound";
         activity.push({
           id: c.id as string,
           at: (c.call_started_at as string) || new Date().toISOString(),
@@ -361,7 +361,7 @@ export async function GET(req: NextRequest) {
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
       .lte("last_activity_at", staleDate)
-      .not("state", "in", '("won","lost","opted_out")');
+      .not("state", "in", '("WON","LOST","CLOSED")');
     staleLeadsCount = sl ?? 0;
   } catch (error) {
     log("error", "dashboard.summary.query", { workspaceId, error });

@@ -84,6 +84,7 @@ export async function PATCH(
         method: "PATCH",
         headers: { "Content-Type": "application/json", cookie: req.headers.get("cookie") ?? "" },
         body: JSON.stringify({ start: finalStart, end: finalEnd }),
+        signal: AbortSignal.timeout(15_000),
       });
     } catch {
       // non-fatal
@@ -127,6 +128,7 @@ export async function DELETE(
       await fetch(`${req.nextUrl.origin}/api/integrations/google-calendar/events/${encodeURIComponent(row.external_calendar_id)}`, {
         method: "DELETE",
         headers: { cookie: req.headers.get("cookie") ?? "" },
+        signal: AbortSignal.timeout(15_000),
       });
     } catch {
       // non-fatal

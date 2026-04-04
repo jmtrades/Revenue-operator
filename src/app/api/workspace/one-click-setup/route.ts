@@ -185,7 +185,7 @@ export async function POST(req: NextRequest) {
         { onConflict: "workspace_id" }
       );
     } catch (ctxErr) {
-      console.warn("[one-click-setup] workspace_business_context upsert failed:", ctxErr instanceof Error ? ctxErr.message : ctxErr);
+      log("warn", "[one-click-setup] workspace_business_context upsert failed:", { detail: ctxErr instanceof Error ? ctxErr.message : ctxErr });
     }
 
     // Build result

@@ -80,7 +80,7 @@ export default function AutoSetupPage() {
   useEffect(() => {
     const loadCurrentStats = async () => {
       try {
-        const response = await fetch("/api/workspace/knowledge-stats");
+        const response = await fetch("/api/workspace/knowledge-stats", { credentials: "include" });
         if (response.ok) {
           const data = await response.json();
           setCurrentStats({
@@ -190,7 +190,7 @@ export default function AutoSetupPage() {
 
       // Reload current stats
       setTimeout(async () => {
-        const statsResponse = await fetch("/api/workspace/knowledge-stats");
+        const statsResponse = await fetch("/api/workspace/knowledge-stats", { credentials: "include" });
         if (statsResponse.ok) {
           const data = await statsResponse.json();
           setCurrentStats({

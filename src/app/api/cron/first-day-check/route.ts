@@ -18,6 +18,8 @@ async function sendEmail(to: string, subject: string, text: string): Promise<boo
     return false;
   }
 
+  const unsubscribeUrl = `${APP_URL}/app/settings/notifications`;
+
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -30,7 +32,12 @@ async function sendEmail(to: string, subject: string, text: string): Promise<boo
         to,
         subject,
         text,
+        headers: {
+          "List-Unsubscribe": `<${unsubscribeUrl}>`,
+          "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        },
       }),
+      signal: AbortSignal.timeout(10_000),
     });
 
     return res.ok;

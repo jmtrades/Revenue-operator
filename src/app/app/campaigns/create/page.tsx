@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
@@ -59,7 +59,7 @@ const getCampaignTypes = (t: any): Array<{
   { id: "quote_chase", icon: FileText, label: t("types.quoteChase.label", { defaultValue: "Quote Chase" }), description: t("types.quoteChase.desc", { defaultValue: "Follow up on pending quotes." }) },
   { id: "review_request", icon: Star, label: t("types.reviewRequest.label", { defaultValue: "Review Request" }), description: t("types.reviewRequest.desc", { defaultValue: "Request a review after completion." }) },
   { id: "cold_outreach", icon: Megaphone, label: t("types.coldOutreach.label", { defaultValue: "Cold Outreach" }), description: t("types.coldOutreach.desc", { defaultValue: "Reach a list with a controlled cadence." }) },
-  { id: "custom", icon: SlidersHorizontal, label: t("types.custom.label", { defaultValue: "Custom" }), description: t("types.custom.desc", { defaultValue: "Build your own sequence." }) },
+  { id: "custom", icon: SlidersHorizontal, label: t("types.custom.label", { defaultValue: "Custom" }), description: t("types.custom.desc", { defaultValue: "Build your own outreach flow." }) },
 ];
 
 const DEFAULT_TEMPLATES: Record<CampaignType, SequenceStep[]> = {
@@ -110,12 +110,17 @@ export default function CampaignCreatePage() {
   const t = useTranslations("campaigns.create");
   const tCommon = useTranslations("common");
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { workspaceId } = useWorkspace();
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
   const effectiveWorkspaceId = workspaceId || workspaceSnapshot?.id?.trim() || null;
 
+  // Pre-fill from template query param (e.g., ?template=speed_to_lead)
+  const templateParam = searchParams.get("template") as CampaignType | null;
+  const initialType: CampaignType = templateParam && templateParam in DEFAULT_TEMPLATES ? templateParam : "speed_to_lead";
+
   const [step, setStep] = useState<WizardStep>(1);
-  const [type, setType] = useState<CampaignType>("speed_to_lead");
+  const [type, setType] = useState<CampaignType>(initialType);
   const [name, setName] = useState("Speed-to-Lead");
 
   // Audience filters (stored into target_filter)
@@ -125,7 +130,7 @@ export default function CampaignCreatePage() {
   const [notContactedDays, setNotContactedDays] = useState<number | "">("");
 
   // Sequence
-  const [sequence, setSequence] = useState<SequenceStep[]>(DEFAULT_TEMPLATES.speed_to_lead);
+  const [sequence, setSequence] = useState<SequenceStep[]>(DEFAULT_TEMPLATES[initialType]);
 
   // Schedule
   const [startAt, setStartAt] = useState<string>("");

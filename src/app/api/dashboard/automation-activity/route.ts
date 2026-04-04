@@ -48,16 +48,15 @@ export async function GET(req: NextRequest) {
     smsSent = fuCount ?? 0;
   } catch (err) { log("warn", "automation_activity.sms_followups_failed", { error: err instanceof Error ? err.message : String(err) }); }
 
-  // Count outbound calls with verified completion (duration > 0 indicates a connected call)
+  // Count outbound calls with verified completion (call_ended_at present indicates a connected call)
   try {
     const { count: obCount } = await db
       .from("call_sessions")
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
-      .eq("direction", "outbound")
-      .gte("created_at", since)
-      .neq("status", "failed")
-      .gt("duration", 0);
+      .in("outcome", ["outbound_completed", "callback_completed"])
+      .gte("call_started_at", since)
+      .not("call_ended_at", "is", null);
     callsMade = obCount ?? 0;
   } catch (err) { log("warn", "automation_activity.outbound_calls_failed", { error: err instanceof Error ? err.message : String(err) }); }
 
@@ -78,7 +77,7 @@ export async function GET(req: NextRequest) {
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
       .gte("last_activity_at", since)
-      .eq("state", "contacted");
+      .eq("state", "CONTACTED");
     recoveredLeads = recCount ?? 0;
   } catch (err) { log("warn", "automation_activity.recovered_leads_failed", { error: err instanceof Error ? err.message : String(err) }); }
 

@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
 
   // Find default reactivation sequence for the workspace (or use first available)
   const { data: sequences } = await db
-    .from("sequences")
+    .from("follow_up_sequences")
     .select("id")
     .eq("workspace_id", session.workspaceId)
     .eq("type", "reactivation")
@@ -196,9 +196,9 @@ export async function POST(req: NextRequest) {
         executed_at: now,
       });
     } catch (err) {
-      console.warn(
+      log("warn",
         `[cold-leads/reengage] Failed to log autonomous action for lead ${item.lead_id}:`,
-        err instanceof Error ? err.message : String(err)
+        { detail: err instanceof Error ? err.message : String(err) }
       );
     }
 
@@ -237,15 +237,15 @@ export async function POST(req: NextRequest) {
             // ignore message store failure
           }
         } else {
-          console.warn(
+          log("warn",
             `[cold-leads/reengage] SMS send failed for lead ${item.lead_id}:`,
-            smsResult.error
+            { detail: smsResult.error }
           );
         }
       } catch (err) {
-        console.warn(
+        log("warn",
           `[cold-leads/reengage] Exception sending SMS for lead ${item.lead_id}:`,
-          err instanceof Error ? err.message : String(err)
+          { detail: err instanceof Error ? err.message : String(err) }
         );
       }
     }
@@ -256,16 +256,16 @@ export async function POST(req: NextRequest) {
         await db.from("sequence_enrollments").insert({
           workspace_id: session.workspaceId,
           sequence_id: defaultSequenceId,
-          lead_id: item.lead_id,
+          contact_id: item.lead_id,
           status: "active",
           enrolled_at: now,
           started_at: now,
         });
       } catch (err) {
         // Sequence enrollment may fail if already enrolled - log but don't block
-        console.warn(
+        log("warn",
           `[cold-leads/reengage] Sequence enrollment failed for lead ${item.lead_id}:`,
-          err instanceof Error ? err.message : String(err)
+          { detail: err instanceof Error ? err.message : String(err) }
         );
       }
     }

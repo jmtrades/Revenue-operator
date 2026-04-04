@@ -266,6 +266,11 @@ export default function SignInForm() {
             {t("signIn.startFreeCta")}
           </Link>
         </p>
+        <p className="text-center text-[var(--text-tertiary)] text-[11px] mt-4">
+          <Link href="/terms" className="hover:text-[var(--text-secondary)] transition">Terms of Service</Link>
+          {" · "}
+          <Link href="/privacy" className="hover:text-[var(--text-secondary)] transition">Privacy Policy</Link>
+        </p>
       </div>
     </div>
   );

@@ -14,6 +14,7 @@ export const maxDuration = 60;
 import { NextRequest, NextResponse } from "next/server";
 import { assertCronAuthorized } from "@/lib/runtime";
 import { runSafeCron } from "@/lib/cron/run-safe";
+import { log } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   const authErr = assertCronAuthorized(request);
@@ -55,7 +56,7 @@ export async function GET(request: NextRequest) {
           const check = await runMeetingAwareCheck(ws.id);
           meetingActions += check.actions;
         } catch (e) {
-          console.warn(`[autonomous-brain] meeting-aware check failed for workspace ${ws.id}:`, e instanceof Error ? e.message : String(e));
+          log("warn", `[autonomous-brain] meeting-aware check failed for workspace ${ws.id}:`, { detail: e instanceof Error ? e.message : String(e) });
         }
       }
     } catch (err) {
@@ -83,7 +84,7 @@ export async function GET(request: NextRequest) {
         .from("leads")
         .select("id, workspace_id")
         .gte("updated_at", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
-        .not("status", "in", '("CLOSED","WON","LOST")')
+        .not("state", "in", '("CLOSED","WON","LOST")')
         .order("updated_at", { ascending: false })
         .limit(100);
 
@@ -91,7 +92,7 @@ export async function GET(request: NextRequest) {
       const { data: unintelligentLeads } = await db
         .from("leads")
         .select("id, workspace_id")
-        .not("status", "in", '("CLOSED","WON","LOST")')
+        .not("state", "in", '("CLOSED","WON","LOST")')
         .not("id", "in", `(${(activeLeads ?? []).map((l: { id: string }) => `"${l.id}"`).join(",") || '"__none__"'})`)
         .is("last_activity_at", null)
         .limit(20);
@@ -150,11 +151,11 @@ export async function GET(request: NextRequest) {
                 actionsExecuted++;
               }
             } catch (e) {
-              console.warn(`[autonomous-brain] action execution failed for lead ${lead.id}:`, e instanceof Error ? e.message : String(e));
+              log("warn", `[autonomous-brain] action execution failed for lead ${lead.id}:`, { detail: e instanceof Error ? e.message : String(e) });
             }
           }
         } catch (e) {
-          console.warn(`[autonomous-brain] intelligence cycle failed for lead ${lead.id}:`, e instanceof Error ? e.message : String(e));
+          log("warn", `[autonomous-brain] intelligence cycle failed for lead ${lead.id}:`, { detail: e instanceof Error ? e.message : String(e) });
         }
       }
     } catch (err) {
@@ -196,7 +197,7 @@ export async function GET(request: NextRequest) {
         }
       }
     } catch (e) {
-      console.warn("[autonomous-brain] no_action churn detection failed:", e instanceof Error ? e.message : String(e));
+      log("warn", "[autonomous-brain] no_action churn detection failed:", { detail: e instanceof Error ? e.message : String(e) });
     }
 
     return {

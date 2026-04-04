@@ -19,6 +19,7 @@ import {
 import { activateSettlementFromStripe } from "@/lib/settlement";
 import { enqueueSendMessage } from "@/lib/action-queue/send-message";
 import { priceIdToTierAndInterval } from "@/lib/stripe-prices";
+import { tierToDbValue } from "@/lib/billing-plans";
 import Stripe from "stripe";
 import { sendDunningEmail } from "@/lib/email/dunning";
 import { getTelephonyService } from "@/lib/telephony";
@@ -151,7 +152,7 @@ export async function POST(req: NextRequest) {
         event_id: eventId,
         error: errMsg,
       });
-    } catch (trackErr) { console.warn("[billing-webhook] Failure tracking insert failed:", trackErr instanceof Error ? trackErr.message : trackErr); }
+    } catch (trackErr) { log("warn", "[billing-webhook] Failure tracking insert failed:", { detail: trackErr instanceof Error ? trackErr.message : String(trackErr) }); }
     // Return 500 so Stripe retries the webhook
     return NextResponse.json({ error: "Processing failed" }, { status: 500 });
   }
@@ -222,6 +223,8 @@ async function handleStripeWebhookEvent(
                     });
 
                     const emailFrom = process.env.EMAIL_FROM ?? "Revenue Operator <noreply@recall-touch.com>";
+                    const emailCtrl = new AbortController();
+                    const emailTimeout = setTimeout(() => emailCtrl.abort(), 10000);
                     await fetch("https://api.resend.com/emails", {
                       method: "POST",
                       headers: {
@@ -229,7 +232,9 @@ async function handleStripeWebhookEvent(
                         Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
                       },
                       body: JSON.stringify({ from: emailFrom, to: ownerEmail, subject, html }),
+                      signal: emailCtrl.signal,
                     });
+                    clearTimeout(emailTimeout);
                   }
                 }
               } catch (emailErr) {
@@ -313,10 +318,13 @@ async function handleStripeWebhookEvent(
           updated_at: new Date().toISOString(),
         };
         if (tierInterval) {
-          updatePayload.billing_tier = tierInterval.tier;
+          updatePayload.billing_tier = tierToDbValue(tierInterval.tier);
           updatePayload.billing_interval = tierInterval.interval;
         }
-        await db.from("workspaces").update(updatePayload).eq("id", workspaceId);
+        const { error: wsUpdateErr } = await db.from("workspaces").update(updatePayload).eq("id", workspaceId);
+        if (wsUpdateErr) {
+          log("error", "billing_webhook.workspace_update_failed", { workspace_id: workspaceId, error: wsUpdateErr.message });
+        }
 
         // Also update workspace_billing.status to keep tables in sync
         try {
@@ -357,10 +365,13 @@ async function handleStripeWebhookEvent(
           updated_at: new Date().toISOString(),
         };
         if (tierInterval) {
-          updatePayload.billing_tier = tierInterval.tier;
+          updatePayload.billing_tier = tierToDbValue(tierInterval.tier);
           updatePayload.billing_interval = tierInterval.interval;
         }
-        await db.from("workspaces").update(updatePayload).eq("id", workspaceId);
+        const { error: wsUpdateErr2 } = await db.from("workspaces").update(updatePayload).eq("id", workspaceId);
+        if (wsUpdateErr2) {
+          log("error", "billing_webhook.workspace_update_failed", { workspace_id: workspaceId, error: wsUpdateErr2.message });
+        }
 
         // Also update workspace_billing.status to keep tables in sync
         try {
@@ -557,7 +568,7 @@ async function handleStripeWebhookEvent(
                   const sub = await stripe.subscriptions.retrieve(subscriptionId);
                   return sub.status === "active" || sub.status === "trialing";
                 } catch (subErr) {
-                  console.warn("[billing-webhook] Subscription retrieval failed:", subErr instanceof Error ? subErr.message : subErr);
+                  log("warn", "[billing-webhook] Subscription retrieval failed:", { detail: subErr instanceof Error ? subErr.message : String(subErr) });
                   return false;
                 }
               })()
@@ -801,8 +812,9 @@ async function handleStripeWebhookEvent(
           const stripe = getStripe();
           const ch = await stripe.charges.retrieve(chargeId);
           resolvedWorkspaceId = ch.metadata?.workspace_id ?? null;
-        } catch (lookupErr) { console.warn("[billing-webhook] Dispute charge lookup failed:", lookupErr instanceof Error ? lookupErr.message : lookupErr); }
+        } catch (lookupErr) { log("warn", "[billing-webhook] Dispute charge lookup failed:", { detail: lookupErr instanceof Error ? lookupErr.message : String(lookupErr) }); }
       }
+
       log("error", "billing_webhook.dispute_created", {
         workspace_id: resolvedWorkspaceId,
         dispute_id: dispute.id,
@@ -872,6 +884,50 @@ async function handleStripeWebhookEvent(
           trial_ends_at: trialEnd ? new Date(trialEnd * 1000).toISOString() : null,
           updated_at: new Date().toISOString(),
         }).eq("id", wid);
+      }
+      break;
+    }
+
+    case "customer.subscription.created": {
+      // Subscription creation is primarily handled by checkout.session.completed.
+      // This handler exists as defense-in-depth for subscriptions created outside
+      // the checkout flow (e.g., Stripe dashboard, API). We delegate to the same
+      // logic as subscription.updated to keep workspace billing state in sync.
+      const createdSub = event.data.object as Stripe.Subscription & { current_period_end?: number; trial_end?: number; status?: string };
+      const createdWsId = createdSub.metadata?.workspace_id;
+      const createdWorkspaceId = createdWsId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(createdWsId) ? createdWsId : undefined;
+      if (createdWorkspaceId) {
+        const isTrialing = createdSub.status === "trialing";
+        const periodEnd = createdSub.current_period_end;
+        const trialEnd = createdSub.trial_end;
+        const trialEndAt = trialEnd ? new Date(trialEnd * 1000) : null;
+        const renewsAt = isTrialing && trialEnd
+          ? new Date(trialEnd * 1000)
+          : periodEnd
+            ? new Date(periodEnd * 1000)
+            : null;
+        const firstPriceId = createdSub.items?.data?.[0]?.price
+          ? (typeof createdSub.items.data[0].price === "string" ? createdSub.items.data[0].price : createdSub.items.data[0].price?.id)
+          : null;
+        const tierInterval = priceIdToTierAndInterval(firstPriceId);
+        const updatePayload: Record<string, unknown> = {
+          billing_status: isTrialing ? "trial" : createdSub.status === "active" ? "active" : "paused",
+          stripe_subscription_id: createdSub.id,
+          protection_renewal_at: renewsAt?.toISOString() ?? null,
+          trial_ends_at: trialEndAt?.toISOString() ?? null,
+          trial_end_at: trialEndAt?.toISOString() ?? null,
+          renews_at: renewsAt?.toISOString() ?? null,
+          updated_at: new Date().toISOString(),
+        };
+        if (tierInterval) {
+          updatePayload.billing_tier = tierToDbValue(tierInterval.tier);
+          updatePayload.billing_interval = tierInterval.interval;
+        }
+        const { error: wsErr } = await db.from("workspaces").update(updatePayload).eq("id", createdWorkspaceId);
+        if (wsErr) {
+          log("error", "billing_webhook.subscription_created_update_failed", { workspace_id: createdWorkspaceId, error: wsErr.message });
+        }
+        log("info", "billing_webhook.subscription_created", { workspace_id: createdWorkspaceId, status: createdSub.status });
       }
       break;
     }

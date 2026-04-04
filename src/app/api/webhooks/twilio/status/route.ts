@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
   if (hasToken && process.env.NODE_ENV === "production") {
     const url = `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/twilio/status`;
     if (!sig || !verifyTwilioSignature(url, formParams, sig)) {
-      console.warn("[twilio-status] Invalid signature — rejecting request");
+      log("warn", "[twilio-status] Invalid signature — rejecting request");
       return new NextResponse("Unauthorized", { status: 401, headers: { "Content-Type": "text/plain" } });
     }
   }

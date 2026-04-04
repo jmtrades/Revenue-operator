@@ -37,12 +37,16 @@ export async function POST(req: NextRequest) {
 
   try {
     const db = getDb();
-    await db.from("call_wrapups").insert({
+    const { error: wrapupErr } = await db.from("call_wrapups").insert({
       call_session_id: consumed.callSessionId,
       outcome: body.outcome,
       objection_text: body.objection_text ?? null,
       submitted_by: "closer",
     });
+    if (wrapupErr) {
+      log("error", "[wrapup/submit] insert failed:", { error: wrapupErr.message });
+      return NextResponse.json({ error: "Failed to save wrapup" }, { status: 500 });
+    }
 
     const analysisOutcome = OUTCOME_TO_ANALYSIS[body.outcome] ?? "info_gap";
     await db

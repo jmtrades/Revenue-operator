@@ -2007,7 +2007,8 @@
     "stats": {
       "activeCalls": "Active Calls",
       "startsAfterFirstCall": "Starts after first call",
-      "estRevenueRecovered": "Est. Revenue Recovered"
+      "estRevenueRecovered": "Est. Revenue Recovered",
+      "activeLeads": "Aktive Leads"
     },
     "gettingStarted": {
       "title": "Getting Started",

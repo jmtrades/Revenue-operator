@@ -111,13 +111,20 @@ export async function computeLeadIntelligence(
 
     signalCount += signalCounts ? Math.min(1, Math.ceil(signalCounts / 10)) : 0;
 
-    // 4. Fetch recent outcomes (max 10)
-    const { data: outcomes } = await db
-      .from("universal_outcomes")
-      .select("outcome_type, created_at")
-      .eq("workspace_id", workspaceId)
-      .order("created_at", { ascending: false })
-      .limit(10);
+    // 4. Fetch recent outcomes (max 10) — universal_outcomes has no lead_id column;
+    // query by workspace only and filter by thread_id if available
+    let outcomes: unknown[] | null = null;
+    try {
+      const { data } = await db
+        .from("universal_outcomes")
+        .select("outcome_type, recorded_at")
+        .eq("workspace_id", workspaceId)
+        .order("recorded_at", { ascending: false })
+        .limit(10);
+      outcomes = data;
+    } catch {
+      // universal_outcomes table may not exist or query failed — continue without
+    }
 
     const recentOutcomes = (outcomes ?? []) as Array<{
       outcome_type: string;

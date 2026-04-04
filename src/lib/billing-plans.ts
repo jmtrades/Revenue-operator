@@ -234,6 +234,23 @@ export const BILLING_PLANS: Record<PlanSlug, BillingPlan> = {
   },
 };
 
+/**
+ * Convert an app-domain PlanSlug to a DB-compatible billing_tier value.
+ * DB CHECK constraint allows: solo, growth, team, enterprise.
+ */
+export function tierToDbValue(appTier: string): string {
+  const map: Record<string, string> = {
+    solo: "solo",
+    business: "growth",
+    scale: "team",
+    enterprise: "enterprise",
+    // passthrough DB values
+    growth: "growth",
+    team: "team",
+  };
+  return map[appTier] ?? appTier;
+}
+
 export const DEFAULT_PLAN: PlanSlug = "business";
 
 /** Paid tiers only (excludes enterprise custom) */

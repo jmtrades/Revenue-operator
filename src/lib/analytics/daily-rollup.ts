@@ -7,13 +7,13 @@ import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
 
 export type DailyMetrics = {
-  total_calls: number;
-  missed_calls: number;
-  total_appointments: number;
-  total_leads: number;
-  recovered_calls: number;
-  total_revenue_cents: number;
-  avg_call_duration_seconds: number | null;
+  calls_answered: number;
+  calls_missed: number;
+  appointments_booked: number;
+  leads_captured: number;
+  no_shows_recovered: number;
+  revenue_estimated_cents: number;
+  response_time_avg_seconds: number | null;
 };
 
 /**
@@ -38,7 +38,7 @@ export async function computeDailyMetrics(
     .gte("call_started_at", startOfDay)
     .lt("call_started_at", endOfDay);
 
-  const total_calls = totalCallsCount ?? 0;
+  const calls_answered = totalCallsCount ?? 0;
 
   // 2. Unanswered calls: outcome = 'no_answer' or 'voicemail'
   const { count: missedCallsCount } = await db
@@ -49,7 +49,7 @@ export async function computeDailyMetrics(
     .lt("call_started_at", endOfDay)
     .in("outcome", ["no_answer", "voicemail"]);
 
-  const missed_calls = missedCallsCount ?? 0;
+  const calls_missed = missedCallsCount ?? 0;
 
   // 3. Appointments booked: status = 'confirmed' and created within date
   const { count: appointmentsCount } = await db
@@ -60,7 +60,7 @@ export async function computeDailyMetrics(
     .gte("created_at", startOfDay)
     .lt("created_at", endOfDay);
 
-  const total_appointments = appointmentsCount ?? 0;
+  const appointments_booked = appointmentsCount ?? 0;
 
   // 4. Leads captured
   const { count: leadsCount } = await db
@@ -70,7 +70,7 @@ export async function computeDailyMetrics(
     .gte("created_at", startOfDay)
     .lt("created_at", endOfDay);
 
-  const total_leads = leadsCount ?? 0;
+  const leads_captured = leadsCount ?? 0;
 
   // 5. Recovered calls: unanswered calls that were later returned/answered
   const { data: noShowAppointments } = await db
@@ -81,7 +81,7 @@ export async function computeDailyMetrics(
     .gte("created_at", startOfDay)
     .lt("created_at", endOfDay);
 
-  let recovered_calls = 0;
+  let no_shows_recovered = 0;
   if (noShowAppointments && noShowAppointments.length > 0) {
     const noShowLeadIds = (noShowAppointments as Array<{ id: string; lead_id: string }>).map((a) => a.lead_id);
     if (noShowLeadIds.length > 0) {
@@ -94,7 +94,7 @@ export async function computeDailyMetrics(
         .gte("created_at", startOfDay)
         .lt("created_at", endOfDay);
 
-      recovered_calls = recoveredCount ?? 0;
+      no_shows_recovered = recoveredCount ?? 0;
     }
   }
 
@@ -107,7 +107,7 @@ export async function computeDailyMetrics(
     .lt("call_started_at", endOfDay)
     .not("call_ended_at", "is", null);
 
-  let avg_call_duration_seconds: number | null = null;
+  let response_time_avg_seconds: number | null = null;
   const durSessions = callDurations ?? [];
   if (durSessions.length > 0) {
     type DurSession = { call_started_at: string; call_ended_at: string };
@@ -120,22 +120,22 @@ export async function computeDailyMetrics(
       .filter((t: number) => t >= 0 && t < 7200);
 
     if (durations.length > 0) {
-      avg_call_duration_seconds = Math.round(durations.reduce((a: number, b: number) => a + b, 0) / durations.length);
+      response_time_avg_seconds = Math.round(durations.reduce((a: number, b: number) => a + b, 0) / durations.length);
     }
   }
 
   // 7. Revenue estimated (cents): appointments × $1500 default deal value
   const estimatedDealValueCents = 150000;
-  const total_revenue_cents = total_appointments * estimatedDealValueCents;
+  const revenue_estimated_cents = appointments_booked * estimatedDealValueCents;
 
   return {
-    total_calls,
-    missed_calls,
-    total_appointments,
-    total_leads,
-    recovered_calls,
-    total_revenue_cents,
-    avg_call_duration_seconds,
+    calls_answered,
+    calls_missed,
+    appointments_booked,
+    leads_captured,
+    no_shows_recovered,
+    revenue_estimated_cents,
+    response_time_avg_seconds,
   };
 }
 
@@ -156,13 +156,13 @@ export async function upsertDailyMetrics(
       {
         workspace_id: workspaceId,
         date: date,
-        total_calls: metrics.total_calls,
-        total_leads: metrics.total_leads,
-        total_appointments: metrics.total_appointments,
-        total_revenue_cents: metrics.total_revenue_cents,
-        avg_call_duration_seconds: metrics.avg_call_duration_seconds,
-        missed_calls: metrics.missed_calls,
-        recovered_calls: metrics.recovered_calls,
+        calls_answered: metrics.calls_answered,
+        calls_missed: metrics.calls_missed,
+        appointments_booked: metrics.appointments_booked,
+        leads_captured: metrics.leads_captured,
+        no_shows_recovered: metrics.no_shows_recovered,
+        revenue_estimated_cents: metrics.revenue_estimated_cents,
+        response_time_avg_seconds: metrics.response_time_avg_seconds,
       },
       {
         onConflict: "workspace_id,date",

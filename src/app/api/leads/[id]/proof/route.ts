@@ -118,7 +118,7 @@ export async function GET(
     const { data: run } = await db.from("sequence_runs").select("sequence_id, current_step, status").eq("workspace_id", workspaceId).eq("lead_id", leadId).eq("status", "running").maybeSingle();
     let sequenceName: string | undefined;
     if (run && (run as { sequence_id?: string }).sequence_id) {
-      const { data: seq } = await db.from("sequences").select("name").eq("id", (run as { sequence_id: string }).sequence_id).maybeSingle();
+      const { data: seq } = await db.from("follow_up_sequences").select("name").eq("id", (run as { sequence_id: string }).sequence_id).maybeSingle();
       sequenceName = (seq as { name?: string })?.name;
     }
     stability = {

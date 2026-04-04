@@ -129,7 +129,7 @@ async function enrollLeadInSequence(
     // Try to create a workflow/sequence record
     // Note: This assumes a sequences or workflows table exists with support for channel orchestration
     const { error: insertError } = await db
-      .from("sequences")
+      .from("follow_up_sequences")
       .insert({
         id: sequenceId,
         workspace_id: workspaceId,

@@ -55,6 +55,7 @@ const CORE_STEPS = [
   // ── Billing & Financial ──
   "/api/cron/billing",
   "/api/cron/phone-billing",
+  "/api/cron/enforce-downgrades",
   "/api/cron/economic-value",
   "/api/cron/financial-exposure",
   "/api/cron/settlement-authorization",
@@ -148,12 +149,13 @@ export async function GET(request: NextRequest) {
         const res = await fetch(`${base.replace(/\/$/, "")}${path}`, {
           headers: { Authorization: `Bearer ${token}` },
           cache: "no-store",
+          signal: AbortSignal.timeout(30_000),
         });
         if (res.ok) {
           ran.push(path);
         } else {
           failed.push(`${path}:${res.status}`);
-          console.warn(`[cron/core] Sub-cron ${path} returned ${res.status}`);
+          log("warn", `[cron/core] Sub-cron ${path} returned ${res.status}`);
         }
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
@@ -162,11 +164,11 @@ export async function GET(request: NextRequest) {
       }
     }
     if (failed.length > 0) {
-      console.warn(`[cron/core] ${failed.length}/${CORE_STEPS.length} sub-crons failed: ${failed.slice(0, 10).join(", ")}`);
+      log("warn", `[cron/core] ${failed.length}/${CORE_STEPS.length} sub-crons failed: ${failed.slice(0, 10).join(", ")}`);
     }
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
     await recordCronHeartbeat("core").catch((e: unknown) => {
-      console.warn("[cron/core] heartbeat failed:", e instanceof Error ? e.message : String(e));
+      log("warn", "[cron/core] heartbeat failed:", { detail: e instanceof Error ? e.message : String(e) });
     });
     return { run: ran.length, ran: ran.length, steps: CORE_STEPS.length, failed: failed.length > 0 ? failed.slice(0, 10) : undefined };
   });

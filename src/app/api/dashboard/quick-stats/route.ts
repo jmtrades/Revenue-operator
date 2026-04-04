@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
       .from("leads")
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
-      .not("state", "in", '("ARCHIVED","LOST","DISQUALIFIED")');
+      .not("state", "in", '("CLOSED","LOST")');
     active_leads = leadCount ?? 0;
   } catch (error) {
     log("error", "dashboard.quick-stats.leads", { workspaceId, error });
@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
       .from("leads")
       .select("id", { count: "exact", head: true })
       .eq("workspace_id", workspaceId)
-      .in("state", ["FOLLOW_UP", "REACTIVATE", "NURTURE"]);
+      .in("state", ["CONTACTED", "ENGAGED", "REACTIVATE", "RETAIN"]);
     pending_followups = followupCount ?? 0;
   } catch (error) {
     log("error", "dashboard.quick-stats.followups", { workspaceId, error });

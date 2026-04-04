@@ -1999,7 +1999,8 @@
     "stats": {
       "activeCalls": "Active Calls",
       "startsAfterFirstCall": "Starts after first call",
-      "estRevenueRecovered": "Est. Revenue Recovered"
+      "estRevenueRecovered": "Est. Revenue Recovered",
+      "activeLeads": "Leads Activos"
     },
     "gettingStarted": {
       "title": "Getting Started",

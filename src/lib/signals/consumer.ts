@@ -161,7 +161,7 @@ export async function processCanonicalSignal(signalId: string): Promise<{ ok: bo
     await db
       .from("leads")
       .update({
-        status: leadStatePersisted,
+        state: leadStatePersisted,
         last_activity_at: occurred_at,
         last_signal_occurred_at: occurred_at,
         updated_at: new Date().toISOString(),

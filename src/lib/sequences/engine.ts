@@ -71,7 +71,7 @@ export async function chooseSequence(
 
   const { data: seq } = await maybeSingleCompat(
     db
-      .from("sequences")
+      .from("follow_up_sequences")
       .select("*")
       .eq("workspace_id", stateVector.workspace_id)
       .eq("purpose", purpose)
@@ -92,7 +92,7 @@ export async function chooseSequence(
   let created: unknown = null;
   try {
     const q = db
-      .from("sequences")
+      .from("follow_up_sequences")
       .insert({
         workspace_id: stateVector.workspace_id,
         name: `Default ${purpose}`,
@@ -112,7 +112,7 @@ export async function chooseSequence(
   let fallback: unknown = null;
   try {
     const q = db
-      .from("sequences")
+      .from("follow_up_sequences")
       .select("*")
       .eq("workspace_id", stateVector.workspace_id)
       .eq("purpose", purpose)
@@ -219,7 +219,7 @@ export async function advanceSequence(
   const r = run as { sequence_id: string; current_step: number };
   let seq: unknown = null;
   try {
-    const q = db.from("sequences").select("steps").eq("id", r.sequence_id) as unknown as DbSingleQuery;
+    const q = db.from("follow_up_sequences").select("steps").eq("id", r.sequence_id) as unknown as DbSingleQuery;
     seq = await fetchSingleRow(q);
   } catch {
     seq = null;

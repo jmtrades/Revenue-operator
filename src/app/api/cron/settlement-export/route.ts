@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import "@/lib/runtime";
 import { assertCronAuthorized, recordCronHeartbeat } from "@/lib/runtime";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 import {
   computeExportPeriods,
   exportUsageToStripe,
@@ -54,7 +55,7 @@ export async function GET(request: NextRequest) {
   }
 
   await recordCronHeartbeat("settlement-export").catch((e: unknown) => {
-    console.warn("[cron/settlement-export] recordCronHeartbeat failed:", e instanceof Error ? e.message : String(e));
+    log("warn", "[cron/settlement-export] recordCronHeartbeat failed:", { detail: e instanceof Error ? e.message : String(e) });
   });
   return NextResponse.json({
     ok: true,

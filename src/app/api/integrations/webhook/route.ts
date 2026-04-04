@@ -19,6 +19,15 @@ export async function POST(req: NextRequest) {
   const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;
 
+  const { canUseFeature } = await import("@/lib/billing/plan-enforcement");
+  const gate = await canUseFeature(workspaceId, "crmWebhook");
+  if (!gate.allowed) {
+    return NextResponse.json({
+      error: gate.message ?? "Webhook integrations require a higher plan.",
+      upgradeTo: gate.upgradeTo,
+    }, { status: 403 });
+  }
+
   let body: { url?: string | null };
   try {
     body = (await req.json()) as { url?: string | null };

@@ -34,10 +34,10 @@ export default function ReportsPage() {
     if (!workspaceId) return;
     setLoading(true);
     Promise.all([
-      fetch(`/api/reports/weekly?workspace_id=${encodeURIComponent(workspaceId)}`).then((r) => r.json()),
-      fetch(`/api/assurance/misses?workspace_id=${encodeURIComponent(workspaceId)}`).then((r) => r.json()),
-      fetch(`/api/risk-surface?workspace_id=${encodeURIComponent(workspaceId)}`).then((r) => r.json()),
-      fetch(`/api/handled-situations?workspace_id=${encodeURIComponent(workspaceId)}`).then((r) => r.json()),
+      fetch(`/api/reports/weekly?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }).then((r) => r.json()),
+      fetch(`/api/assurance/misses?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }).then((r) => r.json()),
+      fetch(`/api/risk-surface?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }).then((r) => r.json()),
+      fetch(`/api/handled-situations?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }).then((r) => r.json()),
     ])
       .then(([w, m, risk, situations]) => {
         setWeekly(w);

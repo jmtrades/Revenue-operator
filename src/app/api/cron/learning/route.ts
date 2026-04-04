@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
   periodStart.setDate(periodStart.getDate() - 30);
 
   try {
-    const { data: workspaces } = await db.from("workspaces").select("id");
+    const { data: workspaces } = await db.from("workspaces").select("id").limit(100);
     let updated = 0;
 
     for (const ws of workspaces ?? []) {

@@ -19,11 +19,11 @@ export const dynamic = "force-dynamic";
 const EXPORT_TABLES = [
   { table: "leads", select: "id, name, email, phone, company, state, qualification_score, metadata, opt_out, created_at, last_activity_at" },
   { table: "conversations", select: "id, lead_id, channel, direction, body, created_at" },
-  { table: "call_sessions", select: "id, lead_id, call_started_at, call_ended_at, transcript_text, summary, outcome, duration_seconds, started_at, ended_at" },
+  { table: "call_sessions", select: "id, lead_id, call_started_at, call_ended_at, transcript_text, summary, outcome, recording_url" },
   { table: "appointments", select: "id, lead_id, title, start_time, end_time, location, notes, status, created_at" },
   { table: "agents", select: "id, name, voice_id, greeting, personality, system_prompt, created_at" },
   { table: "follow_ups", select: "id, lead_id, channel, status, scheduled_at, completed_at, content, created_at" },
-  { table: "sequences", select: "id, name, steps, status, created_at" },
+  { table: "follow_up_sequences", select: "id, name, steps, status, created_at" },
   { table: "sms_logs", select: "id, lead_id, direction, from_number, to_number, body, status, created_at" },
 ] as const;
 

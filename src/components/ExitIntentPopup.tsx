@@ -65,6 +65,7 @@ export function ExitIntentPopup() {
       const response = await fetch("/api/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           email: email.trim(),
           source: "exit-intent",

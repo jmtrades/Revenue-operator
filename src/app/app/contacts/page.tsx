@@ -386,6 +386,15 @@ export default function AppContactsPage() {
     const updated = contacts.map((c) => (selectedIds.has(c.id) ? { ...c, status } : c));
     setContacts(updated);
     saveContacts(updated);
+    // Persist status change to backend for each selected contact
+    selectedIds.forEach((contactId) => {
+      fetch(`/api/leads/${contactId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ state: status }),
+      }).catch(() => { /* non-blocking */ });
+    });
     setSelectedIds(new Set());
     setBulkStatus(null);
     setToast(t("toast.bulkStatusUpdated", { defaultValue: "Status updated for selected contacts" }));

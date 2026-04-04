@@ -50,9 +50,22 @@ export async function GET(req: NextRequest) {
     .in("lead_id", leadIds);
 
   const calledLeadIds = new Set((existingSessions ?? []).map((s: { lead_id: string }) => s.lead_id));
-  const toCall = recentLeads.filter(
+  const candidates = recentLeads.filter(
     (l) => !calledLeadIds.has(l.id) && l.phone && String(l.phone).replace(/\D/g, "").length >= 10
   ).slice(0, MAX_CALLS_PER_RUN);
+
+  if (candidates.length === 0) return NextResponse.json({ ok: true, called: 0 });
+
+  // Only call leads whose workspace has an active phone config
+  const workspaceIds = [...new Set(candidates.map((l) => l.workspace_id))];
+  const { data: phoneConfigs } = await db
+    .from("phone_configs")
+    .select("workspace_id")
+    .in("workspace_id", workspaceIds)
+    .eq("status", "active");
+
+  const activeWorkspaces = new Set((phoneConfigs ?? []).map((p: { workspace_id: string }) => p.workspace_id));
+  const toCall = candidates.filter((l) => activeWorkspaces.has(l.workspace_id));
 
   let called = 0;
   for (const row of toCall) {

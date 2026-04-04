@@ -3,6 +3,7 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { normalizeTier } from "@/lib/billing-plans";
 import { TIER_FEATURES, type BillingTier, type FeatureKey, type TierFeatures } from "./types";
 
 const DEFAULT_TIER: BillingTier = "solo";
@@ -15,11 +16,8 @@ export async function resolveBillingTier(workspaceId: string): Promise<BillingTi
     .eq("id", workspaceId)
     .maybeSingle();
 
-  const tier = (row as { billing_tier?: string } | null)?.billing_tier;
-  if (tier && (TIER_FEATURES as Record<string, TierFeatures>)[tier]) {
-    return tier as BillingTier;
-  }
-  return DEFAULT_TIER;
+  const rawTier = (row as { billing_tier?: string } | null)?.billing_tier;
+  return normalizeTier(rawTier) as BillingTier;
 }
 
 /** Enterprise: read workspace.enterprise_features_json for overrides. */

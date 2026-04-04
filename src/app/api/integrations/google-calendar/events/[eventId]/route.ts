@@ -43,6 +43,7 @@ async function getAccessToken(workspaceId: string): Promise<string | null> {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: body.toString(),
+    signal: AbortSignal.timeout(15_000),
   });
   if (!res.ok) return null;
   const json = (await res.json()) as { access_token?: string; expires_in?: number };
@@ -98,6 +99,7 @@ export async function PATCH(
         start: { dateTime: start, timeZone: "UTC" },
         end: { dateTime: end, timeZone: "UTC" },
       }),
+      signal: AbortSignal.timeout(15_000),
     }
   );
   if (!res.ok) {
@@ -129,7 +131,7 @@ export async function DELETE(
 
   const res = await fetch(
     `https://www.googleapis.com/calendar/v3/calendars/primary/events/${encodeURIComponent(eventId)}`,
-    { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }
+    { method: "DELETE", headers: { Authorization: `Bearer ${token}` }, signal: AbortSignal.timeout(15_000) }
   );
   if (!res.ok && res.status !== 204) {
     const text = await res.text();

@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
 
   const result = await runSafeCron("operability-anchor", async () => {
     const db = getDb();
-    const { data: rows } = await db.from("workspaces").select("id");
+    const { data: rows } = await db.from("workspaces").select("id").limit(100);
     const workspaceIds = (rows ?? []).map((r: { id: string }) => r.id);
     for (const workspaceId of workspaceIds) {
       await refreshOperabilityAnchor(workspaceId).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });

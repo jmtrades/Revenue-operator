@@ -7,9 +7,22 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { getDb } from "@/lib/db/queries";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { log } from "@/lib/logger";
+
+const trackSchema = z.object({
+  event_name: z.string().max(200),
+  event_category: z.string().max(100).optional(),
+  page_url: z.string().max(2000).optional(),
+  referrer: z.string().max(2000).optional(),
+  utm_source: z.string().max(200).optional(),
+  utm_medium: z.string().max(200).optional(),
+  utm_campaign: z.string().max(200).optional(),
+  properties: z.record(z.string(), z.unknown()).optional(),
+  session_id: z.string().max(200).optional(),
+});
 
 // Simple in-memory rate limiter: IP -> timestamp of last request
 const ipLastRequestMap: Map<string, number> = new Map();
@@ -50,11 +63,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
 
-  let body: any;
+  let raw: unknown;
   try {
-    body = await req.json();
+    raw = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+
+  const parsed = trackSchema.safeParse(raw);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
   const {
@@ -67,11 +85,7 @@ export async function POST(req: NextRequest) {
     utm_campaign,
     properties,
     session_id,
-  } = body;
-
-  if (!event_name) {
-    return NextResponse.json({ error: "event_name is required" }, { status: 400 });
-  }
+  } = parsed.data;
 
   const db = getDb();
 
@@ -98,8 +112,8 @@ export async function POST(req: NextRequest) {
       success: true,
       rate_limit_remaining: rateLimit.remaining,
     });
-  } catch (err: any) {
-    log("error", "[admin/track catch]", { error: err });
+  } catch (err) {
+    log("error", "[admin/track catch]", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

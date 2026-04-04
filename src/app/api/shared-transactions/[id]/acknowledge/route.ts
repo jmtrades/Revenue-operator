@@ -8,6 +8,9 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { acknowledgeSharedTransaction } from "@/lib/shared-transaction-assurance";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { getDb } from "@/lib/db/queries";
 
 export async function POST(
   request: NextRequest,
@@ -16,7 +19,23 @@ export async function POST(
   const csrfBlock = assertSameOrigin(request);
   if (csrfBlock) return csrfBlock;
 
+  const session = await getSession(request);
+  if (!session?.userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { id } = await params;
+
+  // Verify the transaction belongs to a workspace the user can access
+  const db = getDb();
+  const { data: txn } = await db.from("shared_transactions").select("workspace_id").eq("id", id).maybeSingle();
+  if (!txn) {
+    return NextResponse.json({ error: "Transaction not found" }, { status: 404 });
+  }
+  const wsId = (txn as { workspace_id: string }).workspace_id;
+  const accessErr = await requireWorkspaceAccess(request, wsId);
+  if (accessErr) return accessErr;
+
   let body: { action?: string; new_deadline?: string; dispute_reason?: string } = {};
   try {
     body = await request.json();

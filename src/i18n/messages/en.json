@@ -870,7 +870,8 @@
     "stats": {
       "activeCalls": "Active Calls",
       "startsAfterFirstCall": "Activates on first interaction",
-      "estRevenueRecovered": "Est. Revenue Recovered"
+      "estRevenueRecovered": "Est. Revenue Recovered",
+      "activeLeads": "Active Leads"
     },
     "gettingStarted": {
       "title": "Getting Started",
@@ -920,6 +921,7 @@
     },
     "kpis": {
       "callsHandled": "Calls executed",
+      "pendingFollowups": "Pending Follow-ups",
       "answerRate": "Answer rate",
       "leadsCreated": "Leads created",
       "appointmentsBooked": "Revenue opportunities created",
@@ -3390,11 +3392,12 @@
       "title": "Your operator is standing by.",
       "description": "Calls appear here once your phone number is connected and your operator is live. Set up your operator to start receiving calls.",
       "connectNumber": "Activate Coverage",
-      "testAgent": "Run a test call",
+      "testAgent": "Try your operator",
       "body": "Every call your operator handles appears here with full intelligence: transcript, sentiment, revenue signals, and recommended next actions.",
-      "emptyTitle": "Place your first test call",
-      "emptyDescription": "One call unlocks the full intelligence layer — transcripts, sentiment, objections, and revenue attribution.",
-      "testCall": "Test Call"
+      "emptyTitle": "No calls yet",
+      "emptyDescription": "Calls will appear here once your phone number is connected and your AI operator is live.",
+      "testCall": "Make a call",
+      "connectPhone": "Connect phone number"
     },
     "table": {
       "dateTime": "Date / time",
@@ -5138,8 +5141,8 @@
       "attempts": "Attempt Count"
     },
     "empty": {
-      "title": "No cold leads in the queue",
-      "description": "Leads are automatically added when they go dormant for 30+ days, or you can manually add leads that need re-engagement."
+      "title": "No cold leads yet",
+      "description": "Cold leads are automatically synced from your CRM when contacts go dormant. Connect your CRM in Settings → Integrations to get started, or add leads manually."
     },
     "modal": {
       "addLeadTitle": "Add Cold Lead",
@@ -8744,7 +8747,7 @@
       "nextSteps": "Next steps",
       "setAsDefault": "Set as default for inbound",
       "assignToAgent": "Assign to agent",
-      "poweredByTelnyx": "Numbers powered by Telnyx · Enterprise-grade telephony",
+      "poweredByTelnyx": "Verified business numbers · Enterprise-grade telephony",
       "pricing": "Pricing",
       "plusSetupFee": "plus {fee} setup fee",
       "purchase": "Purchase"
@@ -9044,30 +9047,30 @@
   },
   "followUps": {
     "title": "Follow-ups",
-    "create": "Create Sequence",
+    "create": "New Follow-up",
     "retry": "Retry",
     "statusActive": "Active",
     "statusPaused": "Paused",
     "trigger": "Trigger",
     "manual": "manual",
-    "pauseAllTitle": "Pause all sequences?",
-    "pauseAllMessage": "This will pause all active follow-up sequences. No automated follow-ups will run until you resume them.",
-    "resumeAllTitle": "Resume all sequences?",
-    "resumeAllMessage": "This will resume all paused follow-up sequences. Automated follow-ups will begin running again.",
+    "pauseAllTitle": "Pause all follow-ups?",
+    "pauseAllMessage": "This will pause all active automated follow-ups. No follow-ups will run until you resume them.",
+    "resumeAllTitle": "Resume all follow-ups?",
+    "resumeAllMessage": "This will resume all paused follow-ups. Automated follow-ups will begin running again.",
     "tabs": {
       "templates": "Templates",
-      "active": "Active enrollments"
+      "active": "Active follow-ups"
     },
     "empty": {
-      "templatesTitle": "No sequences yet.",
+      "templatesTitle": "No follow-ups yet.",
       "templatesBody": "Get started with a pre-built template or create your own.",
-      "activeTitle": "No sequences yet.",
-      "activeBody": "Active sequences will appear here once you enroll contacts."
+      "activeTitle": "No active follow-ups yet.",
+      "activeBody": "Active follow-ups will appear here once leads are enrolled."
     },
     "createPage": {
       "back": "Back to follow-ups",
-      "title": "Create follow-up sequence",
-      "subtitle": "Define a trigger and the steps that run until the revenue is recovered.",
+      "title": "Create automated follow-up",
+      "subtitle": "Define a trigger and the steps your AI operator runs automatically.",
       "save": "Save",
       "saving": "Saving…",
       "basics": {
@@ -9104,27 +9107,27 @@
         "stopIfBooked": "Stop if contact books"
       },
       "errors": {
-        "createFailed": "Could not create sequence.",
+        "createFailed": "Could not create follow-up.",
         "stepFailed": "Could not add a step.",
         "generic": "Could not create the follow-up. Please try again."
       },
       "toast": {
-        "saved": "Sequence saved."
+        "saved": "Follow-up saved."
       }
     },
-    "loadError": "Failed to load follow-up sequences",
-    "pauseSequence": "Pause sequence",
-    "resumeSequence": "Resume sequence",
+    "loadError": "Failed to load follow-ups",
+    "pauseSequence": "Pause follow-up",
+    "resumeSequence": "Resume follow-up",
     "error": {
       "generic": "An unexpected error occurred. Please try again."
     },
-    "sequencePaused": "Sequence paused",
-    "pauseFailed": "Failed to pause sequence",
-    "sequenceResumed": "Sequence resumed",
-    "resumeFailed": "Failed to resume sequence",
-    "allPaused": "All sequences paused",
+    "sequencePaused": "Follow-up paused",
+    "pauseFailed": "Failed to pause follow-up",
+    "sequenceResumed": "Follow-up resumed",
+    "resumeFailed": "Failed to resume follow-up",
+    "allPaused": "All follow-ups paused",
     "pauseAll": "Pause all",
-    "allResumed": "All sequences resumed",
+    "allResumed": "All follow-ups resumed",
     "resumeAll": "Resume all"
   },
   "api": {

@@ -52,7 +52,7 @@ export default function MessagesPage() {
     setLoading(true);
     setListError(null);
     fetchWithFallback<{ conversations: Conversation[] }>(
-      `/api/conversations?workspace_id=${encodeURIComponent(workspaceId)}`
+      `/api/conversations?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" }
     )
       .then((res) => {
         if (res.data?.conversations) setConversations(res.data.conversations);
@@ -100,8 +100,8 @@ export default function MessagesPage() {
       const r = await fetch("/api/messages/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lead_id: selectedLeadId, content: reply.trim() }),
         credentials: "include",
+        body: JSON.stringify({ lead_id: selectedLeadId, content: reply.trim() }),
       });
       const data = await r.json();
       if (!r.ok) throw new Error((data as { error?: string }).error ?? "SEND_FAILED");

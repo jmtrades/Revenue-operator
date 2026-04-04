@@ -659,7 +659,7 @@ export default function AppSettingsAgentPage() {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <label htmlFor="tone-preset" className="block text-xs font-medium text-[var(--text-tertiary)]">{tSettings("agent.tonePresetLabel")}</label>
-                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-violet-500/[0.08] text-[9px] font-medium text-violet-400">brain-adaptive</span>
+                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-violet-500/[0.08] text-[9px] font-medium text-violet-400">adaptive</span>
               </div>
               <select
                 id="tone-preset"
@@ -672,7 +672,7 @@ export default function AppSettingsAgentPage() {
                 <option value="Concise & Direct">{tSettings("agent.tonePresets.concise")}</option>
                 <option value="Empathetic & Warm">{tSettings("agent.tonePresets.empathetic")}</option>
               </select>
-              <p className="text-[10px] text-[var(--text-tertiary)] mt-1">Sets the base tone. Your brain adapts in real-time based on caller sentiment during each conversation.</p>
+              <p className="text-[10px] text-[var(--text-tertiary)] mt-1">Sets the base tone. Your AI adapts in real-time based on caller sentiment during each conversation.</p>
             </div>
           </div>
         )}
@@ -725,7 +725,7 @@ export default function AppSettingsAgentPage() {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <label htmlFor="escalation-threshold" className="block text-xs font-medium text-[var(--text-tertiary)]">{tSettings("agent.confidenceThresholdLabel")}</label>
-                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-violet-500/[0.08] text-[9px] font-medium text-violet-400">brain-tuned</span>
+                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-violet-500/[0.08] text-[9px] font-medium text-violet-400">auto-tuned</span>
               </div>
               <select
                 id="escalation-threshold"
@@ -737,7 +737,7 @@ export default function AppSettingsAgentPage() {
                 <option value="Balanced">{tSettings("agent.escalationThresholds.balanced")}</option>
                 <option value="Aggressive — AI handles most">{tSettings("agent.escalationThresholds.aggressive")}</option>
               </select>
-              <p className="text-[10px] text-[var(--text-tertiary)] mt-1">Your brain continuously adjusts escalation behavior based on call outcomes and sentiment analysis.</p>
+              <p className="text-[10px] text-[var(--text-tertiary)] mt-1">Your AI continuously adjusts escalation behavior based on call outcomes and sentiment analysis.</p>
             </div>
 
             <div>

@@ -224,7 +224,7 @@ export default function LeadsPage() {
   const [statusFilter, setStatusFilter] = useState<LeadStatus[]>([]);
   const [sourceFilter, setSourceFilter] = useState<LeadSource[]>([]);
   const [scoreFilter, setScoreFilter] = useState<ScoreBucket>("all");
-  const [sort, setSort] = useState<SortKey>("score"); // Default to brain priority
+  const [sort, setSort] = useState<SortKey>("score"); // Default to AI priority
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [drawerLead, setDrawerLead] = useState<LeadView | null>(null);
   const [drawerCalls, setDrawerCalls] = useState<Array<{ id: string; call_started_at?: string; outcome?: string }>>([]);
@@ -486,6 +486,15 @@ export default function LeadsPage() {
     setLeads((prev) =>
       prev.map((l) => (selectedIds.has(l.id) ? { ...l, assignedAgent: agent } : l))
     );
+    // Persist agent assignment to backend for each selected lead
+    selectedIds.forEach((leadId) => {
+      fetch(`/api/leads/${leadId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ assigned_agent: agent }),
+      }).catch(() => { /* non-blocking */ });
+    });
   };
 
   const moveLeadStatus = (leadId: string, newStatus: LeadStatus) => {
@@ -892,7 +901,7 @@ export default function LeadsPage() {
               onChange={(e) => setSort(e.target.value as SortKey)}
               className="text-xs rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] px-2.5 py-1 text-[var(--text-primary)] focus:outline-none focus:border-[var(--border-medium)]"
             >
-              <option value="score">🧠 Brain priority</option>
+              <option value="score">AI priority</option>
               <option value="newest">{t("leads.sortOptions.newest")}</option>
               <option value="recent-contact">{t("leads.sortOptions.recentContact")}</option>
             </select>

@@ -25,29 +25,6 @@ interface DailyRevenue {
   noShowRecovery: number;
 }
 
-function generateDemoData(days: number): DailyRevenue[] {
-  const data: DailyRevenue[] = [];
-  const now = new Date();
-  for (let i = days - 1; i >= 0; i--) {
-    const d = new Date(now);
-    d.setDate(d.getDate() - i);
-    const dayOfWeek = d.getDay();
-    const weekdayMultiplier = dayOfWeek === 0 || dayOfWeek === 6 ? 0.4 : 1;
-    const baseInbound = Math.floor((180 + Math.random() * 280) * weekdayMultiplier);
-    const baseFollowUp = Math.floor((60 + Math.random() * 140) * weekdayMultiplier);
-    const baseOutbound = Math.floor((30 + Math.random() * 90) * weekdayMultiplier);
-    const baseNoShow = Math.floor((20 + Math.random() * 60) * weekdayMultiplier);
-    data.push({
-      date: d.toISOString().split("T")[0],
-      inbound: baseInbound,
-      followUps: baseFollowUp,
-      outbound: baseOutbound,
-      noShowRecovery: baseNoShow,
-    });
-  }
-  return data;
-}
-
 function formatShortDate(dateStr: string): string {
   const d = new Date(dateStr + "T00:00:00");
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
@@ -60,7 +37,7 @@ interface DailyMetricRow {
   no_shows_recovered: number;
   follow_ups_sent: number;
   leads_captured: number;
-  total_revenue_cents: number;
+  revenue_estimated_cents: number;
 }
 
 export default function RevenuePage() {
@@ -84,10 +61,10 @@ export default function RevenuePage() {
       if (res.data?.data?.length) {
         const mapped: DailyRevenue[] = res.data.data.map((m) => ({
           date: m.date,
-          inbound: Math.round((m.total_revenue_cents || 0) / 100 * 0.5),
-          followUps: Math.round((m.total_revenue_cents || 0) / 100 * 0.2),
-          outbound: Math.round((m.total_revenue_cents || 0) / 100 * 0.15),
-          noShowRecovery: Math.round((m.total_revenue_cents || 0) / 100 * 0.15),
+          inbound: Math.round((m.revenue_estimated_cents || 0) / 100 * 0.5),
+          followUps: Math.round((m.revenue_estimated_cents || 0) / 100 * 0.2),
+          outbound: Math.round((m.revenue_estimated_cents || 0) / 100 * 0.15),
+          noShowRecovery: Math.round((m.revenue_estimated_cents || 0) / 100 * 0.15),
         }));
         setApiData(mapped);
       } else {
@@ -124,7 +101,7 @@ export default function RevenuePage() {
   const sourceBreakdown = useMemo(() => {
     const sources = [
       { name: "Inbound Calls", value: totals.inbound, icon: Phone, color: "text-blue-400", bg: "bg-[var(--bg-card)]/60" },
-      { name: "Follow-Up Sequences", value: totals.followUps, icon: MessageSquare, color: "text-purple-400", bg: "bg-[var(--bg-card)]/60" },
+      { name: "Automated Follow-Ups", value: totals.followUps, icon: MessageSquare, color: "text-purple-400", bg: "bg-[var(--bg-card)]/60" },
       { name: "Outbound Campaigns", value: totals.outbound, icon: Megaphone, color: "text-amber-400", bg: "bg-amber-500/10" },
       { name: "No-Show Recovery", value: totals.noShowRecovery, icon: Calendar, color: "text-emerald-400", bg: "bg-emerald-500/10" },
     ];
@@ -152,6 +129,21 @@ export default function RevenuePage() {
       <div className="p-8 max-w-6xl mx-auto">
         <PageHeader title="Revenue" subtitle="Revenue breakdown and analysis" />
         <EmptyState icon="pulse" title="Select a workspace" subtitle="Revenue data will appear here." />
+      </div>
+    );
+  }
+
+  if (apiData !== null && rawData.length === 0) {
+    return (
+      <div className="p-8 max-w-6xl mx-auto">
+        <PageHeader title="Revenue" subtitle="Revenue breakdown and analysis" />
+        <EmptyState
+          icon="pulse"
+          title="No revenue tracked yet"
+          subtitle="Revenue appears here as your AI operator handles calls, books appointments, and recovers missed opportunities. Import leads and connect your phone to get started."
+          primaryAction={{ label: "Import Leads", href: "/app/leads?import=1" }}
+          secondaryAction={{ label: "View Dashboard", href: "/app" }}
+        />
       </div>
     );
   }
@@ -187,6 +179,18 @@ export default function RevenuePage() {
           <button
             type="button"
             className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border-default)] px-3 py-2 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors"
+            onClick={() => {
+              if (!rawData.length) return;
+              const header = "Date,Inbound,Follow-ups,Outbound,No-Show Recovery\n";
+              const rows = rawData.map((r) => `${r.date},${r.inbound},${r.followUps},${r.outbound},${r.noShowRecovery}`).join("\n");
+              const blob = new Blob([header + rows], { type: "text/csv" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `revenue-${period}.csv`;
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
           >
             <Download className="w-4 h-4" />
             Export
@@ -285,10 +289,12 @@ export default function RevenuePage() {
             );
           })}
         </div>
+        {chartData.length > 0 && (
         <div className="flex items-center justify-between mt-3 text-[10px]" style={{ color: "var(--text-tertiary)" }}>
           <span>{formatShortDate(chartData[0]?.date ?? "")}</span>
           <span>{formatShortDate(chartData[chartData.length - 1]?.date ?? "")}</span>
         </div>
+        )}
       </div>
 
       {/* Top performing days + source table */}

@@ -5,6 +5,7 @@
 
 import OpenAI from "openai";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 export interface AILeadScoreSignal {
   factor: string;
@@ -37,7 +38,7 @@ interface LeadData {
 
 interface CallData {
   id: string;
-  started_at: string | null;
+  call_started_at: string | null;
   transcript_text: string | null;
   outcome: string | null;
 }
@@ -110,10 +111,10 @@ async function aggregateLeadData(
 
   const { data: calls } = await db
     .from("call_sessions")
-    .select("id, started_at, transcript_text, outcome")
+    .select("id, call_started_at, transcript_text, outcome")
     .eq("lead_id", leadId)
     .eq("workspace_id", workspaceId)
-    .order("started_at", { ascending: false })
+    .order("call_started_at", { ascending: false })
     .limit(10);
 
   const { data: messages } = await db
@@ -221,7 +222,7 @@ function buildScoringPrompt(data: AggregatedLeadData): string {
     .filter((c) => c.transcript_text)
     .map(
       (c) =>
-        `Call on ${c.started_at}: ${c.transcript_text?.substring(0, 500)}`
+        `Call on ${c.call_started_at}: ${c.transcript_text?.substring(0, 500)}`
     )
     .join("\n\n");
 
@@ -352,7 +353,7 @@ export async function scoreLeadWithAI(
 
   const jsonMatch = responseText.match(/\{[\s\S]*\}/);
   if (!jsonMatch) {
-    console.warn(
+    log("warn", 
       `[AI Scorer] Failed to parse response for lead ${leadId}, using fallback`
     );
     return fallbackScore();

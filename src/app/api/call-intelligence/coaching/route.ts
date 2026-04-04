@@ -216,6 +216,7 @@ export async function POST(req: NextRequest) {
           },
         ],
       }),
+      signal: AbortSignal.timeout(30_000),
     });
 
     if (!res.ok) {
@@ -242,10 +243,10 @@ export async function POST(req: NextRequest) {
       if (validateCoachingResponse(parsed)) {
         coachingData = parsed;
       } else {
-        console.warn("[coaching] Invalid response structure from Claude");
+        log("warn", "[coaching] Invalid response structure from Claude");
       }
     } catch (parseErr) {
-      console.warn("[coaching] Failed to parse Claude response:", parseErr);
+      log("warn", "[coaching] Failed to parse Claude response:", { detail: parseErr });
     }
 
     // Optionally save to database if call_id provided
@@ -261,7 +262,7 @@ export async function POST(req: NextRequest) {
       });
 
       if (saveErr) {
-        console.warn("[coaching] Failed to save coaching results:", saveErr.message);
+        log("warn", "[coaching] Failed to save coaching results:", { detail: saveErr.message });
         // Continue - we still return the coaching data even if storage fails
       }
     }

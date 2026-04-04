@@ -94,7 +94,7 @@ export default function AppSettingsBillingPage() {
   const [minutePackError, setMinutePackError] = useState<string | null>(null);
   useEffect(() => {
     setMinutePackError(null);
-    fetch("/api/billing/buy-minutes")
+    fetch("/api/billing/buy-minutes", { credentials: "include" })
       .then((res) => res.json())
       .then((data: { ok?: boolean; packs?: MinutePack[] }) => {
         if (data?.packs) setMinutePacks(data.packs);

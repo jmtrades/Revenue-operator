@@ -56,7 +56,7 @@ export default function AbTestingPage() {
   const fetchTests = useCallback(async () => {
     if (!workspaceId) return;
     try {
-      const res = await fetch(`/api/voice/ab-tests?workspace_id=${workspaceId}`);
+      const res = await fetch(`/api/voice/ab-tests?workspace_id=${workspaceId}`, { credentials: "include" });
       const data = await res.json();
       setTests(data.tests ?? []);
     } catch {
@@ -78,6 +78,7 @@ export default function AbTestingPage() {
       const endDate = new Date(Date.now() + newDays * 86400000).toISOString();
       const res = await fetch(`/api/voice/ab-tests?workspace_id=${workspaceId}`, {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: newName.trim(),
@@ -115,6 +116,7 @@ export default function AbTestingPage() {
       }
       await fetch(`/api/voice/ab-tests?workspace_id=${workspaceId}`, {
         method: "PATCH",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: testId, ...body }),
       });

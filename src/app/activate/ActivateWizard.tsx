@@ -93,7 +93,7 @@ export function ActivateWizard() {
 
   const canGoNext = useMemo(() => {
     if (step === 1) {
-      return selectedPlan !== null;
+      return selectedPlan !== null && emailVerified !== false;
     }
     if (step === 2) {
       return state.goals.length > 0;
@@ -104,18 +104,17 @@ export function ActivateWizard() {
       return digits.length >= 10 && digits.length <= 15 && !/^0+$/.test(digits);
     }
     return true;
-  }, [step, state, selectedPlan]);
+  }, [step, state, selectedPlan, emailVerified]);
 
   const goNext = useCallback(() => {
     if (!canGoNext) return;
     const current = step;
-    if (current >= 1 && current <= 4) {
-      const name =
-        current === 1 ? "plan" : current === 2 ? "goals" : current === 3 ? "phone" : "activate";
-      track("onboarding_step_completed", { step: current, name });
+    const stepNames: Record<number, string> = { 1: "plan", 2: "goals", 3: "phone", 4: "business", 5: "customize", 6: "activate" };
+    if (stepNames[current]) {
+      track("onboarding_step_completed", { step: current, name: stepNames[current] });
     }
     setStep((prev) => {
-      const next = prev < 4 ? ((prev + 1) as StepId) : prev;
+      const next = prev < 6 ? ((prev + 1) as StepId) : prev;
       if (prev === 2) {
         try {
           const bn = state.businessName.trim();
@@ -166,9 +165,8 @@ export function ActivateWizard() {
     e?.preventDefault();
     if (finalizing) return;
 
-    // Block finalization if email not verified — catch early instead of getting a 403
     if (emailVerified === false) {
-      setError(t("errors.emailNotVerified", { defaultValue: "Please verify your email before going live. Check your inbox for a verification link." }));
+      setError(t("errors.emailRequired", { defaultValue: "Please verify your email before going live." }));
       return;
     }
 
@@ -295,6 +293,38 @@ export function ActivateWizard() {
             </div>
           </div>
         )}
+        {/* Block progression if email not verified — show at top before any steps */}
+        {emailVerified === false && step === 1 && (
+          <div className="mb-6 rounded-2xl border-2 border-amber-500/40 bg-amber-500/10 px-5 py-4">
+            <p className="text-sm font-semibold text-amber-300">Verify your email to continue</p>
+            <p className="mt-1 text-sm text-amber-200/80">
+              You need to verify your email before setting up your workspace. Check your inbox for a verification link.
+            </p>
+            <div className="mt-3">
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!accountEmail || resending) return;
+                  setResending(true);
+                  try {
+                    await fetch("/api/auth/resend-verification", {
+                      method: "POST",
+                      credentials: "include",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ email: accountEmail }),
+                    });
+                  } catch { /* best-effort */ }
+                  finally { setTimeout(() => setResending(false), 3000); }
+                }}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 text-black font-semibold px-6 py-2 text-sm hover:bg-amber-400 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                disabled={!accountEmail || resending}
+              >
+                {resending ? "Verification email sent! Check your inbox." : "Resend Verification Email"}
+              </button>
+            </div>
+          </div>
+        )}
+
         <header className="mb-10">
           <p className="text-xs font-semibold tracking-[0.18em] uppercase text-sky-400">
             {t("wizardHeading")}
@@ -332,7 +362,8 @@ export function ActivateWizard() {
                           : "border-[var(--border-default)]"
                     }`}
                     aria-label={s.label}
-                    onClick={() => setStep(s.id)}
+                    onClick={() => { if (idx <= currentIndex) setStep(s.id); }}
+                    style={{ cursor: idx <= currentIndex ? "pointer" : "default" }}
                   />
                   <span className="hidden md:inline text-[11px] text-[var(--text-tertiary)]">
                     {s.label}
@@ -345,7 +376,7 @@ export function ActivateWizard() {
 
         <section
           className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-inset)] px-5 py-6 md:px-7 md:py-7 shadow-[0_18px_50px_rgba(15,23,42,0.7)] transition-[opacity,transform] duration-200"
-          onKeyDown={step <= 3 ? handleKeyDownAdvance : undefined}
+          onKeyDown={step <= 5 ? handleKeyDownAdvance : undefined}
         >
           {step === 1 && (
             <PlanStep
@@ -368,32 +399,40 @@ export function ActivateWizard() {
             />
           )}
           {step === 4 && (
-            <>
-              <PackBusinessStep state={state} setState={setState} goNext={goNext} canGoNext={canGoNext} />
-              <CustomizeStep
-                state={state}
-                setState={setState}
-                voices={voices}
-                industryServices={industryServices}
-                effectiveServices={effectiveServices}
-                onPlayGreeting={handlePlayTestGreeting}
-                goBack={goBack}
-                goNext={goNext}
-                canGoNext={canGoNext}
-              />
-              <ActivateStep
-                onFinalize={handleFinalize}
-                goBack={goBack}
-                finalizing={finalizing}
-                phoneNumber={state.businessPhone}
-                agentName={state.agentName}
-                voiceId={state.voiceId}
-                greeting={state.greeting}
-              />
-            </>
+            <PackBusinessStep state={state} setState={setState} goNext={goNext} canGoNext={canGoNext} />
+          )}
+          {step === 5 && (
+            <CustomizeStep
+              state={state}
+              setState={setState}
+              voices={voices}
+              industryServices={industryServices}
+              effectiveServices={effectiveServices}
+              onPlayGreeting={handlePlayTestGreeting}
+              goBack={goBack}
+              goNext={goNext}
+              canGoNext={canGoNext}
+            />
+          )}
+          {step === 6 && (
+            <ActivateStep
+              onFinalize={handleFinalize}
+              goBack={goBack}
+              finalizing={finalizing}
+              phoneNumber={state.businessPhone}
+              agentName={state.agentName}
+              voiceId={state.voiceId}
+              greeting={state.greeting}
+            />
           )}
         </section>
       </div>
+      <p className="text-center text-[var(--text-tertiary)] text-[11px] mt-6">
+        By continuing, you agree to our{" "}
+        <a href="/terms" className="underline hover:text-[var(--text-secondary)] transition">Terms of Service</a>
+        {" and "}
+        <a href="/privacy" className="underline hover:text-[var(--text-secondary)] transition">Privacy Policy</a>
+      </p>
     </Container>
   );
 }

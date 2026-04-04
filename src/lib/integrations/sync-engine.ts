@@ -12,7 +12,7 @@ import { log } from "@/lib/logger";
 import { triggerBrainAfterSignal } from "@/lib/intelligence/brain-trigger";
 
 export type SyncDirection = "inbound" | "outbound";
-export type SyncStatus = "pending" | "processing" | "completed" | "completed_unverified" | "failed";
+export type SyncStatus = "pending" | "processing" | "completed" | "failed";
 export type SyncLogAction = "created" | "updated" | "failed" | "conflict" | "skipped";
 
 export interface SyncJobRow {
@@ -24,7 +24,7 @@ export interface SyncJobRow {
   entity_id: string | null;
   payload: Record<string, unknown>;
   status: SyncStatus;
-  attempts: number;
+  retry_count: number;
   next_retry_at: string | null;
   last_error: string | null;
   created_at: string;
@@ -38,9 +38,9 @@ export interface SyncLogRow {
   direction: SyncDirection;
   entity_type: string;
   entity_id: string | null;
-  status: SyncLogAction;
-  error: string | null;
-  metadata: Record<string, unknown>;
+  action: SyncLogAction;
+  summary: string | null;
+  payload_snapshot: Record<string, unknown>;
   created_at: string;
 }
 
@@ -95,7 +95,7 @@ export async function enqueueSync(params: {
       entity_id: params.entityId ?? null,
       payload: params.payload ?? {},
       status: "pending",
-      attempts: 0,
+      retry_count: 0,
       updated_at: new Date().toISOString(),
     })
     .select("id")
@@ -124,9 +124,9 @@ export async function appendSyncLog(params: {
     direction: params.direction,
     entity_type: params.entityType ?? "lead",
     entity_id: params.entityId ?? null,
-    status: params.action,
-    error: params.summary ?? null,
-    metadata: params.payloadSnapshot ?? {},
+    action: params.action,
+    summary: params.summary ?? null,
+    payload_snapshot: params.payloadSnapshot ?? {},
   });
 }
 
@@ -146,7 +146,7 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
     return { ok: false, error: "Job not found or not pending" };
   }
   const row = job as SyncJobRow;
-  if (row.attempts >= MAX_RETRIES) {
+  if (row.retry_count >= MAX_RETRIES) {
     await db
       .from("sync_queue")
       .update({
@@ -248,11 +248,8 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
       }
 
       // Validate response body contains expected ID field
-      // If externalId is missing, mark as "completed_unverified" with warning
-      let syncStatus: "completed" | "completed_unverified" = "completed";
       let statusLog = "Pushed to";
       if (!result.externalId) {
-        syncStatus = "completed_unverified";
         statusLog = "Pushed to (unverified — no ID returned)";
         log("warn", "crm_sync.missing_external_id", {
           provider: row.provider,
@@ -261,11 +258,11 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
         });
       }
 
-      // Mark completed (or completed_unverified if ID validation failed)
+      // Mark completed
       await db
         .from("sync_queue")
         .update({
-          status: syncStatus,
+          status: "completed",
           updated_at: new Date().toISOString(),
           completed_at: new Date().toISOString(),
         })
@@ -288,7 +285,6 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
         provider: row.provider,
         entityId: row.entity_id,
         externalId: result.externalId,
-        verified: syncStatus === "completed",
         fields: Object.keys(payload).length,
       });
 
@@ -383,7 +379,7 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
       if (rtFields.email) updateFields.email = String(rtFields.email).trim().toLowerCase();
       if (rtFields.phone) updateFields.phone = formatPhone(rtFields.phone);
       if (rtFields.company) updateFields.company = String(rtFields.company).trim();
-      if (rtFields.state) updateFields.status = String(rtFields.state).toLowerCase();
+      if (rtFields.state) updateFields.state = String(rtFields.state).toLowerCase();
       updateFields.updated_at = new Date().toISOString();
       updateFields.last_activity_at = new Date().toISOString();
 
@@ -441,7 +437,7 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
           email: updateFields.email ?? null,
           phone: updateFields.phone ?? null,
           company: updateFields.company ?? null,
-          status: updateFields.status ?? "NEW",
+          state: updateFields.status ?? "NEW",
           metadata: {
             source: `crm_${provider}`,
             imported_at: new Date().toISOString(),
@@ -505,14 +501,14 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
     return { ok: false, error: "Unknown direction" };
   } catch (e) {
     const errMsg = e instanceof Error ? e.message : String(e);
-    const nextRetry = row.attempts + 1 < MAX_RETRIES;
-    const delayMs = getRetryDelayMs(row.attempts);
+    const nextRetry = row.retry_count + 1 < MAX_RETRIES;
+    const delayMs = getRetryDelayMs(row.retry_count);
     const nextRetryAt = nextRetry ? new Date(Date.now() + delayMs).toISOString() : null;
     await db
       .from("sync_queue")
       .update({
         status: nextRetry ? "pending" : "failed",
-        attempts: row.attempts + 1,
+        retry_count: row.retry_count + 1,
         last_error: errMsg,
         next_retry_at: nextRetryAt,
         updated_at: new Date().toISOString(),
@@ -564,7 +560,7 @@ export async function getSyncHistory(params: {
 
   let query = db
     .from("sync_log")
-    .select("id, workspace_id, provider, direction, entity_type, entity_id, status, error, metadata, created_at", { count: "exact" })
+    .select("id, workspace_id, provider, direction, entity_type, entity_id, action, summary, payload_snapshot, created_at", { count: "exact" })
     .eq("workspace_id", params.workspaceId)
     .order("created_at", { ascending: false })
     .range(offset, offset + limit - 1);

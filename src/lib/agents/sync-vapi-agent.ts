@@ -5,11 +5,12 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
 
 type DbLike = ReturnType<typeof getDb>;
 
 export async function syncVapiAgent(_db: DbLike, _agentId: string): Promise<{ assistantId: string }> {
-  console.warn(
+  log("warn", 
     "[DEPRECATION] syncVapiAgent called but Vapi is no longer supported. " +
     "Product has migrated to Recall voice system. This function is a no-op."
   );

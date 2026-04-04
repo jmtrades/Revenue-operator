@@ -28,7 +28,7 @@ export default function RecordPage() {
       return;
     }
     setLoading(true);
-    fetch(`/api/operational/record-log?workspace_id=${encodeURIComponent(workspaceId)}`)
+    fetch(`/api/operational/record-log?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : { entries: [] }))
       .then((d: { entries?: LogEntry[] }) => setEntries(d.entries ?? []))
       .finally(() => setLoading(false));

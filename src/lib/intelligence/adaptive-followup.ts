@@ -265,7 +265,7 @@ export async function executeAdaptiveStep(
     // Fetch lead contact info
     const { data: leadRow } = await db
       .from("leads")
-      .select("id, phone, email, name, status")
+      .select("id, phone, email, name, state")
       .eq("id", leadId)
       .eq("workspace_id", workspaceId)
       .maybeSingle();
@@ -275,14 +275,14 @@ export async function executeAdaptiveStep(
       phone?: string;
       email?: string;
       name?: string;
-      status?: string;
+      state?: string;
     } | null;
 
     if (!lead) {
       return { success: false, details: "Lead not found" };
     }
 
-    if (lead.status === "CLOSED" || lead.status === "LOST") {
+    if (lead.state === "CLOSED" || lead.state === "LOST") {
       return { success: false, details: "Lead opted out — cannot execute" };
     }
 
@@ -343,6 +343,7 @@ export async function executeAdaptiveStep(
             to: lead.email,
             subject: `[Adaptive] ${step.template_key.replace(/_/g, " ")}`,
             text: `Hi ${lead.name || "there"},\n\nThis is an adaptive follow-up email (${step.template_key}).\n\nBest regards`,
+      signal: AbortSignal.timeout(10_000),
           }),
         });
 

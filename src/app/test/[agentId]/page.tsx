@@ -31,6 +31,7 @@ export default function PublicAgentTestPage({
         const res = await fetch(
           `/api/agents/public/${encodeURIComponent(agentId)}`,
           {
+            credentials: "include",
             signal: controller.signal,
           },
         );

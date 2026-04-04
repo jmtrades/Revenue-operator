@@ -142,12 +142,12 @@ export async function executeLeadOutboundCall(
         const endMinutes = endH * 60 + endM;
         if (currentMinutes < startMinutes || currentMinutes > endMinutes) {
           log("warn", `[outbound-hours] Outside business hours (${todayHours.start}-${todayHours.end} ${tz})`);
-          return { ok: false, error: "Outside business hours — call will be scheduled for next available window" };
+          return { ok: false, error: "Outside business hours — try again during business hours or adjust your hours in Settings" };
         }
       } else {
         // No hours configured for today = closed day
         log("warn", `[outbound-hours] No business hours configured for ${today}`);
-        return { ok: false, error: "Business is closed today — call will be scheduled for next business day" };
+        return { ok: false, error: "Business is closed today — try again on a business day or adjust your hours in Settings" };
       }
     }
     // If no business hours configured at all, allow calls (user hasn't set hours yet)
@@ -304,8 +304,10 @@ YOUR GOAL:
       .eq("id", workspaceId)
       .maybeSingle();
 
-    const billingTier = (wsBilling as { billing_tier?: string | null } | null)?.billing_tier as keyof typeof BILLING_PLANS | null;
-    if (billingTier && billingTier in BILLING_PLANS) {
+    const { normalizeTier } = await import("@/lib/billing-plans");
+    const rawTier = (wsBilling as { billing_tier?: string | null } | null)?.billing_tier;
+    const billingTier = normalizeTier(rawTier);
+    if (billingTier in BILLING_PLANS) {
       const plan = BILLING_PLANS[billingTier];
       const includedMinutes = plan.includedMinutes;
 

@@ -128,12 +128,12 @@ export async function fetchRecordingAndTranscript(
 
 export async function runAnalyzeCall(callSessionId: string, workspaceId: string): Promise<void> {
   const db = getDb();
-  const { data: session } = await db.from("call_sessions").select("transcript_text, matched_lead_id").eq("id", callSessionId).maybeSingle();
+  const { data: session } = await db.from("call_sessions").select("metadata, lead_id").eq("id", callSessionId).maybeSingle();
   if (!session) return;
 
-  const s = session as { transcript_text?: string | null; matched_lead_id?: string | null };
-  const transcript = s.transcript_text ?? "";
-  const { data: lead } = s.matched_lead_id ? await db.from("leads").select("name, company").eq("id", s.matched_lead_id).maybeSingle() : { data: null };
+  const s = session as { metadata?: Record<string, unknown> | null; lead_id?: string | null };
+  const transcript = typeof s.metadata?.transcript === "string" ? s.metadata.transcript as string : typeof s.metadata?.transcript_text === "string" ? s.metadata.transcript_text as string : "";
+  const { data: lead } = s.lead_id ? await db.from("leads").select("name, company").eq("id", s.lead_id).maybeSingle() : { data: null };
   const context = lead ? { leadName: (lead as { name?: string }).name, company: (lead as { company?: string }).company } : undefined;
 
   const analysis = await analyzeClosingCall(transcript, context);
@@ -146,12 +146,12 @@ export async function runAnalyzeCall(callSessionId: string, workspaceId: string)
     analysis_source: "zoom_transcript",
   });
 
-  if (s.matched_lead_id) {
+  if (s.lead_id) {
     await enqueue({
       type: "execute_post_call_plan",
       callSessionId,
       workspaceId,
-      leadId: s.matched_lead_id,
+      leadId: s.lead_id,
     });
   }
 }

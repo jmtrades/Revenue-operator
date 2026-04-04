@@ -51,15 +51,15 @@ export async function triggerAutoFollowUp(params: {
     // Check if lead has opted out
     const { data: leadRow } = await db
       .from("leads")
-      .select("status, phone, email, name, metadata")
+      .select("state, phone, email, name, metadata")
       .eq("id", params.lead_id)
       .maybeSingle();
 
-    const lead = leadRow as { status?: string; phone?: string; email?: string; name?: string; metadata?: Record<string, unknown> } | null;
+    const lead = leadRow as { state?: string; phone?: string; email?: string; name?: string; metadata?: Record<string, unknown> } | null;
     if (!lead) {
       return { action_taken: "skipped", success: false, details: "Lead not found" };
     }
-    if (lead.status === "CLOSED" || lead.status === "LOST") {
+    if (lead.state === "CLOSED" || lead.state === "LOST") {
       return { action_taken: "skipped", success: true, details: "Lead opted out — no follow-up" };
     }
 
@@ -128,7 +128,7 @@ async function executeFollowUpRouting(
   if (routing.action === "do_not_contact") {
     await db
       .from("leads")
-      .update({ status: "CLOSED", updated_at: new Date().toISOString() })
+      .update({ state: "CLOSED", updated_at: new Date().toISOString() })
       .eq("id", params.lead_id);
     // Cancel all active enrollments
     const { pauseOnLeadReply } = await import("@/lib/sequences/follow-up-engine");
@@ -166,6 +166,7 @@ async function executeFollowUpRouting(
                 to: ownerEmail,
                 subject: `[Action Required] ${routing.message_template_key.replace(/_/g, " ")} — ${lead.name ?? lead.phone ?? "Unknown"}`,
                 text: `A call requires your attention.\n\nCaller: ${lead.name ?? "Unknown"} (${lead.phone ?? "no phone"})\nOutcome: ${params.outcome}\nPriority: ${routing.priority}\n\nNotes: ${routing.notes}`,
+      signal: AbortSignal.timeout(10_000),
               }),
             });
           }
@@ -237,6 +238,7 @@ async function executeFollowUpRouting(
             subject: template.email_subject ?? `Following up — ${businessName}`,
             text: template.email_body,
           }),
+          signal: AbortSignal.timeout(10_000),
         });
         if (res.ok) {
           return { action_taken: "send_follow_up_email", success: true, details: `Email sent to ${lead.email}` };
@@ -347,7 +349,7 @@ async function executeFollowUpRouting(
 
       // Find or create appropriate sequence
       const { data: existingSeq } = await db
-        .from("sequences")
+        .from("follow_up_sequences")
         .select("id")
         .eq("workspace_id", params.workspace_id)
         .eq("trigger_type", triggerType)

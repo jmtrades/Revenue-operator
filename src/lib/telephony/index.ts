@@ -15,6 +15,7 @@ import type {
 import { sendSms as sendSmsTelnyx } from "./telnyx-sms";
 import { searchAvailableNumbers as searchTelnyxNumbers, purchaseNumber as purchaseTelnyxNumber, releaseNumber as releaseTelnyxNumber } from "./telnyx-numbers";
 import { createOutboundCall as createTelnyxCall } from "./telnyx-voice";
+import { log } from "@/lib/logger";
 
 /**
  * TelephonyService provides a unified interface for SMS, voice calls, and number management.
@@ -440,7 +441,7 @@ function createFallbackService(
     async sendSms(params: SmsParams) {
       const result = await primary.sendSms(params);
       if ("error" in result) {
-        console.warn(`[telephony-fallback] ${primaryName} SMS failed: ${result.error} — trying ${fallbackName}`);
+        log("warn", `[telephony-fallback] ${primaryName} SMS failed: ${result.error} — trying ${fallbackName}`);
         return fallback.sendSms(params);
       }
       return result;
@@ -455,7 +456,7 @@ function createFallbackService(
     async createOutboundCall(params: CallParams) {
       const result = await primary.createOutboundCall(params);
       if ("error" in result) {
-        console.warn(`[telephony-fallback] ${primaryName} outbound call failed: ${result.error} — trying ${fallbackName}`);
+        log("warn", `[telephony-fallback] ${primaryName} outbound call failed: ${result.error} — trying ${fallbackName}`);
         // Adjust webhook URL for the fallback provider
         const fallbackParams = { ...params };
         if (fallbackName === "twilio" && params.webhookUrl.includes("/telnyx/")) {

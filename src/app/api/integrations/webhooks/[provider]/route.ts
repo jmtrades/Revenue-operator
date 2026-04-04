@@ -202,9 +202,20 @@ function verifyProviderSignature(
       return verifyPipedriveSignature(req, rawBody);
     case "gohighlevel":
       return verifyGoHighLevelSignature(req, rawBody);
-    default:
-      // google_contacts and microsoft_365 use generic secret
+    default: {
+      // google_contacts and microsoft_365 must use generic CRM_WEBHOOK_SECRET
+      const secret = process.env.CRM_WEBHOOK_SECRET;
+      if (!secret) {
+        return { valid: false, error: "Webhook secret not configured for this provider" };
+      }
+      const header =
+        req.headers.get("x-crm-webhook-secret") ??
+        req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
+      if (header !== secret) {
+        return { valid: false, error: "Invalid webhook secret" };
+      }
       return { valid: true };
+    }
   }
 }
 

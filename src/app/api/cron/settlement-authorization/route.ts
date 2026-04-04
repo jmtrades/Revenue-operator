@@ -35,6 +35,8 @@ async function sendSettlementOwnerMessage(workspaceId: string, bodyText: string)
   if (!email) return false;
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return false;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com";
+  const unsubscribeUrl = `${appUrl}/app/settings/notifications`;
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
@@ -43,7 +45,12 @@ async function sendSettlementOwnerMessage(workspaceId: string, bodyText: string)
       to: email,
       subject: "Settlement",
       text: bodyText,
+      headers: {
+        "List-Unsubscribe": `<${unsubscribeUrl}>`,
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+      },
     }),
+    signal: AbortSignal.timeout(10_000),
   });
   return res.ok;
 }

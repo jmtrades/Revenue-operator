@@ -40,9 +40,8 @@ const INTEGRATIONS: Integration[] = [
     icon: Calendar,
     color: "text-blue-400",
     bg: "bg-[var(--bg-card)]/60",
-    status: "connected",
-    detail: "Connected as jmtrades1990@gmail.com",
-    actionLabel: "Disconnect",
+    status: "not_connected",
+    actionLabel: "Connect",
   },
   {
     id: "phone",
@@ -51,8 +50,7 @@ const INTEGRATIONS: Integration[] = [
     icon: Phone,
     color: "text-red-400",
     bg: "bg-red-500/10",
-    status: "configured",
-    detail: "3 active phone numbers",
+    status: "not_connected",
     actionLabel: "Manage Numbers",
     actionUrl: "/dashboard/settings/phone",
   },
@@ -93,9 +91,8 @@ const INTEGRATIONS: Integration[] = [
     icon: Mail,
     color: "text-cyan-400",
     bg: "bg-cyan-500/10",
-    status: "configured",
-    detail: "Sending from hello@recall-touch.com",
-    actionLabel: "Test Email",
+    status: "not_connected",
+    actionLabel: "Configure Email",
   },
 ];
 

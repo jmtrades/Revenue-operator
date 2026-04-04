@@ -113,7 +113,7 @@ export async function chooseSequence(
 
   // Map legacy purpose to trigger_type; store steps in trigger_config
   const { data: seq } = await db
-    .from("sequences")
+    .from("follow_up_sequences")
     .select("*")
     .eq("workspace_id", stateVector.workspace_id)
     .eq("trigger_type", purpose)
@@ -141,7 +141,7 @@ export async function chooseSequence(
         : LEGACY_DEFAULT_FOLLOWUP_STEPS;
 
   const { data: created } = await db
-    .from("sequences")
+    .from("follow_up_sequences")
     .insert({
       workspace_id: stateVector.workspace_id,
       name: `Default ${purpose}`,
@@ -165,7 +165,7 @@ export async function chooseSequence(
   }
 
   const { data: fallback } = await db
-    .from("sequences")
+    .from("follow_up_sequences")
     .select("*")
     .eq("workspace_id", stateVector.workspace_id)
     .eq("trigger_type", purpose)
@@ -211,7 +211,7 @@ export async function advanceSequence(
   if (!run) return { advanced: false };
 
   const r = run as { sequence_id: string; current_step: number };
-  const { data: seq } = await db.from("sequences").select("trigger_config").eq("id", r.sequence_id).maybeSingle();
+  const { data: seq } = await db.from("follow_up_sequences").select("trigger_config").eq("id", r.sequence_id).maybeSingle();
   const steps = (((seq as { trigger_config?: { steps?: LegacySequenceStep[] } })?.trigger_config?.steps) ?? []) as LegacySequenceStep[];
   const nextStepIndex = steps.findIndex((s) => s.step === r.current_step + 1);
   if (nextStepIndex < 0) {
@@ -292,7 +292,7 @@ export async function enrollContact(
 
   // Verify the sequence exists and belongs to this workspace
   const { data: seq } = await db
-    .from("sequences")
+    .from("follow_up_sequences")
     .select("id, workspace_id")
     .eq("id", sequenceId)
     .eq("workspace_id", workspaceId)
@@ -301,14 +301,18 @@ export async function enrollContact(
   if (!seq) return null;
 
   // Safety: Check if lead already has too many active enrollments
+  // Note: DB-level unique partial index (uq_sequence_enrollments_active) handles duplicate
+  // sequence enrollment races. The count check here is best-effort; under rare concurrent
+  // load a lead may briefly exceed MAX_CONCURRENT_ENROLLMENTS_PER_CONTACT by 1, which is
+  // acceptable since the cron processor re-checks before executing steps.
   const { count: activeCount } = await db
     .from("sequence_enrollments")
     .select("id", { count: "exact", head: true })
-    .eq("lead_id", contactId)
+    .eq("contact_id", contactId)
     .eq("workspace_id", workspaceId)
     .eq("status", "active");
   if ((activeCount ?? 0) >= MAX_CONCURRENT_ENROLLMENTS_PER_CONTACT) {
-    console.warn(`[sequence-safety] Lead ${contactId} already has ${activeCount} active enrollments — skipping new enrollment`);
+    log("warn", `[sequence-safety] Lead ${contactId} already has ${activeCount} active enrollments — skipping new enrollment`);
     return null;
   }
 
@@ -317,11 +321,11 @@ export async function enrollContact(
     .from("sequence_enrollments")
     .select("id")
     .eq("sequence_id", sequenceId)
-    .eq("lead_id", contactId)
+    .eq("contact_id", contactId)
     .eq("status", "active")
     .maybeSingle();
   if (existing) {
-    console.warn(`[sequence-safety] Lead ${contactId} already enrolled in sequence ${sequenceId} — skipping duplicate`);
+    log("warn", `[sequence-safety] Lead ${contactId} already enrolled in sequence ${sequenceId} — skipping duplicate`);
     return null;
   }
 
@@ -348,7 +352,7 @@ export async function enrollContact(
     .from("sequence_enrollments")
     .insert({
       sequence_id: sequenceId,
-      lead_id: contactId,
+      contact_id: contactId,
       workspace_id: workspaceId,
       status: "active",
       current_step: 0,
@@ -361,7 +365,7 @@ export async function enrollContact(
     // Handle unique constraint violation gracefully (23505 = unique_violation)
     const pgCode = (error as { code?: string }).code;
     if (pgCode === "23505") {
-      console.warn(`[sequence-safety] Concurrent enrollment race caught for lead ${contactId} in sequence ${sequenceId}`);
+      log("warn", `[sequence-safety] Concurrent enrollment race caught for lead ${contactId} in sequence ${sequenceId}`);
       return null;
     }
     log("error", `[sequence-safety] Enrollment insert failed`, { error: error.message });
@@ -416,7 +420,7 @@ export async function advanceEnrollment(
 
   // Safety: Hard cap on step count to prevent runaway sequences
   if (e.current_step >= MAX_SEQUENCE_STEPS) {
-    console.warn(`[sequence-safety] Enrollment ${enrollmentId} reached MAX_SEQUENCE_STEPS (${MAX_SEQUENCE_STEPS}) — auto-completing`);
+    log("warn", `[sequence-safety] Enrollment ${enrollmentId} reached MAX_SEQUENCE_STEPS (${MAX_SEQUENCE_STEPS}) — auto-completing`);
     await db
       .from("sequence_enrollments")
       .update({ status: "completed", completed_at: new Date().toISOString(), updated_at: new Date().toISOString() })
@@ -475,7 +479,7 @@ export async function advanceEnrollment(
       .gte("created_at", twentyFourHoursAgo.toISOString());
     const totalTouches = (recentTouches ?? 0) + (recentMessages ?? 0);
     if (totalTouches >= MAX_TOUCHES_PER_LEAD_24H) {
-      console.warn(`[sequence-safety] Lead ${e.lead_id} already has ${totalTouches} touches in 24h — skipping step, rescheduling`);
+      log("warn", `[sequence-safety] Lead ${e.lead_id} already has ${totalTouches} touches in 24h — skipping step, rescheduling`);
       // Reschedule this step for 6 hours later instead of executing now
       const laterDue = new Date();
       laterDue.setHours(laterDue.getHours() + 6);
@@ -496,7 +500,7 @@ export async function advanceEnrollment(
       .eq("enrollment_id", enrollmentId)
       .eq("step_order", stepToExecute.step_order);
     if ((alreadyExecuted ?? 0) > 0) {
-      console.warn(`[sequence-dedup] Step ${stepToExecute.step_order} already executed for enrollment ${enrollmentId} — skipping`);
+      log("warn", `[sequence-dedup] Step ${stepToExecute.step_order} already executed for enrollment ${enrollmentId} — skipping`);
       return null;
     }
   } catch {
@@ -512,7 +516,7 @@ export async function advanceEnrollment(
       // SAFETY: Check opt-out before sending any SMS
       const { isOptedOut } = await import("@/lib/lead-opt-out");
       if (await isOptedOut(e.workspace_id, `lead:${e.lead_id}`)) {
-        console.warn(`[sequence-sms] Lead ${e.lead_id} is opted out — skipping SMS step for enrollment ${enrollmentId}`);
+        log("warn", `[sequence-sms] Lead ${e.lead_id} is opted out — skipping SMS step for enrollment ${enrollmentId}`);
         actionSucceeded = true; // Respect opt-out, advance enrollment past this step
       } else {
       const { data: leadRow } = await db
@@ -524,10 +528,10 @@ export async function advanceEnrollment(
       const lead = leadRow as { phone?: string; name?: string; metadata?: Record<string, unknown> | null } | null;
       // Also check metadata.sms_consent === false
       if (lead?.metadata && (lead.metadata as Record<string, unknown>).sms_consent === false) {
-        console.warn(`[sequence-sms] Lead ${e.lead_id} has sms_consent=false — skipping SMS step for enrollment ${enrollmentId}`);
+        log("warn", `[sequence-sms] Lead ${e.lead_id} has sms_consent=false — skipping SMS step for enrollment ${enrollmentId}`);
         actionSucceeded = true;
       } else if (!lead?.phone) {
-        console.warn(`[sequence-sms] Lead ${e.lead_id} has no phone number — skipping SMS step for enrollment ${enrollmentId}`);
+        log("warn", `[sequence-sms] Lead ${e.lead_id} has no phone number — skipping SMS step for enrollment ${enrollmentId}`);
         actionSucceeded = true; // Skip gracefully so enrollment advances
       } else if (lead?.phone) {
         const { data: phoneConfig } = await db
@@ -545,10 +549,10 @@ export async function advanceEnrollment(
                 .replace(/\{\{name\}\}/gi, lead.name ?? "there")
                 .replace(/\{\{phone\}\}/gi, lead.phone)
             : `Hi ${lead.name ?? "there"}, just following up. Let us know if you have any questions or would like to schedule a time to chat.`;
-          await svc.sendSms({ from: fromNumber, to: lead.phone, text: messageText });
-          actionSucceeded = true;
+          const smsResult = await svc.sendSms({ from: fromNumber, to: lead.phone, text: messageText });
+          actionSucceeded = !("error" in smsResult);
         } else {
-          console.warn(`[sequence-sms] No active phone config for workspace ${e.workspace_id} — skipping SMS step for enrollment ${enrollmentId}`);
+          log("warn", `[sequence-sms] No active phone config for workspace ${e.workspace_id} — skipping SMS step for enrollment ${enrollmentId}`);
           actionSucceeded = true;
         }
       }
@@ -557,7 +561,7 @@ export async function advanceEnrollment(
       // SAFETY: Check opt-out before placing outbound call
       const { isOptedOut: isOptedOutCall } = await import("@/lib/lead-opt-out");
       if (await isOptedOutCall(e.workspace_id, `lead:${e.lead_id}`)) {
-        console.warn(`[sequence-call] Lead ${e.lead_id} is opted out — skipping call step for enrollment ${enrollmentId}`);
+        log("warn", `[sequence-call] Lead ${e.lead_id} is opted out — skipping call step for enrollment ${enrollmentId}`);
         actionSucceeded = true;
       } else {
         const { executeLeadOutboundCall } = await import("@/lib/outbound/execute-lead-call");
@@ -568,7 +572,7 @@ export async function advanceEnrollment(
       // SAFETY: Check opt-out before sending any email
       const { isOptedOut: isOptedOutEmail } = await import("@/lib/lead-opt-out");
       if (await isOptedOutEmail(e.workspace_id, `lead:${e.lead_id}`)) {
-        console.warn(`[sequence-email] Lead ${e.lead_id} is opted out — skipping email step for enrollment ${enrollmentId}`);
+        log("warn", `[sequence-email] Lead ${e.lead_id} is opted out — skipping email step for enrollment ${enrollmentId}`);
         actionSucceeded = true; // Respect opt-out, advance enrollment past this step
       } else {
       // Email delivery through workspace email config (if configured)
@@ -581,11 +585,11 @@ export async function advanceEnrollment(
       const lead = leadRow as { email?: string; name?: string; metadata?: Record<string, unknown> | null } | null;
       // Check metadata.email_consent === false
       if (lead?.metadata && (lead.metadata as Record<string, unknown>).email_consent === false) {
-        console.warn(`[sequence-email] Lead ${e.lead_id} has email_consent=false — skipping email step for enrollment ${enrollmentId}`);
+        log("warn", `[sequence-email] Lead ${e.lead_id} has email_consent=false — skipping email step for enrollment ${enrollmentId}`);
         actionSucceeded = true;
       } else if (!lead?.email) {
         // Lead has no email — skip this step gracefully instead of failing forever
-        console.warn(`[sequence-email] Lead ${e.lead_id} has no email address — skipping email step for enrollment ${enrollmentId}`);
+        log("warn", `[sequence-email] Lead ${e.lead_id} has no email address — skipping email step for enrollment ${enrollmentId}`);
         actionSucceeded = true; // Treat as "delivered" so enrollment advances
       } else if (lead?.email) {
         const { data: wsCtx } = await db
@@ -604,7 +608,7 @@ export async function advanceEnrollment(
         const resendKey = process.env.RESEND_API_KEY;
         const fromEmail = process.env.RESEND_FROM_EMAIL ?? `noreply@recall-touch.com`;
         if (!resendKey) {
-          console.warn(`[sequence-email] RESEND_API_KEY not configured — email step skipped for enrollment ${enrollmentId}. Set RESEND_API_KEY to enable email delivery.`);
+          log("warn", `[sequence-email] RESEND_API_KEY not configured — email step skipped for enrollment ${enrollmentId}. Set RESEND_API_KEY to enable email delivery.`);
           actionSucceeded = true; // Skip gracefully — don't loop forever waiting for config
         }
         if (resendKey) {
@@ -615,6 +619,7 @@ export async function advanceEnrollment(
                 method: "POST",
                 headers: { Authorization: `Bearer ${resendKey}`, "Content-Type": "application/json" },
                 body: JSON.stringify({ from: fromEmail, to: lead.email, subject, text: body }),
+      signal: AbortSignal.timeout(10_000),
               });
               if (emailRes.ok) {
                 actionSucceeded = true;
@@ -641,7 +646,7 @@ export async function advanceEnrollment(
               }
               // Retryable: 429 or 5xx — log so we can diagnose
               const retryErrText = await emailRes.text().catch(() => "unknown");
-              console.warn(`[sequence-email] Resend API ${emailRes.status} (attempt ${emailAttempt + 1}/${maxEmailRetries}): ${retryErrText}`);
+              log("warn", `[sequence-email] Resend API ${emailRes.status} (attempt ${emailAttempt + 1}/${maxEmailRetries}): ${retryErrText}`);
               if (emailAttempt < maxEmailRetries - 1) {
                 await new Promise(r => setTimeout(r, (emailAttempt + 1) * 2000));
               }
@@ -683,7 +688,7 @@ export async function advanceEnrollment(
           updated_at: new Date().toISOString(),
         })
         .eq("id", enrollmentId);
-      console.warn(`[sequence] Step ${nextStep.step_order} (${stepToExecute.type}) failed for enrollment ${enrollmentId} — retry ${retryCount + 1}/3 scheduled`);
+      log("warn", `[sequence] Step ${nextStep.step_order} (${stepToExecute.type}) failed for enrollment ${enrollmentId} — retry ${retryCount + 1}/3 scheduled`);
     } else {
       // Max retries exceeded: skip this step and advance
       log("error", `[sequence] Step ${nextStep.step_order} (${stepToExecute.type}) failed 3 times for enrollment ${enrollmentId} — skipping step`);
@@ -757,15 +762,15 @@ export async function advanceEnrollment(
         if (newStatus && newStatus !== currentStatus) {
           await db
             .from("leads")
-            .update({ status: newStatus, updated_at: new Date().toISOString() })
+            .update({ state: newStatus, updated_at: new Date().toISOString() })
             .eq("id", e.lead_id)
             .eq("workspace_id", e.workspace_id);
-          console.log(`[sequence-advance] Lead ${e.lead_id}: ${currentStatus} → ${newStatus} (step: ${stepType})`);
+          log("info", `[sequence-advance] Lead ${e.lead_id}: ${currentStatus} → ${newStatus} (step: ${stepType})`);
         }
       }
     }
   } catch (advErr) {
-    console.warn(`[sequence-advance] Non-fatal error advancing lead ${e.lead_id}:`, advErr instanceof Error ? advErr.message : advErr);
+    log("warn", `[sequence-advance] Non-fatal error advancing lead ${e.lead_id}:`, { detail: advErr instanceof Error ? advErr.message : advErr });
   }
 
   return { step: stepToExecute, enrollment: updated as SequenceEnrollment };
@@ -910,7 +915,7 @@ export async function getContactEnrollments(
       .from("sequence_enrollments")
       .select("*")
       .eq("workspace_id", workspaceId)
-      .eq("lead_id", contactId)
+      .eq("contact_id", contactId)
       .order("enrolled_at", { ascending: false });
 
     if (error) return [];
@@ -943,7 +948,7 @@ export async function getEnrollmentWithDetails(
   const e = enrollment as SequenceEnrollment;
 
   const { data: sequence } = await db
-    .from("sequences")
+    .from("follow_up_sequences")
     .select("*")
     .eq("id", e.sequence_id)
     .maybeSingle();
@@ -1016,7 +1021,7 @@ export async function getWorkspaceSequences(
 
   try {
     const { data: sequences, error } = await db
-      .from("sequences")
+      .from("follow_up_sequences")
       .select("*")
       .eq("workspace_id", workspaceId)
       .eq("is_active", true)
@@ -1039,7 +1044,7 @@ export async function getSequenceWithSteps(
   const db = getDb();
 
   const { data: sequence } = await db
-    .from("sequences")
+    .from("follow_up_sequences")
     .select("*")
     .eq("id", sequenceId)
     .eq("workspace_id", workspaceId)
@@ -1080,7 +1085,7 @@ export async function createSequence(
   const trigger = validTriggers.includes(triggerType) ? triggerType : "manual";
 
   const { data: sequence, error } = await db
-    .from("sequences")
+    .from("follow_up_sequences")
     .insert({
       workspace_id: workspaceId,
       name: name.trim(),
@@ -1116,7 +1121,7 @@ export async function addSequenceStep(
     .insert({
       sequence_id: sequenceId,
       step_order: stepOrder,
-      type,
+      channel: type,
       delay_minutes: delayMinutes,
       config: Object.keys(config).length > 0 ? config : null,
     })
@@ -1138,7 +1143,7 @@ export async function updateSequence(
   const db = getDb();
 
   const { data: sequence, error } = await db
-    .from("sequences")
+    .from("follow_up_sequences")
     .update({
       ...updates,
       updated_at: new Date().toISOString(),
@@ -1162,7 +1167,7 @@ export async function deleteSequence(
   const db = getDb();
 
   const { error } = await db
-    .from("sequences")
+    .from("follow_up_sequences")
     .delete()
     .eq("id", sequenceId)
     .eq("workspace_id", workspaceId);

@@ -48,7 +48,7 @@ export function DailySummaryBanner() {
 
   useEffect(() => {
     if (!show || !workspaceId) return;
-    fetch(`/api/handled-situations?workspace_id=${encodeURIComponent(workspaceId)}`)
+    fetch(`/api/handled-situations?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
       .then((r) => r.json())
       .then((d: { imprints?: string[] }) => {
         const list = d.imprints ?? [];

@@ -49,8 +49,8 @@ export async function GET(req: NextRequest) {
     // Query call_sessions table
     const { data: callSessions, error } = await db
       .from("call_sessions")
-      .select("id, workspace_id, started_at, ended_at, status")
-      .order("started_at", { ascending: false });
+      .select("id, workspace_id, call_started_at, call_ended_at, outcome")
+      .order("call_started_at", { ascending: false });
 
     if (error) {
       throw error;

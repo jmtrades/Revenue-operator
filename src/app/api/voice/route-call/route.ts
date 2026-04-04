@@ -137,6 +137,24 @@ export async function POST(request: NextRequest) {
 
     const workspaceId = (phoneConfig as { workspace_id: string }).workspace_id;
 
+    // Check billing status — block calls for expired/paused workspaces
+    const { data: wsRow } = await db
+      .from("workspaces")
+      .select("billing_status")
+      .eq("id", workspaceId)
+      .maybeSingle();
+    const billingStatus = (wsRow as { billing_status?: string } | null)?.billing_status;
+    if (billingStatus === "expired" || billingStatus === "trial_ended" || billingStatus === "paused") {
+      log("warn", "voice_routing.billing_blocked", { workspace_id: workspaceId, billing_status: billingStatus, callSid: twilio.callSid });
+      return new NextResponse(
+        `<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Say>This service is currently inactive. Please contact the business directly.</Say>
+</Response>`,
+        { status: 402, headers: { "Content-Type": "application/xml" } }
+      );
+    }
+
     // Route the call using the routing engine
     const decision = await routeInboundCall(
       workspaceId,
@@ -167,18 +185,28 @@ export async function POST(request: NextRequest) {
       priority: decision.priority,
     });
 
-    // Store call routing event
+    // Store call routing event (deduplicate by external_meeting_id to handle Twilio retries)
     try {
-      await db.from("call_sessions").insert({
-        workspace_id: workspaceId,
-        twilio_call_sid: twilio.callSid,
-        twilio_from: twilio.from,
-        twilio_to: twilio.to,
-        routing_decision: decision.action,
-        routing_agent_id: decision.agent_id || null,
-        routing_reason: decision.reason,
-        started_at: new Date().toISOString(),
-      });
+      const { data: existingSession } = await db
+        .from("call_sessions")
+        .select("id")
+        .eq("external_meeting_id", twilio.callSid)
+        .maybeSingle();
+      if (!existingSession) {
+        await db.from("call_sessions").insert({
+          workspace_id: workspaceId,
+          external_meeting_id: twilio.callSid,
+          call_started_at: new Date().toISOString(),
+          metadata: {
+            twilio_call_sid: twilio.callSid,
+            twilio_from: twilio.from,
+            twilio_to: twilio.to,
+            routing_decision: decision.action,
+            routing_agent_id: decision.agent_id || null,
+            routing_reason: decision.reason,
+          },
+        });
+      }
     } catch (err) {
       log("warn", "voice_routing.failed_to_store_event", {
         error: err instanceof Error ? err.message : String(err),

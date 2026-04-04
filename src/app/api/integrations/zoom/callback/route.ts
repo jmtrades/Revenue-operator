@@ -57,6 +57,7 @@ export async function GET(req: NextRequest) {
       Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString("base64")}`,
     },
     body: body.toString(),
+    signal: AbortSignal.timeout(15_000),
   });
 
   if (!res.ok) {
@@ -116,5 +117,5 @@ export async function GET(req: NextRequest) {
   }
 
   const base = returnTo === "onboarding" ? "/dashboard/live" : "/dashboard/activation";
-  return NextResponse.redirect(new URL(`${base}?zoom_connected=1&workspace_id=${workspaceId}`, req.url));
+  return NextResponse.redirect(new URL(`${base}?zoom_connected=1`, req.url));
 }

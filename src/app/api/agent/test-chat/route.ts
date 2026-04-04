@@ -198,6 +198,7 @@ export async function POST(req: NextRequest) {
         system: systemPrompt,
         messages: claudeMessages,
       }),
+      signal: AbortSignal.timeout(30_000),
     });
 
     if (!res.ok) {

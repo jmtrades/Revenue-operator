@@ -91,6 +91,7 @@ export function useDashboardFetch<T = unknown>(
         });
         const res = await fetch(`${url}?${searchParams}`, {
           credentials: "include",
+          signal: AbortSignal.timeout(30_000),
         });
 
         if (!res.ok) {

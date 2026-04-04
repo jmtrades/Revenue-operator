@@ -296,7 +296,7 @@ export default function IndustryTemplatesPage() {
 
                   {/* Follow-up Cadence */}
                   <section>
-                    <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Follow-up Cadence ({template.default_follow_up_cadence.length} sequences)</h3>
+                    <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Follow-up Cadence ({template.default_follow_up_cadence.length} steps)</h3>
                     <div className="space-y-3">
                       {template.default_follow_up_cadence.map((cadence, idx) => (
                         <div key={idx} className="bg-[var(--bg-surface)] rounded p-3 border border-[var(--border-default)]">

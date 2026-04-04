@@ -21,18 +21,24 @@ export async function GET(req: NextRequest) {
     const db = getDb();
 
     let sessionsList: unknown[] = [];
-    const { data: byWorkspace, error: callsErr } = await db
+    // Exclude test calls (metadata contains { test_call: true }) from the main list
+    const showTestCalls = req.nextUrl.searchParams.get("include_test") === "true";
+    let callsQuery = db
     .from("call_sessions")
     .select(`
-      id, lead_id, current_node, outcome, started_at, ended_at,
+      id, lead_id, current_node, outcome,
       workspace_id, external_meeting_id, external_meeting_uuid, provider,
       matched_lead_id, matched_confidence, call_started_at, call_ended_at,
       consent_granted, consent_mode, transcript_text, summary,
-      show_status, show_confidence, show_reason
+      show_status, show_confidence, show_reason, metadata
     `)
     .eq("workspace_id", workspaceId)
-    .order("started_at", { ascending: false })
+    .order("call_started_at", { ascending: false })
     .limit(50);
+    if (!showTestCalls) {
+      callsQuery = callsQuery.not("metadata", "cs", '{"test_call":true}');
+    }
+    const { data: byWorkspace, error: callsErr } = await callsQuery;
     if (callsErr) {
       log("error", "calls.get_query_failed", { error: callsErr.message });
       return NextResponse.json({ error: "Failed to load calls" }, { status: 500 });
@@ -44,12 +50,17 @@ export async function GET(req: NextRequest) {
     const { data: deals } = await db.from("deals").select("lead_id").eq("workspace_id", workspaceId);
     const leadIds = [...new Set((deals ?? []).map((d: { lead_id: string }) => d.lead_id))];
     if (leadIds.length > 0) {
-      const { data: byLead } = await db
+      let fallbackQuery = db
         .from("call_sessions")
-        .select("id, lead_id, current_node, outcome, started_at, ended_at, workspace_id, external_meeting_id, external_meeting_uuid, provider, matched_lead_id, matched_confidence, call_started_at, call_ended_at, consent_granted, consent_mode, transcript_text, summary, show_status, show_confidence, show_reason")
+        .select("id, lead_id, current_node, outcome, workspace_id, external_meeting_id, external_meeting_uuid, provider, matched_lead_id, matched_confidence, call_started_at, call_ended_at, consent_granted, consent_mode, transcript_text, summary, show_status, show_confidence, show_reason, metadata")
         .in("lead_id", leadIds)
-        .order("started_at", { ascending: false })
+        .eq("workspace_id", workspaceId)
+        .order("call_started_at", { ascending: false })
         .limit(50);
+      if (!showTestCalls) {
+        fallbackQuery = fallbackQuery.not("metadata", "cs", '{"test_call":true}');
+      }
+      const { data: byLead } = await fallbackQuery;
       sessionsList = byLead ?? [];
     }
   }
@@ -85,8 +96,10 @@ export async function GET(req: NextRequest) {
     const a = analysisMap[s.id];
     const ana = (a?.analysis_json ?? {}) as Record<string, unknown>;
     const matchedId = s.matched_lead_id ?? s.lead_id ?? null;
+    // Strip internal metadata from client response
+    const { metadata: _meta, ...rest } = s as Record<string, unknown>;
     return {
-      ...s,
+      ...rest,
       matched_lead: matchedId ? leadMap[matchedId] : null,
       analysis_outcome: ana.outcome ?? null,
       next_best_action: ana.next_best_action ?? null,

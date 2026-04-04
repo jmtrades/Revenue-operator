@@ -342,28 +342,28 @@ export function UnifiedDashboard() {
     {
       label: t("kpis.callsHandled", { defaultValue: "Calls handled" }),
       value: data.calls_answered,
-      sub: data.calls_answered === 0 && !hasSignal ? "Ready to execute" : data.missed_calls_recovered > 0 ? `${data.missed_calls_recovered} recovered` : undefined,
+      sub: data.calls_answered === 0 && !hasSignal ? "Starts when calls come in" : data.missed_calls_recovered > 0 ? `${data.missed_calls_recovered} recovered` : undefined,
       icon: Phone,
       accent: "var(--accent-primary)",
     },
     {
       label: t("kpis.appointmentsBooked", { defaultValue: "Opportunities created" }),
       value: data.appointments_booked,
-      sub: data.appointments_booked === 0 && !hasSignal ? "Booked automatically from calls" : data.conversion_rate > 0 ? `${data.conversion_rate}% conversion` : undefined,
+      sub: data.appointments_booked === 0 && !hasSignal ? "Booked automatically after calls" : data.conversion_rate > 0 ? `${data.conversion_rate}% conversion` : undefined,
       icon: CalendarCheck,
       accent: "var(--accent-secondary)",
     },
     {
       label: t("kpis.recovered", { defaultValue: "Revenue impact" }),
       value: fmtMoney(data.revenue_recovered_cents),
-      sub: data.revenue_recovered_cents === 0 && !hasSignal ? "Revenue tracked automatically" : data.revenue_trend_pct !== 0 ? `${data.revenue_trend_pct > 0 ? "+" : ""}${data.revenue_trend_pct}% vs last month` : undefined,
+      sub: data.revenue_recovered_cents === 0 && !hasSignal ? "Tracked as calls convert" : data.revenue_trend_pct !== 0 ? `${data.revenue_trend_pct > 0 ? "+" : ""}${data.revenue_trend_pct}% vs last month` : undefined,
       icon: TrendingUp,
       accent: "var(--accent-warning)",
     },
     {
       label: t("kpis.followUpsSent", { defaultValue: "Recovery actions" }),
       value: data.follow_ups_sent,
-      sub: data.follow_ups_sent === 0 && !hasSignal ? "Recovery sequences active" : data.qualified_leads > 0 ? `${data.qualified_leads} qualified leads` : undefined,
+      sub: data.follow_ups_sent === 0 && !hasSignal ? "Automated after missed calls" : data.qualified_leads > 0 ? `${data.qualified_leads} qualified leads` : undefined,
       icon: MailCheck,
       accent: "var(--accent-indigo, #4F46E5)",
     },
@@ -781,7 +781,7 @@ export function UnifiedDashboard() {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {data.missed_calls_today > 0 && (
-              <Link href="/app/calls" className="group flex items-start gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] hover:border-amber-500/40 p-4 transition-colors">
+              <Link href="/dashboard/recovery" className="group flex items-start gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] hover:border-amber-500/40 p-4 transition-colors">
                 <div className="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center shrink-0">
                   <Phone className="w-4 h-4 text-red-500" />
                 </div>
@@ -793,7 +793,7 @@ export function UnifiedDashboard() {
               </Link>
             )}
             {data.no_shows_this_week > 0 && (
-              <Link href="/app/contacts" className="group flex items-start gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] hover:border-amber-500/40 p-4 transition-colors">
+              <Link href="/app/cold-leads" className="group flex items-start gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] hover:border-amber-500/40 p-4 transition-colors">
                 <div className="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
                   <CalendarCheck className="w-4 h-4 text-amber-500" />
                 </div>
@@ -805,7 +805,7 @@ export function UnifiedDashboard() {
               </Link>
             )}
             {data.stale_leads > 0 && (
-              <Link href="/app/contacts?filter=stale" className="group flex items-start gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] hover:border-amber-500/40 p-4 transition-colors">
+              <Link href="/app/cold-leads" className="group flex items-start gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] hover:border-amber-500/40 p-4 transition-colors">
                 <div className="w-9 h-9 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0">
                   <Clock className="w-4 h-4 text-orange-500" />
                 </div>

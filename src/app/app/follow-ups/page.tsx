@@ -386,7 +386,7 @@ export default function AppFollowUpsPage() {
       <div className="mb-8 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
         <RecoveryProfileSelector />
       </div>
-      {/* Brain-managed follow-ups status */}
+      {/* AI-managed follow-ups status */}
       <div className="mb-6 rounded-xl border border-violet-500/15 bg-violet-500/[0.04] p-4 flex items-start gap-3">
         <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center shrink-0 mt-0.5">
           <Zap className="w-4 h-4 text-violet-400" />
@@ -395,21 +395,21 @@ export default function AppFollowUpsPage() {
           {sequences.length > 0 || brainActivity?.follow_ups_sent ? (
             <>
               <div className="flex items-center gap-2 mb-1">
-                <p className="text-sm text-violet-400 font-semibold">Follow-up sequences active</p>
+                <p className="text-sm text-violet-400 font-semibold">Automated follow-ups active</p>
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                   <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
                 </span>
               </div>
               <p className="text-xs text-[var(--text-secondary)]">
-                {sequences.filter(s => s.is_active).length} active sequences running. Active sequences are executing scheduled follow-ups. Timing and channels are based on the sequence configuration you set.
+                {sequences.filter(s => s.is_active).length} automated follow-ups running. Your AI operator is handling follow-ups automatically via call, SMS, and email based on your configured rules.
               </p>
             </>
           ) : (
             <>
-              <p className="text-sm text-violet-400 font-semibold mb-1">Follow-ups will start when leads arrive</p>
+              <p className="text-sm text-violet-400 font-semibold mb-1">Follow-ups will start automatically when leads arrive</p>
               <p className="text-xs text-[var(--text-secondary)]">
-                When new leads arrive, follow-up sequences will be created based on your configured templates and rules. You can also manually create sequences below.
+                When new leads arrive, your AI operator will automatically follow up based on your configured templates and rules. Choose a template below to get started.
               </p>
             </>
           )}
@@ -443,7 +443,7 @@ export default function AppFollowUpsPage() {
           <div className="skeleton-shimmer h-40 rounded-2xl border border-[var(--border-default)]" />
         ) : (
           <div className="space-y-4">
-            {/* Brain Activity Dashboard */}
+            {/* Activity Dashboard */}
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
               <div className="flex items-center gap-2 mb-6">
                 <Activity className="w-5 h-5 text-[var(--accent-primary)]" />
@@ -457,13 +457,13 @@ export default function AppFollowUpsPage() {
                   {brainActivity?.follow_ups_sent ?? 0}
                 </p>
                 <p className="text-xs text-[var(--text-secondary)] mt-2">
-                  Total follow-up actions sent by the brain engine
+                  Total automated follow-up actions executed
                 </p>
               </div>
 
-              {/* Active Sequences — show only real sequences that exist */}
+              {/* Active Follow-ups — show only real follow-ups that exist */}
               <div className="mb-6">
-                <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Your Sequences</h3>
+                <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Your Follow-ups</h3>
                 {sequences.length > 0 ? (
                   <div className="space-y-2">
                     {sequences.map((seq) => (
@@ -489,7 +489,7 @@ export default function AppFollowUpsPage() {
                   </div>
                 ) : (
                   <p className="text-sm text-[var(--text-tertiary)] p-3 rounded-lg bg-[var(--bg-hover)] border border-[var(--border-default)]">
-                    No sequences created yet. The brain will auto-enroll leads when sequences are available.
+                    No follow-ups created yet. Choose a template above to start automatically following up with leads.
                   </p>
                 )}
               </div>
@@ -520,7 +520,7 @@ export default function AppFollowUpsPage() {
                 ) : (
                   <div className="p-4 rounded-lg bg-[var(--bg-hover)] border border-[var(--border-default)] text-center">
                     <p className="text-sm text-[var(--text-secondary)]">
-                      Brain activity will appear here as leads are processed
+                      Activity will appear here as leads are processed
                     </p>
                   </div>
                 )}
@@ -696,9 +696,9 @@ export default function AppFollowUpsPage() {
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ status: "paused" }),
                       }).then((res) => {
-                        if (res.ok) { toast.success(t("sequencePaused", { defaultValue: "Sequence paused" })); refetchSequences(); }
-                        else toast.error(t("pauseFailed", { defaultValue: "Failed to pause sequence" }));
-                      }).catch(() => toast.error(t("pauseFailed", { defaultValue: "Failed to pause sequence" })));
+                        if (res.ok) { toast.success(t("sequencePaused", { defaultValue: "Follow-up paused" })); refetchSequences(); }
+                        else toast.error(t("pauseFailed", { defaultValue: "Failed to pause follow-up" }));
+                      }).catch(() => toast.error(t("pauseFailed", { defaultValue: "Failed to pause follow-up" })));
                     }}
                   >
                     <Pause className="w-4 h-4" />
@@ -714,9 +714,9 @@ export default function AppFollowUpsPage() {
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ status: "active" }),
                       }).then((res) => {
-                        if (res.ok) { toast.success(t("sequenceResumed", { defaultValue: "Sequence resumed" })); refetchSequences(); }
-                        else toast.error(t("resumeFailed", { defaultValue: "Failed to resume sequence" }));
-                      }).catch(() => toast.error(t("resumeFailed", { defaultValue: "Failed to resume sequence" })));
+                        if (res.ok) { toast.success(t("sequenceResumed", { defaultValue: "Follow-up resumed" })); refetchSequences(); }
+                        else toast.error(t("resumeFailed", { defaultValue: "Failed to resume follow-up" }));
+                      }).catch(() => toast.error(t("resumeFailed", { defaultValue: "Failed to resume follow-up" })));
                     }}
                   >
                     <Play className="w-4 h-4" />
@@ -736,8 +736,8 @@ export default function AppFollowUpsPage() {
 
       <ConfirmDialog
         open={confirmPauseAll}
-        title={t("pauseAllTitle", { defaultValue: "Pause all sequences?" })}
-        message={t("pauseAllMessage", { defaultValue: "This will pause all active follow-up sequences. No automated follow-ups will run until you resume them." })}
+        title={t("pauseAllTitle", { defaultValue: "Pause all follow-ups?" })}
+        message={t("pauseAllMessage", { defaultValue: "This will pause all active follow-ups. No automated follow-ups will run until you resume them." })}
         confirmLabel={t("pauseAll", { defaultValue: "Pause all" })}
         onConfirm={async () => {
           try {
@@ -751,10 +751,10 @@ export default function AppFollowUpsPage() {
                 })
               )
             );
-            toast.success(t("allPaused", { defaultValue: "All sequences paused" }));
+            toast.success(t("allPaused", { defaultValue: "All follow-ups paused" }));
             refetchSequences();
           } catch {
-            toast.error(t("pauseFailed", { defaultValue: "Failed to pause sequences" }));
+            toast.error(t("pauseFailed", { defaultValue: "Failed to pause follow-ups" }));
           } finally {
             setConfirmPauseAll(false);
           }
@@ -764,8 +764,8 @@ export default function AppFollowUpsPage() {
 
       <ConfirmDialog
         open={confirmResumeAll}
-        title={t("resumeAllTitle", { defaultValue: "Resume all sequences?" })}
-        message={t("resumeAllMessage", { defaultValue: "This will resume all paused follow-up sequences. Automated follow-ups will begin running again." })}
+        title={t("resumeAllTitle", { defaultValue: "Resume all follow-ups?" })}
+        message={t("resumeAllMessage", { defaultValue: "This will resume all paused follow-ups. Automated follow-ups will begin running again." })}
         confirmLabel={t("resumeAll", { defaultValue: "Resume all" })}
         onConfirm={async () => {
           try {
@@ -779,10 +779,10 @@ export default function AppFollowUpsPage() {
                 })
               )
             );
-            toast.success(t("allResumed", { defaultValue: "All sequences resumed" }));
+            toast.success(t("allResumed", { defaultValue: "All follow-ups resumed" }));
             refetchSequences();
           } catch {
-            toast.error(t("resumeFailed", { defaultValue: "Failed to resume sequences" }));
+            toast.error(t("resumeFailed", { defaultValue: "Failed to resume follow-ups" }));
           } finally {
             setConfirmResumeAll(false);
           }

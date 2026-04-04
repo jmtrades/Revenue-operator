@@ -17,7 +17,7 @@ export function BillingFailureBanner() {
 
   useEffect(() => {
     if (!workspaceId) return;
-    fetch(`/api/billing/status?workspace_id=${encodeURIComponent(workspaceId)}`)
+    fetch(`/api/billing/status?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
       .then((r) => r.json())
       .then((d) => {
         if (!d?.error) setBillingStatus(d);

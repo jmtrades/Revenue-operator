@@ -251,7 +251,7 @@ export async function POST(req: NextRequest) {
                 workspace_id: workspaceId,
                 name: "Inbound caller",
                 phone: callInfo.from ?? undefined,
-                status: "NEW",
+                state: "NEW",
               })
               .select("id")
               .maybeSingle();
@@ -715,6 +715,7 @@ export async function POST(req: NextRequest) {
                 workspace_id: resolvedWorkspaceId,
                 source: "telnyx_hangup",
               }),
+              signal: AbortSignal.timeout(15_000),
             }).catch((err) => {
               log("error", "telnyx_voice.post_call_trigger_failed", {
                 error: err instanceof Error ? err.message : String(err),
@@ -783,9 +784,32 @@ export async function POST(req: NextRequest) {
       }
 
       case "call.recording.saved": {
-        // Call recording saved — store the recording URL
-        log("info", "telnyx_voice.recording_saved", { sessionId: callInfo.callSessionId, workspaceId: resolvedWorkspaceId });
-        // Future: save recording_url to call_sessions for playback
+        // Call recording saved — store the recording URL on the call_session
+        const recordData = payload.data?.record as Record<string, unknown> | undefined;
+        const channels = (recordData?.channels ?? []) as Array<{ sources?: Array<{ url?: string }> }>;
+        const recordingUrls = recordData?.recording_urls as { mp3?: string; wav?: string } | undefined;
+        const recordingUrl =
+          recordingUrls?.mp3 ||
+          recordingUrls?.wav ||
+          channels?.[0]?.sources?.[0]?.url ||
+          null;
+
+        if (recordingUrl && callInfo.callSessionId) {
+          await db
+            .from("call_sessions")
+            .update({ recording_url: recordingUrl })
+            .eq("id", callInfo.callSessionId);
+          log("info", "telnyx_voice.recording_saved", {
+            sessionId: callInfo.callSessionId,
+            workspaceId: resolvedWorkspaceId,
+            hasUrl: true,
+          });
+        } else {
+          log("warn", "telnyx_voice.recording_saved_no_url", {
+            sessionId: callInfo.callSessionId,
+            workspaceId: resolvedWorkspaceId,
+          });
+        }
         break;
       }
 
