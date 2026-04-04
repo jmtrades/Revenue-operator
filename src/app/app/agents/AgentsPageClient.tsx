@@ -172,7 +172,7 @@ function isStepComplete(stepId: StepId, agent: Agent): boolean {
     case "knowledge":
       // At least 1 FAQ entry OR business context/services filled — AI auto-generates the rest
       return agent.faq.filter((e) => (e.question ?? "").trim() && (e.answer ?? "").trim()).length >= 1 ||
-        !!(agent.services?.trim()) || !!(agent.businessContext?.trim());
+        !!(agent.services?.filter(s => s.trim()).length) || !!(agent.businessContext?.trim());
     case "behavior":
       // Considered complete if any behavior is configured, OR if agent has a greeting
       // (the AI has smart defaults for all behavior — this step is optional)
