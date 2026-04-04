@@ -9046,30 +9046,30 @@
   },
   "followUps": {
     "title": "Follow-ups",
-    "create": "Create Sequence",
+    "create": "New Follow-up",
     "retry": "Retry",
     "statusActive": "Active",
     "statusPaused": "Paused",
     "trigger": "Trigger",
     "manual": "manual",
-    "pauseAllTitle": "Pause all sequences?",
-    "pauseAllMessage": "This will pause all active follow-up sequences. No automated follow-ups will run until you resume them.",
-    "resumeAllTitle": "Resume all sequences?",
-    "resumeAllMessage": "This will resume all paused follow-up sequences. Automated follow-ups will begin running again.",
+    "pauseAllTitle": "Pause all follow-ups?",
+    "pauseAllMessage": "This will pause all active automated follow-ups. No follow-ups will run until you resume them.",
+    "resumeAllTitle": "Resume all follow-ups?",
+    "resumeAllMessage": "This will resume all paused follow-ups. Automated follow-ups will begin running again.",
     "tabs": {
       "templates": "Templates",
-      "active": "Active enrollments"
+      "active": "Active follow-ups"
     },
     "empty": {
-      "templatesTitle": "No sequences yet.",
+      "templatesTitle": "No follow-ups yet.",
       "templatesBody": "Get started with a pre-built template or create your own.",
-      "activeTitle": "No sequences yet.",
-      "activeBody": "Active sequences will appear here once you enroll contacts."
+      "activeTitle": "No active follow-ups yet.",
+      "activeBody": "Active follow-ups will appear here once leads are enrolled."
     },
     "createPage": {
       "back": "Back to follow-ups",
-      "title": "Create follow-up sequence",
-      "subtitle": "Define a trigger and the steps that run until the revenue is recovered.",
+      "title": "Create automated follow-up",
+      "subtitle": "Define a trigger and the steps your AI operator runs automatically.",
       "save": "Save",
       "saving": "Saving…",
       "basics": {
@@ -9106,27 +9106,27 @@
         "stopIfBooked": "Stop if contact books"
       },
       "errors": {
-        "createFailed": "Could not create sequence.",
+        "createFailed": "Could not create follow-up.",
         "stepFailed": "Could not add a step.",
         "generic": "Could not create the follow-up. Please try again."
       },
       "toast": {
-        "saved": "Sequence saved."
+        "saved": "Follow-up saved."
       }
     },
-    "loadError": "Failed to load follow-up sequences",
-    "pauseSequence": "Pause sequence",
-    "resumeSequence": "Resume sequence",
+    "loadError": "Failed to load follow-ups",
+    "pauseSequence": "Pause follow-up",
+    "resumeSequence": "Resume follow-up",
     "error": {
       "generic": "An unexpected error occurred. Please try again."
     },
-    "sequencePaused": "Sequence paused",
-    "pauseFailed": "Failed to pause sequence",
-    "sequenceResumed": "Sequence resumed",
-    "resumeFailed": "Failed to resume sequence",
-    "allPaused": "All sequences paused",
+    "sequencePaused": "Follow-up paused",
+    "pauseFailed": "Failed to pause follow-up",
+    "sequenceResumed": "Follow-up resumed",
+    "resumeFailed": "Failed to resume follow-up",
+    "allPaused": "All follow-ups paused",
     "pauseAll": "Pause all",
-    "allResumed": "All sequences resumed",
+    "allResumed": "All follow-ups resumed",
     "resumeAll": "Resume all"
   },
   "api": {

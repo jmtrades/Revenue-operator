@@ -500,9 +500,9 @@ export default function AppointmentsPage() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                   <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
                 </span>
-                Brain-managed
+                AI-managed
               </span>
-              Reminders sent automatically at 24h and 1h before. No-shows trigger recovery sequences.
+              Reminders sent automatically at 24h and 1h before. No-shows trigger automated recovery follow-ups.
             </p>
             {fetchError && (
               <div className="mt-3 flex items-center gap-2">
@@ -1009,7 +1009,7 @@ export default function AppointmentsPage() {
                       onClick={() => setOutcomeData({ ...outcomeData, outcome: suggestion, sentiment: suggestion === "no_show" ? "negative" : "positive" })}
                       className="mb-3 w-full flex items-center gap-2 rounded-lg border border-violet-500/30 bg-violet-500/5 px-3 py-2 text-left hover:bg-violet-500/10 transition-colors"
                     >
-                      <span className="text-[10px] font-medium text-violet-400 uppercase">Brain suggests</span>
+                      <span className="text-[10px] font-medium text-violet-400 uppercase">AI suggests</span>
                       <span className="text-xs text-[var(--text-primary)]">{suggestionLabel}</span>
                       <span className="ml-auto text-[10px] text-[var(--text-tertiary)]">Click to apply</span>
                     </button>

@@ -395,21 +395,21 @@ export default function AppFollowUpsPage() {
           {sequences.length > 0 || brainActivity?.follow_ups_sent ? (
             <>
               <div className="flex items-center gap-2 mb-1">
-                <p className="text-sm text-violet-400 font-semibold">Follow-up sequences active</p>
+                <p className="text-sm text-violet-400 font-semibold">Automated follow-ups active</p>
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                   <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
                 </span>
               </div>
               <p className="text-xs text-[var(--text-secondary)]">
-                {sequences.filter(s => s.is_active).length} active sequences running. Active sequences are executing scheduled follow-ups. Timing and channels are based on the sequence configuration you set.
+                {sequences.filter(s => s.is_active).length} automated follow-ups running. Your AI operator is handling follow-ups automatically via call, SMS, and email based on your configured rules.
               </p>
             </>
           ) : (
             <>
-              <p className="text-sm text-violet-400 font-semibold mb-1">Follow-ups will start when leads arrive</p>
+              <p className="text-sm text-violet-400 font-semibold mb-1">Follow-ups will start automatically when leads arrive</p>
               <p className="text-xs text-[var(--text-secondary)]">
-                When new leads arrive, follow-up sequences will be created based on your configured templates and rules. You can also manually create sequences below.
+                When new leads arrive, your AI operator will automatically follow up based on your configured templates and rules. Choose a template below to get started.
               </p>
             </>
           )}
@@ -461,9 +461,9 @@ export default function AppFollowUpsPage() {
                 </p>
               </div>
 
-              {/* Active Sequences — show only real sequences that exist */}
+              {/* Active Follow-ups — show only real follow-ups that exist */}
               <div className="mb-6">
-                <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Your Sequences</h3>
+                <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Your Follow-ups</h3>
                 {sequences.length > 0 ? (
                   <div className="space-y-2">
                     {sequences.map((seq) => (
@@ -489,7 +489,7 @@ export default function AppFollowUpsPage() {
                   </div>
                 ) : (
                   <p className="text-sm text-[var(--text-tertiary)] p-3 rounded-lg bg-[var(--bg-hover)] border border-[var(--border-default)]">
-                    No sequences created yet. The brain will auto-enroll leads when sequences are available.
+                    No follow-ups created yet. Choose a template above to start automatically following up with leads.
                   </p>
                 )}
               </div>

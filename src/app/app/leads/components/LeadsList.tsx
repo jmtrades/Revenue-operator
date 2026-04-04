@@ -167,12 +167,12 @@ export function LeadsList({
         title={tLeads("empty.title")}
         description={tLeads("empty.description")}
         primaryAction={{
-          label: tLeads("importCsv"),
-          href: "/app/leads?import=1",
+          label: tLeads("empty.connectCrm") ?? "Connect CRM",
+          href: "/app/settings/integrations",
         }}
         secondaryAction={{
-          label: tLeads("addContact"),
-          href: "/app/leads?add=1",
+          label: tLeads("importCsv"),
+          href: "/app/leads?import=1",
         }}
       />
     );
