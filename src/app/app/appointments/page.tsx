@@ -648,7 +648,7 @@ export default function AppointmentsPage() {
             <EmptyState
               icon={Calendar}
               title={t("appointments.empty.title", { defaultValue: "Your operator is ready to book" })}
-              description={t("appointments.empty.body", { defaultValue: "Appointments appear here when the brain books meetings for your leads. Connect your calendar to enable booking." })}
+              description={t("appointments.empty.body", { defaultValue: "Appointments appear here when your AI operator books meetings for leads. Connect your calendar to enable booking." })}
               primaryAction={{
                 label: t("appointments.empty.action", { defaultValue: "Connect Calendar" }),
                 href: "/app/settings/integrations",

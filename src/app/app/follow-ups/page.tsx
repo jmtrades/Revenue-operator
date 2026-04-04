@@ -457,7 +457,7 @@ export default function AppFollowUpsPage() {
                   {brainActivity?.follow_ups_sent ?? 0}
                 </p>
                 <p className="text-xs text-[var(--text-secondary)] mt-2">
-                  Total follow-up actions sent by the brain engine
+                  Total automated follow-up actions executed
                 </p>
               </div>
 
@@ -520,7 +520,7 @@ export default function AppFollowUpsPage() {
                 ) : (
                   <div className="p-4 rounded-lg bg-[var(--bg-hover)] border border-[var(--border-default)] text-center">
                     <p className="text-sm text-[var(--text-secondary)]">
-                      Brain activity will appear here as leads are processed
+                      Activity will appear here as leads are processed
                     </p>
                   </div>
                 )}
