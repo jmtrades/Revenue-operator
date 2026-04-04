@@ -531,7 +531,7 @@ export async function handleInboundCall(
     status?: string | null;
     billing_tier?: string | null;
   } | null;
-  const billingStatus = ws?.billing_status ?? "trial";
+  const billingStatus = ws?.billing_status ?? "pending";
   const workspaceStatus = ws?.status ?? "active";
   const billingAllowed =
     billingStatus === "active" ||

@@ -111,7 +111,8 @@ export async function GET(req: NextRequest) {
       uniqueSellingPoints: businessContext.unique_selling_points ?? "",
       targetAudience: businessContext.target_audience ?? "",
     });
-  } catch {
+  } catch (err) {
+    log("error", "workspace.agent.GET_failed", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
@@ -305,7 +306,8 @@ export async function PATCH(req: NextRequest) {
       business_hours: body.businessHours && typeof body.businessHours === "object" ? body.businessHours as Record<string, { start: string; end: string } | null> : null,
     });
     return NextResponse.json({ ok: true });
-  } catch {
+  } catch (err) {
+    log("error", "workspace.agent.PATCH_failed", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

@@ -8,6 +8,7 @@ import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { buildWorkspaceReadiness } from "@/lib/workspace/readiness";
+import { log } from "@/lib/logger";
 import { assertSameOrigin } from "@/lib/http/csrf";
 
 export const dynamic = "force-dynamic";
@@ -199,7 +200,8 @@ export async function GET(req: NextRequest) {
       workspaceReady: !readiness.showBanner,
       notification_preferences: (row.notification_preferences as Record<string, string[]> | null) ?? null,
     });
-  } catch {
+  } catch (err) {
+    log("error", "workspace.me.GET_failed", { workspaceId, error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({
       authenticated: true,
       name: "My Workspace",
@@ -286,7 +288,8 @@ export async function PATCH(req: NextRequest) {
       // non-blocking
     }
     return NextResponse.json({ ok: true });
-  } catch {
+  } catch (err) {
+    log("error", "workspace.me.PATCH_failed", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
