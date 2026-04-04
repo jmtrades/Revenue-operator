@@ -288,7 +288,7 @@ export async function POST(req: NextRequest) {
     })();
   }
 
-  // Auto-enroll in active campaigns: if workspace has active outbound campaigns with auto_enroll, add imported leads
+  // Auto-enroll in active campaigns: add imported leads to ALL active outbound campaigns
   if (Array.isArray(data) && data.length > 0) {
     void (async () => {
       try {
@@ -297,8 +297,7 @@ export async function POST(req: NextRequest) {
           .select("id")
           .eq("workspace_id", workspaceId)
           .eq("status", "active")
-          .eq("auto_enroll_new_leads", true)
-          .limit(5);
+          .limit(10);
         if (activeCampaigns && activeCampaigns.length > 0) {
           const leadIds = (data as Array<{ id: string }>).map((r) => r.id);
           for (const campaign of activeCampaigns as Array<{ id: string }>) {
@@ -306,8 +305,26 @@ export async function POST(req: NextRequest) {
               campaign_id: campaign.id,
               lead_id: leadId,
               status: "pending",
+              created_at: new Date().toISOString(),
             }));
-            await db.from("campaign_leads").insert(enrollRows);
+            // Batch insert in chunks of 100
+            for (let i = 0; i < enrollRows.length; i += 100) {
+              const batch = enrollRows.slice(i, i + 100);
+              await db
+                .from("campaign_leads")
+                .upsert(batch, { onConflict: "campaign_id,lead_id", ignoreDuplicates: true });
+            }
+            // Update total_leads count
+            const { count } = await db
+              .from("campaign_leads")
+              .select("id", { count: "exact", head: true })
+              .eq("campaign_id", campaign.id);
+            if (count !== null) {
+              await db
+                .from("outbound_campaigns")
+                .update({ total_leads: count })
+                .eq("id", campaign.id);
+            }
           }
           log("info", "leads.import.auto_enrolled", {
             workspace_id: workspaceId,
