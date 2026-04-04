@@ -144,7 +144,7 @@ export const BILLING_PLANS: Record<PlanSlug, BillingPlan> = {
       missedCallRecovery: true,
       noShowRecovery: true,
       reactivationCampaigns: true,
-      outboundCampaigns: false,
+      outboundCampaigns: true,
       outboundPowerDialer: false,
       industryTemplates: true,
       smsEmail: true,
