@@ -228,6 +228,47 @@ export async function POST(req: NextRequest) {
     // Do not block lead creation on sync enqueue
   }
 
+  // Auto-enroll lead in active outbound campaigns (so the dialer picks it up)
+  if (phoneStr) {
+    try {
+      const { data: activeCampaigns } = await db
+        .from("outbound_campaigns")
+        .select("id")
+        .eq("workspace_id", workspaceId)
+        .eq("status", "active")
+        .limit(10);
+
+      const campaigns = (activeCampaigns ?? []) as Array<{ id: string }>;
+      if (campaigns.length > 0) {
+        const enrollRows = campaigns.map((c) => ({
+          campaign_id: c.id,
+          lead_id: createdLead.id,
+          status: "pending",
+          created_at: new Date().toISOString(),
+        }));
+        await db
+          .from("campaign_leads")
+          .upsert(enrollRows, { onConflict: "campaign_id,lead_id", ignoreDuplicates: true });
+
+        // Update total_leads count for each campaign
+        for (const c of campaigns) {
+          const { count } = await db
+            .from("campaign_leads")
+            .select("id", { count: "exact", head: true })
+            .eq("campaign_id", c.id);
+          if (count !== null) {
+            await db
+              .from("outbound_campaigns")
+              .update({ total_leads: count })
+              .eq("id", c.id);
+          }
+        }
+      }
+    } catch {
+      // Non-blocking: don't fail lead creation if enrollment fails
+    }
+  }
+
   // Slack/Teams new lead notifications (Task 24)
   try {
     const { notifyNewLead } = await import("@/lib/integrations/slack");

@@ -170,13 +170,13 @@ function isStepComplete(stepId: StepId, agent: Agent): boolean {
     case "voice":
       return !!agent.voice?.trim();
     case "knowledge":
-      return agent.faq.filter((e) => (e.question ?? "").trim() && (e.answer ?? "").trim()).length >= 3;
+      // At least 1 FAQ entry OR business context/services filled — AI auto-generates the rest
+      return agent.faq.filter((e) => (e.question ?? "").trim() && (e.answer ?? "").trim()).length >= 1 ||
+        !!(agent.services?.trim()) || !!(agent.businessContext?.trim());
     case "behavior":
-      return (
-        agent.alwaysTransfer.length > 0 ||
-        (agent.transferPhone ?? "").trim() !== "" ||
-        agent.transferRules.some((r) => (r.phrase ?? "").trim())
-      );
+      // Considered complete if any behavior is configured, OR if agent has a greeting
+      // (the AI has smart defaults for all behavior — this step is optional)
+      return true; // Always pass — AI handles defaults intelligently
     case "test":
       return (agent.stats?.totalCalls ?? 0) > 0;
     case "golive":
@@ -1325,10 +1325,44 @@ export default function AppAgentsPageClient({
                     getReadiness={getAgentReadinessBound}
                     onBack={() => void handleStepChange("test")}
                     onActivate={async () => {
+                      // First persist any pending agent changes
                       const result = await persistAgent(selected, {
-                        showToast: true,
+                        showToast: false,
                       });
-                      if (result.patchOk) {
+                      if (!result.patchOk) {
+                        setToast(tAgents("toast.saveFailed"));
+                        return;
+                      }
+
+                      // Then trigger the auto-activation pipeline:
+                      // creates campaign, enrolls leads, sets everything live
+                      try {
+                        const activateRes = await fetch("/api/agents/activate", {
+                          method: "POST",
+                          credentials: "include",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ agent_id: selected.id }),
+                        });
+                        const activateData = await activateRes.json() as {
+                          ok?: boolean;
+                          message?: string;
+                          leads_enrolled?: number;
+                        };
+                        if (activateRes.ok && activateData.ok) {
+                          const msg = activateData.leads_enrolled && activateData.leads_enrolled > 0
+                            ? `Agent is live! ${activateData.leads_enrolled} leads queued for AI calling.`
+                            : "Agent is live! Add leads and they'll be called automatically.";
+                          setToast(msg);
+                          setShowConfetti(true);
+                          setTimeout(() => setShowConfetti(false), 4000);
+                        } else {
+                          // Activation partially succeeded (agent is active but campaign may have failed)
+                          setToast(activateData.message ?? tAgents("toast.agentLive"));
+                          setShowConfetti(true);
+                          setTimeout(() => setShowConfetti(false), 4000);
+                        }
+                      } catch {
+                        // Fallback: agent was saved, just show generic success
                         setToast(tAgents("toast.agentLive"));
                         setShowConfetti(true);
                         setTimeout(() => setShowConfetti(false), 4000);

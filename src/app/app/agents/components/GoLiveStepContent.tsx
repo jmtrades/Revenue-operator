@@ -37,16 +37,15 @@ export function GoLiveStepContent({
   const t = useTranslations("agents");
   const r = getReadiness(agent);
   const testCallCompleted = agent.test_call_completed === true;
-  // Core requirements: name, greeting, voice selected, AND at least 1 FAQ (reduced from 3 — brain auto-seeds the rest)
+  // Core requirements: name + greeting + voice. FAQ is optional — AI auto-generates from business context.
   const hasMinConfig =
     !!(agent.name?.trim() && agent.greeting?.trim()) &&
-    !!agent.voice?.trim() &&
-    (agent.faq?.length ?? 0) >= 1;
-  // Test call is recommended but not a hard blocker — operator can skip with reduced readiness
-  const canActivate = hasMinConfig && (testCallCompleted || r.percent >= 60);
+    !!agent.voice?.trim();
+  // Test call recommended but not blocking — user can activate with just the basics
+  const canActivate = hasMinConfig;
   const assignedNumber = workspaceNumbers.find((n) => n.assigned_agent_id === agent.id);
   const hasPhoneOrEnvFallback = !!assignedNumber || workspaceNumbers.length > 0;
-  const allowActivate = canActivate && r.percent >= 40 && hasPhoneOrEnvFallback;
+  const allowActivate = canActivate && hasPhoneOrEnvFallback;
   const unassignedNumbers = workspaceNumbers.filter(
     (n) => !n.assigned_agent_id || n.assigned_agent_id === agent.id,
   );
