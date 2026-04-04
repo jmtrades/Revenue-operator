@@ -45,13 +45,22 @@ export async function executeLeadOutboundCall(
 
   const { data: lead } = await db
     .from("leads")
-    .select("id, phone, name, company, metadata")
+    .select("id, phone, name, company, state, score, tags, notes, metadata")
     .eq("id", leadId)
     .eq("workspace_id", workspaceId)
     .maybeSingle();
   if (!lead) return { ok: false, error: "Lead not found" };
 
-  const leadRow = lead as { phone?: string | null; name?: string | null; company?: string | null; metadata?: { service_requested?: string; notes?: string } | null };
+  const leadRow = lead as {
+    phone?: string | null;
+    name?: string | null;
+    company?: string | null;
+    state?: string | null;
+    score?: number | null;
+    tags?: string[] | null;
+    notes?: string | null;
+    metadata?: { service_requested?: string; notes?: string } | null;
+  };
   const phone = leadRow.phone;
   if (!phone || String(phone).replace(/\D/g, "").length < 10) {
     return { ok: false, error: "Lead has no valid phone number" };
@@ -239,11 +248,15 @@ export async function executeLeadOutboundCall(
 
   const leadName = leadRow.name?.trim() || "there";
   const serviceRequested = leadRow.metadata?.service_requested?.trim() || leadRow.company?.trim() || "your services";
-  const notes = leadRow.metadata?.notes?.trim() || "";
+  const notes = leadRow.metadata?.notes?.trim() || leadRow.notes?.trim() || "";
   const leadForPrompt: LeadForPrompt = {
     name: leadRow.name,
     phone: leadRow.phone,
     company: leadRow.company,
+    state: (leadRow.state as any) || null,
+    score: leadRow.score ?? null,
+    tags: leadRow.tags ?? null,
+    notes: notes || null,
     metadata: leadRow.metadata,
   };
   const campaignType = options?.campaignType;

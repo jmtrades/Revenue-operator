@@ -125,12 +125,12 @@ function mapApiLeadToView(
 ): LeadView {
   const name = l.name?.trim() || l.company?.trim() || t("leads.defaultName");
   const status: LeadStatus =
-    (l.state === "new" && "New") ||
-    (l.state === "contacted" && "Contacted") ||
-    (l.state === "qualified" && "Qualified") ||
-    (l.state === "appointment_set" && "Appointment Set") ||
-    (l.state === "won" && "Won") ||
-    (l.state === "lost" && "Lost") ||
+    (l.state === "NEW" && "New") ||
+    (l.state === "CONTACTED" && "Contacted") ||
+    (l.state === "QUALIFIED" && "Qualified") ||
+    (l.state === "BOOKED" && "Appointment Set") ||
+    (l.state === "WON" && "Won") ||
+    (l.state === "LOST" && "Lost") ||
     "New";
   const meta = l.metadata;
   const source: LeadSource = meta?.source ? (SOURCE_TO_LABEL[meta.source] ?? "Inbound Call") : "Inbound Call";
@@ -787,7 +787,7 @@ export default function LeadsPage() {
                     name,
                     phone,
                     email: email || undefined,
-                    source: "website",
+                    source: "manual",
                     status: "New",
                   }),
                 });

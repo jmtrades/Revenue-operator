@@ -382,7 +382,7 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
       if (rtFields.email) updateFields.email = String(rtFields.email).trim().toLowerCase();
       if (rtFields.phone) updateFields.phone = formatPhone(rtFields.phone);
       if (rtFields.company) updateFields.company = String(rtFields.company).trim();
-      if (rtFields.state) updateFields.status = String(rtFields.state).toLowerCase();
+      if (rtFields.state) updateFields.state = String(rtFields.state).toUpperCase();
       updateFields.updated_at = new Date().toISOString();
       updateFields.last_activity_at = new Date().toISOString();
 
@@ -440,7 +440,7 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
           email: updateFields.email ?? null,
           phone: updateFields.phone ?? null,
           company: updateFields.company ?? null,
-          status: updateFields.status ?? "NEW",
+          state: updateFields.state ?? "NEW",
           metadata: {
             source: `crm_${provider}`,
             imported_at: new Date().toISOString(),
