@@ -703,10 +703,7 @@ export default function CampaignsPage() {
                     <span>·</span>
                     <span>{t("failed")}: {Math.max(0, (campaign.leads_called ?? 0) - (campaign.connects ?? 0))}</span>
                     <span>·</span>
-                    <span className={dailyUsed >= dailyLimit ? "text-[var(--accent-warning,#f59e0b)] font-medium" : ""}>{t("dailyUsage", { defaultValue: "Daily" })}: {dailyUsed}/{dailyLimit}</span>
-                    {dailyUsed >= dailyLimit && (
-                      <span className="text-[var(--accent-warning,#f59e0b)] font-medium">{t("dailyLimitReached", { defaultValue: "— limit reached, resumes tomorrow" })}</span>
-                    )}
+                    <span>{t("type", { defaultValue: "Type" })}: {campaign.type.replace(/_/g, " ")}</span>
                   </div>
                   <div className="mt-3">
                     <div className="flex items-center justify-between text-[11px] text-[var(--text-secondary)] mb-1">

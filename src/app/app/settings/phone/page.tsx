@@ -358,7 +358,7 @@ export default function AppSettingsPhonePage() {
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
             <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wide mb-2">{tPhone("statusTotalNumbers")}</p>
             <p className="text-2xl font-bold text-[var(--text-primary)]">{workspaceNumbers.length}</p>
-            <p className="text-xs text-[var(--text-secondary)] mt-2">{workspaceNumbers.filter(n => n.status === "active").length} {tPhone("active")} (provisioned via telephony provider)</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-2">{workspaceNumbers.filter(n => n.status === "active").length} {tPhone("active")}</p>
           </div>
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
             <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wide mb-2">{tPhone("statusMonthlyCost")}</p>
@@ -368,7 +368,16 @@ export default function AppSettingsPhonePage() {
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-4">
             <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wide mb-2">{tPhone("statusPrimary")}</p>
             <p className="text-sm font-mono text-[var(--text-primary)] mt-2">{phoneNumber && !loading ? formatPhoneNumber(phoneNumber) : "—"}</p>
-            <p className="text-xs text-[var(--text-secondary)] mt-2">{tPhone("statusInbound")}</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-2">
+              {(() => {
+                const active = workspaceNumbers.filter(n => n.status === "active");
+                if (active.length === 0) return tPhone("statusInbound");
+                const hasVoice = active.some(n => n.capabilities?.voice);
+                const hasSms = active.some(n => n.capabilities?.sms);
+                const caps = [hasVoice && "Voice", hasSms && "SMS"].filter(Boolean);
+                return caps.length > 0 ? `Inbound & Outbound · ${caps.join(" + ")}` : tPhone("statusInbound");
+              })()}
+            </p>
           </div>
         </div>
       )}
@@ -396,6 +405,13 @@ export default function AppSettingsPhonePage() {
               <FileInput className="w-4 h-4" />
               {tPhone("portNumber")}
             </Link>
+            <a
+              href="#verify-own"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl border border-[var(--border-default)] text-[var(--text-secondary)] font-medium text-sm hover:bg-[var(--bg-hover)] transition-[background-color,border-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
+            >
+              <PhoneForwarded className="w-4 h-4" />
+              {tPhone("connectYourNumber", { defaultValue: "Connect Your Number" })}
+            </a>
           </div>
         </div>
         {numbersLoading ? (
@@ -620,7 +636,7 @@ export default function AppSettingsPhonePage() {
           </details>
 
           {/* Verify a number by SMS */}
-          <div className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-6">
+          <div id="verify-own" className="p-6 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-6 scroll-mt-4">
             <p className="text-sm font-medium text-[var(--text-primary)] mb-1">{tPhone("verifyBySms")}</p>
             <p className="text-xs text-[var(--text-tertiary)] mb-3">{tPhone("verifyBySmsDesc")}</p>
             {verifiedNumber ? (
