@@ -17,7 +17,7 @@ import { handleInboundCall } from "@/lib/voice/call-flow";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { log } from "@/lib/logger";
 
-const FALLBACK_TWIML = `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">Thanks for calling. Please hold while we connect you.</Say><Pause length="2"/><Say voice="alice">If you need to speak to someone, please leave your name and number after the beep.</Say><Record maxLength="90" transcribe="true"/></Response>`;
+const FALLBACK_TWIML = `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="Polly.Joanna">Thanks for calling. Please hold while we connect you.</Say><Pause length="2"/><Say voice="Polly.Joanna">If you need to speak to someone, please leave your name and number after the beep.</Say><Record maxLength="120" transcribe="true"/></Response>`;
 
 function verifyTwilioSignature(url: string, params: Record<string, string>, signature: string): boolean {
   const token = process.env.TWILIO_AUTH_TOKEN;

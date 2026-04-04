@@ -140,7 +140,7 @@ export async function POST(req: NextRequest) {
   if (!workspaceId) {
     log("error", "twilio-voice.no-workspace-found", { to, from });
     return new NextResponse(
-      `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">We're sorry, this number is not currently in service. Please check the number and try again.</Say><Hangup/></Response>`,
+      `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="Polly.Joanna">We're sorry, this number is not currently in service. Please check the number and try again.</Say><Hangup/></Response>`,
       { status: 200, headers: { "Content-Type": "text/xml" } },
     );
   }

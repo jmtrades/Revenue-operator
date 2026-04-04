@@ -518,7 +518,7 @@ export async function handleInboundCall(
 ): Promise<string> {
   const db = getDb();
   const busyVoicemailTwiml =
-    '<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">All agents are busy. Please hold or leave a message after the tone.</Say><Record maxLength="120" playBeep="true" /></Response>';
+    '<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="Polly.Joanna">All agents are busy. Please hold or leave a message after the tone.</Say><Record maxLength="120" playBeep="true" /></Response>';
 
   // 0) Workspace guardrails before call processing.
   const { data: workspace } = await db
@@ -789,6 +789,6 @@ export async function handleInboundCall(
       workspaceId: params.workspaceId,
     });
     // Fallback to basic TwiML
-    return `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">Thank you for calling. Please hold.</Say><Pause length="2"/></Response>`;
+    return `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="Polly.Joanna">Thank you for calling. We're experiencing a brief delay. Please leave your name and number after the beep and we'll get back to you shortly.</Say><Record maxLength="120" transcribe="true" playBeep="true" /></Response>`;
   }
 }
