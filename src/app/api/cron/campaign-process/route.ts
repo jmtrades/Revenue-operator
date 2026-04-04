@@ -11,8 +11,8 @@ import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
 import { BILLING_PLANS, normalizeTier } from "@/lib/billing-plans";
 
-/** Max calls to trigger per cron tick per campaign (keep bounded) */
-const MAX_PER_TICK = 5;
+/** Max calls to trigger per cron tick per campaign (keep bounded but allow mass operations) */
+const MAX_PER_TICK = 25;
 
 export async function GET(req: NextRequest) {
   const authErr = assertCronAuthorized(req);
@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
     }
 
     const { data: active } = await db
-      .from("campaigns")
+      .from("outbound_campaigns")
       .select("id, workspace_id, total_contacts, called, type, metadata")
       .eq("status", "active")
       .limit(50);
@@ -107,7 +107,7 @@ export async function GET(req: NextRequest) {
       const campaignRemaining = Math.max(0, Number(row.total_contacts || 0) - Number(row.called || 0));
       if (campaignRemaining <= 0) {
         // Campaign exhausted — mark as completed
-        await db.from("campaigns").update({ status: "completed", updated_at: new Date().toISOString() }).eq("id", row.id);
+        await db.from("outbound_campaigns").update({ status: "completed", updated_at: new Date().toISOString() }).eq("id", row.id);
         continue;
       }
 
@@ -126,7 +126,7 @@ export async function GET(req: NextRequest) {
       const leads = (campaignLeads ?? []) as Array<{ id: string; lead_id: string }>;
       if (leads.length === 0) {
         // No more pending leads — mark campaign completed
-        await db.from("campaigns").update({ status: "completed", updated_at: new Date().toISOString() }).eq("id", row.id);
+        await db.from("outbound_campaigns").update({ status: "completed", updated_at: new Date().toISOString() }).eq("id", row.id);
         continue;
       }
 
@@ -187,7 +187,7 @@ export async function GET(req: NextRequest) {
       // Update campaign counter
       const nextCalled = Number(row.called || 0) + callsMade;
       await db
-        .from("campaigns")
+        .from("outbound_campaigns")
         .update({ called: nextCalled, updated_at: new Date().toISOString() })
         .eq("id", row.id);
 

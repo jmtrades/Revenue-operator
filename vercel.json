@@ -78,6 +78,10 @@
       "schedule": "*/15 * * * *"
     },
     {
+      "path": "/api/cron/process-email-queue",
+      "schedule": "*/5 * * * *"
+    },
+    {
       "path": "/api/cron/wizard-abandonment",
       "schedule": "0 * * * *"
     },

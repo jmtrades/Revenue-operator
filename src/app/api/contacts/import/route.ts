@@ -14,6 +14,7 @@ import { normalizePhoneE164 } from "@/lib/phone/normalize";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { runWithWriteContextAsync } from "@/lib/safety/unsafe-write-guard";
+import { log } from "@/lib/logger";
 
 /**
  * CSV parser that properly handles quoted fields with commas
@@ -23,9 +24,9 @@ function parseCSV(text: string): Record<string, string>[] {
   const lines = text.split(/\r?\n/).filter((l) => l.trim());
   if (lines.length < 2) return [];
 
-  // Parse header row
+  // Parse header row — normalize to snake_case, collapse consecutive underscores
   const headers = parseCSVLine(lines[0]).map((h) =>
-    h.trim().toLowerCase().replace(/[^a-z0-9_]/g, "_")
+    h.trim().toLowerCase().replace(/[^a-z0-9_]/g, "_").replace(/_+/g, "_").replace(/^_|_$/g, "")
   );
 
   // Parse data rows
@@ -128,11 +129,11 @@ export async function POST(req: NextRequest) {
       }
 
       rows = csvRows.map((r) => ({
-        name: r.name || r.full_name || r.contact_name || "",
-        phone: r.phone || r.phone_number || r.contact_phone || "",
-        email: r.email || r.email_address || r.contact_email || "",
-        company: r.company || r.organization || r.business_name || "",
-        notes: r.notes || r.comments || r.description || "",
+        name: r.name || r.full_name || r.contact_name || r.first_name || r.lead_name || [r.first_name, r.last_name].filter(Boolean).join(" ") || "",
+        phone: r.phone || r.phone_number || r.contact_phone || r.mobile || r.phone_mobile || r.cell || r.cell_phone || r.telephone || "",
+        email: r.email || r.email_address || r.contact_email || r.e_mail || "",
+        company: r.company || r.organization || r.business_name || r.company_name || "",
+        notes: r.notes || r.comments || r.description || r.note || "",
       }));
     } catch (e) {
       if (e instanceof Error && e.message.includes("exceeds maximum")) {
@@ -195,26 +196,135 @@ export async function POST(req: NextRequest) {
   }
 
   const db = getDb();
-  const toInsert = valid.map((r) => ({
-    workspace_id: workspaceId,
-    name: r.name,
-    phone: normalizePhoneE164(r.phone),
-    email: r.email,
-    company: r.company,
-    status: "NEW",
-    metadata: { source: "csv_import", notes: r.notes, score: 40 },
-  }));
+  log("info", "contacts.import.started", { workspace_id: workspaceId, total_rows: valid.length });
 
-  const insertResult = await runWithWriteContextAsync("api", async () =>
+  // Deduplicate: collect all phones and emails from the import batch
+  const normalizedPhones = valid.map((r) => normalizePhoneE164(r.phone)).filter(Boolean);
+  const normalizedEmails = valid.map((r) => r.email).filter(Boolean) as string[];
+
+  // Fetch existing leads by phone or email to prevent duplicates
+  const existingPhones = new Set<string>();
+  const existingEmails = new Set<string>();
+
+  if (normalizedPhones.length > 0) {
+    const { data: phoneDups } = await db
+      .from("leads")
+      .select("phone")
+      .eq("workspace_id", workspaceId)
+      .in("phone", normalizedPhones);
+    for (const r of (phoneDups ?? []) as Array<{ phone?: string }>) {
+      if (r.phone) existingPhones.add(r.phone);
+    }
+  }
+  if (normalizedEmails.length > 0) {
+    const { data: emailDups } = await db
+      .from("leads")
+      .select("email")
+      .eq("workspace_id", workspaceId)
+      .in("email", normalizedEmails);
+    for (const r of (emailDups ?? []) as Array<{ email?: string }>) {
+      if (r.email) existingEmails.add(r.email.toLowerCase());
+    }
+  }
+
+  let duplicateCount = 0;
+  const toInsert = valid
+    .map((r) => {
+      const phone = normalizePhoneE164(r.phone);
+      const email = r.email?.toLowerCase() ?? null;
+      if (phone && existingPhones.has(phone)) { duplicateCount++; return null; }
+      if (email && existingEmails.has(email)) { duplicateCount++; return null; }
+      return {
+        workspace_id: workspaceId,
+        name: r.name,
+        phone,
+        email: r.email,
+        company: r.company,
+        state: "NEW",
+        metadata: { source: "csv_import", notes: r.notes, score: 40 },
+      };
+    })
+    .filter(Boolean);
+
+  if (toInsert.length === 0) {
+    log("info", "contacts.import.all_duplicates", { workspace_id: workspaceId, duplicates: duplicateCount });
+    return NextResponse.json({
+      imported: 0,
+      duplicates: duplicateCount,
+      skipped: rows.length - valid.length,
+      errors: errors.slice(0, 10),
+      total_processed: rows.length,
+    });
+  }
+
+  const { data, error: dbErr } = await runWithWriteContextAsync("api", async () =>
     db.from("leads").insert(toInsert).select("id")
-  ) as { data?: { id: string }[] | null; error?: unknown };
-  if (insertResult.error) return NextResponse.json({ error: "Could not process contact data. Please try again." }, { status: 500 });
-  const imported = Array.isArray(insertResult.data) ? insertResult.data.length : 0;
+  );
+  if (dbErr) {
+    log("error", "contacts.import.db_error", { workspace_id: workspaceId, error: (dbErr as { message?: string }).message ?? String(dbErr) });
+    return NextResponse.json({ error: "Could not process contact data. Please try again." }, { status: 500 });
+  }
+  const imported = Array.isArray(data) ? data.length : 0;
+
+  // Autonomous Brain: compute initial intelligence for imported contacts (non-blocking)
+  if (Array.isArray(data) && data.length > 0) {
+    void (async () => {
+      try {
+        const { computeLeadIntelligence, persistLeadIntelligence } = await import("@/lib/intelligence/lead-brain");
+        for (const row of data.slice(0, 30) as Array<{ id: string }>) {
+          try {
+            const intelligence = await computeLeadIntelligence(workspaceId, row.id);
+            await persistLeadIntelligence(intelligence);
+          } catch {
+            // Non-blocking per lead — cron will catch up
+          }
+        }
+      } catch {
+        // Non-blocking
+      }
+    })();
+  }
+
+  // Auto-enroll in active campaigns: if workspace has active outbound campaigns, add imported leads
+  if (Array.isArray(data) && data.length > 0) {
+    void (async () => {
+      try {
+        const { data: activeCampaigns } = await db
+          .from("outbound_campaigns")
+          .select("id")
+          .eq("workspace_id", workspaceId)
+          .eq("status", "active")
+          .eq("auto_enroll_new_leads", true)
+          .limit(5);
+        if (activeCampaigns && activeCampaigns.length > 0) {
+          const leadIds = (data as Array<{ id: string }>).map((r) => r.id);
+          for (const campaign of activeCampaigns as Array<{ id: string }>) {
+            const enrollRows = leadIds.map((leadId) => ({
+              campaign_id: campaign.id,
+              lead_id: leadId,
+              status: "pending",
+            }));
+            await db.from("campaign_leads").insert(enrollRows);
+          }
+          log("info", "contacts.import.auto_enrolled", {
+            workspace_id: workspaceId,
+            campaigns: activeCampaigns.length,
+            leads: leadIds.length,
+          });
+        }
+      } catch {
+        // Non-blocking — campaign enrollment is a bonus
+      }
+    })();
+  }
+
+  log("info", "contacts.import.completed", { workspace_id: workspaceId, imported, duplicates: duplicateCount, validation_errors: errors.length });
 
   return NextResponse.json({
     imported,
-    skipped: valid.length - imported,
-    errors: errors.slice(0, 10), // Return first 10 errors for feedback
+    duplicates: duplicateCount,
+    skipped: valid.length - imported - duplicateCount,
+    errors: errors.slice(0, 10),
     total_processed: rows.length,
   });
 }

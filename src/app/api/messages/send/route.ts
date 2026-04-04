@@ -100,6 +100,7 @@ export async function POST(req: NextRequest) {
   const { data: existingConv } = await db
     .from("conversations")
     .select("id")
+    .eq("workspace_id", workspaceId)
     .eq("lead_id", lead_id)
     .eq("channel", channel)
     .limit(1)
@@ -110,6 +111,7 @@ export async function POST(req: NextRequest) {
     const { data: newConv, error: convErr } = await db
       .from("conversations")
       .insert({
+        workspace_id: workspaceId,
         lead_id,
         channel,
         external_thread_id: null,
@@ -156,8 +158,13 @@ export async function POST(req: NextRequest) {
 
   await db.from("messages").insert({
     conversation_id: conversationId,
+    workspace_id: workspaceId,
+    lead_id,
     role: "assistant",
     content: content.trim(),
+    direction: "outbound",
+    channel,
+    status: "sent",
   });
 
   return NextResponse.json({ ok: true, external_id: result.externalId });

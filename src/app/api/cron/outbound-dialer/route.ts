@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { log } from "@/lib/logger";
 import { getDb } from "@/lib/db/queries";
-import { getNextLead, initiateOutboundCall } from "@/lib/voice/outbound-dialer";
 import { assertCronAuthorized } from "@/lib/runtime";
 
 export const dynamic = "force-dynamic";
@@ -9,7 +8,8 @@ export const maxDuration = 30;
 
 /**
  * Cron: Process outbound dialer queues.
- * Runs every 2 minutes. Picks up active campaigns and dials next leads.
+ * Runs every 2 minutes. Picks up active campaigns from outbound_campaigns table
+ * and dials next pending leads via campaign_leads junction.
  */
 export async function GET(req: NextRequest) {
   const authErr = assertCronAuthorized(req);
@@ -19,50 +19,84 @@ export async function GET(req: NextRequest) {
   let callsInitiated = 0;
 
   try {
-    // Find all workspaces with active campaigns
-    const { data: workspaces } = await db
-      .from("workspaces")
-      .select("id, metadata")
+    // Query active campaigns from the outbound_campaigns table (not workspace metadata)
+    const { data: campaigns } = await db
+      .from("outbound_campaigns")
+      .select("id, workspace_id, type, metadata")
+      .eq("status", "active")
       .limit(50);
 
-    const wsList = (workspaces ?? []) as Array<{
+    const activeCampaigns = (campaigns ?? []) as Array<{
       id: string;
+      workspace_id: string;
+      type?: string;
       metadata?: Record<string, unknown>;
     }>;
 
-    for (const ws of wsList) {
-      const meta = ws.metadata ?? {};
-      const campaigns = (meta.outbound_campaigns ?? []) as Array<{
-        id: string;
-        status: string;
-        from_number: string;
-        settings: { max_concurrent_calls: number };
-      }>;
+    if (activeCampaigns.length === 0) {
+      return NextResponse.json({ ok: true, callsInitiated: 0 });
+    }
 
-      const activeCampaigns = campaigns.filter(c => c.status === "active");
+    // Lazy-import to avoid circular dependencies at module level
+    const { executeLeadOutboundCall } = await import("@/lib/outbound/execute-lead-call");
 
-      for (const campaign of activeCampaigns) {
-        // Check concurrent call limit
-        const maxConcurrent = campaign.settings?.max_concurrent_calls ?? 1;
+    for (const campaign of activeCampaigns) {
+      const maxConcurrent = (campaign.metadata?.max_concurrent_calls as number) ?? 3;
 
-        // Get next lead
-        const nextLead = await getNextLead(ws.id, campaign.id);
-        if (!nextLead) continue;
+      // Fetch next pending leads from campaign_leads junction table
+      const { data: pendingLeads } = await db
+        .from("campaign_leads")
+        .select("id, lead_id")
+        .eq("campaign_id", campaign.id)
+        .eq("status", "pending")
+        .order("created_at", { ascending: true })
+        .limit(maxConcurrent);
 
-        // Initiate the call
-        const result = await initiateOutboundCall(
-          ws.id,
-          campaign.id,
-          nextLead,
-          campaign.from_number,
-        );
+      const leads = (pendingLeads ?? []) as Array<{ id: string; lead_id: string }>;
+      if (leads.length === 0) continue;
 
-        if (result) {
-          callsInitiated++;
+      for (const cl of leads) {
+        try {
+          // Mark lead as in-progress
+          await db.from("campaign_leads").update({
+            status: "calling",
+            updated_at: new Date().toISOString(),
+          }).eq("id", cl.id);
+
+          const result = await executeLeadOutboundCall(
+            campaign.workspace_id,
+            cl.lead_id,
+            {
+              campaignType: (campaign.type as import("@/lib/campaigns/prompt").CampaignType) ?? "lead_followup",
+            },
+          );
+
+          if (result.ok) {
+            await db.from("campaign_leads").update({
+              status: "called",
+              call_session_id: result.call_session_id,
+              updated_at: new Date().toISOString(),
+            }).eq("id", cl.id);
+            callsInitiated++;
+          } else {
+            await db.from("campaign_leads").update({
+              status: "failed",
+              error_message: result.error,
+              updated_at: new Date().toISOString(),
+            }).eq("id", cl.id);
+          }
+        } catch (err) {
+          log("error", "cron.outbound_dialer.call_error", {
+            campaign_id: campaign.id,
+            lead_id: cl.lead_id,
+            error: err instanceof Error ? err.message : String(err),
+          });
+          await db.from("campaign_leads").update({
+            status: "failed",
+            error_message: err instanceof Error ? err.message : "Unknown error",
+            updated_at: new Date().toISOString(),
+          }).eq("id", cl.id);
         }
-
-        // Respect concurrent limit
-        if (callsInitiated >= maxConcurrent) break;
       }
     }
 

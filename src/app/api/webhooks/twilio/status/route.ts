@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { recordDeliveryReceipt } from "@/lib/delivery/provider";
 import { markAttemptDelivered } from "@/lib/delivery-assurance/action-attempts";
+import { log } from "@/lib/logger";
 import crypto from "crypto";
 
 export const dynamic = "force-dynamic";
@@ -106,14 +107,23 @@ export async function POST(request: NextRequest) {
   const callDuration = formParams.CallDuration ?? null;
 
   if (callSid) {
-    await db
+    // Look up the specific call session to ensure workspace isolation
+    const { data: existingSession } = await db
       .from("call_sessions")
-      .update({
-        status: callStatus === "completed" ? "completed" : callStatus,
-        duration_seconds: callDuration ? parseInt(callDuration, 10) : undefined,
-        call_ended_at: new Date().toISOString(),
-      })
-      .eq("external_meeting_id", callSid);
+      .select("id, workspace_id")
+      .eq("external_meeting_id", callSid)
+      .maybeSingle();
+
+    if (existingSession) {
+      await db
+        .from("call_sessions")
+        .update({
+          status: callStatus === "completed" ? "completed" : callStatus,
+          duration_seconds: callDuration ? parseInt(callDuration, 10) : undefined,
+          call_ended_at: new Date().toISOString(),
+        })
+        .eq("id", (existingSession as { id: string }).id);
+    }
   }
 
   return new NextResponse("OK", { status: 200, headers: { "Content-Type": "text/plain" } });
@@ -122,4 +132,3 @@ export async function POST(request: NextRequest) {
     return new NextResponse("Error", { status: 500, headers: { "Content-Type": "text/plain" } });
   }
 }
-import { log } from "@/lib/logger";

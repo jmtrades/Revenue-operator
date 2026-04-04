@@ -90,20 +90,14 @@ export async function GET(req: NextRequest) {
           }
 
           const workspace_id = lead.workspace_id;
-          const baseUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 
           try {
-            const callResponse = await fetch(`${baseUrl}/api/outbound/call`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "X-Internal-Request": "true",
-              },
-              body: JSON.stringify({ lead_id: lead.id, workspace_id }),
-            });
+            // Direct function import instead of HTTP roundtrip for reliability + perf
+            const { executeLeadOutboundCall } = await import("@/lib/outbound/execute-lead-call");
+            const callResult = await executeLeadOutboundCall(workspace_id, lead.id);
 
-            if (!callResponse.ok) {
-              log("warn", "cron.follow_ups.call_failed", { lead_id: lead.id, status: callResponse.status });
+            if (!callResult.ok) {
+              log("warn", "cron.follow_ups.call_failed", { lead_id: lead.id, error: callResult.error });
               failed++;
               continue;
             }

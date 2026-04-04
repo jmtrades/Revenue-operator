@@ -300,6 +300,15 @@ export class RecallVoiceProvider implements VoiceProvider {
       }
 
       const webhookBase = process.env.WEBHOOK_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+      if (!webhookBase) {
+        throw new Error("No webhook base URL configured — set NEXT_PUBLIC_APP_URL or WEBHOOK_BASE_URL");
+      }
+      // Validate the webhook base URL is a proper URL
+      try {
+        new URL(webhookBase);
+      } catch {
+        throw new Error(`Invalid webhook base URL: ${webhookBase}`);
+      }
       // Use the correct webhook URL for the active telephony provider
       const { getTelephonyProvider: getProvider } = await import("@/lib/telephony/get-telephony-provider");
       const activeProvider = getProvider();

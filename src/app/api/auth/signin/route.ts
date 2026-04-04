@@ -83,7 +83,10 @@ export async function POST(req: NextRequest) {
         .maybeSingle();
       if (!createErr && created) {
         workspaceId = (created as { id: string }).id;
-        await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
+        await Promise.all([
+          db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" }),
+          db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" }),
+        ]);
       }
     }
   } catch {
