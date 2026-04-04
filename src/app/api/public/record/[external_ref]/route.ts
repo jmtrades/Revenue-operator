@@ -9,8 +9,8 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getPublicEntryByExternalRef } from "@/lib/shared-transaction-assurance";
-import {
 import { log } from "@/lib/logger";
+import {
   hashIpForPublicRecord,
   checkPublicRecordRateLimit,
   incrementPublicRecordRateLimit,
