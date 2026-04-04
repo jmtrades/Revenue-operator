@@ -343,7 +343,7 @@ export default function PhoneMarketplacePage() {
               </div>
               <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--accent-primary)]/5 border border-[var(--accent-primary)]/10">
                 <span className="text-[var(--accent-primary)] text-xs">✓</span>
-                <p className="text-xs text-[var(--text-tertiary)]">{tPhone("marketplace.poweredByTelnyx")}</p>
+                <p className="text-xs text-[var(--text-tertiary)]">{tPhone("marketplace.verifiedNumbers", { defaultValue: "Verified business numbers" })}</p>
               </div>
             </div>
           )}

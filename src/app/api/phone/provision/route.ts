@@ -180,7 +180,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(
           {
             error: isMissingConfig
-              ? "Phone number purchase requires additional configuration. Please contact support or check your Telnyx settings."
+              ? "Phone number purchase requires additional configuration. Please contact support or check your phone provider settings."
               : "Phone number purchase failed. This number may no longer be available — please try a different number.",
             code: "TELNYX_TEMPORARY_FAILURE",
           },
