@@ -98,17 +98,17 @@ export async function POST(req: NextRequest) {
         await db.from("users").upsert({ id: userId, email }, { onConflict: "id" });
         const { data: created, error: insertErr } = await db
           .from("workspaces")
-          .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false })
+          .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false, billing_status: "pending" })
           .select("id")
           .maybeSingle();
         if (!insertErr && created) {
           workspaceId = (created as { id: string }).id;
           await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
           await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
-          await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing" });
+          await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "pending", status: "pending" });
         }
-      } catch {
-        // continue
+      } catch (err) {
+        log("warn", "[signup] workspace setup failed for user", { userId, error: err instanceof Error ? err.message : String(err) });
       }
       const cookie = createSessionCookie({ userId, workspaceId });
       if (cookie) {
@@ -166,17 +166,17 @@ export async function POST(req: NextRequest) {
         await db.from("users").upsert({ id: userId, email }, { onConflict: "id" });
         const { data: created, error: createErr } = await db
           .from("workspaces")
-          .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false })
+          .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false, billing_status: "pending" })
           .select("id")
           .maybeSingle();
         if (!createErr && created) {
           workspaceId = (created as { id: string }).id;
           await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
           await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
-          await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing" });
+          await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "pending", status: "pending" });
         }
-      } catch {
-        // continue
+      } catch (err) {
+        log("warn", "[signup] workspace setup failed for user", { userId, error: err instanceof Error ? err.message : String(err) });
       }
       const cookie = createSessionCookie({ userId, workspaceId });
       if (cookie) {
@@ -204,14 +204,14 @@ export async function POST(req: NextRequest) {
     await db.from("users").upsert({ id: userId, email }, { onConflict: "id" });
     const { data: created, error: createErr } = await db
       .from("workspaces")
-      .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false })
+      .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false, billing_status: "pending" })
       .select("id")
       .maybeSingle();
     if (!createErr && created) {
       workspaceId = (created as { id: string }).id;
       await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
       await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
-      await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing" });
+      await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "pending", status: "pending" });
     }
   } catch {
     // continue without workspace

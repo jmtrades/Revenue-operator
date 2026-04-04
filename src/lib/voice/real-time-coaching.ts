@@ -17,7 +17,6 @@
  * - Post-call coaching report generation
  */
 
-import { log } from "@/lib/logger";
 import type { ConversationMessage } from "./demo-agent";
 
 /* ── Types ───────────────────────────────────────────────────────── */
@@ -92,8 +91,8 @@ const QUESTION_PATTERN = /\?|what|how|when|where|why|which|who|could you|would y
 const EMPATHY_PATTERNS = /\b(understand|i hear you|makes sense|totally get|that's tough|i appreciate|great question|absolutely|valid|fair point)\b/i;
 const SOCIAL_PROOF_PATTERNS = /\b(customers|businesses|companies|clients|users|teams|practices|agencies|case study|proven|results|data shows|research)\b/i;
 const DISCOVERY_PATTERNS = /\b(what.*(challenge|struggle|pain|problem|frustrat|issue)|how.*(current|handle|manage|deal)|tell me about|walk me through|what's your biggest)\b/i;
-const URGENCY_PATTERNS = /\b(right now|today|this week|limited|exclusive|before|deadline|running out|only|special)\b/i;
-const VALUE_PATTERNS = /\b(save|recover|increase|boost|improve|reduce|eliminate|automat|roi|revenue|profit|growth|efficiency)\b/i;
+const _URGENCY_PATTERNS = /\b(right now|today|this week|limited|exclusive|before|deadline|running out|only|special)\b/i;
+const _VALUE_PATTERNS = /\b(save|recover|increase|boost|improve|reduce|eliminate|automat|roi|revenue|profit|growth|efficiency)\b/i;
 
 /* ── Real-Time Analysis ──────────────────────────────────────────── */
 

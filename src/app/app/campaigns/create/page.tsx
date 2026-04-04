@@ -44,7 +44,7 @@ type SequenceStep = {
   template: string;
 };
 
-const getCampaignTypes = (t: any): Array<{
+const getCampaignTypes = (t: (key: string, values?: Record<string, string>) => string): Array<{
   id: CampaignType;
   icon: React.ComponentType<{ className?: string }>;
   label: string;
@@ -134,7 +134,7 @@ export default function CampaignCreatePage() {
   const [hourlyThrottle, setHourlyThrottle] = useState<number | "">(10);
   const [optOutConfirmed, setOptOutConfirmed] = useState(false);
 
-  const [saving, setSaving] = useState(false);
+  const [_saving, setSaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [confirmLaunch, setConfirmLaunch] = useState(false);
   const [toast, setToast] = useState<string | null>(null);

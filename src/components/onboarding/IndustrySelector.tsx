@@ -116,9 +116,9 @@ export default function IndustrySelector({ onSelect, selected, disabled }: Indus
 
   return (
     <div className="space-y-3">
-      <h2 className="text-lg font-semibold text-white">What industry are you in?</h2>
+      <h2 className="text-lg font-semibold text-white">What does your business do?</h2>
       <p className="text-sm text-[var(--text-tertiary)]">
-        We&apos;ll load scripts, templates, and follow-up cadences tuned for your business.
+        This helps us customize your AI operator. Works for any business — pick the closest match or choose &quot;Other&quot;.
       </p>
       <input
         type="text"

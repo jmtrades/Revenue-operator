@@ -548,7 +548,7 @@ async function sendBookingConfirmationSms(
   phone: string,
   slot: AppointmentSlot,
   title: string,
-  workspaceId: string,
+  _workspaceId: string,
 ): Promise<void> {
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
   const authToken = process.env.TWILIO_AUTH_TOKEN;

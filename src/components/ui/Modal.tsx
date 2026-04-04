@@ -78,7 +78,7 @@ export function Modal({ open, onClose, title, size = "md", children }: ModalProp
               <button
                 type="button"
                 onClick={onClose}
-                className="ml-auto -mr-1 flex h-8 w-8 items-center justify-center rounded-lg text-[var(--text-tertiary)] transition-[background-color,color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] active:scale-[0.95] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40"
+                className="ml-auto -mr-1 flex h-11 w-11 items-center justify-center rounded-lg text-[var(--text-tertiary)] transition-[background-color,color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] active:scale-[0.95] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40"
                 aria-label="Close"
               >
                 <X className="h-4 w-4" />

@@ -12,10 +12,6 @@ interface VoicePreviewPlayerProps {
   className?: string;
 }
 
-const VOICE_SERVER_URL = typeof window !== "undefined"
-  ? (process.env.NEXT_PUBLIC_VOICE_SERVER_URL || "https://recall-voice.fly.dev")
-  : "https://recall-voice.fly.dev";
-
 export function VoicePreviewPlayer({
   voiceId,
   greeting,
@@ -31,7 +27,6 @@ export function VoicePreviewPlayer({
 
   const generatePreview = async () => {
     if (audioUrl && audioRef.current) {
-      // If audio already exists, just play it
       audioRef.current.play();
       setPlaying(true);
       return;
@@ -40,20 +35,34 @@ export function VoicePreviewPlayer({
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${VOICE_SERVER_URL}/tts`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text: greeting.slice(0, 5000),
-          voice_id: voiceId,
-        }),
-      });
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+      let res: Response;
+      try {
+        res = await fetch("/api/agent/preview-voice", {
+          method: "POST",
+          credentials: "include",
+          signal: controller.signal,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            voice_id: voiceId,
+            text: greeting.slice(0, 5000),
+          }),
+        });
+      } finally {
+        clearTimeout(timeoutId);
+      }
 
       if (!res.ok) {
-        throw new Error("Failed to generate audio preview");
+        const errBody = await res.json().catch(() => ({ error: "Voice preview unavailable" }));
+        throw new Error((errBody as { error?: string }).error || "Voice preview failed");
       }
 
       const blob = await res.blob();
+      if (blob.size === 0) {
+        throw new Error("Empty audio response — voice server may be unavailable");
+      }
       const url = URL.createObjectURL(blob);
       setAudioUrl(url);
 
@@ -63,7 +72,11 @@ export function VoicePreviewPlayer({
         setPlaying(true);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to generate preview");
+      if (err instanceof DOMException && err.name === "AbortError") {
+        setError("Voice preview timed out — try again");
+      } else {
+        setError(err instanceof Error ? err.message : "Failed to generate preview");
+      }
       setPlaying(false);
     } finally {
       setLoading(false);
@@ -179,6 +192,10 @@ export function VoicePreviewPlayer({
         onEnded={handleAudioEnded}
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
+        onError={() => {
+          setError("Audio playback failed — unsupported format or network error");
+          setPlaying(false);
+        }}
       />
     </div>
   );

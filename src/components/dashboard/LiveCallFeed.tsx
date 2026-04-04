@@ -93,7 +93,7 @@ export function LiveCallFeed({ workspaceId }: LiveCallFeedProps) {
   const [events, setEvents] = useState<CallEvent[]>([]);
   const [hasActivity, setHasActivity] = useState(false);
   const [isLive, setIsLive] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [_error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!workspaceId) return;

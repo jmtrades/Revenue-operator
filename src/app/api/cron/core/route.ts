@@ -153,7 +153,7 @@ export async function GET(request: NextRequest) {
           ran.push(path);
         } else {
           failed.push(`${path}:${res.status}`);
-          console.warn(`[cron/core] Sub-cron ${path} returned ${res.status}`);
+          log("warn", "[cron/core] Sub-cron returned error", { path, status: res.status });
         }
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
@@ -162,11 +162,11 @@ export async function GET(request: NextRequest) {
       }
     }
     if (failed.length > 0) {
-      console.warn(`[cron/core] ${failed.length}/${CORE_STEPS.length} sub-crons failed: ${failed.slice(0, 10).join(", ")}`);
+      log("warn", "[cron/core] Sub-crons failed", { failed: failed.length, total: CORE_STEPS.length, details: failed.slice(0, 10) });
     }
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
     await recordCronHeartbeat("core").catch((e: unknown) => {
-      console.warn("[cron/core] heartbeat failed:", e instanceof Error ? e.message : String(e));
+      log("warn", "[cron/core] heartbeat failed", { error: e instanceof Error ? e.message : String(e) });
     });
     return { run: ran.length, ran: ran.length, steps: CORE_STEPS.length, failed: failed.length > 0 ? failed.slice(0, 10) : undefined };
   });

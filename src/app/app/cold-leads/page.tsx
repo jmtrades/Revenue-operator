@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Plus, RotateCcw, MoreHorizontal, Zap, Clock, AlertCircle } from "lucide-react";
+import { Plus, Zap, Clock, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
@@ -74,7 +74,7 @@ function persistColdLeadsSnapshot(workspaceId: string, leads: ColdLead[]) {
   safeSetItem(`${COLD_LEADS_SNAPSHOT_PREFIX}${workspaceId}`, JSON.stringify(envelope));
 }
 
-function formatRelativeTime(dateStr?: string, t?: any): string {
+function formatRelativeTime(dateStr?: string, t?: (key: string, values?: Record<string, string | number | Date>) => string): string {
   if (!dateStr) return t ? t("formatTime.never") : "Never";
   const now = new Date();
   const past = new Date(dateStr);
@@ -98,7 +98,7 @@ function formatRelativeTime(dateStr?: string, t?: any): string {
   return past.toLocaleDateString();
 }
 
-function getReasonLabel(reason: ColdLeadReason, t: any): string {
+function getReasonLabel(reason: ColdLeadReason, t: (key: string) => string): string {
   const map: Record<ColdLeadReason, string> = {
     no_activity_30d: t("reason.noActivity30d"),
     no_reply_14d: t("reason.noReply14d"),
@@ -108,7 +108,7 @@ function getReasonLabel(reason: ColdLeadReason, t: any): string {
   return map[reason] ?? reason;
 }
 
-function getStatusBadgeVariant(status: ColdLeadStatus): "neutral" | "info" | "success" | "warning" | "error" {
+function _getStatusBadgeVariant(status: ColdLeadStatus): "neutral" | "info" | "success" | "warning" | "error" {
   switch (status) {
     case "pending":
       return "neutral";
@@ -145,7 +145,7 @@ interface StatsProps {
 }
 
 interface StatsBarProps extends StatsProps {
-  t: any;
+  t: (key: string, values?: Record<string, string | number | Date>) => string;
 }
 
 function StatsBar({ total, pending, inProgress, reengaged, exhausted, t }: StatsBarProps) {
@@ -226,10 +226,10 @@ export default function ColdLeadsPage() {
     channel: "default",
   });
   const [reengageSaving, setReengageSaving] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [_selectedIds, _setSelectedIds] = useState<Set<string>>(new Set());
 
   // Fetch average deal value from workspace context
-  const [avgDealValue, setAvgDealValue] = useState(350);
+  const [_avgDealValue, setAvgDealValue] = useState(350);
   useEffect(() => {
     if (!workspaceId) return;
     fetch(`/api/dashboard/revenue-at-risk?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
@@ -429,7 +429,7 @@ export default function ColdLeadsPage() {
       });
       setAddLeadOpen(false);
       toast.success(t("toast.success.addedLead"));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t("toast.error.addFailed"));
     } finally {
       setAddLeadSaving(false);
@@ -480,7 +480,7 @@ export default function ColdLeadsPage() {
       persistColdLeadsSnapshot(workspaceId, updatedLeads);
       setReengageDialog({ open: false, isBulk: false, strategy: "auto", channel: "default" });
       toast.success(t("toast.success.reengagedLeads", { count: leadIds.length }));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t("toast.error.reengageFailed"));
     } finally {
       setReengageSaving(false);
@@ -508,7 +508,7 @@ export default function ColdLeadsPage() {
       setLeads(updated);
       persistColdLeadsSnapshot(workspaceId, updated);
       toast.success(t("toast.success.markedExhausted"));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t("toast.error.skipFailed"));
     }
   };
@@ -532,7 +532,7 @@ export default function ColdLeadsPage() {
       setLeads(updated);
       persistColdLeadsSnapshot(workspaceId, updated);
       toast.success(t("toast.success.removed"));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t("toast.error.removeFailed"));
     }
   };

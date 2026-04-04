@@ -142,7 +142,7 @@ export default function GoHighLevelComparisonPage() {
                 <h2 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>Speed matters: setup time vs time to first call</h2>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
                   GoHighLevel is powerful but requires your team to build workflows, configure the CRM, connect integrations, and set up automations.
-                  That's weeks of work before your first lead gets a callback.
+                  That&apos;s weeks of work before your first lead gets a callback.
                 </p>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
                   Revenue Operator is different. You connect your phone number, write your voice AI instructions, and you&apos;re live in under 3 minutes.
@@ -184,7 +184,7 @@ export default function GoHighLevelComparisonPage() {
               <div>
                 <h2 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>Pricing math: total cost of ownership</h2>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
-                  GoHighLevel starts at $97/mo and goes up to $497/mo. Then many teams buy through agencies, which add 50–100% markup. That's $200–$1,000/mo for one user.
+                  GoHighLevel starts at $97/mo and goes up to $497/mo. Then many teams buy through agencies, which add 50–100% markup. That&apos;s $200–$1,000/mo for one user.
                 </p>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
                   Revenue Operator is $147–$997/mo, flat monthly, no markups, no per-seat licensing. Everyone on your team uses the same system for the same price.
@@ -211,7 +211,7 @@ export default function GoHighLevelComparisonPage() {
                 </Link>
               </div>
               <p className="mt-4 text-xs" style={{ color: "var(--text-tertiary)" }}>
-                Tip: no credit card required. Connect your number and take your first AI-handled call in under 5 minutes.
+                Tip: 30-day money-back guarantee on all plans. Connect your number and take your first AI-handled call in under 5 minutes.
               </p>
             </div>
           </section>

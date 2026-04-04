@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
 import { toast } from "sonner";
 import { useWorkspace } from "@/components/WorkspaceContext";
-import { ArrowLeft, Copy, Check } from "lucide-react";
+import { Copy, Check } from "lucide-react";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 interface WidgetConfig {
@@ -51,7 +50,7 @@ export default function ChatWidgetSettingsPage() {
           const data = (await res.json()) as Partial<WidgetConfig>;
           setConfig({ ...DEFAULT_CONFIG, ...data });
         }
-      } catch (error) {
+      } catch (_error) {
         toast.error(t("toast.loadFailed"));
       } finally {
         setLoading(false);
@@ -75,7 +74,7 @@ export default function ChatWidgetSettingsPage() {
       });
 
       if (!res.ok) {
-        const errorData = (await res.json().catch(() => ({
+        const _errorData = (await res.json().catch(() => ({
           error: t("toast.unknownError"),
         }))) as { error?: string };
         toast.error(t("toast.saveFailed"));
@@ -83,7 +82,7 @@ export default function ChatWidgetSettingsPage() {
       }
 
       toast.success(t("toast.saved"));
-    } catch (error) {
+    } catch (_error) {
       toast.error(t("toast.saveFailed"));
     } finally {
       setSaving(false);
@@ -106,7 +105,7 @@ export default function ChatWidgetSettingsPage() {
       setCopied(true);
       toast.success(t("toast.embedCopied"));
       setTimeout(() => setCopied(false), 2000);
-    } catch (error) {
+    } catch (_error) {
       toast.error(t("toast.copyFailed"));
     }
   };

@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync, invalidateWorkspaceMeCache } from "@/lib/client/workspace-me";
 import { cn } from "@/lib/cn";
-import { ArrowLeft, MessageCircle, Phone, Mail, Radio } from "lucide-react";
+import { MessageCircle, Phone, Radio } from "lucide-react";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 type CommunicationConfig = {
@@ -51,7 +51,7 @@ export default function CommunicationSettingsPage() {
           setConfig({ ...DEFAULT_CONFIG, ...data });
         }
       })
-      .catch((err) => {
+      .catch((_err) => {
         if (!cancelled) {
           setLoading(false);
           toast.error(t("toast.error"));
@@ -80,7 +80,7 @@ export default function CommunicationSettingsPage() {
         body: JSON.stringify(config),
       });
       if (!res.ok) {
-        const body = (await res.json().catch(() => ({}))) as { error?: string };
+        const _body = (await res.json().catch(() => ({}))) as { error?: string };
         toast.error(t("toast.error"));
         return;
       }

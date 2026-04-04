@@ -140,7 +140,9 @@ function isPublicApi(pathname: string): boolean {
   // Conversation messages: only public for voice server webhook callbacks (POST)
   // Browser requests should go through auth — this is kept for legacy webhook compatibility
   if (pathname.startsWith("/api/conversations/") && pathname.endsWith("/messages")) return true;
-  if (pathname === "/api/signup" || pathname === "/api/contact" || pathname === "/api/waitlist") return true;
+  if (pathname === "/api/signup" || pathname === "/api/contact" || pathname === "/api/waitlist" || pathname === "/api/demo-request") return true;
+  // Public analytics tracking endpoint (has its own CSRF + rate limiting)
+  if (pathname === "/api/admin/track") return true;
   // All demo routes are public (call, voice-preview, signup) — they have their own rate limiting
   if (pathname.startsWith("/api/demo/")) return true;
   return false;
@@ -296,7 +298,11 @@ export async function proxy(req: NextRequest) {
   const session = await getSessionFromCookieAsync(cookieHeader);
 
   if (!session) {
-    if (isApp) return NextResponse.redirect(new URL("/sign-in", req.url));
+    if (isApp) {
+      const signInUrl = new URL("/sign-in", req.url);
+      signInUrl.searchParams.set("next", pathname);
+      return NextResponse.redirect(signInUrl);
+    }
     if (pathname.startsWith("/dashboard")) return NextResponse.redirect(new URL("/activate", req.url));
     if (pathname.startsWith("/admin")) return NextResponse.redirect(new URL("/activate", req.url));
     if (pathname.startsWith("/api/")) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

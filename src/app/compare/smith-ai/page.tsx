@@ -137,7 +137,7 @@ export default function SmithAiComparisonPage() {
           <section className="mt-12 max-w-5xl mx-auto">
             <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <h2 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>Why "answering" isn&apos;t the business outcome</h2>
+                <h2 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>Why &quot;answering&quot; isn&apos;t the business outcome</h2>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
                   Most callers don&apos;t become customers in a single interaction. They need follow-up: confirmations, rescheduling, quotes,
                   and sometimes just a consistent next step after voicemail would have happened.

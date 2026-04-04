@@ -140,7 +140,7 @@ export function BehaviorStepContent({
             >
               <input
                 type="checkbox"
-                className="h-3.5 w-3.5 rounded border-[var(--border-default)] bg-[var(--bg-input)]"
+                className="h-4 w-4 rounded border-[var(--border-default)] bg-[var(--bg-input)] cursor-pointer"
                 checked={neverDo.includes(rule)}
                 onChange={(e) =>
                   e.target.checked ? addNeverDo(rule) : removeNeverDo(rule)

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- Admin-only routes with Supabase dynamic queries */
 /**
  * Admin calls deep analytics: call volume, duration, outcomes, quality metrics, agent performance.
  */
@@ -42,7 +43,7 @@ export async function GET(req: NextRequest) {
     let inbound = 0,
       outbound = 0,
       unknown = 0;
-    (calls ?? []).forEach((c: any) => {
+    (calls ?? []).forEach((c: Record<string, any>) => {
       const meta = c.metadata || {};
       const direction = meta.direction || "unknown";
       if (direction === "inbound") inbound += 1;
@@ -65,7 +66,7 @@ export async function GET(req: NextRequest) {
     if (calls && calls.length > 0) {
       let totalDuration = 0;
       let completedCalls = 0;
-      calls.forEach((c: any) => {
+      calls.forEach((c: Record<string, any>) => {
         if (c.started_at && c.ended_at) {
           const start = new Date(c.started_at).getTime();
           const end = new Date(c.ended_at).getTime();
@@ -85,7 +86,7 @@ export async function GET(req: NextRequest) {
   try {
     const { data: calls } = await db.from("call_sessions").select("outcome");
     const outcomes: Record<string, number> = {};
-    (calls ?? []).forEach((c: any) => {
+    (calls ?? []).forEach((c: Record<string, any>) => {
       const outcome = c.outcome || "unknown";
       outcomes[outcome] = (outcomes[outcome] || 0) + 1;
     });
@@ -99,7 +100,7 @@ export async function GET(req: NextRequest) {
   try {
     const { data: calls } = await db.from("call_sessions").select("workspace_id, id").order("started_at", { ascending: false });
     const callsByWorkspace: Record<string, number> = {};
-    (calls ?? []).forEach((c: any) => {
+    (calls ?? []).forEach((c: Record<string, any>) => {
       const wsId = c.workspace_id || "unknown";
       callsByWorkspace[wsId] = (callsByWorkspace[wsId] || 0) + 1;
     });
@@ -124,7 +125,7 @@ export async function GET(req: NextRequest) {
         avgHumanLikeness = 0;
       let escalationCount = 0;
 
-      metrics.forEach((m: any) => {
+      metrics.forEach((m: Record<string, any>) => {
         if (m.speech_clarity_score) avgClarity += m.speech_clarity_score;
         if (m.confidence_score) avgConfidence += m.confidence_score;
         if (m.human_likeness_score) avgHumanLikeness += m.human_likeness_score;
@@ -154,7 +155,7 @@ export async function GET(req: NextRequest) {
     const { data: calls } = await db.from("call_sessions").select("workspace_id, started_at, ended_at");
     const wsStats: Record<string, { calls: number; total_duration: number; avg_duration: number }> = {};
 
-    (calls ?? []).forEach((c: any) => {
+    (calls ?? []).forEach((c: Record<string, any>) => {
       const wsId = c.workspace_id || "unassigned";
       if (!wsStats[wsId]) {
         wsStats[wsId] = { calls: 0, total_duration: 0, avg_duration: 0 };

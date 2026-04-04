@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
   const wsRow = ws as { billing_status?: string; stripe_customer_id?: string | null };
   const billingStatus = wsRow.billing_status;
   const hasCard = !!wsRow.stripe_customer_id;
-  const billingAllowed = billingStatus === "trial" || billingStatus === "active" || (billingStatus === "trial_ended" && hasCard);
+  const billingAllowed = billingStatus === "pending" || billingStatus === "trial" || billingStatus === "active" || (billingStatus === "trial_ended" && hasCard);
   if (!billingStatus || !billingAllowed) {
     return NextResponse.json(
       {
@@ -128,7 +128,7 @@ export async function POST(req: NextRequest) {
     provider_sid: phoneSid,
     status: "active",
     monthly_cost_cents: 500,  // $5/mo local — consistent with /api/phone/provision
-    setup_fee_cents: 100,     // $1.00 setup — consistent with /api/phone/provision
+    setup_fee_cents: 200,     // $2.00 setup — consistent with billing-plans.ts USAGE_RATES
     capabilities: { voice: true, sms: true, mms: false },
     updated_at: new Date().toISOString(),
   });

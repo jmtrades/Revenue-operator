@@ -87,7 +87,7 @@ export default function AppSettingsBusinessPage() {
           lastSavedRef.current = { ...lastSavedRef.current, timezone: data.timezone };
         }
       })
-      .catch((err) => {
+      .catch((_err) => {
         setLoading(false);
         toast.error(tSettings("business.loadFailed"));
       });
@@ -153,7 +153,7 @@ export default function AppSettingsBusinessPage() {
       }
       toast.success(tSettings("business.deleted"));
       window.location.href = "/";
-    } catch (e) {
+    } catch (_e) {
       toast.error(tSettings("business.deleteWorkspaceError"));
     } finally {
       setDeleting(false);

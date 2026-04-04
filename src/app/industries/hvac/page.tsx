@@ -64,7 +64,7 @@ export default function HvacIndustryPage() {
               <h2 className="text-lg font-semibold mb-3">Where HVAC revenue gets lost</h2>
               <div className="space-y-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
                 <p>
-                  HVAC is a speed-to-lead business. The lead is "hot" for minutes, not days. Missed calls are the obvious leak,
+                  HVAC is a speed-to-lead business. The lead is &quot;hot&quot; for minutes, not days. Missed calls are the obvious leak,
                   but there are quieter ones too: weak qualification, slow callbacks, and inconsistent follow-up on estimates.
                 </p>
                 <p>
@@ -88,7 +88,7 @@ export default function HvacIndustryPage() {
               </p>
               <p>
                 For booking, Revenue Operator can offer appointment windows based on your availability, confirm details by SMS, and
-                trigger reminders to reduce missed appointments. If someone wants to "think about it," the system sets follow-up
+                trigger reminders to reduce missed appointments. If someone wants to &quot;think about it,&quot; the system sets follow-up
                 so the job doesn’t vanish.
               </p>
               <p>
@@ -129,7 +129,7 @@ export default function HvacIndustryPage() {
                 peak load.
               </p>
               <p>
-                The system also protects margin by improving scheduling efficiency: fewer missed appointments, fewer "no contact"
+                The system also protects margin by improving scheduling efficiency: fewer missed appointments, fewer &quot;no contact&quot;
                 dispatches, and fewer wasted call-backs. Your team spends more time doing billable work and less time chasing.
               </p>
               <p>

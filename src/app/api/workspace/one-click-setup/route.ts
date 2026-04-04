@@ -1,12 +1,10 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getDb } from "@/lib/db/queries";
 import {
-  scrapeAndAnalyze,
   generateBusinessIntelligence,
   type SetupInput,
 } from "@/lib/ai/website-intelligence";
@@ -185,7 +183,7 @@ export async function POST(req: NextRequest) {
         { onConflict: "workspace_id" }
       );
     } catch (ctxErr) {
-      console.warn("[one-click-setup] workspace_business_context upsert failed:", ctxErr instanceof Error ? ctxErr.message : ctxErr);
+      log("warn", "[one-click-setup] workspace_business_context upsert failed", { error: ctxErr instanceof Error ? ctxErr.message : String(ctxErr) });
     }
 
     // Build result

@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     autonomy_level: "assisted",
     kill_switch: false,
     status: "active",
-    billing_status: "trial",
+    billing_status: "pending",
     billing_tier: "solo",
     trial_ends_at: trialEnd.toISOString(),
     industry: industry?.trim() || null,
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
     // Non-blocking — membership can be retried
   }
   try {
-    await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing" });
+    await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "pending", status: "pending" });
   } catch {
     // Non-blocking — billing can be retried
   }

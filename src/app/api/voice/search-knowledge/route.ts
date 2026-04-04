@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { workspace_id, query, category, limit: rawLimit } = payload;
+  const { workspace_id, query, category: _category, limit: rawLimit } = payload;
 
   if (!workspace_id || typeof workspace_id !== "string" || !query || typeof query !== "string") {
     return NextResponse.json(
@@ -156,7 +156,7 @@ export async function POST(req: NextRequest) {
           .filter(Boolean),
       );
 
-      let docNameMap: Record<string, string> = {};
+      const docNameMap: Record<string, string> = {};
       if (docIds.size > 0) {
         const { data: docs } = await db
           .from("knowledge_documents")

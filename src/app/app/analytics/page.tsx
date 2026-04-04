@@ -428,9 +428,9 @@ export default function AppAnalyticsPage() {
 
   // Compute average deal value from leads with value_cents, fallback to 0
   const avgDealValue = useMemo(() => {
-    const leadsWithValue = filteredLeads.filter((l) => (l as any).value_cents && (l as any).value_cents > 0);
+    const leadsWithValue = filteredLeads.filter((l) => (l as unknown as Record<string, unknown>).value_cents && ((l as unknown as Record<string, unknown>).value_cents as number) > 0);
     if (leadsWithValue.length === 0) return 0;
-    const sum = leadsWithValue.reduce((acc, l) => acc + ((l as any).value_cents ?? 0), 0);
+    const sum = leadsWithValue.reduce((acc, l) => acc + (((l as unknown as Record<string, unknown>).value_cents as number) ?? 0), 0);
     return Math.round(sum / leadsWithValue.length);
   }, [filteredLeads]);
 

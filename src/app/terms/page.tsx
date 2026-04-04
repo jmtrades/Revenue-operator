@@ -86,7 +86,7 @@ export default async function TermsPage() {
             <section className="mb-10">
               <h2 className="font-semibold text-xl mb-3" style={{ color: "var(--text-primary)" }}>Disclaimers</h2>
               <p className="text-base mb-4" style={{ color: "var(--text-secondary)", lineHeight: 1.65 }}>
-                The service is provided "as is" and "as available." We disclaim all warranties of any kind, express or implied, including merchantability, fitness for a particular purpose, and non-infringement. We do not warrant that the service will be uninterrupted, secure, or error-free. You use the service at your own risk. Our AI and automation are tools to assist your business; you remain responsible for the accuracy and appropriateness of how you use them and for any decisions made based on their output.
+                The service is provided &quot;as is&quot; and &quot;as available.&quot; We disclaim all warranties of any kind, express or implied, including merchantability, fitness for a particular purpose, and non-infringement. We do not warrant that the service will be uninterrupted, secure, or error-free. You use the service at your own risk. Our AI and automation are tools to assist your business; you remain responsible for the accuracy and appropriateness of how you use them and for any decisions made based on their output.
               </p>
             </section>
 

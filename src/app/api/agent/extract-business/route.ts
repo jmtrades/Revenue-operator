@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-3-5-sonnet-20241022",
+        model: "claude-haiku-4-5-20251001",
         max_tokens: 800,
         messages: [
           {
@@ -152,7 +152,7 @@ export async function POST(req: NextRequest) {
       faq,
     });
   } catch (e) {
-    const message =
+    const _message =
       e instanceof Error ? e.message : typeof e === "string" ? e : "Unknown error";
     return NextResponse.json(
       { error: "Failed to extract business details. Please try again or enter them manually." },

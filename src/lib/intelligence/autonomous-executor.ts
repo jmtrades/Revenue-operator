@@ -669,7 +669,7 @@ async function scheduleFollowupAction(
     let recoveryProfile: RecoveryProfile | null = null;
     try {
       recoveryProfile = await getRecoveryProfile(lead.workspace_id);
-    } catch (profileErr) {
+    } catch (_profileErr) {
       // Could not fetch recovery profile, using default (error details omitted to protect PII)
     }
 
@@ -683,7 +683,7 @@ async function scheduleFollowupAction(
       adaptivePlan = buildAdaptiveFollowUpPlan(strategy, intelligence, recoveryProfile ?? undefined);
       chosenStrategyDetails = `Adaptive strategy: ${strategy}${recoveryProfile ? ` (${recoveryProfile} recovery)` : ""}`;
       // Adaptive strategy selected (logging omitted to protect PII)
-    } catch (strategyErr) {
+    } catch (_strategyErr) {
       // Non-blocking: fall back to default sequence enrollment
       // Adaptive strategy selection failed, falling back to default (error details omitted to protect PII)
     }
@@ -861,7 +861,7 @@ async function scheduleFollowupAction(
             }
           }
         }
-      } catch (stepErr) {
+      } catch (_stepErr) {
         // Non-blocking: sequence enrollment is the safety net
         // Immediate first step failed, sequence will pick up (logging omitted to protect PII)
       }

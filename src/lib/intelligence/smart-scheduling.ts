@@ -138,7 +138,7 @@ export async function getOptimalCallTime(
         ? `Based on ${calls.length} calls over the last 90 days. Best answer rate: ${Math.round(topWindows[0].answer_rate * 100)}% (${topWindows[0].confidence} confidence)`
         : "Using industry-standard optimal call times",
     };
-  } catch (err) {
+  } catch (_err) {
     // Error in smart scheduling (error details omitted to protect PII)
     const nextBest = getNextWindowTime(DEFAULT_WINDOWS, tz);
     return {

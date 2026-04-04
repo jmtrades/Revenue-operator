@@ -83,7 +83,7 @@ export default function RecruitingIndustryPage() {
                   When no-shows happen, you lose the interview slot and you lose momentum.
                 </p>
                 <p>
-                  <strong>Pipeline follow-up that doesn&apos;t compound.</strong> After an interview, candidates need a "what&apos;s next" touch.
+                  <strong>Pipeline follow-up that doesn&apos;t compound.</strong> After an interview, candidates need a &quot;what&apos;s next&quot; touch.
                   If that touch is delayed or inconsistent, candidates compare experiences and choose whoever is most responsive.
                 </p>
               </div>
@@ -107,7 +107,7 @@ export default function RecruitingIndustryPage() {
               </p>
               <p>
                 <strong>Follow up to keep the pipeline moving.</strong> After interviews (or after a candidate chooses not to continue right away), Revenue Operator can follow up with
-                next-step messaging and appointment confirmation prompts. That keeps the pipeline warm and reduces "lost after interview" churn.
+                next-step messaging and appointment confirmation prompts. That keeps the pipeline warm and reduces &quot;lost after interview&quot; churn.
               </p>
               <p>
                 <strong>Visibility for decision-makers.</strong> Your dashboard reflects what happened: calls answered, screening completion, interviews scheduled,
@@ -142,9 +142,9 @@ export default function RecruitingIndustryPage() {
             <h2 className="text-lg font-semibold mb-3">ROI math for recruiting (speed + interview recovery)</h2>
             <div className="space-y-4 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.85 }}>
               <p>
-                Recruiting ROI is often easiest to model as a reduction in "lost opportunities" plus fewer wasted interview slots.
+                Recruiting ROI is often easiest to model as a reduction in &quot;lost opportunities&quot; plus fewer wasted interview slots.
                 Assume your average placed candidate produces <strong>$3,500</strong> in expected margin across your funnel (fees, margins, and typical compensation structure).
-                If you currently miss even <strong>15</strong> inbound candidate calls per month and your pipeline conversion from "first touch" is <strong>8%</strong>,
+                If you currently miss even <strong>15</strong> inbound candidate calls per month and your pipeline conversion from &quot;first touch&quot; is <strong>8%</strong>,
                 that&apos;s <strong>1.2</strong> fewer placements per month at the margin level — <strong>$4,200</strong> in expected impact.
               </p>
               <p>

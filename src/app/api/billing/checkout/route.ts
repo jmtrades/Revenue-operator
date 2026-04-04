@@ -1,6 +1,6 @@
 /**
  * Stripe checkout: create session for activation
- * 14-day trial, payment method upfront, USD only
+ * Card charged immediately, 30-day money-back guarantee, USD only
  * Economic framing: use BILLING_EMAIL_SUBJECT and INVOICE_DESCRIPTION in Stripe Product/email settings.
  */
 
@@ -158,7 +158,7 @@ export async function POST(req: NextRequest) {
             risk_level: "balanced",
           });
           await db.from("workspace_members").insert({ workspace_id: wsId, user_id: userId, role: "owner" });
-          await db.from("workspace_billing").insert({ workspace_id: wsId, plan: "trial", status: "trialing" });
+          await db.from("workspace_billing").insert({ workspace_id: wsId, plan: "pending", status: "pending" });
 
           finalWorkspaceId = wsId;
           finalEmail = email;
@@ -240,16 +240,38 @@ export async function POST(req: NextRequest) {
         });
         const createdId = customer.id;
 
-        // Persist Stripe customer ID — critical for billing reconciliation.
+        // Persist Stripe customer ID — conditional update to prevent race condition.
+        // Only set if still null (another request may have won the race).
         try {
-          await db
+          const { data: updatedRow } = await db
             .from("workspaces")
             .update({ stripe_customer_id: createdId, updated_at: new Date().toISOString() })
-            .eq("id", finalWorkspaceId);
+            .eq("id", finalWorkspaceId)
+            .is("stripe_customer_id", null)
+            .select("stripe_customer_id")
+            .maybeSingle();
+
+          if (!updatedRow) {
+            // Another request won the race — use their customer ID instead
+            const { data: raceWinner } = await db
+              .from("workspaces")
+              .select("stripe_customer_id")
+              .eq("id", finalWorkspaceId)
+              .maybeSingle();
+            const existingCustId = (raceWinner as { stripe_customer_id?: string } | null)?.stripe_customer_id;
+            if (existingCustId) {
+              customerId = existingCustId;
+              log("info", "billing.customer_race_resolved", { workspace_id: finalWorkspaceId, used: existingCustId, orphaned: createdId });
+            } else {
+              customerId = createdId;
+            }
+          } else {
+            customerId = createdId;
+          }
         } catch (persistErr) {
           log("error", "billing.persist_stripe_customer_id_failed", { workspace_id: finalWorkspaceId, stripe_customer_id: createdId, error: persistErr instanceof Error ? persistErr.message : String(persistErr) });
+          customerId = createdId;
         }
-        customerId = createdId;
       } catch (err) {
         const message = err instanceof Error ? err.message : "unknown_error";
         log("error", "billing.customer_create_failed", { workspace_id: finalWorkspaceId, reason: "customer_create_failed", error: message });
@@ -264,7 +286,9 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-      // No free trial — users pay from day one after experiencing the demo call
+      // No free trial — card charged immediately. Users experience the product
+      // through the live demo call before signup. This maximizes commitment and
+      // eliminates tire-kickers who never convert.
       const trialPeriodDays: number | undefined = undefined;
 
       const session = await stripe.checkout.sessions.create({

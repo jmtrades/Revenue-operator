@@ -54,20 +54,20 @@ export default function HealthcareIndustryPage() {
               Answer patient calls instantly. Reduce no-shows. Fill the schedule. HIPAA-compliant.
             </h1>
             <p className="text-base md:text-lg mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-              Healthcare is fundamentally a scheduling business, and scheduling breaks when your phone system doesn't answer. Patients call to book appointments, refill prescriptions, ask about test results, or report side effects. Your staff is managing charts, running clinics, and answering emails. Calls go to voicemail. Callbacks happen late. Patients get frustrated and choose a different provider. Revenue Operator answers every call, books appointments into your calendar, handles routine refill requests, and prevents no-shows—all while maintaining HIPAA compliance and letting clinicians focus on care.
+              Healthcare is fundamentally a scheduling business, and scheduling breaks when your phone system doesn&apos;t answer. Patients call to book appointments, refill prescriptions, ask about test results, or report side effects. Your staff is managing charts, running clinics, and answering emails. Calls go to voicemail. Callbacks happen late. Patients get frustrated and choose a different provider. Revenue Operator answers every call, books appointments into your calendar, handles routine refill requests, and prevents no-shows—all while maintaining HIPAA compliance and letting clinicians focus on care.
             </p>
 
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 md:p-8 mb-8">
               <h2 className="text-lg font-semibold mb-3">Why patient call volume overwhelms practices</h2>
               <div className="space-y-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
                 <p>
-                  A typical medical practice gets 150–300 calls per day: new patient appointments, existing patient questions, prescription refills, lab result inquiries, insurance questions, and same-day sick calls. Each one is important. But the front desk has 2–3 people, and they're already at capacity. When callers can't reach the office or get put on hold for 10 minutes, they call a competitor or use an urgent care.
+                  A typical medical practice gets 150–300 calls per day: new patient appointments, existing patient questions, prescription refills, lab result inquiries, insurance questions, and same-day sick calls. Each one is important. But the front desk has 2–3 people, and they&apos;re already at capacity. When callers can&apos;t reach the office or get put on hold for 10 minutes, they call a competitor or use an urgent care.
                 </p>
                 <p>
-                  The second leak is no-shows. A patient books an appointment two weeks out. They forget. Or they get anxious. Or they have a new conflict. No-show rates often run 15–25%. Each no-show is lost revenue, but more importantly, it's a wasted appointment slot that could have gone to a patient who needed care. The fix is consistent reminders and an easy reschedule path—but that requires human follow-up that your team doesn't have bandwidth for.
+                  The second leak is no-shows. A patient books an appointment two weeks out. They forget. Or they get anxious. Or they have a new conflict. No-show rates often run 15–25%. Each no-show is lost revenue, but more importantly, it&apos;s a wasted appointment slot that could have gone to a patient who needed care. The fix is consistent reminders and an easy reschedule path—but that requires human follow-up that your team doesn&apos;t have bandwidth for.
                 </p>
                 <p>
-                  The third challenge is routine work that fills your clinical team's day: "Can I get a refill?" "Do you have my insurance?" "When do I get my results?" These are answerable by a structured system but require a human to pick up the phone first.
+                  The third challenge is routine work that fills your clinical team&apos;s day: &quot;Can I get a refill?&quot; &quot;Do you have my insurance?&quot; &quot;When do I get my results?&quot; These are answerable by a structured system but require a human to pick up the phone first.
                 </p>
               </div>
             </div>
@@ -81,7 +81,7 @@ export default function HealthcareIndustryPage() {
                 For routine questions (lab results, insurance eligibility, appointment times), Revenue Operator can answer using your knowledge base without requiring clinician time. If the patient needs clinical judgment, the system routes them to the right person with all context pre-filled.
               </p>
               <p>
-                After appointments are booked, Revenue Operator runs automated reminders: 48 hours before, 24 hours before, and 1 hour before. If a patient doesn't show, Revenue Operator can follow up: "We missed you today. Would you like to reschedule?" This simple prompt recovers 10–15% of no-shows.
+                After appointments are booked, Revenue Operator runs automated reminders: 48 hours before, 24 hours before, and 1 hour before. If a patient doesn&apos;t show, Revenue Operator can follow up: &quot;We missed you today. Would you like to reschedule?&quot; This simple prompt recovers 10–15% of no-shows.
               </p>
             </div>
 
@@ -111,13 +111,13 @@ export default function HealthcareIndustryPage() {
             <h2 className="text-lg font-semibold mb-3">ROI (patient lifetime value is high)</h2>
             <div className="space-y-4 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
               <p>
-                Healthcare economics run on two tracks: patient satisfaction and operational efficiency. The average patient lifetime value is $10,000+. A single recovered patient who would have switched practices justifies the investment. But the real win is no-show reduction. If you recover 10–15 no-shows per month at $150–300 per slot, that's $1,500–4,500 in recovered monthly revenue.
+                Healthcare economics run on two tracks: patient satisfaction and operational efficiency. The average patient lifetime value is $10,000+. A single recovered patient who would have switched practices justifies the investment. But the real win is no-show reduction. If you recover 10–15 no-shows per month at $150–300 per slot, that&apos;s $1,500–4,500 in recovered monthly revenue.
               </p>
               <p>
                 Beyond dollars, answering faster improves patient satisfaction, which drives retention and referral. Reducing no-shows improves provider schedules and job satisfaction. And automating prescription refills and routine questions frees your front desk and nurses to handle complex patient issues and relationship-building.
               </p>
               <p>
-                The practical outcome: your practice doesn't lose patients to slow callbacks. You keep the schedule full. And your team spends time on work that requires human judgment, not fielding "Can I get a refill?" calls.
+                The practical outcome: your practice doesn&apos;t lose patients to slow callbacks. You keep the schedule full. And your team spends time on work that requires human judgment, not fielding &quot;Can I get a refill?&quot; calls.
               </p>
             </div>
 

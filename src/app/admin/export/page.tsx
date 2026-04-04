@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Users, Building2, Phone, BarChart3 } from "lucide-react";
 
-interface ExportRequest {
+interface _ExportRequest {
   id: string;
   data_type: string;
   status: string;
@@ -32,7 +32,7 @@ function ExportButton({ label, dataType, icon }: { label: string; dataType: stri
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-    } catch (err) {
+    } catch (_err) {
       alert("Export failed. Please try again.");
     } finally {
       setExporting(false);
@@ -190,7 +190,7 @@ export default function ExportPage() {
           >
             <p style={{ color: "var(--text-secondary)" }}>No exports yet</p>
             <p style={{ color: "var(--text-tertiary)" }} className="text-sm mt-1">
-              Start an export from the "Export Data" section above to see your history here.
+              Start an export from the &quot;Export Data&quot; section above to see your history here.
             </p>
           </div>
         ) : (

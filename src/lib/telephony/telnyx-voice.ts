@@ -3,7 +3,7 @@
  * Manages outbound calls, call state transitions, and media streaming.
  */
 
-import { telnyxRequest, parseTelnyxError } from "./telnyx-client";
+import { telnyxRequest } from "./telnyx-client";
 
 /**
  * Retry wrapper for idempotent Telnyx operations.

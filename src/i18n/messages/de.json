@@ -63,8 +63,8 @@
       "coverageRunning": "Schutz läuft",
       "nothingRequiresSupervision": "Nichts erfordert Aufsicht. Wir benachrichtigen Sie bei Bedarf.",
       "remindBeforeCharge": "Nichts erfordert Aufsicht. Wir benachrichtigen Sie bei Bedarf. Wir erinnern vor jeder Belastung.",
-      "trialGraceEnded": "Your trial has ended.",
-      "trialUpgradeToContinue": "Upgrade to continue →"
+      "trialGraceEnded": "Ihr Zugang wurde pausiert.",
+      "trialUpgradeToContinue": "Aktivieren um fortzufahren →"
     }
   },
   "siteNav": {
@@ -532,7 +532,8 @@
     },
     "signingIn": "Anmeldung…",
     "savePassword": "Passwort speichern",
-    "genericError": "An unexpected error occurred"
+    "genericError": "An unexpected error occurred",
+    "checkingSession": "Sitzung wird überprüft..."
   },
   "billing": {
     "pageTitle": "Abrechnung — Revenue Operator",
@@ -1406,7 +1407,7 @@
       "renewal": "Verlängerung",
       "manageBilling": "Abrechnung verwalten",
       "opening": "Wird geöffnet…",
-      "statusTrial": "Testversion",
+      "statusTrial": "Erste Schritte",
       "statusActive": "Aktiv",
       "statusPastDue": "Überfällig",
       "statusPaused": "Pausiert",
@@ -1599,14 +1600,53 @@
       "websitePlaceholder": "acmeplumbing.com",
       "industry": "Branche",
       "industries": {
-        "home_services": "Haushaltsservice",
-        "healthcare": "Gesundheitswesen",
+        "home_services": "Haushaltsservices",
+        "healthcare": "Gesundheit",
+        "dental": "Zahnarzt",
+        "medical": "Medizin",
         "legal": "Recht",
         "real_estate": "Immobilien",
         "insurance": "Versicherung",
-        "b2b_sales": "B2B-Verkauf",
-        "local_business": "Lokalunternehmen",
-        "contractors": "Handwerker"
+        "b2b_sales": "B2B-Vertrieb",
+        "contractors": "Auftragnehmer",
+        "plumbing": "Sanitär",
+        "hvac": "Heizung/Klima",
+        "electrical": "Elektrik",
+        "roofing": "Dachdecker",
+        "landscaping": "Garten- und Landschaftsbau",
+        "cleaning": "Reinigung",
+        "veterinary": "Tierarzt",
+        "mental_health": "Psychische Gesundheit / Therapie",
+        "accounting": "Buchhaltung / Steuer",
+        "financial_services": "Finanzdienstleistungen",
+        "salon": "Salon / Friseur",
+        "spa": "Spa / Wellness",
+        "fitness": "Fitness / Fitnessstudio",
+        "restaurant": "Restaurant",
+        "catering": "Catering",
+        "retail": "Einzelhandel",
+        "auto": "Autowerkstatt",
+        "property_mgmt": "Hausverwaltung",
+        "construction": "Bau",
+        "education": "Bildung / Schulung",
+        "nonprofit": "Gemeinnützig",
+        "tech": "Technologie / SaaS",
+        "marketing": "Marketing / Agentur",
+        "events": "Veranstaltungen / Unterhaltung",
+        "travel": "Reise / Gastgewerbe",
+        "logistics": "Logistik / Lieferung",
+        "manufacturing": "Fertigung",
+        "photography": "Fotografie / Kreativ",
+        "pet_services": "Tierservices",
+        "childcare": "Kinderbetreuung",
+        "senior_care": "Seniorenbetreuung",
+        "moving": "Umzug / Lagerung",
+        "security": "Sicherheit",
+        "solar": "Solar",
+        "consulting": "Beratung",
+        "professional_services": "Professionelle Dienstleistungen",
+        "other": "Andere",
+        "local_business": "Lokales Geschäft"
       },
       "continue": "Weiter →",
       "saving": "Wird gespeichert…",
@@ -1999,10 +2039,7 @@
       "makeTestCall": {
         "title": "Make a test call",
         "description": "Call your number from any phone to test it"
-      },
-      "readyTitle": "Ihr KI-Umsatzoperator",
-      "readyDescription": "Richten Sie Ihren Arbeitsbereich ein, um Umsatzoperationen zu automatisieren — Anrufe, Nachfassaktionen und Termine werden von KI verwaltet.",
-      "startTrial": "Loslegen"
+      }
     },
     "stats": {
       "activeCalls": "Active Calls",
@@ -5167,7 +5204,7 @@
       "pricing": {
         "heading": "Einfache Preise, die zu Ihren Umsätzen passen",
         "subheading": "Keine Pro-Sitz-Lizenzen. Sie zahlen für beantwortete Anrufe, nicht für Log-ins.",
-        "trialNote": "Alle Pläne mit 14 Tagen kostenlos. Ohne Karte."
+        "trialNote": "30-Tage-Geld-zurück-Garantie. In unter 3 Minuten starten."
       },
       "pricingTiers": {
         "starter": {
@@ -5493,7 +5530,7 @@
           "cta": "Verkauf kontaktieren"
         }
       },
-      "footerNote": "Alle Pläne inkl.: verschlüsselte Aufzeichnungen · Compliance-Rahmen · Prüfpfad · 14 Tage kostenlos.",
+      "footerNote": "Alle Pläne inkl.: verschlüsselte Aufzeichnungen · Compliance-Rahmen · Prüfpfad · 30-Tage-Geld-zurück-Garantie.",
       "cta": {
         "link": "Vollständigen Planvergleich ansehen →"
       }
@@ -5895,8 +5932,8 @@
         "legal": "Legal",
         "realEstate": "Real Estate",
         "homeServices": "Home Services",
-        "automotive": "Automotive",
-        "dental": "Dental",
+        "consulting": "Beratung",
+        "retail": "Einzelhandel",
         "insurance": "Insurance",
         "financialServices": "Financial Services",
         "recruiting": "Recruiting",
@@ -6332,13 +6369,13 @@
     "faq": {
       "title": "Fragen zu Preisen",
       "trial": "Gibt es eine kostenlose Testphase?",
-      "trialAnswer": "Ja — alle Nicht-Enterprise-Pläne beinhalten eine 14-tägige kostenlose Testphase.",
+      "trialAnswer": "Alle Pläne beinhalten eine 30-Tage-Geld-zurück-Garantie. Registrieren Sie sich, testen Sie mit echten Anrufen, und wenn Sie nicht zufrieden sind, erstatten wir Ihnen alles zurück.",
       "overage": "Was passiert, wenn ich meine Minuten überschreite?",
       "overageAnswer": "Wir berechnen den Überschuss einfach zum Minutenpreis deines Tarifs, ohne Strafgebühren.",
       "cancel": "Kann ich jederzeit kündigen?",
       "cancelAnswer": "Ja — du kannst deinen Tarif jederzeit in den Abrechnungseinstellungen kündigen oder ändern."
     },
-    "trustedBy": "Vertraut von führenden Teams in Service, Gesundheitswesen und lokalem Geschäft.",
+    "trustedBy": "Vertraut von Unternehmen in jeder Branche in allen 50 Staaten.",
     "questionsTalkToUs": "Fragen? Sprechen Sie mit uns →",
     "heading": "Pricing",
     "subheading": "Subheading",
@@ -6722,7 +6759,148 @@
     "modeBusinessTitle": "Business Mode",
     "modeBusinessDesc": "Use Revenue Operator for business operations",
     "businessHeading": "Business Information",
-    "businessSubtitle": "Tell us about your business"
+    "businessSubtitle": "Tell us about your business",
+    "quickSetup": {
+      "progressReading": "Ihre Website wird gelesen...",
+      "progressUnderstanding": "Ihr Unternehmen wird analysiert...",
+      "progressBuilding": "Wissen Ihres Operators wird aufgebaut...",
+      "progressCreating": "Skripte und Antworten werden erstellt...",
+      "errorEnterUrl": "Bitte geben Sie eine Website-URL ein",
+      "errorWorkspaceNotFound": "Arbeitsbereich nicht gefunden. Bitte schließen Sie die Einrichtung zuerst ab.",
+      "statusAnalyzing": "Ihre Website wird analysiert...",
+      "defaultBusinessName": "Ihr Unternehmen",
+      "defaultIndustry": "Allgemein",
+      "heading": "Richten Sie Ihren KI-Operator in Sekunden ein",
+      "subheading": "Wir analysieren Ihr Unternehmen und konfigurieren alles automatisch.",
+      "subheadingNoSetup": "Keine manuellen Skripte oder Einrichtung erforderlich — teilen Sie einfach Ihre Website.",
+      "labelWebsiteUrl": "Website-URL",
+      "placeholderUrl": "https://ihrunternehmen.de",
+      "buttonAnalyzing": "Wird analysiert",
+      "buttonAnalyze": "Analysieren",
+      "reviewHeading": "Wir haben Ihr Unternehmen gefunden",
+      "reviewSubheading": "Überprüfen Sie, was wir gelernt haben, und passen Sie es bei Bedarf an.",
+      "labelBusinessName": "Unternehmensname",
+      "labelIndustry": "Branche",
+      "statFaqsGenerated": "FAQs generiert",
+      "statObjectionHandlers": "Einwandbehandlungen",
+      "statTextTemplates": "Textvorlagen",
+      "statReadyToGo": "Bereit zum Start",
+      "sectionGreeting": "Generiertes Begrüßungsskript",
+      "sectionFaqs": "Beispiel-FAQs ({count} insgesamt)",
+      "sectionObjections": "Einwandbehandlungen ({count} insgesamt)",
+      "sectionTemplates": "Nachfass-Textvorlagen ({count})",
+      "labelQuestion": "F: ",
+      "labelAnswer": "A: ",
+      "labelObjection": "Einwand: ",
+      "labelResponse": "Antwort: ",
+      "moreFaqs": "...und {count} weitere FAQs",
+      "moreHandlers": "...und {count} weitere Behandlungen",
+      "moreTemplates": "...und {count} weitere Vorlagen",
+      "buttonBack": "Zurück",
+      "buttonActivating": "Wird aktiviert...",
+      "buttonActivate": "Sieht gut aus, aktivieren!",
+      "errorAnalyzeFailed": "Website-Analyse fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "errorActivateFailed": "Aktivierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "successHeading": "Sie sind live!",
+      "successSubheading": "Ihr KI-Operator ist bereit, Anrufe zu bearbeiten und Ihre Umsatzprozesse zu automatisieren.",
+      "successCapabilitiesTitle": "Ihr KI-Operator kann jetzt:",
+      "capabilityGreeting": "Anrufe mit Ihrer individuellen Begrüßung beantworten",
+      "capabilityFaqs": "{count} häufige Fragen automatisch beantworten",
+      "capabilityObjections": "{count} Verkaufseinwände überwinden",
+      "capabilityFollowUp": "Automatisch Nachfass-Nachrichten senden",
+      "capabilityAppointments": "Termine in Ihrem Kalender buchen",
+      "buttonDashboard": "Zum Dashboard",
+      "buttonTestCall": "Testanruf starten",
+      "labelServicesFound": "Gefundene Dienstleistungen",
+      "moreServices": "+{count} weitere",
+      "labelAiGreeting": "KI-Begrüßung"
+    },
+    "agentTemplates": {
+      "sectionTitle": "Wählen Sie Ihre KI-Operator-Vorlage",
+      "bestForLabel": "Ideal für:",
+      "inboundCloser": {
+        "name": "Eingehender Abschluss-Agent",
+        "tagline": "Beantwortet jeden Anruf, qualifiziert Leads und bucht sofort Termine",
+        "feature1": "Intelligente Anrufweiterleitung und -filterung",
+        "feature2": "Echtzeit-Lead-Qualifizierung",
+        "feature3": "Automatisierte Terminbuchung",
+        "recommendedFor": "Jedes Unternehmen mit eingehendem Anrufvolumen"
+      },
+      "outboundSetter": {
+        "name": "Ausgehender Terminsetzer",
+        "tagline": "Führt Kampagnen auf Autopilot, füllt Ihren Kalender mit qualifizierten Meetings",
+        "feature1": "Automatisierte ausgehende Anrufkampagnen",
+        "feature2": "Lead-Listen-Verwaltung",
+        "feature3": "Kalenderintegration und Terminbuchung",
+        "recommendedFor": "Vertriebsteams mit ausgehenden Kampagnen"
+      },
+      "officeAgent": {
+        "name": "Büro-Agent",
+        "tagline": "24/7-Empfangsabdeckung, die nie krank wird",
+        "feature1": "Vollständige Anrufweiterleitung und -umleitung",
+        "feature2": "FAQ-Beantwortung und Wissensdatenbank",
+        "feature3": "Nachrichtenaufnahme und Rückrufplanung",
+        "recommendedFor": "Jedes Unternehmen, das 24/7-Telefonabdeckung benötigt"
+      },
+      "followUpEngine": {
+        "name": "Nachfass-Engine",
+        "tagline": "Verwandelt Nichterscheinen in gebuchte Termine, inaktive Leads in Umsatz",
+        "feature1": "Automatisierte Nachfass-Anrufsequenzen",
+        "feature2": "Erinnerungs- und Nichterscheinen-Anrufe",
+        "feature3": "Kampagnen-Performance-Tracking",
+        "recommendedFor": "Unternehmen mit hohem Nachfassvolumen"
+      },
+      "supportAgent": {
+        "name": "Support-Agent",
+        "tagline": "Bearbeitet Support-Anrufe mit Geduld und Präzision, eskaliert bei Bedarf",
+        "feature1": "Mehrkanaliger Kundensupport",
+        "feature2": "Ticket-Erstellung und -Verfolgung",
+        "feature3": "Intelligente Eskalation an Ihr Team",
+        "recommendedFor": "Unternehmen mit Kundensupport-Teams"
+      },
+      "fullOperator": {
+        "name": "Vollständiger Revenue-Operator",
+        "tagline": "Ihr gesamter Telefonbetrieb in einer KI — eingehend, ausgehend, Nachfass, alles",
+        "feature1": "Vollständige Revenue-Pipeline-Automatisierung",
+        "feature2": "Eingehend, ausgehend, Nachfass und Terminbuchung",
+        "feature3": "Erweiterte Analysen und Berichte",
+        "recommendedFor": "Wachsende Unternehmen, die End-to-End-Automatisierung benötigen"
+      }
+    },
+    "smartSetup": {
+      "heading": "Was machst du?",
+      "subheading": "W\u00e4hle deine Rolle und wir zeigen dir deinen Operator in Aktion",
+      "dontSeeRole": "Deine Rolle nicht dabei?",
+      "describeInstead": "Beschreibe sie stattdessen",
+      "describePrompt": "Beschreibe, was du machst und an wen du verkaufst:",
+      "backToSelection": "\u2190 Zur\u00fcck zur Auswahl",
+      "meetOperator": "Lerne deinen Operator kennen",
+      "handlesSituations": "So meistert {playbook} reale Situationen",
+      "loadingScenarios": "Szenarien werden geladen...",
+      "leadLabel": "Lead",
+      "agentLabel": "Agent",
+      "operatorKnows": "Dein Operator kennt:",
+      "objectionHandlers": "\u2713 {count} Einwandbehandlungen",
+      "faqCount": "\u2713 {count} FAQs",
+      "followUpTemplates": "\u2713 {count} Follow-up-Vorlagen",
+      "agentNameLabel": "Agentenname",
+      "businessNameLabel": "Firmenname (Optional)",
+      "companyPlaceholder": "Dein Firmenname",
+      "activateAgent": "Agent aktivieren",
+      "activating": "Aktivierung...",
+      "showCustomization": "Anpassung anzeigen \u2192",
+      "hideCustomization": "Anpassung ausblenden \u2192",
+      "greetingScript": "Begr\u00fc\u00dfungsskript",
+      "sampleFaqs": "Beispiel-FAQs",
+      "activatingOperator": "Dein Operator wird aktiviert...",
+      "fewSeconds": "Das dauert normalerweise nur wenige Sekunden",
+      "workspaceNotFound": "Arbeitsbereich nicht gefunden. Bitte schlie\u00dfe zuerst die Einrichtung ab.",
+      "operatorLive": "Dein Operator \u201e{agentName}\u201c ist live und bereit f\u00fcr Anrufe!",
+      "activationFailed": "Dein Operator konnte nicht aktiviert werden \u2014 \u00fcberpr\u00fcfe deine Internetverbindung und versuche es erneut.",
+      "buildingOperator": "Dein Operator wird erstellt...",
+      "customDescriptionFailed": "Benutzerdefinierte Beschreibung konnte nicht verarbeitet werden",
+      "setupStepFailed": "Einrichtungsschritt fehlgeschlagen \u2014 bitte versuche es erneut. Falls das Problem bestehen bleibt, kontaktiere den Support."
+    }
   },
   "agents.testPanel": {
     "errors": {
@@ -6872,7 +7050,15 @@
     "title": "Errors",
     "unauthorized": "Unauthorized",
     "updateFailed": "Update failed",
-    "emptyTemplate": "At least one message template is required."
+    "emptyTemplate": "At least one message template is required.",
+    "oops": "Hoppla",
+    "temporaryIssue": "Vorübergehendes Problem",
+    "errorDescription": "Diese Seite hatte ein Problem beim Laden. Ihre Daten sind sicher — versuchen Sie zu aktualisieren oder gehen Sie zum Dashboard zurück.",
+    "errorId": "Fehler-ID",
+    "backToDashboard": "Zurück zum Dashboard",
+    "notFoundTitle": "Seite nicht gefunden",
+    "notFoundHeading": "Diese Seite existiert nicht",
+    "notFoundDescription": "Die gesuchte Seite wurde in Ihrem Arbeitsbereich nicht gefunden."
   },
   "forms": {
     "validation": {
@@ -8095,7 +8281,7 @@
     "welcomeAboard": "Willkommen an Bord!",
     "aiReady": "Ihr KI-Telefonsystem ist bereit.",
     "setUpAgent": "Meinen KI-Agenten einrichten →",
-    "takes2Min": "Dauert 2 Minuten · Die ersten 14 Tage sind kostenlos",
+    "takes2Min": "Dauert 2 Minuten · 30-Tage-Geld-zurück-Garantie",
     "emailRequired": "E-Mail ist erforderlich.",
     "creatingAccount": "Ihr Konto wird erstellt…",
     "almostThere": "Fast geschafft…",
@@ -9298,7 +9484,7 @@
   },
   "sidebar": {
     "tier": "Starter",
-    "trial": " · Trial",
+    "trial": " · Pending",
     "activeSubscription": "Active subscription",
     "callsAnswered": "calls answered",
     "minUsed": "min used",
@@ -11130,6 +11316,12 @@
     "declareWinner": "Declare Winner"
   },
   "autoSetup": {
+    "progress": {
+      "reading": "Ihre Website wird gelesen...",
+      "understanding": "Ihr Unternehmen wird analysiert...",
+      "building": "Wissensdatenbank wird aufgebaut...",
+      "creating": "Skripte und Antworten werden erstellt..."
+    },
     "toast": {
       "enterUrlOrIndustry": "Bitte geben Sie eine Website-URL ein oder wählen Sie eine Branche",
       "analyzeFailed": "Fehler bei der Website-Analyse. Bitte versuchen Sie es erneut.",

@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { verifyOAuthState } from "@/lib/integrations/oauth-state";
+import { encrypt } from "@/lib/encryption";
 import { log } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
@@ -149,7 +150,10 @@ export async function GET(
       ? new Date(Date.now() + tokens.expires_in * 1000).toISOString()
       : null;
 
-    // Store tokens and mark as connected
+    // Store tokens (encrypted) and mark as connected
+    const accessEnc = await encrypt(tokens.access_token);
+    const refreshEnc = tokens.refresh_token ? await encrypt(tokens.refresh_token) : null;
+
     const db = getDb();
     const { error: upsertErr } = await db
       .from("workspace_crm_connections")
@@ -158,8 +162,8 @@ export async function GET(
           workspace_id: workspaceId,
           provider,
           status: "active",
-          access_token: tokens.access_token,
-          refresh_token: tokens.refresh_token ?? null,
+          access_token: accessEnc,
+          refresh_token: refreshEnc,
           token_expires_at: expiresAt,
           instance_url: tokens.instance_url ?? null,
           updated_at: new Date().toISOString(),

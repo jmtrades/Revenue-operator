@@ -18,7 +18,16 @@ import {
 } from "lucide-react";
 
 const STEPS = 5;
-const INDUSTRY_VALUES = ["home_services", "healthcare", "legal", "real_estate", "insurance", "b2b_sales", "local_business", "contractors"] as const;
+const INDUSTRY_VALUES = [
+  "home_services", "healthcare", "dental", "medical", "legal", "real_estate", "insurance",
+  "b2b_sales", "contractors", "plumbing", "hvac", "electrical", "roofing", "landscaping",
+  "cleaning", "veterinary", "mental_health", "accounting", "financial_services",
+  "salon", "spa", "fitness", "restaurant", "catering", "retail", "auto",
+  "property_mgmt", "construction", "education", "nonprofit", "tech", "marketing",
+  "events", "travel", "logistics", "manufacturing", "photography", "pet_services",
+  "childcare", "senior_care", "moving", "security", "solar", "consulting",
+  "professional_services", "other",
+] as const;
 const AGENT_NAMES = ["Sarah", "Alex", "Emma", "James", "Rachel", "Charlotte"];
 const VOICE_IDS = [
   "us-female-warm-receptionist",   // Sarah — warm & welcoming
@@ -634,7 +643,7 @@ function OnboardingWizard() {
                 <p className="text-4xl font-bold mb-4" style={{ color: "var(--accent-primary)" }}>{phoneNumber}</p>
                 <div className="bg-[var(--bg-surface)] bg-opacity-50 rounded-lg p-3 mb-4">
                   <p className="text-xs font-medium mb-2" style={{ color: "var(--text-primary)" }}>{t("tryPhrase")}</p>
-                  <p className="text-sm italic" style={{ color: "var(--text-secondary)" }}>"What services do you offer?"</p>
+                  <p className="text-sm italic" style={{ color: "var(--text-secondary)" }}>&quot;What services do you offer?&quot;</p>
                 </div>
                 <p className="text-xs" style={{ color: "var(--text-secondary)" }}>{t("whenYouCallAppear")}</p>
               </div>

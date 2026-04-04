@@ -18,7 +18,7 @@ export function TestimonialsGridSection() {
         }
       ),
       author: t("testimonials.0.author", { default: "Home Services Company" }),
-      role: t("testimonials.0.role", { default: "HVAC & Plumbing — Texas" }),
+      role: t("testimonials.0.role", { default: "Home Services — Texas" }),
       company: t("testimonials.0.company", { default: "" }),
       initials: "HS",
       rating: 5,
@@ -33,7 +33,7 @@ export function TestimonialsGridSection() {
         }
       ),
       author: t("testimonials.1.author", { default: "Multi-Location Practice" }),
-      role: t("testimonials.1.role", { default: "Dental — California" }),
+      role: t("testimonials.1.role", { default: "Healthcare — California" }),
       company: t("testimonials.1.company", { default: "" }),
       initials: "MP",
       rating: 5,

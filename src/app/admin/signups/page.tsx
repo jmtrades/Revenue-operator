@@ -79,7 +79,7 @@ export default function SignupsPage() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-    } catch (err) {
+    } catch (_err) {
       alert("Failed to export CSV");
     }
   };

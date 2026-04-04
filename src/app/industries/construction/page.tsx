@@ -54,7 +54,7 @@ export default function ConstructionIndustryPage() {
               Capture every bid request. Coordinate subs instantly. Win more projects.
             </h1>
             <p className="text-base md:text-lg mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-              A general contractor's phone is a profit center. A property manager calls to get a bid on a commercial roof replacement. A homeowner calls about a kitchen remodel. You're on-site managing three crews and can't answer. The call goes to voicemail. The prospect calls another GC and gets a bid within 30 minutes. You call back three hours later and you've already lost the job. That $50,000+ project is gone. Revenue Operator answers every bid request 24/7, captures the scope, qualifies the opportunity, and routes it to your office or project manager—so you never miss an opportunity, even when you're in the field.
+              A general contractor&apos;s phone is a profit center. A property manager calls to get a bid on a commercial roof replacement. A homeowner calls about a kitchen remodel. You&apos;re on-site managing three crews and can&apos;t answer. The call goes to voicemail. The prospect calls another GC and gets a bid within 30 minutes. You call back three hours later and you&apos;ve already lost the job. That $50,000+ project is gone. Revenue Operator answers every bid request 24/7, captures the scope, qualifies the opportunity, and routes it to your office or project manager—so you never miss an opportunity, even when you&apos;re in the field.
             </p>
 
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 md:p-8 mb-8">
@@ -78,10 +78,10 @@ export default function ConstructionIndustryPage() {
                 Revenue Operator answers bid requests 24/7. It greets the caller, asks about the project scope (commercial roof, kitchen remodel, tenant buildout, etc.), captures the timeline and location, and qualifies budget range. It then routes the opportunity to your office or project manager with a structured summary: location, project type, scope, and contact info. All priority, no guessing.
               </p>
               <p>
-                For subcontractor routing, you can set up workflows: "If the scope includes plumbing, alert the plumbing sub." Revenue Operator can even attempt to schedule a walk-through or bid appointment directly. This accelerates bid turnaround.
+                For subcontractor routing, you can set up workflows: &quot;If the scope includes plumbing, alert the plumbing sub.&quot; Revenue Operator can even attempt to schedule a walk-through or bid appointment directly. This accelerates bid turnaround.
               </p>
               <p>
-                For job-site communication, Revenue Operator can handle site-specific coordination calls. "We need additional lumber for the framing." "When's the HVAC crew arriving?" Revenue Operator answers using your project info and routes critical questions to the right person, keeping your crews focused on work.
+                For job-site communication, Revenue Operator can handle site-specific coordination calls. &quot;We need additional lumber for the framing.&quot; &quot;When&apos;s the HVAC crew arriving?&quot; Revenue Operator answers using your project info and routes critical questions to the right person, keeping your crews focused on work.
               </p>
             </div>
 
@@ -117,7 +117,7 @@ export default function ConstructionIndustryPage() {
                 Beyond raw deal recovery, faster bid turnaround improves win rate. If you deliver a bid in 4 hours instead of 24, you win more. Smoother subcontractor coordination reduces delays and rework, which improves project profitability. Job-site efficiency means crews focus on building instead of chasing information.
               </p>
               <p>
-                The practical outcome: your GC can stay in the field managing production. Your office doesn't miss opportunities. Your subs are coordinated and responsive. Your projects run on schedule. That's growth and profitability.
+                The practical outcome: your GC can stay in the field managing production. Your office doesn&apos;t miss opportunities. Your subs are coordinated and responsive. Your projects run on schedule. That&apos;s growth and profitability.
               </p>
             </div>
 

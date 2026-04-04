@@ -11,7 +11,6 @@ import {
   XCircle,
   Clock,
   Loader2,
-  Zap,
 } from "lucide-react";
 
 interface Transfer {

@@ -146,13 +146,13 @@ export function compileSystemPrompt(input: BusinessBrainInput): string {
     rules,
     qualification_questions,
     objections,
-    business_hours_text,
+    business_hours_text: _business_hours_text,
     after_hours_instructions,
     after_hours_mode,
-    call_style,
-    personality,
-    max_call_duration,
-    timezone,
+    call_style: _call_style,
+    personality: _personality,
+    max_call_duration: _max_call_duration,
+    timezone: _timezone,
     recording_pause_on_sensitive,
   } = input;
 

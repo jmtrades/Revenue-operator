@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { ChevronDown, RefreshCw, Check, AlertCircle } from "lucide-react";
-import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 interface KnowledgeStats {
@@ -48,6 +47,34 @@ const INDUSTRIES = [
   "Home Services",
   "Construction",
   "Consulting",
+  "Healthcare",
+  "Veterinary",
+  "Mental Health / Therapy",
+  "Accounting / Tax",
+  "Financial Services",
+  "Restaurant",
+  "Catering",
+  "Retail",
+  "Property Management",
+  "Education / Training",
+  "Technology / SaaS",
+  "Marketing / Agency",
+  "Nonprofit",
+  "Events / Entertainment",
+  "Travel / Hospitality",
+  "Logistics / Delivery",
+  "Manufacturing",
+  "Photography / Creative",
+  "Pet Services",
+  "Childcare",
+  "Senior Care",
+  "Moving / Storage",
+  "Electrical",
+  "Landscaping",
+  "Cleaning / Janitorial",
+  "Security",
+  "B2B / Sales",
+  "Professional Services",
   "Other",
 ];
 
@@ -70,10 +97,10 @@ export default function AutoSetupPage() {
   const [confirmed, setConfirmed] = useState(false);
 
   const analyzeMessages = [
-    "Reading your website...",
-    "Understanding your business...",
-    "Building your operator's knowledge...",
-    "Creating scripts and responses...",
+    t("progress.reading"),
+    t("progress.understanding"),
+    t("progress.building"),
+    t("progress.creating"),
   ];
 
   // Load current stats on mount
@@ -89,7 +116,7 @@ export default function AutoSetupPage() {
             objectionCount: data.objectionCount || 0,
           });
         }
-      } catch (error) {
+      } catch (_error) {
         // silenced
       }
     };
@@ -150,7 +177,7 @@ export default function AutoSetupPage() {
       if (!industry && data.industry) {
         setIndustry(data.industry);
       }
-    } catch (error) {
+    } catch (_error) {
       clearInterval(messageInterval);
       toast.error(t("toast.analyzeFailed"));
       setShowPreview(false);
@@ -200,7 +227,7 @@ export default function AutoSetupPage() {
           });
         }
       }, 1000);
-    } catch (error) {
+    } catch (_error) {
       toast.error(t("toast.updateFailed"));
     } finally {
       setConfirming(false);
@@ -253,7 +280,7 @@ export default function AutoSetupPage() {
             Re-analyze Your Website
           </h1>
           <p style={{ color: "var(--text-secondary)" }}>
-            Update your AI operator's knowledge base with fresh website analysis.
+            Update your AI operator&apos;s knowledge base with fresh website analysis.
           </p>
         </div>
 
@@ -343,7 +370,7 @@ export default function AutoSetupPage() {
                 borderColor: "var(--border-default)",
                 color: "var(--text-primary)",
                 "--tw-ring-color": "var(--accent-primary)",
-              } as any}
+              } as Record<string, unknown>}
             />
             <button
               onClick={handleReanalyze}
@@ -470,7 +497,7 @@ export default function AutoSetupPage() {
                     AI Greeting
                   </p>
                   <p className="italic" style={{ color: "var(--text-primary)" }}>
-                    "{analysis.greeting}"
+                    &ldquo;{analysis.greeting}&rdquo;
                   </p>
                 </div>
               </div>

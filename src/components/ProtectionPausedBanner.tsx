@@ -39,7 +39,7 @@ export function ProtectionPausedBanner() {
     ? Math.ceil((trialEndDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
     : null;
 
-  const isTrial = billingStatus.billing_status === "trial";
+  const isTrial = billingStatus.billing_status === "trial" || billingStatus.billing_status === "pending";
   const trialEndingSoon = isTrial && daysLeft !== null && daysLeft > 0 && daysLeft <= 7;
 
   // Show banner if trial ended, cancelled, or payment failed
@@ -78,7 +78,7 @@ export function ProtectionPausedBanner() {
             <Link
               href="/app/settings/billing"
               className="inline-block px-5 py-2 rounded-lg text-sm font-medium transition-colors"
-              style={{ background: urgencyColor, color: "#fff" }}
+              style={{ background: urgencyColor, color: "var(--text-on-accent, #fff)" }}
             >
               Upgrade now
             </Link>
@@ -116,7 +116,7 @@ export function ProtectionPausedBanner() {
         <Link
           href="/dashboard/continue-protection"
           className="inline-block px-6 py-2.5 rounded-lg font-medium"
-          style={{ background: "var(--meaning-green)", color: "#0E1116" }}
+          style={{ background: "var(--meaning-green)", color: "var(--text-on-accent, #0E1116)" }}
         >
           {t("resumeHandling")}
         </Link>

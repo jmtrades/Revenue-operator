@@ -20,7 +20,7 @@ import { track } from "@/lib/analytics/posthog";
 
 export function ActivateWizard() {
   const t = useTranslations("activate");
-  const tTeam = useTranslations("team");
+  const _tTeam = useTranslations("team");
   const searchParams = useSearchParams();
   const prefillEmail = searchParams.get("email") ?? null;
   const prefillPlan = searchParams.get("plan") ?? null;
@@ -240,6 +240,25 @@ export function ActivateWizard() {
       setError(t("errors.connectionError", { defaultValue: "Connection error. Please check your internet and try again." }));
       setFinalizing(false);
       return;
+    }
+    // Mark onboarding as completed in the database — retry on failure
+    let onboardingMarked = false;
+    for (let attempt = 0; attempt < 3 && !onboardingMarked; attempt++) {
+      try {
+        const patchRes = await fetch("/api/workspace/me", {
+          method: "PATCH",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ onboardingCompletedAt: new Date().toISOString() }),
+        });
+        if (patchRes.ok) onboardingMarked = true;
+      } catch {
+        // Retry
+      }
+      if (!onboardingMarked && attempt < 2) await new Promise((r) => setTimeout(r, 1000));
+    }
+    if (!onboardingMarked) {
+      console.warn("[activate] Failed to mark onboarding complete after 3 attempts");
     }
     if (typeof localStorage !== "undefined") {
       localStorage.setItem("rt_onboarded", "true");

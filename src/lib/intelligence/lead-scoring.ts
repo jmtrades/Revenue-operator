@@ -208,7 +208,7 @@ export async function scoreLeadFull(
       recommendation,
       scored_at: new Date().toISOString(),
     };
-  } catch (err) {
+  } catch (_err) {
     // Error in lead scoring (error details omitted to protect PII)
     return {
       score: 50,

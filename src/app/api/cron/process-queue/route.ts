@@ -115,7 +115,7 @@ export async function GET(request: NextRequest) {
   if (authErr) return authErr;
 
   await processWebhookDeliveries().catch((e: unknown) => {
-      console.warn("[cron/process-queue] webhook deliveries failed:", e instanceof Error ? e.message : String(e));
+      log("warn", "[cron/process-queue] webhook deliveries failed", { error: e instanceof Error ? e.message : String(e) });
     });
 
   const { enqueueDecision, enqueue } = await import("@/lib/queue");
@@ -248,7 +248,7 @@ export async function GET(request: NextRequest) {
     }
     const { recordCronHeartbeat } = await import("@/lib/runtime/cron-heartbeat");
     await recordCronHeartbeat("process-queue").catch((e: unknown) => {
-      console.warn("[cron/process-queue] heartbeat failed:", e instanceof Error ? e.message : String(e));
+      log("warn", "[cron/process-queue] heartbeat failed", { error: e instanceof Error ? e.message : String(e) });
     });
     return NextResponse.json(body);
   }

@@ -187,7 +187,7 @@ export function LeadsList({
               <th className="py-3 px-4 text-left text-xs font-medium text-[var(--text-secondary)]">
                 <input
                   type="checkbox"
-                  className="h-3.5 w-3.5 rounded border-[var(--border-medium)] bg-[var(--bg-input)] text-[var(--text-primary)]"
+                  className="h-4 w-4 rounded border-[var(--border-medium)] bg-[var(--bg-input)] text-[var(--text-primary)] cursor-pointer"
                   checked={
                     filteredLeads.length > 0 &&
                     selectedIds.size === filteredLeads.length
@@ -240,7 +240,7 @@ export function LeadsList({
                   >
                     <input
                       type="checkbox"
-                      className="h-3.5 w-3.5 rounded border-[var(--border-medium)] bg-[var(--bg-input)] text-[var(--text-primary)]"
+                      className="h-4 w-4 rounded border-[var(--border-medium)] bg-[var(--bg-input)] text-[var(--text-primary)] cursor-pointer"
                       checked={checked}
                       onChange={() => toggleSelected(lead.id)}
                     />

@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import "@/lib/runtime";
 import { assertCronAuthorized } from "@/lib/runtime";
+import { log } from "@/lib/logger";
 import { runSafeCron } from "@/lib/cron/run-safe";
 import {
   transitionPaymentObligations,
@@ -32,7 +33,7 @@ export async function GET(request: NextRequest) {
       if (!allowedWorkspaces.has(ob.workspace_id)) {
         const { recordObservedRisk } = await import("@/lib/adoption-acceleration/observed-risks");
         await recordObservedRisk(ob.workspace_id, "overdue_payment", "payment_obligation", ob.id).catch((e: unknown) => {
-          console.warn("[cron/payment-completion] recordObservedRisk failed:", e instanceof Error ? e.message : String(e));
+          log("warn", "[cron/payment-completion] recordObservedRisk failed", { error: e instanceof Error ? e.message : String(e) });
         });
       }
     }

@@ -14,6 +14,9 @@ export async function GET(
 ) {
   const { counterparty_identifier } = await params;
   const raw = counterparty_identifier ? decodeURIComponent(counterparty_identifier) : "";
+  if (!raw || raw.length > 500) {
+    return NextResponse.json({ error: "Invalid identifier" }, { status: 400 });
+  }
   const state = await getPublicEnvironmentState(raw);
   return NextResponse.json({
     participation_state: state.participation_state,

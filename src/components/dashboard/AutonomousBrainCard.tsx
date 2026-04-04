@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Brain, Zap, TrendingUp, AlertTriangle, CheckCircle2, Activity, Shield, RefreshCw } from "lucide-react";
+import { Brain, Zap, TrendingUp, AlertTriangle, Activity, Shield, RefreshCw } from "lucide-react";
 import { useWorkspaceSafe } from "@/components/WorkspaceContext";
 
 interface BrainDashboardStats {

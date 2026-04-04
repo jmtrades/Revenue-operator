@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { Mic } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { speakText } from "@/lib/voice-preview";
+import { speakTextViaApi } from "@/lib/voice-preview";
 
 const SCENARIO_KEYS = ["normalCall", "bookingRequest", "pricingQuestion", "angryCaller", "wrongNumber"] as const;
 
@@ -23,6 +23,7 @@ export interface AgentTestPanelAgent {
   id: string;
   name: string;
   greeting?: string | null;
+  voice_id?: string | null;
 }
 
 export interface AgentTestPanelWorkspace {
@@ -82,12 +83,13 @@ export function AgentTestPanel({
     if (typeof window === "undefined" || !text.trim()) return;
     window.speechSynthesis?.cancel();
     setIsSpeaking(true);
-    speakText(text, {
+    void speakTextViaApi(text, {
       gender: "female",
+      voiceId: agent.voice_id || undefined,
       onStart: () => setIsSpeaking(true),
       onEnd: () => setIsSpeaking(false),
     });
-  }, []);
+  }, [agent.voice_id]);
 
   const submitToApi = useCallback(
     async (updatedMessages: Message[]) => {

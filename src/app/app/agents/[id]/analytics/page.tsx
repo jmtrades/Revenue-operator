@@ -83,6 +83,7 @@ export default function AgentAnalyticsPage({
   params: Promise<{ id: string }>;
 }) {
   const t = useTranslations("agents");
+  const cc = useChartColors();
   const [agentId, setAgentId] = useState<string | null>(null);
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -144,7 +145,6 @@ export default function AgentAnalyticsPage({
     );
   }
 
-  const cc = useChartColors();
   const { kpis, dailyVolume, successRateTrend, topOutcomes, commonIntents, comparison, recommendations } = data;
   const volumeChartData = dailyVolume.map((d) => ({
     day: new Date(d.date).toLocaleDateString(undefined, { month: "short", day: "numeric" }),

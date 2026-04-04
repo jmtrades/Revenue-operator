@@ -99,7 +99,7 @@ export default function AppSettingsCompliancePage() {
         body: JSON.stringify({ recording, hipaa, retention }),
       });
       if (!res.ok) {
-        const err = (await res.json()).error ?? tSettings("compliance.saveFailed");
+        const _err = (await res.json()).error ?? tSettings("compliance.saveFailed");
         toast.error(tSettings("compliance.saveFailed"));
         return;
       }
@@ -114,7 +114,7 @@ export default function AppSettingsCompliancePage() {
   const handleExport = async () => {
     try {
       const res = await fetch("/api/workspace/recording-consent", { credentials: "include" });
-      const data = res.ok ? await res.json() : {};
+      const _data = res.ok ? await res.json() : {};
       const rows = [
         [tSettings("compliance.csvExport.setting"), tSettings("compliance.csvExport.value")],
         [tSettings("compliance.csvExport.callRecording"), recording ? tSettings("compliance.csvExport.enabled") : tSettings("compliance.csvExport.disabled")],
@@ -221,7 +221,7 @@ export default function AppSettingsCompliancePage() {
               <p className="text-sm font-medium text-[var(--text-primary)]">{tSettings("compliance.callRecording")}</p>
               <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">{tSettings("compliance.callRecordingHelp")}</p>
             </div>
-            <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-[background-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] cursor-pointer ${recording ? "bg-[var(--accent-primary)]" : "bg-[var(--bg-inset)]"}`} onClick={() => setRecording(!recording)}>
+            <div role="switch" aria-checked={recording} tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setRecording(!recording); } }} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-[background-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] cursor-pointer ${recording ? "bg-[var(--accent-primary)]" : "bg-[var(--bg-inset)]"}`} onClick={() => setRecording(!recording)}>
               <span className={`inline-block h-4 w-4 transform rounded-full transition-[transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] ${recording ? "translate-x-6 bg-[var(--text-primary)]" : "translate-x-1 bg-[var(--text-tertiary)]"}`} />
             </div>
           </label>
@@ -233,7 +233,7 @@ export default function AppSettingsCompliancePage() {
               <p className="text-sm font-medium text-[var(--text-primary)]">{tSettings("compliance.hipaaMode")}</p>
               <p className="text-[11px] text-[var(--text-secondary)] mt-0.5">{tSettings("compliance.hipaaModeHelp")}</p>
             </div>
-            <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-[background-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] cursor-pointer ${hipaa ? "bg-[var(--accent-primary)]" : "bg-[var(--bg-inset)]"}`} onClick={() => setHipaa(!hipaa)}>
+            <div role="switch" aria-checked={hipaa} tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setHipaa(!hipaa); } }} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-[background-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] cursor-pointer ${hipaa ? "bg-[var(--accent-primary)]" : "bg-[var(--bg-inset)]"}`} onClick={() => setHipaa(!hipaa)}>
               <span className={`inline-block h-4 w-4 transform rounded-full transition-[transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] ${hipaa ? "translate-x-6 bg-[var(--text-primary)]" : "translate-x-1 bg-[var(--text-tertiary)]"}`} />
             </div>
           </label>

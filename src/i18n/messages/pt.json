@@ -63,8 +63,8 @@
       "coverageRunning": "Cobertura em curso",
       "nothingRequiresSupervision": "Nada requer supervisão. Avisaremos quando for preciso.",
       "remindBeforeCharge": "Nada requer supervisão. Avisaremos quando for preciso. Lembramos antes de qualquer cobrança.",
-      "trialGraceEnded": "Your trial has ended.",
-      "trialUpgradeToContinue": "Upgrade to continue →"
+      "trialGraceEnded": "Seu acesso foi pausado.",
+      "trialUpgradeToContinue": "Ativar para continuar →"
     }
   },
   "siteNav": {
@@ -532,7 +532,8 @@
     },
     "signingIn": "Entrando…",
     "savePassword": "Salvar senha",
-    "genericError": "An unexpected error occurred"
+    "genericError": "An unexpected error occurred",
+    "checkingSession": "Verificando sessão..."
   },
   "billing": {
     "pageTitle": "Faturamento — Revenue Operator",
@@ -1400,7 +1401,7 @@
       "renewal": "Renovação",
       "manageBilling": "Gerenciar cobrança",
       "opening": "Abrindo…",
-      "statusTrial": "Teste",
+      "statusTrial": "Começando",
       "statusActive": "Ativo",
       "statusPastDue": "Vencido",
       "statusPaused": "Pausado",
@@ -1593,14 +1594,53 @@
       "websitePlaceholder": "acmeplumbing.com",
       "industry": "Setor",
       "industries": {
-        "home_services": "Serviços residenciais",
+        "home_services": "Serviços domésticos",
         "healthcare": "Saúde",
+        "dental": "Odontologia",
+        "medical": "Medicina",
         "legal": "Jurídico",
         "real_estate": "Imobiliário",
         "insurance": "Seguros",
         "b2b_sales": "Vendas B2B",
-        "local_business": "Negócio local",
-        "contractors": "Contratados"
+        "contractors": "Empreiteiros",
+        "plumbing": "Encanamento",
+        "hvac": "Climatização",
+        "electrical": "Eletricidade",
+        "roofing": "Telhados",
+        "landscaping": "Paisagismo",
+        "cleaning": "Limpeza",
+        "veterinary": "Veterinária",
+        "mental_health": "Saúde mental / Terapia",
+        "accounting": "Contabilidade / Impostos",
+        "financial_services": "Serviços financeiros",
+        "salon": "Salão / Barbearia",
+        "spa": "Spa / Bem-estar",
+        "fitness": "Fitness / Academia",
+        "restaurant": "Restaurante",
+        "catering": "Buffet",
+        "retail": "Varejo",
+        "auto": "Oficina mecânica",
+        "property_mgmt": "Gestão de propriedades",
+        "construction": "Construção",
+        "education": "Educação / Treinamento",
+        "nonprofit": "Sem fins lucrativos",
+        "tech": "Tecnologia / SaaS",
+        "marketing": "Marketing / Agência",
+        "events": "Eventos / Entretenimento",
+        "travel": "Viagens / Hospitalidade",
+        "logistics": "Logística / Entregas",
+        "manufacturing": "Fabricação",
+        "photography": "Fotografia / Criativo",
+        "pet_services": "Serviços para pets",
+        "childcare": "Cuidado infantil",
+        "senior_care": "Cuidado de idosos",
+        "moving": "Mudanças / Armazenagem",
+        "security": "Segurança",
+        "solar": "Solar",
+        "consulting": "Consultoria",
+        "professional_services": "Serviços profissionais",
+        "other": "Outro",
+        "local_business": "Negócio local"
       },
       "continue": "Continuar →",
       "saving": "Salvando…",
@@ -1993,10 +2033,7 @@
       "makeTestCall": {
         "title": "Make a test call",
         "description": "Call your number from any phone to test it"
-      },
-      "readyTitle": "Seu Operador de Receita com IA",
-      "readyDescription": "Configure seu espaço de trabalho para automatizar operações de receita — chamadas, acompanhamentos e compromissos gerenciados por IA.",
-      "startTrial": "Começar"
+      }
     },
     "stats": {
       "activeCalls": "Active Calls",
@@ -5161,7 +5198,7 @@
       "pricing": {
         "heading": "Preço simples que acompanha sua receita",
         "subheading": "Sem licenças por assento. Você paga pela confiabilidade de atendimento, não por quantos entram.",
-        "trialNote": "Todos os planos começam com 14 dias grátis. Sem cartão."
+        "trialNote": "Garantia de reembolso de 30 dias. Configure em menos de 3 minutos."
       },
       "pricingTiers": {
         "starter": {
@@ -5889,8 +5926,8 @@
         "legal": "Legal",
         "realEstate": "Real Estate",
         "homeServices": "Home Services",
-        "automotive": "Automotive",
-        "dental": "Dental",
+        "consulting": "Consultoria",
+        "retail": "Varejo",
         "insurance": "Insurance",
         "financialServices": "Financial Services",
         "recruiting": "Recruiting",
@@ -6211,7 +6248,7 @@
     },
     "cta": "Começar agora",
     "contactSales": "Falar com vendas",
-    "allPlansInclude": "Todos os planos incluem: gravações encriptadas · quadro de conformidade · registo de auditoria · 14 dias de trial.",
+    "allPlansInclude": "Todos os planos incluem: gravações encriptadas · quadro de conformidade · registo de auditoria · garantia de reembolso de 30 dias.",
     "roiCalculator": "Calculadora de ROI",
     "featureComparison": "Comparação de funcionalidades",
     "feature": "Funcionalidade",
@@ -6332,7 +6369,7 @@
       "cancel": "Posso cancelar a qualquer momento?",
       "cancelAnswer": "Sim — você pode cancelar ou trocar de plano a qualquer momento nas configurações de cobrança."
     },
-    "trustedBy": "Confiado por equipes líderes em serviço, saúde e negócios locais.",
+    "trustedBy": "Confiado por empresas de todos os setores em todos os 50 estados.",
     "questionsTalkToUs": "Dúvidas? Fale conosco →",
     "heading": "Pricing",
     "subheading": "Subheading",
@@ -6716,7 +6753,148 @@
     "modeBusinessTitle": "Business Mode",
     "modeBusinessDesc": "Use Revenue Operator for business operations",
     "businessHeading": "Business Information",
-    "businessSubtitle": "Tell us about your business"
+    "businessSubtitle": "Tell us about your business",
+    "quickSetup": {
+      "progressReading": "Lendo seu site...",
+      "progressUnderstanding": "Entendendo seu negócio...",
+      "progressBuilding": "Construindo o conhecimento do seu operador...",
+      "progressCreating": "Criando scripts e respostas...",
+      "errorEnterUrl": "Por favor, insira a URL de um site",
+      "errorWorkspaceNotFound": "Espaço de trabalho não encontrado. Por favor, conclua a configuração primeiro.",
+      "statusAnalyzing": "Analisando seu site...",
+      "defaultBusinessName": "Seu Negócio",
+      "defaultIndustry": "Geral",
+      "heading": "Configure seu operador IA em segundos",
+      "subheading": "Analisaremos seu negócio e configuraremos tudo automaticamente.",
+      "subheadingNoSetup": "Sem scripts manuais ou configuração necessária — apenas compartilhe seu site.",
+      "labelWebsiteUrl": "URL do site",
+      "placeholderUrl": "https://suaempresa.com.br",
+      "buttonAnalyzing": "Analisando",
+      "buttonAnalyze": "Analisar",
+      "reviewHeading": "Encontramos seu negócio",
+      "reviewSubheading": "Revise o que aprendemos e personalize se necessário.",
+      "labelBusinessName": "Nome do negócio",
+      "labelIndustry": "Setor",
+      "statFaqsGenerated": "Perguntas frequentes geradas",
+      "statObjectionHandlers": "Tratadores de objeções",
+      "statTextTemplates": "Modelos de texto",
+      "statReadyToGo": "Pronto para usar",
+      "sectionGreeting": "Script de saudação gerado",
+      "sectionFaqs": "Perguntas frequentes de exemplo ({count} no total)",
+      "sectionObjections": "Tratadores de objeções ({count} no total)",
+      "sectionTemplates": "Modelos de texto de acompanhamento ({count})",
+      "labelQuestion": "P: ",
+      "labelAnswer": "R: ",
+      "labelObjection": "Objeção: ",
+      "labelResponse": "Resposta: ",
+      "moreFaqs": "...e mais {count} perguntas frequentes",
+      "moreHandlers": "...e mais {count} tratadores",
+      "moreTemplates": "...e mais {count} modelos",
+      "buttonBack": "Voltar",
+      "buttonActivating": "Ativando...",
+      "buttonActivate": "Parece bom, ativar!",
+      "errorAnalyzeFailed": "Falha ao analisar o site. Por favor, tente novamente.",
+      "errorActivateFailed": "Falha ao ativar a configuração. Por favor, tente novamente.",
+      "successHeading": "Você está no ar!",
+      "successSubheading": "Seu operador IA está pronto para atender chamadas e automatizar suas operações de receita.",
+      "successCapabilitiesTitle": "Seu operador IA agora pode:",
+      "capabilityGreeting": "Atender chamadas com sua saudação personalizada",
+      "capabilityFaqs": "Responder {count} perguntas comuns automaticamente",
+      "capabilityObjections": "Superar {count} objeções de vendas",
+      "capabilityFollowUp": "Enviar textos de acompanhamento automaticamente",
+      "capabilityAppointments": "Agendar compromissos no seu calendário",
+      "buttonDashboard": "Ir para o painel",
+      "buttonTestCall": "Fazer uma chamada de teste",
+      "labelServicesFound": "Serviços encontrados",
+      "moreServices": "+{count} mais",
+      "labelAiGreeting": "Saudação IA"
+    },
+    "agentTemplates": {
+      "sectionTitle": "Selecione seu modelo de operador IA",
+      "bestForLabel": "Ideal para:",
+      "inboundCloser": {
+        "name": "Fechador de chamadas recebidas",
+        "tagline": "Atende cada chamada, qualifica leads e agenda compromissos instantaneamente",
+        "feature1": "Roteamento e triagem inteligente de chamadas",
+        "feature2": "Qualificação de leads em tempo real",
+        "feature3": "Agendamento automático de compromissos",
+        "recommendedFor": "Qualquer negócio com volume de chamadas recebidas"
+      },
+      "outboundSetter": {
+        "name": "Agendador de chamadas ativas",
+        "tagline": "Executa campanhas no piloto automático, preenche sua agenda com reuniões qualificadas",
+        "feature1": "Campanhas automáticas de chamadas ativas",
+        "feature2": "Gestão de listas de leads",
+        "feature3": "Integração de calendário e agendamento",
+        "recommendedFor": "Equipes de vendas com campanhas ativas"
+      },
+      "officeAgent": {
+        "name": "Agente de escritório",
+        "tagline": "Cobertura de recepção 24/7 que nunca falta ao trabalho",
+        "feature1": "Roteamento e encaminhamento completo de chamadas",
+        "feature2": "Respostas a perguntas frequentes e base de conhecimento",
+        "feature3": "Registro de mensagens e agendamento de retorno de chamada",
+        "recommendedFor": "Qualquer negócio que precise de cobertura telefônica 24/7"
+      },
+      "followUpEngine": {
+        "name": "Motor de acompanhamento",
+        "tagline": "Transforma ausências em compromissos agendados, leads inativos em receita",
+        "feature1": "Sequências automáticas de chamadas de acompanhamento",
+        "feature2": "Chamadas de lembrete e por ausência",
+        "feature3": "Acompanhamento de desempenho de campanhas",
+        "recommendedFor": "Negócios com alto volume de acompanhamentos"
+      },
+      "supportAgent": {
+        "name": "Agente de suporte",
+        "tagline": "Gerencia chamadas de suporte com paciência e precisão, escala quando necessário",
+        "feature1": "Suporte ao cliente multicanal",
+        "feature2": "Criação e acompanhamento de tickets",
+        "feature3": "Escalação inteligente para sua equipe",
+        "recommendedFor": "Empresas com equipes de suporte ao cliente"
+      },
+      "fullOperator": {
+        "name": "Operador de receita completo",
+        "tagline": "Toda a sua operação telefônica em uma IA — recebidas, ativas, acompanhamento, tudo",
+        "feature1": "Automatização completa do pipeline de receita",
+        "feature2": "Recebidas, ativas, acompanhamento e agendamento",
+        "feature3": "Análises avançadas e relatórios",
+        "recommendedFor": "Empresas em crescimento que precisam de automatização de ponta a ponta"
+      }
+    },
+    "smartSetup": {
+      "heading": "O que voc\u00ea faz?",
+      "subheading": "Escolha sua fun\u00e7\u00e3o e mostraremos seu operador em a\u00e7\u00e3o",
+      "dontSeeRole": "N\u00e3o encontrou sua fun\u00e7\u00e3o?",
+      "describeInstead": "Descreva em vez disso",
+      "describePrompt": "Descreva o que voc\u00ea faz e para quem voc\u00ea vende:",
+      "backToSelection": "\u2190 Voltar \u00e0 sele\u00e7\u00e3o",
+      "meetOperator": "Conhe\u00e7a seu operador",
+      "handlesSituations": "Veja como {playbook} lida com situa\u00e7\u00f5es reais",
+      "loadingScenarios": "Carregando cen\u00e1rios...",
+      "leadLabel": "Lead",
+      "agentLabel": "Agente",
+      "operatorKnows": "Seu operador conhece:",
+      "objectionHandlers": "\u2713 {count} tratamentos de obje\u00e7\u00f5es",
+      "faqCount": "\u2713 {count} perguntas frequentes",
+      "followUpTemplates": "\u2713 {count} modelos de acompanhamento",
+      "agentNameLabel": "Nome do agente",
+      "businessNameLabel": "Nome da empresa (Opcional)",
+      "companyPlaceholder": "Nome da sua empresa",
+      "activateAgent": "Ativar agente",
+      "activating": "Ativando...",
+      "showCustomization": "Mostrar personaliza\u00e7\u00e3o \u2192",
+      "hideCustomization": "Ocultar personaliza\u00e7\u00e3o \u2192",
+      "greetingScript": "Script de sauda\u00e7\u00e3o",
+      "sampleFaqs": "Perguntas frequentes de exemplo",
+      "activatingOperator": "Ativando seu operador...",
+      "fewSeconds": "Isso geralmente leva apenas alguns segundos",
+      "workspaceNotFound": "Espa\u00e7o de trabalho n\u00e3o encontrado. Por favor, conclua a configura\u00e7\u00e3o primeiro.",
+      "operatorLive": "Seu operador \"{agentName}\" est\u00e1 ativo e pronto para receber chamadas!",
+      "activationFailed": "N\u00e3o foi poss\u00edvel ativar seu operador \u2014 verifique sua conex\u00e3o com a internet e tente novamente.",
+      "buildingOperator": "Construindo seu operador...",
+      "customDescriptionFailed": "Falha ao processar a descri\u00e7\u00e3o personalizada",
+      "setupStepFailed": "Etapa de configura\u00e7\u00e3o falhou \u2014 tente novamente. Se o problema persistir, entre em contato com o suporte."
+    }
   },
   "agents.testPanel": {
     "errors": {
@@ -6866,7 +7044,15 @@
     "title": "Errors",
     "unauthorized": "Unauthorized",
     "updateFailed": "Update failed",
-    "emptyTemplate": "At least one message template is required."
+    "emptyTemplate": "At least one message template is required.",
+    "oops": "Ops",
+    "temporaryIssue": "Problema temporário",
+    "errorDescription": "Esta página teve um problema ao carregar. Seus dados estão seguros — tente atualizar ou volte ao painel.",
+    "errorId": "ID do erro",
+    "backToDashboard": "Voltar ao painel",
+    "notFoundTitle": "Página não encontrada",
+    "notFoundHeading": "Esta página não existe",
+    "notFoundDescription": "A página que você procura não foi encontrada no seu espaço de trabalho."
   },
   "forms": {
     "validation": {
@@ -9292,7 +9478,7 @@
   },
   "sidebar": {
     "tier": "Starter",
-    "trial": " · Trial",
+    "trial": " · Pending",
     "activeSubscription": "Active subscription",
     "callsAnswered": "calls answered",
     "minUsed": "min used",
@@ -11124,6 +11310,12 @@
     "declareWinner": "Declare Winner"
   },
   "autoSetup": {
+    "progress": {
+      "reading": "Lendo seu site...",
+      "understanding": "Analisando seu negócio...",
+      "building": "Construindo a base de conhecimento...",
+      "creating": "Criando scripts e respostas..."
+    },
     "toast": {
       "enterUrlOrIndustry": "Insira uma URL de site ou selecione um setor",
       "analyzeFailed": "Falha ao analisar o site. Tente novamente.",

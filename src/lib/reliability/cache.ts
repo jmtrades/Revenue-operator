@@ -41,6 +41,25 @@ export function setCachedResponse<T>(key: string, data: T): void {
   }
 }
 
+/**
+ * Invalidate cache entries matching a prefix after a mutation.
+ * Call after any POST/PATCH/DELETE to ensure fresh data on next read.
+ * Example: invalidateCache("leads") clears all leads-related cache.
+ */
+export function invalidateCache(prefix: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    const keys = Object.keys(localStorage);
+    for (const k of keys) {
+      if (k.startsWith(`${CACHE_PREFIX}${prefix}`)) {
+        localStorage.removeItem(k);
+      }
+    }
+  } catch {
+    // Ignore storage errors
+  }
+}
+
 export function clearCache(key?: string): void {
   if (typeof window === "undefined") return;
   try {

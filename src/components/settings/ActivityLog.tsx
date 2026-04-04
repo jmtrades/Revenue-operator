@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Phone, Calendar, UserPlus, Megaphone, Loader2 } from "lucide-react";
+import { Phone, Calendar, UserPlus, Megaphone } from "lucide-react";
 import { apiFetch } from "@/lib/api";
 
 interface ActivityEntry {

@@ -544,7 +544,7 @@ export default function LeadsPage() {
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({ state: status }),
-    }).catch((err) => {
+    }).catch((_err) => {
       // silenced
     });
   };
@@ -578,7 +578,7 @@ export default function LeadsPage() {
           notes: addLeadForm.notes.trim() || undefined,
         }),
       });
-      const data = (await res.json().catch(() => null)) as {
+      const _data = (await res.json().catch(() => null)) as {
         id?: string;
         error?: string;
       } | null;
@@ -940,6 +940,9 @@ export default function LeadsPage() {
         )}
 
         {/* Table + mobile list */}
+        <div aria-live="polite" aria-atomic="true" className="sr-only">
+          {loading ? "Loading leads..." : error ? error : `${filteredLeads.length} leads loaded`}
+        </div>
         <div className={view === "board" ? "hidden md:block" : ""}>
           <LeadsList
             loading={loading}

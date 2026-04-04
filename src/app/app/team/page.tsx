@@ -140,7 +140,7 @@ export default function TeamPage() {
           }))
         );
       })
-      .catch((err) => {
+      .catch((_err) => {
         toast.error(t("errors.fetchTeamFailed"));
       })
       .finally(() => setLoading(false));
@@ -175,7 +175,7 @@ export default function TeamPage() {
           }))
         );
       })
-      .catch((err) => {
+      .catch((_err) => {
         if (!cancelled) toast.error(t("errors.fetchTeamFailed"));
       })
       .finally(() => { if (!cancelled) setLoading(false); });
@@ -225,7 +225,7 @@ export default function TeamPage() {
         prev.map((m) => (m.id === memberId ? { ...m, role: newRole } : m))
       );
       toast.success(t("toast.roleUpdated"));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t("errors.changeRoleFailed"));
     }
     setRoleModalMember(null);
@@ -243,7 +243,7 @@ export default function TeamPage() {
       if (!res.ok) throw new Error("Failed to remove member");
       setMembers((prev) => prev.filter((m) => m.id !== memberId));
       toast.success(t("toast.memberRemoved"));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t("errors.removeMemberFailed"));
     }
     setRemoveConfirmMember(null);
@@ -352,7 +352,7 @@ export default function TeamPage() {
                       </button>
                       {menuMemberId === member.id && (
                         <>
-                          <div className="fixed inset-0 z-10" onClick={() => setMenuMemberId(null)} />
+                          <div className="fixed inset-0 z-10" onClick={() => setMenuMemberId(null)} onKeyDown={(e) => e.key === "Escape" && setMenuMemberId(null)} role="presentation" />
                           <div className="absolute right-0 top-full mt-1 z-20 py-1 rounded-lg bg-[var(--bg-card)] border border-[var(--border-medium)] shadow-xl min-w-[140px]">
                             <button
                               type="button"
@@ -454,11 +454,11 @@ export default function TeamPage() {
               <table className="w-full text-left text-sm border-collapse">
                 <thead>
                   <tr className="border-b border-[var(--border-default)]">
-                    <th className="py-2 pr-4 font-medium text-[var(--text-secondary)]">{t("permissionLabel")}</th>
-                    <th className="py-2 px-2 font-medium text-[var(--text-secondary)]">{t("roles.owner")}</th>
-                    <th className="py-2 px-2 font-medium text-[var(--text-secondary)]">{t("roles.admin")}</th>
-                    <th className="py-2 px-2 font-medium text-[var(--text-secondary)]">{t("roles.manager")}</th>
-                    <th className="py-2 px-2 font-medium text-[var(--text-secondary)]">{t("roles.agent")}</th>
+                    <th scope="col" className="py-2 pr-4 font-medium text-[var(--text-secondary)]">{t("permissionLabel")}</th>
+                    <th scope="col" className="py-2 px-2 font-medium text-[var(--text-secondary)]">{t("roles.owner")}</th>
+                    <th scope="col" className="py-2 px-2 font-medium text-[var(--text-secondary)]">{t("roles.admin")}</th>
+                    <th scope="col" className="py-2 px-2 font-medium text-[var(--text-secondary)]">{t("roles.manager")}</th>
+                    <th scope="col" className="py-2 px-2 font-medium text-[var(--text-secondary)]">{t("roles.agent")}</th>
                   </tr>
                 </thead>
                 <tbody>

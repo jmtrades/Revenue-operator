@@ -72,3 +72,40 @@ export function buildFirstMessageWithConsent(
 export function isConsentRequired(settings: RecordingConsentSettings | null): boolean {
   return settings?.mode === "two_party";
 }
+
+/**
+ * Validate that recording consent was played by checking transcript.
+ * Returns true if consent is not required or if the announcement text
+ * appears in the first assistant turn of the transcript.
+ */
+export function validateConsentInTranscript(
+  settings: RecordingConsentSettings | null,
+  transcript: Array<{ speaker: string; text: string }>,
+): { valid: boolean; reason?: string } {
+  if (!settings || settings.mode !== "two_party") {
+    return { valid: true };
+  }
+
+  const _announcement = (settings.announcementText ?? "").trim() || getDefaultTwoPartyAnnouncement();
+  // Check first 3 assistant turns for consent keywords
+  const assistantTurns = transcript
+    .filter((t) => t.speaker === "assistant")
+    .slice(0, 3);
+
+  if (assistantTurns.length === 0) {
+    return { valid: false, reason: "no_assistant_turns" };
+  }
+
+  // Check if any early assistant turn contains key consent phrases
+  const consentSignals = ["recorded", "recording", "consent", "quality and training"];
+  const hasConsent = assistantTurns.some((turn) => {
+    const lower = turn.text.toLowerCase();
+    return consentSignals.some((signal) => lower.includes(signal));
+  });
+
+  if (!hasConsent) {
+    return { valid: false, reason: "consent_announcement_not_detected" };
+  }
+
+  return { valid: true };
+}

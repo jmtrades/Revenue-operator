@@ -16,6 +16,7 @@ export async function GET(req: NextRequest) {
   const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;
 
+  try {
   const db = getDb();
   const { data: state } = await db
     .from("activation_states")
@@ -73,6 +74,9 @@ export async function GET(req: NextRequest) {
     top_recoverable_leads: topRecoverable,
     recoverable_revenue_cents: recoverableRevenueCents,
   });
+  } catch {
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {

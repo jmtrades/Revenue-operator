@@ -9,7 +9,7 @@ import crypto from "crypto";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { log } from "@/lib/logger";
 
-interface ChatSession {
+interface _ChatSession {
   id: string;
   workspace_id: string;
   visitor_name: string;

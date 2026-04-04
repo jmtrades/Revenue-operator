@@ -423,7 +423,7 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    const voiceServerUrl = process.env.NEXT_PUBLIC_VOICE_SERVER_URL;
+    const voiceServerUrl = process.env.VOICE_SERVER_URL || process.env.NEXT_PUBLIC_VOICE_SERVER_URL;
     const deepgramApiKey = process.env.DEEPGRAM_API_KEY;
 
     // Diagnostic: log provider availability (no secrets exposed)

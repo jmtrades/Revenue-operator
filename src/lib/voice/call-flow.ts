@@ -518,7 +518,7 @@ export async function handleInboundCall(
 ): Promise<string> {
   const db = getDb();
   const busyVoicemailTwiml =
-    '<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">All agents are busy. Please hold or leave a message after the tone.</Say><Record maxLength="120" playBeep="true" /></Response>';
+    '<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="Polly.Joanna">All agents are busy. Please hold or leave a message after the tone.</Say><Record maxLength="120" playBeep="true" /></Response>';
 
   // 0) Workspace guardrails before call processing.
   const { data: workspace } = await db
@@ -531,10 +531,11 @@ export async function handleInboundCall(
     status?: string | null;
     billing_tier?: string | null;
   } | null;
-  const billingStatus = ws?.billing_status ?? "trial";
+  const billingStatus = ws?.billing_status ?? "pending";
   const workspaceStatus = ws?.status ?? "active";
   const billingAllowed =
     billingStatus === "active" ||
+    billingStatus === "pending" ||
     billingStatus === "trial" ||
     billingStatus === "trial_expired";
   const statusAllowed = workspaceStatus !== "paused" && workspaceStatus !== "payment_failed";
@@ -579,7 +580,7 @@ export async function handleInboundCall(
   let workspaceBizMeta: { business_name?: string; industry?: string; services?: string; address?: string } = {};
   try {
     // Load primary agent, workspace context, and caller context in parallel
-    const [agentResult, businessCtxResult, leadResult, historyResult] = await Promise.all([
+    const [agentResult, businessCtxResult, leadResult, _historyResult] = await Promise.all([
       // Try primary agent first; fall back to most recently created agent if is_primary column missing
       db.from("agents").select("*").eq("workspace_id", params.workspaceId).eq("is_primary", true).maybeSingle()
         .then(res => {
@@ -788,6 +789,6 @@ export async function handleInboundCall(
       workspaceId: params.workspaceId,
     });
     // Fallback to basic TwiML
-    return `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">Thank you for calling. Please hold.</Say><Pause length="2"/></Response>`;
+    return `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="Polly.Joanna">Thank you for calling. We're experiencing a brief delay. Please leave your name and number after the beep and we'll get back to you shortly.</Say><Record maxLength="120" transcribe="true" playBeep="true" /></Response>`;
   }
 }

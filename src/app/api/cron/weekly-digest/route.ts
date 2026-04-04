@@ -105,6 +105,7 @@ export async function GET(req: NextRequest) {
 
       const workspaceName = ws.name || "Your business";
 
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.recall-touch.com";
       const html = `
 <!DOCTYPE html>
 <html>
@@ -168,12 +169,12 @@ export async function GET(req: NextRequest) {
     </table>
 
     <div style="text-align: center;">
-      <a href="https://recall-touch.com/app/analytics" class="cta">View Full Dashboard →</a>
+      <a href="${baseUrl}/app/analytics" class="cta">View Full Dashboard →</a>
     </div>
 
     <div class="footer">
       Revenue Operator — The AI Revenue Execution System<br>
-      <a href="https://recall-touch.com/app/settings/notifications" style="color: #71717a;">Manage email preferences</a>
+      <a href="${baseUrl}/app/settings/notifications" style="color: #71717a;">Manage email preferences</a>
     </div>
   </div>
 </body>

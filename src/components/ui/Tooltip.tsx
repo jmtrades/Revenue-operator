@@ -53,7 +53,10 @@ export function Tooltip({ content, side = "top", children }: TooltipProps) {
   };
 
   /* Determine if we're in the group window (skip animation too) */
-  const isInstant = Date.now() - lastTooltipCloseTime < GROUP_WINDOW;
+  const [isInstant, setIsInstant] = useState(false);
+  useEffect(() => {
+    setIsInstant(Date.now() - lastTooltipCloseTime < GROUP_WINDOW);
+  }, [open]);
 
   return (
     <div

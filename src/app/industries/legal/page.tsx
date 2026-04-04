@@ -66,7 +66,7 @@ export default function LegalIndustryPage() {
               <h2 className="text-lg font-semibold mb-3">Why legal lead capture breaks</h2>
               <div className="space-y-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
                 <p>
-                  Legal callers rarely "shop around" for weeks. They call when something happened: a crash, an arrest, a dispute,
+                  Legal callers rarely &quot;shop around&quot; for weeks. They call when something happened: a crash, an arrest, a dispute,
                   a deadline. That urgency creates high conversion potential—but it also means the first responsive firm wins.
                   If your intake process depends on callbacks, you’re choosing a slower lane.
                 </p>
@@ -127,12 +127,12 @@ export default function LegalIndustryPage() {
             <h2 className="text-lg font-semibold mb-3">ROI (why speed-to-lead matters most here)</h2>
             <div className="space-y-4 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
               <p>
-                Legal ROI isn’t driven by "more calls"—it’s driven by conversion velocity. If answering faster converts one
+                Legal ROI isn’t driven by &quot;more calls&quot;—it’s driven by conversion velocity. If answering faster converts one
                 additional qualified case per quarter, the system pays for itself many times over. Even in lower-value matters,
                 consistent intake and follow-up means fewer dropped consultations and fewer empty calendar blocks.
               </p>
               <p>
-                Revenue Operator is designed for measured professionalism: it doesn’t "spam." It follows your rules. It documents
+                Revenue Operator is designed for measured professionalism: it doesn’t &quot;spam.&quot; It follows your rules. It documents
                 every interaction. And it helps your team spend time where it matters—qualified matters that are ready to move.
               </p>
               <p>

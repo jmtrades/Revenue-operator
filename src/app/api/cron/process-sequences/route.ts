@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
           // Development logging removed
         }
       } catch (error) {
-        const msg = error instanceof Error ? error.message : String(error);
+        const _msg = error instanceof Error ? error.message : String(error);
         // Error (details omitted to protect PII)
         results.errors = (results.errors as number) + 1;
       }

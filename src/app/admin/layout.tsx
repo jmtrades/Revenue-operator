@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [allowed, setAllowed] = useState<boolean | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<string>("");
+  const [lastUpdated] = useState<string>(() => new Date().toLocaleTimeString());
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
@@ -15,10 +15,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       .then((r) => r.json())
       .then((d) => setAllowed(d.allowed === true))
       .catch(() => setAllowed(false));
-  }, []);
-
-  useEffect(() => {
-    setLastUpdated(new Date().toLocaleTimeString());
   }, []);
 
   if (allowed === null) {

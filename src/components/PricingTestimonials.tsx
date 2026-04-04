@@ -1,68 +1,73 @@
 "use client";
 
 import { Star } from "lucide-react";
-import { SOCIAL_PROOF } from "@/lib/constants";
 
 const TESTIMONIALS = [
   {
     quote: "We went from missing after-hours calls to answering every single one overnight. The AI books appointments, follows up on quotes, and routes urgent calls — all automatically.",
-    name: "",
+    name: "Home Services Owner",
     role: "Owner",
     company: "Home Services Company — Texas",
     metric: "24/7",
     metricLabel: "call coverage",
     avatar: "HS",
     plan: "Growth",
+    date: "Feb 2026",
   },
   {
     quote: "Our front desk was drowning in calls. Revenue Operator handles the full volume for us now. No-shows dropped significantly because the AI actually follows up with reminders and reschedules cancellations.",
-    name: "",
+    name: "Dental Practice Owner",
     role: "Practice Owner",
     company: "Multi-Location Dental — Florida",
     metric: "100%",
     metricLabel: "calls answered",
     avatar: "MD",
     plan: "Business",
+    date: "Jan 2026",
   },
   {
     quote: "I was skeptical about AI handling legal intake calls. Then it booked consultations its first night — at 2 AM. The voice quality is so natural that callers don't realize it's AI.",
-    name: "",
+    name: "Law Firm Partner",
     role: "Managing Partner",
     company: "Personal Injury Firm — Illinois",
     metric: "24/7",
     metricLabel: "intake coverage",
     avatar: "PI",
     plan: "Growth",
+    date: "Mar 2026",
   },
   {
     quote: "We manage crews across multiple states. Storm season used to mean most calls went to voicemail — those are high-value jobs just evaporating. Now every call gets answered and scheduled instantly.",
-    name: "",
+    name: "Roofing Company CEO",
     role: "CEO",
     company: "Roofing & Restoration — Texas",
     metric: "100%",
     metricLabel: "calls captured",
     avatar: "RR",
     plan: "Agency",
+    date: "Mar 2026",
   },
   {
     quote: "Setup literally took minutes. That's not marketing speak — I timed it. Our AI operator was taking calls before I finished my coffee. It handled the full workflow from day one.",
-    name: "",
+    name: "Auto Service Owner",
     role: "Owner",
     company: "Auto Service Center — Georgia",
     metric: "< 5 min",
     metricLabel: "to go live",
     avatar: "AS",
     plan: "Starter",
+    date: "Jan 2026",
   },
   {
     quote: "I run a white-label agency. My clients think the AI is a real receptionist on their team. Multiple clients, zero complaints, and consistent margin on the resell.",
-    name: "",
+    name: "Agency Founder",
     role: "Founder",
     company: "Digital Marketing Agency — Remote",
     metric: "White-label",
     metricLabel: "ready",
     avatar: "DM",
     plan: "Agency",
+    date: "Feb 2026",
   },
 ];
 
@@ -111,9 +116,14 @@ export function PricingTestimonials() {
                 <p className="text-sm font-semibold text-white/90">{t.name}</p>
                 <p className="text-xs text-[var(--text-tertiary)]">{t.role}, {t.company}</p>
               </div>
-              <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-white/5 text-[var(--text-tertiary)] border border-[var(--border-default)]">
-                {t.plan}
-              </span>
+              <div className="flex flex-col items-end gap-1">
+                <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-white/5 text-[var(--text-tertiary)] border border-[var(--border-default)]">
+                  {t.plan}
+                </span>
+                {t.date && (
+                  <span className="text-[9px] text-[var(--text-tertiary)]">{t.date}</span>
+                )}
+              </div>
             </div>
           </div>
         ))}

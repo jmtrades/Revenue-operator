@@ -168,7 +168,7 @@ export default function AppSettingsBillingPage() {
       if (!res.ok) { setBillingError(true); return; }
       const data = await res.json() as Record<string, unknown>;
       if (!data) { setBillingError(true); return; }
-      setBillingStatus((data.billing_status as string) ?? "trial");
+      setBillingStatus((data.billing_status as string) ?? "pending");
       setRenewalAt((data.renewal_at as string) ?? null);
       setPendingTier((data.pending_billing_tier as string) ?? null);
       setPendingEffectiveAt((data.pending_billing_effective_at as string) ?? null);
@@ -232,7 +232,7 @@ export default function AppSettingsBillingPage() {
       if (!res.ok) {
         let errorMessage = tBilling("toast.pauseFailed");
         try {
-          const data = await res.json() as { message?: string; error?: string } | null;
+          const _data = await res.json() as { message?: string; error?: string } | null;
         } catch {
           // If JSON parsing fails, use a generic message including status code
           if (res.status === 502) {
@@ -256,9 +256,9 @@ export default function AppSettingsBillingPage() {
 
   function formatBillingStatus(status: string | null): string {
     switch (status) {
-      case "trial": return "Free Trial";
+      case "trial": return "Getting Started";
       case "active": return "Active";
-      case "trial_ended": return "Trial Ended";
+      case "trial_ended": return "Pending Activation";
       case "cancelled": return "Cancelled";
       case "paused": return "Paused";
       case "payment_failed": return "Payment Failed";
@@ -301,8 +301,8 @@ export default function AppSettingsBillingPage() {
         <div className="p-4 rounded-xl border border-[var(--accent-primary)]/20 bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] text-sm mb-4 flex items-start gap-3">
           <div className="shrink-0 w-8 h-8 rounded-full bg-[var(--accent-primary)]/20 flex items-center justify-center text-[var(--accent-primary)] text-sm font-bold">!</div>
           <div>
-            <p className="font-semibold text-[var(--accent-primary)]">{tBilling("trial.title", { defaultValue: "You're on a free trial" })}</p>
-            <p className="mt-1 text-[var(--accent-primary)]/80">{tBilling("trial.description", { defaultValue: "Subscribe to a plan to keep your operators running after the trial ends. Your data and configuration will be preserved." })}</p>
+            <p className="font-semibold text-[var(--accent-primary)]">{tBilling("trial.title", { defaultValue: "Activate your account" })}</p>
+            <p className="mt-1 text-[var(--accent-primary)]/80">{tBilling("trial.description", { defaultValue: "Choose a plan to activate your revenue operators. Your data and configuration are ready to go." })}</p>
           </div>
         </div>
       )}
@@ -406,7 +406,7 @@ export default function AppSettingsBillingPage() {
           <div>
             <p className="text-sm font-medium text-[var(--text-primary)]">Starter Plan — $147/mo</p>
             <p className="text-xs text-[var(--text-secondary)] mt-1">
-              <span className="inline-block px-2 py-0.5 rounded-full text-[11px] font-medium bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]">Free Trial</span>
+              <span className="inline-block px-2 py-0.5 rounded-full text-[11px] font-medium bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]">Getting Started</span>
             </p>
           </div>
         ) : (
@@ -476,7 +476,7 @@ export default function AppSettingsBillingPage() {
 
             {/* What This Plan Includes */}
             <div className="bg-[var(--accent-primary)]/5 rounded-lg p-3 border border-[var(--accent-primary)]/20">
-              <p className="text-[11px] font-medium text-[var(--accent-primary)] uppercase tracking-wide">What's Included</p>
+              <p className="text-[11px] font-medium text-[var(--accent-primary)] uppercase tracking-wide">What&apos;s Included</p>
               <p className="text-xs text-[var(--accent-primary)] mt-1.5">
                 Automated follow-up, call scheduling, and intelligent lead management
               </p>

@@ -13,6 +13,7 @@ export const maxDuration = 60;
 
 import { NextRequest, NextResponse } from "next/server";
 import { assertCronAuthorized } from "@/lib/runtime";
+import { log } from "@/lib/logger";
 import { runSafeCron } from "@/lib/cron/run-safe";
 
 export async function GET(request: NextRequest) {
@@ -55,7 +56,7 @@ export async function GET(request: NextRequest) {
           const check = await runMeetingAwareCheck(ws.id);
           meetingActions += check.actions;
         } catch (e) {
-          console.warn(`[autonomous-brain] meeting-aware check failed for workspace ${ws.id}:`, e instanceof Error ? e.message : String(e));
+          log("warn", "[autonomous-brain] meeting-aware check failed", { workspaceId: ws.id, error: e instanceof Error ? e.message : String(e) });
         }
       }
     } catch (err) {
@@ -150,11 +151,11 @@ export async function GET(request: NextRequest) {
                 actionsExecuted++;
               }
             } catch (e) {
-              console.warn(`[autonomous-brain] action execution failed for lead ${lead.id}:`, e instanceof Error ? e.message : String(e));
+              log("warn", "[autonomous-brain] action execution failed", { leadId: lead.id, error: e instanceof Error ? e.message : String(e) });
             }
           }
         } catch (e) {
-          console.warn(`[autonomous-brain] intelligence cycle failed for lead ${lead.id}:`, e instanceof Error ? e.message : String(e));
+          log("warn", "[autonomous-brain] intelligence cycle failed", { leadId: lead.id, error: e instanceof Error ? e.message : String(e) });
         }
       }
     } catch (err) {
@@ -196,7 +197,7 @@ export async function GET(request: NextRequest) {
         }
       }
     } catch (e) {
-      console.warn("[autonomous-brain] no_action churn detection failed:", e instanceof Error ? e.message : String(e));
+      log("warn", "[autonomous-brain] no_action churn detection failed", { error: e instanceof Error ? e.message : String(e) });
     }
 
     return {

@@ -136,8 +136,8 @@ export async function POST(req: NextRequest) {
         .upsert(
           {
             workspace_id: workspaceId,
-            plan: "trial",
-            status: "trialing",
+            plan: "pending",
+            status: "pending",
             updated_at: new Date().toISOString(),
           },
           { onConflict: "workspace_id" },
@@ -190,9 +190,55 @@ export async function POST(req: NextRequest) {
       knowledgeItems,
     });
 
+    // Auto-provision a phone number for the workspace (non-blocking).
+    // Without a provisioned number the workspace can't receive calls/SMS.
+    let provisionedPhone: string | null = null;
+    try {
+      const { data: existingConfig } = await db
+        .from("phone_configs")
+        .select("id")
+        .eq("workspace_id", workspaceId)
+        .eq("status", "active")
+        .maybeSingle();
+
+      if (!existingConfig) {
+        const { getTelephonyService } = await import("@/lib/telephony");
+        const telephony = getTelephonyService();
+        const searchResult = await telephony.searchAvailableNumbers({ areaCode: "US", limit: 3 });
+
+        if ("error" in searchResult) {
+          log("warn", "workspace.phone_search_failed", { workspaceId, error: searchResult.error });
+        } else if (searchResult.length === 0) {
+          log("warn", "workspace.phone_no_numbers_available", { workspaceId });
+        } else {
+          const num = searchResult[0].phone_number;
+          const purchaseResult = await telephony.purchaseNumber(num);
+
+          if ("error" in purchaseResult) {
+            log("warn", "workspace.phone_purchase_failed", { workspaceId, phone: num, error: purchaseResult.error });
+          } else {
+            await db.from("phone_configs").insert({
+              workspace_id: workspaceId,
+              proxy_number: num,
+              status: "active",
+              twilio_phone_sid: purchaseResult.numberId,
+            });
+            provisionedPhone = num;
+            log("info", "workspace.phone_auto_provisioned", { workspaceId, phone: num });
+          }
+        }
+      }
+    } catch (phoneErr) {
+      // Non-fatal — user can provision a number later in Settings → Phone
+      log("warn", "workspace.phone_auto_provision_failed", {
+        workspaceId,
+        error: phoneErr instanceof Error ? phoneErr.message : String(phoneErr),
+      });
+    }
+
     sendAgentLiveEmail(workspaceId).catch((err) => { log("error", "[workspace/create] error:", { error: err instanceof Error ? err.message : err }); });
 
-    return NextResponse.json({ ok: true, workspaceId });
+    return NextResponse.json({ ok: true, workspaceId, provisionedPhone });
   } catch {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }

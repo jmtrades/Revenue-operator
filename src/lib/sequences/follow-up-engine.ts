@@ -760,7 +760,7 @@ export async function advanceEnrollment(
             .update({ status: newStatus, updated_at: new Date().toISOString() })
             .eq("id", e.lead_id)
             .eq("workspace_id", e.workspace_id);
-          console.log(`[sequence-advance] Lead ${e.lead_id}: ${currentStatus} → ${newStatus} (step: ${stepType})`);
+          log("info", "[sequence-advance]", { leadId: e.lead_id, from: currentStatus, to: newStatus, stepType });
         }
       }
     }

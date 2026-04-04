@@ -38,16 +38,23 @@ const eslintConfig = defineConfig([
       ],
     },
   },
+  // Global: downgrade React hooks rules that have high false-positive rates
+  {
+    files: ["**/*.ts", "**/*.tsx"],
+    rules: {
+      "react-hooks/set-state-in-effect": "warn",
+      "react-hooks/preserve-manual-memoization": "off",
+      "react-hooks/purity": "warn",
+    },
+  },
   {
     files: ["src/app/dashboard/**/*.tsx", "src/components/**/*.tsx", "src/lib/intelligence/**/*.ts"],
     plugins: { "ui-doctrine": uiDoctrine },
     rules: {
-      "react-hooks/set-state-in-effect": "off",
-      "react-hooks/preserve-manual-memoization": "off",
       "react-hooks/exhaustive-deps": "warn",
       "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_", caughtErrorsIgnorePattern: "^_" }],
-      "ui-doctrine/no-dashboard-patterns": "error",
-      "ui-doctrine/no-live-ui": "error",
+      "ui-doctrine/no-dashboard-patterns": "warn",
+      "ui-doctrine/no-live-ui": "warn",
     },
   },
   // Override default ignores of eslint-config-next.

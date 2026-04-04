@@ -23,7 +23,7 @@ import { log } from "@/lib/logger";
 import crypto from "crypto";
 import { runWithWriteContextAsync } from "@/lib/safety/unsafe-write-guard";
 
-const FALLBACK_TWIML = `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">Thanks for calling. Please hold while we connect you.</Say><Pause length="2"/><Say voice="alice">If you need to speak to someone, please leave your name and number after the beep.</Say><Record maxLength="90" transcribe="true"/></Response>`;
+const FALLBACK_TWIML = `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="Polly.Joanna">Thanks for calling. We're not able to connect right now, but your call is important to us. Please leave your name and number after the beep and we'll get back to you shortly.</Say><Record maxLength="120" transcribe="true" action="/api/webhooks/twilio/recording" method="POST"/></Response>`;
 
 function verifyTwilioSignature(url: string, params: Record<string, string>, signature: string): boolean {
   const token = process.env.TWILIO_AUTH_TOKEN;
@@ -140,7 +140,7 @@ export async function POST(req: NextRequest) {
   if (!workspaceId) {
     log("error", "twilio-voice.no-workspace-found", { to, from });
     return new NextResponse(
-      `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice">We're sorry, this number is not currently in service. Please check the number and try again.</Say><Hangup/></Response>`,
+      `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="Polly.Joanna">We're sorry, this number is not currently in service. Please check the number and try again.</Say><Hangup/></Response>`,
       { status: 200, headers: { "Content-Type": "text/xml" } },
     );
   }

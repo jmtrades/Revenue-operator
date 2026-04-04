@@ -77,14 +77,14 @@ export async function PATCH(
 
   try {
     const { id } = await params;
-    let body: { paused_for_followup?: boolean; state?: string } = {};
+    let body: { paused_for_followup?: boolean; state?: string; _updatedAt?: string } = {};
     try {
       body = await req.json();
     } catch {
       return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
     }
     const db = getDb();
-    const { data: existing } = await db.from("leads").select("metadata, workspace_id").eq("id", id).maybeSingle();
+    const { data: existing } = await db.from("leads").select("metadata, workspace_id, updated_at").eq("id", id).maybeSingle();
     if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
     const workspaceId = (existing as { workspace_id?: string }).workspace_id;
     if (workspaceId) {
@@ -105,10 +105,21 @@ export async function PATCH(
       updated_at: new Date().toISOString(),
     };
     if (dbState != null) updatePayload.status = dbState;
+
+    // Optimistic locking: if client sends _updatedAt, reject if record was modified since
+    const existingUpdatedAt = (existing as { updated_at?: string }).updated_at;
+    if (body._updatedAt && existingUpdatedAt && body._updatedAt !== existingUpdatedAt) {
+      return NextResponse.json(
+        { error: "This record was modified by another user. Please refresh and try again.", code: "conflict" },
+        { status: 409 }
+      );
+    }
+
     const { data: updated, error } = await db
       .from("leads")
       .update(updatePayload)
       .eq("id", id)
+      .eq("workspace_id", workspaceId)
       .select()
       .maybeSingle();
     if (error) {
@@ -186,6 +197,14 @@ export async function DELETE(
   if (!existing) {
     return NextResponse.json({ error: "Lead not found" }, { status: 404 });
   }
+
+  // Cascade: clean up related records before deleting the lead
+  await Promise.allSettled([
+    db.from("deals").delete().eq("lead_id", id),
+    db.from("conversations").delete().eq("lead_id", id),
+    db.from("escalation_logs").delete().eq("lead_id", id),
+    db.from("activity_history").delete().eq("lead_id", id),
+  ]);
 
   const { error } = await db
     .from("leads")

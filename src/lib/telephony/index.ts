@@ -77,7 +77,7 @@ function createTelnyxService(): TelephonyService {
         friendly_name: n.phone_number,
         type: (params.phoneType || "local") as "local" | "toll_free" | "mobile",
         monthly_cost_cents: params.phoneType === "toll_free" ? 800 : 500,
-        setup_fee_cents: 100,
+        setup_fee_cents: 200,
         capabilities: n.capabilities,
       }));
     },
@@ -268,7 +268,7 @@ function createTwilioService(): TelephonyService {
           friendly_name: n.friendly_name || n.phone_number || "",
           type: (params.phoneType || "local") as "local" | "toll_free" | "mobile",
           monthly_cost_cents: type === "toll_free" ? 800 : 500,
-          setup_fee_cents: 100,
+          setup_fee_cents: 200,
           capabilities: {
             voice: n.capabilities?.voice ?? true,
             sms: n.capabilities?.sms ?? true,
@@ -357,7 +357,7 @@ function createTwilioService(): TelephonyService {
 
         // Build TwiML URL — Twilio needs a URL that returns TwiML instructions.
         // If a voice server URL is configured, use Stream; otherwise use simple Say.
-        const voiceServerUrl = process.env.VOICE_SERVER_URL || process.env.NEXT_PUBLIC_VOICE_SERVER_URL;
+        const _voiceServerUrl = process.env.VOICE_SERVER_URL || process.env.NEXT_PUBLIC_VOICE_SERVER_URL;
         let twimlUrl = params.webhookUrl;
 
         // If the webhook URL is a Telnyx webhook (from fallback), use the Twilio voice webhook instead

@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
 import { toast } from "sonner";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
@@ -57,7 +56,7 @@ export default function WhiteLabelSettingsPage() {
           setConfig(data.config);
           lastSavedRef.current = data.config;
         }
-      } catch (err) {
+      } catch (_err) {
         toast.error(t("toast.loadFailed"));
       } finally {
         setLoading(false);
@@ -81,7 +80,7 @@ export default function WhiteLabelSettingsPage() {
       lastSavedRef.current = data.config;
       setConfig(data.config);
       toast.success(t("toast.saved"));
-    } catch (err) {
+    } catch (_err) {
       toast.error(t("toast.saveFailed"));
     } finally {
       setSaving(false);
@@ -122,8 +121,9 @@ export default function WhiteLabelSettingsPage() {
         <div className="lg:col-span-2 space-y-6">
           {/* Brand Name */}
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
-            <label className="block text-sm font-semibold text-[var(--text-primary)] mb-3">{t("fields.brandName.label")}</label>
+            <label htmlFor="wl-brand-name" className="block text-sm font-semibold text-[var(--text-primary)] mb-3">{t("fields.brandName.label")}</label>
             <input
+              id="wl-brand-name"
               type="text"
               value={config.brand_name}
               onChange={(e) => setConfig({ ...config, brand_name: e.target.value })}
@@ -135,8 +135,9 @@ export default function WhiteLabelSettingsPage() {
 
           {/* Logo URL */}
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
-            <label className="block text-sm font-semibold text-[var(--text-primary)] mb-3">{t("fields.logoUrl.label")}</label>
+            <label htmlFor="wl-logo-url" className="block text-sm font-semibold text-[var(--text-primary)] mb-3">{t("fields.logoUrl.label")}</label>
             <input
+              id="wl-logo-url"
               type="url"
               value={config.logo_url}
               onChange={(e) => setConfig({ ...config, logo_url: e.target.value })}
@@ -148,8 +149,9 @@ export default function WhiteLabelSettingsPage() {
 
           {/* Favicon URL */}
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
-            <label className="block text-sm font-semibold text-[var(--text-primary)] mb-3">{t("fields.faviconUrl.label")}</label>
+            <label htmlFor="wl-favicon-url" className="block text-sm font-semibold text-[var(--text-primary)] mb-3">{t("fields.faviconUrl.label")}</label>
             <input
+              id="wl-favicon-url"
               type="url"
               value={config.favicon_url}
               onChange={(e) => setConfig({ ...config, favicon_url: e.target.value })}
@@ -219,8 +221,9 @@ export default function WhiteLabelSettingsPage() {
 
           {/* Custom Domain */}
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
-            <label className="block text-sm font-semibold text-[var(--text-primary)] mb-3">{t("fields.customDomain.label")}</label>
+            <label htmlFor="wl-custom-domain" className="block text-sm font-semibold text-[var(--text-primary)] mb-3">{t("fields.customDomain.label")}</label>
             <input
+              id="wl-custom-domain"
               type="text"
               value={config.custom_domain}
               onChange={(e) => setConfig({ ...config, custom_domain: e.target.value })}
@@ -236,8 +239,9 @@ export default function WhiteLabelSettingsPage() {
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-[var(--text-primary)] mb-3">{t("fields.supportEmail.label")}</label>
+                <label htmlFor="wl-support-email" className="block text-sm font-semibold text-[var(--text-primary)] mb-3">{t("fields.supportEmail.label")}</label>
                 <input
+                  id="wl-support-email"
                   type="email"
                   value={config.support_email}
                   onChange={(e) => setConfig({ ...config, support_email: e.target.value })}
@@ -246,8 +250,9 @@ export default function WhiteLabelSettingsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-[var(--text-primary)] mb-3">{t("fields.supportUrl.label")}</label>
+                <label htmlFor="wl-support-url" className="block text-sm font-semibold text-[var(--text-primary)] mb-3">{t("fields.supportUrl.label")}</label>
                 <input
+                  id="wl-support-url"
                   type="url"
                   value={config.support_url}
                   onChange={(e) => setConfig({ ...config, support_url: e.target.value })}
@@ -260,8 +265,9 @@ export default function WhiteLabelSettingsPage() {
 
           {/* Login Background */}
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
-            <label className="block text-sm font-semibold text-[var(--text-primary)] mb-3">{t("fields.loginBackgroundUrl.label")}</label>
+            <label htmlFor="wl-login-bg" className="block text-sm font-semibold text-[var(--text-primary)] mb-3">{t("fields.loginBackgroundUrl.label")}</label>
             <input
+              id="wl-login-bg"
               type="url"
               value={config.login_background_url}
               onChange={(e) => setConfig({ ...config, login_background_url: e.target.value })}
@@ -273,8 +279,9 @@ export default function WhiteLabelSettingsPage() {
 
           {/* Custom CSS */}
           <div className="rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6">
-            <label className="block text-sm font-semibold text-[var(--text-primary)] mb-3">{t("fields.customCss.label")}</label>
+            <label htmlFor="wl-custom-css" className="block text-sm font-semibold text-[var(--text-primary)] mb-3">{t("fields.customCss.label")}</label>
             <textarea
+              id="wl-custom-css"
               value={config.custom_css}
               onChange={(e) => setConfig({ ...config, custom_css: e.target.value })}
               placeholder={t("fields.customCss.placeholder")}
@@ -292,6 +299,10 @@ export default function WhiteLabelSettingsPage() {
                 <p className="text-xs text-[var(--text-tertiary)]">{t("fields.hidePoweredBy.description")}</p>
               </div>
               <button
+                type="button"
+                role="switch"
+                aria-checked={config.powered_by_hidden}
+                aria-label={t("fields.hidePoweredBy.label")}
                 onClick={() => setConfig({ ...config, powered_by_hidden: !config.powered_by_hidden })}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-[background-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] ${
                   config.powered_by_hidden ? "bg-[var(--accent-primary)]" : "bg-[var(--bg-inset)]"
@@ -326,6 +337,7 @@ export default function WhiteLabelSettingsPage() {
               {/* Logo Preview */}
               <div className="bg-[var(--bg-inset)] rounded-lg p-4 h-24 flex items-center justify-center border border-[var(--border-default)]">
                 {config.logo_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={config.logo_url}
                     alt="Logo"

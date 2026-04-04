@@ -58,6 +58,7 @@ export function trackEvent(event: TelemetryEvent): void {
 
     // Try PostHog server client first
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { trackServer } = require("@/lib/analytics/posthog-server");
       // Extract workspace_id from properties if available
       const props = event.properties as Record<string, unknown>;
@@ -90,6 +91,7 @@ export function trackEventClient(event: TelemetryEvent): void {
 
     // Try PostHog client
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { track } = require("@/lib/analytics/posthog");
       track(event.name, event.properties);
       return;

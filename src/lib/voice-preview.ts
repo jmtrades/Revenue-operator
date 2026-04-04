@@ -45,18 +45,19 @@ export async function speakTextViaApi(
       };
       audio.onerror = () => {
         URL.revokeObjectURL(url);
-        // Fall back to browser TTS — let speakText handle onEnd via its own utterance events
-        speakText(text, options);
+        // Do NOT fall back to browser TTS — robotic voices are worse than silence
+        options?.onEnd?.();
       };
       await audio.play();
       return { usedFallback: false };
     }
   } catch (err) {
     if (typeof console !== "undefined") {
-      console.warn("[voice-preview] API TTS failed, falling back to browser TTS:", err instanceof Error ? err.message : String(err));
+      console.warn("[voice-preview] API TTS unavailable:", err instanceof Error ? err.message : String(err));
     }
   }
-  speakText(text, options);
+  // Do NOT fall back to browser TTS — robotic browser voices are worse than silence
+  options?.onEnd?.();
   return { usedFallback: true };
 }
 

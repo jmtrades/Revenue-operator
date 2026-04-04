@@ -252,7 +252,7 @@ export async function executeSmartReactivation(
       success: true,
       details: `Reactivation queued: angle=${decision.angle}, channel=${decision.channel}, delay=${decision.delay_hours}h`,
     };
-  } catch (err) {
+  } catch (_err) {
     // Error in executeSmartReactivation (error details omitted to protect PII)
     return {
       success: false,
@@ -303,13 +303,13 @@ export async function runSmartReactivationSweep(
             reactivated++;
           }
         }
-      } catch (err) {
+      } catch (_err) {
         // Error processing lead (error details omitted to protect PII)
       }
     }
 
     return { processed, reactivated };
-  } catch (err) {
+  } catch (_err) {
     // Error in reactivation sweep (error details omitted to protect PII)
     return { processed, reactivated };
   }

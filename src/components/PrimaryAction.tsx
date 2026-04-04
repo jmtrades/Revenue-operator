@@ -23,7 +23,7 @@ export function PrimaryAction({
 }: PrimaryActionProps) {
   const style = {
     background: "var(--meaning-green)",
-    color: "#0E1116",
+    color: "var(--text-on-accent, #0E1116)",
   };
   const base = "inline-block px-5 py-2.5 rounded-lg font-medium transition-opacity duration-150 hover:opacity-90 focus-ring";
 

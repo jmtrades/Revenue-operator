@@ -38,7 +38,8 @@ export async function POST(req: NextRequest) {
       .from("workspaces")
       .select("id, stripe_subscription_id, stripe_customer_id, billing_tier, renews_at")
       .eq("billing_status", "active")
-      .not("stripe_subscription_id", "is", null);
+      .not("stripe_subscription_id", "is", null)
+      .limit(5000);
 
     if (!workspaces || workspaces.length === 0) {
       return NextResponse.json({ ok: true, processed: 0 });

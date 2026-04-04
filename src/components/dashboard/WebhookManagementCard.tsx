@@ -10,7 +10,6 @@ import {
   CheckCircle,
   XCircle,
   Copy,
-  X,
 } from "lucide-react";
 import { useWorkspaceSafe } from "@/components/WorkspaceContext";
 

@@ -4,16 +4,17 @@ import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { AnimateOnScroll } from "@/components/shared/AnimateOnScroll";
-import { PhoneOff, Calendar, UserX, Flame, Wrench, HeartPulse, Home, Scale, Sparkles, Droplet, Building2 } from "lucide-react";
+import { PhoneOff, Calendar, UserX, Flame, Wrench, HeartPulse, Home, Scale, Sparkles, Droplet, Building2, Briefcase, Users, ShoppingCart } from "lucide-react";
 
 const INDUSTRY_DATA = [
+  { id: "small-biz", label: "Small Business", icon: Briefcase, avgJob: 500, missedPerWeek: 3, annualLoss: 78000 },
+  { id: "consulting", label: "Consulting", icon: Users, avgJob: 2500, missedPerWeek: 2, annualLoss: 260000 },
+  { id: "retail", label: "Retail / E-Commerce", icon: ShoppingCart, avgJob: 200, missedPerWeek: 5, annualLoss: 52000 },
   { id: "hvac", label: "HVAC", icon: Wrench, avgJob: 450, missedPerWeek: 2, annualLoss: 46800 },
-  { id: "dental", label: "Multi-location Dental", icon: HeartPulse, avgJob: 1200, missedPerWeek: 3, annualLoss: 187200 },
+  { id: "dental", label: "Healthcare", icon: HeartPulse, avgJob: 1200, missedPerWeek: 3, annualLoss: 187200 },
   { id: "realestate", label: "Real Estate", icon: Home, avgJob: 12000, missedPerWeek: 1, annualLoss: 624000 },
   { id: "legal", label: "Legal", icon: Scale, avgJob: 4000, missedPerWeek: 2, annualLoss: 416000 },
-  { id: "medspa", label: "Med Spa", icon: Sparkles, avgJob: 600, missedPerWeek: 2, annualLoss: 62400 },
-  { id: "plumbing", label: "Plumbing", icon: Droplet, avgJob: 300, missedPerWeek: 4, annualLoss: 62400 },
-  { id: "roofing", label: "Roofing", icon: Building2, avgJob: 800, missedPerWeek: 2, annualLoss: 83200 },
+  { id: "plumbing", label: "Home Services", icon: Droplet, avgJob: 300, missedPerWeek: 4, annualLoss: 62400 },
 ] as const;
 
 function AnimatedNumber({ value, prefix = "$" }: { value: number; prefix?: string }) {

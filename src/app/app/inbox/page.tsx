@@ -564,7 +564,7 @@ export default function InboxPage() {
           persistInboxSnapshot(workspaceId, list);
         }
       })
-      .catch((err) => {
+      .catch((_err) => {
         toast.error(t("inbox.loadFailed"));
       });
   }, [workspaceId]);
@@ -592,7 +592,7 @@ export default function InboxPage() {
             setTimeout(() => setLastUpdated(null), 2000);
           }
         })
-        .catch((err) => {
+        .catch((_err) => {
           toast.error(t("inbox.loadFailed"));
         });
     }, 30000); // Poll every 30 seconds
@@ -658,7 +658,7 @@ export default function InboxPage() {
       setInput("");
       setSendError(null);
       toast.success(t("inbox.messageSent"));
-    } catch (error) {
+    } catch (_error) {
       // Keep the input in compose field on error
       setSendError(t("inbox.sendFailed"));
       toast.error(t("inbox.messageFailed"));

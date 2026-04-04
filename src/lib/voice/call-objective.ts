@@ -121,7 +121,7 @@ function resolveFromAgentGoal(goal?: string): CallObjective {
   return mapping[goal] ?? "answer_and_route";
 }
 
-function buildObjectiveConfig(objective: CallObjective, ctx: CallContext): ResolvedObjective {
+function buildObjectiveConfig(objective: CallObjective, _ctx: CallContext): ResolvedObjective {
   const configs: Record<CallObjective, Omit<ResolvedObjective, "objective">> = {
     answer_and_route: {
       instruction: "Answer the caller's question or route them to the right person. Be helpful, concise, and efficient. Success = caller got their answer or was connected correctly.",

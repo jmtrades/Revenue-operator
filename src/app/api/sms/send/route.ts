@@ -13,6 +13,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { getTelephonyProvider } from "@/lib/telephony/get-telephony-provider";
 import { getTelephonyService } from "@/lib/telephony";
 import { sendSms as sendSmsTelnyx } from "@/lib/telephony/telnyx-sms";
+import { log } from "@/lib/logger";
 import { assertSameOrigin } from "@/lib/http/csrf";
 
 export const dynamic = "force-dynamic";
@@ -122,8 +123,8 @@ export async function POST(req: NextRequest) {
           status: "sent",
           trigger: "manual",
         });
-      } catch {
-        // ignore store failure
+      } catch (storeErr) {
+        log("error", "[sms/send] Failed to persist SMS record", { error: storeErr instanceof Error ? storeErr.message : String(storeErr), leadId, workspaceId: session.workspaceId });
       }
     }
 

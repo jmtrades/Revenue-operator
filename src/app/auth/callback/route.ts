@@ -4,10 +4,24 @@ import { createSessionCookie } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/queries";
 import { getBaseUrl } from "@/lib/runtime/base-url";
 
+/** Only allow relative paths that start with / and stay on the same origin. */
+function sanitizeRedirectPath(raw: string): string {
+  const fallback = "/app/dashboard";
+  if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return fallback;
+  try {
+    const parsed = new URL(raw, "http://localhost");
+    // Block protocol-relative, external hosts, or non-path redirects
+    if (parsed.hostname !== "localhost") return fallback;
+    return parsed.pathname + parsed.search + parsed.hash;
+  } catch {
+    return fallback;
+  }
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/app/dashboard";
+  const next = sanitizeRedirectPath(searchParams.get("next") ?? "/app/dashboard");
   const origin = getBaseUrl(new URL(request.url).origin);
 
   if (!code) {
@@ -43,13 +57,13 @@ export async function GET(request: Request) {
       }
       let { data: ws } = await db.from("workspaces").select("id").eq("owner_id", userId).limit(1).maybeSingle();
       if (!ws) {
-        const { data: created, error: createErr } = await db.from("workspaces").insert({ name: "My workspace", owner_id: userId, autonomy_level: "assisted", kill_switch: false }).select("id").maybeSingle();
+        const { data: created, error: createErr } = await db.from("workspaces").insert({ name: "My workspace", owner_id: userId, autonomy_level: "assisted", kill_switch: false, billing_status: "pending" }).select("id").maybeSingle();
         if (!createErr && created) {
           ws = created as { id: string };
           isNewUser = true;
           await db.from("settings").insert({ workspace_id: (created as { id: string }).id, risk_level: "balanced" });
           await db.from("workspace_members").insert({ workspace_id: (created as { id: string }).id, user_id: userId, role: "owner" });
-          await db.from("workspace_billing").insert({ workspace_id: (created as { id: string }).id, plan: "trial", status: "trialing" });
+          await db.from("workspace_billing").insert({ workspace_id: (created as { id: string }).id, plan: "pending", status: "pending" });
         }
       }
       workspaceId = (ws as { id?: string } | null)?.id ?? undefined;

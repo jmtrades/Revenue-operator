@@ -27,7 +27,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   const err = await requireWorkspaceAccess(req, workspaceId);
   if (err) return err;
 
-  const ip = getClientIp(req);
+  const _ip = getClientIp(req);
   const rl = await checkRateLimit(`test-call:${workspaceId}`, 3, 60_000);
   if (!rl.allowed) {
     const retryAfterSeconds = Math.ceil((rl.resetAt - Date.now()) / 1000);

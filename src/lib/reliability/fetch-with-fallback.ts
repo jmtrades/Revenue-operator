@@ -4,7 +4,9 @@
  * All requests are capped by DEFAULT_TIMEOUT_MS so they cannot hang indefinitely.
  */
 
-import { getCachedResponse, setCachedResponse } from "./cache";
+import { getCachedResponse, setCachedResponse, invalidateCache } from "./cache";
+
+export { invalidateCache };
 
 const DEFAULT_TIMEOUT_MS = 15_000;
 
@@ -36,7 +38,7 @@ export async function fetchWithFallback<T>(
             if (!data.error) setCachedResponse(cacheKey, data);
           }
         })
-        .catch((e: unknown) => {
+        .catch((_e: unknown) => {
           // Background refresh failed, but we already returned cached data
         });
       return { data: cached, fromCache: true };

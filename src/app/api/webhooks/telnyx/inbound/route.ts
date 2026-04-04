@@ -110,6 +110,42 @@ export async function POST(req: NextRequest) {
           const workspaceId = (phoneConfig as { workspace_id?: string } | null)?.workspace_id;
 
           if (workspaceId) {
+            // Find or create lead from inbound phone number
+            const normalizedPhone = fromPhone.replace(/\D/g, "");
+            let leadId: string | null = null;
+
+            const { data: existingLead } = await db
+              .from("leads")
+              .select("id")
+              .eq("workspace_id", workspaceId)
+              .or(`phone.eq.${fromPhone},phone.eq.${normalizedPhone}`)
+              .order("created_at", { ascending: false })
+              .limit(1)
+              .maybeSingle();
+
+            if (existingLead) {
+              leadId = (existingLead as { id: string }).id;
+            } else {
+              // Create a new lead from inbound SMS
+              const { data: newLead } = await db
+                .from("leads")
+                .insert({
+                  workspace_id: workspaceId,
+                  name: "SMS Contact",
+                  phone: fromPhone,
+                  status: "NEW",
+                  source: "inbound_sms",
+                  metadata: { first_contact_channel: "sms", first_message_at: new Date().toISOString() },
+                })
+                .select("id")
+                .maybeSingle();
+
+              if (newLead) {
+                leadId = (newLead as { id: string }).id;
+                log("info", "telnyx_sms.lead_created", { leadId, from: fromPhone, workspaceId });
+              }
+            }
+
             // Check for opt-out keywords (TCPA compliance)
             if (OPT_OUT_KEYWORDS.has(inboundText)) {
               log("info", "telnyx_sms.opt_out", { from: fromPhone, workspaceId });
@@ -117,7 +153,7 @@ export async function POST(req: NextRequest) {
                 .from("leads")
                 .update({ opt_out: true, updated_at: new Date().toISOString() })
                 .eq("workspace_id", workspaceId)
-                .or(`phone.eq.${fromPhone},phone.eq.${fromPhone.replace(/\D/g, "")}`);
+                .or(`phone.eq.${fromPhone},phone.eq.${normalizedPhone}`);
             }
             // Check for opt-in keywords (re-subscribe)
             else if (OPT_IN_KEYWORDS.has(inboundText)) {
@@ -126,17 +162,30 @@ export async function POST(req: NextRequest) {
                 .from("leads")
                 .update({ opt_out: false, updated_at: new Date().toISOString() })
                 .eq("workspace_id", workspaceId)
-                .or(`phone.eq.${fromPhone},phone.eq.${fromPhone.replace(/\D/g, "")}`);
+                .or(`phone.eq.${fromPhone},phone.eq.${normalizedPhone}`);
             }
 
-            // Store inbound message for inbox
+            // Update lead with latest SMS activity
+            if (leadId) {
+              await db
+                .from("leads")
+                .update({ last_contact_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+                .eq("id", leadId);
+            }
+
+            // Store inbound message for inbox (linked to lead)
             try {
               await db.from("chat_widget_messages").insert({
                 workspace_id: workspaceId,
                 sender_type: "visitor",
                 content: messageInfo.text?.slice(0, 2000) ?? "",
                 channel: "sms",
-                metadata: { from: fromPhone, to: toPhone, message_id: messageInfo.messageId },
+                metadata: {
+                  from: fromPhone,
+                  to: toPhone,
+                  message_id: messageInfo.messageId,
+                  ...(leadId ? { lead_id: leadId } : {}),
+                },
               });
             } catch (err) {
               log("error", "telnyx_sms.inbound_store_failed", { error: err instanceof Error ? err.message : String(err) });

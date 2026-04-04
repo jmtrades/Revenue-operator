@@ -68,8 +68,8 @@ export async function GET(request: NextRequest) {
         continue;
       }
 
-      // Only bill active/trial workspaces
-      if (!workspace.billing_status || !["trial", "active"].includes(workspace.billing_status)) {
+      // Only bill active/pending/trial workspaces
+      if (!workspace.billing_status || !["pending", "trial", "active"].includes(workspace.billing_status)) {
         continue;
       }
 

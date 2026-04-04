@@ -57,7 +57,7 @@ export function TestStepContent({
             Test Your Agent
           </h4>
           <p className="text-xs text-[var(--text-secondary)] mb-3">
-            We'll call you and your agent will answer. Test its greeting, knowledge, and call handling in real time.
+            We&apos;ll call you and your agent will answer. Test its greeting, knowledge, and call handling in real time.
           </p>
         </div>
 

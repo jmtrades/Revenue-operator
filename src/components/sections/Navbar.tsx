@@ -63,6 +63,7 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
 
   useEffect(() => {
     let cancelled = false;
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
     const refreshAuthState = () => {
       fetch("/api/auth/session", {
         credentials: "include",
@@ -76,13 +77,18 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
         })
         .catch(() => { if (!cancelled) setAuthenticated(false); });
     };
+    const debouncedRefresh = () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(refreshAuthState, 1000);
+    };
     refreshAuthState();
-    window.addEventListener("focus", refreshAuthState);
-    document.addEventListener("visibilitychange", refreshAuthState);
+    window.addEventListener("focus", debouncedRefresh);
+    document.addEventListener("visibilitychange", debouncedRefresh);
     return () => {
       cancelled = true;
-      window.removeEventListener("focus", refreshAuthState);
-      document.removeEventListener("visibilitychange", refreshAuthState);
+      if (debounceTimer) clearTimeout(debounceTimer);
+      window.removeEventListener("focus", debouncedRefresh);
+      document.removeEventListener("visibilitychange", debouncedRefresh);
     };
   }, [pathname]);
 

@@ -13,10 +13,11 @@ import { getDb } from "@/lib/db/queries";
 import { getMinutePack, MINUTE_PACKS } from "@/lib/voice/billing";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 function localLog(event: string, data: Record<string, unknown>): void {
   if (data.reason || data.error) {
-    console.warn(`[billing/buy-minutes] ${event}:`, JSON.stringify(data));
+    log("warn", `[billing/buy-minutes] ${event}`, data);
   }
 }
 
@@ -110,7 +111,7 @@ export async function POST(req: NextRequest) {
 
     // Must have an active subscription or a Stripe customer ID to buy minute packs
     const hasStripeCustomer = wsData.stripe_customer_id !== null && wsData.stripe_customer_id !== undefined;
-    const allowedStatus = wsData.billing_status === "active" || wsData.billing_status === "trial" || wsData.billing_status === "trial_ended";
+    const allowedStatus = wsData.billing_status === "active" || wsData.billing_status === "pending" || wsData.billing_status === "trial" || wsData.billing_status === "trial_ended";
     if (!allowedStatus || !hasStripeCustomer) {
       return NextResponse.json(
         { ok: false, reason: "subscription_required", message: "An active subscription is required to purchase minute packs." },

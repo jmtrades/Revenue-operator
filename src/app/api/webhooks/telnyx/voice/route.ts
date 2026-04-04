@@ -36,7 +36,6 @@ import {
 import {
   generateDemoResponse,
   getRandomGreeting,
-  DEMO_GREETING,
   encodeDemoState,
   decodeDemoState,
   type DemoCallState,
@@ -84,7 +83,7 @@ const SILENCE_PROMPTS_INITIAL = [
 const SILENCE_PROMPTS_ONGOING = [
   "I'm still here! Got any questions about Revenue Operator? I could tell you about pricing, how setup works, or anything else.",
   "Take your time! If you're curious about anything — pricing, how it works, what industries we serve — just ask.",
-  "Still here whenever you're ready! I could tell you about our free trial if you're interested.",
+  "Still here whenever you're ready! I could tell you about our money-back guarantee if you're interested.",
 ];
 
 function pickRandom(arr: string[]): string {
@@ -261,7 +260,7 @@ export async function POST(req: NextRequest) {
         }
 
         // 3. Create a call_sessions row
-        let callSessionId: string | null = null;
+        let _callSessionId: string | null = null;
         try {
           const { data: existingSession } = await db
             .from("call_sessions")
@@ -290,12 +289,12 @@ export async function POST(req: NextRequest) {
                 .select("id")
                 .eq("external_meeting_id", callInfo.callSessionId)
                 .maybeSingle();
-              callSessionId = (retryLookup as { id: string } | null)?.id ?? null;
+              _callSessionId = (retryLookup as { id: string } | null)?.id ?? null;
             } else {
-              callSessionId = (inserted as { id: string } | null)?.id ?? null;
+              _callSessionId = (inserted as { id: string } | null)?.id ?? null;
             }
           } else {
-            callSessionId = (existingSession as { id: string }).id;
+            _callSessionId = (existingSession as { id: string }).id;
           }
         } catch (sessionErr) {
           log("error", "telnyx_voice.call_session_creation_failed", {
@@ -336,7 +335,7 @@ export async function POST(req: NextRequest) {
       }
 
       case "call.answered": {
-        const isOutbound = direction === "outgoing";
+        const _isOutbound = direction === "outgoing";
         log("info", "telnyx_voice.call_answered", { sessionId: callInfo.callSessionId, workspaceId: resolvedWorkspaceId, direction, isDemoCall });
 
         // ── Demo outbound call: start AI conversation ──
@@ -747,7 +746,7 @@ export async function POST(req: NextRequest) {
             callInfo.callControlId,
             "Hey there! This is Sarah from Revenue Operator. We got your demo request, but it looks like I got your voicemail. " +
             "Revenue Operator is an AI phone agent that answers your business calls twenty-four seven, books appointments, and makes sure you never miss a customer again. " +
-            "Head to recall dash touch dot com to try it free for fourteen days. Talk soon!",
+            "Head to recall dash touch dot com to get started. There's a thirty day money back guarantee, so zero risk. Talk soon!",
             "female",
           );
         }

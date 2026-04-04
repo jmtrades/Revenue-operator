@@ -149,7 +149,7 @@ export default function HiringReceptionistComparisonPage() {
               <div>
                 <h2 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>Time = revenue lost</h2>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
-                  When a customer calls and gets voicemail, they're frustrated. Studies show 78% of callers who reach voicemail don&apos;t call back.
+                  When a customer calls and gets voicemail, they&apos;re frustrated. Studies show 78% of callers who reach voicemail don&apos;t call back.
                   A receptionist can answer that call in 15–30 seconds (if they&apos;re available).
                 </p>
                 <p className="mt-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>

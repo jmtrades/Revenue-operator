@@ -20,7 +20,7 @@ export type PlanOption = {
 const PLAN_ORDER: PlanId[] = ["starter", "growth", "scale", "enterprise"];
 
 const getPlanPrices = (): Record<PlanId, { price: number | null; minutes: number | null }> => {
-  const planMap: Record<PlanId, string> = {
+  const _planMap: Record<PlanId, string> = {
     starter: "solo",
     growth: "business",
     scale: "scale",

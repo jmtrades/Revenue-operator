@@ -123,7 +123,7 @@ function ApiKeysTab({
 }: {
   keys: ApiKeyRow[];
   onRevoke: (id: string) => void;
-  onCreate: (label: string, permission: ApiKeyPermission) => void;
+  onCreate: (label: string, permission: ApiKeyPermission) => Promise<string | null>;
   onCopyKey: (fullKey: string) => void;
 }) {
   const t = useTranslations("developer");
@@ -134,14 +134,16 @@ function ApiKeysTab({
   const [newKeyModal, setNewKeyModal] = useState<{ label: string; fullKey: string } | null>(null);
   const [createLabel, setCreateLabel] = useState("");
   const [createPermission, setCreatePermission] = useState<ApiKeyPermission>("read_write");
+  const [creating, setCreating] = useState(false);
 
-  const handleCreateSubmit = () => {
-    if (!createLabel.trim()) return;
-    const buf = new Uint8Array(24);
-    crypto.getRandomValues(buf);
-    const fullKey = `sk_live_${Array.from(buf, (b) => b.toString(16).padStart(2, "0")).join("")}`;
-    onCreate(createLabel.trim(), createPermission);
-    setNewKeyModal({ label: createLabel.trim(), fullKey });
+  const handleCreateSubmit = async () => {
+    if (!createLabel.trim() || creating) return;
+    setCreating(true);
+    const fullKey = await onCreate(createLabel.trim(), createPermission);
+    setCreating(false);
+    if (fullKey) {
+      setNewKeyModal({ label: createLabel.trim(), fullKey });
+    }
     setCreateModal(false);
     setCreateLabel("");
     setCreatePermission("read_write");
@@ -165,13 +167,13 @@ function ApiKeysTab({
         <table className="w-full text-left text-sm">
           <thead className="bg-[var(--bg-card)]/80 border-b border-[var(--border-default)]">
             <tr>
-              <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tableLabel")}</th>
-              <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tableKey")}</th>
-              <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tablePermissions")}</th>
-              <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tableCreated")}</th>
-              <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tableLastUsed")}</th>
-              <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tableStatus")}</th>
-              <th className="w-10" />
+              <th scope="col" className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tableLabel")}</th>
+              <th scope="col" className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tableKey")}</th>
+              <th scope="col" className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tablePermissions")}</th>
+              <th scope="col" className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tableCreated")}</th>
+              <th scope="col" className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tableLastUsed")}</th>
+              <th scope="col" className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("tableStatus")}</th>
+              <th scope="col" className="w-10" />
             </tr>
           </thead>
           <tbody>
@@ -273,8 +275,8 @@ function ApiKeysTab({
 
       {/* Create key modal */}
       {createModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)]" onClick={(e) => e.target === e.currentTarget && setCreateModal(false)}>
-          <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)]" onClick={(e) => e.target === e.currentTarget && setCreateModal(false)} onKeyDown={(e) => e.key === "Escape" && setCreateModal(false)}>
+          <div role="dialog" aria-modal="true" aria-label={t("createApiKey")} className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">{t("createApiKey")}</h3>
             <div className="space-y-4">
               <div>
@@ -321,8 +323,8 @@ function ApiKeysTab({
 
       {/* New key shown once */}
       {newKeyModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)]" onClick={(e) => e.target === e.currentTarget && setNewKeyModal(null)}>
-          <div className="bg-[var(--bg-card)] border border-[var(--accent-warning,#f59e0b)]/30 rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)]" onClick={(e) => e.target === e.currentTarget && setNewKeyModal(null)} onKeyDown={(e) => e.key === "Escape" && setNewKeyModal(null)}>
+          <div role="dialog" aria-modal="true" aria-label={t("apiKeyCreatedTitle", { label: newKeyModal.label })} className="bg-[var(--bg-card)] border border-[var(--accent-warning,#f59e0b)]/30 rounded-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-[var(--accent-warning,#f59e0b)]/80 mb-2">{t("apiKeyCreatedTitle", { label: newKeyModal.label })}</h3>
             <p className="text-sm text-[var(--accent-warning,#f59e0b)]/80/80 mb-4">{t("saveKeyWarning")}</p>
             <div className="p-3 rounded-xl bg-[var(--bg-inset)] border border-[var(--border-medium)] mb-4">
@@ -481,8 +483,8 @@ function WebhooksTab({
       </div>
 
       {addModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)] overflow-y-auto" onClick={(e) => e.target === e.currentTarget && setAddModal(false)}>
-          <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-md p-6 my-8" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)] overflow-y-auto" onClick={(e) => e.target === e.currentTarget && setAddModal(false)} onKeyDown={(e) => e.key === "Escape" && setAddModal(false)}>
+          <div role="dialog" aria-modal="true" aria-label={t("addWebhookTitle")} className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-md p-6 my-8" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-4">{t("addWebhookTitle")}</h3>
             <div className="space-y-4">
               <div>
@@ -523,8 +525,8 @@ function WebhooksTab({
       )}
 
       {payloadModal !== null && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)]" onClick={(e) => e.target === e.currentTarget && setPayloadModal(null)}>
-          <div className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)]" onClick={(e) => e.target === e.currentTarget && setPayloadModal(null)} onKeyDown={(e) => e.key === "Escape" && setPayloadModal(null)}>
+          <div role="dialog" aria-modal="true" aria-label={t("payload")} className="bg-[var(--bg-card)] border border-[var(--border-default)] rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between p-4 border-b border-[var(--border-default)]">
               <h3 className="text-sm font-semibold text-[var(--text-primary)]">{t("payload")}</h3>
               <button type="button" onClick={() => setPayloadModal(null)} className="p-2 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:outline-none transition" aria-label={t("close")}><X className="w-4 h-4" /></button>
@@ -595,11 +597,11 @@ function EventLogTab({ events, kindFilter, statusFilter, onKindFilter, onStatusF
         <table className="w-full text-left text-sm">
           <thead className="bg-[var(--bg-card)]/80 border-b border-[var(--border-default)]">
             <tr>
-              <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("time")}</th>
-              <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("event")}</th>
-              <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("endpointUrl")}</th>
-              <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("status")}</th>
-              <th className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("responseTime")}</th>
+              <th scope="col" className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("time")}</th>
+              <th scope="col" className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("event")}</th>
+              <th scope="col" className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("endpointUrl")}</th>
+              <th scope="col" className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("status")}</th>
+              <th scope="col" className="py-3 px-4 font-medium text-[var(--text-tertiary)]">{t("responseTime")}</th>
             </tr>
           </thead>
           <tbody>
@@ -654,8 +656,27 @@ export default function DeveloperPage() {
   const [eventKindFilter, setEventKindFilter] = useState<EventLogKind | "all">("all");
   const [eventStatusFilter, setEventStatusFilter] = useState<EventLogStatus | "all">("all");
 
+  // Load persisted API keys on mount
   useEffect(() => {
     document.title = t("pageTitle");
+    fetch("/api/developer/keys")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((rows: Array<{ id: string; label: string; key_prefix: string; key_suffix: string; permission: ApiKeyPermission; status: string; created_at: string; last_used_at: string | null }>) => {
+        setKeys(
+          rows.map((r) => ({
+            id: r.id,
+            label: r.label,
+            keyPrefix: r.key_prefix,
+            keySuffix: r.key_suffix,
+            fullKey: "", // Full key is only available at creation time
+            permission: r.permission,
+            createdAt: r.created_at,
+            lastUsedAt: r.last_used_at ?? r.created_at,
+            status: (r.status === "revoked" ? "revoked" : "active") as "active" | "revoked",
+          }))
+        );
+      })
+      .catch(() => { /* Gracefully handle fetch failure */ });
   }, [t]);
 
   const showToast = useCallback((msg: string) => {
@@ -669,25 +690,41 @@ export default function DeveloperPage() {
   }, [showToast, t]);
 
   const handleRevokeKey = useCallback((id: string) => {
+    // Optimistically update UI, then persist to server
     setKeys((prev) => prev.map((k) => (k.id === id ? { ...k, status: "revoked" as const } : k)));
+    fetch(`/api/developer/keys/${id}`, { method: "DELETE" }).catch(() => {
+      // Revert on failure
+      setKeys((prev) => prev.map((k) => (k.id === id ? { ...k, status: "active" as const } : k)));
+    });
   }, []);
 
-  const handleCreateKey = useCallback((label: string, permission: ApiKeyPermission) => {
-    const suffix = Math.random().toString(36).slice(2, 6);
-    setKeys((prev) => [
-      ...prev,
-      {
-        id: `key-${Date.now()}`,
-        label,
-        keyPrefix: "sk_live_",
-        keySuffix: suffix,
-        fullKey: (() => { const b = new Uint8Array(24); crypto.getRandomValues(b); return `sk_live_${Array.from(b, (x) => x.toString(16).padStart(2, "0")).join("")}`; })(),
-        permission,
-        createdAt: new Date().toISOString(),
-        lastUsedAt: new Date().toISOString(),
-        status: "active",
-      },
-    ]);
+  const handleCreateKey = useCallback(async (label: string, permission: ApiKeyPermission): Promise<string | null> => {
+    try {
+      const r = await fetch("/api/developer/keys", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ label, permission }),
+      });
+      if (!r.ok) return null;
+      const row: { id: string; label: string; key_prefix: string; key_suffix: string; permission: ApiKeyPermission; status: string; created_at: string; last_used_at: string | null; full_key: string } = await r.json();
+      setKeys((prev) => [
+        ...prev,
+        {
+          id: row.id,
+          label: row.label,
+          keyPrefix: row.key_prefix,
+          keySuffix: row.key_suffix,
+          fullKey: row.full_key,
+          permission: row.permission,
+          createdAt: row.created_at,
+          lastUsedAt: row.last_used_at ?? row.created_at,
+          status: "active",
+        },
+      ]);
+      return row.full_key;
+    } catch {
+      return null;
+    }
   }, []);
 
   const handleAddWebhook = useCallback((url: string, events: WebhookEvent[]) => {

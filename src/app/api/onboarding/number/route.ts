@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
   if (!ws) return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl?.origin ?? "";
-  const voiceWebhookUrl =
+  const _voiceWebhookUrl =
     process.env.VOICE_PROVIDER === "pipecat"
       ? `${baseUrl}/api/voice/connect`
       : `${baseUrl}/api/webhooks/twilio/voice`;

@@ -149,10 +149,10 @@ export async function routeInboundCall(
   workspaceId: string,
   callerPhone: string,
   calledNumber: string,
-  metadata?: Record<string, unknown>,
+  _metadata?: Record<string, unknown>,
 ): Promise<RoutingDecision> {
   try {
-    const db = getDb();
+    const _db = getDb();
 
     // 1. Check if this is a returning caller
     const callerHistory = await getCallerHistory(workspaceId, callerPhone);

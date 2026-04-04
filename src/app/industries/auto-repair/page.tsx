@@ -54,7 +54,7 @@ export default function AutoRepairIndustryPage() {
               Capture estimate calls instantly. Dominate tire season. Book before competition.
             </h1>
             <p className="text-base md:text-lg mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-              Auto repair is a call-driven business, and customers shop around. A driver needs tires, brakes, or an oil change. They call three shops in a row. The first shop that answers and books them wins the job. The second and third shops never get a callback chance. During tire season, summer prep, or winter changeovers, your phone explodes. If your team can't keep up, callers hang up and call competitors. Revenue Operator answers every call instantly, qualifies the job type, checks your availability, and books the appointment before customers can dial another shop.
+              Auto repair is a call-driven business, and customers shop around. A driver needs tires, brakes, or an oil change. They call three shops in a row. The first shop that answers and books them wins the job. The second and third shops never get a callback chance. During tire season, summer prep, or winter changeovers, your phone explodes. If your team can&apos;t keep up, callers hang up and call competitors. Revenue Operator answers every call instantly, qualifies the job type, checks your availability, and books the appointment before customers can dial another shop.
             </p>
 
             <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6 md:p-8 mb-8">
@@ -64,7 +64,7 @@ export default function AutoRepairIndustryPage() {
                   Auto repair is hyper-seasonal. Summer brake specials. Winter tire changeovers. Spring alignments. When the season hits, you go from steady to flooded in days. Calls come in while the tech is under a car. The office manager is running parts. Your single phone line is busy. Callers get a busy signal or hit voicemail and immediately call the shop down the street.
                 </p>
                 <p>
-                  The second problem is callback friction. A customer calls Wednesday morning. You call back Wednesday afternoon. But now they've already scheduled with someone else. If your callback isn't within 30 minutes, you've lost the job. Most shops can't respond that fast during peak season.
+                  The second problem is callback friction. A customer calls Wednesday morning. You call back Wednesday afternoon. But now they&apos;ve already scheduled with someone else. If your callback isn&apos;t within 30 minutes, you&apos;ve lost the job. Most shops can&apos;t respond that fast during peak season.
                 </p>
                 <p>
                   The third leak is estimate follow-up. You give a customer an estimate for $500 in work. They go home, think about it, shop other shops, and the estimate goes cold. Without systematic follow-up, that work never converts.
@@ -75,10 +75,10 @@ export default function AutoRepairIndustryPage() {
             <h2 className="text-lg font-semibold mb-3">How Revenue Operator works for auto repair</h2>
             <div className="space-y-4 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
               <p>
-                Revenue Operator answers every incoming call. It greets the customer, asks what type of service they need (tires, brakes, oil change, diagnostics, etc.), and gathers basic info: year/make/model and preferred appointment time. If you're online and have availability, Revenue Operator offers slots and books immediately. If you're booked out, it captures a callback request with the highest priority.
+                Revenue Operator answers every incoming call. It greets the customer, asks what type of service they need (tires, brakes, oil change, diagnostics, etc.), and gathers basic info: year/make/model and preferred appointment time. If you&apos;re online and have availability, Revenue Operator offers slots and books immediately. If you&apos;re booked out, it captures a callback request with the highest priority.
               </p>
               <p>
-                For estimate follow-up, you can trigger automated outreach: "Hi, this is [shop name]. Just checking in on the $X estimate we quoted. Any questions or ready to move forward?" Revenue Operator can answer follow-up questions from your knowledge base or route complex questions to you.
+                For estimate follow-up, you can trigger automated outreach: &quot;Hi, this is [shop name]. Just checking in on the $X estimate we quoted. Any questions or ready to move forward?&quot; Revenue Operator can answer follow-up questions from your knowledge base or route complex questions to you.
               </p>
               <p>
                 During seasonal spikes, you can use Revenue Operator to qualify and book customers faster than competitors, capturing demand that would otherwise walk away. Every call answered is a potential $300–800 job.
@@ -111,7 +111,7 @@ export default function AutoRepairIndustryPage() {
             <h2 className="text-lg font-semibold mb-3">ROI (captured demand is immediate revenue)</h2>
             <div className="space-y-4 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.8 }}>
               <p>
-                Auto repair margins are healthy: an average service call is $300–800, with some jobs running $1,000+. Capture just 2–3 additional calls per day during peak season, and you're looking at $600–2,400 in incremental daily revenue. That's $3,000–12,000 per week during tire season or summer prep season.
+                Auto repair margins are healthy: an average service call is $300–800, with some jobs running $1,000+. Capture just 2–3 additional calls per day during peak season, and you&apos;re looking at $600–2,400 in incremental daily revenue. That&apos;s $3,000–12,000 per week during tire season or summer prep season.
               </p>
               <p>
                 Beyond peak season, steady answering every call means higher baseline volume. Customers remember shops that answer fast. They refer. They come back. The lifetime value of a responsive auto shop is high.

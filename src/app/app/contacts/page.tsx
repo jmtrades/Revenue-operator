@@ -8,10 +8,9 @@ import { useWorkspace } from "@/components/WorkspaceContext";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import Link from "next/link";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
-import { Download, Upload, Building2, Cloud, Database, TrendingUp, Layers, Users as UsersIcon, Building, X } from "lucide-react";
+import { Download, Upload, Building2, Cloud, Database, TrendingUp, Layers, Users, Building, X } from "lucide-react";
 import { Pagination } from "@/components/ui/Pagination";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { Users } from "lucide-react";
 
 type ContactType = "lead" | "customer" | "vip";
 
@@ -53,7 +52,7 @@ function loadContacts(): Contact[] {
     if (!raw) return [];
     const parsed = JSON.parse(raw) as Contact[];
     return Array.isArray(parsed) ? parsed : [];
-  } catch (e) {
+  } catch (_e) {
     toast.error("Failed to load saved contacts");
     safeRemoveItem(STORAGE_KEY);
     return [];
@@ -133,7 +132,7 @@ const CRM_SOURCE_META: Record<string, { label: string; icon: React.ComponentType
   zoho_crm: { label: "Zoho", icon: Database, color: "text-[var(--accent-danger,#ef4444)]" },
   pipedrive: { label: "Pipedrive", icon: TrendingUp, color: "text-[var(--accent-primary)]" },
   gohighlevel: { label: "GHL", icon: Layers, color: "text-[var(--accent-primary)]" },
-  google_contacts: { label: "Google", icon: UsersIcon, color: "text-sky-400" },
+  google_contacts: { label: "Google", icon: Users, color: "text-sky-400" },
   microsoft_365: { label: "Microsoft", icon: Building, color: "text-cyan-400" },
   airtable: { label: "Airtable", icon: Database, color: "text-yellow-400" },
 };
@@ -299,7 +298,7 @@ export default function AppContactsPage() {
 
         setContacts(mapped);
         saveContacts(mapped);
-      } catch (err) {
+      } catch (_err) {
         setApiError(t("connectionError"));
       } finally {
         setLoading(false);
@@ -494,7 +493,7 @@ export default function AppContactsPage() {
       setToast(t("toast.added"));
       setShowAdd(false);
       resetForm();
-    } catch (err) {
+    } catch (_err) {
       setToast(t("toast.networkError"));
     } finally {
       setCreating(false);

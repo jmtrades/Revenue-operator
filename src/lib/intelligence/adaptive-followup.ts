@@ -11,6 +11,152 @@ import type { RecoveryProfile } from "@/lib/recovery-profile";
 import { setLeadPlan } from "@/lib/plans/lead-plan";
 import { enqueue } from "@/lib/queue";
 
+/**
+ * Resolve SMS/email content from template key.
+ * Uses the lead's name and a professional, concise message appropriate to the
+ * follow-up strategy. Templates are intentionally short for SMS and friendly
+ * for email to maximize engagement.
+ */
+function resolveTemplate(
+  templateKey: string,
+  lead: { name?: string },
+  channel: "sms" | "email",
+): { subject?: string; body: string } {
+  const name = lead.name || "there";
+
+  const templates: Record<string, { sms: string; emailSubject: string; emailBody: string }> = {
+    // Aggressive nurture
+    aggressive_open: {
+      sms: `Hi ${name}! Just following up on your inquiry. Would love to help you get started — is now a good time to chat?`,
+      emailSubject: `Quick follow-up on your inquiry`,
+      emailBody: `Hi ${name},\n\nThanks for reaching out! I wanted to follow up and see how we can help.\n\nWould you have a few minutes for a quick call this week? We'd love to learn more about what you're looking for.\n\nBest regards`,
+    },
+    aggressive_follow: {
+      sms: `Hi ${name}, just checking in — did you have any questions about what we discussed? Happy to help anytime.`,
+      emailSubject: `Still here to help, ${name}`,
+      emailBody: `Hi ${name},\n\nJust wanted to check in and see if you had any questions. We're here whenever you're ready.\n\nFeel free to reply to this email or give us a call.\n\nBest regards`,
+    },
+    aggressive_call: {
+      sms: `Hi ${name}, I'll try giving you a quick call shortly. If that doesn't work, just let me know a better time!`,
+      emailSubject: `Trying to connect`,
+      emailBody: `Hi ${name},\n\nI've been trying to reach you — I'd love to help answer any questions you might have.\n\nWhen's a good time for a brief chat?\n\nBest regards`,
+    },
+    aggressive_reminder: {
+      sms: `Hi ${name}! We haven't connected yet — just wanted to make sure you didn't miss our message. Reply anytime!`,
+      emailSubject: `Don't want you to miss out`,
+      emailBody: `Hi ${name},\n\nJust a friendly reminder that we're here to help. If now isn't the right time, no worries at all — just let us know.\n\nBest regards`,
+    },
+    aggressive_close: {
+      sms: `Hi ${name}, last follow-up from us! If you'd like to chat in the future, we're always here. Wishing you the best!`,
+      emailSubject: `Last note from us`,
+      emailBody: `Hi ${name},\n\nThis will be my last follow-up for now. If you ever want to revisit, we'll be here.\n\nWishing you all the best!\n\nBest regards`,
+    },
+    // Gentle nurture
+    gentle_open: {
+      sms: `Hi ${name}! Thanks for your interest. No rush — just wanted to introduce myself and let you know I'm here if you have questions.`,
+      emailSubject: `Nice to meet you, ${name}`,
+      emailBody: `Hi ${name},\n\nThanks for your interest! I wanted to reach out personally and let you know I'm here if you have any questions.\n\nNo rush at all — take your time.\n\nBest regards`,
+    },
+    gentle_value: {
+      sms: `Hi ${name}, thought you might find this helpful — businesses like yours typically see results within the first week. Happy to share more!`,
+      emailSubject: `Something that might help`,
+      emailBody: `Hi ${name},\n\nI wanted to share a quick insight — businesses similar to yours often see measurable improvements within the first week.\n\nWould you like to learn how? I'm happy to walk you through it.\n\nBest regards`,
+    },
+    gentle_close: {
+      sms: `Hi ${name}, just a final note — if you ever want to explore further, we're here. Wishing you success!`,
+      emailSubject: `Wishing you success`,
+      emailBody: `Hi ${name},\n\nJust wanted to say we're here whenever the timing is right. Wishing you every success!\n\nBest regards`,
+    },
+    // Value drip
+    value_1_intro: {
+      sms: `Hi ${name}! Welcome — we're excited to help you grow your business. Expect a few helpful tips from us over the coming days.`,
+      emailSubject: `Welcome, ${name}!`,
+      emailBody: `Hi ${name},\n\nWelcome! Over the next few days, I'll share some insights that businesses like yours have found valuable.\n\nStay tuned!\n\nBest regards`,
+    },
+    value_2_social_proof: {
+      sms: `Hi ${name}, fun fact — our customers report recovering an average of 30% more missed calls. Want to see how?`,
+      emailSubject: `How others are winning with missed call recovery`,
+      emailBody: `Hi ${name},\n\nHere's something interesting — businesses using our platform recover an average of 30% more missed opportunities.\n\nWant to see how it could work for you?\n\nBest regards`,
+    },
+    value_3_cta: {
+      sms: `Hi ${name}, ready to see it in action? We can get you set up in under 3 minutes. Reply YES to get started!`,
+      emailSubject: `Ready to get started?`,
+      emailBody: `Hi ${name},\n\nIf you're ready to see results, we can have you up and running in under 3 minutes.\n\nJust reply to this email and we'll take it from there.\n\nBest regards`,
+    },
+    // Reactivation
+    reactivate_value_angle: {
+      sms: `Hi ${name}! It's been a while — we've added some great new features since we last connected. Worth a quick look?`,
+      emailSubject: `We've been busy — here's what's new`,
+      emailBody: `Hi ${name},\n\nIt's been a while! We've made some exciting improvements and I thought of you.\n\nWould you like a quick overview of what's new?\n\nBest regards`,
+    },
+    reactivate_proof_angle: {
+      sms: `Hi ${name}, businesses in your industry are seeing amazing results. Thought you'd want to know!`,
+      emailSubject: `Your industry is seeing great results`,
+      emailBody: `Hi ${name},\n\nBusinesses in your industry are achieving outstanding results with our platform. I thought you'd want to hear about it.\n\nHappy to share specifics if you're interested.\n\nBest regards`,
+    },
+    reactivate_urgency_angle: {
+      sms: `Hi ${name}, last chance to reconnect! We'd love to help you get started. Reply if interested.`,
+      emailSubject: `One more thing before we go`,
+      emailBody: `Hi ${name},\n\nThis is my final reach-out for now. If you're interested in exploring what we can do for your business, I'd love to help.\n\nOtherwise, I wish you every success!\n\nBest regards`,
+    },
+    // Appointment protect
+    appt_confirm: {
+      sms: `Hi ${name}! Your appointment is confirmed. Looking forward to speaking with you!`,
+      emailSubject: `Your appointment is confirmed`,
+      emailBody: `Hi ${name},\n\nJust confirming your upcoming appointment. We're looking forward to it!\n\nIf you need to reschedule, just reply to this email.\n\nBest regards`,
+    },
+    appt_reminder_24h: {
+      sms: `Hi ${name}, friendly reminder — your appointment is tomorrow! Let us know if you need to reschedule.`,
+      emailSubject: `Reminder: Your appointment is tomorrow`,
+      emailBody: `Hi ${name},\n\nJust a quick reminder that your appointment is tomorrow. We're excited to connect!\n\nIf you need to make any changes, just let us know.\n\nBest regards`,
+    },
+    appt_prep_info: {
+      sms: `Hi ${name}, your appointment is coming up soon! We're ready for you.`,
+      emailSubject: `Getting ready for your appointment`,
+      emailBody: `Hi ${name},\n\nYour appointment is coming up shortly. Here's what to expect: we'll review your needs and show you exactly how we can help.\n\nSee you soon!\n\nBest regards`,
+    },
+    // Escalation
+    escalate_acknowledgment: {
+      sms: `Hi ${name}, we've escalated your request to our team lead. You'll hear from them shortly.`,
+      emailSubject: `Your request has been escalated`,
+      emailBody: `Hi ${name},\n\nWe want to make sure you get the best possible help. Your request has been escalated to a senior team member who will be reaching out shortly.\n\nBest regards`,
+    },
+    // Retention
+    retain_thank_you: {
+      sms: `Hi ${name}, thanks for being a valued customer! We truly appreciate your business.`,
+      emailSubject: `Thank you, ${name}!`,
+      emailBody: `Hi ${name},\n\nI just wanted to take a moment to say thank you for being a valued customer. We're so glad to have you!\n\nIf there's anything we can do to help you get even more value, don't hesitate to reach out.\n\nBest regards`,
+    },
+    retain_checkin: {
+      sms: `Hi ${name}, checking in — how's everything going? Let us know if you need anything!`,
+      emailSubject: `How's everything going?`,
+      emailBody: `Hi ${name},\n\nJust checking in to see how things are going. Are you getting the most out of everything?\n\nIf you have any questions or feedback, I'd love to hear from you.\n\nBest regards`,
+    },
+    retain_loyalty_offer: {
+      sms: `Hi ${name}, as a valued customer, we'd like to offer you something special. Reply to learn more!`,
+      emailSubject: `A special offer just for you`,
+      emailBody: `Hi ${name},\n\nAs one of our valued customers, we have a special offer we'd like to share with you.\n\nReply to this email and we'll send you the details.\n\nBest regards`,
+    },
+  };
+
+  const tmpl = templates[templateKey];
+  if (!tmpl) {
+    // Fallback for unknown template keys
+    if (channel === "sms") {
+      return { body: `Hi ${name}, just following up — let us know if we can help with anything!` };
+    }
+    return {
+      subject: "Following up",
+      body: `Hi ${name},\n\nJust following up to see how we can help. Feel free to reach out anytime.\n\nBest regards`,
+    };
+  }
+
+  if (channel === "sms") {
+    return { body: tmpl.sms };
+  }
+  return { subject: tmpl.emailSubject, body: tmpl.emailBody };
+}
+
 export type AdaptiveStrategy =
   | "aggressive_nurture"    // Hot lead, high intent — fast cadence multi-channel
   | "gentle_nurture"        // Warm lead, moderate intent — slower cadence
@@ -306,10 +452,11 @@ export async function executeAdaptiveStep(
 
         const { getTelephonyService } = await import("@/lib/telephony");
         const svc = getTelephonyService();
+        const { body: smsText } = resolveTemplate(step.template_key, lead, "sms");
         await svc.sendSms({
           from: fromNumber,
           to: lead.phone,
-          text: `[${step.template_key}] Hi ${lead.name || "there"}! Placeholder SMS from adaptive sequence.`,
+          text: smsText,
         });
 
         return { success: true, details: `SMS sent to ${lead.phone} via ${fromNumber}` };
@@ -332,6 +479,7 @@ export async function executeAdaptiveStep(
           return { success: false, details: "Resend API key not configured" };
         }
 
+        const { subject, body: emailBody } = resolveTemplate(step.template_key, lead, "email");
         const res = await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: {
@@ -341,8 +489,8 @@ export async function executeAdaptiveStep(
           body: JSON.stringify({
             from: process.env.RESEND_FROM_EMAIL ?? "noreply@recall-touch.com",
             to: lead.email,
-            subject: `[Adaptive] ${step.template_key.replace(/_/g, " ")}`,
-            text: `Hi ${lead.name || "there"},\n\nThis is an adaptive follow-up email (${step.template_key}).\n\nBest regards`,
+            subject: subject ?? "Following up",
+            text: emailBody,
           }),
         });
 
@@ -395,7 +543,7 @@ export async function executeAdaptiveStep(
     }
 
     return { success: false, details: `Unknown channel: ${step.channel}` };
-  } catch (err) {
+  } catch (_err) {
     // Error in adaptive followup execution (error details omitted to protect PII)
     return {
       success: false,

@@ -179,7 +179,7 @@ const FAQS = [
   { q: "Can I cancel anytime?", a: "Yes. No long-term contracts. Cancel in your dashboard or pause for 30 days. We'll ask why — your feedback matters." },
   { q: "Does Revenue Operator integrate with my calendar/CRM?", a: "Yes. Growth and Business tiers get CRM webhook and integrations with Google Calendar, Cal.com, Zapier, and Make.com. Business adds API access for custom integrations." },
   { q: "What's included in your support?", a: "Starter: Email support. Growth: Priority email support. Business: Priority email + phone support + dedicated account manager." },
-  { q: "Can I test Revenue Operator free first?", a: "Absolutely. Full access to all features. Cancel anytime. Your AI operator will be answering calls in under 3 minutes." },
+  { q: "Can I test Revenue Operator risk-free?", a: "Every plan comes with a 30-day money-back guarantee. Sign up, use it with real calls, and if you're not completely satisfied we'll give you a full refund — no questions asked." },
   { q: "How does Revenue Operator work?", a: "Revenue Operator answers all your incoming calls with an AI phone agent, qualifies leads in real-time, books appointments directly into your calendar, and automatically follows up with contacts to move them through your pipeline." },
   { q: "Can I white-label this for my clients?", a: "Yes, white-label and agency features are available. Contact our sales team to discuss custom white-label, multi-client, and reseller options." },
 ];
@@ -318,7 +318,7 @@ function FeatureCell({ value }: { value: boolean | string }) {
 
 /* ─── Main Pricing Content ─── */
 export function PricingContent() {
-  const t = useTranslations("pricing");
+  const _t = useTranslations("pricing");
   const [annual, setAnnual] = useState(true); // Annual is default
   const [faqSearch, setFaqSearch] = useState("");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -637,7 +637,7 @@ export function PricingContent() {
             {/* Mini social proof */}
             <div className="flex items-center justify-center gap-4 mb-6 text-xs" style={{ color: "var(--text-tertiary)" }}>
               <span className="flex items-center gap-1"><Check className="w-3 h-3 text-emerald-400" /> 3-minute setup</span>
-              <span className="flex items-center gap-1"><Check className="w-3 h-3 text-emerald-400" /> No credit card</span>
+              <span className="flex items-center gap-1"><Check className="w-3 h-3 text-emerald-400" /> 30-day money-back guarantee</span>
               <span className="flex items-center gap-1"><Check className="w-3 h-3 text-emerald-400" /> Cancel anytime</span>
             </div>
 
@@ -658,7 +658,7 @@ export function PricingContent() {
                 <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
               ))}
               <span className="text-xs ml-2" style={{ color: "var(--text-secondary)" }}>
-                4.9/5 from 3,200+ reviews
+                Loved by businesses nationwide
               </span>
             </div>
 

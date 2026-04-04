@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- Admin-only routes with Supabase dynamic queries */
 /**
  * Admin export route: full data export as JSON (users, workspaces, agents, calls, leads).
  */
@@ -7,6 +8,9 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { isAdmin, forbidden } from "@/lib/admin/auth";
 import { getDb } from "@/lib/db/queries";
+import { log } from "@/lib/logger";
+
+const EXPORT_LIMIT = 10_000;
 
 export async function GET(req: NextRequest) {
   if (!(await isAdmin(req))) {
@@ -21,60 +25,67 @@ export async function GET(req: NextRequest) {
 
   // Export all users (mask sensitive fields)
   try {
-    const { data: users } = await db.from("users").select("id, full_name, created_at, email_verified, last_sign_in_at");
-    result.data.users = (users ?? []).map((u: any) => ({
+    const { data: users } = await db.from("users").select("id, full_name, created_at, email_verified, last_sign_in_at").limit(EXPORT_LIMIT);
+    result.data.users = (users ?? []).map((u: Record<string, any>) => ({
       ...u,
       email_masked: u.email ? u.email.replace(/(.{2}).*(@.*)/, "$1***$2") : null,
     }));
   } catch (err) {
+    log("error", "[admin/export] Failed to export users", { error: String(err) });
     result.data.users = [];
   }
 
-  // Export all workspaces
+  // Export workspaces
   try {
-    const { data: workspaces } = await db.from("workspaces").select("*");
+    const { data: workspaces } = await db.from("workspaces").select("id, name, slug, plan, industry, created_at, updated_at, owner_id, trial_ends_at, is_active").limit(EXPORT_LIMIT);
     result.data.workspaces = workspaces ?? [];
   } catch (err) {
+    log("error", "[admin/export] Failed to export workspaces", { error: String(err) });
     result.data.workspaces = [];
   }
 
-  // Export all agents
+  // Export agents
   try {
-    const { data: agents } = await db.from("agents").select("*");
+    const { data: agents } = await db.from("agents").select("id, workspace_id, name, voice_id, personality, purpose, is_active, template, created_at, updated_at").limit(EXPORT_LIMIT);
     result.data.agents = agents ?? [];
   } catch (err) {
+    log("error", "[admin/export] Failed to export agents", { error: String(err) });
     result.data.agents = [];
   }
 
-  // Export all call sessions
+  // Export call sessions
   try {
-    const { data: calls } = await db.from("call_sessions").select("*");
+    const { data: calls } = await db.from("call_sessions").select("id, workspace_id, agent_id, lead_id, direction, status, duration_seconds, started_at, ended_at, created_at").limit(EXPORT_LIMIT);
     result.data.call_sessions = calls ?? [];
   } catch (err) {
+    log("error", "[admin/export] Failed to export call_sessions", { error: String(err) });
     result.data.call_sessions = [];
   }
 
-  // Export all leads
+  // Export leads
   try {
-    const { data: leads } = await db.from("leads").select("*");
+    const { data: leads } = await db.from("leads").select("id, workspace_id, status, source, created_at, updated_at").limit(EXPORT_LIMIT);
     result.data.leads = leads ?? [];
   } catch (err) {
+    log("error", "[admin/export] Failed to export leads", { error: String(err) });
     result.data.leads = [];
   }
 
-  // Export all conversations
+  // Export conversations
   try {
-    const { data: conversations } = await db.from("conversations").select("*");
+    const { data: conversations } = await db.from("conversations").select("id, workspace_id, lead_id, agent_id, channel, status, created_at, updated_at").limit(EXPORT_LIMIT);
     result.data.conversations = conversations ?? [];
   } catch (err) {
+    log("error", "[admin/export] Failed to export conversations", { error: String(err) });
     result.data.conversations = [];
   }
 
-  // Export all activation events
+  // Export activation events
   try {
-    const { data: activations } = await db.from("activation_events").select("*");
+    const { data: activations } = await db.from("activation_events").select("id, workspace_id, event_type, created_at").limit(EXPORT_LIMIT);
     result.data.activation_events = activations ?? [];
   } catch (err) {
+    log("error", "[admin/export] Failed to export activation_events", { error: String(err) });
     result.data.activation_events = [];
   }
 

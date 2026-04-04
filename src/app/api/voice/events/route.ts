@@ -7,7 +7,7 @@
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
-import { createHmac } from "crypto";
+import { createHmac, timingSafeEqual } from "crypto";
 import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
 import { assertSameOrigin } from "@/lib/http/csrf";
@@ -38,12 +38,7 @@ function verifyWebhookSignature(rawBody: string, signature: string | null): bool
   if (expected.length !== signature.length) return false;
   const a = Buffer.from(expected, "utf-8");
   const b = Buffer.from(signature, "utf-8");
-  try {
-    const { timingSafeEqual } = require("crypto");
-    return timingSafeEqual(a, b);
-  } catch {
-    return expected === signature;
-  }
+  return timingSafeEqual(a, b);
 }
 
 export async function POST(req: NextRequest) {

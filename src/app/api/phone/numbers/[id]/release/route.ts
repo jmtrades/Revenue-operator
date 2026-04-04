@@ -94,7 +94,7 @@ export async function POST(
       const result = await telephony.releaseNumber(providerSid);
       if ("error" in result && phoneE164) {
         // provider_sid might be an order ID (not phone number ID) — look up by E.164
-        console.warn("[release] Direct release failed, resolving phone number ID by E.164:", phoneE164);
+        log("warn", "[release] Direct release failed, resolving phone number ID by E.164", { phoneE164 });
         const resolved = await resolvePhoneNumberId(phoneE164);
         if (resolved) {
           const retry = await telephony.releaseNumber(resolved);
@@ -107,7 +107,7 @@ export async function POST(
           }
         } else {
           // Number may already be released on Telnyx side — proceed with DB cleanup
-          console.warn("[release] Could not resolve phone number ID — may already be released on Telnyx");
+          log("warn", "[release] Could not resolve phone number ID — may already be released on Telnyx");
         }
       }
     } catch (e) {

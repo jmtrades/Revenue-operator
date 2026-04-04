@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-3-5-sonnet-20241022",
+        model: "claude-haiku-4-5-20251001",
         max_tokens: 800,
         messages: [
           {
@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
 
     return Response.json({ entries });
   } catch (e) {
-    const message =
+    const _message =
       e instanceof Error ? e.message : typeof e === "string" ? e : "Unknown error";
     return Response.json(
       { error: "Failed to import URL. Please check the link and try again." },

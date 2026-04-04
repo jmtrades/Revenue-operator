@@ -56,7 +56,7 @@ export default function DentalIndustryPage() {
             <p className="text-base md:text-lg mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
               Dental revenue is sensitive to speed and follow-through. New patient calls often arrive when your front desk is
               busy checking in patients, running insurance, or confirming tomorrow’s schedule. When a caller hits voicemail,
-              the practice doesn’t just lose "a lead"—it loses a production slot that will take weeks to replace. Revenue Operator
+              the practice doesn’t just lose &quot;a lead&quot;—it loses a production slot that will take weeks to replace. Revenue Operator
               is the AI phone system built to prevent that: it answers 24/7, captures intent, books appointments, and follows
               up until the patient is scheduled, converted, or opts out.
             </p>
@@ -65,7 +65,7 @@ export default function DentalIndustryPage() {
               <h2 className="text-lg font-semibold mb-3">What’s really leaking revenue in dental</h2>
               <div className="space-y-3 text-sm" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
                 <p>
-                  Dental isn’t short on demand—it’s short on timely capture. The most common leak isn’t "marketing," it’s
+                  Dental isn’t short on demand—it’s short on timely capture. The most common leak isn’t &quot;marketing,&quot; it’s
                   missed and mishandled calls. A new patient calls at 12:10 PM. The front desk is in the middle of a checkout.
                   The caller gets voicemail and moves on. Even if they leave a message, they’re now one of ten callbacks and
                   the practice is behind. If the callback happens hours later, conversion drops sharply.
@@ -76,7 +76,7 @@ export default function DentalIndustryPage() {
                   cadence: confirm, remind, and offer an easy reschedule path.
                 </p>
                 <p>
-                  The third leak is "dead leads" sitting in your pipeline: unscheduled recall, incomplete treatment plans,
+                  The third leak is &quot;dead leads&quot; sitting in your pipeline: unscheduled recall, incomplete treatment plans,
                   and quote-follow-up. These aren’t bad patients—they’re unworked opportunities.
                 </p>
               </div>
@@ -107,7 +107,7 @@ export default function DentalIndustryPage() {
                 <ul className="space-y-2 text-sm" style={{ color: "var(--text-secondary)" }}>
                   <li>New patient booking with availability + confirmations</li>
                   <li>No-show prevention: 24h + 1h reminders, easy reschedule</li>
-                  <li>No-show recovery: "Want to rebook?" sequence + call follow-up</li>
+                  <li>No-show recovery: &quot;Want to rebook?&quot; sequence + call follow-up</li>
                   <li>Unscheduled treatment plan follow-up (quote chase)</li>
                   <li>Recall reactivation for inactive patients</li>
                 </ul>
@@ -133,7 +133,7 @@ export default function DentalIndustryPage() {
               </p>
               <p>
                 Practices that run a consistent reminder + reschedule system often see fewer empty chairs. And when a no-show
-                does happen, "rescue" follow-up can convert that miss into a kept appointment within the same week—protecting
+                does happen, &quot;rescue&quot; follow-up can convert that miss into a kept appointment within the same week—protecting
                 near-term production and reducing schedule volatility.
               </p>
               <p>

@@ -107,7 +107,7 @@ export async function POST(req: NextRequest) {
   const csrfBlock = assertSameOrigin(req);
   if (csrfBlock) return csrfBlock;
 
-  const session = await getSession(req);
+  const _session = await getSession(req);
   const body = await req.json() as { workspace_id: string; source_sequence_id: string; variant_name: string };
   if (!body.workspace_id || !body.source_sequence_id) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });

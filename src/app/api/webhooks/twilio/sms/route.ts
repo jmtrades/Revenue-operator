@@ -303,14 +303,50 @@ export async function POST(request: NextRequest) {
     }
 
     // 4. General inbound SMS — log it and optionally route to AI
-    // Store as inbound message on the lead record
-    const { data: lead } = await db
+    // Find existing lead or create one from the inbound phone number
+    let lead = await db
       .from("leads")
       .select("id, workspace_id, metadata")
       .eq("phone", normalizedPhone)
       .order("created_at", { ascending: false })
       .limit(1)
-      .maybeSingle();
+      .maybeSingle()
+      .then((r) => r.data);
+
+    // If no lead exists, find workspace from the receiving number and create one
+    if (!lead) {
+      const { data: phoneConfig } = await db
+        .from("phone_configs")
+        .select("workspace_id")
+        .or(`proxy_number.eq.${to},proxy_number.eq.${to.replace(/[^\d+]/g, "")}`)
+        .eq("status", "active")
+        .limit(1)
+        .maybeSingle();
+
+      const wsId = (phoneConfig as { workspace_id?: string } | null)?.workspace_id;
+      if (wsId) {
+        const { data: newLead } = await db
+          .from("leads")
+          .insert({
+            workspace_id: wsId,
+            name: "SMS Contact",
+            phone: normalizedPhone,
+            status: "NEW",
+            source: "inbound_sms",
+            metadata: {
+              first_contact_channel: "sms",
+              first_message_at: new Date().toISOString(),
+            },
+          })
+          .select("id, workspace_id, metadata")
+          .maybeSingle();
+
+        if (newLead) {
+          lead = newLead;
+          log("info", "sms_webhook.lead_created", { leadId: (newLead as { id: string }).id, phone: normalizedPhone, workspaceId: wsId });
+        }
+      }
+    }
 
     if (lead) {
       const leadData = lead as {
@@ -359,7 +395,7 @@ export async function POST(request: NextRequest) {
         });
       });
     } else {
-      log("info", "sms_webhook.unknown_sender", { phone: normalizedPhone });
+      log("info", "sms_webhook.unknown_sender_no_workspace", { phone: normalizedPhone });
     }
 
     // Empty response — no auto-reply for general messages

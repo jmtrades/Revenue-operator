@@ -34,13 +34,13 @@ export default function PhonePortPage() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
+        const _errorData = await response.json().catch(() => null);
         toast.error(t("submitFailed"));
         return;
       }
 
       setSubmitted(true);
-    } catch (error) {
+    } catch (_error) {
       toast.error(t("submitFailed"));
     } finally {
       setLoading(false);

@@ -42,7 +42,8 @@ export async function GET(request: NextRequest) {
       .from("outbound_campaigns")
       .select("*")
       .eq("workspace_id", workspaceId)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .limit(200);
 
     if (!rawCampaigns) {
       return NextResponse.json({ campaigns: [] });

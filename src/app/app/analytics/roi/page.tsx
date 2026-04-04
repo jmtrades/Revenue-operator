@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import {
   TrendingUp,
-  TrendingDown,
   DollarSign,
   Target,
   Clock,
@@ -14,10 +13,7 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Zap,
-  CheckCircle,
   AlertCircle,
-  Eye,
-  EyeOff,
 } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
@@ -528,7 +524,7 @@ export default function ROIPage() {
                 <Sparkles size={32} className="text-[var(--accent-primary)]" />
                 ROI & Revenue Intelligence
               </h1>
-              <p className="text-[var(--text-secondary)]">Track your AI platform's impact on revenue and efficiency</p>
+              <p className="text-[var(--text-secondary)]">Track your AI platform&apos;s impact on revenue and efficiency</p>
             </div>
             <div className="mt-4 md:mt-0 flex gap-2">
               {(["7d", "30d", "90d"] as DateRange[]).map((range) => (

@@ -23,23 +23,31 @@ const dmSans = DM_Sans({
   variable: "--font-body-sans",
   subsets: ["latin"],
   weight: ["400", "500", "700"],
+  display: "swap",
+  fallback: ["system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"],
 });
 
 const playfair = Playfair_Display({
   variable: "--font-serif",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
+  display: "swap",
+  fallback: ["Georgia", "Cambria", "Times New Roman", "serif"],
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
+  fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
   weight: ["400", "500"],
+  display: "swap",
+  fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
 });
 
 export const viewport = {
@@ -64,7 +72,7 @@ export const metadata: Metadata = {
     siteName: "Revenue Operator",
     title: "Revenue Operator — AI Revenue Operations Platform",
     description:
-      "Autonomous revenue execution system that automates inbound calls, outbound campaigns, lead qualification, appointment booking, follow-ups, and revenue recovery. Any business. Any industry. Try free.",
+      "Autonomous revenue execution system that automates inbound calls, outbound campaigns, lead qualification, appointment booking, follow-ups, and revenue recovery. Any business. Any industry. Live in under 3 minutes.",
     images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Revenue Operator — AI revenue operations for every business" }],
   },
   icons: { icon: "/icon" },
@@ -72,7 +80,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Revenue Operator — AI Revenue Operations Platform",
     description:
-      "Autonomous revenue execution system that automates inbound calls, outbound campaigns, lead qualification, appointment booking, follow-ups, and revenue recovery. Any business. Any industry. Try free.",
+      "Autonomous revenue execution system that automates inbound calls, outbound campaigns, lead qualification, appointment booking, follow-ups, and revenue recovery. Any business. Any industry. Live in under 3 minutes.",
     creator: "@revenueoperator",
   },
   alternates: { canonical: "https://www.recall-touch.com" },
@@ -138,7 +146,7 @@ export default async function RootLayout({
     locale = "en";
     messages = (await import("@/i18n/messages/en.json")).default as Record<string, unknown>;
   }
-  const t = await getTranslations("accessibility");
+  const _t = await getTranslations("accessibility");
 
   return (
     <html lang={locale} dir={isRTL(locale) ? "rtl" : "ltr"} suppressHydrationWarning>

@@ -47,7 +47,7 @@ const PROFILES: ProfileOption[] = [
 ];
 
 export function RecoveryProfileSelector() {
-  const { workspaceId } = useWorkspace();
+  const { workspaceId: _workspaceId } = useWorkspace();
   const [current, setCurrent] = useState<RecoveryProfile>("standard");
   const [saving, setSaving] = useState(false);
 

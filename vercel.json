@@ -168,6 +168,42 @@
     {
       "path": "/api/cron/opportunity-recovery",
       "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/billing",
+      "schedule": "0 4 1 * *"
+    },
+    {
+      "path": "/api/cron/scheduled-sends",
+      "schedule": "*/2 * * * *"
+    },
+    {
+      "path": "/api/cron/handoff-notifications",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/renewal-reminder",
+      "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/zoom-refresh",
+      "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/cron/daily-digest",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/integrity-audit",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/pattern-aggregator",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/trial-expiring",
+      "schedule": "0 8 * * *"
     }
   ]
 }

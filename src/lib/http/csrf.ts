@@ -44,9 +44,13 @@ export function assertSameOrigin(req: NextRequest): NextResponse | null {
       if (sameHost) return null;
     }
 
-    // Allow Vercel preview deployments (*.vercel.app)
-    if (originUrl.hostname.endsWith(".vercel.app")) {
-      return null;
+    // Allow Vercel preview deployments only for the project's own subdomain
+    const vercelProject = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+    if (vercelProject && originUrl.hostname.endsWith(".vercel.app")) {
+      const projectSlug = new URL(`https://${vercelProject}`).hostname.replace(".vercel.app", "");
+      if (originUrl.hostname === vercelProject || originUrl.hostname.includes(projectSlug)) {
+        return null;
+      }
     }
 
     return NextResponse.json(
@@ -59,7 +63,5 @@ export function assertSameOrigin(req: NextRequest): NextResponse | null {
       { status: 400 },
     );
   }
-
-  return null;
 }
 

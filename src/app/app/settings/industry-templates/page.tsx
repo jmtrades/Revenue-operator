@@ -68,7 +68,7 @@ export default function IndustryTemplatesPage() {
         } else {
           toast.error(tTemplates("toast.loadFailed"));
         }
-      } catch (err) {
+      } catch (_err) {
         toast.error(tTemplates("toast.loadError"));
       } finally {
         setLoading(false);
@@ -126,7 +126,7 @@ export default function IndustryTemplatesPage() {
             "Failed to apply template"
         );
       }
-    } catch (err) {
+    } catch (_err) {
       toast.error(
         tTemplates("toast.applyError") || "An error occurred while applying the template"
       );
@@ -420,7 +420,7 @@ export default function IndustryTemplatesPage() {
               Apply Template?
             </h3>
             <p className="text-sm text-[var(--text-secondary)] mb-6">
-              Apply <span className="font-medium text-[var(--text-primary)]">{confirmDialog.templateName}</span> to your operator? This will update your operator's greeting, knowledge base, and configuration.
+              Apply <span className="font-medium text-[var(--text-primary)]">{confirmDialog.templateName}</span> to your operator? This will update your operator&apos;s greeting, knowledge base, and configuration.
             </p>
             <div className="flex gap-3 justify-end">
               <button

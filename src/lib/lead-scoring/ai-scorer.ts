@@ -370,8 +370,8 @@ export async function scoreLeadWithAI(
     preferred_channel: parsed.preferred_channel ?? null,
     buying_intent: (
       ["hot", "warm", "cold", "dead"] as const
-    ).includes(parsed.buying_intent as any)
-      ? (parsed.buying_intent as any)
+    ).includes(parsed.buying_intent as "hot" | "warm" | "cold" | "dead")
+      ? (parsed.buying_intent as "hot" | "warm" | "cold" | "dead")
       : "cold",
     predicted_close_probability: Math.min(
       1,

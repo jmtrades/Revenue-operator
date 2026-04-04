@@ -16,7 +16,7 @@ import { BILLING_PLANS, type PlanSlug } from "@/lib/billing-plans";
 export interface EnforcementResult {
   allowed: boolean;
   /** When blocked: reason code */
-  reason?: "agent_limit" | "seat_limit" | "number_limit" | "outbound_limit" | "sms_limit" | "no_subscription" | "feature_gated";
+  reason?: "agent_limit" | "seat_limit" | "number_limit" | "outbound_limit" | "sms_limit" | "no_subscription" | "feature_gated" | "grace_period_expired";
   /** Human-readable message for UI */
   message?: string;
   /** Suggested plan to upgrade to */
@@ -57,10 +57,27 @@ const PAYABLE_STATUSES = new Set(["active", "trial", "trial_ended", "pending"]);
 function checkBillingActive(
   billingStatus: string | null | undefined,
   hasPaymentMethod = false,
+  gracePeriodEndsAt?: string | null,
 ): EnforcementResult | null {
   if (!billingStatus || ACTIVE_STATUSES.has(billingStatus)) return null;
   // Allow trial_ended users through if they have a payment method on file
   if (hasPaymentMethod && PAYABLE_STATUSES.has(billingStatus)) return null;
+
+  // Grace period: allow payment_failed users limited access until grace period expires
+  if (billingStatus === "payment_failed" && gracePeriodEndsAt) {
+    const gracePeriodEnd = new Date(gracePeriodEndsAt);
+    if (gracePeriodEnd.getTime() > Date.now()) {
+      // Still within grace period — allow but warn
+      return null;
+    }
+    // Grace period expired — hard block
+    return {
+      allowed: false,
+      reason: "grace_period_expired",
+      message: "Your grace period has expired. Please update your payment method to restore access.",
+    };
+  }
+
   return {
     allowed: false,
     reason: "no_subscription",
@@ -79,14 +96,14 @@ export async function canCreateAgent(workspaceId: string): Promise<EnforcementRe
   const db = getDb();
 
   const [wsRes, agentRes] = await Promise.all([
-    db.from("workspaces").select("billing_tier, billing_status, stripe_customer_id").eq("id", workspaceId).maybeSingle(),
+    db.from("workspaces").select("billing_tier, billing_status, stripe_customer_id, grace_period_ends_at").eq("id", workspaceId).maybeSingle(),
     db.from("agents").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId),
   ]);
 
-  const ws = wsRes.data as { billing_tier?: string; billing_status?: string; stripe_customer_id?: string | null } | null;
+  const ws = wsRes.data as { billing_tier?: string; billing_status?: string; stripe_customer_id?: string | null; grace_period_ends_at?: string | null } | null;
   if (!ws) return { allowed: false, reason: "no_subscription", message: "Workspace not found" };
 
-  const billingBlock = checkBillingActive(ws.billing_status, !!ws.stripe_customer_id);
+  const billingBlock = checkBillingActive(ws.billing_status, !!ws.stripe_customer_id, ws.grace_period_ends_at);
   if (billingBlock) return billingBlock;
 
   const tier = getPlan(ws.billing_tier);
@@ -112,14 +129,14 @@ export async function canProvisionNumber(workspaceId: string): Promise<Enforceme
   const db = getDb();
 
   const [wsRes, numRes] = await Promise.all([
-    db.from("workspaces").select("billing_tier, billing_status, stripe_customer_id").eq("id", workspaceId).maybeSingle(),
+    db.from("workspaces").select("billing_tier, billing_status, stripe_customer_id, grace_period_ends_at").eq("id", workspaceId).maybeSingle(),
     db.from("phone_numbers").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId).eq("status", "active"),
   ]);
 
-  const ws = wsRes.data as { billing_tier?: string; billing_status?: string; stripe_customer_id?: string | null } | null;
+  const ws = wsRes.data as { billing_tier?: string; billing_status?: string; stripe_customer_id?: string | null; grace_period_ends_at?: string | null } | null;
   if (!ws) return { allowed: false, reason: "no_subscription", message: "Workspace not found" };
 
-  const billingBlock = checkBillingActive(ws.billing_status, !!ws.stripe_customer_id);
+  const billingBlock = checkBillingActive(ws.billing_status, !!ws.stripe_customer_id, ws.grace_period_ends_at);
   if (billingBlock) return billingBlock;
 
   const tier = getPlan(ws.billing_tier);
@@ -144,11 +161,11 @@ export async function canProvisionNumber(workspaceId: string): Promise<Enforceme
 export async function canMakeOutboundCall(workspaceId: string): Promise<EnforcementResult> {
   const db = getDb();
 
-  const wsRes = await db.from("workspaces").select("billing_tier, billing_status, stripe_customer_id").eq("id", workspaceId).maybeSingle();
-  const ws = wsRes.data as { billing_tier?: string; billing_status?: string; stripe_customer_id?: string | null } | null;
+  const wsRes = await db.from("workspaces").select("billing_tier, billing_status, stripe_customer_id, grace_period_ends_at").eq("id", workspaceId).maybeSingle();
+  const ws = wsRes.data as { billing_tier?: string; billing_status?: string; stripe_customer_id?: string | null; grace_period_ends_at?: string | null } | null;
   if (!ws) return { allowed: false, reason: "no_subscription", message: "Workspace not found" };
 
-  const billingBlock = checkBillingActive(ws.billing_status, !!ws.stripe_customer_id);
+  const billingBlock = checkBillingActive(ws.billing_status, !!ws.stripe_customer_id, ws.grace_period_ends_at);
   if (billingBlock) return billingBlock;
 
   const tier = getPlan(ws.billing_tier);
@@ -189,11 +206,11 @@ export async function canUseFeature(
 ): Promise<EnforcementResult> {
   const db = getDb();
 
-  const wsRes = await db.from("workspaces").select("billing_tier, billing_status, stripe_customer_id").eq("id", workspaceId).maybeSingle();
-  const ws = wsRes.data as { billing_tier?: string; billing_status?: string; stripe_customer_id?: string | null } | null;
+  const wsRes = await db.from("workspaces").select("billing_tier, billing_status, stripe_customer_id, grace_period_ends_at").eq("id", workspaceId).maybeSingle();
+  const ws = wsRes.data as { billing_tier?: string; billing_status?: string; stripe_customer_id?: string | null; grace_period_ends_at?: string | null } | null;
   if (!ws) return { allowed: false, reason: "no_subscription", message: "Workspace not found" };
 
-  const billingBlock = checkBillingActive(ws.billing_status, !!ws.stripe_customer_id);
+  const billingBlock = checkBillingActive(ws.billing_status, !!ws.stripe_customer_id, ws.grace_period_ends_at);
   if (billingBlock) return billingBlock;
 
   const tier = getPlan(ws.billing_tier);
@@ -218,14 +235,14 @@ export async function canInviteSeat(workspaceId: string): Promise<EnforcementRes
   const db = getDb();
 
   const [wsRes, memberRes] = await Promise.all([
-    db.from("workspaces").select("billing_tier, billing_status, stripe_customer_id").eq("id", workspaceId).maybeSingle(),
+    db.from("workspaces").select("billing_tier, billing_status, stripe_customer_id, grace_period_ends_at").eq("id", workspaceId).maybeSingle(),
     db.from("workspace_members").select("id", { count: "exact", head: true }).eq("workspace_id", workspaceId),
   ]);
 
-  const ws = wsRes.data as { billing_tier?: string; billing_status?: string; stripe_customer_id?: string | null } | null;
+  const ws = wsRes.data as { billing_tier?: string; billing_status?: string; stripe_customer_id?: string | null; grace_period_ends_at?: string | null } | null;
   if (!ws) return { allowed: false, reason: "no_subscription", message: "Workspace not found" };
 
-  const billingBlock = checkBillingActive(ws.billing_status, !!ws.stripe_customer_id);
+  const billingBlock = checkBillingActive(ws.billing_status, !!ws.stripe_customer_id, ws.grace_period_ends_at);
   if (billingBlock) return billingBlock;
 
   const tier = getPlan(ws.billing_tier);

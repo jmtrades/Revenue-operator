@@ -150,7 +150,7 @@ async function callClaudeApi(prompt: string): Promise<string> {
       "anthropic-version": "2023-06-01",
     },
     body: JSON.stringify({
-      model: "claude-opus-4-1",
+      model: "claude-sonnet-4-20250514",
       max_tokens: 4096,
       messages: [
         {
@@ -523,7 +523,7 @@ ${contentContext ? `Website/Content Summary: ${contentContext}` : ""}
 
 export async function scrapeAndAnalyze(
   url: string,
-  workspaceId: string
+  _workspaceId: string
 ): Promise<WebsiteIntelligence> {
   const pages = await fetchAndParsePages(url);
 

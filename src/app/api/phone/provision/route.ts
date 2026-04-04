@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
     const stripeCustomerId = ws?.stripe_customer_id;
 
     // Must be in an allowed billing state
-    const allowedStatus = bStatus === "trial" || bStatus === "active" || bStatus === "trial_ended";
+    const allowedStatus = bStatus === "pending" || bStatus === "active" || bStatus === "trial" || bStatus === "trial_ended";
     if (!bStatus || !allowedStatus) {
       return NextResponse.json(
         {
@@ -153,11 +153,42 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Idempotency check BEFORE provider purchase: return existing record if already provisioned
+  const { data: existingForWorkspaceEarly } = await db
+    .from("phone_numbers")
+    .select("id, phone_number, friendly_name, number_type, status, monthly_cost_cents, setup_fee_cents")
+    .eq("phone_number", e164)
+    .eq("workspace_id", session.workspaceId)
+    .maybeSingle();
+
+  if (existingForWorkspaceEarly) {
+    const existing = existingForWorkspaceEarly as {
+      id: string; phone_number: string; friendly_name?: string;
+      number_type: string; status: string; monthly_cost_cents: number; setup_fee_cents?: number;
+    };
+    return NextResponse.json({
+      id: existing.id, phone_number: existing.phone_number,
+      friendly_name: existing.friendly_name, number_type: existing.number_type,
+      status: existing.status, monthly_cost_cents: existing.monthly_cost_cents,
+      setup_fee_cents: existing.setup_fee_cents ?? 200, idempotent: true,
+    });
+  }
+
+  // Check if number is already provisioned globally (another workspace) BEFORE purchasing
+  const { data: globalExistingEarly } = await db
+    .from("phone_numbers")
+    .select("id")
+    .eq("phone_number", e164)
+    .maybeSingle();
+  if (globalExistingEarly) {
+    return NextResponse.json({ error: "This number is already provisioned to another workspace." }, { status: 409 });
+  }
+
   const accountSid = process.env.TWILIO_ACCOUNT_SID;
   const authToken = process.env.TWILIO_AUTH_TOKEN;
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin ?? "";
   const telephonyProvider = getTelephonyProvider();
-  const voiceWebhookUrl =
+  const _voiceWebhookUrl =
     process.env.VOICE_PROVIDER === "pipecat"
       ? `${baseUrl}/api/voice/connect`
       : `${baseUrl}/api/webhooks/twilio/voice`;
@@ -229,46 +260,6 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Idempotency check: return existing record if phone number already provisioned to this workspace
-  const { data: existingForWorkspace } = await db
-    .from("phone_numbers")
-    .select("id, phone_number, friendly_name, number_type, status, monthly_cost_cents, setup_fee_cents")
-    .eq("phone_number", e164)
-    .eq("workspace_id", session.workspaceId)
-    .maybeSingle();
-
-  if (existingForWorkspace) {
-    const existing = existingForWorkspace as {
-      id: string;
-      phone_number: string;
-      friendly_name?: string;
-      number_type: string;
-      status: string;
-      monthly_cost_cents: number;
-      setup_fee_cents?: number;
-    };
-    return NextResponse.json({
-      id: existing.id,
-      phone_number: existing.phone_number,
-      friendly_name: existing.friendly_name,
-      number_type: existing.number_type,
-      status: existing.status,
-      monthly_cost_cents: existing.monthly_cost_cents,
-      setup_fee_cents: existing.setup_fee_cents ?? 100,
-      idempotent: true,
-    });
-  }
-
-  // Check if number is already provisioned globally (another workspace)
-  const { data: globalExisting } = await db
-    .from("phone_numbers")
-    .select("id")
-    .eq("phone_number", e164)
-    .maybeSingle();
-  if (globalExisting) {
-    return NextResponse.json({ error: "This number is already provisioned to another workspace." }, { status: 409 });
-  }
-
   // Pricing: $5/mo local, $8/mo toll-free (canonical from billing-plans.ts USAGE_RATES)
   const monthlyCost = number_type === "toll_free" ? 800 : USAGE_RATES.phoneNumberMonthlyCents;
   const setupFeeCents = USAGE_RATES.phoneNumberSetupCents; // $2.00 one-time setup fee
@@ -298,7 +289,7 @@ export async function POST(req: NextRequest) {
       try {
         const telephony = getTelephonyService();
         await telephony.releaseNumber(providerSid);
-        console.warn("[provision] Rolled back purchased number from provider after DB failure:", providerSid);
+        log("warn", "[provision] Rolled back purchased number from provider after DB failure", { providerSid });
       } catch (rollbackErr) {
         log("error", "[provision] CRITICAL: Failed to rollback purchased number", { error: providerSid, rollbackError: rollbackErr instanceof Error ? rollbackErr.message : rollbackErr });
       }

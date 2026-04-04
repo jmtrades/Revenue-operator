@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- Admin-only routes with Supabase dynamic queries */
 /**
  * Admin analytics route: signup funnel, feature adoption, retention cohorts, DAU/WAU/MAU.
  */
@@ -39,7 +40,7 @@ export async function GET(req: NextRequest) {
     const { data: features } = await db.from("feature_usage").select("feature_name, created_at").order("created_at", { ascending: false });
     // Group by feature_name and count
     const featureCounts: Record<string, number> = {};
-    (features ?? []).forEach((f: any) => {
+    (features ?? []).forEach((f: Record<string, any>) => {
       featureCounts[f.feature_name] = (featureCounts[f.feature_name] || 0) + 1;
     });
     result.feature_adoption = Object.entries(featureCounts)
@@ -56,7 +57,7 @@ export async function GET(req: NextRequest) {
 
     if (users && users.length > 0) {
       // Group users by signup week
-      users.forEach((u: any) => {
+      users.forEach((u: Record<string, any>) => {
         const createdDate = new Date(u.created_at);
         const weekKey = `${createdDate.getFullYear()}-W${Math.ceil(createdDate.getDate() / 7)}`;
         if (!cohorts[weekKey]) {
@@ -100,7 +101,7 @@ export async function GET(req: NextRequest) {
     const { data: allFeatures } = await db.from("feature_usage").select("feature_name, created_at");
     // Group by feature_name and count
     const featureCounts: Record<string, number> = {};
-    (allFeatures ?? []).forEach((f: any) => {
+    (allFeatures ?? []).forEach((f: Record<string, any>) => {
       featureCounts[f.feature_name] = (featureCounts[f.feature_name] || 0) + 1;
     });
     result.top_features = Object.entries(featureCounts)
