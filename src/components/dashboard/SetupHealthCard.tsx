@@ -63,16 +63,16 @@ export function SetupHealthCard({ workspaceId }: SetupHealthCardProps) {
       const setupSteps: SetupStep[] = [
         {
           id: "agent",
-          label: "Brain registered",
-          description: "An autonomous agent has been created and is ready for configuration. You can now customize its business rules, tone, and qualification criteria.",
+          label: "AI operator registered",
+          description: "An autonomous operator has been created and is ready for configuration. You can now customize its business rules, tone, and qualification criteria.",
           completed: result.agent_configured ?? false,
-          actionLabel: "Configure brain",
+          actionLabel: "Configure operator",
           actionHref: "/app/agents",
         },
         {
           id: "phone",
           label: "Phone number connected",
-          description: "A phone number has been assigned to your brain. It can now answer inbound calls in under 3 seconds, 24/7.",
+          description: "A phone number has been assigned to your AI operator. It can now answer inbound calls in under 3 seconds, 24/7.",
           completed: result.phone_number_configured ?? false,
           actionLabel: "Set up phone",
           actionHref: "/app/settings/phone",
@@ -80,7 +80,7 @@ export function SetupHealthCard({ workspaceId }: SetupHealthCardProps) {
         {
           id: "call",
           label: "First call completed",
-          description: "Your brain answered at least one call and started learning from real conversations. It's now analyzing patterns and improving its decision-making.",
+          description: "Your AI operator answered at least one call and started learning from real conversations. It's now analyzing patterns and improving its responses.",
           completed: result.calls_answered > 0,
           actionLabel: "Make a test call",
           actionHref: "/app/agents",
@@ -89,7 +89,7 @@ export function SetupHealthCard({ workspaceId }: SetupHealthCardProps) {
         {
           id: "appointment",
           label: "Auto-booking in action",
-          description: "Your brain has successfully booked at least one appointment directly into your calendar during an autonomous call.",
+          description: "Your AI operator has successfully booked at least one appointment directly into your calendar during an autonomous call.",
           completed: result.appointments_booked > 0,
           actionLabel: "Review calendar sync",
           actionHref: "/app/settings/agent",
@@ -97,7 +97,7 @@ export function SetupHealthCard({ workspaceId }: SetupHealthCardProps) {
         {
           id: "followups",
           label: "Follow-up sequences active",
-          description: "Your brain has sent at least one follow-up message (SMS, email, or call) as part of an automated sequence.",
+          description: "Your AI operator has sent at least one follow-up message (SMS, email, or call) as part of an automated follow-up.",
           completed: result.follow_ups_sent > 0,
           actionLabel: "Set up sequences",
           actionHref: "/app/follow-ups",

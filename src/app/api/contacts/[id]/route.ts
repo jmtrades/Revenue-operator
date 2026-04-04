@@ -15,7 +15,7 @@ const updateContactSchema = z.object({
   phone: z.string().min(7).max(20).optional(),
   email: z.string().email().max(320).optional().or(z.literal("").transform(() => undefined)),
   company: z.string().max(255).optional(),
-  status: z.enum(["NEW", "CONTACTED", "QUALIFIED", "BOOKED", "WON", "LOST"]).optional(),
+  state: z.enum(["NEW", "CONTACTED", "ENGAGED", "QUALIFIED", "BOOKED", "SHOWED", "WON", "LOST", "RETAIN", "REACTIVATE", "CLOSED"]).optional(),
 }).strict();
 
 export async function GET(

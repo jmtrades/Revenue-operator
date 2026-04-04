@@ -457,7 +457,7 @@ export default function AppFollowUpsPage() {
                   {brainActivity?.follow_ups_sent ?? 0}
                 </p>
                 <p className="text-xs text-[var(--text-secondary)] mt-2">
-                  Total follow-up actions sent by the brain engine
+                  Total follow-up actions sent by your AI operator
                 </p>
               </div>
 
@@ -489,7 +489,7 @@ export default function AppFollowUpsPage() {
                   </div>
                 ) : (
                   <p className="text-sm text-[var(--text-tertiary)] p-3 rounded-lg bg-[var(--bg-hover)] border border-[var(--border-default)]">
-                    No sequences created yet. The brain will auto-enroll leads when sequences are available.
+                    No sequences created yet. Your AI operator will auto-enroll leads when sequences are available.
                   </p>
                 )}
               </div>
@@ -520,7 +520,7 @@ export default function AppFollowUpsPage() {
                 ) : (
                   <div className="p-4 rounded-lg bg-[var(--bg-hover)] border border-[var(--border-default)] text-center">
                     <p className="text-sm text-[var(--text-secondary)]">
-                      Brain activity will appear here as leads are processed
+                      Activity will appear here as leads are processed
                     </p>
                   </div>
                 )}

@@ -191,7 +191,7 @@ function ConversationList({
               {t("inbox.empty.cta", { defaultValue: "Connect your phone number" })} →
             </Link>
             <p className="text-[11px] text-[var(--text-tertiary)] mt-2">
-              {t("inbox.empty.hint", { defaultValue: "Messages appear here as the brain communicates with your leads via SMS, email, and calls." })}
+              {t("inbox.empty.hint", { defaultValue: "Messages appear here as your AI operator communicates with your leads via SMS, email, and calls." })}
             </p>
           </div>
         ) : filtered.map((thread, idx) => {

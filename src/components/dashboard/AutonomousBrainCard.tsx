@@ -120,13 +120,13 @@ export function AutonomousBrainCard() {
           <div className="w-8 h-8 rounded-lg bg-violet-500/10 flex items-center justify-center">
             <Brain className="w-4 h-4 text-violet-400" />
           </div>
-          <h2 className="text-sm font-semibold text-[var(--text-primary)]">Revenue Brain</h2>
+          <h2 className="text-sm font-semibold text-[var(--text-primary)]">Revenue AI</h2>
         </div>
         <div className="flex items-center gap-2.5 rounded-lg bg-orange-500/[0.06] border border-orange-500/10 px-4 py-3">
           <AlertTriangle className="w-4 h-4 text-orange-400 shrink-0" />
           <div>
-            <p className="text-xs font-medium text-orange-400">Temporarily unable to load brain stats</p>
-            <p className="text-[11px] text-[var(--text-tertiary)] mt-0.5">Your brain is still running — this is a display issue only</p>
+            <p className="text-xs font-medium text-orange-400">Temporarily unable to load stats</p>
+            <p className="text-[11px] text-[var(--text-tertiary)] mt-0.5">Your AI operator is still running — this is a display issue only</p>
           </div>
         </div>
       </div>
@@ -146,7 +146,7 @@ export function AutonomousBrainCard() {
             </div>
             <div>
               <h2 className="text-sm font-semibold text-[var(--text-primary)]">
-                Revenue Brain
+                Revenue AI
               </h2>
               <p className="text-[11px] text-[var(--text-tertiary)]">
                 {hasData ? "Actively managing your pipeline" : "Standing by"}
@@ -182,10 +182,10 @@ export function AutonomousBrainCard() {
               <Brain className="w-5 h-5 text-violet-400/60" />
             </div>
             <p className="text-sm font-medium text-[var(--text-primary)] mb-1">
-              Brain is standing by
+              AI is standing by
             </p>
             <p className="text-xs text-[var(--text-tertiary)] max-w-[280px] mx-auto">
-              When leads arrive, the brain will autonomously score them, decide the best action, execute follow-ups, and advance your pipeline — no manual work required.
+              When leads arrive, your AI operator will autonomously score them, decide the best action, execute follow-ups, and advance your pipeline — no manual work required.
             </p>
           </div>
         ) : (
@@ -211,7 +211,7 @@ export function AutonomousBrainCard() {
                 <p className="text-lg font-bold tabular-nums text-[var(--text-primary)]">
                   {stats.hot_leads}
                 </p>
-                <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5">brain is pursuing</p>
+                <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5">AI is pursuing</p>
               </div>
 
               <div className="rounded-lg bg-[var(--bg-surface)] border border-[var(--border-default)] p-3">
@@ -222,7 +222,7 @@ export function AutonomousBrainCard() {
                 <p className="text-lg font-bold tabular-nums text-[var(--text-primary)]">
                   {stats.warm_leads}
                 </p>
-                <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5">brain is nurturing</p>
+                <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5">AI is nurturing</p>
               </div>
 
               <div className="rounded-lg bg-[var(--bg-surface)] border border-[var(--border-default)] p-3">
