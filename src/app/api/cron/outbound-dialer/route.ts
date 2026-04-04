@@ -105,7 +105,7 @@ export async function GET(req: NextRequest) {
         .order("created_at", { ascending: true })
         .limit(maxConcurrent);
 
-      const leads = (pendingLeads ?? []) as Array<{
+      const leads = (pendingLeads ?? []) as unknown as Array<{
         id: string;
         lead_id: string;
         leads: {
