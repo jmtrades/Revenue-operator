@@ -23,12 +23,12 @@ const STATUS_ORDER: LeadStatus[] = [
 ];
 
 const STATUS_HINTS: Record<LeadStatus, string> = {
-  New: "Lead just arrived — brain is evaluating",
+  New: "Lead just arrived — AI is evaluating",
   Contacted: "First outreach sent — awaiting response",
-  Qualified: "Interest confirmed — brain is nurturing",
-  "Appointment Set": "Meeting booked — brain will send reminders",
-  Won: "Deal closed — brain may offer retention outreach",
-  Lost: "Did not convert — brain may attempt reactivation",
+  Qualified: "Interest confirmed — AI is nurturing",
+  "Appointment Set": "Meeting booked — AI will send reminders",
+  Won: "Deal closed — AI may offer retention outreach",
+  Lost: "Did not convert — AI may attempt reactivation",
 };
 
 function formatDate(iso: string): string {
@@ -151,13 +151,13 @@ export function LeadDetail({
           </div>
           <p className="text-[11px] text-[var(--text-secondary)] ml-8">
             Phase: <span className="font-medium text-[var(--text-primary)]">{brainHint.lifecycle_phase}</span>
-            {brainHint.action_timing === "immediate" ? " · Brain is handling this autonomously" : " · Queued for optimal timing"}
+            {brainHint.action_timing === "immediate" ? " · AI is handling this autonomously" : " · Queued for optimal timing"}
           </p>
 
           {/* Stage — brain-managed with manual override */}
           <div className="pt-2 border-t border-violet-500/10">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] font-medium">{t("detail.stage")} · brain-managed</span>
+              <span className="text-[10px] uppercase tracking-wider text-[var(--text-tertiary)] font-medium">{t("detail.stage")} · AI-managed</span>
               <button
                 type="button"
                 onClick={() => {

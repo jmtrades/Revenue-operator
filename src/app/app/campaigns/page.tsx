@@ -534,7 +534,7 @@ export default function CampaignsPage() {
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <p className="text-sm text-violet-400 font-semibold">Brain-optimized campaigns</p>
+              <p className="text-sm text-violet-400 font-semibold">AI-optimized campaigns</p>
               {campaigns.filter(c => c.status === "active").length > 0 && (
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
@@ -543,7 +543,7 @@ export default function CampaignsPage() {
               )}
             </div>
             <p className="text-xs text-[var(--text-secondary)]">
-              The brain automatically segments leads by temperature (hot/warm/cold) and assigns them to the right campaign. Active campaigns execute touches autonomously — you supervise results.
+              Your AI operator automatically segments leads by temperature (hot/warm/cold) and assigns them to the right campaign. Active campaigns execute touches autonomously — you supervise results.
             </p>
           </div>
         </div>
@@ -582,7 +582,7 @@ export default function CampaignsPage() {
               <EmptyState
                 icon={Megaphone}
                 title={t("empty.title", { defaultValue: "No campaigns yet" })}
-                description={t("empty.body", { defaultValue: "The brain auto-creates follow-up sequences for every lead. Campaigns let you target specific audiences at scale — choose a type and the brain pre-fills the rest." })}
+                description={t("empty.body", { defaultValue: "Your AI operator auto-creates follow-ups for every lead. Campaigns let you target specific audiences at scale — choose a type and the operator pre-fills the rest." })}
                 primaryAction={{ label: t("createCampaign"), href: "/app/campaigns/create" }}
               />
             ) : (

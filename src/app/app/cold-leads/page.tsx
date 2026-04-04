@@ -557,7 +557,7 @@ export default function ColdLeadsPage() {
           <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
         </span>
         <p className="text-sm text-[var(--text-primary)]">
-          <span className="font-semibold text-violet-400">Brain reactivation active</span>
+          <span className="font-semibold text-violet-400">AI reactivation active</span>
           {' · '}
           <span>{stats.pending} leads queued</span>
           {' · '}
