@@ -158,7 +158,10 @@ export async function GET(req: NextRequest) {
         return fail("google_workspace");
       }
       workspaceId = (createdWorkspace as { id: string }).id;
-      await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
+      await Promise.all([
+        db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" }),
+        db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" }),
+      ]);
       isNewUser = true;
     }
 

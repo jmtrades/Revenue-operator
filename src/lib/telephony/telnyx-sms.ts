@@ -37,33 +37,46 @@ export interface SmsResponse {
  * Returns messageId and status on success.
  */
 export async function sendSms(
-  params: SendSmsParams
+  params: SendSmsParams & { maxRetries?: number }
 ): Promise<{ messageId: string; status: string } | { error: string }> {
-  try {
-    const messagingProfileId = params.messagingProfileId || process.env.TELNYX_MESSAGING_PROFILE_ID;
+  const maxRetries = params.maxRetries ?? 2;
+  let lastError = "";
 
-    const body = {
-      to: params.to,
-      from: params.from,
-      text: params.text,
-      ...(messagingProfileId && { messaging_profile_id: messagingProfileId }),
-      ...(params.webhookUrl && { webhook_url: params.webhookUrl }),
-      ...(params.metadata && { metadata: params.metadata }),
-    };
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const messagingProfileId = params.messagingProfileId || process.env.TELNYX_MESSAGING_PROFILE_ID;
 
-    const response = await telnyxRequest<SmsResponse>("/messages", {
-      method: "POST",
-      body: JSON.stringify(body),
-    });
+      const body = {
+        to: params.to,
+        from: params.from,
+        text: params.text,
+        ...(messagingProfileId && { messaging_profile_id: messagingProfileId }),
+        ...(params.webhookUrl && { webhook_url: params.webhookUrl }),
+        ...(params.metadata && { metadata: params.metadata }),
+      };
 
-    const messageId = response.data?.attributes?.id || response.data?.id || "unknown";
-    const status = response.data?.attributes?.status || "queued";
+      const response = await telnyxRequest<SmsResponse>("/messages", {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
 
-    return { messageId, status };
-  } catch (err) {
-    const errorMessage = err instanceof Error ? err.message : String(err);
-    return { error: errorMessage };
+      const messageId = response.data?.attributes?.id || response.data?.id || "unknown";
+      const status = response.data?.attributes?.status || "queued";
+
+      return { messageId, status };
+    } catch (err) {
+      lastError = err instanceof Error ? err.message : String(err);
+      // Don't retry on client errors (4xx) — only on transient/network errors
+      if (lastError.includes("400") || lastError.includes("401") || lastError.includes("403") || lastError.includes("422")) {
+        return { error: lastError };
+      }
+      if (attempt < maxRetries) {
+        // Exponential backoff: 500ms, 1500ms
+        await new Promise((r) => setTimeout(r, 500 * Math.pow(3, attempt)));
+      }
+    }
   }
+  return { error: lastError };
 }
 
 /**

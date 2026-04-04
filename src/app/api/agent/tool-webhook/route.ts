@@ -527,7 +527,7 @@ async function upsertLead(
         name: data.name || "New Lead",
         phone: data.phone,
         email: data.email,
-        status: "NEW",
+        state: "NEW",
         notes: data.notes,
         source: "ai_agent",
       }).select("id").maybeSingle()

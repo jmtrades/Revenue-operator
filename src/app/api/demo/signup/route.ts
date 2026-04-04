@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
         workspace_id: DEMO_WORKSPACE_ID,
         email,
         channel: industry,
-        status: "NEW",
+        state: "NEW",
         metadata: {
           source: source || "website_demo",
           industry,

@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
       {
         workspace_id: DEMO_WORKSPACE,
         email,
-        status: "NEW",
+        state: "NEW",
         channel: "website",
         metadata: {
           source: body.source || "email_capture",

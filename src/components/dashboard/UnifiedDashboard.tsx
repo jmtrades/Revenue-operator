@@ -21,6 +21,8 @@ import {
   ChevronRight,
   RefreshCw,
   Check,
+  Upload,
+  PhoneOutgoing,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -552,6 +554,45 @@ export function UnifiedDashboard() {
             </div>
           </div>
         )}
+
+        {/* ── Quick Actions ──────────────────────────────────────────── */}
+        <div className="mt-6 pt-5 border-t border-[var(--border-default)]">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--text-tertiary)] mb-3">Quick actions</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {/* Import Leads */}
+            <Link href="/app/leads?import=1" className="flex flex-col items-start gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-4 hover:border-[var(--accent-primary)]/50 hover:bg-[var(--bg-surface)]/80 transition-colors">
+              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-500/10">
+                <Upload className="w-5 h-5 text-blue-500" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-[var(--text-primary)]">Import Leads</p>
+                <p className="text-xs text-[var(--text-tertiary)]">Upload your contact list</p>
+              </div>
+            </Link>
+
+            {/* Start Calling */}
+            <Link href="/app/operations" className="flex flex-col items-start gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-4 hover:border-[var(--accent-primary)]/50 hover:bg-[var(--bg-surface)]/80 transition-colors">
+              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-green-500/10">
+                <PhoneOutgoing className="w-5 h-5 text-green-500" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-[var(--text-primary)]">Start Calling</p>
+                <p className="text-xs text-[var(--text-tertiary)]">Begin operations</p>
+              </div>
+            </Link>
+
+            {/* Create Campaign */}
+            <Link href="/app/campaigns/create" className="flex flex-col items-start gap-3 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-4 hover:border-[var(--accent-primary)]/50 hover:bg-[var(--bg-surface)]/80 transition-colors">
+              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-purple-500/10">
+                <Megaphone className="w-5 h-5 text-purple-500" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-[var(--text-primary)]">Create Campaign</p>
+                <p className="text-xs text-[var(--text-tertiary)]">Launch new campaign</p>
+              </div>
+            </Link>
+          </div>
+        </div>
 
         {/* Usage warning — show at 80%+ minute usage */}
         {data && data.minutes_limit > 0 && data.minutes_used >= data.minutes_limit * 0.8 && (

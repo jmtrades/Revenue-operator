@@ -81,17 +81,17 @@ export async function GET(req: NextRequest) {
   // Derive sync stats from sync_log table
   const { data: syncStats } = await db
     .from("sync_log")
-    .select("provider, status, created_at")
+    .select("provider, action, created_at")
     .eq("workspace_id", session.workspaceId)
     .in("provider", [...CRM_PROVIDERS])
     .order("created_at", { ascending: false })
     .limit(500);
 
   const syncStatsByProvider = new Map<string, { recordsSynced: number; errorCount: number; lastSyncAt: string | null }>();
-  for (const s of (syncStats ?? []) as Array<{ provider: string; status: string; created_at: string }>) {
+  for (const s of (syncStats ?? []) as Array<{ provider: string; action: string; created_at: string }>) {
     const existing = syncStatsByProvider.get(s.provider) ?? { recordsSynced: 0, errorCount: 0, lastSyncAt: null };
-    if (s.status === "created" || s.status === "updated") existing.recordsSynced += 1;
-    if (s.status === "failed") existing.errorCount += 1;
+    if (s.action === "created" || s.action === "updated") existing.recordsSynced += 1;
+    if (s.action === "failed") existing.errorCount += 1;
     if (!existing.lastSyncAt || s.created_at > existing.lastSyncAt) existing.lastSyncAt = s.created_at;
     syncStatsByProvider.set(s.provider, existing);
   }

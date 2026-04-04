@@ -34,6 +34,7 @@ import {
   Plug,
   FileText,
   RotateCcw,
+  Activity,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { PageTransition } from "@/components/ui/PageTransition";
@@ -84,6 +85,7 @@ export default function AppShellClient({
         label: t("nav.sectionCommandCenter"),
         items: [
           { href: "/app/dashboard", label: t("nav.dashboard"), icon: LayoutList },
+          { href: "/app/operations", label: "Operations", icon: Activity },
           { href: "/app/agents", label: t("nav.agents"), icon: Bot },
         ],
       },
@@ -117,6 +119,7 @@ export default function AppShellClient({
   const mobileTabs = useMemo(
     () => [
       { href: "/app/dashboard", label: t("nav.dashboard"), icon: LayoutList },
+      { href: "/app/operations", label: "Operations", icon: Activity },
       { href: "/app/leads", label: t("nav.leads", { defaultValue: "Leads" }), icon: UserPlus },
       { href: "/app/campaigns", label: t("nav.campaigns"), icon: Megaphone },
     ],

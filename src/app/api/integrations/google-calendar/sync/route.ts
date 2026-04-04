@@ -12,6 +12,7 @@ import {
   getGoogleCalendarClientSecret,
 } from "@/lib/integrations/google-calendar-env";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -59,19 +60,26 @@ async function getAccessToken(workspaceId: string): Promise<string | null> {
 
   const json = (await res.json()) as {
     access_token?: string;
+    refresh_token?: string;
     expires_in?: number;
   };
   const newExpires = json.expires_in
     ? new Date(Date.now() + json.expires_in * 1000).toISOString()
     : null;
 
+  const updatePayload: Record<string, unknown> = {
+    access_token: json.access_token,
+    expires_at: newExpires,
+    updated_at: new Date().toISOString(),
+  };
+  // Persist new refresh_token if Google returns one (happens on re-consent)
+  if (json.refresh_token) {
+    updatePayload.refresh_token = json.refresh_token;
+  }
+
   await db
     .from("google_calendar_tokens")
-    .update({
-      access_token: json.access_token,
-      expires_at: newExpires,
-      updated_at: new Date().toISOString(),
-    })
+    .update(updatePayload)
     .eq("workspace_id", workspaceId);
 
   return json.access_token ?? null;
@@ -202,47 +210,44 @@ export async function POST(req: NextRequest) {
         }
 
         // If no matching lead found, create one from first attendee
+        // Use upsert to prevent duplicates on re-sync
         if (!leadId && event.attendees[0]?.email) {
           const attendee = event.attendees[0];
-          const { data: newLead } = await db
+          // First check if lead with this email already exists (may have been created by a different sync)
+          const { data: existingByEmail } = await db
             .from("leads")
-            .insert({
-              workspace_id: session.workspaceId,
-              name: attendee.displayName || "Google Calendar Contact",
-              email: attendee.email,
-              phone: null,
-              company: null,
-              status: "NEW",
-              metadata: { source: "google_calendar_sync" },
-            })
             .select("id")
+            .eq("workspace_id", session.workspaceId)
+            .eq("email", attendee.email)
             .maybeSingle();
 
-          if (newLead) {
-            leadId = (newLead as { id: string }).id;
+          if (existingByEmail) {
+            leadId = (existingByEmail as { id: string }).id;
+          } else {
+            const { data: newLead } = await db
+              .from("leads")
+              .insert({
+                workspace_id: session.workspaceId,
+                name: attendee.displayName || "Google Calendar Contact",
+                email: attendee.email,
+                phone: null,
+                company: null,
+                state: "NEW",
+                metadata: { source: "google_calendar_sync" },
+              })
+              .select("id")
+              .maybeSingle();
+
+            if (newLead) {
+              leadId = (newLead as { id: string }).id;
+            }
           }
         }
       }
 
-      // If still no lead, create a generic one
+      // Skip events with no attendees rather than creating orphaned generic leads
       if (!leadId) {
-        const { data: newLead } = await db
-          .from("leads")
-          .insert({
-            workspace_id: session.workspaceId,
-            name: "Calendar Event",
-            email: null,
-            phone: null,
-            company: null,
-            status: "NEW",
-            metadata: { source: "google_calendar_sync" },
-          })
-          .select("id")
-          .maybeSingle();
-
-        if (newLead) {
-          leadId = (newLead as { id: string }).id;
-        }
+        continue;
       }
 
       if (!leadId) continue; // Skip if we couldn't create a lead
@@ -313,4 +318,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-import { log } from "@/lib/logger";

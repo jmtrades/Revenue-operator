@@ -255,9 +255,9 @@ export async function GET(req: NextRequest) {
   try {
     const { data: leads } = await db
       .from("leads")
-      .select("id, name, phone, status, created_at")
+      .select("id, name, phone, state, created_at")
       .eq("workspace_id", workspaceId)
-      .eq("status", "NEW")
+      .eq("state", "NEW")
       .order("created_at", { ascending: false })
       .limit(7);
     if (leads?.length) {

@@ -114,11 +114,15 @@ export async function POST(request: NextRequest) {
         metadata?: Record<string, unknown>;
       }>;
 
+      // Import unified opt-out recorder
+      const { recordOptOut } = await import("@/lib/lead-opt-out");
+
       for (const lead of leadList) {
         const meta = lead.metadata ?? {};
         await db
           .from("leads")
           .update({
+            opt_out: true,
             metadata: {
               ...meta,
               sms_consent: false,
@@ -127,6 +131,8 @@ export async function POST(request: NextRequest) {
             },
           })
           .eq("id", lead.id);
+        // Also record in canonical lead_opt_out table for unified checks
+        await recordOptOut(lead.workspace_id, `lead:${lead.id}`, lead.id);
       }
 
       log("info", "sms_webhook.opt_out", {
@@ -154,11 +160,15 @@ export async function POST(request: NextRequest) {
         metadata?: Record<string, unknown>;
       }>;
 
+      // Import unified opt-out remover
+      const { removeOptOut } = await import("@/lib/lead-opt-out");
+
       for (const lead of leadList) {
         const meta = lead.metadata ?? {};
         await db
           .from("leads")
           .update({
+            opt_out: false,
             metadata: {
               ...meta,
               sms_consent: true,
@@ -166,6 +176,8 @@ export async function POST(request: NextRequest) {
             },
           })
           .eq("id", lead.id);
+        // Also remove from canonical lead_opt_out table
+        await removeOptOut(lead.workspace_id, `lead:${lead.id}`, lead.id);
       }
 
       log("info", "sms_webhook.resubscribe", { phone: normalizedPhone });

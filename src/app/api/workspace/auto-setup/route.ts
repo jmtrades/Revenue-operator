@@ -12,6 +12,7 @@ import {
 } from "@/lib/ai/website-intelligence";
 import { setWorkspaceSettings } from "@/lib/db/workspace-settings";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   const csrfBlock = assertSameOrigin(req);
@@ -194,4 +195,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-import { log } from "@/lib/logger";

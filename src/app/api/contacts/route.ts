@@ -53,7 +53,7 @@ async function postContact(req: NextRequest) {
   const db = getDb();
   const { data: contact, error } = await db
     .from("leads")
-    .insert({ workspace_id, name, phone: phone ? normalizePhoneE164(phone) : null, email: email ?? null, company: company ?? null, status: "NEW" })
+    .insert({ workspace_id, name, phone: phone ? normalizePhoneE164(phone) : null, email: email ?? null, company: company ?? null, state: "NEW" })
     .select()
     .maybeSingle();
   if (error) {

@@ -251,7 +251,7 @@ export async function POST(req: NextRequest) {
                 workspace_id: workspaceId,
                 name: "Inbound caller",
                 phone: callInfo.from ?? undefined,
-                status: "NEW",
+                state: "NEW",
               })
               .select("id")
               .maybeSingle();

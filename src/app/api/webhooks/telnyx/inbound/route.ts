@@ -113,15 +113,39 @@ export async function POST(req: NextRequest) {
             // Check for opt-out keywords (TCPA compliance)
             if (OPT_OUT_KEYWORDS.has(inboundText)) {
               log("info", "telnyx_sms.opt_out", { from: fromPhone, workspaceId });
+              // Find matching leads to record opt-out in unified table
+              const { data: matchedLeads } = await db
+                .from("leads")
+                .select("id")
+                .eq("workspace_id", workspaceId)
+                .or(`phone.eq.${fromPhone},phone.eq.${fromPhone.replace(/\D/g, "")}`);
+              const { recordOptOut } = await import("@/lib/lead-opt-out");
+              for (const lead of (matchedLeads ?? []) as Array<{ id: string }>) {
+                await recordOptOut(workspaceId, `lead:${lead.id}`, lead.id);
+              }
+              // Also update the leads table column + metadata for backward compatibility
               await db
                 .from("leads")
-                .update({ opt_out: true, updated_at: new Date().toISOString() })
+                .update({
+                  opt_out: true,
+                  metadata: { sms_consent: false, sms_opted_out_at: new Date().toISOString() },
+                  updated_at: new Date().toISOString(),
+                })
                 .eq("workspace_id", workspaceId)
                 .or(`phone.eq.${fromPhone},phone.eq.${fromPhone.replace(/\D/g, "")}`);
             }
             // Check for opt-in keywords (re-subscribe)
             else if (OPT_IN_KEYWORDS.has(inboundText)) {
               log("info", "telnyx_sms.opt_in", { from: fromPhone, workspaceId });
+              const { data: matchedLeads } = await db
+                .from("leads")
+                .select("id")
+                .eq("workspace_id", workspaceId)
+                .or(`phone.eq.${fromPhone},phone.eq.${fromPhone.replace(/\D/g, "")}`);
+              const { removeOptOut } = await import("@/lib/lead-opt-out");
+              for (const lead of (matchedLeads ?? []) as Array<{ id: string }>) {
+                await removeOptOut(workspaceId, `lead:${lead.id}`, lead.id);
+              }
               await db
                 .from("leads")
                 .update({ opt_out: false, updated_at: new Date().toISOString() })
