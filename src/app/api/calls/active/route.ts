@@ -31,6 +31,7 @@ export async function GET(req: NextRequest) {
     .eq("workspace_id", workspaceId)
     .not("call_started_at", "is", null)
     .is("call_ended_at", null)
+    .not("metadata", "cs", '{"test_call":true}')
     .order("call_started_at", { ascending: false });
 
   const list = (sessions ?? []) as Array<{
