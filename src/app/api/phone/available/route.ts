@@ -78,7 +78,7 @@ export async function GET(req: NextRequest) {
   } catch {
     return NextResponse.json({
       numbers: [],
-      message: "Phone provider not configured. Contact support to enable number purchasing.",
+      message: "Phone provider is not configured yet. Go to Settings → Integrations to connect Telnyx or Twilio, or contact support for help.",
     });
   }
 }
