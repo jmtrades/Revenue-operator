@@ -232,7 +232,7 @@ export async function POST(
       ok: true,
       appointment_id: id,
       outcome,
-      lead_status: newLeadStatus,
+      lead_state: newLeadState,
       follow_up_scheduled: outcome === "no_show",
     });
   } catch (error) {
