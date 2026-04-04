@@ -612,7 +612,7 @@ export default function AppointmentsPage() {
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-amber-900 dark:text-amber-200 mb-1">
                 {t("appointments.noShowAlert", {
-                  defaultValue: `${noShowAppointments} no-show${noShowAppointments !== 1 ? 's' : ''} detected — Recovery sequences are active.`
+                  defaultValue: `${noShowAppointments} no-show${noShowAppointments !== 1 ? 's' : ''} detected — Recovery follow-ups are active.`
                 })}
               </p>
               <Link
