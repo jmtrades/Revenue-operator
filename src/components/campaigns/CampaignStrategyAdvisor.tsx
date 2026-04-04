@@ -296,14 +296,14 @@ export function CampaignStrategyAdvisor({
 
         {/* Quick Launch Button */}
         <Link
-          href={`/app/follow-ups/create?template=${recommendation.templateSlug}`}
+          href={`/app/campaigns/create?template=${recommendation.templateSlug}`}
           className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold transition-all duration-200 text-white"
           style={{
             backgroundColor: "var(--accent-primary)",
           }}
         >
           <Zap className="w-4 h-4" />
-          Create sequence
+          Create campaign
           <ChevronRight className="w-4 h-4" />
         </Link>
       </div>
@@ -348,7 +348,7 @@ function generateRecommendation(data: DashboardSummary): Recommendation {
         rationale:
           "High-intent prospects need immediate follow-up. Fast turnaround prevents call abandonment.",
       },
-      templateSlug: "speed-to-lead-recovery",
+      templateSlug: "speed_to_lead",
     };
   }
 
@@ -372,7 +372,7 @@ function generateRecommendation(data: DashboardSummary): Recommendation {
         rationale:
           "No-shows signal intent mismatch. Re-engagement typically recovers 15-25% of failed appointments.",
       },
-      templateSlug: "no-show-followup",
+      templateSlug: "no_show_recovery",
     };
   }
 
@@ -396,7 +396,7 @@ function generateRecommendation(data: DashboardSummary): Recommendation {
         rationale:
           "Stale leads need re-engagement but with lower intensity. Value is in reminder + discount incentive.",
       },
-      templateSlug: "stale-lead-reactivation",
+      templateSlug: "reactivation",
     };
   }
 
@@ -419,6 +419,6 @@ function generateRecommendation(data: DashboardSummary): Recommendation {
       rationale:
         "Referral campaigns leverage your best customers. Lower cost-per-acquisition with higher-quality leads.",
     },
-    templateSlug: "post-service-review",
+    templateSlug: "review_request",
   };
 }
