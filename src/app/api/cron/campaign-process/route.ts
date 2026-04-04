@@ -49,14 +49,14 @@ export async function GET(req: NextRequest) {
 
     const { data: active } = await db
       .from("outbound_campaigns")
-      .select("id, workspace_id, total_contacts, called, type, metadata")
+      .select("id, workspace_id, total_leads, leads_called, type, metadata")
       .eq("status", "active")
       .limit(50);
     const activeRows = (active ?? []) as Array<{
       id: string;
       workspace_id: string;
-      total_contacts: number;
-      called: number;
+      total_leads: number;
+      leads_called: number;
       type?: string;
       metadata?: Record<string, unknown>;
     }>;
@@ -104,7 +104,7 @@ export async function GET(req: NextRequest) {
         continue;
       }
 
-      const campaignRemaining = Math.max(0, Number(row.total_contacts || 0) - Number(row.called || 0));
+      const campaignRemaining = Math.max(0, Number(row.total_leads || 0) - Number(row.leads_called || 0));
       if (campaignRemaining <= 0) {
         // Campaign exhausted — mark as completed
         await db.from("outbound_campaigns").update({ status: "completed", updated_at: new Date().toISOString() }).eq("id", row.id);
@@ -185,10 +185,10 @@ export async function GET(req: NextRequest) {
       }
 
       // Update campaign counter
-      const nextCalled = Number(row.called || 0) + callsMade;
+      const nextCalled = Number(row.leads_called || 0) + callsMade;
       await db
         .from("outbound_campaigns")
-        .update({ called: nextCalled, updated_at: new Date().toISOString() })
+        .update({ leads_called: nextCalled, updated_at: new Date().toISOString() })
         .eq("id", row.id);
 
       processedByWorkspace.set(row.workspace_id, used + callsMade);

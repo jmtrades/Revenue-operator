@@ -1,6 +1,7 @@
 /**
  * Orchestration layer for voice call flows.
  * Ties together voice tier limits, assistant creation, call session management, and A/B testing.
+ * Enhanced with lead-adaptive call strategies based on lead state, score, and call history.
  */
 
 import { getDb } from "@/lib/db/queries";
@@ -9,12 +10,23 @@ import { compileSystemPrompt, type BusinessBrainInput } from "@/lib/business-bra
 import { getAgentTools } from "@/lib/voice/agent-tools";
 import { getTemplateCapabilities } from "@/lib/data/agent-templates";
 import { getModelForPhase, type CallPhase, type ModelConfig } from "@/lib/voice/cost-optimizer";
+import { getLeadStrategy, type CampaignType } from "@/lib/campaigns/prompt";
 import { log } from "@/lib/logger";
 
 export interface CallResult {
   callId: string;
   status: "queued" | "ringing" | "in-progress" | "completed" | "failed";
   provider: string;
+}
+
+export interface LeadContextData {
+  name?: string;
+  company?: string;
+  state?: string;
+  score?: number;
+  tags?: string[];
+  notes?: string;
+  lastContacted?: string;
 }
 
 export interface InitiateCallParams {
@@ -25,6 +37,10 @@ export interface InitiateCallParams {
   industry?: string;
   leadId?: string | null;
   metadata?: Record<string, unknown>;
+  leadContext?: LeadContextData;
+  previousCallCount?: number;
+  previousCallOutcomes?: Array<{ outcome?: string; summary?: string }>;
+  campaignType?: CampaignType;
 }
 
 export interface HandleInboundCallParams {
@@ -313,10 +329,34 @@ export async function initiateCall(
       workspace?.greeting ??
       `Hello, this is ${agentName}. How can I help you today?`;
 
-    // Load lead context if this is an outbound call to a known lead
+    // Load lead context (either from params or from database)
     let leadContext: BusinessBrainInput["lead_context"];
     let callHistory: BusinessBrainInput["call_history"];
-    if (params.metadata?.lead_id) {
+    let leadStrategy: ReturnType<typeof getLeadStrategy> | null = null;
+
+    // Use passed lead context if available (from outbound dialer), otherwise load from DB
+    if (params.leadContext) {
+      leadContext = {
+        name: params.leadContext.name,
+        phone: params.leadContext.name ? undefined : undefined, // leadContext doesn't have phone from dialer
+        email: undefined,
+        state: params.leadContext.state as any,
+        score: params.leadContext.score,
+        tags: params.leadContext.tags,
+        notes: params.leadContext.notes,
+        last_contacted: params.leadContext.lastContacted,
+      };
+      // Use pre-loaded call history from params
+      if (params.previousCallOutcomes && params.previousCallOutcomes.length > 0) {
+        callHistory = params.previousCallOutcomes.map((h) => ({
+          date: "",
+          summary: h.summary,
+          outcome: h.outcome,
+          topics: [],
+        }));
+      }
+    } else if (params.metadata?.lead_id) {
+      // Fallback: load from database for non-campaign calls
       const leadId = String(params.metadata.lead_id);
       const [leadRes, historyRes] = await Promise.all([
         db.from("leads").select("name, phone, email, state, score, tags, notes, last_contacted_at").eq("id", leadId).maybeSingle(),
@@ -346,6 +386,21 @@ export async function initiateCall(
       }
     }
 
+    // Compute lead strategy if we have campaign context
+    if (params.campaignType && leadContext) {
+      leadStrategy = getLeadStrategy(
+        {
+          name: leadContext.name,
+          state: leadContext.state as any,
+          score: leadContext.score,
+          tags: leadContext.tags,
+          notes: leadContext.notes,
+        },
+        params.campaignType,
+        params.previousCallCount ?? 0
+      );
+    }
+
     // Merge FAQ: prefer workspace_business_context, fall back to agent knowledge_base
     let mergedFaq = ctx?.faq ?? [];
     if (!Array.isArray(mergedFaq) || mergedFaq.length === 0) {
@@ -360,6 +415,18 @@ export async function initiateCall(
       if (Array.isArray(kbData?.faq) && kbData.faq.length > 0) {
         mergedFaq = kbData.faq;
       }
+    }
+
+    // Build lead strategy section for system prompt (outbound calls only)
+    let strategyInstructions = "";
+    if (leadStrategy) {
+      strategyInstructions = `
+
+LEAD-ADAPTIVE STRATEGY:
+- Approach: ${leadStrategy.approach}
+- Tone: ${leadStrategy.tone}
+- Opening Line: "${leadStrategy.openingLine}"
+- Primary Objectives: ${leadStrategy.objectives.join(", ")}`;
     }
 
     const input: BusinessBrainInput = {
@@ -385,6 +452,10 @@ export async function initiateCall(
     };
 
     systemPrompt = compileSystemPrompt(input);
+    // Append lead strategy to system prompt if available
+    if (strategyInstructions) {
+      systemPrompt += strategyInstructions;
+    }
   }
 
   // 5. Create call_session record

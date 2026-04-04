@@ -16,15 +16,16 @@ import {
   Play,
   Pause,
   TrendingUp,
-  Calendar,
   CheckCircle2,
   Circle,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 
 interface Campaign {
   id: string;
   name: string;
+  type?: string;
   status: "draft" | "active" | "paused" | "completed" | "launching";
   total_leads: number;
   leads_called: number;
@@ -83,6 +84,19 @@ const QuickActionCard = ({
     </div>
   </Link>
 );
+
+const getCampaignTypeLabel = (type?: string): string => {
+  const typeMap: Record<string, string> = {
+    cold_outreach: "Cold Outreach",
+    follow_up: "Follow-Up",
+    appointment_setting: "Appointment Setting",
+    no_show_recovery: "No-Show Recovery",
+    reactivation: "Reactivation",
+    quote_chase: "Quote Chase",
+    lead_qualification: "Lead Qualification",
+  };
+  return typeMap[type?.toLowerCase() || ""] || "Campaign";
+};
 
 const StatusBadge = ({ status }: { status: string }) => {
   const statusConfig: Record<
@@ -145,21 +159,33 @@ const CampaignRow = ({
     campaign.leads_called > 0
       ? Math.round((campaign.connects / campaign.leads_called) * 100)
       : 0;
+  const pendingLeads = campaign.total_leads - campaign.leads_called;
+  const typeLabel = getCampaignTypeLabel(campaign.type);
 
   return (
     <div className="dash-section p-4">
       <div className="flex items-center justify-between gap-4">
         <div className="flex-1">
-          <h4
-            className="font-medium mb-2"
-            style={{ color: "var(--text-primary)" }}
-          >
-            {campaign.name}
-          </h4>
-          <div className="grid grid-cols-3 gap-4 text-sm">
+          <div className="flex items-center gap-2 mb-2">
+            <h4
+              className="font-medium"
+              style={{ color: "var(--text-primary)" }}
+            >
+              {campaign.name}
+            </h4>
+            <Badge variant="info" className="px-2 py-0.5 text-xs">
+              {typeLabel}
+            </Badge>
+          </div>
+          <div className="grid grid-cols-4 gap-4 text-sm">
             <div>
               <span style={{ color: "var(--text-tertiary)" }}>
-                {campaign.leads_called} calls
+                {campaign.leads_called} of {campaign.total_leads} called
+              </span>
+            </div>
+            <div>
+              <span style={{ color: "var(--text-tertiary)" }}>
+                {pendingLeads} pending
               </span>
             </div>
             <div>
@@ -343,17 +369,30 @@ export default function OperationsPage() {
         <QuickActionCard
           icon={Phone}
           title="Start Calling"
-          description="Launch AI to call your leads immediately"
+          description="AI adapts to each lead automatically"
           href="/app/campaigns/create?template=outbound_call"
           color="#3b82f6"
         />
         <QuickActionCard
           icon={Zap}
           title="Create Campaign"
-          description="Build a multi-step engagement campaign"
+          description="Choose from cold outreach, follow-ups, and more"
           href="/app/campaigns/create"
           color="#8b5cf6"
         />
+      </div>
+
+      {/* AI Intelligence Indicator */}
+      <div className="dash-section p-4 border border-blue-200 bg-blue-50/30">
+        <div className="flex items-start gap-3">
+          <Sparkles size={18} color="#3b82f6" className="mt-0.5 flex-shrink-0" />
+          <div className="flex-1">
+            <h3 className="font-semibold mb-1" style={{ color: "var(--text-primary)" }}>AI Intelligence: Active</h3>
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+              AI adapts its approach for each lead based on profile, score, and history. The system learns from every call to improve results.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Key Metrics */}
@@ -460,13 +499,22 @@ export default function OperationsPage() {
             <div className="dash-section p-8 text-center">
               <Zap
                 size={32}
-                className="mx-auto mb-2 opacity-30"
+                className="mx-auto mb-3 opacity-30"
               />
-              <p style={{ color: "var(--text-secondary)" }}>
-                No campaigns yet
+              <p
+                className="font-medium mb-2"
+                style={{ color: "var(--text-primary)" }}
+              >
+                Ready to start calling?
+              </p>
+              <p
+                className="text-sm mb-4"
+                style={{ color: "var(--text-secondary)" }}
+              >
+                Create your first campaign to launch AI calling. Choose from cold outreach, follow-ups, and more.
               </p>
               <Link href="/app/campaigns/create">
-                <Button className="mt-4">Create Campaign</Button>
+                <Button variant="primary">Create Campaign</Button>
               </Link>
             </div>
           )}
@@ -564,10 +612,22 @@ export default function OperationsPage() {
           </div>
         ) : (
           <div className="dash-section p-8 text-center">
-            <Phone size={32} className="mx-auto mb-2 opacity-30" />
-            <p style={{ color: "var(--text-secondary)" }}>
-              No call activity yet
+            <Phone size={32} className="mx-auto mb-3 opacity-30" />
+            <p
+              className="font-medium mb-2"
+              style={{ color: "var(--text-primary)" }}
+            >
+              No calls yet
             </p>
+            <p
+              className="text-sm mb-4"
+              style={{ color: "var(--text-secondary)" }}
+            >
+              Create a campaign to start calling. The AI will handle outreach automatically.
+            </p>
+            <Link href="/app/campaigns/create">
+              <Button variant="secondary">Create Your First Campaign</Button>
+            </Link>
           </div>
         )}
       </div>
