@@ -359,20 +359,20 @@ export async function initiateCall(
       // Fallback: load from database for non-campaign calls
       const leadId = String(params.metadata.lead_id);
       const [leadRes, historyRes] = await Promise.all([
-        db.from("leads").select("name, phone, email, state, score, tags, notes, last_contacted_at").eq("id", leadId).maybeSingle(),
+        db.from("leads").select("name, phone, email, state, qualification_score, metadata, last_activity_at").eq("id", leadId).maybeSingle(),
         db.from("call_sessions").select("call_started_at, summary, outcome, topics").eq("lead_id", leadId).not("call_ended_at", "is", null).order("call_started_at", { ascending: false }).limit(5),
       ]);
-      const lead = leadRes.data as { name?: string; phone?: string; email?: string; state?: string; score?: number; tags?: string[]; notes?: string; last_contacted_at?: string } | null;
+      const lead = leadRes.data as { name?: string; phone?: string; email?: string; state?: string; qualification_score?: number; metadata?: { notes?: string; tags?: string[] } | null; last_activity_at?: string } | null;
       if (lead) {
         leadContext = {
           name: lead.name,
           phone: lead.phone,
           email: lead.email,
           state: lead.state,
-          score: lead.score ?? undefined,
-          tags: lead.tags ?? undefined,
-          notes: lead.notes ?? undefined,
-          last_contacted: lead.last_contacted_at ?? undefined,
+          score: lead.qualification_score ?? undefined,
+          tags: lead.metadata?.tags ?? undefined,
+          notes: lead.metadata?.notes ?? undefined,
+          last_contacted: lead.last_activity_at ?? undefined,
         };
       }
       const history = (historyRes.data ?? []) as Array<{ call_started_at?: string; summary?: string; outcome?: string; topics?: string[] }>;
@@ -665,7 +665,7 @@ export async function handleInboundCall(
           return res;
         }),
       db.from("workspace_business_context").select("*").eq("workspace_id", params.workspaceId).maybeSingle(),
-      db.from("leads").select("id, name, phone, email, state, score, tags, notes, last_contacted_at").eq("workspace_id", params.workspaceId).eq("phone", params.callerPhone).maybeSingle(),
+      db.from("leads").select("id, name, phone, email, state, qualification_score, metadata, last_activity_at").eq("workspace_id", params.workspaceId).eq("phone", params.callerPhone).maybeSingle(),
       // Placeholder — real lead-specific history loaded below after lead ID is known
       Promise.resolve({ data: null }),
     ]);
@@ -757,7 +757,7 @@ export async function handleInboundCall(
 
     // Determine lead state for objective routing
     const leadState = lead?.state as string | undefined;
-    const leadScore = lead?.score as number | undefined;
+    const leadScore = (lead?.qualification_score as number | undefined) ?? (lead?.score as number | undefined);
 
     const brainInput: BusinessBrainInput = {
       agent_name: (agent?.name as string) || "Receptionist",

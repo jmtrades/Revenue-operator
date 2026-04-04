@@ -92,16 +92,14 @@ export async function GET(req: NextRequest) {
             phone,
             company,
             state,
-            score,
-            tags,
-            notes,
-            last_contacted_at
+            qualification_score,
+            last_activity_at
           )
           `
         )
         .eq("campaign_id", campaign.id)
         .eq("status", "pending")
-        .order("leads.score", { ascending: false, nullsFirst: false })
+        .order("leads.qualification_score", { ascending: false, nullsFirst: false })
         .order("created_at", { ascending: true })
         .limit(maxConcurrent);
 
@@ -114,10 +112,8 @@ export async function GET(req: NextRequest) {
           phone?: string;
           company?: string;
           state?: LeadState;
-          score?: number;
-          tags?: string[];
-          notes?: string;
-          last_contacted_at?: string;
+          qualification_score?: number;
+          last_activity_at?: string;
         };
       }>;
 
