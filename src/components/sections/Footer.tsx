@@ -94,6 +94,7 @@ export function Footer() {
             </p>
             <nav className="space-y-1.5">
               <Link href="/privacy" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{t("privacyPolicy")}</Link>
+              <Link href="/trust" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{t("trustCenter")}</Link>
               <Link href="/terms" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{t("termsOfService")}</Link>
               <a href="https://status.recall-touch.com" target="_blank" rel="noopener noreferrer" className={linkClass} style={{ ...linkStyle, ...linkTransition }}>{tMarketing("systemStatus")}</a>
             </nav>

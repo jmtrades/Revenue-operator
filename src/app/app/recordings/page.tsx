@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { Mic, Play, Pause, Download, ChevronLeft, ChevronRight, Upload, MessageSquare } from "lucide-react";
+import { Mic, Play, Pause, Download, ChevronLeft, ChevronRight, MessageSquare } from "lucide-react";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useWorkspaceSafe } from "@/components/WorkspaceContext";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
-import { Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { toast } from "sonner";
 
@@ -249,7 +248,7 @@ export default function RecordingsPage() {
       const data: SearchResponse = await response.json();
 
       // Sort client-side
-      let sorted = [...data.recordings];
+      const sorted = [...data.recordings];
       if (sortBy === "oldest") {
         sorted.reverse();
       } else if (sortBy === "duration_long") {

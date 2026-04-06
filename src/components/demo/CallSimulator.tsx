@@ -150,7 +150,7 @@ function DemoTranscript({
   useEffect(() => {
     if (!isActive || !started || showResult) return;
     // Demo call simulator: live timer counts up from 0:00
-    // eslint-disable-next-line ui-doctrine/no-live-ui -- demo simulator only
+     
     const id = setInterval(() => setElapsed((e) => e + 1), 1000);
     return () => clearInterval(id);
   }, [isActive, started, showResult]);

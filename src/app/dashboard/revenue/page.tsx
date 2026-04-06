@@ -25,7 +25,7 @@ interface DailyRevenue {
   noShowRecovery: number;
 }
 
-function generateDemoData(days: number): DailyRevenue[] {
+function _generateDemoData(days: number): DailyRevenue[] {
   const data: DailyRevenue[] = [];
   const now = new Date();
   for (let i = days - 1; i >= 0; i--) {

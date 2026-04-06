@@ -195,7 +195,7 @@ function calculateChannelScores(
   leadStats: LeadChannelStats,
   workspaceMode: string
 ): Record<string, number> {
-  let scores: Record<string, number> = {
+  const scores: Record<string, number> = {
     call: 0.5,
     sms: 0.5,
     email: 0.5,
@@ -286,7 +286,7 @@ async function getOptimalContactTime(workspaceId: string, leadId: string): Promi
 function buildChannelReasoning(
   leadStats: LeadChannelStats,
   recommended: string,
-  scores: Record<string, number>
+  _scores: Record<string, number>
 ): string {
   const reasons: string[] = [];
 

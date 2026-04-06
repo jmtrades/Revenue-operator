@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { getSession } from "@/lib/auth/request-session";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { ROUTES } from "@/lib/constants";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://www.recall-touch.com";
 
@@ -85,6 +86,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to accept invite" }, { status: 500 });
   }
 
-  const redirectUrl = `${APP_URL.replace(/\/$/, "")}/app/dashboard?welcome=${encodeURIComponent(workspaceName)}`;
+  const redirectUrl = `${APP_URL.replace(/\/$/, "")}${ROUTES.APP_HOME}?welcome=${encodeURIComponent(workspaceName)}`;
   return NextResponse.json({ ok: true, redirectUrl });
 }

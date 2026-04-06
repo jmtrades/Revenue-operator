@@ -47,7 +47,7 @@ function MappingSuggestion({ provider, rtField, currentCrmField, crmFields, onAp
     <button
       type="button"
       onClick={() => onApply(suggested.crmField)}
-      className="mt-1 text-[10px] text-violet-400 hover:text-violet-300 transition-colors"
+      className="mt-1 text-[10px] text-[var(--text-tertiary)] hover:text-[var(--accent-primary)] transition-colors"
     >
       Suggested: {suggestedLabel}
     </button>
@@ -67,6 +67,7 @@ export default function IntegrationsMappingPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [testResult, setTestResult] = useState<{ output: Record<string, unknown>; errors: string[] } | null>(null);
+  const [confirmRemoveIndex, setConfirmRemoveIndex] = useState<number | null>(null);
 
   const crmFields = CRM_FIELDS_BY_PROVIDER[provider] ?? [];
 
@@ -125,6 +126,7 @@ export default function IntegrationsMappingPage() {
       mappings: prev.mappings.filter((_, i) => i !== index),
     }));
     setTestResult(null);
+    setConfirmRemoveIndex(null);
   };
 
   const loadDefaults = () => {
@@ -201,11 +203,12 @@ export default function IntegrationsMappingPage() {
                 <div className="col-span-4">
                   <select
                     value={m.rtField}
+                    title={REVENUE_OPERATOR_FIELDS.find((f) => f.key === m.rtField)?.label}
                     onChange={(e) => updateMapping(index, { rtField: e.target.value })}
                     className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                   >
                     {REVENUE_OPERATOR_FIELDS.map((f) => (
-                      <option key={f.key} value={f.key}>{f.label}</option>
+                      <option key={f.key} value={f.key} title={f.label}>{f.label}</option>
                     ))}
                   </select>
                 </div>
@@ -213,11 +216,12 @@ export default function IntegrationsMappingPage() {
                 <div className="col-span-4">
                   <select
                     value={m.crmField}
+                    title={crmFields.find((f) => f.key === m.crmField)?.label ?? m.crmField}
                     onChange={(e) => updateMapping(index, { crmField: e.target.value })}
                     className="w-full px-3 py-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] text-sm focus:border-[var(--border-medium)] focus:outline-none"
                   >
                     {crmFields.map((f) => (
-                      <option key={f.key} value={f.key}>{f.label}</option>
+                      <option key={f.key} value={f.key} title={`${f.label} (${f.key})`}>{f.label}</option>
                     ))}
                   </select>
                   <MappingSuggestion provider={provider} rtField={m.rtField} currentCrmField={m.crmField} crmFields={crmFields} onApply={(crmField) => updateMapping(index, { crmField })} />
@@ -236,7 +240,7 @@ export default function IntegrationsMappingPage() {
                 <div className="col-span-1">
                   <button
                     type="button"
-                    onClick={() => removeMapping(index)}
+                    onClick={() => setConfirmRemoveIndex(index)}
                     className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--accent-danger)] hover:bg-[var(--bg-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]"
                     aria-label="Remove mapping"
                   >
@@ -307,6 +311,42 @@ export default function IntegrationsMappingPage() {
           <ArrowLeft className="w-4 h-4" /> {tSettings("integrations.backToIntegrations")}
         </Link>
       </p>
+
+      {confirmRemoveIndex !== null && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[var(--overlay)]"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="remove-mapping-title"
+          onClick={() => setConfirmRemoveIndex(null)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-6 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 id="remove-mapping-title" className="text-lg font-semibold text-[var(--text-primary)]">
+              {tSettings("integrations.removeMappingTitle")}
+            </h3>
+            <p className="mt-2 text-sm text-[var(--text-secondary)]">{tSettings("integrations.removeMappingBody")}</p>
+            <div className="mt-6 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setConfirmRemoveIndex(null)}
+                className="px-4 py-2 rounded-xl border border-[var(--border-default)] text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-hover)]"
+              >
+                {tSettings("integrations.cancelRemove", { defaultValue: "Cancel" })}
+              </button>
+              <button
+                type="button"
+                onClick={() => confirmRemoveIndex !== null && removeMapping(confirmRemoveIndex)}
+                className="px-4 py-2 rounded-xl bg-[var(--accent-danger,#ef4444)] text-white text-sm font-medium hover:opacity-90"
+              >
+                {tSettings("integrations.removeMappingConfirm")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

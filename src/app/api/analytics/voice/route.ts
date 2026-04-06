@@ -91,7 +91,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Fetch call sessions for the period
-    let query = db
+    const query = db
       .from("call_sessions")
       .select("id, call_started_at, call_ended_at, summary, outcome, metadata, lead_id")
       .eq("workspace_id", workspaceId)

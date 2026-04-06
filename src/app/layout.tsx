@@ -138,7 +138,7 @@ export default async function RootLayout({
     locale = "en";
     messages = (await import("@/i18n/messages/en.json")).default as Record<string, unknown>;
   }
-  const t = await getTranslations("accessibility");
+  const _t = await getTranslations("accessibility");
 
   return (
     <html lang={locale} dir={isRTL(locale) ? "rtl" : "ltr"} suppressHydrationWarning>

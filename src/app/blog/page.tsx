@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Navbar } from "@/components/sections/Navbar";
+import { MarketingNavbar } from "@/components/sections/MarketingNavbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
@@ -36,7 +36,7 @@ const RESOURCE_TOPICS = [
 export default function ResourcesPage() {
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
-      <Navbar />
+      <MarketingNavbar />
       <main className="pt-28 pb-24">
         <Container>
           <div className="max-w-3xl mb-16">

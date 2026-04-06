@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { ChevronRight, Phone, Clock, Headphones, MessageCircle, PhoneOff, AlertTriangle, MicOff, Mic, PauseCircle, PlayCircle, PhoneForwarded } from "lucide-react";
+import { ChevronRight, Phone, Clock, AlertTriangle, MicOff, Mic, PauseCircle, PlayCircle, PhoneForwarded } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
@@ -101,7 +101,7 @@ export default function CallsLivePage() {
         body: JSON.stringify({ action }),
       });
       if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
+        const _err = await res.json().catch(() => ({}));
         toast.error("Failed to update call");
         return;
       }

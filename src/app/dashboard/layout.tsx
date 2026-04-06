@@ -90,7 +90,7 @@ interface NavGroup {
   label: string;
   items: { key: string; href: string; icon: LucideIcon }[];
 }
-function buildNavGroups(t: (key: string) => string): NavGroup[] {
+function buildNavGroups(_t: (key: string) => string): NavGroup[] {
   return [
     {
       label: "",
@@ -185,7 +185,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { workspaceId, workspaces, loading, error, setWorkspaceId, retry } = useWorkspace();
-  const navItems = useMemo(() => buildNav(t), [t]);
+  const _navItems = useMemo(() => buildNav(t), [t]);
   const navGroups = useMemo(() => buildNavGroups(t), [t]);
   const urlWid = searchParams.get("workspace_id");
   const redirecting = useRef(false);

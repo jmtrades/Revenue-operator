@@ -1,6 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import { useEffect, useState, useCallback } from "react";
 
 const FOLLOW_UP_TYPES = [
@@ -89,13 +90,13 @@ export default function PublicWorkPage() {
       <main className="min-h-screen flex items-center justify-center p-6" style={{ background: "var(--background)" }}>
         <div className="text-center">
           <p className="text-lg mb-4" style={{ color: "var(--text-muted)" }}>Not found.</p>
-          <a
+          <Link
             href="/"
             className="text-sm font-medium"
             style={{ color: "var(--accent)" }}
           >
             Return to homepage
-          </a>
+          </Link>
         </div>
       </main>
     );

@@ -5,8 +5,8 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { ROUTES } from "@/lib/constants";
 
 export default function SignInForm() {
   const t = useTranslations("auth");
@@ -28,8 +28,8 @@ export default function SignInForm() {
       try {
         const res = await fetch("/api/auth/me", { credentials: "include" });
         if (res.ok) {
-          // User has an active session, redirect to dashboard
-          router.push("/app/dashboard");
+          // User has an active session, redirect to app home
+          router.push(ROUTES.APP_HOME);
           return;
         }
       } catch {
@@ -85,7 +85,7 @@ export default function SignInForm() {
       const safeNext =
         nextUrl && nextUrl.startsWith("/") && !nextUrl.startsWith("//") ? nextUrl : null;
       const redirect =
-        safeNext || (d as { redirectTo?: string }).redirectTo || "/app/dashboard";
+        safeNext || (d as { redirectTo?: string }).redirectTo || ROUTES.APP_HOME;
       try {
         const payload = {
           email: email.trim().toLowerCase(),

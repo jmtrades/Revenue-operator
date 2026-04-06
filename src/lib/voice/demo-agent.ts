@@ -29,8 +29,6 @@ import { log } from "@/lib/logger";
 import { analyzeConversation, buildStrategyContext } from "./call-intelligence-engine";
 import { analyzeForCoaching, buildCoachingContext } from "./real-time-coaching";
 import { assessEscalation, buildEscalationContext } from "./sentiment-escalation";
-import { detectTransferRequest } from "./call-transfer";
-import { detectBookingIntent } from "./appointment-booking";
 
 /* ────────────────────────────────────────────────────────────────────────────
  * System Prompt — The "brain" of the demo voice agent.

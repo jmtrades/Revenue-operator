@@ -6,9 +6,7 @@
 
 import { getDb } from "@/lib/db/queries";
 import { enqueue } from "@/lib/queue";
-import { triggerAutoFollowUp } from "@/lib/intelligence/auto-followup";
 import type { LeadIntelligence } from "@/lib/intelligence/lead-brain";
-import { computeLeadIntelligence } from "@/lib/intelligence/lead-brain";
 
 export type MeetingPhase =
   | "pre_meeting"
@@ -89,7 +87,7 @@ export function detectMeetingPhase(context: MeetingContext): MeetingPhase {
 export function decideMeetingAction(
   phase: MeetingPhase,
   context: MeetingContext,
-  intelligence?: LeadIntelligence | null
+  _intelligence?: LeadIntelligence | null
 ): MeetingDecision {
   const now = new Date();
   const scheduledAt = new Date(context.scheduled_at);

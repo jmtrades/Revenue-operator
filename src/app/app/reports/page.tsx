@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
@@ -9,13 +10,9 @@ import {
   Trophy,
   AlertTriangle,
   TrendingUp,
-  TrendingDown,
   Printer,
   Phone,
-  Calendar,
-  MessageSquare,
   Clock,
-  DollarSign,
   Shield,
   Target,
   ArrowUpRight,
@@ -211,20 +208,20 @@ export default function RevenueDigestPage() {
             This report auto-generates as your operator handles calls, books appointments, and creates revenue opportunities. Once you have activity, you&apos;ll see recovery scores, wins, risks, and recommended actions here.
           </p>
           <div className="flex items-center justify-center gap-3">
-            <a
+            <Link
               href="/app/agents"
               className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent-primary)] px-5 py-2.5 text-sm font-semibold text-[var(--text-on-accent)] hover:opacity-90 transition-opacity"
             >
               <Phone size={16} />
               Make a test call
-            </a>
-            <a
+            </Link>
+            <Link
               href="/app/campaigns/create"
               className="inline-flex items-center gap-2 rounded-xl border border-[var(--border-default)] bg-[var(--bg-surface)] px-5 py-2.5 text-sm font-medium text-[var(--text-primary)] hover:border-[var(--border-hover)] transition-colors"
             >
               <Megaphone size={16} />
               Launch a campaign
-            </a>
+            </Link>
           </div>
           <p className="text-xs text-[var(--text-tertiary)] mt-6">
             Reports update automatically — no manual action needed

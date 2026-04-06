@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ROUTES } from "@/lib/constants";
 
 export default function Error({
   error,
@@ -10,33 +11,34 @@ export default function Error({
   reset: () => void;
 }) {
   return (
-    <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-black flex items-center justify-center px-4">
       <div className="w-full max-w-md text-center">
-        <h1 className="text-6xl font-bold text-[var(--text-primary)] mb-4">Oops</h1>
-        <h2 className="text-2xl font-semibold text-[var(--text-primary)] mb-4">
+        <h1 className="text-6xl font-bold text-white mb-4">Oops</h1>
+        <h2 className="text-2xl font-semibold text-white mb-4">
           We hit a temporary issue
         </h2>
-        <p className="text-[var(--text-secondary)] mb-2">
+        <p className="text-zinc-400 mb-2">
           This page ran into an issue. Try refreshing, or return to the homepage.
         </p>
         {error.digest && (
-          <p className="text-sm text-[var(--text-tertiary)] mb-8 font-mono break-words">
+          <p className="text-sm text-zinc-500 mb-8 font-mono break-words">
             Error ID: {error.digest}
           </p>
         )}
 
         <div className="flex flex-col gap-3">
           <button
+            type="button"
             onClick={reset}
-            className="inline-flex items-center justify-center px-6 py-2.5 bg-[var(--accent-primary)] hover:opacity-90 text-[var(--text-on-accent)] font-medium rounded-lg transition-colors"
+            className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-zinc-100 transition-colors"
           >
             Try again
           </button>
           <Link
-            href="/app/dashboard"
-            className="inline-flex items-center justify-center px-6 py-2.5 bg-[var(--bg-surface)] hover:bg-[var(--bg-inset)] text-[var(--text-primary)] font-medium rounded-lg transition-colors border border-[var(--border-default)]"
+            href={ROUTES.APP_HOME}
+            className="inline-flex items-center justify-center px-6 py-3 rounded-xl border border-zinc-700 text-zinc-300 font-medium hover:bg-zinc-900/50 transition-colors"
           >
-            Go to dashboard
+            Open app
           </Link>
         </div>
       </div>

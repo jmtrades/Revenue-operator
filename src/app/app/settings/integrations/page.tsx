@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useSearchParams } from "next/navigation";
-import { Phone, MessageCircle, Cloud, Building2, Database, TrendingUp, Layers, Users, Building, RefreshCw, AlertCircle, Loader, Download, Unplug, ChevronDown, CheckCircle2 } from "lucide-react";
+import { Phone, MessageCircle, Cloud, Building2, Database, TrendingUp, Layers, Users, Building, RefreshCw, AlertCircle, Loader, Download, Unplug, ChevronDown, CheckCircle2, Eye, EyeOff } from "lucide-react";
 import { fetchWorkspaceMeCached } from "@/lib/client/workspace-me";
 import { IntegrationsHealthWidget } from "@/components/settings/IntegrationsHealthWidget";
 import type { CrmProviderId, CrmStatusResponse } from "@/app/api/integrations/crm/status/route";
@@ -63,6 +63,7 @@ export default function AppSettingsIntegrationsPage() {
   const [availabilityPreview, setAvailabilityPreview] = useState<string[]>([]);
   const [webhookConfig, setWebhookConfig] = useState<WebhookConfig>(DEFAULT_WEBHOOK_CONFIG);
   const [webhookSecret, setWebhookSecret] = useState("");
+  const [showWebhookSecret, setShowWebhookSecret] = useState(false);
   const [whatsappEmail, setWhatsappEmail] = useState("");
   const [_whatsappSubmitting, setWhatsappSubmitting] = useState(false);
   const [crmStatus, setCrmStatus] = useState<CrmStatusResponse | null>(null);
@@ -579,9 +580,6 @@ export default function AppSettingsIntegrationsPage() {
                       <Icon className="w-5 h-5 text-[var(--text-tertiary)]" aria-hidden />
                     </div>
                     <div className="flex flex-col gap-1 items-end">
-                      <span className="px-1.5 py-0.5 rounded-full text-xs bg-[var(--accent-primary)]/20 text-[var(--accent-primary)] shrink-0">
-                        {t("status.beta")}
-                      </span>
                       {crm.comingSoon ? (
                         <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-[var(--accent-warning,#f59e0b)]/40 text-[var(--accent-warning,#f59e0b)] shrink-0">
                           {t("comingSoon")}
@@ -846,7 +844,7 @@ export default function AppSettingsIntegrationsPage() {
                   <p className="text-sm font-medium text-[var(--text-primary)]">{t("hub.outlookCalendarLabel")}</p>
                   <p className="text-xs text-[var(--text-secondary)] mt-1">{t("hub.calendarDesc")}</p>
                 </div>
-                <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-blue-500/20 text-blue-400 bg-blue-500/5 shrink-0">
+                <span className="px-2.5 py-1 rounded-lg text-[11px] font-medium border border-[var(--border-medium)] text-[var(--text-secondary)] bg-[var(--bg-inset)] shrink-0">
                   {t("outlookAvailable", { defaultValue: "Available" })}
                 </span>
               </div>
@@ -873,13 +871,24 @@ export default function AppSettingsIntegrationsPage() {
           />
           <div className="mt-3">
             <label className="block text-[11px] font-medium text-[var(--text-tertiary)] mb-1">{t("hub.signingSecretLabel")}</label>
-            <input
-              type="text"
-              value={webhookSecret}
-              onChange={(e) => setWebhookSecret(e.target.value)}
-              placeholder={webhookConfig.has_secret ? t("hub.signingSecretPlaceholderSaved") : t("hub.signingSecretPlaceholderNew")}
-              className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
-            />
+            <div className="relative">
+              <input
+                type={showWebhookSecret ? "text" : "password"}
+                autoComplete="new-password"
+                value={webhookSecret}
+                onChange={(e) => setWebhookSecret(e.target.value)}
+                placeholder={webhookConfig.has_secret ? t("hub.signingSecretPlaceholderSaved") : t("hub.signingSecretPlaceholderNew")}
+                className="w-full pl-4 pr-12 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setShowWebhookSecret((s) => !s)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]"
+                aria-label={showWebhookSecret ? "Hide secret" : "Show secret"}
+              >
+                {showWebhookSecret ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
             {webhookConfig.has_secret ? (
               <p className="mt-1 text-[11px] text-[var(--text-secondary)]">{t("hub.signingSecretStored")}</p>
             ) : null}
@@ -908,6 +917,14 @@ export default function AppSettingsIntegrationsPage() {
                 onChange={(e) => setWebhookConfig((prev) => ({ ...prev, event_deal_at_risk: e.target.checked }))}
               />
               {t("hub.eventDealAtRisk")}
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={webhookConfig.event_deal_won}
+                onChange={(e) => setWebhookConfig((prev) => ({ ...prev, event_deal_won: e.target.checked }))}
+              />
+              {t("hub.eventDealWon")}
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input

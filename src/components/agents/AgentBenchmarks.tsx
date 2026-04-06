@@ -49,7 +49,7 @@ interface MetricRow {
 
 export function AgentBenchmarks({
   workspaceId,
-  agentId,
+  agentId: _agentId,
 }: AgentBenchmarksProps) {
   const [metrics, setMetrics] = useState<PerformanceMetrics>(EMPTY_METRICS);
   const [loading, setLoading] = useState(true);

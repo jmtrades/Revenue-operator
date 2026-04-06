@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { Navbar } from "@/components/sections/Navbar";
+import { MarketingNavbar } from "@/components/sections/MarketingNavbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { IndustryPageTemplate } from "@/components/IndustryPageTemplate";
@@ -90,7 +90,7 @@ export default async function IndustryPage({
             }),
           }}
         />
-        <Navbar />
+        <MarketingNavbar />
         <main className="pt-28 pb-24">
           <Container>
             <div className="max-w-xl mx-auto text-center">
@@ -196,7 +196,7 @@ export default async function IndustryPage({
           }),
         }}
       />
-      <Navbar />
+      <MarketingNavbar />
       <main>
         <IndustryPageTemplate industry={industry} />
       </main>

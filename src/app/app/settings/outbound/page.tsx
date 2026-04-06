@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { cn } from "@/lib/cn";
-import { ArrowLeft, PhoneCall, Voicemail, ShieldAlert } from "lucide-react";
+import { PhoneCall, Voicemail, ShieldAlert } from "lucide-react";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 type OutboundConfig = {
@@ -75,7 +74,7 @@ export default function OutboundSettingsPage() {
         const oc = data?.settings?.outbound_config;
         if (oc && typeof oc === "object") setConfig({ ...DEFAULT_CONFIG, ...oc });
       })
-      .catch((err) => {
+      .catch((_err) => {
         if (!cancelled) {
           setLoading(false);
           toast.error(t("loadFailed"));
@@ -105,7 +104,7 @@ export default function OutboundSettingsPage() {
         body: JSON.stringify({ outbound_config: config }),
       });
       if (!res.ok) {
-        const body = (await res.json().catch(() => ({}))) as { error?: string };
+        const _body = (await res.json().catch(() => ({}))) as { error?: string };
         toast.error(tToast("error.generic"));
         return;
       }

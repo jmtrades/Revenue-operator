@@ -33,22 +33,22 @@ import { safeGetItem, safeSetItem } from "@/lib/client/safe-storage";
 import { staggerContainer, staggerItem, staggerFast } from "@/lib/animations";
 
 /* ── Lazy-loaded dashboard cards for code-splitting & faster initial paint ── */
-const AutomationEngineCard = lazy(() => import("@/components/dashboard/AutomationEngineCard").then(m => ({ default: m.AutomationEngineCard })));
+const _AutomationEngineCard = lazy(() => import("@/components/dashboard/AutomationEngineCard").then(m => ({ default: m.AutomationEngineCard })));
 const VoiceABTestCard = lazy(() => import("@/components/dashboard/VoiceABTestCard").then(m => ({ default: m.VoiceABTestCard })));
-const SequenceABTestCard = lazy(() => import("@/components/dashboard/SequenceABTestCard").then(m => ({ default: m.SequenceABTestCard })));
+const _SequenceABTestCard = lazy(() => import("@/components/dashboard/SequenceABTestCard").then(m => ({ default: m.SequenceABTestCard })));
 const IntelligenceCard = lazy(() => import("@/components/dashboard/IntelligenceCard").then(m => ({ default: m.IntelligenceCard })));
-const VoiceAnalyticsCard = lazy(() => import("@/components/dashboard/VoiceAnalyticsCard").then(m => ({ default: m.VoiceAnalyticsCard })));
-const WebhookManagementCard = lazy(() => import("@/components/dashboard/WebhookManagementCard").then(m => ({ default: m.WebhookManagementCard })));
-const OutboundCampaignCard = lazy(() => import("@/components/dashboard/OutboundCampaignCard").then(m => ({ default: m.OutboundCampaignCard })));
-const CampaignPerformanceCard = lazy(() => import("@/components/dashboard/CampaignPerformanceCard").then(m => ({ default: m.CampaignPerformanceCard })));
+const _VoiceAnalyticsCard = lazy(() => import("@/components/dashboard/VoiceAnalyticsCard").then(m => ({ default: m.VoiceAnalyticsCard })));
+const _WebhookManagementCard = lazy(() => import("@/components/dashboard/WebhookManagementCard").then(m => ({ default: m.WebhookManagementCard })));
+const _OutboundCampaignCard = lazy(() => import("@/components/dashboard/OutboundCampaignCard").then(m => ({ default: m.OutboundCampaignCard })));
+const _CampaignPerformanceCard = lazy(() => import("@/components/dashboard/CampaignPerformanceCard").then(m => ({ default: m.CampaignPerformanceCard })));
 const CallRecordingsCard = lazy(() => import("@/components/dashboard/CallRecordingsCard").then(m => ({ default: m.CallRecordingsCard })));
-const CoachingReportCard = lazy(() => import("@/components/dashboard/CoachingReportCard").then(m => ({ default: m.CoachingReportCard })));
-const AppointmentManagementCard = lazy(() => import("@/components/dashboard/AppointmentManagementCard").then(m => ({ default: m.AppointmentManagementCard })));
-const EscalationLogCard = lazy(() => import("@/components/dashboard/EscalationLogCard").then(m => ({ default: m.EscalationLogCard })));
-const DNCManagementCard = lazy(() => import("@/components/dashboard/DNCManagementCard").then(m => ({ default: m.DNCManagementCard })));
-const SMSThreadsCard = lazy(() => import("@/components/dashboard/SMSThreadsCard").then(m => ({ default: m.SMSThreadsCard })));
-const CallTransferCard = lazy(() => import("@/components/dashboard/CallTransferCard").then(m => ({ default: m.CallTransferCard })));
-const WorkspaceSettingsCard = lazy(() => import("@/components/dashboard/WorkspaceSettingsCard").then(m => ({ default: m.WorkspaceSettingsCard })));
+const _CoachingReportCard = lazy(() => import("@/components/dashboard/CoachingReportCard").then(m => ({ default: m.CoachingReportCard })));
+const _AppointmentManagementCard = lazy(() => import("@/components/dashboard/AppointmentManagementCard").then(m => ({ default: m.AppointmentManagementCard })));
+const _EscalationLogCard = lazy(() => import("@/components/dashboard/EscalationLogCard").then(m => ({ default: m.EscalationLogCard })));
+const _DNCManagementCard = lazy(() => import("@/components/dashboard/DNCManagementCard").then(m => ({ default: m.DNCManagementCard })));
+const _SMSThreadsCard = lazy(() => import("@/components/dashboard/SMSThreadsCard").then(m => ({ default: m.SMSThreadsCard })));
+const _CallTransferCard = lazy(() => import("@/components/dashboard/CallTransferCard").then(m => ({ default: m.CallTransferCard })));
+const _WorkspaceSettingsCard = lazy(() => import("@/components/dashboard/WorkspaceSettingsCard").then(m => ({ default: m.WorkspaceSettingsCard })));
 const LiveCallFeed = lazy(() => import("@/components/dashboard/LiveCallFeed").then(m => ({ default: m.LiveCallFeed })));
 const RecommendationsCard = lazy(() => import("@/components/dashboard/RecommendationsCard").then(m => ({ default: m.RecommendationsCard })));
 const SetupHealthCard = lazy(() => import("@/components/dashboard/SetupHealthCard").then(m => ({ default: m.SetupHealthCard })));
@@ -126,7 +126,7 @@ function fmtMoney(cents: number): string {
   }).format(cents / 100);
 }
 
-function fmtTime(iso: string): string {
+function _fmtTime(iso: string): string {
   try {
     const d = new Date(iso);
     const h = d.getUTCHours();
@@ -263,7 +263,7 @@ export function UnifiedDashboard() {
         }),
       );
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [workspaceId]);
 
   useEffect(() => {

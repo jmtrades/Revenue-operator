@@ -61,7 +61,7 @@ export async function GET(req: NextRequest) {
   } | null;
 
   // Convert existing business_hours format to new format if it exists
-  let businessHours = getDefaultBusinessHours();
+  const businessHours = getDefaultBusinessHours();
   if (workspace?.business_hours) {
     const existing = workspace.business_hours;
     for (const day of Object.keys(businessHours)) {

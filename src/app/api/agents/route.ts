@@ -141,7 +141,7 @@ export async function POST(req: NextRequest) {
   const err = await requireWorkspaceAccess(req, workspace_id);
   if (err) return err;
 
-  const ip = getClientIp(req);
+  const _ip = getClientIp(req);
   const rl = await checkRateLimit(`create-agent:${workspace_id}`, 10, 60_000);
   if (!rl.allowed) {
     const retryAfterSeconds = Math.ceil((rl.resetAt - Date.now()) / 1000);

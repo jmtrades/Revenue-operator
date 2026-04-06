@@ -249,7 +249,7 @@ export default function VoicesSettingsPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ voiceId: voiceId }),
       credentials: "include",
-    }).catch((error) => {
+    }).catch((_error) => {
       // silenced
     });
   }, []);

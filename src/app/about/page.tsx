@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
-import { Navbar } from "@/components/sections/Navbar";
+import { MarketingNavbar } from "@/components/sections/MarketingNavbar";
 import dynamic from "next/dynamic";
 import { Shield, Zap, Lock, Server, Phone, CheckCircle } from "lucide-react";
 
@@ -42,7 +42,7 @@ export default function AboutPage() {
       className="min-h-screen"
       style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}
     >
-      <Navbar initialAuthenticated={false} />
+      <MarketingNavbar />
       <main>
         {/* Hero */}
         <section className="pt-28 pb-16 md:pt-36 md:pb-24">
@@ -216,13 +216,20 @@ export default function AboutPage() {
                 </div>
               ))}
             </div>
-            <div className="max-w-3xl mx-auto text-center mt-8">
+            <div className="max-w-3xl mx-auto text-center mt-8 flex flex-wrap justify-center gap-4">
+              <Link
+                href="/trust"
+                className="text-sm font-medium hover:underline"
+                style={{ color: "var(--accent-primary)" }}
+              >
+                Trust Center &rarr;
+              </Link>
               <Link
                 href="/security"
                 className="text-sm font-medium hover:underline"
                 style={{ color: "var(--accent-primary)" }}
               >
-                View full security documentation &rarr;
+                Security overview &rarr;
               </Link>
             </div>
           </Container>

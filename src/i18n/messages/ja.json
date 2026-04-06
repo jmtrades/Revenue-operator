@@ -74,7 +74,7 @@
     "demo": "デモ",
     "docs": "ドキュメント",
     "dashboard": "ダッシュボード",
-    "dashboardCta": "ダッシュボード →",
+    "dashboardCta": "アプリを開く →",
     "signIn": "サインイン",
     "startFree": "無料で始める",
     "startFreeCta": "無料で始める →",
@@ -2083,6 +2083,8 @@
   },
   "analytics": {
     "pageTitle": "分析 — Revenue Operator",
+    "noWorkspaceTitle": "ワークスペースがありません",
+    "noWorkspaceDescription": "分析を表示するにはワークスペースを選択または作成してください。",
     "heading": "分析",
     "title": "分析",
     "periodSummary": {
@@ -3692,6 +3694,10 @@
   "campaigns": {
     "title": "キャンペーン",
     "pageTitle": "キャンペーン — Revenue Operator",
+    "noWorkspace": {
+      "title": "ワークスペースが選択されていません",
+      "description": "キャンペーンを表示するにはワークスペースを選択または作成してください。"
+    },
     "create": {
       "back": "Back to campaigns",
       "title": "自律キャンペーンを実行",
@@ -4346,7 +4352,7 @@
     "activityLog": "アクティビティログ",
     "deleteAccountTitle": "アカウントを削除",
     "businessPage": {
-      "heading": "ビジネス",
+      "heading": "ビジネス詳細",
       "description": "ビジネス情報はAIが正確に電話に対応するのに役立ちます。",
       "nameLabel": "会社名",
       "namePlaceholder": "例：アクメ配管",
@@ -4383,6 +4389,10 @@
       "addMapping": "マッピングを追加",
       "loadDefaults": "デフォルトを読み込む",
       "testWithSampleData": "サンプルデータでテスト",
+      "removeMappingTitle": "このマッピングを削除しますか？",
+      "removeMappingBody": "この行はCRMフィールドマッピングから削除されます。後から再度追加できます。",
+      "removeMappingConfirm": "削除",
+      "cancelRemove": "キャンセル",
       "saveMapping": "マッピングを保存",
       "saving": "保存中…",
       "testOutput": "テスト出力（サンプル: {name}）",
@@ -6079,6 +6089,7 @@
     "contact": "お問い合わせ",
     "legalSecurity": "法務・セキュリティ",
     "privacyPolicy": "プライバシーポリシー",
+    "trustCenter": "Trust Center",
     "termsOfService": "利用規約",
     "securityBadges": "256ビット暗号化 · 保存時暗号化 · GDPR準拠",
     "copyright": "© {year} Revenue Operator. All rights reserved.",
@@ -7852,6 +7863,10 @@
     },
     "loading": "Loading appointments...",
     "loadError": "Failed to load appointments",
+    "rateLimited": "リクエストが多すぎます。しばらく待ってから再試行してください。",
+    "checkingCalendar": "カレンダーを確認中…",
+    "connectCalendarButton": "カレンダーを接続",
+    "syncCalendarsButton": "カレンダーを同期",
     "retry": "Retry",
     "viewCalls": "View Calls",
     "getStartedTitle": "Get started with appointments",
@@ -8361,12 +8376,25 @@
     "calmLine": "決定は予定どおり進んでいます。"
   },
   "demoVoice": {
-    "enterPhone": "Enter your phone number with country code to receive a demo call.",
+    "enterPhone": "国番号付きの電話番号を入力するとデモ通話を受けられます。",
     "callingNow": "かけています。AIエージェントと話すにはお電話に出てください。",
     "couldNotStart": "デモ通話を開始できませんでした。もう一度お試しください。",
     "calling": "通話中…",
     "callMe": "電話して",
-    "placeholder": "+1 555 123 4567"
+    "placeholder": "+1 555 123 4567",
+    "consentLabel": "この番号に自動デモ通話を受けることに同意し、<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>に同意します。",
+    "termsLink": "利用規約",
+    "privacyLink": "プライバシーポリシー",
+    "connecting": "接続中…",
+    "ringing": "呼び出し中…",
+    "callingYou": "お電話します！",
+    "requested": "リクエスト済み",
+    "tryAgain": "再試行",
+    "callbackFallback": "まもなくライブデモのお電話を差し上げます。",
+    "rateLimited": "デモの試行回数が多すぎます。数分待ってから再度お試しください。",
+    "consentRequired": "デモ通話を依頼するには同意にチェックを入れてください。",
+    "trustLine": "無料デモ。登録不要。国番号を含めてください。",
+    "phoneAriaLabel": "電話番号"
   },
   "accessibility": {
     "skipToContent": "メインコンテンツへスキップ",
@@ -8769,9 +8797,10 @@
       "eventLeadCaptured": "リード獲得",
       "eventAppointmentBooked": "予約確定",
       "eventDealAtRisk": "商談リスク",
+      "eventDealWon": "商談成立",
       "eventReactivatedLead": "リード再活性化",
       "eventsYouCanSend": "送信できるイベント",
-      "eventsList": "リード獲得、予約確定、商談リスク、商談成立、リード再活性化。",
+      "eventsList": "上のチェックボックスで次を選択できます：リード獲得、予約確定、商談リスク、商談成立、リード再活性化。",
       "retryAttempts": "再試行回数",
       "testing": "テスト中…",
       "sendTest": "テスト送信",
@@ -8910,7 +8939,10 @@
     "toast": {
       "loadFailed": "フローの読み込みに失敗しました。",
       "saved": "フローが保存されました。",
-      "saveFailed": "フローの保存に失敗しました。"
+      "saveFailed": "フローの保存に失敗しました。",
+      "needsConnection": "保存する前に、開始から少なくとも1つのステップを接続してください。",
+      "needsEndPath": "通話が終了に到達できるよう、ノードとエッジを追加してください（例：通話終了または予約）。",
+      "savedDraft": "フローを保存しました。公開前に終了ノード（通話終了、予約、転送）を追加してください。"
     }
   },
   "api": {

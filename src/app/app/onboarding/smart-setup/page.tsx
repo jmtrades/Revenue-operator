@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { PLAYBOOKS, getPlaybooksByCategory, type Playbook } from "@/lib/ai/playbooks";
@@ -16,7 +16,7 @@ interface ChatMessage {
 }
 
 export default function SmartSetupPage() {
-  const router = useRouter();
+  const _router = useRouter();
   const { workspaceId } = useWorkspace();
   const [step, setStep] = useState<SetupStep>("select-playbook");
   const [selectedPlaybook, setSelectedPlaybook] = useState<Playbook | null>(null);

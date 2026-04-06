@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import {
   TrendingUp,
-  TrendingDown,
   DollarSign,
   Target,
   Clock,
@@ -14,10 +13,7 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Zap,
-  CheckCircle,
   AlertCircle,
-  Eye,
-  EyeOff,
 } from "lucide-react";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";

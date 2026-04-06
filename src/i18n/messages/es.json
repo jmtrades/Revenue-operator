@@ -74,7 +74,7 @@
     "demo": "Demostración",
     "docs": "Documentación",
     "dashboard": "Panel",
-    "dashboardCta": "Panel →",
+    "dashboardCta": "Abrir app →",
     "signIn": "Iniciar sesión",
     "startFree": "Comenzar ahora",
     "startFreeCta": "Comenzar ahora →",
@@ -2081,6 +2081,8 @@
   },
   "analytics": {
     "pageTitle": "Analítica — Revenue Operator",
+    "noWorkspaceTitle": "Sin workspace",
+    "noWorkspaceDescription": "Selecciona o crea un workspace para ver analítica.",
     "heading": "Analítica",
     "title": "Analítica",
     "periodSummary": {
@@ -3690,6 +3692,10 @@
   "campaigns": {
     "title": "Campañas",
     "pageTitle": "Campañas — Revenue Operator",
+    "noWorkspace": {
+      "title": "No hay workspace seleccionado",
+      "description": "Selecciona o crea un workspace para ver campañas."
+    },
     "create": {
       "back": "Back to campaigns",
       "title": "Create campaign",
@@ -4344,7 +4350,7 @@
     "activityLog": "Registro de actividad",
     "deleteAccountTitle": "Eliminar cuenta",
     "businessPage": {
-      "heading": "Empresa",
+      "heading": "Detalles de la empresa",
       "description": "Los datos de tu empresa ayudan a tu IA a responder llamadas con precisión.",
       "nameLabel": "Nombre de la empresa",
       "namePlaceholder": "Ej. Fontanería Acme",
@@ -4381,6 +4387,10 @@
       "addMapping": "Añadir mapeo",
       "loadDefaults": "Cargar predeterminados",
       "testWithSampleData": "Probar con datos de ejemplo",
+      "removeMappingTitle": "¿Eliminar este mapeo?",
+      "removeMappingBody": "Esta fila se eliminará del mapeo de campos del CRM. Puedes volver a añadirla más tarde.",
+      "removeMappingConfirm": "Eliminar",
+      "cancelRemove": "Cancelar",
       "saveMapping": "Guardar mapeo",
       "saving": "Guardando…",
       "testOutput": "Resultado de prueba (ejemplo: {name})",
@@ -6077,6 +6087,7 @@
     "contact": "Contacto",
     "legalSecurity": "Legal y Seguridad",
     "privacyPolicy": "Política de Privacidad",
+    "trustCenter": "Trust Center",
     "termsOfService": "Términos de Servicio",
     "securityBadges": "Cifrado 256-bit · Cifrado en reposo · Conforme RGPD",
     "copyright": "© {year} Revenue Operator. Todos los derechos reservados.",
@@ -7658,12 +7669,25 @@
     "calmLine": "Las decisiones siguen su curso."
   },
   "demoVoice": {
-    "enterPhone": "Enter your phone number with country code to receive a demo call.",
+    "enterPhone": "Introduce tu número con prefijo internacional para recibir la llamada de demostración.",
     "callingNow": "Llamando ahora. Responde para hablar con el agente IA.",
     "couldNotStart": "No se pudo iniciar la llamada de demostración. Inténtalo de nuevo.",
     "calling": "Llamando…",
     "callMe": "Llámame",
-    "placeholder": "+1 555 123 4567"
+    "placeholder": "+1 555 123 4567",
+    "consentLabel": "Acepto recibir una llamada de demostración automatizada a este número y acepto los <terms>Términos</terms> y la <privacy>Política de privacidad</privacy>.",
+    "termsLink": "Términos",
+    "privacyLink": "Política de privacidad",
+    "connecting": "Conectando…",
+    "ringing": "Sonando…",
+    "callingYou": "¡Te llamamos!",
+    "requested": "¡Solicitado!",
+    "tryAgain": "Reintentar",
+    "callbackFallback": "Te devolveremos la llamada en breve con una demo en vivo.",
+    "rateLimited": "Demasiados intentos de demostración. Espera unos minutos e inténtalo de nuevo.",
+    "consentRequired": "Marca la casilla de consentimiento para solicitar la llamada de demostración.",
+    "trustLine": "Demo gratuita. Sin registro. Incluye el prefijo internacional.",
+    "phoneAriaLabel": "Número de teléfono"
   },
   "proofDrawer": {
     "title": "Cómo progresó",
@@ -7878,6 +7902,10 @@
     },
     "loading": "Loading appointments...",
     "loadError": "Failed to load appointments",
+    "rateLimited": "Demasiadas solicitudes. Espera un momento e inténtalo de nuevo.",
+    "checkingCalendar": "Comprobando calendario…",
+    "connectCalendarButton": "Conectar calendario",
+    "syncCalendarsButton": "Sincronizar calendarios",
     "retry": "Retry",
     "viewCalls": "View Calls",
     "getStartedTitle": "Get started with appointments",
@@ -8764,9 +8792,10 @@
       "eventLeadCaptured": "Prospecto capturado",
       "eventAppointmentBooked": "Cita reservada",
       "eventDealAtRisk": "Oportunidad en riesgo",
+      "eventDealWon": "Oportunidad ganada",
       "eventReactivatedLead": "Prospecto reactivado",
       "eventsYouCanSend": "Eventos que puedes enviar",
-      "eventsList": "Prospecto capturado, cita reservada, oportunidad en riesgo, oportunidad ganada y prospecto reactivado.",
+      "eventsList": "Usa las casillas de arriba para: prospecto capturado, cita reservada, oportunidad en riesgo, oportunidad ganada y prospecto reactivado.",
       "retryAttempts": "Reintentos",
       "testing": "Probando…",
       "sendTest": "Enviar prueba",
@@ -8910,7 +8939,10 @@
     "toast": {
       "loadFailed": "Error al cargar el flujo.",
       "saved": "Flujo guardado.",
-      "saveFailed": "Error al guardar el flujo."
+      "saveFailed": "Error al guardar el flujo.",
+      "needsConnection": "Conecta al menos un paso desde Inicio antes de guardar.",
+      "needsEndPath": "Añade nodos y aristas para que las llamadas lleguen a un final (p. ej., Finalizar llamada o Reservar cita).",
+      "savedDraft": "Flujo guardado. Añade un nodo final (Finalizar llamada, Reservar cita o Transferir) antes de publicar."
     }
   },
   "api": {
@@ -9043,6 +9075,9 @@
   "followUps": {
     "title": "Follow-ups",
     "create": "Create Sequence",
+    "loadError": "No se pudieron cargar las secuencias de seguimiento.",
+    "rateLimitedError": "Demasiadas solicitudes. Espera un momento y pulsa Reintentar.",
+    "retry": "Reintentar",
     "tabs": {
       "templates": "Templates",
       "active": "Active enrollments"

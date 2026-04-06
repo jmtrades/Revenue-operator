@@ -24,6 +24,9 @@
 /build
 
 # misc
+.eslint-output.txt
+/reports/
+
 .DS_Store
 *.pem
 .cursor

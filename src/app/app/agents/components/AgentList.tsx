@@ -33,7 +33,7 @@ interface AgentListProps {
 export function AgentList({
   agents,
   selectedId,
-  defaultAgentId,
+  defaultAgentId: _defaultAgentId,
   workspaceNumbers,
   setSelectedId,
   setActiveStep,
@@ -51,7 +51,7 @@ export function AgentList({
             ? agent.template
             : "receptionist";
           const templateLabel = t(`template.${templateKey}`);
-          const lastActiveLabel =
+          const _lastActiveLabel =
             (agent.stats?.totalCalls ?? 0) > 0
               ? t("callsCount", { count: agent.stats.totalCalls })
               : t("noCallsYet");

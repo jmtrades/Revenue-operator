@@ -170,12 +170,12 @@ export function PipelineFunnel({ workspaceId }: PipelineFunnelProps) {
 
       <div className="space-y-0.5 mb-8">
         {stages.map((stage, index) => {
-          const isFirst = index === 0;
+          const _isFirst = index === 0;
           const funnelWidth = 100 - index * 15;
           const conversionRate = stage.pct;
           const dropoffRate = 100 - conversionRate;
           const nextStage = stages[index + 1];
-          const dropoffKey = `${stage.stage}→${nextStage?.stage}`;
+          const _dropoffKey = `${stage.stage}→${nextStage?.stage}`;
           const isLeakagePoint = index === biggestDropoffIndex && index > 0;
 
           return (

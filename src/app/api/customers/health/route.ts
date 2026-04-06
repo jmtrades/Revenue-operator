@@ -10,7 +10,7 @@ import { z } from "zod";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getSession } from "@/lib/auth/request-session";
-import { BILLING_PLANS, type PlanSlug, normalizeTier } from "@/lib/billing-plans";
+import { BILLING_PLANS, normalizeTier } from "@/lib/billing-plans";
 import { log } from "@/lib/logger";
 
 function clamp(n: number, min: number, max: number): number {

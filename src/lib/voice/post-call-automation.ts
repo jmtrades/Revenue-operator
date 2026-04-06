@@ -18,7 +18,6 @@ import { sendEmail, getTemplate, renderTemplate } from "@/lib/integrations/email
 import { enrollContact } from "@/lib/sequences/follow-up-engine";
 import { scoreLeadPostCall } from "@/lib/intelligence/lead-scoring";
 import { fireWebhookEvent } from "@/lib/integrations/webhook-events";
-import { generateCoachingReport } from "./real-time-coaching";
 import { recordCallAnalytics } from "@/lib/analytics/conversation-analytics";
 import { processCallRecording } from "./call-recording-engine";
 
@@ -794,7 +793,7 @@ async function scoreLead(
 async function analyzeCallQuality(
   callSessionId: string,
   workspaceId: string,
-  leadId: string | null | undefined,
+  _leadId: string | null | undefined,
 ): Promise<PostCallAction> {
   const action: PostCallAction = {
     type: "notification",

@@ -13,7 +13,6 @@ import { safeGetItem, safeSetItem } from "@/lib/client/safe-storage";
 import {
   LayoutList,
   PhoneCall,
-  Users,
   Megaphone,
   MessageSquare,
   BarChart3,
@@ -24,21 +23,16 @@ import {
   PanelLeftOpen,
   Command as CommandIcon,
   Check,
-  BookOpen,
   Clock,
-  CreditCard,
   LogOut,
   Bot,
   CalendarCheck,
   UserPlus,
-  Plug,
-  FileText,
   RotateCcw,
   Activity,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { PageTransition } from "@/components/ui/PageTransition";
-import { LanguageSwitcher as _LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { NotificationCenter } from "@/components/ui/NotificationCenter";
 import { KeyboardShortcuts } from "@/components/ui/KeyboardShortcuts";
 import { TranslatedErrorBoundary } from "@/components/ErrorBoundary";
@@ -254,10 +248,15 @@ export default function AppShellClient({
   }, [pathname]);
 
   useEffect(() => {
-    if (initialWorkspaceMeta) {
-      primeWorkspaceMeCache(initialWorkspaceMeta);
-    }
-  }, [initialWorkspaceMeta]);
+    if (!initialWorkspaceId) return;
+    primeWorkspaceMeCache({
+      ...(initialWorkspaceMeta && typeof initialWorkspaceMeta === "object"
+        ? (initialWorkspaceMeta as Record<string, unknown>)
+        : {}),
+      id: initialWorkspaceId,
+      name: initialWorkspaceName ?? "",
+    });
+  }, [initialWorkspaceId, initialWorkspaceName, initialWorkspaceMeta]);
 
   useEffect(() => {
     let cancelled = false;
@@ -439,6 +438,11 @@ export default function AppShellClient({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [commandPaletteOpen]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   const isActive = (href: string) =>
     pathname === href || (href !== "/app/dashboard" && pathname.startsWith(href));
@@ -639,13 +643,19 @@ export default function AppShellClient({
                         {minutesUsage && (
                           <div className="mt-2">
                             <div className="flex items-center justify-between text-[10px] text-[var(--text-tertiary)] mb-1">
-                              <span>{minutesUsage.used}/{minutesUsage.limit} {t("sidebar.minUsed", { defaultValue: "min" })}</span>
-                              <span>{Math.round((minutesUsage.used / minutesUsage.limit) * 100)}%</span>
+                              <span>{minutesUsage.used}/{minutesUsage.limit || "—"} {t("sidebar.minUsed", { defaultValue: "min" })}</span>
+                              <span>
+                                {minutesUsage.limit > 0
+                                  ? `${Math.round((minutesUsage.used / minutesUsage.limit) * 100)}%`
+                                  : "—"}
+                              </span>
                             </div>
                             <div className="h-1 rounded-full bg-[var(--border-default)] overflow-hidden">
                               <div
                                 className="h-full rounded-full bg-[var(--accent-primary)] transition-[width] duration-500"
-                                style={{ width: `${Math.min(100, (minutesUsage.used / minutesUsage.limit) * 100)}%` }}
+                                style={{
+                                  width: `${minutesUsage.limit > 0 ? Math.min(100, (minutesUsage.used / minutesUsage.limit) * 100) : 0}%`,
+                                }}
                               />
                             </div>
                           </div>

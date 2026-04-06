@@ -111,7 +111,7 @@ export default function CallTranscriptViewer({
         if (cancelled) return;
 
         if (data.recordings && data.recordings.length > 0) {
-          const recording = data.recordings[0];
+          const _recording = data.recordings[0];
           setUtterances(null);
         } else {
           setUtterances(null);

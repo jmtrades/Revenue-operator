@@ -41,7 +41,7 @@ const completeIntentSchema = z.object({
 
 const EMIT_INTENT_ACTIONS = ["schedule_followup", "request_disclosure_confirmation", "escalate_to_human", "pause_execution"] as const;
 
-type ResultStatus = "succeeded" | "failed" | "skipped";
+type _ResultStatus = "succeeded" | "failed" | "skipped";
 
 export async function POST(request: NextRequest) {
   const csrfBlock = assertSameOrigin(request);

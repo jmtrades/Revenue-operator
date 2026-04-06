@@ -3,11 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Megaphone, Plus, Copy, Trash2, Play, Pause, Pencil, ArrowRight, Download } from "lucide-react";
+import { Megaphone, Plus, Copy, Trash2, Play, Pause, Pencil, Download } from "lucide-react";
 import { Pagination } from "@/components/ui/Pagination";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
-import { useWorkspace } from "@/components/WorkspaceContext";
-import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
+import { useResolvedWorkspaceId } from "@/hooks/useResolvedWorkspaceId";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -99,9 +98,8 @@ function persistCampaignsSnapshot(workspaceId: string, campaigns: CampaignRow[])
 
 export default function CampaignsPage() {
   const t = useTranslations("campaigns");
-  const { workspaceId } = useWorkspace();
-  const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
-  const snapshotWorkspaceId = workspaceId || workspaceSnapshot?.id?.trim() || "default";
+  const { workspaceId, loading: workspaceLoading } = useResolvedWorkspaceId();
+  const snapshotWorkspaceId = workspaceId || "default";
   const initialCampaigns = readCampaignsSnapshot(snapshotWorkspaceId);
   const [campaigns, setCampaigns] = useState<CampaignRow[]>(initialCampaigns);
   const [dailyLimit, setDailyLimit] = useState<number>(100);
@@ -459,12 +457,20 @@ export default function CampaignsPage() {
     }
   };
 
+  if (workspaceLoading && !workspaceId) {
+    return (
+      <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto min-h-[40vh] flex items-center justify-center">
+        <p className="text-sm text-[var(--text-secondary)]">{t("loading")}</p>
+      </div>
+    );
+  }
+
   if (!workspaceId) {
     return (
       <div className="p-4 md:p-6 max-w-4xl mx-auto">
         <EmptyState
-          title={t("noWorkspace.title", { defaultValue: "No workspace" })}
-          description={t("noWorkspace.description", { defaultValue: "Select or create a workspace to view campaigns." })}
+          title={t("noWorkspace.title")}
+          description={t("noWorkspace.description")}
         />
       </div>
     );
@@ -517,13 +523,13 @@ export default function CampaignsPage() {
               <Download className="w-4 h-4" />
               {t("export", { defaultValue: "Export" })}
             </button>
-            <a
+            <Link
               href="/app/campaigns/create"
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-sm font-semibold hover:opacity-90 transition-[opacity,transform] active:scale-[0.97]"
             >
               <Plus className="w-4 h-4" />
               {t("createCampaign")}
-            </a>
+            </Link>
           </div>
         </div>
 

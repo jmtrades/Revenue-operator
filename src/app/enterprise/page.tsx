@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Navbar } from "@/components/sections/Navbar";
+import { MarketingNavbar } from "@/components/sections/MarketingNavbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { SectionLabel } from "@/components/ui/SectionLabel";
@@ -8,7 +8,7 @@ import { SectionLabel } from "@/components/ui/SectionLabel";
 const BASE = "https://www.recall-touch.com";
 
 export const metadata: Metadata = {
-  title: "Enterprise — Revenue Operator",
+  title: "Enterprise",
   description:
     "Enterprise AI revenue operations: white-label delivery, SSO/SAML, custom SLAs, multi-location support, compliance controls, and API access.",
   alternates: { canonical: `${BASE}/enterprise` },
@@ -65,7 +65,7 @@ const enterpriseSections: Array<{ title: string; body: string }> = [
 export default function EnterprisePage() {
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
-      <Navbar />
+      <MarketingNavbar />
       <main id="main">
         <section className="marketing-section py-20 md:py-28" style={{ background: "var(--bg-primary, #FAFAF8)" }}>
           <Container>

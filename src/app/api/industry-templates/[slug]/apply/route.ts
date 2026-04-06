@@ -197,8 +197,7 @@ export async function POST(
       Phone: workspace.phone || "",
     };
 
-    let agentId: string;
-    let existingAgent: Record<string, unknown> | null = existingAgentRow ?? null;
+    const existingAgent: Record<string, unknown> | null = existingAgentRow ?? null;
 
     // If no active agent exists, create one
     if (!existingAgent) {
@@ -267,7 +266,7 @@ export async function POST(
     }
 
     // Update existing agent with template data
-    agentId = (existingAgent as { id: string }).id;
+    const agentId = (existingAgent as { id: string }).id;
     const agentName = (existingAgent as { name?: string }).name || "Agent";
     substitutions["Agent Name"] = agentName;
 

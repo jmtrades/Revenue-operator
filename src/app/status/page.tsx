@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Navbar } from "@/components/sections/Navbar";
+import { MarketingNavbar } from "@/components/sections/MarketingNavbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { SectionLabel } from "@/components/ui/SectionLabel";
@@ -53,7 +53,7 @@ export default async function StatusPage() {
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
-      <Navbar />
+      <MarketingNavbar />
       <main id="main">
         <section className="marketing-section py-20 md:py-28" style={{ background: "var(--bg-primary, #FAFAF8)" }}>
           <Container>

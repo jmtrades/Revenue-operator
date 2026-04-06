@@ -51,7 +51,11 @@ const SECTION_KEYWORDS: Record<string, string> = {
   "faq": "faq questions",
 };
 
-export default function DocsPageContent() {
+export default function DocsPageContent({
+  initialAuthenticated = false,
+}: {
+  initialAuthenticated?: boolean;
+}) {
   const t = useTranslations("docs");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -73,7 +77,7 @@ export default function DocsPageContent() {
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
-      <Navbar />
+      <Navbar initialAuthenticated={initialAuthenticated} />
       <main className="pt-28 pb-24">
         <Container>
           <div className="flex flex-col lg:flex-row gap-12">

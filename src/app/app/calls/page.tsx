@@ -131,7 +131,7 @@ export default function CallsPage() {
   const [notesStatus, setNotesStatus] = useState<Record<string, "saving" | "saved" | null>>({});
   const outcomeLabels = useMemo(() => getOutcomeLabels(t), [t]);
   const sentimentLabels = useMemo(() => getSentimentLabels(t), [t]);
-  const typeLabels = useMemo(() => getTypeLabels(t), [t]);
+  const _typeLabels = useMemo(() => getTypeLabels(t), [t]);
 
   useEffect(() => {
     if (!selectedCall?.id) return;
@@ -139,7 +139,7 @@ export default function CallsPage() {
     if (raw) {
       // This effect syncs localStorage into component state for the
       // currently selected call. It is safe to update local state here.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+       
       setCallNotes((prev) => ({ ...prev, [selectedCall.id]: raw }));
     }
   }, [selectedCall?.id]);

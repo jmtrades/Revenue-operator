@@ -249,7 +249,7 @@ export async function processSyncJob(jobId: string): Promise<{ ok: boolean; erro
 
       // Validate response body contains expected ID field
       // If externalId is missing, mark as "completed_unverified" with warning
-      let syncStatus: "completed" = "completed";
+      const syncStatus = "completed" as const;
       let statusLog = "Pushed to";
       if (!result.externalId) {
         statusLog = "Pushed to (unverified — no ID returned)";

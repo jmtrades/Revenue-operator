@@ -350,7 +350,7 @@ export function getRecommendedVoice(industry: string): VoiceProfile {
  */
 export function getVoicesForIndustry(industry: string): VoiceProfile[] {
   const recommended = INDUSTRY_VOICE_MAP[industry.toLowerCase()] ?? [];
-  const recommendedSet = new Set(recommended);
+  const _recommendedSet = new Set(recommended);
 
   // Sort: recommended first (in order), then rest by phone quality
   return [...VOICE_LIBRARY].sort((a, b) => {

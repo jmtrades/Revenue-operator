@@ -76,7 +76,7 @@ Rules:
  */
 export async function summarizeAndStoreCall(
   callSessionId: string,
-  workspaceId: string,
+  _workspaceId: string,
 ): Promise<CallSummary | null> {
   const db = getDb();
 

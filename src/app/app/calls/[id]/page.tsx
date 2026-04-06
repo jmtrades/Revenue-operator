@@ -12,13 +12,10 @@ import {
   Play,
   Pause,
   Download,
-  Bot,
-  User,
 } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
-import { cn } from "@/lib/cn";
 import { safeGetItem, safeSetItem, safeRemoveItem } from "@/lib/client/safe-storage";
 import CallTranscriptViewer from "@/components/calls/CallTranscriptViewer";
 import CallIntelligenceSummary from "@/components/calls/CallIntelligenceSummary";
@@ -277,7 +274,7 @@ export default function AppCallDetailPage() {
   const sentiment = call?.analysis?.sentiment || null;
   const utterances = call?.utterances ?? null;
 
-  const formatSpeaker = (speaker: string): string => {
+  const _formatSpeaker = (speaker: string): string => {
     if (speaker === "agent") return t("speakerAgent");
     if (speaker === "caller") return t("speakerCaller");
     return speaker;

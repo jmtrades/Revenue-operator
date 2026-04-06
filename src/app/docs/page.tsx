@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import { getMarketingInitialAuthenticated } from "@/lib/marketing/get-initial-authenticated";
 import DocsPageContent from "./DocsPageContent";
 
 const BASE = "https://www.recall-touch.com";
 
 export const metadata: Metadata = {
-  title: "Docs — Revenue Operator",
+  title: "Docs",
   description:
     "Read Revenue Operator docs for onboarding, workflow setup, campaigns, integrations, and troubleshooting. Get your revenue operations live quickly and confidently.",
   alternates: { canonical: `${BASE}/docs` },
@@ -26,6 +27,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function DocsPage() {
-  return <DocsPageContent />;
+export default async function DocsPage() {
+  const initialAuthenticated = await getMarketingInitialAuthenticated();
+  return <DocsPageContent initialAuthenticated={initialAuthenticated} />;
 }

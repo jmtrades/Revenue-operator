@@ -105,7 +105,7 @@ export default function AgentVoiceTestPage() {
         toast.success(t("toast.applied"));
         setAgent((a) => (a ? { ...a, voice_id: selectedVoiceId } : null));
       } else {
-        const d = (await res.json()) as { error?: string };
+        const _d = (await res.json()) as { error?: string };
         toast.error(t("errors.applyFailed"));
       }
     } catch {

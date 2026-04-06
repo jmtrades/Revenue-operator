@@ -20,6 +20,35 @@ export function normalizeTier(dbTier: string | null | undefined): PlanSlug {
   return map[t] ?? "solo";
 }
 
+/**
+ * Map workspace `billing_tier` from DB to UI plan id (billing page / PlanChangeModal).
+ */
+export function planIdFromBillingTier(
+  dbTier: string | null | undefined,
+): "starter" | "growth" | "scale" | "enterprise" {
+  const slug = normalizeTier(dbTier);
+  const map: Record<PlanSlug, "starter" | "growth" | "scale" | "enterprise"> = {
+    solo: "starter",
+    business: "growth",
+    scale: "scale",
+    enterprise: "enterprise",
+  };
+  return map[slug] ?? "starter";
+}
+
+/** Map UI plan id (settings modal) to `BILLING_PLANS` key. */
+export function planSlugFromUiPlanId(
+  planId: "starter" | "growth" | "scale" | "enterprise",
+): PlanSlug {
+  const map: Record<"starter" | "growth" | "scale" | "enterprise", PlanSlug> = {
+    starter: "solo",
+    growth: "business",
+    scale: "scale",
+    enterprise: "enterprise",
+  };
+  return map[planId] ?? "solo";
+}
+
 /** Display names for customer-facing UI (slugs remain for DB/Stripe compat) */
 export const PLAN_DISPLAY_NAMES: Record<PlanSlug, string> = {
   solo: "Starter",

@@ -82,7 +82,7 @@
     "demo": "Demo",
     "docs": "Docs",
     "dashboard": "Dashboard",
-    "dashboardCta": "Dashboard →",
+    "dashboardCta": "Open app →",
     "signIn": "Sign in",
     "startFree": "Get started",
     "startFreeCta": "Get started →",
@@ -2189,6 +2189,8 @@
   },
   "analytics": {
     "pageTitle": "Analytics — Revenue Operator",
+    "noWorkspaceTitle": "No workspace",
+    "noWorkspaceDescription": "Select or create a workspace to view analytics.",
     "heading": "Analytics",
     "title": "Analytics",
     "periodSummary": {
@@ -3967,6 +3969,10 @@
   "campaigns": {
     "title": "Campaigns",
     "pageTitle": "Campaigns — Revenue Operator",
+    "noWorkspace": {
+      "title": "No workspace selected",
+      "description": "Select or create a workspace to manage campaigns."
+    },
     "create": {
       "back": "Back to campaigns",
       "title": "Create campaign",
@@ -4641,6 +4647,10 @@
       "testOutput": "Test output",
       "testSuccess": "Test passed",
       "testWithSampleData": "Test with sample data",
+      "removeMappingTitle": "Remove this mapping?",
+      "removeMappingBody": "This row will be removed from your CRM field mapping. You can add it again later.",
+      "removeMappingConfirm": "Remove",
+      "cancelRemove": "Cancel",
       "transformations": {
         "none": "None",
         "format_phone": "Format Phone Number",
@@ -4836,7 +4846,7 @@
     "deleteAllDataMessage": "Delete all workspace data (calls, leads, agents)? This cannot be undone. Contact support to complete.",
     "deleteAccountTitle": "Delete account",
     "businessPage": {
-      "heading": "Business",
+      "heading": "Business details",
       "description": "Your business details help your AI answer calls accurately.",
       "nameLabel": "Business name",
       "namePlaceholder": "Your business",
@@ -6353,6 +6363,7 @@
     "contact": "Contact",
     "legalSecurity": "Legal & Security",
     "privacyPolicy": "Privacy Policy",
+    "trustCenter": "Trust Center",
     "termsOfService": "Terms of Service",
     "securityBadges": "SOC 2 in progress · 256-bit encryption",
     "copyright": "© {year} Revenue Operator. All rights reserved.",
@@ -7538,7 +7549,10 @@
     "toast": {
       "loadFailed": "Could not load flow",
       "saved": "Flow saved.",
-      "saveFailed": "Could not save."
+      "saveFailed": "Could not save.",
+      "needsConnection": "Connect at least one step from Start before saving.",
+      "needsEndPath": "Add nodes and edges so calls can reach an end (e.g. End call or Book appointment).",
+      "savedDraft": "Flow saved. Add an end node (End call, Book appointment, or Transfer) before going live."
     }
   },
   "team": {
@@ -7946,6 +7960,10 @@
     },
     "loading": "Loading appointments...",
     "loadError": "Failed to load appointments",
+    "rateLimited": "Too many requests. Wait a moment, then try again.",
+    "checkingCalendar": "Checking calendar…",
+    "connectCalendarButton": "Connect calendar",
+    "syncCalendarsButton": "Sync calendars",
     "retry": "Retry",
     "viewCalls": "View Calls",
     "getStartedTitle": "Get started with appointments",
@@ -7987,7 +8005,20 @@
     "couldNotStart": "Could not start demo call. Please try again.",
     "calling": "Calling…",
     "callMe": "Call me",
-    "placeholder": "+1 555 123 4567"
+    "placeholder": "+1 555 123 4567",
+    "consentLabel": "I agree to receive an automated demo call to this number and accept the <terms>Terms</terms> and <privacy>Privacy Policy</privacy>.",
+    "termsLink": "Terms",
+    "privacyLink": "Privacy Policy",
+    "connecting": "Connecting…",
+    "ringing": "Ringing…",
+    "callingYou": "Calling you!",
+    "requested": "Requested!",
+    "tryAgain": "Try again",
+    "callbackFallback": "We'll call you back shortly with a live demo!",
+    "rateLimited": "Too many demo attempts. Please wait a few minutes and try again.",
+    "consentRequired": "Check the consent box to request a demo call.",
+    "trustLine": "Free demo call. No signup required. Include your country code.",
+    "phoneAriaLabel": "Phone number"
   },
   "proofDrawer": {
     "title": "How it progressed",
@@ -8897,9 +8928,10 @@
       "eventLeadCaptured": "Lead captured",
       "eventAppointmentBooked": "Appointment booked",
       "eventDealAtRisk": "Deal at risk",
+      "eventDealWon": "Deal won",
       "eventReactivatedLead": "Reactivated lead",
       "eventsYouCanSend": "Events you can send",
-      "eventsList": "Lead captured, appointment booked, deal at risk, deal won, and reactivated lead.",
+      "eventsList": "Use the checkboxes above for: lead captured, appointment booked, deal at risk, deal won, and reactivated lead.",
       "retryAttempts": "Retry attempts",
       "testing": "Testing…",
       "sendTest": "Send test",
@@ -9045,6 +9077,8 @@
   "followUps": {
     "title": "Follow-ups",
     "create": "Create Sequence",
+    "loadError": "Failed to load follow-up sequences.",
+    "rateLimitedError": "Too many requests. Please wait a moment and tap Retry.",
     "retry": "Retry",
     "statusActive": "Active",
     "statusPaused": "Paused",

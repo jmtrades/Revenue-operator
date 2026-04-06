@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { Navbar } from "@/components/sections/Navbar";
+import { MarketingNavbar } from "@/components/sections/MarketingNavbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 
@@ -17,7 +17,7 @@ export default async function TermsPage() {
   const t = await getTranslations("legal");
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
-      <Navbar />
+      <MarketingNavbar />
       <main className="pt-28 pb-24">
         <Container>
           <article className="max-w-[720px] mx-auto">

@@ -423,7 +423,7 @@ export async function exportUsageToStripe(
   const timestamp = Math.floor(new Date(periodEnd).getTime() / 1000) - 1;
 
   try {
-    const stripe = getStripe();
+    const _stripe = getStripe();
     const secretKey = process.env.STRIPE_SECRET_KEY;
     if (!secretKey) {
       throw new Error("STRIPE_SECRET_KEY is not configured");

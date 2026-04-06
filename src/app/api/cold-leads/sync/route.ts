@@ -16,7 +16,7 @@ interface SyncRequest {
   workspace_id?: string;
 }
 
-interface SyncResponse {
+interface _SyncResponse {
   synced: number;
   total_cold: number;
   error?: string;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Phone, PhoneCall, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 
@@ -9,6 +10,7 @@ type CallStatus = "idle" | "calling" | "ringing" | "success" | "error" | "callba
 export function DemoVoiceButton() {
   const t = useTranslations("demoVoice");
   const [phone, setPhone] = useState("");
+  const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<CallStatus>("idle");
   const [message, setMessage] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -39,6 +41,11 @@ export function DemoVoiceButton() {
       setStatus("error");
       setMessage(t("enterPhone"));
       inputRef.current?.focus();
+      return;
+    }
+    if (!consent) {
+      setStatus("error");
+      setMessage(t("consentRequired"));
       return;
     }
 
@@ -72,10 +79,15 @@ export function DemoVoiceButton() {
 
       clearTimeout(ringTimer);
 
+      if (res.status === 429) {
+        setStatus("error");
+        setMessage(t("rateLimited"));
+        return;
+      }
       if (res.ok && data.ok) {
         if (data.callback_requested) {
           setStatus("callback");
-          setMessage(data.message ?? "We'll call you back shortly with a live demo!");
+          setMessage(data.message ?? t("callbackFallback"));
         } else {
           setStatus("success");
           setMessage(data.message ?? t("callingNow"));
@@ -90,7 +102,7 @@ export function DemoVoiceButton() {
       setStatus("error");
       setMessage(t("couldNotStart"));
     }
-  }, [phone, t]);
+  }, [phone, t, consent]);
 
   const isLoading = status === "calling" || status === "ringing";
   const isSuccess = status === "success";
@@ -124,7 +136,7 @@ export function DemoVoiceButton() {
               }
             }}
             onKeyDown={(e) => e.key === "Enter" && !isLoading && handleCall()}
-            placeholder="+1 (555) 123-4567"
+            placeholder={t("placeholder")}
             disabled={isLoading}
             className="w-full pl-9 pr-3 py-3 rounded-xl text-sm transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] disabled:opacity-60"
             style={{
@@ -132,13 +144,13 @@ export function DemoVoiceButton() {
               border: `1.5px solid ${isError ? "var(--accent-danger)" : isSuccess ? "var(--accent-secondary)" : "var(--border-default)"}`,
               color: "var(--text-primary)",
             }}
-            aria-label="Phone number"
+            aria-label={t("phoneAriaLabel")}
           />
         </div>
         <button
           type="button"
           onClick={handleCall}
-          disabled={isLoading || isSuccess}
+          disabled={isLoading || isSuccess || !consent}
           className="btn-marketing-blue px-6 py-3 text-sm font-medium whitespace-nowrap rounded-xl transition-all duration-200 flex items-center justify-center gap-2 min-w-[140px]"
           style={{
             opacity: isLoading ? 0.85 : 1,
@@ -149,13 +161,42 @@ export function DemoVoiceButton() {
           {status === "idle" && <Phone className="w-4 h-4" />}
           {isError && <Phone className="w-4 h-4" />}
           {status === "idle" && t("callMe")}
-          {status === "calling" && "Connecting..."}
-          {status === "ringing" && "Ringing..."}
-          {isSuccess && "Calling you!"}
-          {isCallback && "Requested!"}
-          {isError && "Try Again"}
+          {status === "calling" && t("connecting")}
+          {status === "ringing" && t("ringing")}
+          {isSuccess && t("callingYou")}
+          {isCallback && t("requested")}
+          {isError && t("tryAgain")}
         </button>
       </div>
+
+      <label className="flex items-start gap-2 max-w-md text-left cursor-pointer">
+        <input
+          type="checkbox"
+          checked={consent}
+          onChange={(e) => setConsent(e.target.checked)}
+          className="mt-1 rounded border-[var(--border-default)]"
+        />
+        <span className="text-[11px] leading-snug" style={{ color: "var(--text-secondary)" }}>
+          {t.rich("consentLabel", {
+            terms: (chunks) => (
+              <Link
+                href="/terms"
+                className="underline underline-offset-2 hover:text-[var(--text-primary)]"
+              >
+                {chunks}
+              </Link>
+            ),
+            privacy: (chunks) => (
+              <Link
+                href="/privacy"
+                className="underline underline-offset-2 hover:text-[var(--text-primary)]"
+              >
+                {chunks}
+              </Link>
+            ),
+          })}
+        </span>
+      </label>
 
       {/* Status Messages */}
       {(isSuccess || isCallback) && message && (
@@ -194,7 +235,7 @@ export function DemoVoiceButton() {
           className="text-[10px] text-center opacity-60 leading-tight"
           style={{ color: "var(--text-tertiary)" }}
         >
-          Free demo call. No signup required. Include your country code.
+          {t("trustLine")}
         </p>
       )}
     </div>

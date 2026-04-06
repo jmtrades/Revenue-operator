@@ -10,9 +10,12 @@ on:
 env:
   NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
   NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+  SUPABASE_SERVICE_ROLE_KEY: placeholder
   SESSION_SECRET: placeholder-32-char-secret-for-ci-build
   NEXT_PUBLIC_APP_URL: http://localhost:3000
   CRON_SECRET: placeholder
+  PUBLIC_VIEW_SALT: placeholder-32-char-salt___________
+  FOUNDER_EXPORT_KEY: placeholder-founder-key___________
 
 jobs:
   build-lint-e2e:
@@ -23,7 +26,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "npm"
 
       - name: Install dependencies
@@ -34,6 +37,9 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+      - name: Unit tests (full suite)
+        run: npm test
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium

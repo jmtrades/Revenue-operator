@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Play, Pause, Phone, Mic, Volume2, ChevronRight, Sparkles, Wrench, HeartPulse, Scale, Home, UtensilsCrossed, Building2, Dumbbell, Scissors, Car } from "lucide-react";
+import { Play, Pause, Phone, Mic, Volume2, Sparkles, Wrench, HeartPulse, Scale, Home, UtensilsCrossed, Building2, Scissors, Car } from "lucide-react";
 
 /* ─── Conversation Scripts ─── */
 const SCENARIOS = [

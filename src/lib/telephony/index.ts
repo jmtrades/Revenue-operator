@@ -357,7 +357,7 @@ function createTwilioService(): TelephonyService {
 
         // Build TwiML URL — Twilio needs a URL that returns TwiML instructions.
         // If a voice server URL is configured, use Stream; otherwise use simple Say.
-        const voiceServerUrl = process.env.VOICE_SERVER_URL || process.env.NEXT_PUBLIC_VOICE_SERVER_URL;
+        const _voiceServerUrl = process.env.VOICE_SERVER_URL || process.env.NEXT_PUBLIC_VOICE_SERVER_URL;
         let twimlUrl = params.webhookUrl;
 
         // If the webhook URL is a Telnyx webhook (from fallback), use the Twilio voice webhook instead

@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
 import { toast } from "sonner";
 import { useWorkspace } from "@/components/WorkspaceContext";
-import { ArrowLeft, Copy, Check } from "lucide-react";
+import { Copy, Check } from "lucide-react";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 interface WidgetConfig {
@@ -75,7 +74,7 @@ export default function ChatWidgetSettingsPage() {
       });
 
       if (!res.ok) {
-        const errorData = (await res.json().catch(() => ({
+        const _errorData = (await res.json().catch(() => ({
           error: t("toast.unknownError"),
         }))) as { error?: string };
         toast.error(t("toast.saveFailed"));

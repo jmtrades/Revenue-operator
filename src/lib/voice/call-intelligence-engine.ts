@@ -13,7 +13,6 @@
  * - Objection pattern recognition (detect repeated concerns)
  */
 
-import { log } from "@/lib/logger";
 import type { ConversationMessage } from "./demo-agent";
 
 /* ── Types ──────────────────────────────────────────────────────────────── */

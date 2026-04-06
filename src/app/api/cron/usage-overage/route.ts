@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { reportUsageOverage } from "@/lib/billing/overage";
-import { BILLING_PLANS, type PlanSlug, normalizeTier } from "@/lib/billing-plans";
+import { BILLING_PLANS, normalizeTier } from "@/lib/billing-plans";
 import "@/lib/runtime";
 import { assertCronAuthorized } from "@/lib/runtime";
 

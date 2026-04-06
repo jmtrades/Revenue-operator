@@ -7,7 +7,7 @@ import { Container } from "@/components/ui/Container";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 
 export function HomepageTestCallCTA() {
-  const router = useRouter();
+  const _router = useRouter();
   const [phone, setPhone] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);

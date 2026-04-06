@@ -6,6 +6,7 @@ import { Calendar, ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useWorkspace } from "@/components/WorkspaceContext";
+import { fetchJsonWithBackoff } from "@/lib/client/fetch-with-backoff";
 import { useTranslations } from "next-intl";
 
 type AppointmentStatus = "Confirmed" | "Pending" | "Cancelled" | "Completed" | "No-Show";
@@ -113,9 +114,10 @@ export default function AppointmentsPage() {
   const [showOutcomeForm, setShowOutcomeForm] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [syncLoading, setSyncLoading] = useState(false);
+  const [calendarConnected, setCalendarConnected] = useState<boolean | null>(null);
 
   // Fetch average deal value from workspace context
-  const [avgDealValue, setAvgDealValue] = useState(350);
+  const [_avgDealValue, setAvgDealValue] = useState(350);
   useEffect(() => {
     if (!workspaceId) return;
     fetch(`/api/dashboard/revenue-at-risk?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
@@ -128,7 +130,7 @@ export default function AppointmentsPage() {
   const totalAppointments = appointments.length;
   const completedAppointments = appointments.filter(a => a.status === "Completed").length;
   const noShowAppointments = appointments.filter(a => a.status === "No-Show").length;
-  const confirmedAppointments = appointments.filter(a => a.status === "Confirmed").length;
+  const _confirmedAppointments = appointments.filter(a => a.status === "Confirmed").length;
   const completionRate = totalAppointments > 0 ? Math.round((completedAppointments / totalAppointments) * 100) : 0;
   // Only show revenue from appointments where the user recorded an actual deal value
   const actualRecordedRevenue = appointments
@@ -175,13 +177,23 @@ export default function AppointmentsPage() {
     if (!workspaceId) return;
     setLoading(true);
     setFetchError(null);
-    fetch(`/api/appointments?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
-      .then((r) => {
-        if (!r.ok) throw new Error(`Failed to load appointments (${r.status})`);
-        return r.json();
-      })
-      .then((data: { appointments?: { id: string; date: string; time: string; contactName: string; type: string; status: string; source: string; start_time?: string; metadata?: Record<string, unknown> }[] }) => {
-        const list = data.appointments ?? [];
+    void (async () => {
+      const result = await fetchJsonWithBackoff<{
+        appointments?: {
+          id: string;
+          date: string;
+          time: string;
+          contactName: string;
+          type: string;
+          status: string;
+          source: string;
+          start_time?: string;
+          metadata?: Record<string, unknown>;
+        }[];
+      }>(`/api/appointments?workspace_id=${encodeURIComponent(workspaceId)}`, { maxAttempts: 4, credentials: "include" });
+
+      if (result.ok) {
+        const list = result.data.appointments ?? [];
         if (list.length > 0) {
           setAppointments(
             list.map((a) => ({
@@ -194,27 +206,59 @@ export default function AppointmentsPage() {
               source: (a.source || "Unknown") as AppointmentSource,
               start_time: a.start_time,
               metadata: a.metadata,
-            }))
+            })),
           );
         } else {
           setAppointments([]);
         }
-      })
-      .catch((err) => {
-        setFetchError(err instanceof Error ? err.message : t("appointments.loadError", { defaultValue: "Failed to load appointments" }));
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+      } else {
+        const base = t("appointments.loadError", { defaultValue: "Failed to load appointments" });
+        setFetchError(
+          result.status === 429
+            ? t("appointments.rateLimited", { defaultValue: "Too many requests. Wait a moment, then try again." })
+            : `${base} (${result.status}).`,
+        );
+      }
+      setLoading(false);
+    })();
   }, [workspaceId, t]);
 
   useEffect(() => {
     if (!workspaceId) {
       setLoading(false);
+      setCalendarConnected(null);
       return;
     }
     refetchAppointments();
   }, [workspaceId, refetchAppointments]);
+
+  useEffect(() => {
+    if (!workspaceId) return;
+    let cancelled = false;
+    setCalendarConnected(null);
+    Promise.all([
+      fetch(
+        `/api/integrations/google-calendar/status?workspace_id=${encodeURIComponent(workspaceId)}`,
+        { credentials: "include" },
+      ).then((r) => (r.ok ? r.json() : { connected: false })),
+      fetch(
+        `/api/integrations/outlook-calendar/status?workspace_id=${encodeURIComponent(workspaceId)}`,
+        { credentials: "include" },
+      ).then((r) => (r.ok ? r.json() : { connected: false })),
+    ])
+      .then(([g, o]) => {
+        if (cancelled) return;
+        const google = g as { connected?: boolean };
+        const outlook = o as { connected?: boolean };
+        setCalendarConnected(Boolean(google?.connected || outlook?.connected));
+      })
+      .catch(() => {
+        if (!cancelled) setCalendarConnected(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [workspaceId]);
 
   const isEmpty = appointments.length === 0;
 
@@ -513,23 +557,40 @@ export default function AppointmentsPage() {
               </div>
             )}
           </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handleSyncCalendar}
-              disabled={syncLoading}
-              className="px-3 py-1.5 rounded-lg text-sm font-medium bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-medium)] transition-[background-color,opacity] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--bg-hover)]"
-              title={t("appointments.syncTooltip", { defaultValue: "Sync Google & Outlook Calendar events" })}
-            >
-              {syncLoading ? (
-                <span className="inline-flex items-center gap-2">
-                  <span className="inline-block w-3 h-3 border-2 border-[var(--text-tertiary)] border-t-[var(--text-primary)] rounded-full animate-spin" />
-                  {t("appointments.syncing", { defaultValue: "Syncing..." })}
-                </span>
-              ) : (
-                t("appointments.syncButton", { defaultValue: "Sync Calendar" })
-              )}
-            </button>
+          <div className="flex items-center gap-2 flex-wrap">
+            {calendarConnected === null ? (
+              <button
+                type="button"
+                disabled
+                className="px-3 py-1.5 rounded-lg text-sm font-medium bg-[var(--bg-card)] text-[var(--text-tertiary)] border border-[var(--border-medium)] opacity-70 cursor-not-allowed"
+              >
+                {t("appointments.checkingCalendar")}
+              </button>
+            ) : calendarConnected === false ? (
+              <Link
+                href="/app/settings/integrations"
+                className="px-3 py-1.5 rounded-lg text-sm font-semibold bg-white text-black border border-zinc-200 hover:bg-zinc-100 transition-colors"
+              >
+                {t("appointments.connectCalendarButton")}
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={handleSyncCalendar}
+                disabled={syncLoading}
+                className="px-3 py-1.5 rounded-lg text-sm font-medium bg-[var(--bg-card)] text-[var(--text-primary)] border border-[var(--border-medium)] transition-[background-color,opacity] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--bg-hover)]"
+                title={t("appointments.syncTooltip", { defaultValue: "Sync Google & Outlook Calendar events" })}
+              >
+                {syncLoading ? (
+                  <span className="inline-flex items-center gap-2">
+                    <span className="inline-block w-3 h-3 border-2 border-[var(--text-tertiary)] border-t-[var(--text-primary)] rounded-full animate-spin" />
+                    {t("appointments.syncing", { defaultValue: "Syncing..." })}
+                  </span>
+                ) : (
+                  t("appointments.syncCalendarsButton")
+                )}
+              </button>
+            )}
             <button
               type="button"
               onClick={() => setView("list")}

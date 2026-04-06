@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
 
     return Response.json({ entries });
   } catch (e) {
-    const message =
+    const _message =
       e instanceof Error ? e.message : typeof e === "string" ? e : "Unknown error";
     return Response.json(
       { error: "Failed to import URL. Please check the link and try again." },

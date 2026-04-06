@@ -157,7 +157,7 @@ export async function POST(req: NextRequest) {
   const authToken = process.env.TWILIO_AUTH_TOKEN;
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin ?? "";
   const telephonyProvider = getTelephonyProvider();
-  const voiceWebhookUrl =
+  const _voiceWebhookUrl =
     process.env.VOICE_PROVIDER === "pipecat"
       ? `${baseUrl}/api/voice/connect`
       : `${baseUrl}/api/webhooks/twilio/voice`;

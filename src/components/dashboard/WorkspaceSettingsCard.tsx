@@ -9,7 +9,6 @@ import {
   Mic,
   Clock,
   Brain,
-  Bell,
   Save,
   Loader2,
   CheckCircle2,

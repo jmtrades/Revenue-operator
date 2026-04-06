@@ -1,6 +1,5 @@
-import { cookies } from "next/headers";
 import dynamic from "next/dynamic";
-import { Navbar } from "@/components/sections/Navbar";
+import { MarketingNavbar } from "@/components/sections/MarketingNavbar";
 import { Hero } from "@/components/sections/Hero";
 // V9: Homepage streamlined to 10 high-impact sections.
 const HomepageFAQ = dynamic(
@@ -55,16 +54,6 @@ const StickyMobileCTA = dynamic(
 );
 
 export default async function HomePage() {
-  let initialAuthenticated = false;
-  try {
-    const cookieStore = await cookies();
-    initialAuthenticated =
-      cookieStore.has("revenue_session") ||
-      cookieStore.getAll().some((cookie) => cookie.name.startsWith("sb-"));
-  } catch {
-    // Prefetch/RSC without cookies: render public homepage
-  }
-
   return (
     <div
       className="min-h-screen"
@@ -129,7 +118,7 @@ export default async function HomePage() {
           }),
         }}
       />
-      <Navbar initialAuthenticated={initialAuthenticated} />
+      <MarketingNavbar />
       <main id="main">
         <Hero />
         <TrustedByBar />

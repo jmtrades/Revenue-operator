@@ -74,7 +74,7 @@
     "demo": "Démo",
     "docs": "Documentation",
     "dashboard": "Tableau de bord",
-    "dashboardCta": "Tableau de bord →",
+    "dashboardCta": "Ouvrir l’app →",
     "signIn": "Connexion",
     "startFree": "Commencer",
     "startFreeCta": "Commencer →",
@@ -2081,6 +2081,8 @@
   },
   "analytics": {
     "pageTitle": "Analyses — Revenue Operator",
+    "noWorkspaceTitle": "Aucun espace de travail",
+    "noWorkspaceDescription": "Sélectionnez ou créez un espace de travail pour voir les analyses.",
     "heading": "Analyses",
     "title": "Analyses",
     "periodSummary": {
@@ -3690,6 +3692,10 @@
   "campaigns": {
     "title": "Campagnes",
     "pageTitle": "Campagnes — Revenue Operator",
+    "noWorkspace": {
+      "title": "Aucun espace de travail sélectionné",
+      "description": "Sélectionnez ou créez un espace de travail pour gérer les campagnes."
+    },
     "create": {
       "back": "Retour aux campagnes",
       "title": "Exécuter une Campagne Autonome",
@@ -4344,7 +4350,7 @@
     "activityLog": "Journal d'activité",
     "deleteAccountTitle": "Supprimer le compte",
     "businessPage": {
-      "heading": "Entreprise",
+      "heading": "Détails de l'entreprise",
       "description": "Les informations de votre entreprise aident votre IA à répondre aux appels avec précision.",
       "nameLabel": "Nom de l'entreprise",
       "namePlaceholder": "Ex. Plomberie Acme",
@@ -4381,6 +4387,10 @@
       "addMapping": "Ajouter un mappage",
       "loadDefaults": "Charger les valeurs par défaut",
       "testWithSampleData": "Tester avec des données d'exemple",
+      "removeMappingTitle": "Supprimer ce mappage ?",
+      "removeMappingBody": "Cette ligne sera retirée du mappage des champs CRM. Vous pourrez la rajouter plus tard.",
+      "removeMappingConfirm": "Supprimer",
+      "cancelRemove": "Annuler",
       "saveMapping": "Enregistrer le mappage",
       "saving": "Enregistrement…",
       "testOutput": "Résultat du test (exemple : {name})",
@@ -6077,6 +6087,7 @@
     "contact": "Contact",
     "legalSecurity": "Mentions légales et sécurité",
     "privacyPolicy": "Politique de confidentialité",
+    "trustCenter": "Trust Center",
     "termsOfService": "Conditions d'utilisation",
     "securityBadges": "Chiffrement 256-bit · Chiffré au repos · Conforme RGPD",
     "copyright": "© {year} Revenue Operator. Tous droits réservés.",
@@ -7850,6 +7861,10 @@
     },
     "loading": "Loading appointments...",
     "loadError": "Failed to load appointments",
+    "rateLimited": "Trop de requêtes. Attendez un instant puis réessayez.",
+    "checkingCalendar": "Vérification du calendrier…",
+    "connectCalendarButton": "Connecter le calendrier",
+    "syncCalendarsButton": "Synchroniser les calendriers",
     "retry": "Retry",
     "viewCalls": "View Calls",
     "getStartedTitle": "Get started with appointments",
@@ -8359,12 +8374,25 @@
     "calmLine": "Les décisions restent sur les rails."
   },
   "demoVoice": {
-    "enterPhone": "Enter your phone number with country code to receive a demo call.",
+    "enterPhone": "Saisissez votre numéro avec l'indicatif pays pour recevoir l'appel de démo.",
     "callingNow": "Appel en cours. Répondez pour parler avec l'agent IA.",
     "couldNotStart": "Impossible de démarrer l'appel de démo. Réessayez.",
     "calling": "Appel…",
     "callMe": "Appelez-moi",
-    "placeholder": "+1 555 123 4567"
+    "placeholder": "+1 555 123 4567",
+    "consentLabel": "J'accepte de recevoir un appel de démo automatisé sur ce numéro et j'accepte les <terms>Conditions</terms> et la <privacy>Politique de confidentialité</privacy>.",
+    "termsLink": "Conditions",
+    "privacyLink": "Politique de confidentialité",
+    "connecting": "Connexion…",
+    "ringing": "Sonnerie…",
+    "callingYou": "On vous appelle !",
+    "requested": "Demandé !",
+    "tryAgain": "Réessayer",
+    "callbackFallback": "Nous vous rappelons sous peu pour une démo en direct.",
+    "rateLimited": "Trop de tentatives de démo. Patientez quelques minutes puis réessayez.",
+    "consentRequired": "Cochez la case de consentement pour demander l'appel de démo.",
+    "trustLine": "Appel de démo gratuit. Sans inscription. Indicatif pays requis.",
+    "phoneAriaLabel": "Numéro de téléphone"
   },
   "accessibility": {
     "skipToContent": "Aller au contenu principal",
@@ -8767,9 +8795,10 @@
       "eventLeadCaptured": "Prospect capté",
       "eventAppointmentBooked": "Rendez-vous réservé",
       "eventDealAtRisk": "Affaire à risque",
+      "eventDealWon": "Affaire gagnée",
       "eventReactivatedLead": "Prospect réactivé",
       "eventsYouCanSend": "Événements que vous pouvez envoyer",
-      "eventsList": "Prospect capté, rendez-vous réservé, affaire à risque, affaire gagnée et prospect réactivé.",
+      "eventsList": "Utilisez les cases ci-dessus pour : prospect capté, rendez-vous réservé, affaire à risque, affaire gagnée et prospect réactivé.",
       "retryAttempts": "Tentatives de nouvelle tentative",
       "testing": "Test en cours…",
       "sendTest": "Envoyer un test",
@@ -8908,7 +8937,10 @@
     "toast": {
       "loadFailed": "Échec du chargement du flux.",
       "saved": "Flux enregistré.",
-      "saveFailed": "Échec de l'enregistrement du flux."
+      "saveFailed": "Échec de l'enregistrement du flux.",
+      "needsConnection": "Connectez au moins une étape depuis Démarrer avant d'enregistrer.",
+      "needsEndPath": "Ajoutez des nœuds et des liens pour qu'un appel puisse se terminer (ex. Raccrocher ou Prendre rendez-vous).",
+      "savedDraft": "Flux enregistré. Ajoutez un nœud de fin (Raccrocher, Prendre rendez-vous ou Transférer) avant la mise en production."
     }
   },
   "api": {

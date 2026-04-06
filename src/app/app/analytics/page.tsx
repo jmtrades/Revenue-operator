@@ -16,8 +16,7 @@ import {
   Send,
   LayoutDashboard,
 } from "lucide-react";
-import { useWorkspace } from "@/components/WorkspaceContext";
-import { getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
+import { useResolvedWorkspaceId } from "@/hooks/useResolvedWorkspaceId";
 import { KPIRow } from "@/components/ui/KPIRow";
 import { StatCard } from "@/components/ui/StatCard";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -250,9 +249,8 @@ export default function AppAnalyticsPage() {
   const [range, setRange] = useState<RangeKey>("30d");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
-  const { workspaceId } = useWorkspace();
-  const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
-  const snapshotWorkspaceId = workspaceId || workspaceSnapshot?.id?.trim() || "default";
+  const { workspaceId, loading: workspaceLoading } = useResolvedWorkspaceId();
+  const snapshotWorkspaceId = workspaceId || "default";
   const initialCalls = readAnalyticsSnapshot<CallRecord>(
     ANALYTICS_CALLS_SNAPSHOT_PREFIX,
     snapshotWorkspaceId,
@@ -667,12 +665,22 @@ export default function AppAnalyticsPage() {
     URL.revokeObjectURL(url);
   };
 
+  if (workspaceLoading && !workspaceId) {
+    return (
+      <div className="p-6 md:p-8 max-w-6xl mx-auto">
+        <AnalyticsSkeleton />
+      </div>
+    );
+  }
+
   if (!workspaceId) {
     return (
       <div className="p-4 md:p-6 max-w-4xl mx-auto">
         <EmptyState
-          title="No workspace"
-          description="Select or create a workspace to view analytics."
+          title={t("analytics.noWorkspaceTitle", { defaultValue: "No workspace" })}
+          description={t("analytics.noWorkspaceDescription", {
+            defaultValue: "Select or create a workspace to view analytics.",
+          })}
         />
       </div>
     );

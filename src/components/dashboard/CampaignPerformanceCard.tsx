@@ -8,7 +8,6 @@ import {
   Phone,
   Calendar,
   Trophy,
-  Loader2,
 } from "lucide-react";
 import { apiFetch } from "@/lib/api";
 import { staggerContainer, staggerItem } from "@/lib/animations";

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Users, Building2, Phone, BarChart3 } from "lucide-react";
 
-interface ExportRequest {
+interface _ExportRequest {
   id: string;
   data_type: string;
   status: string;

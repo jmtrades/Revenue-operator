@@ -70,6 +70,33 @@ type AnalyticsData = {
   periodDays: number;
 };
 
+function normalizeAnalyticsPayload(raw: unknown): AnalyticsData | null {
+  if (!raw || typeof raw !== "object") return null;
+  const r = raw as Record<string, unknown>;
+  const kpisRaw = r.kpis;
+  if (!kpisRaw || typeof kpisRaw !== "object") return null;
+  const k = kpisRaw as Record<string, unknown>;
+  const kpis = {
+    callsHandled: Number(k.callsHandled) || 0,
+    avgDurationSec: Number(k.avgDurationSec) || 0,
+    successRate: Number(k.successRate) || 0,
+    qualityScore: k.qualityScore == null ? null : Number(k.qualityScore),
+    satisfactionPct: k.satisfactionPct == null ? null : Number(k.satisfactionPct),
+  };
+  return {
+    kpis,
+    dailyVolume: Array.isArray(r.dailyVolume) ? (r.dailyVolume as AnalyticsData["dailyVolume"]) : [],
+    successRateTrend: Array.isArray(r.successRateTrend)
+      ? (r.successRateTrend as AnalyticsData["successRateTrend"])
+      : [],
+    topOutcomes: Array.isArray(r.topOutcomes) ? (r.topOutcomes as AnalyticsData["topOutcomes"]) : [],
+    commonIntents: Array.isArray(r.commonIntents) ? (r.commonIntents as AnalyticsData["commonIntents"]) : [],
+    comparison: Array.isArray(r.comparison) ? (r.comparison as AnalyticsData["comparison"]) : [],
+    recommendations: Array.isArray(r.recommendations) ? (r.recommendations as string[]) : [],
+    periodDays: Number(r.periodDays) || 30,
+  };
+}
+
 function formatDuration(sec: number): string {
   if (sec < 60) return `${sec}s`;
   const m = Math.floor(sec / 60);
@@ -83,6 +110,7 @@ export default function AgentAnalyticsPage({
   params: Promise<{ id: string }>;
 }) {
   const t = useTranslations("agents");
+  const cc = useChartColors();
   const [agentId, setAgentId] = useState<string | null>(null);
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -104,7 +132,8 @@ export default function AgentAnalyticsPage({
         .then(([agent, analytics]) => {
           if (!mounted) return;
           if (agent) setAgentName((agent as { name?: string }).name ?? "Agent");
-          setData(analytics ?? null);
+          const normalized = normalizeAnalyticsPayload(analytics);
+          setData(normalized);
         })
         .finally(() => mounted && setLoading(false));
     });
@@ -144,7 +173,6 @@ export default function AgentAnalyticsPage({
     );
   }
 
-  const cc = useChartColors();
   const { kpis, dailyVolume, successRateTrend, topOutcomes, commonIntents, comparison, recommendations } = data;
   const volumeChartData = dailyVolume.map((d) => ({
     day: new Date(d.date).toLocaleDateString(undefined, { month: "short", day: "numeric" }),

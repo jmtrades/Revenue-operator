@@ -53,7 +53,7 @@ function HorizontalBar({ label, value, total }: { label: string; value: number; 
   );
 }
 
-function SimpleBarChart({ data, height = "h-32" }: { data: Array<{ label: string; value: number }>; height?: string }) {
+function _SimpleBarChart({ data, height = "h-32" }: { data: Array<{ label: string; value: number }>; height?: string }) {
   if (!data || data.length === 0) return <div className="flex items-center justify-center h-full min-h-[80px] text-sm text-[var(--text-tertiary)]">No data available</div>;
 
   const maxValue = Math.max(...data.map((d) => d.value));

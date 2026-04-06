@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
-import { Navbar } from "@/components/sections/Navbar";
+import { MarketingNavbar } from "@/components/sections/MarketingNavbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
@@ -656,7 +656,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           }),
         }}
       />
-      <Navbar />
+      <MarketingNavbar />
       <main className="pt-28 pb-24">
         <Container>
           <div className="max-w-2xl">
