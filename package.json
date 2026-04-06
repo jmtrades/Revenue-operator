@@ -23,7 +23,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "load-test": "k6 run k6/loadtest.js"
+    "load-test": "k6 run k6/loadtest.js",
+    "deploy:vercel": "vercel deploy --prod --yes --archive=tgz"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
