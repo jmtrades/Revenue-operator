@@ -62,7 +62,7 @@ export default function AppMessagesPage() {
   const [loadingThreads, setLoadingThreads] = useState(true);
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [sending, setSending] = useState(false);
-  const [threadError, setThreadError] = useState<string | null>(null);
+  const [_threadError, setThreadError] = useState<string | null>(null);
 
   const active = threads.find((t) => t.id === selected) ?? threads[0] ?? null;
 
@@ -106,7 +106,7 @@ export default function AppMessagesPage() {
 
   useEffect(() => {
     fetchThreads();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: fetch threads once on mount; URL params read inside fetchThreads
+     
   }, []);
 
   useEffect(() => {
@@ -198,7 +198,7 @@ export default function AppMessagesPage() {
         body: JSON.stringify({ lead_id: active.lead_id, content: text }),
       });
       if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
+        const _err = await res.json().catch(() => ({}));
         toast.error(t("failedToSend"));
         return;
       }

@@ -57,7 +57,7 @@ function calculateRiskScore(
 function predictConversions(
   recentCallsCount: number,
   conversionRate: number,
-  avgCallDuration: number
+  _avgCallDuration: number
 ): number {
   // Linear extrapolation over 30 days
   const dailyRate = recentCallsCount / 7; // assume last 7 days

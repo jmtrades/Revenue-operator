@@ -87,7 +87,7 @@ export function AgentDetail(props: AgentDetailProps) {
     agent,
     activeStep,
     saving,
-    workspaceId,
+    workspaceId: _workspaceId,
     elevenLabsVoices: _elevenLabsVoices,
     workspaceName: _workspaceName,
     workspaceNumbers: _workspaceNumbers,

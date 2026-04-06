@@ -325,7 +325,7 @@ function buildLeadSummary(
 function buildRecommendedApproach(
   stage: string,
   interactionType: InteractionType,
-  sentimentTrend: string
+  _sentimentTrend: string
 ): string {
   const approaches: Record<string, string> = {
     new_call:
@@ -364,7 +364,7 @@ function buildRecommendedApproach(
 
 function buildTalkingPoints(
   stage: string,
-  history: {
+  _history: {
     lastInteraction: { summary: string } | null;
   }
 ): string[] {

@@ -10,6 +10,7 @@ import { getDb } from "@/lib/db/queries";
 import { validateEmail, validatePasswordForSignin, toFriendlySigninError } from "@/lib/auth/validate";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { log } from "@/lib/logger";
+import { ROUTES } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -100,7 +101,7 @@ export async function POST(req: NextRequest) {
     log("error", "[signin] SESSION_SECRET or ENCRYPTION_KEY is not configured");
     return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
   }
-  const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/app/dashboard" });
+  const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: ROUTES.APP_HOME });
   res.headers.set("Set-Cookie", cookie);
   return res;
 }

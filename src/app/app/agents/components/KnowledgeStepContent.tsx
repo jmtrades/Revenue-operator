@@ -32,7 +32,7 @@ export function KnowledgeStepContent({
       autoSeeded.current = true;
       void seedFive();
     }
-  }, [agent.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [agent.id]);  
 
   const seedFive = async () => {
     setSeeding(true);

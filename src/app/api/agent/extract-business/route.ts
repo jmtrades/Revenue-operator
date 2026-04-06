@@ -152,7 +152,7 @@ export async function POST(req: NextRequest) {
       faq,
     });
   } catch (e) {
-    const message =
+    const _message =
       e instanceof Error ? e.message : typeof e === "string" ? e : "Unknown error";
     return NextResponse.json(
       { error: "Failed to extract business details. Please try again or enter them manually." },

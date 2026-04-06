@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { ArrowRight, Phone, PhoneOutgoing, Repeat, CalendarCheck, BarChart3, Brain, DollarSign, Zap, AudioWaveform } from "lucide-react";
+import { MarketingNavbar } from "@/components/sections/MarketingNavbar";
 
-const Navbar = dynamic(() => import("@/components/sections/Navbar").then((m) => m.Navbar));
 const Footer = dynamic(() => import("@/components/sections/Footer").then((m) => m.Footer));
 
 export const metadata: Metadata = {
-  title: "Features — AI Phone Operators That Handle Everything",
+  title: "Features",
   description:
     "Inbound call handling, outbound campaigns, automated follow-ups, appointment booking, revenue recovery, self-learning AI, and full analytics. See every feature Revenue Operator offers.",
   openGraph: {
@@ -106,7 +106,7 @@ export default function FeaturesPage() {
       className="min-h-screen"
       style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}
     >
-      <Navbar initialAuthenticated={false} />
+      <MarketingNavbar />
       <main className="pt-28 pb-24">
         <div className="max-w-6xl mx-auto px-4">
           {/* Header */}

@@ -168,7 +168,7 @@ function KnowledgeModal({
         body: JSON.stringify({ url: url.trim() }),
       });
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
+        const _data = await res.json().catch(() => ({}));
         toast.error(t("toast.fetchFailed"));
         setWebsiteFetchState("idle");
         return;

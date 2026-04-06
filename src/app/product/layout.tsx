@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 const BASE = "https://www.recall-touch.com";
 
 export const metadata: Metadata = {
-  title: "Product — Revenue Operator",
+  title: "Product",
   description: "Call governance, automated follow-ups, compliance records, and escalation control — built for regulated commercial operations.",
   alternates: { canonical: `${BASE}/product` },
   openGraph: {

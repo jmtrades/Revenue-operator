@@ -7,9 +7,7 @@ import {
   AlertTriangle,
   DollarSign,
   ArrowRight,
-  TrendingUp,
   CheckCircle2,
-  Clock,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 

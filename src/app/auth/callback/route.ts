@@ -3,16 +3,17 @@ import { createClient } from "@/lib/supabase/server";
 import { createSessionCookie } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/queries";
 import { getBaseUrl } from "@/lib/runtime/base-url";
+import { ROUTES } from "@/lib/constants";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/app/dashboard";
+  const next = searchParams.get("next") ?? ROUTES.APP_HOME;
   const origin = getBaseUrl(new URL(request.url).origin);
 
   if (!code) {
     const signInUrl = new URL("/sign-in", origin);
-    if (next && next !== "/app/dashboard") signInUrl.searchParams.set("next", next);
+    if (next && next !== ROUTES.APP_HOME) signInUrl.searchParams.set("next", next);
     return NextResponse.redirect(signInUrl);
   }
 
@@ -22,7 +23,7 @@ export async function GET(request: Request) {
     if (error) {
       const signInUrl = new URL("/sign-in", origin);
       signInUrl.searchParams.set("error", "auth");
-      if (next && next !== "/app/dashboard") signInUrl.searchParams.set("next", next);
+      if (next && next !== ROUTES.APP_HOME) signInUrl.searchParams.set("next", next);
       return NextResponse.redirect(signInUrl.toString());
     }
     const userId = data.user?.id;

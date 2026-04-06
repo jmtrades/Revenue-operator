@@ -62,6 +62,16 @@ export function WorkspaceProvider({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const initialRun = useRef(true);
+  const initialWorkspaceIdRef = useRef(initialWorkspaceId);
+  const workspaceIdRef = useRef(workspaceId || initialWorkspaceId || "");
+
+  useEffect(() => {
+    initialWorkspaceIdRef.current = initialWorkspaceId;
+  }, [initialWorkspaceId]);
+
+  useEffect(() => {
+    workspaceIdRef.current = workspaceId;
+  }, [workspaceId]);
 
   useEffect(() => {
     const snapshot = getWorkspaceMeSnapshotSync() as { id?: string | null; name?: string | null } | null;
@@ -144,8 +154,18 @@ export function WorkspaceProvider({
         setError(e instanceof Error ? e.message : "Connection issue");
       }
       setWorkspaces([]);
-      setWorkspaceIdState("");
-      setWorkspaceName("");
+      const restoreId =
+        workspaceIdRef.current.trim() ||
+        initialWorkspaceIdRef.current.trim() ||
+        getSavedWorkspaceId()?.trim() ||
+        "";
+      if (restoreId) {
+        setWorkspaceIdState(restoreId);
+        persistWorkspaceId(restoreId);
+      } else {
+        setWorkspaceIdState("");
+        setWorkspaceName("");
+      }
     } finally {
       clearTimeout(guardId);
       setLoading(false);

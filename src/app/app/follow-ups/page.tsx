@@ -11,6 +11,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { fetchJsonWithBackoff } from "@/lib/client/fetch-with-backoff";
 
 type Sequence = { id: string; name: string; trigger_type?: string; is_active?: boolean };
 
@@ -248,21 +249,20 @@ export default function AppFollowUpsPage() {
     if (!workspaceId) return;
     setLoading(true);
     setFetchError(null);
-    fetch(`/api/sequences?workspace_id=${encodeURIComponent(workspaceId)}`, { credentials: "include" })
-      .then((r) => {
-        if (!r.ok) throw new Error(t("loadError"));
-        return r.json();
-      })
-      .then((d: { sequences?: Sequence[] }) => {
-        setSequences(d.sequences ?? []);
-      })
-      .catch((err) => {
+    void (async () => {
+      const result = await fetchJsonWithBackoff<{ sequences?: Sequence[] }>(
+        `/api/sequences?workspace_id=${encodeURIComponent(workspaceId)}`,
+        { maxAttempts: 4, credentials: "include" },
+      );
+      if (result.ok) {
+        setSequences(result.data.sequences ?? []);
+        setFetchError(null);
+      } else {
         setSequences([]);
-        setFetchError(err instanceof Error ? err.message : t("loadError"));
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+        setFetchError(result.status === 429 ? t("rateLimitedError") : t("loadError"));
+      }
+      setLoading(false);
+    })();
   }, [workspaceId, t]);
 
   const refetchBrainActivity = useCallback(() => {
@@ -317,7 +317,7 @@ export default function AppFollowUpsPage() {
     }
   }, [tab, workspaceId, refetchBrainActivity]);
 
-  const useTemplate = async (template: BuiltInTemplate) => {
+  const applyBuiltInTemplate = async (template: BuiltInTemplate) => {
     setTemplateInProgress(template.id);
     try {
       const res = await fetch("/api/sequences", {
@@ -392,7 +392,7 @@ export default function AppFollowUpsPage() {
           <Zap className="w-4 h-4 text-violet-400" />
         </div>
         <div className="flex-1 min-w-0">
-          {sequences.length > 0 || brainActivity?.follow_ups_sent ? (
+          {!fetchError && (sequences.length > 0 || brainActivity?.follow_ups_sent) ? (
             <>
               <div className="flex items-center gap-2 mb-1">
                 <p className="text-sm text-violet-400 font-semibold">Follow-up sequences active</p>
@@ -415,6 +415,22 @@ export default function AppFollowUpsPage() {
           )}
         </div>
       </div>
+      {fetchError && (
+        <div
+          className="mb-4 rounded-xl border border-[var(--accent-danger,#ef4444)]/30 bg-[var(--accent-danger,#ef4444)]/5 px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+          role="alert"
+        >
+          <p className="text-sm text-[var(--accent-danger,#ef4444)] flex-1 min-w-0">{fetchError}</p>
+          <button
+            type="button"
+            onClick={() => refetchSequences()}
+            disabled={loading}
+            className="shrink-0 px-4 py-2 rounded-xl border border-[var(--border-medium)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] transition-[background-color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97] disabled:opacity-50"
+          >
+            {t("retry")}
+          </button>
+        </div>
+      )}
       <div className="flex gap-2 mb-6 border-b border-[var(--border-default)] pb-2">
         <button
           type="button"
@@ -528,20 +544,11 @@ export default function AppFollowUpsPage() {
             </div>
           </div>
         )
-      ) : loading ? (
-        <div className="skeleton-shimmer h-40 rounded-2xl border border-[var(--border-default)]" />
-      ) : fetchError ? (
-        <div className="rounded-2xl border border-[var(--accent-danger,#ef4444)]/30 bg-[var(--accent-danger,#ef4444)]/5 p-8 text-center">
-          <p className="text-sm text-[var(--accent-danger,#ef4444)]">{fetchError}</p>
-          <button
-            type="button"
-            onClick={() => { setLoading(true); setFetchError(null); refetchSequences(); }}
-            className="mt-3 px-4 py-2 rounded-xl border border-[var(--border-medium)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] transition-[background-color,border-color] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
-          >
-            {t("retry")}
-          </button>
-        </div>
-      ) : tab === "templates" ? (
+      ) : (
+        <>
+          {loading ? (
+            <div className="skeleton-shimmer h-40 rounded-2xl border border-[var(--border-default)]" />
+          ) : tab === "templates" ? (
         <div>
           <div className="space-y-4">
             <div className="text-center py-8">
@@ -561,7 +568,7 @@ export default function AppFollowUpsPage() {
                     <Button
                       variant="primary"
                       size="sm"
-                      onClick={() => void useTemplate(template)}
+                      onClick={() => void applyBuiltInTemplate(template)}
                       disabled={templateInProgress !== null}
                       className="gap-1 whitespace-nowrap"
                     >
@@ -604,7 +611,7 @@ export default function AppFollowUpsPage() {
                     className="gap-2 justify-start text-sm"
                     onClick={() => {
                       const noShowTemplate = BUILT_IN_TEMPLATES.find(t => t.id === "no-show-recovery");
-                      if (noShowTemplate) useTemplate(noShowTemplate);
+                      if (noShowTemplate) void applyBuiltInTemplate(noShowTemplate);
                     }}
                     disabled={templateInProgress !== null}
                   >
@@ -617,7 +624,7 @@ export default function AppFollowUpsPage() {
                     className="gap-2 justify-start text-sm"
                     onClick={() => {
                       const stalePipelineTemplate = BUILT_IN_TEMPLATES.find(t => t.id === "stale-pipeline-recovery");
-                      if (stalePipelineTemplate) useTemplate(stalePipelineTemplate);
+                      if (stalePipelineTemplate) void applyBuiltInTemplate(stalePipelineTemplate);
                     }}
                     disabled={templateInProgress !== null}
                   >
@@ -732,6 +739,8 @@ export default function AppFollowUpsPage() {
           description={t("empty.activeBody")}
           primaryAction={{ label: t("create"), href: "/app/follow-ups/create" }}
         />
+      )}
+        </>
       )}
 
       <ConfirmDialog

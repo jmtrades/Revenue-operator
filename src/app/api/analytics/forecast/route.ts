@@ -43,8 +43,8 @@ export async function GET(req: NextRequest): Promise<NextResponse<ForecastRespon
     const daysRemaining = daysInMonth - currentDay;
 
     // Format dates as YYYY-MM-DD
-    const monthStartStr = monthStart.toISOString().split("T")[0];
-    const monthEndStr = monthEnd.toISOString().split("T")[0];
+    const _monthStartStr = monthStart.toISOString().split("T")[0];
+    const _monthEndStr = monthEnd.toISOString().split("T")[0];
     const todayStr = today.toISOString().split("T")[0];
 
     // Query: last 30 days of revenue data for this workspace

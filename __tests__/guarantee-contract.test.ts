@@ -62,11 +62,15 @@ describe("Guarantee contract", () => {
     });
 
     it("Double dequeue cannot double-run (concurrency: only one worker gets the job)", async () => {
+      const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
       const hasDb =
-        typeof process.env.NEXT_PUBLIC_SUPABASE_URL === "string" &&
-        process.env.NEXT_PUBLIC_SUPABASE_URL.length > 0 &&
+        url.length > 0 &&
         (typeof process.env.SUPABASE_SERVICE_ROLE_KEY === "string" || typeof process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY === "string");
-      if (!hasDb) return;
+      const isPlaceholderEnv =
+        url.includes("placeholder") ||
+        process.env.SUPABASE_SERVICE_ROLE_KEY === "placeholder" ||
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY === "placeholder";
+      if (!hasDb || isPlaceholderEnv) return;
       const { enqueue, dequeue, complete } = await import("@/lib/queue");
       const { getDb } = await import("@/lib/db/queries");
       const jobId = await enqueue({ type: "billing", workspaceId: "test-workspace-double-dequeue" });

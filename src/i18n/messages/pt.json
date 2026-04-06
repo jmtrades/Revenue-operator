@@ -74,7 +74,7 @@
     "demo": "Demonstração",
     "docs": "Documentação",
     "dashboard": "Painel",
-    "dashboardCta": "Painel →",
+    "dashboardCta": "Abrir app →",
     "signIn": "Entrar",
     "startFree": "Começar agora",
     "startFreeCta": "Começar agora →",
@@ -2083,6 +2083,8 @@
   },
   "analytics": {
     "pageTitle": "Análises — Revenue Operator",
+    "noWorkspaceTitle": "Nenhum workspace",
+    "noWorkspaceDescription": "Selecione ou crie um workspace para ver análises.",
     "heading": "Análises",
     "title": "Análises",
     "periodSummary": {
@@ -3692,6 +3694,10 @@
   "campaigns": {
     "title": "Campanhas",
     "pageTitle": "Campanhas — Revenue Operator",
+    "noWorkspace": {
+      "title": "Nenhum workspace selecionado",
+      "description": "Selecione ou crie um workspace para gerenciar campanhas."
+    },
     "create": {
       "back": "Back to campaigns",
       "title": "Executar Campanha Autônoma",
@@ -4346,7 +4352,7 @@
     "activityLog": "Registro de atividade",
     "deleteAccountTitle": "Excluir conta",
     "businessPage": {
-      "heading": "Empresa",
+      "heading": "Detalhes da empresa",
       "description": "Os dados da sua empresa ajudam sua IA a atender ligações com precisão.",
       "nameLabel": "Nome da empresa",
       "namePlaceholder": "Ex. Encanamento Acme",
@@ -4383,6 +4389,10 @@
       "addMapping": "Adicionar mapeamento",
       "loadDefaults": "Carregar predefinidos",
       "testWithSampleData": "Testar com dados de exemplo",
+      "removeMappingTitle": "Remover este mapeamento?",
+      "removeMappingBody": "Esta linha será removida do mapeamento de campos do CRM. Pode adicioná-la novamente depois.",
+      "removeMappingConfirm": "Remover",
+      "cancelRemove": "Cancelar",
       "saveMapping": "Guardar mapeamento",
       "saving": "A guardar…",
       "testOutput": "Resultado do teste (exemplo: {name})",
@@ -6079,6 +6089,7 @@
     "contact": "Contato",
     "legalSecurity": "Legal e Segurança",
     "privacyPolicy": "Política de Privacidade",
+    "trustCenter": "Trust Center",
     "termsOfService": "Termos de Serviço",
     "securityBadges": "Criptografia 256-bit · Criptografado em repouso · Conforme LGPD",
     "copyright": "© {year} Revenue Operator. Todos os direitos reservados.",
@@ -7852,6 +7863,10 @@
     },
     "loading": "Loading appointments...",
     "loadError": "Failed to load appointments",
+    "rateLimited": "Muitas solicitações. Aguarde um momento e tente novamente.",
+    "checkingCalendar": "Verificando calendário…",
+    "connectCalendarButton": "Conectar calendário",
+    "syncCalendarsButton": "Sincronizar calendários",
     "retry": "Retry",
     "viewCalls": "View Calls",
     "getStartedTitle": "Get started with appointments",
@@ -8361,12 +8376,25 @@
     "calmLine": "As decisões permanecem no rumo."
   },
   "demoVoice": {
-    "enterPhone": "Enter your phone number with country code to receive a demo call.",
+    "enterPhone": "Digite seu número com código do país para receber a chamada de demonstração.",
     "callingNow": "Ligando agora. Atenda para falar com o agente de IA.",
     "couldNotStart": "Não foi possível iniciar a chamada de demonstração. Tente novamente.",
     "calling": "Ligando…",
     "callMe": "Me ligue",
-    "placeholder": "+1 555 123 4567"
+    "placeholder": "+1 555 123 4567",
+    "consentLabel": "Concordo em receber uma chamada de demonstração automatizada neste número e aceito os <terms>Termos</terms> e a <privacy>Política de privacidade</privacy>.",
+    "termsLink": "Termos",
+    "privacyLink": "Política de privacidade",
+    "connecting": "Conectando…",
+    "ringing": "Tocando…",
+    "callingYou": "Ligando para você!",
+    "requested": "Solicitado!",
+    "tryAgain": "Tentar de novo",
+    "callbackFallback": "Ligaremos em breve com uma demonstração ao vivo.",
+    "rateLimited": "Muitas tentativas de demonstração. Aguarde alguns minutos e tente novamente.",
+    "consentRequired": "Marque a caixa de consentimento para solicitar a chamada de demonstração.",
+    "trustLine": "Demo gratuita. Sem cadastro. Inclua o código do país.",
+    "phoneAriaLabel": "Número de telefone"
   },
   "accessibility": {
     "skipToContent": "Ir para o conteúdo principal",
@@ -8769,9 +8797,10 @@
       "eventLeadCaptured": "Lead capturado",
       "eventAppointmentBooked": "Compromisso agendado",
       "eventDealAtRisk": "Negócio em risco",
+      "eventDealWon": "Negócio ganho",
       "eventReactivatedLead": "Lead reativado",
       "eventsYouCanSend": "Eventos que você pode enviar",
-      "eventsList": "Lead capturado, compromisso agendado, negócio em risco, negócio ganho e lead reativado.",
+      "eventsList": "Use as caixas acima para: lead capturado, compromisso agendado, negócio em risco, negócio ganho e lead reativado.",
       "retryAttempts": "Tentativas de nova tentativa",
       "testing": "Testando…",
       "sendTest": "Enviar teste",
@@ -8910,7 +8939,10 @@
     "toast": {
       "loadFailed": "Falha ao carregar o fluxo.",
       "saved": "Fluxo salvo.",
-      "saveFailed": "Falha ao salvar o fluxo."
+      "saveFailed": "Falha ao salvar o fluxo.",
+      "needsConnection": "Conecte pelo menos um passo a partir de Início antes de salvar.",
+      "needsEndPath": "Adicione nós e arestas para que as chamadas cheguem a um fim (ex.: Encerrar chamada ou Agendar).",
+      "savedDraft": "Fluxo salvo. Adicione um nó final (Encerrar chamada, Agendar ou Transferir) antes de publicar."
     }
   },
   "api": {

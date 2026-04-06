@@ -3,7 +3,7 @@
  * Sends SMS and other text messages via Telnyx Messaging API.
  */
 
-import { telnyxRequest, parseTelnyxError } from "./telnyx-client";
+import { telnyxRequest } from "./telnyx-client";
 
 export interface SendSmsParams {
   from: string;

@@ -18,7 +18,11 @@ function getIconComponent(iconName: string) {
 
 const BASE = "https://www.recall-touch.com";
 
-export default function IndustriesPageContent() {
+export default function IndustriesPageContent({
+  initialAuthenticated = false,
+}: {
+  initialAuthenticated?: boolean;
+}) {
   const t = useTranslations("industriesPage");
   const industries = getAllIndustries();
 
@@ -37,7 +41,7 @@ export default function IndustriesPageContent() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <Navbar />
+      <Navbar initialAuthenticated={initialAuthenticated} />
       <main className="pt-28 pb-20">
         <Container>
           <div className="max-w-4xl mx-auto">

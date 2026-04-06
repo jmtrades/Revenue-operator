@@ -400,7 +400,7 @@ function detectExitIntent(text: string): boolean {
   return /\b(gotta go|bye|hang up|that'?s all|i'?m done|no more|nothing else|that'?s it|goodbye)\b/.test(lower);
 }
 
-function detectNameReveal(text: string): boolean {
+function _detectNameReveal(text: string): boolean {
   return /\b(my name is|i'?m |this is |it'?s |call me )/i.test(text.toLowerCase());
 }
 

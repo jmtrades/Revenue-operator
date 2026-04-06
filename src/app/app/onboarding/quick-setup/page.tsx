@@ -60,7 +60,7 @@ export default function QuickSetupPage() {
     templates: false,
   });
   const [activating, setActivating] = useState(false);
-  const progressRef = useRef<HTMLDivElement>(null);
+  const _progressRef = useRef<HTMLDivElement>(null);
 
   const analyzeMessages = [
     "Reading your website...",

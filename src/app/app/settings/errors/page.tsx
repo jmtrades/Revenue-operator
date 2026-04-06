@@ -27,7 +27,7 @@ export default function AppSettingsErrorsPage() {
         setEntries(data.entries ?? []);
         setGrouped(data.grouped ?? {});
       })
-      .catch((err) => { /* silenced */ })
+      .catch((_err) => { /* silenced */ })
       .finally(() => setLoading(false));
   }, []);
 

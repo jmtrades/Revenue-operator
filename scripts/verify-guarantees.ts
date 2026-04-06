@@ -8,7 +8,7 @@ import { spawn } from "child_process";
 import { fileURLToPath } from "url";
 import path from "path";
 
-// Skip on Vercel so we never run the heavy test suite there (vercel.json uses buildCommand: "next build" to bypass this; this is fallback if someone runs npm run build on Vercel).
+// Skip on Vercel: no DB for integration slices; CI/GitHub runs the full suite separately.
 if (process.env.VERCEL === "1") {
   console.log("Skipping guarantee verification on Vercel.");
   process.exit(0);
@@ -157,6 +157,7 @@ async function runVitest(): Promise<boolean> {
         "__tests__/scenario_replay_harness_invariants.test.ts",
         "__tests__/unknown_never_sends_final_lock.test.ts",
         "__tests__/prune_script_safety_contract.test.ts",
+        "__tests__/i18n-critical-keys.test.ts",
         "--reporter=verbose",
       ],
       { cwd: root, stdio: "inherit" }

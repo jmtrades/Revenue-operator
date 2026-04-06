@@ -37,7 +37,7 @@ interface Recommendation {
 
 export function CampaignStrategyAdvisor({
   workspaceId,
-  selectedTemplate,
+  selectedTemplate: _selectedTemplate,
 }: {
   workspaceId: string;
   selectedTemplate?: string;

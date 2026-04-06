@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Blog — Revenue Operator",
+  title: "Blog",
   description:
     "Resources and insights on answering every call, follow-up speed, and turning calls into revenue.",
   alternates: { canonical: "https://www.recall-touch.com/blog" },

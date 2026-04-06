@@ -32,7 +32,7 @@ interface FollowUpItem {
   channel: "sms" | "email" | "call";
 }
 
-const DEMO_FOLLOW_UPS: FollowUpItem[] = [
+const _DEMO_FOLLOW_UPS: FollowUpItem[] = [
   {
     id: "1",
     contactName: "Sarah Martinez",

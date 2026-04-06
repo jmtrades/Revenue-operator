@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 
 /**
  * Global error boundary — catches errors in the root layout itself.
@@ -26,8 +27,8 @@ export default function GlobalError({
           margin: 0,
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-          background: "#FFFFFF",
-          color: "#0A0A0B",
+          background: "#000000",
+          color: "#fafafa",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -61,7 +62,7 @@ export default function GlobalError({
           </h1>
           <p
             style={{
-              color: "#5E6270",
+              color: "#a1a1aa",
               lineHeight: 1.6,
               marginBottom: "2rem",
             }}
@@ -70,10 +71,11 @@ export default function GlobalError({
           </p>
           <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center", flexWrap: "wrap" }}>
             <button
+              type="button"
               onClick={reset}
               style={{
-                background: "#2563EB",
-                color: "#FFFFFF",
+                background: "#ffffff",
+                color: "#000000",
                 border: "none",
                 padding: "0.75rem 1.5rem",
                 borderRadius: "0.75rem",
@@ -84,7 +86,7 @@ export default function GlobalError({
             >
               Try again
             </button>
-            <a
+            <Link
               href="/"
               style={{
                 display: "inline-flex",
@@ -99,7 +101,7 @@ export default function GlobalError({
               }}
             >
               Go home
-            </a>
+            </Link>
           </div>
         </main>
       </body>

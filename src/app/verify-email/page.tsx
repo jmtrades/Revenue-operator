@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Navbar } from "@/components/sections/Navbar";
+import { MarketingNavbar } from "@/components/sections/MarketingNavbar";
 import { Footer } from "@/components/sections/Footer";
 import { ResendVerificationButton } from "./ResendVerificationButton";
 
@@ -26,7 +26,7 @@ export default async function VerifyEmailPage({
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
-      <Navbar />
+      <MarketingNavbar />
       <main className="pt-28 pb-24">
         <section className="max-w-2xl mx-auto px-4">
           <h1 className="text-3xl font-semibold" style={{ color: "var(--text-primary)" }}>

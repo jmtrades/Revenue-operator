@@ -56,17 +56,16 @@ export function trackEvent(event: TelemetryEvent): void {
       return;
     }
 
-    // Try PostHog server client first
-    try {
-      const { trackServer } = require("@/lib/analytics/posthog-server");
-      // Extract workspace_id from properties if available
-      const props = event.properties as Record<string, unknown>;
-      const distinctId = (props.workspace_id as string | undefined) || "anonymous";
-      trackServer(distinctId, event.name, event.properties);
-      return;
-    } catch {
-      // PostHog not available or not configured
-    }
+    // Try PostHog server client first (dynamic import keeps optional dependency out of client bundles)
+    void import("@/lib/analytics/posthog-server")
+      .then(({ trackServer }) => {
+        const props = event.properties as Record<string, unknown>;
+        const distinctId = (props.workspace_id as string | undefined) || "anonymous";
+        return trackServer(distinctId, event.name, event.properties);
+      })
+      .catch(() => {
+        /* PostHog not available or not configured */
+      });
 
     // Fallback to console in development
     if (process.env.NODE_ENV === "development") {
@@ -88,14 +87,13 @@ export function trackEventClient(event: TelemetryEvent): void {
       return;
     }
 
-    // Try PostHog client
-    try {
-      const { track } = require("@/lib/analytics/posthog");
-      track(event.name, event.properties);
-      return;
-    } catch {
-      // PostHog not available or not configured
-    }
+    void import("@/lib/analytics/posthog")
+      .then(({ track }) => {
+        track(event.name, event.properties);
+      })
+      .catch(() => {
+        /* PostHog not available or not configured */
+      });
 
     // Fallback to console in development
     if (process.env.NODE_ENV === "development") {

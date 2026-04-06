@@ -473,7 +473,7 @@ export async function POST(req: NextRequest) {
       }
 
       case "check_order_status": {
-        const { order_id, customer_phone } = tool_args as { order_id?: string; customer_phone?: string; customer_email?: string };
+        const { order_id } = tool_args as { order_id?: string; customer_phone?: string; customer_email?: string };
 
         // Generic order lookup
         return NextResponse.json({

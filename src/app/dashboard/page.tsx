@@ -168,10 +168,10 @@ export default function SituationPage() {
   const ifRemovedFull = [...(capsule?.reversion ?? []), ...(retention?.if_disabled ?? [])].filter(Boolean);
   const currentState = currentStateFull.slice(0, CAP);
   const recentChange = recentChangeFull.slice(0, CAP);
-  const ifRemoved = ifRemovedFull.slice(0, CAP);
+  const _ifRemoved = ifRemovedFull.slice(0, CAP);
   const hasMoreCurrent = currentStateFull.length > CAP;
   const hasMoreRecent = recentChangeFull.length > CAP;
-  const hasMoreRemoved = ifRemovedFull.length > CAP;
+  const _hasMoreRemoved = ifRemovedFull.length > CAP;
   const recordHref = `/dashboard/record${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
 
   const callsHref = `/dashboard/calls${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;

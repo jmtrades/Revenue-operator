@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { Navbar } from "@/components/sections/Navbar";
+import { MarketingNavbar } from "@/components/sections/MarketingNavbar";
 import { ActivateWizard } from "./ActivateWizard";
 import { TranslatedErrorBoundary } from "@/components/ErrorBoundary";
 
@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function ActivatePage() {
   return (
     <div className="min-h-screen bg-[var(--bg-base)] text-[var(--text-primary)]">
-      <Navbar />
+      <MarketingNavbar />
       <main className="pt-24 pb-20">
         <TranslatedErrorBoundary>
           <ActivateWizard />

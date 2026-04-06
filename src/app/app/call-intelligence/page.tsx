@@ -153,7 +153,7 @@ export default function CallIntelligencePage() {
       if (v) notes[c.id] = v;
     });
     setCallNotes((prev) => ({ ...notes, ...prev }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only re-run when list length changes
+     
   }, [callExamples.length]);
 
   const handleAnalyze = async () => {

@@ -98,13 +98,13 @@ export default function PhoneMarketplacePage() {
     searchDebounceRef.current = setTimeout(() => {
       search();
     }, 300);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- re-search when country or type changes with debounce
+     
   }, [country, type]);
 
   // Auto-search on page load with default filters
   useEffect(() => {
     search();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, []);
 
   const handleProvisionConfirmed = async (num: AvailableNumber) => {

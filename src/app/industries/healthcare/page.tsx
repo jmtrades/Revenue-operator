@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Navbar } from "@/components/sections/Navbar";
+import { MarketingNavbar } from "@/components/sections/MarketingNavbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
@@ -43,7 +43,7 @@ export default function HealthcareIndustryPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
       />
-      <Navbar />
+      <MarketingNavbar />
       <main className="pt-28 pb-20">
         <Container>
           <div className="max-w-3xl mx-auto">

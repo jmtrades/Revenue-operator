@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
   const authErr = await requireWorkspaceAccess(req, workspaceId);
   if (authErr) return authErr;
 
-  const ip = getClientIp(req);
+  const _ip = getClientIp(req);
   const rl = await checkRateLimit(`upload:${workspaceId}`, 10, 60_000);
   if (!rl.allowed) {
     const retryAfterSeconds = Math.ceil((rl.resetAt - Date.now()) / 1000);

@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 
   const parsed = await parseBody(request, sendOnboardSchema);
   if ("error" in parsed) return parsed.error;
-  const { workspace_id, external_ref, counterparty_contact, approval_mode } = parsed.data;
+  const { workspace_id, external_ref, approval_mode } = parsed.data;
 
   const authErr = await requireWorkspaceAccess(request, workspace_id);
   if (authErr) return authErr;

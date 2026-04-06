@@ -20,7 +20,7 @@ interface AgentDossierProps {
 
 const INDUSTRY_CONVERSION_BENCHMARK = 12;
 
-export function AgentDossier({ workspaceId, agentId }: AgentDossierProps) {
+export function AgentDossier({ workspaceId, agentId: _agentId }: AgentDossierProps) {
   const [data, setData] = useState<DashboardSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -85,7 +85,7 @@ export function AgentDossier({ workspaceId, agentId }: AgentDossierProps) {
   // Build dossier text
   const line1 = `This agent has handled ${calls_answered} calls and created ${appointments_booked} revenue opportunities since deployment.`;
 
-  const conversionDiff = conversion_rate - INDUSTRY_CONVERSION_BENCHMARK;
+  const _conversionDiff = conversion_rate - INDUSTRY_CONVERSION_BENCHMARK;
   const line2 =
     conversion_rate > 0
       ? `Maintaining a ${conversion_rate}% conversion rate — ${

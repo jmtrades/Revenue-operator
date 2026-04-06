@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
     }
 
     const from = params.From ?? "";
-    const to = params.To ?? "";
+    const _to = params.To ?? "";
     const body = (params.Body ?? "").trim();
     const messageSid = params.MessageSid ?? "";
 

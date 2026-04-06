@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getDb } from "@/lib/db/queries";
 import { createClient } from "@/lib/supabase/server";
 import { getSessionFromCookie } from "@/lib/auth/session";
+import { ROUTES } from "@/lib/constants";
 
 async function getUserId(): Promise<string | null> {
   try {
@@ -45,5 +46,5 @@ export default async function AppRootPage() {
     (workspace as { onboarding_completed_at?: string | null } | null)?.onboarding_completed_at,
   );
 
-  redirect(onboarded ? "/app/dashboard" : "/activate");
+  redirect(onboarded ? ROUTES.APP_HOME : "/activate");
 }

@@ -110,7 +110,7 @@ export const LiveAgentChat = forwardRef<LiveAgentChatRef, {
     setMessages([{ role: "assistant", content: greeting ?? cfg.greeting }]);
     setInput("");
     setLoading(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [agent, greeting]);
 
   useEffect(() => {

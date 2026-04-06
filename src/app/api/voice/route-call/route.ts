@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
     );
 
     // If decision includes after-hours metadata, handle special cases
-    const routingMetadata = decision.metadata ?? {};
+    const _routingMetadata = decision.metadata ?? {};
 
     // For emergency_only mode, we'll pass metadata through to voice provider
     // For forward action, buildRoutingTwiml will handle it directly

@@ -1,7 +1,6 @@
 "use client";
 
 import { Star } from "lucide-react";
-import { SOCIAL_PROOF } from "@/lib/constants";
 
 const TESTIMONIALS = [
   {

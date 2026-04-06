@@ -6,8 +6,10 @@ export const SUPPORTED_PHONE_COUNTRIES = [
 ] as const;
 
 export const ROUTES = {
-  /** Core flow: Homepage → Start → /activate → success → /app/onboarding → /app/dashboard */
+  /** Core flow: Homepage → Start → /activate → onboarding → primary app surface */
   START: "/activate",
+  /** Default destination after sign-in / OAuth / activation (activity hub). */
+  APP_HOME: "/app/activity",
   SIGN_IN: "/sign-in",
   PRICING: "/pricing",
   PRODUCT: "/product",

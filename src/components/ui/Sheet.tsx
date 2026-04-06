@@ -4,7 +4,6 @@ import type { ReactNode } from "react";
 import { useEffect, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
-import { cn } from "@/lib/cn";
 
 interface SheetProps {
   open: boolean;

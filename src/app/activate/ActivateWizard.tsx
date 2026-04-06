@@ -17,10 +17,11 @@ import { PhoneOnlyStep } from "./steps/PhoneOnlyStep";
 import { CustomizeStep } from "./steps/CustomizeStep";
 import { ActivateStep } from "./steps/ActivateStep";
 import { track } from "@/lib/analytics/posthog";
+import { ROUTES } from "@/lib/constants";
 
 export function ActivateWizard() {
   const t = useTranslations("activate");
-  const tTeam = useTranslations("team");
+  const _tTeam = useTranslations("team");
   const searchParams = useSearchParams();
   const prefillEmail = searchParams.get("email") ?? null;
   const prefillPlan = searchParams.get("plan") ?? null;
@@ -245,7 +246,7 @@ export function ActivateWizard() {
       localStorage.setItem("rt_onboarded", "true");
       localStorage.removeItem(STORAGE_KEY); // Clear saved progress after successful setup
     }
-    window.location.href = "/app/dashboard";
+    window.location.href = ROUTES.APP_HOME;
   }, [state, selectedPlan, t, finalizing, emailVerified]);
 
   return (

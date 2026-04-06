@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
-import { BILLING_PLANS, normalizeTier, type PlanSlug } from "@/lib/billing-plans";
+import { BILLING_PLANS, normalizeTier } from "@/lib/billing-plans";
 import { evaluateUsageAlert, type VoiceUsageMetrics } from "@/lib/voice/billing";
 
 export async function GET(req: NextRequest) {

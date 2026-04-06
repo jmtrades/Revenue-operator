@@ -4,13 +4,8 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
-  CalendarRange,
   CheckCircle2,
-  ClipboardList,
   Headphones,
-  MoonStar,
-  PhoneCall,
-  Sparkles,
   Play,
   X,
   PhoneIncoming,

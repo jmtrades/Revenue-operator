@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-interface Benchmark {
+interface _Benchmark {
   metric: string;
   platform_avg: string;
   industry_avg: string;

@@ -1,4 +1,5 @@
 import { getBaseUrl } from "@/lib/runtime/base-url";
+import { ROUTES } from "@/lib/constants";
 
 function getEnv(...keys: string[]): string | null {
   for (const key of keys) {
@@ -31,7 +32,7 @@ export function getGoogleAuthRedirectUri(requestOrigin?: string | null): string 
 }
 
 export function sanitizeNextPath(value: string | null | undefined): string {
-  if (!value || !value.startsWith("/")) return "/app/dashboard";
-  if (value.startsWith("//")) return "/app/dashboard";
+  if (!value || !value.startsWith("/")) return ROUTES.APP_HOME;
+  if (value.startsWith("//")) return ROUTES.APP_HOME;
   return value;
 }

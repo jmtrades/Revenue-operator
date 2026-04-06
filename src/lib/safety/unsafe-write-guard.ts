@@ -12,13 +12,13 @@
 let _AsyncLocalStorage: (new <T>() => { run<R>(ctx: T, fn: () => R): R; getStore(): T | undefined }) | null = null;
 try {
   // Try the node: protocol first (works reliably in Next.js 14+ serverless)
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+   
   const mod = require("node:async_hooks") as { AsyncLocalStorage: typeof _AsyncLocalStorage };
   _AsyncLocalStorage = mod.AsyncLocalStorage;
 } catch {
   try {
     // Fallback: try without node: prefix
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+     
     const mod = require("async_hooks") as { AsyncLocalStorage: typeof _AsyncLocalStorage };
     _AsyncLocalStorage = mod.AsyncLocalStorage;
   } catch {

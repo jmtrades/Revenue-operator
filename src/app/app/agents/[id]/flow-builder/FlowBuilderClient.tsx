@@ -135,6 +135,12 @@ export default function FlowBuilderClient({
   const t = useTranslations("flowBuilder");
 
   useEffect(() => {
+    if (!toast) return;
+    const id = window.setTimeout(() => setToast(null), 5000);
+    return () => window.clearTimeout(id);
+  }, [toast]);
+
+  useEffect(() => {
     fetch(`/api/agents/${agentId}`, { credentials: "include" })
       .then((r) => (r.ok ? r.json() : null))
       .then((agent) => {
@@ -153,6 +159,13 @@ export default function FlowBuilderClient({
   );
 
   const handleSave = useCallback(() => {
+    const start = nodes.find((n) => n.type === "start");
+    const hasEdgeFromStart = start ? edges.some((e) => e.source === start.id) : false;
+    if (!start || edges.length === 0 || !hasEdgeFromStart) {
+      setToast(t("toast.needsConnection"));
+      return;
+    }
+    const hasEndish = nodes.some((n) => n.type === "end_call" || n.type === "book_appointment" || n.type === "transfer");
     setSaving(true);
     setToast(null);
     const flow = serializeFlow(nodes, edges);
@@ -163,7 +176,7 @@ export default function FlowBuilderClient({
       body: JSON.stringify({ conversation_flow: flow }),
     })
       .then((r) => {
-        if (r.ok) setToast(t("toast.saved"));
+        if (r.ok) setToast(hasEndish ? t("toast.saved") : t("toast.savedDraft"));
         else setToast(t("toast.saveFailed"));
       })
       .catch(() => setToast(t("toast.saveFailed")))

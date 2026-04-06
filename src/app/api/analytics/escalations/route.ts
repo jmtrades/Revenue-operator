@@ -9,7 +9,6 @@ export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
-import { getSession } from "@/lib/auth/request-session";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { log } from "@/lib/logger";
 
@@ -45,7 +44,7 @@ export async function GET(req: NextRequest) {
     query = query.gte("created_at", fromDate);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   let rows: any[] | null = null;
   try {
     const result = await query;

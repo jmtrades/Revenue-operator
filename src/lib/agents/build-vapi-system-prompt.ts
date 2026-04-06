@@ -4,6 +4,8 @@
  * Now used by Revenue Operator voice server (previously Vapi).
  */
 
+import { getIndustryConfig, mergeIndustryObjections } from "@/lib/data/industry-objections";
+
 type FaqItem = {
   question?: string;
   answer?: string;
@@ -271,7 +273,6 @@ export function buildVapiSystemPrompt(input: AgentPromptInput): string {
   );
   if (input.industry) {
     try {
-      const { getIndustryConfig, mergeIndustryObjections } = require("@/lib/data/industry-objections");
       const industryConfig = getIndustryConfig(input.industry);
       if (industryConfig) {
         mergedObjections = mergeIndustryObjections(mergedObjections, industryConfig.objections);

@@ -221,7 +221,7 @@ export async function GET(req: NextRequest) {
             `<p>Your Revenue Operator trial has ended.</p>
              <p>You can restore service by upgrading your billing.</p>
              <p><a href="${APP_URL}/app/settings/billing">Upgrade to continue →</a></p>`,
-          ).catch((err) => {
+          ).catch((_err) => {
             // Error (details omitted to protect PII)
           });
         }

@@ -71,7 +71,7 @@ export default function BillingCancelPage() {
         if (!data) return;
         setRenewalAt(typeof data.renewal_at === "string" ? data.renewal_at : null);
       })
-      .catch((err) => { /* silenced */ });
+      .catch((_err) => { /* silenced */ });
 
     return () => controller.abort();
   }, [workspaceId]);

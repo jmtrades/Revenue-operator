@@ -50,8 +50,8 @@ export function getLeadStrategy(
   const state = lead.state || "NEW";
   const score = lead.score ?? 0;
   const isHighValue = score >= 70;
-  const isMediumValue = score >= 40 && score < 70;
-  const isLowValue = score < 40;
+  const _isMediumValue = score >= 40 && score < 70;
+  const _isLowValue = score < 40;
   const hasPreviousContact = previousCallCount > 0;
 
   // Strategy matrix: state → approach

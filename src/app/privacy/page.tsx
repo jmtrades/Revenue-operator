@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { Navbar } from "@/components/sections/Navbar";
+import { MarketingNavbar } from "@/components/sections/MarketingNavbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 
 // Note: Dynamic metadata with translations requires generateMetadata.
 // Static metadata.title/description do not have access to i18n.
 export const metadata: Metadata = {
-  title: "Privacy Policy — Revenue Operator",
+  title: "Privacy Policy",
   description:
     "Revenue Operator Privacy Policy covering data collection, usage, storage, and your rights. Learn how we protect your data and handle personal information.",
 };
@@ -17,7 +17,7 @@ export default async function PrivacyPage() {
   const t = await getTranslations("legal");
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
-      <Navbar />
+      <MarketingNavbar />
       <main className="pt-28 pb-24">
         <Container>
           <article className="max-w-[720px] mx-auto">

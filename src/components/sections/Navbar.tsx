@@ -62,6 +62,10 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
   }, [mobileOpen]);
 
   useEffect(() => {
+    setAuthenticated(initialAuthenticated);
+  }, [initialAuthenticated]);
+
+  useEffect(() => {
     let cancelled = false;
     const refreshAuthState = () => {
       fetch("/api/auth/session", {
@@ -86,7 +90,7 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
     };
   }, [pathname]);
 
-  const desktopPrimaryHref = authenticated ? "/app/dashboard" : ROUTES.START;
+  const desktopPrimaryHref = authenticated ? ROUTES.APP_HOME : ROUTES.START;
   const desktopPrimaryLabel = authenticated ? t("dashboardCta") : t("startFreeCta");
 
   return (

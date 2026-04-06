@@ -122,7 +122,7 @@ export function useDashboardFetch<T = unknown>(
         inflightRef.current = false;
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
     [workspaceId, url, JSON.stringify(params), enabled]
   );
 

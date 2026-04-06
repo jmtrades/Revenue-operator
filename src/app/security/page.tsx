@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Navbar } from "@/components/sections/Navbar";
+import { MarketingNavbar } from "@/components/sections/MarketingNavbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { SectionLabel } from "@/components/ui/SectionLabel";
@@ -8,7 +8,7 @@ import { SectionLabel } from "@/components/ui/SectionLabel";
 const BASE = "https://www.recall-touch.com";
 
 export const metadata: Metadata = {
-  title: "Security — Revenue Operator",
+  title: "Security",
   description: "Enterprise-grade security for your business communications: encryption, access control, rate limiting, and compliance.",
   alternates: { canonical: `${BASE}/security` },
   openGraph: {
@@ -41,7 +41,7 @@ export default function SecurityPage() {
           }),
         }}
       />
-      <Navbar />
+      <MarketingNavbar />
       <main id="main">
         <section className="marketing-section py-20 md:py-28" style={{ background: "var(--bg-primary, #FAFAF8)" }}>
           <Container>
@@ -51,7 +51,11 @@ export default function SecurityPage() {
                 Enterprise-Grade Security for Your Business Communications
               </h1>
               <p className="mt-4 text-base md:text-lg" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
-                Revenue Operator is built for revenue-critical conversations. We protect sessions and data with encryption, isolate tenants with workspace-level controls, enforce rate limits, and design outbound compliance into the workflow.
+                Revenue Operator is built for revenue-critical conversations. We protect sessions and data with encryption, isolate tenants with workspace-level controls, enforce rate limits, and design outbound compliance into the workflow. For a consolidated view of what we implement versus what your organization configures, read the{" "}
+                <Link href="/trust" className="underline underline-offset-2 font-medium" style={{ color: "var(--text-primary)" }}>
+                  Trust Center
+                </Link>
+                .
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-3">
                 <Link

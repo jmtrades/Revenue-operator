@@ -78,7 +78,7 @@ export async function initiateTransfer(
       reason: request.reason,
     });
 
-    const db = getDb();
+    const _db = getDb();
 
     // Store transfer record
     const transferId = `txfr_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;

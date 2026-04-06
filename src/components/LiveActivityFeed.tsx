@@ -47,7 +47,7 @@ interface FeedItem {
 
 export function LiveActivityFeed() {
   const [items, setItems] = useState<FeedItem[]>([]);
-  const [counter, setCounter] = useState(0);
+  const [_counter, setCounter] = useState(0);
 
   const addItem = useCallback(() => {
     setCounter((c) => {

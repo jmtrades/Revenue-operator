@@ -83,7 +83,7 @@ export async function GET(
   const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? req.nextUrl.origin).trim();
   const redirectUri = `${appUrl}${config.redirectUriPath}`;
   const state = createOAuthState(session.workspaceId);
-  let baseAuthUrl = config.authUrl(clientId, encodeURIComponent(redirectUri));
+  const baseAuthUrl = config.authUrl(clientId, encodeURIComponent(redirectUri));
   let authUrl = `${baseAuthUrl}&state=${encodeURIComponent(state)}`;
 
   // Airtable requires PKCE (S256 code challenge)

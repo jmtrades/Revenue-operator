@@ -130,7 +130,7 @@ export default function FunnelPage() {
   const totalUsers = stats?.users?.total ?? 0;
   const totalWorkspaces = stats?.workspaces?.total ?? 0;
   const activeWorkspaces = stats?.workspaces?.active ?? 0;
-  const activationEvents = stats?.activation_events?.total ?? 0;
+  const _activationEvents = stats?.activation_events?.total ?? 0;
 
   // Funnel calculation (simplified for demo)
   const visits = totalUsers * 3; // Assume each user represents ~3 visits
@@ -302,7 +302,7 @@ export default function FunnelPage() {
                   d.setMonth(d.getMonth() - i);
                   return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
                 });
-                return cohortLabels.map((cohort, i) => (
+                return cohortLabels.map((cohort, _i) => (
                   <tr key={cohort} className="border-b" style={{ borderColor: "var(--border-default)" }}>
                     <td className="p-3 font-medium" style={{ color: "var(--text-secondary)" }}>
                       {cohort}

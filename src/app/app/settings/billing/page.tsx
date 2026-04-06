@@ -8,7 +8,12 @@ import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useSearchParams } from "next/navigation";
 import { fetchWorkspaceMeCached, getWorkspaceMeSnapshotSync } from "@/lib/client/workspace-me";
 import { PlanChangeModal, type PlanId } from "@/components/PlanChangeModal";
-import { BILLING_PLANS, type PlanSlug } from "@/lib/billing-plans";
+import {
+  BILLING_PLANS,
+  PLAN_DISPLAY_NAMES,
+  planIdFromBillingTier,
+  planSlugFromUiPlanId,
+} from "@/lib/billing-plans";
 
 interface MinutePack {
   id: string;
@@ -42,6 +47,13 @@ type CancelStep = 0 | 1 | 2 | 3 | 4;
 type PauseStep = 0 | 1;
 
 const defaultUsage = { minutes_used: 0, minutes_limit: 0, calls: 0, leads: 0, estRevenue: 0 };
+
+function formatPlanSubscriptionLine(planId: PlanId): string {
+  const slug = planSlugFromUiPlanId(planId);
+  const label = PLAN_DISPLAY_NAMES[slug];
+  const priceDollars = (BILLING_PLANS[slug]?.monthlyPrice ?? 14700) / 100;
+  return `${label} Plan — $${priceDollars}/mo`;
+}
 
 export default function AppSettingsBillingPage() {
   const tNav = useTranslations("nav");
@@ -189,10 +201,7 @@ export default function AppSettingsBillingPage() {
       }
       if (data.bonus_minutes != null) setBonusMinutes(data.bonus_minutes as number);
       if (data.usage_alert) setUsageAlert(data.usage_alert as UsageAlertData);
-      const tier = ((data.billing_tier as string) ?? "solo").toLowerCase();
-      if (tier === "solo" || tier === "starter") setCurrentPlanId("starter");
-      else if (tier === "growth") setCurrentPlanId("growth");
-      else if (tier === "team" || tier === "scale") setCurrentPlanId("scale");
+      setCurrentPlanId(planIdFromBillingTier((data.billing_tier as string) ?? null));
     } catch {
       setLoading(false);
       setBillingError(true);
@@ -233,7 +242,7 @@ export default function AppSettingsBillingPage() {
       if (!res.ok) {
         let errorMessage = tBilling("toast.pauseFailed");
         try {
-          const data = await res.json() as { message?: string; error?: string } | null;
+          const _data = await res.json() as { message?: string; error?: string } | null;
         } catch {
           // If JSON parsing fails, use a generic message including status code
           if (res.status === 502) {
@@ -375,7 +384,12 @@ export default function AppSettingsBillingPage() {
       <div className="p-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-card)] mb-4">
         {billingStatus !== null ? (
           <>
-            <p className="text-sm font-medium text-[var(--text-primary)]">{tBilling("planDisplay", { plan: String(currentPlanId) === "starter" || String(currentPlanId) === "solo" ? "Starter" : String(currentPlanId) === "growth" || String(currentPlanId) === "business" ? "Growth" : String(currentPlanId) === "scale" ? "Business" : String(currentPlanId) === "enterprise" ? "Agency" : "Starter", price: String(currentPlanId) === "starter" || String(currentPlanId) === "solo" ? "147" : String(currentPlanId) === "growth" || String(currentPlanId) === "business" ? "297" : String(currentPlanId) === "scale" ? "597" : String(currentPlanId) === "enterprise" ? "997" : "147" })}</p>
+            <p className="text-sm font-medium text-[var(--text-primary)]">
+              {tBilling("planDisplay", {
+                plan: PLAN_DISPLAY_NAMES[planSlugFromUiPlanId(currentPlanId)],
+                price: String((BILLING_PLANS[planSlugFromUiPlanId(currentPlanId)]?.monthlyPrice ?? 14700) / 100),
+              })}
+            </p>
             <p className="text-xs text-[var(--text-secondary)] mt-1">
               {tBilling("minutesUsed", { used: usage.minutes_used, limit: usage.minutes_limit })}
             </p>
@@ -392,7 +406,7 @@ export default function AppSettingsBillingPage() {
         ) : billingError ? (
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-[var(--text-primary)]">Starter Plan — $147/mo</p>
+              <p className="text-sm font-medium text-[var(--text-primary)]">{formatPlanSubscriptionLine(currentPlanId)}</p>
               <p className="text-xs text-[var(--text-secondary)] mt-1">Could not load billing details right now.</p>
             </div>
             <button
@@ -405,7 +419,7 @@ export default function AppSettingsBillingPage() {
           </div>
         ) : !loading && !workspaceId ? (
           <div>
-            <p className="text-sm font-medium text-[var(--text-primary)]">Starter Plan — $147/mo</p>
+            <p className="text-sm font-medium text-[var(--text-primary)]">{formatPlanSubscriptionLine(currentPlanId)}</p>
             <p className="text-xs text-[var(--text-secondary)] mt-1">
               <span className="inline-block px-2 py-0.5 rounded-full text-[11px] font-medium bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]">Free Trial</span>
             </p>
@@ -463,7 +477,7 @@ export default function AppSettingsBillingPage() {
               <p className="text-[11px] font-medium text-[var(--accent-primary)]/80 uppercase tracking-wide">Platform ROI</p>
               <p className="text-xs text-[var(--accent-primary)] mt-1.5">
                 {usage.estRevenue > 0 ? (() => {
-                  const planSlug = (String(currentPlanId) === "starter" ? "solo" : String(currentPlanId) === "growth" ? "business" : String(currentPlanId) === "scale" ? "scale" : "solo") as PlanSlug;
+                  const planSlug = planSlugFromUiPlanId(currentPlanId);
                   const monthlyPrice = BILLING_PLANS[planSlug]?.monthlyPrice ?? 14700;
                   const roi = usage.estRevenue / (monthlyPrice / 100);
                   return (
@@ -494,11 +508,13 @@ export default function AppSettingsBillingPage() {
                 <p className="text-[11px] font-medium text-[var(--accent-primary)] uppercase tracking-wide">Cost Per Call</p>
                 <p className="text-xs text-[var(--accent-primary)] mt-1.5">
                   <span className="font-semibold text-[var(--accent-primary)]">
-                    ${(
-                      (String(currentPlanId) === "starter" ? 147 : String(currentPlanId) === "growth" ? 297 : String(currentPlanId) === "scale" ? 597 : 147) / usage.calls
-                    ).toFixed(2)}
+                    ${(() => {
+                      const planSlug = planSlugFromUiPlanId(currentPlanId);
+                      const monthlyDollars = (BILLING_PLANS[planSlug]?.monthlyPrice ?? 14700) / 100;
+                      return (monthlyDollars / Math.max(1, usage.calls)).toFixed(2);
+                    })()}
                   </span>
-                  {" per call handled"}
+                  {" per call handled (plan ÷ calls this period)"}
                 </p>
               </div>
             )}

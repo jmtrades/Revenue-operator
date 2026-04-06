@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getMarketingInitialAuthenticated } from "@/lib/marketing/get-initial-authenticated";
 import IndustriesPageContent from "./IndustriesPageContent";
 
 export const metadata: Metadata = {
@@ -20,6 +21,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function IndustriesPage() {
-  return <IndustriesPageContent />;
+export default async function IndustriesPage() {
+  const initialAuthenticated = await getMarketingInitialAuthenticated();
+  return <IndustriesPageContent initialAuthenticated={initialAuthenticated} />;
 }

@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertCircle, TrendingUp, Clock, CheckCircle2, AlertTriangle, Brain, Zap, Shield, Activity, PauseCircle, Play } from "lucide-react";
-import { Card, CardHeader, CardBody } from "@/components/ui/Card";
+import { AlertCircle, Clock, CheckCircle2, AlertTriangle, Brain, Zap, Shield, Activity, PauseCircle, Play } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 

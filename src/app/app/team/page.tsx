@@ -140,7 +140,7 @@ export default function TeamPage() {
           }))
         );
       })
-      .catch((err) => {
+      .catch((_err) => {
         toast.error(t("errors.fetchTeamFailed"));
       })
       .finally(() => setLoading(false));
@@ -175,7 +175,7 @@ export default function TeamPage() {
           }))
         );
       })
-      .catch((err) => {
+      .catch((_err) => {
         if (!cancelled) toast.error(t("errors.fetchTeamFailed"));
       })
       .finally(() => { if (!cancelled) setLoading(false); });

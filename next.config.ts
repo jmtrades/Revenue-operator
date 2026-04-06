@@ -75,6 +75,8 @@ const nextConfig: NextConfig = {
       { source: "/login", destination: "/sign-in", permanent: true },
       { source: "/signup", destination: "/activate", permanent: true },
       { source: "/register", destination: "/activate", permanent: true },
+      { source: "/privacy-policy", destination: "/privacy", permanent: true },
+      { source: "/start", destination: "/activate", permanent: false },
       { source: "/book-demo", destination: "/demo", permanent: false },
       { source: "/sitemaps.xml", destination: "/sitemap.xml", permanent: true },
     ];
@@ -82,8 +84,16 @@ const nextConfig: NextConfig = {
   // Force new JS chunk hashes every build so browsers don't load stale bundles (fixes #418 from mixed deploys).
   generateBuildId: async () => `build-${Date.now()}`,
   experimental: {
-    // Minimize stale RSC cache (Next 16 requires static >= 30 if set).
+    // Client router cache reuse (Next 16: static must be >= 30 when set).
     staleTimes: { dynamic: 0, static: 30 },
+  },
+  webpack: (config) => {
+    // Sentry → @opentelemetry/instrumentation uses dynamic requires; harmless for our bundle.
+    config.ignoreWarnings = [
+      ...(config.ignoreWarnings ?? []),
+      /Critical dependency: the request of a dependency is an expression/,
+    ];
+    return config;
   },
   images: {
     formats: ["image/avif", "image/webp"],
@@ -114,13 +124,11 @@ const nextConfig: NextConfig = {
       "script-src 'self' 'unsafe-inline'",
     ].join("; ");
 
+    // Do not match `/_next/static`, `/_next/image`, or `favicon.ico` — Next sets cache for hashed assets;
+    // applying `no-store` here would hurt caching and triggers Next's custom Cache-Control warning on /_next/static.
     return [
       {
-        source: "/_next/static/:path*",
-        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
-      },
-      {
-        source: "/:path*",
+        source: "/((?!_next/static|_next/image|favicon.ico).*)",
         headers: [
           { key: "Cache-Control", value: "no-store, must-revalidate" },
           { key: "X-Frame-Options", value: "DENY" },

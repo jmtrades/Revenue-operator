@@ -74,7 +74,7 @@
     "demo": "Demo",
     "docs": "Dokumentation",
     "dashboard": "Übersicht",
-    "dashboardCta": "Dashboard →",
+    "dashboardCta": "App öffnen →",
     "signIn": "Anmelden",
     "startFree": "Jetzt starten",
     "startFreeCta": "Jetzt starten →",
@@ -2089,6 +2089,8 @@
   },
   "analytics": {
     "pageTitle": "Analytik — Revenue Operator",
+    "noWorkspaceTitle": "Kein Workspace",
+    "noWorkspaceDescription": "Wählen oder erstellen Sie einen Workspace, um Analytik zu sehen.",
     "heading": "Analytik",
     "title": "Analytik",
     "periodSummary": {
@@ -3698,6 +3700,10 @@
   "campaigns": {
     "title": "Kampagnen",
     "pageTitle": "Kampagnen — Revenue Operator",
+    "noWorkspace": {
+      "title": "Kein Workspace ausgewählt",
+      "description": "Wählen oder erstellen Sie einen Workspace für Kampagnen."
+    },
     "create": {
       "back": "Back to campaigns",
       "title": "Autonome Kampagne ausführen",
@@ -4352,7 +4358,7 @@
     "activityLog": "Aktivitätsprotokoll",
     "deleteAccountTitle": "Konto löschen",
     "businessPage": {
-      "heading": "Unternehmen",
+      "heading": "Unternehmensdaten",
       "description": "Ihre Unternehmensdaten helfen Ihrer KI, Anrufe präzise zu beantworten.",
       "nameLabel": "Firmenname",
       "namePlaceholder": "z. B. Acme Klempnerei",
@@ -4389,6 +4395,10 @@
       "addMapping": "Zuordnung hinzufügen",
       "loadDefaults": "Standardwerte laden",
       "testWithSampleData": "Mit Beispieldaten testen",
+      "removeMappingTitle": "Diese Zuordnung entfernen?",
+      "removeMappingBody": "Diese Zeile wird aus dem CRM-Feldzuordnung entfernt. Sie können sie später wieder hinzufügen.",
+      "removeMappingConfirm": "Entfernen",
+      "cancelRemove": "Abbrechen",
       "saveMapping": "Zuordnung speichern",
       "saving": "Speichern…",
       "testOutput": "Testergebnis (Beispiel: {name})",
@@ -6085,6 +6095,7 @@
     "contact": "Kontakt",
     "legalSecurity": "Rechtliches & Sicherheit",
     "privacyPolicy": "Datenschutz",
+    "trustCenter": "Trust Center",
     "termsOfService": "Nutzungsbedingungen",
     "securityBadges": "256-Bit-Verschlüsselung · Verschlüsselt im Ruhezustand · DSGVO-konform",
     "copyright": "© {year} Revenue Operator. Alle Rechte vorbehalten.",
@@ -7858,6 +7869,10 @@
     },
     "loading": "Loading appointments...",
     "loadError": "Failed to load appointments",
+    "rateLimited": "Zu viele Anfragen. Bitte kurz warten und erneut versuchen.",
+    "checkingCalendar": "Kalender wird geprüft…",
+    "connectCalendarButton": "Kalender verbinden",
+    "syncCalendarsButton": "Kalender synchronisieren",
     "retry": "Retry",
     "viewCalls": "View Calls",
     "getStartedTitle": "Get started with appointments",
@@ -8367,12 +8382,25 @@
     "calmLine": "Entscheidungen bleiben auf Kurs."
   },
   "demoVoice": {
-    "enterPhone": "Enter your phone number with country code to receive a demo call.",
+    "enterPhone": "Gib deine Nummer mit Ländervorwahl ein, um den Demo-Anruf zu erhalten.",
     "callingNow": "Wir rufen dich gleich an. Nimm ab, um mit dem KI-Agenten zu sprechen.",
     "couldNotStart": "Demo-Anruf konnte nicht gestartet werden. Bitte erneut versuchen.",
     "calling": "Anruf…",
     "callMe": "Ruf mich an",
-    "placeholder": "+1 555 123 4567"
+    "placeholder": "+1 555 123 4567",
+    "consentLabel": "Ich stimme einem automatisierten Demo-Anruf auf diese Nummer zu und akzeptiere die <terms>AGB</terms> und die <privacy>Datenschutzerklärung</privacy>.",
+    "termsLink": "AGB",
+    "privacyLink": "Datenschutzerklärung",
+    "connecting": "Verbinden…",
+    "ringing": "Klingelt…",
+    "callingYou": "Wir rufen an!",
+    "requested": "Angefordert!",
+    "tryAgain": "Erneut versuchen",
+    "callbackFallback": "Wir melden uns gleich mit einer Live-Demo.",
+    "rateLimited": "Zu viele Demo-Versuche. Bitte einige Minuten warten und erneut versuchen.",
+    "consentRequired": "Aktiviere das Einverständnis, um den Demo-Anruf anzufordern.",
+    "trustLine": "Kostenlose Demo. Keine Anmeldung. Ländervorwahl angeben.",
+    "phoneAriaLabel": "Telefonnummer"
   },
   "accessibility": {
     "skipToContent": "Zum Hauptinhalt springen",
@@ -8775,9 +8803,10 @@
       "eventLeadCaptured": "Lead erfasst",
       "eventAppointmentBooked": "Termin gebucht",
       "eventDealAtRisk": "Geschäft gefährdet",
+      "eventDealWon": "Geschäft gewonnen",
       "eventReactivatedLead": "Lead reaktiviert",
       "eventsYouCanSend": "Ereignisse, die Sie senden können",
-      "eventsList": "Lead erfasst, Termin gebucht, Geschäft gefährdet, Geschäft gewonnen und Lead reaktiviert.",
+      "eventsList": "Nutzen Sie die Kontrollkästchen oben für: Lead erfasst, Termin gebucht, Geschäft gefährdet, Geschäft gewonnen und Lead reaktiviert.",
       "retryAttempts": "Wiederholungsversuche",
       "testing": "Teste…",
       "sendTest": "Test senden",
@@ -8916,7 +8945,10 @@
     "toast": {
       "loadFailed": "Fehler beim Laden des Flows.",
       "saved": "Flow gespeichert.",
-      "saveFailed": "Fehler beim Speichern des Flows."
+      "saveFailed": "Fehler beim Speichern des Flows.",
+      "needsConnection": "Verbinde mindestens einen Schritt vom Start, bevor du speicherst.",
+      "needsEndPath": "Füge Knoten und Kanten hinzu, damit Anrufe ein Ende erreichen (z. B. Anruf beenden oder Termin buchen).",
+      "savedDraft": "Flow gespeichert. Fügen Sie vor dem Livegang einen Endknoten hinzu (Anruf beenden, Termin buchen oder Weiterleiten)."
     }
   },
   "api": {

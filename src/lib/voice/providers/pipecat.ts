@@ -110,7 +110,7 @@ export class PipecatVoiceProvider implements VoiceProvider {
 
     const serverWsBase = this.requireServerUrl();
 
-    const twiml = `<?xml version="1.0" encoding="UTF-8"?>
+    const _twiml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
   <Connect>
     <Stream url="${escapeXml(`${serverWsBase}/ws/conversation`)}">

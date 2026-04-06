@@ -73,6 +73,7 @@ export const CRM_FIELDS_BY_PROVIDER: Record<CrmProviderId, FieldDef[]> = {
     { key: "source", label: "Source", type: "string" },
   ],
   google_contacts: [
+    { key: "names.displayName", label: "Display name", type: "string" },
     { key: "names.givenName", label: "First Name", type: "string" },
     { key: "names.familyName", label: "Last Name", type: "string" },
     { key: "emailAddresses.value", label: "Email", type: "email" },
@@ -119,21 +120,21 @@ export interface FieldMappingConfig {
 export function getDefaultMappings(provider: CrmProviderId): MapEntry[] {
   const defaults: Record<CrmProviderId, MapEntry[]> = {
     salesforce: [
-      { rtField: "name", crmField: "LastName", transformation: "none" },
+      { rtField: "name", crmField: "FirstName", transformation: "none" },
       { rtField: "email", crmField: "Email", transformation: "none" },
       { rtField: "phone", crmField: "Phone", transformation: "format_phone" },
       { rtField: "company", crmField: "Company", transformation: "none" },
       { rtField: "state", crmField: "Status", transformation: "map_status", statusMap: { NEW: "Open", CONTACTED: "Contacted", QUALIFIED: "Qualified", WON: "Closed Won", LOST: "Closed Lost" } },
     ],
     hubspot: [
-      { rtField: "name", crmField: "lastname", transformation: "none" },
+      { rtField: "name", crmField: "firstname", transformation: "none" },
       { rtField: "email", crmField: "email", transformation: "none" },
       { rtField: "phone", crmField: "phone", transformation: "format_phone" },
       { rtField: "company", crmField: "company", transformation: "none" },
       { rtField: "state", crmField: "lead_status", transformation: "map_status", statusMap: { NEW: "NEW", CONTACTED: "OPEN", QUALIFIED: "OPEN", WON: "WON", LOST: "LOST" } },
     ],
     zoho_crm: [
-      { rtField: "name", crmField: "Last_Name", transformation: "none" },
+      { rtField: "name", crmField: "First_Name", transformation: "none" },
       { rtField: "email", crmField: "Email", transformation: "none" },
       { rtField: "phone", crmField: "Phone", transformation: "format_phone" },
       { rtField: "company", crmField: "Company", transformation: "none" },
@@ -147,19 +148,19 @@ export function getDefaultMappings(provider: CrmProviderId): MapEntry[] {
       { rtField: "state", crmField: "status", transformation: "map_status", statusMap: { NEW: "open", CONTACTED: "open", QUALIFIED: "won", WON: "won", LOST: "lost" } },
     ],
     gohighlevel: [
-      { rtField: "name", crmField: "lastName", transformation: "none" },
+      { rtField: "name", crmField: "firstName", transformation: "none" },
       { rtField: "email", crmField: "email", transformation: "none" },
       { rtField: "phone", crmField: "phone", transformation: "format_phone" },
       { rtField: "company", crmField: "companyName", transformation: "none" },
     ],
     google_contacts: [
-      { rtField: "name", crmField: "names.familyName", transformation: "none" },
+      { rtField: "name", crmField: "names.displayName", transformation: "none" },
       { rtField: "email", crmField: "emailAddresses.value", transformation: "none" },
       { rtField: "phone", crmField: "phoneNumbers.value", transformation: "format_phone" },
       { rtField: "company", crmField: "organizations.name", transformation: "none" },
     ],
     microsoft_365: [
-      { rtField: "name", crmField: "surname", transformation: "none" },
+      { rtField: "name", crmField: "givenName", transformation: "none" },
       { rtField: "email", crmField: "mail", transformation: "none" },
       { rtField: "phone", crmField: "mobilePhone", transformation: "format_phone" },
       { rtField: "company", crmField: "companyName", transformation: "none" },

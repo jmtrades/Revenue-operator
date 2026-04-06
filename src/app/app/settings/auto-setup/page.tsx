@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { ChevronDown, RefreshCw, Check, AlertCircle } from "lucide-react";
-import Link from "next/link";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 interface KnowledgeStats {

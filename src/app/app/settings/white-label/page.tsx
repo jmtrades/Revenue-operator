@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
 import { toast } from "sonner";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
@@ -326,6 +325,8 @@ export default function WhiteLabelSettingsPage() {
               {/* Logo Preview */}
               <div className="bg-[var(--bg-inset)] rounded-lg p-4 h-24 flex items-center justify-center border border-[var(--border-default)]">
                 {config.logo_url ? (
+                  // Arbitrary user URL — next/image would require remotePatterns for every host; preview only.
+                  // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={config.logo_url}
                     alt="Logo"

@@ -14,7 +14,6 @@ import {
   Bell,
   Building2,
   ChevronRight,
-  Circle,
   Code,
   CreditCard,
   History,

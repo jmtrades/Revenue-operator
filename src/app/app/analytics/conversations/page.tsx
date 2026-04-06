@@ -6,25 +6,19 @@ import {
   Pie,
   Cell,
   ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
   Tooltip,
-  Legend,
 } from "recharts";
 import {
   TrendingUp,
   MessageSquare,
   Clock,
-  BarChart3,
   Zap,
   ThumbsUp,
   ThumbsDown,
   AlertCircle,
   Sparkles,
 } from "lucide-react";
-import { apiFetch, ApiError } from "@/lib/api";
+import { apiFetch } from "@/lib/api";
 
 type DateRange = "7d" | "30d" | "90d";
 
