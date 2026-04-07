@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const pageRes = await fetch(url);
+    const pageRes = await fetch(url, { signal: AbortSignal.timeout(15_000) });
     if (!pageRes.ok) {
       return NextResponse.json(
         { error: "Failed to fetch the URL. Please check the link and try again." },
@@ -56,6 +56,7 @@ export async function POST(req: NextRequest) {
 
     const claudeRes = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
+      signal: AbortSignal.timeout(30_000),
       headers: {
         "x-api-key": apiKey,
         "content-type": "application/json",

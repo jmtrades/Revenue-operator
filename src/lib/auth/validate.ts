@@ -39,6 +39,28 @@ export function normalizeBusinessName(input: unknown): string {
   return trimmed.slice(0, MAX_BUSINESS_NAME);
 }
 
+// ---------------------------------------------------------------------------
+// Workspace / UUID validation
+// ---------------------------------------------------------------------------
+
+const UUID_V4_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * Validate a workspace_id (or any UUID) is a well-formed v4 UUID.
+ * Returns the normalised (lowercased) UUID or an error message.
+ */
+export function validateWorkspaceId(id: unknown): { ok: true; value: string } | { ok: false; error: string } {
+  if (!id || typeof id !== "string") return { ok: false, error: "workspace_id is required" };
+  const trimmed = id.trim().toLowerCase();
+  if (!UUID_V4_REGEX.test(trimmed)) return { ok: false, error: "workspace_id must be a valid UUID" };
+  return { ok: true, value: trimmed };
+}
+
+/** Quick boolean helper when you just need a guard check. */
+export function isValidUUID(id: unknown): id is string {
+  return typeof id === "string" && UUID_V4_REGEX.test(id.trim());
+}
+
 /**
  * Map Supabase/auth errors to user-friendly messages (same for all users).
  */

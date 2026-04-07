@@ -32,6 +32,7 @@ export async function analyzeTranscriptForAnalytics(transcript: string): Promise
   try {
     const res = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
+      signal: AbortSignal.timeout(30_000),
       headers: {
         "Content-Type": "application/json",
         "x-api-key": apiKey,

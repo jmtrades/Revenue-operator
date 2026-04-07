@@ -15,6 +15,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/queries";
 import { log } from "@/lib/logger";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { createHmac, timingSafeEqual } from "crypto";
 
 interface SearchKnowledgeBody {
   workspace_id: string;
@@ -78,13 +79,51 @@ function scoreRelevance(query: string, content: string): number {
   return Math.min(1, overlapScore * 0.6 + exactPhraseBonus);
 }
 
+/**
+ * Verify HMAC signature from the voice server.
+ * Falls back to CSRF-only in local dev when no secret is configured.
+ */
+function verifyVoiceServerSignature(body: string, signature: string | null): boolean {
+  const secret = process.env.VOICE_WEBHOOK_SECRET;
+  if (!secret) {
+    const isDeployed = Boolean(process.env.VERCEL_ENV) || process.env.NODE_ENV === "production";
+    if (isDeployed) {
+      log("error", "voice.search_knowledge.secret_not_configured", {
+        message: "rejecting request — VOICE_WEBHOOK_SECRET must be set in all deployed environments",
+      });
+      return false;
+    }
+    return true; // local dev only
+  }
+  if (!signature) return false;
+  const expected = createHmac("sha256", secret).update(body, "utf-8").digest("hex");
+  if (expected.length !== signature.length) return false;
+  try {
+    return timingSafeEqual(Buffer.from(expected, "utf-8"), Buffer.from(signature, "utf-8"));
+  } catch {
+    return false;
+  }
+}
+
 export async function POST(req: NextRequest) {
-  const csrfBlock = assertSameOrigin(req);
-  if (csrfBlock) return csrfBlock;
+  // Accept requests from voice server (HMAC) OR same-origin browser (CSRF).
+  const sig = req.headers.get("x-voice-webhook-signature");
+  const bodyText = await req.text();
+
+  if (sig) {
+    // Voice server path: verify HMAC
+    if (!verifyVoiceServerSignature(bodyText, sig)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  } else {
+    // Browser path: verify CSRF
+    const csrfBlock = assertSameOrigin(req);
+    if (csrfBlock) return csrfBlock;
+  }
 
   let payload: SearchKnowledgeBody;
   try {
-    payload = (await req.json()) as SearchKnowledgeBody;
+    payload = JSON.parse(bodyText) as SearchKnowledgeBody;
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }

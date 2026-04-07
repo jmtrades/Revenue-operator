@@ -81,6 +81,8 @@ const nextConfig: NextConfig = {
       { source: "/sitemaps.xml", destination: "/sitemap.xml", permanent: true },
     ];
   },
+  // Allow overriding build output dir via env (used in CI/sandbox builds where .next is read-only).
+  ...(process.env.NEXT_DIST_DIR ? { distDir: process.env.NEXT_DIST_DIR } : {}),
   // Force new JS chunk hashes every build so browsers don't load stale bundles (fixes #418 from mixed deploys).
   generateBuildId: async () => `build-${Date.now()}`,
   experimental: {

@@ -88,6 +88,7 @@ export async function POST(req: NextRequest) {
   try {
     const res = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
+      signal: AbortSignal.timeout(30_000),
       headers: {
         "Content-Type": "application/json",
         "x-api-key": apiKey,

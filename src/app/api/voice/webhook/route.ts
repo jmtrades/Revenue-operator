@@ -58,13 +58,16 @@ interface VoiceWebhookBody {
 function verifyWebhookSignature(body: string, signature: string): boolean {
   const secret = process.env.VOICE_WEBHOOK_SECRET;
   if (!secret) {
-    // Fail closed in production — reject all requests when secret is not configured
-    const isProduction = process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production";
-    if (isProduction) {
-      log("error", "voice_webhook.secret_not_configured", { message: "rejecting webhook — VOICE_WEBHOOK_SECRET must be set in production" });
+    // Fail closed in ANY deployed environment — only skip locally (no VERCEL_ENV at all).
+    const isDeployed = Boolean(process.env.VERCEL_ENV) || process.env.NODE_ENV === "production";
+    if (isDeployed) {
+      log("error", "voice_webhook.secret_not_configured", {
+        message: "rejecting webhook — VOICE_WEBHOOK_SECRET must be set in all deployed environments",
+        vercel_env: process.env.VERCEL_ENV ?? "unset",
+      });
       return false;
     }
-    log("warn", "voice_webhook.secret_not_configured", { message: "skipping signature verification in development" });
+    log("warn", "voice_webhook.secret_not_configured", { message: "skipping signature verification in local development only" });
     return true;
   }
 
