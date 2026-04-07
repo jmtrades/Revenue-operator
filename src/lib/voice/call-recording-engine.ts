@@ -306,6 +306,7 @@ async function enhanceTranscriptWithClaude(
   try {
     const resp = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
+      signal: AbortSignal.timeout(30_000),
       headers: {
         "x-api-key": apiKey,
         "anthropic-version": "2023-06-01",

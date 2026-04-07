@@ -67,6 +67,7 @@ export async function GET(req: NextRequest) {
 
     const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
+      signal: AbortSignal.timeout(10_000),
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: tokenBody.toString(),
     });
@@ -81,6 +82,7 @@ export async function GET(req: NextRequest) {
     }
 
     const userRes = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
+      signal: AbortSignal.timeout(10_000),
       headers: { Authorization: `Bearer ${tokenJson.access_token}` },
     });
     if (!userRes.ok) {

@@ -71,19 +71,24 @@ export async function POST(req: NextRequest) {
     const hasToken = Boolean(process.env.TWILIO_AUTH_TOKEN);
     const url = `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/twilio/voice`;
 
-    if (process.env.NODE_ENV === "production") {
-      // In production we require both a token and a valid signature.
+    // Require signature verification in ALL deployed environments (production + preview).
+    // Only skip when running purely locally (no VERCEL_ENV set AND NODE_ENV !== "production").
+    const isDeployed = Boolean(process.env.VERCEL_ENV) || process.env.NODE_ENV === "production";
+
+    if (isDeployed) {
+      // In any deployed environment we require both a token and a valid signature.
       if (!hasToken || !sig || !verifyTwilioSignatureFlexible(entries, sig)) {
         log("warn", "twilio-voice.signature-verification-failed", {
           hasToken,
           hasSig: !!sig,
           url,
           callSid: entries.CallSid ?? "unknown",
+          vercel_env: process.env.VERCEL_ENV ?? "unset",
         });
         return new NextResponse("Invalid signature", { status: 401 });
       }
     } else if (sig && hasToken) {
-      // In non-production, verify when signature is present but don't require it
+      // In local dev, verify when signature is present but don't require it
       if (!verifyTwilioSignatureFlexible(entries, sig)) {
         return new NextResponse("Invalid signature", { status: 403 });
       }
