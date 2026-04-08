@@ -108,7 +108,10 @@ export async function POST(req: NextRequest) {
   let rawBody: unknown;
   try {
     rawBody = await req.json();
-  } catch {
+  } catch (parseErr) {
+    log("warn", "demo_call.json_parse_failed", {
+      error: parseErr instanceof Error ? parseErr.message : String(parseErr),
+    });
     return NextResponse.json({ ok: false, error: "Invalid request." }, { status: 400 });
   }
 
