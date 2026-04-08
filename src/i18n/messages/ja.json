@@ -445,7 +445,30 @@
         "reauthenticate": "再認証"
       },
       "hub": {
-        "needHelp": "Need help with integrations?"
+        "needHelp": "Need help with integrations?",
+        "syncHealthTitle": "[JA] Sync Health Summary",
+        "syncHealthConnected": "[JA] Connected",
+        "syncHealthRecordsSynced": "[JA] Records Synced",
+        "syncHealthSyncErrors": "[JA] Sync Errors",
+        "whatsappBusinessApiLink": "[JA] Learn about WhatsApp Business API →",
+        "whatGetsSynced": "[JA] What gets synced?",
+        "newLeadsAutoSync": "[JA] New leads auto-sync to operator system",
+        "callOutcomesPushed": "[JA] Call outcomes pushed back to CRM",
+        "appointmentsSynced": "[JA] Appointments synced both ways",
+        "contactUpdatesSync": "[JA] Contact updates stay in sync",
+        "connectsQuickly": "[JA] Connects in 30 seconds · Data stays encrypted · Disconnect anytime",
+        "unlocksFeatures": "[JA] Unlocks: automatic availability, appointment booking, calendar sync, and meeting reminders for your leads.",
+        "statusLoading": "[JA] Loading",
+        "statusConnected": "[JA] Connected",
+        "statusComingSoon": "[JA] Coming Soon",
+        "statusNotConnected": "[JA] Not Connected",
+        "labelRecordsSynced": "[JA] Records synced:",
+        "labelLastSync": "[JA] Last sync:",
+        "breadcrumbHome": "[JA] Home",
+        "breadcrumbIntegrations": "[JA] Integrations",
+        "placeholderSearchIntegrations": "[JA] Search integrations...",
+        "emptyStateHeading": "[JA] No integrations found",
+        "emptyStateMessage": "[JA] Try adjusting your search query"
       }
     },
     "settings": {
@@ -3340,11 +3363,29 @@
       "bargeIn": "割り込み",
       "liveTranscript": "ライブ文字起こし",
       "noTranscript": "— まだ文字起こしなし —",
-      "sentiment": "感情: —",
+      "sentiment": {
+        "analyzing": "[JA] Analyzing…",
+        "positive": "[JA] Positive",
+        "neutral": "[JA] Neutral",
+        "negative": "[JA] Negative"
+      },
       "emergencyTakeover": "緊急引き継ぎ",
       "listenInComingSoon": "サイレントでのモニタリング機能はまもなく利用可能になります。",
       "whisperComingSoon": "ウィスパーモードはまもなく利用可能になります。",
-      "bargeInComingSoon": "通話への割り込み機能はまもなく利用可能になります。"
+      "bargeInComingSoon": "通話への割り込み機能はまもなく利用可能になります。",
+      "errors": {
+        "updateFailed": "[JA] Failed to update call"
+      },
+      "toast": {
+        "transferSuccess": "[JA] Call transferred to fallback number"
+      },
+      "controls": {
+        "mute": "[JA] Mute",
+        "unmute": "[JA] Unmute",
+        "hold": "[JA] Hold",
+        "resume": "[JA] Resume",
+        "transfer": "[JA] Transfer"
+      }
     },
     "emptyDescription": "Empty description",
     "emptyTitle": "Empty title",
@@ -3567,7 +3608,12 @@
     "messageSent": "Message sent",
     "messageFailed": "Failed to send message",
     "loadFailed": "Failed to load messages",
-    "sendFailed": "Failed to send message. Please try again."
+    "sendFailed": "Failed to send message. Please try again.",
+    "liveChat": {
+      "noSessions": "[JA] No active chat sessions",
+      "noSessionsHint": "[JA] Chat sessions will appear here when visitors connect",
+      "noMessages": "[JA] No messages yet. Start the conversation!"
+    }
   },
   "leads": {
     "title": "リード",
@@ -4567,7 +4613,25 @@
       "objectionsSectionTitle": "Objection Handling",
       "objectionsSectionDescription": "Pre-built responses to common objections",
       "objectionsLabel": "Objection/Response Pairs",
-      "addButton": "+ Add"
+      "addButton": "+ Add",
+      "businessContextSectionTitle": "[JA] Business Context",
+      "businessContextSectionDescription": "[JA] Industry, goals, and target audience",
+      "industryLabel": "[JA] Industry",
+      "industryPlaceholder": "[JA] e.g., Real Estate, SaaS, Healthcare",
+      "servicesOfferedLabel": "[JA] Services Offered",
+      "servicesOfferedPlaceholder": "[JA] e.g., Property sales, Real estate consulting, Home valuation",
+      "primaryGoalLabel": "[JA] Primary Goal",
+      "primaryGoalPlaceholder": "[JA] e.g., Generate qualified leads, Schedule property viewings",
+      "uniqueSellingPointsLabel": "[JA] Unique Selling Points",
+      "uniqueSellingPointsPlaceholder": "[JA] e.g., 20 years of experience, Award-winning service, Local market expertise",
+      "targetAudienceLabel": "[JA] Target Audience",
+      "targetAudiencePlaceholder": "[JA] e.g., First-time homebuyers, Real estate investors",
+      "aiAdaptiveLabel": "[JA] AI-adaptive",
+      "aiTunedLabel": "[JA] AI-tuned",
+      "toneAdaptationHint": "[JA] Sets the base tone. Your AI operator adapts in real-time based on caller sentiment during each conversation.",
+      "escalationAdaptationHint": "[JA] Your AI operator continuously adjusts escalation behavior based on call outcomes and sentiment analysis.",
+      "addCustomActionPlaceholder": "[JA] Add custom action",
+      "addButtonText": "[JA] Add"
     },
     "syncLog": {
       "breadcrumb": "同期ログ",
@@ -4743,6 +4807,35 @@
     },
     "error": {
       "generic": "An unexpected error occurred. Please try again."
+    },
+    "communication": {
+      "pageTitle": "[JA] Communication & Agent Mode",
+      "pageSubtitle": "[JA] Configure how your AI operator communicates with contacts",
+      "channels": {
+        "title": "[JA] Communication Channels",
+        "phone": "[JA] Phone Calls",
+        "phoneDesc": "[JA] Allow agent to make incoming/outgoing phone calls",
+        "sms": "[JA] SMS Messages",
+        "smsDesc": "[JA] Allow agent to send and receive SMS text messages",
+        "email": "[JA] Email",
+        "emailDesc": "[JA] Allow agent to send and receive emails"
+      },
+      "operatingMode": {
+        "title": "[JA] Agent Operating Mode"
+      },
+      "defaultPreferences": {
+        "title": "[JA] Default Contact Preferences"
+      }
+    },
+    "chatWidget": {
+      "title": "[JA] Live Chat Widget",
+      "description": "[JA] Configure and customize your live chat widget for your website",
+      "previewMessage": "[JA] Enable the widget above to see a live preview",
+      "setupTitle": "[JA] How to Use",
+      "setupStep1": "[JA] Copy the embed code above",
+      "setupStep2": "[JA] Paste it into your website HTML",
+      "setupStep3": "[JA] The widget will load automatically",
+      "setupStep4": "[JA] Visitors can start chatting right away"
     }
   },
   "hero": {
@@ -8250,7 +8343,12 @@
       "getStartedLabel": "Get started today",
       "mostPopular": "Most Popular",
       "selected": "Selected"
-    }
+    },
+    "verifyEmailRequired": "[JA] Verify your email to continue",
+    "verifyEmailDesc": "[JA] We sent a verification link to {email}. Please check your inbox and click the link to verify your account.",
+    "resendVerification": "[JA] Resend verification email",
+    "verificationResent": "[JA] Verification email sent!",
+    "checkVerification": "[JA] I've verified my email"
   },
   "onboard": {
     "complete": {
@@ -9453,7 +9551,43 @@
       "loadFailed": "業種テンプレートの読み込みに失敗しました",
       "loadError": "テンプレートの読み込みエラー",
       "copied": "クリップボードにコピーしました",
-      "copyFailed": "コピーに失敗しました"
+      "copyFailed": "コピーに失敗しました",
+      "templateApplied": "[JA] Template applied successfully! Your operator has been updated.",
+      "applyFailed": "[JA] Failed to apply template",
+      "applyError": "[JA] An error occurred while applying the template"
+    },
+    "status": {
+      "applied": "[JA] Applied",
+      "applying": "[JA] Applying..."
+    },
+    "button": {
+      "applyToOperator": "[JA] Apply to Operator"
+    },
+    "section": {
+      "defaultGreeting": "[JA] Default Greeting",
+      "callScripts": "[JA] Call Scripts ({count})",
+      "faq": "[JA] FAQ ({count} items)",
+      "followUpCadence": "[JA] Follow-up Cadence ({count} sequences)",
+      "recommendedFeatures": "[JA] Recommended Features",
+      "apiAccess": "[JA] API Access",
+      "apiDocumentation": "[JA] API Documentation"
+    },
+    "tooltip": {
+      "copyGreeting": "[JA] Copy greeting",
+      "copyScript": "[JA] Copy script"
+    },
+    "trigger": "[JA] Trigger: {trigger}",
+    "triggers": "[JA] Triggers: {list}",
+    "api": {
+      "getSingleTemplate": "[JA] GET single template:",
+      "getAllTemplates": "[JA] Get all templates:",
+      "viewInBrowser": "[JA] View in browser:",
+      "openEndpoint": "[JA] Open API endpoint"
+    },
+    "dialog": {
+      "heading": "[JA] Apply Template?",
+      "cancel": "[JA] Cancel",
+      "apply": "[JA] Apply"
     }
   },
   "sidebar": {

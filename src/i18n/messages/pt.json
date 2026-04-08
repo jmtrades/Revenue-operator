@@ -445,7 +445,30 @@
         "reauthenticate": "Reautenticar"
       },
       "hub": {
-        "needHelp": "Need help with integrations?"
+        "needHelp": "Need help with integrations?",
+        "syncHealthTitle": "[PT] Sync Health Summary",
+        "syncHealthConnected": "[PT] Connected",
+        "syncHealthRecordsSynced": "[PT] Records Synced",
+        "syncHealthSyncErrors": "[PT] Sync Errors",
+        "whatsappBusinessApiLink": "[PT] Learn about WhatsApp Business API →",
+        "whatGetsSynced": "[PT] What gets synced?",
+        "newLeadsAutoSync": "[PT] New leads auto-sync to operator system",
+        "callOutcomesPushed": "[PT] Call outcomes pushed back to CRM",
+        "appointmentsSynced": "[PT] Appointments synced both ways",
+        "contactUpdatesSync": "[PT] Contact updates stay in sync",
+        "connectsQuickly": "[PT] Connects in 30 seconds · Data stays encrypted · Disconnect anytime",
+        "unlocksFeatures": "[PT] Unlocks: automatic availability, appointment booking, calendar sync, and meeting reminders for your leads.",
+        "statusLoading": "[PT] Loading",
+        "statusConnected": "[PT] Connected",
+        "statusComingSoon": "[PT] Coming Soon",
+        "statusNotConnected": "[PT] Not Connected",
+        "labelRecordsSynced": "[PT] Records synced:",
+        "labelLastSync": "[PT] Last sync:",
+        "breadcrumbHome": "[PT] Home",
+        "breadcrumbIntegrations": "[PT] Integrations",
+        "placeholderSearchIntegrations": "[PT] Search integrations...",
+        "emptyStateHeading": "[PT] No integrations found",
+        "emptyStateMessage": "[PT] Try adjusting your search query"
       }
     },
     "settings": {
@@ -3340,11 +3363,29 @@
       "bargeIn": "Intervir",
       "liveTranscript": "Transcrição ao vivo",
       "noTranscript": "— Ainda sem transcrição —",
-      "sentiment": "Sentimento: —",
+      "sentiment": {
+        "analyzing": "[PT] Analyzing…",
+        "positive": "[PT] Positive",
+        "neutral": "[PT] Neutral",
+        "negative": "[PT] Negative"
+      },
       "emergencyTakeover": "Tomada de emergência",
       "listenInComingSoon": "A escuta silenciosa estará disponível em breve.",
       "whisperComingSoon": "O modo sussurro estará disponível em breve.",
-      "bargeInComingSoon": "A intervenção direta estará disponível em breve."
+      "bargeInComingSoon": "A intervenção direta estará disponível em breve.",
+      "errors": {
+        "updateFailed": "[PT] Failed to update call"
+      },
+      "toast": {
+        "transferSuccess": "[PT] Call transferred to fallback number"
+      },
+      "controls": {
+        "mute": "[PT] Mute",
+        "unmute": "[PT] Unmute",
+        "hold": "[PT] Hold",
+        "resume": "[PT] Resume",
+        "transfer": "[PT] Transfer"
+      }
     },
     "emptyDescription": "Empty description",
     "emptyTitle": "Empty title",
@@ -3567,7 +3608,12 @@
     "messageSent": "Message sent",
     "messageFailed": "Failed to send message",
     "loadFailed": "Failed to load messages",
-    "sendFailed": "Failed to send message. Please try again."
+    "sendFailed": "Failed to send message. Please try again.",
+    "liveChat": {
+      "noSessions": "[PT] No active chat sessions",
+      "noSessionsHint": "[PT] Chat sessions will appear here when visitors connect",
+      "noMessages": "[PT] No messages yet. Start the conversation!"
+    }
   },
   "leads": {
     "title": "Leads",
@@ -4567,7 +4613,25 @@
       "objectionsSectionTitle": "Objection Handling",
       "objectionsSectionDescription": "Pre-built responses to common objections",
       "objectionsLabel": "Objection/Response Pairs",
-      "addButton": "+ Add"
+      "addButton": "+ Add",
+      "businessContextSectionTitle": "[PT] Business Context",
+      "businessContextSectionDescription": "[PT] Industry, goals, and target audience",
+      "industryLabel": "[PT] Industry",
+      "industryPlaceholder": "[PT] e.g., Real Estate, SaaS, Healthcare",
+      "servicesOfferedLabel": "[PT] Services Offered",
+      "servicesOfferedPlaceholder": "[PT] e.g., Property sales, Real estate consulting, Home valuation",
+      "primaryGoalLabel": "[PT] Primary Goal",
+      "primaryGoalPlaceholder": "[PT] e.g., Generate qualified leads, Schedule property viewings",
+      "uniqueSellingPointsLabel": "[PT] Unique Selling Points",
+      "uniqueSellingPointsPlaceholder": "[PT] e.g., 20 years of experience, Award-winning service, Local market expertise",
+      "targetAudienceLabel": "[PT] Target Audience",
+      "targetAudiencePlaceholder": "[PT] e.g., First-time homebuyers, Real estate investors",
+      "aiAdaptiveLabel": "[PT] AI-adaptive",
+      "aiTunedLabel": "[PT] AI-tuned",
+      "toneAdaptationHint": "[PT] Sets the base tone. Your AI operator adapts in real-time based on caller sentiment during each conversation.",
+      "escalationAdaptationHint": "[PT] Your AI operator continuously adjusts escalation behavior based on call outcomes and sentiment analysis.",
+      "addCustomActionPlaceholder": "[PT] Add custom action",
+      "addButtonText": "[PT] Add"
     },
     "syncLog": {
       "breadcrumb": "Registo de sincronização",
@@ -4743,6 +4807,35 @@
     },
     "error": {
       "generic": "An unexpected error occurred. Please try again."
+    },
+    "communication": {
+      "pageTitle": "[PT] Communication & Agent Mode",
+      "pageSubtitle": "[PT] Configure how your AI operator communicates with contacts",
+      "channels": {
+        "title": "[PT] Communication Channels",
+        "phone": "[PT] Phone Calls",
+        "phoneDesc": "[PT] Allow agent to make incoming/outgoing phone calls",
+        "sms": "[PT] SMS Messages",
+        "smsDesc": "[PT] Allow agent to send and receive SMS text messages",
+        "email": "[PT] Email",
+        "emailDesc": "[PT] Allow agent to send and receive emails"
+      },
+      "operatingMode": {
+        "title": "[PT] Agent Operating Mode"
+      },
+      "defaultPreferences": {
+        "title": "[PT] Default Contact Preferences"
+      }
+    },
+    "chatWidget": {
+      "title": "[PT] Live Chat Widget",
+      "description": "[PT] Configure and customize your live chat widget for your website",
+      "previewMessage": "[PT] Enable the widget above to see a live preview",
+      "setupTitle": "[PT] How to Use",
+      "setupStep1": "[PT] Copy the embed code above",
+      "setupStep2": "[PT] Paste it into your website HTML",
+      "setupStep3": "[PT] The widget will load automatically",
+      "setupStep4": "[PT] Visitors can start chatting right away"
     }
   },
   "hero": {
@@ -8250,7 +8343,12 @@
       "getStartedLabel": "Get started today",
       "mostPopular": "Most Popular",
       "selected": "Selected"
-    }
+    },
+    "verifyEmailRequired": "[PT] Verify your email to continue",
+    "verifyEmailDesc": "[PT] We sent a verification link to {email}. Please check your inbox and click the link to verify your account.",
+    "resendVerification": "[PT] Resend verification email",
+    "verificationResent": "[PT] Verification email sent!",
+    "checkVerification": "[PT] I've verified my email"
   },
   "onboard": {
     "complete": {
@@ -9453,7 +9551,43 @@
       "loadFailed": "Falha ao carregar modelos do setor",
       "loadError": "Erro ao carregar modelos",
       "copied": "Copiado para a área de transferência",
-      "copyFailed": "Falha ao copiar"
+      "copyFailed": "Falha ao copiar",
+      "templateApplied": "[PT] Template applied successfully! Your operator has been updated.",
+      "applyFailed": "[PT] Failed to apply template",
+      "applyError": "[PT] An error occurred while applying the template"
+    },
+    "status": {
+      "applied": "[PT] Applied",
+      "applying": "[PT] Applying..."
+    },
+    "button": {
+      "applyToOperator": "[PT] Apply to Operator"
+    },
+    "section": {
+      "defaultGreeting": "[PT] Default Greeting",
+      "callScripts": "[PT] Call Scripts ({count})",
+      "faq": "[PT] FAQ ({count} items)",
+      "followUpCadence": "[PT] Follow-up Cadence ({count} sequences)",
+      "recommendedFeatures": "[PT] Recommended Features",
+      "apiAccess": "[PT] API Access",
+      "apiDocumentation": "[PT] API Documentation"
+    },
+    "tooltip": {
+      "copyGreeting": "[PT] Copy greeting",
+      "copyScript": "[PT] Copy script"
+    },
+    "trigger": "[PT] Trigger: {trigger}",
+    "triggers": "[PT] Triggers: {list}",
+    "api": {
+      "getSingleTemplate": "[PT] GET single template:",
+      "getAllTemplates": "[PT] Get all templates:",
+      "viewInBrowser": "[PT] View in browser:",
+      "openEndpoint": "[PT] Open API endpoint"
+    },
+    "dialog": {
+      "heading": "[PT] Apply Template?",
+      "cancel": "[PT] Cancel",
+      "apply": "[PT] Apply"
     }
   },
   "sidebar": {
