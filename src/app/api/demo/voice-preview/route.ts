@@ -430,7 +430,6 @@ export async function GET(req: NextRequest) {
     log("info", "voice_preview.providers", {
       hasVoiceServer: !!voiceServerUrl,
       hasDeepgram: !!deepgramApiKey,
-      deepgramKeyLength: deepgramApiKey?.length ?? 0,
       voiceId,
     });
 
@@ -534,8 +533,6 @@ export async function GET(req: NextRequest) {
         debug: {
           hasVoiceServer: !!voiceServerUrl,
           hasDeepgram: !!deepgramApiKey,
-          deepgramKeyLength: deepgramApiKey?.length ?? 0,
-          errors,
         },
       },
       { status: 503 }

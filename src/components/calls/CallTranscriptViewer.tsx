@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Bot, User, Search, Clock, MessageSquare } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { apiFetch, ApiError } from "@/lib/api";
 import { cn } from "@/lib/cn";
 
@@ -93,6 +94,7 @@ export default function CallTranscriptViewer({
   const [matchCount, setMatchCount] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const hasSearched = searchQuery.trim().length > 0;
+  const t = useTranslations("callTranscript");
 
   useEffect(() => {
     if (initialUtterances || !callId || !workspaceId) return;
@@ -176,7 +178,7 @@ export default function CallTranscriptViewer({
         <div className="flex items-center justify-between flex-wrap gap-3">
           <h2 className="text-sm font-semibold text-[var(--text-primary)] flex items-center gap-2">
             <MessageSquare className="w-4 h-4" />
-            Call Transcript
+            {t("title")}
           </h2>
 
           {metadata && (
@@ -212,14 +214,14 @@ export default function CallTranscriptViewer({
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
           <input
             type="text"
-            placeholder="Search transcript..."
+            placeholder={t("searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-3 py-2 bg-[var(--bg-inset)] border border-[var(--border-default)] rounded-lg text-sm text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent"
           />
           {hasSearched && matchCount > 0 && (
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[var(--text-tertiary)]">
-              {matchCount} match{matchCount !== 1 ? "es" : ""}
+              {matchCount !== 1 ? t("matchCountPlural", { count: matchCount }) : t("matchCount", { count: matchCount })}
             </span>
           )}
         </div>
@@ -257,7 +259,7 @@ export default function CallTranscriptViewer({
         {!loading && !error && (!filteredUtterances || filteredUtterances.length === 0) && !utterances && (
           <div className="flex items-center justify-center h-40">
             <p className="text-sm text-[var(--text-tertiary)]">
-              No transcript available for this call
+              {t("noTranscript")}
             </p>
           </div>
         )}
@@ -265,7 +267,7 @@ export default function CallTranscriptViewer({
         {!loading && !error && utterances && filteredUtterances && filteredUtterances.length === 0 && hasSearched && (
           <div className="flex items-center justify-center h-40">
             <p className="text-sm text-[var(--text-tertiary)]">
-              No messages match your search
+              {t("noMatches")}
             </p>
           </div>
         )}
@@ -322,7 +324,7 @@ export default function CallTranscriptViewer({
                             : "text-[var(--text-tertiary)]"
                         )}
                       >
-                        {isAgent ? "Agent" : "Caller"}
+                        {isAgent ? t("agent") : t("caller")}
                       </span>
                       {utterance.start_time !== null &&
                         utterance.start_time !== undefined && (

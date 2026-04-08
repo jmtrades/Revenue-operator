@@ -9,6 +9,9 @@ export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
   try {
     const authSession = await getSession(req);
+    if (!authSession?.userId) {
+      return new Response("Unauthorized", { status: 401 });
+    }
     const workspaceId =
     req.nextUrl.searchParams.get("workspace_id") || authSession?.workspaceId;
   if (!workspaceId) {

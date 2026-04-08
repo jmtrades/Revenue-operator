@@ -147,7 +147,7 @@ export async function GET(req: NextRequest) {
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     log("error", "[customers/health]", { error: msg });
-    return NextResponse.json({ error: "Failed to compute customer health", details: msg }, { status: 500 });
+    return NextResponse.json({ error: "Failed to compute customer health" }, { status: 500 });
   }
 }
 

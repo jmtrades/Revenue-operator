@@ -1,16 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { WorkspaceProvider, useWorkspace } from "@/components/WorkspaceContext";
-
-const nav = [
-  { href: "/org", label: "Org" },
-  { href: "/solo", label: "Solo" },
-  { href: "/life", label: "Life" },
-];
 
 function SurfacesShell({ children }: { children: React.ReactNode }) {
   const { workspaceId, workspaces, loading, setWorkspaceId } = useWorkspace();
+  const t = useTranslations("surfaces");
+
+  const nav = [
+    { href: "/org", label: t("nav.org") },
+    { href: "/solo", label: t("nav.solo") },
+    { href: "/life", label: t("nav.life") },
+  ];
 
   return (
     <div className="min-h-screen" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
@@ -49,7 +51,7 @@ function SurfacesShell({ children }: { children: React.ReactNode }) {
           {loading ? (
             <div className="flex items-center gap-3 py-8">
               <span className="inline-block h-4 w-4 rounded-full border-2 border-[var(--accent)] border-t-transparent animate-spin" aria-hidden />
-              <p className="text-base" style={{ color: "var(--text-muted)" }}>One moment…</p>
+              <p className="text-base" style={{ color: "var(--text-muted)" }}>{t("loading")}</p>
             </div>
           ) : (
             children
