@@ -1,7 +1,7 @@
 /**
  * Daily Call Plan Generator — Vercel Cron Handler
- * Generates optimal daily call plans using best-time-contact engine.
- * Maximizes answer rates and conversion based on historical patterns.
+ * Generates optimal daily call plans for qualified leads.
+ * Maximizes answer rates based on available lead data.
  */
 
 export const dynamic = "force-dynamic";
@@ -33,14 +33,14 @@ export async function GET(req: NextRequest) {
   try {
     const db = getDb();
 
-    // Fetch leads for the workspace needing calls today
+    // Fetch qualified leads for the workspace needing calls today
     const { data: leads, error: leadsErr } = await db
       .from("leads")
       .select(
-        "id, name, timezone, industry, source_type, last_contacted_at, engagement_score"
+        "id, name, qualification_score, last_activity_at, status"
       )
       .eq("workspace_id", workspaceId)
-      .gte("engagement_score", 35)
+      .gte("qualification_score", 35)
       .limit(100);
 
     if (leadsErr) {
@@ -58,53 +58,25 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // Fetch call history for pattern analysis
-    const leadIds = leads.map((l) => l.id);
-    const { data: callHistory, error: historyErr } = await db
-      .from("call_sessions")
-      .select(
-        "lead_id, started_at, outcome, answered_at"
-      )
-      .in("lead_id", leadIds)
-      .order("started_at", { ascending: false })
-      .limit(500);
-
-    if (historyErr) {
-      log("warn", "cron.call_history_fetch_failed", { error: historyErr.message });
-    }
-
-    // Group leads by timezone for optimal time windows
-    const byTimezone = new Map<string, typeof leads>();
-    for (const lead of leads) {
-      const tz = lead.timezone || "America/New_York";
-      if (!byTimezone.has(tz)) {
-        byTimezone.set(tz, []);
-      }
-      byTimezone.get(tz)!.push(lead);
-    }
-
-    // Generate time slots across timezones
+    // Generate time slots with basic distribution
     const slots = [];
     let totalExpectedAnswers = 0;
 
-    for (const [timezone, tzLeads] of byTimezone.entries()) {
-      // Determine best calling hours based on historical performance
-      // Use 9 AM - 6 PM in local timezone, with peak hours 10-12, 2-4
-      const peakHours = [10, 11, 14, 15];
-      const baseAnswerRate = 0.35; // Industry baseline
+    // Use industry baseline answer rate
+    const baseAnswerRate = 0.35; // 35% baseline
+    const peakHours = [10, 11, 14, 15]; // 10-11am, 2-3pm
 
-      for (const hour of peakHours) {
-        const expectedAnswers = Math.round(tzLeads.length * baseAnswerRate);
-        if (expectedAnswers > 0) {
-          slots.push({
-            hour,
-            dayOfWeek: new Date().getDay(),
-            leadIds: tzLeads.slice(0, 10).map((l) => l.id),
-            timezone,
-            expectedAnswerRate: baseAnswerRate,
-          });
-          totalExpectedAnswers += expectedAnswers;
-        }
+    for (const hour of peakHours) {
+      const expectedAnswers = Math.round(leads.length * baseAnswerRate);
+      if (expectedAnswers > 0) {
+        slots.push({
+          hour,
+          dayOfWeek: new Date().getDay(),
+          leadIds: leads.slice(0, 25).map((l: { id: string }) => l.id),
+          timezone: "UTC",
+          expectedAnswerRate: baseAnswerRate,
+        });
+        totalExpectedAnswers += expectedAnswers;
       }
     }
 
@@ -113,7 +85,7 @@ export async function GET(req: NextRequest) {
       slots,
       totalExpectedAnswers: Math.min(totalExpectedAnswers, leads.length),
       tcpaCompliant: true,
-      summary: `Optimal call plan for ${leads.length} leads across ${byTimezone.size} timezone(s). Expected to reach ~${Math.round((totalExpectedAnswers / leads.length) * 100)}% of leads.`,
+      summary: `Call plan for ${leads.length} qualified leads. Expected to reach ~${Math.round((totalExpectedAnswers / leads.length) * 100)}% of leads.`,
       timestamp,
     };
 

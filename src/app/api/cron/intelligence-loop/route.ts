@@ -1,6 +1,6 @@
 /**
  * Autonomous Intelligence Loop — Vercel Cron Handler
- * Runs periodically to optimize leads, campaigns, experiments, and deals
+ * Runs periodically to optimize leads, campaigns, and intelligence scoring
  * without human intervention. Triggers self-optimization actions.
  */
 
@@ -24,8 +24,7 @@ export async function GET(req: NextRequest) {
   const results = {
     followUps: 0,
     campaignOptimizations: 0,
-    experimentsEvaluated: 0,
-    atRiskDeals: 0,
+    atRiskLeads: 0,
     timestamp,
     errors: [] as string[],
   };
@@ -34,19 +33,26 @@ export async function GET(req: NextRequest) {
 
   // 1. Auto-follow-up processing: Determine next best actions for leads pending follow-up
   try {
-    // Fetch leads needing follow-up (not recently contacted, with engagement potential)
+    // Fetch leads needing follow-up (not recently contacted, with qualification potential)
     const { data: followUpLeads, error: followUpErr } = await db
       .from("leads")
-      .select("id, name, email, phone, company, engagement_score, lead_score, last_contact_at")
+      .select("id, name, email, phone, company, qualification_score, last_activity_at")
       .eq("workspace_id", req.nextUrl.searchParams.get("workspace_id") || "")
-      .lt("last_contact_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()) // Not contacted in 24h
-      .gte("engagement_score", 40) // Minimum engagement
+      .gte("qualification_score", 40) // Minimum qualification
       .limit(50);
 
     if (!followUpErr && followUpLeads) {
-      results.followUps = followUpLeads.length;
+      // Filter for leads not contacted in 24h
+      const qualified = (followUpLeads || []).filter((lead: { last_activity_at?: string | null }) => {
+        if (!lead.last_activity_at) return true;
+        const lastActivity = new Date(lead.last_activity_at).getTime();
+        const dayAgo = Date.now() - 24 * 60 * 60 * 1000;
+        return lastActivity < dayAgo;
+      });
+
+      results.followUps = qualified.length;
       log("info", "cron.auto_followup_processed", {
-        count: followUpLeads.length,
+        count: qualified.length,
         timestamp,
       });
     }
@@ -59,8 +65,8 @@ export async function GET(req: NextRequest) {
   // 2. Campaign optimization: Analyze active campaigns and generate optimizations
   try {
     const { data: activeCampaigns, error: campaignErr } = await db
-      .from("campaigns")
-      .select("id, name, status, metrics_json, created_at")
+      .from("outbound_campaigns")
+      .select("id, name, status, created_at")
       .eq("status", "active")
       .limit(20);
 
@@ -77,49 +83,27 @@ export async function GET(req: NextRequest) {
     log("error", "cron.campaign_optimization_error", { error: errorMsg });
   }
 
-  // 3. A/B test evaluation: Check running experiments and auto-promote winners
-  try {
-    const { data: runningExperiments, error: abErr } = await db
-      .from("ab_experiments")
-      .select("id, experiment_id, test_type, status, metrics_a_json, metrics_b_json, created_at")
-      .eq("status", "active")
-      .limit(15);
-
-    if (!abErr && runningExperiments) {
-      results.experimentsEvaluated = runningExperiments.length;
-      log("info", "cron.ab_test_evaluation_completed", {
-        count: runningExperiments.length,
-        timestamp,
-      });
-    }
-  } catch (err) {
-    const errorMsg = `A/B test evaluation failed: ${err instanceof Error ? err.message : String(err)}`;
-    results.errors.push(errorMsg);
-    log("error", "cron.ab_test_evaluation_error", { error: errorMsg });
-  }
-
-  // 4. Stale deal detection: Identify at-risk deals and flag them
+  // 3. At-risk lead detection: Identify leads with low activity in 30+ days
   try {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-    const { data: staleDealRecords, error: dealErr } = await db
-      .from("deals")
-      .select("id, lead_id, stage, value, last_activity_at")
-      .neq("stage", "won")
-      .neq("stage", "lost")
+    const { data: atRiskLeads, error: atRiskErr } = await db
+      .from("leads")
+      .select("id, name, last_activity_at, status")
+      .neq("status", "completed")
       .lt("last_activity_at", thirtyDaysAgo)
       .limit(100);
 
-    if (!dealErr && staleDealRecords) {
-      results.atRiskDeals = staleDealRecords.length;
-      log("info", "cron.stale_deal_detection_completed", {
-        count: staleDealRecords.length,
+    if (!atRiskErr && atRiskLeads) {
+      results.atRiskLeads = atRiskLeads.length;
+      log("info", "cron.at_risk_lead_detection_completed", {
+        count: atRiskLeads.length,
         timestamp,
       });
     }
   } catch (err) {
-    const errorMsg = `Stale deal detection failed: ${err instanceof Error ? err.message : String(err)}`;
+    const errorMsg = `At-risk lead detection failed: ${err instanceof Error ? err.message : String(err)}`;
     results.errors.push(errorMsg);
-    log("error", "cron.stale_deal_detection_error", { error: errorMsg });
+    log("error", "cron.at_risk_lead_detection_error", { error: errorMsg });
   }
 
   // Return summary
