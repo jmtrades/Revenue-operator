@@ -129,8 +129,8 @@ export interface CampaignAdjustments {
 
 export interface Adjustment {
   type: string;
-  from: unknown;
-  to: unknown;
+  from: string | number;
+  to: string | number;
   percentChange: number;
   rationale: string;
 }

@@ -3,6 +3,8 @@
  * Powers the dashboard with real-time intelligence data, insights, predictions, and recommended actions.
  */
 
+import type { LeadBrain } from "@/lib/intelligence/lead-brain";
+
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // TYPES & INTERFACES
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -83,6 +85,47 @@ export interface MetricTrend {
   previous: number;
   change: number; // percentage
   direction: "up" | "down" | "flat";
+}
+
+// Local interfaces for function parameters
+interface DashboardDeal {
+  id: string;
+  value: number;
+  closeDate: string;
+  createdAt?: string;
+  stage: string;
+  contactName?: string;
+  company?: string;
+  stageProgress?: number;
+  lastTouched?: string;
+  atRisk?: boolean;
+}
+
+interface DashboardActivity {
+  repId: string;
+  repName?: string;
+  timestamp: string;
+  type: "call" | "email" | "sms" | "meeting";
+  outcome?: string;
+  value?: number;
+  score?: number;
+}
+
+interface DashboardCampaign {
+  id: string;
+  name: string;
+  status: "active" | "paused" | "completed";
+  reach: number;
+  conversions: number;
+  spend: number;
+  budget?: number;
+  abTest?: boolean;
+}
+
+interface WorkspaceMetrics {
+  pipeline?: PipelineMetrics;
+  activities?: ActivityMetrics;
+  revenue?: RevenueMetrics;
 }
 
 export interface DashboardPayload {
@@ -215,8 +258,8 @@ export interface CampaignDashboardPayload {
 
 export function generateDashboardData(
   workspaceId: string,
-  pipeline: any[] = [],
-  activities: any[] = []
+  pipeline: DashboardDeal[] = [],
+  activities: DashboardActivity[] = []
 ): DashboardPayload {
   const now = new Date().toISOString();
 
@@ -267,7 +310,7 @@ export function generateDashboardData(
   };
 }
 
-export function generateLeadDetailData(leadId: string, brain: any): LeadDetailPayload {
+export function generateLeadDetailData(leadId: string, brain: LeadBrain): LeadDetailPayload {
   const interactions = brain?.interactions || [];
   const sentiment = brain?.sentiment || [];
   const objections = brain?.objections || [];
@@ -295,7 +338,7 @@ export function generateLeadDetailData(leadId: string, brain: any): LeadDetailPa
   };
 }
 
-export function generateTeamPerformanceData(teamActivities: any[]): TeamPerformancePayload {
+export function generateTeamPerformanceData(teamActivities: DashboardActivity[]): TeamPerformancePayload {
   const repMetrics = aggregateRepMetrics(teamActivities);
   const callScores = extractCallScores(teamActivities);
   const coachingGaps = identifyCoachingGaps(repMetrics);
@@ -303,7 +346,7 @@ export function generateTeamPerformanceData(teamActivities: any[]): TeamPerforma
   const capacityAnalysis = analyzeTeamCapacity(teamActivities);
 
   return {
-    teamSize: new Set(teamActivities.map((a: any) => a.repId)).size,
+    teamSize: new Set(teamActivities.map((a) => a.repId)).size,
     leaderboard: {
       byConversionRate: buildLeaderboard(repMetrics, "conversion-rate", 5),
       byRevenue: buildLeaderboard(repMetrics, "revenue", 5),
@@ -316,12 +359,12 @@ export function generateTeamPerformanceData(teamActivities: any[]): TeamPerforma
   };
 }
 
-export function generateCampaignDashboardData(campaigns: any[]): CampaignDashboardPayload {
-  const activeCampaigns = campaigns.filter((c: any) => c.status === "active");
-  const totalReach = campaigns.reduce((sum: number, c: any) => sum + (c.reach || 0), 0);
+export function generateCampaignDashboardData(campaigns: DashboardCampaign[]): CampaignDashboardPayload {
+  const activeCampaigns = campaigns.filter((c) => c.status === "active");
+  const totalReach = campaigns.reduce((sum: number, c) => sum + (c.reach || 0), 0);
   const overallPerf = calculateCampaignPerformance(campaigns);
 
-  const sorted = [...campaigns].sort((a: any, b: any) => {
+  const sorted = [...campaigns].sort((a, b) => {
     const aConv = a.conversions / Math.max(a.reach, 1);
     const bConv = b.conversions / Math.max(b.reach, 1);
     return bConv - aConv;
@@ -342,7 +385,7 @@ export function generateCampaignDashboardData(campaigns: any[]): CampaignDashboa
   };
 }
 
-export function calculateWorkspaceHealthScore(metrics: any): WorkspaceHealth {
+export function calculateWorkspaceHealthScore(metrics: WorkspaceMetrics): WorkspaceHealth {
   const pipelineHealth = calculatePipelineHealthComponent(metrics.pipeline || {});
   const activityHealth = calculateActivityHealthComponent(metrics.activities || {});
   const conversionHealth = calculateConversionHealthComponent(metrics.pipeline || {});
@@ -369,27 +412,27 @@ export function calculateWorkspaceHealthScore(metrics: any): WorkspaceHealth {
 // HELPER FUNCTIONS
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-function calculateRevenueMetrics(pipeline: any[]): RevenueMetrics {
+function calculateRevenueMetrics(pipeline: DashboardDeal[]): RevenueMetrics {
   const now = new Date();
-  const today = pipeline.filter((d: any) => {
+  const today = pipeline.filter((d) => {
     const closeDate = new Date(d.closeDate);
     return closeDate.toDateString() === now.toDateString();
   });
 
-  const thisWeek = pipeline.filter((d: any) => {
+  const thisWeek = pipeline.filter((d) => {
     const closeDate = new Date(d.closeDate);
     const dayDiff = (closeDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
     return dayDiff >= 0 && dayDiff <= 7;
   });
 
-  const thisMonth = pipeline.filter((d: any) => {
+  const thisMonth = pipeline.filter((d) => {
     const closeDate = new Date(d.closeDate);
     return closeDate.getMonth() === now.getMonth() && closeDate.getFullYear() === now.getFullYear();
   });
 
-  const todayRev = today.reduce((sum: number, d: any) => sum + (d.value || 0), 0);
-  const weekRev = thisWeek.reduce((sum: number, d: any) => sum + (d.value || 0), 0);
-  const monthRev = thisMonth.reduce((sum: number, d: any) => sum + (d.value || 0), 0);
+  const todayRev = today.reduce((sum: number, d) => sum + (d.value || 0), 0);
+  const weekRev = thisWeek.reduce((sum: number, d) => sum + (d.value || 0), 0);
+  const monthRev = thisMonth.reduce((sum: number, d) => sum + (d.value || 0), 0);
 
   return {
     today: todayRev,
@@ -405,15 +448,15 @@ function calculateRevenueMetrics(pipeline: any[]): RevenueMetrics {
   };
 }
 
-function calculatePipelineMetrics(pipeline: any[]): PipelineMetrics {
-  const totalValue = pipeline.reduce((sum: number, d: any) => sum + (d.value || 0), 0);
+function calculatePipelineMetrics(pipeline: DashboardDeal[]): PipelineMetrics {
+  const totalValue = pipeline.reduce((sum: number, d) => sum + (d.value || 0), 0);
   const dealCount = pipeline.length;
   const avgDealSize = dealCount > 0 ? totalValue / Math.max(dealCount, 1) : 0;
 
   const cycleLengths = pipeline
-    .filter((d: any) => d.createdAt && d.closeDate)
-    .map((d: any) => {
-      const created = new Date(d.createdAt).getTime();
+    .filter((d) => d.createdAt && d.closeDate)
+    .map((d) => {
+      const created = new Date(d.createdAt!).getTime();
       const close = new Date(d.closeDate).getTime();
       return (close - created) / (1000 * 60 * 60 * 24);
     });
@@ -431,23 +474,23 @@ function calculatePipelineMetrics(pipeline: any[]): PipelineMetrics {
   };
 }
 
-function calculateActivityMetrics(activities: any[]): ActivityMetrics {
+function calculateActivityMetrics(activities: DashboardActivity[]): ActivityMetrics {
   const today = new Date().toDateString();
-  const todayActivities = activities.filter((a: any) => new Date(a.timestamp).toDateString() === today);
+  const todayActivities = activities.filter((a) => new Date(a.timestamp).toDateString() === today);
 
   return {
-    callsToday: todayActivities.filter((a: any) => a.type === "call").length,
-    emailsSent: todayActivities.filter((a: any) => a.type === "email").length,
-    smsSent: todayActivities.filter((a: any) => a.type === "sms").length,
-    meetingsBooked: todayActivities.filter((a: any) => a.type === "meeting").length,
-    conversions: todayActivities.filter((a: any) => a.outcome === "converted").length,
+    callsToday: todayActivities.filter((a) => a.type === "call").length,
+    emailsSent: todayActivities.filter((a) => a.type === "email").length,
+    smsSent: todayActivities.filter((a) => a.type === "sms").length,
+    meetingsBooked: todayActivities.filter((a) => a.type === "meeting").length,
+    conversions: todayActivities.filter((a) => a.outcome === "converted").length,
   };
 }
 
-function identifyTopPriorityLeads(pipeline: any[], limit: number): PriorityLead[] {
+function identifyTopPriorityLeads(pipeline: DashboardDeal[], limit: number): PriorityLead[] {
   return pipeline
-    .filter((d: any) => d.stage !== "closed-won")
-    .map((d: any) => {
+    .filter((d) => d.stage !== "closed-won")
+    .map((d) => {
       const daysStalled = d.lastTouched ? Math.floor((Date.now() - new Date(d.lastTouched).getTime()) / (1000 * 60 * 60 * 24)) : 0;
       const severity: "critical" | "high" | "medium" = daysStalled > 14 ? "critical" : daysStalled > 7 ? "high" : "medium";
 
@@ -463,14 +506,14 @@ function identifyTopPriorityLeads(pipeline: any[], limit: number): PriorityLead[
         daysStalled,
       };
     })
-    .sort((a: any, b: any) => {
+    .sort((a, b) => {
       const severityOrder = { critical: 0, high: 1, medium: 2 };
       return (severityOrder[a.severity] || 3) - (severityOrder[b.severity] || 3);
     })
     .slice(0, limit);
 }
 
-function generateDashboardInsights(pipeline: any[], pipelineMetrics: any, activityMetrics: any, revenueMetrics: any): DashboardInsight[] {
+function generateDashboardInsights(pipeline: DashboardDeal[], pipelineMetrics: PipelineMetrics, activityMetrics: ActivityMetrics, revenueMetrics: RevenueMetrics): DashboardInsight[] {
   const insights: DashboardInsight[] = [];
 
   if (pipelineMetrics.velocity < 2) {
@@ -503,10 +546,10 @@ function generateDashboardInsights(pipeline: any[], pipelineMetrics: any, activi
   return insights.slice(0, 3);
 }
 
-function generateDashboardAlerts(pipeline: any[], activities: any[], health: any): DashboardAlert[] {
+function generateDashboardAlerts(pipeline: DashboardDeal[], activities: DashboardActivity[], health: WorkspaceHealth): DashboardAlert[] {
   const alerts: DashboardAlert[] = [];
 
-  const atRiskCount = pipeline.filter((d: any) => d.atRisk).length;
+  const atRiskCount = pipeline.filter((d) => d.atRisk).length;
   if (atRiskCount > 0) {
     alerts.push({
       id: "at-risk-deals",
@@ -519,7 +562,7 @@ function generateDashboardAlerts(pipeline: any[], activities: any[], health: any
   }
 
   const staleDays = 14;
-  const staleCount = pipeline.filter((d: any) => {
+  const staleCount = pipeline.filter((d) => {
     const lastTouched = new Date(d.lastTouched || new Date(0)).getTime();
     return Date.now() - lastTouched > staleDays * 24 * 60 * 60 * 1000;
   }).length;
@@ -548,11 +591,11 @@ function generateDashboardAlerts(pipeline: any[], activities: any[], health: any
   return alerts;
 }
 
-function calculateDashboardTrends(pipeline: any[], activities: any[]): MetricTrend[] {
+function calculateDashboardTrends(pipeline: DashboardDeal[], activities: DashboardActivity[]): MetricTrend[] {
   return [
     {
       metric: "Pipeline Value",
-      current: pipeline.reduce((s: number, d: any) => s + (d.value || 0), 0),
+      current: pipeline.reduce((s: number, d) => s + (d.value || 0), 0),
       previous: 250000,
       change: 5.2,
       direction: "up",
@@ -574,13 +617,13 @@ function calculateDashboardTrends(pipeline: any[], activities: any[]): MetricTre
   ];
 }
 
-function calculateEngagementScore(interactions: any[]): number {
+function calculateEngagementScore(interactions: Array<{ timestamp?: string }>): number {
   if (!interactions || interactions.length === 0) return 0;
   const recent = interactions.slice(-5);
   return Math.min(100, recent.length * 20);
 }
 
-function computeNextRecommendedAction(brain: any): any {
+function computeNextRecommendedAction(brain: LeadBrain): { action: string; channel: string; reasoning: string; urgency: "immediate" | "this-week" | "this-month" } {
   return {
     action: "Schedule discovery call",
     channel: "phone",
@@ -589,30 +632,30 @@ function computeNextRecommendedAction(brain: any): any {
   };
 }
 
-function predictCloseDate(brain: any): string | undefined {
-  if (!brain?.stage || brain.stage === "awareness") return undefined;
-  const days = brain.stage === "decision" ? 7 : brain.stage === "evaluation" ? 14 : 21;
+function predictCloseDate(brain: LeadBrain): string | undefined {
+  if (!brain?.relationship?.buyingStage || brain.relationship.buyingStage === "awareness") return undefined;
+  const days = brain.relationship.buyingStage === "decision" ? 7 : brain.relationship.buyingStage === "evaluation" ? 14 : 21;
   const date = new Date();
   date.setDate(date.getDate() + days);
   return date.toISOString().split("T")[0];
 }
 
-function calculateLeadHealthScore(brain: any): number {
+function calculateLeadHealthScore(brain: LeadBrain): number {
   const factors = [
-    brain?.engagementLevel || 50,
-    brain?.responseRate ? brain.responseRate * 100 : 50,
-    brain?.sentimentScore ? (brain.sentimentScore + 1) * 50 : 50,
+    brain?.behavioral?.engagementLevel || 50,
+    brain?.behavioral?.responseRate ? brain.behavioral.responseRate * 100 : 50,
+    brain?.emotional?.sentimentScore ? (brain.emotional.sentimentScore + 1) * 50 : 50,
   ];
   return Math.round(factors.reduce((a: number, b: number) => a + b) / factors.length);
 }
 
-function calculateStageHealth(brain: any): number {
-  const stageWeights: any = { awareness: 20, consideration: 40, evaluation: 60, decision: 80, implementation: 100 };
-  return stageWeights[brain?.stage] || 50;
+function calculateStageHealth(brain: LeadBrain): number {
+  const stageWeights: Record<string, number> = { awareness: 20, consideration: 40, evaluation: 60, decision: 80, implementation: 100 };
+  return stageWeights[brain?.relationship?.buyingStage] || 50;
 }
 
-function buildInteractionTimeline(interactions: any[]): InteractionTimelineEntry[] {
-  return (interactions || []).slice(-10).map((i: any) => ({
+function buildInteractionTimeline(interactions: Array<{ timestamp?: string; channel?: string; type?: string; summary?: string; outcome?: string; sentiment?: string }>): InteractionTimelineEntry[] {
+  return (interactions || []).slice(-10).map((i) => ({
     timestamp: i.timestamp || new Date().toISOString(),
     channel: i.channel || "unknown",
     type: i.type || "interaction",
@@ -622,7 +665,7 @@ function buildInteractionTimeline(interactions: any[]): InteractionTimelineEntry
   }));
 }
 
-function buildEngagementChart(interactions: any[]): { date: string; score: number }[] {
+function buildEngagementChart(interactions: Array<{ timestamp?: string }>): { date: string; score: number }[] {
   const last30Days = Array.from({ length: 30 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - (29 - i));
@@ -635,44 +678,53 @@ function buildEngagementChart(interactions: any[]): { date: string; score: numbe
   }));
 }
 
-function buildSentimentHistory(sentiment: any[], interactions: any[]): { date: string; sentiment: string }[] {
-  return (interactions || []).slice(-20).map((i: any) => ({
+function buildSentimentHistory(sentiment: Array<{ timestamp?: string; sentiment?: string }>, interactions: Array<{ timestamp?: string; sentiment?: string }>): { date: string; sentiment: string }[] {
+  return (interactions || []).slice(-20).map((i) => ({
     date: new Date(i.timestamp || new Date()).toISOString().split("T")[0],
     sentiment: i.sentiment || "neutral",
   }));
 }
 
-function buildObjectionLog(objections: any[]): { objection: string; resolution?: string; date: string }[] {
-  return (objections || []).map((o: any) => ({
+function buildObjectionLog(objections: Array<{ text?: string; resolution?: string; date?: string }>): { objection: string; resolution?: string; date: string }[] {
+  return (objections || []).map((o) => ({
     objection: o.text || "",
     resolution: o.resolution,
     date: new Date(o.date || new Date()).toISOString().split("T")[0],
   }));
 }
 
-function buildCompetitorIntelligence(competitors: any[]): { mention: string; context: string; date: string }[] {
-  return (competitors || []).map((c: any) => ({
+function buildCompetitorIntelligence(competitors: Array<{ name?: string; context?: string; date?: string }>): { mention: string; context: string; date: string }[] {
+  return (competitors || []).map((c) => ({
     mention: c.name || "",
     context: c.context || "",
     date: new Date(c.date || new Date()).toISOString().split("T")[0],
   }));
 }
 
-function generateLeadInsights(brain: any): string[] {
+function generateLeadInsights(brain: LeadBrain): string[] {
   return [
-    `Lead responds best via ${brain?.preferredChannel || "email"}`,
-    `Currently in ${brain?.stage || "early"} stage after ${brain?.cycleLength || "unknown"} days`,
-    `Highest engagement when discussing ${brain?.topicOfInterest || "value proposition"}`,
+    `Lead responds best via ${brain?.behavioral?.preferredChannel || "email"}`,
+    `Currently in ${brain?.relationship?.buyingStage || "early"} stage after ${brain?.interactionCount || "unknown"} interactions`,
+    `Highest engagement when discussing ${brain?.business?.painPointsIdentified?.[0] || "value proposition"}`,
   ];
 }
 
-function aggregateRepMetrics(activities: any[]): any[] {
-  const byRep = new Map<string, any>();
-  activities.forEach((a: any) => {
+interface RepMetric {
+  repId: string;
+  repName?: string;
+  calls: number;
+  conversions: number;
+  revenue: number;
+  activities: number;
+}
+
+function aggregateRepMetrics(activities: DashboardActivity[]): RepMetric[] {
+  const byRep = new Map<string, RepMetric>();
+  activities.forEach((a) => {
     if (!byRep.has(a.repId)) {
       byRep.set(a.repId, { repId: a.repId, repName: a.repName, calls: 0, conversions: 0, revenue: 0, activities: 0 });
     }
-    const rep = byRep.get(a.repId);
+    const rep = byRep.get(a.repId)!;
     if (a.type === "call") rep.calls++;
     if (a.outcome === "converted") rep.conversions++;
     rep.revenue += a.value || 0;
@@ -681,16 +733,16 @@ function aggregateRepMetrics(activities: any[]): any[] {
   return Array.from(byRep.values());
 }
 
-function extractCallScores(activities: any[]): number[] {
-  return activities.filter((a: any) => a.type === "call" && a.score).map((a: any) => a.score);
+function extractCallScores(activities: DashboardActivity[]): number[] {
+  return activities.filter((a) => a.type === "call" && a.score).map((a) => a.score || 0);
 }
 
-function identifyCoachingGaps(repMetrics: any[]): CoachingOpportunity[] {
+function identifyCoachingGaps(repMetrics: RepMetric[]): CoachingOpportunity[] {
   return repMetrics
-    .filter((r: any) => r.conversions / Math.max(r.calls, 1) < 0.2)
-    .map((r: any) => ({
+    .filter((r) => r.conversions / Math.max(r.calls, 1) < 0.2)
+    .map((r) => ({
       repId: r.repId,
-      repName: r.repName,
+      repName: r.repName || r.repId,
       skill: "Discovery Question Technique",
       gap: "Low conversion rate",
       targetPerformance: 0.35,
@@ -698,8 +750,8 @@ function identifyCoachingGaps(repMetrics: any[]): CoachingOpportunity[] {
     }));
 }
 
-function extractBestPractices(repMetrics: any[]): any[] {
-  const topRep = repMetrics.sort((a: any, b: any) => (b.revenue || 0) - (a.revenue || 0))[0];
+function extractBestPractices(repMetrics: RepMetric[]): Array<{ practice: string; performers: string[]; impact: string }> {
+  const topRep = repMetrics.sort((a, b) => (b.revenue || 0) - (a.revenue || 0))[0];
   return [
     {
       practice: "Opening with ROI-focused questions",
@@ -709,9 +761,9 @@ function extractBestPractices(repMetrics: any[]): any[] {
   ];
 }
 
-function analyzeTeamCapacity(activities: any[]): any[] {
+function analyzeTeamCapacity(activities: DashboardActivity[]): Array<{ repId: string; repName: string; utilizationRate: number; status: "available" | "at-capacity" | "overloaded" }> {
   const byRep = new Map<string, number>();
-  activities.forEach((a: any) => {
+  activities.forEach((a) => {
     byRep.set(a.repId, (byRep.get(a.repId) || 0) + 1);
   });
 
@@ -726,22 +778,22 @@ function analyzeTeamCapacity(activities: any[]): any[] {
   });
 }
 
-function buildLeaderboard(metrics: any[], metricType: string, limit: number): RepLeaderboardEntry[] {
+function buildLeaderboard(metrics: RepMetric[], metricType: string, limit: number): RepLeaderboardEntry[] {
   return metrics
-    .map((m: any, idx: number) => {
+    .map((m, idx: number) => {
       let value = 0;
       if (metricType === "conversion-rate") value = m.calls > 0 ? m.conversions / Math.max(m.calls, 1) : 0;
       else if (metricType === "revenue") value = m.revenue || 0;
       else if (metricType === "activity") value = m.activities || 0;
 
-      return { repId: m.repId, repName: m.repName, metric: metricType as any, value, rank: idx + 1 };
+      return { repId: m.repId, repName: m.repName || m.repId, metric: metricType as "conversion-rate" | "revenue" | "activity", value, rank: idx + 1 };
     })
-    .sort((a: any, b: any) => b.value - a.value)
+    .sort((a, b) => b.value - a.value)
     .slice(0, limit)
-    .map((m: any, idx: number) => ({ ...m, rank: idx + 1 }));
+    .map((m, idx: number) => ({ ...m, rank: idx + 1 }));
 }
 
-function mapToCampaignMetrics(c: any): CampaignMetrics {
+function mapToCampaignMetrics(c: DashboardCampaign): CampaignMetrics {
   const convRate = c.reach > 0 ? c.conversions / c.reach : 0;
   const roi = c.spend > 0 ? (c.conversions * 1000 - c.spend) / c.spend : 0;
   return {
@@ -756,10 +808,10 @@ function mapToCampaignMetrics(c: any): CampaignMetrics {
   };
 }
 
-function extractABTests(campaigns: any[]): ABTestMetrics[] {
+function extractABTests(campaigns: DashboardCampaign[]): ABTestMetrics[] {
   return campaigns
-    .filter((c: any) => c.abTest)
-    .map((c: any) => ({
+    .filter((c) => c.abTest)
+    .map((c) => ({
       testId: c.id,
       name: c.name,
       variant1: { name: "Control", conversionRate: 0.05, sampleSize: 500 },
@@ -769,10 +821,10 @@ function extractABTests(campaigns: any[]): ABTestMetrics[] {
     }));
 }
 
-function calculateBudgetUtilization(campaigns: any[]): any {
-  const totalBudget = campaigns.reduce((s: number, c: any) => s + (c.budget || 0), 0);
-  const spent = campaigns.reduce((s: number, c: any) => s + (c.spend || 0), 0);
-  const projectedReturn = campaigns.reduce((s: number, c: any) => s + ((c.conversions || 0) * 1000), 0);
+function calculateBudgetUtilization(campaigns: DashboardCampaign[]): { totalBudget: number; spent: number; remaining: number; utilizationRate: number; projectedReturn: number } {
+  const totalBudget = campaigns.reduce((s: number, c) => s + (c.budget || 0), 0);
+  const spent = campaigns.reduce((s: number, c) => s + (c.spend || 0), 0);
+  const projectedReturn = campaigns.reduce((s: number, c) => s + ((c.conversions || 0) * 1000), 0);
 
   return {
     totalBudget,
@@ -783,12 +835,12 @@ function calculateBudgetUtilization(campaigns: any[]): any {
   };
 }
 
-function calculateCampaignPerformance(campaigns: any[]): number {
-  const avgConv = campaigns.reduce((s: number, c: any) => s + (c.reach > 0 ? c.conversions / c.reach : 0), 0) / Math.max(campaigns.length, 1);
+function calculateCampaignPerformance(campaigns: DashboardCampaign[]): number {
+  const avgConv = campaigns.reduce((s: number, c) => s + (c.reach > 0 ? c.conversions / c.reach : 0), 0) / Math.max(campaigns.length, 1);
   return Math.round(Math.min(100, avgConv * 200));
 }
 
-function generateCampaignRecommendations(campaigns: any[], overallPerf: number): any[] {
+function generateCampaignRecommendations(campaigns: DashboardCampaign[], overallPerf: number): Array<{ action: string; rationale: string; expectedImpact: string }> {
   return [
     {
       action: "Pause underperforming segments",
@@ -803,7 +855,7 @@ function generateCampaignRecommendations(campaigns: any[], overallPerf: number):
   ];
 }
 
-function calculatePipelineHealthComponent(metrics: any): HealthComponent {
+function calculatePipelineHealthComponent(metrics: Partial<PipelineMetrics>): HealthComponent {
   const coverage = metrics.coverage || 0;
   const score = Math.round(Math.min(100, coverage * 100));
   return {
@@ -814,7 +866,7 @@ function calculatePipelineHealthComponent(metrics: any): HealthComponent {
   };
 }
 
-function calculateActivityHealthComponent(metrics: any): HealthComponent {
+function calculateActivityHealthComponent(metrics: Partial<ActivityMetrics>): HealthComponent {
   const baseScore = Math.min(100, ((metrics.callsToday || 0) / 10) * 100);
   return {
     score: baseScore,
@@ -824,7 +876,7 @@ function calculateActivityHealthComponent(metrics: any): HealthComponent {
   };
 }
 
-function calculateConversionHealthComponent(metrics: any): HealthComponent {
+function calculateConversionHealthComponent(metrics: Partial<PipelineMetrics>): HealthComponent {
   const convRate = (metrics.dealCount || 0) / Math.max(metrics.velocity || 1, 1) / 100;
   const score = Math.round(Math.min(100, convRate * 100));
   return {
@@ -835,7 +887,7 @@ function calculateConversionHealthComponent(metrics: any): HealthComponent {
   };
 }
 
-function calculateGrowthHealthComponent(metrics: any): HealthComponent {
+function calculateGrowthHealthComponent(metrics: Partial<RevenueMetrics>): HealthComponent {
   const monthValue = metrics.thisMonth || 0;
   const score = Math.round(Math.min(100, (monthValue / 100000) * 100));
   return {
