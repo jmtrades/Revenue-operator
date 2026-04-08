@@ -8314,7 +8314,11 @@
     "goalStep": {
       "heading": "What do you want your AI agent to do?",
       "subtitle": "Select one or more goals. You can always change this later.",
-      "selected": "✓ Selected"
+      "selected": "✓ Selected",
+      "quickSetupTitle": "Quick AI Setup — Pick your role and go live fast",
+      "quickSetupDesc": "Pre-built playbooks for sales, real estate, insurance, home services, and more. Minimal setup needed.",
+      "quickSetupCta": "Start →",
+      "orCustomize": "or customize manually"
     },
     "businessStep": {
       "heading": "Your business",
@@ -10371,7 +10375,74 @@
     "noShowRate": "No-Show Rate",
     "reactivationRate": "Reactivation Rate",
     "followUpRate": "Follow-Up Rate",
-    "loadError": "Failed to load operations metrics"
+    "loadError": "Failed to load operations metrics",
+    "title": "Mission Control",
+    "subtitle": "Monitor and control all your AI operations in one place",
+    "quickActions": {
+      "importLeads": "Import Leads",
+      "importLeadsDesc": "Upload a CSV of leads to start calling",
+      "startCalling": "Start Calling",
+      "startCallingDesc": "AI adapts to each lead automatically",
+      "createCampaign": "Create Campaign",
+      "createCampaignDesc": "Choose from cold outreach, follow-ups, and more"
+    },
+    "aiIntelligence": {
+      "title": "AI Intelligence: Active",
+      "description": "AI adapts its approach for each lead based on profile, score, and history. The system learns from every call to improve results."
+    },
+    "metrics": {
+      "activeCampaigns": "Active Campaigns",
+      "totalCalls": "Total Calls",
+      "appointmentsBooked": "Appointments Booked",
+      "pendingFollowUps": "Pending Follow-Ups"
+    },
+    "sections": {
+      "outboundCampaigns": "Outbound Campaigns",
+      "followUps": "Follow-Ups",
+      "recentCalls": "Recent Call Activity"
+    },
+    "emptyState": {
+      "campaigns": {
+        "title": "Ready to start calling?",
+        "description": "Create your first campaign to launch AI calling. Choose from cold outreach, follow-ups, and more.",
+        "cta": "Create Campaign"
+      },
+      "calls": {
+        "title": "No calls yet",
+        "description": "Create a campaign to start calling. The AI will handle outreach automatically.",
+        "cta": "Create Your First Campaign"
+      }
+    },
+    "followUps": {
+      "pendingActions": "pending actions",
+      "viewAll": "View Follow-Ups",
+      "allCaughtUp": "All caught up!"
+    },
+    "actions": {
+      "viewAll": "View All"
+    },
+    "campaignTypes": {
+      "coldOutreach": "Cold Outreach",
+      "followUp": "Follow-Up",
+      "appointmentSetting": "Appointment Setting",
+      "noShowRecovery": "No-Show Recovery",
+      "reactivation": "Reactivation",
+      "quoteChase": "Quote Chase",
+      "leadQualification": "Lead Qualification",
+      "campaign": "Campaign"
+    },
+    "statuses": {
+      "active": "Active",
+      "paused": "Paused",
+      "draft": "Draft",
+      "completed": "Completed",
+      "launching": "Launching"
+    },
+    "messages": {
+      "campaignStarted": "Campaign started",
+      "campaignPaused": "Campaign paused",
+      "failedToUpdateCampaign": "Failed to update campaign"
+    }
   },
   "pages": {
     "agent": "Operator",
