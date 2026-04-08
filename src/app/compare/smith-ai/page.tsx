@@ -4,6 +4,7 @@ import { MarketingNavbar } from "@/components/sections/MarketingNavbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { CheckCircle2, XCircle } from "lucide-react";
+import { hreflangAlternateLanguages } from "@/lib/seo/hreflang";
 
 const BASE = "https://www.recall-touch.com";
 
@@ -11,7 +12,10 @@ export const metadata: Metadata = {
   title: "Revenue Operator vs Smith.ai — Revenue Operator",
   description:
     "Smith.ai vs Revenue Operator: compare pricing, follow-up capability, outbound campaigns, and revenue attribution to see which system recovers more revenue.",
-  alternates: { canonical: "https://www.recall-touch.com/compare/smith-ai" },
+  alternates: {
+    canonical: "https://www.recall-touch.com/compare/smith-ai",
+    languages: hreflangAlternateLanguages("/compare/smith-ai"),
+  },
   openGraph: {
     title: "Revenue Operator vs Smith.ai — Revenue Operator",
     description:
@@ -37,19 +41,32 @@ const rows: Row[] = [
 ];
 
 export default function SmithAiComparisonPage() {
-  const breadcrumbJsonLd = {
+  const structuredData = {
     "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
-      { "@type": "ListItem", position: 2, name: "Comparisons", item: `${BASE}/compare` },
-      { "@type": "ListItem", position: 3, name: "Smith.ai", item: `${BASE}/compare/smith-ai` },
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
+          { "@type": "ListItem", position: 2, name: "Comparisons", item: `${BASE}/compare` },
+          { "@type": "ListItem", position: 3, name: "Smith.ai", item: `${BASE}/compare/smith-ai` },
+        ],
+      },
+      {
+        "@type": "WebPage",
+        "@id": `${BASE}/compare/smith-ai`,
+        url: `${BASE}/compare/smith-ai`,
+        name: "Revenue Operator vs Smith.ai — Revenue Operator",
+        description:
+          "Smith.ai vs Revenue Operator: compare pricing, follow-up capability, outbound campaigns, and revenue attribution to see which system recovers more revenue.",
+        isPartOf: { "@type": "WebSite", name: "Revenue Operator", url: BASE },
+      },
     ],
   };
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
       <MarketingNavbar />
       <main className="pt-16 pb-24">
         <Container>

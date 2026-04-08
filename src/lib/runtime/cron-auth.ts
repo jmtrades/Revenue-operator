@@ -28,23 +28,10 @@ export function assertCronAuthorized(req: { headers: { get: (name: string) => st
     return NextResponse.json({ error: "Cron not configured" }, { status: 501 });
   }
 
-  // Check Authorization header first (preferred)
+  // Check Authorization header (required)
   const auth = req.headers.get("authorization");
   if (auth && safeCompare(auth, `Bearer ${secret}`)) {
     return null;
-  }
-
-  // Fallback: check ?cron_secret= query param (for Vercel cron URLs)
-  if (req.url) {
-    try {
-      const url = new URL(req.url);
-      const qs = url.searchParams.get("cron_secret");
-      if (qs && safeCompare(qs, secret)) {
-        return null;
-      }
-    } catch {
-      // Invalid URL — fall through to reject
-    }
   }
 
   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

@@ -48,84 +48,89 @@ async function getInitialAgentsPayload(): Promise<{
   initialAgentsRows: Array<Record<string, unknown>>;
   initialFallbackAgent: InitialFallbackAgent;
 }> {
-  const { userId, workspaceId: sessionWorkspaceId } = await getInitialUserContext();
-  if (!userId) {
-    return { workspaceId: "", workspaceName: "", initialAgentsRows: [], initialFallbackAgent: null };
-  }
+  try {
+    const { userId, workspaceId: sessionWorkspaceId } = await getInitialUserContext();
+    if (!userId) {
+      return { workspaceId: "", workspaceName: "", initialAgentsRows: [], initialFallbackAgent: null };
+    }
 
-  const db = getDb();
-  const { data: ownedWorkspaces } = await db
-    .from("workspaces")
-    .select("id, name, created_at")
-    .eq("owner_id", userId)
-    .order("created_at", { ascending: false });
+    const db = getDb();
+    const { data: ownedWorkspaces } = await db
+      .from("workspaces")
+      .select("id, name, created_at")
+      .eq("owner_id", userId)
+      .order("created_at", { ascending: false });
 
-  const workspaceList = Array.isArray(ownedWorkspaces)
-    ? (ownedWorkspaces as Array<{ id: string; name?: string | null }>)
-    : [];
-  const resolvedWorkspaceId =
-    (sessionWorkspaceId &&
-      workspaceList.find((workspace) => workspace.id === sessionWorkspaceId)?.id) ||
-    workspaceList[0]?.id ||
-    "";
-  const workspaceName = workspaceList.find((w) => w.id === resolvedWorkspaceId)?.name?.trim() ?? "";
+    const workspaceList = Array.isArray(ownedWorkspaces)
+      ? (ownedWorkspaces as Array<{ id: string; name?: string | null }>)
+      : [];
+    const resolvedWorkspaceId =
+      (sessionWorkspaceId &&
+        workspaceList.find((workspace) => workspace.id === sessionWorkspaceId)?.id) ||
+      workspaceList[0]?.id ||
+      "";
+    const workspaceName = workspaceList.find((w) => w.id === resolvedWorkspaceId)?.name?.trim() ?? "";
 
-  if (!resolvedWorkspaceId) {
-    return { workspaceId: "", workspaceName: "", initialAgentsRows: [], initialFallbackAgent: null };
-  }
+    if (!resolvedWorkspaceId) {
+      return { workspaceId: "", workspaceName: "", initialAgentsRows: [], initialFallbackAgent: null };
+    }
 
-  const { data: agents } = await db
-    .from("agents")
-    .select("*")
-    .eq("workspace_id", resolvedWorkspaceId)
-    .order("created_at", { ascending: false });
+    const { data: agents } = await db
+      .from("agents")
+      .select("*")
+      .eq("workspace_id", resolvedWorkspaceId)
+      .order("created_at", { ascending: false });
 
-  const initialAgentsRows = Array.isArray(agents)
-    ? (agents as Array<Record<string, unknown>>)
-    : [];
+    const initialAgentsRows = Array.isArray(agents)
+      ? (agents as Array<Record<string, unknown>>)
+      : [];
 
-  if (initialAgentsRows.length > 0) {
-    const wsName = workspaceList.find((w) => w.id === resolvedWorkspaceId)?.name?.trim() ?? "";
+    if (initialAgentsRows.length > 0) {
+      const wsName = workspaceList.find((w) => w.id === resolvedWorkspaceId)?.name?.trim() ?? "";
+      return {
+        workspaceId: resolvedWorkspaceId,
+        workspaceName: wsName,
+        initialAgentsRows,
+        initialFallbackAgent: null,
+      };
+    }
+
+    const { data: workspaceAgent } = await db
+      .from("workspaces")
+      .select("name, greeting, agent_name, voice_id, knowledge_items")
+      .eq("id", resolvedWorkspaceId)
+      .maybeSingle();
+
+    const fallbackRow = (workspaceAgent ?? null) as
+      | {
+          name?: string | null;
+          greeting?: string | null;
+          agent_name?: string | null;
+          voice_id?: string | null;
+          knowledge_items?: Array<{ q?: string; a?: string }> | null;
+        }
+      | null;
+
     return {
       workspaceId: resolvedWorkspaceId,
-      workspaceName: wsName,
-      initialAgentsRows,
-      initialFallbackAgent: null,
+      workspaceName,
+      initialAgentsRows: [],
+      initialFallbackAgent: fallbackRow
+        ? {
+            businessName: fallbackRow.name ?? "",
+            greeting: fallbackRow.greeting ?? "",
+            agentName: fallbackRow.agent_name ?? "",
+            voiceId: fallbackRow.voice_id ?? "",
+            knowledgeItems: Array.isArray(fallbackRow.knowledge_items)
+              ? fallbackRow.knowledge_items
+              : [],
+          }
+        : null,
     };
+  } catch (error) {
+    console.error("[getInitialAgentsPayload] Error:", error instanceof Error ? error.message : String(error));
+    return { workspaceId: "", workspaceName: "", initialAgentsRows: [], initialFallbackAgent: null };
   }
-
-  const { data: workspaceAgent } = await db
-    .from("workspaces")
-    .select("name, greeting, agent_name, voice_id, knowledge_items")
-    .eq("id", resolvedWorkspaceId)
-    .maybeSingle();
-
-  const fallbackRow = (workspaceAgent ?? null) as
-    | {
-        name?: string | null;
-        greeting?: string | null;
-        agent_name?: string | null;
-        voice_id?: string | null;
-        knowledge_items?: Array<{ q?: string; a?: string }> | null;
-      }
-    | null;
-
-  return {
-    workspaceId: resolvedWorkspaceId,
-    workspaceName,
-    initialAgentsRows: [],
-    initialFallbackAgent: fallbackRow
-      ? {
-          businessName: fallbackRow.name ?? "",
-          greeting: fallbackRow.greeting ?? "",
-          agentName: fallbackRow.agent_name ?? "",
-          voiceId: fallbackRow.voice_id ?? "",
-          knowledgeItems: Array.isArray(fallbackRow.knowledge_items)
-            ? fallbackRow.knowledge_items
-            : [],
-        }
-      : null,
-  };
 }
 
 export default async function AppAgentsPage() {

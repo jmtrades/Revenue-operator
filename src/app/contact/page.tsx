@@ -6,6 +6,7 @@ import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
 import { ContactForm } from "@/components/ContactForm";
+import { hreflangAlternateLanguages } from "@/lib/seo/hreflang";
 
 const BASE = "https://www.recall-touch.com";
 
@@ -14,7 +15,10 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t("metaTitle"),
     description: t("metaDescription"),
-    alternates: { canonical: `${BASE}/contact` },
+    alternates: {
+      canonical: `${BASE}/contact`,
+      languages: hreflangAlternateLanguages("/contact"),
+    },
     openGraph: {
       title: t("metaTitle"),
       description: t("metaDescription"),
@@ -35,8 +39,25 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ContactPage() {
   const t = await getTranslations("contactPage");
 
+  const contactJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    name: t("metaTitle"),
+    description: t("metaDescription"),
+    url: `${BASE}/contact`,
+    isPartOf: {
+      "@type": "WebSite",
+      name: "Revenue Operator",
+      url: BASE,
+    },
+  };
+
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(contactJsonLd) }}
+      />
       <MarketingNavbar />
       <main className="pt-28 pb-24">
         <Container>

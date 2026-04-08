@@ -24,6 +24,9 @@
         "calendar": "Calendrier connecté",
         "team": "Membre invité"
       }
+    },
+    "nav": {
+      "agents": "Operators"
     }
   },
   "banners": {
@@ -135,7 +138,11 @@
     "continueToTest": "Continue to test",
     "coldLeads": "Prospects froids",
     "sectionRecovery": "Exécution des Revenus",
-    "support": "Support"
+    "support": "Support",
+    "reports": "Revenue Digest",
+    "integrations": "Integrations",
+    "sectionCommandCenter": "Command Center",
+    "sectionRevenueExecution": "Revenue Execution"
   },
   "common": {
     "save": "Enregistrer",
@@ -220,7 +227,11 @@
       "availableTimes": "Available Times"
     },
     "dashboard": "Tableau de bord",
-    "saved": "Saved"
+    "saved": "Saved",
+    "home": "Home",
+    "recommendations": {
+      "pageTitle": "Recommendations — Revenue Operator"
+    }
   },
   "toast": {
     "saved": "Paramètres enregistrés",
@@ -451,7 +462,9 @@
     "exported": "Campaigns exported successfully",
     "exportedSelected": "Selected contacts exported",
     "selected": "selected",
-    "oauthPending": "OAuth setup is processing. Please try again in a moment."
+    "oauthPending": "OAuth setup is processing. Please try again in a moment.",
+    "agent": "Operator created",
+    "tested": "Operator tested"
   },
   "auth": {
     "signIn": {
@@ -597,7 +610,8 @@
       "paused": "Couverture en pause.",
       "paymentFailed": "Impossible d'ouvrir les paramètres de paiement.",
       "portalFailed": "Impossible d'ouvrir le portail de facturation.",
-      "minutesAdded": "{minutes} minutes ajoutées à votre compte!"
+      "minutesAdded": "{minutes} minutes ajoutées à votre compte!",
+      "stripeFailed": "Billing service temporarily unavailable. Please try again later."
     },
     "errors": {
       "loadingFailed": "Impossible de charger les informations de facturation",
@@ -646,7 +660,15 @@
     "pauseBullet1": "Your data and settings will be preserved",
     "pauseBullet2": "You can resume your subscription anytime",
     "pauseBullet3": "You'll receive reminder emails",
-    "securityNote": "Payments secured with 256-bit encryption via Stripe. We never store your card details."
+    "securityNote": "Payments secured with 256-bit encryption via Stripe. We never store your card details.",
+    "expandAgentCapacity": "Expand Operator Capacity",
+    "roiTitle": "Platform Return on Investment",
+    "trial": {
+      "title": "You're on a free trial",
+      "description": "Subscribe to a plan to keep your operators running after the trial ends. Your data and configuration will be preserved."
+    },
+    "description": "Subscribe to a plan to keep your operators running after the trial ends. Your data and configuration will be preserved.",
+    "chooseVoice": "Choose Operator Voice"
   },
   "planChange": {
     "title": "Changer de plan",
@@ -880,7 +902,8 @@
       "view": "Voir →"
     },
     "detail": {
-      "callLabel": "Appel"
+      "callLabel": "Appel",
+      "agentWillAnswerFor": "Your operator will answer calls, capture leads, and book appointments for {name}."
     },
     "filters": {
       "all": "Tous",
@@ -1991,10 +2014,7 @@
       "makeTestCall": {
         "title": "Make a test call",
         "description": "Call your number from any phone to test it"
-      },
-      "readyTitle": "Votre Opérateur de Revenus IA",
-      "readyDescription": "Configurez votre espace de travail pour automatiser les opérations de revenus — appels, suivis et rendez-vous gérés par l'IA.",
-      "startTrial": "Commencer"
+      }
     },
     "stats": {
       "activeCalls": "Active Calls",
@@ -2034,7 +2054,8 @@
       "export": "Export",
       "emptyDescription": "Once your AI starts answering calls, revenue metrics will appear here.",
       "setupCallForwarding": "Set up call forwarding →",
-      "totalRevenueRecovered": "Total Revenue Recovered"
+      "totalRevenueRecovered": "Total Revenue Recovered",
+      "breadcrumbAgents": "Operator Analytics"
     },
     "usage": {
       "limitReached": "Limit reached.",
@@ -2077,7 +2098,13 @@
       "buyMore": "Buy more minutes",
       "manage": "Manage usage"
     },
-    "title": "Reseller Dashboard"
+    "title": "Reseller Dashboard",
+    "readyToGo": {
+      "title": "Your AI operator is standing by. Once active, it will execute revenue recovery campaigns, handle inbound calls, and qualify leads autonomously.",
+      "body": "Revenue, calls, and appointments will update in real time as your operator handles calls. Make a test call to see it in action, or forward your business number to go live.",
+      "testCall": "Test your operator",
+      "goLive": "Go live with your number"
+    }
   },
   "analytics": {
     "pageTitle": "Analyses — Revenue Operator",
@@ -2236,7 +2263,8 @@
       "action": "Make a test call"
     },
     "pipelineTitle": "Pipeline & Operations",
-    "operationalMetrics": "Operational Metrics"
+    "operationalMetrics": "Operational Metrics",
+    "recovered": "Operator revenue impact"
   },
   "agents": {
     "pageTitle": "Agents — Revenue Operator",
@@ -2985,7 +3013,29 @@
       "reviewVoice": "Voix :",
       "reviewGreeting": "Message d'accueil :",
       "costNote": "Le coût estimé dépend de l'usage. Vous pouvez désactiver l'agent à tout moment depuis la page Agents.",
-      "back": "Retour"
+      "back": "Retour",
+      "missionTitle": "Define your operator's revenue mission",
+      "missionHint": "Choose your operator's primary revenue function.",
+      "voiceIdentityTitle": "Set your operator's voice & identity",
+      "voiceIdentityHint": "Voice, tone, and communication style.",
+      "deploy": "Deploy",
+      "stepMission": "Mission",
+      "stepVoiceIdentity": "Voice & Identity",
+      "stepIntelligence": "Intelligence",
+      "stepGuardrails": "Guardrails",
+      "stepOperatingHours": "Operating Hours",
+      "stepVerify": "Verify",
+      "stepDeploy": "Deploy",
+      "intelligenceHeading": "Equip your operator with business intelligence",
+      "intelligenceSubtitle": "Knowledge base answers and business context.",
+      "guardrailsHeading": "Set operator guardrails & objection handling",
+      "guardrailsSubtitle": "Boundaries, compliance rules, and objection strategies.",
+      "operatingHoursHeading": "Configure operator working hours",
+      "operatingHoursSubtitle": "When your operator is active and how to handle off-hours.",
+      "verifyHeading": "Test your operator before deployment",
+      "verifySubtitle": "Have a conversation to verify performance and behavior.",
+      "deployHeading": "Review and deploy your autonomous operator",
+      "deploySubtitle": "Final review before your operator goes live."
     },
     "purpose": {
       "inbound": "Entrant",
@@ -3117,7 +3167,9 @@
       "selected": "Selected",
       "selectVoicePrompt": "Select a voice to preview"
     },
-    "voicePreviewLink": "Preview all voices & A/B test"
+    "voicePreviewLink": "Preview all voices & A/B test",
+    "breadcrumbHome": "Home",
+    "breadcrumbOperators": "Operators"
   },
   "calls": {
     "pageTitle": "Appels — Revenue Operator",
@@ -3296,7 +3348,8 @@
     },
     "emptyDescription": "Empty description",
     "emptyTitle": "Empty title",
-    "testCall": "Test call"
+    "testCall": "Test call",
+    "subtitle": "Call execution log. Every inbound and outbound call, with AI intelligence and next-action recommendations."
   },
   "callIntelligence": {
     "pageTitle": "Intelligence d'appels — Revenue Operator",
@@ -3466,7 +3519,8 @@
     "empty": {
       "title": "Calme pour le moment",
       "body": "Au fur et à mesure que vos appels, SMS et e-mails arriveront, vous pourrez tout gérer depuis ici.",
-      "cta": "Activer les SMS dans les paramètres"
+      "cta": "Activer les SMS dans les paramètres",
+      "hint": "Connect a phone number and your operator will start handling conversations automatically."
     },
     "search": {
       "placeholder": "Rechercher des conversations…"
@@ -3883,7 +3937,10 @@
           "label": "Qualification",
           "desc": "Qualifier de nouveaux leads par téléphone"
         }
-      }
+      },
+      "campaignNamePlaceholder": "Missed-call recovery",
+      "removeStep": "Remove step",
+      "addStep": "+ Add step"
     },
     "type": {
       "leadFollowup": "Qualification / suivi des leads",
@@ -4126,6 +4183,14 @@
       "outbound": {
         "label": "Outbound settings",
         "desc": "Calling hours, voicemail behavior, limits, suppression, DNC"
+      },
+      "voices": {
+        "label": "Voice optimization",
+        "desc": "Voice selection and tuning for maximum conversion impact"
+      },
+      "industryTemplates": {
+        "label": "Industry templates",
+        "desc": "Pre-built agent configurations for your industry"
       }
     },
     "nav": {
@@ -4834,7 +4899,9 @@
       "lastAttempt": "Last Attempt",
       "nextAttempt": "Next Attempt",
       "status": "Status",
-      "actions": "Actions"
+      "actions": "Actions",
+      "stage": "Stage",
+      "stageLabel": "Reactivation progress"
     },
     "status": {
       "all": "All Status",
@@ -6725,7 +6792,8 @@
     "modeBusinessTitle": "Business Mode",
     "modeBusinessDesc": "Use Revenue Operator for business operations",
     "businessHeading": "Business Information",
-    "businessSubtitle": "Tell us about your business"
+    "businessSubtitle": "Tell us about your business",
+    "body": "Use the same fast flow every time: pick mode + industry, create the operator, connect the phone, run a test call."
   },
   "agents.testPanel": {
     "errors": {
@@ -6875,7 +6943,9 @@
     "title": "Errors",
     "unauthorized": "Unauthorized",
     "updateFailed": "Update failed",
-    "emptyTemplate": "At least one message template is required."
+    "emptyTemplate": "At least one message template is required.",
+    "loadAgentsError": "Could not load operators.",
+    "agentsAppearHere": "Operators appear here."
   },
   "forms": {
     "validation": {
@@ -7090,7 +7160,11 @@
     "exportReport": "Export report",
     "retentionDaysOption": "{days} days",
     "auditTrailNotice": "Audit trail is being set up",
-    "auditTrailNoticeDesc": "Detailed activity logging will be available here once your workspace has active call and communication history. All actions are already logged in the background."
+    "auditTrailNoticeDesc": "Detailed activity logging will be available here once your workspace has active call and communication history. All actions are already logged in the background.",
+    "common": {
+      "home": "Home"
+    },
+    "loading": "Loading compliance data..."
   },
   "webhooks": {
     "deleteTitle": "Supprimer l'endpoint webhook ?",
@@ -7261,6 +7335,9 @@
       "unauthorized": "Unauthorized. Please log in again.",
       "loadFailed": "Failed to load contacts. Using cached data.",
       "conversationLoadFailed": "Impossible de charger les conversations. Veuillez réessayer."
+    },
+    "common": {
+      "home": "Home"
     }
   },
   "team": {
@@ -7659,7 +7736,9 @@
       "callIntelligence": "Intelligence d'appels",
       "knowledge": "Connaissances",
       "team": "Équipe",
-      "settings": "Paramètres"
+      "settings": "Paramètres",
+      "followUps": "Follow-ups",
+      "reactivation": "Reactivation"
     },
     "noMatches": "Aucune correspondance.",
     "showShortcuts": "Afficher les raccourcis",
@@ -7821,7 +7900,8 @@
       "confirmed": "Confirmé",
       "pending": "En attente",
       "cancelled": "Annulé",
-      "completed": "Terminé"
+      "completed": "Terminé",
+      "noShow": "No-Show"
     },
     "defaultSource": "Appel entrant",
     "sourceOutbound": "Sortant",
@@ -7894,7 +7974,10 @@
       "sendReminder": "Send Reminder",
       "sending": "Sending...",
       "time": "Time"
-    }
+    },
+    "syncButton": "Sync Calendar",
+    "syncTooltip": "Sync appointments with your connected calendar",
+    "subtitle": "AI-managed meetings. Appointments are confirmed, reminded, and followed up automatically."
   },
   "keyboardShortcuts": {
     "modal": {
@@ -8611,7 +8694,15 @@
       "setupFee": "Setup Fee",
       "chargedImmediately": "This will be charged to your account immediately.",
       "cancel": "Cancel",
-      "processing": "Processing"
+      "processing": "Processing",
+      "numberProvisioned": "Number provisioned",
+      "nextSteps": "Next steps",
+      "setAsDefault": "Set as default for inbound",
+      "assignToAgent": "Assign to agent",
+      "poweredByTelnyx": "Numbers powered by Telnyx · Enterprise-grade telephony",
+      "pricing": "Pricing",
+      "plusSetupFee": "plus {fee} setup fee",
+      "purchase": "Purchase"
     },
     "porting": {
       "title": "Porter un numéro existant",
@@ -8731,7 +8822,23 @@
     "takesAbout10Seconds": "Takes about 10 seconds",
     "notifyMe": "Notify me",
     "tryDifferentAreaCodeHint": "Try a different area code or leave blank for any available number:",
-    "needHelpPhoneSetup": "Need help with phone setup?"
+    "needHelpPhoneSetup": "Need help with phone setup?",
+    "statusTotalNumbers": "Total Numbers",
+    "statusMonthlyCost": "Monthly Cost",
+    "statusPerMonth": "per month",
+    "statusPrimary": "Primary Number",
+    "statusInbound": "for inbound calls",
+    "active": "active",
+    "managingNumbers": "Managing your phone numbers",
+    "assigned": "Assigned",
+    "unassigned": "Unassigned",
+    "mms": "MMS",
+    "testCall": "Test Call",
+    "testCallDescription": "Test your agent by calling it from any phone. Your agent will answer and respond based on your current configuration.",
+    "howItWorks": "How it works",
+    "testStep1": "Enter your phone number",
+    "testStep2": "We call you immediately",
+    "testStep3": "Talk to your agent and confirm setup"
   },
   "integrations": {
     "pageTitle": "Intégrations — Revenue Operator",
@@ -8852,7 +8959,11 @@
     "status": {
       "connected": "Connecté",
       "disconnected": "Non connecté",
-      "beta": ""
+      "beta": "",
+      "reauthRequired": "Re-auth required",
+      "expiringToken": "Token expiring soon",
+      "tokenError": "Token error",
+      "syncing": "Syncing…"
     },
     "lastSync": "Dernière synchronisation",
     "button": {
@@ -8862,7 +8973,8 @@
       "syncing": "Syncing...",
       "syncNow": "Sync Now",
       "importing": "Importing...",
-      "import": "Import"
+      "import": "Import",
+      "reauthenticate": "Re-authenticate"
     },
     "syncStatus": {
       "title": "État de synchronisation",
@@ -8890,7 +9002,10 @@
       "synced": "Synced:",
       "records": "records",
       "errors": "{count} error(s)"
-    }
+    },
+    "title": "Integrations",
+    "subtitle": "Connect your tools to automate more of your revenue operations",
+    "outlookAvailable": "Available"
   },
   "email": {
     "templates": {
@@ -9065,6 +9180,9 @@
       "cancel": "Cancel",
       "create": "Create",
       "creating": "Creating..."
+    },
+    "common": {
+      "home": "Home"
     }
   },
   "followUps": {
@@ -9144,7 +9262,16 @@
     "allPaused": "All sequences paused",
     "pauseAll": "Pause all",
     "allResumed": "All sequences resumed",
-    "resumeAll": "Resume all"
+    "resumeAll": "Resume all",
+    "rateLimitedError": "Too many requests. Please wait a moment and tap Retry.",
+    "statusActive": "Active",
+    "statusPaused": "Paused",
+    "trigger": "Trigger",
+    "manual": "manual",
+    "pauseAllTitle": "Pause all sequences?",
+    "pauseAllMessage": "This will pause all active follow-up sequences. No automated follow-ups will run until you resume them.",
+    "resumeAllTitle": "Resume all sequences?",
+    "resumeAllMessage": "This will resume all paused follow-up sequences. Automated follow-ups will begin running again."
   },
   "marketing": {
     "hero": {
@@ -9178,7 +9305,10 @@
         "callError": "Impossible de lancer l'appel. Réessayez.",
         "connectionError": "Connexion échouée. Veuillez réessayer.",
         "invalidPhone": "Enter a valid phone number with country code (e.g. +44, +61).",
-        "disclaimer": "Gratuit. Sans inscription. Nous vous appelons en moins de 10 secondes."
+        "disclaimer": "Gratuit. Sans inscription. Nous vous appelons en moins de 10 secondes.",
+        "phoneErrorMinDigits": "Please enter your full phone number with country code (e.g. +44 7911 123456)",
+        "phoneErrorCountryCode": "Please include your country code (e.g. +44 7911 123456 for UK, +61 412 345 678 for Australia)",
+        "countryCodesHint": "Include your country code: +44 (UK), +1 (US), +61 (AU), +49 (DE)"
       },
       "compliance": [
         "Chiffrement TLS 256-bit",
@@ -9283,7 +9413,9 @@
       "results": "Résultats",
       "security": "Sécurité",
       "systemStatus": "État du Système"
-    }
+    },
+    "agentsTitle": "Operator studio",
+    "agentsDesc": "Build your AI operator without code. Start from 20+ templates or from scratch. Choose voice, personality, greeting, knowledge base, business rules. Test with a real call before going live. Edit anytime — changes are instant."
   },
   "signUp": {
     "title": "Créez votre compte",
@@ -9345,7 +9477,17 @@
     "sdkExamples": "SDK Examples",
     "workspaceNote": "Workspace",
     "fixPayment": "Fix payment →",
-    "upgradeCta": "Upgrade now →"
+    "upgradeCta": "Upgrade now →",
+    "statusTrial": "Trial",
+    "statusActive": "Active",
+    "statusCancelled": "Cancelled",
+    "statusPaymentFailed": "Payment Failed",
+    "statusTrialEnded": "Trial Ended",
+    "statusPaused": "Paused",
+    "trialDaysLeft": "{days} days left",
+    "subscriptionCancelled": "Subscription cancelled",
+    "paymentIssue": "Payment issue — update card",
+    "trialEnded": "Trial ended — upgrade now"
   },
   "help": {
     "breadcrumbs": {
@@ -9386,6 +9528,17 @@
       "title": "Still stuck?",
       "desc1": "Email",
       "desc2": "and include what you were trying to do. We typically respond within 1 business day."
+    },
+    "troubleshooting": {
+      "title": "Troubleshooting",
+      "noCallsTitle": "Why am I not receiving calls?",
+      "noCallsDesc": "Make sure you have a phone number connected in Settings > Phone Numbers. Your agent must also be configured and your account must be on an active plan.",
+      "noVoiceTitle": "Why can't I hear voice previews?",
+      "noVoiceDesc": "Voice preview requires the voice server to be configured. Contact support if previews are not playing.",
+      "crmSyncTitle": "My CRM shows Connected but contacts aren't syncing",
+      "crmSyncDesc": "CRM sync is currently in beta. Inbound contact syncing works automatically. Two-way sync is rolling out progressively — check Settings > Integrations for your current sync status.",
+      "callsCutOffTitle": "Calls are being cut off",
+      "callsCutOffDesc": "Check your plan's minute allowance in Settings > Billing. Calls are limited to 15 minutes by default."
     }
   },
   "voiceAbTesting": {
@@ -10358,7 +10511,11 @@
     "teamSettings": {
       "subtitle": "Manage your team settings settings",
       "title": "Team settings"
-    }
+    },
+    "agentsTitle": "Operators",
+    "agentEditTitle": "Edit Operator",
+    "agentTitle": "Operator",
+    "failedToSaveAgent": "Failed to save operator"
   },
   "password": {
     "label": "Label"
@@ -11365,5 +11522,49 @@
     "noAgent": "Operator not found",
     "backToAgents": "Back to Operators",
     "applyToAgent": "Apply to Operator"
+  },
+  "blogPage": {
+    "sectionLabel": "Resources",
+    "heading": "Learn how to capture every call and convert it to revenue",
+    "subheading": "Guides, playbooks, and industry insights on AI phone agents, automating follow-up, and measuring the revenue impact. Join our mailing list to get new content as it publishes.",
+    "newsletterTitle": "Get the latest guides and playbooks",
+    "newsletterDesc": "We send new articles, case studies, and industry playbooks directly to your inbox — no more than 2x per week.",
+    "emailPlaceholder": "your@email.com",
+    "subscribe": "Subscribe",
+    "ctaLine": "Ready to see how Revenue Operator handles your calls?",
+    "ctaButton": "Get started — 5 minutes →",
+    "topics": {
+      "0": {
+        "title": "AI Revenue Operators",
+        "description": "How autonomous operators handle inbound calls, qualify intent, and book appointments without a human on staff."
+      },
+      "1": {
+        "title": "Call Handling & Recovery",
+        "description": "Turn every call into an opportunity. Automate callbacks, follow-ups, and lead recovery at scale."
+      },
+      "2": {
+        "title": "Speed-to-Lead & Follow-up",
+        "description": "Respond to inbound leads in seconds, not hours. Automated sequences that move prospects to appointments."
+      },
+      "3": {
+        "title": "Revenue Operations Automation",
+        "description": "End-to-end workflows that handle qualifying, booking, follow-up, and recovery so your team focuses on closing."
+      },
+      "4": {
+        "title": "Industry-Specific Guides",
+        "description": "Deep dives into HVAC, Dental, Legal, and Real Estate workflows optimized for missed-call recovery."
+      },
+      "5": {
+        "title": "Measurement & ROI",
+        "description": "Track what matters: calls answered, appointments booked, revenue recovered, and attribution by source."
+      }
+    }
+  },
+  "blogPostPage": {
+    "backLink": "← Blog",
+    "examplePrefix": "See a practical example for",
+    "exampleSuffix": "in your workflows.",
+    "ctaPrimary": "Get started →",
+    "ctaSecondary": "Back to blog"
   }
 }

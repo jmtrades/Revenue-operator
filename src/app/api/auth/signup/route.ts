@@ -101,14 +101,21 @@ export async function POST(req: NextRequest) {
           .insert({ name: businessName, owner_id: userId, autonomy_level: "assisted", kill_switch: false })
           .select("id")
           .maybeSingle();
-        if (!insertErr && created) {
-          workspaceId = (created as { id: string }).id;
-          await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
-          await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
-          await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing" });
+        if (insertErr) {
+          log("error", "[signup] workspace creation failed", { userId, error: insertErr.message ?? String(insertErr) });
+          return NextResponse.json({ error: "Failed to create workspace. Please try again." }, { status: 500 });
         }
-      } catch {
-        // continue
+        if (!created) {
+          log("error", "[signup] workspace creation returned no data", { userId });
+          return NextResponse.json({ error: "Failed to create workspace. Please try again." }, { status: 500 });
+        }
+        workspaceId = (created as { id: string }).id;
+        await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
+        await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
+        await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing" });
+      } catch (err) {
+        log("error", "[signup] workspace creation exception", { userId, error: err instanceof Error ? err.message : String(err) });
+        return NextResponse.json({ error: "Failed to create workspace. Please try again." }, { status: 500 });
       }
       const cookie = createSessionCookie({ userId, workspaceId });
       if (cookie) {

@@ -1,11 +1,13 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { MarketingNavbar } from "@/components/sections/MarketingNavbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { ROUTES } from "@/lib/constants";
+import { hreflangAlternateLanguages } from "@/lib/seo/hreflang";
 
 const BASE = "https://www.recall-touch.com";
 
@@ -623,7 +625,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${post.title} — Revenue Operator`,
     description,
-    alternates: { canonical: `${BASE}/blog/${slug}` },
+    alternates: {
+      canonical: `${BASE}/blog/${slug}`,
+      languages: hreflangAlternateLanguages(`/blog/${slug}`),
+    },
     openGraph: { title: post.title, description },
   };
 }
@@ -632,6 +637,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const { slug } = await params;
   const post = BLOG_POSTS[slug];
   if (!post) notFound();
+  const t = await getTranslations("blogPostPage");
 
   const industryExample = (() => {
     if (slug.includes("dental")) return { href: "/industries/dental", label: "dental" };
@@ -640,28 +646,41 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     return { href: "/industries/plumbing-hvac", label: "HVAC" };
   })();
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
+          { "@type": "ListItem", position: 2, name: "Blog", item: `${BASE}/blog` },
+          { "@type": "ListItem", position: 3, name: post.title, item: `${BASE}/blog/${slug}` },
+        ],
+      },
+      {
+        "@type": "BlogPosting",
+        headline: post.title,
+        datePublished: post.date,
+        description: post.metaDescription,
+        url: `${BASE}/blog/${slug}`,
+        isPartOf: { "@type": "Blog", name: "Revenue Operator Blog", url: `${BASE}/blog` },
+        publisher: { "@type": "Organization", name: "Revenue Operator", url: BASE },
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            itemListElement: [
-              { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
-              { "@type": "ListItem", position: 2, name: "Blog", item: `${BASE}/blog` },
-              { "@type": "ListItem", position: 3, name: post.title, item: `${BASE}/blog/${slug}` },
-            ],
-          }),
-        }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       <MarketingNavbar />
       <main className="pt-28 pb-24">
         <Container>
           <div className="max-w-2xl">
             <Link href="/blog" className="text-sm font-medium mb-6 inline-block" style={{ color: "var(--text-tertiary)" }}>
-              ← Blog
+              {t("backLink")}
             </Link>
             <p className="text-xs font-medium mb-2" style={{ color: "var(--text-tertiary)" }}>{post.date}</p>
             <h1 className="font-bold text-3xl md:text-4xl mb-6" style={{ letterSpacing: "-0.02em", lineHeight: 1.2 }}>
@@ -672,19 +691,19 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 <p key={i} className="mb-4">{renderRichText(para)}</p>
               ))}
               <p className="mt-6">
-                See a practical example for{" "}
+                {t("examplePrefix")}{" "}
                 <Link href={industryExample.href} className="underline">
                   {industryExample.label}
                 </Link>{" "}
-                in your workflows.
+                {t("exampleSuffix")}
               </p>
             </div>
             <div className="mt-12 pt-8 border-t flex gap-4" style={{ borderColor: "var(--border-default)" }}>
               <Link href={ROUTES.START} className="btn-marketing-primary no-underline inline-block">
-                Get started →
+                {t("ctaPrimary")}
               </Link>
               <Link href="/blog" className="btn-marketing-ghost no-underline inline-block">
-                Back to blog
+                {t("ctaSecondary")}
               </Link>
             </div>
           </div>

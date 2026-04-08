@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
 
         // Process if renewal is within next 7 days (widened from 3 to avoid missed charges)
         const daysUntilRenewal = (billingPeriodEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
-        if (daysUntilRenewal > 7 || daysUntilRenewal < -1) {
+        if (daysUntilRenewal > 7 || daysUntilRenewal < -3) {
           continue;
         }
 
@@ -82,7 +82,15 @@ export async function POST(req: NextRequest) {
           billingPeriodEnd
         );
 
-        if (charges && charges.overage_amount_cents > 0 && charges.subscription_id) {
+        // Validate overage amount before creating invoice
+        if (!charges || charges.overage_amount_cents <= 0 || !Number.isFinite(charges.overage_amount_cents)) {
+          if (charges && !Number.isFinite(charges.overage_amount_cents)) {
+            log("warn", `[billing/overage] Invalid overage_amount_cents for workspace ${wsData.id}:`, {
+              overage_amount_cents: charges.overage_amount_cents,
+            });
+          }
+          // Skip to phone billing for this workspace
+        } else if (charges && charges.subscription_id) {
           // Build itemized description for invoice
           const descParts: string[] = [];
           if (charges.overage_minutes > 0) {
@@ -112,6 +120,8 @@ export async function POST(req: NextRequest) {
           });
 
           processed++;
+        } else {
+          // charges exist but subscription_id missing
         }
 
         // Bill monthly phone number costs

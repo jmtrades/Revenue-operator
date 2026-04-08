@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Megaphone, Plus, Copy, Trash2, Play, Pause, Pencil, Download } from "lucide-react";
+import { Megaphone, Plus, Copy, Trash2, Play, Pause, Pencil, Download, AlertCircle } from "lucide-react";
 import { Pagination } from "@/components/ui/Pagination";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { useResolvedWorkspaceId } from "@/hooks/useResolvedWorkspaceId";
@@ -106,6 +106,7 @@ export default function CampaignsPage() {
   const [dailyUsed, setDailyUsed] = useState<number>(0);
   const [loading, setLoading] = useState(initialCampaigns.length === 0);
   const [saving, setSaving] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<"all" | CampaignRow["status"]>("all");
@@ -159,7 +160,13 @@ export default function CampaignsPage() {
       signal: controller.signal,
     })
       .then((res) => {
-        if (!res.ok) { sonnerToast.error("Could not load campaigns"); return { campaigns: [] }; }
+        if (!res.ok) {
+          const errorMsg = "Could not load campaigns";
+          sonnerToast.error(errorMsg);
+          setFetchError(errorMsg);
+          return { campaigns: [] };
+        }
+        setFetchError(null);
         return res.json();
       })
       .then((data: { campaigns?: CampaignRow[]; daily_limit?: number; daily_used?: number }) => {
@@ -170,9 +177,11 @@ export default function CampaignsPage() {
         if (typeof data.daily_used === "number") setDailyUsed(data.daily_used);
         persistCampaignsSnapshot(workspaceId, next);
       })
-      .catch(() => {
+      .catch((err) => {
         if (cancelled) return;
-        sonnerToast.error("Could not load campaigns");
+        const errorMsg = err instanceof Error ? err.message : "Could not load campaigns";
+        sonnerToast.error(errorMsg);
+        setFetchError(errorMsg);
         setCampaigns([]);
       })
       .finally(() => {
@@ -495,6 +504,22 @@ export default function CampaignsPage() {
       `}</style>
       <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto">
         <Breadcrumbs items={[{ label: "Dashboard", href: "/app" }, { label: "Campaigns" }]} />
+
+        {/* Fetch error banner */}
+        {fetchError && (
+          <div className="mb-6 flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/[0.06] px-5 py-4">
+            <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-[var(--text-primary)]">
+                {t("error.loadFailed", { defaultValue: "Could not load campaigns" })}
+              </p>
+              <p className="text-sm text-[var(--text-secondary)] mt-0.5">
+                {fetchError}
+              </p>
+            </div>
+          </div>
+        )}
+
         <div className="flex items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">{t("heading")}</h1>

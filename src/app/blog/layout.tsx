@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
+import { hreflangAlternateLanguages } from "@/lib/seo/hreflang";
 
 export const metadata: Metadata = {
   title: "Blog",
   description:
     "Resources and insights on answering every call, follow-up speed, and turning calls into revenue.",
-  alternates: { canonical: "https://www.recall-touch.com/blog" },
+  alternates: {
+    canonical: "https://www.recall-touch.com/blog",
+    languages: hreflangAlternateLanguages("/blog"),
+  },
   openGraph: {
     title: "Blog — Revenue Operator",
     description:
