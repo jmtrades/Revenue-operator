@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
         break;
 
       case "coaching":
-        result = await extractCoachingInsights(params);
+        result = await extractCoachingInsights(params.analysis, params.score);
         break;
 
       case "moments":

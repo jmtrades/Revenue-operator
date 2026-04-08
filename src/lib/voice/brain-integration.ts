@@ -95,8 +95,8 @@ export interface StrategyAdjustment {
 export function prepareCallContext(leadId: string, leadBrain: LeadBrain): CallBrainContext {
   const objections = extractObjections(leadBrain.relationship.objectionsRaised);
   const daysAgo = Math.floor((Date.now() - new Date(leadBrain.lastInteractionAt).getTime()) / (1000 * 60 * 60 * 24));
-  const talkingPoints = generateTalkingPoints(leadBrain.business, leadBrain.behavioral.communicationStyle);
-  const hooks = generatePersonalizationHooks(leadBrain.business, leadBrain.interactions, leadBrain.relationship);
+  const talkingPoints = generateTalkingPoints(leadBrain.business as unknown as Record<string, unknown>, leadBrain.behavioral.communicationStyle);
+  const hooks = generatePersonalizationHooks(leadBrain.business as unknown as Record<string, unknown>, leadBrain.interactions, leadBrain.relationship);
   const budgetRange = leadBrain.business.budgetSignals?.confirmed
     ? { min: leadBrain.business.budgetSignals.amount || 0, max: (leadBrain.business.budgetSignals.amount || 0) * 1.2, confirmed: true }
     : undefined;
@@ -114,7 +114,7 @@ export function prepareCallContext(leadId: string, leadBrain: LeadBrain): CallBr
     communicationStyle: leadBrain.behavioral.communicationStyle,
     dealStage: leadBrain.relationship.buyingStage,
     talkingPoints,
-    topicsToAvoid: generateTopicsToAvoid(leadBrain.relationship.objectionsRaised, objections),
+    topicsToAvoid: generateTopicsToAvoid(leadBrain.relationship.objectionsRaised.map(o => o.objection), objections),
     personalizationHooks: hooks,
     trustScore: leadBrain.trustScore,
     engagementScore: leadBrain.engagementScore,
@@ -366,13 +366,13 @@ function extractActivePromises(r: RelationshipContext): PromiseRecord[] {
 function extractLeadName(i: LeadInteraction[]): string {
   if (!i || i.length === 0) return "Prospect";
   const first = i[0];
-  return first?.contactName || first?.participantName || "Prospect";
+  return (first as unknown as { contactName?: string; participantName?: string })?.contactName || (first as unknown as { participantName?: string })?.participantName || "Prospect";
 }
 
 function extractCompanyName(i: LeadInteraction[]): string {
   if (!i || i.length === 0) return "Their Company";
   const first = i[0];
-  return first?.companyName || "Their Company";
+  return (first as unknown as { companyName?: string })?.companyName || "Their Company";
 }
 
 function generateTalkingPoints(b: Record<string, unknown>, _s: CommunicationStyle): string[] {

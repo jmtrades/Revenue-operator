@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
         break;
 
       case "update":
-        result = await updateBrainWithEvent(params);
+        result = await updateBrainWithEvent(params.brain, params.event);
         break;
 
       case "health":

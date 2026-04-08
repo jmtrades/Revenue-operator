@@ -34,19 +34,19 @@ export async function POST(request: NextRequest) {
 
     switch (action) {
       case "resolve":
-        result = await resolvePostCallActions(params);
+        result = await resolvePostCallActions(params.callData);
         break;
 
       case "commitments":
-        result = await extractCommitments(params);
+        result = await extractCommitments(params.transcript, params.committer, params.outcome);
         break;
 
       case "tone":
-        result = await determineFollowUpTone(params);
+        result = await determineFollowUpTone(params.callData);
         break;
 
       case "context":
-        result = await buildFollowUpContext(params);
+        result = await buildFollowUpContext(params.callData);
         break;
 
       default:

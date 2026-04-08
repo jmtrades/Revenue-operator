@@ -209,7 +209,7 @@ export async function executeAutonomousAction(
           payload_json: {
             lead_id: intelligence.lead_id,
             confidence: intelligence.action_confidence,
-            reason: intelligence.action_reason,
+            reason: intelligence.next_best_action,
             risk_flags: intelligence.risk_flags,
             requires_approval: true,
           },
@@ -378,7 +378,7 @@ async function executeBasedOnAction(
     return {
       action_type: "monitor_sequence",
       success: true,
-      details: `Monitoring active sequence — ${intelligence.action_reason}`,
+      details: `Monitoring active sequence — ${intelligence.next_best_action}`,
       executed_at: executedAt,
       lead_id: intelligence.lead_id,
       workspace_id: intelligence.workspace_id,
@@ -946,7 +946,7 @@ async function escalateHumanAction(
       await db.from("escalation_logs").insert({
         lead_id: intelligence.lead_id,
         workspace_id: intelligence.workspace_id,
-        reason: intelligence.action_reason,
+        reason: intelligence.next_best_action,
         created_at: executedAt,
       });
     } catch {
@@ -978,7 +978,7 @@ async function escalateHumanAction(
                 from: process.env.RESEND_FROM_EMAIL ?? "noreply@recall-touch.com",
                 to: ownerEmail,
                 subject: `[Escalation] ${lead.name ?? "Unknown"} requires attention`,
-                text: `Lead: ${lead.name ?? "Unknown"}\nPhone: ${lead.phone ?? "N/A"}\nEmail: ${lead.email ?? "N/A"}\nReason: ${intelligence.action_reason}`,
+                text: `Lead: ${lead.name ?? "Unknown"}\nPhone: ${lead.phone ?? "N/A"}\nEmail: ${lead.email ?? "N/A"}\nReason: ${intelligence.next_best_action}`,
               }),
             });
           }

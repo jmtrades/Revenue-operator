@@ -63,7 +63,7 @@ export function selectAdaptiveStrategy(
   intelligence: LeadIntelligence,
   recoveryProfile?: RecoveryProfile
 ): AdaptiveStrategy {
-  const { risk_flags, lifecycle_phase, conversion_probability, urgency_score } = intelligence;
+  const { risk_flags, lifecycle_phase = "NURTURE", conversion_probability, urgency_score } = intelligence;
 
   // Opt-out / do-not-contact takes absolute precedence
   if (risk_flags.includes("opt_out_signal")) {

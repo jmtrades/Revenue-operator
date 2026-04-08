@@ -976,6 +976,221 @@ function calculateTrustScore(
   return Math.min(100, score);
 }
 
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// COMPATIBILITY: DB-aware functions & type aliases for pre-existing routes
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+/**
+ * LeadIntelligence — the persisted, flattened representation used by
+ * brain-trigger, bootstrap, leads/[id]/intelligence, autonomous-executor,
+ * adaptive-followup, meeting-aware, and smart-reactivation.
+ */
+export interface LeadIntelligence {
+  lead_id: string;
+  workspace_id: string;
+  urgency_score: number;
+  intent_score: number;
+  engagement_score: number;
+  conversion_probability: number;
+  next_best_action: string;
+  action_timing: "immediate" | "scheduled" | "deferred";
+  action_confidence: number;
+  risk_flags: string[];
+  opportunity_signals: string[];
+  recommended_channel: string;
+  recommended_tone: string;
+  brain_snapshot: LeadBrain | null;
+  computed_at: string;
+  // Additional properties for reactivation and state tracking
+  last_contact_at: string; // When this intelligence was computed (last contact reference)
+  churn_risk: number; // 0-1: Probability of churn (inverse of conversion_probability or based on risk_flags)
+  last_outcome: string | null; // Most recent interaction outcome (e.g., "no_show", "appointment_cancelled")
+  lifecycle_phase?: string; // Lead lifecycle phase (e.g., "WON", "RETAIN", "NURTURE")
+}
+
+/**
+ * Compute intelligence for a lead by fetching interactions from the DB,
+ * building the brain, computing the next action, and flattening into
+ * LeadIntelligence.
+ */
+export async function computeLeadIntelligence(
+  workspaceId: string,
+  leadId: string
+): Promise<LeadIntelligence> {
+  const { getDb } = await import("@/lib/db/queries");
+  const db = getDb();
+
+  // Fetch recent interactions (signals) for this lead
+  const { data: signals } = await db
+    .from("lead_signals")
+    .select("*")
+    .eq("lead_id", leadId)
+    .eq("workspace_id", workspaceId)
+    .order("created_at", { ascending: true })
+    .limit(100);
+
+  // Convert DB signals to LeadInteraction[]
+  const interactions: LeadInteraction[] = (signals ?? []).map((s: Record<string, unknown>, index: number) => ({
+    id: `signal-${(s.id as string) || index}`,
+    timestamp: (s.created_at as string) || new Date().toISOString(),
+    channel: mapSignalChannel(s.signal_type as string),
+    outcome: mapSignalOutcome(s.signal_type as string, s.metadata as Record<string, unknown> | null),
+    summary: (s.description as string) || `Signal: ${s.signal_type as string}`,
+    keyMoments: [],
+    questionsAsked: [],
+    rapportBuilt: false,
+    responsiveness: "delayed" as const,
+    engagementDepth: (s.weight as number) || 5,
+    duration: 0,
+    sentiment: "neutral" as Sentiment,
+  }));
+
+  const brain = buildLeadBrain(interactions);
+  const action = computeNextAction(brain);
+  const health = assessLeadHealth(brain);
+
+  const timingMap: Record<string, "immediate" | "scheduled" | "deferred"> = {
+    immediate: "immediate",
+    today: "scheduled",
+    "this-week": "scheduled",
+    "next-week": "deferred",
+    nurture: "deferred",
+  };
+
+  // Determine last outcome from most recent interaction
+  let lastOutcome: string | null = null;
+  if (interactions.length > 0) {
+    const mostRecentInteraction = interactions[interactions.length - 1];
+    lastOutcome = mostRecentInteraction.outcome;
+  }
+
+  // Compute churn risk as inverse of conversion probability, adjusted by risk flags
+  let churnRisk = 1 - brain.conversionProbability;
+  if (health.riskFactors.includes("no_recent_engagement")) churnRisk = Math.min(1, churnRisk + 0.15);
+  if (health.riskFactors.includes("objections_unresolved")) churnRisk = Math.min(1, churnRisk + 0.1);
+
+  const computedAtTime = new Date().toISOString();
+
+  return {
+    lead_id: leadId,
+    workspace_id: workspaceId,
+    urgency_score: health.recommendedUrgency === "immediate" ? 1.0
+      : health.recommendedUrgency === "today" ? 0.8
+      : health.recommendedUrgency === "this-week" ? 0.5
+      : 0.3,
+    intent_score: brain.conversionProbability,
+    engagement_score: brain.engagementScore / 100,
+    conversion_probability: brain.conversionProbability,
+    next_best_action: action.action,
+    action_timing: timingMap[health.recommendedUrgency] || "scheduled",
+    action_confidence: Math.min(1, brain.trustScore / 100 + brain.conversionProbability * 0.3),
+    risk_flags: health.riskFactors,
+    opportunity_signals: health.opportunitySignals,
+    recommended_channel: action.channel,
+    recommended_tone: action.messageContext.tone,
+    brain_snapshot: brain,
+    computed_at: computedAtTime,
+    last_contact_at: computedAtTime,
+    churn_risk: churnRisk,
+    last_outcome: lastOutcome,
+  };
+}
+
+/**
+ * Persist computed intelligence to lead_intelligence table.
+ */
+export async function persistLeadIntelligence(
+  intelligence: LeadIntelligence
+): Promise<{ ok: boolean }> {
+  try {
+    const { getDb } = await import("@/lib/db/queries");
+    const db = getDb();
+    const { error } = await db
+      .from("lead_intelligence")
+      .upsert(
+        {
+          lead_id: intelligence.lead_id,
+          workspace_id: intelligence.workspace_id,
+          urgency_score: intelligence.urgency_score,
+          intent_score: intelligence.intent_score,
+          engagement_score: intelligence.engagement_score,
+          conversion_probability: intelligence.conversion_probability,
+          next_best_action: intelligence.next_best_action,
+          action_timing: intelligence.action_timing,
+          action_confidence: intelligence.action_confidence,
+          risk_flags: intelligence.risk_flags,
+          opportunity_signals: intelligence.opportunity_signals,
+          recommended_channel: intelligence.recommended_channel,
+          recommended_tone: intelligence.recommended_tone,
+          brain_snapshot: intelligence.brain_snapshot as unknown as Record<string, unknown>,
+          computed_at: intelligence.computed_at,
+          last_contact_at: intelligence.last_contact_at,
+          churn_risk: intelligence.churn_risk,
+          last_outcome: intelligence.last_outcome,
+        },
+        { onConflict: "lead_id,workspace_id" }
+      );
+    return { ok: !error };
+  } catch {
+    return { ok: false };
+  }
+}
+
+/**
+ * Retrieve persisted intelligence for a lead.
+ */
+export async function getLeadIntelligence(
+  workspaceId: string,
+  leadId: string
+): Promise<LeadIntelligence | null> {
+  try {
+    const { getDb } = await import("@/lib/db/queries");
+    const db = getDb();
+    const { data, error } = await db
+      .from("lead_intelligence")
+      .select("*")
+      .eq("lead_id", leadId)
+      .eq("workspace_id", workspaceId)
+      .maybeSingle();
+    if (error || !data) return null;
+    return data as unknown as LeadIntelligence;
+  } catch {
+    return null;
+  }
+}
+
+// Aliases for routes that import under different names
+export const buildBrainFromInteractions = buildLeadBrain;
+export const updateBrainWithEvent = updateBrain;
+
+// Signal-to-interaction mappers
+function mapSignalChannel(signalType: string): InteractionChannel {
+  if (signalType.includes("call")) return "call";
+  if (signalType.includes("email")) return "email";
+  if (signalType.includes("sms")) return "sms";
+  if (signalType.includes("voicemail")) return "voicemail";
+  return "web";
+}
+
+function mapSignalOutcome(
+  signalType: string,
+  metadata: Record<string, unknown> | null
+): InteractionOutcome {
+  if (signalType.includes("booked") || signalType.includes("appointment"))
+    return "appointment_booked";
+  if (signalType.includes("objection")) return "objection_raised";
+  if (signalType.includes("open")) return "email_opened";
+  if (signalType.includes("click")) return "link_clicked";
+  if (signalType.includes("voicemail")) return "voicemail_left";
+  if (signalType.includes("no_answer")) return "no_answer";
+  if (metadata?.outcome === "promise") return "promise_made";
+  return "completed";
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// END COMPATIBILITY SECTION
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 function calculateEngagementScore(
   interactions: LeadInteraction[],
   behavioral: BehavioralProfile

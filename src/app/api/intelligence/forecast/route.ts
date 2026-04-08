@@ -34,19 +34,19 @@ export async function POST(request: NextRequest) {
 
     switch (action) {
       case "forecast":
-        result = await forecastRevenue(params);
+        result = await forecastRevenue(params.pipeline, params.historicalData);
         break;
 
       case "health":
-        result = await analyzePipelineHealth(params);
+        result = await analyzePipelineHealth(params.pipeline);
         break;
 
       case "at-risk":
-        result = await identifyAtRiskDeals(params);
+        result = await identifyAtRiskDeals(params.pipeline);
         break;
 
       case "insights":
-        result = await generateRevenueInsights(params);
+        result = await generateRevenueInsights(params.forecast, params.health);
         break;
 
       default:

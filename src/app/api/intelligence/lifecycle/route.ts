@@ -35,23 +35,23 @@ export async function POST(request: NextRequest) {
 
     switch (action) {
       case "transition":
-        result = await evaluateTransition(params);
+        result = await evaluateTransition(params.currentStage, params.event);
         break;
 
       case "requirements":
-        result = await getStageRequirements(params);
+        result = await getStageRequirements(params.stage);
         break;
 
       case "health":
-        result = await calculateStageHealth(params);
+        result = await calculateStageHealth(params.stage, params.timeInStage, params.lastActivity, params.engagementScore);
         break;
 
       case "map":
-        result = await generateTransitionMap(params);
+        result = await generateTransitionMap(params.currentStage);
         break;
 
       case "playbook":
-        result = await defineStagePlaybook(params);
+        result = await defineStagePlaybook(params.stage);
         break;
 
       default:

@@ -33,15 +33,15 @@ export async function POST(request: NextRequest) {
 
     switch (action) {
       case "predict":
-        result = await predictBestContactWindow(params);
+        result = await predictBestContactWindow(params.leadProfile);
         break;
 
       case "rank":
-        result = await rankLeadsForCurrentWindow(params);
+        result = await rankLeadsForCurrentWindow(params.leads, params.currentTime);
         break;
 
       case "plan":
-        result = await generateDailyCallPlan(params);
+        result = await generateDailyCallPlan(params.leads, params.date);
         break;
 
       default:

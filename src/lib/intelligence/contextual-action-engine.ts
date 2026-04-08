@@ -428,3 +428,7 @@ export function overrideAction(
     riskFlags: [...plan.riskFlags, "rep_override"],
   };
 }
+
+// ── Compatibility aliases for pre-existing routes ──
+export const computeActionForLead = computeAction;
+export const evaluateOutcome = evaluateActionOutcome;

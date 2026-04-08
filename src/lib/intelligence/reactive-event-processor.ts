@@ -1111,3 +1111,6 @@ export function calculateEventImpact(
     newUnderstanding: `Based on ${event.type}, we now understand this lead is ${scoreDelta > 0 ? "more" : "less"} engaged.`,
   };
 }
+
+// ── Compatibility alias for pre-existing routes ──
+export const classifyUrgency = classifyEventUrgency;

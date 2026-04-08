@@ -309,8 +309,8 @@ export function autoAdjustCampaignSettings(campaign: CampaignSnapshot, optimizat
     const realloc = campaign.budget.remaining * 0.3;
     adjustments.push({
       type: "budgetReallocation",
-      from: campaign.budget.byChannel,
-      to: { ...campaign.budget.byChannel },
+      from: JSON.stringify(campaign.budget.byChannel),
+      to: JSON.stringify({ ...campaign.budget.byChannel }),
       percentChange: (realloc / campaign.budget.total) * 100,
       rationale: "Reallocate to best channel",
     });
@@ -453,14 +453,16 @@ function calculateBenchmarks(campaign: CampaignSnapshot): BenchmarkComparison[] 
 function analyzeChannels(campaign: CampaignSnapshot): ChannelEffectiveness[] {
   return campaign.channels.map((ch) => {
     const m = ch.metricsOverride || campaign.metrics;
-    const contactRate = m.contactRate * (ch.allocationPercentage / 100);
-    const score = Math.min(100, ((contactRate / 0.3) * (m.conversionRate / 0.15) * 100));
+    const contactRate = (m.contactRate ?? campaign.metrics.contactRate) * (ch.allocationPercentage / 100);
+    const conversionRate = m.conversionRate ?? campaign.metrics.conversionRate;
+    const costPerAcquisition = m.costPerAcquisition ?? campaign.metrics.costPerAcquisition;
+    const score = Math.min(100, ((contactRate / 0.3) * (conversionRate / 0.15) * 100));
     return {
       channel: ch.channel,
       allocation: ch.allocationPercentage,
       contactRate,
-      conversionRate: m.conversionRate,
-      costPerAcquisition: m.costPerAcquisition,
+      conversionRate,
+      costPerAcquisition,
       performanceScore: Math.max(0, score),
       recommendation: score > 75 ? "increase" : score < 40 ? "decrease" : "maintain",
     };

@@ -34,19 +34,19 @@ export async function POST(request: NextRequest) {
 
     switch (action) {
       case "process":
-        result = await processEvent(params);
+        result = await processEvent(params.event, params.leadContext);
         break;
 
       case "urgency":
-        result = await classifyUrgency(params);
+        result = await classifyUrgency(params.event);
         break;
 
       case "chain":
-        result = await buildEventChain(params);
+        result = await buildEventChain(params.events);
         break;
 
       case "reactivation":
-        result = await detectReactivationSignals(params);
+        result = await detectReactivationSignals(params.events, params.dormantSinceDays);
         break;
 
       default:
