@@ -1,6 +1,6 @@
 /**
  * Stripe checkout: create session for activation
- * 14-day trial, payment method upfront, USD only
+ * 30-day money-back guarantee, payment method upfront, USD only
  * Economic framing: use BILLING_EMAIL_SUBJECT and INVOICE_DESCRIPTION in Stripe Product/email settings.
  */
 

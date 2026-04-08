@@ -66,7 +66,7 @@
       "coverageRunning": "Cobertura en curso",
       "nothingRequiresSupervision": "Nada requiere supervisión. Te avisaremos cuando haga falta.",
       "remindBeforeCharge": "Nada requiere supervisión. Te avisaremos cuando haga falta. Te recordaremos antes de cualquier cargo.",
-      "trialGraceEnded": "Your trial has ended.",
+      "trialGraceEnded": "Tu suscripción ha finalizado.",
       "trialUpgradeToContinue": "Upgrade to continue →"
     }
   },
@@ -662,10 +662,10 @@
     "expandAgentCapacity": "Expand Operator Capacity",
     "roiTitle": "Platform Return on Investment",
     "trial": {
-      "title": "You're on a free trial",
-      "description": "Subscribe to a plan to keep your operators running after the trial ends. Your data and configuration will be preserved."
+      "title": "Elige un plan para comenzar",
+      "description": "Suscríbete a un plan para mantener tus operadores funcionando. Tus datos y configuración se conservarán."
     },
-    "description": "Subscribe to a plan to keep your operators running after the trial ends. Your data and configuration will be preserved.",
+    "description": "Suscríbete a un plan para mantener tus operadores funcionando. Tus datos y configuración se conservarán.",
     "chooseVoice": "Choose Operator Voice"
   },
   "planChange": {
@@ -1419,7 +1419,7 @@
       "renewal": "Renovación",
       "manageBilling": "Gestionar facturación",
       "opening": "Abriendo…",
-      "statusTrial": "Prueba",
+      "statusTrial": "Inactivo",
       "statusActive": "Activo",
       "statusPastDue": "Vencido",
       "statusPaused": "Pausado",
@@ -9112,7 +9112,7 @@
   "compare": {
     "title": "Revenue Operator vs {name}",
     "subtitle": "See how the AI Revenue Execution System compares.",
-    "cta": "Start free"
+    "cta": "Get started"
   },
   "agency": {
     "kicker": "Partner operations",
@@ -9476,16 +9476,16 @@
     "workspaceNote": "Workspace",
     "fixPayment": "Fix payment →",
     "upgradeCta": "Upgrade now →",
-    "statusTrial": "Trial",
+    "statusTrial": "Inactivo",
     "statusActive": "Active",
     "statusCancelled": "Cancelled",
     "statusPaymentFailed": "Payment Failed",
-    "statusTrialEnded": "Trial Ended",
+    "statusTrialEnded": "Inactivo",
     "statusPaused": "Paused",
     "trialDaysLeft": "{days} days left",
     "subscriptionCancelled": "Subscription cancelled",
     "paymentIssue": "Payment issue — update card",
-    "trialEnded": "Trial ended — upgrade now"
+    "trialEnded": "Sin plan activo — elige un plan"
   },
   "help": {
     "breadcrumbs": {
@@ -10922,7 +10922,7 @@
     "passwordPlaceholder": "Enter your password",
     "showPassword": "Show password",
     "showPasswordAria": "Show password",
-    "startFreeCta": "Start free",
+    "startFreeCta": "Get started",
     "subtitle": "Manage your sign in settings",
     "title": "Sign in"
   },
@@ -10931,7 +10931,7 @@
     "callInProgress": "Call in progress",
     "caller": "Caller",
     "conversationPreview": "Conversation preview",
-    "ctaStartFree": "Cta start free",
+    "ctaStartFree": "Get started",
     "detailLabel": "Detail",
     "disclaimer": "Disclaimer",
     "followUp": "Follow up",

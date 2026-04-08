@@ -80,7 +80,7 @@ export default async function Image() {
             color: "#4B4B4D",
           }}
         >
-          Any business · Any industry · Try free
+          Any business · Any industry · 30-day money-back guarantee
         </div>
       </div>
     ),

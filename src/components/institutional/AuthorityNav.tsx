@@ -3,7 +3,7 @@
 import Link from "next/link";
 
 /**
- * Minimal top nav: Revenue Operator, Product, Pricing, Documentation, Sign in, Start free.
+ * Minimal top nav: Revenue Operator, Product, Pricing, Documentation, Sign in, Get started.
  */
 export function AuthorityNav() {
   return (

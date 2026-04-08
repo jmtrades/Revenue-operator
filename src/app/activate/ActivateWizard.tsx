@@ -311,7 +311,7 @@ export function ActivateWizard() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-3">
             <p className="text-xs font-medium text-[var(--text-tertiary)]">
-              Step {currentIndex + 1} of {STEPS.length}
+              {t("stepProgress", { current: currentIndex + 1, total: STEPS.length, defaultValue: "Step {current} of {total}" })}
             </p>
             <p className="text-xs text-[var(--text-tertiary)] hidden sm:block">
               {STEPS[currentIndex]?.label}

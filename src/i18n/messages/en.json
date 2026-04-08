@@ -71,7 +71,7 @@
       "coverageRunning": "Coverage running",
       "nothingRequiresSupervision": "Nothing requires supervision. We'll notify you when your input is needed.",
       "remindBeforeCharge": "Nothing requires supervision. We'll notify you when your input is needed. We'll remind you before any charge.",
-      "trialGraceEnded": "Your trial has ended.",
+      "trialGraceEnded": "Your subscription has ended.",
       "trialUpgradeToContinue": "Upgrade to continue →"
     }
   },
@@ -743,10 +743,10 @@
     "securityNote": "Payments secured with 256-bit encryption via Stripe. We never store your card details.",
     "roiTitle": "Platform Return on Investment",
     "trial": {
-      "title": "You're on a free trial",
-      "description": "Subscribe to a plan to keep your operators running after the trial ends. Your data and configuration will be preserved."
+      "title": "Choose a plan to get started",
+      "description": "Subscribe to a plan to keep your operators running. Your data and configuration will be preserved."
     },
-    "description": "Subscribe to a plan to keep your operators running after the trial ends. Your data and configuration will be preserved.",
+    "description": "Subscribe to a plan to keep your operators running. Your data and configuration will be preserved.",
     "chooseVoice": "Choose Operator Voice"
   },
   "planChange": {
@@ -1645,7 +1645,7 @@
       "renewal": "Renewal",
       "manageBilling": "Manage billing",
       "opening": "Opening…",
-      "statusTrial": "Trial",
+      "statusTrial": "Inactive",
       "statusActive": "Active",
       "statusPastDue": "Past due",
       "statusPaused": "Paused",
@@ -6642,7 +6642,7 @@
     },
     "heading": "Pricing",
     "subheading": "Subheading",
-    "trialNote": "Trial note"
+    "trialNote": "30-day money-back guarantee"
   },
   "stripePricingTable": {
     "configError": "Configure NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY and NEXT_PUBLIC_STRIPE_PRICING_TABLE_ID to show the pricing table."
@@ -8448,7 +8448,7 @@
         "title": "Quick Start",
         "description": "Set up Revenue Operator in about 5 minutes: sign up, add your business details, configure your AI agent, connect your phone number, and place a test call.",
         "step1Label": "Sign up",
-        "step1": "Go to Start free and create your account.",
+        "step1": "Go to Get Started and create your account.",
         "step2Label": "Business details",
         "step2": "Enter business name, address, and phone.",
         "step3Label": "AI agent",
@@ -9286,16 +9286,16 @@
     "workspaceNote": "Workspace",
     "fixPayment": "Fix payment →",
     "upgradeCta": "Upgrade now →",
-    "statusTrial": "Trial",
+    "statusTrial": "Inactive",
     "statusActive": "Active",
     "statusCancelled": "Cancelled",
     "statusPaymentFailed": "Payment Failed",
-    "statusTrialEnded": "Trial Ended",
+    "statusTrialEnded": "Inactive",
     "statusPaused": "Paused",
     "trialDaysLeft": "{days} days left",
     "subscriptionCancelled": "Subscription cancelled",
     "paymentIssue": "Payment issue — update card",
-    "trialEnded": "Trial ended — upgrade now"
+    "trialEnded": "No active plan — choose a plan"
   },
   "help": {
     "breadcrumbs": {
@@ -9467,7 +9467,7 @@
         "annualLoss": "Annual Loss",
         "paybackPeriod": "Payback Period",
         "annualRoi": "Annual ROI",
-        "cta": "Start Recovering {amount}/mo — Try Free"
+        "cta": "Start Recovering {amount}/mo — Get Started"
       }
     },
     "finalCta": {
@@ -10911,7 +10911,7 @@
     "callInProgress": "Call in progress",
     "caller": "Caller",
     "conversationPreview": "Conversation preview",
-    "ctaStartFree": "Cta start free",
+    "ctaStartFree": "Get started",
     "detailLabel": "Detail",
     "disclaimer": "Disclaimer",
     "followUp": "Follow up",
