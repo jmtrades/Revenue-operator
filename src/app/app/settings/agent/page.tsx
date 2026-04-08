@@ -488,65 +488,65 @@ export default function AppSettingsAgentPage() {
           className="w-full px-4 py-3 flex items-center justify-between bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] transition-[background-color,transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] active:scale-[0.97]"
         >
           <div className="text-left">
-            <h3 className="text-sm font-semibold text-[var(--text-primary)]">Business Context</h3>
-            <p className="text-xs text-[var(--text-secondary)] mt-0.5">Industry, goals, and target audience</p>
+            <h3 className="text-sm font-semibold text-[var(--text-primary)]">{tSettings("agent.businessContextSectionTitle")}</h3>
+            <p className="text-xs text-[var(--text-secondary)] mt-0.5">{tSettings("agent.businessContextSectionDescription")}</p>
           </div>
           <ChevronDown className={`w-4 h-4 text-[var(--text-tertiary)] transition-[transform] duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] ${expandedSections.businessContext ? "rotate-180" : ""}`} />
         </button>
         {expandedSections.businessContext && (
           <div className="px-4 py-4 space-y-4 border-t border-[var(--border-default)]">
             <div>
-              <label htmlFor="industry" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">Industry</label>
+              <label htmlFor="industry" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{tSettings("agent.industryLabel")}</label>
               <input
                 id="industry"
                 type="text"
                 value={config.industry}
                 onChange={(e) => setConfig((c) => ({ ...c, industry: e.target.value }))}
-                placeholder="e.g., Real Estate, SaaS, Healthcare"
+                placeholder={tSettings("agent.industryPlaceholder")}
                 className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
               />
             </div>
             <div>
-              <label htmlFor="services" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">Services Offered</label>
+              <label htmlFor="services" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{tSettings("agent.servicesOfferedLabel")}</label>
               <textarea
                 id="services"
                 rows={2}
                 value={config.servicesOffered}
                 onChange={(e) => setConfig((c) => ({ ...c, servicesOffered: e.target.value }))}
-                placeholder="e.g., Property sales, Real estate consulting, Home valuation"
+                placeholder={tSettings("agent.servicesOfferedPlaceholder")}
                 className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none resize-none"
               />
             </div>
             <div>
-              <label htmlFor="primary-goal" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">Primary Goal</label>
+              <label htmlFor="primary-goal" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{tSettings("agent.primaryGoalLabel")}</label>
               <input
                 id="primary-goal"
                 type="text"
                 value={config.primaryGoal}
                 onChange={(e) => setConfig((c) => ({ ...c, primaryGoal: e.target.value }))}
-                placeholder="e.g., Generate qualified leads, Schedule property viewings"
+                placeholder={tSettings("agent.primaryGoalPlaceholder")}
                 className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
               />
             </div>
             <div>
-              <label htmlFor="usp" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">Unique Selling Points</label>
+              <label htmlFor="usp" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{tSettings("agent.uniqueSellingPointsLabel")}</label>
               <textarea
                 id="usp"
                 rows={2}
                 value={config.uniqueSellingPoints}
                 onChange={(e) => setConfig((c) => ({ ...c, uniqueSellingPoints: e.target.value }))}
-                placeholder="e.g., 20 years of experience, Award-winning service, Local market expertise"
+                placeholder={tSettings("agent.uniqueSellingPointsPlaceholder")}
                 className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none resize-none"
               />
             </div>
             <div>
-              <label htmlFor="target-audience" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">Target Audience</label>
+              <label htmlFor="target-audience" className="block text-xs font-medium text-[var(--text-tertiary)] mb-1">{tSettings("agent.targetAudienceLabel")}</label>
               <input
                 id="target-audience"
                 type="text"
                 value={config.targetAudience}
                 onChange={(e) => setConfig((c) => ({ ...c, targetAudience: e.target.value }))}
-                placeholder="e.g., First-time homebuyers, Real estate investors"
+                placeholder={tSettings("agent.targetAudiencePlaceholder")}
                 className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-sm focus:border-[var(--border-medium)] focus:ring-1 focus:ring-[var(--border-medium)] focus:outline-none"
               />
             </div>
@@ -659,7 +659,7 @@ export default function AppSettingsAgentPage() {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <label htmlFor="tone-preset" className="block text-xs font-medium text-[var(--text-tertiary)]">{tSettings("agent.tonePresetLabel")}</label>
-                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-violet-500/[0.08] text-[9px] font-medium text-violet-400">AI-adaptive</span>
+                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-violet-500/[0.08] text-[9px] font-medium text-violet-400">{tSettings("agent.aiAdaptiveLabel")}</span>
               </div>
               <select
                 id="tone-preset"
@@ -672,7 +672,7 @@ export default function AppSettingsAgentPage() {
                 <option value="Concise & Direct">{tSettings("agent.tonePresets.concise")}</option>
                 <option value="Empathetic & Warm">{tSettings("agent.tonePresets.empathetic")}</option>
               </select>
-              <p className="text-[10px] text-[var(--text-tertiary)] mt-1">Sets the base tone. Your AI operator adapts in real-time based on caller sentiment during each conversation.</p>
+              <p className="text-[10px] text-[var(--text-tertiary)] mt-1">{tSettings("agent.toneAdaptationHint")}</p>
             </div>
           </div>
         )}
@@ -725,7 +725,7 @@ export default function AppSettingsAgentPage() {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <label htmlFor="escalation-threshold" className="block text-xs font-medium text-[var(--text-tertiary)]">{tSettings("agent.confidenceThresholdLabel")}</label>
-                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-violet-500/[0.08] text-[9px] font-medium text-violet-400">AI-tuned</span>
+                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-violet-500/[0.08] text-[9px] font-medium text-violet-400">{tSettings("agent.aiTunedLabel")}</span>
               </div>
               <select
                 id="escalation-threshold"
@@ -737,7 +737,7 @@ export default function AppSettingsAgentPage() {
                 <option value="Balanced">{tSettings("agent.escalationThresholds.balanced")}</option>
                 <option value="Aggressive — AI handles most">{tSettings("agent.escalationThresholds.aggressive")}</option>
               </select>
-              <p className="text-[10px] text-[var(--text-tertiary)] mt-1">Your AI operator continuously adjusts escalation behavior based on call outcomes and sentiment analysis.</p>
+              <p className="text-[10px] text-[var(--text-tertiary)] mt-1">{tSettings("agent.escalationAdaptationHint")}</p>
             </div>
 
             <div>
@@ -811,7 +811,7 @@ export default function AppSettingsAgentPage() {
                         setCustomAllowedInput("");
                       }
                     }}
-                    placeholder="Add custom action"
+                    placeholder={tSettings("agent.addCustomActionPlaceholder")}
                     className="flex-1 px-2 py-1 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-xs focus:border-[var(--border-medium)] focus:outline-none"
                   />
                   <button
@@ -822,7 +822,7 @@ export default function AppSettingsAgentPage() {
                     }}
                     className="px-2 py-1 rounded-lg bg-[var(--accent-primary)] text-[var(--text-on-accent)] text-xs font-medium hover:opacity-90 transition-opacity"
                   >
-                    Add
+                    {tSettings("agent.addButtonText")}
                   </button>
                 </div>
               </div>
@@ -865,7 +865,7 @@ export default function AppSettingsAgentPage() {
                         setCustomForbiddenInput("");
                       }
                     }}
-                    placeholder="Add custom action"
+                    placeholder={tSettings("agent.addCustomActionPlaceholder")}
                     className="flex-1 px-2 py-1 rounded-lg bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] text-xs focus:border-[var(--border-medium)] focus:outline-none"
                   />
                   <button
@@ -876,7 +876,7 @@ export default function AppSettingsAgentPage() {
                     }}
                     className="px-2 py-1 rounded-lg bg-[var(--accent-danger)] text-[var(--text-on-accent)] text-xs font-medium hover:opacity-90 transition-opacity"
                   >
-                    Add
+                    {tSettings("agent.addButtonText")}
                   </button>
                 </div>
               </div>

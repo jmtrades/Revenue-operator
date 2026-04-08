@@ -202,7 +202,7 @@ export default function IndustryTemplatesPage() {
                       {appliedSlugs.has(template.industry_slug) && (
                         <span className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium bg-[var(--success-bg)]/20 text-[var(--success-fg)]">
                           <Check className="w-3 h-3" />
-                          Applied
+                          {tTemplates("status.applied")}
                         </span>
                       )}
                     </div>
@@ -228,10 +228,10 @@ export default function IndustryTemplatesPage() {
                   {applyingSlug === template.industry_slug ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      Applying...
+                      {tTemplates("status.applying")}
                     </>
                   ) : (
-                    "Apply to Operator"
+                    tTemplates("button.applyToOperator")
                   )}
                 </button>
               </div>
@@ -242,11 +242,11 @@ export default function IndustryTemplatesPage() {
                   {/* Greeting */}
                   <section>
                     <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-2 flex items-center justify-between">
-                      Default Greeting
+                      {tTemplates("section.defaultGreeting")}
                       <button
                         onClick={() => copyToClipboard(template.default_greeting)}
                         className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] p-1"
-                        title="Copy greeting"
+                        title={tTemplates("tooltip.copyGreeting")}
                       >
                         <Copy className="w-4 h-4" />
                       </button>
@@ -258,19 +258,19 @@ export default function IndustryTemplatesPage() {
 
                   {/* Scripts */}
                   <section>
-                    <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Call Scripts ({template.default_scripts.length})</h3>
+                    <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">{tTemplates("section.callScripts", { count: template.default_scripts.length })}</h3>
                     <div className="space-y-3">
                       {template.default_scripts.map((script, idx) => (
                         <div key={idx} className="bg-[var(--bg-surface)] rounded p-3 border border-[var(--border-default)]">
                           <div className="flex items-start justify-between mb-2">
                             <div>
                               <p className="text-sm font-medium text-[var(--text-primary)]">{script.name}</p>
-                              <p className="text-xs text-[var(--text-secondary)]">Trigger: {script.trigger}</p>
+                              <p className="text-xs text-[var(--text-secondary)]">{tTemplates("trigger", { trigger: script.trigger })}</p>
                             </div>
                             <button
                               onClick={() => copyToClipboard(script.content)}
                               className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] p-1 flex-shrink-0"
-                              title="Copy script"
+                              title={tTemplates("tooltip.copyScript")}
                             >
                               <Copy className="w-4 h-4" />
                             </button>
@@ -283,7 +283,7 @@ export default function IndustryTemplatesPage() {
 
                   {/* FAQ */}
                   <section>
-                    <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">FAQ ({template.default_faq.length} items)</h3>
+                    <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">{tTemplates("section.faq", { count: template.default_faq.length })}</h3>
                     <div className="space-y-2">
                       {template.default_faq.map((item, idx) => (
                         <div key={idx} className="bg-[var(--bg-surface)] rounded p-3 border border-[var(--border-default)]">
@@ -296,13 +296,13 @@ export default function IndustryTemplatesPage() {
 
                   {/* Follow-up Cadence */}
                   <section>
-                    <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Follow-up Cadence ({template.default_follow_up_cadence.length} sequences)</h3>
+                    <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">{tTemplates("section.followUpCadence", { count: template.default_follow_up_cadence.length })}</h3>
                     <div className="space-y-3">
                       {template.default_follow_up_cadence.map((cadence, idx) => (
                         <div key={idx} className="bg-[var(--bg-surface)] rounded p-3 border border-[var(--border-default)]">
                           <p className="text-sm font-medium text-[var(--text-primary)] mb-2">{cadence.name}</p>
                           <div className="text-xs text-[var(--text-tertiary)] mb-2">
-                            Triggers: {cadence.triggers.join(", ")}
+                            {tTemplates("triggers", { list: cadence.triggers.join(", ") })}
                           </div>
                           <div className="space-y-1">
                             {cadence.steps.map((step, stepIdx) => {
@@ -331,7 +331,7 @@ export default function IndustryTemplatesPage() {
 
                   {/* Recommended Features */}
                   <section>
-                    <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Recommended Features</h3>
+                    <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">{tTemplates("section.recommendedFeatures")}</h3>
                     <div className="flex flex-wrap gap-2">
                       {template.recommended_features.map((feature, idx) => (
                         <span
@@ -346,10 +346,10 @@ export default function IndustryTemplatesPage() {
 
                   {/* API Info */}
                   <section className="pt-4 border-t border-[var(--border-default)]">
-                    <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">API Access</h3>
+                    <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">{tTemplates("section.apiAccess")}</h3>
                     <div className="bg-[var(--bg-surface)] rounded p-3 border border-[var(--border-default)] space-y-2">
                       <div>
-                        <p className="text-xs text-[var(--text-secondary)] mb-1">GET single template:</p>
+                        <p className="text-xs text-[var(--text-secondary)] mb-1">{tTemplates("api.getSingleTemplate")}</p>
                         <div className="flex items-center gap-2">
                           <code className="text-xs flex-1 bg-[var(--bg-inset)] rounded px-2 py-1 text-[var(--text-secondary)] overflow-auto">
                             /api/industry-templates/{template.industry_slug}
@@ -365,13 +365,13 @@ export default function IndustryTemplatesPage() {
                         </div>
                       </div>
                       <div>
-                        <p className="text-xs text-[var(--text-secondary)] mb-1">View in browser:</p>
+                        <p className="text-xs text-[var(--text-secondary)] mb-1">{tTemplates("api.viewInBrowser")}</p>
                         <Link
                           href={`/api/industry-templates/${template.industry_slug}`}
                           target="_blank"
                           className="inline-flex items-center gap-1 text-xs text-[var(--accent-primary)] hover:text-[var(--accent-primary)]/80"
                         >
-                          Open API endpoint
+                          {tTemplates("api.openEndpoint")}
                           <ExternalLink className="w-3 h-3" />
                         </Link>
                       </div>
@@ -386,17 +386,17 @@ export default function IndustryTemplatesPage() {
 
       {/* API Documentation */}
       <div className="mt-8 p-6 rounded-lg border border-[var(--border-default)] bg-[var(--bg-surface)]">
-        <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">API Documentation</h2>
+        <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">{tTemplates("section.apiDocumentation")}</h2>
         <div className="space-y-4 text-sm text-[var(--text-secondary)]">
           <div>
-            <p className="font-medium text-[var(--text-primary)] mb-1">Get all templates:</p>
+            <p className="font-medium text-[var(--text-primary)] mb-1">{tTemplates("api.getAllTemplates")}</p>
             <code className="block bg-[var(--bg-surface)] rounded p-2 text-xs text-[var(--text-tertiary)] overflow-auto mb-2">
               GET /api/industry-templates
             </code>
             <p className="text-xs text-[var(--text-secondary)]">Returns all {templates.length} industry templates with full configuration.</p>
           </div>
           <div>
-            <p className="font-medium text-[var(--text-primary)] mb-1">Get single template:</p>
+            <p className="font-medium text-[var(--text-primary)] mb-1">{tTemplates("api.getSingleTemplate")}</p>
             <code className="block bg-[var(--bg-surface)] rounded p-2 text-xs text-[var(--text-tertiary)] overflow-auto mb-2">
               GET /api/industry-templates/[slug]
             </code>
@@ -417,7 +417,7 @@ export default function IndustryTemplatesPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-[var(--bg-surface)] rounded-lg border border-[var(--border-default)] max-w-sm w-full p-6 shadow-lg">
             <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
-              Apply Template?
+              {tTemplates("dialog.heading")}
             </h3>
             <p className="text-sm text-[var(--text-secondary)] mb-6">
               Apply <span className="font-medium text-[var(--text-primary)]">{confirmDialog.templateName}</span> to your operator? This will update your operator's greeting, knowledge base, and configuration.
@@ -433,13 +433,13 @@ export default function IndustryTemplatesPage() {
                 }
                 className="px-4 py-2 rounded-md text-sm font-medium text-[var(--text-secondary)] bg-[var(--bg-inset)] hover:bg-[var(--bg-inset)]/80 transition-colors"
               >
-                Cancel
+                {tTemplates("dialog.cancel")}
               </button>
               <button
                 onClick={confirmApplyTemplate}
                 className="px-4 py-2 rounded-md text-sm font-medium text-white bg-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/90 transition-colors"
               >
-                Apply
+                {tTemplates("dialog.apply")}
               </button>
             </div>
           </div>

@@ -508,7 +508,30 @@
         "reauthenticate": "Re-authenticate"
       },
       "hub": {
-        "needHelp": "Need help with integrations?"
+        "needHelp": "Need help with integrations?",
+        "syncHealthTitle": "Sync Health Summary",
+        "syncHealthConnected": "Connected",
+        "syncHealthRecordsSynced": "Records Synced",
+        "syncHealthSyncErrors": "Sync Errors",
+        "whatsappBusinessApiLink": "Learn about WhatsApp Business API →",
+        "whatGetsSynced": "What gets synced?",
+        "newLeadsAutoSync": "New leads auto-sync to operator system",
+        "callOutcomesPushed": "Call outcomes pushed back to CRM",
+        "appointmentsSynced": "Appointments synced both ways",
+        "contactUpdatesSync": "Contact updates stay in sync",
+        "connectsQuickly": "Connects in 30 seconds · Data stays encrypted · Disconnect anytime",
+        "unlocksFeatures": "Unlocks: automatic availability, appointment booking, calendar sync, and meeting reminders for your leads.",
+        "statusLoading": "Loading",
+        "statusConnected": "Connected",
+        "statusComingSoon": "Coming Soon",
+        "statusNotConnected": "Not Connected",
+        "labelRecordsSynced": "Records synced:",
+        "labelLastSync": "Last sync:",
+        "breadcrumbHome": "Home",
+        "breadcrumbIntegrations": "Integrations",
+        "placeholderSearchIntegrations": "Search integrations...",
+        "emptyStateHeading": "No integrations found",
+        "emptyStateMessage": "Try adjusting your search query"
       }
     },
     "settings": {
@@ -4564,7 +4587,25 @@
       "objectionsSectionTitle": "Objection Responses",
       "objectionsSectionDescription": "Pre-configured responses to common prospect objections",
       "objectionsLabel": "Objection/Response Pairs",
-      "addButton": "+ Add"
+      "addButton": "+ Add",
+      "businessContextSectionTitle": "Business Context",
+      "businessContextSectionDescription": "Industry, goals, and target audience",
+      "industryLabel": "Industry",
+      "industryPlaceholder": "e.g., Real Estate, SaaS, Healthcare",
+      "servicesOfferedLabel": "Services Offered",
+      "servicesOfferedPlaceholder": "e.g., Property sales, Real estate consulting, Home valuation",
+      "primaryGoalLabel": "Primary Goal",
+      "primaryGoalPlaceholder": "e.g., Generate qualified leads, Schedule property viewings",
+      "uniqueSellingPointsLabel": "Unique Selling Points",
+      "uniqueSellingPointsPlaceholder": "e.g., 20 years of experience, Award-winning service, Local market expertise",
+      "targetAudienceLabel": "Target Audience",
+      "targetAudiencePlaceholder": "e.g., First-time homebuyers, Real estate investors",
+      "aiAdaptiveLabel": "AI-adaptive",
+      "aiTunedLabel": "AI-tuned",
+      "toneAdaptationHint": "Sets the base tone. Your AI operator adapts in real-time based on caller sentiment during each conversation.",
+      "escalationAdaptationHint": "Your AI operator continuously adjusts escalation behavior based on call outcomes and sentiment analysis.",
+      "addCustomActionPlaceholder": "Add custom action",
+      "addButtonText": "Add"
     },
     "outbound": {
       "back": "Back to settings",
@@ -7463,11 +7504,47 @@
     "title": "Industry Templates",
     "description": "Production-ready templates for AI agents across every industry. Choose a template to pre-configure your agent with industry-specific knowledge, greetings, and call flows.",
     "emptyState": "Industry-specific configurations are loading. Templates optimize your operator for your vertical — voice, behavior, objections, and booking logic.",
+    "status": {
+      "applied": "Applied",
+      "applying": "Applying..."
+    },
+    "button": {
+      "applyToOperator": "Apply to Operator"
+    },
+    "section": {
+      "defaultGreeting": "Default Greeting",
+      "callScripts": "Call Scripts ({count})",
+      "faq": "FAQ ({count} items)",
+      "followUpCadence": "Follow-up Cadence ({count} sequences)",
+      "recommendedFeatures": "Recommended Features",
+      "apiAccess": "API Access",
+      "apiDocumentation": "API Documentation"
+    },
+    "tooltip": {
+      "copyGreeting": "Copy greeting",
+      "copyScript": "Copy script"
+    },
+    "trigger": "Trigger: {trigger}",
+    "triggers": "Triggers: {list}",
+    "api": {
+      "getSingleTemplate": "GET single template:",
+      "getAllTemplates": "Get all templates:",
+      "viewInBrowser": "View in browser:",
+      "openEndpoint": "Open API endpoint"
+    },
+    "dialog": {
+      "heading": "Apply Template?",
+      "cancel": "Cancel",
+      "apply": "Apply"
+    },
     "toast": {
       "loadFailed": "Failed to load industry templates",
       "loadError": "Error loading templates",
       "copied": "Copied to clipboard",
-      "copyFailed": "Failed to copy"
+      "copyFailed": "Failed to copy",
+      "templateApplied": "Template applied successfully! Your operator has been updated.",
+      "applyFailed": "Failed to apply template",
+      "applyError": "An error occurred while applying the template"
     }
   },
   "messages": {

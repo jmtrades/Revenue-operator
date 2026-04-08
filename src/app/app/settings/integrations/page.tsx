@@ -505,7 +505,7 @@ export default function AppSettingsIntegrationsPage() {
                 {t("whatsappComingSoon", { defaultValue: "Send and receive WhatsApp messages through your autonomous operator. Connect your WhatsApp Business account to get started." })}
               </p>
               <a href="https://business.whatsapp.com/" target="_blank" rel="noopener noreferrer" className="text-xs text-[var(--accent-primary)] hover:underline">
-                Learn about WhatsApp Business API →
+                {t("hub.whatsappBusinessApiLink")}
               </a>
             </div>
           </div>
@@ -520,7 +520,7 @@ export default function AppSettingsIntegrationsPage() {
           {/* Sync Health Summary Card */}
           <div className="mb-4 p-4 rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-[var(--text-primary)]">Sync Health Summary</h3>
+              <h3 className="text-sm font-semibold text-[var(--text-primary)]">{t("hub.syncHealthTitle")}</h3>
               <Link
                 href="/app/settings/integrations/sync-log"
                 className="text-xs font-medium text-[var(--accent-primary)] hover:underline"
@@ -532,14 +532,14 @@ export default function AppSettingsIntegrationsPage() {
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-[var(--accent-primary)]" aria-hidden />
                 <div className="flex flex-col">
-                  <span className="text-xs text-[var(--text-secondary)]">Connected</span>
+                  <span className="text-xs text-[var(--text-secondary)]">{t("hub.syncHealthConnected")}</span>
                   <span className="text-sm font-semibold text-[var(--text-primary)]">{connectedCount}</span>
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <RefreshCw className="w-4 h-4 text-[var(--text-secondary)]" aria-hidden />
                 <div className="flex flex-col">
-                  <span className="text-xs text-[var(--text-secondary)]">Records Synced</span>
+                  <span className="text-xs text-[var(--text-secondary)]">{t("hub.syncHealthRecordsSynced")}</span>
                   <span className="text-sm font-semibold text-[var(--text-primary)]">{totalSynced}</span>
                 </div>
               </div>
@@ -547,7 +547,7 @@ export default function AppSettingsIntegrationsPage() {
                 <div className="flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-[var(--accent-warning,#f59e0b)]" aria-hidden />
                   <div className="flex flex-col">
-                    <span className="text-xs text-[var(--text-secondary)]">Sync Errors</span>
+                    <span className="text-xs text-[var(--text-secondary)]">{t("hub.syncHealthSyncErrors")}</span>
                     <span className="text-sm font-semibold text-[var(--accent-warning,#f59e0b)]">{totalErrors}</span>
                   </div>
                 </div>
@@ -658,7 +658,7 @@ export default function AppSettingsIntegrationsPage() {
                         onClick={() => setExpandedSyncInfo((prev) => ({ ...prev, [crm.id]: !prev[crm.id] }))}
                         className="w-full text-left flex items-center justify-between px-2 py-1.5 rounded-lg hover:bg-[var(--bg-hover)] transition-colors text-[11px] font-medium text-[var(--text-secondary)]"
                       >
-                        <span>What gets synced?</span>
+                        <span>{t("hub.whatGetsSynced")}</span>
                         <ChevronDown
                           className={`w-3 h-3 transition-transform ${expandedSyncInfo[crm.id] ? "rotate-180" : ""}`}
                           aria-hidden
@@ -668,19 +668,19 @@ export default function AppSettingsIntegrationsPage() {
                         <div className="mt-2 space-y-1.5 text-[10px] text-[var(--text-secondary)]">
                           <div className="flex items-start gap-1.5">
                             <span className="text-[var(--accent-primary)] mt-0.5">•</span>
-                            <span>New leads auto-sync to operator system</span>
+                            <span>{t("hub.newLeadsAutoSync")}</span>
                           </div>
                           <div className="flex items-start gap-1.5">
                             <span className="text-[var(--accent-primary)] mt-0.5">•</span>
-                            <span>Call outcomes pushed back to CRM</span>
+                            <span>{t("hub.callOutcomesPushed")}</span>
                           </div>
                           <div className="flex items-start gap-1.5">
                             <span className="text-[var(--accent-primary)] mt-0.5">•</span>
-                            <span>Appointments synced both ways</span>
+                            <span>{t("hub.appointmentsSynced")}</span>
                           </div>
                           <div className="flex items-start gap-1.5">
                             <span className="text-[var(--accent-primary)] mt-0.5">•</span>
-                            <span>Contact updates stay in sync</span>
+                            <span>{t("hub.contactUpdatesSync")}</span>
                           </div>
                         </div>
                       )}
@@ -689,7 +689,7 @@ export default function AppSettingsIntegrationsPage() {
 
                   {!connected && !crm.comingSoon && !expandedSyncInfo[crm.id] && (
                     <p className="text-[10px] text-[var(--text-tertiary)] mt-2 italic">
-                      Connects in 30 seconds · Data stays encrypted · Disconnect anytime
+                      {t("hub.connectsQuickly")}
                     </p>
                   )}
                   <div className="mt-4 flex flex-wrap gap-2">
@@ -812,7 +812,7 @@ export default function AppSettingsIntegrationsPage() {
                   <p className="text-sm font-medium text-[var(--text-primary)]">{t("hub.googleCalendarLabel")}</p>
                   <p className="text-xs text-[var(--text-secondary)] mt-1">{t("hub.calendarDesc")}</p>
                   {!googleCalendarConnected && (
-                    <p className="text-[11px] text-[var(--text-tertiary)] mt-1.5">Unlocks: automatic availability, appointment booking, calendar sync, and meeting reminders for your leads.</p>
+                    <p className="text-[11px] text-[var(--text-tertiary)] mt-1.5">{t("hub.unlocksFeatures")}</p>
                   )}
                 </div>
                 {googleCalendarConnected ? (

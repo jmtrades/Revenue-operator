@@ -11647,5 +11647,47 @@
       "life": "Vida"
     },
     "loading": "Un momento…"
+  },
+  "recommendations": {
+    "pageTitle": "Recomendaciones — Revenue Operator",
+    "title": "Recomendaciones",
+    "subtitle": "Información procesable para mejorar el rendimiento de las llamadas y recuperar ingresos.",
+    "breadcrumb": {
+      "dashboard": "Panel de control",
+      "recommendations": "Recomendaciones"
+    },
+    "emptyState": {
+      "title": "Sin recomendaciones aún",
+      "description": "A medida que tu operador de IA maneje más llamadas, el sistema mostrará información procesable sobre ingresos perdidos, oportunidades de seguimiento y mejoras de procesos."
+    },
+    "recommendations": {
+      "missedCalls": {
+        "title": "Dar seguimiento a {count} llamadas perdidas",
+        "description": "Valor estimado de recuperación: ${value}"
+      },
+      "staleLeads": {
+        "title": "Reactivar {count} prospectos inactivos",
+        "description": "Contactados hace 7+ días sin cita agendada"
+      },
+      "lowConversion": {
+        "title": "Mejorar guión de reserva — {rate}% tasa de conversión",
+        "description": "Promedio de industria: 18-25%. Revisa el tono del agente y manejo de objeciones."
+      },
+      "volumeGrowth": {
+        "title": "{count} llamadas esta semana — considera actualizar",
+        "description": "Desbloquea más minutos simultáneos y análisis avanzado"
+      },
+      "idleCampaigns": {
+        "title": "Reactivar {count} campaña(s) pausada(s)",
+        "description": "Reanuda las llamadas para construir tu cartera"
+      }
+    },
+    "actions": {
+      "followUp": "Dar seguimiento",
+      "reEngage": "Reactivar",
+      "review": "Revisar",
+      "upgrade": "Actualizar plan",
+      "reactivate": "Reactivar"
+    }
   }
 }

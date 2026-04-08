@@ -11649,5 +11649,47 @@
       "life": "ライフ"
     },
     "loading": "お待ちください…"
+  },
+  "recommendations": {
+    "pageTitle": "推奨事項 — Revenue Operator",
+    "title": "推奨事項",
+    "subtitle": "コール パフォーマンスを向上させ、収益を回復するための実行可能なインサイト。",
+    "breadcrumb": {
+      "dashboard": "ダッシュボード",
+      "recommendations": "推奨事項"
+    },
+    "emptyState": {
+      "title": "推奨事項はまだありません",
+      "description": "AI オペレーターがより多くのコールを処理するにつれて、システムは失われた収益、フォローアップの機会、プロセス改善に関する実行可能なインサイトを表示します。"
+    },
+    "recommendations": {
+      "missedCalls": {
+        "title": "{count}件の不在着信のフォローアップ",
+        "description": "推定回収価値: ${value}"
+      },
+      "staleLeads": {
+        "title": "{count}件の非アクティブなリードの再開",
+        "description": "7日以上前に連絡済み、アポイント未定"
+      },
+      "lowConversion": {
+        "title": "予約スクリプトを改善 — {rate}% コンバージョン率",
+        "description": "業界平均: 18～25%。エージェントのトーンと異議処理を確認してください。"
+      },
+      "volumeGrowth": {
+        "title": "今週は{count}件のコール — アップグレードを検討してください",
+        "description": "同時実行分数と高度な分析をアンロック"
+      },
+      "idleCampaigns": {
+        "title": "{count}件の一時停止中キャンペーンを再開",
+        "description": "コールを再開してパイプラインを構築してください"
+      }
+    },
+    "actions": {
+      "followUp": "フォローアップ",
+      "reEngage": "再開",
+      "review": "確認",
+      "upgrade": "プランをアップグレード",
+      "reactivate": "再開"
+    }
   }
 }
