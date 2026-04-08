@@ -99,15 +99,40 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, campaign_id: null, leads_count: 0, message: "No leads match this segment" });
     }
 
-    // Create campaign
-    const { data: campaign } = await db.from("campaigns").insert({
+    // Create campaign in outbound_campaigns table
+    const { data: campaign } = await db.from("outbound_campaigns").insert({
       workspace_id,
       name: campaignName,
-      description: campaignDescription,
+      type: segment === "hot_leads" ? "outbound_call" : segment === "cold_leads" ? "email" : "multi_channel",
+      mode: "preview",
       status: "draft",
-      campaign_type: segment === "hot_leads" ? "outbound_call" : segment === "cold_leads" ? "email" : "multi_channel",
-      lead_count: leadList.length,
-      created_by: session.userId,
+      target_filter: {},
+      settings: {
+        max_concurrent_calls: 1,
+        max_attempts_per_lead: 3,
+        retry_delay_minutes: 60,
+        voicemail_behavior: "drop",
+        recording_enabled: true,
+        calling_hours: { start: "09:00", end: "20:00" },
+        calling_days: [1, 2, 3, 4, 5],
+        preview_delay_seconds: 5,
+        ring_timeout_seconds: 25,
+      },
+      stats: {
+        total_leads: leadList.length,
+        dialed: 0,
+        answered: 0,
+        voicemails: 0,
+        no_answers: 0,
+        transferred: 0,
+        callbacks_scheduled: 0,
+        dnc_hits: 0,
+        failed: 0,
+        avg_call_duration_seconds: 0,
+        conversion_rate: 0,
+        connect_rate: 0,
+        calls_per_hour: 0,
+      },
     }).select("id").maybeSingle();
 
     const campaignId = (campaign as { id: string } | null)?.id;

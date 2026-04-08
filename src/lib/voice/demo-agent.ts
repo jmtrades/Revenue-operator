@@ -333,6 +333,42 @@ CRITICAL: Do NOT volunteer pricing until the caller asks or you've established v
 - "What made you curious enough to try this demo?"
 
 ### Closing Techniques (Natural, Not Pushy)
+
+#### Assumptive Close
+Don't ask "would you like to sign up?" — assume the next step. This feels natural and moves the conversation forward:
+- "Let me get you set up — what email should I send the welcome link to?"
+- "I'll get your agent ready. What's the best number for your business line?"
+
+#### Alternative Close
+Give two options that both lead to a sale — let them choose rather than saying yes/no:
+- "Would you prefer the Growth plan with 500 minutes, or the Business plan with unlimited agents?"
+- "Would you like to start with just inbound calls, or do you want outbound campaigns too?"
+- "So we can set you up today — should I send the signup link to your email, or would you rather I call you back with onboarding details?"
+
+#### Loss Aversion Close
+Quantify what they're losing by NOT acting. This is emotionally powerful when specific:
+- "Based on what you told me — missing [X] calls a week at $[Y] per job — that's roughly $[Z] a month walking out the door right now. We could stop that today."
+- "Every missed call this week is a customer calling your competitor instead. Let's fix that."
+
+#### Urgency Close (Ethical, Time-Bounded)
+Real urgency, not fake scarcity. Genuine value for acting quickly:
+- "We're onboarding [X] new businesses this week in [their industry] — I want to make sure you get priority setup support."
+- "The sooner you're live, the sooner those missed calls turn into booked jobs. That starts today."
+- "Here's the thing — every day you wait is another thirty to forty calls your competitors might be capturing. Why wait?"
+
+#### Commitment Ladder
+Build small yeses before the big ask. Each question moves them closer:
+- "Does that make sense?" (small yes)
+- "Would that be valuable for your business?" (medium yes)
+- "Want me to get you started?" (big yes)
+- "Great! What's the best email for your welcome link?"
+
+#### Price-Anchored Close
+Always anchor price against the alternative (human receptionist):
+- "A full-time receptionist costs three to four thousand a month, plus benefits, sick days, vacation. Revenue Operator starts at one forty-seven — and handles multiple calls at once, works twenty-four seven. That's a no-brainer financially."
+- "We've done the math: most businesses that hire a receptionist pay ten times what they'd pay us. And we handle overflow when you're already busy. It's literally ten percent of the cost for ten times the reliability."
+
+#### Classic Closing Lines (Proven Winners)
 - "Want me to point you to the signup page? You could have your own agent answering calls by this afternoon."
 - "We have a thirty-day money-back guarantee. Worst case, you've tested the best AI phone agent on the market risk-free."
 - "Honestly? The fastest way to know if this is right for you is to just try it. Takes five minutes to set up."
@@ -622,9 +658,9 @@ function getStaticFallbackResponse(history: ConversationMessage[]): string {
       .pop()
       ?.content.toLowerCase() ?? "";
 
-  // Price / cost / plans
+  // Price / cost / plans — with anchoring
   if (/\b(price|cost|how much|plan|pricing|afford|budget|expensive|cheap)\b/.test(lastUser)) {
-    return "Our plans start at one forty-seven a month for Solo, two ninety-seven for Growth, and five ninety-seven for Business. Every plan comes with a 30-day money-back guarantee. Most businesses find it pays for itself within the first week. Want me to help figure out which plan fits best?";
+    return "So here's the real anchor: most businesses hire a receptionist for three thousand to four thousand a month. Our Business plan at five ninety-seven gives you something that works twenty-four seven, never takes a sick day, handles unlimited calls simultaneously, and runs for the entire year cheaper than one month of a human. Our solo plan is one forty-seven. Growth is two ninety-seven. Every plan comes with a 30-day money-back guarantee, so there's literally zero financial risk. Which plan sounds about right for your business?";
   }
 
   // Setup / onboarding / getting started
@@ -697,9 +733,30 @@ function getStaticFallbackResponse(history: ConversationMessage[]): string {
     return "Every call gets a full transcript, AI summary, and optional recording. You can review it all in your dashboard — see what was discussed, caller sentiment, and use it to improve your agent over time. It's incredibly powerful for quality assurance.";
   }
 
-  // Competitors
-  if (/\b(compet|smith\.?ai|ruby|dialpad|bland|synthflow|alternative|better|best)\b/.test(lastUser)) {
-    return "Great that you're doing your research! What sets us apart is that we're built specifically for business phone calls, not adapted from a chatbot or a phone system. Our AI is faster, more natural, and way more affordable than human answering services. You're hearing the quality right now on this call. I'd encourage you to get started risk-free and compare for yourself — our 30-day money-back guarantee means zero risk.";
+  // Competitors — detailed battlecards
+  if (/\bsmith\.?ai\b/.test(lastUser)) {
+    return "Smith.ai uses human receptionists — they're great, but they cost two hundred to four hundred dollars a month for basic plans and can only handle one call at a time. We handle unlimited simultaneous calls, twenty-four seven, and our AI never has a bad day or calls in sick. Plus you get a thirty-day money-back guarantee to compare yourself.";
+  }
+
+  if (/\bruby\b/.test(lastUser)) {
+    return "Ruby is excellent for small firms, but they charge per-minute and it adds up fast — most businesses end up paying three hundred to five hundred dollars a month. Plus, they're only available during business hours. We're twenty-four seven and flat-rate. On our Growth plan, you get three thousand minutes a month for two ninety-seven. Do the math — that's about what Ruby charges for fifty minutes.";
+  }
+
+  if (/\b(bland|synthflow|retell)\b/.test(lastUser)) {
+    return "Those are developer tools — really smart ones, but you'd need to hire an engineer to build what we give you out of the box. We're purpose-built for business owners. Setup takes fifteen minutes, not fifteen weeks or thousands in developer costs. And you get our analytics, integrations, and support built in, not as expensive add-ons.";
+  }
+
+  if (/\b(dialpad|ringcentral|vonage)\b/.test(lastUser)) {
+    return "Those are phone systems, not AI agents. They route calls and manage internal communication, but they don't actually answer incoming calls, book appointments, or follow up automatically. We do all of that. You get an actual AI receptionist that replaces the person on your front desk — something a phone system alone can't do.";
+  }
+
+  if (/\b(already have|existing|something in place|current system|my own)\b/.test(lastUser)) {
+    return "That's great that you have something in place! Quick question though — is it booking appointments for you automatically? Is it following up with missed calls? Is it handling calls at three AM? Most businesses we work with had something too, and when they switched, they saw a thirty to forty percent increase in booked appointments in the first month. No reason to choose between your current solution and trying us risk-free.";
+  }
+
+  // Generic competitors
+  if (/\b(compet|alternative|better|best|versus|against|compare)\b/.test(lastUser)) {
+    return "Great that you're doing your research! What sets us apart is that we're built specifically for business phone calls — not adapted from a chatbot or phone system. Our AI is faster, more natural, and way more affordable than human answering services. You're hearing the quality right now on this call. I'd encourage you to get started risk-free with our 30-day money-back guarantee and compare yourself.";
   }
 
   // How many calls / volume

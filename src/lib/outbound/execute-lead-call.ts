@@ -123,6 +123,19 @@ export async function executeLeadOutboundCall(
     }
   }
 
+  // COMPLIANCE: TCPA Quiet Hours enforcement — don't call outside 8am-9pm in recipient's timezone
+  try {
+    const { isTCPACompliant } = await import("@/lib/compliance/tcpa-quiet-hours");
+    if (!isTCPACompliant(phone)) {
+      log("warn", "[outbound-compliance] TCPA quiet hours violation — call blocked");
+      return { ok: false, error: "blocked_tcpa_hours" };
+    }
+  } catch (tcpaErr) {
+    // If TCPA check fails, fail closed for compliance safety
+    log("error", "[outbound-compliance] TCPA compliance check failed — blocking call for safety", { error: tcpaErr instanceof Error ? tcpaErr.message : String(tcpaErr) });
+    return { ok: false, error: "TCPA compliance check failed — call blocked for safety" };
+  }
+
   // COMPLIANCE: Business hours enforcement — don't call outside configured hours
   try {
     const { data: bizCtx } = await db

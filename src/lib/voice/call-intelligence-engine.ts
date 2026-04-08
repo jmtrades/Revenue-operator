@@ -14,6 +14,12 @@
  */
 
 import type { ConversationMessage } from "./demo-agent";
+import {
+  detectObjectionType,
+  detectCallerEmotion,
+  routeObjection,
+  formatObjectionCoachingHint,
+} from "./dynamic-objection-router";
 
 /* ── Types ──────────────────────────────────────────────────────────────── */
 
@@ -34,6 +40,14 @@ export interface CallIntelligence {
   shouldAttemptClose: boolean;
   /** Recommended response style */
   responseStyle: "energetic" | "empathetic" | "authoritative" | "casual" | "urgent";
+  /** Dynamic objection routing result (if objection detected) */
+  objectionRoute?: {
+    type: string;
+    emotion: string;
+    response: string;
+    technique: string;
+    followUpQuestion: string;
+  };
 }
 
 export type ConversationPhase =
@@ -401,6 +415,30 @@ export function analyzeConversation(history: ConversationMessage[]): CallIntelli
     turnCount,
   );
 
+  // Dynamic objection routing (if objection detected in current message)
+  let objectionRoute: CallIntelligence["objectionRoute"] | undefined;
+  if (phase === "objection_handling" && objectionPatterns.length > 0) {
+    const objectionType = detectObjectionType(lastUserMsg);
+    const callerEmotion = detectCallerEmotion(lastUserMsg);
+    const priorObjections = objectionPatterns;
+
+    const routedResponse = routeObjection({
+      objectionType,
+      callerEmotion,
+      priorObjections,
+      conversationPhase: phase,
+      callerStatement: lastUserMsg,
+    });
+
+    objectionRoute = {
+      type: objectionType,
+      emotion: callerEmotion,
+      response: routedResponse.response,
+      technique: routedResponse.technique,
+      followUpQuestion: routedResponse.followUpQuestion,
+    };
+  }
+
   // Determine if we should attempt close
   const shouldAttemptClose =
     engagementScore >= 60 &&
@@ -429,6 +467,7 @@ export function analyzeConversation(history: ConversationMessage[]): CallIntelli
     objectionPatterns,
     shouldAttemptClose,
     responseStyle,
+    objectionRoute,
   };
 }
 
@@ -447,6 +486,16 @@ export function buildStrategyContext(intel: CallIntelligence): string {
     for (const hint of intel.strategyHints) {
       parts.push(`- ${hint}`);
     }
+  }
+
+  // Dynamic objection routing coaching
+  if (intel.objectionRoute) {
+    parts.push(`\n🎯 OBJECTION ROUTING GUIDANCE`);
+    parts.push(`Type: ${intel.objectionRoute.type.toUpperCase()} | Emotion: ${intel.objectionRoute.emotion}`);
+    parts.push(`Technique: ${intel.objectionRoute.technique}`);
+    parts.push(`\nSuggested Response:`);
+    parts.push(`"${intel.objectionRoute.response}"`);
+    parts.push(`\nFollow up with: "${intel.objectionRoute.followUpQuestion}"`);
   }
 
   if (intel.battlecard) {

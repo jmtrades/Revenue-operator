@@ -13,37 +13,42 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id: leadId } = await params;
-  const workspaceId = req.nextUrl.searchParams.get("workspace_id");
-  if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
-  const authErr = await requireWorkspaceAccess(req, workspaceId);
-  if (authErr) return authErr;
+  try {
+    const { id: leadId } = await params;
+    const workspaceId = req.nextUrl.searchParams.get("workspace_id");
+    if (!workspaceId) return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
+    const authErr = await requireWorkspaceAccess(req, workspaceId);
+    if (authErr) return authErr;
 
-  const { getDb } = await import("@/lib/db/queries");
-  const db = getDb();
-  const { data: lead } = await db
-    .from("leads")
-    .select("id, workspace_id")
-    .eq("id", leadId)
-    .eq("workspace_id", workspaceId)
-    .maybeSingle();
+    const { getDb } = await import("@/lib/db/queries");
+    const db = getDb();
+    const { data: lead } = await db
+      .from("leads")
+      .select("id, workspace_id")
+      .eq("id", leadId)
+      .eq("workspace_id", workspaceId)
+      .maybeSingle();
 
-  if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
+    if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
 
-  const { data: deal } = await db
-    .from("deals")
-    .select("id")
-    .eq("lead_id", leadId)
-    .eq("workspace_id", workspaceId)
-    .in("status", ["open", "booked"])
-    .limit(1)
-    .maybeSingle();
+    const { data: deal } = await db
+      .from("deals")
+      .select("id")
+      .eq("lead_id", leadId)
+      .eq("workspace_id", workspaceId)
+      .in("status", ["open", "booked"])
+      .limit(1)
+      .maybeSingle();
 
-  const result = await computeReadiness(
-    workspaceId,
-    leadId,
-    (deal as { id: string } | null)?.id
-  );
+    const result = await computeReadiness(
+      workspaceId,
+      leadId,
+      (deal as { id: string } | null)?.id
+    );
 
-  return NextResponse.json(result);
+    return NextResponse.json(result);
+  } catch (err) {
+    console.error("readiness route error:", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }
