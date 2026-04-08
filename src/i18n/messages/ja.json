@@ -8236,7 +8236,11 @@
     "goalStep": {
       "heading": "What do you want your AI agent to do?",
       "subtitle": "Select one or more goals. You can always change this later.",
-      "selected": "✓ Selected"
+      "selected": "✓ Selected",
+      "quickSetupTitle": "クイックAIセットアップ — あなたの役割を選択してすぐに開始",
+      "quickSetupDesc": "営業、不動産、保険、住宅サービスなど、事前構築されたプレイブック。最小限のセットアップが必要。",
+      "quickSetupCta": "開始 →",
+      "orCustomize": "またはカスタマイズ"
     },
     "plan": "Plan",
     "planSelection": {
@@ -11219,11 +11223,78 @@
     "viewSyncLog": "View sync log"
   },
   "operations": {
-    "avgResponseTime": "Avg Response Time",
-    "noShowRate": "No-Show Rate",
-    "reactivationRate": "Reactivation Rate",
-    "followUpRate": "Follow-Up Rate",
-    "loadError": "Failed to load operations metrics"
+    "avgResponseTime": "平均応答時間",
+    "noShowRate": "ノーショー率",
+    "reactivationRate": "再活性化率",
+    "followUpRate": "フォローアップ率",
+    "loadError": "運用メトリクスの読み込みに失敗しました",
+    "title": "ミッションコントロール",
+    "subtitle": "すべてのAI運用を1か所で監視および制御",
+    "quickActions": {
+      "importLeads": "リードをインポート",
+      "importLeadsDesc": "リードのCSVをアップロードして通話を開始",
+      "startCalling": "通話を開始",
+      "startCallingDesc": "AIが各リードに自動的に適応",
+      "createCampaign": "キャンペーンを作成",
+      "createCampaignDesc": "コールドアウトリーチ、フォローアップなどから選択"
+    },
+    "aiIntelligence": {
+      "title": "AI インテリジェンス: アクティブ",
+      "description": "AIは、プロファイル、スコア、履歴に基づいて、各リードのアプローチを調整します。システムはすべての通話から学習して結果を改善します。"
+    },
+    "metrics": {
+      "activeCampaigns": "アクティブキャンペーン",
+      "totalCalls": "通話総数",
+      "appointmentsBooked": "予約済みアポイントメント",
+      "pendingFollowUps": "保留中のフォローアップ"
+    },
+    "sections": {
+      "outboundCampaigns": "アウトバウンドキャンペーン",
+      "followUps": "フォローアップ",
+      "recentCalls": "最近の通話アクティビティ"
+    },
+    "emptyState": {
+      "campaigns": {
+        "title": "通話を開始する準備ができていますか?",
+        "description": "最初のキャンペーンを作成してAI通話を開始します。コールドアウトリーチ、フォローアップなどから選択します。",
+        "cta": "キャンペーンを作成"
+      },
+      "calls": {
+        "title": "まだ通話がありません",
+        "description": "キャンペーンを作成して通話を開始します。AIは自動的にアウトリーチを処理します。",
+        "cta": "最初のキャンペーンを作成"
+      }
+    },
+    "followUps": {
+      "pendingActions": "保留中のアクション",
+      "viewAll": "フォローアップを表示",
+      "allCaughtUp": "すべて最新です!"
+    },
+    "actions": {
+      "viewAll": "すべて表示"
+    },
+    "campaignTypes": {
+      "coldOutreach": "コールドアウトリーチ",
+      "followUp": "フォローアップ",
+      "appointmentSetting": "アポイント設定",
+      "noShowRecovery": "ノーショー復旧",
+      "reactivation": "再活性化",
+      "quoteChase": "見積追跡",
+      "leadQualification": "リード適格性",
+      "campaign": "キャンペーン"
+    },
+    "statuses": {
+      "active": "アクティブ",
+      "paused": "一時停止中",
+      "draft": "ドラフト",
+      "completed": "完了",
+      "launching": "起動中"
+    },
+    "messages": {
+      "campaignStarted": "キャンペーンが開始されました",
+      "campaignPaused": "キャンペーンが一時停止されました",
+      "failedToUpdateCampaign": "キャンペーンの更新に失敗しました"
+    }
   },
   "pipeline": {
     "title": "Pipeline Funnel",

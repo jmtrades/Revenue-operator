@@ -213,6 +213,7 @@ const CampaignRow = ({
               onClick={() =>
                 onToggle(campaign.id, isActive ? "paused" : "active")
               }
+              aria-label={isActive ? t("messages.campaignPaused") : t("messages.campaignStarted")}
             >
               {isActive ? (
                 <Pause size={18} />
@@ -237,7 +238,7 @@ const CallActivityCard = ({ call }: { call: CallRecord }) => {
   return (
     <div className="dash-section p-4">
       <div className="flex items-start gap-3">
-        <Circle size={12} className="mt-1.5" style={{ color: "var(--accent-primary)" }} />
+        <Circle size={12} className="mt-1.5" style={{ color: "var(--accent-primary)" }} aria-hidden="true" />
         <div className="flex-1 min-w-0">
           <h4
             className="font-medium truncate"
@@ -505,6 +506,7 @@ export default function OperationsPage() {
               <Zap
                 size={32}
                 className="mx-auto mb-3 opacity-30"
+                aria-hidden="true"
               />
               <p
                 className="font-medium mb-2"
@@ -573,6 +575,7 @@ export default function OperationsPage() {
                 size={32}
                 className="mx-auto mb-2 opacity-30"
                 style={{ color: "var(--accent-primary)" }}
+                aria-hidden="true"
               />
               <p style={{ color: "var(--text-secondary)" }}>
                 {t("followUps.allCaughtUp")}
@@ -617,7 +620,7 @@ export default function OperationsPage() {
           </div>
         ) : (
           <div className="dash-section p-8 text-center">
-            <Phone size={32} className="mx-auto mb-3 opacity-30" />
+            <Phone size={32} className="mx-auto mb-3 opacity-30" aria-hidden="true" />
             <p
               className="font-medium mb-2"
               style={{ color: "var(--text-primary)" }}

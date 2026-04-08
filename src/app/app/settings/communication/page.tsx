@@ -32,6 +32,7 @@ const DEFAULT_CONFIG: CommunicationConfig = {
 
 export default function CommunicationSettingsPage() {
   const t = useTranslations("communication");
+  const tComm = useTranslations("settings.communication");
   const { workspaceId } = useWorkspace();
   const workspaceSnapshot = getWorkspaceMeSnapshotSync() as { id?: string | null } | null;
   const effectiveWorkspaceId = workspaceId || workspaceSnapshot?.id?.trim() || null;
@@ -104,10 +105,10 @@ export default function CommunicationSettingsPage() {
       <div className="mt-6 flex items-start justify-between gap-3">
         <div>
           <h1 className="text-xl md:text-2xl font-bold tracking-[-0.025em] text-[var(--text-primary)]">
-            Communication & Agent Mode
+            {tComm("pageTitle")}
           </h1>
           <p className="mt-1.5 text-[13px] text-[var(--text-secondary)] leading-relaxed">
-            Configure how your AI operator communicates with contacts
+            {tComm("pageSubtitle")}
           </p>
         </div>
         <button
@@ -129,7 +130,7 @@ export default function CommunicationSettingsPage() {
         <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
           <div className="flex items-center gap-2 mb-4">
             <MessageCircle className="h-4 w-4 text-[var(--text-secondary)]" />
-            <h2 className="text-sm font-semibold text-[var(--text-primary)]">Communication Channels</h2>
+            <h2 className="text-sm font-semibold text-[var(--text-primary)]">{tComm("channels.title")}</h2>
           </div>
           <p className="text-xs text-[var(--text-secondary)] mb-4">
             Choose which channels your AI operator can use to reach contacts.
@@ -188,7 +189,7 @@ export default function CommunicationSettingsPage() {
         <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
           <div className="flex items-center gap-2 mb-4">
             <Radio className="h-4 w-4 text-[var(--text-secondary)]" />
-            <h2 className="text-sm font-semibold text-[var(--text-primary)]">Agent Operating Mode</h2>
+            <h2 className="text-sm font-semibold text-[var(--text-primary)]">{tComm("operatingMode.title")}</h2>
           </div>
           <p className="text-xs text-[var(--text-secondary)] mb-4">
             Control how your AI operator initiates and receives interactions.
@@ -247,7 +248,7 @@ export default function CommunicationSettingsPage() {
         <section className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-6">
           <div className="flex items-center gap-2 mb-4">
             <Phone className="h-4 w-4 text-[var(--text-secondary)]" />
-            <h2 className="text-sm font-semibold text-[var(--text-primary)]">Default Contact Preferences</h2>
+            <h2 className="text-sm font-semibold text-[var(--text-primary)]">{tComm("defaultPreferences.title")}</h2>
           </div>
           <p className="text-xs text-[var(--text-secondary)] mb-4">
             Default channel preferences for new contacts. Individual contacts can override these.
@@ -256,8 +257,8 @@ export default function CommunicationSettingsPage() {
             {/* Phone Calls Toggle */}
             <div className="flex items-center justify-between p-3 rounded-xl border border-[var(--border-default)] hover:border-[var(--border-medium)] transition-colors">
               <div>
-                <p className="text-sm font-medium text-[var(--text-primary)]">Phone Calls</p>
-                <p className="text-xs text-[var(--text-secondary)] mt-0.5">Allow agent to make incoming/outgoing phone calls</p>
+                <p className="text-sm font-medium text-[var(--text-primary)]">{tComm("channels.phone")}</p>
+                <p className="text-xs text-[var(--text-secondary)] mt-0.5">{tComm("channels.phoneDesc")}</p>
               </div>
               <button
                 type="button"
@@ -289,8 +290,8 @@ export default function CommunicationSettingsPage() {
             {/* SMS Messages Toggle */}
             <div className="flex items-center justify-between p-3 rounded-xl border border-[var(--border-default)] hover:border-[var(--border-medium)] transition-colors">
               <div>
-                <p className="text-sm font-medium text-[var(--text-primary)]">SMS Messages</p>
-                <p className="text-xs text-[var(--text-secondary)] mt-0.5">Allow agent to send and receive SMS text messages</p>
+                <p className="text-sm font-medium text-[var(--text-primary)]">{tComm("channels.sms")}</p>
+                <p className="text-xs text-[var(--text-secondary)] mt-0.5">{tComm("channels.smsDesc")}</p>
                 <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5">Requires a phone number with SMS capability. <Link href="/app/settings/phone" className="text-[var(--accent-primary)] hover:underline">Set up phone →</Link></p>
               </div>
               <button
@@ -323,8 +324,8 @@ export default function CommunicationSettingsPage() {
             {/* Email Toggle */}
             <div className="flex items-center justify-between p-3 rounded-xl border border-[var(--border-default)] hover:border-[var(--border-medium)] transition-colors">
               <div>
-                <p className="text-sm font-medium text-[var(--text-primary)]">Email</p>
-                <p className="text-xs text-[var(--text-secondary)] mt-0.5">Allow agent to send and receive emails</p>
+                <p className="text-sm font-medium text-[var(--text-primary)]">{tComm("channels.email")}</p>
+                <p className="text-xs text-[var(--text-secondary)] mt-0.5">{tComm("channels.emailDesc")}</p>
                 <p className="text-[10px] text-[var(--text-tertiary)] mt-0.5">Requires email provider (Resend) to be configured. <Link href="/app/settings/integrations" className="text-[var(--accent-primary)] hover:underline">Set up email →</Link></p>
               </div>
               <button

@@ -37,7 +37,7 @@ export function GoalStep({
       >
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-[var(--accent-primary)] flex items-center justify-center shrink-0">
-            <Sparkles className="w-6 h-6 text-white" />
+            <Sparkles className="w-6 h-6 text-white" aria-hidden="true" />
           </div>
           <div className="flex-1">
             <p className="text-base font-bold text-[var(--text-primary)] group-hover:text-[var(--accent-primary)] transition-colors">
@@ -78,7 +78,7 @@ export function GoalStep({
             >
               <div className="flex items-start gap-3">
                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${selected ? "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]" : "bg-[var(--bg-inset)] text-[var(--text-secondary)]"}`}>
-                  <Icon className="w-5 h-5" />
+                  <Icon className="w-5 h-5" aria-hidden="true" />
                 </div>
                 <div>
                   <p className={`text-sm font-semibold ${selected ? "text-[var(--accent-primary)]" : "text-[var(--text-primary)]"}`}>{goal.label}</p>

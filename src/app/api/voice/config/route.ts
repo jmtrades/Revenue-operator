@@ -11,6 +11,7 @@ import { z } from "zod";
 import { getDb } from "@/lib/db/queries";
 import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { log } from "@/lib/logger";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 const voiceConfigSchema = z.object({
   active_voice_id: z.string().max(100).nullable().optional(),
@@ -76,6 +77,9 @@ export async function GET(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
+    const csrfBlock = assertSameOrigin(req);
+    if (csrfBlock) return csrfBlock;
+
     const workspaceId = req.nextUrl.searchParams.get("workspace_id");
     if (!workspaceId) {
       return NextResponse.json({ error: "workspace_id required" }, { status: 400 });
