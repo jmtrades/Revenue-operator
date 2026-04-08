@@ -376,7 +376,7 @@ function generatePostDemoScript(ctx: VoicemailContext): VoicemailScript {
 }
 
 function generateAfterConversationScript(ctx: VoicemailContext): VoicemailScript {
-  const lastTopic = ctx.lastConversationSummary?.split(",")[0] || "our conversation";
+  const lastTopic = ctx.lastConversationSummary ? ctx.lastConversationSummary.split(",")[0] || "our conversation" : "our conversation";
   const text = `Hi ${ctx.leadName}, following up on ${lastTopic} that we discussed. I have a few ideas that might address what you mentioned. Let's set up 15 minutes this week. Call me back at [number].`;
 
   return {

@@ -596,8 +596,8 @@ export function calculateFollowUpFatigue(lead: LeadState): FatigueScore {
 
   // Channel variety (lack of = fatigue)
   const channelsUsed = [
-    lead.email ? 1 : 0,
-    lead.phone ? 1 : 0,
+    lead.email && lead.email.length > 0 ? 1 : 0,
+    lead.phone && lead.phone.length > 0 ? 1 : 0,
     lead.metadata?.sms_sent ? 1 : 0,
   ].reduce((a, b) => a + b, 0);
   if (channelsUsed < 2 && touchesPerWeek >= 3) {

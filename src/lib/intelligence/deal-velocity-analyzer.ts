@@ -171,7 +171,7 @@ export function analyzeDealVelocity(
   const cycleLen = closed.length > 0 ? closed.reduce((s, d) => s + (d.stageExitedAt!.getTime() - d.createdAt.getTime()) / (1000*60*60*24), 0) / closed.length : 0;
   const pipeVel = cycleLen > 0 ? (deals.length * avgWin * (totalValue / Math.max(deals.length, 1))) / cycleLen : 0;
 
-  const daysFilter = (d: DealRecord, d30: number) => (d.lastActivity.getTime() - now.getTime()) / (1000*60*60*24) > -d30;
+  const daysFilter = (d: DealRecord, d30: number) => (now.getTime() - d.lastActivity.getTime()) / (1000*60*60*24) < d30;
   const vel30 = deals.filter((d) => daysFilter(d, 30)).length / 30 || 0;
   const vel60 = deals.filter((d) => daysFilter(d, 60)).length / 60 || 0;
   const vel90 = deals.filter((d) => daysFilter(d, 90)).length / 90 || 0;
