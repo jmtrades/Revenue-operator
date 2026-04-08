@@ -11,10 +11,14 @@ import { validateEmail, validatePasswordForSignin, toFriendlySigninError } from 
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { log } from "@/lib/logger";
 import { ROUTES } from "@/lib/constants";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
+  const csrfBlock = assertSameOrigin(req);
+  if (csrfBlock) return csrfBlock;
+
   const ip = getClientIp(req);
   const rl = await checkRateLimit(`signin:${ip}`, 10, 60_000);
   if (!rl.allowed) {
