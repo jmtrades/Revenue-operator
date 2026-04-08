@@ -71,8 +71,11 @@ export async function GET(
           });
         }
       }
-    } catch {
-      // Table may not exist or query failed — continue to generate coaching from transcript
+    } catch (dbErr) {
+      log("warn", "calls.coaching.coaching_table_query_failed", {
+        call_id: callId,
+        error: dbErr instanceof Error ? dbErr.message : String(dbErr),
+      });
     }
 
     // Generate lightweight coaching from call data if we have a transcript

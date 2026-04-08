@@ -28,7 +28,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   let body: z.infer<typeof ACTION_BODY>;
   try {
     body = ACTION_BODY.parse(await req.json());
-  } catch {
+  } catch (parseErr) {
+    log("warn", "calls.control.invalid_body", {
+      call_id: callId,
+      error: parseErr instanceof Error ? parseErr.message : String(parseErr),
+    });
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 

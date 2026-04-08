@@ -338,8 +338,6 @@ export async function initiateCall(
     if (params.leadContext) {
       leadContext = {
         name: params.leadContext.name,
-        phone: params.leadContext.name ? undefined : undefined, // leadContext doesn't have phone from dialer
-        email: undefined,
         state: params.leadContext.state as any,
         score: params.leadContext.score,
         tags: params.leadContext.tags,
@@ -355,9 +353,9 @@ export async function initiateCall(
           topics: [],
         }));
       }
-    } else if (params.metadata?.lead_id) {
+    } else if (params.leadId || params.metadata?.lead_id) {
       // Fallback: load from database for non-campaign calls
-      const leadId = String(params.metadata.lead_id);
+      const leadId = String(params.leadId ?? params.metadata?.lead_id);
       const [leadRes, historyRes] = await Promise.all([
         db.from("leads").select("name, phone, email, state, qualification_score, metadata, last_activity_at").eq("id", leadId).maybeSingle(),
         db.from("call_sessions").select("call_started_at, summary, outcome, topics").eq("lead_id", leadId).not("call_ended_at", "is", null).order("call_started_at", { ascending: false }).limit(5),
@@ -366,8 +364,6 @@ export async function initiateCall(
       if (lead) {
         leadContext = {
           name: lead.name,
-          phone: lead.phone,
-          email: lead.email,
           state: lead.state,
           score: lead.qualification_score ?? undefined,
           tags: lead.metadata?.tags ?? undefined,

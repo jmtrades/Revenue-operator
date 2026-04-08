@@ -10,6 +10,7 @@ import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
 import { getDb } from "@/lib/db/queries";
 import { createWrapupTokenForCall } from "@/lib/calls/wrapup-token";
 import { assertSameOrigin } from "@/lib/http/csrf";
+import { log } from "@/lib/logger";
 
 export async function POST(
   req: NextRequest,
@@ -55,8 +56,11 @@ export async function POST(
           message: "Call wrap-up: " + url,
         }),
       });
-    } catch {
-      // non-blocking
+    } catch (err) {
+      log("warn", "wrapup_link.webhook_delivery_failed", {
+        endpoint,
+        error: err instanceof Error ? err.message : String(err),
+      });
     }
   }
 

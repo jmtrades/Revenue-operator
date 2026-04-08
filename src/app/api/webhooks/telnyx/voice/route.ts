@@ -378,7 +378,7 @@ export async function POST(req: NextRequest) {
                 lastTranscriptionAt: Date.now(),
                 callStartedAt: Date.now(),
                 silenceCount: 0,
-                callerPhone: callInfo.to ?? "",
+                callerPhone: callInfo.from ?? callInfo.to ?? "",
               });
 
               // Speak the greeting (transcription will handle the conversation loop)
@@ -687,10 +687,13 @@ export async function POST(req: NextRequest) {
         }
 
         // Also try to update lead for gather-mode calls (no in-memory state)
-        if (isDemoCall && callInfo.to) {
+        if (isDemoCall && (callInfo.from || callInfo.to)) {
           const gatherTurn = demoState?.turn ?? 0;
           if (gatherTurn > 0) {
-            updateDemoLeadOnHangup(callInfo.to, gatherTurn, 0).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
+            const callerPhone = callInfo.from ?? callInfo.to ?? "";
+            if (callerPhone) {
+              updateDemoLeadOnHangup(callerPhone, gatherTurn, 0).catch((e: unknown) => { log("warn", "non-blocking-catch", { error: String(e) }); });
+            }
           }
         }
 
