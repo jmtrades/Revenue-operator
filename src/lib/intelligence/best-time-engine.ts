@@ -504,6 +504,8 @@ function getAnswerRateForWindow(
   if (!MODEL[key] || MODEL[key].total === 0) {
     return INDUSTRY_PATTERNS[industry.toLowerCase()]?.baseAnswerRate || 0.3;
   }
+  // Prevent division by zero
+  if (MODEL[key].total === 0) return 0;
   return MODEL[key].answered / MODEL[key].total;
 }
 

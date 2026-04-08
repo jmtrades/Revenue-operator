@@ -121,7 +121,9 @@ export function analyzeCallMomentum(callState: LiveCallState): MomentumAnalysis 
   const signals: string[] = [];
   let momentumScore = 0;
 
-  if (callState.sentimentHistory[0] === "positive") {
+  const currentSentiment = callState.sentimentHistory && callState.sentimentHistory.length > 0 ? callState.sentimentHistory[0] : null;
+
+  if (currentSentiment === "positive") {
     momentumScore += 2;
     signals.push("positive sentiment");
   }
@@ -133,7 +135,7 @@ export function analyzeCallMomentum(callState: LiveCallState): MomentumAnalysis 
     momentumScore += 2;
     signals.push("progressed to pitch/closing");
   }
-  if (callState.sentimentHistory[0] === "negative") {
+  if (currentSentiment === "negative") {
     momentumScore -= 2;
     signals.push("negative sentiment");
   }

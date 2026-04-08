@@ -356,11 +356,15 @@ function extractActivePromises(r: any): PromiseRecord[] {
 }
 
 function extractLeadName(i: LeadInteraction[]): string {
-  return "Prospect";
+  if (!i || i.length === 0) return "Prospect";
+  const first = i[0];
+  return first?.contactName || first?.participantName || "Prospect";
 }
 
 function extractCompanyName(i: LeadInteraction[]): string {
-  return "Their Company";
+  if (!i || i.length === 0) return "Their Company";
+  const first = i[0];
+  return first?.companyName || "Their Company";
 }
 
 function generateTalkingPoints(b: any, _s: CommunicationStyle): string[] {

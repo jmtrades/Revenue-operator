@@ -217,11 +217,11 @@ export function forecastRevenue(
       revenue90 += weightedRevenue;
     }
 
-    // Best case: all deals in reasonable timeframe close
+    // Best case: all deals with some probability close
     if (probability > 0.3) bestCaseRevenue += deal.valueCents;
 
-    // Worst case: only high-probability deals close
-    if (probability > 0.7) worstCaseRevenue += deal.valueCents;
+    // Worst case: only very high-probability deals close
+    if (probability > 0.8) worstCaseRevenue += deal.valueCents;
   }
 
   // Apply seasonality

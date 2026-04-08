@@ -408,7 +408,7 @@ function calculateRevenueMetrics(pipeline: any[]): RevenueMetrics {
 function calculatePipelineMetrics(pipeline: any[]): PipelineMetrics {
   const totalValue = pipeline.reduce((sum: number, d: any) => sum + (d.value || 0), 0);
   const dealCount = pipeline.length;
-  const avgDealSize = dealCount > 0 ? totalValue / dealCount : 0;
+  const avgDealSize = dealCount > 0 ? totalValue / Math.max(dealCount, 1) : 0;
 
   const cycleLengths = pipeline
     .filter((d: any) => d.createdAt && d.closeDate)
@@ -730,9 +730,9 @@ function buildLeaderboard(metrics: any[], metricType: string, limit: number): Re
   return metrics
     .map((m: any, idx: number) => {
       let value = 0;
-      if (metricType === "conversion-rate") value = m.conversions / Math.max(m.calls, 1);
-      else if (metricType === "revenue") value = m.revenue;
-      else if (metricType === "activity") value = m.activities;
+      if (metricType === "conversion-rate") value = m.calls > 0 ? m.conversions / Math.max(m.calls, 1) : 0;
+      else if (metricType === "revenue") value = m.revenue || 0;
+      else if (metricType === "activity") value = m.activities || 0;
 
       return { repId: m.repId, repName: m.repName, metric: metricType as any, value, rank: idx + 1 };
     })

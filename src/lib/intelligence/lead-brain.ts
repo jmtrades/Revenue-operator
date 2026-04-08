@@ -468,6 +468,27 @@ export function computeNextAction(brain: LeadBrain): ComputedAction {
     }
   }
 
+  // 4. Check channel preferences (15% weight)
+  const nextChannel = brain.behavioral.preferredChannel;
+
+  // 5. Check engagement and sentiment (overall 20% weight) - CHECK EARLY
+  if (brain.engagementScore < 30) {
+    // Low engagement—lighter touch
+    return {
+      action: "light_value_add",
+      channel: brain.behavioral.preferredChannel,
+      timing: { immediate: false, delayMinutes: 2880 }, // 48 hours, give space
+      messageContext: {
+        reference: "Thought of you",
+        tone: "helpful_not_pushy",
+        talkingPoints: ["Relevant content", "No ask", "Personalized"],
+        whatNotToSay: ["Sales language", "Pressure"],
+      },
+      reasoning: "Low engagement—respect their space, add value",
+      confidence: 0.7,
+    };
+  }
+
   // 3. Check buying stage (15% weight)
   if (brain.relationship.buyingStage === "decision") {
     // In decision stage—push for closure
@@ -500,27 +521,6 @@ export function computeNextAction(brain: LeadBrain): ComputedAction {
       },
       reasoning: "Early stage awareness—educate and engage",
       confidence: 0.75,
-    };
-  }
-
-  // 4. Check channel preferences (15% weight)
-  const nextChannel = brain.behavioral.preferredChannel;
-
-  // 5. Check engagement and sentiment (overall 20% weight)
-  if (brain.engagementScore < 30) {
-    // Low engagement—lighter touch
-    return {
-      action: "light_value_add",
-      channel: brain.behavioral.preferredChannel,
-      timing: { immediate: false, delayMinutes: 2880 }, // 48 hours, give space
-      messageContext: {
-        reference: "Thought of you",
-        tone: "helpful_not_pushy",
-        talkingPoints: ["Relevant content", "No ask", "Personalized"],
-        whatNotToSay: ["Sales language", "Pressure"],
-      },
-      reasoning: "Low engagement—respect their space, add value",
-      confidence: 0.7,
     };
   }
 
@@ -604,6 +604,8 @@ export function assessLeadHealth(brain: LeadBrain): LeadHealthAssessment {
     riskFactors.push("stale_no_contact_30days");
   } else if (daysSinceLastContact > 14) {
     riskFactors.push("cooling_no_contact_14days");
+  } else if (daysSinceLastContact > 7) {
+    riskFactors.push("cold_no_contact_7days");
   }
 
   if (brain.trustScore < 30) {

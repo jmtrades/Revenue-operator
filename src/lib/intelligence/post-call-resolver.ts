@@ -154,8 +154,8 @@ export interface PrioritizedResolution {
  */
 export function resolvePostCallActions(callData: CallData): PostCallResolution {
   const outcomeCategoryResult = callData.outcome;
-  const ourCommitments = extractCallCommitments([], "our", callData.outcome);
-  const theirCommitments = extractCallCommitments([], "their", callData.outcome);
+  const ourCommitments = extractCallCommitments(callData.transcriptSummary.split(" "), "our", callData.outcome);
+  const theirCommitments = extractCallCommitments(callData.transcriptSummary.split(" "), "their", callData.outcome);
   const toneGuidance = determineFollowUpTone(callData);
   const followUpContext = buildFollowUpContext(callData);
 
