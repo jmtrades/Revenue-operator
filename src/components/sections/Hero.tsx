@@ -78,10 +78,12 @@ function HeroVoiceDemo() {
     const digits = value.replace(/\D/g, "");
     if (!value || digits.length < 7 || digits.length > 15) {
       setCallError(t("phoneErrorMinDigits"));
+      setCallStatus(null);
       return;
     }
     if (digits.startsWith("0") && !value.startsWith("+")) {
       setCallError(t("phoneErrorCountryCode"));
+      setCallStatus(null);
       return;
     }
     setCallLoading(true);
@@ -97,14 +99,23 @@ function HeroVoiceDemo() {
         ok?: boolean;
         message?: string;
         error?: string;
+        callback_requested?: boolean;
       };
       if (res.ok && data.ok) {
-        setCallStatus(data.message ?? t("callStatus"));
+        // Use API message if available, with special handling for callback requests
+        if (data.callback_requested) {
+          setCallStatus("Thanks! Our team will call you shortly.");
+        } else {
+          setCallStatus(data.message ?? "Pick up your phone! Your AI operator is calling you now.");
+        }
+        setCallError(null);
       } else {
         setCallError(data.error ?? t("callError"));
+        setCallStatus(null);
       }
     } catch {
       setCallError(t("connectionError"));
+      setCallStatus(null);
     } finally {
       setCallLoading(false);
     }
@@ -174,19 +185,37 @@ function HeroVoiceDemo() {
         <button
           type="button"
           onClick={handleDemoCall}
-          disabled={callLoading}
-          className="btn-marketing-primary px-5 py-2.5 text-sm whitespace-nowrap active:scale-[0.97]"
+          disabled={callLoading || callStatus !== null}
+          className="btn-marketing-primary px-5 py-2.5 text-sm whitespace-nowrap active:scale-[0.97] transition-opacity"
+          style={{
+            opacity: callLoading || callStatus !== null ? 0.7 : 1,
+          }}
         >
-          {callLoading ? t("calling") : t("demoCall")}
+          {callLoading ? t("calling") : callStatus ? "✓ " + t("calling") : t("demoCall")}
         </button>
       </div>
       {callStatus && (
-        <p className="text-xs flex items-center gap-1.5" style={{ color: "var(--accent-secondary)" }}>
+        <p
+          className="text-xs flex items-center gap-1.5 animate-fade-in"
+          style={{
+            color: "var(--accent-secondary)",
+            animation: "fadeIn 300ms ease-out",
+            fontWeight: 500,
+          }}
+        >
           <Phone className="w-3 h-3 animate-pulse" /> {callStatus}
         </p>
       )}
       {callError && (
-        <p className="text-xs" style={{ color: "var(--accent-danger)" }}>{callError}</p>
+        <p
+          className="text-xs animate-fade-in"
+          style={{
+            color: "var(--accent-danger)",
+            animation: "fadeIn 300ms ease-out",
+          }}
+        >
+          {callError}
+        </p>
       )}
       <p className="text-[11px]" style={{ color: "var(--text-quaternary)" }}>
         {t("countryCodesHint")}

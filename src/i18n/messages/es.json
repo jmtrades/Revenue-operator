@@ -5174,7 +5174,7 @@
     "insightsDesc": "Volumen de llamadas, tasa de respuesta, conversión, ingresos recuperados. Uso vs plan. ROI mensual claro.",
     "complianceTitle": "Cumplimiento",
     "complianceDesc": "Cada llamada grabada y transcrita. Modo HIPAA. Retención 30-365 días. Auditoría y exportación.",
-    "forBusinesses": "Para empresas",
+    "forBusinesses": "Para operadores",
     "forBusinessesDesc": "Desde autónomos hasta equipos. Responde cada llamada, reserva citas y captura leads sin contratar recepción.",
     "getStarted": "Comenzar →",
     "forTeams": "Para equipos",
@@ -5492,7 +5492,7 @@
       }
     },
     "testimonials": {
-      "preamble": "Hecho para negocios que dependen de cada llamada",
+      "preamble": "Hecho para operadores que dependen de cada llamada",
       "label": "Lo que dicen los clientes",
       "testimonials": {
         "amanda": {
@@ -5653,7 +5653,7 @@
           "cta": "Hablar con ventas"
         }
       },
-      "footerNote": "Todos los planes incluyen: cancela cuando quieras de crédito · Garantía de 30 días · 256-bit TLS · Cifrado en reposo · GDPR. Confiado por miles de empresas.",
+      "footerNote": "Todos los planes incluyen: cancela cuando quieras de crédito · Garantía de 30 días · 256-bit TLS · Cifrado en reposo · GDPR. Confiado por miles de operadores.",
       "cta": {
         "link": "Ver comparativa de planes →"
       }
@@ -9378,10 +9378,10 @@
       "badge": "Sistema autónomo de ejecución de ingresos",
       "heading1": "Tu Revenue. Completamente Automatizado.",
       "heading2": "Cada lead trabajado. Cada dólar recuperado.",
-      "heading3": "",
-      "description": "Revenue Operator ejecuta todo tu ciclo de ingresos — llamadas entrantes, campañas salientes, calificación de leads, agendamiento de citas, secuencias de seguimiento y recuperación de ingresos. 24/7. Sin intervención humana.",
-      "socialProof": "negocios",
-      "socialProofRecovered": "recuperados",
+      "heading3": "Construido para autónomos y empresas grandes.",
+      "description": "Revenue Operator ejecuta todo tu ciclo de ingresos — llamadas entrantes, campañas salientes, calificación de leads, agendamiento de citas, secuencias de seguimiento y recuperación de ingresos. Ya sea como autónomo o como equipo en crecimiento. 24/7. Sin intervención humana.",
+      "socialProof": "operadores",
+      "socialProofRecovered": "para operadores en todo el país",
       "startFreeTrial": "Comenzar ahora",
       "getStarted": "Comenzar ahora",
       "watchDemo": "Ver demo",
@@ -9492,7 +9492,7 @@
       "liveInMinutes": "Activo en menos de 3 minutos. Cancela cuando quieras.",
       "bookDemo": "Agendar demo en vivo",
       "stillNotSure": "¿Aún no estás seguro? Escúchalo tú mismo — te llamamos ahora.",
-      "joinBusinesses": "Únete a {count} negocios que dejaron de perder ingresos por buzón de voz.",
+      "joinBusinesses": "Únete a {count} operadores que dejaron de perder ingresos por buzón de voz.",
       "emailLabel": "Email address"
     },
     "footer": {

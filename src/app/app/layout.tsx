@@ -230,6 +230,56 @@ export default async function AppLayout({
     redirect("/sign-in");
   }
 
+  // Billing paywall gate: check subscription/trial status
+  // Get billing data without full shell initialization to avoid redundant queries
+  let userHasActiveBilling = false;
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user?.id) {
+      const db = getDb();
+      // Get the user's workspaces to check billing status
+      const { data: workspaceList } = await db
+        .from("workspaces")
+        .select("id, billing_status, trial_ends_at")
+        .eq("owner_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(1);
+
+      if (Array.isArray(workspaceList) && workspaceList.length > 0) {
+        const workspace = workspaceList[0];
+        const billingStatus = (workspace.billing_status ?? "trial")?.toLowerCase();
+
+        // Allow access if: active subscription, or valid trial
+        if (billingStatus === "active") {
+          userHasActiveBilling = true;
+        } else if (billingStatus === "trial" || billingStatus === "trialing") {
+          // Check if trial is still valid
+          const trialEndsAt = workspace.trial_ends_at;
+          if (trialEndsAt) {
+            const trialEndDate = new Date(trialEndsAt);
+            const now = new Date();
+            if (now < trialEndDate) {
+              userHasActiveBilling = true;
+            }
+          }
+        }
+        // If billing_status is null, "cancelled", "expired", or other, userHasActiveBilling stays false
+      }
+    }
+  } catch {
+    // If we can't check billing status, let the shell render and client-side logic can handle it
+    // This prevents a complete block if the database is temporarily unavailable
+  }
+
+  if (!userHasActiveBilling) {
+    const { redirect } = await import("next/navigation");
+    redirect("/activate?reason=subscription_required");
+  }
+
   // If user is authenticated via revenue_session, also check email verification via Supabase
   if (rawSessionCookie) {
     try {

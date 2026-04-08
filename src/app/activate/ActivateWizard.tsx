@@ -25,6 +25,7 @@ export function ActivateWizard() {
   const searchParams = useSearchParams();
   const prefillEmail = searchParams.get("email") ?? null;
   const prefillPlan = searchParams.get("plan") ?? null;
+  const reasonParam = searchParams.get("reason") ?? null;
   // Restore progress from localStorage on mount
   const STORAGE_KEY = "rt_activate_progress";
   const savedProgress = typeof window !== "undefined" ? (() => {
@@ -267,6 +268,18 @@ export function ActivateWizard() {
   return (
     <Container>
       <div className="max-w-4xl mx-auto">
+        {reasonParam === "trial_expired" && (
+          <div className="mb-6 rounded-2xl border border-[var(--accent-warning)]/40 bg-[var(--accent-warning-subtle)] px-5 py-4" role="alert">
+            <p className="text-sm font-semibold text-[var(--accent-warning)]">{t("trialExpired.title", { defaultValue: "Your trial has ended" })}</p>
+            <p className="mt-1 text-sm text-[var(--accent-warning)]/80">{t("trialExpired.desc", { defaultValue: "Choose a plan to continue using the app." })}</p>
+          </div>
+        )}
+        {reasonParam === "subscription_required" && (
+          <div className="mb-6 rounded-2xl border border-[var(--accent-info)]/40 bg-[var(--accent-info-subtle)] px-5 py-4" role="alert">
+            <p className="text-sm font-semibold text-[var(--accent-info)]">{t("subscriptionRequired.title", { defaultValue: "Choose a plan to get started" })}</p>
+            <p className="mt-1 text-sm text-[var(--accent-info)]/80">{t("subscriptionRequired.desc", { defaultValue: "Select a billing plan below to unlock full access to the app." })}</p>
+          </div>
+        )}
         {error && (
           <div className="mb-6 rounded-2xl border border-[var(--accent-danger)]/30 bg-[var(--accent-danger-subtle)] px-5 py-4" role="alert">
             <p className="text-sm font-semibold text-[var(--accent-danger)]">{t("errors.title", { defaultValue: "Setup Error" })}</p>
