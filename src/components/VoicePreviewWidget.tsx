@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Play, Pause, Phone, Mic, Volume2, Sparkles, Wrench, HeartPulse, Scale, Home, UtensilsCrossed, Building2, Scissors, Car, Shield, Dumbbell, FileText, PawPrint, Sparkle, Camera, Zap, ShoppingCart } from "lucide-react";
+import { Play, Pause, Phone, Mic, Volume2, Sparkles, Wrench, HeartPulse, Scale, Home, UtensilsCrossed, Building2, Scissors, Car, Shield, Dumbbell, FileText, PawPrint, Sparkle, Camera, Zap, ShoppingCart, Bone, Trees, BookOpen, Truck, Heart, Baby, Bug, Waves, DollarSign, Lightbulb, Key, Droplet, Hammer } from "lucide-react";
 
 /* ─── Conversation Scripts ─── */
 const SCENARIOS = [
@@ -233,6 +233,230 @@ const SCENARIOS = [
       { role: "ai" as const, text: "Absolutely! One medium coming right up. I'm emailing you a return label and your exchange confirmation. The medium will ship out tomorrow, and once we receive your return, we'll process the refund within three business days. You'll get an update email for both. Anything else I can help with?", delay: 6200 },
     ],
   },
+  {
+    id: "chiropractic",
+    industry: "Chiropractic",
+    label: "Back Pain Appointment",
+    icon: Bone,
+    greeting: "Welcome to Precision Chiropractic! This is Sarah. How can I help?",
+    conversation: [
+      { role: "ai" as const, text: "Welcome to Precision Chiropractic! This is Sarah. How can I help?", delay: 0 },
+      { role: "caller" as const, text: "I've had really bad lower back pain for the last few weeks. I need to see someone soon.", delay: 3200 },
+      { role: "ai" as const, text: "I'm so sorry you're dealing with that pain — it can really impact your day. Dr. Morrison is fantastic with lower back issues. Your first visit includes a full consultation, X-rays, and initial adjustment. It's ninety-nine dollars. I have tomorrow at 2 PM or Thursday at 10 AM. Which works?", delay: 6000 },
+      { role: "caller" as const, text: "Tomorrow at 2 sounds perfect.", delay: 2000 },
+      { role: "ai" as const, text: "Great! You're all set for tomorrow at 2 PM with Dr. Morrison. Please wear comfortable, loose-fitting clothes. The whole first visit takes about forty-five minutes. You'll start feeling better soon!", delay: 5000 },
+    ],
+  },
+  {
+    id: "landscaping",
+    industry: "Landscaping",
+    label: "Lawn Care Quote",
+    icon: Trees,
+    greeting: "Hi, this is Alex with GreenScape Landscaping. What can I do for you today?",
+    conversation: [
+      { role: "ai" as const, text: "Hi, this is Alex with GreenScape Landscaping. What can I do for you today?", delay: 0 },
+      { role: "caller" as const, text: "My lawn needs work. I'd like a quote for regular maintenance.", delay: 3000 },
+      { role: "ai" as const, text: "Absolutely! We offer weekly, bi-weekly, or monthly service. A typical residential lawn runs about fifty-five a week for weekly maintenance. How many square feet is your property?", delay: 5200 },
+      { role: "caller" as const, text: "It's about a quarter acre.", delay: 1800 },
+      { role: "ai" as const, text: "Perfect, that's right in our wheelhouse. I can schedule a free walkthrough this week to give you an exact quote. Tuesday or Friday work for you?", delay: 4500 },
+    ],
+  },
+  {
+    id: "tutoring",
+    industry: "Tutoring / Education",
+    label: "Math Tutoring Session",
+    icon: BookOpen,
+    greeting: "Hello, this is Emma with Bright Minds Tutoring! How can I help?",
+    conversation: [
+      { role: "ai" as const, text: "Hello, this is Emma with Bright Minds Tutoring! How can I help?", delay: 0 },
+      { role: "caller" as const, text: "My daughter is struggling with algebra. We need a tutor to help her get ready for her final exam.", delay: 3300 },
+      { role: "ai" as const, text: "We can definitely help her ace that exam! Our math tutor, Marcus, specializes in algebra and has a ninety-two percent pass rate. Sessions are sixty dollars an hour, and most students need four to six sessions before a final. Should we get started?", delay: 6000 },
+      { role: "caller" as const, text: "Yeah, when can we start?", delay: 1800 },
+      { role: "ai" as const, text: "Marcus has openings starting tomorrow evening. He can do in-person or online — your choice. What works best for your daughter's schedule?", delay: 4800 },
+    ],
+  },
+  {
+    id: "moving",
+    industry: "Moving Company",
+    label: "Moving Estimate",
+    icon: Truck,
+    greeting: "Thanks for calling Swift Movers! This is Alex. Where are you moving from and to?",
+    conversation: [
+      { role: "ai" as const, text: "Thanks for calling Swift Movers! This is Alex. Where are you moving from and to?", delay: 0 },
+      { role: "caller" as const, text: "We're moving from a two-bedroom apartment downtown to a house about twenty miles away. We need movers this weekend.", delay: 3400 },
+      { role: "ai" as const, text: "Great! This weekend is doable, but it's getting busy. A two-bedroom apartment with a truck and two movers typically runs between eight hundred fifty and twelve hundred, depending on your stuff. I can schedule a free estimate today, or I can give you a rough quote. Which do you prefer?", delay: 6200 },
+      { role: "caller" as const, text: "A rough quote is fine. Do you charge extra for heavy furniture?", delay: 2500 },
+      { role: "ai" as const, text: "Nope, it's all included in our flat rate. We handle everything professionally and insure your belongings. I have Saturday at 9 AM or Sunday at 1 PM available. Want me to book one of those?", delay: 5800 },
+    ],
+  },
+  {
+    id: "wedding",
+    industry: "Wedding Planning",
+    label: "Wedding Consultation",
+    icon: Heart,
+    greeting: "Congratulations on your engagement! This is Sarah with Bliss Weddings. How can I help?",
+    conversation: [
+      { role: "ai" as const, text: "Congratulations on your engagement! This is Sarah with Bliss Weddings. How can I help?", delay: 0 },
+      { role: "caller" as const, text: "We're getting married in October and we need help planning everything. Where do we even start?", delay: 3500 },
+      { role: "ai" as const, text: "How exciting! October is a beautiful time to get married. We offer full-service planning or day-of coordination — it really depends on your needs. Most couples book us about twelve months out, so you're perfectly timed. How many guests are you thinking?", delay: 6000 },
+      { role: "caller" as const, text: "Around one hundred twenty-five.", delay: 1800 },
+      { role: "ai" as const, text: "Perfect! For a wedding that size, full-service planning is around three thousand. We handle venues, vendors, design, and timelines. I'd love to sit down with you and your fiancé. Can you do coffee next Saturday?", delay: 5500 },
+    ],
+  },
+  {
+    id: "daycare",
+    industry: "Daycare / Childcare",
+    label: "Enrollment Inquiry",
+    icon: Baby,
+    greeting: "Hi! Thanks for calling Sunny Days Daycare. This is Sarah. How can I help?",
+    conversation: [
+      { role: "ai" as const, text: "Hi! Thanks for calling Sunny Days Daycare. This is Sarah. How can I help?", delay: 0 },
+      { role: "caller" as const, text: "We're looking for a daycare for our three-year-old. Do you have any openings?", delay: 3200 },
+      { role: "ai" as const, text: "We'd love to meet your little one! We do have one opening in our preschool class. We're state-licensed, have a ten-to-one teacher ratio, and focus on play-based learning. Our rates are fourteen hundred a month for full-time. Would you like to schedule a tour?", delay: 6000 },
+      { role: "caller" as const, text: "Yes, a tour would be great. When can we come by?", delay: 2200 },
+      { role: "ai" as const, text: "I have tomorrow morning at 10 AM or Wednesday afternoon at 2 PM. We can show you the classrooms, meet our teachers, and answer all your questions. Which works better?", delay: 5000 },
+    ],
+  },
+  {
+    id: "pestcontrol",
+    industry: "Pest Control",
+    label: "Pest Inspection",
+    icon: Bug,
+    greeting: "This is Alex with BugFree Pest Control. What's bugging you today?",
+    conversation: [
+      { role: "ai" as const, text: "This is Alex with BugFree Pest Control. What's bugging you today?", delay: 0 },
+      { role: "caller" as const, text: "I've been seeing some termites in my basement. I need to get this checked out before it gets worse.", delay: 3300 },
+      { role: "ai" as const, text: "Termites are definitely something we want to address fast. I can schedule a free inspection today or tomorrow — our inspector uses a thermal camera to find hidden damage. Most inspections take about an hour. What's your address?", delay: 5800 },
+      { role: "caller" as const, text: "It's 456 Oak Lane.", delay: 1500 },
+      { role: "ai" as const, text: "Got it. I have today at 3 PM or tomorrow morning at 9 AM. I'll dispatch our inspector and he'll give you a full report with treatment options. Most termite treatments are fully guaranteed. What works for you?", delay: 5500 },
+    ],
+  },
+  {
+    id: "spa",
+    industry: "Spa & Massage",
+    label: "Massage Booking",
+    icon: Waves,
+    greeting: "Welcome to Serenity Spa! This is Emma. How can we relax you today?",
+    conversation: [
+      { role: "ai" as const, text: "Welcome to Serenity Spa! This is Emma. How can we relax you today?", delay: 0 },
+      { role: "caller" as const, text: "I've been super stressed and need a massage. What options do you have?", delay: 3000 },
+      { role: "ai" as const, text: "Perfect timing! We offer Swedish, deep tissue, hot stone, and therapeutic massage. Most clients start with our Swedish massage if they're new — it's super relaxing. Sixty minutes is one hundred dollars, and our therapists are incredibly good. When would you like to come in?", delay: 6200 },
+      { role: "caller" as const, text: "This weekend if you have anything.", delay: 2000 },
+      { role: "ai" as const, text: "Lucky you — we have Saturday at 2 PM and Sunday at 11 AM available. Both are with our most popular therapist, Lisa. Which feels better for your schedule?", delay: 5200 },
+    ],
+  },
+  {
+    id: "financial",
+    industry: "Financial Advisor",
+    label: "Retirement Planning",
+    icon: DollarSign,
+    greeting: "Welcome to Wealth Partners Financial. This is Alex. How can I help secure your future?",
+    conversation: [
+      { role: "ai" as const, text: "Welcome to Wealth Partners Financial. This is Alex. How can I help secure your future?", delay: 0 },
+      { role: "caller" as const, text: "I'm thinking about retiring in ten years and I want to make sure I'm on track financially.", delay: 3400 },
+      { role: "ai" as const, text: "That's smart planning! Ten years is a solid timeframe to make a real difference. I'd recommend a comprehensive retirement analysis — we look at your current savings, Social Security projections, and create a tailored strategy. The consultation is free. Do you want to schedule that?", delay: 6200 },
+      { role: "caller" as const, text: "Yeah, absolutely. What do I need to bring?", delay: 2000 },
+      { role: "ai" as const, text: "Just recent statements from your 401k, IRA, and any brokerage accounts. We have openings tomorrow at 1 PM or Friday at 10 AM. Which time works for you?", delay: 5200 },
+    ],
+  },
+  {
+    id: "physicaltherapy",
+    industry: "Physical Therapy",
+    label: "PT Appointment",
+    icon: HeartPulse,
+    greeting: "Hi there, thanks for calling Motion Therapy Center! This is Sarah. How can I help?",
+    conversation: [
+      { role: "ai" as const, text: "Hi there, thanks for calling Motion Therapy Center! This is Sarah. How can I help?", delay: 0 },
+      { role: "caller" as const, text: "I injured my shoulder and my doctor referred me for physical therapy.", delay: 2800 },
+      { role: "ai" as const, text: "We're great with shoulder injuries — our therapists will get you back to full strength. Your first visit is a comprehensive evaluation, and we'll create a personalized treatment plan. We're in-network with most insurance plans. When would you like to come in?", delay: 6000 },
+      { role: "caller" as const, text: "I'm pretty busy. Do you have early morning appointments?", delay: 2500 },
+      { role: "ai" as const, text: "Absolutely! We open at 6 AM on weekdays. I have Tuesday at 6:30 AM or Thursday at 7 AM available. Most patients come twice a week for six to eight weeks. Which time works?", delay: 5500 },
+    ],
+  },
+  {
+    id: "locksmith",
+    industry: "Locksmith",
+    label: "Emergency Lockout",
+    icon: Key,
+    greeting: "This is Alex with TrueLock Emergency Services. Is this an emergency lockout?",
+    conversation: [
+      { role: "ai" as const, text: "This is Alex with TrueLock Emergency Services. Is this an emergency lockout?", delay: 0 },
+      { role: "caller" as const, text: "Yes! I'm locked out of my car in a parking lot. I have to pick my kid up in an hour.", delay: 3200 },
+      { role: "ai" as const, text: "No problem — we can absolutely get you into your car quickly. We're fifteen minutes away and available right now. The emergency lockout service is sixty-nine dollars, and we accept all major cards. What's your location?", delay: 5800 },
+      { role: "caller" as const, text: "Downtown mall parking lot, third level near Macy's.", delay: 2200 },
+      { role: "ai" as const, text: "Perfect. I'm dispatching our tech right now — he'll be there in about fifteen minutes. His name is Mike and he'll text you when he's close. We'll have you on your way in minutes. Stay put!", delay: 5500 },
+    ],
+  },
+  {
+    id: "poolservice",
+    industry: "Pool Service",
+    label: "Pool Maintenance Schedule",
+    icon: Droplet,
+    greeting: "Hi! Thanks for calling Crystal Clear Pools. This is Emma. What can I help with?",
+    conversation: [
+      { role: "ai" as const, text: "Hi! Thanks for calling Crystal Clear Pools. This is Emma. What can I help with?", delay: 0 },
+      { role: "caller" as const, text: "It's our first summer with a pool and we need someone to maintain it. What do you recommend?", delay: 3300 },
+      { role: "ai" as const, text: "Weekly service is the way to go — we clean, balance chemicals, and check equipment every week. Most residential pools run about seventy-five a week. We're fully insured, and our customers love the peace of mind. Should we set up a time for me to see your pool?", delay: 6000 },
+      { role: "caller" as const, text: "Yeah, let's do it. When can you come out?", delay: 2000 },
+      { role: "ai" as const, text: "I can send someone out this Saturday morning between 9 and 11. He'll assess your pool and give you a detailed quote. How does that sound?", delay: 4800 },
+    ],
+  },
+  {
+    id: "electrician",
+    industry: "Electrician",
+    label: "Electrical Inspection",
+    icon: Zap,
+    greeting: "Hi, this is Alex with Bright Electrical Solutions. What's your electrical issue?",
+    conversation: [
+      { role: "ai" as const, text: "Hi, this is Alex with Bright Electrical Solutions. What's your electrical issue?", delay: 0 },
+      { role: "caller" as const, text: "I keep having outlets go out in my kitchen and I'm not sure what's wrong. Is it safe?", delay: 3300 },
+      { role: "ai" as const, text: "Those outlets could be on a bad breaker — we need to get that checked out to keep your family safe. I can schedule a full diagnostic inspection today or tomorrow. It's eighty-nine dollars and includes recommendations. We're licensed and insured. What works for you?", delay: 6000 },
+      { role: "caller" as const, text: "Can you come today?", delay: 1500 },
+      { role: "ai" as const, text: "Let me check our schedule. We have 4 PM available this afternoon. Our electrician will inspect everything, find the problem, and give you a quote before any repair work. Sound good?", delay: 5500 },
+    ],
+  },
+  {
+    id: "florist",
+    industry: "Florist",
+    label: "Event Flower Arrangement",
+    icon: Sparkles,
+    greeting: "Welcome to Petals & Stems Florist! This is Sarah. What can we grow for you?",
+    conversation: [
+      { role: "ai" as const, text: "Welcome to Petals & Stems Florist! This is Sarah. What can we grow for you?", delay: 0 },
+      { role: "caller" as const, text: "I'm having a corporate event next month and I need flower arrangements for the tables.", delay: 3200 },
+      { role: "ai" as const, text: "How lovely! Corporate events are our specialty. We create custom arrangements that wow your guests. The cost depends on size and flowers, but typically center arrangements run forty to seventy-five each. How many tables are we talking?", delay: 5800 },
+      { role: "caller" as const, text: "We have twenty tables and I want something elegant but not too formal.", delay: 2800 },
+      { role: "ai" as const, text: "Perfect! For twenty tables with elegant mixed arrangements, we're looking at around fifteen hundred. I'd love to schedule a consultation to show you options. Can you come by this week?", delay: 5200 },
+    ],
+  },
+  {
+    id: "catering",
+    industry: "Catering",
+    label: "Event Catering Quote",
+    icon: UtensilsCrossed,
+    greeting: "Hi, this is Emma with Gourmet Events Catering! How can we serve you?",
+    conversation: [
+      { role: "ai" as const, text: "Hi, this is Emma with Gourmet Events Catering! How can we serve you?", delay: 0 },
+      { role: "caller" as const, text: "We're throwing a company party for seventy-five people and we need catering.", delay: 3000 },
+      { role: "ai" as const, text: "Great! We'd love to cater your event. For seventy-five people, we typically offer several menu packages from casual to upscale. Our most popular is our buffet service at thirty-five per person, which includes three entrees, sides, dessert, and our bartender. What's your vibe?", delay: 6200 },
+      { role: "caller" as const, text: "Something nice but not over the top. What dates do you have available?", delay: 2500 },
+      { role: "ai" as const, text: "We're booked most weekends, but we have availability next Thursday or the following Saturday. Both work great for corporate events. I can send you our full menu and pricing. What email should I use?", delay: 5500 },
+    ],
+  },
+  {
+    id: "itsupport",
+    industry: "IT Support",
+    label: "Tech Support Ticket",
+    icon: Lightbulb,
+    greeting: "Hello, thanks for calling TechCare Support. This is Alex. What's happening with your system?",
+    conversation: [
+      { role: "ai" as const, text: "Hello, thanks for calling TechCare Support. This is Alex. What's happening with your system?", delay: 0 },
+      { role: "caller" as const, text: "My laptop won't connect to the internet. I have an important meeting in two hours.", delay: 3200 },
+      { role: "ai" as const, text: "Let's get you back online fast! I can remote in right now and diagnose the issue — usually takes ten to fifteen minutes. We're running same-day support, no hold time. Can I connect to your machine?", delay: 5800 },
+      { role: "caller" as const, text: "Yeah, please do. How do I let you in?", delay: 1800 },
+      { role: "ai" as const, text: "I'll send you a secure link to your email. Click it and I'll be able to see your screen. I'll fix this and have you back online well before your meeting. Check your email now.", delay: 5200 },
+    ],
+  },
 ] as const;
 
 /* ─── Animated Waveform ─── */
@@ -319,6 +543,22 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
       photography: "us-female-warm-receptionist", // Sarah — warm, personable
       plumbing: "us-male-professional",           // Alex — confident, technical
       ecommerce: "us-female-warm-receptionist",   // Sarah — warm, helpful
+      chiropractic: "us-female-warm-receptionist", // Sarah — warm, caring
+      landscaping: "us-male-professional",        // Alex — confident, technical
+      tutoring: "us-female-casual",               // Emma — friendly, supportive
+      moving: "us-male-professional",             // Alex — professional, organized
+      wedding: "us-female-warm-receptionist",     // Sarah — warm, enthusiastic
+      daycare: "us-female-warm-receptionist",     // Sarah — warm, nurturing
+      pestcontrol: "us-male-professional",        // Alex — professional, reassuring
+      spa: "us-female-casual",                    // Emma — casual, relaxing
+      financial: "us-male-professional",          // Alex — professional, authoritative
+      physicaltherapy: "us-female-warm-receptionist", // Sarah — warm, encouraging
+      locksmith: "us-male-professional",          // Alex — professional, urgent
+      poolservice: "us-female-casual",            // Emma — casual, friendly
+      electrician: "us-male-professional",        // Alex — professional, technical
+      florist: "us-female-warm-receptionist",     // Sarah — warm, creative
+      catering: "us-female-casual",               // Emma — friendly, enthusiastic
+      itsupport: "us-male-professional",          // Alex — professional, technical
     };
     const voiceId = voiceIdMap[scenario.id] || "us-female-warm-receptionist";
 

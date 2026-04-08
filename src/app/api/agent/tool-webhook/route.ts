@@ -5,6 +5,14 @@ import { getDb } from "@/lib/db/queries";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { runWithWriteContextAsync } from "@/lib/safety/unsafe-write-guard";
 import { log } from "@/lib/logger";
+import {
+  detectBookingIntent,
+  getAvailableSlots,
+  bookAppointment,
+  buildSlotPresentationScript,
+  type AppointmentSlot,
+  type BookingRequest,
+} from "@/lib/voice/appointment-booking";
 
 /**
  * POST /api/agent/tool-webhook
@@ -81,81 +89,145 @@ export async function POST(req: NextRequest) {
           caller_phone?: string; caller_email?: string; notes?: string;
         };
 
-        // Create appointment in calendar_events table
-        const startTime = date && time ? `${date}T${time}:00` : new Date().toISOString();
-        const { data: event, error } = await db.from("calendar_events").insert({
-          workspace_id,
-          title: `${service || "Appointment"} — ${caller_name || "Customer"}`,
-          start_time: startTime,
-          end_time: new Date(new Date(startTime).getTime() + 60 * 60 * 1000).toISOString(),
-          attendee_name: caller_name,
-          attendee_phone: caller_phone || body.caller_phone,
-          attendee_email: caller_email,
-          notes,
-          source: "ai_agent",
-          status: "confirmed",
-        }).select("id").maybeSingle();
+        try {
+          // Validate required fields
+          if (!date || !time || !caller_name) {
+            return NextResponse.json({
+              result: "I need a date, time, and your name to confirm the appointment. Can you provide those?",
+            });
+          }
 
-        if (error) {
-          log("error", "[tool-webhook] book_appointment error:", { error: error.message });
-          return NextResponse.json({ result: `I've noted your appointment request for ${date} at ${time}. Someone will confirm shortly.` });
+          // Parse the slot from date and time
+          const startDateTime = new Date(`${date}T${time}`);
+          if (isNaN(startDateTime.getTime())) {
+            return NextResponse.json({
+              result: "I'm sorry, I couldn't parse the appointment time. Could you please provide the date and time again?",
+            });
+          }
+
+          // Create appointment slot for the booking engine
+          const slot: AppointmentSlot = {
+            start: startDateTime,
+            end: new Date(startDateTime.getTime() + 30 * 60_000), // Default 30 min duration
+            formatted: `${startDateTime.toLocaleDateString()} at ${startDateTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+            available: true,
+          };
+
+          // Build booking request for the appointment booking engine
+          const bookingRequest: BookingRequest = {
+            workspace_id,
+            lead_id: "", // Will be set after capturing/upserting lead
+            call_session_id: body.call_session_id,
+            title: service || "Appointment",
+            timezone: "America/New_York", // Default; should ideally come from workspace settings
+            notes,
+          };
+
+          // First, capture or update the lead
+          const leadId = await upsertLead(db, workspace_id, {
+            name: caller_name,
+            phone: caller_phone || body.caller_phone,
+            email: caller_email,
+            notes: `Appointment request: ${service || "General"} on ${date} at ${time}`,
+          });
+
+          if (!leadId) {
+            return NextResponse.json({
+              result: "I had trouble saving your information. Let me have someone follow up with you instead.",
+            });
+          }
+
+          // Update booking request with lead ID
+          bookingRequest.lead_id = leadId;
+
+          // Call the appointment booking engine
+          const bookingResult = await bookAppointment(bookingRequest, slot);
+
+          if (bookingResult.success) {
+            const confirmMsg = bookingResult.confirmation_sent
+              ? " You'll receive a confirmation text shortly."
+              : "";
+            return NextResponse.json({
+              result: `Perfect! I've booked your ${service || "appointment"} for ${slot.formatted}.${confirmMsg}`,
+              appointment_id: bookingResult.appointment_id,
+              success: true,
+            });
+          } else {
+            // Booking failed — offer alternatives
+            if (bookingResult.suggested_alternatives && bookingResult.suggested_alternatives.length > 0) {
+              const altScript = buildSlotPresentationScript(
+                bookingResult.suggested_alternatives
+              );
+              return NextResponse.json({
+                result: `That slot just became unavailable. ${altScript}`,
+                alternatives: bookingResult.suggested_alternatives.map(s => ({
+                  formatted: s.formatted,
+                  start: s.start.toISOString(),
+                })),
+              });
+            }
+
+            return NextResponse.json({
+              result: `I couldn't complete your booking: ${bookingResult.error}. Let me have someone call you back to schedule.`,
+            });
+          }
+        } catch (err) {
+          log("error", "[tool-webhook] book_appointment error:", {
+            error: err instanceof Error ? err.message : String(err),
+          });
+          return NextResponse.json({
+            result: "I'm having trouble completing your booking. Someone will call you back to confirm.",
+          });
         }
-
-        // Also capture/update lead
-        await upsertLead(db, workspace_id, { name: caller_name, phone: caller_phone || body.caller_phone, email: caller_email, notes: `Booked: ${service} on ${date} at ${time}` });
-
-        // Send confirmation SMS if we have a phone number
-        const phone = caller_phone || body.caller_phone;
-        if (phone) {
-          await sendQuickSms(db, workspace_id, phone, `Your ${service || "appointment"} with us is confirmed for ${date} at ${time}. We look forward to seeing you!`);
-        }
-
-        return NextResponse.json({
-          result: `Perfect! I've booked your ${service || "appointment"} for ${date} at ${time}. You'll receive a confirmation text shortly.`,
-          event_id: (event as { id: string } | null)?.id,
-        });
       }
 
       case "check_availability": {
-        const { date } = tool_args as { date?: string; service?: string };
-        const targetDate = date || new Date().toISOString().split("T")[0];
+        const { date, service } = tool_args as { date?: string; service?: string };
 
-        // Check existing appointments for that day
-        const dayStart = `${targetDate}T00:00:00`;
-        const dayEnd = `${targetDate}T23:59:59`;
-        const { data: existing } = await db
-          .from("calendar_events")
-          .select("start_time, end_time")
-          .eq("workspace_id", workspace_id)
-          .gte("start_time", dayStart)
-          .lte("start_time", dayEnd)
-          .eq("status", "confirmed")
-          .order("start_time");
-
-        const bookedSlots = (existing ?? []).map((e: Record<string, unknown>) => {
-          const s = new Date(String(e.start_time));
-          return `${s.getHours()}:${String(s.getMinutes()).padStart(2, "0")}`;
-        });
-
-        // Generate available slots (9am-5pm, hourly, excluding booked)
-        const available: string[] = [];
-        for (let h = 9; h < 17; h++) {
-          const slot = `${h}:00`;
-          if (!bookedSlots.some(b => b.startsWith(`${h}:`))) {
-            available.push(slot);
+        try {
+          // Parse target date if provided
+          let targetDate: Date | undefined;
+          if (date) {
+            targetDate = new Date(date);
+            // Validate date is in the future
+            if (targetDate < new Date()) {
+              return NextResponse.json({
+                result: "That date has already passed. Let me show you availability going forward.",
+                available: [],
+              });
+            }
           }
+
+          // Get available slots using the appointment booking engine
+          const slots = await getAvailableSlots(workspace_id, targetDate, 5);
+
+          if (slots.length === 0) {
+            return NextResponse.json({
+              result: "I'm sorry, I don't have any available slots in the next two weeks. Would you like me to have someone call you back to schedule?",
+              available: [],
+            });
+          }
+
+          // Build natural language response for available slots
+          const slotScript = buildSlotPresentationScript(slots);
+
+          return NextResponse.json({
+            result: slotScript,
+            available: slots.map(s => ({
+              formatted: s.formatted,
+              start: s.start.toISOString(),
+              end: s.end.toISOString(),
+            })),
+          });
+        } catch (err) {
+          log("error", "[tool-webhook] check_availability error:", {
+            error: err instanceof Error ? err.message : String(err),
+          });
+          return NextResponse.json({
+            result: "I'm having trouble checking availability right now. Let me have someone get back to you.",
+            available: [],
+          });
         }
-
-        if (available.length === 0) {
-          return NextResponse.json({ result: `I'm sorry, it looks like ${targetDate} is fully booked. Would you like to try another day?`, available: [] });
-        }
-
-        const formatted = available.slice(0, 5).map(s => {
-          const h = parseInt(s);
-          return h >= 12 ? `${h === 12 ? 12 : h - 12}:00 PM` : `${h}:00 AM`;
-        }).join(", ");
-
-        return NextResponse.json({ result: `For ${targetDate}, I have these times available: ${formatted}. Which works best for you?`, available });
       }
 
       case "capture_lead": {
