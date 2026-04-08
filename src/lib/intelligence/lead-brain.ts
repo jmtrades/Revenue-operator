@@ -1,473 +1,1031 @@
 /**
- * Lead Intelligence Engine — Core Brain for Autonomous Revenue Brain
- * Integrates ALL signals into a single rich intelligence profile.
- * Deterministic rule-based computation — no inference, no freeform AI.
+ * Lead Brain — Complete Contextual Memory & Decision Engine
+ *
+ * The Lead Brain is the core intelligence system. Every lead has ONE brain that:
+ * 1. Holds EVERYTHING about them (interactions, behaviors, relationship context, emotions)
+ * 2. Computes the single best next action dynamically based on complete context
+ * 3. Updates continuously as new events arrive
+ *
+ * No templates. No sequences. Pure contextual decision-making.
  */
 
-import { getDb } from "@/lib/db/queries";
-import { log } from "@/lib/logger";
-import { scoreLeadFull } from "./lead-scoring";
-import { getNextBestAction } from "./next-best-action";
-import { getLeadMemory } from "@/lib/lead-memory";
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// TYPES & INTERFACES
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-export interface LeadIntelligence {
-  lead_id: string;
-  workspace_id: string;
+export type InteractionChannel = "call" | "email" | "sms" | "voicemail" | "web";
+export type InteractionOutcome =
+  | "completed"
+  | "appointment_booked"
+  | "objection_raised"
+  | "objection_resolved"
+  | "promise_made"
+  | "value_demonstrated"
+  | "competitor_mentioned"
+  | "budget_discussed"
+  | "timeline_mentioned"
+  | "no_answer"
+  | "voicemail_left"
+  | "email_opened"
+  | "link_clicked";
 
-  // Lifecycle
-  lifecycle_phase: string;
-  days_in_current_phase: number;
-  total_touchpoints: number;
+export type Sentiment = "positive" | "neutral" | "negative" | "frustrated" | "enthusiastic";
+export type EngagementTrend = "rising" | "stable" | "declining" | "recovering";
+export type CommunicationStyle = "formal" | "casual" | "direct" | "analytical";
+export type BuyingStage = "awareness" | "consideration" | "evaluation" | "decision" | "implementation";
+export type LeadHealth = "thriving" | "healthy" | "cooling" | "cold" | "dead";
 
-  // Scores (0-100)
-  urgency_score: number;
-  intent_score: number;
-  engagement_score: number;
+/**
+ * Single interaction: call, email, SMS, voicemail, or website visit
+ */
+export interface LeadInteraction {
+  id: string;
+  timestamp: string;
+  channel: InteractionChannel;
+  outcome: InteractionOutcome;
+  duration?: number; // seconds
+  sentiment?: Sentiment;
+  // What was said/done
+  summary: string;
+  keyMoments: string[];
+  questionsAsked: string[];
+  // Relationship signals
+  rapportBuilt: boolean;
+  objectionRaised?: string;
+  objectionResolved?: string;
+  promiseMade?: string;
+  promiseFrom?: "us" | "them";
+  // Emotional/behavioral signals
+  responsiveness: "immediate" | "delayed" | "slow" | "never";
+  engagementDepth: number; // 0-10 scale (how much they engaged)
+}
 
-  // Probabilities (0-1)
-  conversion_probability: number;
-  churn_risk: number;
+/**
+ * A new event that updates the brain
+ */
+export interface LeadEvent {
+  id: string;
+  timestamp: string;
+  type: "interaction" | "outcome" | "signal" | "milestone";
+  interaction?: LeadInteraction;
+  // For outcomes: appointment confirmed, payment made, etc
+  outcome?: {
+    type: string;
+    value?: number;
+    description: string;
+  };
+  // For signals: visited pricing page, opened email, competitor contract expiring soon
+  signal?: {
+    type: string;
+    value: string;
+    source: string;
+  };
+  // For milestones: meeting with decision maker, decision timeline announced
+  milestone?: {
+    type: string;
+    description: string;
+  };
+}
 
-  // Risk flags
-  risk_flags: string[];
+/**
+ * Behavioral profile of a lead
+ */
+export interface BehavioralProfile {
+  engagementTrajectory: EngagementTrend;
+  responsePatterns: {
+    typical: "immediate" | "delayed" | "slow" | "inconsistent";
+    averageHoursToRespond: number;
+    responseRate: number; // 0-1
+  };
+  preferredChannel: InteractionChannel;
+  secondaryChannel?: InteractionChannel;
+  preferredTime: {
+    dayOfWeek?: string;
+    hourOfDay?: number;
+    timezone?: string;
+  };
+  communicationStyle: CommunicationStyle;
+  engagementDepth: number; // 0-10: how deeply they engage in conversations
+}
 
-  // Decision output
-  next_best_action: string;
-  action_reason: string;
-  action_timing: "immediate" | "scheduled" | "deferred";
-  action_channel: string;
-  action_confidence: number;
+/**
+ * Emotional state detection
+ */
+export interface EmotionalState {
+  sentiment: Sentiment;
+  frustrationLevel: number; // 0-10
+  enthusiasmLevel: number; // 0-10
+  urgencyLevel: number; // 0-10
+  lastDetected: string;
+  trend: "stable" | "improving" | "declining";
+}
 
-  // Context
-  last_outcome: string | null;
-  last_sentiment: string | null;
-  last_contact_at: string | null;
-  hours_since_last_contact: number;
+/**
+ * Relationship context
+ */
+export interface RelationshipContext {
+  teamMembers: string[]; // who's spoken to them
+  rapportLevel: number; // 0-10
+  trustScore: number; // 0-100
+  objectionsRaised: Array<{ objection: string; resolvedAt?: string }>;
+  promisesMadeByUs: Array<{ promise: string; dueDate?: string; fulfilledAt?: string }>;
+  promisesMadeByThem: Array<{ promise: string; dueDate?: string; fulfilledAt?: string }>;
+  decisionMakersIdentified: string[];
+  buyingStage: BuyingStage;
+  stageEnteredAt: string;
+}
+
+/**
+ * Business context specific to this lead
+ */
+export interface BusinessContext {
+  industry?: string;
+  companySize?: string;
+  dealValue?: number;
+  currency?: string;
+  competitiveSituation?: string;
+  painPointsIdentified: string[];
+  goalsIdentified: string[];
+  budgetSignals?: {
+    confirmed: boolean;
+    amount?: number;
+    source?: string;
+  };
+  competitorMentions: Array<{ competitor: string; context: string; mentionedAt: string }>;
+  contractExpirationInfo?: {
+    currentContractor?: string;
+    expirationDate?: string;
+    opportunity?: string;
+  };
+}
+
+/**
+ * The complete Lead Brain state
+ */
+export interface LeadBrain {
+  leadId: string;
+  workspaceId: string;
+
+  // Complete history
+  interactions: LeadInteraction[];
+  events: LeadEvent[];
+
+  // Derived signals (computed from history)
+  behavioral: BehavioralProfile;
+  emotional: EmotionalState;
+  relationship: RelationshipContext;
+  business: BusinessContext;
+
+  // Calculated metrics
+  trustScore: number; // 0-100
+  engagementScore: number; // 0-100
+  conversionProbability: number; // 0-1
 
   // Metadata
-  computed_at: string;
-  signal_count: number;
-  version: number;
+  createdAt: string;
+  lastUpdatedAt: string;
+  lastInteractionAt: string;
+  interactionCount: number;
 }
 
 /**
- * Compute comprehensive lead intelligence from all available signals.
+ * The computed next action with full context
  */
-export async function computeLeadIntelligence(
-  workspaceId: string,
-  leadId: string
-): Promise<LeadIntelligence> {
-  const db = getDb();
-  const computedAt = new Date().toISOString();
-  let signalCount = 0;
+export interface ComputedAction {
+  action: string; // "send_email", "call", "sms", "wait", "escalate", etc
+  channel: InteractionChannel | "multi" | "none";
+  timing: {
+    immediate: boolean;
+    delayMinutes?: number;
+    optimalTime?: string; // ISO or human-friendly
+  };
+  messageContext: {
+    reference: string; // what to reference from past conversation
+    tone: string; // how to approach
+    talkingPoints: string[];
+    whatNotToSay: string[];
+  };
+  reasoning: string; // why this is the best action
+  confidence: number; // 0-1
+}
 
-  try {
-    // 1. Fetch lead row
-    const { data: leadRow } = await db
-      .from("leads")
-      .select("id, state, created_at, last_activity_at")
-      .eq("id", leadId)
-      .eq("workspace_id", workspaceId)
-      .maybeSingle();
+/**
+ * Lead health assessment
+ */
+export interface LeadHealthAssessment {
+  overallHealth: LeadHealth;
+  riskFactors: string[];
+  opportunitySignals: string[];
+  recommendedUrgency: "immediate" | "today" | "this-week" | "next-week" | "nurture";
+  daysToNextAction: number;
+  keyRecommendations: string[];
+}
 
-    const lead = leadRow as {
-      id: string;
-      state: string;
-      created_at: string;
-      last_activity_at: string;
-    } | null;
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// CORE FUNCTIONS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-    if (!lead) {
-      throw new Error(`Lead not found: ${leadId}`);
-    }
-
-    signalCount += 1;
-
-    // 2. Fetch recent call sessions (max 20)
-    const { data: callSessions } = await db
-      .from("call_sessions")
-      .select("duration_seconds, outcome, call_started_at, sentiment")
-      .eq("workspace_id", workspaceId)
-      .eq("lead_id", leadId)
-      .not("call_ended_at", "is", null)
-      .order("call_started_at", { ascending: false })
-      .limit(20);
-
-    const calls = (callSessions ?? []) as Array<{
-      duration_seconds?: number;
-      outcome?: string;
-      call_started_at?: string;
-      sentiment?: string;
-    }>;
-
-    signalCount += calls.length > 0 ? 1 : 0;
-
-    // 3. Fetch canonical signals count
-    const { count: signalCounts } = await db
-      .from("canonical_signals")
-      .select("*", { count: "exact", head: true })
-      .eq("workspace_id", workspaceId)
-      .eq("lead_id", leadId);
-
-    signalCount += signalCounts ? Math.min(1, Math.ceil(signalCounts / 10)) : 0;
-
-    // 4. Fetch recent outcomes (max 10)
-    const { data: outcomes } = await db
-      .from("universal_outcomes")
-      .select("outcome_type, created_at")
-      .eq("workspace_id", workspaceId)
-      .order("created_at", { ascending: false })
-      .limit(10);
-
-    const recentOutcomes = (outcomes ?? []) as Array<{
-      outcome_type: string;
-      created_at: string;
-    }>;
-
-    signalCount += recentOutcomes.length > 0 ? 1 : 0;
-
-    // 5. Fetch lead memory
-    const memory = await getLeadMemory(workspaceId, leadId);
-    signalCount += memory ? 1 : 0;
-
-    // 6. Call lead scoring engine
-    const score = await scoreLeadFull(workspaceId, leadId);
-    signalCount += 1;
-
-    // 7. Compute lifecycle metrics
-    const stateCreatedAt = new Date(lead.created_at);
-    const daysSinceStateEntry = Math.floor(
-      (Date.now() - stateCreatedAt.getTime()) / (1000 * 60 * 60 * 24)
-    );
-
-    // 8. Compute last contact info
-    const lastContactTime = calls.length > 0 ? new Date(calls[0].call_started_at!) : new Date(lead.last_activity_at);
-    const hoursSinceLastContact = Math.floor(
-      (Date.now() - lastContactTime.getTime()) / (1000 * 60 * 60)
-    );
-
-    // 9. Compute urgency score (0-100)
-    // Decays based on inactivity: fresh = 80, 7 days = 50, 14 days = 30, 30+ days = 10
-    let urgencyScore = 80;
-    if (hoursSinceLastContact > 720) urgencyScore = 10; // 30+ days
-    else if (hoursSinceLastContact > 336) urgencyScore = 30; // 14+ days
-    else if (hoursSinceLastContact > 168) urgencyScore = 50; // 7+ days
-    else if (hoursSinceLastContact > 24) urgencyScore = 65; // 1+ days
-
-    // Boost if appointment is near or payment promised (check memory/outcomes)
-    const hasPaymentPromise = recentOutcomes.some((o) => o.outcome_type === "payment_promised");
-    const hasAppointment = recentOutcomes.some((o) => o.outcome_type === "appointment_confirmed");
-    if (hasPaymentPromise || hasAppointment) urgencyScore = Math.min(100, urgencyScore + 20);
-
-    // 10. Compute intent score (0-100)
-    // Based on outcome quality, engagement pattern, and booking signals
-    let intentScore = 40; // Base neutral
-    const positiveOutcomes = [
-      "appointment_confirmed",
-      "payment_made",
-      "payment_promised",
-      "followup_scheduled",
-    ];
-    const negativeOutcomes = ["opted_out", "hostile", "wrong_number", "legal_risk"];
-
-    const positiveOutcomeCount = recentOutcomes.filter((o) =>
-      positiveOutcomes.includes(o.outcome_type)
-    ).length;
-    const negativeOutcomeCount = recentOutcomes.filter((o) =>
-      negativeOutcomes.includes(o.outcome_type)
-    ).length;
-
-    // Scale by positive outcomes
-    intentScore = 40 + positiveOutcomeCount * 15 - negativeOutcomeCount * 20;
-    intentScore = Math.max(0, Math.min(100, intentScore));
-
-    // 11. Compute engagement score (from lead score)
-    // Map score grade to engagement: A=90, B=75, C=60, D=40, F=20
-    const engagementScore =
-      score.grade === "A"
-        ? 90
-        : score.grade === "B"
-          ? 75
-          : score.grade === "C"
-            ? 60
-            : score.grade === "D"
-              ? 40
-              : 20;
-
-    // 12. Compute conversion probability (0-1)
-    // Weighted: 40% score grade, 35% outcome quality, 25% engagement trend
-    const gradeWeight =
-      score.grade === "A"
-        ? 0.9
-        : score.grade === "B"
-          ? 0.7
-          : score.grade === "C"
-            ? 0.5
-            : score.grade === "D"
-              ? 0.3
-              : 0.1;
-    const outcomeWeight =
-      positiveOutcomeCount > 0 ? Math.min(1, 0.3 + positiveOutcomeCount * 0.15) : 0.2;
-    const engagementTrend =
-      calls.length > 1
-        ? calls.slice(0, 3).filter((c) => (c.duration_seconds ?? 0) > 30).length / Math.min(3, calls.length)
-        : 0.5;
-
-    const conversionProbability = gradeWeight * 0.4 + outcomeWeight * 0.35 + engagementTrend * 0.25;
-
-    // 13. Compute churn risk (0-1)
-    // High inactivity, negative sentiment, no positive signals = high risk
-    let churnRisk = 0;
-    if (hoursSinceLastContact > 720) churnRisk += 0.3; // 30+ days
-    else if (hoursSinceLastContact > 336) churnRisk += 0.15; // 14+ days
-
-    const recentSentiments = calls.slice(0, 5).map((c) => c.sentiment);
-    const negativeSentimentRatio =
-      recentSentiments.filter((s) => s === "negative").length / Math.max(1, recentSentiments.length);
-    churnRisk += negativeSentimentRatio * 0.4;
-
-    if (negativeOutcomeCount >= 2) churnRisk += 0.2;
-    churnRisk = Math.min(1, churnRisk);
-
-    // 14. Compute risk flags
-    const riskFlags: string[] = [];
-
-    // Anger flag
-    if (
-      recentSentiments.filter((s) => s === "negative").length >= 2 ||
-      recentOutcomes.some((o) => o.outcome_type === "hostile")
-    ) {
-      riskFlags.push("anger");
-    }
-
-    // Opt-out signal
-    if (recentOutcomes.some((o) => o.outcome_type === "opted_out")) {
-      riskFlags.push("opt_out_signal");
-    }
-
-    // Going cold (no contact >7 days)
-    if (hoursSinceLastContact > 168) {
-      riskFlags.push("going_cold");
-    }
-
-    // No show risk (booked but low engagement)
-    if (
-      recentOutcomes.some((o) => o.outcome_type === "appointment_confirmed") &&
-      engagementScore < 50
-    ) {
-      riskFlags.push("no_show_risk");
-    }
-
-    // Stale (>30 days no contact)
-    if (hoursSinceLastContact > 720) {
-      riskFlags.push("stale");
-    }
-
-    // 15. Check if lead is enrolled in an active sequence
-    let isEnrolledInSequence = false;
-    try {
-      const { count: enrollCount } = await db
-        .from("sequence_enrollments")
-        .select("id", { count: "exact", head: true })
-        .eq("lead_id", leadId)
-        .eq("workspace_id", workspaceId)
-        .eq("status", "active");
-      isEnrolledInSequence = (enrollCount ?? 0) > 0;
-    } catch {
-      // sequence_enrollments may not exist
-    }
-
-    // 16. Look up active deal for this lead (if any)
-    let activeDealId: string | undefined;
-    try {
-      const { data: dealRow } = await db
-        .from("deals")
-        .select("id")
-        .eq("workspace_id", workspaceId)
-        .eq("lead_id", leadId)
-        .neq("status", "closed_lost")
-        .neq("status", "closed_won")
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      activeDealId = (dealRow as { id?: string } | null)?.id ?? undefined;
-    } catch {
-      // deals table may not exist — continue without deal context
-    }
-
-    // 17. Determine next best action (with intent_score and real dealId)
-    const nbaResult = await getNextBestAction({
-      leadId,
-      state: lead.state,
-      intent: positiveOutcomeCount > 0 ? "interested" : "exploring",
-      intentScore,
-      riskFlags,
-      dealId: activeDealId,
-      isEnrolledInSequence,
-      hoursSinceLastContact,
-      engagementScore,
-      touchpointCount: calls.length + (signalCount ?? 0),
-    });
-
-    // 17. Map action to channel
-    const channelMap: Record<string, string> = {
-      ask_clarification: "multi",
-      send_proof: "email",
-      reframe_value: "call",
-      book_call: "call",
-      schedule_followup: "sms",
-      reactivate_later: "email",
-      escalate_human: "multi",
-      monitor_sequence: "none",
-      change_channel: "multi",
-      send_email: "email",
-      send_sms: "sms",
-    };
-
-    const actionChannel = channelMap[nbaResult.action] || "multi";
-
-    // 17. Determine action timing
-    // Safety-critical risk flags → immediate (escalation/pause must fire, not be deferred)
-    // High urgency or explicit escalation → immediate
-    // Everything else → scheduled
-    let actionTiming: "immediate" | "scheduled" | "deferred" = "scheduled";
-    if (riskFlags.includes("opt_out_signal")) {
-      actionTiming = "immediate"; // Pause must fire immediately
-    } else if (riskFlags.includes("anger")) {
-      actionTiming = "immediate"; // Escalation must fire immediately
-    } else if (urgencyScore > 75 || nbaResult.action === "escalate_human") {
-      actionTiming = "immediate";
-    }
-
-    // 18. Get last outcome and sentiment
-    const lastOutcome = recentOutcomes.length > 0 ? recentOutcomes[0].outcome_type : null;
-    const lastSentiment =
-      calls.length > 0 && calls[0].sentiment ? calls[0].sentiment : null;
-
+/**
+ * Build a complete Lead Brain from raw interaction history
+ */
+export function buildLeadBrain(interactions: LeadInteraction[]): LeadBrain {
+  if (interactions.length === 0) {
     return {
-      lead_id: leadId,
-      workspace_id: workspaceId,
-      lifecycle_phase: lead.state,
-      days_in_current_phase: daysSinceStateEntry,
-      total_touchpoints: calls.length + recentOutcomes.length,
-      urgency_score: Math.round(urgencyScore),
-      intent_score: Math.round(intentScore),
-      engagement_score: engagementScore,
-      conversion_probability: Math.round(conversionProbability * 100) / 100,
-      churn_risk: Math.round(churnRisk * 100) / 100,
-      risk_flags: riskFlags,
-      next_best_action: nbaResult.action,
-      action_reason: nbaResult.reasoning,
-      action_timing: actionTiming,
-      action_channel: actionChannel,
-      action_confidence: nbaResult.confidence,
-      last_outcome: lastOutcome,
-      last_sentiment: lastSentiment,
-      last_contact_at: lastContactTime.toISOString(),
-      hours_since_last_contact: hoursSinceLastContact,
-      computed_at: computedAt,
-      signal_count: signalCount,
-      version: 1,
+      leadId: "",
+      workspaceId: "",
+      interactions: [],
+      events: [],
+      behavioral: getDefaultBehavioralProfile(),
+      emotional: getDefaultEmotionalState(),
+      relationship: getDefaultRelationshipContext(),
+      business: getDefaultBusinessContext(),
+      trustScore: 0,
+      engagementScore: 0,
+      conversionProbability: 0,
+      createdAt: new Date().toISOString(),
+      lastUpdatedAt: new Date().toISOString(),
+      lastInteractionAt: new Date().toISOString(),
+      interactionCount: 0,
     };
-  } catch (err) {
-    // Error computing lead intelligence (error details omitted to protect PII)
-    throw err;
   }
+
+  // Sort by timestamp (oldest first for processing)
+  const sorted = [...interactions].sort(
+    (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+  );
+
+  // Build behavioral profile from interaction patterns
+  const behavioral = deduceBehavioralProfile(sorted);
+
+  // Build emotional state from most recent interactions
+  const emotional = deduceEmotionalState(sorted);
+
+  // Build relationship context from commitment and promise tracking
+  const relationship = deduceRelationshipContext(sorted);
+
+  // Build business context from mentions and signals
+  const business = deduceBusinessContext(sorted);
+
+  // Calculate trust score: based on promises kept + response consistency + engagement depth
+  const trustScore = calculateTrustScore(sorted, relationship);
+
+  // Calculate engagement score: how actively they participate
+  const engagementScore = calculateEngagementScore(sorted, behavioral);
+
+  // Calculate conversion probability: where are they in journey + engagement + sentiment
+  const conversionProbability = estimateConversionProbability(
+    sorted,
+    relationship,
+    behavioral,
+    emotional
+  );
+
+  const now = new Date().toISOString();
+  const lastInteraction = sorted[sorted.length - 1];
+
+  return {
+    leadId: "",
+    workspaceId: "",
+    interactions: sorted,
+    events: [], // Will be populated by updateBrain
+    behavioral,
+    emotional,
+    relationship,
+    business,
+    trustScore,
+    engagementScore,
+    conversionProbability,
+    createdAt: now,
+    lastUpdatedAt: now,
+    lastInteractionAt: lastInteraction.timestamp,
+    interactionCount: sorted.length,
+  };
 }
 
 /**
- * Persist lead intelligence to database (non-blocking).
+ * Compute the single best next action based on complete lead context
+ *
+ * Decision factors (weighted):
+ * - Most recent event (40%): what just happened?
+ * - Emotional state (20%): how do they feel now?
+ * - Channel & time preferences (15%): when/how do they like to be contacted?
+ * - Buying journey stage (15%): where are they?
+ * - Historical effectiveness (10%): what worked before?
  */
-export async function persistLeadIntelligence(
-  intelligence: LeadIntelligence
-): Promise<{ ok: boolean }> {
-  const db = getDb();
-  try {
-    // Attempt upsert
-    await db.from("lead_intelligence").upsert(
-      {
-        lead_id: intelligence.lead_id,
-        workspace_id: intelligence.workspace_id,
-        lifecycle_phase: intelligence.lifecycle_phase,
-        days_in_current_phase: intelligence.days_in_current_phase,
-        total_touchpoints: intelligence.total_touchpoints,
-        urgency_score: intelligence.urgency_score,
-        intent_score: intelligence.intent_score,
-        engagement_score: intelligence.engagement_score,
-        conversion_probability: intelligence.conversion_probability,
-        churn_risk: intelligence.churn_risk,
-        risk_flags_json: intelligence.risk_flags,
-        next_best_action: intelligence.next_best_action,
-        action_reason: intelligence.action_reason,
-        action_timing: intelligence.action_timing,
-        action_channel: intelligence.action_channel,
-        action_confidence: intelligence.action_confidence,
-        last_outcome: intelligence.last_outcome,
-        last_sentiment: intelligence.last_sentiment,
-        last_contact_at: intelligence.last_contact_at,
-        hours_since_last_contact: intelligence.hours_since_last_contact,
-        computed_at: intelligence.computed_at,
-        signal_count: intelligence.signal_count,
-        version: intelligence.version,
-        updated_at: new Date().toISOString(),
+export function computeNextAction(brain: LeadBrain): ComputedAction {
+  if (brain.interactions.length === 0) {
+    return {
+      action: "wait",
+      channel: "none",
+      timing: { immediate: false, delayMinutes: 1440 }, // 24 hours
+      messageContext: {
+        reference: "Initial outreach",
+        tone: "warm_introduction",
+        talkingPoints: [],
+        whatNotToSay: [],
       },
-      { onConflict: "lead_id,workspace_id" }
-    );
-    return { ok: true };
-  } catch (err) {
-    log("error", "intelligence.persist_failed", { leadId: intelligence.lead_id, error: (err as Error)?.message ?? String(err) });
-    return { ok: false };
+      reasoning: "No interaction history yet",
+      confidence: 0.5,
+    };
   }
+
+  const mostRecent = brain.interactions[brain.interactions.length - 1];
+  const minutesSinceLastContact = Math.floor(
+    (Date.now() - new Date(mostRecent.timestamp).getTime()) / 60000
+  );
+
+  // ── CONTEXTUAL DECISION LOGIC ──
+
+  // 1. Check emotional state (20% weight)
+  if (brain.emotional.sentiment === "frustrated" || brain.emotional.frustrationLevel > 7) {
+    // De-escalate: light touch, acknowledge, offer value
+    return {
+      action: "send_value_content",
+      channel: brain.behavioral.preferredChannel,
+      timing: { immediate: false, delayMinutes: 240 }, // Wait 4 hours
+      messageContext: {
+        reference: `Last conversation about ${mostRecent.summary}`,
+        tone: "empathetic_helpful",
+        talkingPoints: ["Acknowledge their concern", "Offer solution", "Light next step"],
+        whatNotToSay: ["More sales pitch", "Dismissing their concern"],
+      },
+      reasoning: "Lead is frustrated—reduce pressure, increase value",
+      confidence: 0.9,
+    };
+  }
+
+  // 2. Check most recent outcome (40% weight)
+  if (mostRecent.outcome === "appointment_booked") {
+    // They committed to a call—confirm 24 hours before
+    return {
+      action: "send_confirmation",
+      channel: brain.behavioral.secondaryChannel || "sms",
+      timing: { immediate: false, delayMinutes: 1320 }, // 22 hours after booking
+      messageContext: {
+        reference: "Appointment confirmed for tomorrow",
+        tone: "friendly_reminder",
+        talkingPoints: ["Confirm time", "Provide meeting link", "Quick value reminder"],
+        whatNotToSay: ["Asking if they still want to meet"],
+      },
+      reasoning: "Appointment booked—reduce no-show risk with timely reminder",
+      confidence: 0.95,
+    };
+  }
+
+  if (mostRecent.outcome === "promise_made") {
+    const promiseFrom = mostRecent.promiseFrom || "us";
+    if (promiseFrom === "us") {
+      // WE made a promise—fulfill it immediately
+      const promise = mostRecent.promiseMade || "Send information";
+      return {
+        action: "fulfill_promise",
+        channel: "email",
+        timing: { immediate: true },
+        messageContext: {
+          reference: `You asked for: ${promise}`,
+          tone: "reliable_deliverer",
+          talkingPoints: ["Deliver exactly what promised", "Add slight extra value"],
+          whatNotToSay: ["Asking for anything in return yet"],
+        },
+        reasoning: "We made a promise—fulfill it immediately to build trust",
+        confidence: 0.98,
+      };
+    } else {
+      // THEY made a promise—follow up to completion
+      return {
+        action: "follow_up_promise",
+        channel: brain.behavioral.preferredChannel,
+        timing: { immediate: false, delayMinutes: 1440 }, // 24 hours later
+        messageContext: {
+          reference: `They committed to: ${mostRecent.promiseMade}`,
+          tone: "supportive_collaborator",
+          talkingPoints: ["Remind of commitment", "Offer help", "Light pressure"],
+          whatNotToSay: ["Accusatory tone"],
+        },
+        reasoning: "They made a commitment—gently remind and support completion",
+        confidence: 0.8,
+      };
+    }
+  }
+
+  if (
+    mostRecent.outcome === "objection_raised" &&
+    !mostRecent.objectionResolved
+  ) {
+    // Unresolved objection—address it directly
+    return {
+      action: "resolve_objection",
+      channel: brain.behavioral.preferredChannel,
+      timing: { immediate: false, delayMinutes: 60 }, // 1 hour
+      messageContext: {
+        reference: `Their concern: "${mostRecent.objectionRaised}"`,
+        tone: "empathetic_expert",
+        talkingPoints: [
+          "Acknowledge objection",
+          "Provide specific answer",
+          "Address root concern",
+        ],
+        whatNotToSay: ["Dismissing their concern", "Generic answer"],
+      },
+      reasoning: "Unresolved objection blocking progress—address directly",
+      confidence: 0.9,
+    };
+  }
+
+  if (mostRecent.outcome === "no_answer") {
+    // No answer—change strategy
+    if (minutesSinceLastContact < 60) {
+      // Just tried, switch channel
+      const altChannel = brain.behavioral.secondaryChannel || "sms";
+      return {
+        action: "try_alternate_channel",
+        channel: altChannel,
+        timing: { immediate: false, delayMinutes: 30 },
+        messageContext: {
+          reference: "Quick follow-up",
+          tone: "casual_persistent",
+          talkingPoints: ["Light value prop", "Easy way to reply"],
+          whatNotToSay: [],
+        },
+        reasoning: "No answer on primary channel—try secondary",
+        confidence: 0.75,
+      };
+    } else if (minutesSinceLastContact < 1440) {
+      // Tried 1h+ ago, try again same channel
+      return {
+        action: "retry_call",
+        channel: "call",
+        timing: { immediate: false, delayMinutes: 120 },
+        messageContext: {
+          reference: "Following up from earlier attempt",
+          tone: "normal",
+          talkingPoints: ["Quick question", "Value to discuss"],
+          whatNotToSay: [],
+        },
+        reasoning: "No answer earlier—retry with new angle",
+        confidence: 0.7,
+      };
+    }
+  }
+
+  // 3. Check buying stage (15% weight)
+  if (brain.relationship.buyingStage === "decision") {
+    // In decision stage—push for closure
+    return {
+      action: "close_or_clarify",
+      channel: brain.behavioral.preferredChannel,
+      timing: { immediate: true },
+      messageContext: {
+        reference: "Next steps to move forward",
+        tone: "confident_closer",
+        talkingPoints: ["Clear next step", "Remove friction", "Sense of urgency"],
+        whatNotToSay: ["Desperate", "High pressure"],
+      },
+      reasoning: "In decision stage—directly move to close",
+      confidence: 0.85,
+    };
+  }
+
+  if (brain.relationship.buyingStage === "awareness") {
+    // Early stage—build awareness and engagement
+    return {
+      action: "educate_engage",
+      channel: brain.behavioral.preferredChannel,
+      timing: { immediate: false, delayMinutes: 0 }, // When they're typically active
+      messageContext: {
+        reference: "What you mentioned about...",
+        tone: "knowledgeable_helper",
+        talkingPoints: ["Industry insight", "Problem validation", "Thought leadership"],
+        whatNotToSay: ["Product pitch", "Ask for commitment"],
+      },
+      reasoning: "Early stage awareness—educate and engage",
+      confidence: 0.75,
+    };
+  }
+
+  // 4. Check channel preferences (15% weight)
+  const nextChannel = brain.behavioral.preferredChannel;
+
+  // 5. Check engagement and sentiment (overall 20% weight)
+  if (brain.engagementScore < 30) {
+    // Low engagement—lighter touch
+    return {
+      action: "light_value_add",
+      channel: brain.behavioral.preferredChannel,
+      timing: { immediate: false, delayMinutes: 2880 }, // 48 hours, give space
+      messageContext: {
+        reference: "Thought of you",
+        tone: "helpful_not_pushy",
+        talkingPoints: ["Relevant content", "No ask", "Personalized"],
+        whatNotToSay: ["Sales language", "Pressure"],
+      },
+      reasoning: "Low engagement—respect their space, add value",
+      confidence: 0.7,
+    };
+  }
+
+  // 6. Default: move to next logical stage
+  return {
+    action: "advance_qualification",
+    channel: nextChannel,
+    timing: { immediate: false, delayMinutes: 120 },
+    messageContext: {
+      reference: `Based on our conversation about ${mostRecent.summary}`,
+      tone: "natural_progression",
+      talkingPoints: ["Clarify next fit", "Prepare for decision", "Address concerns"],
+      whatNotToSay: [],
+    },
+    reasoning: "Continue natural progression based on context",
+    confidence: 0.65,
+  };
 }
 
 /**
- * Retrieve persisted lead intelligence from database.
+ * Update the brain with a new event
  */
-export async function getLeadIntelligence(
-  workspaceId: string,
-  leadId: string
-): Promise<LeadIntelligence | null> {
-  const db = getDb();
-  try {
-    const { data } = await db
-      .from("lead_intelligence")
-      .select("*")
-      .eq("workspace_id", workspaceId)
-      .eq("lead_id", leadId)
-      .maybeSingle();
+export function updateBrain(brain: LeadBrain, newEvent: LeadEvent): LeadBrain {
+  const updated = { ...brain };
 
-    if (!data) return null;
+  // Add to events list
+  updated.events = [...updated.events, newEvent];
 
-    return {
-      lead_id: (data as Record<string, unknown>).lead_id as string,
-      workspace_id: (data as Record<string, unknown>).workspace_id as string,
-      lifecycle_phase: (data as Record<string, unknown>).lifecycle_phase as string,
-      days_in_current_phase: (data as Record<string, unknown>).days_in_current_phase as number,
-      total_touchpoints: (data as Record<string, unknown>).total_touchpoints as number,
-      urgency_score: (data as Record<string, unknown>).urgency_score as number,
-      intent_score: (data as Record<string, unknown>).intent_score as number,
-      engagement_score: (data as Record<string, unknown>).engagement_score as number,
-      conversion_probability: (data as Record<string, unknown>).conversion_probability as number,
-      churn_risk: (data as Record<string, unknown>).churn_risk as number,
-      risk_flags: ((data as Record<string, unknown>).risk_flags_json as string[]) || [],
-      next_best_action: (data as Record<string, unknown>).next_best_action as string,
-      action_reason: (data as Record<string, unknown>).action_reason as string,
-      action_timing: (data as Record<string, unknown>).action_timing as
-        | "immediate"
-        | "scheduled"
-        | "deferred",
-      action_channel: (data as Record<string, unknown>).action_channel as string,
-      action_confidence: (data as Record<string, unknown>).action_confidence as number,
-      last_outcome: ((data as Record<string, unknown>).last_outcome as string) || null,
-      last_sentiment: ((data as Record<string, unknown>).last_sentiment as string) || null,
-      last_contact_at: (data as Record<string, unknown>).last_contact_at as string,
-      hours_since_last_contact: (data as Record<string, unknown>).hours_since_last_contact as number,
-      computed_at: (data as Record<string, unknown>).computed_at as string,
-      signal_count: (data as Record<string, unknown>).signal_count as number,
-      version: (data as Record<string, unknown>).version as number,
-    };
-  } catch (err) {
-    // Table may not exist yet — return null gracefully
-    return null;
+  // If it's an interaction, add to interactions
+  if (newEvent.interaction) {
+    updated.interactions = [...updated.interactions, newEvent.interaction];
   }
+
+  // Recalculate all derived signals
+  updated.behavioral = deduceBehavioralProfile(updated.interactions);
+  updated.emotional = deduceEmotionalState(updated.interactions);
+  updated.relationship = deduceRelationshipContext(updated.interactions);
+  updated.business = deduceBusinessContext(updated.interactions);
+
+  // Recalculate scores
+  updated.trustScore = calculateTrustScore(updated.interactions, updated.relationship);
+  updated.engagementScore = calculateEngagementScore(updated.interactions, updated.behavioral);
+  updated.conversionProbability = estimateConversionProbability(
+    updated.interactions,
+    updated.relationship,
+    updated.behavioral,
+    updated.emotional
+  );
+
+  // Update metadata
+  updated.lastUpdatedAt = new Date().toISOString();
+  updated.interactionCount = updated.interactions.length;
+  if (newEvent.interaction) {
+    updated.lastInteractionAt = newEvent.interaction.timestamp;
+  }
+
+  return updated;
+}
+
+/**
+ * Assess overall lead health
+ */
+export function assessLeadHealth(brain: LeadBrain): LeadHealthAssessment {
+  const riskFactors: string[] = [];
+  const opportunitySignals: string[] = [];
+
+  // ── RISK ASSESSMENT ──
+  if (brain.emotional.sentiment === "negative" || brain.emotional.frustrationLevel > 7) {
+    riskFactors.push("high_frustration");
+  }
+
+  if (brain.behavioral.engagementTrajectory === "declining") {
+    riskFactors.push("engagement_declining");
+  }
+
+  const lastInteractionDate = new Date(brain.lastInteractionAt);
+  const daysSinceLastContact = Math.floor(
+    (Date.now() - lastInteractionDate.getTime()) / (1000 * 60 * 60 * 24)
+  );
+  if (daysSinceLastContact > 30) {
+    riskFactors.push("stale_no_contact_30days");
+  } else if (daysSinceLastContact > 14) {
+    riskFactors.push("cooling_no_contact_14days");
+  }
+
+  if (brain.trustScore < 30) {
+    riskFactors.push("low_trust");
+  }
+
+  // Check for competitor mentions
+  if (brain.business.competitorMentions.length > 0) {
+    const recentMentions = brain.business.competitorMentions.filter((m) => {
+      const daysAgo = Math.floor(
+        (Date.now() - new Date(m.mentionedAt).getTime()) / (1000 * 60 * 60 * 24)
+      );
+      return daysAgo < 30;
+    });
+    if (recentMentions.length > 0) {
+      riskFactors.push("competitor_actively_mentioned");
+    }
+  }
+
+  // ── OPPORTUNITY SIGNALS ──
+  if (brain.relationship.buyingStage === "decision" || brain.relationship.buyingStage === "evaluation") {
+    opportunitySignals.push("in_active_buying_stage");
+  }
+
+  if (brain.business.painPointsIdentified.length >= 2) {
+    opportunitySignals.push("multiple_pain_points_identified");
+  }
+
+  if (brain.relationship.decisionMakersIdentified.length > 1) {
+    opportunitySignals.push("multiple_decision_makers");
+  }
+
+  if (brain.business.budgetSignals?.confirmed) {
+    opportunitySignals.push("budget_confirmed");
+  }
+
+  if (brain.emotional.enthusiasmLevel > 7) {
+    opportunitySignals.push("high_enthusiasm");
+  }
+
+  if (brain.behavioral.engagementTrajectory === "rising") {
+    opportunitySignals.push("rising_engagement");
+  }
+
+  // ── OVERALL HEALTH DETERMINATION ──
+  let overallHealth: LeadHealth = "healthy";
+  if (brain.conversionProbability > 0.7 && brain.trustScore > 70) {
+    overallHealth = "thriving";
+  } else if (brain.conversionProbability < 0.2 && daysSinceLastContact > 30) {
+    overallHealth = "dead";
+  } else if (daysSinceLastContact > 14 || brain.behavioral.engagementTrajectory === "declining") {
+    overallHealth = "cooling";
+  } else if (daysSinceLastContact > 7 || brain.emotional.sentiment === "negative") {
+    overallHealth = "cold";
+  }
+
+  // ── URGENCY RECOMMENDATION ──
+  let recommendedUrgency: "immediate" | "today" | "this-week" | "next-week" | "nurture" = "next-week";
+  if (brain.relationship.buyingStage === "decision") {
+    recommendedUrgency = "immediate";
+  } else if (
+    brain.relationship.buyingStage === "evaluation" ||
+    brain.conversionProbability > 0.6
+  ) {
+    recommendedUrgency = "today";
+  } else if (brain.behavioral.engagementTrajectory === "rising") {
+    recommendedUrgency = "this-week";
+  } else if (overallHealth === "cooling" || overallHealth === "cold") {
+    recommendedUrgency = "today";
+  }
+
+  const daysToNextAction =
+    recommendedUrgency === "immediate"
+      ? 0
+      : recommendedUrgency === "today"
+        ? 0
+        : recommendedUrgency === "this-week"
+          ? 3
+          : recommendedUrgency === "next-week"
+            ? 7
+            : 14;
+
+  // ── KEY RECOMMENDATIONS ──
+  const keyRecommendations: string[] = [];
+  if (riskFactors.includes("high_frustration")) {
+    keyRecommendations.push("De-escalate immediately, reduce contact frequency");
+  }
+  if (riskFactors.includes("competitor_actively_mentioned")) {
+    keyRecommendations.push("Address competitor positioning proactively");
+  }
+  if (opportunitySignals.includes("in_active_buying_stage")) {
+    keyRecommendations.push("Accelerate—lead is actively evaluating");
+  }
+  if (brain.trustScore < 40) {
+    keyRecommendations.push("Focus on trust-building: deliver on promises, be responsive");
+  }
+  if (opportunitySignals.includes("rising_engagement")) {
+    keyRecommendations.push("Maintain momentum—strike while iron is hot");
+  }
+
+  return {
+    overallHealth,
+    riskFactors,
+    opportunitySignals,
+    recommendedUrgency,
+    daysToNextAction,
+    keyRecommendations,
+  };
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// HELPER FUNCTIONS (Pure Logic)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+function getDefaultBehavioralProfile(): BehavioralProfile {
+  return {
+    engagementTrajectory: "stable",
+    responsePatterns: {
+      typical: "delayed",
+      averageHoursToRespond: 24,
+      responseRate: 0.5,
+    },
+    preferredChannel: "call",
+    preferredTime: { dayOfWeek: "weekday", hourOfDay: 14 },
+    communicationStyle: "formal",
+    engagementDepth: 5,
+  };
+}
+
+function getDefaultEmotionalState(): EmotionalState {
+  return {
+    sentiment: "neutral",
+    frustrationLevel: 0,
+    enthusiasmLevel: 5,
+    urgencyLevel: 3,
+    lastDetected: new Date().toISOString(),
+    trend: "stable",
+  };
+}
+
+function getDefaultRelationshipContext(): RelationshipContext {
+  return {
+    teamMembers: [],
+    rapportLevel: 0,
+    trustScore: 0,
+    objectionsRaised: [],
+    promisesMadeByUs: [],
+    promisesMadeByThem: [],
+    decisionMakersIdentified: [],
+    buyingStage: "awareness",
+    stageEnteredAt: new Date().toISOString(),
+  };
+}
+
+function getDefaultBusinessContext(): BusinessContext {
+  return {
+    painPointsIdentified: [],
+    goalsIdentified: [],
+    competitorMentions: [],
+  };
+}
+
+function deduceBehavioralProfile(interactions: LeadInteraction[]): BehavioralProfile {
+  if (interactions.length === 0) return getDefaultBehavioralProfile();
+
+  // Channel preferences
+  const channelCounts = interactions.reduce(
+    (acc, i) => {
+      acc[i.channel] = (acc[i.channel] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
+  const preferredChannel = (
+    Object.entries(channelCounts).sort(([, a], [, b]) => b - a)[0] || ["call", 0]
+  )[0] as InteractionChannel;
+  const secondaryChannel = (
+    Object.entries(channelCounts).sort(([, a], [, b]) => b - a)[1]?.at(0) as
+      | InteractionChannel
+      | undefined
+  );
+
+  // Response patterns
+  const responseTimes: number[] = [];
+  for (let i = 1; i < interactions.length; i++) {
+    const prevTime = new Date(interactions[i - 1].timestamp).getTime();
+    const currTime = new Date(interactions[i].timestamp).getTime();
+    const hoursDiff = (currTime - prevTime) / (1000 * 60 * 60);
+    if (hoursDiff < 72) responseTimes.push(hoursDiff); // Ignore gaps > 3 days
+  }
+  const avgResponseHours = responseTimes.length > 0
+    ? responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length
+    : 24;
+
+  // Engagement trajectory
+  const recentEngagement = interactions.slice(-5).map((i) => i.engagementDepth);
+  const oldEngagement = interactions.slice(0, Math.max(1, Math.floor(interactions.length * 0.3))).map(
+    (i) => i.engagementDepth
+  );
+  const recentAvg = recentEngagement.reduce((a, b) => a + b, 0) / recentEngagement.length;
+  const oldAvg = oldEngagement.reduce((a, b) => a + b, 0) / oldEngagement.length;
+  let trajectory: EngagementTrend = "stable";
+  if (recentAvg > oldAvg + 2) trajectory = "rising";
+  else if (recentAvg < oldAvg - 2) trajectory = "declining";
+  else if (recentAvg < 3) trajectory = "declining";
+
+  // Communication style (inferred from engagement depth and sentiment)
+  let style: CommunicationStyle = "formal";
+  const avgSentiment = interactions.filter((i) => i.sentiment === "positive").length /
+    interactions.length;
+  const avgEngagement = recentEngagement.reduce((a, b) => a + b, 0) / recentEngagement.length;
+  if (avgEngagement > 8 && avgSentiment > 0.6) style = "casual";
+  else if (avgEngagement > 6) style = "direct";
+  else if (avgSentiment > 0.5) style = "analytical";
+
+  // Response rate
+  const answered = interactions.filter((i) => i.outcome !== "no_answer").length;
+  const responseRate = answered / Math.max(1, interactions.length);
+
+  // Engagement depth
+  const avgEngagementDepth =
+    interactions.reduce((sum, i) => sum + i.engagementDepth, 0) / interactions.length;
+
+  const typicalResponse: "immediate" | "delayed" | "slow" | "inconsistent" =
+    avgResponseHours < 4
+      ? "immediate"
+      : avgResponseHours < 12
+        ? "delayed"
+        : avgResponseHours < 48
+          ? "slow"
+          : "inconsistent";
+
+  return {
+    engagementTrajectory: trajectory,
+    responsePatterns: {
+      typical: typicalResponse,
+      averageHoursToRespond: avgResponseHours,
+      responseRate,
+    },
+    preferredChannel,
+    secondaryChannel,
+    preferredTime: { dayOfWeek: "weekday", hourOfDay: 14 }, // Would need more data
+    communicationStyle: style,
+    engagementDepth: Math.round(avgEngagementDepth),
+  };
+}
+
+function deduceEmotionalState(interactions: LeadInteraction[]): EmotionalState {
+  if (interactions.length === 0) return getDefaultEmotionalState();
+
+  const recent = interactions.slice(-3);
+  const sentiments = recent.map((i) => i.sentiment || "neutral");
+  const positivCount = sentiments.filter((s) => s === "positive").length;
+  const frustrationCount = sentiments.filter((s) => s === "frustrated").length;
+
+  const sentiment: Sentiment =
+    positivCount >= 2
+      ? "positive"
+      : frustrationCount >= 2
+        ? "frustrated"
+        : sentiments[sentiments.length - 1] || "neutral";
+
+  const frustrationLevel = frustrationCount * 3;
+  const enthusiasmLevel = sentiments.filter((s) => s === "enthusiastic").length * 5 +
+    (positivCount * 2);
+
+  // Trend
+  const oldSentiment = interactions.slice(0, 3).map((i) => i.sentiment || "neutral");
+  const oldPositive = oldSentiment.filter((s) => s === "positive").length;
+  const trend =
+    positivCount > oldPositive ? "improving" : positivCount < oldPositive ? "declining" : "stable";
+
+  return {
+    sentiment,
+    frustrationLevel: Math.min(10, frustrationLevel),
+    enthusiasmLevel: Math.min(10, enthusiasmLevel),
+    urgencyLevel: 5, // Would need explicit urgency signals
+    lastDetected: recent[recent.length - 1]?.timestamp || new Date().toISOString(),
+    trend,
+  };
+}
+
+function deduceRelationshipContext(interactions: LeadInteraction[]): RelationshipContext {
+  const objectionsRaised = interactions
+    .filter((i) => i.objectionRaised)
+    .map((i) => ({
+      objection: i.objectionRaised || "",
+      resolvedAt: i.objectionResolved ? i.timestamp : undefined,
+    }));
+
+  const promisesMadeByUs = interactions
+    .filter((i) => i.promiseMade && i.promiseFrom === "us")
+    .map((i) => ({
+      promise: i.promiseMade || "",
+      dueDate: undefined,
+      fulfilledAt: undefined, // Would need to track fulfillment
+    }));
+
+  const promisesMadeByThem = interactions
+    .filter((i) => i.promiseMade && i.promiseFrom === "them")
+    .map((i) => ({
+      promise: i.promiseMade || "",
+      dueDate: undefined,
+      fulfilledAt: undefined,
+    }));
+
+  // Rapport from interactions where rapport was built
+  const rapportBuilt = interactions.filter((i) => i.rapportBuilt).length;
+  const rapportLevel = Math.min(10, rapportBuilt);
+
+  // Infer buying stage from objectives and promises
+  let buyingStage: BuyingStage = "awareness";
+  if (
+    promisesMadeByThem.length >= 2 ||
+    interactions.some((i) => i.outcome === "appointment_booked")
+  ) {
+    buyingStage = "decision";
+  } else if (promisesMadeByUs.length >= 1) {
+    buyingStage = "evaluation";
+  } else if (rapportBuilt >= 2) {
+    buyingStage = "consideration";
+  }
+
+  return {
+    teamMembers: [], // Would need to track
+    rapportLevel: Math.min(10, rapportLevel),
+    trustScore: 50, // Will be calculated separately
+    objectionsRaised,
+    promisesMadeByUs,
+    promisesMadeByThem,
+    decisionMakersIdentified: [],
+    buyingStage,
+    stageEnteredAt: new Date().toISOString(),
+  };
+}
+
+function deduceBusinessContext(interactions: LeadInteraction[]): BusinessContext {
+  const painPoints = interactions
+    .flatMap((i) => i.keyMoments.filter((m) => m.includes("pain") || m.includes("problem")))
+    .filter((p, i, arr) => arr.indexOf(p) === i); // Unique
+
+  return {
+    painPointsIdentified: painPoints,
+    goalsIdentified: [],
+    competitorMentions: [],
+  };
+}
+
+function calculateTrustScore(
+  interactions: LeadInteraction[],
+  relationship: RelationshipContext
+): number {
+  let score = 50; // Start neutral
+
+  // Promises kept: +15 per fulfilled promise
+  score += relationship.promisesMadeByUs.filter((p) => p.fulfilledAt).length * 15;
+
+  // Rapport built: +10 per interaction
+  score += relationship.rapportLevel * 5;
+
+  // Consistency in responsiveness: +10
+  const consistent = interactions.slice(-5).filter((i) => i.responsiveness !== "never").length;
+  if (consistent >= 4) score += 10;
+
+  // Resolve objections: +10 per resolved
+  score += relationship.objectionsRaised.filter((o) => o.resolvedAt).length * 10;
+
+  return Math.min(100, score);
+}
+
+function calculateEngagementScore(
+  interactions: LeadInteraction[],
+  behavioral: BehavioralProfile
+): number {
+  let score = 0;
+
+  // Engagement depth average: 0-40 points
+  score += behavioral.engagementDepth * 4;
+
+  // Response rate: 0-30 points
+  score += behavioral.responsePatterns.responseRate * 30;
+
+  // Trajectory: 0-30 points
+  score +=
+    behavioral.engagementTrajectory === "rising"
+      ? 30
+      : behavioral.engagementTrajectory === "stable"
+        ? 15
+        : 0;
+
+  return Math.min(100, score);
+}
+
+function estimateConversionProbability(
+  interactions: LeadInteraction[],
+  relationship: RelationshipContext,
+  behavioral: BehavioralProfile,
+  emotional: EmotionalState
+): number {
+  let probability = 0.3; // Base 30%
+
+  // Buying stage: 0-0.4 bonus
+  const stageBonus =
+    relationship.buyingStage === "decision"
+      ? 0.4
+      : relationship.buyingStage === "evaluation"
+        ? 0.25
+        : relationship.buyingStage === "consideration"
+          ? 0.1
+          : 0;
+  probability += stageBonus;
+
+  // Engagement trajectory: 0-0.2 bonus
+  if (behavioral.engagementTrajectory === "rising") probability += 0.2;
+  else if (behavioral.engagementTrajectory === "declining") probability -= 0.15;
+
+  // Sentiment: 0-0.15 bonus/penalty
+  if (emotional.sentiment === "positive" || emotional.sentiment === "enthusiastic") probability += 0.15;
+  else if (emotional.sentiment === "frustrated" || emotional.sentiment === "negative") probability -= 0.1;
+
+  // Promises made by them: +0.1 per promise (signals commitment)
+  probability += Math.min(0.2, relationship.promisesMadeByThem.length * 0.1);
+
+  return Math.max(0, Math.min(1, probability));
 }
