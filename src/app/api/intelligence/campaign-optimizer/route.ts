@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
         break;
 
       case "anomalies":
-        result = await detectCampaignAnomalies(params);
+        result = await detectCampaignAnomalies(params.campaign, params.historical);
         break;
 
       case "health":

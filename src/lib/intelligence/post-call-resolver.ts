@@ -443,3 +443,6 @@ function buildPrioritizationReason(resolution: PostCallResolution): string {
   if (resolution.priorityScore >= 5) return "Active engagement - nurture";
   return "Lower priority - standard cadence";
 }
+
+// ── Compatibility alias for pre-existing routes ──
+export const extractCommitments = extractCallCommitments;

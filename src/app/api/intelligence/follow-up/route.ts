@@ -34,19 +34,19 @@ export async function POST(request: NextRequest) {
 
     switch (action) {
       case "next-action":
-        result = await determineNextBestAction(params);
+        result = await determineNextBestAction(params.lead, params.context);
         break;
 
       case "message":
-        result = await generateFollowUpMessage(params);
+        result = await generateFollowUpMessage(params.action, params.lead);
         break;
 
       case "prioritize":
-        result = await prioritizeActionQueue(params);
+        result = await prioritizeActionQueue(params.leads, params.capacity);
         break;
 
       case "fatigue":
-        result = await calculateFollowUpFatigue(params);
+        result = await calculateFollowUpFatigue(params.lead);
         break;
 
       default:

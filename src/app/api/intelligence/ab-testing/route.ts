@@ -51,11 +51,11 @@ export async function POST(request: NextRequest) {
         break;
 
       case "evaluate":
-        result = await evaluateExperiment(params.experimentId);
+        result = await evaluateExperiment(params.experiment, params.outcomes);
         break;
 
       case "promote":
-        result = await autoPromoteWinner(params.experimentId);
+        result = await autoPromoteWinner(params.experiment, params.result);
         break;
 
       default:

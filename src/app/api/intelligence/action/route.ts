@@ -34,19 +34,19 @@ export async function POST(request: NextRequest) {
 
     switch (action) {
       case "compute":
-        result = await computeActionForLead(params);
+        result = await computeActionForLead(params.leadId, params.trigger, params.fullContext);
         break;
 
       case "batch":
-        result = await batchComputeActions(params);
+        result = await batchComputeActions(params.leads);
         break;
 
       case "evaluate":
-        result = await evaluateOutcome(params);
+        result = await evaluateOutcome(params.leadId, params.action, params.outcome);
         break;
 
       case "explain":
-        result = await explainDecision(params);
+        result = await explainDecision(params.plan);
         break;
 
       default:

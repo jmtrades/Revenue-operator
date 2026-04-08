@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createHmac, timingSafeEqual } from "crypto";
-import { resolvePostCallActions } from "@/lib/intelligence/post-call-resolver";
+import { resolvePostCallActions, type CallOutcomeType } from "@/lib/intelligence/post-call-resolver";
 import { processEvent } from "@/lib/intelligence/reactive-event-processor";
 import { log } from "@/lib/logger";
 
@@ -99,25 +99,49 @@ export async function POST(request: NextRequest) {
 
     // Resolve post-call actions
     const postCallResult = await resolvePostCallActions({
-      leadId,
-      callerId,
-      duration,
-      recordingUrl,
-      outcome,
+      callerId: callerId || leadId,
+      callerPhone: callerId || "",
+      duration: (duration as number) ?? 0,
+      outcome: ((outcome as string | undefined) ?? "completed") as CallOutcomeType,
+      sentiment: "neutral",
+      topicsDiscussed: [],
+      keyMoments: [],
+      transcriptSummary: "",
+      timestamp: new Date().toISOString(),
     });
 
-    // Process call_completed event
-    const eventResult = await processEvent({
+    // Process call_completed event with proper types
+    const leadEvent = {
+      id: `call-${Date.now()}`,
+      type: "call_attempt_failed" as const,
+      timestamp: (timestamp as string | undefined) || new Date().toISOString(),
       leadId,
-      eventType: "call_completed",
-      eventData: {
+      data: {
         callerId,
-        duration,
+        duration: (duration as number) ?? 0,
         recordingUrl,
-        outcome,
-        timestamp: timestamp || new Date().toISOString(),
+        outcome: (outcome as string | undefined) ?? "completed",
       },
-    });
+    };
+
+    const leadContext = {
+      leadId,
+      name: "",
+      lifecyclePhase: "ENGAGED",
+      daysSinceFirstContact: 0,
+      daysSinceDark: 0,
+      leadScore: 50,
+      conversionProbability: 0.5,
+      lastActivityAt: new Date().toISOString(),
+      lastTouchChannel: "call" as const,
+      totalTouchpoints: 1,
+      recentEvents: [],
+      sentiment: "neutral" as const,
+      hasOptedOut: false,
+      isHighValue: false,
+    };
+
+    const eventResult = await processEvent(leadEvent, leadContext);
 
     return NextResponse.json(
       {

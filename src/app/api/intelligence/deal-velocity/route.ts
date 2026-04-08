@@ -34,19 +34,19 @@ export async function POST(request: NextRequest) {
 
     switch (action) {
       case "velocity":
-        result = await analyzeDealVelocity(params);
+        result = await analyzeDealVelocity(params.deals, params.stages);
         break;
 
       case "bottlenecks":
-        result = await identifyBottlenecks(params);
+        result = await identifyBottlenecks(params.report);
         break;
 
       case "accelerators":
-        result = await recommendAccelerators(params);
+        result = await recommendAccelerators(params.bottleneck);
         break;
 
       case "predict-close":
-        result = await predictDealCloseDate(params);
+        result = await predictDealCloseDate(params.deal, params.velocityData);
         break;
 
       default:

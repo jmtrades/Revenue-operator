@@ -31,6 +31,7 @@ export interface SequenceGenerationParams {
   workspaceGoal: WorkspaceGoal;
   channelPreferences: ChannelPreferences;
   urgency: LeadTemperature;
+  industry?: string;
   companyName?: string;
   firstName?: string;
 }
@@ -139,7 +140,8 @@ const DEFAULT_TEMPLATES: Record<ChannelType, string> = {
  * Generates an optimal multi-step outreach sequence based on lead data
  */
 export function generateOptimalSequence(params: SequenceGenerationParams): AutoSequence {
-  const { urgency, industry, leadProfile, workspaceGoal, channelPreferences } = params;
+  const { urgency, leadProfile, workspaceGoal, channelPreferences } = params;
+  const industry = params.industry ?? leadProfile.industry;
 
   let steps: SequenceStep[] = [];
   let totalDays = 0;

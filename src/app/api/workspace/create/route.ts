@@ -197,8 +197,8 @@ export async function POST(req: NextRequest) {
     try {
       const nurtureSeqId = await enrollWorkspaceInTrialNurture(workspaceId, {
         businessName: name,
-        industry,
-        planTier: billingTier,
+        industry: industry ?? undefined,
+        planTier: billingTier ?? undefined,
         agentPhone: phone ?? undefined,
         signupDate: new Date().toISOString(),
       });

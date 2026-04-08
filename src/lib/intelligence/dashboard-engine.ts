@@ -312,9 +312,9 @@ export function generateDashboardData(
 
 export function generateLeadDetailData(leadId: string, brain: LeadBrain): LeadDetailPayload {
   const interactions = brain?.interactions || [];
-  const sentiment = brain?.sentiment || [];
-  const objections = brain?.objections || [];
-  const competitors = brain?.competitorMentions || [];
+  const sentiment = brain?.emotional?.sentiment ? [{ sentiment: brain.emotional.sentiment }] : [];
+  const objections = brain?.relationship?.objectionsRaised || [];
+  const competitors = brain?.business?.competitorMentions || [];
 
   const engagementScore = calculateEngagementScore(interactions);
   const nextAction = computeNextRecommendedAction(brain);
@@ -322,9 +322,9 @@ export function generateLeadDetailData(leadId: string, brain: LeadBrain): LeadDe
 
   return {
     leadId,
-    name: brain?.name || "Unknown",
-    company: brain?.company || "Unknown",
-    stage: brain?.stage || "awareness",
+    name: (brain as unknown as Record<string, unknown>).name as string || "Lead",
+    company: (brain as unknown as Record<string, unknown>).company as string || "Company",
+    stage: brain?.relationship?.buyingStage || "awareness",
     healthScore: calculateLeadHealthScore(brain),
     stageHealth: calculateStageHealth(brain),
     predictedCloseDate: predictedClose,
@@ -332,7 +332,7 @@ export function generateLeadDetailData(leadId: string, brain: LeadBrain): LeadDe
     nextRecommendedAction: nextAction,
     engagementChart: buildEngagementChart(interactions),
     sentimentHistory: buildSentimentHistory(sentiment, interactions),
-    objectionLog: buildObjectionLog(objections),
+    objectionLog: buildObjectionLog(objections.map(o => ({ text: o.objection, date: o.resolvedAt }))),
     competitorIntelligence: buildCompetitorIntelligence(competitors),
     aiInsights: generateLeadInsights(brain),
   };
@@ -641,11 +641,11 @@ function predictCloseDate(brain: LeadBrain): string | undefined {
 }
 
 function calculateLeadHealthScore(brain: LeadBrain): number {
-  const factors = [
-    brain?.behavioral?.engagementLevel || 50,
-    brain?.behavioral?.responseRate ? brain.behavioral.responseRate * 100 : 50,
-    brain?.emotional?.sentimentScore ? (brain.emotional.sentimentScore + 1) * 50 : 50,
-  ];
+  const engagementDepth = brain?.behavioral?.engagementDepth || 50;
+  const responseRate = brain?.behavioral?.responsePatterns?.responseRate ? brain.behavioral.responsePatterns.responseRate * 100 : 50;
+  const sentimentScore = brain?.emotional?.sentiment ? (brain.emotional.sentiment === "positive" ? 75 : brain.emotional.sentiment === "neutral" ? 50 : 25) : 50;
+
+  const factors = [engagementDepth, responseRate, sentimentScore];
   return Math.round(factors.reduce((a: number, b: number) => a + b) / factors.length);
 }
 
@@ -678,7 +678,7 @@ function buildEngagementChart(interactions: Array<{ timestamp?: string }>): { da
   }));
 }
 
-function buildSentimentHistory(sentiment: Array<{ timestamp?: string; sentiment?: string }>, interactions: Array<{ timestamp?: string; sentiment?: string }>): { date: string; sentiment: string }[] {
+function buildSentimentHistory(sentiment: Array<{ sentiment?: string }>, interactions: Array<{ timestamp?: string; sentiment?: string }>): { date: string; sentiment: string }[] {
   return (interactions || []).slice(-20).map((i) => ({
     date: new Date(i.timestamp || new Date()).toISOString().split("T")[0],
     sentiment: i.sentiment || "neutral",

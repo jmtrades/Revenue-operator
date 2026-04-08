@@ -74,11 +74,11 @@ export interface Action {
     | "pause";
   description: string;
   template?: string;
-  timing: "immediate" | "same_day" | "within_3_days" | "within_week";
+  timing: "immediate" | "same_day" | "within_3_days" | "within_week" | "within_6_hours" | "within_24_hours" | "within_7_days";
 }
 
 export interface MessagingGuidance {
-  tone: "warm" | "curious" | "empathetic" | "assertive" | "humble";
+  tone: "warm" | "curious" | "empathetic" | "assertive" | "humble" | "supportive" | "patient" | "confident" | "analytical" | "collaborative" | "validating" | "helpful" | "organized" | "flexible" | "observant" | "urgent" | "honest" | "diplomatic" | "apologetic";
   keyPhrases: string[];
   whatToAvoid: string[];
   coreValue: string;
@@ -2821,7 +2821,7 @@ function calculateConfidence(situation: SalesSituation, scenario: ScenarioPlaybo
 }
 
 function evaluateTrigger(situation: SalesSituation, trigger: TriggerCondition): boolean {
-  const value = (situation as Record<string, unknown>)[trigger.signal];
+  const value = (situation as unknown as Record<string, unknown>)[trigger.signal];
 
   switch (trigger.operator) {
     case "equals":
