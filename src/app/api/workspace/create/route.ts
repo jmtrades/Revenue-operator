@@ -14,6 +14,7 @@ import { parseBody, phoneSchema } from "@/lib/api/validate";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { assertSameOrigin } from "@/lib/http/csrf";
 import { log } from "@/lib/logger";
+import { enrollWorkspaceInTrialNurture } from "@/lib/sequences/trial-nurture-playbook";
 
 export const dynamic = "force-dynamic";
 
@@ -191,6 +192,22 @@ export async function POST(req: NextRequest) {
     });
 
     sendAgentLiveEmail(workspaceId).catch((err) => { log("error", "[workspace/create] error:", { error: err instanceof Error ? err.message : err }); });
+
+    // Enroll in trial nurture playbook
+    try {
+      const nurtureSeqId = await enrollWorkspaceInTrialNurture(workspaceId, {
+        businessName: name,
+        industry,
+        planTier: billingTier,
+        agentPhone: phone ?? undefined,
+        signupDate: new Date().toISOString(),
+      });
+      if (!nurtureSeqId) {
+        log("warn", "[workspace/create] trial nurture enrollment failed", { workspaceId });
+      }
+    } catch (err) {
+      log("error", "[workspace/create] trial nurture enrollment error:", { error: err instanceof Error ? err.message : String(err) });
+    }
 
     return NextResponse.json({ ok: true, workspaceId });
   } catch {
