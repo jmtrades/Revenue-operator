@@ -11649,5 +11649,47 @@
       "life": "Leben"
     },
     "loading": "Einen Moment…"
+  },
+  "recommendations": {
+    "pageTitle": "Empfehlungen — Revenue Operator",
+    "title": "Empfehlungen",
+    "subtitle": "Umsetzbare Erkenntnisse zur Verbesserung der Anrufleistung und Umsatzrückgewinnung.",
+    "breadcrumb": {
+      "dashboard": "Armaturenbrett",
+      "recommendations": "Empfehlungen"
+    },
+    "emptyState": {
+      "title": "Noch keine Empfehlungen",
+      "description": "Mit zunehmender Handhabung von Anrufen durch Ihren KI-Operator werden im System umsetzbare Erkenntnisse zu entgangenem Umsatz, Folgemaßnahmen und Prozessverbesserungen angezeigt."
+    },
+    "recommendations": {
+      "missedCalls": {
+        "title": "Nachverfolgung von {count} verpassten Anrufen",
+        "description": "Geschätzter Rückgewinnungswert: ${value}"
+      },
+      "staleLeads": {
+        "title": "Erneute Kontaktaufnahme mit {count} inaktiven Leads",
+        "description": "Vor 7+ Tagen kontaktiert, kein Termin vereinbart"
+      },
+      "lowConversion": {
+        "title": "Buchungsskript verbessern — {rate}% Konversionsrate",
+        "description": "Branchendurchschnitt: 18-25%. Überprüfen Sie Agententonfall und Einwandbehandlung."
+      },
+      "volumeGrowth": {
+        "title": "{count} Anrufe diese Woche — Upgrade in Betracht ziehen",
+        "description": "Schalten Sie mehr gleichzeitige Minuten und erweiterte Analysen frei"
+      },
+      "idleCampaigns": {
+        "title": "Reaktivieren Sie {count} angehaltene Kampagne(n)",
+        "description": "Setzen Sie Anrufe fort, um Ihre Pipeline zu erweitern"
+      }
+    },
+    "actions": {
+      "followUp": "Nachverfolgen",
+      "reEngage": "Erneut kontaktieren",
+      "review": "Überprüfen",
+      "upgrade": "Plan upgraden",
+      "reactivate": "Erneut aktivieren"
+    }
   }
 }

@@ -11649,5 +11649,47 @@
       "life": "Vie"
     },
     "loading": "Un instant…"
+  },
+  "recommendations": {
+    "pageTitle": "Recommandations — Revenue Operator",
+    "title": "Recommandations",
+    "subtitle": "Insights actionnables pour améliorer les performances des appels et récupérer les revenus.",
+    "breadcrumb": {
+      "dashboard": "Tableau de bord",
+      "recommendations": "Recommandations"
+    },
+    "emptyState": {
+      "title": "Pas de recommandations pour le moment",
+      "description": "À mesure que votre opérateur IA gère plus d'appels, le système surfacera des insights actionnables sur les revenus manqués, les opportunités de suivi et les améliorations de processus."
+    },
+    "recommendations": {
+      "missedCalls": {
+        "title": "Assurer le suivi de {count} appels manqués",
+        "description": "Valeur estimée de récupération : ${value}"
+      },
+      "staleLeads": {
+        "title": "Relancer {count} prospects inactifs",
+        "description": "Contactés il y a 7+ jours sans rendez-vous prévu"
+      },
+      "lowConversion": {
+        "title": "Améliorer le script de réservation — {rate}% taux de conversion",
+        "description": "Moyenne du secteur : 18-25%. Examinez le ton de l'agent et la gestion des objections."
+      },
+      "volumeGrowth": {
+        "title": "{count} appels cette semaine — envisagez une mise à niveau",
+        "description": "Déverrouillez plus de minutes simultanées et d'analytiques avancées"
+      },
+      "idleCampaigns": {
+        "title": "Relancer {count} campagne(s) mise(s) en pause",
+        "description": "Reprenez les appels pour développer votre portefeuille"
+      }
+    },
+    "actions": {
+      "followUp": "Assurer le suivi",
+      "reEngage": "Relancer",
+      "review": "Examiner",
+      "upgrade": "Mettre à niveau le plan",
+      "reactivate": "Relancer"
+    }
   }
 }

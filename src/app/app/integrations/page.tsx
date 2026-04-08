@@ -70,7 +70,7 @@ function IntegrationCard({
   status?: { connected: boolean; lastSyncAt?: string | null; recordsSynced?: number } | undefined;
   isLoading?: boolean | string;
 }) {
-  const _t = useTranslations();
+  const t = useTranslations("integrations.hub");
 
   const getIconColor = (letter: string) => {
     const colors: Record<string, string> = {
@@ -131,26 +131,26 @@ function IntegrationCard({
         {isLoading && (
           <div className="flex items-center gap-1.5 rounded-full bg-[var(--accent-primary)]/15 px-3 py-1 text-xs font-semibold text-[var(--accent-primary)] border border-[var(--accent-primary)]/40">
             <Loader size={12} className="animate-spin" />
-            Loading
+            {t("statusLoading")}
           </div>
         )}
 
         {!isLoading && isConnected && (
           <div className="flex items-center gap-1.5 rounded-full bg-[var(--accent-primary)]/15 px-3 py-1 text-xs font-semibold text-[var(--accent-primary)] border border-[var(--accent-primary)]/40">
             <Check size={12} />
-            Connected
+            {t("statusConnected")}
           </div>
         )}
 
         {!isLoading && !isConnected && isComingSoon && (
           <div className="rounded-full bg-[var(--accent-warning,#f59e0b)]/15 px-3 py-1 text-xs font-semibold text-[var(--accent-warning,#f59e0b)] border border-[var(--accent-warning,#f59e0b)]/40">
-            Coming Soon
+            {t("statusComingSoon")}
           </div>
         )}
 
         {!isLoading && !isConnected && !isComingSoon && (
           <div className="rounded-full bg-[var(--bg-input)] px-3 py-1 text-xs font-semibold text-[var(--text-secondary)] border border-[var(--border-default)]">
-            Not Connected
+            {t("statusNotConnected")}
           </div>
         )}
       </div>
@@ -168,13 +168,13 @@ function IntegrationCard({
         <div className="mt-3 py-3 border-t border-[var(--border-light)] text-xs text-[var(--text-secondary)] space-y-1">
           {status.recordsSynced !== undefined && (
             <div className="flex justify-between">
-              <span>Records synced:</span>
+              <span>{t("labelRecordsSynced")}</span>
               <span className="font-semibold text-[var(--text-primary)]">{status.recordsSynced}</span>
             </div>
           )}
           {status.lastSyncAt && (
             <div className="flex justify-between">
-              <span>Last sync:</span>
+              <span>{t("labelLastSync")}</span>
               <span className="font-semibold text-[var(--text-primary)]">{formatTimeAgo(status.lastSyncAt)}</span>
             </div>
           )}
@@ -199,7 +199,7 @@ function IntegrationCard({
               {isConnected && !integration.external ? (
                 <>
                   <Check size={14} />
-                  Connected
+                  {t("statusConnected")}
                 </>
               ) : (
                 <>
@@ -229,7 +229,8 @@ function IntegrationCard({
 }
 
 export default function IntegrationsPage() {
-  const t = useTranslations();
+  const tGlobal = useTranslations();
+  const t = useTranslations("integrations.hub");
   const [searchQuery, setSearchQuery] = useState("");
   const [crmStatus, setCrmStatus] = useState<CrmStatusResponse | null>(null);
   const [googleCalendarConnected, setGoogleCalendarConnected] = useState<boolean | null>(null);
@@ -298,15 +299,15 @@ export default function IntegrationsPage() {
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <Breadcrumbs items={[{ label: "Home", href: "/app" }, { label: "Integrations" }]} />
+        <Breadcrumbs items={[{ label: t("breadcrumbHome"), href: "/app" }, { label: t("breadcrumbIntegrations") }]} />
 
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)]">
-            {t("integrations.title", { defaultValue: "Integrations Hub" })}
+            {tGlobal("integrations.title", { defaultValue: "Integrations Hub" })}
           </h1>
           <p className="mt-2 text-base text-[var(--text-secondary)]">
-            {t(
+            {tGlobal(
               "integrations.subtitle",
               {
                 defaultValue:
@@ -325,7 +326,7 @@ export default function IntegrationsPage() {
             />
             <input
               type="text"
-              placeholder="Search integrations..."
+              placeholder={t("placeholderSearchIntegrations")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-3 rounded-xl bg-[var(--bg-input)] border border-[var(--border-default)] text-[var(--text-primary)] placeholder-[var(--text-secondary)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)]/30"
@@ -377,10 +378,10 @@ export default function IntegrationsPage() {
           <div className="rounded-2xl border border-[var(--border-default)] bg-[var(--bg-card)] p-12 text-center">
             <Plug size={40} className="mx-auto mb-4 text-[var(--text-secondary)] opacity-50" />
             <h3 className="text-lg font-semibold text-[var(--text-primary)]">
-              No integrations found
+              {t("emptyStateHeading")}
             </h3>
             <p className="mt-2 text-sm text-[var(--text-secondary)]">
-              Try adjusting your search query
+              {t("emptyStateMessage")}
             </p>
           </div>
         )}
