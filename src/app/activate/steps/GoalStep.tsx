@@ -41,19 +41,19 @@ export function GoalStep({
           </div>
           <div className="flex-1">
             <p className="text-base font-bold text-[var(--text-primary)] group-hover:text-[var(--accent-primary)] transition-colors">
-              Quick AI Setup — Pick your role and go live fast
+              {t("quickSetupTitle")}
             </p>
             <p className="text-sm text-[var(--text-secondary)] mt-0.5">
-              Pre-built playbooks for sales, real estate, insurance, home services, and more. Minimal setup needed.
+              {t("quickSetupDesc")}
             </p>
           </div>
-          <span className="text-[var(--accent-primary)] font-semibold text-sm shrink-0">Start →</span>
+          <span className="text-[var(--accent-primary)] font-semibold text-sm shrink-0">{t("quickSetupCta")}</span>
         </div>
       </Link>
 
       <div className="flex items-center gap-3">
         <div className="flex-1 h-px bg-[var(--border-default)]" />
-        <span className="text-xs text-[var(--text-tertiary)] font-medium uppercase tracking-wider">or customize manually</span>
+        <span className="text-xs text-[var(--text-tertiary)] font-medium uppercase tracking-wider">{t("orCustomize")}</span>
         <div className="flex-1 h-px bg-[var(--border-default)]" />
       </div>
 

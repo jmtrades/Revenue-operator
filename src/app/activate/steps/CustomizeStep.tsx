@@ -140,9 +140,13 @@ export function CustomizeStep({
                   disabled={!slot.enabled}
                   className="rounded-lg border border-slate-700 bg-slate-900/60 px-2 py-1 text-[11px] text-slate-100 focus:border-[var(--border-default)] focus:outline-none focus:ring-1 focus:ring-[var(--border-default)]"
                 >
+                  <option value="06:00">6:00 AM</option>
+                  <option value="07:00">7:00 AM</option>
+                  <option value="08:00">8:00 AM</option>
                   <option value="09:00">9:00 AM</option>
                   <option value="10:00">10:00 AM</option>
                   <option value="11:00">11:00 AM</option>
+                  <option value="12:00">12:00 PM</option>
                 </select>
                 <span className="text-slate-500">–</span>
                 <select
@@ -157,9 +161,18 @@ export function CustomizeStep({
                   disabled={!slot.enabled}
                   className="rounded-lg border border-slate-700 bg-slate-900/60 px-2 py-1 text-[11px] text-slate-100 focus:border-[var(--border-default)] focus:outline-none focus:ring-1 focus:ring-[var(--border-default)]"
                 >
+                  <option value="12:00">12:00 PM</option>
+                  <option value="13:00">1:00 PM</option>
+                  <option value="14:00">2:00 PM</option>
+                  <option value="15:00">3:00 PM</option>
+                  <option value="16:00">4:00 PM</option>
                   <option value="17:00">5:00 PM</option>
                   <option value="18:00">6:00 PM</option>
                   <option value="19:00">7:00 PM</option>
+                  <option value="20:00">8:00 PM</option>
+                  <option value="21:00">9:00 PM</option>
+                  <option value="22:00">10:00 PM</option>
+                  <option value="23:00">11:00 PM</option>
                 </select>
               </div>
             </div>

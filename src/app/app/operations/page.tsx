@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { Button } from "@/components/ui/Button";
@@ -85,20 +86,22 @@ const QuickActionCard = ({
   </Link>
 );
 
-const getCampaignTypeLabel = (type?: string): string => {
+const getCampaignTypeLabel = (type?: string, t?: any): string => {
   const typeMap: Record<string, string> = {
-    cold_outreach: "Cold Outreach",
-    follow_up: "Follow-Up",
-    appointment_setting: "Appointment Setting",
-    no_show_recovery: "No-Show Recovery",
-    reactivation: "Reactivation",
-    quote_chase: "Quote Chase",
-    lead_qualification: "Lead Qualification",
+    cold_outreach: t?.("campaignTypes.coldOutreach") ?? "Cold Outreach",
+    follow_up: t?.("campaignTypes.followUp") ?? "Follow-Up",
+    appointment_setting: t?.("campaignTypes.appointmentSetting") ?? "Appointment Setting",
+    no_show_recovery: t?.("campaignTypes.noShowRecovery") ?? "No-Show Recovery",
+    reactivation: t?.("campaignTypes.reactivation") ?? "Reactivation",
+    quote_chase: t?.("campaignTypes.quoteChase") ?? "Quote Chase",
+    lead_qualification: t?.("campaignTypes.leadQualification") ?? "Lead Qualification",
   };
-  return typeMap[type?.toLowerCase() || ""] || "Campaign";
+  return typeMap[type?.toLowerCase() || ""] || (t?.("campaignTypes.campaign") ?? "Campaign");
 };
 
 const StatusBadge = ({ status }: { status: string }) => {
+  const t = useTranslations("operations");
+
   const statusConfig: Record<
     string,
     { color: string; bg: string; label: string }
@@ -106,27 +109,27 @@ const StatusBadge = ({ status }: { status: string }) => {
     active: {
       color: "#10b981",
       bg: "#10b98115",
-      label: "Active",
+      label: t("statuses.active"),
     },
     paused: {
       color: "#f59e0b",
       bg: "#f59e0b15",
-      label: "Paused",
+      label: t("statuses.paused"),
     },
     draft: {
       color: "#6366f1",
       bg: "#6366f115",
-      label: "Draft",
+      label: t("statuses.draft"),
     },
     completed: {
       color: "#8b5cf6",
       bg: "#8b5cf615",
-      label: "Completed",
+      label: t("statuses.completed"),
     },
     launching: {
       color: "#3b82f6",
       bg: "#3b82f615",
-      label: "Launching",
+      label: t("statuses.launching"),
     },
   };
 
@@ -154,13 +157,14 @@ const CampaignRow = ({
   campaign: Campaign;
   onToggle: (id: string, status: string) => void;
 }) => {
+  const t = useTranslations("operations");
   const isActive = campaign.status === "active";
   const answerRate =
     campaign.leads_called > 0
       ? Math.round((campaign.connects / campaign.leads_called) * 100)
       : 0;
   const pendingLeads = campaign.total_leads - campaign.leads_called;
-  const typeLabel = getCampaignTypeLabel(campaign.type);
+  const typeLabel = getCampaignTypeLabel(campaign.type, t);
 
   return (
     <div className="dash-section p-4">
@@ -262,6 +266,7 @@ const CallActivityCard = ({ call }: { call: CallRecord }) => {
 };
 
 export default function OperationsPage() {
+  const t = useTranslations("operations");
   const { workspaceId } = useWorkspace();
   const [data, setData] = useState<OperationsData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -322,10 +327,10 @@ export default function OperationsPage() {
       }
 
       toast.success(
-        `Campaign ${newStatus === "active" ? "started" : "paused"}`
+        t(newStatus === "active" ? "messages.campaignStarted" : "messages.campaignPaused")
       );
     } catch (err) {
-      toast.error("Failed to update campaign");
+      toast.error(t("messages.failedToUpdateCampaign"));
       console.error(err);
     }
   };
@@ -351,10 +356,10 @@ export default function OperationsPage() {
           className="text-3xl font-bold mb-2"
           style={{ color: "var(--text-primary)" }}
         >
-          Mission Control
+          {t("title")}
         </h1>
         <p style={{ color: "var(--text-secondary)" }}>
-          Monitor and control all your AI operations in one place
+          {t("subtitle")}
         </p>
       </div>
 
@@ -362,21 +367,21 @@ export default function OperationsPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <QuickActionCard
           icon={Upload}
-          title="Import Leads"
-          description="Upload a CSV of leads to start calling"
+          title={t("quickActions.importLeads")}
+          description={t("quickActions.importLeadsDesc")}
           href="/app/leads?import=1"
         />
         <QuickActionCard
           icon={Phone}
-          title="Start Calling"
-          description="AI adapts to each lead automatically"
+          title={t("quickActions.startCalling")}
+          description={t("quickActions.startCallingDesc")}
           href="/app/campaigns/create?template=outbound_call"
           color="#3b82f6"
         />
         <QuickActionCard
           icon={Zap}
-          title="Create Campaign"
-          description="Choose from cold outreach, follow-ups, and more"
+          title={t("quickActions.createCampaign")}
+          description={t("quickActions.createCampaignDesc")}
           href="/app/campaigns/create"
           color="#8b5cf6"
         />
@@ -387,9 +392,9 @@ export default function OperationsPage() {
         <div className="flex items-start gap-3">
           <Sparkles size={18} color="#3b82f6" className="mt-0.5 flex-shrink-0" />
           <div className="flex-1">
-            <h3 className="font-semibold mb-1" style={{ color: "var(--text-primary)" }}>AI Intelligence: Active</h3>
+            <h3 className="font-semibold mb-1" style={{ color: "var(--text-primary)" }}>{t("aiIntelligence.title")}</h3>
             <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-              AI adapts its approach for each lead based on profile, score, and history. The system learns from every call to improve results.
+              {t("aiIntelligence.description")}
             </p>
           </div>
         </div>
@@ -412,7 +417,7 @@ export default function OperationsPage() {
               className="text-sm mb-2"
               style={{ color: "var(--text-secondary)" }}
             >
-              Active Campaigns
+              {t("metrics.activeCampaigns")}
             </p>
             <p
               className="text-3xl font-bold"
@@ -426,7 +431,7 @@ export default function OperationsPage() {
               className="text-sm mb-2"
               style={{ color: "var(--text-secondary)" }}
             >
-              Total Calls
+              {t("metrics.totalCalls")}
             </p>
             <p
               className="text-3xl font-bold"
@@ -440,7 +445,7 @@ export default function OperationsPage() {
               className="text-sm mb-2"
               style={{ color: "var(--text-secondary)" }}
             >
-              Appointments Booked
+              {t("metrics.appointmentsBooked")}
             </p>
             <p
               className="text-3xl font-bold"
@@ -454,7 +459,7 @@ export default function OperationsPage() {
               className="text-sm mb-2"
               style={{ color: "var(--text-secondary)" }}
             >
-              Pending Follow-Ups
+              {t("metrics.pendingFollowUps")}
             </p>
             <p
               className="text-3xl font-bold"
@@ -476,7 +481,7 @@ export default function OperationsPage() {
               className="text-xl font-bold"
               style={{ color: "var(--text-primary)" }}
             >
-              Outbound Campaigns
+              {t("sections.outboundCampaigns")}
             </h2>
           </div>
           {loading ? (
@@ -505,16 +510,16 @@ export default function OperationsPage() {
                 className="font-medium mb-2"
                 style={{ color: "var(--text-primary)" }}
               >
-                Ready to start calling?
+                {t("emptyState.campaigns.title")}
               </p>
               <p
                 className="text-sm mb-4"
                 style={{ color: "var(--text-secondary)" }}
               >
-                Create your first campaign to launch AI calling. Choose from cold outreach, follow-ups, and more.
+                {t("emptyState.campaigns.description")}
               </p>
               <Link href="/app/campaigns/create">
-                <Button variant="primary">Create Campaign</Button>
+                <Button variant="primary">{t("emptyState.campaigns.cta")}</Button>
               </Link>
             </div>
           )}
@@ -528,7 +533,7 @@ export default function OperationsPage() {
               className="text-xl font-bold"
               style={{ color: "var(--text-primary)" }}
             >
-              Follow-Ups
+              {t("sections.followUps")}
             </h2>
           </div>
           {loading ? (
@@ -551,14 +556,14 @@ export default function OperationsPage() {
                     className="text-sm"
                     style={{ color: "var(--text-secondary)" }}
                   >
-                    pending actions
+                    {t("followUps.pendingActions")}
                   </p>
                 </div>
                 <AlertCircle size={32} color="#f59e0b" />
               </div>
               <Link href="/app/follow-ups">
                 <Button variant="secondary" className="w-full mt-4">
-                  View Follow-Ups
+                  {t("followUps.viewAll")}
                 </Button>
               </Link>
             </div>
@@ -570,7 +575,7 @@ export default function OperationsPage() {
                 style={{ color: "var(--accent-primary)" }}
               />
               <p style={{ color: "var(--text-secondary)" }}>
-                All caught up!
+                {t("followUps.allCaughtUp")}
               </p>
             </div>
           )}
@@ -589,12 +594,12 @@ export default function OperationsPage() {
               className="text-xl font-bold"
               style={{ color: "var(--text-primary)" }}
             >
-              Recent Call Activity
+              {t("sections.recentCalls")}
             </h2>
           </div>
           <Link href="/app/calls">
             <Button variant="ghost" size="sm">
-              View All
+              {t("actions.viewAll")}
             </Button>
           </Link>
         </div>
@@ -617,16 +622,16 @@ export default function OperationsPage() {
               className="font-medium mb-2"
               style={{ color: "var(--text-primary)" }}
             >
-              No calls yet
+              {t("emptyState.calls.title")}
             </p>
             <p
               className="text-sm mb-4"
               style={{ color: "var(--text-secondary)" }}
             >
-              Create a campaign to start calling. The AI will handle outreach automatically.
+              {t("emptyState.calls.description")}
             </p>
             <Link href="/app/campaigns/create">
-              <Button variant="secondary">Create Your First Campaign</Button>
+              <Button variant="secondary">{t("emptyState.calls.cta")}</Button>
             </Link>
           </div>
         )}
