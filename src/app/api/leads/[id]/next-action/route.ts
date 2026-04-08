@@ -11,9 +11,12 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getSession(req);
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { id: leadId } = await params;
+  if (!session?.workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // Auth check BEFORE lead lookup
   const db = getDb();
+  const { id: leadId } = await params;
+
   const { data: lead } = await db.from("leads").select("state, workspace_id").eq("id", leadId).maybeSingle();
   if (!lead) return NextResponse.json({ error: "Not found" }, { status: 404 });
   const accessErr = await requireWorkspaceAccess(req, (lead as { workspace_id: string }).workspace_id);

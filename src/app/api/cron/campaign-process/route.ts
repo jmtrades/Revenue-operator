@@ -170,12 +170,25 @@ export async function GET(req: NextRequest) {
             callsMade++;
             processed++;
           } else {
-            await db.from("campaign_leads").update({
-              status: "failed",
-              error_message: result.error,
-              updated_at: new Date().toISOString(),
-            }).eq("id", cl.id);
-            failed++;
+            // Handle TCPA quiet hours separately — mark as retry_later instead of failed
+            if (result.error === "blocked_tcpa_hours") {
+              await db.from("campaign_leads").update({
+                status: "retry_later",
+                error_message: "TCPA quiet hours — will retry during compliant window",
+                updated_at: new Date().toISOString(),
+              }).eq("id", cl.id);
+              log("info", "campaign_lead_tcpa_blocked", {
+                campaign_id: row.id,
+                lead_id: cl.lead_id,
+              });
+            } else {
+              await db.from("campaign_leads").update({
+                status: "failed",
+                error_message: result.error,
+                updated_at: new Date().toISOString(),
+              }).eq("id", cl.id);
+              failed++;
+            }
           }
         } catch (err) {
           log("error", "campaign_call_error", {
