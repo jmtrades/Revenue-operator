@@ -13,11 +13,13 @@ export function FinalCTA() {
   const t = useTranslations("marketing.finalCta");
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !email.includes("@")) return;
     setSubmitted(true);
+
     // Capture the lead before redirecting — don't lose it if they bounce from signup
     try {
       await fetch("/api/leads/capture", {
@@ -28,7 +30,14 @@ export function FinalCTA() {
     } catch {
       // Non-blocking — still redirect even if capture fails
     }
-    window.location.href = `${ROUTES.START}?email=${encodeURIComponent(email.trim())}`;
+
+    // Show brief success message before redirect
+    setSubmitSuccess(true);
+
+    // Small delay to let user see the success state before redirect
+    setTimeout(() => {
+      window.location.href = `${ROUTES.START}?email=${encodeURIComponent(email.trim())}`;
+    }, 1200);
   };
 
   return (
@@ -112,16 +121,29 @@ export function FinalCTA() {
               }}
               required
               autoComplete="email"
+              disabled={submitted}
             />
             <button
               type="submit"
               disabled={submitted}
               className="btn-marketing-blue px-6 py-3 text-sm whitespace-nowrap group inline-flex items-center justify-center gap-2"
             >
-              {submitted ? t("redirecting") : t("getStarted")}
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+              {submitted ? (submitSuccess ? "✓ " : "") + t("redirecting") : t("getStarted")}
+              {!submitted && <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />}
             </button>
           </form>
+
+          {submitSuccess && (
+            <p
+              className="text-xs animate-fade-in"
+              style={{
+                color: "var(--accent-secondary)",
+                animation: "fadeIn 300ms ease-out",
+              }}
+            >
+              ✓ Email captured — {t("redirecting")}
+            </p>
+          )}
 
           <p className="text-xs mb-8" style={{ color: "var(--text-tertiary)" }}>
             {t("liveInMinutes")}

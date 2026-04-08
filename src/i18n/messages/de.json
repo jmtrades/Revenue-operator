@@ -5176,7 +5176,7 @@
     "insightsDesc": "Anrufvolumen, Antwortrate, Konversion, geschützte Umsätze. Nutzung vs. Tarif. Klarer monatlicher ROI.",
     "complianceTitle": "Compliance",
     "complianceDesc": "Jeder Anruf aufgezeichnet und transkribiert. HIPAA-Modus. Aufbewahrung 30-365 Tage. Audit und Export.",
-    "forBusinesses": "Für Unternehmen",
+    "forBusinesses": "Für Operatoren",
     "forBusinessesDesc": "Vom Einzelunternehmer bis zum wachsenden Team. Jeden Anruf beantworten, Termine buchen und Leads erfassen — ohne Empfang.",
     "getStarted": "Starten →",
     "forTeams": "Für Teams",
@@ -5494,7 +5494,7 @@
       }
     },
     "testimonials": {
-      "preamble": "Für Unternehmen, die von jedem Anruf abhängen",
+      "preamble": "Für Operatoren, die von jedem Anruf abhängen",
       "label": "Was Kunden sagen",
       "testimonials": {
         "amanda": {
@@ -5655,7 +5655,7 @@
           "cta": "Verkauf kontaktieren"
         }
       },
-      "footerNote": "Alle Pläne inkl.: verschlüsselte Aufzeichnungen · Compliance-Rahmen · Prüfpfad · 14 Tage kostenlos.",
+      "footerNote": "Alle Pläne inkl.: verschlüsselte Aufzeichnungen · Compliance-Rahmen · Prüfpfad · Vertraut von tausenden Operatoren.",
       "cta": {
         "link": "Vollständigen Planvergleich ansehen →"
       }
@@ -9380,10 +9380,10 @@
       "badge": "Autonomes Umsatzausführungssystem",
       "heading1": "Ihr Umsatz. Vollständig Automatisiert.",
       "heading2": "Jeder Lead bearbeitet. Jeder Euro zurückgeholt.",
-      "heading3": "",
-      "description": "Revenue Operator führt Ihren gesamten Umsatzzyklus aus — eingehende Anrufe, ausgehende Kampagnen, Lead-Qualifizierung, Terminbuchung, Follow-up-Sequenzen und Umsatzrückgewinnung. 24/7. Keine menschliche Intervention.",
-      "socialProof": "Unternehmen",
-      "socialProofRecovered": "zurückgeholt",
+      "heading3": "Für Einzelunternehmer und große Unternehmen.",
+      "description": "Revenue Operator führt Ihren gesamten Umsatzzyklus aus — eingehende Anrufe, ausgehende Kampagnen, Lead-Qualifizierung, Terminbuchung, Follow-up-Sequenzen und Umsatzrückgewinnung. Ob als Einzelunternehmer oder wachsendes Team. 24/7. Keine menschliche Intervention.",
+      "socialProof": "Operatoren",
+      "socialProofRecovered": "für Operatoren bundesweit",
       "startFreeTrial": "Jetzt starten",
       "getStarted": "Jetzt starten",
       "watchDemo": "Demo ansehen",
@@ -9494,7 +9494,7 @@
       "liveInMinutes": "In unter 3 Minuten aktiv. Jederzeit kündbar.",
       "bookDemo": "Live-Demo buchen",
       "stillNotSure": "Noch unsicher? Hören Sie selbst — wir rufen Sie jetzt an.",
-      "joinBusinesses": "Schließen Sie sich {count} Unternehmen an, die aufgehört haben, Umsatz an die Mailbox zu verlieren.",
+      "joinBusinesses": "Schließen Sie sich {count} Operatoren an, die aufgehört haben, Umsatz an die Mailbox zu verlieren.",
       "emailLabel": "Email address"
     },
     "footer": {

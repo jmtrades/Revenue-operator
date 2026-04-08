@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Play, Pause, Phone, Mic, Volume2, Sparkles, Wrench, HeartPulse, Scale, Home, UtensilsCrossed, Building2, Scissors, Car } from "lucide-react";
+import { Play, Pause, Phone, Mic, Volume2, Sparkles, Wrench, HeartPulse, Scale, Home, UtensilsCrossed, Building2, Scissors, Car, Shield, Dumbbell, FileText, PawPrint, Sparkle, Camera, Zap, ShoppingCart } from "lucide-react";
 
 /* ─── Conversation Scripts ─── */
 const SCENARIOS = [
@@ -121,6 +121,118 @@ const SCENARIOS = [
       { role: "ai" as const, text: "Perfect, our technicians work on Hondas all the time. I've got you down for 2 PM today. We'll run the diagnostic, give you a full report, and you'll know exactly what's going on before we do any work. Can I grab your name and number to confirm?", delay: 6000 },
     ],
   },
+  {
+    id: "insurance",
+    industry: "Insurance",
+    label: "Policy Renewal Quote",
+    icon: Shield,
+    greeting: "Welcome to SafeGuard Insurance, this is Alex. How can I help you today?",
+    conversation: [
+      { role: "ai" as const, text: "Welcome to SafeGuard Insurance, this is Alex. How can I help you today?", delay: 0 },
+      { role: "caller" as const, text: "Hi, my auto insurance policy is coming up for renewal and I want to shop around for a better rate.", delay: 3500 },
+      { role: "ai" as const, text: "You're smart to shop around — rates can vary quite a bit. I can help you find coverage that's both better priced and more comprehensive. Do you have your current policy details handy, or would you like me to pull them up based on your driver's license number?", delay: 6000 },
+      { role: "caller" as const, text: "I can give you my license number. It's 1-4-5-8-9-2-7-X.", delay: 2500 },
+      { role: "ai" as const, text: "Perfect, got that. I'm seeing your current coverage is pretty basic. We can actually get you better liability limits, comprehensive coverage, and a lower premium. Our average customer saves four hundred twelve dollars a year. Should I get a quote running for you?", delay: 6500 },
+    ],
+  },
+  {
+    id: "fitness",
+    industry: "Fitness / Gym",
+    label: "Membership & Classes",
+    icon: Dumbbell,
+    greeting: "Hey, thanks for calling Peak Fitness! This is Emma. What brings you in today?",
+    conversation: [
+      { role: "ai" as const, text: "Hey, thanks for calling Peak Fitness! This is Emma. What brings you in today?", delay: 0 },
+      { role: "caller" as const, text: "I'm looking to join a gym. What kind of memberships do you offer?", delay: 3200 },
+      { role: "ai" as const, text: "Awesome! We've got a few options. Our most popular is the unlimited membership — it's thirty-nine ninety-five a month and gives you access to all our classes, the gym floor, pools, and saunas. We're also running a promotion right now where your first month is just nine ninety-five. Does that sound like something you'd be interested in?", delay: 5800 },
+      { role: "caller" as const, text: "That sounds good. Do you have yoga classes?", delay: 2200 },
+      { role: "ai" as const, text: "We absolutely do! We have five yoga classes a week — everything from hot yoga to restorative. Our most popular is the Tuesday morning flow at 9 AM with instructor Maria. You can drop in to any class free once you join, and we have a huge community. Want me to get you set up with a membership?", delay: 6200 },
+    ],
+  },
+  {
+    id: "accounting",
+    industry: "Accounting / Tax",
+    label: "Tax Preparation Services",
+    icon: FileText,
+    greeting: "Good morning, this is Alex with TaxPro Accounting. How can I help you today?",
+    conversation: [
+      { role: "ai" as const, text: "Good morning, this is Alex with TaxPro Accounting. How can I help you today?", delay: 0 },
+      { role: "caller" as const, text: "I need help with my 2024 tax return. I'm self-employed and I'm not sure what I need to bring.", delay: 3300 },
+      { role: "ai" as const, text: "Great — we handle a lot of self-employed returns, so you're in good hands. Here's what we'll need: your income records, any business expense receipts or logs, your estimated tax payments from throughout the year, and prior year tax return. Most of our self-employed clients end up saving between one and three thousand dollars by optimizing deductions. Have you kept records of your business expenses?", delay: 6500 },
+      { role: "caller" as const, text: "Yeah, I have receipts and a spreadsheet.", delay: 2000 },
+      { role: "ai" as const, text: "Perfect — that's exactly what we need. Our standard preparation fee for self-employed returns is three hundred fifty dollars, and we usually have appointments available within two weeks. We can do this in-person or over Zoom, whichever works best for you. What's better — next week or the week after?", delay: 6300 },
+    ],
+  },
+  {
+    id: "petcare",
+    industry: "Pet Care / Veterinary",
+    label: "Appointment Booking",
+    icon: PawPrint,
+    greeting: "Hi there, thanks for calling Riverside Animal Hospital! This is Sarah, how can I help?",
+    conversation: [
+      { role: "ai" as const, text: "Hi there, thanks for calling Riverside Animal Hospital! This is Sarah, how can I help?", delay: 0 },
+      { role: "caller" as const, text: "My dog has been limping on his back left leg for a couple days. I'd like to get him checked out.", delay: 3400 },
+      { role: "ai" as const, text: "Oh, I'm sorry to hear that. We'll get him in and find out what's going on. Dr. Martinez is excellent with orthopedic issues — she'll do a full exam and take X-rays if needed. I have an opening tomorrow at 10 AM or later today at 4 PM. Which would work better for you?", delay: 6000 },
+      { role: "caller" as const, text: "Today at 4 would be great.", delay: 2000 },
+      { role: "ai" as const, text: "Perfect, I've got you down for today at 4 PM with Dr. Martinez. Just bring his medical records if you have them, and any medications he's currently on. The exam is eighty-five dollars, plus any diagnostics if we need them. Our facility is really pet-friendly, so he'll be comfortable. We'll take great care of him!", delay: 6200 },
+    ],
+  },
+  {
+    id: "cleaning",
+    industry: "Home Cleaning",
+    label: "Cleaning Service Quote",
+    icon: Sparkle,
+    greeting: "Hi, welcome to Fresh Home Cleaning! This is Emma. What can I help you with?",
+    conversation: [
+      { role: "ai" as const, text: "Hi, welcome to Fresh Home Cleaning! This is Emma. What can I help you with?", delay: 0 },
+      { role: "caller" as const, text: "I need to get my house cleaned. How much do you charge for a full house cleaning?", delay: 3000 },
+      { role: "ai" as const, text: "Great question! Our pricing depends on your home size and the level of cleaning. A typical 3-bedroom house runs about two hundred twenty-five to two hundred seventy-five for a standard deep clean. We're eco-friendly, we're insured and bonded, and we guarantee satisfaction. How many bedrooms do you have?", delay: 5800 },
+      { role: "caller" as const, text: "Three bedrooms and two bathrooms.", delay: 1800 },
+      { role: "ai" as const, text: "Perfect! For your size, we'd estimate about two fifty. We can come weekly, bi-weekly, or monthly — most clients do bi-weekly maintenance. We're fully booked through Friday, but I have Wednesday morning or Thursday afternoon available next week. Which day works?", delay: 6200 },
+    ],
+  },
+  {
+    id: "photography",
+    industry: "Photography",
+    label: "Session Booking",
+    icon: Camera,
+    greeting: "Hello, this is Sarah with Captured Moments Photography. How can I help?",
+    conversation: [
+      { role: "ai" as const, text: "Hello, this is Sarah with Captured Moments Photography. How can I help?", delay: 0 },
+      { role: "caller" as const, text: "I'm looking to book a family photo session. We want something casual and natural-looking.", delay: 3200 },
+      { role: "ai" as const, text: "I love that approach! That's exactly our style — we do lifestyle and candid photography, so it feels relaxed and genuine. A typical family session with us is one hour and includes digital gallery of about 60-80 images. It's three hundred ninety-five dollars. We can do indoor studio, outdoor locations, or even at your home. What sounds best to you?", delay: 6200 },
+      { role: "caller" as const, text: "Outdoor sounds nice. When could we schedule something?", delay: 2500 },
+      { role: "ai" as const, text: "Wonderful! Spring is perfect for outdoor sessions. I'm pretty booked, but I have availability on Saturday, April 19th at 10 AM or 2 PM, and Saturday, April 26th at 11 AM. Our outdoor location in the park is stunning this time of year. Which date and time works for your family?", delay: 6500 },
+    ],
+  },
+  {
+    id: "plumbing",
+    industry: "Plumbing",
+    label: "Emergency Service Call",
+    icon: Zap,
+    greeting: "AquaFlow Plumbing, this is Alex. Is this an emergency?",
+    conversation: [
+      { role: "ai" as const, text: "AquaFlow Plumbing, this is Alex. Is this an emergency?", delay: 0 },
+      { role: "caller" as const, text: "Yes! My kitchen sink is completely backed up and water's pooling. I need someone out here today.", delay: 3200 },
+      { role: "ai" as const, text: "I understand — water backup is something we want to address immediately before it causes damage. You're in luck, we have a technician available within the hour. There's a one-twenty-five dollar emergency service fee, plus the cost of repairs. Most drain clears run between one-fifty and three-fifty. Can I get your address?", delay: 6500 },
+      { role: "caller" as const, text: "It's 247 Maple Drive, apartment 3B.", delay: 2000 },
+      { role: "ai" as const, text: "Got it, I'm dispatching our tech right now — he'll be there in about forty-five minutes. His name is John and he'll text you when he's ten minutes away. He'll clear that backup quickly and give you the exact cost before doing any work. We're also doing twenty percent off drain cleaning this month, so that'll help. We'll take care of you!", delay: 6800 },
+    ],
+  },
+  {
+    id: "ecommerce",
+    industry: "E-Commerce / Retail",
+    label: "Order Status & Returns",
+    icon: ShoppingCart,
+    greeting: "Hi, thanks for calling StyleHub Online! This is Sarah. How can I help?",
+    conversation: [
+      { role: "ai" as const, text: "Hi, thanks for calling StyleHub Online! This is Sarah. How can I help?", delay: 0 },
+      { role: "caller" as const, text: "I ordered a dress last week and it arrived, but it's the wrong size. I need to return it.", delay: 3300 },
+      { role: "ai" as const, text: "Oh no, I'm sorry it wasn't the right fit! No problem at all — we have a thirty-day return window, so you're completely covered. Did you want to exchange it for a different size, or get a refund? Either way, I can process that right now and email you a prepaid return label.", delay: 5800 },
+      { role: "caller" as const, text: "Can I exchange it for a medium instead of large?", delay: 2200 },
+      { role: "ai" as const, text: "Absolutely! One medium coming right up. I'm emailing you a return label and your exchange confirmation. The medium will ship out tomorrow, and once we receive your return, we'll process the refund within three business days. You'll get an update email for both. Anything else I can help with?", delay: 6200 },
+    ],
+  },
 ] as const;
 
 /* ─── Animated Waveform ─── */
@@ -184,9 +296,10 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
       return;
     }
 
+    // Show loading state immediately for perceived speed
+    setAudioLoading(true);
     setPlaying(true);
     setCurrentLine(0);
-    setAudioLoading(true);
 
     // Map scenario voice names to real Recall voice IDs for maximum human realism
     const voiceIdMap: Record<string, string> = {
@@ -198,6 +311,14 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
       realestate: "us-female-warm-receptionist",  // Sarah — warm, knowledgeable
       medspa: "us-female-casual",                 // Emma — friendly, informative
       auto: "us-male-professional",               // Alex — confident, technical
+      insurance: "us-male-professional",          // Alex — professional, expert
+      fitness: "us-female-casual",                // Emma — casual, energetic
+      accounting: "us-male-professional",         // Alex — professional, knowledgeable
+      petcare: "us-female-warm-receptionist",     // Sarah — warm, caring
+      cleaning: "us-female-casual",               // Emma — casual, friendly
+      photography: "us-female-warm-receptionist", // Sarah — warm, personable
+      plumbing: "us-male-professional",           // Alex — confident, technical
+      ecommerce: "us-female-warm-receptionist",   // Sarah — warm, helpful
     };
     const voiceId = voiceIdMap[scenario.id] || "us-female-warm-receptionist";
 
@@ -217,8 +338,9 @@ export function VoicePreviewWidget({ compact = false }: { compact?: boolean }) {
       // No fallback to browser TTS — better silent than robotic
     } catch {
       // Voice API unavailable — do NOT fall back to robot browser TTS
+    } finally {
+      setAudioLoading(false);
     }
-    setAudioLoading(false);
 
     // Animate through conversation lines
     let cumulativeDelay = 0;

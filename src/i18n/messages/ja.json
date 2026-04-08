@@ -5176,7 +5176,7 @@
     "insightsDesc": "通話数、応答率、コンバージョン、保護された収益。利用量とプラン。月次ROIを明確に。",
     "complianceTitle": "コンプライアンス",
     "complianceDesc": "全通話を記録・文字起こし。HIPAAモード。保持30-365日。監査・エクスポート。",
-    "forBusinesses": "ビジネス向け",
+    "forBusinesses": "オペレータ向け",
     "forBusinessesDesc": "個人事業主から成長チームまで。すべての通話に応答、予約・リード獲得 — 受付不要。",
     "getStarted": "始める →",
     "forTeams": "チーム向け",
@@ -5494,7 +5494,7 @@
       }
     },
     "testimonials": {
-      "preamble": "すべての通話を大切にする企業向けに",
+      "preamble": "すべての通話を大切にするオペレータ向けに",
       "label": "お客様の声",
       "testimonials": {
         "amanda": {
@@ -5655,7 +5655,7 @@
           "cta": "営業に相談"
         }
       },
-      "footerNote": "全プランに含まれる：いつでもキャンセル可能・30日間返金保証・256ビット暗号化。企業が信頼。",
+      "footerNote": "全プランに含まれる：いつでもキャンセル可能・30日間返金保証・256ビット暗号化。何千ものオペレータが信頼。",
       "cta": {
         "link": "プラン比較を見る →"
       }
@@ -9380,10 +9380,10 @@
       "badge": "自律的収益実行システム",
       "heading1": "あなたの売上。完全に自動化。",
       "heading2": "すべてのリードに対応。すべての利益を回収。",
-      "heading3": "",
-      "description": "Revenue Operatorはあなたの売上サイクル全体を実行します — インバウンド通話、アウトバウンドキャンペーン、リード選定、約束予約、フォローアップシーケンス、および売上回収。24/7。人間の介入不要。",
-      "socialProof": "企業",
-      "socialProofRecovered": "回収済み",
+      "heading3": "個人事業主から大企業まで対応。",
+      "description": "Revenue Operatorはあなたの売上サイクル全体を実行します — インバウンド通話、アウトバウンドキャンペーン、リード選定、約束予約、フォローアップシーケンス、および売上回収。個人オペレータでも成長チームでも。24/7。人間の介入不要。",
+      "socialProof": "オペレータ",
+      "socialProofRecovered": "全国のオペレータに",
       "startFreeTrial": "今すぐ始める",
       "getStarted": "今すぐ始める",
       "watchDemo": "デモを見る",
@@ -9494,7 +9494,7 @@
       "liveInMinutes": "3分以内に稼働。いつでもキャンセル可能。",
       "bookDemo": "ライブデモを予約",
       "stillNotSure": "まだ迷っていますか？ご自身で確認 — 今すぐお電話します。",
-      "joinBusinesses": "ボイスメールで収益を失うのをやめた{count}の企業に参加しましょう。",
+      "joinBusinesses": "ボイスメールで収益を失うのをやめた{count}のオペレータに参加しましょう。",
       "emailLabel": "Email address"
     },
     "footer": {

@@ -5176,7 +5176,7 @@
     "insightsDesc": "Volume d'appels, taux de réponse, conversion, revenus protégés. Utilisation vs forfait. ROI mensuel clair.",
     "complianceTitle": "Conformité",
     "complianceDesc": "Chaque appel enregistré et transcrit. Mode HIPAA. Rétention 30-365 jours. Audit et export.",
-    "forBusinesses": "Pour les entreprises",
+    "forBusinesses": "Pour les opérateurs",
     "forBusinessesDesc": "Du solo aux équipes en croissance. Répondez à chaque appel, réservez des rendez-vous et capturez les leads sans réceptionniste.",
     "getStarted": "Commencer →",
     "forTeams": "Pour les équipes",
@@ -5494,7 +5494,7 @@
       }
     },
     "testimonials": {
-      "preamble": "Conçu pour les entreprises qui dépendent de chaque appel",
+      "preamble": "Conçu pour les opérateurs qui dépendent de chaque appel",
       "label": "Ce que disent les clients",
       "testimonials": {
         "amanda": {
@@ -5655,7 +5655,7 @@
           "cta": "Parler aux ventes"
         }
       },
-      "footerNote": "Tous les plans incluent : garantie de remboursement 30 jours · annulez à tout moment · chiffrement 256-bit · chiffré au repos · conforme RGPD. De confiance pour des milliers d'entreprises.",
+      "footerNote": "Tous les plans incluent : garantie de remboursement 30 jours · annulez à tout moment · chiffrement 256-bit · chiffré au repos · conforme RGPD. De confiance pour des milliers d'opérateurs.",
       "cta": {
         "link": "Voir la comparaison des plans →"
       }
@@ -9380,10 +9380,10 @@
       "badge": "Système autonome d'exécution des revenus",
       "heading1": "Vos Revenus. Entièrement Automatisés.",
       "heading2": "Chaque lead travaillé. Chaque euro récupéré.",
-      "heading3": "",
-      "description": "Revenue Operator exécute l'intégralité de votre cycle de revenus — appels entrants, campagnes sortantes, qualification des leads, prise de rendez-vous, séquences de suivi et récupération des revenus. 24h/24. Aucune intervention humaine.",
-      "socialProof": "entreprises",
-      "socialProofRecovered": "récupérés",
+      "heading3": "Conçu pour les solopreneurs et les grandes entreprises.",
+      "description": "Revenue Operator exécute l'intégralité de votre cycle de revenus — appels entrants, campagnes sortantes, qualification des leads, prise de rendez-vous, séquences de suivi et récupération des revenus. Que vous soyez un opérateur solo ou une équipe en croissance. 24h/24. Aucune intervention humaine.",
+      "socialProof": "opérateurs",
+      "socialProofRecovered": "pour les opérateurs partout en France",
       "startFreeTrial": "Commencer",
       "getStarted": "Commencer",
       "watchDemo": "Voir la démo",
@@ -9494,7 +9494,7 @@
       "liveInMinutes": "Actif en moins de 3 minutes. Annulez quand vous voulez.",
       "bookDemo": "Réserver une démo en direct",
       "stillNotSure": "Pas encore convaincu ? Écoutez par vous-même — on vous appelle maintenant.",
-      "joinBusinesses": "Rejoignez {count} entreprises qui ont cessé de perdre du revenu au profit de la messagerie vocale.",
+      "joinBusinesses": "Rejoignez {count} opérateurs qui ont cessé de perdre du revenu au profit de la messagerie vocale.",
       "emailLabel": "Email address"
     },
     "footer": {

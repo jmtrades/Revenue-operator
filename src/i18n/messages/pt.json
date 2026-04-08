@@ -5176,7 +5176,7 @@
     "insightsDesc": "Volume de chamadas, taxa de resposta, conversão, receita protegida. Uso vs. plano. ROI mensal claro.",
     "complianceTitle": "Conformidade",
     "complianceDesc": "Cada chamada gravada e transcrita. Modo HIPAA. Retenção 30-365 dias. Auditoria e exportação.",
-    "forBusinesses": "Para empresas",
+    "forBusinesses": "Para operadores",
     "forBusinessesDesc": "De profissionais solo a equipes em crescimento. Atenda cada chamada, agende e capture leads sem recepção.",
     "getStarted": "Começar →",
     "forTeams": "Para equipes",
@@ -5494,7 +5494,7 @@
       }
     },
     "testimonials": {
-      "preamble": "Feito para negócios que dependem de cada ligação",
+      "preamble": "Feito para operadores que dependem de cada ligação",
       "label": "O que os clientes dizem",
       "testimonials": {
         "amanda": {
@@ -5655,7 +5655,7 @@
           "cta": "Falar com vendas"
         }
       },
-      "footerNote": "Todos os planos incluem: gravações criptografadas · framework de conformidade · trilha de auditoria · 14 dias grátis",
+      "footerNote": "Todos os planos incluem: gravações criptografadas · framework de conformidade · trilha de auditoria · Confiado por milhares de operadores.",
       "cta": {
         "link": "Ver comparação completa de planos →"
       }
@@ -9380,10 +9380,10 @@
       "badge": "Sistema autônomo de execução de receita",
       "heading1": "Seu Faturamento. Totalmente Automatizado.",
       "heading2": "Cada lead trabalhado. Cada dólar recuperado.",
-      "heading3": "",
-      "description": "Revenue Operator executa todo o seu ciclo de receita — chamadas de entrada, campanhas de saída, qualificação de leads, agendamento de compromissos, sequências de acompanhamento e recuperação de receita. 24/7. Nenhuma intervenção humana.",
-      "socialProof": "empresas",
-      "socialProofRecovered": "recuperados",
+      "heading3": "Feito para profissionais solo e grandes empresas.",
+      "description": "Revenue Operator executa todo o seu ciclo de receita — chamadas de entrada, campanhas de saída, qualificação de leads, agendamento de compromissos, sequências de acompanhamento e recuperação de receita. Seja como operador solo ou equipe em crescimento. 24/7. Nenhuma intervenção humana.",
+      "socialProof": "operadores",
+      "socialProofRecovered": "para operadores em todo o Brasil",
       "startFreeTrial": "Começar agora",
       "getStarted": "Começar agora",
       "watchDemo": "Ver demo",
@@ -9494,7 +9494,7 @@
       "liveInMinutes": "Ativo em menos de 3 minutos. Cancele quando quiser.",
       "bookDemo": "Agendar demo ao vivo",
       "stillNotSure": "Ainda não tem certeza? Ouça você mesmo — ligamos agora.",
-      "joinBusinesses": "Junte-se a {count} empresas que pararam de perder receita para a caixa postal.",
+      "joinBusinesses": "Junte-se a {count} operadores que pararam de perder receita para a caixa postal.",
       "emailLabel": "Email address"
     },
     "footer": {

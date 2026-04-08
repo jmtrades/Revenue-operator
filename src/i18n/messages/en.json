@@ -5438,7 +5438,7 @@
     "insightsDesc": "Call volume, answer rate, lead conversion, appointment completion, revenue recovered. Usage meter shows minutes vs plan. Monthly ROI statement: your AI captured X leads, booked Y appointments worth $Z. ROI: clear.",
     "complianceTitle": "Compliance",
     "complianceDesc": "Every call recorded and transcribed. HIPAA mode available. Retention 30-365 days. Full audit trail. Data export. Industry-ready documentation.",
-    "forBusinesses": "For businesses",
+    "forBusinesses": "For operators",
     "forBusinessesDesc": "Solo operators to growing teams. Answer every call, book appointments, capture leads, and follow up — without hiring a front desk.",
     "getStarted": "Get started →",
     "forTeams": "For teams",
@@ -5744,7 +5744,7 @@
       }
     },
     "testimonials": {
-      "preamble": "Built for businesses that depend on every revenue opportunity",
+      "preamble": "Built for operators that depend on every revenue opportunity",
       "label": "Customer Stories",
       "testimonials": {
         "amanda": {
@@ -5908,7 +5908,7 @@
           "cta": "Get started"
         }
       },
-      "footerNote": "All plans include: 30-day money-back guarantee · 256-bit TLS · Encrypted at rest · GDPR compliant · Cancel anytime. Join thousands of businesses.",
+      "footerNote": "All plans include: 30-day money-back guarantee · 256-bit TLS · Encrypted at rest · GDPR compliant · Cancel anytime. Join thousands of operators.",
       "cta": {
         "link": "View full plan comparison →"
       }
@@ -9509,10 +9509,10 @@
       "badge": "AI-Powered Revenue Operations",
       "heading1": "Your Revenue. Fully Automated.",
       "heading2": "Every lead worked. Every dollar recovered.",
-      "heading3": "Built for every business. Every industry.",
-      "description": "Revenue Operator runs your entire revenue cycle — inbound calls, outbound campaigns, lead qualification, appointment booking, follow-up sequences, and revenue recovery. 24/7. No humans required.",
-      "socialProof": "businesses",
-      "socialProofRecovered": "for businesses nationwide",
+      "heading3": "Built for solopreneurs and enterprises alike.",
+      "description": "Revenue Operator runs your entire revenue cycle — inbound calls, outbound campaigns, lead qualification, appointment booking, follow-up sequences, and revenue recovery. Whether you're a solo operator or a growing team. 24/7. No humans required.",
+      "socialProof": "operators",
+      "socialProofRecovered": "for operators nationwide",
       "startFreeTrial": "Get started",
       "getStarted": "Get started",
       "watchDemo": "Watch demo",
@@ -9622,7 +9622,7 @@
       "liveInMinutes": "Live in under 3 minutes. Cancel anytime.",
       "bookDemo": "Book a live demo",
       "stillNotSure": "Still not sure? Hear it for yourself — we'll call you right now.",
-      "joinBusinesses": "Join thousands of businesses running revenue operations on autopilot.",
+      "joinBusinesses": "Join thousands of operators running revenue operations on autopilot.",
       "emailLabel": "Email address"
     },
     "footer": {
