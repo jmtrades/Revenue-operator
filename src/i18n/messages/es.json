@@ -10414,15 +10414,8 @@
     }
   },
   "pages": {
-    "agent": {
-      "subtitle": "Manage your agent settings",
-      "title": "Agent"
-    },
-    "agents": {
-      "subtitle": "Manage your agents settings",
-      "subtitleShort": "Subtitle short",
-      "title": "Agents"
-    },
+    "agent": "Operador",
+    "agents": "Operadores",
     "billing": {
       "subtitle": "Manage your billing settings",
       "subtitleShort": "Subtitle short",
@@ -11564,5 +11557,24 @@
     "exampleSuffix": "in your workflows.",
     "ctaPrimary": "Get started →",
     "ctaSecondary": "Back to blog"
+  },
+  "callTranscript": {
+    "title": "Transcripción de la llamada",
+    "searchPlaceholder": "Buscar transcripción...",
+    "noTranscript": "No hay transcripción disponible para esta llamada",
+    "noMatches": "No hay mensajes que coincidan con tu búsqueda",
+    "matchCount": "{count} coincidencia",
+    "matchCountPlural": "{count} coincidencias",
+    "agent": "Agente",
+    "caller": "Llamante",
+    "loading": "Un momento…"
+  },
+  "surfaces": {
+    "nav": {
+      "org": "Org",
+      "solo": "Solo",
+      "life": "Vida"
+    },
+    "loading": "Un momento…"
   }
 }

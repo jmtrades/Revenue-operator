@@ -10416,15 +10416,8 @@
     }
   },
   "pages": {
-    "agent": {
-      "subtitle": "Manage your agent settings",
-      "title": "Agent"
-    },
-    "agents": {
-      "subtitle": "Manage your agents settings",
-      "subtitleShort": "Subtitle short",
-      "title": "Agents"
-    },
+    "agent": "オペレーター",
+    "agents": "オペレーター",
     "billing": {
       "subtitle": "Manage your billing settings",
       "subtitleShort": "Subtitle short",
@@ -11566,5 +11559,24 @@
     "exampleSuffix": "in your workflows.",
     "ctaPrimary": "Get started →",
     "ctaSecondary": "Back to blog"
+  },
+  "callTranscript": {
+    "title": "通話トランスクリプト",
+    "searchPlaceholder": "トランスクリプトを検索...",
+    "noTranscript": "この通話のトランスクリプトはありません",
+    "noMatches": "検索に一致するメッセージはありません",
+    "matchCount": "{count}件の一致",
+    "matchCountPlural": "{count}件の一致",
+    "agent": "エージェント",
+    "caller": "発信者",
+    "loading": "お待ちください…"
+  },
+  "surfaces": {
+    "nav": {
+      "org": "組織",
+      "solo": "ソロ",
+      "life": "ライフ"
+    },
+    "loading": "お待ちください…"
   }
 }
