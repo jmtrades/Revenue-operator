@@ -96,31 +96,22 @@ export async function executeLeadOutboundCall(
     return { ok: false, error: "Lead has exceeded maximum contact frequency for 24-hour period" };
   }
 
-  // COMPLIANCE: Check opt-out status before calling
+  // COMPLIANCE: Full DNC check (workspace DNC, federal/state compliance, opt-outs)
   try {
-    const { isOptedOut } = await import("@/lib/lead-opt-out");
+    const { checkDNC } = await import("@/lib/compliance/dnc-check");
     const phoneNormalized = String(phone).replace(/\D/g, "");
-    const optedOut = await isOptedOut(workspaceId, phoneNormalized) || await isOptedOut(workspaceId, phone);
-    // Also check the leads table opt_out flag
-    const { data: leadOptData } = await db
-      .from("leads")
-      .select("opt_out")
-      .eq("id", leadId)
-      .maybeSingle();
-    if (optedOut || (leadOptData as { opt_out?: boolean } | null)?.opt_out === true) {
-      log("warn", "[outbound-compliance] Lead is opted out — blocking call");
-      return { ok: false, error: "Lead has opted out of contact" };
+    const dncResult = await checkDNC(workspaceId, phoneNormalized);
+    if (dncResult.blocked) {
+      log("warn", "[outbound-compliance] Call blocked by DNC compliance check", {
+        reason: dncResult.reason,
+        source: dncResult.source
+      });
+      return { ok: false, error: dncResult.reason || "Call blocked by DNC compliance check" };
     }
-  } catch (optErr) {
-    const errMsg = optErr instanceof Error ? optErr.message : String(optErr);
-    // Only fail open if the table doesn't exist yet (e.g. new workspace)
-    if (errMsg.includes("does not exist") || errMsg.includes("relation") || errMsg.includes("42P01")) {
-      log("warn", "[outbound-compliance] Opt-out table not found — skipping check", { error: errMsg });
-    } else {
-      // Real error (DB down, network issue, etc.) — fail closed for compliance safety
-      log("error", "[outbound-compliance] Opt-out check failed — blocking call for safety", { error: errMsg });
-      return { ok: false, error: "Unable to verify opt-out status — call blocked for compliance" };
-    }
+  } catch (dncErr) {
+    // On DNC check error, fail closed for compliance safety
+    log("error", "[outbound-compliance] DNC check failed — blocking call for safety", { error: dncErr instanceof Error ? dncErr.message : String(dncErr) });
+    return { ok: false, error: "Unable to verify DNC status — call blocked for compliance safety" };
   }
 
   // COMPLIANCE: TCPA Quiet Hours enforcement — don't call outside 8am-9pm in recipient's timezone
@@ -308,7 +299,12 @@ YOUR GOAL:
           pauseOnSensitive: consentRow.recording_pause_on_sensitive ?? false,
         }
       : null;
-  const outboundFirstMessage = buildFirstMessageWithConsent(outboundFirstMessageBase, recordingConsentSettings);
+  // LEGAL COMPLIANCE: Pass lead's state to ensure two-party consent is enforced for multi-state calls
+  const outboundFirstMessage = buildFirstMessageWithConsent(
+    outboundFirstMessageBase,
+    recordingConsentSettings,
+    leadRow.state // Lead's state may require two-party consent regardless of workspace setting
+  );
 
   const voicemailBehavior = (agent.knowledge_base?.voicemailBehavior === "hangup" || agent.knowledge_base?.voicemailBehavior === "sms")
     ? agent.knowledge_base.voicemailBehavior

@@ -55,14 +55,37 @@ export function suggestConsentModeFromRegion(stateCode?: string | null, countryC
 }
 
 /**
+ * Check if a given state requires two-party recording consent (all-party consent).
+ * LEGAL: Two-party consent states ALWAYS require disclosure, regardless of workspace settings.
+ */
+export function requiresTwoPartyConsent(stateCode?: string | null): boolean {
+  const state = (stateCode ?? "").toUpperCase().trim().slice(0, 2);
+  return (TWO_PARTY_STATES_US as readonly string[]).includes(state);
+}
+
+/**
  * Build the first message for a call: if two_party, prepend the consent announcement.
+ *
+ * LEGAL COMPLIANCE: Two-party consent states ALWAYS get the disclosure, regardless of workspace settings.
+ * This prevents violations of state recording consent laws (CA, FL, IL, MD, MA, MT, NH, PA, WA, CT, MI).
+ *
+ * @param baseFirstMessage The base greeting/message to send
+ * @param settings Workspace-level recording consent configuration (can be overridden by lead state)
+ * @param leadState Optional lead state code (e.g., "CA", "FL") — if in a two-party state, consent is mandatory
+ * @returns The greeting with consent announcement prepended if required
  */
 export function buildFirstMessageWithConsent(
   baseFirstMessage: string,
-  settings: RecordingConsentSettings | null
+  settings: RecordingConsentSettings | null,
+  leadState?: string | null
 ): string {
-  if (!settings || settings.mode !== "two_party") return baseFirstMessage;
-  const announcement = (settings.announcementText ?? "").trim() || getDefaultTwoPartyAnnouncement();
+  // LEGAL: If lead is in a two-party consent state, ALWAYS include disclosure regardless of workspace setting
+  const leadInTwoPartyState = requiresTwoPartyConsent(leadState);
+  const requiresConsent = leadInTwoPartyState || settings?.mode === "two_party";
+
+  if (!requiresConsent) return baseFirstMessage;
+
+  const announcement = (settings?.announcementText ?? "").trim() || getDefaultTwoPartyAnnouncement();
   return `${announcement} ${baseFirstMessage}`.trim();
 }
 
