@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useWorkspace } from "@/components/WorkspaceContext";
 import { ArrowLeft, Send, CheckCircle } from "lucide-react";
 
@@ -29,6 +30,7 @@ interface ChatMessage {
 
 export default function LiveChatInboxPage() {
   const { workspaceId } = useWorkspace();
+  const tLiveChat = useTranslations("inbox.liveChat");
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -200,9 +202,9 @@ export default function LiveChatInboxPage() {
           {sessions.length === 0 ? (
             <div className="flex items-center justify-center h-full text-[var(--text-tertiary)]">
               <div className="text-center">
-                <p className="text-sm font-medium">No active chat sessions</p>
+                <p className="text-sm font-medium">{tLiveChat("noSessions")}</p>
                 <p className="text-xs mt-1">
-                  Chat sessions will appear here when visitors connect
+                  {tLiveChat("noSessionsHint")}
                 </p>
               </div>
             </div>
@@ -271,7 +273,7 @@ export default function LiveChatInboxPage() {
               <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
                 {messages.length === 0 ? (
                   <div className="flex items-center justify-center h-full text-[var(--text-tertiary)]">
-                    <p className="text-sm">No messages yet. Start the conversation!</p>
+                    <p className="text-sm">{tLiveChat("noMessages")}</p>
                   </div>
                 ) : (
                   messages.map((msg) => (

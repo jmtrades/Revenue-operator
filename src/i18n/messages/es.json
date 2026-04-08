@@ -8275,7 +8275,11 @@
     "goalStep": {
       "heading": "What do you want your AI agent to do?",
       "subtitle": "Select one or more goals. You can always change this later.",
-      "selected": "✓ Selected"
+      "selected": "✓ Selected",
+      "quickSetupTitle": "Configuración rápida de IA — Elige tu rol y comienza rápido",
+      "quickSetupDesc": "Plantillas predefinidas para ventas, bienes raíces, seguros, servicios del hogar y más. Configuración mínima necesaria.",
+      "quickSetupCta": "Empezar →",
+      "orCustomize": "o personalizar manualmente"
     },
     "plan": "Plan",
     "planSelection": {
@@ -11217,11 +11221,78 @@
     "viewSyncLog": "View sync log"
   },
   "operations": {
-    "avgResponseTime": "Avg Response Time",
-    "noShowRate": "No-Show Rate",
-    "reactivationRate": "Reactivation Rate",
-    "followUpRate": "Follow-Up Rate",
-    "loadError": "Failed to load operations metrics"
+    "avgResponseTime": "Tiempo Promedio de Respuesta",
+    "noShowRate": "Tasa de Inasistencia",
+    "reactivationRate": "Tasa de Reactivación",
+    "followUpRate": "Tasa de Seguimiento",
+    "loadError": "Error al cargar métricas de operaciones",
+    "title": "Centro de Control",
+    "subtitle": "Monitorea y controla todas tus operaciones de IA en un solo lugar",
+    "quickActions": {
+      "importLeads": "Importar Clientes Potenciales",
+      "importLeadsDesc": "Carga un CSV de clientes potenciales para comenzar a llamar",
+      "startCalling": "Comenzar a Llamar",
+      "startCallingDesc": "La IA se adapta a cada cliente potencial automáticamente",
+      "createCampaign": "Crear Campaña",
+      "createCampaignDesc": "Elige entre prospección en frío, seguimientos y más"
+    },
+    "aiIntelligence": {
+      "title": "Inteligencia de IA: Activa",
+      "description": "La IA adapta su enfoque para cada cliente potencial basado en perfil, puntuación e historial. El sistema aprende de cada llamada para mejorar resultados."
+    },
+    "metrics": {
+      "activeCampaigns": "Campañas Activas",
+      "totalCalls": "Total de Llamadas",
+      "appointmentsBooked": "Citas Reservadas",
+      "pendingFollowUps": "Seguimientos Pendientes"
+    },
+    "sections": {
+      "outboundCampaigns": "Campañas Salientes",
+      "followUps": "Seguimientos",
+      "recentCalls": "Actividad de Llamadas Recientes"
+    },
+    "emptyState": {
+      "campaigns": {
+        "title": "¿Listo para comenzar a llamar?",
+        "description": "Crea tu primera campaña para lanzar llamadas de IA. Elige entre prospección en frío, seguimientos y más.",
+        "cta": "Crear Campaña"
+      },
+      "calls": {
+        "title": "Sin llamadas aún",
+        "description": "Crea una campaña para comenzar a llamar. La IA manejará el prospección automáticamente.",
+        "cta": "Crear Tu Primera Campaña"
+      }
+    },
+    "followUps": {
+      "pendingActions": "acciones pendientes",
+      "viewAll": "Ver Seguimientos",
+      "allCaughtUp": "¡Todo al día!"
+    },
+    "actions": {
+      "viewAll": "Ver Todo"
+    },
+    "campaignTypes": {
+      "coldOutreach": "Prospección en Frío",
+      "followUp": "Seguimiento",
+      "appointmentSetting": "Establecimiento de Citas",
+      "noShowRecovery": "Recuperación de Inasistencia",
+      "reactivation": "Reactivación",
+      "quoteChase": "Seguimiento de Presupuesto",
+      "leadQualification": "Calificación de Clientes Potenciales",
+      "campaign": "Campaña"
+    },
+    "statuses": {
+      "active": "Activo",
+      "paused": "Pausado",
+      "draft": "Borrador",
+      "completed": "Completado",
+      "launching": "Lanzando"
+    },
+    "messages": {
+      "campaignStarted": "Campaña iniciada",
+      "campaignPaused": "Campaña pausada",
+      "failedToUpdateCampaign": "Error al actualizar la campaña"
+    }
   },
   "pipeline": {
     "title": "Pipeline Funnel",

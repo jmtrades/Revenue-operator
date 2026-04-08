@@ -29,6 +29,7 @@ const DEFAULT_CONFIG: WidgetConfig = {
 
 export default function ChatWidgetSettingsPage() {
   const t = useTranslations("chatWidget");
+  const tWidget = useTranslations("settings.chatWidget");
   const { workspaceId } = useWorkspace();
   const [config, setConfig] = useState<WidgetConfig>(DEFAULT_CONFIG);
   const [loading, setLoading] = useState(true);
@@ -130,10 +131,10 @@ export default function ChatWidgetSettingsPage() {
           ]} />
         </div>
         <div className="flex items-center gap-3 mb-2">
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Live Chat Widget</h1>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">{tWidget("title")}</h1>
         </div>
         <p className="text-sm text-[var(--text-secondary)] ml-11">
-          Configure and customize your live chat widget for your website
+          {tWidget("description")}
         </p>
       </div>
 
@@ -343,7 +344,7 @@ export default function ChatWidgetSettingsPage() {
                 )}
                 {!config.enabled && (
                   <div className="text-center text-[var(--text-tertiary)]">
-                    <p className="text-sm">Enable the widget above to see a live preview</p>
+                    <p className="text-sm">{tWidget("previewMessage")}</p>
                   </div>
                 )}
               </div>
@@ -380,13 +381,13 @@ export default function ChatWidgetSettingsPage() {
             {/* Instructions */}
             <div className="bg-[var(--accent-primary)]/10 border border-[var(--accent-primary)] rounded-lg p-4">
               <h4 className="text-sm font-medium text-[var(--accent-primary)] mb-2">
-                How to Use
+                {tWidget("setupTitle")}
               </h4>
               <ol className="text-xs text-[var(--accent-primary)] space-y-1 list-decimal list-inside">
-                <li>Copy the embed code above</li>
-                <li>Paste it into your website HTML</li>
-                <li>The widget will load automatically</li>
-                <li>Visitors can start chatting right away</li>
+                <li>{tWidget("setupStep1")}</li>
+                <li>{tWidget("setupStep2")}</li>
+                <li>{tWidget("setupStep3")}</li>
+                <li>{tWidget("setupStep4")}</li>
               </ol>
             </div>
           </div>

@@ -513,7 +513,9 @@ export function PricingContent() {
             <VoicePreviewWidget />
           </div>
           <div className="lg:col-span-2 flex flex-col gap-4">
-            <LiveActivityFeed />
+            <div onClick={() => document.getElementById("demo-section")?.scrollIntoView({ behavior: "smooth" })} aria-label="Scroll to demo section" role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") document.getElementById("demo-section")?.scrollIntoView({ behavior: "smooth" }); }} className="cursor-pointer">
+              <LiveActivityFeed />
+            </div>
           </div>
         </div>
 
@@ -621,7 +623,7 @@ export function PricingContent() {
         {/* Bottom CTA */}
         <div className="text-center space-y-5 mt-16 py-14 px-6 rounded-3xl border border-emerald-500/20 bg-gradient-to-b from-emerald-500/[0.04] to-transparent relative overflow-hidden">
           {/* Background glow */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-500/5 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-500/5 to-transparent pointer-events-none" aria-hidden="true" />
 
           <div className="relative">
             <p className="text-xs font-semibold tracking-wider uppercase text-emerald-400 mb-3">

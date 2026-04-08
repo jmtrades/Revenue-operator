@@ -19,16 +19,20 @@ function SurfacesShell({ children }: { children: React.ReactNode }) {
       <header className="border-b px-6 py-4" style={{ borderColor: "var(--border)" }}>
         <div className="mx-auto flex max-w-[880px] items-center justify-between gap-4">
           <nav className="flex gap-6">
-            {nav.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                className="text-[15px] transition-colors hover:opacity-90"
-              style={{ color: "var(--text-muted)" }}
-              >
-                {label}
-              </Link>
-            ))}
+            {nav.map(({ href, label }) => {
+              const isActive = typeof window !== "undefined" && window.location.pathname === href;
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className="text-[15px] transition-colors hover:opacity-90"
+                  aria-current={isActive ? "page" : undefined}
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  {label}
+                </Link>
+              );
+            })}
           </nav>
           {workspaces.length > 1 && (
             <select

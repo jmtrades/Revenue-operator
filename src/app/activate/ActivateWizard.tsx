@@ -109,6 +109,19 @@ export function ActivateWizard() {
 
   const goNext = useCallback(() => {
     if (!canGoNext) return;
+
+    // Check email verification before advancing from step 3 to step 4
+    if (step === 3) {
+      if (emailVerified === false) {
+        setShowEmailVerificationModal(true);
+        return;
+      }
+      if (emailVerified === null) {
+        // Still loading verification status, wait
+        return;
+      }
+    }
+
     const current = step;
     if (current >= 1 && current <= 4) {
       const name =
@@ -125,7 +138,7 @@ export function ActivateWizard() {
       }
       return next;
     });
-  }, [canGoNext, state.businessName, step]);
+  }, [canGoNext, state.businessName, step, emailVerified]);
 
   const goBack = useCallback(() => {
     setStep((prev) => (prev > 1 ? ((prev - 1) as StepId) : prev));
@@ -151,6 +164,8 @@ export function ActivateWizard() {
     []
   );
   const [voices, _setVoices] = useState<VoiceOption[]>(() => recallVoiceList);
+  const [showEmailVerificationModal, setShowEmailVerificationModal] = useState(false);
+  const [checkingVerification, setCheckingVerification] = useState(false);
 
   const handlePlayTestGreeting = () => {
     const voiceText =
@@ -253,10 +268,10 @@ export function ActivateWizard() {
     <Container>
       <div className="max-w-4xl mx-auto">
         {error && (
-          <div className="mb-6 rounded-2xl border border-[var(--accent-danger)]/30 bg-[var(--accent-danger-subtle)] px-5 py-4">
+          <div className="mb-6 rounded-2xl border border-[var(--accent-danger)]/30 bg-[var(--accent-danger-subtle)] px-5 py-4" role="alert">
             <p className="text-sm font-semibold text-[var(--accent-danger)]">{t("errors.title", { defaultValue: "Setup Error" })}</p>
             <p className="mt-1 text-sm text-[var(--accent-danger)]/80">{error}</p>
-            <button type="button" onClick={() => setError(null)} className="mt-2 text-xs text-[var(--accent-danger)] hover:text-[var(--accent-danger-hover)] underline">{t("errors.dismiss", { defaultValue: "Dismiss" })}</button>
+            <button type="button" onClick={() => setError(null)} aria-label="Dismiss error message" className="mt-2 text-xs text-[var(--accent-danger)] hover:text-[var(--accent-danger-hover)] underline">{t("errors.dismiss", { defaultValue: "Dismiss" })}</button>
           </div>
         )}
         {emailVerified === false && (
@@ -292,6 +307,70 @@ export function ActivateWizard() {
                 disabled={!accountEmail || resending}
               >
                 {resending ? t("verificationSent", { defaultValue: "Verification email sent! Check your inbox." }) : t("resendVerificationCta")}
+              </button>
+            </div>
+          </div>
+        )}
+        {showEmailVerificationModal && step === 3 && emailVerified === false && (
+          <div className="mb-6 rounded-2xl border border-[var(--accent-warning)]/40 bg-[var(--accent-warning-subtle)] px-5 py-4" role="alert">
+            <p className="text-sm font-semibold text-[var(--accent-warning)]">{t("verifyEmailRequired", { defaultValue: "Verify your email to continue" })}</p>
+            <p className="mt-2 text-sm text-[var(--accent-warning)]/80">
+              {t("verifyEmailDesc", { email: accountEmail || "", defaultValue: "We sent a verification link to {email}. Please check your inbox and click the link to verify your account." })}
+            </p>
+            <div className="mt-4 flex gap-3">
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!accountEmail || resending) return;
+                  setResending(true);
+                  try {
+                    const res = await fetch("/api/auth/resend-verification", {
+                      method: "POST",
+                      credentials: "include",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ email: accountEmail }),
+                    });
+                    if (res.ok) {
+                      setResending(true);
+                      setTimeout(() => setResending(false), 3000);
+                    }
+                  } catch {
+                    // best-effort
+                  } finally {
+                    setTimeout(() => setResending(false), 3000);
+                  }
+                }}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--accent-warning)] text-white font-semibold px-4 py-2 hover:bg-[var(--accent-warning)]/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-sm"
+                disabled={resending}
+              >
+                {resending ? t("verificationResent", { defaultValue: "Verification email sent!" }) : t("resendVerification", { defaultValue: "Resend verification email" })}
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  setCheckingVerification(true);
+                  try {
+                    const res = await fetch("/api/auth/session", { credentials: "include" });
+                    if (res.ok) {
+                      const data = (await res.json().catch(() => null)) as { session?: { emailVerified?: boolean } | null } | null;
+                      const s = data?.session ?? null;
+                      if (typeof s?.emailVerified === "boolean") {
+                        setEmailVerified(s.emailVerified);
+                        if (s.emailVerified) {
+                          setShowEmailVerificationModal(false);
+                        }
+                      }
+                    }
+                  } catch {
+                    // best-effort
+                  } finally {
+                    setCheckingVerification(false);
+                  }
+                }}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] font-semibold px-4 py-2 hover:bg-[var(--bg-hover)] transition-colors disabled:opacity-60 disabled:cursor-not-allowed text-sm"
+                disabled={checkingVerification}
+              >
+                {t("checkVerification", { defaultValue: "I've verified my email" })}
               </button>
             </div>
           </div>
@@ -333,6 +412,7 @@ export function ActivateWizard() {
                           : "border-[var(--border-default)]"
                     }`}
                     aria-label={s.label}
+                    aria-current={isActive ? "step" : undefined}
                     onClick={() => setStep(s.id)}
                   />
                   <span className="hidden md:inline text-[11px] text-[var(--text-tertiary)]">

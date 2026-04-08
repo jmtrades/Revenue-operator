@@ -87,6 +87,7 @@ export function ActivateStep({
                   key={c.id}
                   type="button"
                   onClick={() => setCarrier(c.id)}
+                  aria-pressed={carrier === c.id}
                   className={`rounded-full border px-3 py-1 ${
                     carrier === c.id
                       ? "border-sky-400 bg-sky-500/10 text-slate-50"
@@ -142,6 +143,7 @@ export function ActivateStep({
           <div className="flex items-center justify-center gap-3">
             <a
               href={`tel:${phoneNumber}`}
+              aria-label="Call your AI agent for a test"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-500 text-white font-semibold hover:bg-emerald-600 transition-colors active:scale-95"
             >
               <Phone className="w-5 h-5" />

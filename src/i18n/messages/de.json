@@ -8236,7 +8236,11 @@
     "goalStep": {
       "heading": "What do you want your AI agent to do?",
       "subtitle": "Select one or more goals. You can always change this later.",
-      "selected": "✓ Selected"
+      "selected": "✓ Selected",
+      "quickSetupTitle": "Schnelle KI-Einrichtung — Wählen Sie Ihre Rolle und starten Sie schnell",
+      "quickSetupDesc": "Vordefinierte Vorlagen für Verkauf, Immobilien, Versicherungen, Heimatservice und mehr. Minimale Konfiguration erforderlich.",
+      "quickSetupCta": "Starten →",
+      "orCustomize": "oder manuell anpassen"
     },
     "plan": "Plan",
     "planSelection": {
@@ -11219,11 +11223,78 @@
     "viewSyncLog": "View sync log"
   },
   "operations": {
-    "avgResponseTime": "Avg Response Time",
-    "noShowRate": "No-Show Rate",
-    "reactivationRate": "Reactivation Rate",
-    "followUpRate": "Follow-Up Rate",
-    "loadError": "Failed to load operations metrics"
+    "avgResponseTime": "Durchschnittliche Antwortzeit",
+    "noShowRate": "Ausfallquote",
+    "reactivationRate": "Reaktivierungsquote",
+    "followUpRate": "Verfolgungsquote",
+    "loadError": "Fehler beim Laden der Operationsmetriken",
+    "title": "Kontrollzentrum",
+    "subtitle": "Überwachen und kontrollieren Sie alle Ihre KI-Operationen an einem Ort",
+    "quickActions": {
+      "importLeads": "Leads Importieren",
+      "importLeadsDesc": "Laden Sie eine CSV-Datei mit Leads hoch, um Anrufe zu starten",
+      "startCalling": "Anrufe Starten",
+      "startCallingDesc": "KI passt sich automatisch an jeden Lead an",
+      "createCampaign": "Kampagne Erstellen",
+      "createCampaignDesc": "Wählen Sie aus Kaltakquise, Nachverfolgungen und mehr"
+    },
+    "aiIntelligence": {
+      "title": "KI-Intelligenz: Aktiv",
+      "description": "KI passt ihren Ansatz für jeden Lead basierend auf Profil, Bewertung und Verlauf an. Das System lernt aus jedem Anruf, um Ergebnisse zu verbessern."
+    },
+    "metrics": {
+      "activeCampaigns": "Aktive Kampagnen",
+      "totalCalls": "Gesamtanrufe",
+      "appointmentsBooked": "Gebuchte Termine",
+      "pendingFollowUps": "Ausstehende Nachverfolgungen"
+    },
+    "sections": {
+      "outboundCampaigns": "Ausgehende Kampagnen",
+      "followUps": "Nachverfolgungen",
+      "recentCalls": "Aktivität Aktueller Anrufe"
+    },
+    "emptyState": {
+      "campaigns": {
+        "title": "Bereit, Anrufe zu starten?",
+        "description": "Erstellen Sie Ihre erste Kampagne, um KI-Anrufe zu starten. Wählen Sie aus Kaltakquise, Nachverfolgungen und mehr.",
+        "cta": "Kampagne Erstellen"
+      },
+      "calls": {
+        "title": "Noch keine Anrufe",
+        "description": "Erstellen Sie eine Kampagne, um Anrufe zu starten. Die KI bearbeitet die Kaltakquise automatisch.",
+        "cta": "Erstellen Sie Ihre Erste Kampagne"
+      }
+    },
+    "followUps": {
+      "pendingActions": "ausstehende Aktionen",
+      "viewAll": "Nachverfolgungen Anzeigen",
+      "allCaughtUp": "Alles erledigt!"
+    },
+    "actions": {
+      "viewAll": "Alle Anzeigen"
+    },
+    "campaignTypes": {
+      "coldOutreach": "Kaltakquise",
+      "followUp": "Nachverfolgung",
+      "appointmentSetting": "Terminvereinbarung",
+      "noShowRecovery": "Ausfallwiederherstellung",
+      "reactivation": "Reaktivierung",
+      "quoteChase": "Angebotsverfolgung",
+      "leadQualification": "Lead-Qualifizierung",
+      "campaign": "Kampagne"
+    },
+    "statuses": {
+      "active": "Aktiv",
+      "paused": "Pausiert",
+      "draft": "Entwurf",
+      "completed": "Abgeschlossen",
+      "launching": "Wird Gestartet"
+    },
+    "messages": {
+      "campaignStarted": "Kampagne gestartet",
+      "campaignPaused": "Kampagne pausiert",
+      "failedToUpdateCampaign": "Fehler beim Aktualisieren der Kampagne"
+    }
   },
   "pipeline": {
     "title": "Pipeline Funnel",

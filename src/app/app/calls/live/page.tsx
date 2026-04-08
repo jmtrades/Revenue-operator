@@ -70,11 +70,12 @@ function DurationTimer({ startedAt }: { startedAt: string | null }) {
 }
 
 function SentimentBadge({ sentiment }: { sentiment?: "positive" | "neutral" | "negative" | null }) {
-  if (!sentiment) return <span className="text-xs text-[var(--text-tertiary)]">Analyzing…</span>;
+  const tLocal = useTranslations("calls.live");
+  if (!sentiment) return <span className="text-xs text-[var(--text-tertiary)]">{tLocal("sentiment.analyzing")}</span>;
   const config = {
-    positive: { label: "Positive", color: "text-[var(--accent-primary)]", bg: "bg-[color:var(--accent-primary)]/10" },
-    neutral: { label: "Neutral", color: "text-[var(--text-secondary)]", bg: "bg-[var(--bg-inset)]" },
-    negative: { label: "Negative", color: "text-[var(--accent-danger,#ef4444)]", bg: "bg-[color:var(--accent-danger,#ef4444)]/10" },
+    positive: { label: tLocal("sentiment.positive"), color: "text-[var(--accent-primary)]", bg: "bg-[color:var(--accent-primary)]/10" },
+    neutral: { label: tLocal("sentiment.neutral"), color: "text-[var(--text-secondary)]", bg: "bg-[var(--bg-inset)]" },
+    negative: { label: tLocal("sentiment.negative"), color: "text-[var(--accent-danger,#ef4444)]", bg: "bg-[color:var(--accent-danger,#ef4444)]/10" },
   }[sentiment];
   return (
     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${config.bg} ${config.color}`}>
@@ -86,6 +87,7 @@ function SentimentBadge({ sentiment }: { sentiment?: "positive" | "neutral" | "n
 export default function CallsLivePage() {
   const { workspaceId } = useWorkspace();
   const t = useTranslations();
+  const tLive = useTranslations("calls.live");
   const { data, loading, error, lastRefreshed } = useActiveCalls(workspaceId ?? null);
   const [mutedCalls, setMutedCalls] = useState<Set<string>>(new Set());
   const [heldCalls, setHeldCalls] = useState<Set<string>>(new Set());
@@ -102,16 +104,16 @@ export default function CallsLivePage() {
       });
       if (!res.ok) {
         const _err = await res.json().catch(() => ({}));
-        toast.error("Failed to update call");
+        toast.error(tLive("errors.updateFailed"));
         return;
       }
       if (action === "mute") setMutedCalls((prev) => new Set(prev).add(callId));
       if (action === "unmute") setMutedCalls((prev) => { const next = new Set(prev); next.delete(callId); return next; });
       if (action === "hold") setHeldCalls((prev) => new Set(prev).add(callId));
       if (action === "unhold") setHeldCalls((prev) => { const next = new Set(prev); next.delete(callId); return next; });
-      if (action === "transfer") toast.success("Call transferred to fallback number");
+      if (action === "transfer") toast.success(tLive("toast.transferSuccess"));
     } catch (err) {
-      toast.error("Failed to update call");
+      toast.error(tLive("errors.updateFailed"));
     } finally {
       setActionLoading(null);
     }
@@ -230,10 +232,10 @@ export default function CallsLivePage() {
                               ? "border-[color:var(--accent-warning,#f59e0b)]/30 text-[var(--accent-warning,#f59e0b)] bg-[color:var(--accent-warning,#f59e0b)]/10 hover:bg-[color:var(--accent-warning,#f59e0b)]/20"
                               : "border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-inset)]"
                           }`}
-                          title={isMuted ? "Unmute" : "Mute"}
+                          title={isMuted ? tLive("controls.unmute") : tLive("controls.mute")}
                         >
                           {isMuted ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5" />}
-                          {isMuted ? "Unmute" : "Mute"}
+                          {isMuted ? tLive("controls.unmute") : tLive("controls.mute")}
                         </button>
                         <button
                           type="button"
@@ -244,20 +246,20 @@ export default function CallsLivePage() {
                               ? "border-[var(--accent-primary)]/30 text-[var(--accent-primary)] bg-[color:var(--accent-primary)]/10 hover:bg-[color:var(--accent-primary)]/20"
                               : "border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-inset)]"
                           }`}
-                          title={isHeld ? "Resume" : "Hold"}
+                          title={isHeld ? tLive("controls.resume") : tLive("controls.hold")}
                         >
                           {isHeld ? <PlayCircle className="w-3.5 h-3.5" /> : <PauseCircle className="w-3.5 h-3.5" />}
-                          {isHeld ? "Resume" : "Hold"}
+                          {isHeld ? tLive("controls.resume") : tLive("controls.hold")}
                         </button>
                         <button
                           type="button"
                           onClick={() => handleCallAction(call.id, "transfer")}
                           disabled={actionLoading === `${call.id}-transfer`}
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-[var(--border-default)] text-[var(--text-secondary)] hover:bg-[var(--bg-inset)] transition-colors disabled:opacity-50"
-                          title="Transfer call"
+                          title={tLive("controls.transfer")}
                         >
                           <PhoneForwarded className="w-3.5 h-3.5" />
-                          Transfer
+                          {tLive("controls.transfer")}
                         </button>
                       </div>
                     </div>

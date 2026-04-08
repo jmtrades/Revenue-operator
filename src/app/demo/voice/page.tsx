@@ -275,6 +275,7 @@ export default function VoiceDemoPage() {
               value={businessName}
               onChange={(e) => setBusinessName(e.target.value)}
               placeholder="Your business name (e.g., Acme Dental)"
+              aria-label="Your business name"
               className="w-full px-4 py-3 rounded-xl text-sm text-center transition-colors focus:outline-none focus:ring-2"
               style={{
                 background: "var(--bg-primary)",
@@ -341,7 +342,7 @@ export default function VoiceDemoPage() {
               </div>
 
               {/* Transcript Area */}
-              <div className="px-4 py-4 min-h-64 max-h-64 overflow-y-auto space-y-3" style={{ background: "var(--bg-primary)" }}>
+              <div className="px-4 py-4 min-h-64 max-h-64 overflow-y-auto space-y-3" style={{ background: "var(--bg-primary)" }} aria-live="polite">
                 {transcript.length === 0 && conversationStep === 0 && (
                   <p className="text-sm italic text-center mt-20" style={{ color: "var(--text-tertiary)" }}>Tap &quot;Start Call&quot; to begin...</p>
                 )}
