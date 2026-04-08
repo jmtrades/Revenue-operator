@@ -172,6 +172,14 @@
     {
       "path": "/api/cron/opportunity-recovery",
       "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/intelligence-loop",
+      "schedule": "0 */4 * * *"
+    },
+    {
+      "path": "/api/cron/daily-call-plan",
+      "schedule": "0 7 * * *"
     }
   ]
 }

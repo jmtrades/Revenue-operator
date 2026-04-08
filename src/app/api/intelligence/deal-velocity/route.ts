@@ -5,8 +5,20 @@ import {
   recommendAccelerators,
   predictDealCloseDate,
 } from "@/lib/intelligence/deal-velocity-analyzer";
+import { getSession } from "@/lib/auth/request-session";
+import { requireWorkspaceAccess } from "@/lib/auth/workspace-access";
+import { assertSameOrigin } from "@/lib/http/csrf";
 
 export async function POST(request: NextRequest) {
+  const csrfBlock = assertSameOrigin(request);
+  if (csrfBlock) return csrfBlock;
+
+  const session = await getSession(request);
+  const workspaceId = session?.workspaceId;
+  if (!workspaceId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const authErr = await requireWorkspaceAccess(request, workspaceId);
+  if (authErr) return authErr;
+
   try {
     const body = await request.json();
     const { action, ...params } = body;

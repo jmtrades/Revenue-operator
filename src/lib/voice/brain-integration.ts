@@ -17,6 +17,14 @@ import type {
 } from "@/lib/intelligence/lead-brain";
 
 // TYPES
+
+// Local interfaces for helper functions
+interface RelationshipContext {
+  objectionsRaised: Array<{ objection: string; resolvedAt?: string }>;
+  promisesMadeByUs?: Array<{ promise: string; dueDate?: string; fulfilledAt?: string }>;
+  promisesMadeByThem?: Array<{ promise: string; dueDate?: string; fulfilledAt?: string }>;
+  buyingStage?: BuyingStage;
+}
 export interface CallBrainContext {
   leadId: string;
   leadName: string;
@@ -344,7 +352,7 @@ function extractObjections(o: Array<{ objection: string; resolvedAt?: string }>)
   }));
 }
 
-function extractActivePromises(r: any): PromiseRecord[] {
+function extractActivePromises(r: RelationshipContext): PromiseRecord[] {
   return [...(r.promisesMadeByUs || []), ...(r.promisesMadeByThem || [])]
     .filter((p) => !p.fulfilledAt)
     .map((p) => ({
@@ -367,25 +375,28 @@ function extractCompanyName(i: LeadInteraction[]): string {
   return first?.companyName || "Their Company";
 }
 
-function generateTalkingPoints(b: any, _s: CommunicationStyle): string[] {
-  const p = b.painPointsIdentified?.length ? [`Solution for: ${b.painPointsIdentified[0]}`] : [];
+function generateTalkingPoints(b: Record<string, unknown>, _s: CommunicationStyle): string[] {
+  const painPoints = (b.painPointsIdentified as string[] | undefined);
+  const p = painPoints?.length ? [`Solution for: ${painPoints[0]}`] : [];
   return [...p, "45-day implementation", "99.9% uptime"];
 }
 
-function generateTopicsToAvoid(o: any[], r: ObjectionRecord[]): string[] {
+function generateTopicsToAvoid(o: string[], r: ObjectionRecord[]): string[] {
   return r.filter((x) => !x.resolved).map((x) => x.objection);
 }
 
-function generatePersonalizationHooks(b: any, i: LeadInteraction[], r: any): PersonalizationHook[] {
+function generatePersonalizationHooks(b: Record<string, unknown>, i: LeadInteraction[], r: RelationshipContext): PersonalizationHook[] {
   const h: PersonalizationHook[] = [];
-  if (b.painPointsIdentified?.length)
-    h.push({ type: "pain_point", content: b.painPointsIdentified[0], context: "Primary" });
-  if (b.competitorMentions?.length)
-    h.push({ type: "value_driver", content: `vs ${b.competitorMentions[0].competitor}`, context: "Positioning" });
+  const painPoints = (b.painPointsIdentified as string[] | undefined);
+  const competitors = (b.competitorMentions as Array<{ competitor?: string }> | undefined);
+  if (painPoints?.length)
+    h.push({ type: "pain_point", content: painPoints[0], context: "Primary" });
+  if (competitors?.length)
+    h.push({ type: "value_driver", content: `vs ${competitors[0].competitor}`, context: "Positioning" });
   return h;
 }
 
-function extractDecisionTimeline(b: any): string | undefined {
+function extractDecisionTimeline(b: LeadBrain): string | undefined {
   return "End of Q2";
 }
 
