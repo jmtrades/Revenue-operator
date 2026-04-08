@@ -276,7 +276,7 @@ export function getNextCompliantTime(leadPhone: string): string {
     const leadLocalTime = new Date(now.toLocaleString("en-US", { timeZone: leadTimezone }));
     const hours = leadLocalTime.getHours();
 
-    let nextTime = new Date(leadLocalTime);
+    const nextTime = new Date(leadLocalTime);
 
     // If it's before 8 AM, schedule for 8 AM today
     if (hours < 8) {

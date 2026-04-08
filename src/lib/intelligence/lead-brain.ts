@@ -1020,30 +1020,33 @@ export async function computeLeadIntelligence(
   const { getDb } = await import("@/lib/db/queries");
   const db = getDb();
 
-  // Fetch recent interactions (signals) for this lead
+  // Fetch recent interactions (canonical signals) for this lead
   const { data: signals } = await db
-    .from("lead_signals")
-    .select("*")
+    .from("canonical_signals")
+    .select("id, workspace_id, lead_id, signal_type, payload, occurred_at, created_at")
     .eq("lead_id", leadId)
     .eq("workspace_id", workspaceId)
-    .order("created_at", { ascending: true })
+    .order("occurred_at", { ascending: true })
     .limit(100);
 
-  // Convert DB signals to LeadInteraction[]
-  const interactions: LeadInteraction[] = (signals ?? []).map((s: Record<string, unknown>, index: number) => ({
-    id: `signal-${(s.id as string) || index}`,
-    timestamp: (s.created_at as string) || new Date().toISOString(),
-    channel: mapSignalChannel(s.signal_type as string),
-    outcome: mapSignalOutcome(s.signal_type as string, s.metadata as Record<string, unknown> | null),
-    summary: (s.description as string) || `Signal: ${s.signal_type as string}`,
-    keyMoments: [],
-    questionsAsked: [],
-    rapportBuilt: false,
-    responsiveness: "delayed" as const,
-    engagementDepth: (s.weight as number) || 5,
-    duration: 0,
-    sentiment: "neutral" as Sentiment,
-  }));
+  // Convert canonical_signals to LeadInteraction[]
+  const interactions: LeadInteraction[] = (signals ?? []).map((s: Record<string, unknown>, index: number) => {
+    const payload = (s.payload as Record<string, unknown>) || {};
+    return {
+      id: `signal-${(s.id as string) || index}`,
+      timestamp: (s.occurred_at as string) || (s.created_at as string) || new Date().toISOString(),
+      channel: mapSignalChannel(s.signal_type as string),
+      outcome: mapSignalOutcome(s.signal_type as string, payload),
+      summary: (payload.summary as string) || `Signal: ${s.signal_type as string}`,
+      keyMoments: [],
+      questionsAsked: [],
+      rapportBuilt: false,
+      responsiveness: "delayed" as const,
+      engagementDepth: (payload.weight as number) || 5,
+      duration: (payload.duration as number) || 0,
+      sentiment: ((payload.sentiment as string) || "neutral") as Sentiment,
+    };
+  });
 
   const brain = buildLeadBrain(interactions);
   const action = computeNextAction(brain);
@@ -1118,15 +1121,18 @@ export async function persistLeadIntelligence(
           next_best_action: intelligence.next_best_action,
           action_timing: intelligence.action_timing,
           action_confidence: intelligence.action_confidence,
-          risk_flags: intelligence.risk_flags,
-          opportunity_signals: intelligence.opportunity_signals,
-          recommended_channel: intelligence.recommended_channel,
-          recommended_tone: intelligence.recommended_tone,
-          brain_snapshot: intelligence.brain_snapshot as unknown as Record<string, unknown>,
-          computed_at: intelligence.computed_at,
-          last_contact_at: intelligence.last_contact_at,
+          action_channel: intelligence.recommended_channel,
+          action_reason: intelligence.recommended_tone,
+          risk_flags_json: JSON.stringify(intelligence.risk_flags),
           churn_risk: intelligence.churn_risk,
           last_outcome: intelligence.last_outcome,
+          last_contact_at: intelligence.last_contact_at,
+          last_sentiment: "neutral",
+          lifecycle_phase: intelligence.lifecycle_phase || null,
+          computed_at: intelligence.computed_at,
+          signal_count: 0,
+          total_touchpoints: 0,
+          updated_at: new Date().toISOString(),
         },
         { onConflict: "lead_id,workspace_id" }
       );
@@ -1153,10 +1159,40 @@ export async function getLeadIntelligence(
       .eq("workspace_id", workspaceId)
       .maybeSingle();
     if (error || !data) return null;
-    return data as unknown as LeadIntelligence;
+    const row = data as Record<string, unknown>;
+    // Map DB columns to LeadIntelligence interface
+    return {
+      lead_id: row.lead_id as string,
+      workspace_id: row.workspace_id as string,
+      urgency_score: (row.urgency_score as number) || 0,
+      intent_score: (row.intent_score as number) || 0,
+      engagement_score: (row.engagement_score as number) || 0,
+      conversion_probability: (row.conversion_probability as number) || 0,
+      next_best_action: (row.next_best_action as string) || "wait",
+      action_timing: (row.action_timing as "immediate" | "scheduled" | "deferred") || "scheduled",
+      action_confidence: (row.action_confidence as number) || 0,
+      risk_flags: parseJsonArray(row.risk_flags_json),
+      opportunity_signals: [],
+      recommended_channel: (row.action_channel as string) || "call",
+      recommended_tone: (row.action_reason as string) || "professional",
+      brain_snapshot: null,
+      computed_at: (row.computed_at as string) || new Date().toISOString(),
+      last_contact_at: (row.last_contact_at as string) || new Date().toISOString(),
+      churn_risk: (row.churn_risk as number) || 0,
+      last_outcome: (row.last_outcome as string) || null,
+      lifecycle_phase: (row.lifecycle_phase as string) || undefined,
+    };
   } catch {
     return null;
   }
+}
+
+function parseJsonArray(val: unknown): string[] {
+  if (Array.isArray(val)) return val as string[];
+  if (typeof val === "string") {
+    try { return JSON.parse(val) as string[]; } catch { return []; }
+  }
+  return [];
 }
 
 // Aliases for routes that import under different names
