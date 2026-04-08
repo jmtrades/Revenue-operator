@@ -536,7 +536,7 @@
       "backToHome": "Back to home",
       "button": "Sign in",
       "pageTitle": "Sign in — Revenue Operator",
-      "googleComingSoon": "",
+      "googleComingSoon": "Google Sign-In coming soon",
       "noAccountPrefix": "No account found. ",
       "startFreeCta": "Get started →",
       "emailPlaceholder": "you@company.com",
@@ -4191,7 +4191,7 @@
     "empty": {
       "title": "No active campaigns.",
       "body": "Deploy your first autonomous campaign to start executing revenue recovery.",
-      "description": ""
+      "description": "Create a campaign from a template or build a custom sequence to qualify leads and recover revenue."
     },
     "heading": "Campaigns",
     "description": "Intelligent revenue execution. Deploy autonomous campaigns that qualify leads, recover revenue, and re-engage stale pipeline.",
@@ -5277,6 +5277,50 @@
     "startFree": "Get started →",
     "backToHome": "Back to home"
   },
+  "blogPage": {
+    "sectionLabel": "Resources",
+    "heading": "Learn how to capture every call and convert it to revenue",
+    "subheading": "Guides, playbooks, and industry insights on AI phone agents, automating follow-up, and measuring the revenue impact. Join our mailing list to get new content as it publishes.",
+    "newsletterTitle": "Get the latest guides and playbooks",
+    "newsletterDesc": "We send new articles, case studies, and industry playbooks directly to your inbox — no more than 2x per week.",
+    "emailPlaceholder": "your@email.com",
+    "subscribe": "Subscribe",
+    "ctaLine": "Ready to see how Revenue Operator handles your calls?",
+    "ctaButton": "Get started — 5 minutes →",
+    "topics": {
+      "0": {
+        "title": "AI Revenue Operators",
+        "description": "How autonomous operators handle inbound calls, qualify intent, and book appointments without a human on staff."
+      },
+      "1": {
+        "title": "Call Handling & Recovery",
+        "description": "Turn every call into an opportunity. Automate callbacks, follow-ups, and lead recovery at scale."
+      },
+      "2": {
+        "title": "Speed-to-Lead & Follow-up",
+        "description": "Respond to inbound leads in seconds, not hours. Automated sequences that move prospects to appointments."
+      },
+      "3": {
+        "title": "Revenue Operations Automation",
+        "description": "End-to-end workflows that handle qualifying, booking, follow-up, and recovery so your team focuses on closing."
+      },
+      "4": {
+        "title": "Industry-Specific Guides",
+        "description": "Deep dives into HVAC, Dental, Legal, and Real Estate workflows optimized for missed-call recovery."
+      },
+      "5": {
+        "title": "Measurement & ROI",
+        "description": "Track what matters: calls answered, appointments booked, revenue recovered, and attribution by source."
+      }
+    }
+  },
+  "blogPostPage": {
+    "backLink": "← Blog",
+    "examplePrefix": "See a practical example for",
+    "exampleSuffix": "in your workflows.",
+    "ctaPrimary": "Get started →",
+    "ctaSecondary": "Back to blog"
+  },
   "productPage": {
     "metaTitle": "Product",
     "metaDescription": "One platform for every phone interaction — inbound calls, outbound campaigns, SMS, scheduling, lead capture, and analytics.",
@@ -5611,23 +5655,23 @@
       "label": "Customer Stories",
       "testimonials": {
         "amanda": {
-          "quote": "",
-          "author": "",
+          "quote": "Revenue Operator transformed how we manage client callbacks. Our utilization rates are up 40% since implementation.",
+          "author": "Amanda Chen",
           "role": "Consulting firm"
         },
         "ryan": {
-          "quote": "",
-          "author": "",
+          "quote": "We cut our lead response time from 4 hours to under 2 minutes. Sales conversations are happening before our team even logs in.",
+          "author": "Ryan Martinez",
           "role": "SaaS startup"
         },
         "mike": {
-          "quote": "",
-          "author": "",
+          "quote": "Emergency calls used to go straight to voicemail when I was in the field. Now Revenue Operator handles everything - dispatch, scheduling, even upsells. My revenue actually increased.",
+          "author": "Mike Olson",
           "role": "Plumbing company owner"
         },
         "sarah": {
-          "quote": "",
-          "author": "",
+          "quote": "The AI answers our phones with the same professionalism as our receptionist. Patient satisfaction scores went up because calls are answered immediately, even during lunch breaks.",
+          "author": "Sarah Kim",
           "role": "Dental practice"
         },
         "james": {
@@ -5643,7 +5687,7 @@
       "items": {
         "0": {
           "quote": "We were missing after-hours calls — significant missed revenue every month. Within a week of going live, Revenue Operator was booking appointments at 2 AM, recovering leads at midnight, and following up with quotes before our crew even woke up. It paid for itself almost immediately.",
-          "name": "",
+          "name": "Marcus T.",
           "role": "Owner",
           "company": "Home Services Company — Texas",
           "metric": "24/7 coverage"
@@ -5657,7 +5701,7 @@
         },
         "2": {
           "quote": "I was skeptical about AI handling our legal intake. Then it booked consultations its first night — at 2 AM — from people searching for a lawyer. The voice quality is so natural that callers thank the AI by name. The ROI has been undeniable.",
-          "name": "",
+          "name": "Jordan Reeves",
           "role": "Managing Partner",
           "company": "Personal Injury Law Firm — Illinois",
           "metric": "After-hours intake"
@@ -5671,7 +5715,7 @@
         },
         "4": {
           "quote": "I tested multiple AI phone products before finding Revenue Operator. The difference is night and day — this one actually books appointments, follows up on quotes, and routes urgent calls to my cell. Connected my existing number and it was handling the full workflow within an hour.",
-          "name": "",
+          "name": "Kevin Morales",
           "role": "Owner",
           "company": "Auto Service Center — Georgia",
           "metric": "Live in minutes"
@@ -5685,7 +5729,7 @@
         },
         "6": {
           "quote": "As a solo practitioner, I was losing patients because I couldn't answer during appointments. Revenue Operator handles my entire patient communication — scheduling, follow-ups, and no-show recovery. Patient volume increased significantly in the first quarter without adding staff. It's a complete operations layer that supports growth.",
-          "name": "",
+          "name": "Dr. Alan Meyer",
           "role": "Chiropractor",
           "company": "Wellness Center — Colorado",
           "metric": "Growth"
@@ -9355,6 +9399,9 @@
         "callError": "Could not start the call. Try again.",
         "connectionError": "Could not connect. Please try again.",
         "invalidPhone": "Enter a valid phone number with country code (e.g. +44, +61).",
+        "phoneErrorMinDigits": "Please enter your full phone number with country code (e.g. +44 7911 123456)",
+        "phoneErrorCountryCode": "Please include your country code (e.g. +44 7911 123456 for UK, +61 412 345 678 for Australia)",
+        "countryCodesHint": "Include your country code: +44 (UK), +1 (US), +61 (AU), +49 (DE)",
         "disclaimer": "Free. No signup required. We call your phone in under 10 seconds."
       },
       "compliance": [

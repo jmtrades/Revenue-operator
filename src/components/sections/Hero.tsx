@@ -77,11 +77,11 @@ function HeroVoiceDemo() {
     const value = phone.trim();
     const digits = value.replace(/\D/g, "");
     if (!value || digits.length < 7 || digits.length > 15) {
-      setCallError("Please enter your full phone number with country code (e.g. +44 7911 123456)");
+      setCallError(t("phoneErrorMinDigits"));
       return;
     }
     if (digits.startsWith("0") && !value.startsWith("+")) {
-      setCallError("Please include your country code (e.g. +44 7911 123456 for UK, +61 412 345 678 for Australia)");
+      setCallError(t("phoneErrorCountryCode"));
       return;
     }
     setCallLoading(true);
@@ -175,7 +175,7 @@ function HeroVoiceDemo() {
           type="button"
           onClick={handleDemoCall}
           disabled={callLoading}
-          className="btn-marketing-blue px-5 py-2.5 text-sm whitespace-nowrap active:scale-[0.97]"
+          className="btn-marketing-primary px-5 py-2.5 text-sm whitespace-nowrap active:scale-[0.97]"
         >
           {callLoading ? t("calling") : t("demoCall")}
         </button>
@@ -189,7 +189,7 @@ function HeroVoiceDemo() {
         <p className="text-xs" style={{ color: "var(--accent-danger)" }}>{callError}</p>
       )}
       <p className="text-[11px]" style={{ color: "var(--text-quaternary)" }}>
-        Include your country code: +44 (UK), +1 (US), +61 (AU), +49 (DE)
+        {t("countryCodesHint")}
       </p>
       <p className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>
         {t("disclaimer")}
@@ -246,13 +246,13 @@ export function Hero() {
               </span>
             </div>
 
-            {/* CTAs — primary is blue (highest contrast, highest conversion) */}
+            {/* CTAs */}
             <div
               className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center mb-2"
             >
               <Link
                 href={ROUTES.START}
-                className="btn-marketing-blue btn-lg group no-underline flex items-center justify-center gap-2 w-full sm:w-auto active:scale-[0.97]"
+                className="btn-marketing-primary btn-lg group no-underline flex items-center justify-center gap-2 w-full sm:w-auto active:scale-[0.97]"
               >
                 {t("getStarted")}
                 <ArrowRight className="w-4 h-4" style={{ transition: "transform 200ms cubic-bezier(0.23, 1, 0.32, 1)" }} />

@@ -4,6 +4,7 @@ import { MarketingNavbar } from "@/components/sections/MarketingNavbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { CheckCircle2, XCircle } from "lucide-react";
+import { hreflangAlternateLanguages } from "@/lib/seo/hreflang";
 
 const BASE = "https://www.recall-touch.com";
 
@@ -11,7 +12,10 @@ export const metadata: Metadata = {
   title: "Revenue Operator vs GoHighLevel (GHL) — Revenue Operator",
   description:
     "GoHighLevel vs Revenue Operator: compare setup time, voice AI capability, AI phone agent capabilities, and pricing. Revenue Operator delivers AI phone + revenue ops in under 3 minutes.",
-  alternates: { canonical: "https://www.recall-touch.com/compare/gohighlevel" },
+  alternates: {
+    canonical: "https://www.recall-touch.com/compare/gohighlevel",
+    languages: hreflangAlternateLanguages("/compare/gohighlevel"),
+  },
   openGraph: {
     title: "Revenue Operator vs GoHighLevel (GHL) — Revenue Operator",
     description:
@@ -38,19 +42,32 @@ const rows: Row[] = [
 ];
 
 export default function GoHighLevelComparisonPage() {
-  const breadcrumbJsonLd = {
+  const structuredData = {
     "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
-      { "@type": "ListItem", position: 2, name: "Comparisons", item: `${BASE}/compare` },
-      { "@type": "ListItem", position: 3, name: "GoHighLevel", item: `${BASE}/compare/gohighlevel` },
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
+          { "@type": "ListItem", position: 2, name: "Comparisons", item: `${BASE}/compare` },
+          { "@type": "ListItem", position: 3, name: "GoHighLevel", item: `${BASE}/compare/gohighlevel` },
+        ],
+      },
+      {
+        "@type": "WebPage",
+        "@id": `${BASE}/compare/gohighlevel`,
+        url: `${BASE}/compare/gohighlevel`,
+        name: "Revenue Operator vs GoHighLevel (GHL) — Revenue Operator",
+        description:
+          "GoHighLevel vs Revenue Operator: compare setup time, voice AI capability, AI phone agent capabilities, and pricing. Revenue Operator delivers AI phone + revenue ops in under 3 minutes.",
+        isPartOf: { "@type": "WebSite", name: "Revenue Operator", url: BASE },
+      },
     ],
   };
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
       <MarketingNavbar />
       <main className="pt-16 pb-24">
         <Container>

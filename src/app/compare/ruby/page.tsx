@@ -4,6 +4,7 @@ import { MarketingNavbar } from "@/components/sections/MarketingNavbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { CheckCircle2, XCircle } from "lucide-react";
+import { hreflangAlternateLanguages } from "@/lib/seo/hreflang";
 
 const BASE = "https://www.recall-touch.com";
 
@@ -11,7 +12,10 @@ export const metadata: Metadata = {
   title: "Revenue Operator vs Ruby Receptionists — Revenue Operator",
   description:
     "Ruby Receptionists vs Revenue Operator: compare per-minute human receptionist pricing, automation limits, outbound capabilities, and revenue attribution.",
-  alternates: { canonical: "https://www.recall-touch.com/compare/ruby" },
+  alternates: {
+    canonical: "https://www.recall-touch.com/compare/ruby",
+    languages: hreflangAlternateLanguages("/compare/ruby"),
+  },
   openGraph: {
     title: "Revenue Operator vs Ruby Receptionists — Revenue Operator",
     description:
@@ -38,19 +42,32 @@ const rows: Row[] = [
 ];
 
 export default function RubyComparisonPage() {
-  const breadcrumbJsonLd = {
+  const structuredData = {
     "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
-      { "@type": "ListItem", position: 2, name: "Comparisons", item: `${BASE}/compare` },
-      { "@type": "ListItem", position: 3, name: "Ruby Receptionists", item: `${BASE}/compare/ruby` },
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
+          { "@type": "ListItem", position: 2, name: "Comparisons", item: `${BASE}/compare` },
+          { "@type": "ListItem", position: 3, name: "Ruby Receptionists", item: `${BASE}/compare/ruby` },
+        ],
+      },
+      {
+        "@type": "WebPage",
+        "@id": `${BASE}/compare/ruby`,
+        url: `${BASE}/compare/ruby`,
+        name: "Revenue Operator vs Ruby Receptionists — Revenue Operator",
+        description:
+          "Ruby Receptionists vs Revenue Operator: compare per-minute human receptionist pricing, automation limits, outbound capabilities, and revenue attribution.",
+        isPartOf: { "@type": "WebSite", name: "Revenue Operator", url: BASE },
+      },
     ],
   };
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
       <MarketingNavbar />
       <main className="pt-16 pb-24">
         <Container>

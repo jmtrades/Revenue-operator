@@ -18,6 +18,7 @@ import TrackPageView from "@/components/TrackPageView";
 import { ExitIntentPopup } from "@/components/ExitIntentPopup";
 import { CookieConsent } from "@/components/shared/CookieConsent";
 import SkipToContent from "@/components/ui/SkipToContent";
+import { hreflangAlternateLanguages } from "@/lib/seo/hreflang";
 
 const dmSans = DM_Sans({
   variable: "--font-body-sans",
@@ -75,7 +76,10 @@ export const metadata: Metadata = {
       "Autonomous revenue execution system that automates inbound calls, outbound campaigns, lead qualification, appointment booking, follow-ups, and revenue recovery. Any business. Any industry. Try free.",
     creator: "@revenueoperator",
   },
-  alternates: { canonical: "https://www.recall-touch.com" },
+  alternates: {
+    canonical: "https://www.recall-touch.com",
+    languages: hreflangAlternateLanguages("/"),
+  },
   robots: {
     index: true,
     follow: true,

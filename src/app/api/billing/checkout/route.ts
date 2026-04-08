@@ -248,6 +248,7 @@ export async function POST(req: NextRequest) {
             .eq("id", finalWorkspaceId);
         } catch (persistErr) {
           log("error", "billing.persist_stripe_customer_id_failed", { workspace_id: finalWorkspaceId, stripe_customer_id: createdId, error: persistErr instanceof Error ? persistErr.message : String(persistErr) });
+          return NextResponse.json({ ok: false, reason: "persist_stripe_customer_failed" }, { status: 500 });
         }
         customerId = createdId;
       } catch (err) {

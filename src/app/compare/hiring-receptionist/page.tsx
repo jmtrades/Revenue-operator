@@ -4,6 +4,7 @@ import { MarketingNavbar } from "@/components/sections/MarketingNavbar";
 import { Footer } from "@/components/sections/Footer";
 import { Container } from "@/components/ui/Container";
 import { CheckCircle2, XCircle } from "lucide-react";
+import { hreflangAlternateLanguages } from "@/lib/seo/hreflang";
 
 const BASE = "https://www.recall-touch.com";
 
@@ -11,7 +12,10 @@ export const metadata: Metadata = {
   title: "Revenue Operator vs Hiring a Receptionist — Revenue Operator",
   description:
     "Hiring a receptionist costs $35K–50K/year, 8 hours/day, and vacation days. Revenue Operator costs $1,164–$11,964/year, works 24/7/365, and never misses a call.",
-  alternates: { canonical: "https://www.recall-touch.com/compare/hiring-receptionist" },
+  alternates: {
+    canonical: "https://www.recall-touch.com/compare/hiring-receptionist",
+    languages: hreflangAlternateLanguages("/compare/hiring-receptionist"),
+  },
   openGraph: {
     title: "Revenue Operator vs Hiring a Receptionist — Revenue Operator",
     description:
@@ -39,19 +43,32 @@ const rows: Row[] = [
 ];
 
 export default function HiringReceptionistComparisonPage() {
-  const breadcrumbJsonLd = {
+  const structuredData = {
     "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
-      { "@type": "ListItem", position: 2, name: "Comparisons", item: `${BASE}/compare` },
-      { "@type": "ListItem", position: 3, name: "Hiring a Receptionist", item: `${BASE}/compare/hiring-receptionist` },
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Revenue Operator", item: BASE },
+          { "@type": "ListItem", position: 2, name: "Comparisons", item: `${BASE}/compare` },
+          { "@type": "ListItem", position: 3, name: "Hiring a Receptionist", item: `${BASE}/compare/hiring-receptionist` },
+        ],
+      },
+      {
+        "@type": "WebPage",
+        "@id": `${BASE}/compare/hiring-receptionist`,
+        url: `${BASE}/compare/hiring-receptionist`,
+        name: "Revenue Operator vs Hiring a Receptionist — Revenue Operator",
+        description:
+          "Hiring a receptionist costs $35K–50K/year, 8 hours/day, and vacation days. Revenue Operator costs $1,164–$11,964/year, works 24/7/365, and never misses a call.",
+        isPartOf: { "@type": "WebSite", name: "Revenue Operator", url: BASE },
+      },
     ],
   };
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
       <MarketingNavbar />
       <main className="pt-16 pb-24">
         <Container>

@@ -156,14 +156,21 @@ export async function GET(req: NextRequest) {
         })
         .select("id")
         .maybeSingle();
-      if (workspaceError || !createdWorkspace) {
-        return fail("google_workspace");
+      if (workspaceError) {
+        return fail("workspace_creation_failed");
+      }
+      if (!createdWorkspace) {
+        return fail("workspace_creation_failed");
       }
       workspaceId = (createdWorkspace as { id: string }).id;
-      await Promise.all([
-        db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" }),
-        db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" }),
-      ]);
+      try {
+        await Promise.all([
+          db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" }),
+          db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" }),
+        ]);
+      } catch {
+        return fail("workspace_creation_failed");
+      }
       isNewUser = true;
     }
 

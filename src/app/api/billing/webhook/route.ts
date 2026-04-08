@@ -442,23 +442,27 @@ async function handleStripeWebhookEvent(
 
         if (numbers && numbers.length > 0) {
           const telephony = getTelephonyService();
+          const successfullyReleased: string[] = [];
           for (const num of numbers as Array<{ id: string; provider_sid: string | null }>) {
             if (num.provider_sid) {
               try {
-                                const res = await telephony.releaseNumber(num.provider_sid);
+                const res = await telephony.releaseNumber(num.provider_sid);
                 if ("error" in res) {
                   log("error", "billing_webhook.release_number_failed", { provider_sid: num.provider_sid, error: res.error });
+                } else {
+                  successfullyReleased.push(num.id);
                 }
-} catch (e) {
+              } catch (e) {
                 log("error", "billing_webhook.release_number_error", { provider_sid: num.provider_sid, error: e instanceof Error ? e.message : String(e) });
               }
             }
           }
-          await db
-            .from("phone_numbers")
-            .update({ status: "released" })
-            .eq("workspace_id", workspaceId)
-            .eq("status", "active");
+          if (successfullyReleased.length > 0) {
+            await db
+              .from("phone_numbers")
+              .update({ status: "released" })
+              .in("id", successfullyReleased);
+          }
         }
       }
       break;
@@ -576,8 +580,16 @@ async function handleStripeWebhookEvent(
         }
       }
       if (workspaceId) {
-        await resolvePaymentObligationsBySubject(workspaceId, "subscription", invoice.id, "paid");
-        await resolvePaymentObligationsBySubject(workspaceId, "invoice", invoice.id, "paid");
+        try {
+          await resolvePaymentObligationsBySubject(workspaceId, "subscription", invoice.id, "paid");
+        } catch (err) {
+          log("warn", "stripe_webhook.resolve_subscription_obligation_failed", { workspace_id: workspaceId, error: err instanceof Error ? err.message : String(err) });
+        }
+        try {
+          await resolvePaymentObligationsBySubject(workspaceId, "invoice", invoice.id, "paid");
+        } catch (err) {
+          log("warn", "stripe_webhook.resolve_invoice_obligation_failed", { workspace_id: workspaceId, error: err instanceof Error ? err.message : String(err) });
+        }
           const { data: ws } = await db
             .from("workspaces")
             .select("pending_billing_tier, pending_billing_effective_at")
@@ -877,6 +889,7 @@ async function handleStripeWebhookEvent(
     }
 
     default:
+      log("info", "stripe_webhook.unhandled_event", { type: event.type });
       break;
   }
 
