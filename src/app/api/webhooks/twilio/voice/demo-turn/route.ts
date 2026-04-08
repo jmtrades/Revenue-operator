@@ -174,7 +174,7 @@ function isGoodbyeSignal(text: string): boolean {
 /** Detect conversation phase from history for analytics */
 function detectPhase(turnCount: number, lastUserMsg: string): string {
   if (turnCount <= 1) return "opening";
-  if (/\b(sign up|get started|free trial|ready to buy|buy now|subscribe|purchase|let's do it|i'm in|take my money|where do i sign)\b/i.test(lastUserMsg)) return "closing";
+  if (/\b(sign up|get started|ready to buy|buy now|subscribe|purchase|let's do it|i'm in|take my money|where do i sign)\b/i.test(lastUserMsg)) return "closing";
   if (/\b(smith\.?ai|ruby|bland|synthflow|retell|dialpad|competitor|alternative|compared|vs|versus)\b/i.test(lastUserMsg)) return "competitive";
   if (/\b(price|cost|plans?\b|how much|pricing|afford|budget|monthly|per month|subscription)\b/i.test(lastUserMsg)) return "pricing";
   if (/\b(but|however|concern|worry|expensive|not sure|think about|hesitat|don't know|maybe later)\b/i.test(lastUserMsg)) return "objection";
@@ -186,7 +186,7 @@ function detectPhase(turnCount: number, lastUserMsg: string): string {
 
 /** Detect if the AI response contained a CTA (call-to-action) */
 function hasCTA(text: string): boolean {
-  return /\b(recall dash touch dot com|sign up|free trial|get started|fourteen.?day)\b/i.test(text);
+  return /\b(recall dash touch dot com|sign up|get started|money.?back|thirty.?day)\b/i.test(text);
 }
 
 /* ── Main handler ───────────────────────────────────────────────────────── */
@@ -402,7 +402,7 @@ export async function POST(request: NextRequest) {
         // Inject a natural wrap-up hint into the system context
         history.push({
           role: "user",
-          content: "[System note: This call has been going for a while. Naturally wrap up and guide toward the free trial in your next response.]",
+          content: "[System note: This call has been going for a while. Naturally wrap up and guide toward getting started in your next response.]",
         });
       }
       aiResponse = await generateDemoResponse(history);
@@ -490,7 +490,7 @@ export async function POST(request: NextRequest) {
     });
     return twimlResponse(
       buildGoodbyeTwiml(
-        "I hit a small snag, but don't let that stop you! Head to recall dash touch dot com for a free trial. Thanks for calling!",
+        "I hit a small snag, but don't let that stop you! Head to recall dash touch dot com to try with our money-back guarantee. Thanks for calling!",
       ),
     );
   }

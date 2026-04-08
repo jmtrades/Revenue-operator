@@ -321,14 +321,14 @@ function generateStrategyHints(
       break;
     case "pricing":
       hints.push("Anchor on value before price. Frame as ROI: 'one missed call costs more than a month of Revenue Operator.'");
-      hints.push("Always end pricing discussion with the free trial — remove all risk.");
+      hints.push("Always end pricing discussion with our money-back guarantee — remove all risk.");
       break;
     case "objection_handling":
       hints.push("Use empathy first. Validate their concern, then address it.");
       break;
     case "closing":
       hints.push("They're ready! Be direct and helpful. Guide them to recall-touch.com/signup.");
-      hints.push("Make it feel easy and low-risk: 'takes thirty seconds, no credit card.'");
+      hints.push("Make it feel easy and risk-free: 'takes thirty seconds, fully risk-free.'");
       break;
   }
 
@@ -350,7 +350,7 @@ function generateStrategyHints(
 
   // Objection-pattern hints
   if (objections.includes("price_sensitivity")) {
-    hints.push("Price is a concern. Lean into ROI and the free trial. Don't defend the price — show the value.");
+    hints.push("Price is a concern. Lean into ROI and our money-back guarantee. Don't defend the price — show the value.");
   }
   if (objections.includes("ai_skepticism")) {
     hints.push("They're skeptical about AI. Point out: 'This conversation IS the proof. You're hearing the quality right now.'");
@@ -456,7 +456,7 @@ export function buildStrategyContext(intel: CallIntelligence): string {
   }
 
   if (intel.shouldAttemptClose) {
-    parts.push(`\nCLOSE SIGNAL: Engagement is high and caller seems ready. Naturally guide toward the free trial this turn.`);
+    parts.push(`\nCLOSE SIGNAL: Engagement is high and caller seems ready. Naturally guide toward our money-back guarantee this turn.`);
   }
 
   if (intel.objectionPatterns.length > 0) {

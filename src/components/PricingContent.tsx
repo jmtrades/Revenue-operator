@@ -296,7 +296,7 @@ function CostCalculator() {
           href={ROUTES.START}
           className="inline-flex items-center gap-2 bg-emerald-500 text-black font-semibold rounded-xl px-6 py-3 hover:bg-emerald-400 transition-[background-color,border-color,color,transform] no-underline"
         >
-          Start Recovering ${result.monthlyLost.toLocaleString()}/mo — Try Free
+          Start Recovering ${result.monthlyLost.toLocaleString()}/mo — Get Started
           <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
@@ -637,7 +637,7 @@ export function PricingContent() {
             {/* Mini social proof */}
             <div className="flex items-center justify-center gap-4 mb-6 text-xs" style={{ color: "var(--text-tertiary)" }}>
               <span className="flex items-center gap-1"><Check className="w-3 h-3 text-emerald-400" /> 3-minute setup</span>
-              <span className="flex items-center gap-1"><Check className="w-3 h-3 text-emerald-400" /> No credit card</span>
+              <span className="flex items-center gap-1"><Check className="w-3 h-3 text-emerald-400" /> 30-day money-back guarantee</span>
               <span className="flex items-center gap-1"><Check className="w-3 h-3 text-emerald-400" /> Cancel anytime</span>
             </div>
 

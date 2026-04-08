@@ -266,9 +266,9 @@ export default function AppSettingsBillingPage() {
 
   function formatBillingStatus(status: string | null): string {
     switch (status) {
-      case "trial": return "Free Trial";
+      case "trial": return "Inactive";
       case "active": return "Active";
-      case "trial_ended": return "Trial Ended";
+      case "trial_ended": return "Inactive";
       case "cancelled": return "Cancelled";
       case "paused": return "Paused";
       case "payment_failed": return "Payment Failed";
@@ -311,7 +311,7 @@ export default function AppSettingsBillingPage() {
         <div className="p-4 rounded-xl border border-[var(--accent-primary)]/20 bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] text-sm mb-4 flex items-start gap-3">
           <div className="shrink-0 w-8 h-8 rounded-full bg-[var(--accent-primary)]/20 flex items-center justify-center text-[var(--accent-primary)] text-sm font-bold">!</div>
           <div>
-            <p className="font-semibold text-[var(--accent-primary)]">{tBilling("trial.title", { defaultValue: "You're on a free trial" })}</p>
+            <p className="font-semibold text-[var(--accent-primary)]">{tBilling("trial.title", { defaultValue: "Choose a plan to get started" })}</p>
             <p className="mt-1 text-[var(--accent-primary)]/80">{tBilling("trial.description", { defaultValue: "Subscribe to a plan to keep your operators running after the trial ends. Your data and configuration will be preserved." })}</p>
           </div>
         </div>
@@ -421,7 +421,7 @@ export default function AppSettingsBillingPage() {
           <div>
             <p className="text-sm font-medium text-[var(--text-primary)]">{formatPlanSubscriptionLine(currentPlanId)}</p>
             <p className="text-xs text-[var(--text-secondary)] mt-1">
-              <span className="inline-block px-2 py-0.5 rounded-full text-[11px] font-medium bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]">Free Trial</span>
+              <span className="inline-block px-2 py-0.5 rounded-full text-[11px] font-medium bg-[var(--accent-primary)]/10 text-[var(--accent-primary)]">{tBilling("trial.title", { defaultValue: "Choose a plan to get started" })}</span>
             </p>
           </div>
         ) : (

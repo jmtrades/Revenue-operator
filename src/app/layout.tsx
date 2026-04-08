@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     siteName: "Revenue Operator",
     title: "Revenue Operator — AI Revenue Operations Platform",
     description:
-      "Autonomous revenue execution system that automates inbound calls, outbound campaigns, lead qualification, appointment booking, follow-ups, and revenue recovery. Any business. Any industry. Try free.",
+      "Autonomous revenue execution system that automates inbound calls, outbound campaigns, lead qualification, appointment booking, follow-ups, and revenue recovery. Any business. Any industry.",
     images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Revenue Operator — AI revenue operations for every business" }],
   },
   icons: { icon: "/icon" },
@@ -73,7 +73,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Revenue Operator — AI Revenue Operations Platform",
     description:
-      "Autonomous revenue execution system that automates inbound calls, outbound campaigns, lead qualification, appointment booking, follow-ups, and revenue recovery. Any business. Any industry. Try free.",
+      "Autonomous revenue execution system that automates inbound calls, outbound campaigns, lead qualification, appointment booking, follow-ups, and revenue recovery. Any business. Any industry.",
     creator: "@revenueoperator",
   },
   alternates: {

@@ -66,7 +66,7 @@
       "coverageRunning": "保護は稼働中",
       "nothingRequiresSupervision": "監督不要。必要時に通知します。",
       "remindBeforeCharge": "監督不要。必要時に通知します。請求前にリマインドします。",
-      "trialGraceEnded": "Your trial has ended.",
+      "trialGraceEnded": "サブスクリプションが終了しました。",
       "trialUpgradeToContinue": "Upgrade to continue →"
     }
   },
@@ -664,10 +664,10 @@
     "expandAgentCapacity": "Expand Operator Capacity",
     "roiTitle": "Platform Return on Investment",
     "trial": {
-      "title": "You're on a free trial",
-      "description": "Subscribe to a plan to keep your operators running after the trial ends. Your data and configuration will be preserved."
+      "title": "プランを選択してください",
+      "description": "オペレーターを稼働させ続けるためにプランに加入してください。データと設定は保持されます。"
     },
-    "description": "Subscribe to a plan to keep your operators running after the trial ends. Your data and configuration will be preserved.",
+    "description": "オペレーターを稼働させ続けるためにプランに加入してください。データと設定は保持されます。",
     "chooseVoice": "Choose Operator Voice"
   },
   "planChange": {
@@ -1421,7 +1421,7 @@
       "renewal": "更新",
       "manageBilling": "請求を管理",
       "opening": "開いています…",
-      "statusTrial": "アクティブ",
+      "statusTrial": "未アクティブ",
       "statusActive": "アクティブ",
       "statusPastDue": "支払い遅延",
       "statusPaused": "一時停止",
@@ -9114,7 +9114,7 @@
   "compare": {
     "title": "Revenue Operator vs {name}",
     "subtitle": "See how the AI Revenue Execution System compares.",
-    "cta": "Start free"
+    "cta": "Get started"
   },
   "agency": {
     "kicker": "Partner operations",
@@ -9478,16 +9478,16 @@
     "workspaceNote": "Workspace",
     "fixPayment": "Fix payment →",
     "upgradeCta": "Upgrade now →",
-    "statusTrial": "Trial",
+    "statusTrial": "未アクティブ",
     "statusActive": "Active",
     "statusCancelled": "Cancelled",
     "statusPaymentFailed": "Payment Failed",
-    "statusTrialEnded": "Trial Ended",
+    "statusTrialEnded": "未アクティブ",
     "statusPaused": "Paused",
     "trialDaysLeft": "{days} days left",
     "subscriptionCancelled": "Subscription cancelled",
     "paymentIssue": "Payment issue — update card",
-    "trialEnded": "Trial ended — upgrade now"
+    "trialEnded": "アクティブなプランがありません — プランを選択"
   },
   "help": {
     "breadcrumbs": {
@@ -10924,7 +10924,7 @@
     "passwordPlaceholder": "Enter your password",
     "showPassword": "Show password",
     "showPasswordAria": "Show password",
-    "startFreeCta": "Start free",
+    "startFreeCta": "Get started",
     "subtitle": "Manage your sign in settings",
     "title": "Sign in"
   },
@@ -10933,7 +10933,7 @@
     "callInProgress": "Call in progress",
     "caller": "Caller",
     "conversationPreview": "Conversation preview",
-    "ctaStartFree": "Cta start free",
+    "ctaStartFree": "Get started",
     "detailLabel": "Detail",
     "disclaimer": "Disclaimer",
     "followUp": "Follow up",

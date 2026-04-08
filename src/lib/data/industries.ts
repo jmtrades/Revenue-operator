@@ -122,7 +122,7 @@ const INDUSTRIES_DATA: Record<IndustrySlug, IndustryData> = {
       recoveredPerMonth: 4200,
       paybackDays: 3,
     },
-    ctaHeadline: "Start your free Plumbing & HVAC AI operator in 5 minutes",
+    ctaHeadline: "Start your Plumbing & HVAC AI operator in 5 minutes",
   },
   dental: {
     slug: "dental",
@@ -189,7 +189,7 @@ const INDUSTRIES_DATA: Record<IndustrySlug, IndustryData> = {
       recoveredPerMonth: 9600,
       paybackDays: 2,
     },
-    ctaHeadline: "Start your free Dental AI operator in 5 minutes",
+    ctaHeadline: "Start your Dental AI operator in 5 minutes",
   },
   legal: {
     slug: "legal",
@@ -256,7 +256,7 @@ const INDUSTRIES_DATA: Record<IndustrySlug, IndustryData> = {
       recoveredPerMonth: 27000,
       paybackDays: 1,
     },
-    ctaHeadline: "Start your free Legal AI operator in 5 minutes",
+    ctaHeadline: "Start your Legal AI operator in 5 minutes",
   },
   "real-estate": {
     slug: "real-estate",
@@ -323,7 +323,7 @@ const INDUSTRIES_DATA: Record<IndustrySlug, IndustryData> = {
       recoveredPerMonth: 85000,
       paybackDays: 1,
     },
-    ctaHeadline: "Start your free Real Estate AI operator in 5 minutes",
+    ctaHeadline: "Start your Real Estate AI operator in 5 minutes",
   },
   healthcare: {
     slug: "healthcare",
@@ -390,7 +390,7 @@ const INDUSTRIES_DATA: Record<IndustrySlug, IndustryData> = {
       recoveredPerMonth: 3000,
       paybackDays: 5,
     },
-    ctaHeadline: "Start your free Healthcare AI operator in 5 minutes",
+    ctaHeadline: "Start your Healthcare AI operator in 5 minutes",
   },
   "auto-repair": {
     slug: "auto-repair",
@@ -457,7 +457,7 @@ const INDUSTRIES_DATA: Record<IndustrySlug, IndustryData> = {
       recoveredPerMonth: 19200,
       paybackDays: 2,
     },
-    ctaHeadline: "Start your free Auto Repair AI operator in 5 minutes",
+    ctaHeadline: "Start your Auto Repair AI operator in 5 minutes",
   },
   insurance: {
     slug: "insurance",
@@ -524,7 +524,7 @@ const INDUSTRIES_DATA: Record<IndustrySlug, IndustryData> = {
       recoveredPerMonth: 15120,
       paybackDays: 3,
     },
-    ctaHeadline: "Start your free Insurance AI operator in 5 minutes",
+    ctaHeadline: "Start your Insurance AI operator in 5 minutes",
   },
   construction: {
     slug: "construction",
@@ -591,7 +591,7 @@ const INDUSTRIES_DATA: Record<IndustrySlug, IndustryData> = {
       recoveredPerMonth: 32400,
       paybackDays: 2,
     },
-    ctaHeadline: "Start your free Construction AI operator in 5 minutes",
+    ctaHeadline: "Start your Construction AI operator in 5 minutes",
   },
   "med-spa": {
     slug: "med-spa",
@@ -658,7 +658,7 @@ const INDUSTRIES_DATA: Record<IndustrySlug, IndustryData> = {
       recoveredPerMonth: 9600,
       paybackDays: 3,
     },
-    ctaHeadline: "Start your free Medical Spa AI operator in 5 minutes",
+    ctaHeadline: "Start your Medical Spa AI operator in 5 minutes",
   },
   recruiting: {
     slug: "recruiting",
@@ -725,7 +725,7 @@ const INDUSTRIES_DATA: Record<IndustrySlug, IndustryData> = {
       recoveredPerMonth: 15000,
       paybackDays: 2,
     },
-    ctaHeadline: "Start your free Recruiting AI operator in 5 minutes",
+    ctaHeadline: "Start your Recruiting AI operator in 5 minutes",
   },
   roofing: {
     slug: "roofing",
@@ -792,7 +792,7 @@ const INDUSTRIES_DATA: Record<IndustrySlug, IndustryData> = {
       recoveredPerMonth: 27000,
       paybackDays: 2,
     },
-    ctaHeadline: "Start your free Roofing AI operator in 5 minutes",
+    ctaHeadline: "Start your Roofing AI operator in 5 minutes",
   },
 };
 

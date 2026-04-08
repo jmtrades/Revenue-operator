@@ -228,7 +228,7 @@ export default function GoHighLevelComparisonPage() {
                 </Link>
               </div>
               <p className="mt-4 text-xs" style={{ color: "var(--text-tertiary)" }}>
-                Tip: no credit card required. Connect your number and take your first AI-handled call in under 5 minutes.
+                30-day money-back guarantee. Connect your number and take your first AI-handled call in under 5 minutes.
               </p>
             </div>
           </section>

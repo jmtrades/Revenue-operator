@@ -226,7 +226,7 @@ export default function VoiceDemoPage() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ background: "var(--accent-primary)" }} />
             <span className="relative inline-flex rounded-full h-2 w-2" style={{ background: "var(--accent-primary)" }} />
           </span>
-          Live AI Voice Demo — Try It Free
+          Live AI Voice Demo — Experience It Now
         </div>
         <h1
           className="text-4xl md:text-5xl lg:text-6xl font-semibold mb-4"

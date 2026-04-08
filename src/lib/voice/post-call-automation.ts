@@ -316,19 +316,19 @@ async function sendPostCallSms(
 function buildSmsMessage(outcome: string, signupLink: string): string {
   switch (outcome) {
     case "signup_initiated":
-      return `Thanks for chatting with Sarah from Revenue Operator! Ready to get started? Complete your signup here: ${signupLink} — Your 14-day free trial is waiting. Reply STOP to opt out.`;
+      return `Thanks for chatting with Sarah from Revenue Operator! Ready to get started? Complete your signup here: ${signupLink} — 30-day money-back guarantee. Reply STOP to opt out.`;
 
     case "demo_completed":
-      return `Great talking with you! Sarah here from Revenue Operator. If you're ready to stop missing calls and start closing more deals, start your free trial: ${signupLink} — No credit card needed. Reply STOP to opt out.`;
+      return `Great talking with you! Sarah here from Revenue Operator. If you're ready to stop missing calls and start closing more deals, get started: ${signupLink} — 30-day money-back guarantee. Reply STOP to opt out.`;
 
     case "callback_requested":
       return `Thanks for your interest in Revenue Operator! We'll follow up with you shortly. In the meantime, check out what we can do: ${signupLink} — Reply STOP to opt out.`;
 
     case "objection_unresolved":
-      return `Thanks for taking the time to chat with us at Revenue Operator. We'd love to answer any remaining questions — feel free to call back anytime or start a free trial: ${signupLink} Reply STOP to opt out.`;
+      return `Thanks for taking the time to chat with us at Revenue Operator. We'd love to answer any remaining questions — feel free to call back anytime or get started: ${signupLink} Reply STOP to opt out.`;
 
     default:
-      return `Thanks for trying the Revenue Operator demo! Start your free 14-day trial — no credit card required: ${signupLink} Reply STOP to opt out.`;
+      return `Thanks for trying the Revenue Operator demo! Get started with 30-day money-back guarantee: ${signupLink} Reply STOP to opt out.`;
   }
 }
 
@@ -731,7 +731,7 @@ async function ensureDemoNurtureSequence(workspaceId: string): Promise<string | 
         delay_minutes: 7200, // 5 days after step 2
         config: {
           template_content: "follow_up_last_chance",
-          subject: "Your free trial is waiting, {{contact.name}}",
+          subject: "Risk-free offer — 30-day money-back guarantee, {{contact.name}}",
           conditions: {},
         },
       },
@@ -1011,20 +1011,20 @@ function buildDefaultFollowUpEmail(
   switch (nextAction) {
     case "send_pricing":
       ctaBlock = `<p>As promised, here are our plans — starting at <strong>$147/month</strong> for the Solo plan:</p>
-        <p><a href="${signupLink}" style="display:inline-block;padding:12px 24px;background:#2563EB;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;">View Plans & Start Free Trial</a></p>`;
+        <p><a href="${signupLink}" style="display:inline-block;padding:12px 24px;background:#2563EB;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;">View Plans — 30-Day Money-Back Guarantee</a></p>`;
       break;
     case "send_case_study":
       ctaBlock = `<p>I mentioned we have some great results from businesses like yours. I'll follow up with a case study shortly.</p>
         <p>In the meantime, you can explore what Revenue Operator can do:</p>
-        <p><a href="${signupLink}" style="display:inline-block;padding:12px 24px;background:#2563EB;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;">Start Your 14-Day Free Trial</a></p>`;
+        <p><a href="${signupLink}" style="display:inline-block;padding:12px 24px;background:#2563EB;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;">Get Started — 30-Day Money-Back Guarantee</a></p>`;
       break;
     case "schedule_team_demo":
       ctaBlock = `<p>I'd love to set up a deeper demo with our team. In the meantime, you can get started right away:</p>
-        <p><a href="${signupLink}" style="display:inline-block;padding:12px 24px;background:#2563EB;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;">Start Your 14-Day Free Trial</a></p>`;
+        <p><a href="${signupLink}" style="display:inline-block;padding:12px 24px;background:#2563EB;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;">Get Started — 30-Day Money-Back Guarantee</a></p>`;
       break;
     default:
       ctaBlock = `<p>Ready to stop missing calls and start recovering revenue?</p>
-        <p><a href="${signupLink}" style="display:inline-block;padding:12px 24px;background:#2563EB;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;">Start Your 14-Day Free Trial</a></p>`;
+        <p><a href="${signupLink}" style="display:inline-block;padding:12px 24px;background:#2563EB;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;">Get Started — 30-Day Money-Back Guarantee</a></p>`;
   }
 
   return `<!DOCTYPE html>
@@ -1063,9 +1063,9 @@ function buildReassuranceEmail(
 <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1a1a1a;max-width:560px;margin:0 auto;padding:24px;">
   <p>Hey ${name},</p>
   <p>Thanks for taking the time to chat earlier. I know choosing the right tool for your business is a big decision, and I wanted to follow up on a couple of things we discussed.</p>
-  ${objections ? `<p>You raised some really good points:</p><ul style="color:#374151;padding-left:20px;">${objections}</ul><p>These are concerns we hear from a lot of businesses initially — and they're exactly why we offer a completely free 14-day trial with no credit card required. You can test everything with real calls and see the results for yourself.</p>` : "<p>I understand you might want to take some time to think things through. That's totally fine — we're not going anywhere.</p>"}
+  ${objections ? `<p>You raised some really good points:</p><ul style="color:#374151;padding-left:20px;">${objections}</ul><p>These are concerns we hear from a lot of businesses initially — and that's exactly why we offer a 30-day money-back guarantee. You can test everything with real calls and see the results for yourself. If it doesn't work out, you get your money back, no questions asked.</p>` : "<p>I understand you might want to take some time to think things through. That's totally fine — we're not going anywhere.</p>"}
   <p>If you'd like to give it a try (zero risk, zero commitment):</p>
-  <p><a href="${signupLink}" style="display:inline-block;padding:12px 24px;background:#2563EB;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;">Start Your Free Trial</a></p>
+  <p><a href="${signupLink}" style="display:inline-block;padding:12px 24px;background:#2563EB;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;">Get Started — 30-Day Money-Back Guarantee</a></p>
   <p style="margin-top:24px;">And if you have any other questions, just reply to this email or call back anytime. I'm always here.</p>
   <p>Best,<br><strong>Sarah</strong><br><span style="color:#6b7280;font-size:14px;">AI Sales Agent, Revenue Operator</span></p>
   <hr style="border:none;border-top:1px solid #e5e7eb;margin:32px 0 16px;">

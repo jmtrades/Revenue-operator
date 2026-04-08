@@ -278,7 +278,7 @@ If your business needs fast follow-through, 24/7 coverage, and revenue proof tie
     title: "What Is AI Revenue Operations?",
     date: "March 2026",
     metaDescription:
-      "AI revenue operations is the execution layer for call answering, booking, follow-up, and recovery. Learn the complete guide and start free.",
+      "AI revenue operations is the execution layer for call answering, booking, follow-up, and recovery. The complete guide for every business.",
     body: `AI revenue operations (AI RevOps) is not "a chatbot."
 It is a system that connects customer intent to measurable revenue outcomes.
 In practice, AI RevOps must do four things in a loop: answer incoming demand, capture structured intent, execute next steps, and recover what happens when humans are busy or leads go quiet.
