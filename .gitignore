@@ -51,3 +51,4 @@ next-env.d.ts
 .next-old/
 env-backup-production.txt
 AUDIT_EMAIL_SMS.md
+.gitnexus
