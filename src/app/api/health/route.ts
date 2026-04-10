@@ -62,6 +62,6 @@ export async function GET() {
     status: allHealthy ? "healthy" : "degraded",
     checks,
     latencyMs: Date.now() - start,
-    version: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || "dev",
+    version: process.env.GIT_COMMIT_SHA?.slice(0, 7) || "dev",
   }, { status: allHealthy ? 200 : 503 });
 }

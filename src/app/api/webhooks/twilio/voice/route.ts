@@ -43,7 +43,7 @@ function verifyTwilioSignature(url: string, params: Record<string, string>, sign
 
 /**
  * Try multiple URL variants for signature verification.
- * Twilio may sign the request with the exact URL it was given, but Vercel may
+ * Twilio may sign the request with the exact URL it was given, but the host may
  * serve it at a slightly different URL (trailing slash, port stripping, etc).
  */
 function verifyTwilioSignatureFlexible(params: Record<string, string>, signature: string): boolean {
@@ -51,7 +51,7 @@ function verifyTwilioSignatureFlexible(params: Record<string, string>, signature
   const variants = [
     `${appUrl}/api/webhooks/twilio/voice`,
     `${appUrl}/api/webhooks/twilio/voice/`,
-    // In case Vercel forwards with the deployment URL instead
+    // In case the host forwards with a slightly different URL
     appUrl.replace("https://www.", "https://") + "/api/webhooks/twilio/voice",
   ];
   return variants.some((url) => verifyTwilioSignature(url, params, signature));
@@ -72,8 +72,8 @@ export async function POST(req: NextRequest) {
     const url = `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/twilio/voice`;
 
     // Require signature verification in ALL deployed environments (production + preview).
-    // Only skip when running purely locally (no VERCEL_ENV set AND NODE_ENV !== "production").
-    const isDeployed = Boolean(process.env.VERCEL_ENV) || process.env.NODE_ENV === "production";
+    // Only skip when running purely locally (NODE_ENV !== "production").
+    const isDeployed = process.env.NODE_ENV === "production";
 
     if (isDeployed) {
       // In any deployed environment we require both a token and a valid signature.
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
           hasSig: !!sig,
           url,
           callSid: entries.CallSid ?? "unknown",
-          vercel_env: process.env.VERCEL_ENV ?? "unset",
+          node_env: process.env.NODE_ENV ?? "unset",
         });
         return new NextResponse("Invalid signature", { status: 401 });
       }

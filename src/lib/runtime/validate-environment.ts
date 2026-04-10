@@ -1,7 +1,7 @@
 /**
  * Server startup environment validation.
  * Required vars: missing → throw and stop. Optional: missing → log structured warning once.
- * Use NEXT_PUBLIC_APP_URL for app/base URL (Vercel); APP_URL is optional legacy.
+ * Use NEXT_PUBLIC_APP_URL for app/base URL; APP_URL is optional legacy.
  */
 
 const REQUIRED = [

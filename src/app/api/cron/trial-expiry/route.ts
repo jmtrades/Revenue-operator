@@ -4,7 +4,7 @@
  * - After grace (6 total days since trial_ends_at): mark workspace `expired` and billing_status `trial_ended`
  * - Send a "trial ended" email when transitioning trial_expired -> expired
  *
- * Intended to run daily via Vercel Cron.
+ * Intended to run daily via cron.
  */
 
 export const dynamic = "force-dynamic";

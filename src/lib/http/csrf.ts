@@ -44,11 +44,6 @@ export function assertSameOrigin(req: NextRequest): NextResponse | null {
       if (sameHost) return null;
     }
 
-    // Allow Vercel preview deployments (*.vercel.app)
-    if (originUrl.hostname.endsWith(".vercel.app")) {
-      return null;
-    }
-
     return NextResponse.json(
       { error: "Invalid request origin", code: "invalid_origin" },
       { status: 403 },

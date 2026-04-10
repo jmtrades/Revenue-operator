@@ -1,5 +1,5 @@
 /**
- * Weekly email digest — sends every Monday at 8am via Vercel cron.
+ * Weekly email digest — sends every Monday at 8am via cron.
  * Summarizes: calls answered, appointments booked, follow-ups sent, revenue recovered.
  * Uses daily_metrics table for aggregation.
  */

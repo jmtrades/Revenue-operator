@@ -73,7 +73,7 @@ async function main(): Promise<void> {
     console.error("  ✗ NEXT_PUBLIC_SUPABASE_URL not set. Add to .env.local (app needs it for all DB access).");
     ok = false;
   } else if (!key?.trim()) {
-    console.error("  ✗ SUPABASE_SERVICE_ROLE_KEY (or NEXT_PUBLIC_SUPABASE_ANON_KEY) not set. Copy from Supabase Dashboard > Project Settings > API or from Vercel.");
+    console.error("  ✗ SUPABASE_SERVICE_ROLE_KEY (or NEXT_PUBLIC_SUPABASE_ANON_KEY) not set. Copy from Supabase Dashboard > Project Settings > API.");
     ok = false;
   } else {
     try {

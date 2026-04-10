@@ -1,6 +1,6 @@
 /**
  * Speed-to-lead: call new leads within ~60 seconds.
- * Runs every minute via Vercel cron. Finds leads created in the last 90s with a phone number
+ * Runs every minute via cron. Finds leads created in the last 90s with a phone number
  * and no existing call_session, then triggers one outbound call per lead (idempotent per lead).
  */
 

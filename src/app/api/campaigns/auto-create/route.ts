@@ -56,39 +56,39 @@ export async function POST(req: NextRequest) {
       .not("phone", "is", null);
 
     let campaignName = "";
-    let campaignDescription = "";
+    let _campaignDescription = "";
 
     switch (segment) {
       case "hot_leads":
         leadQuery = leadQuery.gte("qualification_score", 70).order("qualification_score", { ascending: false });
         campaignName = `Hot Leads — ${now.toLocaleDateString()}`;
-        campaignDescription = "High-scoring leads ready for conversion. Priority outreach.";
+        _campaignDescription = "High-scoring leads ready for conversion. Priority outreach.";
         break;
       case "cold_leads":
         leadQuery = leadQuery.lte("qualification_score", 30).gte("updated_at", thirtyDaysAgo);
         campaignName = `Re-warm Cold Leads — ${now.toLocaleDateString()}`;
-        campaignDescription = "Low-scoring leads that need re-engagement with value-add content.";
+        _campaignDescription = "Low-scoring leads that need re-engagement with value-add content.";
         break;
       case "no_answer":
         // Leads with recent no-answer outcomes
         leadQuery = leadQuery.eq("state", "NEW").gte("updated_at", sevenDaysAgo);
         campaignName = `No-Answer Retry — ${now.toLocaleDateString()}`;
-        campaignDescription = "Leads we couldn't reach. Trying at different times.";
+        _campaignDescription = "Leads we couldn't reach. Trying at different times.";
         break;
       case "appointment_follow_up":
         leadQuery = leadQuery.eq("state", "APPOINTMENT_SET").gte("updated_at", sevenDaysAgo);
         campaignName = `Appointment Follow-up — ${now.toLocaleDateString()}`;
-        campaignDescription = "Leads with upcoming appointments. Reminder and preparation outreach.";
+        _campaignDescription = "Leads with upcoming appointments. Reminder and preparation outreach.";
         break;
       case "re_engagement":
         leadQuery = leadQuery.lte("updated_at", thirtyDaysAgo).gte("updated_at", new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000).toISOString());
         campaignName = `Win-Back — ${now.toLocaleDateString()}`;
-        campaignDescription = "Dormant leads from 30-90 days ago. Re-engagement campaign.";
+        _campaignDescription = "Dormant leads from 30-90 days ago. Re-engagement campaign.";
         break;
       case "all_new":
         leadQuery = leadQuery.eq("state", "NEW").gte("created_at", sevenDaysAgo);
         campaignName = `New Leads — ${now.toLocaleDateString()}`;
-        campaignDescription = "All new leads from the past 7 days.";
+        _campaignDescription = "All new leads from the past 7 days.";
         break;
     }
 

@@ -18,7 +18,7 @@ import { createHmac, timingSafeEqual } from "crypto";
 function verifyWebhookSecret(body: string, authHeader: string | null): boolean {
   const secret = process.env.VOICE_WEBHOOK_SECRET;
   if (!secret) {
-    const isProduction = process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production";
+    const isProduction = process.env.NODE_ENV === "production";
     if (isProduction) {
       log("error", "voice_check_hours.secret_not_configured", { message: "rejecting webhook — VOICE_WEBHOOK_SECRET must be set in production" });
       return false;

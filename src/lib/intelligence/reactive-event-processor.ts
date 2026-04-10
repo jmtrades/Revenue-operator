@@ -579,7 +579,7 @@ function processSmsReply(
   leadContext: LeadContext,
   reaction: EventReaction
 ): EventReaction {
-  const message = event.data.message as string | undefined;
+  const _message = event.data.message as string | undefined;
 
   reaction.scoreDelta = {
     delta: +15,
@@ -645,7 +645,7 @@ function processScoreChanged(
 ): EventReaction {
   const oldScore = event.data.oldScore as number;
   const newScore = event.data.newScore as number;
-  const delta = newScore - oldScore;
+  const _delta = newScore - oldScore;
 
   reaction.scoreDelta = {
     delta: 0,
@@ -1052,7 +1052,7 @@ export function detectReactivationSignals(
  */
 export function calculateEventImpact(
   event: LeadEvent,
-  leadContext: LeadContext
+  _leadContext: LeadContext
 ): EventImpact {
   let scoreDelta = 0;
   let stageChange: string | null = null;

@@ -352,8 +352,7 @@ function createTwilioService(): TelephonyService {
         }
 
         // Determine base URL for callbacks
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL
-          || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "";
 
         // Build TwiML URL — Twilio needs a URL that returns TwiML instructions.
         // If a voice server URL is configured, use Stream; otherwise use simple Say.

@@ -10,8 +10,6 @@ import "./globals.css";
 // runtime-only env vars (STRIPE_SECRET_KEY etc.) are not yet available, which
 // causes the production build to crash.
 import { Toaster } from "sonner";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Analytics } from "@vercel/analytics/next";
 import { SwCleanup } from "@/components/SwCleanup";
 import { StaleBuildBanner } from "@/components/StaleBuildBanner";
 import TrackPageView from "@/components/TrackPageView";
@@ -185,8 +183,6 @@ export default async function RootLayout({
             }}
           />
           <TrackPageView />
-          <SpeedInsights />
-          <Analytics />
           <CookieConsent />
         </NextIntlClientProvider>
       </body>

@@ -705,7 +705,7 @@ export async function POST(req: NextRequest) {
             .eq("workspace_id", resolvedWorkspaceId);
 
           // Trigger post-call processing asynchronously
-          const appUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null);
+          const appUrl = process.env.NEXT_PUBLIC_APP_URL || null;
           if (!appUrl) {
             log("error", "telnyx_voice.app_url_not_configured");
           } else {

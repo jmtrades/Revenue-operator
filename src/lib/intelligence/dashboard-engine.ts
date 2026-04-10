@@ -316,7 +316,7 @@ export function generateLeadDetailData(leadId: string, brain: LeadBrain): LeadDe
   const objections = brain?.relationship?.objectionsRaised || [];
   const competitors = brain?.business?.competitorMentions || [];
 
-  const engagementScore = calculateEngagementScore(interactions);
+  const _engagementScore = calculateEngagementScore(interactions);
   const nextAction = computeNextRecommendedAction(brain);
   const predictedClose = predictCloseDate(brain);
 
@@ -513,7 +513,7 @@ function identifyTopPriorityLeads(pipeline: DashboardDeal[], limit: number): Pri
     .slice(0, limit);
 }
 
-function generateDashboardInsights(pipeline: DashboardDeal[], pipelineMetrics: PipelineMetrics, activityMetrics: ActivityMetrics, revenueMetrics: RevenueMetrics): DashboardInsight[] {
+function generateDashboardInsights(pipeline: DashboardDeal[], pipelineMetrics: PipelineMetrics, activityMetrics: ActivityMetrics, _revenueMetrics: RevenueMetrics): DashboardInsight[] {
   const insights: DashboardInsight[] = [];
 
   if (pipelineMetrics.velocity < 2) {
@@ -623,7 +623,7 @@ function calculateEngagementScore(interactions: Array<{ timestamp?: string }>): 
   return Math.min(100, recent.length * 20);
 }
 
-function computeNextRecommendedAction(brain: LeadBrain): { action: string; channel: string; reasoning: string; urgency: "immediate" | "this-week" | "this-month" } {
+function computeNextRecommendedAction(_brain: LeadBrain): { action: string; channel: string; reasoning: string; urgency: "immediate" | "this-week" | "this-month" } {
   return {
     action: "Schedule discovery call",
     channel: "phone",
@@ -665,7 +665,7 @@ function buildInteractionTimeline(interactions: Array<{ timestamp?: string; chan
   }));
 }
 
-function buildEngagementChart(interactions: Array<{ timestamp?: string }>): { date: string; score: number }[] {
+function buildEngagementChart(_interactions: Array<{ timestamp?: string }>): { date: string; score: number }[] {
   const last30Days = Array.from({ length: 30 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - (29 - i));
@@ -840,7 +840,7 @@ function calculateCampaignPerformance(campaigns: DashboardCampaign[]): number {
   return Math.round(Math.min(100, avgConv * 200));
 }
 
-function generateCampaignRecommendations(campaigns: DashboardCampaign[], overallPerf: number): Array<{ action: string; rationale: string; expectedImpact: string }> {
+function generateCampaignRecommendations(_campaigns: DashboardCampaign[], _overallPerf: number): Array<{ action: string; rationale: string; expectedImpact: string }> {
   return [
     {
       action: "Pause underperforming segments",

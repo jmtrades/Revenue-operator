@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
       if (!verifyTwilioSignature(validationUrl, params, signature, authToken)) {
         return new NextResponse("Forbidden", { status: 403 });
       }
-    } else if (process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production") {
+    } else if (process.env.NODE_ENV === "production") {
       log("error", "twilio_inbound.auth_token_not_configured", { message: "rejecting request — TWILIO_AUTH_TOKEN must be set in production" });
       return new NextResponse("Forbidden", { status: 403 });
     }

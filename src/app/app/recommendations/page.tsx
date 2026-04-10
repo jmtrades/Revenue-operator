@@ -11,7 +11,6 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import {
   TrendingUp,
   PhoneOff,
-  Clock,
   Zap,
   ArrowUpRight,
   Target,
@@ -133,7 +132,7 @@ export default function RecommendationsPage() {
   );
 }
 
-function generateRecommendations(data: RecommendationsData, t: any): Recommendation[] {
+function generateRecommendations(data: RecommendationsData, _t: any): Recommendation[] {
   const recs: Recommendation[] = [];
   const missedCalls = data.calls.filter((c: any) => (c.outcome === "missed" || c.outcome === "voicemail") && c.call_started_at);
   if (missedCalls.length > 0) {

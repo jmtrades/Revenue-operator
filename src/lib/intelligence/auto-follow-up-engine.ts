@@ -633,7 +633,7 @@ export function calculateFollowUpFatigue(lead: LeadState): FatigueScore {
 // ============ Helper functions for message generation ============
 
 function generateEmailSubject(template: string, lead: LeadState): string {
-  const firstName = lead.name?.split(" ")[0] || "there";
+  const _firstName = lead.name?.split(" ")[0] || "there";
   const subjects: Record<string, string> = {
     hot_lead_direct_call: `Quick chat about ${lead.company || "your business"}?`,
     value_proposition_pricing_email: `ROI breakdown for ${lead.company || "companies like yours"}`,
@@ -661,7 +661,7 @@ function generateEmailBody(template: string, firstName: string, lead: LeadState)
   return bodies[template] || `Hi ${firstName},\n\nFollowing up on our conversation.`;
 }
 
-function generateSMSBody(template: string, firstName: string, lead: LeadState): string {
+function generateSMSBody(template: string, firstName: string, _lead: LeadState): string {
   const bodies: Record<string, string> = {
     warm_sms_followup: `${firstName}, saw you opened our email. What's one thing you'd want to solve first?`,
     channel_switch_sms: `Hi ${firstName}. Trying another way. Best time for a quick call?`,

@@ -429,8 +429,8 @@ function bayesianUpdate(
 
 function computeEmpiricalScores(
   interactions: CallOutcome[],
-  industry: string,
-  sourceType: string
+  _industry: string,
+  _sourceType: string
 ): Record<string, number> {
   const scores: Record<string, number> = {};
   const windowCounts: Record<string, { answered: number; total: number }> = {};
@@ -467,7 +467,7 @@ function computeAnswerProbability(
   industry: string,
   sourceType: string,
   timezone: string,
-  currentTime: Date
+  _currentTime: Date
 ): number {
   // Adjust for timezone offset
   const tzOffset = getTimezoneOffset(timezone);

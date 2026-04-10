@@ -27,7 +27,7 @@ function verifyTwilioSignature(
 ): boolean {
   const authToken = process.env.TWILIO_AUTH_TOKEN;
   if (!authToken) {
-    const isProduction = process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production";
+    const isProduction = process.env.NODE_ENV === "production";
     if (isProduction) {
       log("error", "voice_routing.twilio_auth_token_missing", { message: "rejecting request — TWILIO_AUTH_TOKEN must be set in production" });
       return false;

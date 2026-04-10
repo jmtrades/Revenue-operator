@@ -84,7 +84,7 @@ section("Webhooks (inbound – add in each provider)", [
   `Zoom:        ${urls.webhooks.zoom}`,
 ]);
 
-section("Cron (e.g. Vercel Cron)", [urls.cron]);
+section("Cron (cron scheduler)", [urls.cron]);
 
 section("Localhost (for local dev in Supabase/Stripe/Zoom)", [
   ...urls.localhost.supabase,

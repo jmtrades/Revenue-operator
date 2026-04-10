@@ -299,7 +299,7 @@ export class RecallVoiceProvider implements VoiceProvider {
         throw new Error("No outbound phone number configured — set workspace phone config or TELNYX_PHONE_NUMBER or TWILIO_PHONE_NUMBER");
       }
 
-      const webhookBase = process.env.WEBHOOK_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+      const webhookBase = process.env.WEBHOOK_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || "";
       if (!webhookBase) {
         throw new Error("No webhook base URL configured — set NEXT_PUBLIC_APP_URL or WEBHOOK_BASE_URL");
       }

@@ -1,5 +1,5 @@
 /**
- * Autonomous Intelligence Loop — Vercel Cron Handler
+ * Autonomous Intelligence Loop — Cron Handler
  * Runs periodically to optimize leads, campaigns, and intelligence scoring
  * without human intervention. Triggers self-optimization actions.
  */
@@ -226,7 +226,7 @@ export async function GET(req: NextRequest) {
 
   // 3. At-risk lead detection: Identify leads with low activity in 30+ days
   try {
-    const workspaceId = req.nextUrl.searchParams.get("workspace_id") || "";
+    const _workspaceId = req.nextUrl.searchParams.get("workspace_id") || "";
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
     const { data: atRiskLeads, error: atRiskErr } = await db
       .from("leads")

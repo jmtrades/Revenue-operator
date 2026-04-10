@@ -6,7 +6,6 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { runWithWriteContextAsync } from "@/lib/safety/unsafe-write-guard";
 import { log } from "@/lib/logger";
 import {
-  detectBookingIntent,
   getAvailableSlots,
   bookAppointment,
   buildSlotPresentationScript,
@@ -48,7 +47,7 @@ export async function POST(req: NextRequest) {
     if (token !== webhookSecret) {
       return NextResponse.json({ error: "Unauthorized", result: "Technical issue. Someone will follow up." }, { status: 401 });
     }
-  } else if (process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production") {
+  } else if (process.env.NODE_ENV === "production") {
     // Fail closed in production — webhook secret must be configured
     log("error", "[tool-webhook] TOOL_WEBHOOK_SECRET not configured in production — rejecting request");
     return NextResponse.json({ error: "Unauthorized", result: "Technical issue. Someone will follow up." }, { status: 401 });
@@ -182,7 +181,7 @@ export async function POST(req: NextRequest) {
       }
 
       case "check_availability": {
-        const { date, service } = tool_args as { date?: string; service?: string };
+        const { date, service: _service } = tool_args as { date?: string; service?: string };
 
         try {
           // Parse target date if provided

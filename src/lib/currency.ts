@@ -31,7 +31,7 @@ const RATES_TO_USD: Record<string, number> = {
 /**
  * Map short locale codes to full BCP 47 tags appropriate for the currency.
  * Without this, Intl.NumberFormat("es", {currency:"USD"}) can render "€" or
- * use European decimal separators in some runtimes (V8 on Vercel edge).
+ * use European decimal separators in some runtimes (V8 on edge runtime).
  */
 const LOCALE_FOR_CURRENCY: Record<string, Record<string, string>> = {
   USD: { es: "es-US", fr: "fr-US", de: "de-US", pt: "pt-BR", ja: "ja-JP", en: "en-US" },

@@ -46,7 +46,7 @@ function main() {
   }
   console.log("\n--- End Report ---\n");
   if (!allRequired) {
-    console.log("Set missing required variables in Vercel (or .env.local) and redeploy.");
+    console.log("Set missing required variables in your environment (or .env.local) and redeploy.");
     process.exit(1);
   }
   console.log("All required variables are set.");

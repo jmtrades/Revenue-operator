@@ -8,9 +8,9 @@ import { spawn } from "child_process";
 import { fileURLToPath } from "url";
 import path from "path";
 
-// Skip on Vercel: no DB for integration slices; CI/GitHub runs the full suite separately.
-if (process.env.VERCEL === "1") {
-  console.log("Skipping guarantee verification on Vercel.");
+// Skip in CI: no DB for integration slices; CI/GitHub runs the full suite separately.
+if (process.env.CI === "true") {
+  console.log("Skipping guarantee verification in CI.");
   process.exit(0);
 }
 

@@ -19,7 +19,6 @@ const PROVIDER_PATTERNS = [
   /posthog/gi,
   /upstash/gi,
   /redis/gi,
-  /vercel/gi,
   /anthropic/gi,
   /openai/gi,
   /fly\.io/gi,

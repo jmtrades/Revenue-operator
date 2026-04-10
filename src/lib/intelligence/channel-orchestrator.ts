@@ -436,7 +436,7 @@ export function orchestrateMultiTouch(lead: ChannelProfile, objective: TouchObje
  */
 export function calculateChannelSaturation(lead: ChannelProfile): ChannelSaturation[] {
   const now = Date.now();
-  const sevenDaysAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+  const _sevenDaysAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
 
   const results: ChannelSaturation[] = [];
 

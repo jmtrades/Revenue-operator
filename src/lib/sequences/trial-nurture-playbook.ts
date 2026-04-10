@@ -38,7 +38,7 @@ export function generateTrialNurtureSequence(context: {
   agentPhone?: string;
   signupDate: string;
 }): NurtureStep[] {
-  const baseDate = new Date(context.signupDate);
+  const _baseDate = new Date(context.signupDate);
 
   return [
     // Day 0 — Welcome & Setup

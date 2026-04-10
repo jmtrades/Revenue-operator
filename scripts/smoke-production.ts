@@ -1,7 +1,7 @@
 #!/usr/bin/env npx tsx
 /**
  * Smoke test for production readiness: health, cron health, optionally trigger process-queue.
- * Usage: BASE_URL=https://your-app.vercel.app CRON_SECRET=xxx npx tsx scripts/smoke-production.ts [--trigger-cron]
+ * Usage: BASE_URL=https://your-app.example.com CRON_SECRET=xxx npx tsx scripts/smoke-production.ts [--trigger-cron]
  */
 
 const BASE_URL = process.env.BASE_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";

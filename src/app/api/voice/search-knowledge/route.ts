@@ -86,7 +86,7 @@ function scoreRelevance(query: string, content: string): number {
 function verifyVoiceServerSignature(body: string, signature: string | null): boolean {
   const secret = process.env.VOICE_WEBHOOK_SECRET;
   if (!secret) {
-    const isDeployed = Boolean(process.env.VERCEL_ENV) || process.env.NODE_ENV === "production";
+    const isDeployed = process.env.NODE_ENV === "production";
     if (isDeployed) {
       log("error", "voice.search_knowledge.secret_not_configured", {
         message: "rejecting request — VOICE_WEBHOOK_SECRET must be set in all deployed environments",

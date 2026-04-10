@@ -2839,7 +2839,7 @@ function evaluateTrigger(situation: SalesSituation, trigger: TriggerCondition): 
   }
 }
 
-function generateAdaptations(situation: SalesSituation, scenario: ScenarioPlaybook): string[] {
+function generateAdaptations(situation: SalesSituation, _scenario: ScenarioPlaybook): string[] {
   const adaptations: string[] = [];
 
   if (situation.last_outcome === "no_answer") {

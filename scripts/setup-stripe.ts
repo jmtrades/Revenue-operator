@@ -2,7 +2,7 @@
  * Stripe Setup: Create products and prices for Recall Touch
  *
  * Creates 3 products (Solo/Starter, Business/Growth, Scale/Business) with monthly + annual prices.
- * Outputs env vars to add to Vercel.
+ * Outputs env vars to add to your environment.
  *
  * Usage:
  *   STRIPE_SECRET_KEY=sk_test_... npx tsx scripts/setup-stripe.ts
@@ -150,7 +150,7 @@ async function main() {
 
   // Output env vars
   console.log("\n\n═══════════════════════════════════════════════════════");
-  console.log("  ADD THESE TO VERCEL ENVIRONMENT VARIABLES:");
+  console.log("  ADD THESE TO YOUR ENVIRONMENT VARIABLES:");
   console.log("═══════════════════════════════════════════════════════\n");
 
   for (const [key, value] of Object.entries(envVars)) {
@@ -163,13 +163,6 @@ async function main() {
   console.log(`STRIPE_WEBHOOK_SECRET=whsec_...`);
 
   console.log("\n\n═══════════════════════════════════════════════════════");
-  console.log("  VERCEL CLI (paste all at once):");
-  console.log("═══════════════════════════════════════════════════════\n");
-
-  for (const [key, value] of Object.entries(envVars)) {
-    console.log(`npx vercel env add ${key} production <<< "${value}"`);
-  }
-
   console.log("\n✅ Stripe setup complete!\n");
 }
 

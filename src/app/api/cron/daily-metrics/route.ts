@@ -1,7 +1,7 @@
 /**
  * Cron: Daily metrics aggregation job.
  * Computes daily_metrics rollup for all active workspaces.
- * Called daily (e.g., at 00:15 UTC) via Vercel Cron or external scheduler.
+ * Called daily (e.g., at 00:15 UTC) via cron scheduler.
  * Processes yesterday's date.
  */
 

@@ -24,7 +24,7 @@ function localLog(event: string, data: Record<string, unknown>): void {
 function effectiveOrigin(req: NextRequest): string | null {
   const fromReq = new URL(req.url).origin;
   const isLocal = fromReq.includes("localhost") || fromReq.includes("127.0.0.1");
-  const isPreview = fromReq.includes("preview") || fromReq.includes("vercel.app");
+  const isPreview = fromReq.includes("preview");
   if (isLocal || isPreview) return process.env.NEXT_PUBLIC_APP_URL ?? null;
   return fromReq || (process.env.NEXT_PUBLIC_APP_URL ?? null);
 }
