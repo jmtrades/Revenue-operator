@@ -11,6 +11,24 @@ import * as path from "path";
 import { reduceLeadState } from "@/lib/state/reducer";
 import { leadStateToLifecycle } from "@/lib/state/types";
 
+vi.mock("@/lib/signals/store", async (importOriginal) => {
+  const mod = await importOriginal<typeof import("@/lib/signals/store")>();
+  return {
+    ...mod,
+    getSignalById: vi.fn().mockResolvedValue({
+      id: "sig",
+      workspace_id: "w",
+      lead_id: "l",
+      signal_type: "InboundMessageReceived",
+      payload: {},
+      occurred_at: "2025-01-01T00:00:00Z",
+      processed_at: null,
+      failure_reason: "signal_unprocessable",
+    }),
+    setSignalProcessed: vi.fn().mockResolvedValue(undefined),
+  };
+});
+
 describe("Guarantee preservation", () => {
   describe("Irrecoverable signal never blocks replay", () => {
     it("hasEarlierUnprocessedSignal excludes processed_at set (irrecoverable)", () => {
@@ -23,23 +41,6 @@ describe("Guarantee preservation", () => {
     });
 
     it("consumer returns ok for irrecoverable without running reducer", async () => {
-      vi.mock("@/lib/signals/store", async (importOriginal) => {
-        const mod = await importOriginal<typeof import("@/lib/signals/store")>();
-        return {
-          ...mod,
-          getSignalById: vi.fn().mockResolvedValue({
-            id: "sig",
-            workspace_id: "w",
-            lead_id: "l",
-            signal_type: "InboundMessageReceived",
-            payload: {},
-            occurred_at: "2025-01-01T00:00:00Z",
-            processed_at: null,
-            failure_reason: "signal_unprocessable",
-          }),
-          setSignalProcessed: vi.fn().mockResolvedValue(undefined),
-        };
-      });
       const { processCanonicalSignal } = await import("@/lib/signals/consumer");
       const out = await processCanonicalSignal("sig");
       expect(out).toEqual({ ok: true, reason: "irrecoverable" });
