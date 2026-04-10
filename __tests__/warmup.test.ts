@@ -1,26 +1,44 @@
 import { describe, it, expect } from "vitest";
-import { getWarmupLimit } from "../src/lib/warmup";
+import { getWarmupLimit } from "@/lib/warmup";
 
-describe("Warm-up limits", () => {
-  it("Day 0-1: 20/day", () => {
-    const created = new Date();
-    expect(getWarmupLimit(created)).toBe(20);
-    const yesterday = new Date(Date.now() - 12 * 60 * 60 * 1000);
+describe("warmup limits", () => {
+  it("returns 20 for workspace created today (day 0)", () => {
+    const now = new Date();
+    expect(getWarmupLimit(now)).toBe(20);
+  });
+
+  it("returns 20 for workspace created yesterday (day 1)", () => {
+    const yesterday = new Date(Date.now() - 1 * 86400000);
     expect(getWarmupLimit(yesterday)).toBe(20);
   });
 
-  it("Day 2-3: 50/day", () => {
-    const twoDaysAgo = new Date(Date.now() - 2.5 * 24 * 60 * 60 * 1000);
+  it("returns 50 for workspace created 2 days ago", () => {
+    const twoDaysAgo = new Date(Date.now() - 2 * 86400000);
     expect(getWarmupLimit(twoDaysAgo)).toBe(50);
   });
 
-  it("Day 4-7: 150/day", () => {
-    const fiveDaysAgo = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000);
-    expect(getWarmupLimit(fiveDaysAgo)).toBe(150);
+  it("returns 50 for workspace created 3 days ago", () => {
+    const threeDaysAgo = new Date(Date.now() - 3 * 86400000);
+    expect(getWarmupLimit(threeDaysAgo)).toBe(50);
   });
 
-  it("Day 8+: unlimited", () => {
-    const tenDaysAgo = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000);
-    expect(getWarmupLimit(tenDaysAgo)).toBe(Number.POSITIVE_INFINITY);
+  it("returns 150 for workspace created 4 days ago", () => {
+    const fourDaysAgo = new Date(Date.now() - 4 * 86400000);
+    expect(getWarmupLimit(fourDaysAgo)).toBe(150);
+  });
+
+  it("returns 150 for workspace created 7 days ago", () => {
+    const sevenDaysAgo = new Date(Date.now() - 7 * 86400000);
+    expect(getWarmupLimit(sevenDaysAgo)).toBe(150);
+  });
+
+  it("returns Infinity for workspace created 8+ days ago", () => {
+    const eightDaysAgo = new Date(Date.now() - 8 * 86400000);
+    expect(getWarmupLimit(eightDaysAgo)).toBe(Number.POSITIVE_INFINITY);
+  });
+
+  it("returns Infinity for workspace created 30 days ago", () => {
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000);
+    expect(getWarmupLimit(thirtyDaysAgo)).toBe(Number.POSITIVE_INFINITY);
   });
 });

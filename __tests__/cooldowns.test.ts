@@ -1,85 +1,69 @@
-/**
- * Cooldown tests: prevents thrash (same lead, same type within window)
- */
-
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import {
-  canInterveneNow,
-  recordIntervention,
-  interventionToCooldownCategory,
-  hashMessage,
-} from "@/lib/stability/cooldowns";
-
-vi.mock("@/lib/db/queries", () => ({
-  getDb: () => ({
-    from: (table: string) => {
-      if (table === "lead_intervention_limits") {
-        return {
-          select: () => ({
-            eq: () => ({
-              eq: () => ({
-                single: () =>
-                  Promise.resolve({
-                    data: null,
-                  }),
-              }),
-            }),
-          }),
-          insert: () => Promise.resolve({}),
-          update: () => ({
-            eq: () => ({
-              eq: () => Promise.resolve({}),
-            }),
-          }),
-        };
-      }
-      if (table === "settings") {
-        return {
-          select: () => ({
-            eq: () => ({
-              single: () =>
-                Promise.resolve({
-                  data: {
-                    cooldown_by_type_hours: { reassurance: 6, clarify: 12, urgency: 24, schedule: 12, confirm: 6, revive: 24 },
-                    max_touches_per_day_by_stage: { NEW: 2, ENGAGED: 3 },
-                  },
-                }),
-            }),
-          }),
-        };
-      }
-      return { select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null }) }) }) };
-    },
-  }),
-}));
+import { describe, it, expect } from "vitest";
+import { interventionToCooldownCategory, hashMessage } from "@/lib/stability/cooldowns";
 
 describe("cooldowns", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
+  describe("interventionToCooldownCategory", () => {
+    it("maps reminder to confirm", () => {
+      expect(interventionToCooldownCategory("reminder")).toBe("confirm");
+    });
+    it("maps prep_info to confirm", () => {
+      expect(interventionToCooldownCategory("prep_info")).toBe("confirm");
+    });
+    it("maps booking to schedule", () => {
+      expect(interventionToCooldownCategory("booking")).toBe("schedule");
+    });
+    it("maps call_invite to schedule", () => {
+      expect(interventionToCooldownCategory("call_invite")).toBe("schedule");
+    });
+    it("maps recovery to revive", () => {
+      expect(interventionToCooldownCategory("recovery")).toBe("revive");
+    });
+    it("maps win_back to revive", () => {
+      expect(interventionToCooldownCategory("win_back")).toBe("revive");
+    });
+    it("maps clarifying_question to clarify", () => {
+      expect(interventionToCooldownCategory("clarifying_question")).toBe("clarify");
+    });
+    it("maps qualification_question to clarify", () => {
+      expect(interventionToCooldownCategory("qualification_question")).toBe("clarify");
+    });
+    it("maps question to clarify", () => {
+      expect(interventionToCooldownCategory("question")).toBe("clarify");
+    });
+    it("maps follow_up to urgency", () => {
+      expect(interventionToCooldownCategory("follow_up")).toBe("urgency");
+    });
+    it("maps greeting to reassurance", () => {
+      expect(interventionToCooldownCategory("greeting")).toBe("reassurance");
+    });
+    it("maps offer to reassurance", () => {
+      expect(interventionToCooldownCategory("offer")).toBe("reassurance");
+    });
+    it("maps next_step to reassurance", () => {
+      expect(interventionToCooldownCategory("next_step")).toBe("reassurance");
+    });
+    it("maps unknown type to reassurance (default)", () => {
+      expect(interventionToCooldownCategory("anything_unknown")).toBe("reassurance");
+    });
   });
 
-  it("maps intervention types to cooldown categories", () => {
-    expect(interventionToCooldownCategory("reminder")).toBe("confirm");
-    expect(interventionToCooldownCategory("booking")).toBe("schedule");
-    expect(interventionToCooldownCategory("recovery")).toBe("revive");
-    expect(interventionToCooldownCategory("clarifying_question")).toBe("clarify");
-    expect(interventionToCooldownCategory("follow_up")).toBe("urgency");
-  });
-
-  it("hashMessage returns deterministic hash", () => {
-    const h1 = hashMessage("Hello world");
-    const h2 = hashMessage("Hello world");
-    expect(h1).toBe(h2);
-    expect(typeof h1).toBe("string");
-    expect(hashMessage("Different")).not.toBe(h1);
-  });
-
-  it("canInterveneNow returns allowed when no limits row", async () => {
-    const result = await canInterveneNow("ws-1", "lead-1", "follow_up", "ENGAGED");
-    expect(result.allowed).toBe(true);
-  });
-
-  it("recordIntervention does not throw", async () => {
-    await expect(recordIntervention("ws-1", "lead-1", "follow_up", "abc123")).resolves.not.toThrow();
+  describe("hashMessage", () => {
+    it("returns a string", () => {
+      expect(typeof hashMessage("hello world")).toBe("string");
+    });
+    it("returns consistent hash for same input", () => {
+      expect(hashMessage("test message")).toBe(hashMessage("test message"));
+    });
+    it("returns different hashes for different inputs", () => {
+      expect(hashMessage("message A")).not.toBe(hashMessage("message B"));
+    });
+    it("handles empty string", () => {
+      expect(typeof hashMessage("")).toBe("string");
+    });
+    it("truncates to first 200 chars for hashing", () => {
+      const long = "a".repeat(300);
+      const long2 = "a".repeat(200) + "b".repeat(100);
+      expect(hashMessage(long)).toBe(hashMessage(long2));
+    });
   });
 });

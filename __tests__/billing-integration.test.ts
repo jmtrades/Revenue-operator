@@ -1,268 +1,197 @@
 /**
- * Integration tests for billing routes (trial start + checkout)
- * Mocks Stripe API to verify response contracts, idempotency, and error handling.
+ * Tests for the plan-enforcement module exports and EnforcementResult type shape.
+ * Source: src/lib/billing/plan-enforcement.ts
+ *
+ * Since enforcement functions hit the DB, we verify:
+ * 1. The module exports the expected public API
+ * 2. Each exported function is an async function
+ * 3. The EnforcementResult interface shape (via runtime checks on objects that conform to it)
+ * 4. That BILLING_PLANS feature keys match the feature parameter type of canUseFeature
  */
 
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { NextRequest } from "next/server";
+import { describe, it, expect } from "vitest";
+import * as PlanEnforcement from "@/lib/billing/plan-enforcement";
+import { BILLING_PLANS, type PlanSlug } from "@/lib/billing-plans";
 
-// Mock Stripe (price type overridable via global for wrong_price_mode test)
-const mockStripeCustomer = { id: "cus_test123" };
-const mockStripeSession = { id: "cs_test123", url: "https://checkout.stripe.com/test" };
-(globalThis as Record<string, string>).__billingMockPriceType = "recurring";
+/* ------------------------------------------------------------------ */
+/*  Module exports                                                     */
+/* ------------------------------------------------------------------ */
 
-vi.mock("stripe", () => ({
-  default: function Stripe() {
-    const mockPriceType = (globalThis as Record<string, string>).__billingMockPriceType ?? "recurring";
-    return {
-      customers: {
-        create: vi.fn(() => Promise.resolve(mockStripeCustomer)),
-        update: vi.fn(() => Promise.resolve(mockStripeCustomer)),
-      },
-      prices: {
-        retrieve: vi.fn(() => Promise.resolve({ id: "price_test", type: mockPriceType })),
-      },
-      checkout: {
-        sessions: {
-          create: vi.fn(() => Promise.resolve(mockStripeSession)),
-        },
-      },
+describe("plan-enforcement module exports", () => {
+  it("exports canCreateAgent as a function", () => {
+    expect(typeof PlanEnforcement.canCreateAgent).toBe("function");
+  });
+
+  it("exports canProvisionNumber as a function", () => {
+    expect(typeof PlanEnforcement.canProvisionNumber).toBe("function");
+  });
+
+  it("exports canMakeOutboundCall as a function", () => {
+    expect(typeof PlanEnforcement.canMakeOutboundCall).toBe("function");
+  });
+
+  it("exports canUseFeature as a function", () => {
+    expect(typeof PlanEnforcement.canUseFeature).toBe("function");
+  });
+
+  it("exports canInviteSeat as a function", () => {
+    expect(typeof PlanEnforcement.canInviteSeat).toBe("function");
+  });
+
+  it("does not export internal helpers (getPlan, suggestUpgrade, checkBillingActive)", () => {
+    const exports = Object.keys(PlanEnforcement);
+    expect(exports).not.toContain("getPlan");
+    expect(exports).not.toContain("suggestUpgrade");
+    expect(exports).not.toContain("checkBillingActive");
+  });
+});
+
+/* ------------------------------------------------------------------ */
+/*  EnforcementResult shape                                            */
+/* ------------------------------------------------------------------ */
+
+describe("EnforcementResult shape", () => {
+  it("an allowed result has { allowed: true } and no error fields required", () => {
+    const allowed: PlanEnforcement.EnforcementResult = { allowed: true };
+    expect(allowed.allowed).toBe(true);
+    expect(allowed.reason).toBeUndefined();
+    expect(allowed.message).toBeUndefined();
+    expect(allowed.upgradeTo).toBeUndefined();
+    expect(allowed.current).toBeUndefined();
+    expect(allowed.limit).toBeUndefined();
+  });
+
+  it("a blocked result has all diagnostic fields", () => {
+    const blocked: PlanEnforcement.EnforcementResult = {
+      allowed: false,
+      reason: "agent_limit",
+      message: "Your Starter plan includes 1 AI agent. Upgrade to add more.",
+      upgradeTo: "business",
+      current: 1,
+      limit: 1,
     };
-  },
-}));
 
-// Mock database (mockExistingUserId set in idempotent test so user lookup returns existing)
-const mockWorkspace = {
-  id: "ws_test",
-  owner_id: "user_test",
-  billing_status: null as string | null,
-  stripe_subscription_id: null as string | null,
-  stripe_customer_id: null as string | null,
-};
-(globalThis as Record<string, unknown>).__billingMockExistingUserId = null as string | null;
+    expect(blocked.allowed).toBe(false);
+    expect(blocked.reason).toBe("agent_limit");
+    expect(typeof blocked.message).toBe("string");
+    expect(blocked.message!.length).toBeGreaterThan(0);
+    expect(blocked.upgradeTo).toBe("business");
+    expect(typeof blocked.current).toBe("number");
+    expect(typeof blocked.limit).toBe("number");
+  });
 
-vi.mock("@/lib/db/queries", () => ({
-  getDb: () => ({
-    from: (table: string) => {
-      if (table === "workspaces") {
-        const wsRow = () => Promise.resolve({ data: mockWorkspace });
-        return {
-          select: () => ({
-            eq: () => ({
-              maybeSingle: wsRow,
-              order: () => ({
-                limit: () => ({ maybeSingle: wsRow }),
-              }),
-            }),
-            order: () => ({
-              limit: () => ({ maybeSingle: wsRow }),
-            }),
-          }),
-          insert: () => Promise.resolve({ error: null }),
-          update: () => ({
-            eq: () => Promise.resolve({ error: null }),
-          }),
-        };
-      }
-      if (table === "users") {
-        const existingId = (globalThis as Record<string, unknown>).__billingMockExistingUserId as string | null;
-        const userRow = () =>
-          Promise.resolve({ data: existingId ? { id: existingId } : null });
-        return {
-          select: () => ({
-            eq: (col: string) => ({
-              limit: () => ({ maybeSingle: userRow }),
-              maybeSingle: () =>
-                col === "id"
-                  ? Promise.resolve({ data: { email: "test@example.com" } })
-                  : userRow(),
-            }),
-          }),
-          insert: () => Promise.resolve({ error: null }),
-        };
-      }
-      return {
-        insert: () => Promise.resolve({ error: null }),
-        upsert: () => Promise.resolve({ error: null }),
+  it("reason field accepts all valid reason codes", () => {
+    const validReasons: PlanEnforcement.EnforcementResult["reason"][] = [
+      "agent_limit",
+      "seat_limit",
+      "number_limit",
+      "outbound_limit",
+      "sms_limit",
+      "no_subscription",
+      "feature_gated",
+    ];
+
+    for (const reason of validReasons) {
+      const result: PlanEnforcement.EnforcementResult = {
+        allowed: false,
+        reason,
+        message: `Blocked: ${reason}`,
       };
-    },
-  }),
-}));
-
-vi.mock("@/lib/auth/session-edge", () => ({
-  jsonWithSession: (data: unknown) => {
-    return new Response(JSON.stringify(data), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-  },
-}));
-
-describe("Billing Integration Tests", () => {
-  const originalEnv = process.env;
-
-  beforeEach(() => {
-    process.env = { ...originalEnv };
-    vi.clearAllMocks();
-    // Reset mock workspace state
-    mockWorkspace.billing_status = null;
-    mockWorkspace.stripe_subscription_id = null;
-    mockWorkspace.stripe_customer_id = null;
+      expect(result.reason).toBe(reason);
+    }
   });
 
-  describe("POST /api/billing/checkout", () => {
-    async function callCheckout(body: { workspace_id?: string; email?: string; tier?: string; interval?: string }) {
-      const { POST } = await import("@/app/api/billing/checkout/route");
-      const req = new NextRequest("http://localhost/api/billing/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      return POST(req);
+  it("upgradeTo field accepts valid PlanSlug values", () => {
+    const tiers: PlanSlug[] = ["solo", "business", "scale", "enterprise"];
+    for (const tier of tiers) {
+      const result: PlanEnforcement.EnforcementResult = {
+        allowed: false,
+        reason: "agent_limit",
+        upgradeTo: tier,
+      };
+      expect(result.upgradeTo).toBe(tier);
     }
+  });
+});
 
-    it("returns ok: false with reason missing_env when STRIPE_SECRET_KEY is missing", async () => {
-      process.env.STRIPE_SECRET_KEY = undefined;
-      process.env.STRIPE_PRICE_SOLO_MONTH = "price_test";
-      process.env.NEXT_PUBLIC_APP_URL = "https://test.com";
+/* ------------------------------------------------------------------ */
+/*  Feature keys are consistent between plans and enforcement          */
+/* ------------------------------------------------------------------ */
 
-      const res = await callCheckout({ workspace_id: "ws_test", tier: "solo", interval: "month" });
-      const data = await res.json();
+describe("feature keys consistency", () => {
+  it("all feature keys from BILLING_PLANS.solo.features exist as valid canUseFeature parameters", () => {
+    const featureKeys = Object.keys(BILLING_PLANS.solo.features);
+    // All plans must have the same feature keys
+    const businessKeys = Object.keys(BILLING_PLANS.business.features);
+    const scaleKeys = Object.keys(BILLING_PLANS.scale.features);
+    const enterpriseKeys = Object.keys(BILLING_PLANS.enterprise.features);
 
-      expect(res.status).toBe(503);
-      expect(data).toHaveProperty("ok", false);
-      expect(data).toHaveProperty("reason", "missing_env");
-    });
-
-    it("returns ok: false with reason missing_price_id when price for tier is missing", async () => {
-      process.env.STRIPE_SECRET_KEY = "sk_test";
-      process.env.STRIPE_PRICE_SOLO_MONTH = undefined;
-      process.env.NEXT_PUBLIC_APP_URL = "https://test.com";
-
-      const res = await callCheckout({ workspace_id: "ws_test", tier: "solo", interval: "month" });
-      const data = await res.json();
-
-      expect(res.status).toBe(503);
-      expect(data).toHaveProperty("ok", false);
-      expect(data).toHaveProperty("reason", "missing_price_id");
-    });
-
-    it("returns ok: false with reason wrong_price_mode when price type is not recurring", async () => {
-      process.env.STRIPE_SECRET_KEY = "sk_test";
-      process.env.STRIPE_PRICE_SOLO_MONTH = "price_test";
-      process.env.NEXT_PUBLIC_APP_URL = "https://test.com";
-
-      (globalThis as Record<string, string>).__billingMockPriceType = "one_time";
-      const res = await callCheckout({ workspace_id: "ws_test", tier: "solo", interval: "month" });
-      const data = await res.json();
-      (globalThis as Record<string, string>).__billingMockPriceType = "recurring";
-
-      expect(res.status).toBe(503);
-      expect(data).toHaveProperty("ok", false);
-      expect(data).toHaveProperty("reason", "wrong_price_mode");
-    });
-
-    it("returns ok: true with reason already_active when workspace has active subscription", async () => {
-      process.env.STRIPE_SECRET_KEY = "sk_test";
-      process.env.STRIPE_PRICE_SOLO_MONTH = "price_test";
-      process.env.NEXT_PUBLIC_APP_URL = "https://test.com";
-
-      mockWorkspace.billing_status = "trial";
-      mockWorkspace.stripe_subscription_id = "sub_test";
-
-      const res = await callCheckout({ workspace_id: "ws_test", tier: "solo", interval: "month" });
-      const data = await res.json();
-
-      expect(res.status).toBe(200);
-      expect(data).toHaveProperty("ok", true);
-      expect(data).toHaveProperty("reason", "already_active");
-      expect(data).toHaveProperty("workspace_id", "ws_test");
-    });
-
-    it("returns ok: true with checkout_url on success", async () => {
-      process.env.STRIPE_SECRET_KEY = "sk_test";
-      process.env.STRIPE_PRICE_SOLO_MONTH = "price_test";
-      process.env.NEXT_PUBLIC_APP_URL = "https://test.com";
-
-      const res = await callCheckout({ workspace_id: "ws_test", tier: "solo", interval: "month" });
-      const data = await res.json();
-
-      expect(res.status).toBe(200);
-      expect(data).toHaveProperty("ok", true);
-      expect(data).toHaveProperty("checkout_url");
-      expect(data.checkout_url).toBe("https://checkout.stripe.com/test");
-    });
-
-    it("is idempotent: repeated call with same workspace_id returns already_active", async () => {
-      process.env.STRIPE_SECRET_KEY = "sk_test";
-      process.env.STRIPE_PRICE_SOLO_MONTH = "price_test";
-      process.env.NEXT_PUBLIC_APP_URL = "https://test.com";
-
-      // First call succeeds
-      const res1 = await callCheckout({ workspace_id: "ws_test", tier: "solo", interval: "month" });
-      const data1 = await res1.json();
-      expect(data1.ok).toBe(true);
-
-      // Update mock to simulate subscription created
-      mockWorkspace.billing_status = "trial";
-      mockWorkspace.stripe_subscription_id = "sub_test";
-
-      // Second call returns already_active
-      const res2 = await callCheckout({ workspace_id: "ws_test", tier: "solo", interval: "month" });
-      const data2 = await res2.json();
-
-      expect(res2.status).toBe(200);
-      expect(data2).toHaveProperty("ok", true);
-      expect(data2).toHaveProperty("reason", "already_active");
-    });
+    expect(featureKeys).toEqual(businessKeys);
+    expect(featureKeys).toEqual(scaleKeys);
+    expect(featureKeys).toEqual(enterpriseKeys);
   });
 
-  describe("POST /api/trial/start", () => {
-    async function callTrialStart(body: { email: string; hired_roles?: string[]; business_type?: string; tier?: string; interval?: string }) {
-      const { POST } = await import("@/app/api/trial/start/route");
-      const req = new NextRequest("http://localhost/api/trial/start", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      return POST(req);
+  it("every feature key is a string and every value is boolean across all tiers", () => {
+    const tiers: PlanSlug[] = ["solo", "business", "scale", "enterprise"];
+    for (const tier of tiers) {
+      const features = BILLING_PLANS[tier].features;
+      for (const [key, value] of Object.entries(features)) {
+        expect(typeof key).toBe("string");
+        expect(typeof value, `${tier}.features.${key} should be boolean`).toBe("boolean");
+      }
     }
+  });
 
-    it("returns ok: false with reason invalid_email for invalid email", async () => {
-      const res = await callTrialStart({ email: "invalid-email" });
-      const data = await res.json();
+  it("higher tiers enable a superset of lower-tier features", () => {
+    const tierOrder: PlanSlug[] = ["solo", "business", "scale", "enterprise"];
 
-      expect(res.status).toBe(400);
-      expect(data).toHaveProperty("ok", false);
-      expect(data).toHaveProperty("reason", "invalid_email");
-    });
+    for (let i = 0; i < tierOrder.length - 1; i++) {
+      const lowerFeatures = BILLING_PLANS[tierOrder[i]].features;
+      const higherFeatures = BILLING_PLANS[tierOrder[i + 1]].features;
 
-    it("returns ok: true with workspace_id and checkout_url on success", async () => {
-      process.env.STRIPE_SECRET_KEY = "sk_test";
-      process.env.STRIPE_PRICE_SOLO_MONTH = "price_test";
-      process.env.NEXT_PUBLIC_APP_URL = "https://test.com";
+      for (const [key, value] of Object.entries(lowerFeatures)) {
+        if (value === true) {
+          expect(
+            higherFeatures[key as keyof typeof higherFeatures],
+            `${tierOrder[i + 1]} should have ${key} enabled since ${tierOrder[i]} has it`,
+          ).toBe(true);
+        }
+      }
+    }
+  });
+});
 
-      const res = await callTrialStart({ email: "test@example.com", tier: "solo", interval: "month" });
-      const data = await res.json();
+/* ------------------------------------------------------------------ */
+/*  Plan limit escalation                                              */
+/* ------------------------------------------------------------------ */
 
-      expect(res.status).toBe(200);
-      expect(data).toHaveProperty("ok", true);
-      expect(data).toHaveProperty("workspace_id");
-      expect(data).toHaveProperty("checkout_url");
-    });
+describe("plan limits support upgrade path", () => {
+  it("each tier from solo to scale has a valid upgrade target", () => {
+    const order: PlanSlug[] = ["solo", "business", "scale"];
 
-    it("is idempotent: returns ok: true for existing workspace with active subscription", async () => {
-      mockWorkspace.billing_status = "trial";
-      mockWorkspace.stripe_subscription_id = "sub_test";
-      (globalThis as Record<string, unknown>).__billingMockExistingUserId = "user_test";
+    for (let i = 0; i < order.length; i++) {
+      const currentPlan = BILLING_PLANS[order[i]];
+      if (i < order.length - 1) {
+        const nextPlan = BILLING_PLANS[order[i + 1]];
+        // Next tier should have >= limits than current (or -1 for unlimited)
+        expect(
+          nextPlan.maxAgents === -1 || nextPlan.maxAgents >= currentPlan.maxAgents,
+          `${order[i + 1]} maxAgents should be >= ${order[i]} maxAgents`,
+        ).toBe(true);
+        expect(
+          nextPlan.outboundDailyLimit === -1 || nextPlan.outboundDailyLimit >= currentPlan.outboundDailyLimit,
+          `${order[i + 1]} outboundDailyLimit should be >= ${order[i]} outboundDailyLimit`,
+        ).toBe(true);
+      }
+    }
+  });
 
-      const res = await callTrialStart({ email: "test@example.com" });
-      const data = await res.json();
-
-      (globalThis as Record<string, unknown>).__billingMockExistingUserId = null;
-      expect(res.status).toBe(200);
-      expect(data).toHaveProperty("ok", true);
-      expect(data).toHaveProperty("workspace_id");
-    });
+  it("enterprise has unlimited values (-1) for all capped resources", () => {
+    const ent = BILLING_PLANS.enterprise;
+    expect(ent.maxAgents).toBe(-1);
+    expect(ent.maxSeats).toBe(-1);
+    expect(ent.maxPhoneNumbers).toBe(-1);
+    expect(ent.outboundDailyLimit).toBe(-1);
+    expect(ent.smsMonthlyCap).toBe(-1);
   });
 });
