@@ -64,6 +64,10 @@ describe("Verification: invite, welcome, crons", () => {
     it("returns 200 with error for invalid token", async () => {
       process.env.NEXT_PUBLIC_SUPABASE_URL = "https://test.supabase.co";
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "test-anon-key";
+      // Phase 78/Phase 2: getDb() now strictly requires the service-role key
+      // rather than silently falling back to anon. Cron + invite routes are
+      // service-only and legitimately need admin access.
+      process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role-key";
       const { GET } = await import("@/app/api/invite/validate/route");
       const req = new NextRequest("http://localhost/api/invite/validate?token=invalid-token-12345");
       const res = await GET(req);
@@ -92,6 +96,10 @@ describe("Verification: invite, welcome, crons", () => {
       process.env.CRON_SECRET = "test-cron-secret";
       process.env.NEXT_PUBLIC_SUPABASE_URL = "https://test.supabase.co";
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "test-anon-key";
+      // Phase 78/Phase 2: getDb() now strictly requires the service-role key
+      // rather than silently falling back to anon. Cron + invite routes are
+      // service-only and legitimately need admin access.
+      process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role-key";
       const { GET } = await import("@/app/api/cron/first-day-check/route");
       const req = new NextRequest("http://localhost/api/cron/first-day-check", {
         method: "GET",
@@ -127,6 +135,10 @@ describe("Verification: invite, welcome, crons", () => {
       process.env.CRON_SECRET = "test-cron-secret";
       process.env.NEXT_PUBLIC_SUPABASE_URL = "https://test.supabase.co";
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "test-anon-key";
+      // Phase 78/Phase 2: getDb() now strictly requires the service-role key
+      // rather than silently falling back to anon. Cron + invite routes are
+      // service-only and legitimately need admin access.
+      process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role-key";
       const { GET } = await import("@/app/api/cron/day-3-nudge/route");
       const req = new NextRequest("http://localhost/api/cron/day-3-nudge", {
         method: "GET",

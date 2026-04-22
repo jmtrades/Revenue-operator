@@ -4,7 +4,7 @@
  * Uses Supabase RPC to execute DDL.
  */
 
-import { createServerClient } from "@/lib/db/client";
+import { getSupabaseAdmin } from "@/lib/supabase/admin";
 
 let _migrationRunOnce = false;
 
@@ -73,7 +73,7 @@ export async function ensureBrainTables(): Promise<{ ok: boolean; error?: string
   }
 
   try {
-    const client = createServerClient();
+    const client = getSupabaseAdmin();
 
     // Try to run DDL via Supabase RPC (requires exec_sql function in DB)
     for (const sql of [SQL_LEAD_INTELLIGENCE, SQL_AUTONOMOUS_ACTIONS]) {

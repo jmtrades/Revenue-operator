@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { createClient as createSupabaseJsClient } from "@supabase/supabase-js";
+import { getSupabaseAdmin, isSupabaseAdminAvailable } from "@/lib/supabase/admin";
 import { createSessionCookie } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/queries";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
@@ -74,12 +75,10 @@ export async function POST(req: NextRequest) {
   const sendWelcome = () => {
     void sendWelcomeEmail(email, businessName).catch((err) => { log("error", "[auth/signup] error:", { error: err instanceof Error ? err.message : err }); });
   };
-  const serviceRoleKey = (process.env.SUPABASE_SERVICE_ROLE_KEY ?? "").trim();
-
   // Prefer admin.createUser when service role is set — bypasses "Error sending confirmation email"
-  if (serviceRoleKey) {
+  if (isSupabaseAdminAvailable()) {
     try {
-      const admin = createSupabaseJsClient(url, serviceRoleKey);
+      const admin = getSupabaseAdmin();
       const { data: adminData, error: createErr } = await admin.auth.admin.createUser({
         email,
         password,
@@ -172,6 +171,7 @@ export async function POST(req: NextRequest) {
     userId = signInData?.user?.id;
     if (userId && signInData?.session) {
       let workspaceId: string | undefined;
+      let workspaceCreated = true;
       try {
         const db = getDb();
         await db.from("users").upsert({ id: userId, email }, { onConflict: "id" });
@@ -185,14 +185,18 @@ export async function POST(req: NextRequest) {
           await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
           await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
           await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing" });
+        } else {
+          workspaceCreated = false;
+          log("error", "[signup] workspace creation failed (confirmation email error path)", { userId, error: createErr?.message ?? "unknown error" });
         }
-      } catch {
-        // continue
+      } catch (err) {
+        workspaceCreated = false;
+        log("error", "[signup] workspace creation exception (confirmation email error path)", { userId, error: err instanceof Error ? err.message : String(err) });
       }
       const cookie = createSessionCookie({ userId, workspaceId });
       if (cookie) {
         sendWelcome();
-        const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/activate" });
+        const res = NextResponse.json({ ok: true, userId, workspaceId, workspace_created: workspaceCreated, redirectTo: "/activate" });
         res.headers.set("Set-Cookie", cookie);
         return res;
       }
@@ -210,6 +214,7 @@ export async function POST(req: NextRequest) {
   }
 
   let workspaceId: string | undefined;
+  let workspaceCreated = true;
   try {
     const db = getDb();
     await db.from("users").upsert({ id: userId, email }, { onConflict: "id" });
@@ -223,9 +228,13 @@ export async function POST(req: NextRequest) {
       await db.from("settings").insert({ workspace_id: workspaceId, risk_level: "balanced" });
       await db.from("workspace_members").insert({ workspace_id: workspaceId, user_id: userId, role: "owner" });
       await db.from("workspace_billing").insert({ workspace_id: workspaceId, plan: "trial", status: "trialing" });
+    } else {
+      workspaceCreated = false;
+      log("error", "[signup] workspace creation failed (normal signup path)", { userId, error: createErr?.message ?? "unknown error" });
     }
-  } catch {
-    // continue without workspace
+  } catch (err) {
+    workspaceCreated = false;
+    log("error", "[signup] workspace creation exception (normal signup path)", { userId, error: err instanceof Error ? err.message : String(err) });
   }
 
   if (isConfirmationEmailError) {
@@ -234,7 +243,7 @@ export async function POST(req: NextRequest) {
       const cookie = createSessionCookie({ userId, workspaceId });
       if (cookie) {
         sendWelcome();
-        const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/activate" });
+        const res = NextResponse.json({ ok: true, userId, workspaceId, workspace_created: workspaceCreated, redirectTo: "/activate" });
         res.headers.set("Set-Cookie", cookie);
         return res;
       }
@@ -248,10 +257,10 @@ export async function POST(req: NextRequest) {
     // SESSION_SECRET/ENCRYPTION_KEY not configured. Degrade gracefully:
     log("warn", "[auth] Signup succeeded but SESSION_SECRET/ENCRYPTION_KEY is not set. App sessions running without revenue_session cookie.");
     sendWelcome();
-    return NextResponse.json({ ok: true, userId, workspaceId, session: "missing", redirectTo: "/activate" });
+    return NextResponse.json({ ok: true, userId, workspaceId, workspace_created: workspaceCreated, session: "missing", redirectTo: "/activate" });
   }
   sendWelcome();
-  const res = NextResponse.json({ ok: true, userId, workspaceId, redirectTo: "/activate" });
+  const res = NextResponse.json({ ok: true, userId, workspaceId, workspace_created: workspaceCreated, redirectTo: "/activate" });
   res.headers.set("Set-Cookie", cookie);
   return res;
 }

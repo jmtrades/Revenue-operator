@@ -4,7 +4,7 @@
  * and contact progression through automation sequences
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { getSupabaseAdmin } from '@/lib/supabase/admin';
 import { log } from '@/lib/logger';
 import type {
   Workflow,
@@ -18,11 +18,24 @@ import type {
   EventType,
 } from './types';
 
-// Initialize Supabase client
-const supabase = createClient(
-  process.env.SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-);
+/**
+ * Lazy proxy for the service-role Supabase client.
+ *
+ * Cannot be constructed at import time — `getSupabaseAdmin()` throws when
+ * `SUPABASE_SERVICE_ROLE_KEY` is absent, which would crash every process
+ * that transitively imports this module (including tests). The Proxy
+ * forwards every property access to the real admin client on first use,
+ * after env validation has run. `getSupabaseAdmin` itself memoizes, so
+ * the per-call overhead is one cache lookup.
+ */
+type AdminClient = ReturnType<typeof getSupabaseAdmin>;
+const supabase: AdminClient = new Proxy({} as AdminClient, {
+  get(_target, prop: keyof AdminClient) {
+    const client = getSupabaseAdmin();
+    const value = client[prop];
+    return typeof value === "function" ? value.bind(client) : value;
+  },
+}) as AdminClient;
 
 // ============================================================================
 // TEMPLATE RENDERING
@@ -578,20 +591,38 @@ export async function processWorkflowEnrollments(): Promise<{
 
     log("info", "workflow.scheduler.processing-enrollments", { count: enrollments.length });
 
-    // Process each enrollment
-    for (const enrollment of enrollments) {
-      results.processed++;
+    // Process enrollments in parallel batches of 8 with error isolation
+    const CONCURRENCY_LIMIT = 8;
+    for (let i = 0; i < enrollments.length; i += CONCURRENCY_LIMIT) {
+      const batch = enrollments.slice(i, i + CONCURRENCY_LIMIT);
+      const batchResults = await Promise.allSettled(
+        batch.map((enrollment) => processEnrollment(enrollment))
+      );
 
-      const result = await processEnrollment(enrollment);
+      for (let j = 0; j < batchResults.length; j++) {
+        results.processed++;
+        const settled = batchResults[j];
 
-      if (result.stepExecuted) {
-        results.successful++;
-      } else {
-        results.failed++;
-        if (result.error) {
+        if (settled.status === "fulfilled") {
+          const result = settled.value;
+          if (result.stepExecuted) {
+            results.successful++;
+          } else {
+            results.failed++;
+            if (result.error) {
+              results.errors.push({
+                enrollmentId: batch[j].id,
+                error: result.error,
+              });
+            }
+          }
+        } else {
+          results.failed++;
+          const errorMsg = settled.reason instanceof Error ? settled.reason.message : String(settled.reason);
+          log("error", "workflow.scheduler.enrollment-rejected", { enrollment_id: batch[j].id, error: errorMsg });
           results.errors.push({
-            enrollmentId: enrollment.id,
-            error: result.error,
+            enrollmentId: batch[j].id,
+            error: errorMsg,
           });
         }
       }

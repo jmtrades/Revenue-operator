@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
-import { createClient as createSupabaseJsClient } from "@supabase/supabase-js";
+import { getSupabaseAdmin, isSupabaseAdminAvailable } from "@/lib/supabase/admin";
 import { createSessionCookie } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/queries";
 import {
@@ -96,8 +96,6 @@ export async function GET(req: NextRequest) {
     }
 
     const db = getDb();
-    const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").trim();
-    const serviceRoleKey = (process.env.SUPABASE_SERVICE_ROLE_KEY ?? "").trim();
 
     let isNewUser = false;
     let userId: string | null = null;
@@ -106,8 +104,8 @@ export async function GET(req: NextRequest) {
     const { data: existingUser } = await db.from("users").select("id").eq("email", email).maybeSingle();
     userId = (existingUser as { id?: string } | null)?.id ?? null;
 
-    if (!userId && supabaseUrl && serviceRoleKey) {
-      const admin = createSupabaseJsClient(supabaseUrl, serviceRoleKey);
+    if (!userId && isSupabaseAdminAvailable()) {
+      const admin = getSupabaseAdmin();
       const generatedPassword = `${randomUUID()}!Aa1`;
       const { data: adminData, error: adminError } = await admin.auth.admin.createUser({
         email,
