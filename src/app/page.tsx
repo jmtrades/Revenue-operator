@@ -1,47 +1,50 @@
 import dynamic from "next/dynamic";
 import { MarketingNavbar } from "@/components/sections/MarketingNavbar";
 import { Hero } from "@/components/sections/Hero";
-// V9: Homepage streamlined to 10 high-impact sections.
-const HomepageFAQ = dynamic(
-  () => import("@/components/sections/HomepageFAQ").then((m) => m.HomepageFAQ),
-);
 
-const HomepageRoiCalculator = dynamic(
-  () =>
-    import("@/components/sections/HomepageRoiCalculator").then(
-      (module) => module.HomepageRoiCalculator,
-    ),
-);
+// Phase 80 — Homepage consolidated from 14 competing sections to 9.
+// The hero now carries what used to be three sections (copy, ROI calculator,
+// voice preview), which were fighting each other for the same square inches.
+// Duplicated testimonial block removed. Order optimised for a single narrative:
+// 1) Claim (hero with self-computed $-recovered)  → 2) Trust (logos)
+// → 3) Aggregate proof (stats)  → 4) Mechanism (how it works)
+// → 5) Social proof (testimonials + embedded testimonials)
+// → 6) Differentiation (comparison)  → 7) Commitment (pricing)
+// → 8) Objections (FAQ)  → 9) Final ask (CTA).
+
 const TrustedByBar = dynamic(
   () => import("@/components/sections/TrustedByBar").then((m) => m.TrustedByBar),
+);
+const ResultsStatsSection = dynamic(
+  () =>
+    import("@/components/sections/ResultsStatsSection").then(
+      (m) => m.ResultsStatsSection,
+    ),
+);
+const HowItWorks = dynamic(
+  () => import("@/components/sections/HowItWorks").then((m) => m.HowItWorks),
 );
 const SocialProof = dynamic(
   () => import("@/components/sections/SocialProof").then((m) => m.SocialProof),
 );
-const ResultsStatsSection = dynamic(
-  () => import("@/components/sections/ResultsStatsSection").then((m) => m.ResultsStatsSection),
-);
-// ProblemStatement removed — loss-psychology framing replaced by ROI calculator
-const HowItWorks = dynamic(
-  () => import("@/components/sections/HowItWorks").then((m) => m.HowItWorks),
-);
-const PricingPreview = dynamic(
-  () => import("@/components/sections/PricingPreview").then((m) => m.PricingPreview),
-);
-// Industries removed — listing specific industries on homepage excludes potential users.
-// Industry-specific pages still exist at /industries/* for SEO.
-const HomepageVoicePreview = dynamic(
-  () => import("@/components/sections/HomepageVoicePreview").then((m) => m.HomepageVoicePreview),
-);
-// HomepageModeSelector removed — merged into HowItWorks flow
 const TestimonialsGridSection = dynamic(
-  () => import("@/components/sections/TestimonialsGridSection").then((m) => m.TestimonialsGridSection),
-);
-const TestimonialsSection = dynamic(
-  () => import("@/components/sections/TestimonialsSection").then((m) => m.TestimonialsSection),
+  () =>
+    import("@/components/sections/TestimonialsGridSection").then(
+      (m) => m.TestimonialsGridSection,
+    ),
 );
 const ComparisonTableSection = dynamic(
-  () => import("@/components/sections/ComparisonTableSection").then((m) => m.ComparisonTableSection),
+  () =>
+    import("@/components/sections/ComparisonTableSection").then(
+      (m) => m.ComparisonTableSection,
+    ),
+);
+const PricingPreview = dynamic(
+  () =>
+    import("@/components/sections/PricingPreview").then((m) => m.PricingPreview),
+);
+const HomepageFAQ = dynamic(
+  () => import("@/components/sections/HomepageFAQ").then((m) => m.HomepageFAQ),
 );
 const FinalCTA = dynamic(
   () => import("@/components/sections/FinalCTA").then((m) => m.FinalCTA),
@@ -50,7 +53,8 @@ const Footer = dynamic(
   () => import("@/components/sections/Footer").then((m) => m.Footer),
 );
 const StickyMobileCTA = dynamic(
-  () => import("@/components/sections/StickyMobileCTA").then((m) => m.StickyMobileCTA),
+  () =>
+    import("@/components/sections/StickyMobileCTA").then((m) => m.StickyMobileCTA),
 );
 
 export default async function HomePage() {
@@ -123,12 +127,9 @@ export default async function HomePage() {
         <Hero />
         <TrustedByBar />
         <ResultsStatsSection />
-        <HomepageRoiCalculator />
         <HowItWorks />
-        <HomepageVoicePreview />
         <SocialProof />
         <TestimonialsGridSection />
-        <TestimonialsSection />
         <ComparisonTableSection />
         <PricingPreview />
         <HomepageFAQ />
