@@ -142,13 +142,20 @@ export function Navbar({ initialAuthenticated = false }: { initialAuthenticated?
       }}
     >
       <Container className="flex items-center justify-between w-full">
-        {/* Logo: clean wordmark */}
+        {/* Wordmark: Playfair Display — editorial signature.
+            Phase 81 — matches the hero display typography so the brand
+            voice is consistent from masthead to footer. */}
         <Link
           href="/"
-          className="text-[15px] font-semibold tracking-tight no-underline"
-          style={{ color: "var(--text-primary)", letterSpacing: "-0.02em" }}
+          className="font-editorial-small no-underline"
+          style={{
+            color: "var(--text-primary)",
+            fontSize: "1.1875rem",
+            letterSpacing: "-0.018em",
+            lineHeight: 1,
+          }}
         >
-          Revenue Operator
+          Revenue <em style={{ fontStyle: "italic", fontWeight: 500 }}>Operator</em>
         </Link>
 
         {/* Desktop nav */}
