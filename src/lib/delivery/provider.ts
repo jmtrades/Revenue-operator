@@ -7,6 +7,11 @@
 
 import { getDb } from "@/lib/db/queries";
 import { incrementMetric, METRIC_KEYS } from "@/lib/observability/metrics";
+import {
+  runThroughBreaker,
+  telnyxBreaker,
+  twilioBreaker,
+} from "@/lib/reliability/provider-breakers";
 import { getTelephonyProvider } from "@/lib/telephony/get-telephony-provider";
 import { sendSms as sendSmsTelnyx } from "@/lib/telephony/telnyx-sms";
 
@@ -58,12 +63,18 @@ async function sendViaTelnyx(
   const toAddr = to.startsWith("+") ? to : to.replace(/\D/g, "").length === 10 ? `+1${to.replace(/\D/g, "")}` : to;
   const fromAddr = fromNumber.startsWith("+") ? fromNumber : fromNumber.replace(/\D/g, "").length === 10 ? `+1${fromNumber.replace(/\D/g, "")}` : fromNumber;
 
-  const result = await sendSmsTelnyx({
-    from: fromAddr,
-    to: toAddr,
-    text: body,
-    messagingProfileId: messagingProfileId ?? undefined,
-  });
+  // Phase 79 Task 13.1 — Route through Telnyx circuit breaker. On
+  // CircuitOpenError, runThroughBreaker returns `{error: "circuit_open:telnyx-sms"}`
+  // so sendOutbound's channel fallback picks the next channel rather than
+  // retrying a provider we already know is down.
+  const result = await runThroughBreaker(telnyxBreaker, () =>
+    sendSmsTelnyx({
+      from: fromAddr,
+      to: toAddr,
+      text: body,
+      messagingProfileId: messagingProfileId ?? undefined,
+    })
+  );
 
   if ("error" in result) {
     return { error: result.error };
@@ -140,11 +151,16 @@ async function sendViaTwilio(
   const { getTelephonyService } = await import("@/lib/telephony");
   const telephony = getTelephonyService();
 
-  const smsResult = await telephony.sendSms({
-    from: fromAddr,
-    to: toAddr,
-    text: body,
-  });
+  // Phase 79 Task 13.1 — Route through Twilio circuit breaker. Isolates
+  // Twilio failures from Telnyx/Resend paths so one provider outage does
+  // not cascade into quota burn or channel fallback blindness.
+  const smsResult = await runThroughBreaker(twilioBreaker, () =>
+    telephony.sendSms({
+      from: fromAddr,
+      to: toAddr,
+      text: body,
+    })
+  );
 
   if ("error" in smsResult) {
     return { error: smsResult.error };

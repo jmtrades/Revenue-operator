@@ -8,6 +8,12 @@ import {
   createSupabaseSuppressionWriter,
   isEmailSuppressed,
 } from "@/lib/integrations/email-suppression";
+// Phase 79 Task 13.1 — Circuit breaker around Resend to fail fast during
+// provider outages instead of burning retry quota.
+import {
+  resendBreaker,
+  runThroughBreaker,
+} from "@/lib/reliability/provider-breakers";
 
 export type EmailProvider = "resend" | "sendgrid";
 
@@ -163,7 +169,11 @@ export async function sendEmail(
   const queueId = (inserted as { id: string } | null)?.id;
   if (!queueId) return { ok: false, error: "Failed to create queue entry" };
 
-  try {
+  // Phase 79 Task 13.1 — Route the Resend HTTP call through the provider
+  // breaker. runThroughBreaker returns `{error: "circuit_open:resend-email"}`
+  // when the breaker is tripped, letting the caller short-circuit without
+  // touching Resend.
+  const breakerResult = await runThroughBreaker(resendBreaker, async () => {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -177,29 +187,29 @@ export async function sendEmail(
         html: bodyHtml,
       }),
     });
-
     const json = (await res.json()) as { id?: string; message?: string };
     if (res.ok && json.id) {
-      await db
-        .from("email_send_queue")
-        .update({ status: "sent", external_id: json.id, sent_at: new Date().toISOString() })
-        .eq("id", queueId);
-      return { ok: true, id: queueId, externalId: json.id };
+      return { id: json.id };
     }
-    const errMsg = (json as { message?: string }).message ?? res.statusText ?? "Send failed";
+    return {
+      error:
+        (json as { message?: string }).message ?? res.statusText ?? "Send failed",
+    };
+  });
+
+  if ("error" in breakerResult) {
     await db
       .from("email_send_queue")
-      .update({ status: "failed", error_message: errMsg })
+      .update({ status: "failed", error_message: breakerResult.error })
       .eq("id", queueId);
-    return { ok: false, id: queueId, error: errMsg };
-  } catch (e) {
-    const errMsg = e instanceof Error ? e.message : String(e);
-    await db
-      .from("email_send_queue")
-      .update({ status: "failed", error_message: errMsg })
-      .eq("id", queueId);
-    return { ok: false, id: queueId, error: errMsg };
+    return { ok: false, id: queueId, error: breakerResult.error };
   }
+
+  await db
+    .from("email_send_queue")
+    .update({ status: "sent", external_id: breakerResult.id, sent_at: new Date().toISOString() })
+    .eq("id", queueId);
+  return { ok: true, id: queueId, externalId: breakerResult.id };
 }
 
 export const DEFAULT_EMAIL_TEMPLATE_SLUGS = DEFAULT_TEMPLATE_SLUGS;
