@@ -15,6 +15,7 @@ import { executePostCallPlan } from "@/lib/zoom/post-call";
 import { runCalendarCallEndedJob } from "@/lib/calls/calendar-call-ended-job";
 import { runPostCallUnknownCheckin } from "@/lib/calls/post-call-unknown-checkin";
 import { fetchSingleRow, type DbSingleQuery } from "@/lib/db/single-row";
+import { decideRetryOrDlq, nextAttemptNumber } from "./retry-policy";
 
 const BURST_MAX_JOBS = 10;
 const BURST_BUDGET_MS = 7000;
@@ -36,12 +37,12 @@ type JobPayload =
 async function acquireLock(
   db: ReturnType<typeof getDb>,
   _workerId: string
-): Promise<{ id: string; payload: unknown; job_type: string } | null> {
+): Promise<{ id: string; payload: unknown; job_type: string; attempts: number } | null> {
   let row: unknown = null;
   try {
     const q = db
       .from("job_queue")
-      .select("id, payload, job_type")
+      .select("id, payload, job_type, attempts")
       .eq("status", "pending")
       .order("created_at", { ascending: true })
       .limit(1) as unknown as DbSingleQuery;
@@ -51,9 +52,12 @@ async function acquireLock(
   }
 
   if (!row) return null;
-  const r = row as { id: string; payload: unknown; job_type: string };
+  const r = row as { id: string; payload: unknown; job_type: string; attempts?: number | null };
+  // Monotonic increment — previously hardcoded to 1, which silently disabled
+  // the retry cap (MAX_QUEUE_ATTEMPTS in retry-policy.ts).
+  const nextAttempts = nextAttemptNumber(r.attempts);
 
-  const updatePayload = { status: "processing" as const, attempts: 1 };
+  const updatePayload = { status: "processing" as const, attempts: nextAttempts };
   try {
     const q = db
       .from("job_queue")
@@ -66,7 +70,7 @@ async function acquireLock(
   } catch {
     return null;
   }
-  return r;
+  return { id: r.id, payload: r.payload, job_type: r.job_type, attempts: nextAttempts };
 }
 
 async function processPayload(payload: JobPayload): Promise<void> {
@@ -140,9 +144,12 @@ export async function burstDrain(workerId?: string): Promise<{ processed: number
       processed++;
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err);
+      // Route exhausted jobs to DLQ; others stay in `failed` where the
+      // existing tooling can re-enqueue them for a manual retry.
+      const finalStatus = decideRetryOrDlq(job.attempts) === "dlq" ? "dlq" : "failed";
       await db
         .from("job_queue")
-        .update({ status: "failed", error: errMsg })
+        .update({ status: finalStatus, error: errMsg })
         .eq("id", job.id);
       errors++;
     }

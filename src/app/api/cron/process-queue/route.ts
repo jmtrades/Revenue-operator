@@ -281,7 +281,9 @@ export async function GET(request: NextRequest) {
           }
         }
       }
-      await fail(job.id, errMsg);
+      // Pass the incremented attempt count so fail() can route exhausted
+      // jobs to the DLQ (MAX_QUEUE_ATTEMPTS). See src/lib/queue/retry-policy.ts.
+      await fail(job.id, errMsg, job.attempts);
       return NextResponse.json({ ok: false, error: errMsg }, { status: 500 });
     }
     const body: { ok: boolean; processed: number; job_type: string; worker_id?: string; job_id?: string; claim_ttl_seconds?: number; claimed_via_rpc?: boolean } = {

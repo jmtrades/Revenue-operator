@@ -7,8 +7,11 @@
  */
 
 import { getDb } from "@/lib/db/queries";
+import { decideRetryOrDlq, nextAttemptNumber } from "./retry-policy";
 
 import type { ActionCommand } from "@/lib/action-queue/types";
+
+export { MAX_QUEUE_ATTEMPTS } from "./retry-policy";
 
 export type JobPayload =
   | { type: "process_webhook"; webhookId: string }
@@ -104,6 +107,12 @@ export interface DequeueResult {
   payload: JobPayload;
   /** Set when job was claimed via DB RPC (job_claims). TTL uses DB now(), not worker clock. */
   claim?: { worker_id: string; job_id: string; expires_at: string; claim_ttl_seconds: number };
+  /**
+   * Attempt number for THIS claim (1-based, monotonically increasing across
+   * claims of the same job). `fail()` uses this to decide whether the job
+   * has exhausted its retries (see MAX_QUEUE_ATTEMPTS).
+   */
+  attempts: number;
 }
 
 /** Process one job: claim via job_claims (SELECT FOR UPDATE SKIP LOCKED). Dequeue is always DB-backed so jobs are never lost. */
@@ -138,21 +147,27 @@ export async function dequeue(workerId?: string): Promise<DequeueResult | null> 
 
   const { data: row } = await db
     .from("job_queue")
-    .select("id, payload, job_type")
+    .select("id, payload, job_type, attempts")
     .eq("id", jobId)
     .maybeSingle();
 
   if (!row) return null;
-  const r = row as { id: string; payload: unknown; job_type: string };
+  const r = row as { id: string; payload: unknown; job_type: string; attempts?: number | null };
 
+  // Monotonic attempt counter. Previously this was hardcoded `attempts: 1` on
+  // every claim, which silently disabled the retry cap — a poison-pill job
+  // could be reclaimed indefinitely (when its claim expired and the status
+  // was reset to pending elsewhere) because `attempts` never grew. Now each
+  // claim increments, so MAX_QUEUE_ATTEMPTS is actually enforced by fail().
+  const attempts = nextAttemptNumber(r.attempts);
   await db
     .from("job_queue")
-    .update({ status: "processing", locked_by: wId, locked_at: new Date().toISOString(), attempts: 1 })
+    .update({ status: "processing", locked_by: wId, locked_at: new Date().toISOString(), attempts })
     .eq("id", r.id);
 
   const payload = (typeof r.payload === "object" && r.payload !== null ? r.payload : {}) as JobPayload;
   if (!payload.type) (payload as { type: string }).type = r.job_type;
-  return { id: r.id, payload, claim: claimMeta };
+  return { id: r.id, payload, claim: claimMeta, attempts };
 }
 
 /** Move failed job to DLQ. */
@@ -181,12 +196,22 @@ export async function complete(jobId: string, completionId?: string): Promise<vo
     .eq("id", jobId);
 }
 
-/** Mark job failed. Release claim. */
-export async function fail(jobId: string, error: string): Promise<void> {
+/**
+ * Mark job failed. Release claim.
+ *
+ * When `attempts` is supplied and >= MAX_QUEUE_ATTEMPTS, the job is routed
+ * to the DLQ instead (status=dlq) so it stops being considered retryable.
+ * Callers that don't have the attempt count (legacy callers, manual failure
+ * paths) can omit the arg and the job just goes to status=failed — matching
+ * the pre-retry-cap behaviour.
+ */
+export async function fail(jobId: string, error: string, attempts?: number): Promise<void> {
   const db = getDb();
   await db.from("job_claims").delete().eq("job_id", jobId);
+  const finalStatus =
+    attempts !== undefined && decideRetryOrDlq(attempts) === "dlq" ? "dlq" : "failed";
   await db
     .from("job_queue")
-    .update({ status: "failed", error })
+    .update({ status: finalStatus, error })
     .eq("id", jobId);
 }
