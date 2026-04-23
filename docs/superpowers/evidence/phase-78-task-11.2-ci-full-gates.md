@@ -132,8 +132,9 @@ that had to be resolved first:
   `/\\b(?:sk|pk|rk)_(?:live|test)_[A-Za-z0-9]{16,}\\b/` still matches,
   but (b) scan-secrets' allowlist sees `/PLACEHOLDER/i` inside the
   matched text and skips the hit. PEM-header fixture rebuilt from string
-  fragments so the source file contains no literal `-----BEGIN RSA PRIVATE KEY-----`
-  substring (runtime value unchanged). All 23 tests in the file still pass.
+  fragments so the source file contains no literal `BEGIN RSA PRIVATE KEY`
+  wrapped in the five-dash delimiter (runtime value unchanged). All 23
+  tests in the file still pass.
 - **`docs/superpowers/plans/2026-04-22-phase-78-100b-remediation.md`** —
   historical reference to the original leaked webhook secret (already
   rotated in Stripe Dashboard, already filter-repo'd out of git history).

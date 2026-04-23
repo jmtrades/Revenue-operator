@@ -1,9 +1,13 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
+  // Enable standalone output for self-hosted Docker deployments.
+  // When NEXT_OUTPUT_STANDALONE is unset (e.g. local dev), this defaults to undefined (normal mode).
+  output: process.env.NEXT_OUTPUT_STANDALONE === "1" ? "standalone" : undefined,
   async redirects() {
     return [
       { source: "/app/onboarding", destination: "/activate", permanent: false },
@@ -18,7 +22,9 @@ const nextConfig: NextConfig = {
       { source: "/onboard/:path*", destination: "/activate", permanent: false },
       // Dashboard consolidation — redirect ALL /dashboard/* to /app/*
       { source: "/dashboard", destination: "/app", permanent: true },
-      { source: "/dashboard/activity", destination: "/app/activity", permanent: true },
+      // /app/activity never existed as a page; collapse it + its legacy alias to the dashboard.
+      { source: "/dashboard/activity", destination: "/app/dashboard", permanent: true },
+      { source: "/app/activity", destination: "/app/dashboard", permanent: true },
       { source: "/dashboard/analytics", destination: "/app/analytics", permanent: true },
       { source: "/dashboard/analytics/:path*", destination: "/app/analytics", permanent: true },
       { source: "/dashboard/billing", destination: "/app/settings/billing", permanent: true },
@@ -109,23 +115,12 @@ const nextConfig: NextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
   },
   async headers() {
-    // Next.js App Router requires inline styles/scripts for hydration and streaming.
-    // Keep this policy strict on origins, but allow inline for style/script so pages do not render blank.
-    const csp = [
-      "default-src 'self'",
-      "base-uri 'self'",
-      "object-src 'none'",
-      "frame-ancestors 'none'",
-      "form-action 'self'",
-      "connect-src 'self' https: wss:",
-      "img-src 'self' data: https:",
-      "media-src 'self' data: blob: https:",
-      "font-src 'self' data:",
-      "worker-src 'self' blob:",
-      "style-src 'self' 'unsafe-inline'",
-      "script-src 'self' 'unsafe-inline'",
-    ].join("; ");
-
+    // NOTE: Content-Security-Policy is set from middleware.ts, not here.
+    // The policy carries a per-request crypto-random nonce so script-src can
+    // use `'strict-dynamic' 'nonce-…'` instead of `'unsafe-inline'`, which is
+    // only possible from a runtime that sees each request (i.e. middleware).
+    // Leaving CSP out of this static header block is intentional.
+    //
     // Do not match `/_next/static`, `/_next/image`, or `favicon.ico` — Next sets cache for hashed assets;
     // applying `no-store` here would hurt caching and triggers Next's custom Cache-Control warning on /_next/static.
     return [
@@ -141,15 +136,11 @@ const nextConfig: NextConfig = {
             value: "max-age=31536000; includeSubDomains; preload",
           },
           {
-            key: "Content-Security-Policy",
-            value: csp,
-          },
-          {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(self), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()",
           },
           // Preconnect to external services for faster first-byte
-          { key: "Link", value: `<${process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://db.ucjbsftixnnbmuodholg.supabase.co"}>; rel=preconnect` },
+          ...(process.env.NEXT_PUBLIC_SUPABASE_URL ? [{ key: "Link", value: `<${process.env.NEXT_PUBLIC_SUPABASE_URL}>; rel=preconnect` }] : []),
           { key: "Link", value: "<https://js.stripe.com>; rel=preconnect" },
         ],
       },
@@ -157,4 +148,31 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withNextIntl(nextConfig);
+// Phase 78 Task 11.3 — wrap with withSentryConfig so source maps upload in CI
+// and release markers carry the commit SHA. Options are inert when the
+// SENTRY_AUTH_TOKEN env var isn't set, so local builds are unaffected.
+const sentryOptions = {
+  // Quiet plugin output in local dev; CI prints full info via its own logs.
+  silent: !process.env.CI,
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  // Upload source maps only when an auth token is present (i.e. CI/release
+  // builds). Skipping avoids build failures on dev machines with no token.
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  // Tunnel rewrites Sentry's ingest path through our origin so ad-blockers
+  // don't eat the event; keeps CSP connect-src scoped to `'self' + *.sentry.io`.
+  tunnelRoute: "/monitoring",
+  // Hide Sentry's own telemetry tracing in the build output — we already have
+  // structured build logs from next and Vercel.
+  hideSourceMaps: true,
+  // Sentry v9+ moved these two options under `webpack`; leaving them top-level
+  // emits deprecation warnings that add noise to every CI build.
+  webpack: {
+    // Strip the Sentry SDK's own debug logging from production bundles.
+    treeshake: { removeDebugLogging: true },
+    // Skip the Vercel Cron → Sentry Monitors wiring in preview builds.
+    automaticVercelMonitors: false,
+  },
+};
+
+export default withSentryConfig(withNextIntl(nextConfig), sentryOptions);
