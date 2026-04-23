@@ -78,7 +78,7 @@ export default function OutboundPage() {
           <Container>
             <div className="max-w-3xl mx-auto text-center">
               <SectionLabel>Outbound</SectionLabel>
-              <h1 className="font-bold text-4xl md:text-6xl leading-tight">Outbound That Actually Works</h1>
+              <h1 className="font-editorial" style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)", color: "var(--text-primary)" }}>Outbound That Actually Works</h1>
               <p className="mt-4 text-base md:text-lg" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
                 Create outbound campaigns that call, text, qualify, and book appointments automatically — with compliance guardrails and measurable outcomes in your analytics.
               </p>
@@ -97,7 +97,7 @@ export default function OutboundPage() {
         <section className="py-14 md:py-20">
           <Container>
             <div className="max-w-5xl mx-auto">
-              <h2 className="text-2xl md:text-3xl font-bold" style={{ color: "var(--text-primary)" }}>10 Campaign Types</h2>
+              <h2 className="font-editorial" style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.5rem)", color: "var(--text-primary)" }}>10 Campaign Types</h2>
               <p className="mt-3" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
                 Choose the play that matches your sales motion. Each campaign automatically chains calls + SMS into the next revenue step.
               </p>
@@ -126,7 +126,7 @@ export default function OutboundPage() {
           <Container>
             <div className="max-w-5xl mx-auto grid lg:grid-cols-2 gap-8 items-start">
               <div>
-                <h2 className="text-2xl md:text-3xl font-bold" style={{ color: "var(--text-primary)" }}>
+                <h2 className="font-editorial" style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.5rem)", color: "var(--text-primary)" }}>
                   Sequence Builder
                 </h2>
                 <p className="mt-3" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
@@ -159,7 +159,7 @@ export default function OutboundPage() {
               </div>
 
               <div>
-                <h2 className="text-2xl md:text-3xl font-bold" style={{ color: "var(--text-primary)" }}>
+                <h2 className="font-editorial" style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.5rem)", color: "var(--text-primary)" }}>
                   Compliance Built In
                 </h2>
                 <p className="mt-3" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
@@ -196,7 +196,7 @@ export default function OutboundPage() {
         <section className="py-14 md:py-20">
           <Container>
             <div className="max-w-5xl mx-auto">
-              <h2 className="text-2xl md:text-3xl font-bold" style={{ color: "var(--text-primary)" }}>
+              <h2 className="font-editorial" style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.5rem)", color: "var(--text-primary)" }}>
                 Full Analytics
               </h2>
               <p className="mt-3" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>

@@ -683,7 +683,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               {t("backLink")}
             </Link>
             <p className="text-xs font-medium mb-2" style={{ color: "var(--text-tertiary)" }}>{post.date}</p>
-            <h1 className="font-bold text-3xl md:text-4xl mb-6" style={{ letterSpacing: "-0.02em", lineHeight: 1.2 }}>
+            <h1 className="font-editorial mb-6" style={{ fontSize: "clamp(2rem, 4.5vw, 3.25rem)", color: "var(--text-primary)", letterSpacing: "-0.02em", lineHeight: 1.2 }}>
               {post.title}
             </h1>
             <div className="prose prose-invert max-w-none" style={{ color: "var(--text-secondary)", lineHeight: 1.75 }}>

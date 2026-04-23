@@ -70,7 +70,7 @@ export default async function ResultsPage() {
           <Container>
             <div className="text-center max-w-3xl mx-auto">
               <SectionLabel>Real Outcomes</SectionLabel>
-              <h1 className="font-bold text-4xl md:text-6xl leading-tight">
+              <h1 className="font-editorial" style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)", color: "var(--text-primary)" }}>
                 Real Results from Real Businesses
               </h1>
               <p className="mt-4 text-base md:text-lg" style={{ color: "var(--text-secondary)" }}>
@@ -99,7 +99,7 @@ export default async function ResultsPage() {
             {!hasCustomers && (
               <div className="mt-16">
                 <div className="max-w-3xl mx-auto rounded-2xl border border-[var(--border-default)] bg-[var(--bg-inset)] p-6 md:p-8">
-                  <h2 className="text-2xl md:text-3xl font-bold" style={{ color: "var(--text-primary)" }}>
+                  <h2 className="font-editorial" style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.5rem)", color: "var(--text-primary)" }}>
                     Expected ROI by Industry
                   </h2>
                   <p className="mt-3" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
@@ -145,7 +145,7 @@ export default async function ResultsPage() {
         <section className="py-14 md:py-20 border-t" style={{ borderColor: "var(--border-default)" }}>
           <Container>
             <div className="max-w-3xl mx-auto text-center">
-              <h2 className="text-2xl md:text-3xl font-bold" style={{ color: "var(--text-primary)" }}>
+              <h2 className="font-editorial" style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.5rem)", color: "var(--text-primary)" }}>
                 Ready to see it in action?
               </h2>
               <p className="mt-4" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>

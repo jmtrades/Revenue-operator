@@ -62,18 +62,16 @@ export function TestimonialsSection() {
       <Container>
         <AnimateOnScroll className="text-center mb-12">
           <p
-            className="text-[11px] font-semibold uppercase tracking-wider mb-4"
+            className="eyebrow-editorial mb-5"
             style={{ color: "var(--accent-primary)" }}
           >
             {t("label")}
           </p>
           <h2
             id="testimonials-heading"
-            className="font-semibold max-w-2xl mx-auto"
+            className="font-editorial max-w-2xl mx-auto"
             style={{
-              fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)",
-              letterSpacing: "-0.025em",
-              lineHeight: 1.2,
+              fontSize: "clamp(2rem, 4vw, 3.25rem)",
               color: "var(--text-primary)",
             }}
           >

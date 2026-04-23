@@ -71,7 +71,7 @@ export default function EnterprisePage() {
           <Container>
             <div className="max-w-3xl mx-auto text-center">
               <SectionLabel>Enterprise</SectionLabel>
-              <h1 className="font-bold text-4xl md:text-6xl leading-tight">AI Revenue Operations for Enterprise</h1>
+              <h1 className="font-editorial" style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)", color: "var(--text-primary)" }}>AI Revenue Operations for Enterprise</h1>
               <p className="mt-4 text-base md:text-lg" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
                 Built for organizations that need scale, governance, and predictable execution. Deploy a revenue system that answers calls 24/7, drives appointments, and proves impact with analytics.
               </p>
@@ -111,7 +111,7 @@ export default function EnterprisePage() {
         <section className="py-14 md:py-20" style={{ background: "var(--bg-surface)" }}>
           <Container>
             <div className="max-w-3xl mx-auto text-center mb-10">
-              <h2 className="text-2xl md:text-3xl font-bold">Enterprise-Grade Trust & Compliance</h2>
+              <h2 className="font-editorial" style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.5rem)", color: "var(--text-primary)" }}>Enterprise-Grade Trust & Compliance</h2>
               <p className="mt-3 text-sm md:text-base" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
                 Built to meet the security, privacy, and reliability standards your organization requires.
               </p>
@@ -138,7 +138,7 @@ export default function EnterprisePage() {
         <section className="py-14 md:py-20">
           <Container>
             <div className="max-w-2xl mx-auto text-center">
-              <h2 className="text-2xl md:text-3xl font-bold mb-4">Ready to deploy AI revenue operations at scale?</h2>
+              <h2 className="font-editorial mb-4" style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.5rem)", color: "var(--text-primary)" }}>Ready to deploy AI revenue operations at scale?</h2>
               <p className="text-base mb-8" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
                 Get a personalized deployment plan, custom SLA, and dedicated account manager.
               </p>

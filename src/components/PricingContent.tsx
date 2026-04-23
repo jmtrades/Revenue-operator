@@ -336,8 +336,8 @@ export function PricingContent() {
         <div className="text-center mb-12">
           <p className="section-label mb-4">Pricing</p>
           <h1
-            className="font-bold text-3xl md:text-5xl mb-4"
-            style={{ letterSpacing: "-0.02em", lineHeight: 1.15 }}
+            className="font-editorial mb-5"
+              style={{ fontSize: "clamp(2.25rem, 5vw, 3.5rem)", color: "var(--text-primary)", letterSpacing: "-0.02em", lineHeight: 1.15 }}
           >
             Revenue Execution Pricing
           </h1>

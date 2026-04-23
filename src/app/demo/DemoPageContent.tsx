@@ -136,7 +136,7 @@ export function DemoPageContent() {
       {/* Product mockups */}
       <div className="max-w-5xl mx-auto px-4 mt-16">
         <div className="max-w-2xl text-center mx-auto mb-10">
-          <p className="text-[11px] font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--accent-primary)" }}>
+          <p className="eyebrow-editorial mb-4" style={{ color: "var(--accent-primary)" }}>
             See the full product
           </p>
           <h2

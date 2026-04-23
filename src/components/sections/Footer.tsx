@@ -36,7 +36,7 @@ export function Footer() {
 
           {/* Product */}
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--accent-primary)" }}>
+            <p className="eyebrow-editorial mb-4" style={{ color: "var(--accent-primary)" }}>
               {t("product")}
             </p>
             <nav className="space-y-1.5">
@@ -52,7 +52,7 @@ export function Footer() {
 
           {/* Industries */}
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--accent-primary)" }}>
+            <p className="eyebrow-editorial mb-4" style={{ color: "var(--accent-primary)" }}>
               {tMarketing("industries")}
             </p>
             <nav className="space-y-1.5">
@@ -76,7 +76,7 @@ export function Footer() {
 
           {/* Company */}
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--accent-primary)" }}>
+            <p className="eyebrow-editorial mb-4" style={{ color: "var(--accent-primary)" }}>
               {t("company")}
             </p>
             <nav className="space-y-1.5">
@@ -90,7 +90,7 @@ export function Footer() {
 
           {/* Legal */}
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-wider mb-3" style={{ color: "var(--accent-primary)" }}>
+            <p className="eyebrow-editorial mb-4" style={{ color: "var(--accent-primary)" }}>
               {t("legalSecurity")}
             </p>
             <nav className="space-y-1.5">

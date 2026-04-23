@@ -54,7 +54,7 @@ export function HomepageRoiCalculator() {
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] items-start max-w-5xl mx-auto">
           <div>
             <p
-              className="text-[11px] font-semibold uppercase tracking-wider mb-3"
+              className="eyebrow-editorial mb-4"
               style={{ color: "var(--accent-primary)" }}
             >
               {t("sectionLabel")}

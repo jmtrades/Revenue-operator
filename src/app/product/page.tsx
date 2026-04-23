@@ -118,8 +118,8 @@ export default async function ProductPage() {
           <section className="max-w-3xl mb-16">
             <p className="section-label mb-4">{t("sectionLabel")}</p>
             <h1
-              className="font-bold text-3xl md:text-4xl mb-6"
-              style={{ letterSpacing: "-0.02em", lineHeight: 1.2 }}
+              className="font-editorial mb-6"
+              style={{ fontSize: "clamp(2rem, 4.5vw, 3.25rem)", color: "var(--text-primary)", letterSpacing: "-0.02em", lineHeight: 1.2 }}
             >
               {t("heading")}
             </h1>

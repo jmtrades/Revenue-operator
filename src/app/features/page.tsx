@@ -118,8 +118,8 @@ export default function FeaturesPage() {
               Features
             </p>
             <h1
-              className="font-bold text-3xl md:text-5xl mb-4"
-              style={{ letterSpacing: "-0.02em", lineHeight: 1.15 }}
+              className="font-editorial mb-5"
+              style={{ fontSize: "clamp(2.25rem, 5vw, 3.5rem)", color: "var(--text-primary)", letterSpacing: "-0.02em", lineHeight: 1.15 }}
             >
               Everything your phone needs. Nothing it doesn&apos;t.
             </h1>

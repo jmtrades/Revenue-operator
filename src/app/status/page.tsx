@@ -93,7 +93,7 @@ export default async function StatusPage() {
           <Container>
             <div className="max-w-3xl mx-auto text-center">
               <SectionLabel>System Status</SectionLabel>
-              <h1 className="font-bold text-4xl md:text-6xl leading-tight">{headline}</h1>
+              <h1 className="font-editorial" style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)", color: "var(--text-primary)" }}>{headline}</h1>
               <p className="mt-4 text-base md:text-lg" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
                 Live subsystem probes for database, telephony, billing, rate-limit store, and the voice server.
               </p>

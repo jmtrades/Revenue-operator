@@ -72,7 +72,7 @@ export function PricingTestimonials() {
         <p className="text-xs font-semibold tracking-wider uppercase text-emerald-400 mb-2">
           What Our Customers Say
         </p>
-        <h2 className="text-2xl md:text-3xl font-bold" style={{ color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
+        <h2 className="font-editorial" style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.5rem)", color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
           Trusted by businesses across every industry
         </h2>
       </div>

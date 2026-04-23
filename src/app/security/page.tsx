@@ -47,7 +47,7 @@ export default function SecurityPage() {
           <Container>
             <div className="max-w-3xl mx-auto text-center">
               <SectionLabel>Security & Compliance</SectionLabel>
-              <h1 className="font-bold text-4xl md:text-6xl leading-tight">
+              <h1 className="font-editorial" style={{ fontSize: "clamp(2.5rem, 6vw, 4.5rem)", color: "var(--text-primary)" }}>
                 Enterprise-Grade Security for Your Business Communications
               </h1>
               <p className="mt-4 text-base md:text-lg" style={{ color: "var(--text-secondary)", lineHeight: 1.7 }}>
