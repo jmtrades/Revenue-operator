@@ -32,8 +32,8 @@ export function UseCases() {
         <AnimateOnScroll className="text-center mb-16">
           <SectionLabel>{t("label")}</SectionLabel>
           <h2
-            className="font-semibold max-w-2xl mx-auto"
-            style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)", letterSpacing: "-0.02em", lineHeight: 1.2, color: "var(--text-primary)" }}
+            className="font-editorial max-w-2xl mx-auto"
+            style={{ fontSize: "clamp(2rem, 4vw, 3.25rem)", color: "var(--text-primary)" }}
           >
             {t("heading")}
           </h2>
