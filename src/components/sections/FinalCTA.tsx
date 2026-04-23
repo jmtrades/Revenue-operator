@@ -49,20 +49,23 @@ export function FinalCTA() {
       }}
     >
       <Container>
+        {/* Phase 81 — closing chapter rule, sets up the editorial close. */}
+        <div
+          className="rule-editorial max-w-xl mx-auto mb-14 md:mb-16"
+          aria-hidden="true"
+        />
         <AnimateOnScroll className="text-center max-w-2xl mx-auto relative z-10">
           <p
-            className="text-[11px] font-semibold uppercase tracking-wider mb-4"
+            className="eyebrow-editorial mb-5"
             style={{ color: "var(--accent-primary)" }}
           >
             {t("label")}
           </p>
 
           <h2
-            className="font-semibold mb-5"
+            className="font-editorial mb-6"
             style={{
-              fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)",
-              letterSpacing: "-0.025em",
-              lineHeight: 1.15,
+              fontSize: "clamp(2rem, 4vw, 3.25rem)",
               color: "var(--text-primary)",
             }}
           >
@@ -70,7 +73,7 @@ export function FinalCTA() {
           </h2>
 
           <p
-            className="text-base md:text-lg max-w-xl mx-auto mb-6 leading-relaxed"
+            className="text-base md:text-lg max-w-xl mx-auto mb-7 leading-relaxed"
             style={{ color: "var(--text-secondary)" }}
           >
             {t("description")}

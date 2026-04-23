@@ -38,17 +38,15 @@ export function PricingPreview() {
       <Container>
         <AnimateOnScroll className="text-center mb-16">
           <p
-            className="text-[11px] font-semibold uppercase tracking-wider mb-4"
+            className="eyebrow-editorial mb-5"
             style={{ color: "var(--accent-primary)" }}
           >
             {t("label")}
           </p>
           <h2
-            className="font-semibold max-w-2xl mx-auto"
+            className="font-editorial max-w-2xl mx-auto"
             style={{
-              fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)",
-              letterSpacing: "-0.025em",
-              lineHeight: 1.2,
+              fontSize: "clamp(2rem, 4vw, 3.25rem)",
               color: "var(--text-primary)",
             }}
           >
@@ -164,19 +162,26 @@ export function PricingPreview() {
                   </motion.span>
                 )}
                 <h3
-                  className="font-semibold text-base mb-1"
-                  style={{ color: "var(--text-primary)" }}
+                  className="font-editorial-small text-base mb-1"
+                  style={{ color: "var(--text-primary)", fontSize: "1.125rem" }}
                 >
                   {name}
                 </h3>
                 <p
-                  className="text-2xl font-semibold mb-4"
-                  style={{ color: "var(--text-primary)", fontFeatureSettings: "'tnum'" }}
+                  className="num-editorial mb-4"
+                  style={{
+                    color: "var(--text-primary)",
+                    fontSize: "clamp(1.75rem, 2.5vw, 2rem)",
+                    lineHeight: 1.1,
+                  }}
                 >
                   {annual ? tier.priceAnnual : tier.priceMonthly}
                   <span
-                    className="text-sm font-normal"
-                    style={{ color: "var(--text-tertiary)" }}
+                    className="text-sm font-normal ml-1"
+                    style={{
+                      color: "var(--text-tertiary)",
+                      fontFamily: "var(--font-body-sans)",
+                    }}
                   >
                     {period}
                   </span>
