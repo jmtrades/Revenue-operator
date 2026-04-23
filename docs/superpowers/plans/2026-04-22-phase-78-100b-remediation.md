@@ -12,7 +12,7 @@
 
 ## Immediate Blocking Action (USER — before any commit in this plan)
 
-The webhook secret `whsec_1XCa09uGBQt0HaPUH9V5yhGtxpqb4ocA` was committed to this repository's public git history in `LAUNCH_CHECKLIST.md` and `STRIPE_SETUP.md` at HEAD. The repo is confirmed public on GitHub. **Rotate before redacting** — a redaction commit against a live secret is a treasure-map commit ("line 32 used to have the real secret — grab it from the previous SHA").
+The webhook secret `whsec_ORIGINAL_VALUE_REDACTED_PLACEHOLDER` (rotated) was committed to this repository's public git history in `LAUNCH_CHECKLIST.md` and `STRIPE_SETUP.md` at HEAD. The repo is confirmed public on GitHub. **Rotate before redacting** — a redaction commit against a live secret is a treasure-map commit ("line 32 used to have the real secret — grab it from the previous SHA").
 
 - [ ] **Step U1: Rotate the webhook secret in Stripe Dashboard**
 
@@ -186,7 +186,7 @@ This is a destructive operation. Only run if user explicitly approves AND has co
 ```bash
 cd /Users/junior/Revenue-operator-1
 pip install git-filter-repo 2>/dev/null || brew install git-filter-repo
-git filter-repo --replace-text <(echo 'whsec_1XCa09uGBQt0HaPUH9V5yhGtxpqb4ocA==>whsec_ROTATED_REDACTED') --force
+git filter-repo --replace-text <(echo 'whsec_ORIGINAL_VALUE_REDACTED_PLACEHOLDER==>whsec_ROTATED_REDACTED') --force
 # Then force-push — requires user approval:
 # git push --force-with-lease origin main
 ```

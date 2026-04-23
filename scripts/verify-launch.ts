@@ -89,12 +89,16 @@ async function verifyLaunch() {
 
   // 6. Check build
   log("\n6. Checking build...", YELLOW);
-  try {
-    execSync("npm run build", { stdio: "ignore", cwd: process.cwd() });
-    log("   ✓ Build passes", GREEN);
-  } catch {
-    log("   ❌ Build failed", RED);
-    allPassed = false;
+  if (process.env.SKIP_BUILD === "1") {
+    log("   ⏭  Skipped (SKIP_BUILD=1 — caller already ran `npm run build`)", YELLOW);
+  } else {
+    try {
+      execSync("npm run build", { stdio: "ignore", cwd: process.cwd() });
+      log("   ✓ Build passes", GREEN);
+    } catch {
+      log("   ❌ Build failed", RED);
+      allPassed = false;
+    }
   }
 
   // 7. Check migrations

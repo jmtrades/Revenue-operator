@@ -1,4 +1,12 @@
-# CI: build, lint, and e2e on push/PR to main.
+# CI: full gate suite — secret scan, env presence, placeholder rejection,
+# build, lint, unit tests, full E2E, and launch readiness. Runs on push/PR
+# to main. Ordered fail-fast: secret scan runs first so a leaked key is
+# caught before anything else runs.
+#
+# Phase 78 Task 11.2 — these gates replace the previous lean build/lint/e2e
+# pipeline. Together with the prebuild guarantee checks and verify-env's
+# --strict mode, a production deploy with placeholder secrets is now
+# structurally blocked.
 name: CI
 
 on:
@@ -8,6 +16,9 @@ on:
     branches: [main]
 
 env:
+  # Build-time placeholder values. These are NOT real secrets. Marked with
+  # "placeholder" so `verify:env --strict` rejects them — the production
+  # deploy pipeline must replace every one of these with a real value.
   NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
   NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
   SUPABASE_SERVICE_ROLE_KEY: placeholder
@@ -16,9 +27,44 @@ env:
   CRON_SECRET: placeholder
   PUBLIC_VIEW_SALT: placeholder-32-char-salt___________
   FOUNDER_EXPORT_KEY: placeholder-founder-key___________
+  # Stripe presence-only placeholders — verify:prod-config requires these
+  # when Stripe is enabled. These are NOT Stripe-shaped (no sk_live_ prefix)
+  # so scan:secrets ignores them, and verify:env --strict rejects them.
+  STRIPE_SECRET_KEY: placeholder-stripe-secret
+  STRIPE_WEBHOOK_SECRET: placeholder-whsec-not-real
+  STRIPE_PRICE_ID: placeholder-price-id
 
 jobs:
-  build-lint-e2e:
+  # Gate 1: secret leak scan. Runs on a minimal checkout — no npm install
+  # needed. If a real secret ever lands in a tracked file, this job blocks
+  # merge before any build cost is incurred.
+  scan-secrets:
+    name: Scan secrets (tracked files)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Full history so `scan:secrets:deep` has something to walk, and
+          # so the workflow can scan re-added files in follow-up commits.
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Scan tracked files for secret-shaped values
+        run: npm run scan:secrets
+
+  # Gate 2: full build, lint, test, and e2e pipeline. Depends on the secret
+  # scan passing so we don't waste compute on a compromised branch.
+  build-lint-test:
+    name: Build, lint, test, E2E
+    needs: scan-secrets
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -32,10 +78,39 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Env presence check — confirms every REQUIRED_FOR_PRODUCTION var is
+      # set in the workflow env. Catches accidental removal of an env block
+      # in ci.yml before the build fails obscurely.
+      - name: Verify env (presence)
+        run: npm run verify:env
+
+      # Placeholder rejection check — inverts exit code: strict mode MUST
+      # reject these placeholder values, so the command must exit 1, and
+      # the `!` makes the CI step succeed. If the strict check ever stops
+      # catching `placeholder` values, this step fails loudly.
+      - name: Verify env (strict mode rejects CI placeholders)
+        run: |
+          if npm run verify:env -- --strict; then
+            echo "::error::verify:env --strict accepted placeholder values — placeholder rejection is broken."
+            exit 1
+          else
+            echo "✓ Strict mode correctly rejected CI placeholders."
+          fi
+
+      # Production config presence — doctrine-safe output, exits 1 if any
+      # required var is missing. Passes here because every required var is
+      # set to a placeholder above.
+      - name: Verify production config (presence)
+        run: npm run verify:prod-config
+
       - name: Build
+        env:
+          # Prebuild guarantees skip when CI=true; the full suite runs under
+          # the dedicated unit-test step below.
+          CI: "true"
         run: npm run build
 
-      - name: Lint
+      - name: Lint (--max-warnings=0)
         run: npm run lint
 
       - name: Unit tests (full suite)
@@ -44,7 +119,9 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: Run E2E (server + tests in same step so server stays up)
+      # Full E2E suite — the previous pipeline ran a subset via --grep;
+      # this task restores coverage to every Playwright spec under `e2e/`.
+      - name: Run full E2E suite (server + tests in same step)
         run: |
           npm run start &
           SERVER_PID=$!
@@ -52,7 +129,17 @@ jobs:
             curl -s -o /dev/null -w "%{http_code}" http://localhost:3000 | grep -q 200 && break
             sleep 2
           done
-          PLAYWRIGHT_BASE_URL=http://localhost:3000 npm run test:e2e -- --grep "Critical path|App routes|Activate"
+          PLAYWRIGHT_BASE_URL=http://localhost:3000 npm run test:e2e
+          E2E_EXIT=$?
           kill $SERVER_PID 2>/dev/null || true
+          exit $E2E_EXIT
         env:
           PORT: 3000
+
+      # Launch readiness — informational on CI (build is skipped since we
+      # already built above). Prints a green summary when all presence
+      # checks pass. Never exits 1 on its own — hard gates above do that.
+      - name: Verify launch readiness (informational, SKIP_BUILD=1)
+        env:
+          SKIP_BUILD: "1"
+        run: npm run verify:launch
