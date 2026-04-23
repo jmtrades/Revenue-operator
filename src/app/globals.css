@@ -477,6 +477,69 @@ h3.headline {
   color: var(--text-tertiary);
 }
 
+/* ── Editorial-luxury display ─────────────────────────────────────────────
+   Phase 81 — European editorial aesthetic. Playfair Display via --font-serif.
+   Used on hero + section-lead headlines only. Serif signals authority and
+   longevity; paired with restrained sans body it reads like Bloomberg Markets
+   or The Economist, not generic SaaS.                                      */
+.font-editorial {
+  font-family: var(--font-serif), "Playfair Display", Georgia,
+    "Times New Roman", serif;
+  font-weight: 500;
+  letter-spacing: -0.022em;
+  line-height: 1.04;
+  font-feature-settings: "ss01", "ss02", "liga", "kern", "onum";
+}
+.font-editorial em,
+.font-editorial .ital {
+  font-style: italic;
+  font-weight: 500;
+  /* a hair warmer than text-primary — italic calls attention without shouting */
+  color: var(--text-primary);
+}
+.font-editorial-small {
+  font-family: var(--font-serif), "Playfair Display", Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+/* Tabular editorial display numerals — used for ROI / $-figure readouts. */
+.num-editorial {
+  font-family: var(--font-serif), "Playfair Display", Georgia, serif;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.03em;
+}
+
+/* Hairline editorial rule — one pixel, full width, used as chapter divider. */
+.rule-editorial {
+  position: relative;
+  height: 1px;
+  background: var(--border-default);
+  overflow: visible;
+}
+.rule-editorial::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  transform: translate(-50%, 0) rotate(45deg);
+  background: var(--bg-primary);
+  border-right: 1px solid var(--border-default);
+  border-bottom: 1px solid var(--border-default);
+}
+
+/* Small uppercase eyebrow — Hermès/Loro-Piana spacing, not SV tech. */
+.eyebrow-editorial {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-tertiary);
+}
+
 /* Monospace */
 .record-text, .mono, .text-mono {
   font-family: var(--font-jetbrains-mono), var(--font-geist-mono), "Fira Code", monospace;

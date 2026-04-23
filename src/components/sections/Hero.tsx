@@ -357,25 +357,27 @@ export function Hero() {
       style={{ background: "var(--bg-primary)" }}
     >
       <Container className="relative z-10">
-        {/* Top: editorial headline + sub, centered, confident scale */}
+        {/* Top: editorial headline + sub, centered, confident scale.
+            Phase 81 — Playfair Display on the h1 + editorial-grade rhythm.
+            Italic emphasis on the second line adds a single gesture that
+            separates this from every other AI-SaaS landing page. */}
         <div className="max-w-3xl mx-auto text-center mb-10 md:mb-14">
           <p
-            className="text-[11px] font-semibold uppercase tracking-[0.14em] mb-5"
+            className="eyebrow-editorial mb-6"
             style={{ color: "var(--accent-primary)" }}
           >
             {t("badge")}
           </p>
           <h1
-            className="font-semibold mb-5"
+            className="font-editorial mb-6"
             style={{
-              fontSize: "clamp(2.4rem, 5.5vw, 4rem)",
-              letterSpacing: "-0.035em",
-              lineHeight: 1.04,
+              fontSize: "clamp(2.6rem, 6vw, 4.5rem)",
               color: "var(--text-primary)",
             }}
           >
             {t("heading1")}
-            <br className="hidden sm:block" /> {t("heading2")}
+            <br className="hidden sm:block" />{" "}
+            <em className="ital">{t("heading2")}</em>
           </h1>
           <p
             className="text-base md:text-lg max-w-2xl mx-auto leading-relaxed"
@@ -384,6 +386,13 @@ export function Hero() {
             {t("description")}
           </p>
         </div>
+
+        {/* Hairline chapter-rule between claim and proof. */}
+        <div
+          className="rule-editorial max-w-5xl mx-auto mb-10 md:mb-14"
+          aria-hidden="true"
+        />
+
 
         {/* Main two-column result panel */}
         <div
@@ -410,12 +419,7 @@ export function Hero() {
                 >
                   <TrendingDown className="w-4 h-4" />
                 </div>
-                <p
-                  className="text-[11px] font-semibold uppercase tracking-wider"
-                  style={{ color: "var(--text-tertiary)" }}
-                >
-                  {tCalc("sectionLabel")}
-                </p>
+                <p className="eyebrow-editorial">{tCalc("sectionLabel")}</p>
               </div>
 
               <div className="space-y-5">
@@ -520,27 +524,25 @@ export function Hero() {
                 className="mt-6 pt-5"
                 style={{ borderTop: "1px solid var(--border-default)" }}
               >
+                <p className="eyebrow-editorial mb-2">Monthly revenue leak</p>
                 <p
-                  className="text-xs uppercase tracking-wider mb-1.5 font-semibold"
-                  style={{ color: "var(--text-tertiary)" }}
-                >
-                  Monthly revenue leak
-                </p>
-                <p
-                  className="font-semibold tabular-nums"
+                  className="num-editorial"
                   style={{
-                    fontSize: "clamp(1.75rem, 3.5vw, 2.25rem)",
+                    fontSize: "clamp(2rem, 4vw, 2.75rem)",
                     color: "var(--accent-danger)",
-                    letterSpacing: "-0.025em",
+                    lineHeight: 1,
                   }}
                   aria-live="polite"
                 >
                   ${formatMoney(animatedLost)}
                   <span
-                    className="text-sm font-medium ml-1"
-                    style={{ color: "var(--text-tertiary)" }}
+                    className="text-sm font-medium ml-1.5 align-middle"
+                    style={{
+                      color: "var(--text-tertiary)",
+                      fontFamily: "var(--font-body-sans)",
+                    }}
                   >
-                    /mo
+                    / mo
                   </span>
                 </p>
               </div>
@@ -561,27 +563,16 @@ export function Hero() {
                 >
                   <TrendingUp className="w-4 h-4" />
                 </div>
-                <p
-                  className="text-[11px] font-semibold uppercase tracking-wider"
-                  style={{ color: "var(--text-tertiary)" }}
-                >
-                  With Revenue Operator
-                </p>
+                <p className="eyebrow-editorial">With Revenue Operator</p>
               </div>
 
+              <p className="eyebrow-editorial mb-2">Recovered / month</p>
               <p
-                className="text-xs uppercase tracking-wider mb-1.5 font-semibold"
-                style={{ color: "var(--text-tertiary)" }}
-              >
-                Recovered / month
-              </p>
-              <p
-                className="font-semibold tabular-nums mb-1"
+                className="num-editorial mb-1.5"
                 style={{
-                  fontSize: "clamp(2rem, 5vw, 3rem)",
+                  fontSize: "clamp(2.25rem, 5.5vw, 3.25rem)",
                   color: "var(--accent-secondary)",
-                  letterSpacing: "-0.03em",
-                  lineHeight: 1.05,
+                  lineHeight: 1,
                 }}
                 aria-live="polite"
               >
@@ -595,7 +586,14 @@ export function Hero() {
                 {paysForItself >= 1 ? (
                   <>
                     {" · "}
-                    <span style={{ color: "var(--text-primary)", fontWeight: 500 }}>
+                    <span
+                      style={{
+                        color: "var(--text-primary)",
+                        fontWeight: 500,
+                        fontFamily: "var(--font-serif)",
+                        fontStyle: "italic",
+                      }}
+                    >
                       {paysForItself.toFixed(1)}× ROI
                     </span>
                   </>
@@ -620,12 +618,7 @@ export function Hero() {
                 className="pt-5"
                 style={{ borderTop: "1px solid var(--border-default)" }}
               >
-                <p
-                  className="text-[11px] font-semibold uppercase tracking-wider mb-3"
-                  style={{ color: "var(--text-tertiary)" }}
-                >
-                  Hear it work
-                </p>
+                <p className="eyebrow-editorial mb-3">Hear it work</p>
                 <HeroVoicePanel />
               </div>
             </div>
