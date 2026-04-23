@@ -31,7 +31,25 @@ import {
   ShoppingCart,
   GraduationCap,
   Briefcase,
+  Wand2,
+  Check,
+  Loader2,
 } from "lucide-react";
+
+/**
+ * Shape returned by `/api/industry/tailor` for custom industries.
+ * Kept local to avoid pulling a server-only import into this client comp.
+ */
+export interface TailoredIndustryPack {
+  industry_slug: string;
+  industry_name: string;
+  default_greeting: string;
+  default_faq: { question: string; answer: string }[];
+  default_follow_up_cadence: string[];
+  voice_tone: string;
+  recommended_services: string[];
+  ai_generated: true;
+}
 
 /**
  * Complete industry list for onboarding.
@@ -86,13 +104,64 @@ const CATEGORIES = ["Health", "Home", "Professional", "Consumer", "General"] as 
 
 interface IndustrySelectorProps {
   onSelect: (slug: string) => void;
+  /**
+   * Phase 82 — when user tailors a custom industry via AI, we hand the
+   * generated pack back so the caller can persist it server-side via
+   * `/api/workspace/industry` (or equivalent) and pre-fill agent config.
+   * Optional to preserve backward compatibility with existing call-sites.
+   */
+  onTailoredPack?: (pack: TailoredIndustryPack) => void;
   selected?: string | null;
   disabled?: boolean;
 }
 
-export default function IndustrySelector({ onSelect, selected, disabled }: IndustrySelectorProps) {
+export default function IndustrySelector({
+  onSelect,
+  onTailoredPack,
+  selected,
+  disabled,
+}: IndustrySelectorProps) {
   const [hovering, setHovering] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  // Phase 82 — custom/AI-tailored industry state
+  const [customIndustry, setCustomIndustry] = useState("");
+  const [tailorLoading, setTailorLoading] = useState(false);
+  const [tailorError, setTailorError] = useState<string | null>(null);
+  const [tailoredPack, setTailoredPack] = useState<TailoredIndustryPack | null>(null);
+
+  const handleTailor = async () => {
+    const industry = customIndustry.trim();
+    if (!industry || industry.length < 2) {
+      setTailorError("Enter an industry name (at least 2 characters).");
+      return;
+    }
+    setTailorError(null);
+    setTailorLoading(true);
+    setTailoredPack(null);
+    try {
+      const res = await fetch("/api/industry/tailor", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ industry }),
+      });
+      const data = (await res.json().catch(() => ({}))) as {
+        ok?: boolean;
+        pack?: TailoredIndustryPack;
+        error?: string;
+      };
+      if (!res.ok || !data.ok || !data.pack) {
+        setTailorError(data.error ?? "Could not tailor that industry. Try another phrasing.");
+        return;
+      }
+      setTailoredPack(data.pack);
+      onSelect(data.pack.industry_slug);
+      onTailoredPack?.(data.pack);
+    } catch {
+      setTailorError("Connection issue — please try again.");
+    } finally {
+      setTailorLoading(false);
+    }
+  };
 
   const filtered = useMemo(() => {
     if (!search.trim()) return INDUSTRIES;
@@ -115,18 +184,126 @@ export default function IndustrySelector({ onSelect, selected, disabled }: Indus
   }, [filtered]);
 
   return (
-    <div className="space-y-3">
-      <h2 className="text-lg font-semibold text-white">What industry are you in?</h2>
-      <p className="text-sm text-[var(--text-tertiary)]">
-        We&apos;ll load scripts, templates, and follow-up cadences tuned for your business.
-      </p>
-      <input
-        type="text"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search industries..."
-        className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-base)] px-4 py-2.5 text-sm text-white placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-default)] focus:outline-none focus:ring-1 focus:ring-white/20"
-      />
+    <div className="space-y-4">
+      <div>
+        <h2 className="font-editorial-small text-white" style={{ fontSize: "1.375rem", lineHeight: 1.2 }}>
+          What industry are you in?
+        </h2>
+        <p className="text-sm text-[var(--text-tertiary)] mt-1">
+          We&apos;ll load scripts, FAQs, and follow-up cadences tuned for your
+          business. Don&apos;t see yours? Type it below — our AI will tailor a
+          pack in about ten seconds.
+        </p>
+      </div>
+
+      {/* ─── Phase 82: AI-tailored custom industry ─────────────────────── */}
+      <div
+        className="rounded-xl p-4 space-y-3"
+        style={{
+          background: "var(--bg-inset)",
+          border: "1px solid var(--border-default)",
+        }}
+      >
+        <div className="flex items-center gap-2">
+          <Wand2 className="w-4 h-4 text-white" />
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white">
+            Tailor for any industry with AI
+          </p>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <input
+            type="text"
+            value={customIndustry}
+            onChange={(e) => {
+              setCustomIndustry(e.target.value);
+              if (tailorError) setTailorError(null);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !tailorLoading && !disabled) {
+                e.preventDefault();
+                handleTailor();
+              }
+            }}
+            placeholder='e.g. "vintage watch restoration" or "commercial beekeeping"'
+            disabled={disabled || tailorLoading}
+            maxLength={120}
+            aria-label="Custom industry name for AI tailoring"
+            className="flex-1 rounded-lg border border-[var(--border-default)] bg-[var(--bg-base)] px-3 py-2 text-sm text-white placeholder:text-[var(--text-tertiary)] focus:border-white/40 focus:outline-none focus:ring-1 focus:ring-white/20 disabled:opacity-60"
+          />
+          <button
+            type="button"
+            onClick={handleTailor}
+            disabled={disabled || tailorLoading || customIndustry.trim().length < 2}
+            className="rounded-lg px-4 py-2 text-sm font-semibold inline-flex items-center justify-center gap-2 transition-[background-color,opacity] disabled:opacity-50 whitespace-nowrap"
+            style={{
+              background: tailoredPack ? "rgba(34,197,94,0.18)" : "white",
+              color: tailoredPack ? "#22C55E" : "#09090B",
+            }}
+          >
+            {tailorLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" /> Tailoring…
+              </>
+            ) : tailoredPack ? (
+              <>
+                <Check className="w-4 h-4" /> Tailored
+              </>
+            ) : (
+              <>
+                <Wand2 className="w-4 h-4" /> Tailor with AI
+              </>
+            )}
+          </button>
+        </div>
+        {tailorError && (
+          <p className="text-xs" style={{ color: "#F87171" }}>
+            {tailorError}
+          </p>
+        )}
+        {tailoredPack && (
+          <div className="space-y-2 pt-2 border-t border-[var(--border-default)]">
+            <p className="text-xs text-[var(--text-tertiary)]">
+              Tailored pack for{" "}
+              <span className="text-white font-medium">
+                {tailoredPack.industry_name}
+              </span>
+              :
+            </p>
+            <ul className="text-xs text-[var(--text-tertiary)] space-y-1 leading-relaxed">
+              <li>
+                <span className="text-white">Tone:</span>{" "}
+                {tailoredPack.voice_tone}
+              </li>
+              <li>
+                <span className="text-white">Services:</span>{" "}
+                {tailoredPack.recommended_services.slice(0, 4).join(" · ")}
+              </li>
+              <li>
+                <span className="text-white">FAQs:</span>{" "}
+                {tailoredPack.default_faq.length} pre-written answers
+              </li>
+              <li>
+                <span className="text-white">Follow-up:</span>{" "}
+                {tailoredPack.default_follow_up_cadence.length}-step cadence
+              </li>
+            </ul>
+          </div>
+        )}
+      </div>
+
+      {/* ─── Or pick from preset industries ────────────────────────────── */}
+      <div className="pt-2">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--text-tertiary)] mb-2">
+          Or pick a preset
+        </p>
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search industries..."
+          className="w-full rounded-xl border border-[var(--border-default)] bg-[var(--bg-base)] px-4 py-2.5 text-sm text-white placeholder:text-[var(--text-tertiary)] focus:border-[var(--border-default)] focus:outline-none focus:ring-1 focus:ring-white/20"
+        />
+      </div>
       {Object.entries(groupedByCategory).map(([category, industries]) => (
         <div key={category}>
           <p className="text-xs font-medium text-[var(--text-tertiary)] uppercase tracking-wider mt-4 mb-2">
