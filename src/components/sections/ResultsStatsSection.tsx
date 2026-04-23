@@ -38,17 +38,15 @@ export function ResultsStatsSection() {
       <Container>
         <AnimateOnScroll className="text-center mb-12 md:mb-16">
           <p
-            className="text-[11px] font-semibold uppercase tracking-wider mb-4"
+            className="eyebrow-editorial mb-5"
             style={{ color: "var(--accent-primary)" }}
           >
             {t("label", { default: "Proven Results" })}
           </p>
           <h2
-            className="font-semibold max-w-2xl mx-auto"
+            className="font-editorial max-w-2xl mx-auto"
             style={{
-              fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)",
-              letterSpacing: "-0.025em",
-              lineHeight: 1.2,
+              fontSize: "clamp(2rem, 4vw, 3.25rem)",
               color: "var(--text-primary)",
             }}
           >
@@ -77,19 +75,18 @@ export function ResultsStatsSection() {
               {/* Content */}
               <div className="relative z-10">
                 <div
-                  className="font-bold mb-3"
+                  className="num-editorial mb-3"
                   style={{
-                    fontSize: "clamp(2.5rem, 5vw, 3.5rem)",
+                    fontSize: "clamp(2.75rem, 5.5vw, 3.75rem)",
                     lineHeight: 1,
-                    letterSpacing: "-0.03em",
                     color: stat.accentColor,
                   }}
                 >
                   {stat.number}
                 </div>
                 <p
-                  className="font-semibold text-sm"
-                  style={{ color: "var(--text-primary)" }}
+                  className="eyebrow-editorial"
+                  style={{ color: "var(--text-primary)", letterSpacing: "0.14em" }}
                 >
                   {stat.label}
                 </p>

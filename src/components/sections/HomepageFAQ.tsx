@@ -25,7 +25,7 @@ export function HomepageFAQ() {
       <Container>
         <div className="text-center mb-10">
           <p
-            className="text-[11px] font-semibold uppercase tracking-wider mb-4"
+            className="eyebrow-editorial mb-5"
             style={{ color: "var(--accent-primary)" }}
           >
             {t("label")}
